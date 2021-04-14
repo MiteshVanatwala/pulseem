@@ -1,0 +1,107 @@
+import React from 'react';
+import {Typography,Grid,TextField,IconButton} from '@material-ui/core'
+import {PageArrowIcon} from '../../assets/images/managment/index'
+
+import {useTranslation} from 'react-i18next'
+
+
+export const TablePadington=({
+  classes,
+  rows=0,
+  page=1,
+  rowsPerPageOptions=[],
+  rowsPerPage,
+  onRowsPerPageChange=() => null,
+  onPageChange=() => null
+}) => {
+  const {t}=useTranslation()
+  const pages=Math.ceil(rows/rowsPerPage)
+
+  const handelPageChange=event => {
+    const currentPage=parseInt(event.target.value)
+    if(currentPage>=1&&currentPage<=pages)
+      onPageChange(currentPage)
+  }
+
+  const handleRowsPerPageChange=event => {
+    const value=parseInt(event.target.value)
+    if(value!==rowsPerPage) {
+      onRowsPerPageChange(value)
+      onPageChange(1)
+    }
+  }
+
+  const renderRowNumbers=() => {
+    return (
+      <Grid item className={classes.tablePadingtonGridItem}>
+        <Typography>
+          {t('common.rowNumber')}
+        </Typography>
+        <TextField
+          select
+          className={classes.tablePadingtonSelect}
+          variant='standard'
+          SelectProps={{
+            native: true,
+          }}
+          value={rowsPerPage}
+          onChange={handleRowsPerPageChange}>
+          {rowsPerPageOptions.map(option => (
+            <option
+              key={option.toString()}
+              value={option}>
+              {option}
+            </option>
+          ))}
+        </TextField>
+      </Grid>
+    )
+  }
+
+  const renderPageNumbers=() => {
+    return (
+      <Grid
+        item
+        className={classes.tablePadingtonGridItem}>
+        {page>1&&
+          <IconButton
+            onClick={() => onPageChange(page-1)}
+            size='small'
+            className={classes.tablePadingtonArrowOppisite}>
+            <PageArrowIcon />
+          </IconButton>}
+        <Typography>
+          {t('common.page')}
+        </Typography>
+        <TextField
+          type="number"
+          value={page.toString()}
+          onChange={handelPageChange}
+          variant='outlined'
+          margin='none'
+          size='small'
+          className={classes.tablePadingtonTextFeild}
+        />
+        <Typography>
+          {t('common.outOf')} {pages}
+        </Typography>
+        {page<pages&&
+          <IconButton
+            onClick={() => onPageChange(page+1)}
+            size='small'
+            className={classes.tablePadingtonArrow}>
+            <PageArrowIcon />
+          </IconButton>}
+      </Grid>
+    )
+  }
+  return (
+    <Grid
+      container
+      justify='space-between'
+      className={classes.tablePadingtonGridContainer} >
+      {renderRowNumbers()}
+      {renderPageNumbers()}
+    </Grid>
+  )
+}

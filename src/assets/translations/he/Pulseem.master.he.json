@@ -1,0 +1,371 @@
+{
+  "Localize1Resource1": {
+    "Text": "ברוכים הבאים!"
+  },
+  "locHelloResource1": {
+    "Text": "שלום"
+  },
+  "mnuMainResource1": {
+    "ToolTip": ""
+  },
+  "RadMenuItemResource1": {
+    "Text": "לוח בקרה"
+  },
+  "RadMenuItemResource10": {
+    "Text": "תבניות קמפיין"
+  },
+  "RadMenuItemResource11": {
+    "Text": "מטרות"
+  },
+  "RadMenuItemResource12": {
+    "Text": "קמפיין דואר אלקטרוני"
+  },
+  "RadMenuItemResource13": {
+    "Text": "דיוור אלקטרוני"
+  },
+  "RadMenuItemResource14": {
+    "Text": "גרפי"
+  },
+  "RadMenuItemResource15": {
+    "Text": "מנהל חשבון"
+  },
+  "RadMenuItemResource16": {
+    "Text": "השוואת קמפיינים"
+  },
+  "RadMenuItemResource17": {
+    "Text": "מטרות"
+  },
+  "RadMenuItemResource18": {
+    "Text": "נמען"
+  },
+  "RadMenuItemResource19": {
+    "Text": "דוחות"
+  },
+  "RadMenuItemResource2": {
+    "Text": "פרטי חשבון"
+  },
+  "RadMenuItemResource20": {
+    "Text": "עזרה"
+  },
+  "RadMenuItemResource21": {
+    "Text": "צור קשר"
+  },
+  "RadMenuItemResource22": {
+    "Text": "תמיכה"
+  },
+  "RadMenuItemResource3": {
+    "Text": "משתמשים והרשאות"
+  },
+  "RadMenuItemResource4": {
+    "Text": "דוח חשבונות משנה"
+  },
+  "RadMenuItemResource5": {
+    "Text": "הגדרות"
+  },
+  "RadMenuItemResource6": {
+    "Text": "ניהול קבוצות נמענים"
+  },
+  "RadMenuItemResource7": {
+    "Text": "חיפוש"
+  },
+  "RadMenuItemResource8": {
+    "Text": "קבוצות"
+  },
+  "RadMenuItemResource9": {
+    "Text": "ניהול קמפיינים"
+  },
+  "RadMenuItemResource23": {
+    "Text": "שדות נוספים"
+  },
+  "RadMenuItemResource37": {
+    "Text": "חיפוש מתקדם"
+  },
+  "RadMenuItemResource9a": {
+    "Text": "Autoresponder"
+  },
+  "RadMenuItemResource9b": {
+    "Text": "יצירת קמפיין"
+  },
+  "RadMenuItemResource100": {
+    "Text": "SMS קמפיין "
+  },
+  "RadMenuItemResource101": {
+    "Text": "יצירת קמפיין"
+  },
+  "RadMenuItemResource102": {
+    "Text": "ניהול קמפיינים"
+  },
+  "RadMenuItemResource103": {
+    "Text": "תבניות קמפיין"
+  },
+  "RadMenuItemResource24": {
+    "Text": "סמס"
+  },
+  "PackagesResource": {
+    "Text": "חבילות"
+  },
+  "RadMenuItemResource200": {
+    "Text": "סקרים"
+  },
+  "RadMenuItemResource201": {
+    "Text": "כניסה למערכת סקרים"
+  },
+  "RadMenuItemLanding": {
+    "Text": "ניהול דף נחיתה"
+  },
+  "RadMenuItemRegistration": {
+    "Text": "ניהול דף הטמעה"
+  },
+  "RadMenuItemResource25": {
+    "Text": "דוח דפי נחיתה"
+  },
+  "RadMenuItemLandingManagement": {
+    "Text": "ניהול דפי נחיתה"
+  },
+  "RadMenuItemLandingPage": {
+    "Text": "יצירת דף נחיתה"
+  },
+  "RadItemLandingPagesMenu": {
+    "Text": "דפי נחיתה"
+  },
+  "RadItemFacebookMenu": {
+    "Text": "פייסבוק"
+  },
+  "lblAddPackageResource1": {
+    "Text": "הוסף חבילת SMS",
+    "ToolTip": ""
+  },
+  "lblUpgradeResource1": {
+    "Text": "שדרג חשבון",
+    "ToolTip": ""
+  },
+  "btnUpgradeResource1": {
+    "Text": "צור קשר לשדרוג חשבון",
+    "ToolTip": ""
+  },
+  "lblCompanyNameResource1": {
+    "Text": "שם חברה",
+    "ToolTip": ""
+  },
+  "lblContactNameResource1": {
+    "Text": "שם",
+    "ToolTip": ""
+  },
+  "lblUserMailResource1": {
+    "Text": "אימייל",
+    "ToolTip": ""
+  },
+  "lblUserMobileResource1": {
+    "Text": "נייד",
+    "ToolTip": ""
+  },
+  "lblUserPhoneResource1": {
+    "Text": "טלפון",
+    "ToolTip": ""
+  },
+  "lblUpgradeDescriptionResource1": {
+    "Text": "שדרג חשבונך לחשבון פעיל.<br/>מלא את פרטיך ונציגינו יחזור אליך בהקדם.",
+    "ToolTip": ""
+  },
+  "RequiredFields": "נא למלא שדות חובה",
+  "btnUpgradeSendResource1": {
+    "Text": "שדרג",
+    "ToolTip": ""
+  },
+  "lblAddressResource1": {
+    "Text": "כתובת",
+    "ToolTip": ""
+  },
+  "lblCityResource1": {
+    "Text": "עיר",
+    "ToolTip": ""
+  },
+  "lblCountryResource1": {
+    "Text": "ארץ",
+    "ToolTip": ""
+  },
+  "lblZipResource1": {
+    "Text": "מיקוד",
+    "ToolTip": ""
+  },
+  "LogoutResource1": {
+    "Text": "יציאה"
+  },
+  "linkAboutResource1": {
+    "Text": "אודות"
+  },
+  "linkContactResource1": {
+    "Text": "צור קשר"
+  },
+  "linkCopyrightsResource1": {
+    "Text": "2009 © פולסים בע\"מ. כל הזכויות שמורות."
+  },
+  "linkHomeResource1": {
+    "Text": "אתר בית"
+  },
+  "lblChatResource1": {
+    "Text": "צ'אט אונליין"
+  },
+  "btnLaterSendResource1": {
+    "Text": "שדרג מאוחר יותר..."
+  },
+  "lblFormSide1Resource1": {
+    "Text": "פולסים דיוור אלקטרוני ו SMS החברה"
+  },
+  "lblFormSide2Resource1": {
+    "Text": "המובילה בתחומה בארץ ובעולם"
+  },
+  "lblFormSide3Resource1": {
+    "Text": "עשרות מליוני אימיילים ו SMS"
+  },
+  "lblFormSide4Resource1": {
+    "Text": "בחודש שנשלחים ממערכת פולסים"
+  },
+  "lblFormSide5Resource1": {
+    "Text": "בדקתם כבר מה הם<br/>השירותים החדשים שלנו?"
+  },
+  "lblFormSide6Resource1": {
+    "Text": "כל חודש עולים שירותים נוספים<br />שאלו את נציגינו על השירותים החדשים"
+  },
+  "lblFormSide7Resource1": {
+    "Text": "שירות הלקוחות הטלפוני"
+  },
+  "lblFormSide8Resource1": {
+    "Text": "עובד בין הימים א - ה<br />בין השעות 9:00 - 18:00"
+  },
+  "linkAccountBilling": {
+    "Text": "הגדרות פרטי חיוב"
+  },
+  "linkSendCampaignByResultResource1": {
+    "Text": "יצירת שליחה לפי תוצאות"
+  },
+  "linkAbTestingsResource1": {
+    "Text": "ניהול שליחות לפי תוצאה"
+  },
+  "AbTestsReport": {
+    "Text": "שליחות לפי תוצאה"
+  },
+  "linkShareSettingsResource1": {
+    "Text": "הגדרות שיתוף"
+  },
+  "lblAccountIsDemo": {
+    "Text": "יש לך חשבון נסיון"
+  },
+  "lblBelowLimitations": {
+    "Text": "להלן המגבלות של חשבון נסיון:"
+  },
+  "lblGetItNow": {
+    "Text": "ולהנות מאפשרויות נוספות?"
+  },
+  "lblInPulseemSystem": {
+    "Text": "במערכת פולסים"
+  },
+  "lblLimit1": {
+    "Text": "200 הודעות דיוור אלקטרוני חודשיות"
+  },
+  "lblLimit2": {
+    "Text": "ניהול עד 50000 נמענים בחשבון"
+  },
+  "lblLimit3": {
+    "Text": "ניהול עד 5 קבוצות בחשבון"
+  },
+  "lblLimit4": {
+    "Text": "שליחה עד 20 קמפיינים בחודש"
+  },
+  "lblUpgradeEmail": {
+    "Text": "שדרג חשבון<br/>דיוור אלקטרוני"
+  },
+  "lblUpgradeNow": {
+    "Text": "עליך שדרג את חשבונך"
+  },
+  "lblUpgradeSms": {
+    "Text": "שדרג חשבון<br/>SMS"
+  },
+  "lblWantMore": {
+    "Text": "רוצה להסיר את המגבלות?"
+  },
+  "SmsPackages": {
+    "Text": "SMS חבילות"
+  },
+  "SetToken": "הוספת כרטיס אשראי",
+  "Checkout": "סיום רכישה",
+  "linkApiSettingsResource1": {
+    "Text": "API הגדרות"
+  },
+  "linkCampaignTopicsManagment": {
+    "Text": "ניהול נושאי קמפיין"
+  },
+  "RadMenuItemResource30": {
+    "Text": "אוטומטים"
+  },
+  "DirectReportsResource1": {
+    "Text": "שליחה ישירה – אימייל"
+  },
+  "locRemovedReason": {
+    "Text": "הסרות"
+  },
+  "AdvancedReportsResource1": {
+    "Text": "מומחים"
+  },
+  "linkSupportResource1": {
+    "NavigateUrl": "tel:035240290"
+  },
+  "locPhoneNumberResource1": {
+    "Text": "03-5240290"
+  },
+  "FormTemplatesResource1": {
+    "Text": "תבניות דפי נחיתה"
+  },
+  "linkUnsubscribeSettsResource1": {
+    "Text": "הגדרות דף הסרה"
+  },
+  "MmsCampaignEdit": {
+    "Text": "יצירת קמפיין"
+  },
+  "MmsCampaignMnage": {
+    "Text": "ניהול קמפיינים"
+  },
+  "MmsCampaigns": {
+    "Text": "MMS קמפיין"
+  },
+  "MmsMainReport": {
+    "Text": "MMS"
+  },
+  "DirectSmsReport": {
+    "Text": "שליחה ישירה – סמס"
+  },
+  "RadMenuItemResourceDynamicGroups": {
+    "Text": "קבוצות דינאמיות"
+  },
+  "linkSMSSmartResponses": {
+    "Text": "משובים חכמים"
+  },
+  "linkSMSResponsesReport": {
+    "Text": "דו\"ח משובים"
+  },
+  "RadMenuItemResourceFileUploads": {
+    "Text": "היסטוריית העלאת נמענים"
+  },
+  "RadMenuItemResourceDeleteRecipient": {
+    "Text": "מחיקת נמענים"
+  },
+  "Automations": "אוטומציות",
+  "RadMenuItemCreateAutomationResource": {
+    "Text": "צור אוטומציה"
+  },
+  "RadMenuItemManageAutomationResource": {
+    "Text": "ניהול אוטומציות"
+  },
+  "linkRedir": {
+    "MainAccount": "חשבון ראשי"
+  },
+  "newsletter": "ניוזלטר",
+  "notifications": "נוטיפיקציות",
+  "newslatterBasicEditor": "עורך בסיסי",
+  "chatbotSMS": "צ'אטבוט SMS",
+  "clalCollage": "דוחות הרשמה כלל",
+  "OpenedClickedReport": "פתיחות / הקלקות",
+  "createNotification": "יצירת נוטיפיקציה",
+  "manageNotifications": "ניהול נוטיפיקציות",
+  "guides": "מדריכים"
+}

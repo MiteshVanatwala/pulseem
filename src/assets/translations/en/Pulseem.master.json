@@ -1,0 +1,377 @@
+{
+  "Localize1Resource1": {
+    "Text": "Welcome!"
+  },
+  "locHelloResource1": {
+    "Text": "Hello"
+  },
+  "mnuMainResource1": {
+    "ToolTip": ""
+  },
+  "RadMenuItemResource1": {
+    "Text": "Dashboard"
+  },
+  "RadMenuItemResource10": {
+    "Text": "Newsletter Templates"
+  },
+  "RadMenuItemResource11": {
+    "Text": "Targets"
+  },
+  "RadMenuItemResource12": {
+    "Text": "Email Campaign"
+  },
+  "RadMenuItemResource13": {
+    "Text": "Email Report"
+  },
+  "RadMenuItemResource14": {
+    "Text": "Graphic Report"
+  },
+  "RadMenuItemResource15": {
+    "Text": "Account Manager"
+  },
+  "RadMenuItemResource16": {
+    "Text": "A/B Testing"
+  },
+  "RadMenuItemResource17": {
+    "Text": "Targets"
+  },
+  "RadMenuItemResource18": {
+    "Text": "Recipient Report"
+  },
+  "RadMenuItemResource19": {
+    "Text": "Reports"
+  },
+  "RadMenuItemResource2": {
+    "Text": "Account Details"
+  },
+  "RadMenuItemResource20": {
+    "Text": "Help"
+  },
+  "RadMenuItemResource21": {
+    "Text": "Contact us"
+  },
+  "RadMenuItemResource22": {
+    "Text": "Support"
+  },
+  "RadMenuItemResource3": {
+    "Text": "Sub Accounts"
+  },
+  "RadMenuItemResource4": {
+    "Text": "Sub Account Report"
+  },
+  "RadMenuItemResource5": {
+    "Text": "Account"
+  },
+  "RadMenuItemResource6": {
+    "Text": "Manage Recipients"
+  },
+  "RadMenuItemResource7": {
+    "Text": "Search"
+  },
+  "RadMenuItemResource8": {
+    "Text": "Groups"
+  },
+  "RadMenuItemResource9": {
+    "Text": "Newsletter Management"
+  },
+  "RadMenuItemResource23": {
+    "Text": "Extra Fields"
+  },
+  "RadMenuItemResource37": {
+    "Text": "Advanced Search"
+  },
+  "RadMenuItemResource9a": {
+    "Text": "Autoresponder"
+  },
+  "RadMenuItemResource9b": {
+    "Text": "Create New Newsletter"
+  },
+  "RadMenuItemResource100": {
+    "Text": "SMS Campaign"
+  },
+  "RadMenuItemResource101": {
+    "Text": "New SMS Campaign"
+  },
+  "RadMenuItemResource102": {
+    "Text": "SMS Campaign Management"
+  },
+  "RadMenuItemResource103": {
+    "Text": "Campaign Templates"
+  },
+  "RadMenuItemResource24": {
+    "Text": "SMS Report"
+  },
+  "PackagesResource": {
+    "Text": "Packages"
+  },
+  "RadMenuItemResource200": {
+    "Text": "Surveys"
+  },
+  "RadMenuItemResource201": {
+    "Text": "Enter Surveys"
+  },
+  "RadMenuItemRegistration": {
+    "Text": "Create Registration Page"
+  },
+  "RadMenuItemResource25": {
+    "Text": "Landing Page Reports"
+  },
+  "RadItemLandingPagesMenu": {
+    "Text": "Landing Pages"
+  },
+  "RadItemFacebookMenu": {
+    "Text": "Facebook"
+  },
+  "RadMenuItemLandingManagement": {
+    "Text": "Landing Pages Management"
+  },
+  "RadMenuItemLandingPage": {
+    "Text": "Create a Landing Page"
+  },
+  "lblAddPackageResource1": {
+    "Text": "Add SMS Package",
+    "ToolTip": ""
+  },
+  "lblUpgradeResource1": {
+    "Text": "Upgrade Account",
+    "ToolTip": ""
+  },
+  "btnUpgradeResource1": {
+    "Text": "Contact For Account Upgrade",
+    "ToolTip": ""
+  },
+  "lblCompanyNameResource1": {
+    "Text": "Company Name",
+    "ToolTip": ""
+  },
+  "lblContactNameResource1": {
+    "Text": "Name",
+    "ToolTip": ""
+  },
+  "lblUserMailResource1": {
+    "Text": "Email",
+    "ToolTip": ""
+  },
+  "lblUserMobileResource1": {
+    "Text": "Cell Phone",
+    "ToolTip": ""
+  },
+  "lblUserPhoneResource1": {
+    "Text": "Phone",
+    "ToolTip": ""
+  },
+  "lblUpgradeDescriptionResource1": {
+    "Text": "Upgrade your account.<br/>Leave your details and our operator will contact you shortly.",
+    "ToolTip": ""
+  },
+  "RequiredFields": "Fill in all required fields",
+  "btnUpgradeSendResource1": {
+    "Text": "Upgrade",
+    "ToolTip": ""
+  },
+  "lblAddressResource1": {
+    "Text": "Address",
+    "ToolTip": ""
+  },
+  "lblCityResource1": {
+    "Text": "City",
+    "ToolTip": ""
+  },
+  "lblCountryResource1": {
+    "Text": "Country",
+    "ToolTip": ""
+  },
+  "lblZipResource1": {
+    "Text": "Zip",
+    "ToolTip": ""
+  },
+  "LogoutResource1": {
+    "Text": "Logout"
+  },
+  "linkAboutResource1": {
+    "Text": "About"
+  },
+  "linkContactResource1": {
+    "Text": "Contact"
+  },
+  "linkCopyrightsResource1": {
+    "Text": "© 2009 Pulseem LTD. All Rights Reserved."
+  },
+  "linkHomeResource1": {
+    "Text": "Home"
+  },
+  "lblChatResource1": {
+    "Text": "Chat Online"
+  },
+  "btnLaterSendResource1": {
+    "Text": "Upgrade Later..."
+  },
+  "lblFormSide1Resource1": {
+    "Text": "Pulseem EMAIL MARKETING<br/>and SMS is one of the<br/>"
+  },
+  "lblFormSide2Resource1": {
+    "Text": "leaders of the E-marketing industry."
+  },
+  "lblFormSide3Resource1": {
+    "Text": "More than a hundred millions"
+  },
+  "lblFormSide4Resource1": {
+    "Text": "EMAIL and SMS massages<br/>sent every month"
+  },
+  "lblFormSide5Resource1": {
+    "Text": "Did you check the new<br/>service we provide?"
+  },
+  "lblFormSide6Resource1": {
+    "Text": "Every month we add new services."
+  },
+  "lblFormSide7Resource1": {
+    "Text": "Our chat service is online at"
+  },
+  "lblFormSide8Resource1": {
+    "Text": "Sunday – Thursday 9AM – 6PM"
+  },
+  "linkAccountBilling": {
+    "Text": "Billing Settings"
+  },
+  "linkSendCampaignByResultResource1": {
+    "Text": "Create New A/B Testing Campaign"
+  },
+  "linkAbTestingsResource1": {
+    "Text": "A/B Testing Management"
+  },
+  "AbTestsReport": {
+    "Text": "AB Testing Report"
+  },
+  "linkShareSettingsResource1": {
+    "Text": "Share Settings"
+  },
+  "lblAccountIsDemo": {
+    "Text": "You have a demo account"
+  },
+  "lblBelowLimitations": {
+    "Text": "Demo account restrictions:"
+  },
+  "lblGetItNow": {
+    "Text": "And enjoy from all features?"
+  },
+  "lblInPulseemSystem": {
+    "Text": "in Pulseem system"
+  },
+  "lblLimit1": {
+    "Text": "200 monthly email messages"
+  },
+  "lblLimit2": {
+    "Text": "Up to 50000 recipients in account"
+  },
+  "lblLimit3": {
+    "Text": "Up to 5 groups in account"
+  },
+  "lblLimit4": {
+    "Text": "Up to 20 monthly campaigns"
+  },
+  "lblUpgradeEmail": {
+    "Text": "Upgrade<br/>Email Account"
+  },
+  "lblUpgradeNow": {
+    "Text": "You should upgrade<br/>your account"
+  },
+  "lblUpgradeSms": {
+    "Text": "Upgrade<br/>SMS Account"
+  },
+  "lblWantMore": {
+    "Text": "Wish to remove the restrictions?"
+  },
+  "SmsPackages": {
+    "Text": "SMS Packages"
+  },
+  "SetToken": "Add Credit Card",
+  "Checkout": "Finish Checkout",
+  "linkApiSettingsResource1": {
+    "Text": "API Settings"
+  },
+  "linkCampaignTopicsManagment": {
+    "Text": "Campaign Topics Managment"
+  },
+  "RadMenuItemResource30": {
+    "Text": "Automatic Reports"
+  },
+  "DirectReportsResource1": {
+    "Text": "Direct Email Report"
+  },
+  "locRemovedReason": {
+    "Text": "Unsubscribes Report"
+  },
+  "AdvancedReportsResource1": {
+    "Text": "Advanced Campaign Reports"
+  },
+  "linkSupportResource1": {
+    "NavigateUrl": "tel:+97235240290"
+  },
+  "locPhoneNumberResource1": {
+    "Text": "+972 35240290"
+  },
+  "FormTemplatesResource1": {
+    "Text": "Landing Page Templates"
+  },
+  "linkUnsubscribeSettsResource1": {
+    "Text": "Unsubscribe Page"
+  },
+  "MmsCampaignEdit": {
+    "Text": "New MMS Campaign"
+  },
+  "MmsCampaignMnage": {
+    "Text": "MMS Campaign Management"
+  },
+  "MmsCampaigns": {
+    "Text": "MMS Campaign"
+  },
+  "MmsMainReport": {
+    "Text": "MMS Report"
+  },
+  "DirectSmsReport": {
+    "Text": "Direct Sms Report"
+  },
+  "RadMenuItemResourceDynamicGroups": {
+    "Text": "Dynamic Groups"
+  },
+  "linkSMSSmartResponses": {
+    "Text": "Smart SMS Responses"
+  },
+  "linkSMSResponsesReport": {
+    "Text": "Responses Report"
+  },
+  "RadMenuItemResourceFileUploads": {
+    "Text": "File Uploads"
+  },
+  "RadMenuItemCreateAutomationResource": {
+    "Text": "Create Automation"
+  },
+  "RadMenuItemManageActionsResource": {
+    "Text": "Manage Actions"
+  },
+  "RadMenuItemManageAutomationResource": {
+    "Text": "Manage Automation"
+  },
+  "RadMenuItemManageTriggersResource": {
+    "Text": "Manage Triggers"
+  },
+  "RadMenuItemResourceDeleteRecipient": {
+    "Text": "Delete Recipient"
+  },
+  "LabelCreateCatalogue": {
+    "Text": "Create a Catalogue"
+  },
+  "Automations": "Automations",
+  "linkRedir": {
+    "MainAccount": "Main Account"
+  },
+  "newsletter": "Newsletter",
+  "notifications": "Notifications",
+  "newslatterBasicEditor": "Basic Editor",
+  "chatbotSMS": "Chatbot SMS",
+  "clalCollage": "Clal Sign Reports",
+  "OpenedClickedReport": "Opened / Clicked Report",
+  "createNotification": "Create Notification",
+  "manageNotifications": "Manage Notifications",
+  "guides": "Guides"
+}

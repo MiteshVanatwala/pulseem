@@ -1,0 +1,35 @@
+{
+  "dashboard": "Dashboard",
+  "groups": {
+    "title": "Groups",
+    "manageRecipients": "Manage Recipients",
+    "search": "Search",
+    "advencedSearch": "Advenced Search",
+    "dynamicGroups": "Dynamic Groups",
+    "fileUploads": "File Uploads"
+  },
+  "newsletter": {
+    "title": "Newsletter"
+  },
+  "sms": {
+    "title": "SMS"
+  },
+  "mms": {
+    "title": "MMS"
+  },
+  "landingPages": {
+    "title": "Landing Pages"
+  },
+  "reports": {
+    "title": "Reports",
+    "newsletterReports": "Newsletter Reports",
+    "smsReports": "SMS Reports"
+  },
+  "automation": {
+    "title": "Automations"
+  },
+  "notifications": {
+    "title": "Notifications"
+  },
+  "logout": "Logout"
+}

@@ -1,0 +1,35 @@
+{
+  "dashboard": "לוח בקרה",
+  "groups": {
+    "title": "קבוצות",
+    "manageRecipients": "ניהול קבוצות נמענים",
+    "search": "חיפוש",
+    "advencedSearch": "חיפוש מתקדם",
+    "dynamicGroups": "קבוצות דינאמיות",
+    "fileUploads": "היסטוריית העלאת נמענים"
+  },
+  "newsletter": {
+    "title": "ניוזלטר"
+  },
+  "sms": {
+    "title": "SMS"
+  },
+  "mms": {
+    "title": "MMS"
+  },
+  "landingPages": {
+    "title": "דפי נחיתה"
+  },
+  "reports": {
+    "title": "דוחות",
+    "newsletterReports": "דוחות ניוזלטר",
+    "smsReports": "דוחות SMS"
+  },
+  "automation": {
+    "title": "אוטומציות"
+  },
+  "notifications": {
+    "title": "נוטיפיקציות"
+  },
+  "logout": "יציאה"
+}

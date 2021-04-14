@@ -1,0 +1,48 @@
+{
+  "CloneResource1": {
+    "HeaderText": "Clone"
+  },
+  "createResource": {
+    "Text": "Create Automation"
+  },
+  "DeleteResource1": {
+    "HeaderText": "Delete"
+  },
+  "EditCampaignResource1": {
+    "HeaderText": "Edit"
+  },
+  "logPageHeaderResource1": {
+    "Text": "Automation Management"
+  },
+  "restoreResource": {
+    "Text": "Restore"
+  },
+  "ShowCampaignResource1": {
+    "HeaderText": "Preview"
+  },
+  "GridButtonColumnResource2": {
+    "ConfirmText": "Do you want to delete the automation?",
+    "ConfirmTitle": "Delete Automation"
+  },
+  "locSearchAutomationResource1": {
+    "Text": "Search"
+  },
+  "EditConfirm": {
+    "Text": "Editing an active Automation process will pause it. You can re-activate it from the Manage-Automations screen.",
+    "Title": "Edit an Active Automation"
+  },
+  "Automations": "Automations",
+  "DaysActive": "Days Active",
+  "AutomationActiveStatusText": "Active",
+  "AutomatoionInActiveStatusText": "Inactive",
+  "HeaderActivateAutomationProcess": "Activate Automation Process",
+  "HeaderDeactivateAutomationProcess": "Deactivate Automation Process",
+  "TextActivateAutomationProcess": "Clicking Ok will reactivate a paused Marketing Automation process.",
+  "TextDeactivateAutomationProcess": "Clicking Ok will stop an ongoing Marketing Automation process. You can reactivate it later from the Manage Automations page.",
+  "Report": "Report",
+  "labelAutomationName": "Automation Name",
+  "labelAutomationSubHeader": "Let’s Go! Create a new Automation.",
+  "TextConfirmLeaveWithoutSave": "You have unsaved workflow left, do you want to close without saving?",
+  "DayActive": "Day Active",
+  "Recipient": "Recipient"
+}

@@ -1,0 +1,332 @@
+{
+  "GridBoundColumnResource1": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "EmptyDataText": "&nbsp;",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "ID",
+    "HeaderTooltip": "",
+    "HtmlEncode": "False",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource2": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "EmptyDataText": "&nbsp;",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Landing page name",
+    "HeaderTooltip": "",
+    "HtmlEncode": "False",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource3": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "EmptyDataText": "&nbsp;",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Group name",
+    "HeaderTooltip": "",
+    "HtmlEncode": "False",
+    "SortExpression": ""
+  },
+  "GridButtonColumnResource1": {
+    "AndCurrentFilterValue": "",
+    "ConfirmText": "Do you want to delete the landing page?",
+    "ConfirmTextFormatString": "",
+    "ConfirmTitle": "Delete Landing Page",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Delete",
+    "HeaderTooltip": "",
+    "ImageUrl": "~/Images/Document 1 delete.png",
+    "SortExpression": "",
+    "Text": "Delete"
+  },
+  "GridTemplateColumnResource1": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Link",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource2": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Number of records",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource3": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Edit",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource4": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Display",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "imgEditResource1": {
+    "AlternateText": "",
+    "ToolTip": ""
+  },
+  "imgPreviewResource1": {
+    "AlternateText": "",
+    "ToolTip": ""
+  },
+  "lnkEditResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "lnkPreviewResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "locPageExplanationResource1": {
+    "Text": "Use this page to manage and edit your landing pages."
+  },
+  "logPageHeaderResource1": {
+    "Text": "Landing pages management"
+  },
+  "NumOfEnteriesResource1": {
+    "Text": ""
+  },
+  "NumOfRegistrationsResource1": {
+    "Text": ""
+  },
+  "PageResource1": {
+    "Title": "Landing Page Managment | Pulseem System"
+  },
+  "RadGridResource1": {
+    "BackImageUrl": "",
+    "FilterMenu": {
+      "ToolTip": ""
+    },
+    "GroupingSettings": {
+      "CollapseTooltip": "Collapse group",
+      "ExpandTooltip": "Expand group",
+      "GroupByFieldsSeparator": "; ",
+      "GroupContinuedFormatString": "... group continued from the previous page. ",
+      "GroupContinuesFormatString": " Group continues on the next page.",
+      "GroupSplitDisplayFormat": "Showing {0} of {1} items.",
+      "GroupSplitFormat": " ({0})",
+      "UnGroupButtonTooltip": "Click here to ungroup",
+      "UnGroupTooltip": "Drag out of the bar to ungroup"
+    },
+    "GroupPanel": {
+      "Text": "Drag a column header and drop it here to group by that column",
+      "ToolTip": ""
+    },
+    "HeaderContextMenu": {
+      "ToolTip": ""
+    },
+    "HierarchySettings": {
+      "CollapseTooltip": "Collapse",
+      "ExpandTooltip": "Expand",
+      "SelfCollapseTooltip": "Self reference collapse",
+      "SelfExpandTooltip": "Self reference expand"
+    },
+    "MasterTableView": {
+      "Caption": "",
+      "CommandItemSettings": {
+        "AddNewRecordImageUrl": "",
+        "AddNewRecordText": "Add new record",
+        "ExportToCsvImageUrl": "",
+        "ExportToCsvText": "Export to CSV",
+        "ExportToExcelImageUrl": "",
+        "ExportToExcelText": "Export to Excel",
+        "ExportToPdfImageUrl": "",
+        "ExportToPdfText": "Export to PDF",
+        "ExportToWordImageUrl": "",
+        "ExportToWordText": "Export to Word",
+        "RefreshImageUrl": "",
+        "RefreshText": "Refresh"
+      },
+      "EditFormSettings": {
+        "CaptionFormatString": "",
+        "InsertCaption": ""
+      },
+      "ExpandCollapseColumn": {
+        "AndCurrentFilterValue": "",
+        "CollapseImageUrl": "",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "ExpandImageUrl": "",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderAbbr": "",
+        "HeaderAxis": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "HeaderTooltip": "",
+        "SortExpression": ""
+      },
+      "FilterExpression": "",
+      "NoDetailRecordsText": "No child records to display.",
+      "NoMasterRecordsText": "No records to display.",
+      "PagerStyle": {
+        "FirstPageText": "",
+        "FirstPageToolTip": "First Page",
+        "LastPageText": "",
+        "LastPageToolTip": "Last Page",
+        "NextPagesToolTip": "Next Pages",
+        "NextPageText": "",
+        "NextPageToolTip": "Next Page",
+        "PagerTextFormat": "Change page: {4} &nbsp;Page <strong>{0}</strong> of <strong>{1}</strong>, items <strong>{2}</strong> to <strong>{3}</strong> of <strong>{5}</strong>.",
+        "PageSizeLabelText": "Page size:",
+        "PrevPagesToolTip": "Previous Pages",
+        "PrevPageText": "",
+        "PrevPageToolTip": "Previous Page"
+      },
+      "RowIndicatorColumn": {
+        "AndCurrentFilterValue": "",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderAbbr": "",
+        "HeaderAxis": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "HeaderTooltip": "",
+        "SortExpression": ""
+      },
+      "Summary": "",
+      "ToolTip": ""
+    },
+    "PagerStyle": {
+      "FirstPageText": "",
+      "FirstPageToolTip": "First Page",
+      "LastPageText": "",
+      "LastPageToolTip": "Last Page",
+      "NextPagesToolTip": "Next Pages",
+      "NextPageText": "",
+      "NextPageToolTip": "Next Page",
+      "PagerTextFormat": "Change page: {4} &nbsp;Page <strong>{0}</strong> of <strong>{1}</strong>, items <strong>{2}</strong> to <strong>{3}</strong> of <strong>{5}</strong>.",
+      "PageSizeLabelText": "Page size:",
+      "PrevPagesToolTip": "Previous Pages",
+      "PrevPageText": "",
+      "PrevPageToolTip": "Previous Page"
+    },
+    "SortingSettings": {
+      "SortedAscToolTip": "Sorted asc",
+      "SortedDescToolTip": "Sorted desc",
+      "SortToolTip": "Click here to sort"
+    },
+    "StatusBarSettings": {
+      "LoadingText": "Loading...",
+      "ReadyText": "Ready"
+    },
+    "ToolTip": ""
+  },
+  "NewPage": {
+    "Text": "New landing page"
+  },
+  "Status": {
+    "HeaderText": "Active"
+  },
+  "CreateNewResource": {
+    "Text": "Create New Landing Page"
+  },
+  "DeleteBody": "Are you sure want to delete this page?",
+  "DeleteResource1": {
+    "HeaderText": "Delete"
+  },
+  "DeleteTitle": "Delete Landing Page",
+  "EditResource1": {
+    "HeaderText": "Edit"
+  },
+  "FacebookResource1": {
+    "HeaderText": "Add To Facebook"
+  },
+  "FormNameResource1": {
+    "HeaderText": "Page Name"
+  },
+  "GroupNamesResource1": {
+    "HeaderText": "Groups"
+  },
+  "PageLinkResource1": {
+    "HeaderText": "Page Address"
+  },
+  "CloneResource1": {
+    "HeaderText": "Copy"
+  },
+  "SubmitsResource1": {
+    "HeaderText": "Subscribes"
+  },
+  "HtmlPage": "Html Embed Form",
+  "StaticPage": "Landing Page",
+  "ViewsResource1": {
+    "HeaderText": "Views"
+  },
+  "WebForm": "Subscribe Page",
+  "TypeNameResource1": {
+    "HeaderText": "Page Type"
+  },
+  "Popup": "Pop Up Form",
+  "MaxPagesBody": "Your account has reached the maximum amount of landing pages. You must upgrade account.",
+  "MaxPagesTitle": "Landing Pages Exceeded ",
+  "EditRegistrationPage": "Survey Results",
+  "SurveyExportTitle": "Survey Results",
+  "PurchaseExportTitle": "Purchases Report",
+  "restoreResource": "Restore"
+}

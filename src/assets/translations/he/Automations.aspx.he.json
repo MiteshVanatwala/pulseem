@@ -1,0 +1,48 @@
+{
+  "CloneResource1": {
+    "HeaderText": "שכפל"
+  },
+  "createResource": {
+    "Text": "צור אוטומציה"
+  },
+  "DeleteResource1": {
+    "HeaderText": "מחק"
+  },
+  "EditCampaignResource1": {
+    "HeaderText": "ערוך"
+  },
+  "logPageHeaderResource1": {
+    "Text": "ניהול אוטומציות"
+  },
+  "restoreResource": {
+    "Text": "שחזר מחוקים"
+  },
+  "ShowCampaignResource1": {
+    "HeaderText": "הצג"
+  },
+  "GridButtonColumnResource2": {
+    "ConfirmText": "האם ברצונך למחוק את האוטומציה ?",
+    "ConfirmTitle": "מחיקת אוטומציה"
+  },
+  "locSearchAutomationResource1": {
+    "Text": "חפש"
+  },
+  "EditConfirm": {
+    "Text": "ניתן להפעיל אותו מחדש ממסך ניהול. <br />\nעריכת תהליך אוטומציה פעיל תעצור אותו.",
+    "Title": "עריכת אוטומציה פעילה"
+  },
+  "Automations": "אוטומציות",
+  "DaysActive": "ימים פעיל",
+  "AutomationActiveStatusText": "פעיל",
+  "AutomatoionInActiveStatusText": "לא-פעיל",
+  "HeaderActivateAutomationProcess": "הפעל אוטומציה",
+  "HeaderDeactivateAutomationProcess": "עצור אוטומציה",
+  "TextActivateAutomationProcess": ".לחיצה על אישור תפעיל מחדש את תהליך האוטומציה",
+  "TextDeactivateAutomationProcess": "לחיצה על אישור תעצור את תהליך האוטומציה. ניתן להפעיל אותו מחדש ממסך ניהול האוטומציות",
+  "Report": "להגיש תלונה",
+  "labelAutomationName": "שם האוטומציה:",
+  "labelAutomationSubHeader": "הזן שם לאוטומציה",
+  "TextConfirmLeaveWithoutSave": "נותרו לך זרימת עבודה שלא נשמרו, האם ברצונך לסגור בלי לשמור?",
+  "DayActive": "יום פעיל",
+  "Recipient": "נמענים"
+}

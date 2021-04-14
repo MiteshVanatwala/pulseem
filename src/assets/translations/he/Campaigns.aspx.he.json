@@ -1,0 +1,472 @@
+{
+  "AjaxManagerResource1": {
+    "ToolTip": ""
+  },
+  "btnClearSearchResource1": {
+    "Text": "נקה",
+    "ToolTip": ""
+  },
+  "btnSearchResource1": {
+    "Text": "חפש",
+    "ToolTip": ""
+  },
+  "datFromDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Open the calendar popup."
+    },
+    "ToolTip": ""
+  },
+  "datToDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Open the calendar popup."
+    },
+    "ToolTip": ""
+  },
+  "grdCampaingsResource1": {
+    "BackImageUrl": "",
+    "FilterMenu": {
+      "ToolTip": ""
+    },
+    "GroupingSettings": {
+      "CollapseTooltip": "Collapse group",
+      "ExpandTooltip": "Expand group",
+      "GroupByFieldsSeparator": "; ",
+      "GroupContinuedFormatString": "... group continued from the previous page. ",
+      "GroupContinuesFormatString": " Group continues on the next page.",
+      "GroupSplitDisplayFormat": "Showing {0} of {1} items.",
+      "GroupSplitFormat": " ({0})",
+      "UnGroupTooltip": "Drag out of the bar to ungroup"
+    },
+    "GroupPanel": {
+      "Text": "Drag a column header and drop it here to group by that column",
+      "ToolTip": ""
+    },
+    "HierarchySettings": {
+      "CollapseTooltip": "Collapse",
+      "ExpandTooltip": "Expand",
+      "SelfCollapseTooltip": "Self reference collapse",
+      "SelfExpandTooltip": "Self reference expand"
+    },
+    "MasterTableView": {
+      "Caption": "",
+      "CommandItemSettings": {
+        "AddNewRecordImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.AddRecord.gif",
+        "AddNewRecordText": "Add new record",
+        "RefreshImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.Refresh.gif",
+        "RefreshText": "Refresh"
+      },
+      "EditFormSettings": {
+        "CaptionFormatString": "",
+        "EditColumn": {
+          "CancelText": "Cancel",
+          "CurrentFilterValue": "",
+          "EditFormHeaderTextFormat": "{0}:",
+          "EditText": "Edit",
+          "FooterText": "",
+          "GroupByExpression": "",
+          "HeaderImageUrl": "",
+          "HeaderText": "",
+          "InsertText": "Insert",
+          "SortExpression": "",
+          "UpdateText": "Update"
+        }
+      },
+      "ExpandCollapseColumn": {
+        "CollapseImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SingleMinus.gif",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "ExpandImageUrl": "mvwres://Telerik.Web.UI, Version=2008.1.415.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SinglePlus.gif",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "FilterExpression": "",
+      "NoDetailRecordsText": "No child records to display.",
+      "NoMasterRecordsText": "No records to display.",
+      "PagerStyle": {
+        "NextPagesToolTip": "Next Pages",
+        "NextPageText": "",
+        "NextPageToolTip": "Next Page",
+        "PagerTextFormat": "Change page: {4} &nbsp;Displaying page {0} of {1}, items {2} to {3} of {5}.",
+        "PrevPagesToolTip": "Previous Pages",
+        "PrevPageText": "",
+        "PrevPageToolTip": "Previous Page"
+      },
+      "RowIndicatorColumn": {
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "Summary": "",
+      "ToolTip": ""
+    },
+    "PagerStyle": {
+      "NextPagesToolTip": "Next Pages",
+      "NextPageText": "",
+      "NextPageToolTip": "Next Page",
+      "PagerTextFormat": "Change page: {4} &nbsp;Displaying page {0} of {1}, items {2} to {3} of {5}.",
+      "PrevPagesToolTip": "Previous Pages",
+      "PrevPageText": "",
+      "PrevPageToolTip": "Previous Page"
+    },
+    "SortingSettings": {
+      "SortedAscToolTip": "Sorted asc",
+      "SortedDescToolTip": "Sorted desc",
+      "SortToolTip": "Click here to sort"
+    },
+    "StatusBarSettings": {
+      "LoadingText": "Loading...",
+      "ReadyText": "Ready"
+    },
+    "ToolTip": ""
+  },
+  "GridBoundColumnResource1": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource2": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "שם הקמפיין",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource3": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "תאריך עריכה",
+    "SortExpression": ""
+  },
+  "GridButtonColumnResource1": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "שכפול",
+    "ImageUrl": "~/Images/Copy.png",
+    "SortExpression": "",
+    "Text": "שכפל"
+  },
+  "GridButtonColumnResource2": {
+    "ConfirmText": "האם ברצונך למחוק את הקמפיין?",
+    "ConfirmTitle": "מחיקת קמפיין",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "מחיקה",
+    "ImageUrl": "~/Images/Document 1 delete.png",
+    "SortExpression": "",
+    "Text": "מחק"
+  },
+  "GridTemplateColumnResource1": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "אופן שליחה:",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource2": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "תצוגה מקדימה",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource3": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "עריכה",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource4": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "הגדרות",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource5": {
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "שליחה",
+    "SortExpression": ""
+  },
+  "Image1Resource1": {
+    "AlternateText": "",
+    "ToolTip": "תצוגה מקדימה"
+  },
+  "Image2Resource1": {
+    "AlternateText": "",
+    "ToolTip": "עריכה"
+  },
+  "imgSendResource1": {
+    "AlternateText": "",
+    "ToolTip": "שלח"
+  },
+  "imgSettingsResource1": {
+    "AlternateText": "",
+    "ToolTip": "הגדרות"
+  },
+  "lblCampaignStatusResource1": {
+    "Text": "סטאטוס",
+    "ToolTip": ""
+  },
+  "lnkEditResource1": {
+    "Text": "",
+    "ToolTip": "שיכפול"
+  },
+  "lnkPreviewResource1": {
+    "Text": "",
+    "ToolTip": "קבוצות"
+  },
+  "lnkSendResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "lnkSettingsResource1": {
+    "Text": "",
+    "ToolTip": "הגדרות"
+  },
+  "LoadingPanelResource1": {
+    "GroupingText": "",
+    "ToolTip": ""
+  },
+  "locFromDateResource1": {
+    "Text": "החל מתאריך"
+  },
+  "locPageExplanationResource1": {
+    "Text": "במסך זה מוצגת רשימת הקמפיינים במערכת."
+  },
+  "locSearchCampaignResource1": {
+    "Text": "חפש קמפיין:"
+  },
+  "locToDateResource1": {
+    "Text": "עד תאריך"
+  },
+  "logPageHeaderResource1": {
+    "Text": "ניהול קמפיינים"
+  },
+  "PageResource1": {
+    "Title": "ניהול קמפיינים | מערכת פולסים"
+  },
+  "txtCampaignNameResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "WindowManagerResource1": {
+    "ToolTip": ""
+  },
+  "winPreviewResource1": {
+    "ToolTip": ""
+  },
+  "winSendCampaignResource1": {
+    "ToolTip": ""
+  },
+  "winSettingsResource1": {
+    "ToolTip": ""
+  },
+  "GridBoundColumnResource4": {
+    "HeaderText": "נשלחו"
+  },
+  "all": "הכל",
+  "AutomatedSend": "שליחה מתוזמנת",
+  "Canceled": "מבוטל",
+  "Finished": "Finished",
+  "FutureSend": "שליחה עתידית",
+  "GridTemplateColumnResource0": {
+    "HeaderText": "סטאטוס"
+  },
+  "locMethod": {
+    "Text": "אופן שליחה:"
+  },
+  "MethodAutomatedSending": "שליחה מתוזמנת",
+  "MethodByDateField": "לפי שדה תאריך",
+  "MethodFutureDate": "בתאריך עתידי",
+  "MethodImmediate": "מיידית",
+  "NewInEdit": "New / In Edit",
+  "Optin": "Optin",
+  "Sending": "Sending",
+  "SendNow": "שליחה מיידית",
+  "Stopped": "הופסק",
+  "UsingDateField": "לפי שדה תאריך",
+  "locSearch": {
+    "Text": "חפש"
+  },
+  "restoreResource": {
+    "Text": "שחזור מחוקים"
+  },
+  "CampaignNameResource1": {
+    "HeaderText": "שם קמפיין"
+  },
+  "CloneResource1": {
+    "HeaderText": "העתקה"
+  },
+  "DeleteResource1": {
+    "HeaderText": "מחק"
+  },
+  "EditCampaignResource1": {
+    "HeaderText": "ערוך"
+  },
+  "EditSettingsResource1": {
+    "HeaderText": "הגדרות"
+  },
+  "LastEditDateResource1": {
+    "HeaderText": "תאריך עדכון אחרון"
+  },
+  "SendCampaignResource1": {
+    "HeaderText": "שלח"
+  },
+  "SendingMethodResource1": {
+    "HeaderText": "אופן שליחה"
+  },
+  "ShowCampaignResource1": {
+    "HeaderText": "הצג"
+  },
+  "StatusResource1": {
+    "HeaderText": "סטאטוס"
+  },
+  "TotalSendPlanResource1": {
+    "HeaderText": "נשלחו"
+  },
+  "CloneLinkResource1": {
+    "ToolTip": "שכפל קמפיין"
+  },
+  "DeleteLinkResource1": {
+    "ToolTip": "מחק קמפיין"
+  },
+  "EditCampaignLinkResource1": {
+    "ToolTip": "ערוך קמפיין"
+  },
+  "EditSettingsLinkResource1": {
+    "ToolTip": "הגדרות קמפיין"
+  },
+  "SendCampaignLinkResource1": {
+    "ToolTip": "שלח קמפיין"
+  },
+  "ShowCampaignLinkResource1": {
+    "ToolTip": "הצג קמפיין"
+  },
+  "settingsTitleResource1": {
+    "Text": "הגדרות קמפיין"
+  },
+  "RestoreTitle": "שחזור קמפיינים מחוקים",
+  "ShowGroups": "הצג קבוצות",
+  "ShowGroupsTitle": "קבוצות לקמפיין",
+  "EditShareLinkResource1": {
+    "Text": "הגדרות שיתוף"
+  },
+  "EditShareSettingsResource1": {
+    "HeaderText": "שיתוף"
+  },
+  "Approve": "ממתין לאישור",
+  "searchParams": {
+    "Text": "חיפוש על פי שם, נושא או מספר קמפיין"
+  },
+  "SmartLinkResource1": {
+    "HeaderText": "לינקים חכמים"
+  },
+  "SmartLinksResource1": {
+    "ToolTip": "ערוך לינקים"
+  },
+  "Reports": "דוחות",
+  "camapignName": "שם הקמפיין",
+  "recipients": "נמענים",
+  "automation": "אוטומציות",
+  "create": "צור ניוזלטר",
+  "restoreDeleted": "שחזור מחוקים",
+  "exportFile": "ייצוא קובץ",
+  "lastUpdate": "עודכן ב",
+  "campaginName": "שם הקמפיין",
+  "restoreCampaginTitle": "בחר את הקמפיינים שברצונך לשחזר",
+  "dialogDuplicateTitle": "שיכפול קמפיין",
+  "dialogDuplicateContent": "האם ברצונך לשכפל את הקמפיין?"
+}

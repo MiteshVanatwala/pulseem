@@ -11,3 +11,29 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+@font-face {
+  font-family: 'OpenSansHebrew';
+  src: local('OpenSansHebrew'),
+    url(./assets/fonts/OpenSansHebrew-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'OpenSansHebrew-Bold';
+  src: local('OpenSansHebrew-Bold'),
+    url(./assets/fonts/OpenSansHebrew-Bold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'OpenSansHebrew-ExtraBold';
+  src: local('OpenSansHebrew-ExtraBold'),
+    url(./assets/fonts/OpenSansHebrew-ExtraBold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'pulseemicons';
+  src: local('pulseemicons'),
+    url(./assets/fonts/pulseemicons.ttf) format('truetype');
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&display=swap');

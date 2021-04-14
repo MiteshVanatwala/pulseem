@@ -1,0 +1,332 @@
+{
+  "GridBoundColumnResource1": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "EmptyDataText": "&nbsp;",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "ID",
+    "HeaderTooltip": "",
+    "HtmlEncode": "False",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource2": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "EmptyDataText": "&nbsp;",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "שם טופס הנחיתה",
+    "HeaderTooltip": "",
+    "HtmlEncode": "False",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource3": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "EmptyDataText": "&nbsp;",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "שם קבוצה",
+    "HeaderTooltip": "",
+    "HtmlEncode": "False",
+    "SortExpression": ""
+  },
+  "GridButtonColumnResource1": {
+    "AndCurrentFilterValue": "",
+    "ConfirmText": "Do you want to delete the landing page?",
+    "ConfirmTextFormatString": "",
+    "ConfirmTitle": "Delete campaign",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "מחיקה",
+    "HeaderTooltip": "",
+    "ImageUrl": "~/Images/Document 1 delete.png",
+    "SortExpression": "",
+    "Text": "Delete"
+  },
+  "GridTemplateColumnResource1": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "קישור",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource2": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "מספר הרשמות",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource3": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "ערוך",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "GridTemplateColumnResource4": {
+    "AndCurrentFilterValue": "",
+    "CurrentFilterValue": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderAbbr": "",
+    "HeaderAxis": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "תצוגה",
+    "HeaderTooltip": "",
+    "SortExpression": ""
+  },
+  "imgEditResource1": {
+    "AlternateText": "",
+    "ToolTip": ""
+  },
+  "imgPreviewResource1": {
+    "AlternateText": "",
+    "ToolTip": ""
+  },
+  "lnkEditResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "lnkPreviewResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "locPageExplanationResource1": {
+    "Text": "בדף זה נוכל לערוך את טפסי הנחיתה שיצרנו"
+  },
+  "logPageHeaderResource1": {
+    "Text": "ניהול דפי נחיתה"
+  },
+  "NumOfEnteriesResource1": {
+    "Text": ""
+  },
+  "NumOfRegistrationsResource1": {
+    "Text": ""
+  },
+  "PageResource1": {
+    "Title": "ניהול דפי נחיתה | מערכת פולסים"
+  },
+  "RadGridResource1": {
+    "BackImageUrl": "",
+    "FilterMenu": {
+      "ToolTip": ""
+    },
+    "GroupingSettings": {
+      "CollapseTooltip": "Collapse group",
+      "ExpandTooltip": "Expand group",
+      "GroupByFieldsSeparator": "; ",
+      "GroupContinuedFormatString": "... group continued from the previous page. ",
+      "GroupContinuesFormatString": " Group continues on the next page.",
+      "GroupSplitDisplayFormat": "Showing {0} of {1} items.",
+      "GroupSplitFormat": " ({0})",
+      "UnGroupButtonTooltip": "Click here to ungroup",
+      "UnGroupTooltip": "Drag out of the bar to ungroup"
+    },
+    "GroupPanel": {
+      "Text": "Drag a column header and drop it here to group by that column",
+      "ToolTip": ""
+    },
+    "HeaderContextMenu": {
+      "ToolTip": ""
+    },
+    "HierarchySettings": {
+      "CollapseTooltip": "Collapse",
+      "ExpandTooltip": "Expand",
+      "SelfCollapseTooltip": "Self reference collapse",
+      "SelfExpandTooltip": "Self reference expand"
+    },
+    "MasterTableView": {
+      "Caption": "",
+      "CommandItemSettings": {
+        "AddNewRecordImageUrl": "",
+        "AddNewRecordText": "Add new record",
+        "ExportToCsvImageUrl": "",
+        "ExportToCsvText": "Export to CSV",
+        "ExportToExcelImageUrl": "",
+        "ExportToExcelText": "Export to Excel",
+        "ExportToPdfImageUrl": "",
+        "ExportToPdfText": "Export to PDF",
+        "ExportToWordImageUrl": "",
+        "ExportToWordText": "Export to Word",
+        "RefreshImageUrl": "",
+        "RefreshText": "Refresh"
+      },
+      "EditFormSettings": {
+        "CaptionFormatString": "",
+        "InsertCaption": ""
+      },
+      "ExpandCollapseColumn": {
+        "AndCurrentFilterValue": "",
+        "CollapseImageUrl": "",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "ExpandImageUrl": "",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderAbbr": "",
+        "HeaderAxis": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "HeaderTooltip": "",
+        "SortExpression": ""
+      },
+      "FilterExpression": "",
+      "NoDetailRecordsText": "No child records to display.",
+      "NoMasterRecordsText": "No records to display.",
+      "PagerStyle": {
+        "FirstPageText": "",
+        "FirstPageToolTip": "First Page",
+        "LastPageText": "",
+        "LastPageToolTip": "Last Page",
+        "NextPagesToolTip": "Next Pages",
+        "NextPageText": "",
+        "NextPageToolTip": "Next Page",
+        "PagerTextFormat": "Change page: {4} &nbsp;Page <strong>{0}</strong> of <strong>{1}</strong>, items <strong>{2}</strong> to <strong>{3}</strong> of <strong>{5}</strong>.",
+        "PageSizeLabelText": "Page size:",
+        "PrevPagesToolTip": "Previous Pages",
+        "PrevPageText": "",
+        "PrevPageToolTip": "Previous Page"
+      },
+      "RowIndicatorColumn": {
+        "AndCurrentFilterValue": "",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderAbbr": "",
+        "HeaderAxis": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "HeaderTooltip": "",
+        "SortExpression": ""
+      },
+      "Summary": "",
+      "ToolTip": ""
+    },
+    "PagerStyle": {
+      "FirstPageText": "",
+      "FirstPageToolTip": "First Page",
+      "LastPageText": "",
+      "LastPageToolTip": "Last Page",
+      "NextPagesToolTip": "Next Pages",
+      "NextPageText": "",
+      "NextPageToolTip": "Next Page",
+      "PagerTextFormat": "Change page: {4} &nbsp;Page <strong>{0}</strong> of <strong>{1}</strong>, items <strong>{2}</strong> to <strong>{3}</strong> of <strong>{5}</strong>.",
+      "PageSizeLabelText": "Page size:",
+      "PrevPagesToolTip": "Previous Pages",
+      "PrevPageText": "",
+      "PrevPageToolTip": "Previous Page"
+    },
+    "SortingSettings": {
+      "SortedAscToolTip": "Sorted asc",
+      "SortedDescToolTip": "Sorted desc",
+      "SortToolTip": "Click here to sort"
+    },
+    "StatusBarSettings": {
+      "LoadingText": "Loading...",
+      "ReadyText": "Ready"
+    },
+    "ToolTip": ""
+  },
+  "NewPage": {
+    "Text": "דף נחיתה חדש"
+  },
+  "Status": {
+    "HeaderText": "פעיל"
+  },
+  "CreateNewResource": {
+    "Text": "צור דף חדש"
+  },
+  "DeleteBody": "האם ברצונך למחוק דף זה?",
+  "DeleteResource1": {
+    "HeaderText": "מחק"
+  },
+  "DeleteTitle": "מחיקת דף נחיתה",
+  "EditResource1": {
+    "HeaderText": "ערוך"
+  },
+  "FacebookResource1": {
+    "HeaderText": "הוסף לפייסבוק"
+  },
+  "FormNameResource1": {
+    "HeaderText": "שם הדף"
+  },
+  "GroupNamesResource1": {
+    "HeaderText": "קבוצות"
+  },
+  "PageLinkResource1": {
+    "HeaderText": "כתובת דף"
+  },
+  "CloneResource1": {
+    "HeaderText": "שכפל"
+  },
+  "SubmitsResource1": {
+    "HeaderText": "הרשמות"
+  },
+  "HtmlPage": "טופס הטמעה",
+  "StaticPage": "דף נחיתה",
+  "ViewsResource1": {
+    "HeaderText": "הצגות"
+  },
+  "WebForm": "טופס הרשמה",
+  "TypeNameResource1": {
+    "HeaderText": "סוג דף"
+  },
+  "Popup": "טופס צף",
+  "MaxPagesBody": "חשבונך הגיעה לקצה של כמות דפי נחיתה. עלייך לשדרג חשבון.",
+  "MaxPagesTitle": "חריגה בכמות דפי נחיתה",
+  "EditRegistrationPage": "תוצאות סקר",
+  "SurveyExportTitle": "תוצאות סקר",
+  "PurchaseExportTitle": "דו\"ח רכישות",
+  "restoreResource": "שחזור מחוקים"
+}
