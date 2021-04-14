@@ -13,7 +13,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.21.1",
-    "history": "^4.10.1",
+    "history": "4.10.1",
     "i18next": "^19.9.2",
     "jss-rtl": "^0.3.0",
     "moment": "^2.29.1",
@@ -49,5 +49,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.2.2",
+    "babel-preset-react": "^6.24.1"
   }
 }
