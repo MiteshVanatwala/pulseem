@@ -4,19 +4,19 @@ import {create} from 'jss';
 import rtl from 'jss-rtl';
 import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
 import i18n from './i18n'
-import {BrowserRouter,Route,useParams} from 'react-router-dom';
-import {Router} from "react-router";
-import {createBrowserHistory} from 'history'
+import {BrowserRouter,useParams} from 'react-router-dom';
+import {Router,Route} from 'react-router'
+import {history} from './helpers/history'
 import {useSelector,useDispatch} from 'react-redux';
 import {setWindowSize} from './redux/reducers/coreSlice'
 import {getTheme} from './style/theme'
 import {useClasses} from './style/classes/index'
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-import {useHistory} from "react-router-dom";
+//import {useHistory} from "react-router-dom";
 import moment from 'moment'
 
-const renderRoutes=(classes,history) => {
+const renderRoutes=(classes) => {
   const transferUrl=(url='',param='') => () => {
     const {campaignID,automationID}=useParams()
     const addParam={
@@ -284,13 +284,13 @@ const App=() => {
   const classes=useClasses(windowSize,isRTL)()
   i18n.changeLanguage(language)
   const theme=getTheme(language)
-  const history=useHistory()
+  //const history=useHistory()
 
   return (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL? 'rtl':'ltr'}>
-          {renderRoutes(classes,history)}
+          {renderRoutes(classes)}
         </div>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider>
@@ -300,12 +300,12 @@ const App=() => {
 
 const AppContainer=() => {
   const jss=create({plugins: [...jssPreset().plugins,rtl()]});
-  const history=createBrowserHistory({basename: '/React'})
+  //const history=createBrowserHistory({basename: '/React'})
   return (
     <StylesProvider jss={jss}>
-      <BrowserRouter basename={'/react/'}>
+      <Router history={history}>
         <App />
-      </BrowserRouter>
+      </Router>
     </StylesProvider>
   )
 }

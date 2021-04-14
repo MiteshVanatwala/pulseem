@@ -2,7 +2,7 @@
   "name": "pulseem-react-app",
   "version": "0.1.0",
   "private": true,
-  "hostname": "www.pulseemdev.co.il",
+  "homepage": "/react/",
   "dependencies": {
     "@date-io/moment": "1.x",
     "@material-ui/core": "^4.11.3",
@@ -13,7 +13,7 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.21.1",
-    "history": "^5.0.0",
+    "history": "^4.10.1",
     "i18next": "^19.9.2",
     "jss-rtl": "^0.3.0",
     "moment": "^2.29.1",
