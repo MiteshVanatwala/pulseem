@@ -11,8 +11,8 @@ export const getNewslatterData=createAsyncThunk(
     }
   })
 
-export const apiSlice=createSlice({
-  name: 'api',
+export const newsletterSlice=createSlice({
+  name: 'newsletter',
   initialState: {
     newslettersData: [],
     newslettersDeletedData: [],
@@ -32,4 +32,4 @@ export const apiSlice=createSlice({
 
 
 
-export default apiSlice.reducer
+export default newsletterSlice.reducer

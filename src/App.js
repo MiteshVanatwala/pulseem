@@ -1,5 +1,6 @@
 import React,{useEffect} from 'react';
 import NewsletterManagnent from './screens/NewsletterManagnent';
+import LandingPagesesManagment from './screens/LandingPagesesManagment'
 import {create} from 'jss';
 import rtl from 'jss-rtl';
 import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
@@ -29,11 +30,13 @@ const renderRoutes=(classes) => {
   return (
     <>
       <Route
-        exact path="/"
-        component={() => {
-          history.push('/Campaigns')
-          return null
-        }}
+        exact
+        path="/"
+        render={props => <LandingPagesesManagment {...props} classes={classes} />}
+      //component={() => {
+      //  history.push('/Campaigns')
+      //  return null
+      //}}
       />
       <Route
         path="/SendCampaign/:campaignID"

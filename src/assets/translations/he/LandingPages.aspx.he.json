@@ -328,5 +328,8 @@
   "EditRegistrationPage": "תוצאות סקר",
   "SurveyExportTitle": "תוצאות סקר",
   "PurchaseExportTitle": "דו\"ח רכישות",
-  "restoreResource": "שחזור מחוקים"
+  "restoreResource": "שחזור מחוקים",
+  "landingPages": "דפי נחיתה",
+  "name": "שם דף נחיתה",
+  "template": "תבנית"
 }

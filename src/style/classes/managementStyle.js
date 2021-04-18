@@ -136,6 +136,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   textField: {
     width: 180,
+    textTransform: 'capitalize',
     '& .MuiInputBase-root': {
       fontSize: 16,
     },

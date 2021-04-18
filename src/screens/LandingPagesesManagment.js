@@ -13,7 +13,7 @@ import {
   TablePadington,ManagmentIcon,DateField,Dialog,PopMassage,SearchField
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import {getNewslatterData} from '../redux/reducers/newsletterSlice'
+import {getLandingPagesData} from '../redux/reducers/landingPagesSlice'
 //import {useHistory} from "react-router-dom";
 import {history} from '../helpers/history'
 import {useSelector,useDispatch} from 'react-redux'
@@ -24,13 +24,13 @@ import instence from '../helpers/api'
 import moment from 'moment'
 import 'moment/locale/he'
 
-const NewsletterManagnentScreen=({classes}) => {
+
+
+const LandingPagesesManagmentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
-  const {newslettersData,newslettersDataError,newslettersDeletedData}=useSelector(state => state.newsletter)
+  const {landingPagesData,landingPagesDataError,landingPagesDeletedData}=useSelector(state => state.landingPages)
   const {t}=useTranslation()
-  const [fromDate,handleFromDate]=useState(null);
-  const [toDate,handleToDate]=useState(null)
-  const [campaineNameSearch,setCampaineNameSearch]=useState('')
+  const [landingPageNameSearch,setLandingPageNameSearch]=useState('')
   const rowsOptions=[6,12,18]
   const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
@@ -45,8 +45,10 @@ const NewsletterManagnentScreen=({classes}) => {
   moment.locale(language)
 
   const getData=() => {
-    dispatch(getNewslatterData())
+    dispatch(getLandingPagesData())
   }
+
+  console.log("landingPagesData",landingPagesData)
 
   useEffect(getData,[dispatch])
 
@@ -54,7 +56,7 @@ const NewsletterManagnentScreen=({classes}) => {
     return (
       <>
         <Typography className={classes.managementTitle}>
-          {t('campaigns.logPageHeaderResource1.Text')}
+          {t('landingPages.logPageHeaderResource1.Text')}
         </Typography>
         <Divider />
       </>
@@ -65,33 +67,29 @@ const NewsletterManagnentScreen=({classes}) => {
     const handleSearch=() => {
       setSearchArray([{
         type: 'name',
-        campaineName: campaineNameSearch
-      },{
-        type: 'date',
-        fromDate,
-        toDate
+        campaineName: landingPageNameSearch
       }])
     }
 
     const clearSearch=() => {
-      setCampaineNameSearch('')
-      handleFromDate(null)
-      handleToDate(null)
+      setLandingPageNameSearch('')
       setSearchArray(null)
     }
 
     const handleCampainNameChange=event => {
-      setCampaineNameSearch(event.target.value)
+      setLandingPageNameSearch(event.target.value)
     }
+
+    const placeholder=t('landingPages.GridBoundColumnResource2.HeaderText')
 
     if(windowSize==='xs') {
       return (
         <SearchField
           classes={classes}
-          value={campaineNameSearch}
+          value={landingPageNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          placeholder={t('campaigns.campaginName')}
+          placeholder={placeholder}
         />
       )
     }
@@ -101,28 +99,10 @@ const NewsletterManagnentScreen=({classes}) => {
           <TextField
             variant='outlined'
             size='small'
-            value={campaineNameSearch}
+            value={landingPageNameSearch}
             onChange={handleCampainNameChange}
             className={classes.textField}
-            placeholder={t('campaigns.campaginName')}
-          />
-        </Grid>
-
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={fromDate}
-            onChange={handleFromDate}
-            placeholder={t('campaigns.locFromDateResource1.Text')}
-          />
-        </Grid>
-
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={toDate}
-            onChange={handleToDate}
-            placeholder={t('campaigns.locToDateResource1.Text')}
+            placeholder={placeholder}
           />
         </Grid>
 
@@ -157,12 +137,12 @@ const NewsletterManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('CampaignInfo')}
+            onClick={() => history.push('LandingPageWizard')}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
             )}>
-            {t('campaigns.create')}
+            {t('landingPages.CreateNewResource.Text')}
           </Button>
         </Grid>}
         {windowSize!=='xs'&&<Grid item>
@@ -175,14 +155,14 @@ const NewsletterManagnentScreen=({classes}) => {
             )}
             onClick={() => setDialogType({
               type: 'restore',
-              data: newslettersDeletedData
+              data: landingPagesDeletedData
             })}>
             {t('campaigns.restoreDeleted')}
           </Button>
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${newslettersData.length} ${t('campaigns.newsletters')}`}
+            {`${landingPagesData.length} ${t('landingPages.landingPages')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -192,11 +172,35 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderTableHead=() => {
     return (
       <TableHead>
-        <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("campaigns.camapignName")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.recipients")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
-          <TableCell classes={{root: classes.tableCellRoot}} className={classes.flex12} ></TableCell>
+        <TableRow
+          classes={rowStyle}>
+          <TableCell
+            classes={cellStyle}
+            className={classes.flex3}
+            align='center'>
+            {t("landingPages.name")}
+          </TableCell>
+          <TableCell
+            classes={cellStyle}
+            className={classes.flex1}
+            align='center'>
+            {t("landingPages.template")}
+          </TableCell>
+          <TableCell
+            classes={cellStyle}
+            className={classes.flex1}
+            align='center'>
+            {t("landingPages.ViewsResource1.HeaderText")}
+          </TableCell>
+          <TableCell
+            classes={cellStyle}
+            className={classes.flex1}
+            align='center'>
+            {t("landingPages.SubmitsResource1.HeaderText")}
+          </TableCell>
+          <TableCell
+            classes={{root: classes.tableCellRoot}}
+            className={classes.flex12} />
         </TableRow>
       </TableHead>
     )
@@ -344,7 +348,7 @@ const NewsletterManagnentScreen=({classes}) => {
     )
   }
 
-  const renderStatusCell=(status) => {
+  const renderViewsCell=(status) => {
     const statuses={
       1: 'common.Created',
       2: 'common.Sending',
@@ -372,51 +376,38 @@ const NewsletterManagnentScreen=({classes}) => {
     )
   }
 
-  const renderRecipientsCell=(recipients) => {
+  const renderTemplateCell=(recipients) => {
     if(recipients===0) return null
 
     return (
       <>
         <Typography className={classes.middleText}>
-          {recipients.toLocaleString()}
-        </Typography>
-        <Typography className={classes.middleText}>
-          {t("campaigns.recipients")}
+          {recipients}
         </Typography>
       </>
     )
   }
 
   const renderNameCell=(row) => {
-    let date=null
-    let text=''
-    if(!row.SendDate) {
-      date=moment(row.UpdatedDate,dateFormat)
-      text=t('common.UpdatedOn')
-    } else {
-      date=moment(row.SendDate,dateFormat)
-      const dateMillis=date.valueOf()
-      const currentDateMillis=moment().valueOf()
-      text=dateMillis>currentDateMillis? t('common.WillBeSentOn'):t('common.SentOn')
-    }
-
     return (
-      <>
-        <Ellipsis
-          text={row.Name}
-          lines={1}
-          style={{
-            fontSize: 17,
-            fontWeight: 700,
-            marginBottom: '0.5rem',
-            color: '#333333',
-            fontFamily: 'Assistant'
-          }}
-        />
-        <Typography style={{'WebkitLineClamp': 1}}>
-          {`${text} ${date.format('L')} ${date.format('LT')}`}
-        </Typography>
-      </>
+      <Ellipsis
+        text={row.FormName}
+        lines={1}
+        style={{
+          fontSize: 17,
+          fontWeight: 700,
+          marginBottom: '0.5rem',
+          color: '#333333',
+          fontFamily: 'Assistant'
+        }}
+      />
+
+    )
+  }
+
+  const renderSubscribersCell=() => {
+    return (
+      null
     )
   }
 
@@ -435,13 +426,19 @@ const NewsletterManagnentScreen=({classes}) => {
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderRecipientsCell(row.SentCount)}
+          {renderTemplateCell(row.SentCount)}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderStatusCell(row.Status)}
+          {renderViewsCell(row.Status)}
+        </TableCell>
+        <TableCell
+          classes={cellStyle}
+          align='center'
+          className={classes.flex1}>
+          {renderSubscribersCell(row)}
         </TableCell>
         <TableCell
           component="th"
@@ -449,7 +446,6 @@ const NewsletterManagnentScreen=({classes}) => {
           classes={{root: classes.tableCellRoot}}
           className={classes.flex12}>
           {renderCellIcons(row)}
-
         </TableCell>
       </TableRow>
     )
@@ -467,7 +463,7 @@ const NewsletterManagnentScreen=({classes}) => {
               {renderNameCell(row)}
             </Grid>
             <Grid item>
-              {renderStatusCell(row.Status)}
+              {renderViewsCell(row.Status)}
             </Grid>
           </Grid>
           {renderCellIcons(row)}
@@ -479,24 +475,11 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.campaineName)
-      },
-      date: (row,values) => {
-        const {UpdatedDate,SendDate}=row
-        const lastUpdate=SendDate?
-          moment(SendDate,dateFormat).valueOf()
-          :moment(UpdatedDate,dateFormat).valueOf()
-        if(fromDate&&toDate)
-          return ((lastUpdate>=values.fromDate.valueOf())&&(lastUpdate<=values.toDate.valueOf()))
-        if(fromDate)
-          return lastUpdate>=values.fromDate.valueOf()
-        if(toDate)
-          return lastUpdate<=values.toDate.valueOf()
-        return true
+        return row.Name.includes(values.FormName)
       }
     }
 
-    let sortData=newslettersData
+    let sortData=landingPagesData
     if(searchArray) {
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
@@ -527,7 +510,7 @@ const NewsletterManagnentScreen=({classes}) => {
     return (
       <TablePadington
         classes={classes}
-        rows={newslettersData.length}
+        rows={landingPagesData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -699,7 +682,7 @@ const NewsletterManagnentScreen=({classes}) => {
   }
   return (
     <DefaultScreen
-      currentPage='newsletter'
+      currentPage='landingPages'
       classes={classes}>
       {renderHeader()}
       {renderSearchLine()}
@@ -711,4 +694,4 @@ const NewsletterManagnentScreen=({classes}) => {
   )
 }
 
-export default NewsletterManagnentScreen
+export default LandingPagesesManagmentScreen

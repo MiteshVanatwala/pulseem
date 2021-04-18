@@ -473,5 +473,6 @@
   "lastUpdate": "Last update",
   "campaginName": "Campagin Name",
   "dialogDuplicateTitle": "Duplicate campaign",
-  "dialogDuplicateContent": "Do you want to duplicate the campaign?"
+  "dialogDuplicateContent": "Do you want to duplicate the campaign?",
+  "newsletters": "Newsletters"
 }
