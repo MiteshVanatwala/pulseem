@@ -33,7 +33,7 @@ const renderRoutes=(classes,history) => {
       <Route
         exact path={`${base}/`}
         component={() => {
-          history.push('/Campaigns')
+          history.push(`${base}/Campaigns`)
           return null
         }}
       />
@@ -305,7 +305,7 @@ const AppContainer=() => {
 
   return (
     <StylesProvider jss={jss}>
-      <BrowserRouter basename='React'>
+      <BrowserRouter basename='react'>
         <App />
       </BrowserRouter>
     </StylesProvider>
