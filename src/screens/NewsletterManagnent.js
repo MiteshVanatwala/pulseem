@@ -10,12 +10,11 @@ import {
   GroupsIcon,PreviewIcon,ReportsIcon,CopyIcon
 } from '../assets/images/managment/index'
 import {
-  TablePadington,ManagmentIcon,DateField,Dialog,PopMassage,SearchField
+  TablePadington,ManagmentIcon,DateField,Dialog,PopMassage,SearchField,RestorDialogContent
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {getNewslatterData} from '../redux/reducers/newsletterSlice'
-//import {useHistory} from "react-router-dom";
-import {history} from '../helpers/history'
+import {useHistory} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
@@ -41,6 +40,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const [showCopied,setShowCopied]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
+  const history=useHistory()
   const dispatch=useDispatch()
   moment.locale(language)
 
@@ -406,14 +406,16 @@ const NewsletterManagnentScreen=({classes}) => {
           text={row.Name}
           lines={1}
           style={{
-            fontSize: 17,
+            fontSize: 20,
             fontWeight: 700,
             marginBottom: '0.5rem',
             color: '#333333',
-            fontFamily: 'Assistant'
+            fontFamily: 'Assistant',
+            marginBottom: -5
           }}
         />
-        <Typography style={{'WebkitLineClamp': 1}}>
+        <Typography
+          className={classes.grayTextCell}>
           {`${text} ${date.format('L')} ${date.format('LT')}`}
         </Typography>
       </>
@@ -563,29 +565,13 @@ const NewsletterManagnentScreen=({classes}) => {
           </div>
         ),
         content: (
-          <Box
-            className={classes.restorDialogContent}>
-            {dialogType&&dialogType.type==='restore'&&dialogType.data
-              .map(row => {
-                const checked=restoreArray.includes(row.CampaignID)
-                return (
-                  <FormControlLabel
-                    key={row.CampaignID}
-                    className={classes.restoreDialogCheckBoxLable}
-                    control={
-                      <Checkbox
-                        checked={checked}
-                        onChange={handleChange(row.CampaignID)}
-                        className={classes.restoreDialogCheckBox}
-                        color='primary'
-                        size='small'
-                      />
-                    }
-                    label={row.Name}
-                  />
-                )
-              })}
-          </Box>
+          <RestorDialogContent
+            classes={classes}
+            data={dialogType&&dialogType.data}
+            currentChecked={restoreArray}
+            onChange={handleChange}
+            dataIdVar='CampaignID'
+          />
         ),
         onConfirm: () => {
           instence.put('email/restoreEmailCampaigns',

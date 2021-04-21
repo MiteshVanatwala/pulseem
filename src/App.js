@@ -5,24 +5,23 @@ import {create} from 'jss';
 import rtl from 'jss-rtl';
 import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
 import i18n from './i18n'
-import {BrowserRouter,useParams} from 'react-router-dom';
-import {Router,Route} from 'react-router'
-import {history} from './helpers/history'
+import {BrowserRouter,useParams,Route} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
 import {setWindowSize} from './redux/reducers/coreSlice'
 import {getTheme} from './style/theme'
 import {useClasses} from './style/classes/index'
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-//import {useHistory} from "react-router-dom";
+import {useHistory} from "react-router-dom";
 import moment from 'moment'
 
-const renderRoutes=(classes) => {
+const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
-    const {campaignID,automationID}=useParams()
+    const {campaignID,automationID,id}=useParams()
     const addParam={
       campaign: campaignID,
-      automation: automationID
+      automation: automationID,
+      id: id
     }
     window.location.href=`https://www.pulseemdev.co.il/${url}${addParam[param]||''}`
     return null
@@ -144,6 +143,17 @@ const renderRoutes=(classes) => {
         component={transferUrl('/Pulseem/MmsCampaignEdit.aspx')}
       />
       {/* Landing Pages */}
+
+      <Route
+        path='/NewWebForm/NewFormEdit/:id'
+        component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/','id')}
+      />
+
+      <Route
+        path="/ClientSearchResult/:id"
+        component={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=','id')}
+      />
+
       <Route
         path="/EditRegistrationPage"
         component={transferUrl('/Pulseem/EditRegistrationPage.aspx')}
@@ -287,7 +297,7 @@ const App=() => {
   const classes=useClasses(windowSize,isRTL)()
   i18n.changeLanguage(language)
   const theme=getTheme(language)
-  //const history=useHistory()
+  const history=useHistory()
 
   return (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
@@ -306,9 +316,9 @@ const AppContainer=() => {
   //const history=createBrowserHistory({basename: '/React'})
   return (
     <StylesProvider jss={jss}>
-      <Router history={history}>
+      <BrowserRouter basename='/react'>
         <App />
-      </Router>
+      </BrowserRouter>
     </StylesProvider>
   )
 }

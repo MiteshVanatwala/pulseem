@@ -52,9 +52,9 @@
   },
   "GridButtonColumnResource1": {
     "AndCurrentFilterValue": "",
-    "ConfirmText": "Do you want to delete the landing page?",
+    "ConfirmText": "האם ברצונך למחוק את דף הנחיתה?",
     "ConfirmTextFormatString": "",
-    "ConfirmTitle": "Delete campaign",
+    "ConfirmTitle": "מחיקת דף נחיתה",
     "CurrentFilterValue": "",
     "DataTextFormatString": "",
     "EditFormHeaderTextFormat": "{0}:",
@@ -331,5 +331,10 @@
   "restoreResource": "שחזור מחוקים",
   "landingPages": "דפי נחיתה",
   "name": "שם דף נחיתה",
-  "template": "תבנית"
+  "template": "תבנית",
+  "copyLink": "העתק קישור",
+  "embedCode": "קוד הטמעה",
+  "restoreLandingPageTitle": "בחר את דפי הנחיתה שברצונך לשחזר",
+  "dialogDuplicateTitle": "שיכפול דף נחיתה",
+  "dialogDuplicateContent": "האם ברצונך לשכפל את דף הנחיתה?"
 }

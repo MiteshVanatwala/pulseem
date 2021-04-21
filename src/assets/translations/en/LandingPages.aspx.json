@@ -313,7 +313,7 @@
   "SubmitsResource1": {
     "HeaderText": "Subscribers"
   },
-  "HtmlPage": "Html Embed Form",
+  "HtmlPage": "HTML Embed Form",
   "StaticPage": "Landing Page",
   "ViewsResource1": {
     "HeaderText": "Views"
@@ -331,5 +331,10 @@
   "restoreResource": "Restore",
   "landingPages": "Landing Pages",
   "name": "Landing Page Name",
-  "template": "Template"
+  "template": "Template",
+  "copyLink": "Copy Link",
+  "embedCode": "Embed Code",
+  "restoreLandingPageTitle": "Select the landing pages you want to restore",
+  "dialogDuplicateTitle": "Duplicate landing page",
+  "dialogDuplicateContent": "Do you want to duplicate the landing page?"
 }

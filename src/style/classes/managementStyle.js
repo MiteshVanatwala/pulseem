@@ -61,6 +61,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
+    color: '#333'
   },
   managmentIconHide: {
     opacity: 0
@@ -361,6 +362,10 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     overflowY: 'auto',
     padding: 5,
     marginBlock: 10
+  },
+  grayTextCell: {
+    'WebkitLineClamp': 1,
+    color: '#7F7F7F'
   }
 
 })
