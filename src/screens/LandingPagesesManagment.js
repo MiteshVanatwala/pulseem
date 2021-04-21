@@ -201,7 +201,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           </TableCell>
           <TableCell
             classes={{root: classes.tableCellRoot}}
-            className={classes.flex12} />
+            className={classes.flex5} />
         </TableRow>
       </TableHead>
     )
@@ -332,7 +332,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
           className={classes.middleText}>
           {views.toLocaleString()}
         </Typography>
-        <Typography>
+        <Typography
+          className={classes.middleText}>
           {t('landingPages.ViewsResource1.HeaderText')}
         </Typography>
       </>
@@ -431,7 +432,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           component="th"
           scope="row"
           classes={{root: classes.tableCellRoot}}
-          className={classes.flex12}>
+          className={classes.flex5}>
           {renderCellIcons(row)}
         </TableCell>
       </TableRow>

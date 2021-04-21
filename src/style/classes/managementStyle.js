@@ -24,7 +24,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   tableCellHead: {
     fontFamily: 'Assistant',
     fontWeight: 'bold',
-    fontSize: '1rem',
+    fontSize: 20,
     marginBlock: 0,
     borderBottom: 0
   },
@@ -57,7 +57,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     borderColor: 'transparent',
   },
   middleText: {
-    fontSize: 16,
+    fontSize: 18,
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -114,7 +114,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   actionButton: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
     textTransform: 'none'
   },
   actionButtonLightGreen: {
@@ -139,7 +139,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     width: 180,
     textTransform: 'capitalize',
     '& .MuiInputBase-root': {
-      fontSize: 16,
+      fontSize: 18,
     },
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: '#a6a6a6'
@@ -170,6 +170,11 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   flex1: {
     flex: 1
+  },
+  flex5: {
+    flex: 5,
+    borderBottom: 0,
+    justifyContent: 'center'
   },
   flex12: {
     flex: flex12[windowSize]||12,
