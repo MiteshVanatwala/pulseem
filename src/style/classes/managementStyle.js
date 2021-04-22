@@ -32,14 +32,39 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     borderInlineEnd: '1px solid #797979',
     marginBlock: 20,
     borderBottom: 0,
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    alignContent: 'center',
+    alignContent: 'center'
+  },
+  borderRight: {
+    marginBlock: 20,
+    borderBottom: 0,
+    borderInlineEnd: '1px solid #797979',
+  },
+  flex: {
+    display: 'flex',
+  },
+  paddingRightLeft10: {
+    padding: '0 10px'
+  },
+  paddingHead: {
+    padding: '20px 10px'
+  },
+  tableCellBodyNoBorder: {
+    marginBlock: 20,
+    borderBottom: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center'
   },
   tableCellRoot: {
     display: 'flex',
-    flexDirection: 'column',
-    minWidth: 100
+    flexDirection: 'column'
+  },
+  minWidth50: {
+    minWidth: '50px'
   },
   tableRowRoot: {
     display: 'flex',
@@ -61,6 +86,14 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
+  },
+  wrapText: {
+    fontSize: 16,
+    flexWrap: "wrap",
+    textOverflow: "ellipsis",
+  },
+  errorText: {
+    color: 'red'
   },
   managmentIconHide: {
     opacity: 0
@@ -111,6 +144,10 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     color: '#E74C3C',
     fontWeight: 700
   },
+  recipientsStatusStopped: {
+    color: '#E74C3C',
+    fontWeight: 700
+  },
   actionButton: {
     color: 'white',
     fontSize: 16,
@@ -151,6 +188,24 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
       }
     }
   },
+  selectField: {
+    width: 180,
+    '& .MuiSelect-root': {
+      fontSize: 16,
+      padding: '10px 30px'
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#a6a6a6'
+    },
+    '& .MuiOutlinedInput-root': {
+      '&:hover fieldset': {
+        borderColor: '#797979'
+      },
+      '&.Mui-focused fieldset': {
+        border: '1px solid #797979',
+      }
+    }
+  },
   textFieldPlaceholder: {
     '& .MuiInputBase-root': {
       color: 'rgba(0,0,0,0.40)'
@@ -162,6 +217,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   tableContainer: {
     border: '1px solid #7F7F7F'
+  },
+  flex7: {
+    flex: 7
+  },
+  flex5: {
+    flex: 5
   },
   flex3: {
     flex: 3

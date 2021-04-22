@@ -1,5 +1,6 @@
 import automations from './Automations.aspx.json'
 import campaigns from './Campaigns.aspx.json'
+import notifications from './Notifications.json'
 import common from './Common.json'
 import landingPages from './LandingPages.aspx.json'
 import mmsCampaigns from './MmsCampaigns.aspx.json'
@@ -10,6 +11,7 @@ import appBar from './AppBar.json'
 export const en={
   automations,
   campaigns,
+  notifications,
   common,
   landingPages,
   mmsCampaigns,

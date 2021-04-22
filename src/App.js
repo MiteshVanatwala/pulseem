@@ -15,6 +15,7 @@ import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import {useHistory} from "react-router-dom";
 import moment from 'moment'
+import NotificationManagement from './screens/NotificationManagement';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -31,11 +32,13 @@ const renderRoutes=(classes,history) => {
   return (
     <>
       <Route
-        exact path={`${base}/`}
-        component={() => {
+        exact path={`/notifications`}
+        /* component={() => {
           history.push(`${base}/Campaigns`)
           return null
-        }}
+        }} */
+        render={props => <NotificationManagement {...props} classes={classes} />}
+        // render={props => <NotificationManagement {...props} classes={classes} />}
       />
       <Route
         path={`${base}/SendCampaign/:campaignID`}
@@ -83,12 +86,12 @@ const renderRoutes=(classes,history) => {
         component={transferUrl('/Pulseem/DynamicGroups.aspx')}
       />
       <Route
-        path={`${base}/FileUploads`}
+        path={`/FileUploads`}
         component={transferUrl('/Pulseem/FileUploads.aspx')}
       />
       {/* Newsletter */}
       <Route
-        path={`${base}/Campaigns`}
+        path={`/Campaigns`}
         render={props => <NewsletterManagnent {...props} classes={classes} />}
       />
 

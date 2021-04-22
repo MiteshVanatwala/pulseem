@@ -3,11 +3,11 @@ import DefaultScreen from './DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,IconButton,InputAdornment,Input,Box,FormControlLabel,Checkbox
+  Grid,Button,TextField,IconButton,InputAdornment,Input,Box,FormControlLabel,Checkbox, Select, MenuItem
 } from '@material-ui/core'
 import {
-  AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
-  GroupsIcon,PreviewIcon,ReportsIcon,CopyIcon
+  DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
+  GroupsIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
   TablePagination,ManagmentIcon,DateField,Dialog,PopMassage
@@ -24,27 +24,123 @@ import instence from '../helpers/api'
 import moment from 'moment'
 import 'moment/locale/he'
 
-const NewsletterManagnentScreen=({classes}) => {
+const NotificationManagement=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
-  const {newslettersData,newslettersDataError,newslettersDeletedData}=useSelector(state => state.api)
+  console.log(`windowSize`, windowSize)
+  const {notificationData,notificationDataError,notificationDeletedData}=useSelector(state => state.api)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null)
-  const [campaineNameSearch,setCampaineNameSearch]=useState('')
+  const [notificationNameSearch,setNotificationNameSearch]=useState('');
+  const [statusSearch, setStatusSearch] = useState('');
   const rowsOptions=[6,12,18]
   const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
   const [searchArray,setSearchArray]=useState(null)
-  const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
-  const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
   const [showCopied,setShowCopied]=useState(null)
-  const [restoreArray,setRestoreArray]=useState([])
+  const [restoreArray,setRestoreArray]=useState([]);
   const history=useHistory()
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch=useDispatch()
+  const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
+  const cellStyle={head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead)}
+  const cell50wStyle={head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead)}
+  const cellBodyStyle={body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.paddingRightLeft10)}
+  const noBorderCellStyle={body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.paddingRightLeft10)}
+  const borderCellStyle={body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.paddingRightLeft10)}
   moment.locale(language)
 
+  const dummyNotificationData = [
+    {
+      id: Math.random(3453*5),
+      name: "Experience 2 - Mailing Doge Carmela A name longer than a line",
+      lastUpdate:  new Date(),
+      sendDate:  new Date(),
+      toSent: 19999,
+      sent: 19999,
+      errors: 19999,
+      clicks: 7,
+      status: 1
+    },
+    {
+      id: Math.random(3453*5),
+      name: "Active Customers",
+      lastUpdate:  new Date(),
+      sendDate:  new Date(),
+      toSent: 19999,
+      sent: 19999,
+      errors: 19999,
+      clicks: 7,
+      status: 2
+    },
+    {
+      id: Math.random(3453*5),
+      name: "Active Customers",
+      lastUpdate:  new Date(),
+      sendDate:  new Date(),
+      toSent: 19999,
+      sent: 19999,
+      errors: 19999,
+      clicks: 7,
+      status: 1
+    },
+    {
+      id: Math.random(3453*5),
+      name: "Active Customers",
+      lastUpdate:  new Date(),
+      sendDate:  new Date(),
+      toSent: 999,
+      sent: 999,
+      errors: 999,
+      clicks: 7,
+      status: 3
+    },
+    {
+      id: Math.random(3453*5),
+      name: "Active Customers",
+      lastUpdate:  new Date(),
+      sendDate:  new Date(),
+      toSent: 999,
+      sent: 999,
+      errors: 999,
+      clicks: 7,
+      status: 4
+    },
+    {
+      id: Math.random(3453*5),
+      name: "Active Customers",
+      lastUpdate:  new Date(),
+      sendDate:  new Date(),
+      toSent: 999,
+      sent: 999,
+      errors: 999,
+      clicks: 7,
+      status: 5
+    },
+    {
+      id: Math.random(3453*5),
+      name: "Active Customers",
+      lastUpdate:  new Date(),
+      sendDate:  new Date(),
+      toSent: 999,
+      sent: 999,
+      errors: 999,
+      clicks: 7,
+      status: 6
+    },
+    {
+      id: Math.random(3453*5),
+      name: "Active Customers",
+      lastUpdate:  new Date(),
+      sendDate:  new Date(),
+      toSent: 999,
+      sent: 999,
+      errors: 999,
+      clicks: 7,
+      status: 7
+    },
+  ]
   const getData=() => {
     dispatch(getNewslatterData())
   }
@@ -55,18 +151,18 @@ const NewsletterManagnentScreen=({classes}) => {
     return (
       <>
         <Typography className={classes.managementTitle}>
-          {t('campaigns.logPageHeaderResource1.Text')}
+          {t('notifications.notificationManagement')}
         </Typography>
         <Divider />
       </>
     )
   }
 
-  const renderSearchLine=() => {
+  const renderSearchSection=() => {
     const handleSearch=() => {
       setSearchArray([{
         type: 'name',
-        campaineName: campaineNameSearch
+        notificationName: notificationNameSearch
       },{
         type: 'date',
         fromDate,
@@ -75,14 +171,19 @@ const NewsletterManagnentScreen=({classes}) => {
     }
 
     const clearSearch=() => {
-      setCampaineNameSearch('')
+      setNotificationNameSearch('')
+      setStatusSearch('')
       handleFromDate(null)
       handleToDate(null)
       setSearchArray(null)
     }
 
-    const handleCampainNameChange=event => {
-      setCampaineNameSearch(event.target.value)
+    const handleNotificationNameChange=event => {
+      setNotificationNameSearch(event.target.value)
+    }
+
+    const handleStatusChange=event => {
+      setStatusSearch(event.target.value)
     }
 
     if(windowSize==='xs') {
@@ -91,9 +192,9 @@ const NewsletterManagnentScreen=({classes}) => {
           classes={{
             underline: classes.phoneSearchBar
           }}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          placeholder={t('campaigns.campaginName')}
+          value={notificationNameSearch}
+          onChange={handleNotificationNameChange}
+          placeholder={t('notifications.searchSection.notificationName')}
           endAdornment={
             <InputAdornment position="end">
               <IconButton
@@ -106,17 +207,35 @@ const NewsletterManagnentScreen=({classes}) => {
         </Input>
       )
     }
+
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
           <TextField
             variant='outlined'
             size='small'
-            value={campaineNameSearch}
-            onChange={handleCampainNameChange}
+            value={notificationNameSearch}
+            onChange={handleNotificationNameChange}
             className={classes.textField}
-            placeholder={t('campaigns.campaginName')}
+            placeholder={t('notifications.searchSection.notificationName')}
           />
+        </Grid>
+        <Grid item>
+          <Select
+            variant='outlined'
+            size='small'
+            onChange={handleStatusChange}
+            className={classes.selectField}
+            value={0}
+          >
+            <MenuItem value={0} disabled>{t('notifications.status.text')}</MenuItem>
+            <MenuItem value={1}>{t('notifications.status.created')}</MenuItem>
+            <MenuItem value={2}>{t('notifications.status.sending')}</MenuItem>
+            <MenuItem value={3}>{t('notifications.status.stopped')}</MenuItem>
+            <MenuItem value={4}>{t('notifications.status.sent')}</MenuItem>
+            <MenuItem value={5}>{t('notifications.status.cancelled')}</MenuItem>
+            <MenuItem value={6}>{t('notifications.status.approved')}</MenuItem>
+          </Select>
         </Grid>
 
         <Grid item>
@@ -124,7 +243,7 @@ const NewsletterManagnentScreen=({classes}) => {
             classes={classes}
             value={fromDate}
             onChange={handleFromDate}
-            placeholder={t('campaigns.locFromDateResource1.Text')}
+            placeholder={t('notifications.searchSection.fromDate')}
           />
         </Grid>
 
@@ -133,7 +252,7 @@ const NewsletterManagnentScreen=({classes}) => {
             classes={classes}
             value={toDate}
             onChange={handleToDate}
-            placeholder={t('campaigns.locToDateResource1.Text')}
+            placeholder={t('notifications.searchSection.toDate')}
           />
         </Grid>
 
@@ -144,7 +263,7 @@ const NewsletterManagnentScreen=({classes}) => {
             onClick={handleSearch}
             className={classes.searchButton}
             endIcon={<SearchIcon />}>
-            {t('campaigns.btnSearchResource1.Text')}
+            {t('notifications.buttons.search')}
           </Button>
         </Grid>
         {searchArray&&<Grid item>
@@ -168,12 +287,12 @@ const NewsletterManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('CampaignInfo')}
+            onClick={() => history.push('#')}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
             )}>
-            {t('campaigns.create')}
+            {t('notifications.buttons.createNotification')}
           </Button>
         </Grid>}
         {windowSize!=='xs'&&<Grid item>
@@ -186,14 +305,44 @@ const NewsletterManagnentScreen=({classes}) => {
             )}
             onClick={() => setDialogType({
               type: 'restore',
-              data: newslettersDeletedData
+              data: dummyNotificationData
             })}>
-            {t('campaigns.restoreDeleted')}
+            {t('notifications.buttons.recover')}
           </Button>
         </Grid>}
+        <Grid item>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonLightBlue
+            )}
+            onClick={() => setDialogType({
+              type: 'restore',
+              data: dummyNotificationData
+            })}>
+            {t('notifications.buttons.implementScript')}
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonLightBlue
+            )}
+            onClick={() => setDialogType({
+              type: 'restore',
+              data: dummyNotificationData
+            })}>
+            {t('notifications.buttons.groups')}
+          </Button>
+        </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${newslettersData.length} ${t('campaigns.lnkPreviewResource1.ToolTip')}`}
+            {`${dummyNotificationData.length} ${t('notifications.notifications')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -204,9 +353,12 @@ const NewsletterManagnentScreen=({classes}) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("campaigns.camapignName")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.recipients")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex5} align='center'>{t("notifications.notificationManagement")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.toSend")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.sent")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.failed")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.clicks")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.status")}</TableCell>
           <TableCell classes={{root: classes.tableCellRoot}} className={classes.flex12} ></TableCell>
         </TableRow>
       </TableHead>
@@ -214,12 +366,12 @@ const NewsletterManagnentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {Status,Groups,AutomationID,CampaignID,shareUrl}=row
+    const {status,groups,id,shareUrl}=row
 
     const renderCopyToClipoard=(
       <PopMassage
         classes={classes}
-        show={showCopied===CampaignID}
+        show={showCopied===id}
         timeout={500}
         label={t('common.copyClip')}
       />
@@ -229,41 +381,41 @@ const NewsletterManagnentScreen=({classes}) => {
       {
         key: 'send',
         icon: SendGreenIcon,
-        lable: t('campaigns.imgSendResource1.ToolTip'),
-        remove: Status!==1,
+        lable: t('notifications.buttons.send'),
+        remove: status!==1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         onClick: () => {
-          history.push('/SendCampaign/'+CampaignID)
+          history.push('/SendCampaign/'+id)
         }
       },
       {
         key: 'preview',
         icon: PreviewIcon,
         remove: windowSize==='xs',
-        lable: t('campaigns.Image1Resource1.ToolTip'),
+        lable: t('notifications.buttons.preview'),
         onClick: () => {
-          history.push('/PreviewCampaign/'+CampaignID)
+          history.push('/PreviewCampaign/'+id)
         }
       },
       {
         key: 'edit',
         icon: EditIcon,
         remove: windowSize==='xs',
-        disable: Status!==1,
-        lable: t('campaigns.Image2Resource1.ToolTip'),
+        disable: status!==1,
+        lable: t('notifications.buttons.edit'),
         onClick: () => {
-          history.push('/Editor/CampaignEdit/'+CampaignID)
+          history.push('/Editor/CampaignEdit/'+id)
         }
       },
       {
         key: 'duplicate',
         icon: DuplicateIcon,
-        lable: t('campaigns.lnkEditResource1.ToolTip'),
+        lable: t('notifications.buttons.duplicate'),
         onClick: () => {
           setDialogType({
             type: 'duplicate',
-            data: CampaignID
+            data: id
           })
         }
       },
@@ -271,52 +423,19 @@ const NewsletterManagnentScreen=({classes}) => {
         key: 'groups',
         icon: GroupsIcon,
         remove: windowSize==='xs',
-        disable: Groups&&Groups.length===0,
-        lable: t('campaigns.lnkPreviewResource1.ToolTip'),
+        disable: groups&&groups.length===0,
+        lable: t('notifications.buttons.groups'),
         onClick: () => {
           setDialogType({
             type: 'groups',
-            data: row.Groups
+            data: row.groups
           })
-        }
-      },
-    ],[
-      {
-        key: 'copy',
-        icon: CopyIcon,
-        lable: t('campaigns.CloneResource1.HeaderText'),
-        onClick: () => {
-          navigator.clipboard.writeText(shareUrl)
-          setShowCopied(CampaignID)
-          setTimeout(() => {
-            setShowCopied(null)
-          },1000)
-        }
-      },
-      {
-        key: 'reports',
-        icon: ReportsIcon,
-        disable: Status===1,
-        remove: windowSize==='xs',
-        lable: t('campaigns.Reports'),
-        onClick: () => {
-          history.push('/CampaignStatistics/'+CampaignID)
-        }
-      },
-      {
-        key: 'automation',
-        icon: AutomationIcon,
-        remove: windowSize==='xs',
-        disable: AutomationID===0,
-        lable: t('campaigns.automation'),
-        onClick: () => {
-          history.push('/CampaignStatistics/'+AutomationID)
         }
       },
       {
         key: 'delete',
         icon: DeleteIcon,
-        lable: t('campaigns.DeleteResource1.HeaderText'),
+        lable: t('notifications.buttons.delete'),
         showPhone: true,
         onClick: () => {
           setDialogType({
@@ -324,8 +443,8 @@ const NewsletterManagnentScreen=({classes}) => {
             data: row
           })
         }
-      },]
-    ]
+      }
+    ]]
     return (
       <Grid
         container
@@ -368,11 +487,12 @@ const NewsletterManagnentScreen=({classes}) => {
     return (
       <>
         <Typography className={clsx(
-          classes.middleText,
+          classes.wrapText,
           classes.recipientsStatus,
           {
             [classes.recipientsStatusCreated]: status===1,
             [classes.recipientsStatusSent]: status===4,
+            [classes.recipientsStatusStopped]: status===3,
             [classes.recipientsStatusSending]: status===2,
             [classes.recipientsStatusCanceled]: status===5
           }
@@ -383,16 +503,27 @@ const NewsletterManagnentScreen=({classes}) => {
     )
   }
 
-  const renderRecipientsCell=(recipients) => {
-    if(recipients===0) return null
+  const renderTotalCell = (value, type) => {
+    return (
+      <div>
+        <Typography className={clsx(classes.middleText, type === "error" && classes.errorText)}>
+          {value.toLocaleString()}
+        </Typography>
+        <Typography className={clsx(classes.middleText, type === "error" && classes.errorText)}>
+          {t("notifications.tblBody.total")}
+        </Typography>
+      </div>
+    )
+  }
 
+  const renderClickCell = (value, type) => {
     return (
       <>
-        <Typography className={classes.middleText}>
-          {recipients.toLocaleString()}
+        <Typography className={clsx(classes.middleText, type === "error" && classes.errorText)}>
+          {value.toLocaleString()}
         </Typography>
-        <Typography className={classes.middleText}>
-          {t("campaigns.recipients")}
+        <Typography className={clsx(classes.middleText, type === "error" && classes.errorText)}>
+          {t("notifications.tblBody.clicks")}
         </Typography>
       </>
     )
@@ -401,11 +532,11 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderNameCell=(row) => {
     let date=null
     let text=''
-    if(!row.SendDate) {
-      date=moment(row.UpdatedDate,dateFormat)
+    if(!row.sendDate) {
+      date=moment(row.lastUpdate,dateFormat)
       text=t('common.UpdatedOn')
     } else {
-      date=moment(row.SendDate,dateFormat)
+      date=moment(row.sendDate,dateFormat)
       const dateMillis=date.valueOf()
       const currentDateMillis=moment().valueOf()
       text=dateMillis>currentDateMillis? t('common.WillBeSentOn'):t('common.SentOn')
@@ -414,7 +545,7 @@ const NewsletterManagnentScreen=({classes}) => {
     return (
       <>
         <Ellipsis
-          text={row.Name}
+          text={row.name}
           lines={1}
           style={{
             fontSize: 17,
@@ -434,30 +565,48 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderRow=(row) => {
     return (
       <TableRow
-        key={row.CampaignID}
+        key={row.id}
         classes={rowStyle}>
         <TableCell
-          classes={cellStyle}
+          classes={cellBodyStyle}
           align='center'
-          className={classes.flex3}>
+          className={classes.flex5}>
           {renderNameCell(row)}
         </TableCell>
         <TableCell
-          classes={cellStyle}
+          classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderRecipientsCell(row.SentCount)}
+          {renderTotalCell(row.toSent)}
         </TableCell>
         <TableCell
-          classes={cellStyle}
+          classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderStatusCell(row.Status)}
+          {renderTotalCell(row.sent)}
+        </TableCell>
+        <TableCell
+          classes={borderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          {renderTotalCell(row.errors, "error")}
+        </TableCell>
+        <TableCell
+          classes={cellBodyStyle}
+          align='center'
+          className={classes.flex1}>
+          {renderClickCell(row.clicks)}
+        </TableCell>
+        <TableCell
+          classes={cellBodyStyle}
+          align='center'
+          className={classes.flex1}>
+          {renderStatusCell(row.status)}
         </TableCell>
         <TableCell
           component="th"
           scope="row"
-          classes={{root: classes.tableCellRoot}}
+          classes={{root: clsx(classes.tableCellRoot, classes.paddingRightLeft10)}}
           className={classes.flex12}>
           {renderCellIcons(row)}
 
@@ -478,7 +627,7 @@ const NewsletterManagnentScreen=({classes}) => {
               {renderNameCell(row)}
             </Grid>
             <Grid item>
-              {renderStatusCell(row.Status)}
+              {renderStatusCell(row.status)}
             </Grid>
           </Grid>
           {renderCellIcons(row)}
@@ -490,7 +639,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.campaineName)
+        return row.Name.includes(values.notificationName)
       },
       date: (row,values) => {
         const {UpdatedDate,SendDate}=row
@@ -507,13 +656,13 @@ const NewsletterManagnentScreen=({classes}) => {
       }
     }
 
-    let sortData=newslettersData
+    let sortData=dummyNotificationData;
     if(searchArray) {
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
       })
     }
-
+    
     sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -538,7 +687,7 @@ const NewsletterManagnentScreen=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={newslettersData.length}
+        rows={dummyNotificationData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -713,7 +862,7 @@ const NewsletterManagnentScreen=({classes}) => {
       currentPage='newsletter'
       classes={classes}>
       {renderHeader()}
-      {renderSearchLine()}
+      {renderSearchSection()}
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
@@ -722,4 +871,4 @@ const NewsletterManagnentScreen=({classes}) => {
   )
 }
 
-export default NewsletterManagnentScreen
+export default NotificationManagement

@@ -1,0 +1,47 @@
+{
+  "notificationManagement": "Notification Management",
+  "searchSection": {
+    "notificationName": "Notification Name",
+    "status": "Status",
+    "fromDate": "From Date",
+    "toDate": "To Date"
+  },
+  "buttons": {
+    "createNotification": "Create Notification",
+    "recover": "Recover Deleted",
+    "implementScript": "Implement Script",
+    "groups": "Groups",
+    "send": "Send",
+    "preview": "Preview",
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "search": "Search"
+  },
+  "tblHeader": {
+    "notificationName": "Notification Name",
+    "toSend": "To Send",
+    "sent": "Sent",
+    "failed": "Failed",
+    "clicks": "Clicks",
+    "status": "Status"
+  },
+  "tblBody": {
+    "total": "Total",
+    "failed": "failed",
+    "clicks": "Clicks",
+    "lastUpdate": "Last update"
+  },
+  "status": {
+    "text": "Status",
+    "draft": "Draft",
+    "sending": "Sending",
+    "sent": "Sent",
+    "cancelled": "Cancelled",
+    "created": "Created",
+    "stopped": "Stopped",
+    "optin": "Optin",
+    "approved": "Approved"
+  },
+  "notifications": "Notifications"
+}
