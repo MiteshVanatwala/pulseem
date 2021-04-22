@@ -1,12 +1,11 @@
 import React,{useEffect} from 'react';
 import NewsletterManagnent from './screens/NewsletterManagnent';
+import LandingPagesesManagment from './screens/LandingPagesesManagment'
 import {create} from 'jss';
 import rtl from 'jss-rtl';
 import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
 import i18n from './i18n'
-import {BrowserRouter,useParams} from 'react-router-dom';
-import {Router,Route} from 'react-router'
-//import {history} from './helpers/history'
+import {BrowserRouter,useParams,Route} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
 import {setWindowSize} from './redux/reducers/coreSlice'
 import {getTheme} from './style/theme'
@@ -19,10 +18,11 @@ import NotificationManagement from './screens/NotificationManagement';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
-    const {campaignID,automationID}=useParams()
+    const {campaignID,automationID,id}=useParams()
     const addParam={
       campaign: campaignID,
-      automation: automationID
+      automation: automationID,
+      id: id
     }
     window.location.href=`https://www.pulseemdev.co.il/${url}${addParam[param]||''}`
     return null
@@ -39,6 +39,15 @@ const renderRoutes=(classes,history) => {
         }} */
         render={props => <NotificationManagement {...props} classes={classes} />}
         // render={props => <NotificationManagement {...props} classes={classes} />}
+      />
+      <Route 
+        exact
+        path="/"
+        render={props => <LandingPagesesManagment {...props} classes={classes} />}
+      //component={() => {
+      //  history.push('/Campaigns')
+      //  return null
+      //}}
       />
       <Route
         path={`${base}/SendCampaign/:campaignID`}
@@ -146,6 +155,17 @@ const renderRoutes=(classes,history) => {
         component={transferUrl('/Pulseem/MmsCampaignEdit.aspx')}
       />
       {/* Landing Pages */}
+
+      <Route
+        path='/NewWebForm/NewFormEdit/:id'
+        component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/','id')}
+      />
+
+      <Route
+        path="/ClientSearchResult/:id"
+        component={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=','id')}
+      />
+
       <Route
         path={`${base}/EditRegistrationPage`}
         component={transferUrl('/Pulseem/EditRegistrationPage.aspx')}
@@ -308,7 +328,7 @@ const AppContainer=() => {
 
   return (
     <StylesProvider jss={jss}>
-      <BrowserRouter basename='react'>
+      <BrowserRouter basename='/react'>
         <App />
       </BrowserRouter>
     </StylesProvider>

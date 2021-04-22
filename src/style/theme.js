@@ -38,7 +38,7 @@ export const getTheme=(language) => {
         'Assistant'
       ],
       fontStyle: 'normal',
-      fontSize: 12
+      fontSize: 14
     }
   },translation)
 }

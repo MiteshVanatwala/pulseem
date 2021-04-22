@@ -14,7 +14,6 @@ import {ReactComponent as QuestionIcon} from '../../assets/images/question.svg'
 import {FaBars,FaTimes} from 'react-icons/fa';
 import {getRoutes,getSettingsItem} from '../../helpers/routes'
 import {useHistory} from "react-router-dom";
-//import {history} from '../../helpers/history'
 
 const AppBarItem=({
   item,

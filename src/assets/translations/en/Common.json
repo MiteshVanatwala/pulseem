@@ -423,7 +423,7 @@
   "Send1": "Send",
   "DLR": "DLR",
   "page": "Page",
-  "outOf": "Out of",
-  "rowNumber": "Row's number",
+  "outOf": "out of",
+  "rowNumber": "Rows",
   "clear": "Clear"
 }

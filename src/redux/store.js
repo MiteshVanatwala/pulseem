@@ -1,12 +1,14 @@
 import {configureStore} from '@reduxjs/toolkit';
 import userReducer from './reducers/userSlice';
 import coreReducer from './reducers/coreSlice'
-import apiReducer from './reducers/apiSlice'
+import newsletterReducer from './reducers/newsletterSlice'
+import landingPagesReducer from './reducers/landingPagesSlice'
 
 export default configureStore({
   reducer: {
     core: coreReducer,
     user: userReducer,
-    api: apiReducer
+    newsletter: newsletterReducer,
+    landingPages: landingPagesReducer
   },
 });
