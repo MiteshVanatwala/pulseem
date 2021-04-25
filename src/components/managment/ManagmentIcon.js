@@ -17,7 +17,7 @@ export const ManagmentIcon=({
 
   return (
     <Button
-      disabled={disable||hide}
+      disabled={!!disable||!!hide}
       onClick={onClick}
       size='small'
       className={clsx({

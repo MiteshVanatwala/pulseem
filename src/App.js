@@ -1,6 +1,7 @@
 import React,{useEffect} from 'react';
-import NewsletterManagnent from './screens/NewsletterManagnent';
+import NewsletterManagment from './screens/NewsletterManagment';
 import LandingPagesesManagment from './screens/LandingPagesesManagment'
+import MmsManagment from './screens/MmsManagment';
 import {create} from 'jss';
 import rtl from 'jss-rtl';
 import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
@@ -31,7 +32,7 @@ const renderRoutes=(classes,history) => {
       <Route
         exact
         path="/"
-        render={props => <LandingPagesesManagment {...props} classes={classes} />}
+        render={props => <MmsManagment {...props} classes={classes} />}
       //component={() => {
       //  history.push('/Campaigns')
       //  return null
@@ -89,7 +90,7 @@ const renderRoutes=(classes,history) => {
       {/* Newsletter */}
       <Route
         path="/Campaigns"
-        render={props => <NewsletterManagnent {...props} classes={classes} />}
+        render={props => <NewsletterManagment {...props} classes={classes} />}
       />
 
       <Route
@@ -142,6 +143,18 @@ const renderRoutes=(classes,history) => {
         path="/MmsCampaignEdit"
         component={transferUrl('/Pulseem/MmsCampaignEdit.aspx')}
       />
+      <Route
+        path='/MmsCampaignEdit/:id'
+        component={transferUrl('/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=','id')}
+      />
+      <Route
+        path='/MmsPreviewCampaign/:id'
+        component={transferUrl('/Pulseem/MmsPreviewCampaign.aspx?MmsCampaignID=','id')}
+      />
+      <Route
+        path='/SendMmsCampaign/:id'
+        component={transferUrl('/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=','id')}
+      />
       {/* Landing Pages */}
 
       <Route
@@ -156,7 +169,8 @@ const renderRoutes=(classes,history) => {
 
       <Route
         path="/EditRegistrationPage"
-        component={transferUrl('/Pulseem/EditRegistrationPage.aspx')}
+        render={props => <LandingPagesesManagment {...props} classes={classes} />}
+      //component={transferUrl('/Pulseem/EditRegistrationPage.aspx')}
       />
       <Route
         path="/LandingPageWizard"
@@ -303,7 +317,7 @@ const App=() => {
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL? 'rtl':'ltr'}>
-          {renderRoutes(classes)}
+          {renderRoutes(classes,history)}
         </div>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider>

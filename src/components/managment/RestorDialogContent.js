@@ -16,11 +16,11 @@ export const RestorDialogContent=({
   return (
     <Box
       className={classes.restorDialogContent}>
-      {data.map(row => {
-        const checked=currentChecked.includes(row.ID)
+      {data.map((row,index) => {
+        const checked=currentChecked.includes(row[dataIdVar])
         return (
           <FormControlLabel
-            key={row[dataIdVar]}
+            key={index}
             className={classes.restoreDialogCheckBoxLable}
             control={
               <Checkbox

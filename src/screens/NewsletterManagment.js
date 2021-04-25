@@ -6,28 +6,30 @@ import {
   Grid,Button,TextField,Box
 } from '@material-ui/core'
 import {
-  DeleteIcon,DuplicateIcon,EditIcon,SearchIcon,
-  PreviewIcon,ReportsIcon,CopyIcon,EmbedCodeIcon,SurveryResultsIcon
+  AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
+  GroupsIcon,PreviewIcon,ReportsIcon,CopyIcon
 } from '../assets/images/managment/index'
 import {
-  TablePadington,ManagmentIcon,RestorDialogContent,Dialog,PopMassage,SearchField
+  TablePadington,ManagmentIcon,DateField,Dialog,PopMassage,SearchField,RestorDialogContent
 } from '../components/managment/index'
-import {getLandingPagesData} from '../redux/reducers/landingPagesSlice'
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import {getNewslatterData} from '../redux/reducers/newsletterSlice'
 import {useHistory} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import instence from '../helpers/api'
-import {Link} from 'react-router-dom';
+import moment from 'moment'
+import 'moment/locale/he'
 
-
-
-const LandingPagesesManagmentScreen=({classes}) => {
-  const {windowSize}=useSelector(state => state.core)
-  const {landingPagesData,landingPagesDataError,landingPagesDeletedData}=useSelector(state => state.landingPages)
+const NewsletterManagnentScreen=({classes}) => {
+  const {language,windowSize}=useSelector(state => state.core)
+  const {newslettersData,newslettersDataError,newslettersDeletedData}=useSelector(state => state.newsletter)
   const {t}=useTranslation()
-  const [landingPageNameSearch,setLandingPageNameSearch]=useState('')
+  const [fromDate,handleFromDate]=useState(null);
+  const [toDate,handleToDate]=useState(null)
+  const [campaineNameSearch,setCampaineNameSearch]=useState('')
   const rowsOptions=[6,12,18]
   const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
@@ -37,14 +39,14 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const [dialogType,setDialogType]=useState(null)
   const [showCopied,setShowCopied]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
+  const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
   const history=useHistory()
   const dispatch=useDispatch()
+  moment.locale(language)
 
   const getData=() => {
-    dispatch(getLandingPagesData())
+    dispatch(getNewslatterData())
   }
-
-  console.log("landingPagesData",landingPagesData)
 
   useEffect(getData,[dispatch])
 
@@ -52,7 +54,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
     return (
       <>
         <Typography className={classes.managementTitle}>
-          {t('landingPages.logPageHeaderResource1.Text')}
+          {t('campaigns.logPageHeaderResource1.Text')}
         </Typography>
         <Divider />
       </>
@@ -63,29 +65,33 @@ const LandingPagesesManagmentScreen=({classes}) => {
     const handleSearch=() => {
       setSearchArray([{
         type: 'name',
-        campaineName: landingPageNameSearch
+        campaineName: campaineNameSearch
+      },{
+        type: 'date',
+        fromDate,
+        toDate
       }])
     }
 
     const clearSearch=() => {
-      setLandingPageNameSearch('')
+      setCampaineNameSearch('')
+      handleFromDate(null)
+      handleToDate(null)
       setSearchArray(null)
     }
 
     const handleCampainNameChange=event => {
-      setLandingPageNameSearch(event.target.value)
+      setCampaineNameSearch(event.target.value)
     }
-
-    const placeholder=t('landingPages.GridBoundColumnResource2.HeaderText')
 
     if(windowSize==='xs') {
       return (
         <SearchField
           classes={classes}
-          value={landingPageNameSearch}
+          value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          placeholder={placeholder}
+          placeholder={t('campaigns.campaginName')}
         />
       )
     }
@@ -95,10 +101,28 @@ const LandingPagesesManagmentScreen=({classes}) => {
           <TextField
             variant='outlined'
             size='small'
-            value={landingPageNameSearch}
+            value={campaineNameSearch}
             onChange={handleCampainNameChange}
             className={classes.textField}
-            placeholder={placeholder}
+            placeholder={t('campaigns.campaginName')}
+          />
+        </Grid>
+
+        <Grid item>
+          <DateField
+            classes={classes}
+            value={fromDate}
+            onChange={handleFromDate}
+            placeholder={t('campaigns.locFromDateResource1.Text')}
+          />
+        </Grid>
+
+        <Grid item>
+          <DateField
+            classes={classes}
+            value={toDate}
+            onChange={handleToDate}
+            placeholder={t('campaigns.locToDateResource1.Text')}
           />
         </Grid>
 
@@ -133,12 +157,12 @@ const LandingPagesesManagmentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/LandingPageWizard')}
+            onClick={() => history.push('CampaignInfo')}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
             )}>
-            {t('landingPages.CreateNewResource.Text')}
+            {t('campaigns.create')}
           </Button>
         </Grid>}
         {windowSize!=='xs'&&<Grid item>
@@ -151,14 +175,14 @@ const LandingPagesesManagmentScreen=({classes}) => {
             )}
             onClick={() => setDialogType({
               type: 'restore',
-              data: landingPagesDeletedData
+              data: newslettersDeletedData
             })}>
             {t('campaigns.restoreDeleted')}
           </Button>
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${landingPagesData.length} ${t('landingPages.landingPages')}`}
+            {`${newslettersData.length} ${t('campaigns.newsletters')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -168,99 +192,57 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderTableHead=() => {
     return (
       <TableHead>
-        <TableRow
-          classes={rowStyle}>
-          <TableCell
-            classes={cellStyle}
-            className={classes.flex3}
-            align='center'>
-            {t("landingPages.name")}
-          </TableCell>
-          <TableCell
-            classes={cellStyle}
-            className={classes.flex1}
-            align='center'>
-            {t("landingPages.template")}
-          </TableCell>
-          <TableCell
-            classes={cellStyle}
-            className={classes.flex1}
-            align='center'>
-            {t("landingPages.ViewsResource1.HeaderText")}
-          </TableCell>
-          <TableCell
-            classes={cellStyle}
-            className={classes.flex1}
-            align='center'>
-            {t("landingPages.SubmitsResource1.HeaderText")}
-          </TableCell>
-          <TableCell
-            classes={{root: classes.tableCellRoot}}
-            className={classes.flex5} />
+        <TableRow classes={rowStyle}>
+          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("campaigns.camapignName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.recipients")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
+          <TableCell classes={{root: classes.tableCellRoot}} className={classes.flex12} ></TableCell>
         </TableRow>
       </TableHead>
     )
   }
 
   const renderCellIcons=(row) => {
-    const {ID,IsPayment,PageLink,SurveyCount,Type,PageUrl}=row
-    const copyDataObject={
-      1: {
-        icon: CopyIcon,
-        lable: t('landingPages.copyLink'),
-        copy: PageUrl
-      },
-      2: {
-        icon: CopyIcon,
-        lable: t('landingPages.copyLink'),
-        copy: PageUrl
-      },
-      3: {
-        icon: EmbedCodeIcon,
-        lable: t('landingPages.embedCode'),
-        copy: `<iframe src='${PageLink}' frameborder='0' style='overflow: auto;' width='100%' height='386'></iframe>`
-      },
-      4: {
-        icon: EmbedCodeIcon,
-        lable: t('landingPages.embedCode'),
-        copy: `<div id='pulseem-parent'><img id='pulseem-close' onclick='pulseemClose()' src='https://www.pulseemdev.co.il/images/close_button.png' alt='' /><div id='pulseem-popup'><iframe src='${PageLink}' frameborder='0' width='100%' height='320px'></iframe></div></div><style>#pulseem-parent { width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: block; position: fixed; } #pulseem-popup { width: 480px; margin: auto; position: absolute; left: 0px; right: 0px; top: 100px; border-radius: 10px; box-shadow: 0px 0px 5px #888; overflow: hidden; z-index: 1024; } #pulseem-close { margin: auto; position: absolute; right: -470px; left: 0px; top: 85px; cursor: pointer; z-index: 2048; }</style><script>function pulseemClose() { var wrapper = document.getElementById('pulseem-parent'); wrapper.parentNode.removeChild(wrapper); }</script>`
-      }
-    }
+    const {Status,Groups,AutomationID,CampaignID,shareUrl}=row
 
-    const copyData=copyDataObject[Type]
     const renderCopyToClipoard=(
       <PopMassage
         classes={classes}
-        show={showCopied===ID}
+        show={showCopied===CampaignID}
         timeout={500}
         label={t('common.copyClip')}
       />
     )
 
-    const iconsMap=[
+    const iconsMap=[[
       {
-        key: 'purchase/survey',
-        icon: IsPayment? ReportsIcon:SurveryResultsIcon,
-        lable: IsPayment?
-          t('landingPages.PurchaseExportTitle')
-          :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (!IsPayment&&SurveyCount===0)||windowSize==='xs',
-        onClick: () => {}
+        key: 'send',
+        icon: SendGreenIcon,
+        lable: t('campaigns.imgSendResource1.ToolTip'),
+        remove: Status!==1,
+        rootClass: classes.sendIcon,
+        textClass: classes.sendIconText,
+        onClick: () => {
+          history.push('/SendCampaign/'+CampaignID)
+        }
       },
       {
         key: 'preview',
         icon: PreviewIcon,
         remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        onClick: () => {}
+        onClick: () => {
+          history.push('/PreviewCampaign/'+CampaignID)
+        }
       },
       {
         key: 'edit',
         icon: EditIcon,
         remove: windowSize==='xs',
-        lable: t('landingPages.EditResource1.HeaderText'),
+        disable: Status!==1,
+        lable: t('campaigns.Image2Resource1.ToolTip'),
         onClick: () => {
-          history.push(`NewWebForm/NewFormEdit/${ID}`)
+          history.push('/Editor/CampaignEdit/'+CampaignID)
         }
       },
       {
@@ -270,90 +252,154 @@ const LandingPagesesManagmentScreen=({classes}) => {
         onClick: () => {
           setDialogType({
             type: 'duplicate',
-            data: ID
+            data: CampaignID
           })
         }
       },
       {
-        key: 'copy',
-        icon: copyData.icon,
-        lable: copyData.lable,
+        key: 'groups',
+        icon: GroupsIcon,
+        remove: windowSize==='xs',
+        disable: Groups&&Groups.length===0,
+        lable: t('campaigns.lnkPreviewResource1.ToolTip'),
         onClick: () => {
-          navigator.clipboard.writeText(copyData.copy)
-          setShowCopied(ID)
+          setDialogType({
+            type: 'groups',
+            data: row.Groups
+          })
+        }
+      },
+    ],[
+      {
+        key: 'copy',
+        icon: CopyIcon,
+        lable: t('campaigns.CloneResource1.HeaderText'),
+        onClick: () => {
+          navigator.clipboard.writeText(shareUrl)
+          setShowCopied(CampaignID)
           setTimeout(() => {
             setShowCopied(null)
           },1000)
         }
       },
       {
+        key: 'reports',
+        icon: ReportsIcon,
+        disable: Status===1,
+        remove: windowSize==='xs',
+        lable: t('campaigns.Reports'),
+        onClick: () => {
+          history.push('/CampaignStatistics/'+CampaignID)
+        }
+      },
+      {
+        key: 'automation',
+        icon: AutomationIcon,
+        remove: windowSize==='xs',
+        disable: AutomationID===0,
+        lable: t('campaigns.automation'),
+        onClick: () => {
+          history.push('/CampaignStatistics/'+AutomationID)
+        }
+      },
+      {
         key: 'delete',
         icon: DeleteIcon,
-        lable: t('landingPages.GridButtonColumnResource1.HeaderText'),
+        lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
         onClick: () => {
           setDialogType({
             type: 'delete',
-            data: ID
+            data: row
           })
         }
-      }
+      },]
     ]
     return (
       <Grid
         container
-        //direction={windowSize==='sm'? 'column':'row'}
-        spacing={2}
+        direction={windowSize==='sm'? 'column':'row'}
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
-        {iconsMap.map(icon => (
+        {iconsMap.map((map,index) => (
           <Grid
-            key={icon.key}
-            item >
-            <ManagmentIcon
-              classes={classes}
-              {...icon}
-            />
-            {icon.key==='copy'&&renderCopyToClipoard}
+            key={index}
+            item>
+            <Grid
+              container>
+              {map.map(icon => (
+                <Grid
+                  key={icon.key}
+                  item >
+                  <ManagmentIcon
+                    classes={classes}
+                    {...icon}
+                  />
+                  {icon.key==='copy'&&renderCopyToClipoard}
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
         ))}
       </Grid>
     )
   }
 
-  const renderViewsCell=(views) => {
+  const renderStatusCell=(status) => {
+    const statuses={
+      1: 'common.Created',
+      2: 'common.Sending',
+      3: 'campaigns.Stopped',
+      4: 'common.Sent',
+      5: 'campaigns.Canceled',
+      6: 'campaigns.Optin',
+      7: 'campaigns.Approve'
+    }
     return (
       <>
-        <Typography
-          className={classes.middleText}>
-          {views.toLocaleString()}
-        </Typography>
-        <Typography
-          className={classes.middleText}>
-          {t('landingPages.ViewsResource1.HeaderText')}
+        <Typography className={clsx(
+          classes.middleText,
+          classes.recipientsStatus,
+          {
+            [classes.recipientsStatusCreated]: status===1,
+            [classes.recipientsStatusSent]: status===4,
+            [classes.recipientsStatusSending]: status===2,
+            [classes.recipientsStatusCanceled]: status===5
+          }
+        )}>
+          {t(statuses[status])}
         </Typography>
       </>
     )
   }
 
-  const renderTemplateCell=(type) => {
-    const types={
-      1: t('landingPages.WebForm'),
-      2: t('landingPages.StaticPage'),
-      3: t('landingPages.HtmlPage'),
-      4: t('landingPages.Popup')
-    }
+  const renderRecipientsCell=(recipients) => {
+    if(recipients===0) return null
 
     return (
       <>
-        <Typography
-          className={classes.middleText}>
-          {types[type]}
+        <Typography className={classes.middleText}>
+          {recipients.toLocaleString()}
+        </Typography>
+        <Typography className={classes.middleText}>
+          {t("campaigns.recipients")}
         </Typography>
       </>
     )
   }
 
   const renderNameCell=(row) => {
+    let date=null
+    let text=''
+    if(!row.SendDate) {
+      date=moment(row.UpdatedDate,dateFormat)
+      text=t('common.UpdatedOn')
+    } else {
+      date=moment(row.SendDate,dateFormat)
+      const dateMillis=date.valueOf()
+      const currentDateMillis=moment().valueOf()
+      text=dateMillis>currentDateMillis? t('common.WillBeSentOn'):t('common.SentOn')
+    }
+
     return (
       <>
         <Ellipsis
@@ -363,31 +409,13 @@ const LandingPagesesManagmentScreen=({classes}) => {
             fontSize: 20,
             fontWeight: 700,
             color: '#333333',
-            fontFamily: 'Assistant'
+            fontFamily: 'Assistant',
           }}
         />
         <Typography
           className={classes.grayTextCell}>
-          {row.GroupNames.join(', ')}
+          {`${text} ${date.format('L')} ${date.format('LT')}`}
         </Typography>
-      </>
-
-    )
-  }
-
-  const renderSubscribersCell=(row) => {
-    const {ID,Submits}=row
-    return (
-      <>
-        <Typography
-          className={classes.middleText}>
-          {Submits.toLocaleString()}
-        </Typography>
-        <Link
-          to={`/ClientSearchResult/${ID}`}
-          className={classes.middleText}>
-          {t('landingPages.SubmitsResource1.HeaderText')}
-        </Link>
       </>
     )
   }
@@ -407,26 +435,21 @@ const LandingPagesesManagmentScreen=({classes}) => {
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderTemplateCell(row.Type)}
+          {renderRecipientsCell(row.SentCount)}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderViewsCell(row.Views)}
-        </TableCell>
-        <TableCell
-          classes={cellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderSubscribersCell(row)}
+          {renderStatusCell(row.Status)}
         </TableCell>
         <TableCell
           component="th"
           scope="row"
           classes={{root: classes.tableCellRoot}}
-          className={classes.flex5}>
+          className={classes.flex12}>
           {renderCellIcons(row)}
+
         </TableCell>
       </TableRow>
     )
@@ -439,22 +462,15 @@ const LandingPagesesManagmentScreen=({classes}) => {
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
-          {renderNameCell(row)}
-          <Grid container justify='space-between' alignItems='center' >
-            <Grid item style={{textAlign: 'center'}}>
-              <Grid container spacing={4} >
-                <Grid item >
-                  {renderViewsCell(row.Views)}
-                </Grid>
-                <Grid item>
-                  {renderSubscribersCell(row)}
-                </Grid>
-              </Grid>
+          <Grid container justify='space-between'>
+            <Grid item>
+              {renderNameCell(row)}
             </Grid>
             <Grid item>
-              {renderCellIcons(row)}
+              {renderStatusCell(row.Status)}
             </Grid>
           </Grid>
+          {renderCellIcons(row)}
         </TableCell>
       </TableRow>
     )
@@ -463,11 +479,24 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.FormName)
+        return row.Name.includes(values.campaineName)
+      },
+      date: (row,values) => {
+        const {UpdatedDate,SendDate}=row
+        const lastUpdate=SendDate?
+          moment(SendDate,dateFormat).valueOf()
+          :moment(UpdatedDate,dateFormat).valueOf()
+        if(fromDate&&toDate)
+          return ((lastUpdate>=values.fromDate.valueOf())&&(lastUpdate<=values.toDate.valueOf()))
+        if(fromDate)
+          return lastUpdate>=values.fromDate.valueOf()
+        if(toDate)
+          return lastUpdate<=values.toDate.valueOf()
+        return true
       }
     }
 
-    let sortData=landingPagesData
+    let sortData=newslettersData
     if(searchArray) {
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
@@ -498,7 +527,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
     return (
       <TablePadington
         classes={classes}
-        rows={landingPagesData.length}
+        rows={newslettersData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -510,23 +539,24 @@ const LandingPagesesManagmentScreen=({classes}) => {
 
   const renderDialog=() => {
 
-    const handleChange=(id) => () => {
-      const found=restoreArray.includes(id)
-      console.log('restore',id,'found:',found)
+    const handleChange=(CampaignID) => () => {
+      const found=restoreArray.includes(CampaignID)
       if(found) {
-        setRestoreArray(restoreArray.filter(restore => restore!==id))
+        setRestoreArray(restoreArray.filter(restore => restore!==CampaignID))
       } else {
-        setRestoreArray([...restoreArray,id])
+        setRestoreArray([...restoreArray,CampaignID])
       }
+
     }
 
     const handleClose=() => {
+      setRestoreArray([])
       setDialogType(null)
     }
 
     const dialogContent={
       restore: {
-        title: t('landingPages.restoreLandingPageTitle'),
+        title: t('campaigns.restoreCampaginTitle'),
         showDivider: false,
         icon: (
           <div className={classes.dialogIconContent}>
@@ -539,20 +569,60 @@ const LandingPagesesManagmentScreen=({classes}) => {
             data={dialogType&&dialogType.data}
             currentChecked={restoreArray}
             onChange={handleChange}
+            dataIdVar='CampaignID'
           />
         ),
         onConfirm: () => {
-          instence.put('landingpages/restoreLandingPages',
+          instence.put('email/restoreEmailCampaigns',
             restoreArray)
             .then(res => {
+              console.log("restore res",res)
               getData()
             })
-            .catch(err => console.log('duplicate Error',err))
+            .catch(err => console.log('restore Error',err))
           handleClose()
         }
       },
+      groups: {
+        title: t('campaigns.ShowGroupsTitle'),
+        showDivider: false,
+        icon: (
+          <div className={classes.dialogIconContent}>
+            {'\uE185'}
+          </div>
+        ),
+        content: (
+          <Box
+            className={classes.gruopsDialogContent}>
+            {dialogType&&dialogType.type==='groups'&&dialogType.data
+              .map(group => {
+                return (
+                  <Typography
+                    key={group}
+                    className={classes.gruopsDialogText}>
+                    <FiberManualRecordIcon
+                      className={classes.gruopsDialogBullet} />
+                    {group}
+                  </Typography>
+                )
+              })}
+          </Box>
+        ),
+        renderButtons: () => (
+          <Button
+            variant='contained'
+            size='small'
+            onClick={handleClose}
+            className={clsx(
+              classes.gruopsDialogButton,
+              classes.dialogConfirmButton,
+            )}>
+            {t('common.Ok')}
+          </Button>
+        )
+      },
       delete: {
-        title: t('landingPages.GridButtonColumnResource1.ConfirmTitle'),
+        title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
         showDivider: false,
         icon: (
           <Box className={classes.dialogAlertIcon}>
@@ -561,13 +631,14 @@ const LandingPagesesManagmentScreen=({classes}) => {
         ),
         content: (
           <Typography style={{fontSize: 18}}>
-            {t('landingPages.GridButtonColumnResource1.ConfirmText')}
+            {t('campaigns.GridButtonColumnResource2.ConfirmText')}
           </Typography>
         ),
         onConfirm: async () => {
           instence
-            .delete(`landingpages/deleteLandingPage/${dialogType.data}`)
+            .delete(`email/deleteEmailCampaign/${dialogType.data.CampaignID}`)
             .then(res => {
+              console.log("Delete res",res)
               getData()
             })
             .catch(err => console.log('delete Error',err))
@@ -575,7 +646,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         }
       },
       duplicate: {
-        title: t('landingPages.dialogDuplicateTitle'),
+        title: t('campaigns.dialogDuplicateTitle'),
         showDivider: false,
         icon: (
           <Box className={classes.dialogAlertIcon}>
@@ -584,12 +655,12 @@ const LandingPagesesManagmentScreen=({classes}) => {
         ),
         content: (
           <Typography style={{fontSize: 18}}>
-            {t('landingPages.dialogDuplicateContent')}
+            {t('campaigns.dialogDuplicateContent')}
           </Typography>
         ),
         onConfirm: () => {
           instence
-            .put(`landingpages/cloneLandingPage/${dialogType.data}`)
+            .put(`email/cloneCampaign/${dialogType.data}`)
             .then(res => {
               console.log("duplicate res",res)
               getData()
@@ -613,7 +684,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
   return (
     <DefaultScreen
-      currentPage='landingPages'
+      currentPage='newsletter'
       classes={classes}>
       {renderHeader()}
       {renderSearchLine()}
@@ -625,4 +696,4 @@ const LandingPagesesManagmentScreen=({classes}) => {
   )
 }
 
-export default LandingPagesesManagmentScreen
+export default NewsletterManagnentScreen

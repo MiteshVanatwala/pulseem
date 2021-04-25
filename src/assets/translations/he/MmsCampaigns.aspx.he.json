@@ -321,16 +321,16 @@
     "ToolTip": ""
   },
   "locFromDateResource1": {
-    "Text": "החל מתאריך:"
+    "Text": "החל מתאריך"
   },
   "locPageExplanationResource1": {
     "Text": "במסך זה מוצגת רשימת הקמפיינם במערכת."
   },
   "locSearchCampaignResource1": {
-    "Text": "חפש קמפיין:"
+    "Text": "חפש"
   },
   "locToDateResource1": {
-    "Text": "עד תאריך:"
+    "Text": "עד תאריך"
   },
   "logPageHeaderResource1": {
     "Text": "ניהול קמפיינים MMS"
@@ -446,5 +446,7 @@
   "CreditsResource1": {
     "HeaderText": "הודעות"
   },
-  "CampsAmountLimit": "חשבון זה ניצל את מכסת קמפיינים, צור קשר עם תמיכה שלנו על מנת לשדרג את חשבונך."
+  "CampsAmountLimit": "חשבון זה ניצל את מכסת קמפיינים, צור קשר עם תמיכה שלנו על מנת לשדרג את חשבונך.",
+  "create": "צור MMS",
+  "compagins": "קמפיינים"
 }
