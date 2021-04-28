@@ -130,8 +130,10 @@ export const Drawer=({classes}) => {
       <div
         onClick={onClick}
         className={classes.borgerContainer}>
-        {[...Array(3)].map(() => (
-          <div className={classes.borgerLine} />
+        {[...Array(3)].map((_,i) => (
+          <div
+            key={i}
+            className={classes.borgerLine} />
         ))}
       </div>
     )

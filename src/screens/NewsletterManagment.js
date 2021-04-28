@@ -13,13 +13,14 @@ import {
   TablePadington,ManagmentIcon,DateField,Dialog,PopMassage,SearchField,RestorDialogContent
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import {getNewslatterData} from '../redux/reducers/newsletterSlice'
+import {
+  getNewslatterData,restoreCampaigns,deleteCampaign,duplicteCampaign
+} from '../redux/reducers/newsletterSlice'
 import {useHistory} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
-import instence from '../helpers/api'
 import moment from 'moment'
 import 'moment/locale/he'
 
@@ -157,7 +158,7 @@ const NewsletterManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('CampaignInfo')}
+            onClick={() => history.push('/CampaignInfo')}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -310,7 +311,7 @@ const NewsletterManagnentScreen=({classes}) => {
         onClick: () => {
           setDialogType({
             type: 'delete',
-            data: row
+            data: CampaignID
           })
         }
       },]
@@ -572,14 +573,9 @@ const NewsletterManagnentScreen=({classes}) => {
             dataIdVar='CampaignID'
           />
         ),
-        onConfirm: () => {
-          instence.put('email/restoreEmailCampaigns',
-            restoreArray)
-            .then(res => {
-              console.log("restore res",res)
-              getData()
-            })
-            .catch(err => console.log('restore Error',err))
+        onConfirm: async () => {
+          await dispatch(restoreCampaigns(restoreArray))
+          getData()
           handleClose()
         }
       },
@@ -635,13 +631,8 @@ const NewsletterManagnentScreen=({classes}) => {
           </Typography>
         ),
         onConfirm: async () => {
-          instence
-            .delete(`email/deleteEmailCampaign/${dialogType.data.CampaignID}`)
-            .then(res => {
-              console.log("Delete res",res)
-              getData()
-            })
-            .catch(err => console.log('delete Error',err))
+          await dispatch(deleteCampaign(dialogType.data))
+          getData()
           handleClose()
         }
       },
@@ -658,14 +649,9 @@ const NewsletterManagnentScreen=({classes}) => {
             {t('campaigns.dialogDuplicateContent')}
           </Typography>
         ),
-        onConfirm: () => {
-          instence
-            .put(`email/cloneCampaign/${dialogType.data}`)
-            .then(res => {
-              console.log("duplicate res",res)
-              getData()
-            })
-            .catch(err => console.log('duplicate Error',err))
+        onConfirm: async () => {
+          await dispatch(duplicteCampaign(dialogType.data))
+          getData()
           handleClose()
         }
       }

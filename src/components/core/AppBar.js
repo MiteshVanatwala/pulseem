@@ -73,7 +73,7 @@ const AppBarItem=({
                 <MenuList
                   style={{padding: 0}}>
                   {item.options&&item.options.map((option,index) => (
-                    <Box>
+                    <Box key={index}>
                       {index!==0&&<Box className={classes.appBarItemBorder} />}
                       <MenuItem
                         key={option.title}
@@ -250,13 +250,15 @@ export const TopAppBar=({classes,currentPage=''}) => {
                     <Grid
                       container
                       spacing={1} >
-                      {smallRoutes.map(routesRow => (
+                      {smallRoutes.map((routesRow,i) => (
                         <Grid
+                          key={i}
                           container
                           xs={12} s
                           pacing={1}>
-                          {routesRow.map(route => (
+                          {routesRow.map((route,j) => (
                             <Grid
+                              key={j}
                               item
                               xs={4}>
                               <Box

@@ -44,5 +44,14 @@
   "labelAutomationSubHeader": "Let’s Go! Create a new Automation.",
   "TextConfirmLeaveWithoutSave": "You have unsaved workflow left, do you want to close without saving?",
   "DayActive": "Day Active",
-  "Recipient": "Recipient"
+  "Recipient": "Recipient",
+  "days": "Days",
+  "errorTitle": "Error!",
+  "errorContent": "There are automation errors. Please fix them first to activate the automation.",
+  "click": "Click",
+  "here": "here",
+  "edit": "to edit the automation",
+  "close": "Close",
+  "duplicateTitle": "Duplicate automation",
+  "duplicateContent": "Do you want to duplicate the automation?"
 }

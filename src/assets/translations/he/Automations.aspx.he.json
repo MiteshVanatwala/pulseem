@@ -40,9 +40,18 @@
   "TextActivateAutomationProcess": ".לחיצה על אישור תפעיל מחדש את תהליך האוטומציה",
   "TextDeactivateAutomationProcess": "לחיצה על אישור תעצור את תהליך האוטומציה. ניתן להפעיל אותו מחדש ממסך ניהול האוטומציות",
   "Report": "להגיש תלונה",
-  "labelAutomationName": "שם האוטומציה:",
+  "labelAutomationName": "שם האוטומציה",
   "labelAutomationSubHeader": "הזן שם לאוטומציה",
   "TextConfirmLeaveWithoutSave": "נותרו לך זרימת עבודה שלא נשמרו, האם ברצונך לסגור בלי לשמור?",
   "DayActive": "יום פעיל",
-  "Recipient": "נמענים"
+  "Recipient": "נמענים",
+  "days": "ימים",
+  "errorTitle": "שגיאה!",
+  "errorContent": "יש שגיאות אוטומציה. אנא תקן אותם תחילה כדי להפעיל את האוטומציה.",
+  "click": "לחץ",
+  "here": "כאן",
+  "edit": "כדי לערוך את האוטומציה",
+  "close": "סגירה",
+  "duplicateTitle": "שכפול אוטומציה",
+  "duplicateContent": "האם ברצונך לשכפל את האוטומציה?"
 }

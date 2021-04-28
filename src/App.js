@@ -1,5 +1,6 @@
 import React,{useEffect} from 'react';
 import NewsletterManagment from './screens/NewsletterManagment';
+import AutomationManagment from './screens/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPagesesManagment'
 import MmsManagment from './screens/MmsManagment';
 import {create} from 'jss';
@@ -32,7 +33,7 @@ const renderRoutes=(classes,history) => {
       <Route
         exact
         path="/"
-        render={props => <MmsManagment {...props} classes={classes} />}
+
       //component={() => {
       //  history.push('/Campaigns')
       //  return null
@@ -137,10 +138,10 @@ const renderRoutes=(classes,history) => {
       {/* MMS */}
       <Route
         path="/MmsCampaigns"
-        component={transferUrl('/Pulseem/MmsCampaigns.aspx')}
+        render={props => <MmsManagment {...props} classes={classes} />}
       />
       <Route
-        path="/MmsCampaignEdit"
+        path="/CreateMmsCampaign"
         component={transferUrl('/Pulseem/MmsCampaignEdit.aspx')}
       />
       <Route
@@ -170,7 +171,6 @@ const renderRoutes=(classes,history) => {
       <Route
         path="/EditRegistrationPage"
         render={props => <LandingPagesesManagment {...props} classes={classes} />}
-      //component={transferUrl('/Pulseem/EditRegistrationPage.aspx')}
       />
       <Route
         path="/LandingPageWizard"
@@ -236,11 +236,23 @@ const renderRoutes=(classes,history) => {
       {/* Automations */}
       <Route
         path="/Automations"
-        component={transferUrl('/Pulseem/Automations.aspx')}
+        render={props => <AutomationManagment {...props} classes={classes} />}
       />
       <Route
         path="/CreateAutomations"
         component={transferUrl('/Pulseem/CreateAutomations.aspx')}
+      />
+      <Route
+        path="/EditAutomations/:id"
+        component={transferUrl('/Pulseem/CreateAutomations.aspx?AutomationID=','id')}
+      />
+      <Route
+        path="/PreviewAutomations/:id"
+        component={transferUrl('/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=','id')}
+      />
+      <Route
+        path="/AutomationReport/:id"
+        component={transferUrl('/Pulseem/automationreport.aspx?AutomationID=','id')}
       />
       {/* Notifications */}
       <Route

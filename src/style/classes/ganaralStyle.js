@@ -120,5 +120,22 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     borderRadius: 50,
     width: 40,
     height: 40
+  },
+  switchActive: {
+    color: '#27AE60'
+  },
+  switchInactive: {
+    color: '#F02039'
+  },
+  dialogErrorText: {
+    fontFamily: 'Assistant',
+    fontSize: 18
+  },
+  boxDialog: {
+    maxWidth: 380,
+    marginBottom: 15
+  },
+  middle: {
+    alignSelf: 'center'
   }
 })

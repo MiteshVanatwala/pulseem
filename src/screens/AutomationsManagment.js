@@ -6,25 +6,26 @@ import {
   Grid,Button,TextField,Box
 } from '@material-ui/core'
 import {
-  DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,GroupsIcon,PreviewIcon
+  DeleteIcon,DuplicateIcon,EditIcon,ReportsIcon,SearchIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
-  TablePadington,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent
+  TablePadington,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent,Switch
 } from '../components/managment/index'
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import {getMmsData} from '../redux/reducers/mmsSlice'
-import {useHistory} from "react-router-dom";
+import {
+  getAutomationsData,deleteAutomations,duplicateAutomations,restoreAutomations,activateAutomation
+} from '../redux/reducers/automationsSlice'
+import {Link,useHistory} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
-import instence from '../helpers/api'
 import moment from 'moment'
 import 'moment/locale/he'
 
+
 const AutomationsManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
-  const {mmsData,mmsDataError,mmsDeletedData}=useSelector(state => state.mms)
+  const {automationsData,automationsDataError,automationsDeletedData}=useSelector(state => state.automations)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null)
@@ -42,11 +43,12 @@ const AutomationsManagnentScreen=({classes}) => {
   const dispatch=useDispatch()
   moment.locale(language)
 
-  console.log('mmsData',mmsData)
-  console.log('mmsDeletedData',mmsDeletedData)
+
+  console.log('automationsData',automationsData)
+  console.log('automationsDeletedData',automationsDeletedData)
 
   const getData=() => {
-    dispatch(getMmsData())
+    dispatch(getAutomationsData())
   }
 
   useEffect(getData,[dispatch])
@@ -55,7 +57,7 @@ const AutomationsManagnentScreen=({classes}) => {
     return (
       <>
         <Typography className={classes.managementTitle}>
-          {t('mms.logPageHeaderResource1.Text')}
+          {t('automations.logPageHeaderResource1.Text')}
         </Typography>
         <Divider />
       </>
@@ -92,7 +94,7 @@ const AutomationsManagnentScreen=({classes}) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
+          placeholder={t('automations.labelAutomationName')}
         />
       )
     }
@@ -105,7 +107,7 @@ const AutomationsManagnentScreen=({classes}) => {
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
             className={classes.textField}
-            placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
+            placeholder={t('automations.labelAutomationName')}
           />
         </Grid>
 
@@ -158,12 +160,12 @@ const AutomationsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/MmsCampaignEdit')}
+            onClick={() => history.push('/CreateAutomations')}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
             )}>
-            {t('mms.create')}
+            {t('automations.createResource.Text')}
           </Button>
         </Grid>}
         {windowSize!=='xs'&&<Grid item>
@@ -176,14 +178,14 @@ const AutomationsManagnentScreen=({classes}) => {
             )}
             onClick={() => setDialogType({
               type: 'restore',
-              data: mmsDeletedData
+              data: automationsDeletedData
             })}>
-            {t('mms.restoreResource.Text')}
+            {t('automations.restoreResource.Text')}
           </Button>
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${mmsData.length} ${t('mms.compagins')}`}
+            {`${automationsData.length} ${t('automations.Automations')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -194,9 +196,9 @@ const AutomationsManagnentScreen=({classes}) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("campaigns.camapignName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("automations.labelAutomationName")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.recipients")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("mms.CreditsResource1.HeaderText")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("automations.DaysActive")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
           <TableCell classes={{root: classes.tableCellRoot}} className={classes.flex5} ></TableCell>
         </TableRow>
@@ -205,37 +207,33 @@ const AutomationsManagnentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {Status,ID,GroupNames}=row
+    const {ID,IsActive}=row
 
     const iconsMap=[
-      {
-        key: 'send',
-        icon: SendGreenIcon,
-        lable: t('campaigns.imgSendResource1.ToolTip'),
-        remove: Status!==1,
-        rootClass: classes.sendIcon,
-        textClass: classes.sendIconText,
-        onClick: () => {
-          history.push('/SendMmsCampaign/'+ID)
-        }
-      },
       {
         key: 'preview',
         icon: PreviewIcon,
         remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
         onClick: () => {
-          history.push('/MmsPreviewCampaign/'+ID)
+          history.push(`/PreviewAutomations/${ID}`)
         }
       },
       {
         key: 'edit',
         icon: EditIcon,
         remove: windowSize==='xs',
-        disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         onClick: () => {
-          history.push('/MmsCampaignEdit/'+ID)
+          if(IsActive) {
+            setDialogType({
+              type: 'editActive',
+              data: row
+            })
+          }
+          else {
+            history.push(`/EditAutomations/${ID}`)
+          }
         }
       },
       {
@@ -250,16 +248,12 @@ const AutomationsManagnentScreen=({classes}) => {
         }
       },
       {
-        key: 'groups',
-        icon: GroupsIcon,
+        key: 'reports',
+        icon: ReportsIcon,
         remove: windowSize==='xs',
-        disable: GroupNames.length===0,
-        lable: t('campaigns.lnkPreviewResource1.ToolTip'),
+        lable: t('campaigns.Reports'),
         onClick: () => {
-          setDialogType({
-            type: 'groups',
-            data: GroupNames
-          })
+          history.push(`/AutomationReport/${ID}`)
         }
       },
       {
@@ -296,36 +290,41 @@ const AutomationsManagnentScreen=({classes}) => {
     )
   }
 
-  const renderStatusCell=(status) => {
+  const renderStatusCell=(row) => {
+    const {IsActive}=row
     const statuses={
-      1: 'common.Created',
-      2: 'common.Sending',
-      3: 'campaigns.Stopped',
-      4: 'common.Sent',
-      5: 'campaigns.Canceled',
-      6: 'campaigns.Optin',
-      7: 'campaigns.Approve'
+      true: t('automations.AutomationActiveStatusText'),
+      false: t('automations.AutomatoionInActiveStatusText',)
     }
     return (
-      <>
-        <Typography className={clsx(
-          classes.middleText,
-          classes.recipientsStatus,
-          {
-            [classes.recipientsStatusCreated]: status===1,
-            [classes.recipientsStatusSent]: status===4,
-            [classes.recipientsStatusSending]: status===2,
-            [classes.recipientsStatusCanceled]: status===5
-          }
-        )}>
-          {t(statuses[status])}
+      <Box>
+        <Switch
+          checked={IsActive}
+          onChange={() => {
+            setDialogType({
+              type: 'switch',
+              data: row
+            })
+          }}
+        />
+
+        <Typography
+          className={clsx(
+            classes.middleText,
+            {
+              [classes.switchActive]: IsActive,
+              [classes.switchInactive]: !IsActive
+            }
+          )}
+        >
+          {statuses[IsActive]}
         </Typography>
-      </>
+      </Box>
     )
   }
 
-  const renderRecipientsCell=(recipients) => {
-    if(recipients===0) return null
+  const renderRecipientsCell=(recipients=0) => {
+    if(!recipients||recipients===0) return null
 
     return (
       <>
@@ -372,14 +371,14 @@ const AutomationsManagnentScreen=({classes}) => {
     )
   }
 
-  const renderMessagesCell=(messages) => {
+  const renderDaysActiveCell=(messages=0) => {
     return (
       <>
         <Typography className={classes.middleText}>
           {messages.toLocaleString()}
         </Typography>
         <Typography className={classes.middleText}>
-          {t("mms.CreditsResource1.HeaderText")}
+          {t("automations.days")}
         </Typography>
       </>
     )
@@ -400,19 +399,19 @@ const AutomationsManagnentScreen=({classes}) => {
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderRecipientsCell(row.SentCount)}
+          {renderRecipientsCell(row.Recipients)}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderMessagesCell(row.CreditsPerMms)}
+          {renderDaysActiveCell(row.activeDaysCount)}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderStatusCell(row.Status)}
+          {renderStatusCell(row)}
         </TableCell>
         <TableCell
           component="th"
@@ -467,7 +466,7 @@ const AutomationsManagnentScreen=({classes}) => {
       }
     }
 
-    let sortData=mmsData
+    let sortData=automationsData
     if(searchArray) {
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
@@ -498,7 +497,7 @@ const AutomationsManagnentScreen=({classes}) => {
     return (
       <TablePadington
         classes={classes}
-        rows={mmsData.length}
+        rows={automationsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -525,6 +524,43 @@ const AutomationsManagnentScreen=({classes}) => {
       setDialogType(null)
     }
 
+    const switchOptions={
+      true: {
+        title: t('automations.HeaderDeactivateAutomationProcess'),
+        content: (
+          <Typography>
+            {t('automations.TextDeactivateAutomationProcess')}
+          </Typography>
+        )
+      },
+      false: {
+        title: t('automations.HeaderActivateAutomationProcess'),
+        content: (
+          <Typography>
+            {t('automations.TextActivateAutomationProcess')}
+          </Typography>
+        )
+      }
+    }
+
+    const handleActiveChange=(data,isEdit=false) => async () => {
+      try {
+        await dispatch(activateAutomation(data))
+        getData()
+        if(isEdit)
+          history.push(`/EditAutomations/${data.ID}`)
+      } catch(err) {
+        console.log('AutomationManagment.ChangeStatus',err)
+        setDialogType({
+          type: "statusError",
+          data: data.ID
+        })
+      }
+      handleClose()
+    }
+
+    const switchContent=(dialogType&&dialogType.type==='switch'&&switchOptions[dialogType.data.IsActive])||{}
+
     const dialogContent={
       restore: {
         title: t('campaigns.restoreCampaginTitle'),
@@ -542,40 +578,57 @@ const AutomationsManagnentScreen=({classes}) => {
             onChange={handleChange}
           />
         ),
-        onConfirm: () => {
-          instence.put('mms/restoreMmsCampaigns',
-            restoreArray)
-            .then(res => {
-              console.log("restore res",res)
-              getData()
-            })
-            .catch(err => console.log('duplicate Error',err))
+        onConfirm: async () => {
+          console.log("restoreArray",restoreArray)
+          await dispatch(restoreAutomations(restoreArray))
+          getData()
           handleClose()
         }
       },
-      groups: {
-        title: t('campaigns.ShowGroupsTitle'),
+      editActive: {
+        title: t('automations.HeaderDeactivateAutomationProcess'),
         showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
         content: (
-          <Box
-            className={classes.gruopsDialogContent}>
-            {dialogType&&dialogType.type==='groups'&&dialogType.data
-              .map((group,index) => {
-                return (
-                  <Typography
-                    key={index}
-                    className={classes.gruopsDialogText}>
-                    <FiberManualRecordIcon
-                      className={classes.gruopsDialogBullet} />
-                    {group}
-                  </Typography>
-                )
-              })}
+          <Typography className={clsx(
+            classes.boxDialog,
+            classes.dialogErrorText
+          )}>
+            {t('automations.TextDeactivateAutomationProcess')}
+          </Typography>
+        ),
+        onConfirm: handleActiveChange((dialogType&&dialogType.data)||{},true)
+      },
+      switch: {
+        title: switchContent.title,
+        showDivider: false,
+        content: switchContent.content,
+        onConfirm: handleActiveChange((dialogType&&dialogType.data)||{})
+      },
+      statusError: {
+        title: t('automations.errorTitle'),
+        showDivider: false,
+        content: (
+          <Box className={classes.boxDialog}>
+            <Typography className={classes.dialogErrorText}>
+              {t('automations.errorContent')}
+            </Typography>
+            <Grid container spacing={1}>
+              <Grid item>
+                <Typography className={classes.dialogErrorText}>
+                  {t('automations.click')}
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Link className={classes.dialogErrorText}>
+                  {` ${t('automations.here')} `}
+                </Link>
+              </Grid>
+              <Grid item>
+                <Typography className={classes.dialogErrorText}>
+                  {t('automations.edit')}
+                </Typography>
+              </Grid>
+            </Grid>
           </Box>
         ),
         renderButtons: () => (
@@ -584,59 +637,39 @@ const AutomationsManagnentScreen=({classes}) => {
             size='small'
             onClick={handleClose}
             className={clsx(
-              classes.gruopsDialogButton,
-              classes.dialogConfirmButton,
+              classes.middle,
+              classes.dialogButton,
+              classes.dialogCancelButton
             )}>
-            {t('common.Ok')}
+            {t('automations.close')}
           </Button>
         )
       },
       delete: {
-        title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
+        title: t('automations.GridButtonColumnResource2.ConfirmTitle'),
         showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
         content: (
           <Typography style={{fontSize: 18}}>
-            {t('campaigns.GridButtonColumnResource2.ConfirmText')}
+            {t('automations.GridButtonColumnResource2.ConfirmText')}
           </Typography>
         ),
         onConfirm: async () => {
-          console.log('DELETE',dialogType.data)
-          instence
-            .delete(`mms/deleteMmsCampaigns/${dialogType.data}`)
-            .then(res => {
-              console.log("Delete res",res)
-              getData()
-            })
-            .catch(err => console.log('delete Error',err))
+          await dispatch(deleteAutomations(dialogType.data))
+          getData()
           handleClose()
         }
       },
       duplicate: {
-        title: t('campaigns.dialogDuplicateTitle'),
+        title: t('automations.duplicateTitle'),
         showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
         content: (
           <Typography style={{fontSize: 18}}>
-            {t('campaigns.dialogDuplicateContent')}
+            {t('automations.duplicateContent')}
           </Typography>
         ),
-        onConfirm: () => {
-          instence
-            .put(`mms/cloneMmsCampaign/${dialogType.data}`)
-            .then(res => {
-              console.log("duplicate res",res)
-              getData()
-            })
-            .catch(err => console.log('duplicate Error',err))
+        onConfirm: async () => {
+          await dispatch(duplicateAutomations(dialogType.data))
+          getData()
           handleClose()
         }
       }
@@ -655,7 +688,7 @@ const AutomationsManagnentScreen=({classes}) => {
   }
   return (
     <DefaultScreen
-      currentPage='newsletter'
+      currentPage='automations'
       classes={classes}>
       {renderHeader()}
       {renderSearchLine()}

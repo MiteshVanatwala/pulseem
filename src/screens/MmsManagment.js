@@ -12,13 +12,12 @@ import {
   TablePadington,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import {getMmsData} from '../redux/reducers/mmsSlice'
+import {getMmsData,restoreMms,deleteMms,duplicteMms} from '../redux/reducers/mmsSlice'
 import {useHistory} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
-import instence from '../helpers/api'
 import moment from 'moment'
 import 'moment/locale/he'
 
@@ -41,9 +40,6 @@ const MmsManagnentScreen=({classes}) => {
   const history=useHistory()
   const dispatch=useDispatch()
   moment.locale(language)
-
-  console.log('mmsData',mmsData)
-  console.log('mmsDeletedData',mmsDeletedData)
 
   const getData=() => {
     dispatch(getMmsData())
@@ -158,7 +154,7 @@ const MmsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/MmsCampaignEdit')}
+            onClick={() => history.push('/CreateMmsCampaign')}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -509,7 +505,6 @@ const MmsManagnentScreen=({classes}) => {
   }
 
   const renderDialog=() => {
-
     const handleChange=(id) => () => {
       const found=restoreArray.includes(id)
       console.log('restore',id,'found:',found)
@@ -542,14 +537,9 @@ const MmsManagnentScreen=({classes}) => {
             onChange={handleChange}
           />
         ),
-        onConfirm: () => {
-          instence.put('mms/restoreMmsCampaigns',
-            restoreArray)
-            .then(res => {
-              console.log("restore res",res)
-              getData()
-            })
-            .catch(err => console.log('duplicate Error',err))
+        onConfirm: async () => {
+          await dispatch(restoreMms(restoreArray))
+          getData()
           handleClose()
         }
       },
@@ -594,49 +584,28 @@ const MmsManagnentScreen=({classes}) => {
       delete: {
         title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
         showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
         content: (
           <Typography style={{fontSize: 18}}>
             {t('campaigns.GridButtonColumnResource2.ConfirmText')}
           </Typography>
         ),
         onConfirm: async () => {
-          console.log('DELETE',dialogType.data)
-          instence
-            .delete(`mms/deleteMmsCampaigns/${dialogType.data}`)
-            .then(res => {
-              console.log("Delete res",res)
-              getData()
-            })
-            .catch(err => console.log('delete Error',err))
+          await dispatch(deleteMms(dialogType.data))
+          getData()
           handleClose()
         }
       },
       duplicate: {
         title: t('campaigns.dialogDuplicateTitle'),
         showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
         content: (
           <Typography style={{fontSize: 18}}>
             {t('campaigns.dialogDuplicateContent')}
           </Typography>
         ),
-        onConfirm: () => {
-          instence
-            .put(`mms/cloneMmsCampaign/${dialogType.data}`)
-            .then(res => {
-              console.log("duplicate res",res)
-              getData()
-            })
-            .catch(err => console.log('duplicate Error',err))
+        onConfirm: async () => {
+          await dispatch(duplicteMms(dialogType.data))
+          getData()
           handleClose()
         }
       }
@@ -655,7 +624,7 @@ const MmsManagnentScreen=({classes}) => {
   }
   return (
     <DefaultScreen
-      currentPage='newsletter'
+      currentPage='mms'
       classes={classes}>
       {renderHeader()}
       {renderSearchLine()}

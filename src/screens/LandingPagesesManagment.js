@@ -3,7 +3,7 @@ import DefaultScreen from './DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box
+  Grid,Button,TextField
 } from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SearchIcon,
@@ -12,16 +12,17 @@ import {
 import {
   TablePadington,ManagmentIcon,RestorDialogContent,Dialog,PopMassage,SearchField
 } from '../components/managment/index'
-import {getLandingPagesData} from '../redux/reducers/landingPagesSlice'
-import {useHistory} from "react-router-dom";
+import {
+  getLandingPagesData,restoreLandingPages,deleteLandingPage,
+  duplicteLandingPage,downloadReport
+
+} from '../redux/reducers/landingPagesSlice'
+import {openInNewTab} from '../helpers/functions'
+import {useHistory,Link} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
-import instence from '../helpers/api'
-import {Link} from 'react-router-dom';
-
-
 
 const LandingPagesesManagmentScreen=({classes}) => {
   const {windowSize}=useSelector(state => state.core)
@@ -245,14 +246,20 @@ const LandingPagesesManagmentScreen=({classes}) => {
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
         remove: (!IsPayment&&SurveyCount===0)||windowSize==='xs',
-        onClick: () => {}
+        onClick: async () => {
+          if(IsPayment) {
+            dispatch(downloadReport(row))
+          }
+        }
       },
       {
         key: 'preview',
         icon: PreviewIcon,
         remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        onClick: () => {}
+        onClick: () => {
+          openInNewTab(PageLink)
+        }
       },
       {
         key: 'edit',
@@ -276,8 +283,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
       },
       {
         key: 'copy',
-        icon: copyData.icon,
-        lable: copyData.lable,
+        icon: (copyData&&copyData.icon)||null,
+        lable: (copyData&&copyData.lable)||'',
         onClick: () => {
           navigator.clipboard.writeText(copyData.copy)
           setShowCopied(ID)
@@ -325,7 +332,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
       <>
         <Typography
           className={classes.middleText}>
-          {views.toLocaleString()}
+          {(views&&views.toLocaleString())||''}
         </Typography>
         <Typography
           className={classes.middleText}>
@@ -368,20 +375,19 @@ const LandingPagesesManagmentScreen=({classes}) => {
         />
         <Typography
           className={classes.grayTextCell}>
-          {row.GroupNames.join(', ')}
+          {row.GroupNames&&row.GroupNames.join(', ')}
         </Typography>
       </>
 
     )
   }
 
-  const renderSubscribersCell=(row) => {
-    const {ID,Submits}=row
+  const renderSubscribersCell=({ID,Submits}) => {
     return (
       <>
         <Typography
           className={classes.middleText}>
-          {Submits.toLocaleString()}
+          {(Submits&&Submits.toLocaleString())||''}
         </Typography>
         <Link
           to={`/ClientSearchResult/${ID}`}
@@ -395,7 +401,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderRow=(row) => {
     return (
       <TableRow
-        key={row.CampaignID}
+        key={row.ID}
         classes={rowStyle}>
         <TableCell
           classes={cellStyle}
@@ -435,7 +441,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderPhoneRow=(row) => {
     return (
       <TableRow
-        key={row.CampaignID}
+        key={row.ID}
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
@@ -509,7 +515,6 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
 
   const renderDialog=() => {
-
     const handleChange=(id) => () => {
       const found=restoreArray.includes(id)
       console.log('restore',id,'found:',found)
@@ -541,60 +546,37 @@ const LandingPagesesManagmentScreen=({classes}) => {
             onChange={handleChange}
           />
         ),
-        onConfirm: () => {
-          instence.put('landingpages/restoreLandingPages',
-            restoreArray)
-            .then(res => {
-              getData()
-            })
-            .catch(err => console.log('duplicate Error',err))
+        onConfirm: async () => {
+          await dispatch(restoreLandingPages(restoreArray))
+          getData()
           handleClose()
         }
       },
       delete: {
         title: t('landingPages.GridButtonColumnResource1.ConfirmTitle'),
         showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
         content: (
           <Typography style={{fontSize: 18}}>
             {t('landingPages.GridButtonColumnResource1.ConfirmText')}
           </Typography>
         ),
         onConfirm: async () => {
-          instence
-            .delete(`landingpages/deleteLandingPage/${dialogType.data}`)
-            .then(res => {
-              getData()
-            })
-            .catch(err => console.log('delete Error',err))
+          await dispatch(deleteLandingPage(dialogType.data))
+          getData()
           handleClose()
         }
       },
       duplicate: {
         title: t('landingPages.dialogDuplicateTitle'),
         showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
         content: (
           <Typography style={{fontSize: 18}}>
             {t('landingPages.dialogDuplicateContent')}
           </Typography>
         ),
-        onConfirm: () => {
-          instence
-            .put(`landingpages/cloneLandingPage/${dialogType.data}`)
-            .then(res => {
-              console.log("duplicate res",res)
-              getData()
-            })
-            .catch(err => console.log('duplicate Error',err))
+        onConfirm: async () => {
+          await dispatch(duplicteLandingPage(dialogType.data))
+          getData()
           handleClose()
         }
       }

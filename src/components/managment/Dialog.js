@@ -5,6 +5,7 @@ import {
 } from '@material-ui/core'
 import {useSelector} from 'react-redux'
 import {useTranslation} from 'react-i18next'
+import {AlertIcon} from '../icons/index'
 
 export const Dialog=({
   classes,
@@ -85,6 +86,7 @@ export const Dialog=({
   }
 
   const renderIcon=() => {
+    const alertIcon=<AlertIcon classes={classes} />
     return (
       <Box
         className={clsx(
@@ -94,7 +96,7 @@ export const Dialog=({
             [classes.dialogIconContainerLTR]: !isRTL
           }
         )}>
-        {icon}
+        {icon||alertIcon}
       </Box>
     )
   }

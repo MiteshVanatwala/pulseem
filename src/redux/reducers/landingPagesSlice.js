@@ -1,5 +1,6 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
 import instence from '../../helpers/api'
+import fileDownloader from 'js-file-download'
 
 export const getLandingPagesData=createAsyncThunk(
   'landingpages/getLandingPages',async (_,thunkAPI) => {
@@ -10,6 +11,51 @@ export const getLandingPagesData=createAsyncThunk(
       return thunkAPI.rejectWithValue({error: error.message});
     }
   })
+
+export const restoreLandingPages=createAsyncThunk(
+  'landingpages/restoreLandingPages',async (deletedLandingPages,thunkAPI) => {
+    try {
+      const response=await instence.put(`landingpages/restoreLandingPages`,deletedLandingPages);
+      return response.data
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  })
+
+export const deleteLandingPage=createAsyncThunk(
+  'landingpages/deleteLandingPage',async (id,thunkAPI) => {
+    try {
+      const response=await instence.delete(`landingpages/deleteLandingPage/${id}`);
+      return response.data
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  })
+
+export const duplicteLandingPage=createAsyncThunk(
+  'landingpages/cloneLandingPage',async (id,thunkAPI) => {
+    try {
+      const response=await instence.put(`landingpages/cloneLandingPage/${id}`);
+      return response.data
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  })
+
+export const downloadReport=createAsyncThunk(
+  'landingpages/export/purchase/',async ({ID,Name},thunkAPI) => {
+    try {
+      const response=await instence.get(`landingpages/export/purchase/${ID}`,{
+        responseType: 'blob'
+      });
+      fileDownloader(response.data,`${Name}-Report.xls`)
+      return 'Success'
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  })
+
+
 
 export const landingPagesSlice=createSlice({
   name: 'newsletter',
@@ -27,6 +73,15 @@ export const landingPagesSlice=createSlice({
     builder.addCase(getLandingPagesData.rejected,(state,action) => {
       state.landingPagesDataError=action.error.message
     })
+    builder.addCase(downloadReport.fulfilled,() => console.log('api downloadReport success'))
+    builder.addCase(duplicteLandingPage.fulfilled,() => console.log('api duplicteLandingPage success'))
+    builder.addCase(deleteLandingPage.fulfilled,() => console.log('api deleteLandingPage success'))
+    builder.addCase(restoreLandingPages.fulfilled,() => console.log('api restoreLandingPages success'))
+
+    builder.addCase(downloadReport.rejected,(_,action) => console.log('Error - api downloadReport: '+action.error))
+    builder.addCase(duplicteLandingPage.rejected,(_,action) => console.log('Error - api duplicteLandingPage: '+action.error))
+    builder.addCase(deleteLandingPage.rejected,(_,action) => console.log('Error - api deleteLandingPage: '+action.error))
+    builder.addCase(restoreLandingPages.rejected,(_,action) => console.log('Error - api restoreLandingPages: '+action.error))
   }
 })
 
