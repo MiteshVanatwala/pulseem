@@ -28,7 +28,7 @@
     "HeaderAbbr": "",
     "HeaderAxis": "",
     "HeaderImageUrl": "",
-    "HeaderText": "Landing page name",
+    "HeaderText": "Landing Page Name",
     "HeaderTooltip": "",
     "HtmlEncode": "False",
     "SortExpression": ""
@@ -145,7 +145,7 @@
     "Text": "Use this page to manage and edit your landing pages."
   },
   "logPageHeaderResource1": {
-    "Text": "Landing pages management"
+    "Text": "Landing Pages Management"
   },
   "NumOfEnteriesResource1": {
     "Text": ""
@@ -285,7 +285,7 @@
     "HeaderText": "Active"
   },
   "CreateNewResource": {
-    "Text": "Create New Landing Page"
+    "Text": "Create Landing Page"
   },
   "DeleteBody": "Are you sure want to delete this page?",
   "DeleteResource1": {
@@ -311,9 +311,9 @@
     "HeaderText": "Copy"
   },
   "SubmitsResource1": {
-    "HeaderText": "Subscribes"
+    "HeaderText": "Subscribers"
   },
-  "HtmlPage": "Html Embed Form",
+  "HtmlPage": "HTML Embed Form",
   "StaticPage": "Landing Page",
   "ViewsResource1": {
     "HeaderText": "Views"
@@ -328,5 +328,13 @@
   "EditRegistrationPage": "Survey Results",
   "SurveyExportTitle": "Survey Results",
   "PurchaseExportTitle": "Purchases Report",
-  "restoreResource": "Restore"
+  "restoreResource": "Restore",
+  "landingPages": "Landing Pages",
+  "name": "Landing Page Name",
+  "template": "Template",
+  "copyLink": "Copy Link",
+  "embedCode": "Embed Code",
+  "restoreLandingPageTitle": "Select the landing pages you want to restore",
+  "dialogDuplicateTitle": "Duplicate landing page",
+  "dialogDuplicateContent": "Do you want to duplicate the landing page?"
 }

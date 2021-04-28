@@ -321,19 +321,19 @@
     "ToolTip": ""
   },
   "locFromDateResource1": {
-    "Text": "From Date:"
+    "Text": "From Date"
   },
   "locPageExplanationResource1": {
     "Text": "Use this page to manage your campaigns."
   },
   "locSearchCampaignResource1": {
-    "Text": "Search:"
+    "Text": "Search"
   },
   "locToDateResource1": {
-    "Text": "To Date:"
+    "Text": "To Date"
   },
   "logPageHeaderResource1": {
-    "Text": "Campaigns"
+    "Text": "MMS Campaigns Managment"
   },
   "PageResource1": {
     "Title": "MMS Campaigns Management | Pulseem System"
@@ -446,5 +446,7 @@
   "CreditsResource1": {
     "HeaderText": "Messages"
   },
-  "CampsAmountLimit": "This account has reached maximum MMS campaigns limit, please contact our support to upgrade your account."
+  "CampsAmountLimit": "This account has reached maximum MMS campaigns limit, please contact our support to upgrade your account.",
+  "create": "Create MMS",
+  "compagins": "Compagins"
 }

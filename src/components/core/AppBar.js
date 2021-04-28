@@ -14,7 +14,6 @@ import {ReactComponent as QuestionIcon} from '../../assets/images/question.svg'
 import {FaBars,FaTimes} from 'react-icons/fa';
 import {getRoutes,getSettingsItem} from '../../helpers/routes'
 import {useHistory} from "react-router-dom";
-//import {history} from '../../helpers/history'
 
 const AppBarItem=({
   item,
@@ -74,7 +73,7 @@ const AppBarItem=({
                 <MenuList
                   style={{padding: 0}}>
                   {item.options&&item.options.map((option,index) => (
-                    <Box>
+                    <Box key={index}>
                       {index!==0&&<Box className={classes.appBarItemBorder} />}
                       <MenuItem
                         key={option.title}
@@ -251,13 +250,15 @@ export const TopAppBar=({classes,currentPage=''}) => {
                     <Grid
                       container
                       spacing={1} >
-                      {smallRoutes.map(routesRow => (
+                      {smallRoutes.map((routesRow,i) => (
                         <Grid
+                          key={i}
                           container
                           xs={12} s
                           pacing={1}>
-                          {routesRow.map(route => (
+                          {routesRow.map((route,j) => (
                             <Grid
+                              key={j}
                               item
                               xs={4}>
                               <Box

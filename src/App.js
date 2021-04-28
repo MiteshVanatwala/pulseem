@@ -1,12 +1,13 @@
 import React,{useEffect} from 'react';
-import NewsletterManagnent from './screens/NewsletterManagnent';
+import NewsletterManagment from './screens/NewsletterManagment';
+import AutomationManagment from './screens/AutomationsManagment';
+import LandingPagesesManagment from './screens/LandingPagesesManagment'
+import MmsManagment from './screens/MmsManagment';
 import {create} from 'jss';
 import rtl from 'jss-rtl';
 import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
 import i18n from './i18n'
-import {BrowserRouter,useParams} from 'react-router-dom';
-import {Router,Route} from 'react-router'
-//import {history} from './helpers/history'
+import {BrowserRouter,useParams,Route} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
 import {setWindowSize} from './redux/reducers/coreSlice'
 import {getTheme} from './style/theme'
@@ -18,242 +19,278 @@ import moment from 'moment'
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
-    const {campaignID,automationID}=useParams()
+    const {campaignID,automationID,id}=useParams()
     const addParam={
       campaign: campaignID,
-      automation: automationID
+      automation: automationID,
+      id: id
     }
     window.location.href=`https://www.pulseemdev.co.il/${url}${addParam[param]||''}`
     return null
   }
-
-  const base=process.env.PUBLIC_URL
   return (
     <>
       <Route
-        exact path={`${base}/`}
-        component={() => {
-          history.push(`${base}/Campaigns`)
-          return null
-        }}
+        exact
+        path="/"
+
+      //component={() => {
+      //  history.push('/Campaigns')
+      //  return null
+      //}}
       />
       <Route
-        path={`${base}/SendCampaign/:campaignID`}
+        path={`/SendCampaign/:campaignID`}
         component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=','campaign')}
       />
       <Route
-        path={`${base}/PreviewCampaign/:campaignID`}
+        path={`/PreviewCampaign/:campaignID`}
         component={transferUrl('/Pulseem/PreviewCampaign.aspx?CampaignID=','campaign')}
       />
       <Route
-        path={`${base}/Editor/CampaignEdit/:campaignID`}
+        path={`/Editor/CampaignEdit/:campaignID`}
         component={transferUrl('/Editor/CampaignEdit/','campaign')}
       />
       <Route
-        path={`${base}/DuplicateCampign/:campaignID`}
+        path={`/DuplicateCampign/:campaignID`}
         component={transferUrl('/DuplicateCampign/','campaign')}
       />
       <Route
-        path={`${base}/CampaignStatistics/:campaignID`}
+        path={`/CampaignStatistics/:campaignID`}
         component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=','campaign')}
       />
       <Route
-        path={`${base}/CreateAutomations/:automationID`}
+        path={`/CreateAutomations/:automationID`}
         component={transferUrl('/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=','automation')}
       />
       <Route
-        path={`${base}/homepage`}
+        path={`/homepage`}
         component={transferUrl('/Pulseem/homepage.aspx')}
       />
       {/* Groups */}
       <Route
-        path={`${base}/Groups`}
+        path={`/Groups`}
         component={transferUrl('/Pulseem/Groups.aspx')}
       />
       <Route
-        path={`${base}/ClientSearch`}
+        path={`/ClientSearch`}
         component={transferUrl('/Pulseem/ClientSearch.aspx')}
       />
       <Route
-        path={`${base}/ClientAdvancedSearch`}
+        path={`/ClientAdvancedSearch`}
         component={transferUrl('/Pulseem/ClientAdvancedSearch.aspx')}
       />
       <Route
-        path={`${base}/DynamicGroups`}
+        path={`/DynamicGroups`}
         component={transferUrl('/Pulseem/DynamicGroups.aspx')}
       />
       <Route
-        path={`${base}/FileUploads`}
+        path={`/FileUploads`}
         component={transferUrl('/Pulseem/FileUploads.aspx')}
       />
       {/* Newsletter */}
       <Route
-        path={`${base}/Campaigns`}
-        render={props => <NewsletterManagnent {...props} classes={classes} />}
+        path="/Campaigns"
+        render={props => <NewsletterManagment {...props} classes={classes} />}
       />
 
       <Route
-        path={`${base}/Editor/CampaignInfo`}
+        path={`/Editor/CampaignInfo`}
         component={transferUrl('/Pulseem/Editor/CampaignInfo?new=1')}
       />
       <Route
-        path={`${base}/CampaignsByResults`}
+        path={`/CampaignsByResults`}
         component={transferUrl('/Pulseem/CampaignsByResults.aspx')}
       />
       <Route
-        path={`${base}/CampaignsAbTestings`}
+        path={`/CampaignsAbTestings`}
         component={transferUrl('/Pulseem/CampaignsAbTestings.aspx')}
       />
       <Route
-        path={`${base}/AutoSendPlans`}
+        path={`/AutoSendPlans`}
         component={transferUrl('/Pulseem/AutoSendPlans.aspx')}
       />
       <Route
-        path={`${base}/CampaignTemplates`}
+        path={`/CampaignTemplates`}
         component={transferUrl('/Pulseem/CampaignTemplates.aspx')}
       />
       <Route
-        path={`${base}/CampaignEdit`}
+        path={`/CampaignEdit`}
         component={transferUrl('/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic')}
       />
       {/* SMS */}
       <Route
-        path={`${base}/SMSCampaigns`}
+        path={`/SMSCampaigns`}
         component={transferUrl('/Pulseem/SMSCampaigns.aspx')}
       />
       <Route
-        path={`${base}/SMSCampaignEdit`}
+        path={`/SMSCampaignEdit`}
         component={transferUrl('/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create')}
       />
       <Route
-        path={`${base}/SMSSmartResponses`}
+        path={`/SMSSmartResponses`}
         component={transferUrl('/Pulseem/SMSSmartResponses.aspx')}
       />
       <Route
-        path={`${base}/ResponsesReport`}
+        path={`/ResponsesReport`}
         component={transferUrl('/Pulseem/ResponsesReport.aspx')}
       />
       {/* MMS */}
       <Route
-        path={`${base}/MmsCampaigns`}
-        component={transferUrl('/Pulseem/MmsCampaigns.aspx')}
+        path="/MmsCampaigns"
+        render={props => <MmsManagment {...props} classes={classes} />}
       />
       <Route
-        path={`${base}/MmsCampaignEdit`}
+        path="/CreateMmsCampaign"
         component={transferUrl('/Pulseem/MmsCampaignEdit.aspx')}
       />
-      {/* Landing Pages */}
       <Route
-        path={`${base}/EditRegistrationPage`}
-        component={transferUrl('/Pulseem/EditRegistrationPage.aspx')}
+        path='/MmsCampaignEdit/:id'
+        component={transferUrl('/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=','id')}
       />
       <Route
-        path={`${base}/LandingPageWizard`}
+        path='/MmsPreviewCampaign/:id'
+        component={transferUrl('/Pulseem/MmsPreviewCampaign.aspx?MmsCampaignID=','id')}
+      />
+      <Route
+        path='/SendMmsCampaign/:id'
+        component={transferUrl('/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=','id')}
+      />
+      {/* Landing Pages */}
+
+      <Route
+        path='/NewWebForm/NewFormEdit/:id'
+        component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/','id')}
+      />
+
+      <Route
+        path="/ClientSearchResult/:id"
+        component={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=','id')}
+      />
+
+      <Route
+        path="/EditRegistrationPage"
+        render={props => <LandingPagesesManagment {...props} classes={classes} />}
+      />
+      <Route
+        path={`/LandingPageWizard`}
         component={transferUrl('/Pulseem/LandingPageWizard.aspx')}
       />
       <Route
-        path={`${base}/FormTemplates`}
+        path={`/FormTemplates`}
         component={transferUrl('/Pulseem/FormTemplates.aspx')}
       />
       {/* Reports */}
       <Route
-        path={`${base}/MainReport`}
+        path={`/MainReport`}
         component={transferUrl('/Pulseem/MainReport.aspx')}
       />
       <Route
-        path={`${base}/ClalReport`}
+        path={`/ClalReport`}
         component={transferUrl('/Pulseem/ClalReport.aspx')}
       />
       <Route
-        path={`${base}/SMSMainReport`}
+        path={`/SMSMainReport`}
         component={transferUrl('/Pulseem/SMSMainReport.aspx')}
       />
       <Route
-        path={`${base}/MmsMainReport`}
+        path={`/MmsMainReport`}
         component={transferUrl('/Pulseem/MmsMainReport.aspx')}
       />
       <Route
-        path={`${base}/AbTestsReport`}
+        path={`/AbTestsReport`}
         component={transferUrl('/Pulseem/AbTestsReport.aspx')}
       />
       <Route
-        path={`${base}/AccountReport`}
+        path={`/AccountReport`}
         component={transferUrl('/Pulseem/AccountReport.aspx')}
       />
       <Route
-        path={`${base}/CampaignComparison`}
+        path={`/CampaignComparison`}
         component={transferUrl('/Pulseem/CampaignComparison.aspx')}
       />
       <Route
-        path={`${base}/ClientReport`}
+        path={`/ClientReport`}
         component={transferUrl('/Pulseem/ClientReport.aspx')}
       />
       <Route
-        path={`${base}/EmailAutoReports`}
+        path={`/EmailAutoReports`}
         component={transferUrl('/Pulseem/EmailAutoReports.aspx')}
       />
       <Route
-        path={`${base}/RemovedStats`}
+        path={`/RemovedStats`}
         component={transferUrl('/Pulseem/RemovedStats.aspx')}
       />
       <Route
-        path={`${base}/DirectEmailReport`}
+        path={`/DirectEmailReport`}
         component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
       />
       <Route
-        path={`${base}/DirectSmsReport`}
+        path={`/DirectSmsReport`}
         component={transferUrl('/Pulseem/DirectSmsReport.aspx')}
       />
       <Route
-        path={`${base}/EmailCampaignStatistics`}
+        path={`/EmailCampaignStatistics`}
         component={transferUrl('/Pulseem/EmailCampaignStatistics.aspx')}
       />
       {/* Automations */}
       <Route
-        path={`${base}/Automations`}
-        component={transferUrl('/Pulseem/Automations.aspx')}
+        path="/Automations"
+        render={props => <AutomationManagment {...props} classes={classes} />}
       />
       <Route
-        path={`${base}/CreateAutomations`}
+        path={`/CreateAutomations`}
         component={transferUrl('/Pulseem/CreateAutomations.aspx')}
+      />
+      <Route
+        path="/EditAutomations/:id"
+        component={transferUrl('/Pulseem/CreateAutomations.aspx?AutomationID=','id')}
+      />
+      <Route
+        path="/PreviewAutomations/:id"
+        component={transferUrl('/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=','id')}
+      />
+      <Route
+        path="/AutomationReport/:id"
+        component={transferUrl('/Pulseem/automationreport.aspx?AutomationID=','id')}
       />
       {/* Notifications */}
       <Route
-        path={`${base}/Notification`}
+        path={`/Notification`}
         component={transferUrl('/Pulseem/Notification.aspx?t=main')}
       />
       <Route
-        path={`${base}/Notification/create`}
+        path={`/Notification/create`}
         component={transferUrl('/Pulseem/Notification.aspx?t=add')}
       />
       {/* Settings */}
       <Route
-        path={`${base}/AccountSettings`}
+        path={`/AccountSettings`}
         component={transferUrl('/Pulseem/AccountSettings.aspx')}
       />
       <Route
-        path={`${base}/AccountBilling`}
+        path={`/AccountBilling`}
         component={transferUrl('/Pulseem/AccountBilling.aspx')}
       />
       <Route
-        path={`${base}/AccountUsers`}
+        path={`/AccountUsers`}
         component={transferUrl('/Pulseem/AccountUsers.aspx')}
       />
       <Route
-        path={`${base}/AccountUsersReport`}
+        path={`/AccountUsersReport`}
         component={transferUrl('/Pulseem/AccountUsersReport.aspx')}
       />
       <Route
-        path={`${base}/ExtraFieldsDefinition`}
+        path={`/ExtraFieldsDefinition`}
         component={transferUrl('/Pulseem/ExtraFieldsDefinition.aspx')}
       />
       <Route
-        path={`${base}/ApiSettings`}
+        path={`/ApiSettings`}
         component={transferUrl('/Pulseem/ApiSettings.aspx')}
       />
       {/* Support */}
       <Route
-        path={`${base}/Support`}
+        path={`/Support`}
         component={() => {
           window.open("https://www.pulseem.co.il/Pages/Home.aspx?action=support","_blank")
           return null
@@ -305,7 +342,7 @@ const AppContainer=() => {
 
   return (
     <StylesProvider jss={jss}>
-      <BrowserRouter basename='react'>
+      <BrowserRouter basename='/react'>
         <App />
       </BrowserRouter>
     </StylesProvider>
