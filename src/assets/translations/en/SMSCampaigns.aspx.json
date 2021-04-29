@@ -336,7 +336,7 @@
     "Text": "Campaigns"
   },
   "PageResource1": {
-    "Title": "SMS Campaigns Management | Pulseem System"
+    "Title": "SMS Campaigns Management"
   },
   "txtCampaignNameResource1": {
     "Text": "",
@@ -455,5 +455,7 @@
   },
   "AlertHeading": "Please Note!",
   "NumberChangeErrorMessage": "You have changed the number assigned to you by the Pulseem platform for this campaign. The recipients won’t be able to unsubscribe from your SMS distribution list through a removal message. You can add a removal link instead or revert to your original number.",
-  "restoreCampaginTitle": "Select the campaigns you want to restore"
+  "restoreCampaginTitle": "Select the campaigns you want to restore",
+  "create": "Create SMS",
+  "verification": "Verification of number to send"
 }

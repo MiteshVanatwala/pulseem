@@ -5,6 +5,7 @@ import newsletterReducer from './reducers/newsletterSlice'
 import landingPagesReducer from './reducers/landingPagesSlice'
 import mmsReducer from './reducers/mmsSlice'
 import automationsReducer from './reducers/automationsSlice'
+import smsReducer from './reducers/smsSlice'
 
 export default configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export default configureStore({
     newsletter: newsletterReducer,
     landingPages: landingPagesReducer,
     mms: mmsReducer,
-    automations: automationsReducer
+    automations: automationsReducer,
+    sms: smsReducer
   },
 });

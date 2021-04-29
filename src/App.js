@@ -3,6 +3,7 @@ import NewsletterManagment from './screens/NewsletterManagment';
 import AutomationManagment from './screens/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPagesesManagment'
 import MmsManagment from './screens/MmsManagment';
+import SmsManagment from './screens/SmsManagment';
 import {create} from 'jss';
 import rtl from 'jss-rtl';
 import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
@@ -33,7 +34,7 @@ const renderRoutes=(classes,history) => {
       <Route
         exact
         path="/"
-
+        render={props => <SmsManagment {...props} classes={classes} />}
       //component={() => {
       //  history.push('/Campaigns')
       //  return null
@@ -135,6 +136,15 @@ const renderRoutes=(classes,history) => {
         path={`/ResponsesReport`}
         component={transferUrl('/Pulseem/ResponsesReport.aspx')}
       />
+      <Route
+        path={`/SMSPreviewCampaign/:id`}
+        component={transferUrl('/Pulseem/SMSPreviewCampaign.aspx?SMSCampaignID=','id')}
+      />
+      <Route
+        path={`/Edit/SMSCampaignEdit/:id`}
+        component={transferUrl('/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=','id')}
+      />
+
       {/* MMS */}
       <Route
         path="/MmsCampaigns"

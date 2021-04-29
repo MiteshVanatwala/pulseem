@@ -129,6 +129,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
       backgroundColor: '#2283c3'
     }
   },
+  actionButtonDarkBlue: {
+    backgroundColor: '#5088b5',
+    '&:hover': {
+      backgroundColor: '#4477a2'
+    }
+  },
   actionButtonGreen: {
     backgroundColor: '#217346',
     '&:hover': {
