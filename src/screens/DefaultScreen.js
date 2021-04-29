@@ -10,7 +10,8 @@ const DefaultScreen=({classes,children,currentPage='',}) => {
         currentPage={currentPage}
       />
       {/*<Drawer classes={classes} />*/}
-      <Container maxWidth='xl'>
+      
+      <Container maxWidth='xl' className={classes.mainContainer}>
         {children}
       </Container>
     </div>

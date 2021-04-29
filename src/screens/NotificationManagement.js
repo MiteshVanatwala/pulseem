@@ -1,38 +1,42 @@
-import React,{useState,useEffect} from 'react';
+import React,{useState,useEffect, useRef} from 'react';
 import DefaultScreen from './DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,IconButton,InputAdornment,Input,Box,FormControlLabel,Checkbox, Select, MenuItem
+  Grid,Button,TextField,IconButton,InputAdornment,Input,Box,FormControlLabel,Checkbox, Select, MenuItem, CardMedia, Card, CardContent, RadioGroup, Radio
 } from '@material-ui/core'
 import {
-  DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
+  DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon, SearchIcon,
   GroupsIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
   TablePagination,ManagmentIcon,DateField,Dialog,PopMassage
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import {getNewslatterData} from '../redux/reducers/apiSlice'
 import {useHistory} from "react-router-dom";
-//import {history} from '../helpers/history'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
-import instence from '../helpers/api'
 import moment from 'moment'
 import 'moment/locale/he'
+import { getNotificationById, getNotificationGroups, getNotificationData, getDeletedNotifications, 
+  duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
+  getScriptPath, getApiToken, updateScriptPath
+} from '../redux/reducers/notificationSlice';
 
 const NotificationManagement=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
-  console.log(`windowSize`, windowSize)
-  const {notificationData,notificationDataError,notificationDeletedData}=useSelector(state => state.api)
+  const {notificationData}=useSelector(state => state.notification)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null)
   const [notificationNameSearch,setNotificationNameSearch]=useState('');
-  const [statusSearch, setStatusSearch] = useState('');
+  const [statusSearch, setStatusSearch] = useState(-1);
+  const [scriptDirectory, setScriptDirectory] = useState(0);
+  const [copyStatus, setCopyStatus] = useState(false);
+  const [scriptPath, setScriptPath] = useState(0);
+  const [apiToken, setApiToken] = useState(0);
   const rowsOptions=[6,12,18]
   const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
@@ -49,103 +53,107 @@ const NotificationManagement=({classes}) => {
   const cellBodyStyle={body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.paddingRightLeft10)}
   const noBorderCellStyle={body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.paddingRightLeft10)}
   const borderCellStyle={body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.paddingRightLeft10)}
+  const baseUrl='https://www.pulseemdev.co.il/pulseem';
+  const refScriptCode = useRef(null);
   moment.locale(language)
 
-  const dummyNotificationData = [
-    {
-      id: Math.random(3453*5),
-      name: "Experience 2 - Mailing Doge Carmela A name longer than a line",
-      lastUpdate:  new Date(),
-      sendDate:  new Date(),
-      toSent: 19999,
-      sent: 19999,
-      errors: 19999,
-      clicks: 7,
-      status: 1
-    },
-    {
-      id: Math.random(3453*5),
-      name: "Active Customers",
-      lastUpdate:  new Date(),
-      sendDate:  new Date(),
-      toSent: 19999,
-      sent: 19999,
-      errors: 19999,
-      clicks: 7,
-      status: 2
-    },
-    {
-      id: Math.random(3453*5),
-      name: "Active Customers",
-      lastUpdate:  new Date(),
-      sendDate:  new Date(),
-      toSent: 19999,
-      sent: 19999,
-      errors: 19999,
-      clicks: 7,
-      status: 1
-    },
-    {
-      id: Math.random(3453*5),
-      name: "Active Customers",
-      lastUpdate:  new Date(),
-      sendDate:  new Date(),
-      toSent: 999,
-      sent: 999,
-      errors: 999,
-      clicks: 7,
-      status: 3
-    },
-    {
-      id: Math.random(3453*5),
-      name: "Active Customers",
-      lastUpdate:  new Date(),
-      sendDate:  new Date(),
-      toSent: 999,
-      sent: 999,
-      errors: 999,
-      clicks: 7,
-      status: 4
-    },
-    {
-      id: Math.random(3453*5),
-      name: "Active Customers",
-      lastUpdate:  new Date(),
-      sendDate:  new Date(),
-      toSent: 999,
-      sent: 999,
-      errors: 999,
-      clicks: 7,
-      status: 5
-    },
-    {
-      id: Math.random(3453*5),
-      name: "Active Customers",
-      lastUpdate:  new Date(),
-      sendDate:  new Date(),
-      toSent: 999,
-      sent: 999,
-      errors: 999,
-      clicks: 7,
-      status: 6
-    },
-    {
-      id: Math.random(3453*5),
-      name: "Active Customers",
-      lastUpdate:  new Date(),
-      sendDate:  new Date(),
-      toSent: 999,
-      sent: 999,
-      errors: 999,
-      clicks: 7,
-      status: 7
-    },
-  ]
-  const getData=() => {
-    dispatch(getNewslatterData())
+  const getData = () => {
+    dispatch(getNotificationData());
   }
 
-  useEffect(getData,[dispatch])
+  useEffect(getData, [dispatch]);
+
+  const handleImplementScript = async () => {
+    handleScriptPath();
+    handleApiToken();
+    setDialogType({
+      type: 'implement',
+      data: {}
+    });
+  }
+
+  const handleScriptPath = async () => {
+    const scriptPath = await dispatch(getScriptPath());
+    const path = scriptPath && scriptPath.payload || '';
+    setScriptPath(path);
+  }
+
+  const handleApiToken = async () => {
+    const apiToken = await dispatch(getApiToken());
+    const token = apiToken && apiToken.payload && apiToken.payload.PublicKey || '';
+    setApiToken(token);
+  }
+
+  const handleScriptDirectory = async (event) => {
+    const value = parseInt(event.target.value);
+    setScriptDirectory(value);
+  }
+
+  const handleCopyScript = () => {
+    navigator.clipboard.writeText(refScriptCode.current.innerText);
+    setCopyStatus(true);
+    
+    setTimeout( () => {
+      setCopyStatus(false);
+    }, 1000);
+  }
+
+  const handleScriptPathChange = (event) => {
+    setScriptPath(event.target.value);
+  }
+
+  const handlePreview = async (ID) => {
+    const item = await dispatch(getNotificationById(ID));
+    setDialogType({
+      type: 'preview',
+      data: item.payload
+    })
+  } 
+
+  const handleShowGroups = async (ID) => {
+    const item = await dispatch(getNotificationGroups(ID));
+    if (item && item.payload) {
+
+    }
+    setDialogType({
+      type: 'groups',
+      data: item.payload
+    })
+  } 
+
+  const handleShowGroupsById= async (ID) => {
+    const item = await dispatch(getNotificationGroupsById(ID));
+    setDialogType({
+      type: 'groupsById',
+      data: item.payload
+    })
+  } 
+
+  const handleDuplicate = async (ID) => {
+    const res = await dispatch(duplicateNotification(ID));
+    if (!res.error) {
+      dispatch(getNotificationData());
+    }
+    handleDialogClose();
+  } 
+
+  const handleDeleteNotification = async (ID) => {
+    const res = await dispatch(deleteNotification(ID));
+    if (res.payload === true && !res.error) {
+      dispatch(getNotificationData());
+    }
+    handleDialogClose();
+  }
+
+  const handleShowDeletedItems = async () => {
+    const res = await dispatch(getDeletedNotifications());
+    if (!res.error) {
+      setDialogType({
+        type: 'restore',
+        data: res.payload
+      });
+    }
+  }
 
   const renderHeader=() => {
     return (
@@ -164,6 +172,9 @@ const NotificationManagement=({classes}) => {
         type: 'name',
         notificationName: notificationNameSearch
       },{
+        type: 'status',
+        status: statusSearch
+      },{
         type: 'date',
         fromDate,
         toDate
@@ -172,7 +183,7 @@ const NotificationManagement=({classes}) => {
 
     const clearSearch=() => {
       setNotificationNameSearch('')
-      setStatusSearch('')
+      setStatusSearch(-1)
       handleFromDate(null)
       handleToDate(null)
       setSearchArray(null)
@@ -222,19 +233,20 @@ const NotificationManagement=({classes}) => {
         </Grid>
         <Grid item>
           <Select
-            variant='outlined'
-            size='small'
+            id="statusSelect"
+            variant="outlined"
             onChange={handleStatusChange}
-            className={classes.selectField}
-            value={0}
+            value={statusSearch}
+            className={classes.formControlSelect}
           >
-            <MenuItem value={0} disabled>{t('notifications.status.text')}</MenuItem>
-            <MenuItem value={1}>{t('notifications.status.created')}</MenuItem>
-            <MenuItem value={2}>{t('notifications.status.sending')}</MenuItem>
-            <MenuItem value={3}>{t('notifications.status.stopped')}</MenuItem>
-            <MenuItem value={4}>{t('notifications.status.sent')}</MenuItem>
-            <MenuItem value={5}>{t('notifications.status.cancelled')}</MenuItem>
-            <MenuItem value={6}>{t('notifications.status.approved')}</MenuItem>
+            <MenuItem value={-1} disabled><div style={{color: 'rgba(0,0,0,0.40)'}}>{t('common.Status')}</div></MenuItem>
+            <MenuItem value={0}>{t('common.draft')}</MenuItem>
+            <MenuItem value={1}>{t('common.deleted')}</MenuItem>
+            <MenuItem value={2}>{t('common.Pending')}</MenuItem>
+            <MenuItem value={3}>{t('common.Sending')}</MenuItem>
+            <MenuItem value={4}>{t('common.Sent')}</MenuItem>
+            <MenuItem value={5}>{t('common.ScheduledDate')}</MenuItem>
+            <MenuItem value={7}>{t('common.failedStatus')}</MenuItem>
           </Select>
         </Grid>
 
@@ -287,7 +299,7 @@ const NotificationManagement=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('#')}
+            onClick={() => history.push('/notifications/create')}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -301,13 +313,10 @@ const NotificationManagement=({classes}) => {
             size='medium'
             className={clsx(
               classes.actionButton,
-              classes.actionButtonLightBlue
+              classes.actionButtonRed
             )}
-            onClick={() => setDialogType({
-              type: 'restore',
-              data: dummyNotificationData
-            })}>
-            {t('notifications.buttons.recover')}
+            onClick={handleShowDeletedItems}>
+            {t('notifications.restoreDeleted')}
           </Button>
         </Grid>}
         <Grid item>
@@ -318,10 +327,7 @@ const NotificationManagement=({classes}) => {
               classes.actionButton,
               classes.actionButtonLightBlue
             )}
-            onClick={() => setDialogType({
-              type: 'restore',
-              data: dummyNotificationData
-            })}>
+            onClick={handleImplementScript}>
             {t('notifications.buttons.implementScript')}
           </Button>
         </Grid>
@@ -333,16 +339,13 @@ const NotificationManagement=({classes}) => {
               classes.actionButton,
               classes.actionButtonLightBlue
             )}
-            onClick={() => setDialogType({
-              type: 'restore',
-              data: dummyNotificationData
-            })}>
+            onClick={handleShowGroups}>
             {t('notifications.buttons.groups')}
           </Button>
         </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${dummyNotificationData.length} ${t('notifications.notifications')}`}
+            {`${notificationData.length} ${t('notifications.notifications')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -354,24 +357,24 @@ const NotificationManagement=({classes}) => {
       <TableHead>
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex5} align='center'>{t("notifications.notificationManagement")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.toSend")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.sent")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.failed")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.clicks")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.status")}</TableCell>
-          <TableCell classes={{root: classes.tableCellRoot}} className={classes.flex12} ></TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex15} align='center'>{t("notifications.tblHeader.toSend")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex15} align='center'>{t("notifications.tblHeader.sent")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex15} align='center'>{t("notifications.tblHeader.failed")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex15} align='center'>{t("notifications.tblHeader.clicks")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex15} align='center'>{t("notifications.tblHeader.status")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex12} ></TableCell>
         </TableRow>
       </TableHead>
     )
   }
 
   const renderCellIcons=(row) => {
-    const {status,groups,id,shareUrl}=row
+    const { StatusID , groups ,ID }=row
 
     const renderCopyToClipoard=(
       <PopMassage
         classes={classes}
-        show={showCopied===id}
+        show={showCopied===ID}
         timeout={500}
         label={t('common.copyClip')}
       />
@@ -382,11 +385,11 @@ const NotificationManagement=({classes}) => {
         key: 'send',
         icon: SendGreenIcon,
         lable: t('notifications.buttons.send'),
-        remove: status!==1,
+        remove: StatusID!==0,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         onClick: () => {
-          history.push('/SendCampaign/'+id)
+          // history.push('/SendCampaign/'+id)
         }
       },
       {
@@ -395,17 +398,17 @@ const NotificationManagement=({classes}) => {
         remove: windowSize==='xs',
         lable: t('notifications.buttons.preview'),
         onClick: () => {
-          history.push('/PreviewCampaign/'+id)
+          handlePreview(ID);
         }
       },
       {
         key: 'edit',
         icon: EditIcon,
         remove: windowSize==='xs',
-        disable: status!==1,
+        disable: StatusID!==0,
         lable: t('notifications.buttons.edit'),
         onClick: () => {
-          history.push('/Editor/CampaignEdit/'+id)
+          history.push(`/notifications/edit/${ID}`);
         }
       },
       {
@@ -414,9 +417,9 @@ const NotificationManagement=({classes}) => {
         lable: t('notifications.buttons.duplicate'),
         onClick: () => {
           setDialogType({
-            type: 'duplicate',
-            data: id
-          })
+            type: "duplicate",
+            data: ID
+          });
         }
       },
       {
@@ -426,10 +429,7 @@ const NotificationManagement=({classes}) => {
         disable: groups&&groups.length===0,
         lable: t('notifications.buttons.groups'),
         onClick: () => {
-          setDialogType({
-            type: 'groups',
-            data: row.groups
-          })
+          handleShowGroupsById(ID);
         }
       },
       {
@@ -437,10 +437,10 @@ const NotificationManagement=({classes}) => {
         icon: DeleteIcon,
         lable: t('notifications.buttons.delete'),
         showPhone: true,
-        onClick: () => {
+        onClick: async () => {
           setDialogType({
             type: 'delete',
-            data: row
+            data: ID
           })
         }
       }
@@ -476,13 +476,13 @@ const NotificationManagement=({classes}) => {
 
   const renderStatusCell=(status) => {
     const statuses={
-      1: 'common.Created',
-      2: 'common.Sending',
-      3: 'campaigns.Stopped',
+      0: 'common.draft',
+      1: 'common.deleted',
+      2: 'common.Pending',
+      3: 'common.Sending',
       4: 'common.Sent',
-      5: 'campaigns.Canceled',
-      6: 'campaigns.Optin',
-      7: 'campaigns.Approve'
+      5: 'common.ScheduledDate',
+      7: 'common.failedStatus'
     }
     return (
       <>
@@ -490,11 +490,13 @@ const NotificationManagement=({classes}) => {
           classes.wrapText,
           classes.recipientsStatus,
           {
-            [classes.recipientsStatusCreated]: status===1,
-            [classes.recipientsStatusSent]: status===4,
-            [classes.recipientsStatusStopped]: status===3,
-            [classes.recipientsStatusSending]: status===2,
-            [classes.recipientsStatusCanceled]: status===5
+            [classes.statusDraft]: status===0,
+            [classes.statusFailed]: status===1,
+            [classes.statusPending]: status===2,
+            [classes.statusSending]: status===3,
+            [classes.statusSent]: status===4,
+            [classes.statusScheduled]: status===5,
+            [classes.statusFailed]: status===7,
           }
         )}>
           {t(statuses[status])}
@@ -504,10 +506,15 @@ const NotificationManagement=({classes}) => {
   }
 
   const renderTotalCell = (value, type) => {
+    let count = value;
+    if (type === "error") {
+      count = value.UnSubscribed + value.FailedCount;
+    }
+
     return (
       <div>
-        <Typography className={clsx(classes.middleText, type === "error" && classes.errorText)}>
-          {value.toLocaleString()}
+        <Typography className={clsx(classes.middleText, classes.fontBold, type === "error" && classes.errorText)}>
+          {count.toLocaleString()}
         </Typography>
         <Typography className={clsx(classes.middleText, type === "error" && classes.errorText)}>
           {t("notifications.tblBody.total")}
@@ -519,7 +526,7 @@ const NotificationManagement=({classes}) => {
   const renderClickCell = (value, type) => {
     return (
       <>
-        <Typography className={clsx(classes.middleText, type === "error" && classes.errorText)}>
+        <Typography className={clsx(classes.middleText, classes.fontBold, type === "error" && classes.errorText)}>
           {value.toLocaleString()}
         </Typography>
         <Typography className={clsx(classes.middleText, type === "error" && classes.errorText)}>
@@ -532,11 +539,11 @@ const NotificationManagement=({classes}) => {
   const renderNameCell=(row) => {
     let date=null
     let text=''
-    if(!row.sendDate) {
-      date=moment(row.lastUpdate,dateFormat)
+    if(!row.SendDate) {
+      date=moment(row.UpdatedDate,dateFormat)
       text=t('common.UpdatedOn')
     } else {
-      date=moment(row.sendDate,dateFormat)
+      date=moment(row.SendDate,dateFormat)
       const dateMillis=date.valueOf()
       const currentDateMillis=moment().valueOf()
       text=dateMillis>currentDateMillis? t('common.WillBeSentOn'):t('common.SentOn')
@@ -545,7 +552,7 @@ const NotificationManagement=({classes}) => {
     return (
       <>
         <Ellipsis
-          text={row.name}
+          text={row.Name}
           lines={1}
           style={{
             fontSize: 17,
@@ -576,32 +583,32 @@ const NotificationManagement=({classes}) => {
         <TableCell
           classes={noBorderCellStyle}
           align='center'
-          className={classes.flex1}>
-          {renderTotalCell(row.toSent)}
+          className={classes.flex15}>
+          {renderTotalCell(row.SentCount)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
-          className={classes.flex1}>
-          {renderTotalCell(row.sent)}
+          className={classes.flex15}>
+          {renderTotalCell(row.ReceivedCount)}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex1}>
-          {renderTotalCell(row.errors, "error")}
+          className={classes.flex15}>
+          {renderTotalCell(row, "error")}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={classes.flex1}>
-          {renderClickCell(row.clicks)}
+          className={classes.flex15}>
+          {renderClickCell(row.ClickCount)}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={classes.flex1}>
-          {renderStatusCell(row.status)}
+          className={classes.flex15}>
+          {renderStatusCell(row.StatusID)}
         </TableCell>
         <TableCell
           component="th"
@@ -627,7 +634,7 @@ const NotificationManagement=({classes}) => {
               {renderNameCell(row)}
             </Grid>
             <Grid item>
-              {renderStatusCell(row.status)}
+              {renderStatusCell(row.StatusID)}
             </Grid>
           </Grid>
           {renderCellIcons(row)}
@@ -639,7 +646,14 @@ const NotificationManagement=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.notificationName)
+        return row.Name.toLowerCase().includes(values.notificationName)
+      },
+      status: (row,values) => {
+        if (values.status < 0) {
+          return true;
+        } else {
+          return row.StatusID === values.status
+        }
       },
       date: (row,values) => {
         const {UpdatedDate,SendDate}=row
@@ -656,10 +670,11 @@ const NotificationManagement=({classes}) => {
       }
     }
 
-    let sortData=dummyNotificationData;
+    let sortData=notificationData;
     if(searchArray) {
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
+        
       })
     }
     
@@ -687,7 +702,7 @@ const NotificationManagement=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={dummyNotificationData.length}
+        rows={notificationData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -697,169 +712,404 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const renderDialog=() => {
+  const handleChange=(CampaignID) => () => {
+    const found=restoreArray.includes(CampaignID)
+    if(found) {
+      setRestoreArray(restoreArray.filter(restore => restore!==CampaignID))
+    } else {
+      setRestoreArray([...restoreArray,CampaignID])
+    }
+  }
 
-    const handleChange=(CampaignID) => () => {
-      const found=restoreArray.includes(CampaignID)
-      console.log('restore',CampaignID,'found:',found)
-      if(found) {
-        setRestoreArray(restoreArray.filter(restore => restore!==CampaignID))
-      } else {
-        setRestoreArray([...restoreArray,CampaignID])
+  const handleDialogClose=() => {
+    setDialogType(null)
+  }
+
+  const renderPreview = () => {
+    const image = dialogType && dialogType.data && dialogType.data.Image || '';
+    const name = dialogType && dialogType.data && dialogType.data.Name || '';
+    const body = dialogType && dialogType.data && dialogType.data.Body || '';
+    return {
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE0F8'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <Card>
+            {image? 
+            <CardMedia
+              className={classes.cardMedia}
+              image={image}
+              title="Contemplative Reptile"
+            />: null}
+            <CardContent>
+              <Typography variant="h5" component="h2">
+                {name}
+              </Typography>
+              <Typography variant="body2" color="textSecondary" component="p">
+                {body}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleDialogClose}
+          className={clsx(
+            classes.confirmButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.confirm')}
+        </Button>
+      )
+    };
+  }
+
+  const renderRestore = (data) => {
+    return {
+      title: t('notifications.restoreTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <Box
+          className={clsx(classes.restorDialogContent, classes.dialogBox)}>
+          { dialogType && dialogType.data.map( row => {
+              const checked=restoreArray.includes(row.ID)
+              return (
+                <FormControlLabel
+                  key={row.CampaignID}
+                  className={classes.restoreDialogCheckBoxLable}
+                  control={
+                    <Checkbox
+                      checked={checked}
+                      onChange={handleChange(row.ID)}
+                      className={classes.restoreDialogCheckBox}
+                      color='primary'
+                      size='small'
+                    />
+                  }
+                  label={row.Name}
+                />
+              )
+            })}
+        </Box>
+      ),
+      onConfirm: async () => {
+        const res = await dispatch(restoreNotifications(restoreArray));
+        if (!res.error) {
+          dispatch(getNotificationData());
+        }
+        handleDialogClose();
       }
     }
+  }
 
-    const handleClose=() => {
-      setDialogType(null)
+  const renderGroups = () => {
+    return {
+      title: t('campaigns.ShowGroupsTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE0D5'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <Table>
+              <TableHead >
+                <TableRow>
+                  <TableCell>Group Name</TableCell>
+                  <TableCell align="center">Recipients</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+              { dialogType && dialogType.data
+                .map(group => {
+                  return (
+                    <TableRow key={ group.Id}>
+                      <TableCell>{ group.GroupName }</TableCell>
+                      <TableCell align="center">{ group.Members }</TableCell>
+                    </TableRow>
+
+                  )
+                })}
+              </TableBody>
+          </Table>
+
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleDialogClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.Ok')}
+        </Button>
+      )
     }
+  }
 
-    const dialogContent={
-      restore: {
-        title: t('campaigns.restoreCampaginTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
-        content: (
-          <Box
-            className={classes.restorDialogContent}>
-            {dialogType&&dialogType.type==='restore'&&dialogType.data
-              .map(row => {
-                const checked=restoreArray.includes(row.CampaignID)
-                return (
-                  <FormControlLabel
-                    key={row.CampaignID}
-                    className={classes.restoreDialogCheckBoxLable}
-                    control={
-                      <Checkbox
-                        checked={checked}
-                        onChange={handleChange(row.CampaignID)}
-                        className={classes.restoreDialogCheckBox}
-                        color='primary'
-                        size='small'
-                      />
-                    }
-                    label={row.Name}
-                  />
-                )
-              })}
-          </Box>
-        ),
-        onConfirm: () => {
-          instence.put('email/restoreEmailCampaigns',
-            restoreArray)
-            .then(res => {
-              console.log("duplicate res",res)
-              getData()
-            })
-            .catch(err => console.log('duplicate Error',err))
-          handleClose()
-        }
-      },
-      groups: {
-        title: t('campaigns.ShowGroupsTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
-        content: (
-          <Box
-            className={classes.gruopsDialogContent}>
-            {dialogType&&dialogType.type==='groups'&&dialogType.data
-              .map(group => {
-                return (
-                  <Typography
-                    key={group}
-                    className={classes.gruopsDialogText}>
-                    <FiberManualRecordIcon
-                      className={classes.gruopsDialogBullet} />
-                    {group}
-                  </Typography>
-                )
-              })}
-          </Box>
-        ),
-        renderButtons: () => (
+  const renderGroupsById = () => {
+    return {
+      title: t('notifications.groupsByIdTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE0D5'}
+        </div>
+      ),
+      content: (
+        <Box
+          className={clsx(classes.gruopsDialogContent, classes.dialogBox)}>
+          {dialogType&&dialogType.data
+            .map(group => {
+              return (
+                <Typography
+                  key={group.Id}
+                  className={classes.gruopsDialogText}>
+                  <FiberManualRecordIcon
+                    className={classes.gruopsDialogBullet} />
+                  {group.GroupName}
+                </Typography>
+              )
+            })}
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleDialogClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.Ok')}
+        </Button>
+      )
+    }
+  }
+
+  const renderDelete = (ID) => {
+    return {
+      title: t('notifications.deleteTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE0D2'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+        <Typography style={{fontSize: 18}}>
+          {t('notifications.deleteConfirmation')}
+        </Typography>
+        <Typography style={{fontSize: 18}}>
+          {t('notifications.areYouSure')}
+        </Typography>
+        </Box>
+      ),
+      onConfirm: async () => {
+        handleDeleteNotification(ID);
+      }
+    }
+  }
+
+  const renderDuplicate = (ID) => {
+    return {
+      title: t('notifications.duplicateTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE038'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <Typography style={{fontSize: 18}}>
+            {t('notifications.duplicateConfirmation')}
+          </Typography>
+        </Box>
+      ),
+      onConfirm: async () => {
+        handleDuplicate(ID);
+      }
+    }
+  }
+
+  const renderScriptCode = () => {
+    let  scriptCode= `&lt;script type="text/javascript"&gt;
+    (function(d, t) {
+        var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+        g.src="#scriptSource#?d=" + Math.floor(Date.now() / 1000);
+        g.setAttribute("key", #key#);
+        #scriptpath#
+        s.parentNode.insertBefore(g, s);
+    }(document, "script"))
+&lt;/script&gt;`;
+
+    return scriptCode
+      .replace("#key#", '"' + encodeURI(apiToken) + '"')
+      .replace("&lt;", "<")
+      .replace("&gt;", ">")
+      .replace("&lt;", "<")
+      .replace("&gt;", ">")
+      .replace("#scriptSource#", baseUrl)
+      .replace(
+        "#scriptpath#",
+        scriptDirectory != 0 && scriptPath != ''
+          ? 'g.setAttribute("swfolder", "' + scriptPath + '");'
+          : ""
+      )
+      .replace(/(^[ \t]*\n)/gm, "");
+  }
+
+  const renderImplement = () => {
+    return {
+      title: t('notifications.implementTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\u005E'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <Typography>
+            1. {t('notifications.downloadThe')} 
+            <a target="_blank" href="https://pn.pulseem.com/assets/scripts/service-worker.js" download>{t('notifications.attachedScript')}</a>
+          </Typography>
+          <hr/>
+          <Grid container direction={'row'} alignItems="center">
+            <Typography>
+              2. {t('notifications.chooseSaveLocation')}
+            </Typography>
+            <RadioGroup row value={scriptDirectory} onChange={handleScriptDirectory} className={classes.radioGroup}>
+              <FormControlLabel 
+                key={Math.round(Math.random() * 999999999)}
+                value={0} 
+                control={<Radio color="primary"/>} 
+                label={t("notifications.siteMainDirectory")} 
+              />
+              <FormControlLabel 
+                key={Math.round(Math.random() * 999999999)}
+                value={1} 
+                control={<Radio color="primary"/>} 
+                label={t("notifications.anotherDirectory")} 
+              />
+            </RadioGroup>
+          </Grid>
+          {scriptDirectory === 1?
+            <Box>
+            <Box className={classes.directoryField}>
+              <Typography>{t("notifications.anotherDirectory")}</Typography>
+              <Typography variant="body2">{t("notifications.example")}: /examplefolder1/examplefodler2/</Typography>
+            </Box>
+            <TextField 
+              variant="outlined" 
+              size="small" 
+              fullWidth 
+              style={{maxWidth: 400}}
+              onChange={handleScriptPathChange}
+              value={scriptPath}
+            />
+          </Box>: null}
+          <hr/>
+          <Typography>
+            3. {t('notifications.copyLineCodeText')}
+          </Typography>
+          <Typography style={{fontWeight: 'bold', padding: '10px 0'}}>
+            {t('notifications.payAttentionText')}
+          </Typography>
           <Button
-            variant='contained'
-            size='small'
-            onClick={handleClose}
-            className={clsx(
-              classes.gruopsDialogButton,
-              classes.dialogConfirmButton,
-            )}>
-            {t('common.Ok')}
+            variant="outlined"
+            color="primary"
+            size="small"
+            onClick={handleCopyScript}
+            startIcon={<div className={classes.copyIcon}>{copyStatus?'\uE134':'\ue0b0'}</div>}
+          >
+            {copyStatus?'Copied':'Copy'}
           </Button>
-        )
-      },
-      delete: {
-        title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
-        showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('campaigns.GridButtonColumnResource2.ConfirmText')}
+          <Typography style={{fontWeight: 'bold', fontSize: 14}}>
+            {t('notifications.headTagOpenText')} {'<head>'}
           </Typography>
-        ),
-        onConfirm: async () => {
-          instence
-            .delete(`email/deleteEmailCampaign/${dialogType.data.CampaignID}`)
-            .then(res => {
-              console.log("Delete res",res)
-              getData()
-            })
-            .catch(err => console.log('delete Error',err))
-          handleClose()
-        }
-      },
-      duplicate: {
-        title: t('campaigns.dialogDuplicateTitle'),
-        showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('campaigns.dialogDuplicateContent')}
+          <pre>
+            <div ref={refScriptCode} style={{background: '#eee', fontSize: 12, wordBreak: 'break-all', overflow: 'auto'}}>
+              {renderScriptCode()}
+            </div>
+          </pre>
+          <Typography style={{fontWeight: 'bold', fontSize: 14}}>
+            {t('notifications.headTagClosesText')} {'</head>'}
           </Typography>
-        ),
-        onConfirm: () => {
-          instence
-            .put(`email/cloneCampaign/${dialogType.data}`)
-            .then(res => {
-              console.log("duplicate res",res)
-              getData()
-            })
-            .catch(err => console.log('duplicate Error',err))
-          handleClose()
-        }
+        </Box>
+      ),
+      onConfirm: () => {
+        dispatch(updateScriptPath(scriptPath));
       }
     }
+  }
 
-    const currentDialog=(dialogType&&dialogContent[dialogType.type])||{}
+  const renderDialog=() => {
+    if (!dialogType || !dialogType.data) {
+      return;
+    }
+
+    let data = dialogType.data;
+    let dialog = {};
+
+    switch (dialogType.type) {
+      case 'preview':
+        dialog = renderPreview(data);
+        break;
+      case 'duplicate':
+        dialog = renderDuplicate(data);
+        break;
+      case 'groupsById':
+        dialog = renderGroupsById(data);
+        break;
+        case 'groups':
+        dialog = renderGroups(data);
+        break;
+      case 'delete':
+        dialog = renderDelete(data);
+        break;
+      case 'restore':
+        dialog = renderRestore(data);
+        break;
+      case 'implement':
+        dialog = renderImplement(data);
+        break;
+    }
+
     return (
-      dialogType&&<Dialog
+      <Dialog
         classes={classes}
         open={dialogType}
-        onClose={handleClose}
-        {...currentDialog}>
-        {currentDialog.content}
+        onClose={handleDialogClose}
+        {...dialog}>
+        {dialog.content}
       </Dialog>
-    )
+    );
   }
+
   return (
     <DefaultScreen
-      currentPage='newsletter'
+      currentPage='notifications'
       classes={classes}>
       {renderHeader()}
       {renderSearchSection()}

@@ -8,7 +8,6 @@
   },
   "buttons": {
     "createNotification": "Create Notification",
-    "recover": "Recover Deleted",
     "implementScript": "Implement Script",
     "groups": "Groups",
     "send": "Send",
@@ -41,7 +40,30 @@
     "created": "Created",
     "stopped": "Stopped",
     "optin": "Optin",
-    "approved": "Approved"
+    "approved": "Approved",
+    "failed": "Failed",
+    "pending": "Pending"
   },
-  "notifications": "Notifications"
+  "notifications": "Notifications",
+  "restoreDeleted": "Restore Deleted",
+  "deleteConfirmation": "You are going to delete this record,",
+  "areYouSure": "Are you sure?",
+  "duplicateTitle": "Duplicate Notification?",
+  "duplicateConfirmation": "Do you want to duplicate this notification?",
+  "deleteTitle": "Delete Notification",
+  "groupsByIdTitle": "Notification Groups",
+  "restoreTitle": "Select the notifications you want to restore",
+  "implementTitle": "Code Implementation for notification permissions",
+  "downloadThe": "Download the ",
+  "attachedScript": "attached script",
+  "chooseSaveLocation": "Choose where to save the file: ",
+  "siteMainDirectory": "Main directory of the site",
+  "anotherDirectory": "Another directory",
+  "enterDirectory": "Enter directory",
+  "example": "Example",
+  "copyLineCodeText": "Copy the following lines of code and paste them in the last line before closing the \"head\" element",
+  "payAttentionText": "*Pay attention. Notifications will only work on sites with an SSL certificate",
+  "headTagOpenText": "(Head tag opens)",
+  "headTagClosesText": "(Head tag closes)"
+
 }

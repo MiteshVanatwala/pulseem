@@ -102,7 +102,7 @@ export const Dialog=({
   const renderChildren=() => {
     return (
       <Box
-        className={classes.dialogChildren}>
+        className={classes.dialogChildren}   style={{overflow: 'auto', maxHeight: 'calc(65vh)'}}>
         {children}
       </Box>)
   }

@@ -1,4 +1,4 @@
-export {TablePagination} from './TablePadington'
+export {TablePagination} from './TablePagination'
 export {ManagmentIcon} from './ManagmentIcon'
 export {DateField} from './DateField'
 export {Dialog} from './Dialog'

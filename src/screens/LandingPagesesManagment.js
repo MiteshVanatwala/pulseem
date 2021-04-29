@@ -10,7 +10,7 @@ import {
   GroupsIcon,PreviewIcon,ReportsIcon,CopyIcon,EmbedCodeIcon,SurveryResultsIcon
 } from '../assets/images/managment/index'
 import {
-  TablePadington,ManagmentIcon,RestorDialogContent,Dialog,PopMassage,SearchField
+  TablePagination,ManagmentIcon,RestorDialogContent,Dialog,PopMassage,SearchField
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {getLandingPagesData} from '../redux/reducers/landingPagesSlice'
@@ -501,9 +501,9 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderTablePadington=() => {
+  const renderTablePagination=() => {
     return (
-      <TablePadington
+      <TablePagination
         classes={classes}
         rows={landingPagesData.length}
         rowsPerPage={rowsPerPage}
@@ -626,7 +626,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}
-      {renderTablePadington()}
+      {renderTablePagination()}
       {renderDialog()}
     </DefaultScreen>
   )

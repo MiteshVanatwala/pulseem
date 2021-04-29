@@ -10,7 +10,7 @@ import {
   GroupsIcon,PreviewIcon,ReportsIcon,CopyIcon
 } from '../assets/images/managment/index'
 import {
-  TablePadington,ManagmentIcon,DateField,Dialog,PopMassage,SearchField,RestorDialogContent
+  TablePagination,ManagmentIcon,DateField,Dialog,PopMassage,SearchField,RestorDialogContent
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {getNewslatterData} from '../redux/reducers/newsletterSlice'
@@ -41,7 +41,6 @@ const NewsletterManagnentScreen=({classes}) => {
   const [restoreArray,setRestoreArray]=useState([])
   const history=useHistory()
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
-  const history=useHistory()
   const dispatch=useDispatch()
   moment.locale(language)
 
