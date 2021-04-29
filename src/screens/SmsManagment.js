@@ -670,7 +670,7 @@ const SmsManagnentScreen=({classes}) => {
   }
   return (
     <DefaultScreen
-      currentPage='newsletter'
+      currentPage='sms'
       classes={classes}>
       {renderHeader()}
       {renderSearchLine()}
