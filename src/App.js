@@ -42,16 +42,8 @@ const renderRoutes=(classes,history) => {
       //}}
       />
       <Route
-        path={`/notifications`}
-        render={props => <NotificationManagement {...props} classes={classes} />}
-      />
-      <Route
         path={`/notifications/edit/:notificationID`}
         component={transferUrl('notifications/Edit/','notification')}
-      />
-      <Route
-        path={`/notifications/create`}
-        component={transferUrl('notifications/Create')}
       />
       <Route
         path={`/SendCampaign/:campaignID`}
@@ -247,7 +239,7 @@ const renderRoutes=(classes,history) => {
       {/* Notifications */}
       <Route
         path={`/Notification`}
-        component={transferUrl('/Pulseem/Notification.aspx?t=main')}
+        render={props => <NotificationManagement {...props} classes={classes} />}
       />
       <Route
         path={`/Notification/create`}

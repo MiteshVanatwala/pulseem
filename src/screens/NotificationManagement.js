@@ -299,7 +299,7 @@ const NotificationManagement=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/notifications/create')}
+            onClick={() => history.push('/Notification/create')}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
