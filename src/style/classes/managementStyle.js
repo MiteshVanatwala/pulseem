@@ -377,6 +377,37 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   grayTextCell: {
     'WebkitLineClamp': 1,
     color: '#7F7F7F'
+  },
+  avatarIcon: {
+    fontFamily: 'pulseemicons',
+    color: '#fff',
+    fontSize: 15
+  },
+  checkIcon: {
+    backgroundColor: 'green',
+    width: 14,
+    height: 14
+  },
+  redIcon: {
+    backgroundColor: 'darkred',
+    width: 14,
+    height: 14
+  },
+  newLine: {
+    whiteSpace: 'pre-line'
+  },
+  contactUs: {
+    fontSize: 12,
+    marginTop: 20
+  },
+  verifyLink: {
+    paddingLeft: 5,
+    fontSize: 12,
+    textDecoration: 'underline',
+    color: '#000',
+    '&:hover': {
+      color: 'darkred'
+    }
   }
 
 })

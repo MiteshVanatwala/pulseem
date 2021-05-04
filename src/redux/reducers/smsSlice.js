@@ -51,6 +51,37 @@ export const getSmsAuthorizationData=createAsyncThunk(
     }
   })
 
+export const getAuthorizeNumbers=createAsyncThunk(
+  'GetRelatedSubAccountNumber',async (_,thunkAPI) => {
+    try {
+      const response=await instence.get(`authorization/getAuthorizeNumbers`, { subID: -1 });
+      return JSON.parse(response.data)
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  })
+
+export const sendVerificationCode=createAsyncThunk(
+  'authorization/newAuthorizeNumbers',async (data,thunkAPI) => {
+    const { userName = '', number = '' } = data || {};
+    try {
+      const response=await instence.post(`authorization/newAuthorizeNumbers/${userName}/${number}`);
+      return JSON.parse(response.data)
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  })
+
+export const verifyCode=createAsyncThunk(
+  'authorization/newAuthorizeNumbers',async (optinCode,thunkAPI) => {
+    try {
+      const response=await instence.post(`authorization/newAuthorizeNumberInsertCode/${optinCode}`);
+      return JSON.parse(response.data)
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  })
+
 export const smsSlice=createSlice({
   name: 'newsletter',
   initialState: {
