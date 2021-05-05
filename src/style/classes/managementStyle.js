@@ -1,7 +1,7 @@
 const iconWidth={
   sm: 20,
-  md: 30,
-  lg: 30
+  md: 25,
+  lg: 25
 }
 
 const flex12={
@@ -12,7 +12,7 @@ const flex12={
 
 export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   managementTitle: {
-    fontSize: '2.5rem',
+    fontSize: '2rem',
     color: '#333333',
     paddingBlock: '0.5rem',
     fontFamily: "Assistant",
@@ -26,7 +26,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     fontWeight: 'bold',
     fontSize: 20,
     marginBlock: 0,
-    borderBottom: 0
+    borderBottom: 0,
+    padding: '16px!important'
   },
   tableCellBody: {
     borderInlineEnd: '1px solid #797979',
@@ -39,7 +40,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   tableCellRoot: {
     display: 'flex',
     flexDirection: 'column',
-    minWidth: 100
+    minWidth: 100,
+    padding: '0 16px'
   },
   tableRowRoot: {
     display: 'flex',
@@ -74,7 +76,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     padding: '0.8rem 1.1rem 0.2rem'
   },
   managmentIcon: {
-    width: iconWidth[windowSize]
+    width: iconWidth[windowSize],
+    margin: 'auto'
   },
   managmentIconDisable: {
     opacity: 0.5
@@ -163,7 +166,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     padding: 0
   },
   tableContainer: {
-    border: '1px solid #7F7F7F'
+    border: '1px solid #7F7F7F',
+    overflow: 'hidden'
   },
   flex3: {
     flex: 3
@@ -216,7 +220,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     },
     '& .MuiSelect-icon': {
       color: '#000',
-      top: 0
+      top: 0,
+      marginRight: -5
     },
     '& .MuiInput-underline': {
       '&:before': {
@@ -275,11 +280,13 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   tablePadingtonArrow: {
     transform: isRTL? 'rotateY(0deg)':'rotateY(180deg)',
-    marginInlineStart: 10
+    marginInlineStart: 10,
+    padding: 5
   },
   tablePadingtonArrowOppisite: {
     transform: isRTL? 'rotateY(180deg)':'rotateY(0deg)',
-    marginInlineEnd: 10
+    marginInlineEnd: 10,
+    padding: 5
   },
   tablePadingtonGridItem: {
     display: 'flex',

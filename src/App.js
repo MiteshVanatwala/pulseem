@@ -306,12 +306,14 @@ const App=() => {
     const setWindowWidth=() => {
       const {innerWidth}=window
       let windowSize='xs'
-      if(innerWidth>975&&innerWidth<1200)
+      if(innerWidth>769&&innerWidth<1024)
         windowSize='sm'
-      else if(innerWidth>=1200&&innerWidth<1300)
+      else if(innerWidth>=1025&&innerWidth<1200)
         windowSize='md'
-      else if(innerWidth>=1300)
+      else if(innerWidth>=1201&&innerWidth<1400 )
         windowSize='lg'
+      else if(innerWidth>=1401)
+        windowSize='xl'
       dispatch(setWindowSize(windowSize))
     }
 

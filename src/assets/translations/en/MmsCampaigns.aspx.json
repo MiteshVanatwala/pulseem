@@ -382,7 +382,7 @@
     "Text": "Search"
   },
   "restoreResource": {
-    "Text": "Restore"
+    "Text": "Restore Delete"
   },
   "CampaignNameResource1": {
     "HeaderText": "Campaign Name"
@@ -448,5 +448,5 @@
   },
   "CampsAmountLimit": "This account has reached maximum MMS campaigns limit, please contact our support to upgrade your account.",
   "create": "Create MMS",
-  "compagins": "Compagins"
+  "campaign": "Campaigns"
 }

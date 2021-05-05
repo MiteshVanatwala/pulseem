@@ -120,6 +120,8 @@ const MmsManagnentScreen=({classes}) => {
             value={toDate}
             onChange={handleToDate}
             placeholder={t('mms.locToDateResource1.Text')}
+            disabled={fromDate?false: true}
+            minDate={fromDate?fromDate: null}
           />
         </Grid>
 
@@ -179,7 +181,7 @@ const MmsManagnentScreen=({classes}) => {
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${mmsData.length} ${t('mms.compagins')}`}
+            {`${mmsData.length} ${t('mms.campaign')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -190,7 +192,7 @@ const MmsManagnentScreen=({classes}) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("campaigns.camapignName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("common.CampaignName")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.recipients")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("mms.CreditsResource1.HeaderText")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
@@ -321,7 +323,6 @@ const MmsManagnentScreen=({classes}) => {
   }
 
   const renderRecipientsCell=(recipients) => {
-    if(recipients===0) return null
 
     return (
       <>
