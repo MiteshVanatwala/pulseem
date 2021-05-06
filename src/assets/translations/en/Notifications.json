@@ -46,9 +46,8 @@
   },
   "notifications": "Notifications",
   "restoreDeleted": "Restore Deleted",
-  "deleteConfirmation": "You are going to delete this record,",
-  "areYouSure": "Are you sure?",
-  "duplicateTitle": "Duplicate Notification?",
+  "deleteConfirmation": "Do you want to delete this notification?",
+  "duplicateTitle": "Duplicate Notification",
   "duplicateConfirmation": "Do you want to duplicate this notification?",
   "deleteTitle": "Delete Notification",
   "groupsByIdTitle": "Notification Groups",
@@ -59,11 +58,14 @@
   "chooseSaveLocation": "Choose where to save the file: ",
   "siteMainDirectory": "Main directory of the site",
   "anotherDirectory": "Another directory",
-  "enterDirectory": "Enter directory",
+  "enterDirectory": "Enter path",
   "example": "Example",
   "copyLineCodeText": "Copy the following lines of code and paste them in the last line before closing the \"head\" element",
   "payAttentionText": "*Pay attention. Notifications will only work on sites with an SSL certificate",
   "headTagOpenText": "(Head tag opens)",
-  "headTagClosesText": "(Head tag closes)"
-
+  "headTagClosesText": "(Head tag closes)",
+  "groupName": "Group Name",
+  "recipients": "Recipients",
+  "copy": "Copy",
+  "copied": "Copied"
 }

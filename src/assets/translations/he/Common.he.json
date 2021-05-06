@@ -424,5 +424,8 @@
   "page": "עמוד",
   "outOf": "מתוך",
   "rowNumber": "מספר שורות",
-  "clear": "נקה"
+  "clear": "נקה",
+  "draft": "טיוטה",
+  "deleted": "מחוק",
+  "failedStatus": "נכשל"
 }
