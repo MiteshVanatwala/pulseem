@@ -1,73 +1,61 @@
-import React,{useEffect} from 'react';
+import React, { useEffect } from 'react';
 import NewsletterManagnent from './screens/NewsletterManagnent';
 import LandingPagesesManagment from './screens/LandingPagesesManagment'
-import {create} from 'jss';
+import { create } from 'jss';
 import rtl from 'jss-rtl';
-import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
+import { StylesProvider, jssPreset, MuiThemeProvider } from '@material-ui/core/styles';
 import i18n from './i18n'
-import {BrowserRouter,useParams,Route} from 'react-router-dom';
-import {useSelector,useDispatch} from 'react-redux';
-import {setWindowSize} from './redux/reducers/coreSlice'
-import {getTheme} from './style/theme'
-import {useClasses} from './style/classes/index'
-import {MuiPickersUtilsProvider} from '@material-ui/pickers';
+import { BrowserRouter, useParams, Route } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { setWindowSize } from './redux/reducers/coreSlice'
+import { getTheme } from './style/theme'
+import { useClasses } from './style/classes/index'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-import {useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/NotificationManagement';
+import NotificationItem from './screens/Notifications/NotificationItem';
 
-const renderRoutes=(classes,history) => {
-  const transferUrl=(url='',param='') => () => {
-    const {campaignID,automationID,id, notificationID}=useParams()
-    const addParam={
+const renderRoutes = (classes, history) => {
+  
+  const transferUrl = (url = '', param = '') => () => {
+    const { campaignID, automationID, id, notificationID } = useParams()
+    const addParam = {
       campaign: campaignID,
       automation: automationID,
       notification: notificationID,
       id: id
     }
-    window.location.href=`https://www.pulseemdev.co.il/${url}${addParam[param]||''}`
+    window.location.href = `https://www.pulseemdev.co.il/${url}${addParam[param] || ''}`
     return null
   }
 
   return (
     <>
-      
-      <Route 
-        exact
-        path="/"
-        render={props => <LandingPagesesManagment {...props} classes={classes} />}
-      //component={() => {
-      //  history.push('/Campaigns')
-      //  return null
-      //}}
-      />
-      <Route
-        path={`/notifications/edit/:notificationID`}
-        component={transferUrl('notifications/Edit/','notification')}
-      />
       <Route
         path={`/SendCampaign/:campaignID`}
-        component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=','campaign')}
+        component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'campaign')}
       />
       <Route
         path={`/PreviewCampaign/:campaignID`}
-        component={transferUrl('/Pulseem/PreviewCampaign.aspx?CampaignID=','campaign')}
+        component={transferUrl('/Pulseem/PreviewCampaign.aspx?CampaignID=', 'campaign')}
       />
       <Route
         path={`/Editor/CampaignEdit/:campaignID`}
-        component={transferUrl('/Editor/CampaignEdit/','campaign')}
+        component={transferUrl('/Editor/CampaignEdit/', 'campaign')}
       />
       <Route
         path={`/DuplicateCampign/:campaignID`}
-        component={transferUrl('/DuplicateCampign/','campaign')}
+        component={transferUrl('/DuplicateCampign/', 'campaign')}
       />
       <Route
         path={`/CampaignStatistics/:campaignID`}
-        component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=','campaign')}
+        component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
       />
       <Route
         path={`/CreateAutomations/:automationID`}
-        component={transferUrl('/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=','automation')}
+        component={transferUrl('/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=', 'automation')}
       />
       <Route
         path={`/homepage`}
@@ -154,12 +142,12 @@ const renderRoutes=(classes,history) => {
 
       <Route
         path='/NewWebForm/NewFormEdit/:id'
-        component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/','id')}
+        component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
       />
 
       <Route
         path="/ClientSearchResult/:id"
-        component={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=','id')}
+        component={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=', 'id')}
       />
 
       <Route
@@ -238,12 +226,18 @@ const renderRoutes=(classes,history) => {
       />
       {/* Notifications */}
       <Route
+        exact
         path={`/Notification`}
         render={props => <NotificationManagement {...props} classes={classes} />}
       />
       <Route
-        path={`/Notification/create`}
-        component={transferUrl('/Pulseem/Notification.aspx?t=add')}
+        exact
+        path={`/NotificationItem/`}
+        render={props => <NotificationItem props={props} classes={classes} />}
+      />
+      <Route
+        path={`/NotificationItem/:id`}
+        render={props => <NotificationItem props={props} classes={classes} />}
       />
       {/* Settings */}
       <Route
@@ -274,7 +268,7 @@ const renderRoutes=(classes,history) => {
       <Route
         path={`/Support`}
         component={() => {
-          window.open("https://www.pulseem.co.il/Pages/Home.aspx?action=support","_blank")
+          window.open("https://www.pulseem.co.il/Pages/Home.aspx?action=support", "_blank")
           return null
         }}
       />
@@ -282,36 +276,36 @@ const renderRoutes=(classes,history) => {
   )
 }
 
-const App=() => {
-  const dispatch=useDispatch()
+const App = () => {
+  const dispatch = useDispatch()
   useEffect(() => {
-    const setWindowWidth=() => {
-      const {innerWidth}=window
-      let windowSize='xs'
-      if(innerWidth>975&&innerWidth<1200)
-        windowSize='sm'
-      else if(innerWidth>=1200&&innerWidth<1300)
-        windowSize='md'
-      else if(innerWidth>=1300)
-        windowSize='lg'
+    const setWindowWidth = () => {
+      const { innerWidth } = window
+      let windowSize = 'xs'
+      if (innerWidth > 975 && innerWidth < 1200)
+        windowSize = 'sm'
+      else if (innerWidth >= 1200 && innerWidth < 1300)
+        windowSize = 'md'
+      else if (innerWidth >= 1300)
+        windowSize = 'lg'
       dispatch(setWindowSize(windowSize))
     }
 
-    window.addEventListener('resize',setWindowWidth)
+    window.addEventListener('resize', setWindowWidth)
 
     setWindowWidth()
-  },[dispatch])
-  const {language,isRTL,windowSize}=useSelector(state => state.core)
-  const classes=useClasses(windowSize,isRTL)()
+  }, [dispatch])
+  const { language, isRTL, windowSize } = useSelector(state => state.core)
+  const classes = useClasses(windowSize, isRTL)()
   i18n.changeLanguage(language)
-  const theme=getTheme(language)
-  const history=useHistory()
+  const theme = getTheme(language)
+  const history = useHistory()
 
   return (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
-        <div dir={isRTL? 'rtl':'ltr'}>
-          {renderRoutes(classes,history)}
+        <div dir={isRTL ? 'rtl' : 'ltr'}>
+          {renderRoutes(classes, history)}
         </div>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider>
@@ -319,8 +313,8 @@ const App=() => {
   )
 }
 
-const AppContainer=() => {
-  const jss=create({plugins: [...jssPreset().plugins,rtl()]});
+const AppContainer = () => {
+  const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
 
   return (
     <StylesProvider jss={jss}>

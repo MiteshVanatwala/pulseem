@@ -64,6 +64,6 @@
   "copyLineCodeText": "Copy the following lines of code and paste them in the last line before closing the \"head\" element",
   "payAttentionText": "*Pay attention. Notifications will only work on sites with an SSL certificate",
   "headTagOpenText": "(Head tag opens)",
-  "headTagClosesText": "(Head tag closes)"
-
+  "headTagClosesText": "(Head tag closes)",
+  "createContent": "Create New Push Notification"
 }

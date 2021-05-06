@@ -1,0 +1,4 @@
+.MuiInput-underline:before,
+.MuiInput-underline:after{
+    border-bottom: none !important;
+}

@@ -6,6 +6,7 @@ import mmsCampaigns from './MmsCampaigns.aspx.he.json'
 import smsCampaigns from './SMSCampaigns.aspx.he.json'
 import master from './Pulseem.master.he.json'
 import appBar from './AppBar.he.json'
+import notifications from './Notifications.json'
 
 export const he={
   automations,
@@ -15,5 +16,6 @@ export const he={
   mmsCampaigns,
   smsCampaigns,
   appBar,
-  master
+  master,
+  notifications
 }
