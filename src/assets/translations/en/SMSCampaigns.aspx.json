@@ -475,5 +475,6 @@
   "didNotReceived": "Did you not receive?",
   "resend": "Resend",
   "verificationCodeError": "The code is incorrect, please try again or select resend",
-  "numberError": "Enter minimum of 10 numbers"
+  "numberError": "Enter minimum of 10 numbers",
+  "verifyNumber": "Verify Number"
 }

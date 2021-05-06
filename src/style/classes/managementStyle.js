@@ -401,7 +401,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     marginTop: 20
   },
   verifyLink: {
-    paddingLeft: 5,
+    paddingInlineStart: 5,
     fontSize: 12,
     textDecoration: 'underline',
     color: '#000',
