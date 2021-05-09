@@ -1,4 +1,4 @@
-const appBarTitleTextSize={xs: 20,sm: 17,md: 17,lg: 20}
+const appBarTitleTextSize={xs: 20,sm: 17,md: 15,lg: 17, xl: 20}
 
 export const appBarStyle=(windowSize,isRTL,theme) => ({
   appBarItemContainer: {

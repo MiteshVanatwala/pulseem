@@ -327,7 +327,7 @@
     "Text": "במסך זה מוצגת רשימת הקמפיינם במערכת."
   },
   "locSearchCampaignResource1": {
-    "Text": "חפש"
+    "Text": "חיפוש"
   },
   "locToDateResource1": {
     "Text": "עד תאריך"
@@ -448,5 +448,5 @@
   },
   "CampsAmountLimit": "חשבון זה ניצל את מכסת קמפיינים, צור קשר עם תמיכה שלנו על מנת לשדרג את חשבונך.",
   "create": "צור MMS",
-  "compagins": "קמפיינים"
+  "campaigns": "קמפיינים"
 }

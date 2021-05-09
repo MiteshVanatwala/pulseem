@@ -14,6 +14,7 @@ import {ReactComponent as QuestionIcon} from '../../assets/images/question.svg'
 import {FaBars,FaTimes} from 'react-icons/fa';
 import {getRoutes,getSettingsItem} from '../../helpers/routes'
 import {useHistory} from "react-router-dom";
+import {getCookie,setCookie} from '../../helpers/functions';
 
 const AppBarItem=({
   item,
@@ -101,8 +102,10 @@ const AppBarItem=({
 }
 
 const LanguageSelector=({classes}) => {
-  const {language}=useSelector(state => state.core)
-  const dispatch=useDispatch()
+  const cookieData=getCookie('language');
+  const language=cookieData&&cookieData!==undefined? cookieData:'he';
+  const dispatch=useDispatch();
+  dispatch(setLanguage(language));
   const languages=[
     {
       title: "עברית",
@@ -117,7 +120,8 @@ const LanguageSelector=({classes}) => {
   const item={title: languages.find(lang => lang.value===language).title,options: languages}
 
   const changeLanguage=option => {
-    dispatch(setLanguage(option.value))
+    setCookie('language',option.value,{'max-age': 3600});
+    dispatch(setLanguage(option.value));
   }
 
   return (
@@ -167,7 +171,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
           classes={classes}
           item={route}
           chosen={route.key===currentPage}
-          showIcon={windowSize==='sm'}
+          showIcon={windowSize==='sm'||windowSize==='md'}
           onMainClick={navigate}
           onInnerClick={navigate}
         />

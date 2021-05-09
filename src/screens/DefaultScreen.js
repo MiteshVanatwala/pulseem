@@ -4,14 +4,16 @@ import {Container} from '@material-ui/core'
 
 const DefaultScreen=({classes,children,currentPage='',}) => {
   return (
-    <div style={{width: '100vw',height: '100vh'}}>
+    <div>
       <TopAppBar
         classes={classes}
         currentPage={currentPage}
       />
       {/*<Drawer classes={classes} />*/}
-      
-      <Container maxWidth='xl' className={classes.mainContainer}>
+      <Container
+        maxWidth='xl'
+        //className={classes.defaultScreen}
+        style={{maxHeight: 'calc(100vh - 53px)'}}>
         {children}
       </Container>
     </div>

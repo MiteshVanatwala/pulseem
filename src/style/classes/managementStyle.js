@@ -1,18 +1,18 @@
 const iconWidth={
   sm: 20,
-  md: 30,
-  lg: 30
+  md: 25,
+  lg: 25
 }
 
 const flex12={
   sm: 5,
   md: 7,
-  lg: 12
+  lg: 6
 }
 
 export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   managementTitle: {
-    fontSize: '2.5rem',
+    fontSize: '2rem',
     color: '#333333',
     paddingBlock: '0.5rem',
     fontFamily: "Assistant",
@@ -26,7 +26,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     fontWeight: 'bold',
     fontSize: 20,
     marginBlock: 0,
-    borderBottom: 0
+    borderBottom: 0,
+    padding: '16px!important'
   },
   tableCellBody: {
     borderInlineEnd: '1px solid #797979',
@@ -61,10 +62,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   tableCellRoot: {
     display: 'flex',
-    flexDirection: 'column'
-  },
-  minWidth50: {
-    minWidth: '50px'
+    flexDirection: 'column',
+    minWidth: 100,
+    padding: '0 16px'
   },
   tableRowRoot: {
     display: 'flex',
@@ -107,7 +107,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     padding: '0.8rem 1.1rem 0.2rem'
   },
   managmentIcon: {
-    width: iconWidth[windowSize]
+    width: iconWidth[windowSize],
+    margin: 'auto'
   },
   managmentIconDisable: {
     opacity: 0.5
@@ -251,8 +252,11 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     height: 0,
     padding: 0
   },
+  tableStyle: {
+    overflowX: 'visible'
+  },
   tableContainer: {
-    border: '1px solid #7F7F7F'
+    border: '1px solid #7F7F7F',
   },
   flex7: {
     flex: 7
@@ -261,18 +265,18 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     flex: 3
   },
   flex15: {
-    flex: 1.5
+    flex: 1
   },
   flex1: {
     flex: 1
   },
   flex5: {
-    flex: 5,
+    flex: 4,
     borderBottom: 0,
     justifyContent: 'center'
   },
   flex12: {
-    flex: flex12[windowSize]||12,
+    flex: flex12[windowSize]||5,
     borderBottom: 0,
     justifyContent: 'center'
   },
@@ -311,7 +315,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     },
     '& .MuiSelect-icon': {
       color: '#000',
-      top: 0
+      top: 0,
+      marginRight: -5
     },
     '& .MuiInput-underline': {
       '&:before': {
@@ -370,16 +375,19 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   tablePadingtonArrow: {
     transform: isRTL? 'rotateY(0deg)':'rotateY(180deg)',
-    marginInlineStart: 10
+    marginInlineStart: 10,
+    padding: 5
   },
   tablePadingtonArrowOppisite: {
     transform: isRTL? 'rotateY(180deg)':'rotateY(0deg)',
-    marginInlineEnd: 10
+    marginInlineEnd: 10,
+    padding: 5
   },
   tablePadingtonGridItem: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 100
   },
   tablePadingtonGridContainer: {
     paddingBlock: 10,
@@ -426,7 +434,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   groupsTableHead: {
     padding: 0,
     background: '#ccc'
-    
+
   },
   gruopsDialogText: {
     fontSize: 16
@@ -512,7 +520,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     paddingBottom: 20
   },
   directoryField: {
-    display: 'flex', 
+    display: 'flex',
     flexWrap: 'wrap',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -522,8 +530,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     padding: '0 10px'
   },
   copyIcon: {
-    fontFamily: 'pulseemicons', 
-    fontSize: 10, 
+    fontFamily: 'pulseemicons',
+    fontSize: 10,
     padding: '0 5px'
   }
 

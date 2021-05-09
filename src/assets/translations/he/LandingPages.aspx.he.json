@@ -28,7 +28,7 @@
     "HeaderAbbr": "",
     "HeaderAxis": "",
     "HeaderImageUrl": "",
-    "HeaderText": "שם טופס הנחיתה",
+    "HeaderText": "שם דף הנחיתה",
     "HeaderTooltip": "",
     "HtmlEncode": "False",
     "SortExpression": ""
@@ -63,7 +63,7 @@
     "HeaderAbbr": "",
     "HeaderAxis": "",
     "HeaderImageUrl": "",
-    "HeaderText": "מחיקה",
+    "HeaderText": "מחק",
     "HeaderTooltip": "",
     "ImageUrl": "~/Images/Document 1 delete.png",
     "SortExpression": "",
@@ -316,7 +316,7 @@
   "HtmlPage": "טופס הטמעה",
   "StaticPage": "דף נחיתה",
   "ViewsResource1": {
-    "HeaderText": "הצגות"
+    "HeaderText": "צפיות"
   },
   "WebForm": "טופס הרשמה",
   "TypeNameResource1": {

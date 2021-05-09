@@ -92,7 +92,7 @@ const NewsletterManagnentScreen=({classes}) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          placeholder={t('campaigns.campaginName')}
+          placeholder={t('common.CampaignName')}
         />
       )
     }
@@ -105,7 +105,7 @@ const NewsletterManagnentScreen=({classes}) => {
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
             className={classes.textField}
-            placeholder={t('campaigns.campaginName')}
+            placeholder={t('common.CampaignName')}
           />
         </Grid>
 
@@ -124,6 +124,8 @@ const NewsletterManagnentScreen=({classes}) => {
             value={toDate}
             onChange={handleToDate}
             placeholder={t('campaigns.locToDateResource1.Text')}
+            disabled={fromDate? false:true}
+            minDate={fromDate? fromDate:null}
           />
         </Grid>
 
@@ -194,7 +196,7 @@ const NewsletterManagnentScreen=({classes}) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("campaigns.camapignName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("common.CampaignName")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.recipients")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
           <TableCell classes={{root: classes.tableCellRoot}} className={classes.flex12} ></TableCell>
@@ -270,7 +272,6 @@ const NewsletterManagnentScreen=({classes}) => {
           })
         }
       },
-    ],[
       {
         key: 'copy',
         icon: CopyIcon,
@@ -314,7 +315,8 @@ const NewsletterManagnentScreen=({classes}) => {
             data: CampaignID
           })
         }
-      },]
+      }
+    ]
     ]
     return (
       <Grid
@@ -374,7 +376,6 @@ const NewsletterManagnentScreen=({classes}) => {
   }
 
   const renderRecipientsCell=(recipients) => {
-    if(recipients===0) return null
 
     return (
       <>
@@ -515,7 +516,7 @@ const NewsletterManagnentScreen=({classes}) => {
 
   const renderTable=() => {
     return (
-      <TableContainer>
+      <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
           {windowSize!=='xs'&&renderTableHead()}
           {renderTableBody()}

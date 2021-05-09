@@ -122,6 +122,8 @@ const AutomationsManagnentScreen=({classes}) => {
             value={toDate}
             onChange={handleToDate}
             placeholder={t('mms.locToDateResource1.Text')}
+            disabled={fromDate? false:true}
+            minDate={fromDate? fromDate:null}
           />
         </Grid>
 
@@ -320,7 +322,6 @@ const AutomationsManagnentScreen=({classes}) => {
   }
 
   const renderRecipientsCell=(recipients=0) => {
-    if(!recipients||recipients===0) return null
 
     return (
       <>
@@ -480,7 +481,7 @@ const AutomationsManagnentScreen=({classes}) => {
 
   const renderTable=() => {
     return (
-      <TableContainer>
+      <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
           {windowSize!=='xs'&&renderTableHead()}
           {renderTableBody()}

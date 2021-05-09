@@ -356,12 +356,12 @@ const NotificationManagement=({classes}) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex5} align='center'>{t("notifications.notificationManagement")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex15} align='center'>{t("notifications.tblHeader.toSend")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex15} align='center'>{t("notifications.tblHeader.sent")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex15} align='center'>{t("notifications.tblHeader.failed")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex15} align='center'>{t("notifications.tblHeader.clicks")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex15} align='center'>{t("notifications.tblHeader.status")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("notifications.notificationManagement")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.toSend")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.sent")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.failed")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.clicks")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.status")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex12} ></TableCell>
         </TableRow>
       </TableHead>
@@ -558,37 +558,37 @@ const NotificationManagement=({classes}) => {
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={classes.flex5}>
+          className={classes.flex3}>
           {renderNameCell(row)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
-          className={classes.flex15}>
+          className={classes.flex1}>
           {renderTotalCell(row.SentCount)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
-          className={classes.flex15}>
+          className={classes.flex1}>
           {renderTotalCell(row.ReceivedCount)}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex15}>
+          className={classes.flex1}>
           {renderTotalCell(row,"error")}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={classes.flex15}>
+          className={classes.flex1}>
           {renderClickCell(row.ClickCount)}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={classes.flex15}>
+          className={classes.flex1}>
           {renderStatusCell(row.StatusID)}
         </TableCell>
         <TableCell
@@ -670,7 +670,7 @@ const NotificationManagement=({classes}) => {
 
   const renderTable=() => {
     return (
-      <TableContainer>
+      <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
           {windowSize!=='xs'&&renderTableHead()}
           {renderTableBody()}

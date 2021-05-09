@@ -144,6 +144,9 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   mainContainer: {
     maxHeight: 'calc(100vh - 53px)',
     overflow: 'auto'
+  },
+  defaultScreen: {
+    'overflow': 'visible'
   }
 
 })
