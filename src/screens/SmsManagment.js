@@ -559,9 +559,10 @@ const SmsManagnentScreen=({classes}) => {
 
     const handleSendVerificationCode=async () => {
       const value=(dialogType&&dialogType.type==='shortVerify'&&dialogType.data)? dialogType.data:number;
-      console.log("length",value)
+      console.log("length",value.length)
       if(!value||value.length<10) {
         handleNumberError(true);
+        return
       }
 
       const result=await dispatch(sendVerificationCode({userName: null,number: value}));
@@ -798,7 +799,7 @@ const SmsManagnentScreen=({classes}) => {
               value={(dialogType&&dialogType.type==='shortVerify'&&dialogType.data!=='')? dialogType.data:number}
               onChange={e => handleNumber(e.target.value)}
               size='small'
-              type='number'
+              type='tel'
               readOnly={dialogType&&dialogType.type==='shortVerify'&&dialogType.data!==''}
             />
             <br /><br />
