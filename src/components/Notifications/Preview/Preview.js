@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-    TextareaAutosize, TextField, Grid, Box, AppBar, Tab, Tabs, Typography
-} from '@material-ui/core'
+import {Grid, Box, Typography, AppBar, Tab, Tabs } from '@material-ui/core'
 import clsx from 'clsx';
 import './preview.styles.css';
 import PropTypes from 'prop-types';
-import { FaChrome, FaFirefox, FaMobile, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaChrome, FaFirefox, FaMobile } from 'react-icons/fa';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -20,13 +19,15 @@ function TabPanel(props) {
             {...other}
         >
             {value === index && (
-                <Box p={3}>
+                <Box>
                     {children}
                 </Box>
             )}
         </div>
     );
 }
+
+
 
 export const Preview = ({ classes, model, ShowRedirectButton }) => {
     const { t } = useTranslation();
@@ -70,7 +71,7 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
                     </div>
                 </div>
                 }
-                <div className={clsx(classes.footerWrapper)}>
+                <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : '' )}>
                     <div className={classes.iconWrapper}>
                         <div className={clsx(classes.borderSign, classes.icon)}
                             style={{
@@ -80,13 +81,15 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
                         </div>
                     </div>
                     <div className={classes.notificationContent}>
-                        <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}>{model.Title}</Typography>
+                        <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title}</b></Typography>
                         <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}>{model.Body}</Typography>
                     </div>
                 </div>
                 {
-                    ShowRedirectButton &&
-                    <div className={classes.RedirectButtonText}>{model.RedirectButtonText}</div>
+                    isChrome && ShowRedirectButton &&
+                    <div className={clsx(classes.RedirectButtonText, isChrome ? classes.chromeRedirectButtonText : '')}>
+                        <div className={isChrome ? classes.chromeRedirectInnerButton : ''}>{model.RedirectButtonText}</div>
+                    </div>
                 }
             </div>
         )
@@ -115,7 +118,7 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
                         </div>
                         }
                         <div className={classes.notificationContent}>
-                            <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}>{model.Title}</Typography>
+                            <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title}</b></Typography>
                             <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}>{model.Body}</Typography>
                         </div>
                     </div>
@@ -146,22 +149,20 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
 
     return (
         <Grid>
-            <Grid item xs={6} style={{ paddingRight: '25px', paddingLeft: '25px' }}>
-                <h3 className={classes.previewTitle}>{t("notifications.preview")}</h3>
-                <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
-                    <Tabs
-                        value={previewDeviceSelected}
-                        onChange={handleDeviceChange}
-                        variant="fullWidth"
-                        scrollButtons="off"
-                        aria-label="scrollable force tabs example"
-                    >
-                        <Tab className={classes.deviceSelector} icon={<FaChrome style={{ fontSize: '24px' }} />} {...a11yProps(0)} />
-                        <Tab className={classes.deviceSelector} icon={<FaFirefox style={{ fontSize: '24px' }} />} {...a11yProps(1)} />
-                        <Tab className={classes.deviceSelector} icon={<FaMobile style={{ fontSize: '24px' }} />} {...a11yProps(2)} />
-                    </Tabs>
-                </AppBar>
-            </Grid>
+            <h3 className={classes.previewTitle}>{t("notifications.preview")}</h3>
+            <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
+                <Tabs
+                    value={previewDeviceSelected}
+                    onChange={handleDeviceChange}
+                    variant="fullWidth"
+                    scrollButtons="off"
+                    aria-label="scrollable force tabs example"
+                >
+                    <Tab className={classes.deviceSelector} icon={<FaChrome style={{ fontSize: '24px' }} />} {...a11yProps(0)} />
+                    <Tab className={classes.deviceSelector} icon={<FaFirefox style={{ fontSize: '24px' }} />} {...a11yProps(1)} />
+                    <Tab className={classes.deviceSelector} icon={<FaMobile style={{ fontSize: '24px' }} />} {...a11yProps(2)} />
+                </Tabs>
+            </AppBar>
             <TabPanel value={previewDeviceSelected} index={0}>
                 {desktopPreview(true)}
             </TabPanel >

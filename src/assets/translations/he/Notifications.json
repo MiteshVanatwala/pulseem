@@ -79,5 +79,8 @@
   "saveAndContinue": "שמור והמשך",
   "saveAndExit": "שמור וצא",
   "save": "שמור",
-  "testSend": "שליחת ניסיון"
+  "testSend": "שליחת ניסיון",
+  "createContentText": "תמונות, אייקון וכפתור אופציונליים, אבל מומלץ לממשם על מנת לקבל תוצאות אופטימליות",
+  "titleLimitation": "כותרת (עד 50 תווים): ",
+  "bodyLimitation": "טקסט (עד 100 תווים): "
 }

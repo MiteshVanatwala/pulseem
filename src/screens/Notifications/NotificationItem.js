@@ -1,33 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../DefaultScreen'
-import {
-  Typography, Divider,
-  Button, TextField, Grid, TextareaAutosize, Switch, Box
-} from '@material-ui/core'
+import { Typography, Button, TextField, Grid, TextareaAutosize, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormLabel } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import 'moment/locale/he'
 import { Preview } from '../../components/Notifications/Preview/Preview';
-import { getNotificationById } from '../../redux/reducers/notificationSlice';
+import { getNotificationById, saveNotification, updateNotification, getApiToken } from '../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { useHistory } from "react-router-dom";
+import { PushService } from './init-push';
+import Picker from 'emoji-picker-react';
+import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
+
 
 function getSteps() {
   return ['Create content', 'Send Settings'];
 }
 
-
-
 const NotificationItem = ({ props, classes }) => {
   const dispatch = useDispatch();
   const { language } = useSelector(state => state.core)
   const { t } = useTranslation();
-  const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
   const history = useHistory();
   let isEditable = false;
   const { isRTL } = useSelector(state => state.core)
+
+  // State
   const [model, setModel] = useState({
     ID: 0,
     Name: "",
@@ -47,14 +47,28 @@ const NotificationItem = ({ props, classes }) => {
     RedirectButtonText: "",
   });
 
-  const [ShowRedirectButton, setRedirectButtonVisibillity] = useState(false);
+
+  const [activeStep, setActiveStep] = React.useState(0);
+  const [ShowRedirectButton, setRedirectButtonVisibillity] = React.useState(false);
+  const [apiToken, setApiToken] = useState(0);
+  const [chosenEmoji, setChosenEmoji] = useState(null);
+  const [inputFocus, setFocusOnInput] = useState(null);
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const [isEmojiShown, setShowEmoji] = useState(false);
 
   moment.locale(language);
+
+  const handleApiToken = async () => {
+    const apiToken = await dispatch(getApiToken());
+    const token = apiToken && apiToken.payload && apiToken.payload.PublicKey || '';
+    setApiToken(token);
+  }
 
   const getData = async () => {
     const notificationPayload = await dispatch(getNotificationById(props.match.params.id));
     setModel(notificationPayload.payload);
-    if (model.RedirectButtonText != '') {
+
+    if (notificationPayload.payload.RedirectButtonText != '') {
       setRedirectButtonVisibillity(true);
     }
   }
@@ -62,7 +76,10 @@ const NotificationItem = ({ props, classes }) => {
   useEffect(() => {
     if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
       getData();
+      handleApiToken();
       isEditable = true;
+
+
     }
     else {
       isEditable = false;
@@ -104,10 +121,112 @@ const NotificationItem = ({ props, classes }) => {
   }
 
   const handleNotificationTitle = (event) => {
-    setModel({ ...model, Title: event.target.value });
+    if (event.target.value.length <= 50) {
+      setModel({ ...model, Title: event.target.value });
+    }
+    event.target.value = event.target.value.substring(0, 50);
   }
   const handleNotificationText = (event) => {
-    setModel({ ...model, Body: event.target.value });
+    if (event.target.value.length <= 100) {
+      setModel({ ...model, Body: event.target.value });
+    }
+    event.target.value = event.target.value.substring(0, 100);
+  }
+
+  const handleDirection = (event) => {
+    setModel({ ...model, Direction: event.target.value })
+  }
+
+  // Emoji
+  const showEmoji = () => {
+    setShowEmoji(!isEmojiShown);
+  }
+  const onEmojiClick = (event, emojiObject) => {
+    setChosenEmoji(emojiObject);
+    const el = document.querySelector(`#${inputFocus}`);
+    if (el) {
+      let finalStr = '';
+      const textBefore = el.value.substring(0, cursorPosition);
+      const textAfter = el.value.substring(cursorPosition, el.value.length);
+      const valToReplace = el.value.substring(el.selectionStart, el.selectionEnd);
+
+      if (valToReplace != '') {
+        finalStr = el.value.replace(valToReplace, emojiObject.emoji);
+      }
+      else {
+        finalStr = `${textBefore}${emojiObject.emoji}${textAfter}`;
+      }
+
+      if (inputFocus == 'notificationTitle') {
+        setModel({ ...model, Title: finalStr });
+      }
+      else if (inputFocus == 'notificationText') {
+        setModel({ ...model, Body: finalStr });
+      }
+      else {
+        setModel({ ...model, RedirectButtonText: finalStr });
+      }
+    }
+  };
+
+  const handleTextFocus = (event) => {
+    setFocusOnInput(event.target.id);
+    const el = document.querySelector(`#${event.target.id}`);
+    setTimeout(() => {
+      const selection = el.selectionEnd - el.selectionStart;
+      if (selection == 0) {
+        setCursorPosition(el.selectionStart);
+      }
+    }, 100);
+
+  }
+
+  // Api calls
+  const save = (isExit, isContinue) => (event) => {
+    event.preventDefault();
+    if (!ShowRedirectButton) {
+      model.RedirectButtonText = '';
+    }
+    if (model && model.ID > 0) {
+      dispatch(updateNotification(model));
+    }
+    else {
+      dispatch(saveNotification(model));
+    }
+    if (isExit) {
+      history.push("/Notification");
+    }
+    else if (isContinue) {
+      setActiveStep(activeStep + 1);
+    }
+  }
+
+  // Test send 
+  const handleTestSend = () => {
+    PushService(apiToken).then((subscription) => {
+      if (subscription) {
+        const options = {
+          id: model.ID,
+          dir: model.Direction == 2 ? 'rtl' : 'ltr',
+          renotify: true,
+          body: model.Body,
+          icon: model.Icon,
+          image: model.Image,
+          title: model.Title,
+          vibrate: [200, 100, 200],
+          tag: "test",
+          badge: model.Icon,
+          redirect: model.RedirectURL
+        };
+
+        if (model.RedirectURL != '' && model.RedirectButtonText != '' && ShowRedirectButton) {
+          options.actions = [];
+          options.actions.push({ action: model.RedirectURL, title: model.RedirectButtonText });
+        }
+
+        subscription.showNotification(model.Title, options);
+      }
+    });
   }
 
   // HTML
@@ -144,26 +263,34 @@ const NotificationItem = ({ props, classes }) => {
               onChange={handleRedirectUrlChange}
             />
           </Grid>
-          <Grid item xs={2}>
+          <Grid item>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={ShowRedirectButton}
+                  color="primary"
+                  name="checkedB"
+                  inputProps={{ 'aria-label': 'primary checkbox' }}
+                  onChange={handleRedirectVisibillity}
+                />
+              }
+              label={t('notifications.redirectUrlButton')}
+            />
+          </Grid>
+          {ShowRedirectButton && <Grid item xs={2}>
             <TextField
               label={t('notifications.redirectUrlButton')}
-              id="outlined-margin-dense"
+              id="notificationButton"
               value={model && model.RedirectButtonText || ''}
               className={classes.textField}
               margin="dense"
               variant="outlined"
               onChange={handleRedirectButtonTextChange}
+              onFocus={handleTextFocus}
             />
           </Grid>
-          <Grid item xs={2}>
-            <Switch
-              checked={ShowRedirectButton}
-              color="primary"
-              name="checkedB"
-              inputProps={{ 'aria-label': 'primary checkbox' }}
-              onChange={handleRedirectVisibillity}
-            />
-          </Grid>
+          }
+
         </Grid>
         <Grid
           container
@@ -171,11 +298,14 @@ const NotificationItem = ({ props, classes }) => {
           justify="flex-start"
           alignItems="flex-start"
           className={classes.dialogButtonsContainer}>
-          <Grid item xs={4}>
+          <Grid item xs={4} style={{ marginTop: 90 }}>
             {notificationContent()}
           </Grid>
           <Grid item xs={4}>
-            <Preview classes={classes} model={model} ShowRedirectButton={ShowRedirectButton} />
+            <Preview classes={classes}
+              model={model}
+              ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText != ''}
+            />
           </Grid>
         </Grid>
       </Box>
@@ -213,56 +343,89 @@ const NotificationItem = ({ props, classes }) => {
 
   const notificationContent = () => {
     return (
-      <div className={classes.notification} id={model.ID}>
-        <div className={clsx(
-          classes.borderSign,
-          classes.dashed,
-          classes.notificationTop,
-          classes.notificationContainer
-        )}
-          style={{
-            backgroundImage: `url(${model.Image})`
-          }}>
-          {model == null || !model.Image ? chooseImage() : ""
-          }
-          <a href="#" className={clsx(classes.absTopRight, classes.hidden)} style={{ cursor: 'pointer' }}>X</a>
-        </div>
-        <div className={clsx(classes.footerWrapper, classes.dashed)}>
-          <div className={classes.iconWrapper}>
-            <div className={clsx(classes.borderSign, classes.dashed, classes.icon)}
-              style={{
-                backgroundImage: `url(${model.Icon})`
-              }}>
-              <div className={clsx(classes.flex, classes.flexCenter, classes.flexColumn)}
+      <div>
+        <div className={classes.notification} id={model.ID}>
+          <div className={clsx(
+            classes.borderSign,
+            classes.dashed,
+            classes.notificationTop,
+            classes.notificationContainer
+          )}
+            style={{
+              backgroundImage: `url(${model.Image})`
+            }}>
+            {model == null || !model.Image ? chooseImage() : ""
+            }
+            <a href="#" className={clsx(classes.absTopRight, classes.hidden)} style={{ cursor: 'pointer' }}>X</a>
+          </div>
+          <div className={clsx(classes.footerWrapper, classes.dashed)}>
+            <div className={classes.iconWrapper}>
+              <div className={clsx(classes.borderSign, classes.dashed, classes.icon)}
                 style={{
-                  fontSize: '30px', cursor: 'pointer'
+                  backgroundImage: `url(${model.Icon})`
                 }}>
-                {model == null || !model.Icon ? chooseIcon() : ""
-                }
+                <div className={clsx(classes.flex, classes.flexCenter, classes.flexColumn)}
+                  style={{
+                    fontSize: '30px', cursor: 'pointer'
+                  }}>
+                  {model == null || !model.Icon ? chooseIcon() : ""
+                  }
+                </div>
+                <a href="#" className={clsx(classes.absTopRight, classes.hidden)}>X</a>
               </div>
-              <a href="#" className={clsx(classes.absTopRight, classes.hidden)}>X</a>
+            </div>
+            <div className={classes.notificationContent}>
+              <TextField
+                aria-label=""
+                placeholder={t("notifications.ph_title")}
+                value={model.Title}
+                className={clsx(classes.transparent, classes.borderSign, classes.dashed)}
+                onChange={handleNotificationTitle}
+                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr' }}
+                onFocus={handleTextFocus}
+                id="notificationTitle"
+              />
+              <TextareaAutosize
+                rowsMax={4}
+                aria-label=""
+                placeholder={t("notifications.ph_body")}
+                value={model.Body}
+                className={clsx(classes.transparent, classes.borderSign, classes.dashed, classes.notificationText)}
+                onChange={handleNotificationText}
+                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr' }}
+                onFocus={handleTextFocus}
+                id="notificationText"
+              />
             </div>
           </div>
-          <div className={classes.notificationContent}>
-            <TextField
-              aria-label=""
-              placeholder={t("notifications.ph_title")}
-              value={model.Title}
-              className={clsx(classes.transparent, classes.borderSign, classes.dashed)}
-              onChange={handleNotificationTitle}
-            />
-            <TextareaAutosize
-              rowsMax={4}
-              aria-label=""
-              placeholder={t("notifications.ph_body")}
-              value={model.Body}
-              className={clsx(classes.transparent, classes.borderSign, classes.dashed, classes.notificationText)}
-              onChange={handleNotificationText}
-            />
-          </div>
+          {ShowRedirectButton && model.RedirectButtonText != '' ? redirectButton() : ''}
         </div>
-        {ShowRedirectButton ? redirectButton() : ''}
+        <Box pt={4} style={{ position: 'relative' }}>
+          <FormControl component="fieldset">
+            <RadioGroup defaultValue="2" aria-label="gender" name="customized-radios" className={classes.directionRadio}>
+              <FormControlLabel value="1" control={<Radio onChange={handleDirection} icon={<FaAlignLeft style={{ fontSize: 16 }} />} />} />
+              <FormControlLabel value="2" control={<Radio onChange={handleDirection} icon={<FaAlignRight style={{ fontSize: 16 }} />} />} />
+              <button className={classes.emojiIcon} onClick={showEmoji}></button>
+              {isEmojiShown && <Picker onEmojiClick={onEmojiClick} />}
+            </RadioGroup>
+          </FormControl>
+        </Box>
+        <Box pt={4}>
+          <b>{t("notifications.titleLimitation")}</b>
+          {model.Title.length}
+        </Box>
+        <Box pt={1}>
+          <b>{t("notifications.bodyLimitation")}</b>
+          {model.Body.length}
+        </Box>
       </div>
+
+    )
+  }
+
+  const StyledRadio = (props) => {
+    return (
+      <input type="radio" className={classes.directionRadio} name="direction" />
     )
   }
 
@@ -289,6 +452,7 @@ const NotificationItem = ({ props, classes }) => {
           </span>
           {t('notifications.createContent')}
         </Typography>
+        <Typography>{t('notifications.createContentText')}</Typography>
       </>
     )
   }
@@ -317,7 +481,7 @@ const NotificationItem = ({ props, classes }) => {
                         classes.backButton
                       )}
                       color="primary"
-                      onClick={handleNext}>
+                      onClick={handleTestSend}>
                       {t('notifications.testSend')}
                     </Button>
                   </Box>
@@ -345,7 +509,7 @@ const NotificationItem = ({ props, classes }) => {
                       classes.actionButton,
                       classes.actionButtonRed
                     )}
-                    style={{margin: '8px'}}
+                    style={{ margin: '8px' }}
                     onClick={handleCancel}
                   >
                     {t('notifications.cancel')}
@@ -359,8 +523,8 @@ const NotificationItem = ({ props, classes }) => {
                       classes.backButton
                     )}
                     color="primary"
-                    style={{margin: '8px'}}
-                    onClick={handleNext}>
+                    style={{ margin: '8px' }}
+                    onClick={save(false, false)}>
                     {t('notifications.save')}
                   </Button>
                   <Button
@@ -372,8 +536,8 @@ const NotificationItem = ({ props, classes }) => {
                       classes.backButton
                     )}
                     color="primary"
-                    style={{margin: '8px'}}
-                    onClick={handleNext}>
+                    style={{ margin: '8px' }}
+                    onClick={save(true, false)}>
                     {t('notifications.saveAndExit')}
                   </Button>
                   <Button
@@ -385,8 +549,8 @@ const NotificationItem = ({ props, classes }) => {
                       classes.backButton
                     )}
                     color="primary"
-                    style={{margin: '8px'}}
-                    onClick={handleNext}>
+                    style={{ margin: '8px' }}
+                    onClick={save(false, true)}>
                     {t('notifications.saveAndContinue')}
                   </Button>
                 </Box>

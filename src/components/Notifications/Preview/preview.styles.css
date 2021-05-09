@@ -1,4 +1,19 @@
 .MuiInput-underline:before,
-.MuiInput-underline:after{
+.MuiInput-underline:after {
     border-bottom: none !important;
+}
+
+.dialogButtonsContainer .MuiBox-root {
+    padding: 0 !important;
+}
+
+.direction-radio::before {
+    content: "aaa";
+    width: "100%";
+}
+
+.emoji-picker-react {
+    position: absolute !important;
+    top: 0 !important;
+    right: 100% !important;
 }

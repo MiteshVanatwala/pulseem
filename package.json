@@ -13,6 +13,8 @@
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "axios": "^0.21.1",
+    "emoji-picker-react": "^3.4.4",
+    "firebase": "^8.5.0",
     "i18next": "^19.9.2",
     "jss-rtl": "^0.3.0",
     "moment": "^2.29.1",

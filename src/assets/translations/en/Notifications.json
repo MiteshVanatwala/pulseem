@@ -65,5 +65,21 @@
   "payAttentionText": "*Pay attention. Notifications will only work on sites with an SSL certificate",
   "headTagOpenText": "(Head tag opens)",
   "headTagClosesText": "(Head tag closes)",
-  "createContent": "Create New Push Notification"
+  "createContent": "Create New Push Notification",
+  "redirectUrl": "Redirection Link",
+  "redirectUrlButton": "Readirection Link's button",
+  "ph_title": "Type title",
+  "ph_body": "Type text here",
+  "ph_chooseImage": "Select Image...",
+  "ph_chooseIcon": "Select Icon...",
+  "preview": "Preview:",
+  "cancel": "Cancel",
+  "back": "Back",
+  "saveAndContinue": "Save and Continue",
+  "saveAndExit": "Save and Exit",
+  "save": "Save",
+  "testSend": "Test Send",
+  "createContentText": "Image, icon and button are optional, but recommended for optional results",
+  "titleLimitation": "Title (up to 50 chars): ",
+  "bodyLimitation": "Text (up to 100 chars): "
 }

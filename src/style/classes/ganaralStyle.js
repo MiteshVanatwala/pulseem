@@ -14,6 +14,9 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
       maxWidth: '850px'
     }
   },
+  noPadding: {
+    padding: '0px !important'
+  },
   dialogIconContainer: {
     paddingTop: 60,
     paddingBottom: 15,
