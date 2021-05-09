@@ -61,6 +61,7 @@ const NotificationManagement=({classes}) => {
   const getData=() => {
     dispatch(getNotificationData());
   }
+  console.log('notificationData',notificationData)
 
   useEffect(getData,[dispatch]);
 
@@ -381,7 +382,7 @@ const NotificationManagement=({classes}) => {
       />
     )
 
-    const iconsMap=[[
+    const iconsMap=[
       {
         key: 'send',
         icon: SendGreenIcon,
@@ -445,30 +446,21 @@ const NotificationManagement=({classes}) => {
           })
         }
       }
-    ]]
+    ]
     return (
       <Grid
         container
-        direction={windowSize==='sm'? 'column':'row'}
+        direction='row'
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
-        {iconsMap.map((map,index) => (
+        {iconsMap.map(icon => (
           <Grid
-            key={index}
-            item>
-            <Grid
-              container>
-              {map.map(icon => (
-                <Grid
-                  key={icon.key}
-                  item >
-                  <ManagmentIcon
-                    classes={classes}
-                    {...icon}
-                  />
-                  {icon.key==='copy'&&renderCopyToClipoard}
-                </Grid>
-              ))}
-            </Grid>
+            key={icon.key}
+            item >
+            <ManagmentIcon
+              classes={classes}
+              {...icon}
+            />
+            {icon.key==='copy'&&renderCopyToClipoard}
           </Grid>
         ))}
       </Grid>
@@ -573,7 +565,7 @@ const NotificationManagement=({classes}) => {
   const renderRow=(row) => {
     return (
       <TableRow
-        key={row.id}
+        key={row.ID}
         classes={rowStyle}>
         <TableCell
           classes={cellBodyStyle}
@@ -626,7 +618,7 @@ const NotificationManagement=({classes}) => {
   const renderPhoneRow=(row) => {
     return (
       <TableRow
-        key={row.CampaignID}
+        key={row.ID}
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
@@ -713,12 +705,12 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const handleChange=(CampaignID) => () => {
-    const found=restoreArray.includes(CampaignID)
+  const handleChange=(id) => () => {
+    const found=restoreArray.includes(id)
     if(found) {
-      setRestoreArray(restoreArray.filter(restore => restore!==CampaignID))
+      setRestoreArray(restoreArray.filter(restore => restore!==id))
     } else {
-      setRestoreArray([...restoreArray,CampaignID])
+      setRestoreArray([...restoreArray,id])
     }
   }
 
@@ -788,7 +780,7 @@ const NotificationManagement=({classes}) => {
             const checked=restoreArray.includes(row.ID)
             return (
               <FormControlLabel
-                key={row.CampaignID}
+                key={row.ID}
                 className={classes.restoreDialogCheckBoxLable}
                 control={
                   <Checkbox
@@ -841,12 +833,10 @@ const NotificationManagement=({classes}) => {
                       <TableCell>{group.GroupName}</TableCell>
                       <TableCell align="center">{group.Members}</TableCell>
                     </TableRow>
-
                   )
                 })}
             </TableBody>
           </Table>
-
         </Box>
       ),
       renderButtons: () => (

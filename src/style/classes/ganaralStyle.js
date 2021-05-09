@@ -113,7 +113,7 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   dialogIconContent: {
     fontFamily: 'pulseemicons',
     color: '#fff',
-    fontSize: 20,
+    fontSize: 30,
     padding: 5
   },
   dialogAlertIcon: {
@@ -125,7 +125,7 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     height: 40
   },
   mainContainer: {
-    maxHeight: 'calc(100vh - 53px)', 
+    maxHeight: 'calc(100vh - 53px)',
     overflow: 'auto'
   }
 
