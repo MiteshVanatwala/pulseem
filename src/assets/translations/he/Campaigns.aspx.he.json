@@ -282,11 +282,11 @@
   },
   "Image1Resource1": {
     "AlternateText": "",
-    "ToolTip": "תצוגה מקדימה"
+    "ToolTip": "הצג"
   },
   "Image2Resource1": {
     "AlternateText": "",
-    "ToolTip": "עריכה"
+    "ToolTip": "ערוך"
   },
   "imgSendResource1": {
     "AlternateText": "",
@@ -302,7 +302,7 @@
   },
   "lnkEditResource1": {
     "Text": "",
-    "ToolTip": "שיכפול"
+    "ToolTip": "שכפל"
   },
   "lnkPreviewResource1": {
     "Text": "",
@@ -388,7 +388,7 @@
     "HeaderText": "שם קמפיין"
   },
   "CloneResource1": {
-    "HeaderText": "העתקה"
+    "HeaderText": "העתק קישור"
   },
   "DeleteResource1": {
     "HeaderText": "מחק"

@@ -120,8 +120,8 @@ const MmsManagnentScreen=({classes}) => {
             value={toDate}
             onChange={handleToDate}
             placeholder={t('mms.locToDateResource1.Text')}
-            disabled={fromDate?false: true}
-            minDate={fromDate?fromDate: null}
+            disabled={fromDate? false:true}
+            minDate={fromDate? fromDate:null}
           />
         </Grid>
 
@@ -181,7 +181,7 @@ const MmsManagnentScreen=({classes}) => {
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${mmsData.length} ${t('mms.campaign')}`}
+            {`${mmsData.length} ${t('mms.campaigns')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -482,7 +482,7 @@ const MmsManagnentScreen=({classes}) => {
 
   const renderTable=() => {
     return (
-      <TableContainer>
+      <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
           {windowSize!=='xs'&&renderTableHead()}
           {renderTableBody()}

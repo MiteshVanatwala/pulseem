@@ -124,8 +124,8 @@ const NewsletterManagnentScreen=({classes}) => {
             value={toDate}
             onChange={handleToDate}
             placeholder={t('campaigns.locToDateResource1.Text')}
-            disabled={fromDate?false: true}
-            minDate={fromDate?fromDate: null}
+            disabled={fromDate? false:true}
+            minDate={fromDate? fromDate:null}
           />
         </Grid>
 
@@ -516,7 +516,7 @@ const NewsletterManagnentScreen=({classes}) => {
 
   const renderTable=() => {
     return (
-      <TableContainer>
+      <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
           {windowSize!=='xs'&&renderTableHead()}
           {renderTableBody()}

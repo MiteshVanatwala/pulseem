@@ -137,5 +137,8 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   },
   middle: {
     alignSelf: 'center'
+  },
+  defaultScreen: {
+    'overflow': 'visible'
   }
 })

@@ -332,7 +332,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
       <>
         <Typography
           className={classes.middleText}>
-          {(views&&views.toLocaleString())||''}
+          {(views&&views.toLocaleString())||0}
         </Typography>
         <Typography
           className={classes.middleText}>
@@ -387,7 +387,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
       <>
         <Typography
           className={classes.middleText}>
-          {(Submits&&Submits.toLocaleString())||''}
+          {(Submits&&Submits.toLocaleString())||0}
         </Typography>
         <Link
           to={`/ClientSearchResult/${ID}`}
@@ -491,7 +491,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
 
   const renderTable=() => {
     return (
-      <TableContainer>
+      <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
           {windowSize!=='xs'&&renderTableHead()}
           {renderTableBody()}

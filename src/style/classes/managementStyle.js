@@ -7,7 +7,7 @@ const iconWidth={
 const flex12={
   sm: 5,
   md: 7,
-  lg: 12
+  lg: 6
 }
 
 export const getManagmentStyle=(windowSize,isRTL,theme) => ({
@@ -165,9 +165,11 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     height: 0,
     padding: 0
   },
+  tableStyle: {
+    overflowX: 'visible'
+  },
   tableContainer: {
     border: '1px solid #7F7F7F',
-    overflow: 'hidden'
   },
   flex3: {
     flex: 3
@@ -176,12 +178,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     flex: 1
   },
   flex5: {
-    flex: 5,
+    flex: 4,
     borderBottom: 0,
     justifyContent: 'center'
   },
   flex12: {
-    flex: flex12[windowSize]||12,
+    flex: flex12[windowSize]||5,
     borderBottom: 0,
     justifyContent: 'center'
   },
@@ -291,7 +293,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   tablePadingtonGridItem: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 100
   },
   tablePadingtonGridContainer: {
     paddingBlock: 10,
