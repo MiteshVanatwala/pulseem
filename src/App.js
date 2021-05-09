@@ -34,11 +34,6 @@ const renderRoutes=(classes,history) => {
       <Route
         exact
         path="/"
-        render={props => <SmsManagment {...props} classes={classes} />}
-      //component={() => {
-      //  history.push('/Campaigns')
-      //  return null
-      //}}
       />
       <Route
         path={`/SendCampaign/:campaignID`}
@@ -122,7 +117,7 @@ const renderRoutes=(classes,history) => {
       {/* SMS */}
       <Route
         path={`/SMSCampaigns`}
-        component={transferUrl('/Pulseem/SMSCampaigns.aspx')}
+        render={props => <SmsManagment {...props} classes={classes} />}
       />
       <Route
         path={`/SMSCampaignEdit`}
