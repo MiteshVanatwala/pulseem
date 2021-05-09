@@ -9,7 +9,7 @@ import {
   DeleteIcon,DuplicateIcon,EditIcon,ReportsIcon,SearchIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
-  TablePadington,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent,Switch
+  TablePagination,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent,Switch
 } from '../components/managment/index'
 import {
   getAutomationsData,deleteAutomations,duplicateAutomations,restoreAutomations,activateAutomation
@@ -42,10 +42,6 @@ const AutomationsManagnentScreen=({classes}) => {
   const history=useHistory()
   const dispatch=useDispatch()
   moment.locale(language)
-
-
-  console.log('automationsData',automationsData)
-  console.log('automationsDeletedData',automationsDeletedData)
 
   const getData=() => {
     dispatch(getAutomationsData())
@@ -495,7 +491,7 @@ const AutomationsManagnentScreen=({classes}) => {
 
   const renderTablePadington=() => {
     return (
-      <TablePadington
+      <TablePagination
         classes={classes}
         rows={automationsData.length}
         rowsPerPage={rowsPerPage}

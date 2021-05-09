@@ -5,7 +5,7 @@ import {PageArrowIcon} from '../../assets/images/managment/index'
 import {useTranslation} from 'react-i18next'
 
 
-export const TablePadington=({
+export const TablePagination=({
   classes,
   rows=0,
   page=1,

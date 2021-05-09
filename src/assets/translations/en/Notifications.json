@@ -1,0 +1,71 @@
+{
+  "notificationManagement": "Notification Management",
+  "searchSection": {
+    "notificationName": "Notification Name",
+    "status": "Status",
+    "fromDate": "From Date",
+    "toDate": "To Date"
+  },
+  "buttons": {
+    "createNotification": "Create Notification",
+    "implementScript": "Implement Script",
+    "groups": "Groups",
+    "send": "Send",
+    "preview": "Preview",
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "search": "Search"
+  },
+  "tblHeader": {
+    "notificationName": "Notification Name",
+    "toSend": "To Send",
+    "sent": "Sent",
+    "failed": "Failed",
+    "clicks": "Clicks",
+    "status": "Status"
+  },
+  "tblBody": {
+    "total": "Total",
+    "failed": "failed",
+    "clicks": "Clicks",
+    "lastUpdate": "Last update"
+  },
+  "status": {
+    "text": "Status",
+    "draft": "Draft",
+    "sending": "Sending",
+    "sent": "Sent",
+    "cancelled": "Cancelled",
+    "created": "Created",
+    "stopped": "Stopped",
+    "optin": "Optin",
+    "approved": "Approved",
+    "failed": "Failed",
+    "pending": "Pending"
+  },
+  "notifications": "Notifications",
+  "restoreDeleted": "Restore Deleted",
+  "deleteConfirmation": "Do you want to delete this notification?",
+  "duplicateTitle": "Duplicate Notification",
+  "duplicateConfirmation": "Do you want to duplicate this notification?",
+  "deleteTitle": "Delete Notification",
+  "groupsByIdTitle": "Notification Groups",
+  "restoreTitle": "Select the notifications you want to restore",
+  "implementTitle": "Code Implementation for notification permissions",
+  "downloadThe": "Download the ",
+  "attachedScript": "attached script",
+  "chooseSaveLocation": "Choose where to save the file: ",
+  "siteMainDirectory": "Main directory of the site",
+  "anotherDirectory": "Another directory",
+  "enterDirectory": "Enter path",
+  "example": "Example",
+  "copyLineCodeText": "Copy the following lines of code and paste them in the last line before closing the \"head\" element",
+  "payAttentionText": "*Pay attention. Notifications will only work on sites with an SSL certificate",
+  "headTagOpenText": "(Head tag opens)",
+  "headTagClosesText": "(Head tag closes)",
+  "groupName": "Group Name",
+  "recipients": "Recipients",
+  "copy": "Copy",
+  "copied": "Copied"
+}

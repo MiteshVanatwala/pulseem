@@ -32,14 +32,39 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     borderInlineEnd: '1px solid #797979',
     marginBlock: 20,
     borderBottom: 0,
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    alignContent: 'center',
+    alignContent: 'center'
+  },
+  borderRight: {
+    marginBlock: 20,
+    borderBottom: 0,
+    borderInlineEnd: '1px solid #797979',
+  },
+  flex: {
+    display: 'flex',
+  },
+  paddingRightLeft10: {
+    padding: '0 10px'
+  },
+  paddingHead: {
+    padding: '20px 10px'
+  },
+  tableCellBodyNoBorder: {
+    marginBlock: 20,
+    borderBottom: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center'
   },
   tableCellRoot: {
     display: 'flex',
-    flexDirection: 'column',
-    minWidth: 100
+    flexDirection: 'column'
+  },
+  minWidth50: {
+    minWidth: '50px'
   },
   tableRowRoot: {
     display: 'flex',
@@ -62,6 +87,14 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     color: '#333'
+  },
+  wrapText: {
+    fontSize: 16,
+    flexWrap: "wrap",
+    textOverflow: "ellipsis",
+  },
+  errorText: {
+    color: 'red'
   },
   managmentIconHide: {
     opacity: 0
@@ -96,6 +129,34 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     fontSize: 17,
     color: 'black'
   },
+  statusFailed: {
+    fontWeight: 700,
+    color: '#E74C3C'
+  },
+  statusDraft: {
+    fontWeight: 700,
+    color: '#0371AD'
+  },
+  statusDeleted: {
+    fontWeight: 700,
+    color: '#E74C3C'
+  },
+  statusSending: {
+    fontWeight: 700,
+    color: '#F59A23'
+  },
+  statusSent: {
+    fontWeight: 700,
+    color: '#27AE60'
+  },
+  statusPending: {
+    fontWeight: 700,
+    color: '#F59A23'
+  },
+  statusScheduled: {
+    fontWeight: 700,
+    color: '#F59A23'
+  },
   recipientsStatusCreated: {
     color: '#0371AD',
     fontWeight: 700
@@ -109,6 +170,10 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     fontWeight: 700
   },
   recipientsStatusCanceled: {
+    color: '#E74C3C',
+    fontWeight: 700
+  },
+  recipientsStatusStopped: {
     color: '#E74C3C',
     fontWeight: 700
   },
@@ -135,11 +200,35 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
       backgroundColor: '#1d633c'
     }
   },
+  actionButtonRed: {
+    backgroundColor: '#c9302c',
+    '&:hover': {
+      backgroundColor: '#ae2a27'
+    }
+  },
   textField: {
     width: 180,
     textTransform: 'capitalize',
     '& .MuiInputBase-root': {
       fontSize: 18,
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: '#a6a6a6'
+    },
+    '& .MuiOutlinedInput-root': {
+      '&:hover fieldset': {
+        borderColor: '#797979'
+      },
+      '&.Mui-focused fieldset': {
+        border: '1px solid #797979',
+      }
+    }
+  },
+  selectField: {
+    width: 180,
+    '& .MuiSelect-root': {
+      fontSize: 18,
+      padding: '12px 30px'
     },
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: '#a6a6a6'
@@ -165,8 +254,14 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   tableContainer: {
     border: '1px solid #7F7F7F'
   },
+  flex7: {
+    flex: 7
+  },
   flex3: {
     flex: 3
+  },
+  flex15: {
+    flex: 1.5
   },
   flex1: {
     flex: 1
@@ -325,7 +420,14 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
       fontWeight: 'bold'
     }
   },
-
+  groupsTable: {
+    border: '1px solid #ccc'
+  },
+  groupsTableHead: {
+    padding: 0,
+    background: '#ccc'
+    
+  },
   gruopsDialogText: {
     fontSize: 16
   },
@@ -333,7 +435,6 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    height: 100,
     width: 400,
     overflow: 'auto',
     marginBlock: 10
@@ -371,6 +472,59 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   grayTextCell: {
     'WebkitLineClamp': 1,
     color: '#7F7F7F'
+  },
+  fontBold: {
+    fontWeight: 700
+  },
+  cardMedia: {
+    height: '140px',
+    '&.MuiCardMedia-root': {
+      backgroundSize: 'unset'
+    }
+  },
+  searchWhite: {
+    transform: 'scale(1.5)',
+    padding: 10,
+    '& path': {
+      fill: 'white',
+    }
+  },
+  confirmButton: {
+    alignSelf: 'center',
+    fontFamily: 'OpenSansHebrew',
+    color: '#fff',
+    textTransform: 'capitalize',
+    width: 167,
+    fontSize: 16,
+    borderRadius: 100
+  },
+  formControl: {
+    '& .MuiInputLabel-formControl': {
+      top: -7
+    }
+  },
+  formControlSelect: {
+    '& .MuiSelect-outlined.MuiSelect-outlined': {
+      padding: '12px 32px'
+    }
+  },
+  dialogBox: {
+    paddingBottom: 20
+  },
+  directoryField: {
+    display: 'flex', 
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    maxWidth: 400
+  },
+  radioGroup: {
+    padding: '0 10px'
+  },
+  copyIcon: {
+    fontFamily: 'pulseemicons', 
+    fontSize: 10, 
+    padding: '0 5px'
   }
 
 })

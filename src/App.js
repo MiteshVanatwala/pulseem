@@ -16,20 +16,24 @@ import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import {useHistory} from "react-router-dom";
 import moment from 'moment'
+import NotificationManagement from './screens/NotificationManagement';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
-    const {campaignID,automationID,id}=useParams()
+    const {campaignID,automationID,id,notificationID}=useParams()
     const addParam={
       campaign: campaignID,
       automation: automationID,
+      notification: notificationID,
       id: id
     }
     window.location.href=`https://www.pulseemdev.co.il/${url}${addParam[param]||''}`
     return null
   }
+
   return (
     <>
+
       <Route
         exact
         path="/"
@@ -40,52 +44,56 @@ const renderRoutes=(classes,history) => {
       //}}
       />
       <Route
-        path="/SendCampaign/:campaignID"
+        path={`/notifications/edit/:notificationID`}
+        component={transferUrl('notifications/Edit/','notification')}
+      />
+      <Route
+        path={`/SendCampaign/:campaignID`}
         component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=','campaign')}
       />
       <Route
-        path="/PreviewCampaign/:campaignID"
+        path={`/PreviewCampaign/:campaignID`}
         component={transferUrl('/Pulseem/PreviewCampaign.aspx?CampaignID=','campaign')}
       />
       <Route
-        path="/Editor/CampaignEdit/:campaignID"
+        path={`/Editor/CampaignEdit/:campaignID`}
         component={transferUrl('/Editor/CampaignEdit/','campaign')}
       />
       <Route
-        path="/DuplicateCampign/:campaignID"
+        path={`/DuplicateCampign/:campaignID`}
         component={transferUrl('/DuplicateCampign/','campaign')}
       />
       <Route
-        path="/CampaignStatistics/:campaignID"
+        path={`/CampaignStatistics/:campaignID`}
         component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=','campaign')}
       />
       <Route
-        path="/CreateAutomations/:automationID"
+        path={`/CreateAutomations/:automationID`}
         component={transferUrl('/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=','automation')}
       />
       <Route
-        path="/homepage"
+        path={`/homepage`}
         component={transferUrl('/Pulseem/homepage.aspx')}
       />
       {/* Groups */}
       <Route
-        path="/Groups"
+        path={`/Groups`}
         component={transferUrl('/Pulseem/Groups.aspx')}
       />
       <Route
-        path="/ClientSearch"
+        path={`/ClientSearch`}
         component={transferUrl('/Pulseem/ClientSearch.aspx')}
       />
       <Route
-        path="/ClientAdvancedSearch"
+        path={`/ClientAdvancedSearch`}
         component={transferUrl('/Pulseem/ClientAdvancedSearch.aspx')}
       />
       <Route
-        path="/DynamicGroups"
+        path={`/DynamicGroups`}
         component={transferUrl('/Pulseem/DynamicGroups.aspx')}
       />
       <Route
-        path="/FileUploads"
+        path={`/FileUploads`}
         component={transferUrl('/Pulseem/FileUploads.aspx')}
       />
       {/* Newsletter */}
@@ -95,44 +103,44 @@ const renderRoutes=(classes,history) => {
       />
 
       <Route
-        path="/Editor/CampaignInfo"
+        path={`/Editor/CampaignInfo`}
         component={transferUrl('/Pulseem/Editor/CampaignInfo?new=1')}
       />
       <Route
-        path="/CampaignsByResults"
+        path={`/CampaignsByResults`}
         component={transferUrl('/Pulseem/CampaignsByResults.aspx')}
       />
       <Route
-        path="/CampaignsAbTestings"
+        path={`/CampaignsAbTestings`}
         component={transferUrl('/Pulseem/CampaignsAbTestings.aspx')}
       />
       <Route
-        path="/AutoSendPlans"
+        path={`/AutoSendPlans`}
         component={transferUrl('/Pulseem/AutoSendPlans.aspx')}
       />
       <Route
-        path="/CampaignTemplates"
+        path={`/CampaignTemplates`}
         component={transferUrl('/Pulseem/CampaignTemplates.aspx')}
       />
       <Route
-        path="/CampaignEdit"
+        path={`/CampaignEdit`}
         component={transferUrl('/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic')}
       />
       {/* SMS */}
       <Route
-        path="/SMSCampaigns"
+        path={`/SMSCampaigns`}
         component={transferUrl('/Pulseem/SMSCampaigns.aspx')}
       />
       <Route
-        path="/SMSCampaignEdit"
+        path={`/SMSCampaignEdit`}
         component={transferUrl('/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create')}
       />
       <Route
-        path="/SMSSmartResponses"
+        path={`/SMSSmartResponses`}
         component={transferUrl('/Pulseem/SMSSmartResponses.aspx')}
       />
       <Route
-        path="/ResponsesReport"
+        path={`/ResponsesReport`}
         component={transferUrl('/Pulseem/ResponsesReport.aspx')}
       />
       {/* MMS */}
@@ -173,64 +181,64 @@ const renderRoutes=(classes,history) => {
         render={props => <LandingPagesesManagment {...props} classes={classes} />}
       />
       <Route
-        path="/LandingPageWizard"
+        path={`/LandingPageWizard`}
         component={transferUrl('/Pulseem/LandingPageWizard.aspx')}
       />
       <Route
-        path="/FormTemplates"
+        path={`/FormTemplates`}
         component={transferUrl('/Pulseem/FormTemplates.aspx')}
       />
       {/* Reports */}
       <Route
-        path="/MainReport"
+        path={`/MainReport`}
         component={transferUrl('/Pulseem/MainReport.aspx')}
       />
       <Route
-        path="/ClalReport"
+        path={`/ClalReport`}
         component={transferUrl('/Pulseem/ClalReport.aspx')}
       />
       <Route
-        path="/SMSMainReport"
+        path={`/SMSMainReport`}
         component={transferUrl('/Pulseem/SMSMainReport.aspx')}
       />
       <Route
-        path="/MmsMainReport"
+        path={`/MmsMainReport`}
         component={transferUrl('/Pulseem/MmsMainReport.aspx')}
       />
       <Route
-        path="/AbTestsReport"
+        path={`/AbTestsReport`}
         component={transferUrl('/Pulseem/AbTestsReport.aspx')}
       />
       <Route
-        path="/AccountReport"
+        path={`/AccountReport`}
         component={transferUrl('/Pulseem/AccountReport.aspx')}
       />
       <Route
-        path="/CampaignComparison"
+        path={`/CampaignComparison`}
         component={transferUrl('/Pulseem/CampaignComparison.aspx')}
       />
       <Route
-        path="/ClientReport"
+        path={`/ClientReport`}
         component={transferUrl('/Pulseem/ClientReport.aspx')}
       />
       <Route
-        path="/EmailAutoReports"
+        path={`/EmailAutoReports`}
         component={transferUrl('/Pulseem/EmailAutoReports.aspx')}
       />
       <Route
-        path="/RemovedStats"
+        path={`/RemovedStats`}
         component={transferUrl('/Pulseem/RemovedStats.aspx')}
       />
       <Route
-        path="/DirectEmailReport"
+        path={`/DirectEmailReport`}
         component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
       />
       <Route
-        path="/DirectSmsReport"
+        path={`/DirectSmsReport`}
         component={transferUrl('/Pulseem/DirectSmsReport.aspx')}
       />
       <Route
-        path="/EmailCampaignStatistics"
+        path={`/EmailCampaignStatistics`}
         component={transferUrl('/Pulseem/EmailCampaignStatistics.aspx')}
       />
       {/* Automations */}
@@ -239,7 +247,7 @@ const renderRoutes=(classes,history) => {
         render={props => <AutomationManagment {...props} classes={classes} />}
       />
       <Route
-        path="/CreateAutomations"
+        path={`/CreateAutomations`}
         component={transferUrl('/Pulseem/CreateAutomations.aspx')}
       />
       <Route
@@ -256,41 +264,41 @@ const renderRoutes=(classes,history) => {
       />
       {/* Notifications */}
       <Route
-        path="/Notification"
-        component={transferUrl('/Pulseem/Notification.aspx?t=main')}
+        path={`/Notification`}
+        render={props => <NotificationManagement {...props} classes={classes} />}
       />
       <Route
-        path="/Notification/create"
+        path={`/Notification/create`}
         component={transferUrl('/Pulseem/Notification.aspx?t=add')}
       />
       {/* Settings */}
       <Route
-        path="/AccountSettings"
+        path={`/AccountSettings`}
         component={transferUrl('/Pulseem/AccountSettings.aspx')}
       />
       <Route
-        path="/AccountBilling"
+        path={`/AccountBilling`}
         component={transferUrl('/Pulseem/AccountBilling.aspx')}
       />
       <Route
-        path="/AccountUsers"
+        path={`/AccountUsers`}
         component={transferUrl('/Pulseem/AccountUsers.aspx')}
       />
       <Route
-        path="/AccountUsersReport"
+        path={`/AccountUsersReport`}
         component={transferUrl('/Pulseem/AccountUsersReport.aspx')}
       />
       <Route
-        path="/ExtraFieldsDefinition"
+        path={`/ExtraFieldsDefinition`}
         component={transferUrl('/Pulseem/ExtraFieldsDefinition.aspx')}
       />
       <Route
-        path="/ApiSettings"
+        path={`/ApiSettings`}
         component={transferUrl('/Pulseem/ApiSettings.aspx')}
       />
       {/* Support */}
       <Route
-        path="/Support"
+        path={`/Support`}
         component={() => {
           window.open("https://www.pulseem.co.il/Pages/Home.aspx?action=support","_blank")
           return null
@@ -339,7 +347,7 @@ const App=() => {
 
 const AppContainer=() => {
   const jss=create({plugins: [...jssPreset().plugins,rtl()]});
-  //const history=createBrowserHistory({basename: '/React'})
+
   return (
     <StylesProvider jss={jss}>
       <BrowserRouter basename='/react'>

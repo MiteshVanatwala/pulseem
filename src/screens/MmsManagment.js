@@ -9,7 +9,7 @@ import {
   DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,GroupsIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
-  TablePadington,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent
+  TablePagination,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {getMmsData,restoreMms,deleteMms,duplicteMms} from '../redux/reducers/mmsSlice'
@@ -490,9 +490,9 @@ const MmsManagnentScreen=({classes}) => {
     )
   }
 
-  const renderTablePadington=() => {
+  const renderTablePagination=() => {
     return (
-      <TablePadington
+      <TablePagination
         classes={classes}
         rows={mmsData.length}
         rowsPerPage={rowsPerPage}
@@ -630,7 +630,7 @@ const MmsManagnentScreen=({classes}) => {
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}
-      {renderTablePadington()}
+      {renderTablePagination()}
       {renderDialog()}
     </DefaultScreen>
   )

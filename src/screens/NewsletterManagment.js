@@ -10,7 +10,7 @@ import {
   GroupsIcon,PreviewIcon,ReportsIcon,CopyIcon
 } from '../assets/images/managment/index'
 import {
-  TablePadington,ManagmentIcon,DateField,Dialog,PopMassage,SearchField,RestorDialogContent
+  TablePagination,ManagmentIcon,DateField,Dialog,PopMassage,SearchField,RestorDialogContent
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
@@ -40,8 +40,8 @@ const NewsletterManagnentScreen=({classes}) => {
   const [dialogType,setDialogType]=useState(null)
   const [showCopied,setShowCopied]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
-  const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
   const history=useHistory()
+  const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch=useDispatch()
   moment.locale(language)
 
@@ -524,9 +524,9 @@ const NewsletterManagnentScreen=({classes}) => {
     )
   }
 
-  const renderTablePadington=() => {
+  const renderTablePagination=() => {
     return (
-      <TablePadington
+      <TablePagination
         classes={classes}
         rows={newslettersData.length}
         rowsPerPage={rowsPerPage}
@@ -676,7 +676,7 @@ const NewsletterManagnentScreen=({classes}) => {
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}
-      {renderTablePadington()}
+      {renderTablePagination()}
       {renderDialog()}
     </DefaultScreen>
   )

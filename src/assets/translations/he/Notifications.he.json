@@ -1,0 +1,71 @@
+{
+  "notificationManagement": "ניהול נוטיפיקציות",
+  "searchSection": {
+    "notificationName": "שם הנוטיפיקציה",
+    "status": "סטטוס",
+    "fromDate": "מתאריך",
+    "toDate": "עד תאריך"
+  },
+  "buttons": {
+    "createNotification": "צור נוטיפיקציה",
+    "implementScript": "הטמע סקריפט",
+    "groups": "קבוצות",
+    "send": "שלח",
+    "preview": "תצוגה מקדימה",
+    "edit": "ערוך",
+    "duplicate": "שכפל",
+    "delete": "מחק",
+    "search": "חיפוש"
+  },
+  "tblHeader": {
+    "notificationName": "שם הנוטיפיקציה",
+    "toSend": "לשליחה",
+    "sent": "נשלחו",
+    "failed": "שגויים",
+    "clicks": "הקלקות",
+    "status": "סטטוס"
+  },
+  "tblBody": {
+    "total": "סה\"כ",
+    "failed": "שגויים",
+    "clicks": "הקלקות",
+    "lastUpdate": "עודכן לאחרונה"
+  },
+  "status": {
+    "text": "סטטוס",
+    "draft": "טיוטה",
+    "sending": "בשליחה",
+    "sent": "נשלח",
+    "cancelled": "בוטל",
+    "created": "נוצר",
+    "stopped": "הושהה",
+    "optin": "Optin",
+    "approved": "אושר",
+    "failed": "נכשל",
+    "pending": "בהמתנה"
+  },
+  "notifications": "נוטיפיקציות",
+  "restoreDeleted": "שחזור מחוקים",
+  "deleteConfirmation": "האם ברצונך למחוק את הנוטיפיקציה?",
+  "duplicateTitle": "שכפול נוטיפיקציה",
+  "duplicateConfirmation": "האם ברצונך לשכפל את הנוציפיקציה?",
+  "deleteTitle": "מחיקת נוטיפיקציה",
+  "groupsByIdTitle": "קבוצות בנוטיפיקציה",
+  "restoreTitle": "בחר את הנוטיפיקציות שברצונך לשחזר",
+  "implementTitle": "הטמעת קוד לאישור נוטיפיקציות",
+  "downloadThe": "הורידו את ",
+  "attachedScript": "קובץ הסקריפט המצורף",
+  "chooseSaveLocation": "בחרו היכן לשמור את הקובץ: ",
+  "siteMainDirectory": "הספריה הראשית של האתר",
+  "anotherDirectory": "ספריה אחרת",
+  "enterDirectory": "הזינו מיקום",
+  "example": "דוגמה",
+  "copyLineCodeText": "יש להעתיק את שורות הקוד הבאות ולהדביקן בשורה האחרונה לפני סגירת האלמנט \"head\"",
+  "payAttentionText": "*שימו לב. נוטיפקציות יעבדו רק באתרים עם תעודת SSL",
+  "headTagOpenText": "(תג head פותח)",
+  "headTagClosesText": "(תג head סוגר)",
+  "groupName": "שם הקבוצה",
+  "recipients": "נמענים",
+  "copy": "העתק",
+  "copied": "הועתק"
+}

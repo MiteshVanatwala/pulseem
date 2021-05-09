@@ -9,6 +9,9 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   dialogContainer: {
     '& .MuiPaper-root': {
       overflow: 'hidden'
+    },
+    '& .MuiDialog-paperWidthSm': {
+      maxWidth: '850px'
     }
   },
   dialogIconContainer: {
@@ -58,7 +61,6 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     borderRadius: 5,
     margin: '1rem',
     padding: '1rem',
-    minHeight: 180,
     minWidth: dialogWidth[windowSize]
   },
   dialogButton: {
@@ -111,7 +113,8 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   dialogIconContent: {
     fontFamily: 'pulseemicons',
     color: '#fff',
-    fontSize: 40
+    fontSize: 30,
+    padding: 5
   },
   dialogAlertIcon: {
     fontSize: 32,
@@ -137,5 +140,10 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   },
   middle: {
     alignSelf: 'center'
+  },
+  mainContainer: {
+    maxHeight: 'calc(100vh - 53px)',
+    overflow: 'auto'
   }
+
 })

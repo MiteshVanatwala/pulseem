@@ -425,5 +425,12 @@
   "page": "Page",
   "outOf": "out of",
   "rowNumber": "Rows",
-  "clear": "Clear"
+  "clear": "Clear",
+  "confirm": "Confirm",
+  "stopped": "Stopped",
+  "cancelled": "Cancelled",
+  "approved": "Approved",
+  "draft": "Draft",
+  "failedStatus": "Failed",
+  "deleted": "Deleted"
 }
