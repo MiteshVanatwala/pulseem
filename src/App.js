@@ -40,7 +40,7 @@ const renderRoutes=(classes,history) => {
       />
       <Route
         path={`/notifications/edit/:notificationID`}
-        component={transferUrl('notifications/Edit/','notification')}
+        component={transferUrl('/Pulseem/notifications/Edit/','notification')}
       />
       <Route
         path={`/SendCampaign/:campaignID`}
