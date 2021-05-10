@@ -16,7 +16,7 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
   getNewslatterData,restoreCampaigns,deleteCampaign,duplicteCampaign
 } from '../redux/reducers/newsletterSlice'
-import {useHistory} from "react-router-dom";
+import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
@@ -40,7 +40,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const [dialogType,setDialogType]=useState(null)
   const [showCopied,setShowCopied]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
-  const history=useHistory()
+  const history=useCtrlHistory()
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch=useDispatch()
   moment.locale(language)

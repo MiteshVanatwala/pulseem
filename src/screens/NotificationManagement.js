@@ -13,7 +13,7 @@ import {
   TablePagination,ManagmentIcon,DateField,Dialog
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import {useHistory} from "react-router-dom";
+import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
@@ -44,7 +44,7 @@ const NotificationManagement=({classes}) => {
   const [searchArray,setSearchArray]=useState(null)
   const [dialogType,setDialogType]=useState(null)
   const [restoreArray,setRestoreArray]=useState([]);
-  const history=useHistory()
+  const history=useCtrlHistory()
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch=useDispatch()
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}

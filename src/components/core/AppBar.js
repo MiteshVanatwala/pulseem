@@ -13,7 +13,7 @@ import DoubleArrowIcon from '../../assets/images/doubleArrow.png'
 import {ReactComponent as QuestionIcon} from '../../assets/images/question.svg'
 import {FaBars,FaTimes} from 'react-icons/fa';
 import {getRoutes,getSettingsItem} from '../../helpers/routes'
-import {useHistory} from "react-router-dom";
+import useCtrlHistory from '../../helpers/useCtrlHistory'
 import {getCookie,setCookie} from '../../helpers/functions';
 
 const AppBarItem=({
@@ -139,7 +139,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
-  const history=useHistory()
+  const history=useCtrlHistory()
 
   useEffect(() => {
     const resizeWindow=() => {

@@ -15,10 +15,10 @@ import {
 import {
   getLandingPagesData,restoreLandingPages,deleteLandingPage,
   duplicteLandingPage,downloadReport
-
 } from '../redux/reducers/landingPagesSlice'
+import useCtrlHistory from '../helpers/useCtrlHistory'
 import {openInNewTab} from '../helpers/functions'
-import {useHistory,Link} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
@@ -38,7 +38,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const [dialogType,setDialogType]=useState(null)
   const [showCopied,setShowCopied]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
-  const history=useHistory()
+  const history=useCtrlHistory()
   const dispatch=useDispatch()
 
   const getData=() => {

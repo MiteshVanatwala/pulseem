@@ -14,7 +14,8 @@ import {
 import {
   getAutomationsData,deleteAutomations,duplicateAutomations,restoreAutomations,activateAutomation
 } from '../redux/reducers/automationsSlice'
-import {Link,useHistory} from "react-router-dom";
+import useCtrlHistory from '../helpers/useCtrlHistory'
+import {Link} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
@@ -39,9 +40,10 @@ const AutomationsManagnentScreen=({classes}) => {
   const [dialogType,setDialogType]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
-  const history=useHistory()
   const dispatch=useDispatch()
+  const history=useCtrlHistory()
   moment.locale(language)
+
 
   const getData=() => {
     dispatch(getAutomationsData())

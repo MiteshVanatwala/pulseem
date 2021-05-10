@@ -195,6 +195,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
       backgroundColor: '#2283c3'
     }
   },
+  actionButtonDarkBlue: {
+    backgroundColor: '#5088b5',
+    '&:hover': {
+      backgroundColor: '#4477a2'
+    }
+  },
   actionButtonGreen: {
     backgroundColor: '#217346',
     '&:hover': {
@@ -533,6 +539,37 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     fontFamily: 'pulseemicons',
     fontSize: 10,
     padding: '0 5px'
+  },
+  avatarIcon: {
+    fontFamily: 'pulseemicons',
+    color: '#fff',
+    fontSize: 15
+  },
+  checkIcon: {
+    backgroundColor: 'green',
+    width: 14,
+    height: 14
+  },
+  redIcon: {
+    backgroundColor: 'darkred',
+    width: 14,
+    height: 14
+  },
+  newLine: {
+    whiteSpace: 'pre-line'
+  },
+  contactUs: {
+    fontSize: 12,
+    marginTop: 20
+  },
+  verifyLink: {
+    paddingInlineStart: 5,
+    fontSize: 12,
+    textDecoration: 'underline',
+    color: '#000',
+    '&:hover': {
+      color: 'darkred'
+    }
   }
 
 })
