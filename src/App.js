@@ -18,7 +18,7 @@ import NotificationManagement from './screens/NotificationManagement';
 import NotificationItem from './screens/Notifications/NotificationItem';
 
 const renderRoutes = (classes, history) => {
-  
+
   const transferUrl = (url = '', param = '') => () => {
     const { campaignID, automationID, id, notificationID } = useParams()
     const addParam = {
@@ -236,7 +236,12 @@ const renderRoutes = (classes, history) => {
         render={props => <NotificationItem props={props} classes={classes} />}
       />
       <Route
-        path={`/NotificationItem/:id`}
+        exact
+        path={`/NotificationItem/:id/`}
+        render={props => <NotificationItem props={props} classes={classes} />}
+      />
+      <Route
+        path={`/NotificationItem/:id/:send`}
         render={props => <NotificationItem props={props} classes={classes} />}
       />
       {/* Settings */}

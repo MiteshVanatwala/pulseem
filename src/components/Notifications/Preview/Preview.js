@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import {Grid, Box, Typography, AppBar, Tab, Tabs } from '@material-ui/core'
+import { Grid, Box, Typography, AppBar, Tab, Tabs } from '@material-ui/core'
 import clsx from 'clsx';
 import './preview.styles.css';
 import PropTypes from 'prop-types';
@@ -71,7 +71,8 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
                     </div>
                 </div>
                 }
-                <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : '' )}>
+                {!isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right", paddingTop: 10, paddingRight: 15, paddingLeft: 5, marginBottom: '-10px' }}><b>{model.Title}</b></Typography>}
+                <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : '')}>
                     <div className={classes.iconWrapper}>
                         <div className={clsx(classes.borderSign, classes.icon)}
                             style={{
@@ -81,7 +82,7 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
                         </div>
                     </div>
                     <div className={classes.notificationContent}>
-                        <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title}</b></Typography>
+                        {isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title}</b></Typography>}
                         <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}>{model.Body}</Typography>
                     </div>
                 </div>

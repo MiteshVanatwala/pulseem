@@ -1,0 +1,9 @@
+#notificationTitle,
+#notificationText
+{
+    padding-right: 10px;
+    padding-left: 10px;
+    font-family: Assistant;
+    font-weight: 400;
+    font-size: 15px;
+}

@@ -20,16 +20,22 @@ export const PushService = async (apiToken) => {
     }
 
     const initializeUI = function () {
-        // Set the initial subscription value
-        var promise = new Promise((resolve, reject) => {
-            checkPermissions().then((res) => {
-                resolve(res);
-            });
-        });
-
-        promise.then((permission) => {
-            if (permission != 'denied' && permission != 'granted' || permission == 'prompt') {
-                subscribeUser();
+        return new Promise((resolve, reject) => {
+            try {
+                // Set the initial subscription value
+                checkPermissions().then((permission) => {
+                    if (permission != 'denied' && permission != 'granted' || permission == 'prompt') {
+                        subscribeUser().then(() => {
+                            resolve();
+                        });
+                    }
+                    else{
+                        resolve();
+                    }
+                });
+            }
+            catch (e) {
+                reject(e);
             }
         });
     }
@@ -44,23 +50,30 @@ export const PushService = async (apiToken) => {
 
 
     const subscribeUser = function () {
-        const applicationServerKey = urlB64ToUint8Array(apiToken);
-        const options = {
-            userVisibleOnly: true,
-            applicationServerKey: applicationServerKey
-        };
-        swRegistration.pushManager.permissionState(options).then(function (res) {
-            if (res != 'denied' || res == 'granted') {
-                swRegistration.pushManager.subscribe(options)
-                    .then(function (subscription) {
-                        subscription.isSubscribe = true;
-                    })
-                    .catch(function (err) {
-                        if (err.toString().indexOf('already exists') == -1 && err.toString().indexOf('permission denied') == -1 || err.name == 'NotAllowedError')
-                            initializeUI();
-                    });
-            }
+        return new Promise((resolve) => {
+            const applicationServerKey = urlB64ToUint8Array(apiToken);
+            const options = {
+                userVisibleOnly: true,
+                applicationServerKey: applicationServerKey
+            };
+            swRegistration.pushManager.permissionState(options).then(function (res) {
+                if (res != 'denied' || res == 'granted') {
+                    swRegistration.pushManager.subscribe(options)
+                        .then(function (subscription) {
+                            subscription.isSubscribe = true;
+                            resolve();
+                        })
+                        .catch(function (err) {
+                            if (err.toString().indexOf('already exists') == -1 && err.toString().indexOf('permission denied') == -1 || err.name == 'NotAllowedError') {
+                                initializeUI().then(() => {
+                                    resolve();
+                                });
+                            }
+                        });
+                }
+            });
         });
+
     }
 
     const registerServiceWorker = async () => {
@@ -127,8 +140,9 @@ export const PushService = async (apiToken) => {
             if (serviceWorker) {
                 if (serviceWorker.state == "activated") {
                     swRegistration = reg;
-                    subscribeUser();
-                    resolve(swRegistration);
+                    subscribeUser().then(() => {
+                        resolve(swRegistration);
+                    });
                 }
                 serviceWorker.addEventListener("statechange", function (e) {
                     if (e.target.state == "redundant") {
@@ -141,6 +155,7 @@ export const PushService = async (apiToken) => {
     }
 
     const subscription = await main();
-    return subscription;
+    const state = await checkPermissions();
+    return { subscription: subscription, state: state };
 }
 

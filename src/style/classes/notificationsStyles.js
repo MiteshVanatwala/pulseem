@@ -1,4 +1,3 @@
-import { MicNone } from '@material-ui/icons'
 import mobileBg from '../../assets/images/mobile.png'
 
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
@@ -41,7 +40,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     borderSign: {
         display: 'flex',
-        alignItems: 'center',
         justifyContent: 'center'
     },
     dashed: {

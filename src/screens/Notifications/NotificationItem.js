@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../DefaultScreen'
-import { Typography, Button, TextField, Grid, TextareaAutosize, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormLabel } from '@material-ui/core'
+import { Typography, Button, TextField, Grid, TextareaAutosize, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
@@ -12,6 +12,7 @@ import { useHistory } from "react-router-dom";
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
+import './notification.styles.css';
 
 
 function getSteps() {
@@ -78,8 +79,9 @@ const NotificationItem = ({ props, classes }) => {
       getData();
       handleApiToken();
       isEditable = true;
-
-
+      if (props.match.params.send) {
+        setActiveStep(activeStep + 1);
+      }
     }
     else {
       isEditable = false;
@@ -140,6 +142,10 @@ const NotificationItem = ({ props, classes }) => {
   // Emoji
   const showEmoji = () => {
     setShowEmoji(!isEmojiShown);
+  }
+  const handleClickOutsideEmoji = (event) => {
+    if(event.target.id != 'emohiToggle')
+      setShowEmoji(false);
   }
   const onEmojiClick = (event, emojiObject) => {
     setChosenEmoji(emojiObject);
@@ -203,29 +209,39 @@ const NotificationItem = ({ props, classes }) => {
 
   // Test send 
   const handleTestSend = () => {
-    PushService(apiToken).then((subscription) => {
-      if (subscription) {
-        const options = {
-          id: model.ID,
-          dir: model.Direction == 2 ? 'rtl' : 'ltr',
-          renotify: true,
-          body: model.Body,
-          icon: model.Icon,
-          image: model.Image,
-          title: model.Title,
-          vibrate: [200, 100, 200],
-          tag: "test",
-          badge: model.Icon,
-          redirect: model.RedirectURL
-        };
+    PushService(apiToken).then((permissions) => {
+      try {
+        if (permissions.subscription) {
+          if (permissions.state == 'granted') {
+            const options = {
+              id: model.ID,
+              dir: model.Direction == 2 ? 'rtl' : 'ltr',
+              renotify: true,
+              body: model.Body,
+              icon: model.Icon,
+              image: model.Image,
+              title: model.Title,
+              vibrate: [200, 100, 200],
+              tag: "test",
+              badge: model.Icon,
+              redirect: model.RedirectURL
+            };
 
-        if (model.RedirectURL != '' && model.RedirectButtonText != '' && ShowRedirectButton) {
-          options.actions = [];
-          options.actions.push({ action: model.RedirectURL, title: model.RedirectButtonText });
+            if (model.RedirectURL != '' && model.RedirectButtonText != '' && ShowRedirectButton) {
+              options.actions = [];
+              options.actions.push({ action: model.RedirectURL, title: model.RedirectButtonText });
+            }
+
+            permissions.subscription.showNotification(model.Title, options);
+
+          }
+
         }
-
-        subscription.showNotification(model.Title, options);
       }
+      catch (e) {
+        console.log(e);
+      }
+
     });
   }
 
@@ -298,10 +314,10 @@ const NotificationItem = ({ props, classes }) => {
           justify="flex-start"
           alignItems="flex-start"
           className={classes.dialogButtonsContainer}>
-          <Grid item xs={4} style={{ marginTop: 90 }}>
+          <Grid item xs={3} style={{ marginTop: 90 }}>
             {notificationContent()}
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <Preview classes={classes}
               model={model}
               ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText != ''}
@@ -381,7 +397,7 @@ const NotificationItem = ({ props, classes }) => {
                 value={model.Title}
                 className={clsx(classes.transparent, classes.borderSign, classes.dashed)}
                 onChange={handleNotificationTitle}
-                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr' }}
+                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left' }}
                 onFocus={handleTextFocus}
                 id="notificationTitle"
               />
@@ -392,7 +408,7 @@ const NotificationItem = ({ props, classes }) => {
                 value={model.Body}
                 className={clsx(classes.transparent, classes.borderSign, classes.dashed, classes.notificationText)}
                 onChange={handleNotificationText}
-                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr' }}
+                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left' }}
                 onFocus={handleTextFocus}
                 id="notificationText"
               />
@@ -400,34 +416,48 @@ const NotificationItem = ({ props, classes }) => {
           </div>
           {ShowRedirectButton && model.RedirectButtonText != '' ? redirectButton() : ''}
         </div>
-        <Box pt={4} style={{ position: 'relative' }}>
-          <FormControl component="fieldset">
-            <RadioGroup defaultValue="2" aria-label="gender" name="customized-radios" className={classes.directionRadio}>
-              <FormControlLabel value="1" control={<Radio onChange={handleDirection} icon={<FaAlignLeft style={{ fontSize: 16 }} />} />} />
-              <FormControlLabel value="2" control={<Radio onChange={handleDirection} icon={<FaAlignRight style={{ fontSize: 16 }} />} />} />
-              <button className={classes.emojiIcon} onClick={showEmoji}></button>
-              {isEmojiShown && <Picker onEmojiClick={onEmojiClick} />}
-            </RadioGroup>
-          </FormControl>
-        </Box>
-        <Box pt={4}>
-          <b>{t("notifications.titleLimitation")}</b>
-          {model.Title.length}
-        </Box>
-        <Box pt={1}>
-          <b>{t("notifications.bodyLimitation")}</b>
-          {model.Body.length}
-        </Box>
-      </div>
-
+        <Grid style={{ marginRight: '10px', marginLeft: '10px' }}>
+          <Box pt={2} style={{ position: 'relative' }}>
+            <FormControl component="fieldset">
+              <RadioGroup defaultValue="2" aria-label="gender" name="customized-radios" className={classes.directionRadio}>
+                <FormControlLabel value="2"
+                  control={<Radio onChange={handleDirection}
+                    checkedIcon={<FaAlignRight style={{ fontWeight: 'bold', fontSize: 16 }}
+                    />}
+                    icon={<FaAlignRight style={{ fontSize: 16 }}
+                    />}
+                  />}
+                />
+                <FormControlLabel value="1"
+                  control={<Radio onChange={handleDirection}
+                    checkedIcon={<FaAlignLeft style={{ fontWeight: 'bold', fontSize: 16 }}
+                    />}
+                    icon={<FaAlignLeft style={{ fontSize: 16 }}
+                    />}
+                  />}
+                />
+                <button className={classes.emojiIcon} onClick={showEmoji} id="emohiToggle"></button>
+                <ClickAwayListener onClickAway={handleClickOutsideEmoji}>
+                  <div>
+                    {isEmojiShown && <Picker onEmojiClick={onEmojiClick} />}
+                  </div>
+                </ClickAwayListener>
+              </RadioGroup>
+            </FormControl>
+          </Box>
+          <Box pt={1}>
+            <b>{t("notifications.titleLimitation")}</b>
+            {model && model.Title != '' && model.Title.length}
+          </Box>
+          <Box>
+            <b>{t("notifications.bodyLimitation")}</b>
+            {model && model.Body != '' && model.Body.length}
+          </Box>
+        </Grid>
+      </div >
     )
   }
 
-  const StyledRadio = (props) => {
-    return (
-      <input type="radio" className={classes.directionRadio} name="direction" />
-    )
-  }
 
   const redirectButton = () => {
     return <div className={classes.RedirectButtonText}>{model.RedirectButtonText}</div>
