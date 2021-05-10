@@ -16,6 +16,7 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
   getSmsData,restoreSms,deleteSms,duplicteSms,getSmsAuthorizationData,getAuthorizeNumbers,sendVerificationCode,verifyCode
 } from '../redux/reducers/smsSlice'
+import {pulseemNewTab} from '../helpers/functions'
 import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
@@ -227,7 +228,7 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {Status,Groups,AutomationId,Id}=row
+    const {Status,Groups,AutomationID,Id}=row
 
     const iconsMap=[
       {
@@ -247,7 +248,7 @@ const SmsManagnentScreen=({classes}) => {
         remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
         onClick: () => {
-          history.push('/SMSPreviewCampaign/'+Id)
+          pulseemNewTab(`SMSPreviewCampaign.aspx?SMSCampaignID=${Id}`)
         }
       },
       {
@@ -257,7 +258,7 @@ const SmsManagnentScreen=({classes}) => {
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         onClick: () => {
-          history.push('/Editor/CampaignEdit/'+Id)
+          history.push('/Edit/SMSCampaignEdit/'+Id)
         }
       },
       {
@@ -288,10 +289,11 @@ const SmsManagnentScreen=({classes}) => {
         key: 'automation',
         icon: AutomationIcon,
         remove: windowSize==='xs',
-        disable: AutomationId===0,
+        disable: AutomationID===0,
         lable: t('campaigns.automation'),
         onClick: () => {
-          history.push('/CampaignStatistics/'+AutomationId)
+          console.log(row)
+          history.push('/PreviewAutomations/'+AutomationID)
         }
       },
       {

@@ -16,6 +16,7 @@ import {getMmsData,restoreMms,deleteMms,duplicteMms} from '../redux/reducers/mms
 import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
+import {pulseemNewTab} from '../helpers/functions'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
@@ -223,7 +224,7 @@ const MmsManagnentScreen=({classes}) => {
         remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
         onClick: () => {
-          history.push('/MmsPreviewCampaign/'+ID)
+          pulseemNewTab(`MmsPreviewCampaign.aspx?MmsCampaignID=${ID}`)
         }
       },
       {

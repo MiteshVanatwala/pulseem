@@ -160,7 +160,7 @@ const NewsletterManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/CampaignInfo')}
+            onClick={() => history.push('/Editor/CampaignInfo')}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -301,7 +301,7 @@ const NewsletterManagnentScreen=({classes}) => {
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
         onClick: () => {
-          history.push('/CampaignStatistics/'+AutomationID)
+          history.push('/PreviewAutomations/'+AutomationID)
         }
       },
       {

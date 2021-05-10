@@ -231,7 +231,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
       <PopMassage
         classes={classes}
         show={showCopied===ID}
-        timeout={500}
+        timeout={2000}
         label={t('common.copyClip')}
       />
     )

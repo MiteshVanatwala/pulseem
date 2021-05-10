@@ -52,19 +52,15 @@ const renderRoutes=(classes,history) => {
       />
       <Route
         path={`/Editor/CampaignEdit/:campaignID`}
-        component={transferUrl('/Editor/CampaignEdit/','campaign')}
+        component={transferUrl('/Pulseem/Editor/CampaignEdit/','campaign')}
       />
       <Route
         path={`/DuplicateCampign/:campaignID`}
-        component={transferUrl('/DuplicateCampign/','campaign')}
+        component={transferUrl('/Pulseem/DuplicateCampign/','campaign')}
       />
       <Route
         path={`/CampaignStatistics/:campaignID`}
         component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=','campaign')}
-      />
-      <Route
-        path={`/CreateAutomations/:automationID`}
-        component={transferUrl('/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=','automation')}
       />
       <Route
         path={`/homepage`}
@@ -254,6 +250,7 @@ const renderRoutes=(classes,history) => {
         path={`/CreateAutomations`}
         component={transferUrl('/Pulseem/CreateAutomations.aspx')}
       />
+
       <Route
         path="/EditAutomations/:id"
         component={transferUrl('/Pulseem/CreateAutomations.aspx?AutomationID=','id')}

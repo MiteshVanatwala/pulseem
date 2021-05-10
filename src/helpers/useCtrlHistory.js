@@ -8,7 +8,6 @@ export default () => {
   const key=isMac? 'metaKey':'ctrlKey'
   const handleKeyDown=e => {
     if(e[key]) {
-      console.log('down')
       setCtrlKeyPressed(true);
     }
   };
@@ -41,7 +40,7 @@ export default () => {
       document.removeEventListener('keyup',handleKeyUp);
       window.removeEventListener('blur',handleKeyUp);
     };
-  },[]);
+  },[isMac]);
 
   return ctrlHistory;
 };

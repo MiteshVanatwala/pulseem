@@ -109,6 +109,7 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     fontWeight: 600,
     backgroundColor: '#bde5f8',
     opacity: 0,
+    zIndex: 10
   },
   dialogIconContent: {
     fontFamily: 'pulseemicons',
