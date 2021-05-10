@@ -3,7 +3,7 @@ import DefaultScreen from './DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction
+  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction, Link
 } from '@material-ui/core'
 import {
   AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
@@ -559,10 +559,9 @@ const SmsManagnentScreen=({classes}) => {
 
     const handleSendVerificationCode=async () => {
       const value=(dialogType&&dialogType.type==='shortVerify'&&dialogType.data)? dialogType.data:number;
-      console.log("length",value.length)
       if(!value||value.length<10) {
         handleNumberError(true);
-        return
+        return;
       }
 
       const result=await dispatch(sendVerificationCode({userName: null,number: value}));
@@ -575,6 +574,11 @@ const SmsManagnentScreen=({classes}) => {
       }
     }
 
+    const handleNumberChange=(value)=>{
+      handleNumberError(false);
+      handleNumber(value);
+    }
+    
     const handleConfirmCode=async () => {
       const result=await dispatch(verifyCode(verificationCode));
       if(result.error) {
@@ -664,7 +668,7 @@ const SmsManagnentScreen=({classes}) => {
           </Box>
         ),
         content: (
-          <Typography style={{fontSize: 18}}>
+          <Typography className={classes.font18}>
             {t('campaigns.GridButtonColumnResource2.ConfirmText')}
           </Typography>
         ),
@@ -713,7 +717,7 @@ const SmsManagnentScreen=({classes}) => {
               {t('sms.verificationNote')}
             </Typography>
             <hr />
-            <Box style={{display: 'flex',justifyContent: 'space-between',marginBottom: 10}}>
+            <Box className={classes.numberBox}>
               <Typography style={{fontSize: 15}}>
                 {t('sms.numbersAccount')}
               </Typography>
@@ -725,12 +729,12 @@ const SmsManagnentScreen=({classes}) => {
               >{t('sms.verifyAnotherNumber')}
               </Button>
             </Box>
-            <List style={{padding: 0,overflow: 'auto',height: 'calc(100vh - 500px)'}}>
+            <List className={classes.phoneNumberList}>
               {dialogType&&dialogType.type==='verify'&&dialogType.data
                 .map(item => {
                   return (
-                    <ListItem style={{padding: 0}} key={`verificationNumber${item.ID}`}>
-                      <ListItemAvatar style={{minWidth: 25}}>
+                    <ListItem className={classes.padding0} key={`verificationNumber${item.ID}`}>
+                      <ListItemAvatar className={classes.minWidth25}>
                         <Avatar className={item.IsOptIn? classes.checkIcon:classes.redIcon}>
                           <div className={clsx(classes.avatarIcon)}>
                             {item.IsOptIn? '\uE134':'\uE0A7'}
@@ -738,16 +742,16 @@ const SmsManagnentScreen=({classes}) => {
                         </Avatar>
                       </ListItemAvatar>
                       <ListItemText
-                        style={{margin: 0}}
+                        className={classes.margin0}
                         primary={
                           <Typography variant="body2">
                             {item.Number}
                             {!item.IsOptIn&&
-                              <a
-                                href=""
+                              <Link
+                                component='button'
                                 className={classes.verifyLink}
                                 onClick={() => handleShortVerify(item.Number)}
-                              >{t('sms.verifyNumber')}</a>
+                              >{t('sms.verifyNumber')}</Link>
                             }
                           </Typography>}
                       />
@@ -765,7 +769,6 @@ const SmsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='small'
-            style={{maxWidth: 100}}
             onClick={handleClose}
             className={clsx(
               classes.gruopsDialogButton,
@@ -784,8 +787,12 @@ const SmsManagnentScreen=({classes}) => {
         ),
         content: (
           <Box style={{textAlign: 'center'}}>
-            <Typography align='center' style={{fontWeight: 'bold',fontSize: 25}}>{t('sms.shortVerificationTitle')}</Typography>
-            <Typography style={{fontSize: 15}} align={'justify'}>
+            <Typography 
+              align='center' 
+              className={classes.boldSize25}
+              >{t('sms.shortVerificationTitle')}
+            </Typography>
+            <Typography className={classes.font15} align={'justify'}>
               {t('sms.verificationBody')}
               <b>{t('sms.oneTimeProcess')}</b>
               {t('sms.foreachSubmission')}
@@ -797,7 +804,7 @@ const SmsManagnentScreen=({classes}) => {
               variant='outlined'
               placeholder={t('sms.enterNumberText')}
               value={(dialogType&&dialogType.type==='shortVerify'&&dialogType.data!=='')? dialogType.data:number}
-              onChange={e => handleNumber(e.target.value)}
+              onChange={e => handleNumberChange(e.target.value)}
               size='small'
               type='tel'
               readOnly={dialogType&&dialogType.type==='shortVerify'&&dialogType.data!==''}
@@ -806,7 +813,10 @@ const SmsManagnentScreen=({classes}) => {
             <Button
               variant='contained'
               onClick={handleSendVerificationCode}
-              style={{background: 'green',textTransform: 'capitalize',color: 'white'}}
+              className={clsx(
+                classes.actionButton,
+                classes.actionButtonLightGreen
+              )}
             >{t('sms.verificationButtonText')}</Button>
             <Typography className={clsx(classes.contactUs,classes.newLine)}>{t('sms.havingIssuesMessage')}</Typography>
           </Box>
@@ -822,8 +832,14 @@ const SmsManagnentScreen=({classes}) => {
         ),
         content: (
           <Box style={{textAlign: 'center'}}>
-            <Typography align='center' style={{fontWeight: 'bold',fontSize: 25}}>{t('common.Sent')}!</Typography>
-            <Typography style={{fontSize: 15}} align={'center'}>
+            <Typography 
+              align='center' 
+              className={classes.boldSize25}
+              >{t('common.Sent')}!
+            </Typography>
+            <Typography 
+              className={classes.font15} 
+              align={'center'}>
               {t('sms.verificationSentToNumber')}{dialogType&&dialogType.type==='verificationSent'? dialogType.data:null}
               <br />
               {t('sms.pleaseNoteCode')}
@@ -843,14 +859,17 @@ const SmsManagnentScreen=({classes}) => {
               variant='contained'
               onClick={() => handleConfirmCode(verificationCode)}
               color='primary'
-              style={{minWidth: 150}}
+              className={classes.minWidth150}
             >{t('common.Ok')}</Button>
-            <Typography style={{paddingTop: 20}}>
+            <Typography className={classes.pt20}>
               {t('sms.didNotReceived')}
-              <a href="#"
+              <Link 
+                component='button' 
                 onClick={() => handleShortVerify(dialogType.data)}
-                style={{textDecoration: 'underline',margin: '0 5px'}}
-              >{t('sms.resend')}</a>
+                className={classes.link}>
+                {t('sms.resend')}
+              </Link>
+              
             </Typography>
           </Box>
         ),

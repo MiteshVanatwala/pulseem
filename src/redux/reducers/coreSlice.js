@@ -5,8 +5,8 @@ const rtlLanguages=['he','ar']
 export const coreSlice=createSlice({
   name: 'core',
   initialState: {
-    language: 'he',
-    isRTL: true,
+    language: 'en',
+    isRTL: false,
     windowSize: 'lg',
   },
   reducers: {

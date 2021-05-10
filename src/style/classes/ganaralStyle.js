@@ -74,7 +74,8 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     backgroundRepeat: 'repeat-x',
     border: '1px solid #345233',
     borderTop: '0px solid #345233',
-    boxShadow: '0px 3px 3px #345233'
+    boxShadow: '0px 3px 3px #345233',
+    maxWidth: 100
   },
   dialogCancelButton: {
     background: 'rgba(212,137,33,1)',
