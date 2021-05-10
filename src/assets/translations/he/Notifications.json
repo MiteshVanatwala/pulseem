@@ -44,6 +44,12 @@
     "failed": "נכשל",
     "pending": "בהמתנה"
   },
+  "validation": {
+    "notificationName": "שם הנוטיפיקציה - שדה חובה",
+    "redirectUrl": "קישור להפניה - שדה חובה",
+    "title": "כותרת הנוטיפיקציה - שדה חובה",
+    "body": "תוכן הנוטיפיקציה - שדה חובה"
+  },
   "notificationName": "שם הנוטיפיקציה",
   "notifications": "נוטיפיקציות",
   "restoreDeleted": "שיחזור מחוקים",

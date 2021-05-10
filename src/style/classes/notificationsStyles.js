@@ -131,7 +131,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     notificationText: {
         marginTop: '5px',
         resize: 'none',
-        height: '45px !important',
+        minHeight: '45px !important',
         overflow: 'hidden',
         textAlign: 'right'
     },
@@ -230,5 +230,12 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         width: 30,
         height: 30,
         marginTop: 5
+    },
+    notificationPreviewBody: {
+        backgroundColor: 'transparent',
+        border: 'none',
+        fontFamily: 'Assistant !important',
+        fontSize: 16
+
     }
 })

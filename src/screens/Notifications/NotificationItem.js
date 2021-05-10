@@ -1,18 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../DefaultScreen'
-import { Typography, Button, TextField, Grid, TextareaAutosize, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener } from '@material-ui/core'
+import {
+  Typography, Button, TextField, Grid, TextareaAutosize, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener,
+  Card, CardContent, Dialog
+} from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import 'moment/locale/he'
 import { Preview } from '../../components/Notifications/Preview/Preview';
-import { getNotificationById, saveNotification, updateNotification, getApiToken } from '../../redux/reducers/notificationSlice';
+import { getNotificationById, save, updateNotification, getApiToken } from '../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { useHistory } from "react-router-dom";
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
 import './notification.styles.css';
+import { FormatLineSpacing } from '@material-ui/icons';
 
 
 function getSteps() {
@@ -38,7 +42,7 @@ const NotificationItem = ({ props, classes }) => {
     Image: "",
     RedirectURL: "",
     Tag: "",
-    Direction: "",
+    Direction: "2",
     IsRenotify: "",
     SendDate: "",
     IsDeleted: "",
@@ -56,6 +60,8 @@ const NotificationItem = ({ props, classes }) => {
   const [inputFocus, setFocusOnInput] = useState(null);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [isEmojiShown, setShowEmoji] = useState(false);
+  const [validationErrorList, setValidationError] = useState([]);
+  const [dialogType, setDialogType] = useState(null)
 
   moment.locale(language);
 
@@ -144,7 +150,7 @@ const NotificationItem = ({ props, classes }) => {
     setShowEmoji(!isEmojiShown);
   }
   const handleClickOutsideEmoji = (event) => {
-    if(event.target.id != 'emohiToggle')
+    if (event.target.id != 'emohiToggle')
       setShowEmoji(false);
   }
   const onEmojiClick = (event, emojiObject) => {
@@ -186,24 +192,122 @@ const NotificationItem = ({ props, classes }) => {
     }, 100);
 
   }
+  const isValidNotification = () => {
+    const errorList = [];
+
+    if (model.Name === '') {
+      errorList.push({ message: t('notifications.validation.notificationName') });
+    }
+    if (model.RedirectURL === '') {
+      errorList.push({ message: t('notifications.validation.redirectUrl') });
+    }
+    if (model.Title === '') {
+      errorList.push({ message: t('notifications.validation.title') });
+    }
+    if (model.Body === '') {
+      errorList.push({ message: t('notifications.validation.body') });
+    }
+    setValidationError(errorList);
+
+    setDialogType({
+      type: 'validation',
+      data: errorList
+    })
+
+    if (errorList.length > 0) {
+      return false;
+    }
+  }
+
+  const renderValidationError = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE0F8'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <Card>
+            <CardContent>
+              (
+                 <>
+                <ul>
+                  {validationErrorList.map(d => (<li>{d.message}</li>))}
+                </ul>
+              </>
+              )
+            </CardContent>
+          </Card>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleDialogClose}
+          className={clsx(
+            classes.confirmButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.confirm')}
+        </Button>
+      )
+    };
+  }
+
+  const handleDialogClose = () => {
+    setDialogType(null)
+  }
+
+  const renderDialog = () => {
+    let dialog = {};
+
+    dialog = renderValidationError();
+
+    return (
+      <Dialog
+        classes={classes}
+        open={dialogType}
+        onClose={handleDialogClose}
+        {...dialog}>
+        {dialog.content}
+      </Dialog>
+    );
+  }
 
   // Api calls
-  const save = (isExit, isContinue) => (event) => {
+  const saveNotification = (isExit, isContinue) => (event) => {
+    // Show loader
     event.preventDefault();
-    if (!ShowRedirectButton) {
-      model.RedirectButtonText = '';
-    }
-    if (model && model.ID > 0) {
-      dispatch(updateNotification(model));
+    if (isValidNotification()) {
+      if (!ShowRedirectButton) {
+        model.RedirectButtonText = '';
+      }
+      if (model && model.ID > 0) {
+        dispatch(updateNotification(model));
+      }
+      else {
+        dispatch(save(model)).then((response) => {
+          setModel({ ...model, ID: response.payload });
+          if (isContinue) {
+            redirectAfterSave(response.payload);
+          }
+        });
+      }
+      if (isExit) {
+        history.push("/Notification");
+      }
     }
     else {
-      dispatch(saveNotification(model));
+      renderDialog();
     }
-    if (isExit) {
-      history.push("/Notification");
-    }
-    else if (isContinue) {
-      setActiveStep(activeStep + 1);
+  }
+
+  const redirectAfterSave = (notificationId) => {
+    if (notificationId > 0) {
+      history.push(`/NotificationItem/${notificationId}/send`);
     }
   }
 
@@ -347,11 +451,16 @@ const NotificationItem = ({ props, classes }) => {
     )
   }
   const chooseIcon = () => {
-    return (<div><svg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="image" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-      <g>
-        <path fillRule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
-      </g>
-    </svg>
+    return (<div className={clsx(
+      classes.flex,
+      classes.flexCenter,
+      classes.flexColumn
+    )}
+      style={{ fontSize: '40px' }}><svg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="image" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+        <g>
+          <path fillRule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
+        </g>
+      </svg>
       <span style={{ fontSize: '14px' }}>{t("notifications.ph_chooseIcon")}</span>
     </div>
     )
@@ -402,13 +511,12 @@ const NotificationItem = ({ props, classes }) => {
                 id="notificationTitle"
               />
               <TextareaAutosize
-                rowsMax={4}
                 aria-label=""
                 placeholder={t("notifications.ph_body")}
                 value={model.Body}
                 className={clsx(classes.transparent, classes.borderSign, classes.dashed, classes.notificationText)}
                 onChange={handleNotificationText}
-                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left' }}
+                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', maxHeight: 45 }}
                 onFocus={handleTextFocus}
                 id="notificationText"
               />
@@ -421,18 +529,23 @@ const NotificationItem = ({ props, classes }) => {
             <FormControl component="fieldset">
               <RadioGroup defaultValue="2" aria-label="gender" name="customized-radios" className={classes.directionRadio}>
                 <FormControlLabel value="2"
-                  control={<Radio onChange={handleDirection}
-                    checkedIcon={<FaAlignRight style={{ fontWeight: 'bold', fontSize: 16 }}
+                  control={<Radio
+                    onChange={handleDirection}
+                    checked
+                    checkedIcon={<FaAlignRight
+                      style={{ fontWeight: 'bold', fontSize: 24, color: 'black' }}
                     />}
-                    icon={<FaAlignRight style={{ fontSize: 16 }}
+                    icon={<FaAlignRight style={{ fontSize: 24 }}
                     />}
                   />}
                 />
                 <FormControlLabel value="1"
-                  control={<Radio onChange={handleDirection}
-                    checkedIcon={<FaAlignLeft style={{ fontWeight: 'bold', fontSize: 16 }}
+                  control={<Radio
+                    onChange={handleDirection}
+                    checkedIcon={<FaAlignLeft
+                      style={{ fontWeight: 'bold', fontSize: 24, color: 'black' }}
                     />}
-                    icon={<FaAlignLeft style={{ fontSize: 16 }}
+                    icon={<FaAlignLeft style={{ fontSize: 24 }}
                     />}
                   />}
                 />
@@ -447,11 +560,11 @@ const NotificationItem = ({ props, classes }) => {
           </Box>
           <Box pt={1}>
             <b>{t("notifications.titleLimitation")}</b>
-            {model && model.Title != '' && model.Title.length}
+            {model && model.Title != '' && model.Title.length || 0}
           </Box>
           <Box>
             <b>{t("notifications.bodyLimitation")}</b>
-            {model && model.Body != '' && model.Body.length}
+            {model && model.Body != '' && model.Body.length || 0}
           </Box>
         </Grid>
       </div >
@@ -554,7 +667,7 @@ const NotificationItem = ({ props, classes }) => {
                     )}
                     color="primary"
                     style={{ margin: '8px' }}
-                    onClick={save(false, false)}>
+                    onClick={saveNotification(false, false)}>
                     {t('notifications.save')}
                   </Button>
                   <Button
@@ -567,7 +680,7 @@ const NotificationItem = ({ props, classes }) => {
                     )}
                     color="primary"
                     style={{ margin: '8px' }}
-                    onClick={save(true, false)}>
+                    onClick={saveNotification(true, false)}>
                     {t('notifications.saveAndExit')}
                   </Button>
                   <Button
@@ -580,7 +693,7 @@ const NotificationItem = ({ props, classes }) => {
                     )}
                     color="primary"
                     style={{ margin: '8px' }}
-                    onClick={save(false, true)}>
+                    onClick={saveNotification(false, true)}>
                     {t('notifications.saveAndContinue')}
                   </Button>
                 </Box>

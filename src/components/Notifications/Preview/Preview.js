@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, Box, Typography, AppBar, Tab, Tabs } from '@material-ui/core'
+import { Grid, Box, Typography, AppBar, Tab, Tabs, TextareaAutosize } from '@material-ui/core'
 import clsx from 'clsx';
 import './preview.styles.css';
 import PropTypes from 'prop-types';
@@ -77,13 +77,19 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
                         <div className={clsx(classes.borderSign, classes.icon)}
                             style={{
                                 backgroundImage: `url(${model.Icon})`,
-                                cursor: 'unset'
+                                cursor: 'unset',
+                                maxHeight: 85
                             }}>
                         </div>
                     </div>
                     <div className={classes.notificationContent}>
                         {isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title}</b></Typography>}
-                        <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}>{model.Body}</Typography>
+                        <TextareaAutosize
+                            rowsMax={4}
+                            style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', color: isChrome ? '#fff' : '' }}
+                            value={model.Body}
+                            className={clsx(classes.notificationPreviewBody, classes.borderSign, classes.notificationText)}
+                        />
                     </div>
                 </div>
                 {
