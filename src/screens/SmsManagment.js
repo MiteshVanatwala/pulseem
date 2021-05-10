@@ -357,8 +357,6 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderRecipientsCell=(recipients) => {
-    if(recipients===0) return null
-
     return (
       <>
         <Typography className={classes.middleText}>
