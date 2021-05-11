@@ -570,6 +570,11 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     '&:hover': {
       color: 'darkred'
     }
+  },
+  scriptCode: {
+    background: '#eee',
+    fontSize: 12,
+    wordBreak: 'break-all',
+    overflow: 'auto'
   }
-
 })

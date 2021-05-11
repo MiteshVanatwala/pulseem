@@ -67,5 +67,10 @@
   "groupName": "Group Name",
   "recipients": "Recipients",
   "copy": "Copy",
-  "copied": "Copied"
+  "copied": "Copied",
+  "implementDialog": {
+    "beforeYouStarted": "Before you get started...",
+    "startSendingOutMessage": "In order to start sending out Push Notifications to your clients, you must first implement the script below so visitors to your site can receive notifications.",
+    "dontShowThisMessage": "Do not show me this message again"
+  }
 }

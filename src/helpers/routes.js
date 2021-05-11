@@ -157,7 +157,8 @@ export const getRoutes=(t=() => null) => [
       src={NotificationsIcon} />,
     options: [
       {title: t('master.createNotification'),href: '/Notification/create'},
-      {title: t('master.manageNotifications'),href: '/Notification'}
+      {title: t('master.manageNotifications'),href: '/Notification'},
+      {title: t('master.implementScript'),href: '/Notification', isScriptDialog: true}
     ]
   }
 ]

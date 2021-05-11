@@ -15,6 +15,7 @@ import {FaBars,FaTimes} from 'react-icons/fa';
 import {getRoutes,getSettingsItem} from '../../helpers/routes'
 import useCtrlHistory from '../../helpers/useCtrlHistory'
 import {getCookie,setCookie} from '../../helpers/functions';
+import { setScriptDialog } from '../../redux/reducers/notificationSlice';
 
 const AppBarItem=({
   item,
@@ -140,8 +141,17 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
   const history=useCtrlHistory()
+  const dispatch=useDispatch();
+
+  const handleScriptDialog=()=>{
+    let scriptDialog=getCookie('scriptDialog');
+    scriptDialog = (scriptDialog === 'true');
+    dispatch(setScriptDialog(scriptDialog));
+  }
 
   useEffect(() => {
+    handleScriptDialog();
+
     const resizeWindow=() => {
       setWindowWidth(window.innerWidth)
     }
@@ -159,7 +169,11 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const routes=getRoutes(t)
   const settings=getSettingsItem(t,classes.appBarSettingIcon)
 
-  const navigate=({href}) => {
+  const navigate=({href, isScriptDialog=false}) => {
+    if (isScriptDialog) {
+      setCookie('scriptDialog', false, {'max-age': 3600});
+      dispatch(setScriptDialog(false));
+    }
     history.push(href)
   }
 

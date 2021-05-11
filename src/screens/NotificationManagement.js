@@ -1,9 +1,9 @@
 import React,{useState,useEffect,useRef} from 'react';
-import DefaultScreen from './DefaultScreen'
+import DefaultScreen from './DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,IconButton,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio
+  Grid,Button,TextField,IconButton,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio, FormGroup, FormControl
 } from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
@@ -23,15 +23,17 @@ import 'moment/locale/he'
 import {
   getNotificationById,getNotificationGroups,getNotificationData,getDeletedNotifications,
   duplicateNotification,deleteNotification,getNotificationGroupsById,restoreNotifications,
-  getScriptPath,getApiToken,updateScriptPath
+  getScriptPath,getApiToken,updateScriptPath, setScriptDialog
 } from '../redux/reducers/notificationSlice';
+import { setCookie } from '../helpers/functions';
 
 const NotificationManagement=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
-  const {notificationData}=useSelector(state => state.notification)
+  const {notificationData, hideScriptDialog}=useSelector(state => state.notification)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
-  const [toDate,handleToDate]=useState(null)
+  const [toDate,handleToDate]=useState(null);
+  const [scriptDialog,handleScriptDialogCheck]=useState(false);
   const [notificationNameSearch,setNotificationNameSearch]=useState('');
   const [statusSearch,setStatusSearch]=useState(-1);
   const [scriptDirectory,setScriptDirectory]=useState(0);
@@ -61,16 +63,11 @@ const NotificationManagement=({classes}) => {
     dispatch(getNotificationData());
   }
 
-  useEffect(getData,[dispatch]);
-
-  const handleImplementScript=async () => {
+  useEffect(()=>{
     handleScriptPath();
     handleApiToken();
-    setDialogType({
-      type: 'implement',
-      data: {}
-    });
-  }
+    getData();
+  },[dispatch]);
 
   const handleScriptPath=async () => {
     const scriptPath=await dispatch(getScriptPath());
@@ -153,6 +150,31 @@ const NotificationManagement=({classes}) => {
         data: res.payload
       });
     }
+  }
+
+  const handleImplementScript=(value)=>{
+    if (value) {
+      setCookie('scriptDialog', scriptDialog, {'max-age': 3600});
+      dispatch(updateScriptPath(scriptPath));
+    }
+    dispatch(setScriptDialog(true));
+  }
+
+  const renderImplementDialog=()=>{
+    if(hideScriptDialog) {
+      return;
+    }
+
+    const dialog=renderImplement();
+    return (
+      <Dialog
+        classes={classes}
+        open={!hideScriptDialog}
+        onClose={()=>handleImplementScript(false)}
+        {...dialog}>
+        {dialog.content}
+      </Dialog>
+    );
   }
 
   const renderHeader=() => {
@@ -239,7 +261,7 @@ const NotificationManagement=({classes}) => {
             value={statusSearch}
             className={classes.formControlSelect}
           >
-            <MenuItem value={-1} disabled><div style={{color: 'rgba(0,0,0,0.40)'}}>{t('common.Status')}</div></MenuItem>
+            <MenuItem value={-1} disabled><div className={classes.colorGray}>{t('common.Status')}</div></MenuItem>
             <MenuItem value={0}>{t('common.draft')}</MenuItem>
             <MenuItem value={1}>{t('common.deleted')}</MenuItem>
             <MenuItem value={2}>{t('common.Pending')}</MenuItem>
@@ -319,18 +341,6 @@ const NotificationManagement=({classes}) => {
             {t('notifications.restoreDeleted')}
           </Button>
         </Grid>}
-        <Grid item>
-          <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
-            onClick={handleImplementScript}>
-            {t('notifications.buttons.implementScript')}
-          </Button>
-        </Grid>
         <Grid item>
           <Button
             variant='contained'
@@ -609,7 +619,7 @@ const NotificationManagement=({classes}) => {
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
+        <TableCell classes={{root: clsx(classes.tableCellRoot, classes.flex1)}}>
           <Grid container justify='space-between'>
             <Grid item>
               {renderNameCell(row)}
@@ -703,7 +713,8 @@ const NotificationManagement=({classes}) => {
   }
 
   const handleDialogClose=() => {
-    setDialogType(null)
+    setDialogType(null);
+
   }
 
   const renderPreview=() => {
@@ -894,7 +905,7 @@ const NotificationManagement=({classes}) => {
       ),
       content: (
         <Box className={classes.dialogBox}>
-          <Typography style={{fontSize: 18}}>
+          <Typography className={classes.f18}>
             {t('notifications.deleteConfirmation')}
           </Typography>
         </Box>
@@ -916,7 +927,7 @@ const NotificationManagement=({classes}) => {
       ),
       content: (
         <Box className={classes.dialogBox}>
-          <Typography style={{fontSize: 18}}>
+          <Typography className={classes.f18}>
             {t('notifications.duplicateConfirmation')}
           </Typography>
         </Box>
@@ -957,7 +968,7 @@ const NotificationManagement=({classes}) => {
 
   const renderImplement=() => {
     return {
-      title: t('notifications.implementTitle'),
+      title: null,
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -966,6 +977,14 @@ const NotificationManagement=({classes}) => {
       ),
       content: (
         <Box className={classes.dialogBox}>
+          <Typography 
+            className={classes.f25}>
+            {t('notifications.implementDialog.beforeYouStarted')}
+          </Typography>
+          <Typography 
+            className={clsx(classes.f18, classes.pb10)}>
+            {t('notifications.implementDialog.startSendingOutMessage')}
+          </Typography>
           <Typography>
             1. {t('notifications.downloadThe')}
             <a target="_blank" rel="noreferrer" href="https://pn.pulseem.com/assets/scripts/service-worker.js" download>{t('notifications.attachedScript')}</a>
@@ -1000,7 +1019,7 @@ const NotificationManagement=({classes}) => {
                 variant="outlined"
                 size="small"
                 fullWidth
-                style={{maxWidth: 400}}
+                className={classes.maxWidth400}
                 onChange={handleScriptPathChange}
                 value={scriptPath}
               />
@@ -1009,7 +1028,7 @@ const NotificationManagement=({classes}) => {
           <Typography>
             3. {t('notifications.copyLineCodeText')}
           </Typography>
-          <Typography style={{fontWeight: 'bold',padding: '10px 0'}}>
+          <Typography className={clsx(classes.bold, classes.pb10, classes.pt10)}>
             {t('notifications.payAttentionText')}
           </Typography>
           <Button
@@ -1021,22 +1040,44 @@ const NotificationManagement=({classes}) => {
           >
             {copyStatus? t('notifications.copied'):t('notifications.copy')}
           </Button>
-          <Typography style={{fontWeight: 'bold',fontSize: 14}}>
+          <Typography className={clsx(classes.bold, classes.f14)}>
             {t('notifications.headTagOpenText')} {'<head>'}
           </Typography>
           <pre>
-            <div ref={refScriptCode} style={{background: '#eee',fontSize: 12,wordBreak: 'break-all',overflow: 'auto'}}>
+            <div ref={refScriptCode} className={classes.scriptCode}>
               {renderScriptCode()}
             </div>
           </pre>
-          <Typography style={{fontWeight: 'bold',fontSize: 14}}>
+          <Typography className={clsx(classes.bold, classes.f14)}>
             {t('notifications.headTagClosesText')} {'</head>'}
           </Typography>
         </Box>
       ),
-      onConfirm: () => {
-        dispatch(updateScriptPath(scriptPath));
-      }
+      renderButtons: () => (
+        <>
+        <FormControl className={classes.ps25}>
+          <FormControlLabel 
+            control={
+              <Checkbox
+                checked={scriptDialog}
+                onChange={()=>handleScriptDialogCheck(!scriptDialog)}
+                color="primary"
+              />
+            }
+            label={t('notifications.implementDialog.dontShowThisMessage')}/>
+        </FormControl>
+        <Button
+          variant='contained'
+          size='small'
+          onClick={()=>handleImplementScript(true)}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.Ok')}
+        </Button>
+        </>
+      )
     }
   }
 
@@ -1079,6 +1120,7 @@ const NotificationManagement=({classes}) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
+      {renderImplementDialog()}
     </DefaultScreen>
   )
 }
