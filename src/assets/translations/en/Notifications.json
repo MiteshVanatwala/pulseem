@@ -81,5 +81,19 @@
   "testSend": "Test Send",
   "createContentText": "Image, icon and button are optional, but recommended for optional results",
   "titleLimitation": "Title (up to 50 chars): ",
-  "bodyLimitation": "Text (up to 100 chars): "
+  "bodyLimitation": "Text (up to 100 chars): ",
+  "exampleBody": "Example Text",
+  "exampleTitle": "Example Title",
+  "noGroupsSelected": "No groups selected",
+  "selectAll": "Select All",
+  "totalRecipients": "Total Recipients: ",
+  "sort_by_group": "Sort by: Group Name",
+  "sort_by_update": "Sort by: Creation Date",
+  "toWhomToSend": "To whom to send?",
+  "whenToSend": "When would you like to send?",
+  "immediateDescription": "Right after you click ''send'' in the Summary screen",
+  "immediateSend": "Send imediatley",
+  "futureSend": "Date and Time",
+  "date": "Pick a Date",
+  "hour": "Pick Hour"
 }

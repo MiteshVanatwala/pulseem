@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Grid, Box, Typography, AppBar, Tab, Tabs, TextareaAutosize } from '@material-ui/core'
 import clsx from 'clsx';
@@ -9,7 +9,6 @@ import { FaChrome, FaFirefox, FaMobile } from 'react-icons/fa';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
-
     return (
         <div
             role="tabpanel"
@@ -26,8 +25,6 @@ function TabPanel(props) {
         </div>
     );
 }
-
-
 
 export const Preview = ({ classes, model, ShowRedirectButton }) => {
     const { t } = useTranslation();
@@ -49,6 +46,37 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
             'aria-controls': `scrollable-force-tabpanel-${index}`,
         };
     }
+    // Image/Icon selection
+    const chooseImage = () => {
+        return (<div className={clsx(
+            classes.flex,
+            classes.flexCenter,
+            classes.flexColumn
+        )}
+            style={{ fontSize: '80px' }}>
+            <svg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="image" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                <g>
+                    <path fillRule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
+                </g>
+            </svg>
+        </div>
+        )
+    }
+    const chooseIcon = () => {
+        return (<div className={clsx(
+            classes.flex,
+            classes.flexCenter,
+            classes.flexColumn
+        )}
+            style={{ fontSize: '40px' }}><svg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="image" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                <g>
+                    <path fillRule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
+                </g>
+            </svg>
+        </div>
+        )
+    }
+
 
     // Desktop/Mobile Preview
     const desktopPreview = (isChrome) => {
@@ -68,10 +96,11 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
                         classes.flexCenter, classes.flexColumn
                     )}
                         style={{ fontSize: '80px' }}>
+                        {model == null || !model.Image ? chooseImage() : ""}
                     </div>
                 </div>
                 }
-                {!isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right", paddingTop: 10, paddingRight: 15, paddingLeft: 5, marginBottom: '-10px' }}><b>{model.Title}</b></Typography>}
+                {!isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right", paddingTop: 10, paddingRight: 15, paddingLeft: 5, marginBottom: '-10px' }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
                 <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : '')}>
                     <div className={classes.iconWrapper}>
                         <div className={clsx(classes.borderSign, classes.icon)}
@@ -80,14 +109,15 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
                                 cursor: 'unset',
                                 maxHeight: 85
                             }}>
+                                {model == null || !model.Image ? chooseIcon() : ""}
                         </div>
                     </div>
                     <div className={classes.notificationContent}>
-                        {isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title}</b></Typography>}
+                        {isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
                         <TextareaAutosize
                             rowsMax={4}
                             style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', color: isChrome ? '#fff' : '' }}
-                            value={model.Body}
+                            value={model.Body != '' ? model.Body : t('notifications.exampleBody')}
                             className={clsx(classes.notificationPreviewBody, classes.borderSign, classes.notificationText)}
                         />
                     </div>

@@ -2,14 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import {
   Typography, Button, TextField, Grid, TextareaAutosize, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener,
-  Card, CardContent, Dialog
+  Card, CardContent
 } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import 'moment/locale/he'
 import { Preview } from '../../components/Notifications/Preview/Preview';
-import { getNotificationById, save, updateNotification, getApiToken } from '../../redux/reducers/notificationSlice';
+import { getNotificationById, save, updateNotification, getApiToken, getNotificationGroups } from '../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { useHistory } from "react-router-dom";
 import { PushService } from './init-push';
@@ -17,6 +17,10 @@ import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
 import './notification.styles.css';
 import { FormatLineSpacing } from '@material-ui/icons';
+import Groups from '../../components/Notifications/Groups/Groups';
+import {
+  DateField, Dialog, TimeField
+} from '../../components/managment/index'
 
 
 function getSteps() {
@@ -30,7 +34,8 @@ const NotificationItem = ({ props, classes }) => {
   const steps = getSteps();
   const history = useHistory();
   let isEditable = false;
-  const { isRTL } = useSelector(state => state.core)
+  const { isRTL } = useSelector(state => state.core);
+  moment.locale(language);
 
   // State
   const [model, setModel] = useState({
@@ -49,7 +54,7 @@ const NotificationItem = ({ props, classes }) => {
     SentCount: "",
     StatusID: "",
     NotificationGroups: "",
-    RedirectButtonText: "",
+    RedirectButtonText: ""
   });
 
 
@@ -61,9 +66,14 @@ const NotificationItem = ({ props, classes }) => {
   const [cursorPosition, setCursorPosition] = useState(0);
   const [isEmojiShown, setShowEmoji] = useState(false);
   const [validationErrorList, setValidationError] = useState([]);
-  const [dialogType, setDialogType] = useState(null)
+  const [dialogType, setDialogType] = useState(null);
+  const [groupList, setGroupList] = useState([]);
 
-  moment.locale(language);
+
+  const getSubAccountGroups = async () => {
+    const list = await dispatch(getNotificationGroups());
+    setGroupList(list.payload);
+  }
 
   const handleApiToken = async () => {
     const apiToken = await dispatch(getApiToken());
@@ -84,6 +94,7 @@ const NotificationItem = ({ props, classes }) => {
     if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
       getData();
       handleApiToken();
+      getSubAccountGroups();
       isEditable = true;
       if (props.match.params.send) {
         setActiveStep(activeStep + 1);
@@ -104,7 +115,8 @@ const NotificationItem = ({ props, classes }) => {
   };
 
   const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+    history.push(`/NotificationItem/${model.ID}`);
+    //setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
   const handleReset = () => {
@@ -142,6 +154,7 @@ const NotificationItem = ({ props, classes }) => {
   }
 
   const handleDirection = (event) => {
+    console.log(event.target.value);
     setModel({ ...model, Direction: event.target.value })
   }
 
@@ -207,16 +220,18 @@ const NotificationItem = ({ props, classes }) => {
     if (model.Body === '') {
       errorList.push({ message: t('notifications.validation.body') });
     }
-    setValidationError(errorList);
-
-    setDialogType({
-      type: 'validation',
-      data: errorList
-    })
 
     if (errorList.length > 0) {
+      setValidationError(errorList);
+
+      setDialogType({
+        type: 'validation',
+        data: errorList
+      })
       return false;
     }
+
+    return true;
   }
 
   const renderValidationError = () => {
@@ -287,6 +302,9 @@ const NotificationItem = ({ props, classes }) => {
       }
       if (model && model.ID > 0) {
         dispatch(updateNotification(model));
+        if (isContinue) {
+          redirectAfterSave(model.ID);
+        }
       }
       else {
         dispatch(save(model)).then((response) => {
@@ -351,7 +369,7 @@ const NotificationItem = ({ props, classes }) => {
 
   // HTML
 
-  const notificationPage = () => {
+  const notificationSettings = () => {
     return (
       <Box>
         <Grid
@@ -365,6 +383,7 @@ const NotificationItem = ({ props, classes }) => {
             <TextField
               label={t('notifications.notificationName')}
               id="outlined-margin-dense"
+              required
               value={model && model.Name || ''}
               className={classes.textField}
               margin="dense"
@@ -376,6 +395,7 @@ const NotificationItem = ({ props, classes }) => {
             <TextField
               label={t('notifications.redirectUrl')}
               id="outlined-margin-dense"
+              required
               value={model && model.RedirectURL || ''}
               className={classes.textField}
               margin="dense"
@@ -466,6 +486,7 @@ const NotificationItem = ({ props, classes }) => {
     )
   }
 
+  // Notification Edior Page
   const notificationContent = () => {
     return (
       <div>
@@ -502,6 +523,7 @@ const NotificationItem = ({ props, classes }) => {
             <div className={classes.notificationContent}>
               <TextField
                 aria-label=""
+                required
                 placeholder={t("notifications.ph_title")}
                 value={model.Title}
                 className={clsx(classes.transparent, classes.borderSign, classes.dashed)}
@@ -512,6 +534,7 @@ const NotificationItem = ({ props, classes }) => {
               />
               <TextareaAutosize
                 aria-label=""
+                required
                 placeholder={t("notifications.ph_body")}
                 value={model.Body}
                 className={clsx(classes.transparent, classes.borderSign, classes.dashed, classes.notificationText)}
@@ -527,11 +550,13 @@ const NotificationItem = ({ props, classes }) => {
         <Grid style={{ marginRight: '10px', marginLeft: '10px' }}>
           <Box pt={2} style={{ position: 'relative' }}>
             <FormControl component="fieldset">
-              <RadioGroup defaultValue="2" aria-label="gender" name="customized-radios" className={classes.directionRadio}>
+              <RadioGroup defaultValue="2" aria-label="direction" name="direction" className={classes.directionRadio}>
                 <FormControlLabel value="2"
                   control={<Radio
+                    name="direction"
+                    value="2"
+                    checked={model.Direction === 2}
                     onChange={handleDirection}
-                    checked
                     checkedIcon={<FaAlignRight
                       style={{ fontWeight: 'bold', fontSize: 24, color: 'black' }}
                     />}
@@ -541,6 +566,9 @@ const NotificationItem = ({ props, classes }) => {
                 />
                 <FormControlLabel value="1"
                   control={<Radio
+                    name="direction"
+                    value="1"
+                    checked={model.Direction === 1}
                     onChange={handleDirection}
                     checkedIcon={<FaAlignLeft
                       style={{ fontWeight: 'bold', fontSize: 24, color: 'black' }}
@@ -571,6 +599,96 @@ const NotificationItem = ({ props, classes }) => {
     )
   }
 
+  // Notification Send Settings Page
+
+  // Groups
+  const [selectedGroups, setSelected] = useState([]);
+  const [allGroupsSelected, setAllGroupsSelected] = useState(false);
+  const callbackSelectedGroups = (group, key, reference) => {
+    const found = selectedGroups.map((group) => { return group.Id }).includes(group.Id)
+    if (found) {
+      setSelected(selectedGroups.filter(g => g.Id !== group.Id))
+    } else {
+      setSelected([...selectedGroups, group])
+    }
+  }
+  const callbackSelectAll = () => {
+    if (!allGroupsSelected) {
+      setSelected(groupList);
+    }
+    else {
+      setSelected([]);
+    }
+    setAllGroupsSelected(!allGroupsSelected);
+
+  }
+  const callbackUpdateGroups = (groups) => {
+    setSelected(groups);
+  }
+
+  // Send Type settings
+  const [sendType, setSendType] = useState(1); // Immediate
+  const [sendDate, handleFromDate] = useState(null);
+  const [timeDate, handleTimeToSend] = useState(null);
+
+  const handleSendType = (event) => {
+    setSendType(event.target.value);
+
+  }
+  const notificationSendSettings = () => {
+    return (
+      <Grid container
+        direction="row"
+        justify="flex-start"
+        spacing={4}
+        className={classes.dialogButtonsContainer}
+      >
+        <Grid item xs={6}>
+          <h2>{t('notifications.toWhomToSend')}</h2>
+          <Groups classes={classes}
+            groupList={groupList}
+            selectedList={selectedGroups}
+            callbackSelectedGroups={callbackSelectedGroups}
+            callbackUpdateGroups={callbackUpdateGroups}
+            callbackSelectAll={callbackSelectAll}
+          />
+          <Box>
+            <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>
+              {t('notifications.totalRecipients')}
+              {selectedGroups.reduce(function (a, b) {
+                return a + b['Members'];
+              }, 0)}
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={2}></Grid>
+        <Grid item xs={4}>
+          <h2>{t('notifications.whenToSend')}</h2>
+          <FormControl component="fieldset">
+            <RadioGroup aria-label="gender" name="sendType" value={sendType} onChange={handleSendType}>
+              <FormControlLabel value="1" control={<Radio />} label={t("notifications.immediateSend")} />
+              <Typography>{t("notifications.immediateDescription")}</Typography>
+              <FormControlLabel value="2" control={<Radio />} label={t("notifications.futureSend")} />
+            </RadioGroup>
+            <DateField
+              classes={classes}
+              value={sendDate}
+              onChange={handleFromDate}
+              placeholder={t('notifications.date')}
+            />
+            <TimeField
+              classes={classes}
+              value={timeDate}
+              onChange={handleTimeToSend}
+              placeholder={t('notifications.hour')}
+            />
+          </FormControl>
+        </Grid>
+      </Grid>
+
+    );
+  }
+
 
   const redirectButton = () => {
     return <div className={classes.RedirectButtonText}>{model.RedirectButtonText}</div>
@@ -579,12 +697,11 @@ const NotificationItem = ({ props, classes }) => {
   const getStepContent = (stepIndex) => {
     switch (stepIndex) {
       case 0:
-        return notificationPage();
+        return notificationSettings();
       case 1:
-        return 'SendSettings';
+        return notificationSendSettings();
     }
   }
-
 
   const renderHeader = () => {
     return (
@@ -697,8 +814,6 @@ const NotificationItem = ({ props, classes }) => {
                     {t('notifications.saveAndContinue')}
                   </Button>
                 </Box>
-
-
               </div>
             </div>
           )}

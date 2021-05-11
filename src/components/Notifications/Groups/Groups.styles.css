@@ -1,0 +1,18 @@
+.blue {
+    color: "#007bff";
+    stroke: "#007bff !important";
+}
+.blue path {
+    stroke: "#007bff !important";
+}
+.green {
+    color: "#48a148";
+    stroke: "#48a148 !important";
+}
+.green path {
+    stroke: "#48a148 !important";
+}
+.groupText span {
+    font-size: 20px;
+    color: #555;
+}

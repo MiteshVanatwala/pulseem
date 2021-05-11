@@ -88,5 +88,20 @@
   "testSend": "שליחת ניסיון",
   "createContentText": "תמונות, אייקון וכפתור אופציונליים, אבל מומלץ לממשם על מנת לקבל תוצאות אופטימליות",
   "titleLimitation": "כותרת (עד 50 תווים): ",
-  "bodyLimitation": "טקסט (עד 100 תווים): "
+  "bodyLimitation": "טקסט (עד 100 תווים): ",
+  "exampleBody": "טקסט לדוגמא",
+  "exampleTitle": "כותרת לדוגמא",
+  "noGroupsSelected": "לא נבחרו קבוצות",
+  "selectAll": "בחר הכל",
+  "totalRecipients": "סה''כ נמענים: ",
+  "sort_by_group": "סדר לפי: שם קבוצה",
+  "sort_by_update": "סדר לפי: תאריך עדכון",
+  "toWhomToSend": "למי שולחים?",
+  "whenToSend": "מתי תרצו לשלוח?",
+  "immediateDescription": "ממש לאחר שתלחצו על 'שלח' במסך הסיכום",
+  "immediateSend": "שליחה מיידית",
+  "futureSend": "תאריך ושעה",
+  "date": "בחר תאריך",
+  "hour": "בחר שעה"
+
 }

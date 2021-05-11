@@ -237,5 +237,101 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         fontFamily: 'Assistant !important',
         fontSize: 16
 
+    },
+    groupsContainer: {
+        position: 'relative',
+        wordWrap: 'break-word',
+        backgroundColor: '#fff',
+        backgroundClip: 'border-box',
+        border: '1px solid rgba(0,0,0,.125)',
+        borderRadius: '.25rem',
+        overflow: 'hidden'
+    },
+    searchInput: {
+        paddingRight: 15,
+        paddingLeft: 15,
+        minHeight: 45,
+        justifyContent: 'center',
+        alignSelf: 'flex-start'
+    },
+    noSelection: {
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: 45
+    },
+    bottomShadow: {
+        boxShadow: 'inset 0 -10px 10px -10px rgb(0 0 0 / 10%)',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        minHeight: 45
+    },
+    noBorder: {
+        border: 'none !important'
+    },
+    transparentBg: {
+        backgroundColor: 'transparent'
+    },
+    blue: {
+        color: '#007bff',
+        stroke: '#007bff !important'
+    },
+    green: {
+        color: '#48a148',
+        stroke: '#48a148 !important'
+    },
+    borderBlue: {
+        border: '1px solid #007bff',
+    },
+    borderGreen: {
+        border: '1px solid #48a148',
+    },
+    listIcon: {
+        width: 30,
+        height: 30,
+        fontSize: 18,
+    },
+    tagSelected: {
+        '& .MuiAutocomplete-tag': {
+            marginTop: 5,
+            backgroundColor: '#007bff',
+            '& .MuiChip-label': {
+                color: '#fff !important'
+            },
+            '& .MuiChip-deleteIcon': {
+                color: '#fff !important'
+            }
+        },
+    },
+    dropDown: {
+        marginLeft: 5,
+        marginRight: 5,
+        alignSelf: 'flex-end',
+        border: '1px solid #007bff',
+        borderRadius: '.2rem',
+        padding: 3,
+        '& .MuiSelect-selectMenu': {
+            color: '#007bff !important',
+            '&:focus': {
+                backgroundColor: '#fff'
+            }
+        },
+        '& .MuiSelect-icon': {
+            color: '#007bff !important'
+        }
+    },
+    groupFilterRow: {
+        borderBottom: '1px solid #ccc',
+        justifyContent: 'space-between'
+    },
+    controlField: {
+        marginRight: 5,
+        marginLeft: 5,
+        height: 40,
+        fontSize: 24,
+        '& .MuiButton-label': {
+            color: '#007bff'
+        }
     }
 })
