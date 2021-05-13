@@ -18,6 +18,7 @@ import MomentUtils from '@date-io/moment';
 import {useHistory} from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/NotificationManagement';
+import TestScreen from './screens/TestScreen'
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -37,6 +38,7 @@ const renderRoutes=(classes,history) => {
       <Route
         exact
         path="/"
+        render={props => <TestScreen {...props} />}
       />
       <Route
         path={`/notifications/edit/:notificationID`}
