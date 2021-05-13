@@ -48,7 +48,9 @@
     "notificationName": "שם הנוטיפיקציה - שדה חובה",
     "redirectUrl": "קישור להפניה - שדה חובה",
     "title": "כותרת הנוטיפיקציה - שדה חובה",
-    "body": "תוכן הנוטיפיקציה - שדה חובה"
+    "body": "תוכן הנוטיפיקציה - שדה חובה",
+    "notificationDate": "יש לבחור תאריך ושעת שליחה",
+    "notificationGroups": "יש לבחור קבוצה אחת לפחות"
   },
   "notificationName": "שם הנוטיפיקציה",
   "notifications": "נוטיפיקציות",
@@ -100,8 +102,18 @@
   "whenToSend": "מתי תרצו לשלוח?",
   "immediateDescription": "ממש לאחר שתלחצו על 'שלח' במסך הסיכום",
   "immediateSend": "שליחה מיידית",
+  "immediate": "מיידית",
   "futureSend": "תאריך ושעה",
   "date": "בחר תאריך",
-  "hour": "בחר שעה"
-
+  "hour": "בחר שעה",
+  "validationError": "השדות הבאים אינם תקינים:",
+  "summary": "סיכום",
+  "summaryModalTitle": "סיכום קמפיין לשליחה",
+  "when": "מתי:",
+  "totalRecipientForSending": "סה''כ נמענים לשליחה: ",
+  "for": "עבור:",
+  "details": "פירוט",
+  "close": "סגור",
+  "recipient": "נמען",
+  "recipients": "נמענים"
 }

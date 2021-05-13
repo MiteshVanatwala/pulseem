@@ -72,7 +72,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     primary={group.GroupName}
                 />
                 <ListItemSecondaryAction className={'groupText'}>
-                    {group.Members}
+                    {group.Members} {group.Members != 1 ? t("notifications.recipients") : t("notifications.recipient")}
                 </ListItemSecondaryAction>
             </ListItem>)
         })
@@ -117,7 +117,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
     const [sortDirection, setSortDirection] = useState('asc');
     const renderSortItems = () => {
         return groupSortOptions.map((sortBy) => {
-            return (<MenuItem value={sortBy.value}>{sortBy.text}</MenuItem>)
+            return (<MenuItem key={sortBy.value} value={sortBy.value}>{sortBy.text}</MenuItem>)
         });
     }
     const handleSortBySelected = (event) => {

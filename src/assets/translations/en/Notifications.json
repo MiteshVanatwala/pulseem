@@ -44,6 +44,15 @@
     "failed": "Failed",
     "pending": "Pending"
   },
+  "validation": {
+    "notificationName": "Notification Name - Required",
+    "redirectUrl": "Redirect URL - Required",
+    "title": "Notification Title - Rquired",
+    "body": "Notification Text - Required",
+    "notificationDate": "Pick Date and Time",
+    "notificationGroups": "Pick at least 1 group"
+  },
+  "notificationName": "Notification Name",
   "notifications": "Notifications",
   "restoreDeleted": "Restore Deleted",
   "deleteConfirmation": "You are going to delete this record,",
@@ -93,7 +102,18 @@
   "whenToSend": "When would you like to send?",
   "immediateDescription": "Right after you click ''send'' in the Summary screen",
   "immediateSend": "Send imediatley",
+  "immediate": "Imediatley",
   "futureSend": "Date and Time",
   "date": "Pick a Date",
-  "hour": "Pick Hour"
+  "hour": "Pick Hour",
+  "validationError": "The following fields are invalid:",
+  "summary": "Summary",
+  "summaryModalTitle": "Campaign Summary",
+  "when": "When:",
+  "totalRecipientForSending": "Total recipients for sending: ",
+  "for": "For:",
+  "details": "Details",
+  "close": "Close",
+  "recipient": "Recipient",
+  "recipients": "Recipients"
 }

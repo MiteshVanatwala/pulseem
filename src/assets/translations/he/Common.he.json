@@ -424,5 +424,8 @@
   "page": "עמוד",
   "outOf": "מתוך",
   "rowNumber": "מספר שורות",
-  "clear": "נקה"
+  "clear": "נקה",
+  "confirm": "אישור",
+  "cancel": "ביטול",
+  "imageGallery": "גלריית תמונות"
 }

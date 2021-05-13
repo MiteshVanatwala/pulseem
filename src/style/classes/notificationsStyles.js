@@ -78,6 +78,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         top: '5px',
         right: '5px',
         backgroundColor: '#c9302c',
+        textDecoration: 'none',
         color: '#fff',
         borderRadius: '25px',
         transition: 'all .4s ease-in-out',
@@ -141,7 +142,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         justifyContent: 'center',
         alignItems: 'center'
     },
-    dialogButtonsContainer: {
+    flexStart: {
         marginTop: '25px',
         justifyContent: 'flex-start !important'
     },
@@ -274,15 +275,15 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         backgroundColor: 'transparent'
     },
     blue: {
-        color: '#007bff',
-        stroke: '#007bff !important'
+        color: '#1c82b2',
+        stroke: '#1c82b2 !important'
     },
     green: {
         color: '#48a148',
         stroke: '#48a148 !important'
     },
     borderBlue: {
-        border: '1px solid #007bff',
+        border: '1px solid #1c82b2',
     },
     borderGreen: {
         border: '1px solid #48a148',
@@ -295,7 +296,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     tagSelected: {
         '& .MuiAutocomplete-tag': {
             marginTop: 5,
-            backgroundColor: '#007bff',
+            backgroundColor: '#1c82b2',
             '& .MuiChip-label': {
                 color: '#fff !important'
             },
@@ -308,22 +309,29 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         marginLeft: 5,
         marginRight: 5,
         alignSelf: 'flex-end',
-        border: '1px solid #007bff',
+        border: '1px solid #1c82b2',
         borderRadius: '.2rem',
         padding: 3,
         '& .MuiSelect-selectMenu': {
-            color: '#007bff !important',
+            color: '#1c82b2 !important',
             '&:focus': {
                 backgroundColor: '#fff'
             }
         },
         '& .MuiSelect-icon': {
-            color: '#007bff !important'
+            color: '#1c82b2 !important'
         }
     },
     groupFilterRow: {
         borderBottom: '1px solid #ccc',
         justifyContent: 'space-between'
+    },
+    flexSpaceBetween: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        alignContent: 'center'
     },
     controlField: {
         marginRight: 5,
@@ -331,7 +339,16 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         height: 40,
         fontSize: 24,
         '& .MuiButton-label': {
-            color: '#007bff'
+            color: '#1c82b2'
         }
+    },
+    padding10: {
+        padding: 10
+    },
+    helpText: {
+        marginRight: 30,
+        marginLeft: 30,
+        marginTop: -10,
+        marginBottom: 25
     }
 })

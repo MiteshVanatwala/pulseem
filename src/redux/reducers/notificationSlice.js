@@ -52,6 +52,38 @@ export const getNotificationGroups = createAsyncThunk(
     }
   });
 
+export const getSettings = createAsyncThunk(
+  'notification/GetSettings/', async (id, thunkAPI) => {
+    try {
+      const response = await instence.get(`notification/GetSettings/${id}`);
+      return JSON.parse(response.data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+export const SendNotification = createAsyncThunk(
+  'notification/InsertNotificationBeforeSend', async (model, thunkAPI) => {
+    try {
+      const response = await instence.post(`notification/InsertNotificationBeforeSend`, model
+      );
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+export const saveNotificationSettings = createAsyncThunk(
+  'notification/SaveNotificationSettings', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`notification/SaveNotificationSettings`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+
+
 export const getNotificationGroupsById = createAsyncThunk(
   'notification/getGroupsByNotificationId', async (id, thunkAPI) => {
     try {
@@ -132,15 +164,15 @@ export const saveNotification = createAsyncThunk(
     }
   });
 
-  export const save = createAsyncThunk(
-    'notification/Save/', async (data, thunkAPI) => {
-      try {
-        const response = await instence.post(`notification/Save`, data);
-        return response.data;
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
-    });
+export const save = createAsyncThunk(
+  'notification/Save/', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`notification/Save`, data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 export const notificationSlice = createSlice({
   name: 'notification',

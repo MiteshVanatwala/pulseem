@@ -2,25 +2,27 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import {
   Typography, Button, TextField, Grid, TextareaAutosize, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener,
-  Card, CardContent
+  FormHelperText, Divider
 } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import moment from 'moment'
-import 'moment/locale/he'
 import { Preview } from '../../components/Notifications/Preview/Preview';
-import { getNotificationById, save, updateNotification, getApiToken, getNotificationGroups } from '../../redux/reducers/notificationSlice';
+import { getNotificationById, save, updateNotification, getApiToken, getNotificationGroups, getSettings, saveNotificationSettings, SendNotification } from '../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { useHistory } from "react-router-dom";
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
 import './notification.styles.css';
-import { FormatLineSpacing } from '@material-ui/icons';
 import Groups from '../../components/Notifications/Groups/Groups';
+import Gallery from '../../components/Gallery/Gallery.component';
 import {
-  DateField, Dialog, TimeField
-} from '../../components/managment/index'
+  DateField, Dialog
+} from '../../components/managment/index';
+import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
+import { IoMdImages } from 'react-icons/io'
+import moment from 'moment'
+import 'moment/locale/he'
 
 
 function getSteps() {
@@ -57,7 +59,6 @@ const NotificationItem = ({ props, classes }) => {
     RedirectButtonText: ""
   });
 
-
   const [activeStep, setActiveStep] = React.useState(0);
   const [ShowRedirectButton, setRedirectButtonVisibillity] = React.useState(false);
   const [apiToken, setApiToken] = useState(0);
@@ -65,29 +66,22 @@ const NotificationItem = ({ props, classes }) => {
   const [inputFocus, setFocusOnInput] = useState(null);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [isEmojiShown, setShowEmoji] = useState(false);
-  const [validationErrorList, setValidationError] = useState([]);
-  const [dialogType, setDialogType] = useState(null);
+  const [validationErrorList, setValidationError] = useState(null);
   const [groupList, setGroupList] = useState([]);
-
+  // Groups
+  const [selectedGroups, setSelected] = useState([]);
+  const [allGroupsSelected, setAllGroupsSelected] = useState(false);
+  // Send Type settings
+  const [sendType, setSendType] = useState('1'); // Immediate
+  const [sendDate, handleFromDate] = useState(null);
+  const [summary, setSummary] = useState(null);
+  const [showDetails, setDetailsVisibility] = useState(false);
+  const [notificationHover, setHovered] = useState(false);
+  const [showGallery, setGalleryState] = useState(false)
 
   const getSubAccountGroups = async () => {
     const list = await dispatch(getNotificationGroups());
     setGroupList(list.payload);
-  }
-
-  const handleApiToken = async () => {
-    const apiToken = await dispatch(getApiToken());
-    const token = apiToken && apiToken.payload && apiToken.payload.PublicKey || '';
-    setApiToken(token);
-  }
-
-  const getData = async () => {
-    const notificationPayload = await dispatch(getNotificationById(props.match.params.id));
-    setModel(notificationPayload.payload);
-
-    if (notificationPayload.payload.RedirectButtonText != '') {
-      setRedirectButtonVisibillity(true);
-    }
   }
 
   useEffect(() => {
@@ -105,7 +99,131 @@ const NotificationItem = ({ props, classes }) => {
     }
   }, [dispatch]);
 
-  // Steps handlers
+  useEffect(() => {
+    if (groupList && groupList.length > 0) {
+      getNotificationSettings();
+    }
+  }, [groupList]);
+
+  const callbackSelectedGroups = (group, key, reference) => {
+    const found = selectedGroups.map((group) => { return group.Id }).includes(group.Id)
+    if (found) {
+      setSelected(selectedGroups.filter(g => g.Id !== group.Id))
+    } else {
+      setSelected([...selectedGroups, group])
+    }
+  }
+  const callbackSelectAll = () => {
+    if (!allGroupsSelected) {
+      setSelected(groupList);
+    }
+    else {
+      setSelected([]);
+    }
+    setAllGroupsSelected(!allGroupsSelected);
+
+  }
+  const callbackUpdateGroups = (groups) => {
+    setSelected(groups);
+  }
+  const handleSendType = (event) => {
+    setSendType(event.target.value);
+  }
+  const getSummary = () => {
+    if (sendDate) {
+      const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+      setSummary({ groups: selectedGroups, sendType: sendType, sendDate: m.format("MMMM Do YYYY, hh:mm a") });
+    }
+    else {
+      setSummary({ groups: selectedGroups, sendType: sendType, sendDate: null });
+    }
+  }
+
+  // Api calls
+  const saveNotification = (isExit, isContinue) => (event) => {
+    // Show loader
+    event.preventDefault();
+    if (isValidNotification()) {
+      if (!ShowRedirectButton) {
+        model.RedirectButtonText = '';
+      }
+      if (model && model.ID > 0) {
+        dispatch(updateNotification(model));
+        if (isContinue) {
+          redirectAfterSave(model.ID);
+        }
+      }
+      else {
+        dispatch(save(model)).then((response) => {
+          setModel({ ...model, ID: response.payload });
+          if (isContinue) {
+            redirectAfterSave(response.payload);
+          }
+        });
+      }
+      if (isExit) {
+        history.push("/Notification");
+      }
+    }
+  }
+  const saveSettings = async () => {
+    if (isValidSettings()) {
+      if (sendType === "2") {
+        const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+        m.set({ h: m.format('HH'), m: m.format('mm') });
+
+        model.SendDate = m.format();
+      }
+      const data = { NotificationId: parseInt(props.match.params.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
+      const result = await dispatch(saveNotificationSettings(data));
+      if (result == true) {
+        alert('success');
+      }
+    }
+  }
+  const insertNotificationForSend = async () => {
+    const data = { NotificationId: parseInt(props.match.params.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
+    const result = await dispatch(SendNotification(data));
+    if (result && result.payload == "true") {
+      history.push("/Notification");
+    }
+  }
+  const getNotificationSettings = async () => {
+    const list = await dispatch(getSettings(props.match.params.id));
+    const selectedList = [];
+    if (list.payload.length > 0) {
+      const sendDate = list.payload[0].SendDate;
+      const status = list.payload[0].StatusID;
+      if (sendDate && (status == 4 || status == 5)) {
+        const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+        const d = m.format('YYYY-MM-DD HH:mm:ss');
+        handleFromDate(d);
+        setSendType('2');
+      }
+      list.payload.forEach((g) => {
+        const exist = groupList.filter(gl => { return gl.Id === g.NotificationGroupId });
+        if (exist && exist.length > 0) {
+          selectedList.push(exist[0]);
+        }
+      });
+    }
+    setSelected(selectedList);
+  }
+  const handleApiToken = async () => {
+    const apiToken = await dispatch(getApiToken());
+    const token = apiToken && apiToken.payload && apiToken.payload.PublicKey || '';
+    setApiToken(token);
+  }
+  const getData = async () => {
+    const notificationPayload = await dispatch(getNotificationById(props.match.params.id));
+    setModel(notificationPayload.payload);
+
+    if (notificationPayload.payload.RedirectButtonText != '') {
+      setRedirectButtonVisibillity(true);
+    }
+  }
+
+  // Wizard Steps handlers
 
   const handleCancel = () => {
     history.push("/Notification");
@@ -113,33 +231,35 @@ const NotificationItem = ({ props, classes }) => {
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
   };
-
   const handleBack = () => {
     history.push(`/NotificationItem/${model.ID}`);
     //setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
-
   const handleReset = () => {
     setActiveStep(0);
   };
+  const getStepContent = (stepIndex) => {
+    switch (stepIndex) {
+      case 0:
+        return notificationEdit();
+      case 1:
+        return notificationSendSettings();
+    }
+  }
 
   // Model Handlers
   const handleNotificationName = (event) => {
     setModel({ ...model, Name: event.target.value });
   }
-
   const handleRedirectUrlChange = (event) => {
     setModel({ ...model, RedirectURL: event.target.value });
   }
-
   const handleRedirectButtonTextChange = (event) => {
     setModel({ ...model, RedirectButtonText: event.target.value });
   }
-
   const handleRedirectVisibillity = (event) => {
     setRedirectButtonVisibillity(event.target.checked);
   }
-
   const handleNotificationTitle = (event) => {
     if (event.target.value.length <= 50) {
       setModel({ ...model, Title: event.target.value });
@@ -152,12 +272,15 @@ const NotificationItem = ({ props, classes }) => {
     }
     event.target.value = event.target.value.substring(0, 100);
   }
-
   const handleDirection = (event) => {
     console.log(event.target.value);
     setModel({ ...model, Direction: event.target.value })
   }
-
+  const redirectAfterSave = (notificationId) => {
+    if (notificationId > 0) {
+      history.push(`/NotificationItem/${notificationId}/send`);
+    }
+  }
   // Emoji
   const showEmoji = () => {
     setShowEmoji(!isEmojiShown);
@@ -193,7 +316,6 @@ const NotificationItem = ({ props, classes }) => {
       }
     }
   };
-
   const handleTextFocus = (event) => {
     setFocusOnInput(event.target.id);
     const el = document.querySelector(`#${event.target.id}`);
@@ -205,6 +327,8 @@ const NotificationItem = ({ props, classes }) => {
     }, 100);
 
   }
+  // Validators
+  // Notification edit validation
   const isValidNotification = () => {
     const errorList = [];
 
@@ -223,112 +347,31 @@ const NotificationItem = ({ props, classes }) => {
 
     if (errorList.length > 0) {
       setValidationError(errorList);
-
-      setDialogType({
-        type: 'validation',
-        data: errorList
-      })
       return false;
     }
 
     return true;
   }
+  const isValidSettings = () => {
+    const errorList = [];
 
-  const renderValidationError = () => {
-    return {
-      showDivider: false,
-      icon: (
-        <div className={classes.dialogIconContent}>
-          {'\uE0F8'}
-        </div>
-      ),
-      content: (
-        <Box className={classes.dialogBox}>
-          <Card>
-            <CardContent>
-              (
-                 <>
-                <ul>
-                  {validationErrorList.map(d => (<li>{d.message}</li>))}
-                </ul>
-              </>
-              )
-            </CardContent>
-          </Card>
-        </Box>
-      ),
-      renderButtons: () => (
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleDialogClose}
-          className={clsx(
-            classes.confirmButton,
-            classes.dialogConfirmButton,
-          )}>
-          {t('common.confirm')}
-        </Button>
-      )
-    };
+    if (sendType == 2 && (!sendDate)) {
+      errorList.push({ message: t('notifications.validation.notificationDate') });
+    }
+    if (selectedGroups.length === 0) {
+      errorList.push({ message: t('notifications.validation.notificationGroups') });
+    }
+    if (errorList.length > 0) {
+      setValidationError(errorList);
+      return false;
+    }
+    return true;
   }
 
   const handleDialogClose = () => {
-    setDialogType(null)
+    setValidationError(null);
+    setGalleryState(null);
   }
-
-  const renderDialog = () => {
-    let dialog = {};
-
-    dialog = renderValidationError();
-
-    return (
-      <Dialog
-        classes={classes}
-        open={dialogType}
-        onClose={handleDialogClose}
-        {...dialog}>
-        {dialog.content}
-      </Dialog>
-    );
-  }
-
-  // Api calls
-  const saveNotification = (isExit, isContinue) => (event) => {
-    // Show loader
-    event.preventDefault();
-    if (isValidNotification()) {
-      if (!ShowRedirectButton) {
-        model.RedirectButtonText = '';
-      }
-      if (model && model.ID > 0) {
-        dispatch(updateNotification(model));
-        if (isContinue) {
-          redirectAfterSave(model.ID);
-        }
-      }
-      else {
-        dispatch(save(model)).then((response) => {
-          setModel({ ...model, ID: response.payload });
-          if (isContinue) {
-            redirectAfterSave(response.payload);
-          }
-        });
-      }
-      if (isExit) {
-        history.push("/Notification");
-      }
-    }
-    else {
-      renderDialog();
-    }
-  }
-
-  const redirectAfterSave = (notificationId) => {
-    if (notificationId > 0) {
-      history.push(`/NotificationItem/${notificationId}/send`);
-    }
-  }
-
   // Test send 
   const handleTestSend = () => {
     PushService(apiToken).then((permissions) => {
@@ -366,10 +409,9 @@ const NotificationItem = ({ props, classes }) => {
 
     });
   }
-
-  // HTML
-
-  const notificationSettings = () => {
+  // HTML Pages
+  // Notification Edtior
+  const notificationEdit = () => {
     return (
       <Box>
         <Grid
@@ -378,7 +420,7 @@ const NotificationItem = ({ props, classes }) => {
           justify="flex-start"
           alignItems="center"
           spacing={4}
-          className={classes.dialogButtonsContainer}>
+          className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
           <Grid item xs={2}>
             <TextField
               label={t('notifications.notificationName')}
@@ -395,6 +437,7 @@ const NotificationItem = ({ props, classes }) => {
             <TextField
               label={t('notifications.redirectUrl')}
               id="outlined-margin-dense"
+              dir="ltr"
               required
               value={model && model.RedirectURL || ''}
               className={classes.textField}
@@ -437,7 +480,7 @@ const NotificationItem = ({ props, classes }) => {
           direction="row"
           justify="flex-start"
           alignItems="flex-start"
-          className={classes.dialogButtonsContainer}>
+          className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
           <Grid item xs={3} style={{ marginTop: 90 }}>
             {notificationContent()}
           </Grid>
@@ -452,7 +495,167 @@ const NotificationItem = ({ props, classes }) => {
     );
 
   }
+  // Notification Settings
+  const notificationSendSettings = () => {
+    return (
+      <Grid container
+        direction="row"
+        justify="flex-start"
+        spacing={4}
+        className={classes.wizardFlex}
+      >
+        <Grid item xs={6}>
+          <h2>{t('notifications.toWhomToSend')}</h2>
+          <Groups classes={classes}
+            groupList={groupList}
+            selectedList={selectedGroups}
+            callbackSelectedGroups={callbackSelectedGroups}
+            callbackUpdateGroups={callbackUpdateGroups}
+            callbackSelectAll={callbackSelectAll}
+          />
+          <Box>
+            <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>
+              {t('notifications.totalRecipients')}
+              {selectedGroups.reduce(function (a, b) {
+                return a + b['Members'];
+              }, 0)}
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item xs={2}></Grid>
+        <Grid item xs={4}>
+          <h2>{t('notifications.whenToSend')}</h2>
+          <FormControl component="fieldset">
+            <RadioGroup aria-label="gender" name="sendType" value={sendType} onChange={handleSendType}>
+              <FormControlLabel value="1" control={<Radio color="primary" />} label={t("notifications.immediateSend")} />
+              <FormHelperText className={classes.helpText}>{t("notifications.immediateDescription")}</FormHelperText>
+              <FormControlLabel value="2" control={<Radio color="primary" />} label={t("notifications.futureSend")} />
+            </RadioGroup>
+            <Box>
+              <DateField
+                classes={classes}
+                value={sendDate}
+                onChange={handleFromDate}
+                placeholder={t('notifications.date')}
+              />
 
+            </Box>
+            <Box style={{ marginTop: 10 }}>
+              <DateField
+                classes={classes}
+                value={sendDate}
+                onTimeChange={handleFromDate}
+                placeholder={t('notifications.hour')}
+                isTimePicker={true}
+              />
+            </Box>
+          </FormControl>
+        </Grid>
+      </Grid>
+
+    );
+  }
+  const renderSummary = () => {
+    if (summary) {
+      let dialog = {};
+      dialog = summaryContent();
+      return (
+        <Dialog
+          showDivider={false}
+          classes={classes}
+          open={summary}
+          onClose={handleSummaryClose}
+          onConfirm={insertNotificationForSend}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
+    }
+  }
+  const openGallery = () => {
+    setGalleryState(true);
+  }
+  const callbackSelectImage = (image) => {
+    setGalleryState(null);
+    setModel({ ...model, Image: image });
+  }
+  const showGalleryModal = () => {
+    if (showGallery) {
+      let dialog = {};
+      dialog = renderGalleryDialog();
+
+      return (
+        <Dialog
+          style={{ minHeight: 400 }}
+          showDivider={false}
+          classes={classes}
+          open={showGallery}
+          onClose={handleDialogClose}
+          onConfirm={callbackSelectImage}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
+    }
+  }
+  const renderGalleryDialog = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
+      ),
+      title: t("common.imageGallery"),
+      content: (
+        <Gallery classes={classes} callbackSelectFile={callbackSelectImage} />
+      )
+    };
+  }
+  const renderDialog = () => {
+    if (validationErrorList != null) {
+      let dialog = {};
+      dialog = renderValidationError();
+
+      return (
+        <Dialog
+          showDivider={false}
+          classes={classes}
+          open={validationErrorList}
+          onClose={handleDialogClose}
+          onConfirm={handleDialogClose}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
+    }
+  }
+  const renderValidationError = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <MdErrorOutline style={{ fontSize: 30 }} />
+      ),
+      title: t("notifications.validationError"),
+      content: (
+        <Box className={classes.dialogBox}>
+          <ul>
+            {validationErrorList.map((d, index) => (<li key={{ index }}>{d.message}</li>))}
+          </ul>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleDialogClose}
+          className={clsx(
+            classes.confirmButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.confirm')}
+        </Button>
+      )
+    };
+  }
   // Image/Icon selection
   const chooseImage = () => {
     return (<div className={clsx(
@@ -485,9 +688,12 @@ const NotificationItem = ({ props, classes }) => {
     </div>
     )
   }
-
   // Notification Edior Page
   const notificationContent = () => {
+    const toggleHover = () => setHovered(!notificationHover);
+    const removeImage = () => {
+      setModel({ ...model, Image: null });
+    }
     return (
       <div>
         <div className={classes.notification} id={model.ID}>
@@ -497,12 +703,19 @@ const NotificationItem = ({ props, classes }) => {
             classes.notificationTop,
             classes.notificationContainer
           )}
+            onMouseEnter={toggleHover}
+            onMouseLeave={toggleHover}
+            onClick={openGallery}
             style={{
               backgroundImage: `url(${model.Image})`
             }}>
             {model == null || !model.Image ? chooseImage() : ""
             }
-            <a href="#" className={clsx(classes.absTopRight, classes.hidden)} style={{ cursor: 'pointer' }}>X</a>
+            <button href="#"
+              className={clsx(classes.absTopRight, notificationHover && model.Image != null ? '' : classes.hidden)}
+              style={{ border: 'none', cursor: 'pointer', textDecoration: 'none', opacity: notificationHover ? 1 : 0 }}
+              onClick={removeImage}
+            >X</button>
           </div>
           <div className={clsx(classes.footerWrapper, classes.dashed)}>
             <div className={classes.iconWrapper}>
@@ -598,109 +811,64 @@ const NotificationItem = ({ props, classes }) => {
       </div >
     )
   }
-
-  // Notification Send Settings Page
-
-  // Groups
-  const [selectedGroups, setSelected] = useState([]);
-  const [allGroupsSelected, setAllGroupsSelected] = useState(false);
-  const callbackSelectedGroups = (group, key, reference) => {
-    const found = selectedGroups.map((group) => { return group.Id }).includes(group.Id)
-    if (found) {
-      setSelected(selectedGroups.filter(g => g.Id !== group.Id))
-    } else {
-      setSelected([...selectedGroups, group])
+  const summaryContent = () => {
+    const handleShowDetails = () => {
+      setDetailsVisibility(!showDetails);
     }
-  }
-  const callbackSelectAll = () => {
-    if (!allGroupsSelected) {
-      setSelected(groupList);
-    }
-    else {
-      setSelected([]);
-    }
-    setAllGroupsSelected(!allGroupsSelected);
-
-  }
-  const callbackUpdateGroups = (groups) => {
-    setSelected(groups);
-  }
-
-  // Send Type settings
-  const [sendType, setSendType] = useState(1); // Immediate
-  const [sendDate, handleFromDate] = useState(null);
-  const [timeDate, handleTimeToSend] = useState(null);
-
-  const handleSendType = (event) => {
-    setSendType(event.target.value);
-
-  }
-  const notificationSendSettings = () => {
-    return (
-      <Grid container
-        direction="row"
-        justify="flex-start"
-        spacing={4}
-        className={classes.dialogButtonsContainer}
-      >
-        <Grid item xs={6}>
-          <h2>{t('notifications.toWhomToSend')}</h2>
-          <Groups classes={classes}
-            groupList={groupList}
-            selectedList={selectedGroups}
-            callbackSelectedGroups={callbackSelectedGroups}
-            callbackUpdateGroups={callbackUpdateGroups}
-            callbackSelectAll={callbackSelectAll}
-          />
-          <Box>
-            <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>
-              {t('notifications.totalRecipients')}
-              {selectedGroups.reduce(function (a, b) {
-                return a + b['Members'];
-              }, 0)}
-            </Typography>
-          </Box>
-        </Grid>
-        <Grid item xs={2}></Grid>
-        <Grid item xs={4}>
-          <h2>{t('notifications.whenToSend')}</h2>
-          <FormControl component="fieldset">
-            <RadioGroup aria-label="gender" name="sendType" value={sendType} onChange={handleSendType}>
-              <FormControlLabel value="1" control={<Radio />} label={t("notifications.immediateSend")} />
-              <Typography>{t("notifications.immediateDescription")}</Typography>
-              <FormControlLabel value="2" control={<Radio />} label={t("notifications.futureSend")} />
-            </RadioGroup>
-            <DateField
-              classes={classes}
-              value={sendDate}
-              onChange={handleFromDate}
-              placeholder={t('notifications.date')}
+    const whenToSend = summary.sendDate ? `${summary.sendDate}` : t("notifications.immediateSend")
+    return {
+      showDivider: false,
+      icon: (
+        <MdNotificationsActive style={{ fontSize: 30 }} />
+      ),
+      title: `${t("notifications.summaryModalTitle")} "${model.Name}"`,
+      content: (
+        <Grid container className={clsx(classes.root, classes.dialogBox)} spacing={4} style={{ minWidth: 850 }}>
+          <Grid item xs={6}>
+            <h3 className={classes.blue}>{t("notifications.when")}</h3>
+            {whenToSend}
+            <h3 className={classes.blue}>{t("notifications.for")}</h3>
+            {`${t("notifications.totalRecipientForSending")} ${selectedGroups.reduce(function (a, b) {
+              return a + b['Members'];
+            }, 0)}`}
+            <Grid item xs={12} style={{ paddingTop: 15 }}>
+              <a onClick={handleShowDetails} style={{ cursor: 'pointer', fontWeight: 'bold', textDecoration: 'underline' }}>
+                {!showDetails ? t("notifications.details") : t("notifications.close")}
+              </a>
+            </Grid>
+          </Grid>
+          <Grid item xs={6}>
+            <Preview classes={classes}
+              model={model}
+              ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText != ''}
+              showDevices={false}
+              showTitle={false}
             />
-            <TimeField
-              classes={classes}
-              value={timeDate}
-              onChange={handleTimeToSend}
-              placeholder={t('notifications.hour')}
-            />
-          </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            {showDetails && <div>
+              <h3>{t("notifications.buttons.groups")} ({selectedGroups.length})</h3>
+              <ul>
+                {selectedGroups.map((g) => {
+                  return (<li>
+                    <div className={classes.flexSpaceBetween}>
+                      <Typography className={classes.padding10}>{g.GroupName}</Typography> <Typography>{g.Members} {g.Members != 1 ? t("notifications.recipients") : t("notifications.recipient")}</Typography>
+                    </div>
+                    <Divider />
+                  </li>)
+                })}
+              </ul>
+            </div>}
+          </Grid>
         </Grid>
-      </Grid>
-
-    );
+      )
+    };
   }
-
-
+  const handleSummaryClose = () => {
+    setSummary(null);
+  }
   const redirectButton = () => {
     return <div className={classes.RedirectButtonText}>{model.RedirectButtonText}</div>
-  }
-
-  const getStepContent = (stepIndex) => {
-    switch (stepIndex) {
-      case 0:
-        return notificationSettings();
-      case 1:
-        return notificationSendSettings();
-    }
   }
 
   const renderHeader = () => {
@@ -784,7 +952,7 @@ const NotificationItem = ({ props, classes }) => {
                     )}
                     color="primary"
                     style={{ margin: '8px' }}
-                    onClick={saveNotification(false, false)}>
+                    onClick={activeStep == 0 ? saveNotification(false, false) : saveSettings}>
                     {t('notifications.save')}
                   </Button>
                   <Button
@@ -797,7 +965,7 @@ const NotificationItem = ({ props, classes }) => {
                     )}
                     color="primary"
                     style={{ margin: '8px' }}
-                    onClick={saveNotification(true, false)}>
+                    onClick={activeStep == 0 ? saveNotification(true, false) : saveSettings}>
                     {t('notifications.saveAndExit')}
                   </Button>
                   <Button
@@ -806,12 +974,13 @@ const NotificationItem = ({ props, classes }) => {
                     className={clsx(
                       classes.actionButton,
                       classes.actionButtonLightGreen,
-                      classes.backButton
+                      classes.backButton,
+                      activeStep > 0 && selectedGroups.length === 0 ? classes.disabled : ''
                     )}
                     color="primary"
                     style={{ margin: '8px' }}
-                    onClick={saveNotification(false, true)}>
-                    {t('notifications.saveAndContinue')}
+                    onClick={activeStep == 0 ? saveNotification(false, true) : getSummary}>
+                    {activeStep == 0 ? t('notifications.saveAndContinue') : t('notifications.summary')}
                   </Button>
                 </Box>
               </div>
@@ -829,6 +998,9 @@ const NotificationItem = ({ props, classes }) => {
       classes={classes}>
       {renderHeader()}
       {renderNotification()}
+      {renderDialog()}
+      {renderSummary()}
+      {showGalleryModal()}
     </DefaultScreen>
   );
 }

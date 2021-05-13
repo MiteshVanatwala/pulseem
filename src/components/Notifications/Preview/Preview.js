@@ -26,7 +26,7 @@ function TabPanel(props) {
     );
 }
 
-export const Preview = ({ classes, model, ShowRedirectButton }) => {
+export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true, showTitle = true }) => {
     const { t } = useTranslation();
     const [previewDeviceSelected, setPreviewDevice] = useState(0);
     const [notificationExpanded, setNotificationExpanded] = useState(false);
@@ -109,7 +109,7 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
                                 cursor: 'unset',
                                 maxHeight: 85
                             }}>
-                                {model == null || !model.Image ? chooseIcon() : ""}
+                            {model == null || !model.Icon ? chooseIcon() : ""}
                         </div>
                     </div>
                     <div className={classes.notificationContent}>
@@ -186,8 +186,8 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
 
     return (
         <Grid>
-            <h3 className={classes.previewTitle}>{t("notifications.preview")}</h3>
-            <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
+            {showTitle && <h3 className={classes.previewTitle}>{t("notifications.preview")}</h3>}
+            {showDevices && <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
                 <Tabs
                     value={previewDeviceSelected}
                     onChange={handleDeviceChange}
@@ -200,6 +200,7 @@ export const Preview = ({ classes, model, ShowRedirectButton }) => {
                     <Tab className={classes.deviceSelector} icon={<FaMobile style={{ fontSize: '24px' }} />} {...a11yProps(2)} />
                 </Tabs>
             </AppBar>
+            }
             <TabPanel value={previewDeviceSelected} index={0}>
                 {desktopPreview(true)}
             </TabPanel >

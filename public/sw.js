@@ -6,6 +6,42 @@ self.addEventListener('install', (event) => {
     console.log('ServiceWorker installed')
 });
 
+self.addEventListener('push', function(event) {
+    const payload = event.data.text();
+    let title = '';
+    let options = {};
+    if (isValidJson(payload) == true) {
+        const jsonPayload = JSON.parse(payload);
+        const notificationItem = JSON.parse(jsonPayload.notification);
+        title = notificationItem.Title;
+        notificationId = notificationItem.ID;
+        clientId = jsonPayload.ClientId;
+        options = {
+            title: notificationItem.Title,
+            body: notificationItem.Body,
+            icon: notificationItem.Icon,
+            image: notificationItem.Image,
+            tag: notificationItem.Tag.Accept,
+            dir: notificationItem.Direction == 2 ? 'rtl' : 'ltr',
+            vibrate: [500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500]
+        };
+        if (notificationItem.RedirectURL != '') {
+            options.data = {
+                url: notificationItem.RedirectURL,
+                subscriberId: clientId,
+                notificationId: notificationId
+            }
+            if (notificationItem.RedirectButtonText != '') {
+                options.actions = [{
+                    action: 'openurl',
+                    title: notificationItem.RedirectButtonText
+                }];
+            }
+        }
+        event.waitUntil(self.registration.showNotification(title, options));
+    }
+});
+
 self.addEventListener('notificationclick', function(event) {
     const target = event.notification.actions[0].action;
     event.notification.close();

@@ -432,5 +432,7 @@
   "approved": "Approved",
   "draft": "Draft",
   "failedStatus": "Failed",
-  "deleted": "Deleted"
+  "deleted": "Deleted",
+  "cancel": "Cancel",
+  "imageGallery": "Image Gallery"
 }
