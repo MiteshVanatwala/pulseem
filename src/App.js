@@ -4,8 +4,10 @@ import AutomationManagment from './screens/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPagesesManagment'
 import MmsManagment from './screens/MmsManagment';
 import SmsManagment from './screens/SmsManagment';
+import Cookies from 'universal-cookie';
 import {create} from 'jss';
 import rtl from 'jss-rtl';
+import jwt_decode from "jwt-decode";
 import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
 import i18n from './i18n'
 import {BrowserRouter,useParams,Route} from 'react-router-dom';
@@ -18,6 +20,7 @@ import MomentUtils from '@date-io/moment';
 import {useHistory} from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/NotificationManagement';
+import TestScreen from './screens/TestScreen'
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -37,6 +40,7 @@ const renderRoutes=(classes,history) => {
       <Route
         exact
         path="/"
+        render={props => <TestScreen {...props} />}
       />
       <Route
         path={`/notifications/edit/:notificationID`}
@@ -265,7 +269,7 @@ const renderRoutes=(classes,history) => {
       />
       {/* Notifications */}
       <Route
-        path={`/Notification`}
+        path={`/Notifications`}
         render={props => <NotificationManagement {...props} classes={classes} />}
       />
       <Route
@@ -311,6 +315,10 @@ const renderRoutes=(classes,history) => {
 
 const App=() => {
   const dispatch=useDispatch()
+  const cookies=new Cookies();
+  const token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlBhdmVscyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6IkZYYjc3TUFyMlUvWFRvYW85bnNZeFE9PSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2RucyI6ImxvY2FsaG9zdCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3VyaSI6IlRydWUiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9sb2NhbGl0eSI6ImhlLUlMIiwiZW1haWwiOiJwb3N0bWFzdGVyQHB1bHNlZW0uY29tIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvaG9tZXBob25lIjoid0wtMDktMTExMTExMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3N0YXRlb3Jwcm92aW5jZSI6IkNvbnRlbnQvaW1hZ2VzL1doaXRlTGFiZWxSaWdodENvcm5lckxvZ28ucG5nIiwiZ2l2ZW5fbmFtZSI6IiIsIm5iZiI6MTYyMDEzOTc3NiwiZXhwIjoxNjIwMTQzMzc2LCJpYXQiOjE2MjAxMzk3NzZ9.__vosPXeuSunBauj9_Zt9z7BA75rMsbGq0PTGY679GQ' //cookies.get('jtoken')
+  const jwt=jwt_decode(token)
+  console.log('JWT',jwt)
   useEffect(() => {
     const setWindowWidth=() => {
       const {innerWidth}=window

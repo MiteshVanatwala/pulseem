@@ -312,7 +312,7 @@ const SmsManagnentScreen=({classes}) => {
     return (
       <Grid
         container
-        direction={windowSize==='sm'? 'column':'row'}
+        direction='row'
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
           <Grid

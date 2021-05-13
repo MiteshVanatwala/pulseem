@@ -343,7 +343,6 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
       fontSize: 14,
       padding: 0,
       height: 30,
-
     },
     '& .MuiOutlinedInput': {
       '&-input': {

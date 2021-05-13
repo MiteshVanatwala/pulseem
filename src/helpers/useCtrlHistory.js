@@ -40,7 +40,7 @@ export default () => {
       document.removeEventListener('keyup',handleKeyUp);
       window.removeEventListener('blur',handleKeyUp);
     };
-  },[isMac]);
+  },[isMac,handleKeyDown,handleKeyUp]);
 
   return ctrlHistory;
 };

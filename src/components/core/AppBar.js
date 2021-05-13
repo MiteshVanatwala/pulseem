@@ -45,17 +45,18 @@ const AppBarItem=({
 
   return (
     <Box
-      component='div'
+      component='a'
+      href={item.href}
       zIndex='tooltip'
       onMouseOver={handleOpen}
       onMouseLeave={handleClose}
       className={classes.appBarItemContainer}>
       <IconButton
         ref={buttonRef}
-        onClick={() => {
-          handleOpen()
-          onMainClick(item)
-        }}
+        //onClick={() => {
+        //  handleOpen()
+        //  onMainClick(item)
+        //}}
         className={clsx(
           currentStyle,
           textStyle,
@@ -74,7 +75,12 @@ const AppBarItem=({
                 <MenuList
                   style={{padding: 0}}>
                   {item.options&&item.options.map((option,index) => (
-                    <Box key={index}>
+                    //<a href={option.href}>
+                    <Box
+                      key={index}
+                      component='a'
+                      className={classes.appBarItemMenuItem}
+                      href={option.href}>
                       {index!==0&&<Box className={classes.appBarItemBorder} />}
                       <MenuItem
                         key={option.title}
@@ -89,6 +95,7 @@ const AppBarItem=({
                         {option.title}
                       </MenuItem>
                     </Box>
+                    //</a>
                   ))}
                 </MenuList>
 
