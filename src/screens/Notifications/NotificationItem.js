@@ -606,7 +606,7 @@ const NotificationItem = ({ props, classes }) => {
       ),
       title: t("common.imageGallery"),
       content: (
-        <Gallery classes={classes} callbackSelectFile={callbackSelectImage} />
+        <Gallery classes={classes} callbackSelectFile={callbackSelectImage} style={{ minWidth: 400}} />
       )
     };
   }

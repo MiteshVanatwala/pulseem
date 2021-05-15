@@ -23,9 +23,20 @@ export const createFolder = createAsyncThunk(
   });
 
 export const postImage = createAsyncThunk(
-  '/PostImageFile', async (folderName, thunkAPI) => {
+  '/PostImageFile', async (fileGallery, thunkAPI) => {
     try {
-      const response = await instence.post(`/PostImageFile`, { FolderName: folderName }
+      const response = await instence.post(`/PostImageFile`, fileGallery
+      );
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+export const deleteGalleryFile = createAsyncThunk(
+  '/DeleteGalleryFile', async (fileGallery, thunkAPI) => {
+    try {
+      const response = await instence.post(`/DeleteGalleryFile`, fileGallery
       );
       return JSON.parse(response.data)
     } catch (error) {

@@ -81,10 +81,10 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         textDecoration: 'none',
         color: '#fff',
         borderRadius: '25px',
-        transition: 'all .4s ease-in-out',
-        '-webkit-transition': 'all .4s ease-in-out',
-        '-o-transition': 'all ease-in-out .4s',
-        '-moz-transition': 'all ease-in-out .4s'
+        transition: 'all .2s ease-in-out',
+        '-webkit-transition': 'all .2s ease-in-out',
+        '-o-transition': 'all ease-in-out .2s',
+        '-moz-transition': 'all ease-in-out .2s'
     },
     hidden: {
         display: 'none !important'

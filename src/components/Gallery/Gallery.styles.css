@@ -1,0 +1,67 @@
+.img-container {
+    background-color: rgba(0, 0, 0, 0.1);
+    height: 170px;
+    display: flex;
+    width: 100%;
+    padding: 0;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: column;
+    max-width: 350px;
+}
+
+.responsive-bg {
+    background-size: cover;
+    min-width: 170px;
+    width: 100%;
+    height: 130px;
+    background-position: 50%;
+    background-repeat: no-repeat;
+}
+
+.select-image {
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    position: relative;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.image-info {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+}
+
+.elipsis-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0 10px;
+}
+
+.selected-file {
+    background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.scroll {
+    overflow-y: auto;
+    max-height: 400px;
+    overflow-x: hidden;
+}
+
+.drag-here {
+    border: 2px dashed #8a8383;
+    cursor: pointer;
+    width: 470px;
+    height: 165px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    flex-direction: column;
+}
