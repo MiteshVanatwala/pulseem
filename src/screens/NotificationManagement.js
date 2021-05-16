@@ -390,7 +390,7 @@ const NotificationManagement = ({ classes }) => {
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         onClick: () => {
-          history.push(`/NotificationItem/${ID}/send`);
+          history.push(`/Notification/send/${ID}`);
         }
       },
       {
@@ -409,7 +409,7 @@ const NotificationManagement = ({ classes }) => {
         disable: StatusID !== 0,
         lable: t('notifications.buttons.edit'),
         onClick: () => {
-          history.push(`/notifications/edit/${ID}`);
+          history.push(`/notification/edit/${ID}`);
         }
       },
       {

@@ -17,3 +17,25 @@
     bottom: 0 !important;
     right: 100% !important;
 }
+
+@media screen and (max-width: 768px) {
+    .previewTitle {
+        margin-top: 15px !important;
+    }
+}
+
+.MuiDialog-root .mobileBG {
+    max-width: 400px;
+}
+.MuiDialog-root .mobileNotification {
+    top: 60px;
+    right: 45px;
+    width: 100%;
+    position: absolute;
+    max-width: 310px;
+    /* min-height: 335px; */
+}
+
+.MuiDialog-root .notificationContainer {
+    min-height: 190px;
+}

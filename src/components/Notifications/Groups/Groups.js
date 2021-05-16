@@ -207,7 +207,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                 popupIcon={false}
                 onChange={onTagChange}
                 renderInput={(params) => selectedList.length > 0 ? (
-                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected)}>{params}</TextField>
+                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected)}></TextField>
                 ) : (
                     <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{t('notifications.noGroupsSelected')}</Typography>
                 )

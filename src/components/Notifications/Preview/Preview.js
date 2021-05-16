@@ -28,8 +28,8 @@ function TabPanel(props) {
 
 export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true, showTitle = true }) => {
     const { t } = useTranslation();
-    const [previewDeviceSelected, setPreviewDevice] = useState(0);
-    const [notificationExpanded, setNotificationExpanded] = useState(false);
+    const [previewDeviceSelected, setPreviewDevice] = useState(showDevices == false ? 2 : 0);
+    const [notificationExpanded, setNotificationExpanded] = useState(!showDevices);
     TabPanel.propTypes = {
         children: PropTypes.node,
         index: PropTypes.any.isRequired,
@@ -138,8 +138,8 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
 
     const mobilePreview = () => {
         return (
-            <div className={classes.mobileBG}>
-                <div className={classes.mobileNotification}>
+            <div className={clsx(classes.mobileBG, "mobileBG")}>
+                <div className={clsx(classes.mobileNotification, "mobileNotification")}>
                     <div style={{ position: 'relative' }}>
                         <button className={classes.expandNotification} onClick={expandNotification}>{notificationExpanded ? <FaChevronUp /> : <FaChevronDown />}</button>
                     </div>
@@ -163,7 +163,8 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                     {notificationExpanded && <div className={clsx(
                         classes.borderSign,
                         classes.notificationTop,
-                        classes.notificationContainer
+                        classes.notificationContainer,
+                        "notificationContainer"
                     )}
                         style={{
                             backgroundImage: `url(${model.Image})`,
@@ -186,7 +187,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
 
     return (
         <Grid>
-            {showTitle && <h3 className={classes.previewTitle}>{t("notifications.preview")}</h3>}
+            {showTitle && <h3 className={clsx(classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</h3>}
             {showDevices && <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
                 <Tabs
                     value={previewDeviceSelected}

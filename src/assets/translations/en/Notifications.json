@@ -115,5 +115,7 @@
   "details": "Details",
   "close": "Close",
   "recipient": "Recipient",
-  "recipients": "Recipients"
+  "recipients": "Recipients",
+  "saved": "Notification Saved!",
+  "settings_saved": "Notification settings Saved!"
 }

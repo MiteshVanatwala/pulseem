@@ -249,6 +249,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         overflow: 'hidden'
     },
     searchInput: {
+        width: '100%',
         paddingRight: 15,
         paddingLeft: 15,
         minHeight: 45,

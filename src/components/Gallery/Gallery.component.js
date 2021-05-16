@@ -22,7 +22,7 @@ import { AiOutlineCheckCircle, AiOutlineCloudUpload } from 'react-icons/ai';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
 
-const Gallery = ({ classes, callbackSelectFile, isIcon = false }) => {
+const Gallery = ({ classes, callbackSelectFile }) => {
     const dispatch = useDispatch();
     const { language } = useSelector(state => state.core)
     const { t } = useTranslation();
@@ -199,8 +199,7 @@ const Gallery = ({ classes, callbackSelectFile, isIcon = false }) => {
                     const fileModel = {
                         FileName: fileToUpload.name,
                         Base64: result,
-                        FolderName: selectedFolder,
-                        IsIcon: isIcon
+                        FolderName: selectedFolder
                     }
 
                     await dispatch(postImage(fileModel));

@@ -62,6 +62,17 @@ export const getSettings = createAsyncThunk(
     }
   });
 
+export const getUniqueClientsByGroups = createAsyncThunk(
+  'notification/GetUniqueClientsByGroups', async (groupIds, thunkAPI) => {
+    try {
+      const response = await instence.post(`notification/GetUniqueClientsByGroups`, groupIds
+      );
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 export const SendNotification = createAsyncThunk(
   'notification/InsertNotificationBeforeSend', async (model, thunkAPI) => {
     try {
