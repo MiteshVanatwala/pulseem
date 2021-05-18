@@ -8,7 +8,7 @@ const dialogWidth = {
 export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dialogContainer: {
     '& .MuiPaper-root': {
-      overflow: 'hidden'
+      overflowX: 'hidden'
     },
     '& .MuiDialog-paperWidthSm': {
       maxWidth: '1050px'

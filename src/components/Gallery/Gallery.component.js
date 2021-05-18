@@ -10,8 +10,6 @@ import clsx from 'clsx';
 import './Gallery.styles.css';
 import moment from 'moment'
 import 'moment/locale/he'
-import InfoIcon from '@material-ui/icons/Info';
-import FolderOpen from '@material-ui/icons/FolderOpen';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import FolderIcon from '@material-ui/icons/Folder';
@@ -21,8 +19,7 @@ import PropTypes from 'prop-types';
 import { AiOutlineCheckCircle, AiOutlineCloudUpload } from 'react-icons/ai';
 import InputAdornment from '@material-ui/core/InputAdornment';
 
-
-const Gallery = ({ classes, callbackSelectFile }) => {
+const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     const dispatch = useDispatch();
     const { language } = useSelector(state => state.core)
     const { t } = useTranslation();
@@ -152,11 +149,17 @@ const Gallery = ({ classes, callbackSelectFile }) => {
         setSelectedFile(fileIndex);
         setSelectedFileURL(fileUrl);
     }
-    const onConfirm = () => {
-        if (selectedFileURL) {
-            callbackSelectFile(selectedFileURL);
+
+    useEffect(() => {
+        if (isConfirm) {
+            callbackSelectFile(encodeURI(selectedFileURL));
         }
-    }
+    }, [isConfirm])
+    // const onConfirm = () => {
+    //     if (isConfirm) {
+
+    //     }
+    // }
 
     const renderFiles = () => {
         const deleteImage = (fileModel) => async (event) => {
@@ -246,7 +249,7 @@ const Gallery = ({ classes, callbackSelectFile }) => {
                                     id={index}
                                     style={{ padding: "6px 10px" }}
                                 >
-                                    <Box className="select-image" onClick={handleSelectFile(filePath, `f_${index}`)}>
+                                    <Box className="select-image" onClick={handleSelectFile(filePath, `${f.FolderName.replace('\\', '')}_${index}`)}>
                                         <Box className="img-container">
                                             <Box className="responsive-bg" style={{ backgroundImage: `url('${filePath}')` }}>
                                                 <button
@@ -260,8 +263,8 @@ const Gallery = ({ classes, callbackSelectFile }) => {
                                                 <Typography className="elipsis-text" style={{ fontSize: 14 }}>
                                                     {f.FileName}
                                                 </Typography>
-                                                {selectedFile == `f_${index}` &&
-                                                    <AiOutlineCheckCircle style={{ color: 'green', fontSize: 20 }} />
+                                                {selectedFile == `${f.FolderName.replace('\\', '')}_${index}` &&
+                                                    <AiOutlineCheckCircle style={{ color: 'green', fontSize: 24, padding: '0 10px', width: 40 }} />
                                                 }
                                             </Box>
                                         </Box>
@@ -417,7 +420,6 @@ const Gallery = ({ classes, callbackSelectFile }) => {
                 </Grid>
                 <Grid item xs={4}>
                     {renderUploadNotice()}
-                    {onConfirm()}
                 </Grid>
             </Grid>
         </div>

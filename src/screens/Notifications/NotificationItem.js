@@ -83,6 +83,7 @@ const NotificationItem = ({ props, classes }) => {
   const [isIcon, setIsIcon] = useState(false);
   const [totalRecipients, setTotalRecipients] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+  const [isGalleryConfirmed, setIsFileSelected] = useState(false);
 
 
   const getSubAccountGroups = async () => {
@@ -184,7 +185,8 @@ const NotificationItem = ({ props, classes }) => {
       }
     }
   }
-  const saveSettings = async () => {
+  const saveSettings = (isExit) => async (event) => {
+    event.preventDefault();
     if (isValidSettings()) {
       if (sendType === "2") {
         const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
@@ -195,9 +197,18 @@ const NotificationItem = ({ props, classes }) => {
       const data = { NotificationId: parseInt(props.match.params.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
       const result = await dispatch(saveNotificationSettings(data));
       if (result.payload == true) {
-        setToastMessage(toastMessages.SAVE_SETTINGS);
+        if (!isExit) {
+          setToastMessage(toastMessages.SAVE_SETTINGS);
+        }
+        else {
+          history.push("/Notification");
+        }
+      }
+      else {
+        setToastMessage(toastMessages.ERROR);
       }
     }
+
   }
   const insertNotificationForSend = async () => {
     const data = { NotificationId: parseInt(props.match.params.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
@@ -599,15 +610,19 @@ const NotificationItem = ({ props, classes }) => {
 
     setIsIcon(isIcon);
     setGalleryState(true);
+    setIsFileSelected(false);
   }
-  const callbackSelectImage = (image) => {
-    setGalleryState(null);
+  const handleSelectedImage = (image) => {
+    setGalleryState(false);
     if (isIcon == true) {
       setModel({ ...model, Icon: image });
     }
     else {
       setModel({ ...model, Image: image });
     }
+  }
+  const handleGalleryConfirm = () => {
+    setIsFileSelected(true);
   }
   const showGalleryModal = () => {
     if (showGallery) {
@@ -621,7 +636,7 @@ const NotificationItem = ({ props, classes }) => {
           classes={classes}
           open={showGallery}
           onClose={handleDialogClose}
-          onConfirm={callbackSelectImage}
+          onConfirm={handleGalleryConfirm}
           {...dialog}>
           {dialog.content}
         </Dialog>
@@ -636,7 +651,7 @@ const NotificationItem = ({ props, classes }) => {
       ),
       title: t("common.imageGallery"),
       content: (
-        <Gallery classes={classes} callbackSelectFile={callbackSelectImage} style={{ minWidth: 400 }} />
+        <Gallery classes={classes} isConfirm={isGalleryConfirmed} callbackSelectFile={handleSelectedImage} style={{ minWidth: 400 }} />
       )
     };
   }
@@ -994,7 +1009,7 @@ const NotificationItem = ({ props, classes }) => {
                     )}
                     color="primary"
                     style={{ margin: '8px' }}
-                    onClick={activeStep == 0 ? saveNotification(false, false) : saveSettings}>
+                    onClick={activeStep == 0 ? saveNotification(false, false) : saveSettings(false)}>
                     {t('notifications.save')}
                   </Button>
                   <Button
@@ -1007,7 +1022,7 @@ const NotificationItem = ({ props, classes }) => {
                     )}
                     color="primary"
                     style={{ margin: '8px' }}
-                    onClick={activeStep == 0 ? saveNotification(true, false) : saveSettings}>
+                    onClick={activeStep == 0 ? saveNotification(true, false) : saveSettings(true)}>
                     {t('notifications.saveAndExit')}
                   </Button>
                   <Button

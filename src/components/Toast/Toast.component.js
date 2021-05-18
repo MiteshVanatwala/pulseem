@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import 'moment/locale/he'
-import { Alert, AlertTitle } from '@material-ui/lab';
+import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import './Toast.styles.css'
 import clsx from 'clsx';
@@ -47,7 +47,7 @@ const Toast = ({ data, onClose }) => {
     }
     return (
         <div className={clsx(classes.root, "alert")}>
-            <Alert severity={data.severity} color={data.color} className={classes.center}>
+            <Alert severity={data.severity} color={data.color} className={classes.center} style={{ fontWeight: 900, fontSize: 16 }}>
                 {/* {data.title && <AlertTitle>{data.title}</AlertTitle>} */}
                 {data.message}
             </Alert>
