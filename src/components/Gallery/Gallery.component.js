@@ -155,16 +155,11 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             callbackSelectFile(encodeURI(selectedFileURL));
         }
     }, [isConfirm])
-    // const onConfirm = () => {
-    //     if (isConfirm) {
-
-    //     }
-    // }
-
     const renderFiles = () => {
         const deleteImage = (fileModel) => async (event) => {
             event.preventDefault();
             event.stopPropagation();
+            fileModel.FolderName = fileModel.FolderName.replace('main\\', '');
             await dispatch(deleteGalleryFile(fileModel));
             initGallery();
         }
@@ -221,7 +216,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             return (
                 <Grid container
                     direction="row"
-                    alignItems="flex-start">
+                    alignItems="flex-start" style={{width: '100%', padding: '0 25px', borderRight: isRTL ? '1px solid #ccc' : '', borderLeft: isRTL ? '' : '1px solid #ccc', height: '100%'}}>
                     <Grid item xs={12}>{selectedFolder == "main" && isRTL ? "ראשי" : selectedFolder}</Grid>
                     <Grid item lg={4} md={6} xs={12}>
                         <Button
@@ -403,13 +398,10 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         <div className={classes.root}>
             <Divider style={{ margin: '15px 0' }} />
             <Grid container style={{ minHeight: 400 }}>
-                <Grid item xs={3} className="scroll">
+                <Grid item xs={2} className="scroll">
                     {renderFolders()}
                 </Grid>
-                <Grid item xs={1}>
-                    <Divider orientation="vertical" variant="middle"></Divider>
-                </Grid>
-                <Grid item xs={8} className="scroll">
+                <Grid item xs={9} className="scroll">
                     {renderFiles()}
                 </Grid>
             </Grid>

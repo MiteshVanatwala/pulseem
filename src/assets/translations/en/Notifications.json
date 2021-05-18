@@ -74,7 +74,9 @@
   "payAttentionText": "*Pay attention. Notifications will only work on sites with an SSL certificate",
   "headTagOpenText": "(Head tag opens)",
   "headTagClosesText": "(Head tag closes)",
-  "createContent": "Create New Push Notification",
+  "createNewPush": "Create New Push Notification",
+  "createContent": "Create Content",
+  "sendSettings": "Send Settings",
   "redirectUrl": "Redirection Link",
   "redirectUrlButton": "Readirection Link's button",
   "ph_title": "Type title",
@@ -101,7 +103,7 @@
   "toWhomToSend": "To whom to send?",
   "whenToSend": "When would you like to send?",
   "immediateDescription": "Right after you click ''send'' in the Summary screen",
-  "immediateSend": "Send imediatley",
+  "immediateSend": "Send immediatley",
   "immediate": "Imediatley",
   "futureSend": "Date and Time",
   "date": "Pick a Date",
@@ -117,5 +119,10 @@
   "recipient": "Recipient",
   "recipients": "Recipients",
   "saved": "Notification Saved!",
-  "settings_saved": "Notification settings Saved!"
+  "settings_saved": "Notification settings Saved!",
+  "tooltip": {
+    "testSend": "Please note that tests sends for Push Notifications are sent to creator of the notification only.",
+    "redirectUrl": "This is the link your customers will be referred to when clicking on your notification.",
+    "firefoxNotSupported": "Please note that images are not supported by Mozilla Firefox"
+  }
 }

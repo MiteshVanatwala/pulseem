@@ -24,11 +24,25 @@
     }
     .wizardButtonContainer div:last-child {
         display: flex;
-        flex-direction: column-reverse;
+        flex-direction: column;
     }
 }
 @media screen and (max-width: 960px) {
     .dialogBox {
         min-width: unset !important;
     }
+}
+
+.MuiGrid-align-items-xs-flex-start {
+    align-content: flex-start !important;
+}
+
+input.error {
+    border-bottom: 1px solid red;
+    border-radius: 4px;
+}
+
+.MuiTooltip-tooltipPlacementTop,
+.MuiTooltip-tooltipPlacementLeft {
+    font-size: 12px !important;
 }

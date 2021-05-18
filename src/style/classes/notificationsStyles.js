@@ -140,7 +140,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         padding: '10px',
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        paddingTop: 0
     },
     flexStart: {
         marginTop: '25px',
@@ -200,7 +201,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         borderRadius: '5px',
         position: 'absolute',
         right: '50px',
-        maxHeight: 'calc(100% - 80px)'
+        maxHeight: 'calc(100% - 80px)',
+        paddingTop: 10
     },
     chromeNotification: {
         backgroundColor: '#282828 !important',
@@ -351,5 +353,18 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         marginLeft: 30,
         marginTop: -10,
         marginBottom: 25
+    },
+    smallNotice: {
+        fontSize: 12,
+        marginTop: 15,
+        display: 'block'
+    },
+    pageSubTitle: {
+        fontSize: 28
+    },
+    subTitle: {
+        margin: '0 10px !important',
+        color: '#157eaf',
+        fontSize: 30
     }
 })
