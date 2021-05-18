@@ -92,7 +92,7 @@ export const getRoutes=(t=() => null) => [
       alt='Mms'
       src={MmsIcon} />,
     options: [
-      {title: t('master.RadMenuItemResource101.Text'),href: '/MmsCampaignEdit'},
+      {title: t('master.NewMMSCampaign.Text'),href: '/MmsCampaignEdit'},
       {title: t('master.MmsCampaignMnage.Text'),href: '/MmsCampaigns'}
     ]
   },

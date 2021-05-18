@@ -1,13 +1,31 @@
 const iconWidth={
+  xs: 20,
   sm: 20,
   md: 25,
   lg: 25
 }
 
 const flex12={
+  xs: 5,
   sm: 5,
   md: 7,
   lg: 6
+}
+
+const iconPadding={
+  xs: '0.8rem 1.1rem 0.8rem',
+  sm: '0.8rem 1.1rem 0.2rem',
+  md: '0.8rem 1.1rem 0.2rem',
+  lg: '0.8rem 1.1rem 0.2rem',
+  xl: '0.8rem 1.1rem 0.2rem'
+}
+
+const tableRowMinWidth={
+  xs: 75,
+  sm: 75,
+  md: 75,
+  lg: 75,
+  xl: 100
 }
 
 export const getManagmentStyle=(windowSize,isRTL,theme) => ({
@@ -46,8 +64,14 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   flex: {
     display: 'flex',
   },
+  minWidth75: {
+    minWidth: '75px!important'
+  },
+  maxWidth75: {
+    maxWidth: '75px!important'
+  },
   paddingRightLeft10: {
-    padding: '0 10px'
+    padding: '0 10px!important'
   },
   paddingHead: {
     padding: '20px 10px'
@@ -63,7 +87,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   tableCellRoot: {
     display: 'flex',
     flexDirection: 'column',
-    minWidth: 100,
+    minWidth: 75,
     padding: '0 16px'
   },
   tableRowRoot: {
@@ -96,6 +120,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   errorText: {
     color: 'red'
   },
+  paddingIcon: {
+    padding: '0.8rem 0rem 0.2rem!important'
+  },
   managmentIconHide: {
     opacity: 0
   },
@@ -103,8 +130,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    width: '1.8rem',
-    padding: '0.8rem 1.1rem 0.2rem'
+    width: '100%',
+    padding: iconPadding[windowSize]
   },
   managmentIcon: {
     width: iconWidth[windowSize],
@@ -127,14 +154,18 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     color: '#27AE60'
   },
   recipientsStatus: {
-    fontSize: 17,
+    fontSize: 18,
     color: 'black'
+  },
+  statusStopped: {
+    fontWeight: 700,
+    color: '#E74C3C'
   },
   statusFailed: {
     fontWeight: 700,
     color: '#E74C3C'
   },
-  statusDraft: {
+  statusCreated: {
     fontWeight: 700,
     color: '#0371AD'
   },
@@ -276,6 +307,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   flex1: {
     flex: 1
   },
+  flexHalf: {
+    flex: .5
+  },
   flex5: {
     flex: 4,
     borderBottom: 0,
@@ -382,12 +416,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   tablePadingtonArrow: {
     transform: isRTL? 'rotateY(0deg)':'rotateY(180deg)',
     marginInlineStart: 10,
-    padding: 5
+    padding: 10
   },
   tablePadingtonArrowOppisite: {
     transform: isRTL? 'rotateY(180deg)':'rotateY(0deg)',
     marginInlineEnd: 10,
-    padding: 5
+    padding: 10
   },
   tablePadingtonGridItem: {
     display: 'flex',
@@ -477,7 +511,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     flexDirection: 'column',
     flex: 1,
     height: 300,
-    width: 450,
+    width: '97%',
     border: '1px solid #8b8b8b',
     overflowY: 'auto',
     padding: 5,
@@ -491,10 +525,13 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     fontWeight: 700
   },
   cardMedia: {
-    height: '140px',
-    '&.MuiCardMedia-root': {
-      backgroundSize: 'unset'
-    }
+    height: '200px',
+  },
+  cardIcon: {
+    width: '100px',
+    height: '100%',
+    minHeight: 85,
+    backgroundSize: 'contain'
   },
   searchWhite: {
     transform: 'scale(1.5)',
@@ -523,7 +560,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     }
   },
   dialogBox: {
-    paddingBottom: 20
+    padding: 20
   },
   directoryField: {
     display: 'flex',
@@ -570,6 +607,81 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     '&:hover': {
       color: 'darkred'
     }
+  },
+  nameEllipsis: {
+    fontSize: 20,
+    fontWeight: 700,
+    color: '#333333',
+    fontFamily: 'Assistant',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    width: '100%'
+  },
+  p10: {
+    padding: 10
+  },
+  p15: {
+    padding: 15
+  },
+  emptyImageLabel: {
+    textAlign: 'center',
+    alignSelf: 'center',
+    textTransform: 'none',
+    marginTop: '-30px',
+    fontWeight: 500
+  },
+  mt_10: {
+    marginTop: -10
+  },
+  pictureIcon: {
+    fontFamily: 'pulseemicons',
+    color: '#000',
+    fontSize: 35,
+    fontWeight: 'bold'
+  },
+  f80: {
+    fontSize: 80
+  },
+  boxShadow: {
+    boxShadow: '0px 5px 10px #888888'
+  },
+  chooseImageBtn: {
+    width: '100%', 
+    padding: 0
+  },
+  pictureBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    width: '100px',
+    padding: 0,
+    border: '1px dashed #64a1bd!important'
+  },
+  pictureBoxBig: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    width: '100%',
+    minHeight: 200,
+    padding: 0,
+    border: '1px dashed #64a1bd!important'
+  },
+  previewCardContent: {
+    display: 'flex', 
+    alignItems: 'center', 
+    justify: 'center', 
+    padding: 0, 
+    minHeight: 115
+  },
+  previewLabel: {
+    background: '#a9a9a9', 
+    color: 'white',
+     margin: 5, 
+     padding: 5
+  },
+  w100: {
+    width: '100%'
   }
 
 })

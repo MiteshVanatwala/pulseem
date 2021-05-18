@@ -1,5 +1,5 @@
 {
-  "notificationManagement": "Notification Management",
+  "notificationManagement": "Notifications Management",
   "searchSection": {
     "notificationName": "Notification Name",
     "status": "Status",
@@ -67,5 +67,8 @@
   "groupName": "Group Name",
   "recipients": "Recipients",
   "copy": "Copy",
-  "copied": "Copied"
+  "copied": "Copied",
+  "myGroups": "My Groups",
+  "chooseIcon": "Choose Icon...",
+  "chooseImage": "Choose Image..."
 }

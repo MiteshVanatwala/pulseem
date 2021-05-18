@@ -28,7 +28,7 @@ const AppBarItem=({
   const [open,setOpen]=useState(false)
   const [buttonWidth,setButtonWidth]=useState(0)
   const buttonRef=useRef(null)
-  const menuWidth=240
+  const menuWidth=290
 
   useEffect(() => {
     setButtonWidth(buttonRef.current.clientWidth)
@@ -120,7 +120,7 @@ const LanguageSelector=({classes}) => {
   const item={title: languages.find(lang => lang.value===language).title,options: languages}
 
   const changeLanguage=option => {
-    setCookie('language',option.value,{'max-age': 3600});
+    setCookie('language',option.value,{'max-age': 31536000});
     dispatch(setLanguage(option.value));
   }
 

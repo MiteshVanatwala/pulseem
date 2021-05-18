@@ -19,7 +19,6 @@ import {
 import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
-import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
@@ -62,6 +61,13 @@ const NewsletterManagnentScreen=({classes}) => {
     )
   }
 
+  const clearSearch=() => {
+    setCampaineNameSearch('')
+    handleFromDate(null)
+    handleToDate(null)
+    setSearchArray(null)
+  }
+
   const renderSearchLine=() => {
     const handleSearch=() => {
       setSearchArray([{
@@ -71,31 +77,32 @@ const NewsletterManagnentScreen=({classes}) => {
         type: 'date',
         fromDate,
         toDate
-      }])
+      }]);
+      setPage(1);
     }
 
-    const clearSearch=() => {
-      setCampaineNameSearch('')
-      handleFromDate(null)
-      handleToDate(null)
-      setSearchArray(null)
+    const handleFromDateChange=(value)=> {
+      if (value>toDate) {
+        handleToDate(null);
+      }
+      handleFromDate(value);
     }
 
     const handleCampainNameChange=event => {
       setCampaineNameSearch(event.target.value)
     }
 
-    if(windowSize==='xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onClick={handleSearch}
-          placeholder={t('common.CampaignName')}
-        />
-      )
-    }
+    // if(windowSize==='xs') {
+    //   return (
+    //     <SearchField
+    //       classes={classes}
+    //       value={campaineNameSearch}
+    //       onChange={handleCampainNameChange}
+    //       onClick={handleSearch}
+    //       placeholder={t('common.CampaignName')}
+    //     />
+    //   )
+    // }
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -109,25 +116,28 @@ const NewsletterManagnentScreen=({classes}) => {
           />
         </Grid>
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={fromDate}
-            onChange={handleFromDate}
-            placeholder={t('campaigns.locFromDateResource1.Text')}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={fromDate}
+              onChange={handleFromDateChange}
+              placeholder={t('mms.locFromDateResource1.Text')}
+            />
+          </Grid>
+        :null}
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={toDate}
-            onChange={handleToDate}
-            placeholder={t('campaigns.locToDateResource1.Text')}
-            disabled={fromDate? false:true}
-            minDate={fromDate? fromDate:null}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={toDate}
+              onChange={handleToDate}
+              placeholder={t('mms.locToDateResource1.Text')}
+              minDate={fromDate? fromDate:''}
+            />
+          </Grid>
+        :null}
 
         <Grid item>
           <Button
@@ -156,7 +166,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderManagmentLine=() => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize!=='xs'&&<Grid item>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -167,8 +177,8 @@ const NewsletterManagnentScreen=({classes}) => {
             )}>
             {t('campaigns.create')}
           </Button>
-        </Grid>}
-        {windowSize!=='xs'&&<Grid item>
+        </Grid>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -182,7 +192,7 @@ const NewsletterManagnentScreen=({classes}) => {
             })}>
             {t('campaigns.restoreDeleted')}
           </Button>
-        </Grid>}
+        </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${newslettersData.length} ${t('campaigns.newsletters')}`}
@@ -232,8 +242,8 @@ const NewsletterManagnentScreen=({classes}) => {
       {
         key: 'preview',
         icon: PreviewIcon,
-        remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           history.push('/PreviewCampaign/'+CampaignID)
         }
@@ -241,9 +251,9 @@ const NewsletterManagnentScreen=({classes}) => {
       {
         key: 'edit',
         icon: EditIcon,
-        remove: windowSize==='xs',
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           history.push('/Editor/CampaignEdit/'+CampaignID)
         }
@@ -252,6 +262,7 @@ const NewsletterManagnentScreen=({classes}) => {
         key: 'duplicate',
         icon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'duplicate',
@@ -262,9 +273,9 @@ const NewsletterManagnentScreen=({classes}) => {
       {
         key: 'groups',
         icon: GroupsIcon,
-        remove: windowSize==='xs',
         disable: Groups&&Groups.length===0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'groups',
@@ -276,6 +287,9 @@ const NewsletterManagnentScreen=({classes}) => {
         key: 'copy',
         icon: CopyIcon,
         lable: t('campaigns.CloneResource1.HeaderText'),
+        rootClass: classes.paddingIcon,
+        text: shareUrl||'',
+        type: 'copy',
         onClick: () => {
           navigator.clipboard.writeText(shareUrl)
           setShowCopied(CampaignID)
@@ -288,8 +302,8 @@ const NewsletterManagnentScreen=({classes}) => {
         key: 'reports',
         icon: ReportsIcon,
         disable: Status===1,
-        remove: windowSize==='xs',
         lable: t('campaigns.Reports'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           history.push('/CampaignStatistics/'+CampaignID)
         }
@@ -297,9 +311,9 @@ const NewsletterManagnentScreen=({classes}) => {
       {
         key: 'automation',
         icon: AutomationIcon,
-        remove: windowSize==='xs',
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           history.push('/PreviewAutomations/'+AutomationID)
         }
@@ -308,6 +322,7 @@ const NewsletterManagnentScreen=({classes}) => {
         key: 'delete',
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
+        rootClass: classes.paddingIcon,
         showPhone: true,
         onClick: () => {
           setDialogType({
@@ -404,16 +419,9 @@ const NewsletterManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Ellipsis
-          text={row.Name}
-          lines={1}
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            color: '#333333',
-            fontFamily: 'Assistant',
-          }}
-        />
+        <Typography noWrap={false} className={classes.nameEllipsis}>
+          {row.Name}
+        </Typography>
         <Typography
           className={classes.grayTextCell}>
           {`${text} ${date.format('L')} ${date.format('LT')}`}
@@ -481,7 +489,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.campaineName)
+        return String(row.Name.toLowerCase()).startsWith(values.campaineName.toLowerCase());
       },
       date: (row,values) => {
         const {UpdatedDate,SendDate}=row
@@ -558,7 +566,7 @@ const NewsletterManagnentScreen=({classes}) => {
 
     const dialogContent={
       restore: {
-        title: t('campaigns.restoreCampaginTitle'),
+        title: t('campaigns.restoreCampaignTitle'),
         showDivider: false,
         icon: (
           <div className={classes.dialogIconContent}>
@@ -651,9 +659,10 @@ const NewsletterManagnentScreen=({classes}) => {
           </Typography>
         ),
         onConfirm: async () => {
-          await dispatch(duplicteCampaign(dialogType.data))
-          getData()
-          handleClose()
+          await dispatch(duplicteCampaign(dialogType.data));
+          clearSearch();
+          getData();
+          handleClose();
         }
       }
     }

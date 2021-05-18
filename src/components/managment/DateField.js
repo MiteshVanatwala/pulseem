@@ -7,8 +7,7 @@ import moment from 'moment'
 import 'moment/locale/he'
 
 export const DateField=({
-  disabled=false,
-  minDate='',
+  minDate,
   classes,
   value,
   onChange=() => null,
@@ -39,7 +38,6 @@ export const DateField=({
       keyboardIcon={<CalendarIcon />}
       format="L"
       margin='none'
-      disabled={disabled}
       minDate={minDate}
       emptyLabel={placeholder}
       initialFocusedDate={moment()}

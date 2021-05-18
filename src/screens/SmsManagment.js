@@ -20,7 +20,6 @@ import {pulseemNewTab} from '../helpers/functions'
 import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
-import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
@@ -66,6 +65,13 @@ const SmsManagnentScreen=({classes}) => {
     )
   }
 
+  const clearSearch=() => {
+    setCampaineNameSearch('')
+    handleFromDate(null)
+    handleToDate(null)
+    setSearchArray(null)
+  }
+
   const renderSearchLine=() => {
     const handleSearch=() => {
       setSearchArray([{
@@ -75,31 +81,32 @@ const SmsManagnentScreen=({classes}) => {
         type: 'date',
         fromDate,
         toDate
-      }])
+      }]);
+      setPage(1);
     }
 
-    const clearSearch=() => {
-      setCampaineNameSearch('')
-      handleFromDate(null)
-      handleToDate(null)
-      setSearchArray(null)
+    const handleFromDateChange=(value)=> {
+      if (value>toDate) {
+        handleToDate(null);
+      }
+      handleFromDate(value);
     }
 
     const handleCampainNameChange=event => {
       setCampaineNameSearch(event.target.value)
     }
 
-    if(windowSize==='xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onClick={handleSearch}
-          placeholder={t('campaigns.campaginName')}
-        />
-      )
-    }
+    // if(windowSize==='xs') {
+    //   return (
+    //     <SearchField
+    //       classes={classes}
+    //       value={campaineNameSearch}
+    //       onChange={handleCampainNameChange}
+    //       onClick={handleSearch}
+    //       placeholder={t('campaigns.campaginName')}
+    //     />
+    //   )
+    // }
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -109,27 +116,32 @@ const SmsManagnentScreen=({classes}) => {
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
             className={classes.textField}
-            placeholder={t('campaigns.campaginName')}
+            placeholder={t('sms.GridBoundColumnResource2.HeaderText')}
           />
         </Grid>
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={fromDate}
-            onChange={handleFromDate}
-            placeholder={t('campaigns.locFromDateResource1.Text')}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={fromDate}
+              onChange={handleFromDateChange}
+              placeholder={t('mms.locFromDateResource1.Text')}
+            />
+          </Grid>
+        :null}
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={toDate}
-            onChange={handleToDate}
-            placeholder={t('campaigns.locToDateResource1.Text')}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={toDate}
+              onChange={handleToDate}
+              placeholder={t('mms.locToDateResource1.Text')}
+              minDate={fromDate? fromDate:''}
+            />
+          </Grid>
+        :null}
 
         <Grid item>
           <Button
@@ -165,7 +177,7 @@ const SmsManagnentScreen=({classes}) => {
     }
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize!=='xs'&&<Grid item>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -176,8 +188,8 @@ const SmsManagnentScreen=({classes}) => {
             )}>
             {t('sms.create')}
           </Button>
-        </Grid>}
-        {windowSize!=='xs'&&<Grid item>
+        </Grid>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -191,8 +203,8 @@ const SmsManagnentScreen=({classes}) => {
             })}>
             {t('campaigns.restoreDeleted')}
           </Button>
-        </Grid>}
-        {windowSize!=='xs'&&<Grid item>
+        </Grid>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -201,12 +213,12 @@ const SmsManagnentScreen=({classes}) => {
               classes.actionButtonDarkBlue
             )}
             onClick={handleVerificationDialog}>
-            {t('sms.verification')}
+            {t('sms.verificationDialogTitle')}
           </Button>
-        </Grid>}
+        </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${smsData.length} ${t('campaigns.newsletters')}`}
+            {`${smsData.length} ${t('mms.campaigns')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -245,8 +257,8 @@ const SmsManagnentScreen=({classes}) => {
       {
         key: 'preview',
         icon: PreviewIcon,
-        remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           pulseemNewTab(`SMSPreviewCampaign.aspx?SMSCampaignID=${Id}`)
         }
@@ -254,9 +266,9 @@ const SmsManagnentScreen=({classes}) => {
       {
         key: 'edit',
         icon: EditIcon,
-        remove: windowSize==='xs',
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           history.push('/Edit/SMSCampaignEdit/'+Id)
         }
@@ -265,6 +277,7 @@ const SmsManagnentScreen=({classes}) => {
         key: 'duplicate',
         icon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'duplicate',
@@ -275,9 +288,9 @@ const SmsManagnentScreen=({classes}) => {
       {
         key: 'groups',
         icon: GroupsIcon,
-        remove: windowSize==='xs',
         disable: Groups&&Groups.length===0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'groups',
@@ -288,9 +301,9 @@ const SmsManagnentScreen=({classes}) => {
       {
         key: 'automation',
         icon: AutomationIcon,
-        remove: windowSize==='xs',
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           console.log(row)
           history.push('/PreviewAutomations/'+AutomationID)
@@ -301,6 +314,7 @@ const SmsManagnentScreen=({classes}) => {
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'delete',
@@ -312,7 +326,7 @@ const SmsManagnentScreen=({classes}) => {
     return (
       <Grid
         container
-        direction={windowSize==='sm'? 'column':'row'}
+        direction={'row'}
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
@@ -397,16 +411,9 @@ const SmsManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Ellipsis
-          text={row.Name}
-          lines={1}
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            color: '#333333',
-            fontFamily: 'Assistant',
-          }}
-        />
+        <Typography noWrap={false} className={classes.nameEllipsis}>
+          {row.Name}
+        </Typography>
         <Typography
           className={classes.grayTextCell}>
           {`${text} ${date.format('L')} ${date.format('LT')}`}
@@ -418,7 +425,7 @@ const SmsManagnentScreen=({classes}) => {
   const renderRow=(row) => {
     return (
       <TableRow
-        key={row.Id}
+        key={Math.round(Math.random()*999999999)}
         classes={rowStyle}>
         <TableCell
           classes={cellStyle}
@@ -429,7 +436,7 @@ const SmsManagnentScreen=({classes}) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex1}>
+          className={clsx(classes.flex1, classes.maxnWidth75)}>
           {renderRecipientsCell(row.SentCount)}
         </TableCell>
         <TableCell
@@ -480,7 +487,7 @@ const SmsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.campaineName)
+        return String(row.Name.toLowerCase()).startsWith(values.campaineName.toLowerCase());
       },
       date: (row,values) => {
         const {UpdatedDate,SendDate}=row
@@ -559,7 +566,6 @@ const SmsManagnentScreen=({classes}) => {
 
     const handleSendVerificationCode=async () => {
       const value=(dialogType&&dialogType.type==='shortVerify'&&dialogType.data)? dialogType.data:number;
-      console.log("length",value.length)
       if(!value||value.length<10) {
         handleNumberError(true);
         return
@@ -595,7 +601,7 @@ const SmsManagnentScreen=({classes}) => {
 
     const dialogContent={
       restore: {
-        title: t('campaigns.restoreCampaginTitle'),
+        title: t('sms.restoreCampaignTitle'),
         showDivider: false,
         icon: (
           <div className={classes.dialogIconContent}>
@@ -689,6 +695,7 @@ const SmsManagnentScreen=({classes}) => {
         ),
         onConfirm: async () => {
           await dispatch(duplicteSms(dialogType.data))
+          clearSearch();
           getData()
           handleClose()
         }

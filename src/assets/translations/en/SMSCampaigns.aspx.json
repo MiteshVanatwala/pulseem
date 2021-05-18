@@ -457,8 +457,7 @@
   "NumberChangeErrorMessage": "You have changed the number assigned to you by the Pulseem platform for this campaign. The recipients won’t be able to unsubscribe from your SMS distribution list through a removal message. You can add a removal link instead or revert to your original number.",
   "restoreCampaginTitle": "Select the campaigns you want to restore",
   "create": "Create SMS",
-  "verification": "Verification of number to send",
-  "verificationDialogTitle": "Verification of number to send",
+  "verificationDialogTitle": "Verification of Number to Send",
   "verificationBody": "According to new regulations of the Ministry of Communications, we are obliged to make sure that the number you entered for sending is owned by you. This is a ",
   "oneTimeProcess": "one-time process",
   "foreachSubmission": " for each submission number.",
@@ -476,5 +475,6 @@
   "resend": "Resend",
   "verificationCodeError": "The code is incorrect, please try again or select resend",
   "numberError": "Enter minimum of 10 numbers",
-  "verifyNumber": "Verify Number"
+  "verifyNumber": "Verify Number",
+  "restoreCampaignTitle": "Select the SMS you want to restore"
 }

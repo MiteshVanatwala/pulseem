@@ -3,7 +3,7 @@ import DefaultScreen from './DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,IconButton,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio
+  Grid,Button,TextField,Box,FormControlLabel,Checkbox,CardMedia,Card,CardContent,RadioGroup,Radio
 } from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
@@ -16,7 +16,6 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
-import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
@@ -25,6 +24,7 @@ import {
   duplicateNotification,deleteNotification,getNotificationGroupsById,restoreNotifications,
   getScriptPath,getApiToken,updateScriptPath
 } from '../redux/reducers/notificationSlice';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 const NotificationManagement=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
@@ -33,7 +33,6 @@ const NotificationManagement=({classes}) => {
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null)
   const [notificationNameSearch,setNotificationNameSearch]=useState('');
-  const [statusSearch,setStatusSearch]=useState(-1);
   const [scriptDirectory,setScriptDirectory]=useState(0);
   const [copyStatus,setCopyStatus]=useState(false);
   const [scriptPath,setScriptPath]=useState(0);
@@ -49,10 +48,10 @@ const NotificationManagement=({classes}) => {
   const dispatch=useDispatch()
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
   const cellStyle={head: classes.tableCellHead,root: clsx(classes.tableCellRoot,classes.paddingHead)}
-  const cell50wStyle={head: clsx(classes.tableCellHead),root: clsx(classes.tableCellRoot,classes.paddingHead)}
+  const cell50wStyle={head: clsx(classes.tableCellHead),root: clsx(classes.tableCellRoot,classes.paddingHead, classes.minWidth75)}
   const cellBodyStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.paddingRightLeft10)}
-  const noBorderCellStyle={body: classes.tableCellBodyNoBorder,root: clsx(classes.tableCellRoot,classes.paddingRightLeft10)}
-  const borderCellStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.paddingRightLeft10)}
+  const noBorderCellStyle={body: classes.tableCellBodyNoBorder,root: clsx(classes.tableCellRoot,classes.paddingRightLeft10, classes.minWidth75)}
+  const borderCellStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.paddingRightLeft10, classes.minWidth75)}
   const baseUrl='https://www.pulseemdev.co.il/pulseem';
   const refScriptCode=useRef(null);
   moment.locale(language)
@@ -90,9 +89,7 @@ const NotificationManagement=({classes}) => {
   }
 
   const handleCopyScript=() => {
-    navigator.clipboard.writeText(refScriptCode.current.innerText);
     setCopyStatus(true);
-
     setTimeout(() => {
       setCopyStatus(false);
     },1000);
@@ -131,6 +128,7 @@ const NotificationManagement=({classes}) => {
 
   const handleDuplicate=async (ID) => {
     const res=await dispatch(duplicateNotification(ID));
+    clearSearch();
     if(!res.error) {
       dispatch(getNotificationData());
     }
@@ -166,58 +164,58 @@ const NotificationManagement=({classes}) => {
     )
   }
 
+  const clearSearch=() => {
+    setNotificationNameSearch('')
+    handleFromDate(null)
+    handleToDate(null)
+    setSearchArray(null)
+  }
+
   const renderSearchSection=() => {
     const handleSearch=() => {
       setSearchArray([{
         type: 'name',
         notificationName: notificationNameSearch
       },{
-        type: 'status',
-        status: statusSearch
-      },{
         type: 'date',
         fromDate,
         toDate
-      }])
+      }]);
+      setPage(1);
     }
 
-    const clearSearch=() => {
-      setNotificationNameSearch('')
-      setStatusSearch(-1)
-      handleFromDate(null)
-      handleToDate(null)
-      setSearchArray(null)
+    const handleFromDateChange=(value)=> {
+      if (value>toDate) {
+        handleToDate(null);
+      }
+      handleFromDate(value);
     }
 
     const handleNotificationNameChange=event => {
       setNotificationNameSearch(event.target.value)
     }
 
-    const handleStatusChange=event => {
-      setStatusSearch(event.target.value)
-    }
-
-    if(windowSize==='xs') {
-      return (
-        <Input
-          classes={{
-            underline: classes.phoneSearchBar
-          }}
-          value={notificationNameSearch}
-          onChange={handleNotificationNameChange}
-          placeholder={t('notifications.searchSection.notificationName')}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                onClick={handleSearch}
-                className={classes.phoneSearchBarIcon}>
-                <SearchIcon />
-              </IconButton>
-            </InputAdornment>
-          }>
-        </Input>
-      )
-    }
+    // if(windowSize==='xs') {
+    //   return (
+    //     <Input
+    //       classes={{
+    //         underline: classes.phoneSearchBar
+    //       }}
+    //       value={notificationNameSearch}
+    //       onChange={handleNotificationNameChange}
+    //       placeholder={t('notifications.searchSection.notificationName')}
+    //       endAdornment={
+    //         <InputAdornment position="end">
+    //           <IconButton
+    //             onClick={handleSearch}
+    //             className={classes.phoneSearchBarIcon}>
+    //             <SearchIcon />
+    //           </IconButton>
+    //         </InputAdornment>
+    //       }>
+    //     </Input>
+    //   )
+    // }
 
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
@@ -231,42 +229,29 @@ const NotificationManagement=({classes}) => {
             placeholder={t('notifications.searchSection.notificationName')}
           />
         </Grid>
-        <Grid item>
-          <Select
-            id="statusSelect"
-            variant="outlined"
-            onChange={handleStatusChange}
-            value={statusSearch}
-            className={classes.formControlSelect}
-          >
-            <MenuItem value={-1} disabled><div style={{color: 'rgba(0,0,0,0.40)'}}>{t('common.Status')}</div></MenuItem>
-            <MenuItem value={0}>{t('common.draft')}</MenuItem>
-            <MenuItem value={1}>{t('common.deleted')}</MenuItem>
-            <MenuItem value={2}>{t('common.Pending')}</MenuItem>
-            <MenuItem value={3}>{t('common.Sending')}</MenuItem>
-            <MenuItem value={4}>{t('common.Sent')}</MenuItem>
-            <MenuItem value={5}>{t('common.ScheduledDate')}</MenuItem>
-            <MenuItem value={7}>{t('common.failedStatus')}</MenuItem>
-          </Select>
-        </Grid>
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={fromDate}
-            onChange={handleFromDate}
-            placeholder={t('notifications.searchSection.fromDate')}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={fromDate}
+              onChange={handleFromDateChange}
+              placeholder={t('mms.locFromDateResource1.Text')}
+            />
+          </Grid>
+        :null}
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={toDate}
-            onChange={handleToDate}
-            placeholder={t('notifications.searchSection.toDate')}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={toDate}
+              onChange={handleToDate}
+              placeholder={t('mms.locToDateResource1.Text')}
+              minDate={fromDate? fromDate:''}
+            />
+          </Grid>
+        :null}
 
         <Grid item>
           <Button
@@ -295,7 +280,7 @@ const NotificationManagement=({classes}) => {
   const renderManagmentLine=() => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize!=='xs'&&<Grid item>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -306,19 +291,19 @@ const NotificationManagement=({classes}) => {
             )}>
             {t('notifications.buttons.createNotification')}
           </Button>
-        </Grid>}
-        {windowSize!=='xs'&&<Grid item>
+        </Grid>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
             className={clsx(
               classes.actionButton,
-              classes.actionButtonRed
+              classes.actionButtonLightBlue
             )}
             onClick={handleShowDeletedItems}>
             {t('notifications.restoreDeleted')}
           </Button>
-        </Grid>}
+        </Grid>
         <Grid item>
           <Button
             variant='contained'
@@ -345,7 +330,7 @@ const NotificationManagement=({classes}) => {
         </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${notificationData.length} ${t('notifications.notifications')}`}
+            {`${notificationData.length} ${t('mms.campaigns')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -356,12 +341,12 @@ const NotificationManagement=({classes}) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("notifications.notificationManagement")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("notifications.searchSection.notificationName")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.toSend")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.sent")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.failed")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.clicks")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.status")}</TableCell>
+          <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.minWidth75)} align='center'>{t("notifications.tblHeader.clicks")}</TableCell>
+          <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.minWidth75)} align='center'>{t("notifications.tblHeader.status")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex12} ></TableCell>
         </TableRow>
       </TableHead>
@@ -386,8 +371,8 @@ const NotificationManagement=({classes}) => {
       {
         key: 'preview',
         icon: PreviewIcon,
-        remove: windowSize==='xs',
         lable: t('notifications.buttons.preview'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           handlePreview(ID);
         }
@@ -395,9 +380,9 @@ const NotificationManagement=({classes}) => {
       {
         key: 'edit',
         icon: EditIcon,
-        remove: windowSize==='xs',
         disable: StatusID!==0,
         lable: t('notifications.buttons.edit'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           history.push(`/notifications/edit/${ID}`);
         }
@@ -406,6 +391,7 @@ const NotificationManagement=({classes}) => {
         key: 'duplicate',
         icon: DuplicateIcon,
         lable: t('notifications.buttons.duplicate'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: "duplicate",
@@ -416,9 +402,9 @@ const NotificationManagement=({classes}) => {
       {
         key: 'groups',
         icon: GroupsIcon,
-        remove: windowSize==='xs',
         disable: groups&&groups.length===0,
         lable: t('notifications.buttons.groups'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           handleShowGroupsById(ID);
         }
@@ -428,6 +414,7 @@ const NotificationManagement=({classes}) => {
         icon: DeleteIcon,
         lable: t('notifications.buttons.delete'),
         showPhone: true,
+        rootClass: classes.paddingIcon,
         onClick: async () => {
           setDialogType({
             type: 'delete',
@@ -457,8 +444,7 @@ const NotificationManagement=({classes}) => {
 
   const renderStatusCell=(status) => {
     const statuses={
-      0: 'common.draft',
-      1: 'common.deleted',
+      0: 'common.Created',
       2: 'common.Pending',
       3: 'common.Sending',
       4: 'common.Sent',
@@ -471,8 +457,7 @@ const NotificationManagement=({classes}) => {
           classes.wrapText,
           classes.recipientsStatus,
           {
-            [classes.statusDraft]: status===0,
-            [classes.statusFailed]: status===1,
+            [classes.statusCreated]: status===0,
             [classes.statusPending]: status===2,
             [classes.statusSending]: status===3,
             [classes.statusSent]: status===4,
@@ -532,17 +517,9 @@ const NotificationManagement=({classes}) => {
 
     return (
       <>
-        <Ellipsis
-          text={row.Name}
-          lines={1}
-          style={{
-            fontSize: 17,
-            fontWeight: 700,
-            marginBottom: '0.5rem',
-            color: '#333333',
-            fontFamily: 'Assistant'
-          }}
-        />
+        <Typography noWrap={false} className={classes.nameEllipsis}>
+          {row.Name}
+        </Typography>
         <Typography style={{'WebkitLineClamp': 1}}>
           {`${text} ${date.format('L')} ${date.format('LT')}`}
         </Typography>
@@ -558,7 +535,7 @@ const NotificationManagement=({classes}) => {
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={classes.flex3}>
+          className={clsx(classes.flex3)}>
           {renderNameCell(row)}
         </TableCell>
         <TableCell
@@ -582,13 +559,13 @@ const NotificationManagement=({classes}) => {
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={classes.flex1}>
+          className={clsx(classes.flex1, classes.minWidth75)}>
           {renderClickCell(row.ClickCount)}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={classes.flex1}>
+          className={clsx(classes.flex1, classes.minWidth75)}>
           {renderStatusCell(row.StatusID)}
         </TableCell>
         <TableCell
@@ -627,14 +604,7 @@ const NotificationManagement=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.toLowerCase().includes(values.notificationName)
-      },
-      status: (row,values) => {
-        if(values.status<0) {
-          return true;
-        } else {
-          return row.StatusID===values.status
-        }
+        return String(row.Name.toLowerCase()).startsWith(values.notificationName.toLowerCase());
       },
       date: (row,values) => {
         const {UpdatedDate,SendDate}=row
@@ -709,6 +679,7 @@ const NotificationManagement=({classes}) => {
   const renderPreview=() => {
     const image=(dialogType&&dialogType.data&&dialogType.data.Image)||'';
     const name=(dialogType&&dialogType.data&&dialogType.data.Name)||'';
+    const title=(dialogType&&dialogType.data&&dialogType.data.Title)||'';
     const body=(dialogType&&dialogType.data&&dialogType.data.Body)||'';
     return {
       showDivider: false,
@@ -718,22 +689,66 @@ const NotificationManagement=({classes}) => {
         </div>
       ),
       content: (
-        <Box className={classes.dialogBox}>
-          <Card>
+        <Box className={classes.p15}>
+          <Card className={classes.boxShadow}>
             {image?
               <CardMedia
                 className={classes.cardMedia}
                 image={image}
-                title="Contemplative Reptile"
-              />:null}
-            <CardContent>
-              <Typography variant="h5" component="h2">
-                {name}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
-                {body}
-              </Typography>
+              />:
+              <Button className={classes.chooseImageBtn}>
+                <Box
+                  className={clsx(
+                    classes.pictureBoxBig,
+                  )}>
+                    <div className={clsx(classes.pictureIcon, classes.f80)}>
+                      {'\uE00F'}
+                    </div>
+                  <Typography className={clsx(
+                    classes.emptyImageLabel,
+                  )}>
+                    {t('notifications.chooseImage')}
+                  </Typography>
+                </Box>
+              </Button>}
+            <CardContent className={classes.previewCardContent}>
+              <Box className={classes.p10}>
+                {image? 
+                <CardMedia
+                  className={classes.cardIcon}
+                  image={image}
+                />:
+                  <Button
+                    size='small'
+                    >
+                    <Box
+                      className={clsx(
+                        classes.pictureBox,
+                      )}>
+                        <div className={classes.pictureIcon}>
+                          {'\uE00F'}
+                        </div>
+                      <Typography className={clsx(
+                        classes.emptyImageLabel,
+                        classes.mt_10
+                      )}>
+                      {t('notifications.chooseIcon')}
+                      </Typography>
+                    </Box>
+                  </Button>
+                }
+              </Box>
+              <Box className={classes.w100}>
+                <Typography variant="h5" component="h2">
+                  {title}
+                </Typography>
+                <Typography variant="body" color="textSecondary" component="p">
+                  {body}
+                </Typography>
+              </Box>
+             
             </CardContent>
+            <Typography align='center' className={classes.previewLabel}>{name}</Typography>
           </Card>
         </Box>
       ),
@@ -797,7 +812,7 @@ const NotificationManagement=({classes}) => {
 
   const renderGroups=() => {
     return {
-      title: t('campaigns.ShowGroupsTitle'),
+      title: t('notifications.myGroups'),
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -1012,15 +1027,16 @@ const NotificationManagement=({classes}) => {
           <Typography style={{fontWeight: 'bold',padding: '10px 0'}}>
             {t('notifications.payAttentionText')}
           </Typography>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="small"
-            onClick={handleCopyScript}
-            startIcon={<div className={classes.copyIcon}>{copyStatus? '\uE134':'\ue0b0'}</div>}
-          >
-            {copyStatus? t('notifications.copied'):t('notifications.copy')}
-          </Button>
+          <CopyToClipboard text={renderScriptCode()} onCopy={handleCopyScript}>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              startIcon={<div className={classes.copyIcon}>{copyStatus? '\uE134':'\ue0b0'}</div>}
+            >
+              {copyStatus? t('notifications.copied'):t('notifications.copy')}
+            </Button>
+          </CopyToClipboard>
           <Typography style={{fontWeight: 'bold',fontSize: 14}}>
             {t('notifications.headTagOpenText')} {'<head>'}
           </Typography>

@@ -58,17 +58,18 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
+  const clearSearch=() => {
+    setLandingPageNameSearch('');
+    setSearchArray(null);
+  }
+
   const renderSearchLine=() => {
     const handleSearch=() => {
       setSearchArray([{
         type: 'name',
-        campaineName: landingPageNameSearch
-      }])
-    }
-
-    const clearSearch=() => {
-      setLandingPageNameSearch('')
-      setSearchArray(null)
+        campaignName: landingPageNameSearch
+      }]);
+      setPage(1);
     }
 
     const handleCampainNameChange=event => {
@@ -173,7 +174,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             classes={cellStyle}
             className={classes.flex3}
             align='center'>
-            {t("landingPages.name")}
+            {t("landingPages.GridBoundColumnResource2.HeaderText")}
           </TableCell>
           <TableCell
             classes={cellStyle}
@@ -244,6 +245,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
         remove: (!IsPayment&&SurveyCount===0)||windowSize==='xs',
+        rootClass: classes.paddingIcon,
         onClick: async () => {
           if(IsPayment) {
             dispatch(downloadReport(row))
@@ -255,6 +257,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: PreviewIcon,
         remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           openInNewTab(PageLink)
         }
@@ -264,6 +267,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: EditIcon,
         remove: windowSize==='xs',
         lable: t('landingPages.EditResource1.HeaderText'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           history.push(`NewWebForm/NewFormEdit/${ID}`)
         }
@@ -272,6 +276,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'duplicate',
         icon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'duplicate',
@@ -283,6 +288,9 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'copy',
         icon: (copyData&&copyData.icon)||null,
         lable: (copyData&&copyData.lable)||'',
+        rootClass: classes.paddingIcon,
+        text: (copyData&&copyData.copy)||'',
+        type: 'copy',
         onClick: () => {
           navigator.clipboard.writeText(copyData.copy)
           setShowCopied(ID)
@@ -296,6 +304,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: DeleteIcon,
         lable: t('landingPages.GridButtonColumnResource1.HeaderText'),
         showPhone: true,
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'delete',
@@ -307,7 +316,6 @@ const LandingPagesesManagmentScreen=({classes}) => {
     return (
       <Grid
         container
-        //direction={windowSize==='sm'? 'column':'row'}
         spacing={2}
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
@@ -361,16 +369,9 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderNameCell=(row) => {
     return (
       <>
-        <Ellipsis
-          text={row.Name}
-          lines={1}
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            color: '#333333',
-            fontFamily: 'Assistant'
-          }}
-        />
+        <Typography noWrap={false} className={classes.nameEllipsis}>
+          {row.Name}
+        </Typography>
         <Typography
           className={classes.grayTextCell}>
           {row.GroupNames&&row.GroupNames.join(', ')}
@@ -467,7 +468,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.FormName)
+        return String(row.Name.toLowerCase()).startsWith(values.campaignName.toLowerCase());
       }
     }
 
@@ -574,6 +575,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         ),
         onConfirm: async () => {
           await dispatch(duplicteLandingPage(dialogType.data))
+          clearSearch();
           getData()
           handleClose()
         }
