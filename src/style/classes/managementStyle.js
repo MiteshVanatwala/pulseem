@@ -104,7 +104,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     width: '1.8rem',
-    padding: '0.8rem 1.1rem 0.2rem'
+    padding: '0.8rem 1.1rem 0.2rem',
+    textDecoration: 'none'
   },
   managmentIcon: {
     width: iconWidth[windowSize],

@@ -299,7 +299,7 @@ const NotificationManagement=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/Notification/create')}
+            href='/Pulseem/Notification.aspx?t=add'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -398,9 +398,7 @@ const NotificationManagement=({classes}) => {
         remove: windowSize==='xs',
         disable: StatusID!==0,
         lable: t('notifications.buttons.edit'),
-        onClick: () => {
-          history.push(`/notifications/edit/${ID}`);
-        }
+        href: `/Pulseem/notifications/Edit/${ID}`
       },
       {
         key: 'duplicate',
@@ -706,10 +704,10 @@ const NotificationManagement=({classes}) => {
     setDialogType(null)
   }
 
-  const renderPreview=() => {
-    const image=(dialogType&&dialogType.data&&dialogType.data.Image)||'';
-    const name=(dialogType&&dialogType.data&&dialogType.data.Name)||'';
-    const body=(dialogType&&dialogType.data&&dialogType.data.Body)||'';
+  const renderPreview=(data={}) => {
+    const image=data.Image
+    const name=data.Name
+    const body=data.Body;
     return {
       showDivider: false,
       icon: (
@@ -752,7 +750,8 @@ const NotificationManagement=({classes}) => {
     };
   }
 
-  const renderRestore=(data) => {
+  const renderRestore=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
     return {
       title: t('notifications.restoreTitle'),
       showDivider: false,
@@ -763,8 +762,11 @@ const NotificationManagement=({classes}) => {
       ),
       content: (
         <Box
-          className={clsx(classes.restorDialogContent,classes.dialogBox)}>
-          { dialogType&&dialogType.type==='restore'&&dialogType.data.map(row => {
+          className={clsx(
+            classes.restorDialogContent,
+            classes.dialogBox
+          )}>
+          {data.map(row => {
             const checked=restoreArray.includes(row.ID)
             return (
               <FormControlLabel
@@ -795,7 +797,8 @@ const NotificationManagement=({classes}) => {
     }
   }
 
-  const renderGroups=() => {
+  const renderGroups=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
     return {
       title: t('campaigns.ShowGroupsTitle'),
       showDivider: false,
@@ -814,15 +817,14 @@ const NotificationManagement=({classes}) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {dialogType&&dialogType.type==='groups'&&dialogType.data
-                .map(group => {
-                  return (
-                    <TableRow key={group.Id}>
-                      <TableCell>{group.GroupName}</TableCell>
-                      <TableCell align="center">{group.Members}</TableCell>
-                    </TableRow>
-                  )
-                })}
+              {data.map(group => {
+                return (
+                  <TableRow key={group.Id}>
+                    <TableCell>{group.GroupName}</TableCell>
+                    <TableCell align="center">{group.Members}</TableCell>
+                  </TableRow>
+                )
+              })}
             </TableBody>
           </Table>
         </Box>
@@ -842,7 +844,8 @@ const NotificationManagement=({classes}) => {
     }
   }
 
-  const renderGroupsById=() => {
+  const renderGroupsById=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
     return {
       title: t('notifications.groupsByIdTitle'),
       showDivider: false,
@@ -854,18 +857,17 @@ const NotificationManagement=({classes}) => {
       content: (
         <Box
           className={clsx(classes.gruopsDialogContent,classes.dialogBox)}>
-          {dialogType&&dialogType.type==='groupsById'&&dialogType.data
-            .map(group => {
-              return (
-                <Typography
-                  key={group.Id}
-                  className={classes.gruopsDialogText}>
-                  <FiberManualRecordIcon
-                    className={classes.gruopsDialogBullet} />
-                  {group.GroupName}
-                </Typography>
-              )
-            })}
+          {data.map(group => {
+            return (
+              <Typography
+                key={group.Id}
+                className={classes.gruopsDialogText}>
+                <FiberManualRecordIcon
+                  className={classes.gruopsDialogBullet} />
+                {group.GroupName}
+              </Typography>
+            )
+          })}
         </Box>
       ),
       renderButtons: () => (
@@ -1045,8 +1047,7 @@ const NotificationManagement=({classes}) => {
       return;
     }
 
-    let {data,type}=dialogType;
-
+    const {data,type}=dialogType||{};
 
     const dialogContent={
       preview: renderPreview(data),

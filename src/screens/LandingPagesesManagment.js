@@ -132,7 +132,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/LandingPageWizard')}
+            href='/Pulseem/LandingPageWizard.aspx'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -264,9 +264,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: EditIcon,
         remove: windowSize==='xs',
         lable: t('landingPages.EditResource1.HeaderText'),
-        onClick: () => {
-          history.push(`NewWebForm/NewFormEdit/${ID}`)
-        }
+        href: `/Pulseem/NewWebForm/NewFormEdit/${ID}`
       },
       {
         key: 'duplicate',
@@ -511,76 +509,87 @@ const LandingPagesesManagmentScreen=({classes}) => {
       />
     )
   }
+  const handleChange=(id) => () => {
+    const found=restoreArray.includes(id)
+    console.log('restore',id,'found:',found)
+    if(found) {
+      setRestoreArray(restoreArray.filter(restore => restore!==id))
+    } else {
+      setRestoreArray([...restoreArray,id])
+    }
+  }
+
+  const handleClose=() => {
+    setDialogType(null)
+  }
+
+  const getRestorDialog=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
+
+    return {
+      title: t('landingPages.restoreLandingPageTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <RestorDialogContent
+          classes={classes}
+          data={data}
+          currentChecked={restoreArray}
+          onChange={handleChange}
+        />
+      ),
+      onConfirm: async () => {
+        await dispatch(restoreLandingPages(restoreArray))
+        getData()
+        handleClose()
+      }
+    }
+  }
+
+  const getDeleteDialog=(data='') => ({
+    title: t('landingPages.GridButtonColumnResource1.ConfirmTitle'),
+    showDivider: false,
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('landingPages.GridButtonColumnResource1.ConfirmText')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(deleteLandingPage(data))
+      getData()
+      handleClose()
+    }
+  })
+
+  const getDuplicateDialog=(data='') => ({
+    title: t('landingPages.dialogDuplicateTitle'),
+    showDivider: false,
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('landingPages.dialogDuplicateContent')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(duplicteLandingPage(data))
+      getData()
+      handleClose()
+    }
+  })
 
   const renderDialog=() => {
-    const handleChange=(id) => () => {
-      const found=restoreArray.includes(id)
-      console.log('restore',id,'found:',found)
-      if(found) {
-        setRestoreArray(restoreArray.filter(restore => restore!==id))
-      } else {
-        setRestoreArray([...restoreArray,id])
-      }
-    }
-
-    const handleClose=() => {
-      setDialogType(null)
-    }
+    const {data,type}=dialogType||{}
 
     const dialogContent={
-      restore: {
-        title: t('landingPages.restoreLandingPageTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
-        content: (
-          <RestorDialogContent
-            classes={classes}
-            data={dialogType&&dialogType.data}
-            currentChecked={restoreArray}
-            onChange={handleChange}
-          />
-        ),
-        onConfirm: async () => {
-          await dispatch(restoreLandingPages(restoreArray))
-          getData()
-          handleClose()
-        }
-      },
-      delete: {
-        title: t('landingPages.GridButtonColumnResource1.ConfirmTitle'),
-        showDivider: false,
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('landingPages.GridButtonColumnResource1.ConfirmText')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(deleteLandingPage(dialogType.data))
-          getData()
-          handleClose()
-        }
-      },
-      duplicate: {
-        title: t('landingPages.dialogDuplicateTitle'),
-        showDivider: false,
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('landingPages.dialogDuplicateContent')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(duplicteLandingPage(dialogType.data))
-          getData()
-          handleClose()
-        }
-      }
+      restore: getRestorDialog(data),
+      delete: getDeleteDialog(data),
+      duplicate: getDuplicateDialog(data)
     }
 
-    const currentDialog=(dialogType&&dialogContent[dialogType.type])||{}
+    const currentDialog=dialogContent[type]||{}
     return (
       dialogType&&<Dialog
         classes={classes}

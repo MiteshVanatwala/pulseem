@@ -11,6 +11,7 @@ export const ManagmentIcon=({
   disable=false,
   hide=false,
   remove=false,
+  href='',
   onClick=() => null}) => {
   if(remove)
     return null
@@ -24,6 +25,8 @@ export const ManagmentIcon=({
         [classes.managmentIconHide]: hide
       })}>
       <Box
+        component={href? 'div':'a'}
+        href={href}
         className={clsx(
           classes.managmentIconContainer,
           rootClass

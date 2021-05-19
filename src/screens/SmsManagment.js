@@ -24,10 +24,12 @@ import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
+import {Link} from 'react-router-dom';
 
 const SmsManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
   const {smsData,smsDataError,smsDeletedData,authorizationData}=useSelector(state => state.sms)
+  const {username}=useSelector(state => state.user)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null);
@@ -169,7 +171,7 @@ const SmsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/SMSCampaignEdit')}
+            href='/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -238,9 +240,7 @@ const SmsManagnentScreen=({classes}) => {
         remove: Status!==1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        onClick: () => {
-          history.push('/SendCampaign/'+Id)
-        }
+        href: `/Pulseem/SendCampaign.aspx?CampaignID=${Id}`
       },
       {
         key: 'preview',
@@ -257,9 +257,7 @@ const SmsManagnentScreen=({classes}) => {
         remove: windowSize==='xs',
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        onClick: () => {
-          history.push('/Edit/SMSCampaignEdit/'+Id)
-        }
+        href: `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}`
       },
       {
         key: 'duplicate',
@@ -291,10 +289,7 @@ const SmsManagnentScreen=({classes}) => {
         remove: windowSize==='xs',
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
-        onClick: () => {
-          console.log(row)
-          history.push('/PreviewAutomations/'+AutomationID)
-        }
+        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}`
       },
       {
         key: 'delete',
@@ -538,327 +533,353 @@ const SmsManagnentScreen=({classes}) => {
     )
   }
 
-  const renderDialog=() => {
+  const handleChange=(Id) => () => {
+    const found=restoreArray.includes(Id)
+    if(found) {
+      setRestoreArray(restoreArray.filter(restore => restore!==Id))
+    } else {
+      setRestoreArray([...restoreArray,Id])
+    }
+  }
 
-    const handleChange=(Id) => () => {
-      const found=restoreArray.includes(Id)
-      if(found) {
-        setRestoreArray(restoreArray.filter(restore => restore!==Id))
-      } else {
-        setRestoreArray([...restoreArray,Id])
-      }
+  const handleShortVerify=async (number) => {
+    handleVerificationCodeInput('');
+    setDialogType({
+      type: 'shortVerify',
+      data: number
+    });
+  }
+
+  const handleSendVerificationCode=async () => {
+    const value=(dialogType&&dialogType.type==='shortVerify'&&dialogType.data)? dialogType.data:number;
+    console.log("length",value.length)
+    if(!value||value.length<10) {
+      handleNumberError(true);
+      return
     }
 
-    const handleShortVerify=async (number) => {
-      handleVerificationCodeInput('');
+    const result=await dispatch(sendVerificationCode({username,number: value}));
+
+    if(!result.error) {
       setDialogType({
-        type: 'shortVerify',
-        data: number
-      });
+        type: 'verificationSent',
+        data: value
+      })
     }
+  }
 
-    const handleSendVerificationCode=async () => {
-      const value=(dialogType&&dialogType.type==='shortVerify'&&dialogType.data)? dialogType.data:number;
-      console.log("length",value.length)
-      if(!value||value.length<10) {
-        handleNumberError(true);
-        return
+  const handleConfirmCode=async () => {
+    const result=await dispatch(verifyCode(verificationCode));
+    if(result.error) {
+      handleVerificationCodeError(true);
+    } else {
+      handleClose();
+    }
+  }
+
+  const handleClose=() => {
+    setRestoreArray([]);
+    setDialogType(null);
+    handleVerificationCodeError(false);
+    handleNumberError(false);
+    handleNumber('');
+    handleVerificationCodeInput('');
+  }
+
+  const getRestorDialog=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
+    return {
+      title: t('campaigns.restoreCampaginTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <RestorDialogContent
+          classes={classes}
+          data={data}
+          currentChecked={restoreArray}
+          onChange={handleChange}
+          dataIdVar='Id'
+        />
+      ),
+      onConfirm: async () => {
+        await dispatch(restoreSms(restoreArray))
+        getData()
+        handleClose()
       }
-
-      const result=await dispatch(sendVerificationCode({userName: null,number: value}));
-
-      if(!result.error) {
-        setDialogType({
-          type: 'verificationSent',
-          data: value
-        })
-      }
     }
+  }
 
-    const handleConfirmCode=async () => {
-      const result=await dispatch(verifyCode(verificationCode));
-      if(result.error) {
-        handleVerificationCodeError(true);
-      } else {
-        handleClose();
-      }
-    }
+  const getGroupsDialog=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
 
-    const handleClose=() => {
-      setRestoreArray([]);
-      setDialogType(null);
-      handleVerificationCodeError(false);
-      handleNumberError(false);
-      handleNumber('');
-      handleVerificationCodeInput('');
+    return ({
+      title: t('campaigns.ShowGroupsTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <Box
+          className={classes.gruopsDialogContent}>
+          {data.map(group => {
+            return (
+              <Typography
+                key={group}
+                className={classes.gruopsDialogText}>
+                <FiberManualRecordIcon
+                  className={classes.gruopsDialogBullet} />
+                {group}
+              </Typography>
+            )
+          })}
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.Ok')}
+        </Button>
+      )
+    })
+  }
+
+  const getDeleteDialog=(data='') => ({
+    title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
+    showDivider: false,
+    icon: (
+      <Box className={classes.dialogAlertIcon}>
+        !
+      </Box>
+    ),
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('campaigns.GridButtonColumnResource2.ConfirmText')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(deleteSms(data))
+      getData()
+      handleClose()
     }
+  })
+
+  const getDuplicateDialog=(data='') => ({
+    title: t('campaigns.dialogDuplicateTitle'),
+    showDivider: false,
+    icon: (
+      <Box className={classes.dialogAlertIcon}>
+        !
+      </Box>
+    ),
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('campaigns.dialogDuplicateContent')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(duplicteSms(data))
+      getData()
+      handleClose()
+    }
+  })
+
+  const getVerifyDialog=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
+    return {
+      title: t('sms.verificationDialogTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>
+      ),
+      content: (
+        <Box>
+          <Typography style={{fontSize: 15}} align={'justify'}>
+            {t('sms.verificationBody')}
+            <b>{t('sms.oneTimeProcess')}</b>
+            {t('sms.foreachSubmission')}
+          </Typography>
+          <br />
+          <Typography style={{fontSize: 15,textDecoration: 'underline'}}>
+            {t('sms.verificationNote')}
+          </Typography>
+          <hr />
+          <Box style={{display: 'flex',justifyContent: 'space-between',marginBottom: 10}}>
+            <Typography style={{fontSize: 15}}>
+              {t('sms.numbersAccount')}
+            </Typography>
+            <Button
+              variant='contained'
+              size='small'
+              color='primary'
+              onClick={() => handleShortVerify()}
+            >{t('sms.verifyAnotherNumber')}
+            </Button>
+          </Box>
+          <List style={{padding: 0,overflow: 'auto',height: 'calc(100vh - 500px)'}}>
+            {data.map(item => {
+              return (
+                <ListItem style={{padding: 0}} key={`verificationNumber${item.ID}`}>
+                  <ListItemAvatar style={{minWidth: 25}}>
+                    <Avatar className={item.IsOptIn? classes.checkIcon:classes.redIcon}>
+                      <div className={clsx(classes.avatarIcon)}>
+                        {item.IsOptIn? '\uE134':'\uE0A7'}
+                      </div>
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    style={{margin: 0}}
+                    primary={
+                      <Typography variant="body2">
+                        {item.Number}
+                        {!item.IsOptIn&&
+                          <Link
+                            className={classes.verifyLink}
+                            onClick={() => handleShortVerify(item.Number)}>
+                            {t('sms.verifyNumber')}
+                          </Link>
+                        }
+                      </Typography>}
+                  />
+                  <ListItemSecondaryAction>
+
+                  </ListItemSecondaryAction>
+                </ListItem>
+              );
+            })}
+          </List>
+
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          style={{maxWidth: 100}}
+          onClick={handleClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.Ok')}
+        </Button>
+      )
+    }
+  }
+
+  const getShortVerifyDialog=(data='') => ({
+    showDivider: false,
+    icon: (
+      <div className={classes.dialogIconContent}>
+        {'\uE11B'}
+      </div>
+    ),
+    content: (
+      <Box style={{textAlign: 'center'}}>
+        <Typography align='center' style={{fontWeight: 'bold',fontSize: 25}}>{t('sms.shortVerificationTitle')}</Typography>
+        <Typography style={{fontSize: 15}} align={'justify'}>
+          {t('sms.verificationBody')}
+          <b>{t('sms.oneTimeProcess')}</b>
+          {t('sms.foreachSubmission')}
+        </Typography>
+        <br />
+        <TextField
+          error={numberError}
+          helperText={numberError? t('sms.numberError'):''}
+          variant='outlined'
+          placeholder={t('sms.enterNumberText')}
+          value={data||number}
+          onChange={e => handleNumber(e.target.value)}
+          size='small'
+          type='tel'
+          readOnly={!!data}
+        />
+        <br /><br />
+        <Button
+          variant='contained'
+          onClick={handleSendVerificationCode}
+          style={{background: 'green',textTransform: 'capitalize',color: 'white'}}
+        >{t('sms.verificationButtonText')}</Button>
+        <Typography className={clsx(classes.contactUs,classes.newLine)}>
+          {t('sms.havingIssuesMessage')}
+        </Typography>
+      </Box>
+    ),
+    renderButtons: () => null
+  })
+
+  const getVerificationSentDialog=(data='') => ({
+    showDivider: false,
+    icon: (
+      <div className={classes.dialogIconContent}>
+        {'\uE11B'}
+      </div>
+    ),
+    content: (
+      <Box style={{textAlign: 'center'}}>
+        <Typography align='center' style={{fontWeight: 'bold',fontSize: 25}}>{t('common.Sent')}!</Typography>
+        <Typography style={{fontSize: 15}} align={'center'}>
+          {t('sms.verificationSentToNumber')}{data}
+          <br />
+          {t('sms.pleaseNoteCode')}
+        </Typography>
+        <br />
+        <TextField
+          error={verificationCodeError}
+          helperText={verificationCodeError? t('sms.verificationCodeError'):''}
+          variant='outlined'
+          placeholder={t('sms.enterCode')}
+          value={verificationCode}
+          onChange={(e) => handleVerificationCodeInput(e.target.value)}
+          size='small'
+        />
+        <br /><br />
+        <Button
+          variant='contained'
+          onClick={() => handleConfirmCode(verificationCode)}
+          color='primary'
+          style={{minWidth: 150}}
+        >{t('common.Ok')}</Button>
+        <Typography style={{paddingTop: 20}}>
+          {t('sms.didNotReceived')}
+          <Link
+            onClick={() => handleShortVerify(data)}
+            style={{textDecoration: 'underline',margin: '0 5px'}}>
+            {t('sms.resend')}
+          </Link>
+        </Typography>
+      </Box>
+    ),
+    renderButtons: () => null
+  })
+
+  const renderDialog=() => {
+    const {data,type}=dialogType||{};
 
     const dialogContent={
-      restore: {
-        title: t('campaigns.restoreCampaginTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
-        content: (
-          <RestorDialogContent
-            classes={classes}
-            data={dialogType&&dialogType.data}
-            currentChecked={restoreArray}
-            onChange={handleChange}
-            dataIdVar='Id'
-          />
-        ),
-        onConfirm: async () => {
-          await dispatch(restoreSms(restoreArray))
-          getData()
-          handleClose()
-        }
-      },
-      groups: {
-        title: t('campaigns.ShowGroupsTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
-        content: (
-          <Box
-            className={classes.gruopsDialogContent}>
-            {dialogType&&dialogType.type==='groups'&&dialogType.data
-              .map(group => {
-                return (
-                  <Typography
-                    key={group}
-                    className={classes.gruopsDialogText}>
-                    <FiberManualRecordIcon
-                      className={classes.gruopsDialogBullet} />
-                    {group}
-                  </Typography>
-                )
-              })}
-          </Box>
-        ),
-        renderButtons: () => (
-          <Button
-            variant='contained'
-            size='small'
-            onClick={handleClose}
-            className={clsx(
-              classes.gruopsDialogButton,
-              classes.dialogConfirmButton,
-            )}>
-            {t('common.Ok')}
-          </Button>
-        )
-      },
-      delete: {
-        title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
-        showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('campaigns.GridButtonColumnResource2.ConfirmText')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(deleteSms(dialogType.data))
-          getData()
-          handleClose()
-        }
-      },
-      duplicate: {
-        title: t('campaigns.dialogDuplicateTitle'),
-        showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('campaigns.dialogDuplicateContent')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(duplicteSms(dialogType.data))
-          getData()
-          handleClose()
-        }
-      },
-      verify: {
-        title: t('sms.verificationDialogTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE11B'}
-          </div>
-        ),
-        content: (
-          <Box>
-            <Typography style={{fontSize: 15}} align={'justify'}>
-              {t('sms.verificationBody')}
-              <b>{t('sms.oneTimeProcess')}</b>
-              {t('sms.foreachSubmission')}
-            </Typography>
-            <br />
-            <Typography style={{fontSize: 15,textDecoration: 'underline'}}>
-              {t('sms.verificationNote')}
-            </Typography>
-            <hr />
-            <Box style={{display: 'flex',justifyContent: 'space-between',marginBottom: 10}}>
-              <Typography style={{fontSize: 15}}>
-                {t('sms.numbersAccount')}
-              </Typography>
-              <Button
-                variant='contained'
-                size='small'
-                color='primary'
-                onClick={() => handleShortVerify()}
-              >{t('sms.verifyAnotherNumber')}
-              </Button>
-            </Box>
-            <List style={{padding: 0,overflow: 'auto',height: 'calc(100vh - 500px)'}}>
-              {dialogType&&dialogType.type==='verify'&&dialogType.data
-                .map(item => {
-                  return (
-                    <ListItem style={{padding: 0}} key={`verificationNumber${item.ID}`}>
-                      <ListItemAvatar style={{minWidth: 25}}>
-                        <Avatar className={item.IsOptIn? classes.checkIcon:classes.redIcon}>
-                          <div className={clsx(classes.avatarIcon)}>
-                            {item.IsOptIn? '\uE134':'\uE0A7'}
-                          </div>
-                        </Avatar>
-                      </ListItemAvatar>
-                      <ListItemText
-                        style={{margin: 0}}
-                        primary={
-                          <Typography variant="body2">
-                            {item.Number}
-                            {!item.IsOptIn&&
-                              <a
-                                href=""
-                                className={classes.verifyLink}
-                                onClick={() => handleShortVerify(item.Number)}
-                              >{t('sms.verifyNumber')}</a>
-                            }
-                          </Typography>}
-                      />
-                      <ListItemSecondaryAction>
-
-                      </ListItemSecondaryAction>
-                    </ListItem>
-                  );
-                })}
-            </List>
-
-          </Box>
-        ),
-        renderButtons: () => (
-          <Button
-            variant='contained'
-            size='small'
-            style={{maxWidth: 100}}
-            onClick={handleClose}
-            className={clsx(
-              classes.gruopsDialogButton,
-              classes.dialogConfirmButton,
-            )}>
-            {t('common.Ok')}
-          </Button>
-        )
-      },
-      shortVerify: {
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE11B'}
-          </div>
-        ),
-        content: (
-          <Box style={{textAlign: 'center'}}>
-            <Typography align='center' style={{fontWeight: 'bold',fontSize: 25}}>{t('sms.shortVerificationTitle')}</Typography>
-            <Typography style={{fontSize: 15}} align={'justify'}>
-              {t('sms.verificationBody')}
-              <b>{t('sms.oneTimeProcess')}</b>
-              {t('sms.foreachSubmission')}
-            </Typography>
-            <br />
-            <TextField
-              error={numberError}
-              helperText={numberError? t('sms.numberError'):''}
-              variant='outlined'
-              placeholder={t('sms.enterNumberText')}
-              value={(dialogType&&dialogType.type==='shortVerify'&&dialogType.data!=='')? dialogType.data:number}
-              onChange={e => handleNumber(e.target.value)}
-              size='small'
-              type='tel'
-              readOnly={dialogType&&dialogType.type==='shortVerify'&&dialogType.data!==''}
-            />
-            <br /><br />
-            <Button
-              variant='contained'
-              onClick={handleSendVerificationCode}
-              style={{background: 'green',textTransform: 'capitalize',color: 'white'}}
-            >{t('sms.verificationButtonText')}</Button>
-            <Typography className={clsx(classes.contactUs,classes.newLine)}>{t('sms.havingIssuesMessage')}</Typography>
-          </Box>
-        ),
-        renderButtons: () => null
-      },
-      verificationSent: {
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE11B'}
-          </div>
-        ),
-        content: (
-          <Box style={{textAlign: 'center'}}>
-            <Typography align='center' style={{fontWeight: 'bold',fontSize: 25}}>{t('common.Sent')}!</Typography>
-            <Typography style={{fontSize: 15}} align={'center'}>
-              {t('sms.verificationSentToNumber')}{dialogType&&dialogType.type==='verificationSent'? dialogType.data:null}
-              <br />
-              {t('sms.pleaseNoteCode')}
-            </Typography>
-            <br />
-            <TextField
-              error={verificationCodeError}
-              helperText={verificationCodeError? t('sms.verificationCodeError'):''}
-              variant='outlined'
-              placeholder={t('sms.enterCode')}
-              value={verificationCode}
-              onChange={(e) => handleVerificationCodeInput(e.target.value)}
-              size='small'
-            />
-            <br /><br />
-            <Button
-              variant='contained'
-              onClick={() => handleConfirmCode(verificationCode)}
-              color='primary'
-              style={{minWidth: 150}}
-            >{t('common.Ok')}</Button>
-            <Typography style={{paddingTop: 20}}>
-              {t('sms.didNotReceived')}
-              <a href="#"
-                onClick={() => handleShortVerify(dialogType.data)}
-                style={{textDecoration: 'underline',margin: '0 5px'}}
-              >{t('sms.resend')}</a>
-            </Typography>
-          </Box>
-        ),
-        renderButtons: () => null
-      },
+      restore: getRestorDialog(data),
+      groups: getGroupsDialog(data),
+      delete: getDeleteDialog(data),
+      duplicate: getDuplicateDialog(data),
+      verify: getVerifyDialog(data),
+      shortVerify: getShortVerifyDialog(data),
+      verificationSent: getVerificationSentDialog(data)
     }
 
-    const currentDialog=(dialogType&&dialogContent[dialogType.type])||{}
+    const currentDialog=dialogContent[type]||{}
     return (
       dialogType&&<Dialog
         classes={classes}

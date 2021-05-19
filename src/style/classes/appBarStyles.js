@@ -6,6 +6,11 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
     flexDirection: 'column',
     textDecoration: 'none'
   },
+  appBarHrefContainer: {
+    display: 'flex',
+    flex: 1,
+    textDecoration: 'none'
+  },
   appBarItemText: {
     fontFamily: 'OpenSansHebrew',
     color: 'white',

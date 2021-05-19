@@ -12,7 +12,8 @@ import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/style
 import i18n from './i18n'
 import {BrowserRouter,useParams,Route} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
-import {setWindowSize} from './redux/reducers/coreSlice'
+import {setWindowSize,setCoreData} from './redux/reducers/coreSlice'
+import {setUsername} from './redux/reducers/userSlice'
 import {getTheme} from './style/theme'
 import {useClasses} from './style/classes/index'
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
@@ -20,7 +21,7 @@ import MomentUtils from '@date-io/moment';
 import {useHistory} from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/NotificationManagement';
-import TestScreen from './screens/TestScreen'
+const cookies=new Cookies();
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -40,7 +41,6 @@ const renderRoutes=(classes,history) => {
       <Route
         exact
         path="/"
-        render={props => <TestScreen {...props} />}
       />
       <Route
         path={`/notifications/edit/:notificationID`}
@@ -315,12 +315,29 @@ const renderRoutes=(classes,history) => {
 
 const App=() => {
   const dispatch=useDispatch()
-  const cookies=new Cookies();
-  const token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlBhdmVscyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6IkZYYjc3TUFyMlUvWFRvYW85bnNZeFE9PSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2RucyI6ImxvY2FsaG9zdCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3VyaSI6IlRydWUiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9sb2NhbGl0eSI6ImhlLUlMIiwiZW1haWwiOiJwb3N0bWFzdGVyQHB1bHNlZW0uY29tIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvaG9tZXBob25lIjoid0wtMDktMTExMTExMSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3N0YXRlb3Jwcm92aW5jZSI6IkNvbnRlbnQvaW1hZ2VzL1doaXRlTGFiZWxSaWdodENvcm5lckxvZ28ucG5nIiwiZ2l2ZW5fbmFtZSI6IiIsIm5iZiI6MTYyMDEzOTc3NiwiZXhwIjoxNjIwMTQzMzc2LCJpYXQiOjE2MjAxMzk3NzZ9.__vosPXeuSunBauj9_Zt9z7BA75rMsbGq0PTGY679GQ' //cookies.get('jtoken')
-  const jwt=jwt_decode(token)
-  console.log("moment",moment().unix())
-  console.log('JWT',jwt)
+
   useEffect(() => {
+
+    const updateToken=() => {
+      const token=cookies.get('jtoken')
+      if(!token) return
+      const jwt=jwt_decode(token)
+      console.log('JWT',jwt)
+      const {
+        email='',
+        unique_name='',
+        given_name: basename='',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone': phone='',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality': locality='he-IL',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince': imageURL='',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri': isWhiteLabel=''
+      }=jwt
+
+      dispatch(setCoreData({email,basename,phone,locality,imageURL,isWhiteLabel}))
+      dispatch(setUsername(unique_name))
+      cookies.set('Culture',locality)
+    }
+
     const setWindowWidth=() => {
       const {innerWidth}=window
       let windowSize='xs'
@@ -336,14 +353,21 @@ const App=() => {
     }
 
     window.addEventListener('resize',setWindowWidth)
-
+    cookies.addChangeListener((name) => {
+      if(name==='jtoken')
+        updateToken()
+    })
+    updateToken()
     setWindowWidth()
   },[dispatch])
+
+
   const {language,isRTL,windowSize}=useSelector(state => state.core)
   const classes=useClasses(windowSize,isRTL)()
   i18n.changeLanguage(language)
   const theme=getTheme(language)
   const history=useHistory()
+
 
   return (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>

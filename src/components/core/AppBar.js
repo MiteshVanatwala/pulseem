@@ -13,8 +13,8 @@ import DoubleArrowIcon from '../../assets/images/doubleArrow.png'
 import {ReactComponent as QuestionIcon} from '../../assets/images/question.svg'
 import {FaBars,FaTimes} from 'react-icons/fa';
 import {getRoutes,getSettingsItem} from '../../helpers/routes'
-import useCtrlHistory from '../../helpers/useCtrlHistory'
-import {getCookie,setCookie} from '../../helpers/functions';
+//import useCtrlHistory from '../../helpers/useCtrlHistory'
+import Cookies from 'universal-cookie'
 
 const AppBarItem=({
   item,
@@ -45,24 +45,30 @@ const AppBarItem=({
 
   return (
     <Box
-      component='a'
-      href={item.href}
+      //component='a'
+      //href={item.href}
       zIndex='tooltip'
       onMouseOver={handleOpen}
       onMouseLeave={handleClose}
       className={classes.appBarItemContainer}>
-      <IconButton
-        ref={buttonRef}
-        //onClick={() => {
-        //  handleOpen()
-        //  onMainClick(item)
-        //}}
-        className={clsx(
-          currentStyle,
-          textStyle,
-          {[classes.chosenText]: chosen})}>
-        {showIcon? item.iconUnicode:item.title}
-      </IconButton>
+      <Box
+        component='a'
+        href={item.href}
+        className={classes.appBarHrefContainer}>
+        <IconButton
+          ref={buttonRef}
+          onClick={() => {
+            handleOpen()
+            onMainClick(item)
+          }}
+          className={clsx(
+            currentStyle,
+            textStyle,
+            {[classes.chosenText]: chosen})}>
+          {showIcon? item.iconUnicode:item.title}
+        </IconButton>
+
+      </Box>
       {(chosen||open)&&<ArrowDropUp className={classes.appBarItemArrow} />}
       <Popper open={open} anchorEl={buttonRef.current} role={undefined} transition disablePortal>
         {({TransitionProps}) => (
@@ -109,26 +115,31 @@ const AppBarItem=({
 }
 
 const LanguageSelector=({classes}) => {
-  const cookieData=getCookie('language');
-  const language=cookieData&&cookieData!==undefined? cookieData:'he';
+  const cookies=new Cookies()
+  const cookieData=cookies.get('Culture');
+  const language=!!cookieData? cookieData:'he-IL';
   const dispatch=useDispatch();
-  dispatch(setLanguage(language));
+  //dispatch(setLanguage(language.split('-')[0]));
   const languages=[
     {
       title: "עברית",
-      value: 'he'
+      value: 'he-IL'
     },
     {
       title: 'English',
-      value: 'en'
+      value: 'en-US'
     }
   ]
 
-  const item={title: languages.find(lang => lang.value===language).title,options: languages}
+  const item={
+    title: languages.find(lang => lang.value===language).title,
+    options: languages
+  }
 
   const changeLanguage=option => {
-    setCookie('language',option.value,{'max-age': 3600});
-    dispatch(setLanguage(option.value));
+    const {value}=option
+    cookies.set('Culture',value);
+    dispatch(setLanguage(value.split('-')[0]));
   }
 
   return (
@@ -146,7 +157,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
-  const history=useCtrlHistory()
+  //const history=useCtrlHistory()
 
   useEffect(() => {
     const resizeWindow=() => {
@@ -166,9 +177,9 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const routes=getRoutes(t)
   const settings=getSettingsItem(t,classes.appBarSettingIcon)
 
-  const navigate=({href}) => {
-    history.push(href)
-  }
+  //const navigate=({href}) => {
+  //  history.push(href)
+  //}
 
   const renderRegularAppBar=() => (
     <>
@@ -179,8 +190,6 @@ export const TopAppBar=({classes,currentPage=''}) => {
           item={route}
           chosen={route.key===currentPage}
           showIcon={windowSize==='sm'||windowSize==='md'}
-          onMainClick={navigate}
-          onInnerClick={navigate}
         />
       ))}
       {windowSize==='lg'&&<>
@@ -194,15 +203,12 @@ export const TopAppBar=({classes,currentPage=''}) => {
         <AppBarItem
           classes={classes}
           item={settings}
-          onMainClick={navigate}
-          onInnerClick={navigate}
         />
         <LanguageSelector classes={classes} />
         <AppBarItem
           classes={classes}
-          item={{title: question}}
+          item={{title: question,href: '/Pages/Home.aspx?action=support'}}
           textStyle={classes.appBarQuestionIcon}
-          onMainClick={() => navigate('/Support')}
         />
       </Box>
     </>

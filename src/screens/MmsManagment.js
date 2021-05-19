@@ -157,7 +157,7 @@ const MmsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/CreateMmsCampaign')}
+            href='/Pulseem/MmsCampaignEdit.aspx'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -214,9 +214,7 @@ const MmsManagnentScreen=({classes}) => {
         remove: Status!==1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        onClick: () => {
-          history.push('/SendMmsCampaign/'+ID)
-        }
+        href: `/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=${ID}`
       },
       {
         key: 'preview',
@@ -233,9 +231,7 @@ const MmsManagnentScreen=({classes}) => {
         remove: windowSize==='xs',
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        onClick: () => {
-          history.push('/MmsCampaignEdit/'+ID)
-        }
+        href: `/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=${ID}`
       },
       {
         key: 'duplicate',
@@ -506,114 +502,131 @@ const MmsManagnentScreen=({classes}) => {
     )
   }
 
-  const renderDialog=() => {
-    const handleChange=(id) => () => {
-      const found=restoreArray.includes(id)
-      console.log('restore',id,'found:',found)
-      if(found) {
-        setRestoreArray(restoreArray.filter(restore => restore!==id))
-      } else {
-        setRestoreArray([...restoreArray,id])
+  const handleChange=(id) => () => {
+    const found=restoreArray.includes(id)
+    console.log('restore',id,'found:',found)
+    if(found) {
+      setRestoreArray(restoreArray.filter(restore => restore!==id))
+    } else {
+      setRestoreArray([...restoreArray,id])
+    }
+  }
+
+  const handleClose=() => {
+    setRestoreArray([])
+    setDialogType(null)
+  }
+
+  const getRestoreDialog=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
+    return {
+      title: t('campaigns.restoreCampaginTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <RestorDialogContent
+          classes={classes}
+          data={data}
+          currentChecked={restoreArray}
+          onChange={handleChange}
+        />
+      ),
+      onConfirm: async () => {
+        await dispatch(restoreMms(restoreArray))
+        getData()
+        handleClose()
       }
     }
+  }
 
-    const handleClose=() => {
-      setRestoreArray([])
-      setDialogType(null)
+  const getGroupsDialog=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
+    return {
+      title: t('campaigns.ShowGroupsTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <Box
+          className={classes.gruopsDialogContent}>
+          {data
+            .map((group,index) => {
+              return (
+                <Typography
+                  key={index}
+                  className={classes.gruopsDialogText}>
+                  <FiberManualRecordIcon
+                    className={classes.gruopsDialogBullet} />
+                  {group}
+                </Typography>
+              )
+            })}
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.Ok')}
+        </Button>
+      )
     }
+  }
+
+  const getDeleteDialog=(data='') => ({
+    title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
+    showDivider: false,
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('campaigns.GridButtonColumnResource2.ConfirmText')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(deleteMms(data))
+      getData()
+      handleClose()
+    }
+  })
+
+  const getDuplicateDialog=(data='') => ({
+    title: t('campaigns.dialogDuplicateTitle'),
+    showDivider: false,
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('campaigns.dialogDuplicateContent')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(duplicteMms(data))
+      getData()
+      handleClose()
+    }
+  })
+
+  const renderDialog=() => {
+
+    const {data,type}=dialogType||{}
 
     const dialogContent={
-      restore: {
-        title: t('campaigns.restoreCampaginTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
-        content: (
-          <RestorDialogContent
-            classes={classes}
-            data={dialogType&&dialogType.data}
-            currentChecked={restoreArray}
-            onChange={handleChange}
-          />
-        ),
-        onConfirm: async () => {
-          await dispatch(restoreMms(restoreArray))
-          getData()
-          handleClose()
-        }
-      },
-      groups: {
-        title: t('campaigns.ShowGroupsTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
-        content: (
-          <Box
-            className={classes.gruopsDialogContent}>
-            {dialogType&&dialogType.type==='groups'&&dialogType.data
-              .map((group,index) => {
-                return (
-                  <Typography
-                    key={index}
-                    className={classes.gruopsDialogText}>
-                    <FiberManualRecordIcon
-                      className={classes.gruopsDialogBullet} />
-                    {group}
-                  </Typography>
-                )
-              })}
-          </Box>
-        ),
-        renderButtons: () => (
-          <Button
-            variant='contained'
-            size='small'
-            onClick={handleClose}
-            className={clsx(
-              classes.gruopsDialogButton,
-              classes.dialogConfirmButton,
-            )}>
-            {t('common.Ok')}
-          </Button>
-        )
-      },
-      delete: {
-        title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
-        showDivider: false,
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('campaigns.GridButtonColumnResource2.ConfirmText')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(deleteMms(dialogType.data))
-          getData()
-          handleClose()
-        }
-      },
-      duplicate: {
-        title: t('campaigns.dialogDuplicateTitle'),
-        showDivider: false,
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('campaigns.dialogDuplicateContent')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(duplicteMms(dialogType.data))
-          getData()
-          handleClose()
-        }
-      }
+      restore: getRestoreDialog(data),
+      groups: getGroupsDialog(data),
+      delete: getDeleteDialog(data),
+      duplicate: getDuplicateDialog(data)
     }
 
-    const currentDialog=(dialogType&&dialogContent[dialogType.type])||{}
+    const currentDialog=dialogContent[type]||{}
     return (
       dialogType&&<Dialog
         classes={classes}

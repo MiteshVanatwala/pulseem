@@ -11,7 +11,8 @@ export const getSettingsItem=(t,style='') => ({
   title: <img
     alt='settings'
     src={SettingsLogo}
-    className={style} />,
+    className={style}
+  />,
   href: '/Pulseem/AccountSettings.aspx',
   options: [
     {title: t('master.RadMenuItemResource2.Text'),href: '/Pulseem/AccountSettings.aspx',iconSrc: SettingsMenuIcon},

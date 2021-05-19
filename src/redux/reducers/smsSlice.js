@@ -54,7 +54,7 @@ export const getSmsAuthorizationData=createAsyncThunk(
 export const getAuthorizeNumbers=createAsyncThunk(
   'GetRelatedSubAccountNumber',async (_,thunkAPI) => {
     try {
-      const response=await instence.get(`authorization/getAuthorizeNumbers`, { subID: -1 });
+      const response=await instence.get(`authorization/getAuthorizeNumbers`,{subID: -1});
       return JSON.parse(response.data)
     } catch(error) {
       return thunkAPI.rejectWithValue({error: error.message});
@@ -63,9 +63,9 @@ export const getAuthorizeNumbers=createAsyncThunk(
 
 export const sendVerificationCode=createAsyncThunk(
   'authorization/newAuthorizeNumbers',async (data,thunkAPI) => {
-    const { userName = '', number = '' } = data || {};
+    const {username='',number=''}=data||{};
     try {
-      const response=await instence.post(`authorization/newAuthorizeNumbers/${userName}/${number}`);
+      const response=await instence.post(`authorization/newAuthorizeNumbers/${username}/${number}`);
       return JSON.parse(response.data)
     } catch(error) {
       return thunkAPI.rejectWithValue({error: error.message});
