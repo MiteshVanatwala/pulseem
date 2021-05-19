@@ -17,7 +17,6 @@ import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import {pulseemNewTab} from '../helpers/functions'
-import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
@@ -59,6 +58,13 @@ const MmsManagnentScreen=({classes}) => {
     )
   }
 
+  const clearSearch=() => {
+    setCampaineNameSearch('')
+    handleFromDate(null)
+    handleToDate(null)
+    setSearchArray(null)
+  }
+
   const renderSearchLine=() => {
     const handleSearch=() => {
       setSearchArray([{
@@ -68,31 +74,32 @@ const MmsManagnentScreen=({classes}) => {
         type: 'date',
         fromDate,
         toDate
-      }])
+      }]);
+      setPage(1);
     }
 
-    const clearSearch=() => {
-      setCampaineNameSearch('')
-      handleFromDate(null)
-      handleToDate(null)
-      setSearchArray(null)
+    const handleFromDateChange=(value) => {
+      if(value>toDate) {
+        handleToDate(null);
+      }
+      handleFromDate(value);
     }
 
     const handleCampainNameChange=event => {
       setCampaineNameSearch(event.target.value)
     }
 
-    if(windowSize==='xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onClick={handleSearch}
-          placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
-        />
-      )
-    }
+    // if(windowSize==='xs') {
+    //   return (
+    //     <SearchField
+    //       classes={classes}
+    //       value={campaineNameSearch}
+    //       onChange={handleCampainNameChange}
+    //       onClick={handleSearch}
+    //       placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
+    //     />
+    //   )
+    // }
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -106,25 +113,28 @@ const MmsManagnentScreen=({classes}) => {
           />
         </Grid>
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={fromDate}
-            onChange={handleFromDate}
-            placeholder={t('mms.locFromDateResource1.Text')}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={fromDate}
+              onChange={handleFromDateChange}
+              placeholder={t('mms.locFromDateResource1.Text')}
+            />
+          </Grid>
+          :null}
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={toDate}
-            onChange={handleToDate}
-            placeholder={t('mms.locToDateResource1.Text')}
-            disabled={fromDate? false:true}
-            minDate={fromDate? fromDate:null}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={toDate}
+              onChange={handleToDate}
+              placeholder={t('mms.locToDateResource1.Text')}
+              minDate={fromDate? fromDate:''}
+            />
+          </Grid>
+          :null}
 
         <Grid item>
           <Button
@@ -153,7 +163,7 @@ const MmsManagnentScreen=({classes}) => {
   const renderManagmentLine=() => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize!=='xs'&&<Grid item>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -164,8 +174,8 @@ const MmsManagnentScreen=({classes}) => {
             )}>
             {t('mms.create')}
           </Button>
-        </Grid>}
-        {windowSize!=='xs'&&<Grid item>
+        </Grid>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -179,7 +189,7 @@ const MmsManagnentScreen=({classes}) => {
             })}>
             {t('mms.restoreResource.Text')}
           </Button>
-        </Grid>}
+        </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${mmsData.length} ${t('mms.campaigns')}`}
@@ -219,8 +229,8 @@ const MmsManagnentScreen=({classes}) => {
       {
         key: 'preview',
         icon: PreviewIcon,
-        remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           pulseemNewTab(`MmsPreviewCampaign.aspx?MmsCampaignID=${ID}`)
         }
@@ -228,15 +238,16 @@ const MmsManagnentScreen=({classes}) => {
       {
         key: 'edit',
         icon: EditIcon,
-        remove: windowSize==='xs',
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        href: `/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=${ID}`
+        href: `/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=${ID}`,
+        rootClass: classes.paddingIcon,
       },
       {
         key: 'duplicate',
         icon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'duplicate',
@@ -247,9 +258,9 @@ const MmsManagnentScreen=({classes}) => {
       {
         key: 'groups',
         icon: GroupsIcon,
-        remove: windowSize==='xs',
         disable: GroupNames.length===0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'groups',
@@ -262,6 +273,7 @@ const MmsManagnentScreen=({classes}) => {
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'delete',
@@ -348,16 +360,9 @@ const MmsManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Ellipsis
-          text={row.Name}
-          lines={1}
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            color: '#333333',
-            fontFamily: 'Assistant'
-          }}
-        />
+        <Typography noWrap={false} className={classes.nameEllipsis}>
+          {row.Name}
+        </Typography>
         <Typography
           className={classes.grayTextCell}>
           {`${text} ${date.format('L')} ${date.format('LT')}`}
@@ -444,7 +449,7 @@ const MmsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.campaineName)
+        return String(row.Name.toLowerCase()).startsWith(values.campaineName.toLowerCase());
       },
       date: (row,values) => {
         const {LastUpdate,SendDate}=row
@@ -597,6 +602,7 @@ const MmsManagnentScreen=({classes}) => {
       await dispatch(deleteMms(data))
       getData()
       handleClose()
+      clearSearch()
     }
   })
 
@@ -612,6 +618,7 @@ const MmsManagnentScreen=({classes}) => {
       await dispatch(duplicteMms(data))
       getData()
       handleClose()
+      clearSearch()
     }
   })
 

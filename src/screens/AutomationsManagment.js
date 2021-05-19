@@ -9,7 +9,7 @@ import {
   DeleteIcon,DuplicateIcon,EditIcon,ReportsIcon,SearchIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent,Switch
+  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,Switch
 } from '../components/managment/index'
 import {
   getAutomationsData,deleteAutomations,duplicateAutomations,restoreAutomations,activateAutomation
@@ -18,7 +18,6 @@ import useCtrlHistory from '../helpers/useCtrlHistory'
 import {Link} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
-import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
@@ -62,6 +61,13 @@ const AutomationsManagnentScreen=({classes}) => {
     )
   }
 
+  const clearSearch=() => {
+    setCampaineNameSearch('')
+    handleFromDate(null)
+    handleToDate(null)
+    setSearchArray(null)
+  }
+
   const renderSearchLine=() => {
     const handleSearch=() => {
       setSearchArray([{
@@ -71,31 +77,32 @@ const AutomationsManagnentScreen=({classes}) => {
         type: 'date',
         fromDate,
         toDate
-      }])
+      }]);
+      setPage(1);
     }
 
-    const clearSearch=() => {
-      setCampaineNameSearch('')
-      handleFromDate(null)
-      handleToDate(null)
-      setSearchArray(null)
+    const handleFromDateChange=(value) => {
+      if(value>toDate) {
+        handleToDate(null);
+      }
+      handleFromDate(value);
     }
 
     const handleCampainNameChange=event => {
       setCampaineNameSearch(event.target.value)
     }
 
-    if(windowSize==='xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onClick={handleSearch}
-          placeholder={t('automations.labelAutomationName')}
-        />
-      )
-    }
+    // if(windowSize==='xs') {
+    //   return (
+    //     <SearchField
+    //       classes={classes}
+    //       value={campaineNameSearch}
+    //       onChange={handleCampainNameChange}
+    //       onClick={handleSearch}
+    //       placeholder={t('automations.labelAutomationName')}
+    //     />
+    //   )
+    // }
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -109,25 +116,28 @@ const AutomationsManagnentScreen=({classes}) => {
           />
         </Grid>
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={fromDate}
-            onChange={handleFromDate}
-            placeholder={t('mms.locFromDateResource1.Text')}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={fromDate}
+              onChange={handleFromDateChange}
+              placeholder={t('mms.locFromDateResource1.Text')}
+            />
+          </Grid>
+          :null}
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={toDate}
-            onChange={handleToDate}
-            placeholder={t('mms.locToDateResource1.Text')}
-            disabled={fromDate? false:true}
-            minDate={fromDate? fromDate:null}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={toDate}
+              onChange={handleToDate}
+              placeholder={t('mms.locToDateResource1.Text')}
+              minDate={fromDate? fromDate:''}
+            />
+          </Grid>
+          :null}
 
         <Grid item>
           <Button
@@ -156,7 +166,7 @@ const AutomationsManagnentScreen=({classes}) => {
   const renderManagmentLine=() => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize!=='xs'&&<Grid item>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -167,8 +177,8 @@ const AutomationsManagnentScreen=({classes}) => {
             )}>
             {t('automations.createResource.Text')}
           </Button>
-        </Grid>}
-        {windowSize!=='xs'&&<Grid item>
+        </Grid>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -182,7 +192,7 @@ const AutomationsManagnentScreen=({classes}) => {
             })}>
             {t('automations.restoreResource.Text')}
           </Button>
-        </Grid>}
+        </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${automationsData.length} ${t('automations.Automations')}`}
@@ -213,16 +223,16 @@ const AutomationsManagnentScreen=({classes}) => {
       {
         key: 'preview',
         icon: PreviewIcon,
-        remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${ID}`
+        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${ID}`,
+        rootClass: classes.paddingIcon,
       },
       {
         key: 'edit',
         icon: EditIcon,
-        remove: windowSize==='xs',
         lable: t('campaigns.Image2Resource1.ToolTip'),
         href: !IsActive? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}`:'',
+        rootClass: classes.paddingIcon,
         onClick: () => {
           if(IsActive) {
             setDialogType({
@@ -236,6 +246,7 @@ const AutomationsManagnentScreen=({classes}) => {
         key: 'duplicate',
         icon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'duplicate',
@@ -246,15 +257,16 @@ const AutomationsManagnentScreen=({classes}) => {
       {
         key: 'reports',
         icon: ReportsIcon,
-        remove: windowSize==='xs',
         lable: t('campaigns.Reports'),
-        href: `/Pulseem/automationreport.aspx?AutomationID=${ID}`
+        href: `/Pulseem/automationreport.aspx?AutomationID=${ID}`,
+        rootClass: classes.paddingIcon,
       },
       {
         key: 'delete',
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'delete',
@@ -346,16 +358,9 @@ const AutomationsManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Ellipsis
-          text={row.Name}
-          lines={1}
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            color: '#333333',
-            fontFamily: 'Assistant'
-          }}
-        />
+        <Typography noWrap={false} className={classes.nameEllipsis}>
+          {row.Name}
+        </Typography>
         <Typography
           className={classes.grayTextCell}>
           {`${text} ${date.format('L')} ${date.format('LT')}`}
@@ -442,7 +447,7 @@ const AutomationsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.campaineName)
+        return String(row.Name.toLowerCase()).startsWith(values.campaineName.toLowerCase());
       },
       date: (row,values) => {
         const {LastUpdate,SendDate}=row
@@ -655,6 +660,7 @@ const AutomationsManagnentScreen=({classes}) => {
       await dispatch(deleteAutomations(data))
       getData()
       handleClose()
+      clearSearch()
     }
   })
 
@@ -669,7 +675,9 @@ const AutomationsManagnentScreen=({classes}) => {
     onConfirm: async () => {
       await dispatch(duplicateAutomations(data))
       getData()
+      clearSearch()
       handleClose()
+      clearSearch()
     }
   })
 

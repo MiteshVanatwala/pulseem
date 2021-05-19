@@ -315,6 +315,7 @@ const renderRoutes=(classes,history) => {
 
 const App=() => {
   const dispatch=useDispatch()
+  const {language,isRTL,windowSize}=useSelector(state => state.core)
 
   useEffect(() => {
 
@@ -361,10 +362,12 @@ const App=() => {
     setWindowWidth()
   },[dispatch])
 
+  useEffect(() => {
+    i18n.changeLanguage(language)
+  },[language])
 
-  const {language,isRTL,windowSize}=useSelector(state => state.core)
+
   const classes=useClasses(windowSize,isRTL)()
-  i18n.changeLanguage(language)
   const theme=getTheme(language)
   const history=useHistory()
 

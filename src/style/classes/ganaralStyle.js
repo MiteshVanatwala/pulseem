@@ -11,7 +11,8 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
       overflow: 'hidden'
     },
     '& .MuiDialog-paperWidthSm': {
-      maxWidth: '850px'
+      maxWidth: '850px',
+      minWidth: '500px'
     }
   },
   dialogIconContainer: {

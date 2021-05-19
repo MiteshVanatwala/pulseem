@@ -11,7 +11,7 @@
     "implementScript": "הטמע סקריפט",
     "groups": "קבוצות",
     "send": "שלח",
-    "preview": "תצוגה מקדימה",
+    "preview": "הצג",
     "edit": "ערוך",
     "duplicate": "שכפל",
     "delete": "מחק",
@@ -67,5 +67,6 @@
   "groupName": "שם הקבוצה",
   "recipients": "נמענים",
   "copy": "העתק",
-  "copied": "הועתק"
+  "copied": "הועתק",
+  "myGroups": "הקבוצות שלי"
 }
