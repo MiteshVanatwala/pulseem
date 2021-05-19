@@ -526,6 +526,7 @@ const NotificationManagement=({classes}) => {
   }
 
   const renderRow=(row) => {
+    console.log(`renderRow(): row`,row)
     return (
       <TableRow
         key={row.ID}
@@ -679,6 +680,7 @@ const NotificationManagement=({classes}) => {
     const name=data.Name
     const title=data.Title
     const body=data.Body;
+    const redirectButtonText=data.RedirectButtonText;
     return {
       showDivider: false,
       icon: (
@@ -694,21 +696,19 @@ const NotificationManagement=({classes}) => {
                 className={classes.cardMedia}
                 image={image}
               />:
-              <Button className={classes.chooseImageBtn}>
-                <Box
-                  className={clsx(
-                    classes.pictureBoxBig,
-                  )}>
-                  <div className={clsx(classes.pictureIcon,classes.f80)}>
-                    {'\uE00F'}
-                  </div>
-                  <Typography className={clsx(
-                    classes.emptyImageLabel,
-                  )}>
-                    {t('notifications.chooseImage')}
-                  </Typography>
-                </Box>
-              </Button>}
+              <Box
+                className={clsx(
+                  classes.pictureBoxBig,
+                )}>
+                <div className={clsx(classes.pictureIcon,classes.f80)}>
+                  {'\uE00F'}
+                </div>
+                <Typography className={clsx(
+                  classes.emptyImageLabel,
+                )}>
+                  {t('notifications.chooseImage')}
+                </Typography>
+              </Box>}
             <CardContent className={classes.previewCardContent}>
               <Box className={classes.p10}>
                 {image?
@@ -716,24 +716,21 @@ const NotificationManagement=({classes}) => {
                     className={classes.cardIcon}
                     image={image}
                   />:
-                  <Button
-                    size='small'
-                  >
-                    <Box
-                      className={clsx(
-                        classes.pictureBox,
-                      )}>
-                      <div className={classes.pictureIcon}>
-                        {'\uE00F'}
-                      </div>
-                      <Typography className={clsx(
-                        classes.emptyImageLabel,
-                        classes.mt_10
-                      )}>
-                        {t('notifications.chooseIcon')}
-                      </Typography>
-                    </Box>
-                  </Button>
+
+                  <Box
+                    className={clsx(
+                      classes.pictureBox,
+                    )}>
+                    <div className={classes.pictureIcon}>
+                      {'\uE00F'}
+                    </div>
+                    <Typography className={clsx(
+                      classes.emptyImageLabel,
+                      classes.mt_10
+                    )}>
+                      {t('notifications.chooseIcon')}
+                    </Typography>
+                  </Box>
                 }
               </Box>
               <Box className={classes.w100}>
@@ -745,7 +742,7 @@ const NotificationManagement=({classes}) => {
                 </Typography>
               </Box>
             </CardContent>
-            <Typography align='center' className={classes.previewLabel}>{name}</Typography>
+            <Typography align='center' className={classes.previewLabel}>{redirectButtonText}</Typography>
           </Card>
         </Box>
       ),
