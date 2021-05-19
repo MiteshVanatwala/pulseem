@@ -58,17 +58,18 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
+  const clearSearch=() => {
+    setLandingPageNameSearch('');
+    setSearchArray(null);
+  }
+
   const renderSearchLine=() => {
     const handleSearch=() => {
       setSearchArray([{
         type: 'name',
-        campaineName: landingPageNameSearch
-      }])
-    }
-
-    const clearSearch=() => {
-      setLandingPageNameSearch('')
-      setSearchArray(null)
+        campaignName: landingPageNameSearch
+      }]);
+      setPage(1);
     }
 
     const handleCampainNameChange=event => {
@@ -132,7 +133,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/LandingPageWizard')}
+            href='/Pulseem/LandingPageWizard.aspx'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -173,7 +174,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             classes={cellStyle}
             className={classes.flex3}
             align='center'>
-            {t("landingPages.name")}
+            {t("landingPages.GridBoundColumnResource2.HeaderText")}
           </TableCell>
           <TableCell
             classes={cellStyle}
@@ -244,6 +245,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
         remove: (!IsPayment&&SurveyCount===0)||windowSize==='xs',
+        rootClass: classes.paddingIcon,
         onClick: async () => {
           if(IsPayment) {
             dispatch(downloadReport(row))
@@ -255,6 +257,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: PreviewIcon,
         remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           openInNewTab(PageLink)
         }
@@ -264,14 +267,14 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: EditIcon,
         remove: windowSize==='xs',
         lable: t('landingPages.EditResource1.HeaderText'),
-        onClick: () => {
-          history.push(`NewWebForm/NewFormEdit/${ID}`)
-        }
+        href: `/Pulseem/NewWebForm/NewFormEdit/${ID}`,
+        rootClass: classes.paddingIcon,
       },
       {
         key: 'duplicate',
         icon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'duplicate',
@@ -283,6 +286,9 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'copy',
         icon: (copyData&&copyData.icon)||null,
         lable: (copyData&&copyData.lable)||'',
+        rootClass: classes.paddingIcon,
+        text: (copyData&&copyData.copy)||'',
+        type: 'copy',
         onClick: () => {
           navigator.clipboard.writeText(copyData.copy)
           setShowCopied(ID)
@@ -296,6 +302,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: DeleteIcon,
         lable: t('landingPages.GridButtonColumnResource1.HeaderText'),
         showPhone: true,
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'delete',
@@ -307,7 +314,6 @@ const LandingPagesesManagmentScreen=({classes}) => {
     return (
       <Grid
         container
-        //direction={windowSize==='sm'? 'column':'row'}
         spacing={2}
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
@@ -361,16 +367,9 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderNameCell=(row) => {
     return (
       <>
-        <Ellipsis
-          text={row.Name}
-          lines={1}
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            color: '#333333',
-            fontFamily: 'Assistant'
-          }}
-        />
+        <Typography noWrap={false} className={classes.nameEllipsis}>
+          {row.Name}
+        </Typography>
         <Typography
           className={classes.grayTextCell}>
           {row.GroupNames&&row.GroupNames.join(', ')}
@@ -387,11 +386,11 @@ const LandingPagesesManagmentScreen=({classes}) => {
           className={classes.middleText}>
           {(Submits&&Submits.toLocaleString())||0}
         </Typography>
-        <Link
-          to={`/ClientSearchResult/${ID}`}
+        <a
+          href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}`}
           className={classes.middleText}>
           {t('landingPages.SubmitsResource1.HeaderText')}
-        </Link>
+        </a>
       </>
     )
   }
@@ -467,7 +466,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.FormName)
+        return String(row.Name.toLowerCase()).startsWith(values.campaignName.toLowerCase());
       }
     }
 
@@ -511,76 +510,89 @@ const LandingPagesesManagmentScreen=({classes}) => {
       />
     )
   }
+  const handleChange=(id) => () => {
+    const found=restoreArray.includes(id)
+    console.log('restore',id,'found:',found)
+    if(found) {
+      setRestoreArray(restoreArray.filter(restore => restore!==id))
+    } else {
+      setRestoreArray([...restoreArray,id])
+    }
+  }
+
+  const handleClose=() => {
+    setDialogType(null)
+  }
+
+  const getRestorDialog=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
+
+    return {
+      title: t('landingPages.restoreLandingPageTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <RestorDialogContent
+          classes={classes}
+          data={data}
+          currentChecked={restoreArray}
+          onChange={handleChange}
+        />
+      ),
+      onConfirm: async () => {
+        await dispatch(restoreLandingPages(restoreArray))
+        getData()
+        handleClose()
+      }
+    }
+  }
+
+  const getDeleteDialog=(data='') => ({
+    title: t('landingPages.GridButtonColumnResource1.ConfirmTitle'),
+    showDivider: false,
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('landingPages.GridButtonColumnResource1.ConfirmText')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(deleteLandingPage(data))
+      getData()
+      handleClose()
+      clearSearch()
+    }
+  })
+
+  const getDuplicateDialog=(data='') => ({
+    title: t('landingPages.dialogDuplicateTitle'),
+    showDivider: false,
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('landingPages.dialogDuplicateContent')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(duplicteLandingPage(data))
+      getData()
+      handleClose()
+      clearSearch()
+    }
+  })
 
   const renderDialog=() => {
-    const handleChange=(id) => () => {
-      const found=restoreArray.includes(id)
-      console.log('restore',id,'found:',found)
-      if(found) {
-        setRestoreArray(restoreArray.filter(restore => restore!==id))
-      } else {
-        setRestoreArray([...restoreArray,id])
-      }
-    }
-
-    const handleClose=() => {
-      setDialogType(null)
-    }
+    const {data,type}=dialogType||{}
 
     const dialogContent={
-      restore: {
-        title: t('landingPages.restoreLandingPageTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
-        content: (
-          <RestorDialogContent
-            classes={classes}
-            data={dialogType&&dialogType.data}
-            currentChecked={restoreArray}
-            onChange={handleChange}
-          />
-        ),
-        onConfirm: async () => {
-          await dispatch(restoreLandingPages(restoreArray))
-          getData()
-          handleClose()
-        }
-      },
-      delete: {
-        title: t('landingPages.GridButtonColumnResource1.ConfirmTitle'),
-        showDivider: false,
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('landingPages.GridButtonColumnResource1.ConfirmText')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(deleteLandingPage(dialogType.data))
-          getData()
-          handleClose()
-        }
-      },
-      duplicate: {
-        title: t('landingPages.dialogDuplicateTitle'),
-        showDivider: false,
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('landingPages.dialogDuplicateContent')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(duplicteLandingPage(dialogType.data))
-          getData()
-          handleClose()
-        }
-      }
+      restore: getRestorDialog(data),
+      delete: getDeleteDialog(data),
+      duplicate: getDuplicateDialog(data)
     }
 
-    const currentDialog=(dialogType&&dialogContent[dialogType.type])||{}
+    const currentDialog=dialogContent[type]||{}
     return (
       dialogType&&<Dialog
         classes={classes}

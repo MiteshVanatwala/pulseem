@@ -9,7 +9,7 @@ import {
   DeleteIcon,DuplicateIcon,EditIcon,ReportsIcon,SearchIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent,Switch
+  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,Switch
 } from '../components/managment/index'
 import {
   getAutomationsData,deleteAutomations,duplicateAutomations,restoreAutomations,activateAutomation
@@ -18,7 +18,6 @@ import useCtrlHistory from '../helpers/useCtrlHistory'
 import {Link} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
-import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
@@ -62,6 +61,13 @@ const AutomationsManagnentScreen=({classes}) => {
     )
   }
 
+  const clearSearch=() => {
+    setCampaineNameSearch('')
+    handleFromDate(null)
+    handleToDate(null)
+    setSearchArray(null)
+  }
+
   const renderSearchLine=() => {
     const handleSearch=() => {
       setSearchArray([{
@@ -71,31 +77,32 @@ const AutomationsManagnentScreen=({classes}) => {
         type: 'date',
         fromDate,
         toDate
-      }])
+      }]);
+      setPage(1);
     }
 
-    const clearSearch=() => {
-      setCampaineNameSearch('')
-      handleFromDate(null)
-      handleToDate(null)
-      setSearchArray(null)
+    const handleFromDateChange=(value) => {
+      if(value>toDate) {
+        handleToDate(null);
+      }
+      handleFromDate(value);
     }
 
     const handleCampainNameChange=event => {
       setCampaineNameSearch(event.target.value)
     }
 
-    if(windowSize==='xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onClick={handleSearch}
-          placeholder={t('automations.labelAutomationName')}
-        />
-      )
-    }
+    // if(windowSize==='xs') {
+    //   return (
+    //     <SearchField
+    //       classes={classes}
+    //       value={campaineNameSearch}
+    //       onChange={handleCampainNameChange}
+    //       onClick={handleSearch}
+    //       placeholder={t('automations.labelAutomationName')}
+    //     />
+    //   )
+    // }
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -109,25 +116,28 @@ const AutomationsManagnentScreen=({classes}) => {
           />
         </Grid>
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={fromDate}
-            onChange={handleFromDate}
-            placeholder={t('mms.locFromDateResource1.Text')}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={fromDate}
+              onChange={handleFromDateChange}
+              placeholder={t('mms.locFromDateResource1.Text')}
+            />
+          </Grid>
+          :null}
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={toDate}
-            onChange={handleToDate}
-            placeholder={t('mms.locToDateResource1.Text')}
-            disabled={fromDate? false:true}
-            minDate={fromDate? fromDate:null}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={toDate}
+              onChange={handleToDate}
+              placeholder={t('mms.locToDateResource1.Text')}
+              minDate={fromDate? fromDate:''}
+            />
+          </Grid>
+          :null}
 
         <Grid item>
           <Button
@@ -156,19 +166,19 @@ const AutomationsManagnentScreen=({classes}) => {
   const renderManagmentLine=() => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize!=='xs'&&<Grid item>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/CreateAutomations')}
+            href='/Pulseem/CreateAutomations.aspx'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
             )}>
             {t('automations.createResource.Text')}
           </Button>
-        </Grid>}
-        {windowSize!=='xs'&&<Grid item>
+        </Grid>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -182,7 +192,7 @@ const AutomationsManagnentScreen=({classes}) => {
             })}>
             {t('automations.restoreResource.Text')}
           </Button>
-        </Grid>}
+        </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${automationsData.length} ${t('automations.Automations')}`}
@@ -213,17 +223,16 @@ const AutomationsManagnentScreen=({classes}) => {
       {
         key: 'preview',
         icon: PreviewIcon,
-        remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        onClick: () => {
-          history.push(`/PreviewAutomations/${ID}`)
-        }
+        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${ID}`,
+        rootClass: classes.paddingIcon,
       },
       {
         key: 'edit',
         icon: EditIcon,
-        remove: windowSize==='xs',
         lable: t('campaigns.Image2Resource1.ToolTip'),
+        href: !IsActive? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}`:'',
+        rootClass: classes.paddingIcon,
         onClick: () => {
           if(IsActive) {
             setDialogType({
@@ -231,15 +240,13 @@ const AutomationsManagnentScreen=({classes}) => {
               data: row
             })
           }
-          else {
-            history.push(`/EditAutomations/${ID}`)
-          }
         }
       },
       {
         key: 'duplicate',
         icon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'duplicate',
@@ -250,17 +257,16 @@ const AutomationsManagnentScreen=({classes}) => {
       {
         key: 'reports',
         icon: ReportsIcon,
-        remove: windowSize==='xs',
         lable: t('campaigns.Reports'),
-        onClick: () => {
-          history.push(`/AutomationReport/${ID}`)
-        }
+        href: `/Pulseem/automationreport.aspx?AutomationID=${ID}`,
+        rootClass: classes.paddingIcon,
       },
       {
         key: 'delete',
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'delete',
@@ -352,16 +358,9 @@ const AutomationsManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Ellipsis
-          text={row.Name}
-          lines={1}
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            color: '#333333',
-            fontFamily: 'Assistant'
-          }}
-        />
+        <Typography noWrap={false} className={classes.nameEllipsis}>
+          {row.Name}
+        </Typography>
         <Typography
           className={classes.grayTextCell}>
           {`${text} ${date.format('L')} ${date.format('LT')}`}
@@ -448,7 +447,7 @@ const AutomationsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.campaineName)
+        return String(row.Name.toLowerCase()).startsWith(values.campaineName.toLowerCase());
       },
       date: (row,values) => {
         const {LastUpdate,SendDate}=row
@@ -505,24 +504,79 @@ const AutomationsManagnentScreen=({classes}) => {
       />
     )
   }
+  const handleClose=() => {
+    setRestoreArray([])
+    setDialogType(null)
+  }
 
-  const renderDialog=() => {
+  const handleChange=(id) => () => {
+    const found=restoreArray.includes(id)
+    console.log('restore',id,'found:',found)
+    if(found) {
+      setRestoreArray(restoreArray.filter(restore => restore!==id))
+    } else {
+      setRestoreArray([...restoreArray,id])
+    }
+  }
 
-    const handleChange=(id) => () => {
-      const found=restoreArray.includes(id)
-      console.log('restore',id,'found:',found)
-      if(found) {
-        setRestoreArray(restoreArray.filter(restore => restore!==id))
-      } else {
-        setRestoreArray([...restoreArray,id])
+  const handleActiveChange=(data,isEdit=false) => async () => {
+    try {
+      await dispatch(activateAutomation(data))
+      getData()
+      if(isEdit)
+        window.location.href=`/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}`
+    } catch(err) {
+      console.log('AutomationManagment.ChangeStatus',err)
+      setDialogType({
+        type: "statusError",
+        data: data.ID
+      })
+    }
+    handleClose()
+  }
+
+  const getRestorDialog=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
+    return {
+      title: t('campaigns.restoreCampaginTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <RestorDialogContent
+          classes={classes}
+          data={data}
+          currentChecked={restoreArray}
+          onChange={handleChange}
+        />
+      ),
+      onConfirm: async () => {
+        console.log("restoreArray",restoreArray)
+        await dispatch(restoreAutomations(restoreArray))
+        getData()
+        handleClose()
       }
     }
+  }
 
-    const handleClose=() => {
-      setRestoreArray([])
-      setDialogType(null)
-    }
+  const getEditActiveDialog=(data={}) => ({
+    title: t('automations.HeaderDeactivateAutomationProcess'),
+    showDivider: false,
+    content: (
+      <Typography className={clsx(
+        classes.boxDialog,
+        classes.dialogErrorText
+      )}>
+        {t('automations.TextDeactivateAutomationProcess')}
+      </Typography>
+    ),
+    onConfirm: handleActiveChange(data,true)
+  })
 
+  const getSwitchDialog=(data={}) => {
     const switchOptions={
       true: {
         title: t('automations.HeaderDeactivateAutomationProcess'),
@@ -542,139 +596,105 @@ const AutomationsManagnentScreen=({classes}) => {
       }
     }
 
-    const handleActiveChange=(data,isEdit=false) => async () => {
-      try {
-        await dispatch(activateAutomation(data))
-        getData()
-        if(isEdit)
-          history.push(`/EditAutomations/${data.ID}`)
-      } catch(err) {
-        console.log('AutomationManagment.ChangeStatus',err)
-        setDialogType({
-          type: "statusError",
-          data: data.ID
-        })
-      }
-      handleClose()
-    }
+    const switchContent=switchOptions[data.IsActive]||{}
 
-    const switchContent=(dialogType&&dialogType.type==='switch'&&switchOptions[dialogType.data.IsActive])||{}
+    return {
+      title: switchContent.title,
+      showDivider: false,
+      content: switchContent.content,
+      onConfirm: handleActiveChange(data)
+    }
+  }
+
+  const getStatusErrorDioalog=() => ({
+    title: t('automations.errorTitle'),
+    showDivider: false,
+    content: (
+      <Box className={classes.boxDialog}>
+        <Typography className={classes.dialogErrorText}>
+          {t('automations.errorContent')}
+        </Typography>
+        <Grid container spacing={1}>
+          <Grid item>
+            <Typography className={classes.dialogErrorText}>
+              {t('automations.click')}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Link className={classes.dialogErrorText}>
+              {` ${t('automations.here')} `}
+            </Link>
+          </Grid>
+          <Grid item>
+            <Typography className={classes.dialogErrorText}>
+              {t('automations.edit')}
+            </Typography>
+          </Grid>
+        </Grid>
+      </Box>
+    ),
+    renderButtons: () => (
+      <Button
+        variant='contained'
+        size='small'
+        onClick={handleClose}
+        className={clsx(
+          classes.middle,
+          classes.dialogButton,
+          classes.dialogCancelButton
+        )}>
+        {t('automations.close')}
+      </Button>
+    )
+  })
+
+  const getDeleteDialog=(data='') => ({
+    title: t('automations.GridButtonColumnResource2.ConfirmTitle'),
+    showDivider: false,
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('automations.GridButtonColumnResource2.ConfirmText')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(deleteAutomations(data))
+      getData()
+      handleClose()
+      clearSearch()
+    }
+  })
+
+  const getDuplicateDialog=(data='') => ({
+    title: t('automations.duplicateTitle'),
+    showDivider: false,
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('automations.duplicateContent')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(duplicateAutomations(data))
+      getData()
+      clearSearch()
+      handleClose()
+      clearSearch()
+    }
+  })
+
+  const renderDialog=() => {
+
+    const {data,type}=dialogType||{}
 
     const dialogContent={
-      restore: {
-        title: t('campaigns.restoreCampaginTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
-        content: (
-          <RestorDialogContent
-            classes={classes}
-            data={dialogType&&dialogType.data}
-            currentChecked={restoreArray}
-            onChange={handleChange}
-          />
-        ),
-        onConfirm: async () => {
-          console.log("restoreArray",restoreArray)
-          await dispatch(restoreAutomations(restoreArray))
-          getData()
-          handleClose()
-        }
-      },
-      editActive: {
-        title: t('automations.HeaderDeactivateAutomationProcess'),
-        showDivider: false,
-        content: (
-          <Typography className={clsx(
-            classes.boxDialog,
-            classes.dialogErrorText
-          )}>
-            {t('automations.TextDeactivateAutomationProcess')}
-          </Typography>
-        ),
-        onConfirm: handleActiveChange((dialogType&&dialogType.data)||{},true)
-      },
-      switch: {
-        title: switchContent.title,
-        showDivider: false,
-        content: switchContent.content,
-        onConfirm: handleActiveChange((dialogType&&dialogType.data)||{})
-      },
-      statusError: {
-        title: t('automations.errorTitle'),
-        showDivider: false,
-        content: (
-          <Box className={classes.boxDialog}>
-            <Typography className={classes.dialogErrorText}>
-              {t('automations.errorContent')}
-            </Typography>
-            <Grid container spacing={1}>
-              <Grid item>
-                <Typography className={classes.dialogErrorText}>
-                  {t('automations.click')}
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Link className={classes.dialogErrorText}>
-                  {` ${t('automations.here')} `}
-                </Link>
-              </Grid>
-              <Grid item>
-                <Typography className={classes.dialogErrorText}>
-                  {t('automations.edit')}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Box>
-        ),
-        renderButtons: () => (
-          <Button
-            variant='contained'
-            size='small'
-            onClick={handleClose}
-            className={clsx(
-              classes.middle,
-              classes.dialogButton,
-              classes.dialogCancelButton
-            )}>
-            {t('automations.close')}
-          </Button>
-        )
-      },
-      delete: {
-        title: t('automations.GridButtonColumnResource2.ConfirmTitle'),
-        showDivider: false,
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('automations.GridButtonColumnResource2.ConfirmText')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(deleteAutomations(dialogType.data))
-          getData()
-          handleClose()
-        }
-      },
-      duplicate: {
-        title: t('automations.duplicateTitle'),
-        showDivider: false,
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('automations.duplicateContent')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(duplicateAutomations(dialogType.data))
-          getData()
-          handleClose()
-        }
-      }
+      restore: getRestorDialog(data),
+      editActive: getEditActiveDialog(data),
+      switch: getSwitchDialog(data),
+      statusError: getStatusErrorDioalog(data),
+      delete: getDeleteDialog(data),
+      duplicate: getDuplicateDialog(data)
     }
 
-    const currentDialog=(dialogType&&dialogContent[dialogType.type])||{}
+    const currentDialog=dialogContent[type]||{}
     return (
       dialogType&&<Dialog
         classes={classes}

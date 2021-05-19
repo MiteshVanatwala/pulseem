@@ -19,7 +19,6 @@ import {
 import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
-import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
@@ -62,6 +61,13 @@ const NewsletterManagnentScreen=({classes}) => {
     )
   }
 
+  const clearSearch=() => {
+    setCampaineNameSearch('')
+    handleFromDate(null)
+    handleToDate(null)
+    setSearchArray(null)
+  }
+
   const renderSearchLine=() => {
     const handleSearch=() => {
       setSearchArray([{
@@ -71,31 +77,32 @@ const NewsletterManagnentScreen=({classes}) => {
         type: 'date',
         fromDate,
         toDate
-      }])
+      }]);
+      setPage(1);
     }
 
-    const clearSearch=() => {
-      setCampaineNameSearch('')
-      handleFromDate(null)
-      handleToDate(null)
-      setSearchArray(null)
+    const handleFromDateChange=(value) => {
+      if(value>toDate) {
+        handleToDate(null);
+      }
+      handleFromDate(value);
     }
 
     const handleCampainNameChange=event => {
       setCampaineNameSearch(event.target.value)
     }
 
-    if(windowSize==='xs') {
-      return (
-        <SearchField
-          classes={classes}
-          value={campaineNameSearch}
-          onChange={handleCampainNameChange}
-          onClick={handleSearch}
-          placeholder={t('common.CampaignName')}
-        />
-      )
-    }
+    // if(windowSize==='xs') {
+    //   return (
+    //     <SearchField
+    //       classes={classes}
+    //       value={campaineNameSearch}
+    //       onChange={handleCampainNameChange}
+    //       onClick={handleSearch}
+    //       placeholder={t('common.CampaignName')}
+    //     />
+    //   )
+    // }
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -109,25 +116,28 @@ const NewsletterManagnentScreen=({classes}) => {
           />
         </Grid>
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={fromDate}
-            onChange={handleFromDate}
-            placeholder={t('campaigns.locFromDateResource1.Text')}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={fromDate}
+              onChange={handleFromDateChange}
+              placeholder={t('mms.locFromDateResource1.Text')}
+            />
+          </Grid>
+          :null}
 
-        <Grid item>
-          <DateField
-            classes={classes}
-            value={toDate}
-            onChange={handleToDate}
-            placeholder={t('campaigns.locToDateResource1.Text')}
-            disabled={fromDate? false:true}
-            minDate={fromDate? fromDate:null}
-          />
-        </Grid>
+        {windowSize!=='xs'?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={toDate}
+              onChange={handleToDate}
+              placeholder={t('mms.locToDateResource1.Text')}
+              minDate={fromDate? fromDate:''}
+            />
+          </Grid>
+          :null}
 
         <Grid item>
           <Button
@@ -156,19 +166,19 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderManagmentLine=() => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize!=='xs'&&<Grid item>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
-            onClick={() => history.push('/Editor/CampaignInfo')}
+            href='/Pulseem/Editor/CampaignInfo?new=1'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
             )}>
             {t('campaigns.create')}
           </Button>
-        </Grid>}
-        {windowSize!=='xs'&&<Grid item>
+        </Grid>
+        <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -182,7 +192,7 @@ const NewsletterManagnentScreen=({classes}) => {
             })}>
             {t('campaigns.restoreDeleted')}
           </Button>
-        </Grid>}
+        </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${newslettersData.length} ${t('campaigns.newsletters')}`}
@@ -225,33 +235,28 @@ const NewsletterManagnentScreen=({classes}) => {
         remove: Status!==1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        onClick: () => {
-          history.push('/SendCampaign/'+CampaignID)
-        }
+        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}`
       },
       {
         key: 'preview',
         icon: PreviewIcon,
-        remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        onClick: () => {
-          history.push('/PreviewCampaign/'+CampaignID)
-        }
+        href: `/Pulseem/PreviewCampaign.aspx?CampaignID=${CampaignID}`,
+        rootClass: classes.paddingIcon
       },
       {
         key: 'edit',
         icon: EditIcon,
-        remove: windowSize==='xs',
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        onClick: () => {
-          history.push('/Editor/CampaignEdit/'+CampaignID)
-        }
+        href: `/Pulseem/Editor/CampaignEdit/${CampaignID}`,
+        rootClass: classes.paddingIcon,
       },
       {
         key: 'duplicate',
         icon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'duplicate',
@@ -262,9 +267,9 @@ const NewsletterManagnentScreen=({classes}) => {
       {
         key: 'groups',
         icon: GroupsIcon,
-        remove: windowSize==='xs',
         disable: Groups&&Groups.length===0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'groups',
@@ -276,6 +281,9 @@ const NewsletterManagnentScreen=({classes}) => {
         key: 'copy',
         icon: CopyIcon,
         lable: t('campaigns.CloneResource1.HeaderText'),
+        rootClass: classes.paddingIcon,
+        text: shareUrl||'',
+        type: 'copy',
         onClick: () => {
           navigator.clipboard.writeText(shareUrl)
           setShowCopied(CampaignID)
@@ -288,26 +296,23 @@ const NewsletterManagnentScreen=({classes}) => {
         key: 'reports',
         icon: ReportsIcon,
         disable: Status===1,
-        remove: windowSize==='xs',
         lable: t('campaigns.Reports'),
-        onClick: () => {
-          history.push('/CampaignStatistics/'+CampaignID)
-        }
+        href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`,
+        rootClass: classes.paddingIcon,
       },
       {
         key: 'automation',
         icon: AutomationIcon,
-        remove: windowSize==='xs',
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
-        onClick: () => {
-          history.push('/PreviewAutomations/'+AutomationID)
-        }
+        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}`,
+        rootClass: classes.paddingIcon,
       },
       {
         key: 'delete',
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
+        rootClass: classes.paddingIcon,
         showPhone: true,
         onClick: () => {
           setDialogType({
@@ -404,16 +409,9 @@ const NewsletterManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Ellipsis
-          text={row.Name}
-          lines={1}
-          style={{
-            fontSize: 20,
-            fontWeight: 700,
-            color: '#333333',
-            fontFamily: 'Assistant',
-          }}
-        />
+        <Typography noWrap={false} className={classes.nameEllipsis}>
+          {row.Name}
+        </Typography>
         <Typography
           className={classes.grayTextCell}>
           {`${text} ${date.format('L')} ${date.format('LT')}`}
@@ -481,7 +479,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return row.Name.includes(values.campaineName)
+        return String(row.Name.toLowerCase()).startsWith(values.campaineName.toLowerCase());
       },
       date: (row,values) => {
         const {UpdatedDate,SendDate}=row
@@ -539,126 +537,141 @@ const NewsletterManagnentScreen=({classes}) => {
     )
   }
 
-  const renderDialog=() => {
+  const handleChange=(CampaignID) => () => {
+    const found=restoreArray.includes(CampaignID)
+    if(found) {
+      setRestoreArray(restoreArray.filter(restore => restore!==CampaignID))
+    } else {
+      setRestoreArray([...restoreArray,CampaignID])
+    }
 
-    const handleChange=(CampaignID) => () => {
-      const found=restoreArray.includes(CampaignID)
-      if(found) {
-        setRestoreArray(restoreArray.filter(restore => restore!==CampaignID))
-      } else {
-        setRestoreArray([...restoreArray,CampaignID])
+  }
+
+  const handleClose=() => {
+    setRestoreArray([])
+    setDialogType(null)
+  }
+
+  const getRestorDialog=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
+    return {
+      title: t('campaigns.restoreCampaginTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <RestorDialogContent
+          classes={classes}
+          data={data}
+          currentChecked={restoreArray}
+          onChange={handleChange}
+          dataIdVar='CampaignID'
+        />
+      ),
+      onConfirm: async () => {
+        await dispatch(restoreCampaigns(restoreArray))
+        getData()
+        handleClose()
       }
-
     }
+  }
 
-    const handleClose=() => {
-      setRestoreArray([])
-      setDialogType(null)
+  const getGruopsDialog=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
+    return {
+      title: t('campaigns.ShowGroupsTitle'),
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <Box
+          className={classes.gruopsDialogContent}>
+          {data.map(group => {
+            return (
+              <Typography
+                key={group}
+                className={classes.gruopsDialogText}>
+                <FiberManualRecordIcon
+                  className={classes.gruopsDialogBullet} />
+                {group}
+              </Typography>
+            )
+          })}
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.Ok')}
+        </Button>
+      )
     }
+  }
+
+  const getDeleteDialog=(data='') => ({
+    title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
+    showDivider: false,
+    icon: (
+      <Box className={classes.dialogAlertIcon}>
+        !
+      </Box>
+    ),
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('campaigns.GridButtonColumnResource2.ConfirmText')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(deleteCampaign(data))
+      getData()
+      handleClose()
+      clearSearch()
+    }
+  })
+
+  const getDuplicateDialog=(data='') => ({
+    title: t('campaigns.dialogDuplicateTitle'),
+    showDivider: false,
+    icon: (
+      <Box className={classes.dialogAlertIcon}>
+        !
+      </Box>
+    ),
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('campaigns.dialogDuplicateContent')}
+      </Typography>
+    ),
+    onConfirm: async () => {
+      await dispatch(duplicteCampaign(data))
+      getData()
+      handleClose()
+      clearSearch()
+    }
+  })
+  const renderDialog=() => {
+    const {data,type}=dialogType||{}
 
     const dialogContent={
-      restore: {
-        title: t('campaigns.restoreCampaginTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
-        content: (
-          <RestorDialogContent
-            classes={classes}
-            data={dialogType&&dialogType.data}
-            currentChecked={restoreArray}
-            onChange={handleChange}
-            dataIdVar='CampaignID'
-          />
-        ),
-        onConfirm: async () => {
-          await dispatch(restoreCampaigns(restoreArray))
-          getData()
-          handleClose()
-        }
-      },
-      groups: {
-        title: t('campaigns.ShowGroupsTitle'),
-        showDivider: false,
-        icon: (
-          <div className={classes.dialogIconContent}>
-            {'\uE185'}
-          </div>
-        ),
-        content: (
-          <Box
-            className={classes.gruopsDialogContent}>
-            {dialogType&&dialogType.type==='groups'&&dialogType.data
-              .map(group => {
-                return (
-                  <Typography
-                    key={group}
-                    className={classes.gruopsDialogText}>
-                    <FiberManualRecordIcon
-                      className={classes.gruopsDialogBullet} />
-                    {group}
-                  </Typography>
-                )
-              })}
-          </Box>
-        ),
-        renderButtons: () => (
-          <Button
-            variant='contained'
-            size='small'
-            onClick={handleClose}
-            className={clsx(
-              classes.gruopsDialogButton,
-              classes.dialogConfirmButton,
-            )}>
-            {t('common.Ok')}
-          </Button>
-        )
-      },
-      delete: {
-        title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
-        showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('campaigns.GridButtonColumnResource2.ConfirmText')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(deleteCampaign(dialogType.data))
-          getData()
-          handleClose()
-        }
-      },
-      duplicate: {
-        title: t('campaigns.dialogDuplicateTitle'),
-        showDivider: false,
-        icon: (
-          <Box className={classes.dialogAlertIcon}>
-            !
-          </Box>
-        ),
-        content: (
-          <Typography style={{fontSize: 18}}>
-            {t('campaigns.dialogDuplicateContent')}
-          </Typography>
-        ),
-        onConfirm: async () => {
-          await dispatch(duplicteCampaign(dialogType.data))
-          getData()
-          handleClose()
-        }
-      }
+      restore: getRestorDialog(data),
+      groups: getGruopsDialog(data),
+      delete: getDeleteDialog(data),
+      duplicate: getDuplicateDialog(data)
     }
 
-    const currentDialog=(dialogType&&dialogContent[dialogType.type])||{}
+    const currentDialog=dialogContent[type]||{}
     return (
       dialogType&&<Dialog
         classes={classes}
@@ -669,6 +682,7 @@ const NewsletterManagnentScreen=({classes}) => {
       </Dialog>
     )
   }
+
   return (
     <DefaultScreen
       currentPage='newsletter'

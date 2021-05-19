@@ -11,7 +11,7 @@
     "implementScript": "הטמע סקריפט",
     "groups": "קבוצות",
     "send": "שלח",
-    "preview": "תצוגה מקדימה",
+    "preview": "הצג",
     "edit": "ערוך",
     "duplicate": "שכפל",
     "delete": "מחק",
@@ -67,5 +67,11 @@
   "groupName": "שם הקבוצה",
   "recipients": "נמענים",
   "copy": "העתק",
-  "copied": "הועתק"
+  "copied": "הועתק",
+  "myGroups": "הקבוצות שלי",
+  "implementDialog": {
+    "beforeYouStarted": "לפני שאתה מתחיל...",
+    "startSendingOutMessage": "על מנת להתחיל לשלוח נוטיפקציות ללקוחות שלך, עליך להטמיע את הסקריפט שלמטה כדי שמבקרים באתר שלך יוכלו לקבל נוטיפקציות",
+    "dontShowThisMessage": "אל תציג לי הודעה זו"
+  }
 }

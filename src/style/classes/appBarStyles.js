@@ -1,9 +1,15 @@
-const appBarTitleTextSize={xs: 20,sm: 17,md: 15,lg: 17, xl: 20}
+const appBarTitleTextSize={xs: 20,sm: 17,md: 15,lg: 17,xl: 20}
 
 export const appBarStyle=(windowSize,isRTL,theme) => ({
   appBarItemContainer: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    textDecoration: 'none'
+  },
+  appBarHrefContainer: {
+    display: 'flex',
+    flex: 1,
+    textDecoration: 'none'
   },
   appBarItemText: {
     fontFamily: 'OpenSansHebrew',
@@ -42,6 +48,8 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
     fontSize: 14,
     fontFamily: 'OpenSansHebrew-Bold',
     alignSelf: 'center',
+    textDecoration: 'none',
+    color: '#333'
   },
   appBarItemMenuRoot: {
     '&:hover': {

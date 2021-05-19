@@ -4,13 +4,16 @@ import AutomationManagment from './screens/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPagesesManagment'
 import MmsManagment from './screens/MmsManagment';
 import SmsManagment from './screens/SmsManagment';
+import {getCookie,setCookie,cookieListener} from './helpers/cookies'
 import {create} from 'jss';
 import rtl from 'jss-rtl';
+import jwt_decode from "jwt-decode";
 import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
 import i18n from './i18n'
 import {BrowserRouter,useParams,Route} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
-import {setWindowSize} from './redux/reducers/coreSlice'
+import {setWindowSize,setCoreData} from './redux/reducers/coreSlice'
+import {setUsername} from './redux/reducers/userSlice'
 import {getTheme} from './style/theme'
 import {useClasses} from './style/classes/index'
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
@@ -267,7 +270,7 @@ const renderRoutes=(classes,history) => {
       />
       {/* Notifications */}
       <Route
-        path={`/Notification`}
+        path={`/Notifications`}
         render={props => <NotificationManagement {...props} classes={classes} />}
       />
       <Route
@@ -313,7 +316,30 @@ const renderRoutes=(classes,history) => {
 
 const App=() => {
   const dispatch=useDispatch()
+  const {language,isRTL,windowSize}=useSelector(state => state.core)
+
   useEffect(() => {
+
+    const updateToken=() => {
+      const token=getCookie('jtoken')
+      if(!token) return
+      const jwt=jwt_decode(token)
+      console.log('JWT',jwt)
+      const {
+        email='',
+        unique_name='',
+        given_name: basename='',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone': phone='',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality': locality='he-IL',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince': imageURL='',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri': isWhiteLabel=''
+      }=jwt
+
+      dispatch(setCoreData({email,basename,phone,locality,imageURL,isWhiteLabel}))
+      dispatch(setUsername(unique_name))
+      setCookie('Culture',locality)
+    }
+
     const setWindowWidth=() => {
       const {innerWidth}=window
       let windowSize='xs'
@@ -329,14 +355,23 @@ const App=() => {
     }
 
     window.addEventListener('resize',setWindowWidth)
-
+    cookieListener(({name}) => {
+      if(name==='jtoken')
+        updateToken()
+    })
+    updateToken()
     setWindowWidth()
   },[dispatch])
-  const {language,isRTL,windowSize}=useSelector(state => state.core)
+
+  useEffect(() => {
+    i18n.changeLanguage(language)
+  },[language])
+
+
   const classes=useClasses(windowSize,isRTL)()
-  i18n.changeLanguage(language)
   const theme=getTheme(language)
   const history=useHistory()
+
 
   return (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>

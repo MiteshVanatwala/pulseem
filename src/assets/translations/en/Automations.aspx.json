@@ -12,7 +12,7 @@
     "HeaderText": "Edit"
   },
   "logPageHeaderResource1": {
-    "Text": "Automation Management"
+    "Text": "Automations Management"
   },
   "restoreResource": {
     "Text": "Restore Deleted"
@@ -53,5 +53,6 @@
   "edit": "to edit the automation",
   "close": "Close",
   "duplicateTitle": "Duplicate automation",
-  "duplicateContent": "Do you want to duplicate the automation?"
+  "duplicateContent": "Do you want to duplicate the automation?",
+  "restoreCampaignTitle": "Select the automations you want to restore"
 }

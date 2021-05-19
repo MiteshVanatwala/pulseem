@@ -316,11 +316,11 @@
   "linkUnsubscribeSettsResource1": {
     "Text": "Unsubscribe Page"
   },
-  "MmsCampaignEdit": {
+  "NewMMSCampaign": {
     "Text": "New MMS Campaign"
   },
   "MmsCampaignMnage": {
-    "Text": "MMS Campaign Management"
+    "Text": "MMS Campaigns Management"
   },
   "MmsCampaigns": {
     "Text": "MMS Campaign"
@@ -350,7 +350,7 @@
     "Text": "Manage Actions"
   },
   "RadMenuItemManageAutomationResource": {
-    "Text": "Manage Automation"
+    "Text": "Automations Management"
   },
   "RadMenuItemManageTriggersResource": {
     "Text": "Manage Triggers"
@@ -373,5 +373,6 @@
   "OpenedClickedReport": "Opened / Clicked Report",
   "createNotification": "Create Notification",
   "manageNotifications": "Manage Notifications",
+  "implementScript": "Implement Script",
   "guides": "Guides"
 }
