@@ -158,7 +158,8 @@ export const getRoutes=(t=() => null) => [
       src={NotificationsIcon} />,
     options: [
       {title: t('master.createNotification'),href: '/Pulseem/Notification.aspx?t=add'},
-      {title: t('master.manageNotifications'),href: '/react/Notifications'}
+      {title: t('master.manageNotifications'),href: '/react/Notifications'},
+      {title: t('master.implementScript'),uri: '/react/Notifications'}
     ]
   }
 ]

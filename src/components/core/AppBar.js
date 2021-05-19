@@ -15,6 +15,7 @@ import {FaBars,FaTimes} from 'react-icons/fa';
 import {getRoutes,getSettingsItem} from '../../helpers/routes'
 //import useCtrlHistory from '../../helpers/useCtrlHistory'
 import Cookies from 'universal-cookie'
+import {setScriptDialog} from '../../redux/reducers/notificationSlice';
 
 const AppBarItem=({
   item,
@@ -157,9 +158,19 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
+  const cookies=new Cookies()
   //const history=useCtrlHistory()
+  const dispatch=useDispatch();
+
+  const handleScriptDialog=() => {
+    let scriptDialog=cookies.get('scriptDialog');
+    scriptDialog=(scriptDialog==='true');
+    dispatch(setScriptDialog(scriptDialog));
+  }
 
   useEffect(() => {
+    handleScriptDialog();
+
     const resizeWindow=() => {
       setWindowWidth(window.innerWidth)
     }
@@ -177,9 +188,13 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const routes=getRoutes(t)
   const settings=getSettingsItem(t,classes.appBarSettingIcon)
 
-  //const navigate=({href}) => {
-  //  history.push(href)
-  //}
+  const navigate=({uri}) => {
+    if(!!uri) {
+      cookies.set('scriptDialog',false,{maxAge: 3600});
+      dispatch(setScriptDialog(false));
+      window.location.href=uri
+    }
+  }
 
   const renderRegularAppBar=() => (
     <>
@@ -190,6 +205,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
           item={route}
           chosen={route.key===currentPage}
           showIcon={windowSize==='sm'||windowSize==='md'}
+          onInnerClick={navigate}
         />
       ))}
       {windowSize==='lg'&&<>

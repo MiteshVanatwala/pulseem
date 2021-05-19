@@ -68,5 +68,10 @@
   "recipients": "נמענים",
   "copy": "העתק",
   "copied": "הועתק",
-  "myGroups": "הקבוצות שלי"
+  "myGroups": "הקבוצות שלי",
+  "implementDialog": {
+    "beforeYouStarted": "לפני שאתה מתחיל...",
+    "startSendingOutMessage": "על מנת להתחיל לשלוח נוטיפקציות ללקוחות שלך, עליך להטמיע את הסקריפט שלמטה כדי שמבקרים באתר שלך יוכלו לקבל נוטיפקציות",
+    "dontShowThisMessage": "אל תציג לי הודעה זו"
+  }
 }

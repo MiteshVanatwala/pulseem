@@ -685,6 +685,11 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   w100: {
     width: '100%'
+  },
+  scriptCode: {
+    background: '#eee',
+    fontSize: 12,
+    wordBreak: 'break-all',
+    overflow: 'auto'
   }
-
 })

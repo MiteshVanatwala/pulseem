@@ -115,12 +115,17 @@ export const getApiToken = createAsyncThunk(
 export const notificationSlice=createSlice({
   name: 'notification',
   initialState: {
+    hideScriptDialog: true,
     notificationData: [],
     notificationDeletedData: [],
     notificationDataError: '',
     notificationById: {}
   },
-  reducers: {},
+  reducers: {
+    setScriptDialog: (state,action) => {
+      state.hideScriptDialog=action.payload
+    }
+  },
   extraReducers: builder => {
     builder.addCase(getNotificationData.fulfilled,(state,{payload}) => {
       state.notificationData=payload.filter(row => !row.IsDeleted)
@@ -133,5 +138,6 @@ export const notificationSlice=createSlice({
 })
 
 
+export const {setScriptDialog}=notificationSlice.actions;
 
 export default notificationSlice.reducer

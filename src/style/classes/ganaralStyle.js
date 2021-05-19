@@ -77,7 +77,8 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     backgroundRepeat: 'repeat-x',
     border: '1px solid #345233',
     borderTop: '0px solid #345233',
-    boxShadow: '0px 3px 3px #345233'
+    boxShadow: '0px 3px 3px #345233',
+    maxWidth: 150
   },
   dialogCancelButton: {
     background: 'rgba(212,137,33,1)',
@@ -149,6 +150,33 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   },
   defaultScreen: {
     'overflow': 'visible'
+  },
+  maxWidth400: {
+    maxWidth: 400
+  },
+  ps25: {
+    paddingInlineStart: 25
+  },
+  pt10: {
+    paddingBottom: 10
+  },
+  pb10: {
+    paddingBottom: 10
+  },
+  f14: {
+    fontSize: 14
+  },
+  f18: {
+    fontSize: 18
+  },
+  f25: {
+    fontSize: 25
+  },
+  colorGray: {
+    color: 'rgba(0,0,0,0.40)'
+  },
+  bold: {
+    fontWeight: 'bold',
   }
 
 })

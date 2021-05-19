@@ -70,5 +70,10 @@
   "copied": "Copied",
   "myGroups": "My Groups",
   "chooseIcon": "Choose Icon...",
-  "chooseImage": "Choose Image..."
+  "chooseImage": "Choose Image...",
+  "implementDialog": {
+    "beforeYouStarted": "Before you get started...",
+    "startSendingOutMessage": "In order to start sending out Push Notifications to your clients, you must first implement the script below so visitors to your site can receive notifications.",
+    "dontShowThisMessage": "Do not show me this message again"
+  }
 }
