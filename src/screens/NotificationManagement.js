@@ -528,6 +528,7 @@ const NotificationManagement=({classes}) => {
   }
 
   const renderRow=(row) => {
+    console.log(`renderRow(): row`, row)
     return (
       <TableRow
         key={row.ID}
@@ -681,6 +682,8 @@ const NotificationManagement=({classes}) => {
     const name=(dialogType&&dialogType.data&&dialogType.data.Name)||'';
     const title=(dialogType&&dialogType.data&&dialogType.data.Title)||'';
     const body=(dialogType&&dialogType.data&&dialogType.data.Body)||'';
+    console.log(`renderPreview(): dialogType.data`,dialogType.data)
+    const redirectButtonText=dialogType.data.RedirectButtonText || '';
     return {
       showDivider: false,
       icon: (
@@ -696,7 +699,6 @@ const NotificationManagement=({classes}) => {
                 className={classes.cardMedia}
                 image={image}
               />:
-              <Button className={classes.chooseImageBtn}>
                 <Box
                   className={clsx(
                     classes.pictureBoxBig,
@@ -709,8 +711,7 @@ const NotificationManagement=({classes}) => {
                   )}>
                     {t('notifications.chooseImage')}
                   </Typography>
-                </Box>
-              </Button>}
+                </Box>}
             <CardContent className={classes.previewCardContent}>
               <Box className={classes.p10}>
                 {image? 
@@ -718,9 +719,7 @@ const NotificationManagement=({classes}) => {
                   className={classes.cardIcon}
                   image={image}
                 />:
-                  <Button
-                    size='small'
-                    >
+                  
                     <Box
                       className={clsx(
                         classes.pictureBox,
@@ -735,7 +734,6 @@ const NotificationManagement=({classes}) => {
                       {t('notifications.chooseIcon')}
                       </Typography>
                     </Box>
-                  </Button>
                 }
               </Box>
               <Box className={classes.w100}>
@@ -748,7 +746,7 @@ const NotificationManagement=({classes}) => {
               </Box>
              
             </CardContent>
-            <Typography align='center' className={classes.previewLabel}>{name}</Typography>
+            <Typography align='center' className={classes.previewLabel}>{redirectButtonText}</Typography>
           </Card>
         </Box>
       ),

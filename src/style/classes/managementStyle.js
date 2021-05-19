@@ -628,7 +628,6 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     textAlign: 'center',
     alignSelf: 'center',
     textTransform: 'none',
-    marginTop: '-30px',
     fontWeight: 500
   },
   mt_10: {
@@ -638,7 +637,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     fontFamily: 'pulseemicons',
     color: '#000',
     fontSize: 35,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    textAlign: 'center'
   },
   f80: {
     fontSize: 80
@@ -655,6 +655,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     flexDirection: 'column',
     justifyContent: 'center',
     width: '100px',
+    height: '75px',
     padding: 0,
     border: '1px dashed #64a1bd!important'
   },
@@ -662,10 +663,11 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    width: '100%',
+    width: '99%',
     minHeight: 200,
     padding: 0,
-    border: '1px dashed #64a1bd!important'
+    border: '1px dashed #64a1bd!important',
+    margin: 'auto'
   },
   previewCardContent: {
     display: 'flex', 
