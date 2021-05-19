@@ -46,3 +46,21 @@ input.error {
 .MuiTooltip-tooltipPlacementLeft {
     font-size: 12px !important;
 }
+.MuiPickersTimePickerToolbar-hourMinuteLabel {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100%;
+}
+
+.MuiPickersTimePickerToolbar-ampmSelection {
+    align-items: flex-end !important;
+    justify-content: flex-end !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+
+[direction="rtl"] .MuiDialogActions-spacing,
+[direction="rtl"] .MuiPickersCalendarHeader-switchHeader {
+    direction: rtl;
+}

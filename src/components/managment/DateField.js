@@ -13,7 +13,9 @@ export const DateField = ({
   onChange = () => null,
   onTimeChange = () => null,
   placeholder = '',
-  isTimePicker = false
+  isTimePicker = false,
+  buttons = null,
+  ampm = true
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -33,10 +35,10 @@ export const DateField = ({
       inputProps={{
         className: classes.datePickerInput,
       }}
-      PopoverProps={{
+      popoverprops={{
         dir: direction[isRTL]
       }}
-      variant='inline'
+      variant={buttons ? 'dialog' : 'inline'}
       margin='none'
       emptyLabel={placeholder}
       initialFocusedDate={moment()}
@@ -47,6 +49,9 @@ export const DateField = ({
         'aria-label': 'change time',
         className: classes.datePickerButton
       }}
+      cancelLabel={buttons && buttons.cancel}
+      okLabel={buttons && buttons.ok}
+      ampm={ampm}
     />
   ) :
 
@@ -60,10 +65,10 @@ export const DateField = ({
       inputProps={{
         className: classes.datePickerInput,
       }}
-      PopoverProps={{
+      popoverprops={{
         dir: direction[isRTL]
       }}
-      variant='inline'
+      variant={buttons ? 'dialog' : 'inline'}
       keyboardIcon={<CalendarIcon />}
       format="L"
       margin='none'
@@ -76,6 +81,8 @@ export const DateField = ({
         'aria-label': 'change date',
         className: classes.datePickerButton
       }}
+      cancelLabel={buttons && buttons.cancel}
+      okLabel={buttons && buttons.ok}
     />
     )
 

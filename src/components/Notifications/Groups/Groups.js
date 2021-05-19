@@ -109,7 +109,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
         },
         {
             value: "Update Date",
-            text: t("notifications.sort_by_update"),
+            text: t("notifications.sort_by_creation"),
         },
     ];
 

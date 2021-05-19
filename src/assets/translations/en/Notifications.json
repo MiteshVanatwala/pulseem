@@ -99,7 +99,7 @@
   "selectAll": "Select All",
   "totalRecipients": "Total Recipients: ",
   "sort_by_group": "Sort by: Group Name",
-  "sort_by_update": "Sort by: Creation Date",
+  "sort_by_creation": "Sort by: Creation Date",
   "toWhomToSend": "To whom to send?",
   "whenToSend": "When would you like to send?",
   "immediateDescription": "Right after you click ''send'' in the Summary screen",

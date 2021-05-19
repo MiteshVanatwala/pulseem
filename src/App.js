@@ -305,7 +305,11 @@ const App = () => {
   const classes = useClasses(windowSize, isRTL)()
   i18n.changeLanguage(language)
   const theme = getTheme(language)
-  const history = useHistory()
+  const history = useHistory();
+
+  if (isRTL) {
+    document.body.setAttribute("direction", "rtl");
+  }
 
   return (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>

@@ -431,5 +431,7 @@
   "chooseImage": "בחר תמונה...",
   "uploadNotice": "יש להעלות תמונה בפורמט png, jpeg, jpg,<br>בגודל של עד 1 מגה בייט<br>רזולציה מומלצת: <br>תמונה <b>512x256px</b>, אייקון  <b>192x192px</b>",
   "createFolder": "צור תיקייה",
-  "save": "שמור"
+  "save": "שמור",
+  "sentAlert": "נשלח!",
+  "yourCampaignOnItsWay": "הקמפיין שלך בדרך"
 }

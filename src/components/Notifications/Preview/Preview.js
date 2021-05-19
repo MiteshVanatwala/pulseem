@@ -157,7 +157,11 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                                     cursor: 'unset'
                                 }}>
                             </div>
-                        </div>) : (chooseIcon())
+                        </div>) : (
+                            <div className={classes.iconWrapper}>
+                                {chooseIcon()}
+                            </div>
+                        )
                         }
                         <div className={classes.notificationContent}>
                             <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title}</b></Typography>
