@@ -25,11 +25,11 @@ import {
   getScriptPath,getApiToken,updateScriptPath,setScriptDialog
 } from '../redux/reducers/notificationSlice';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-import Cookies from 'universal-cookie'
+import {getCookie,setCookie,cookieListener} from '../helpers/cookies'
 
 const NotificationManagement=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
-  const {notificationData,hideScriptDialog}=useSelector(state => state.notification)
+  const {notificationData}=useSelector(state => state.notification)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null);
@@ -55,8 +55,10 @@ const NotificationManagement=({classes}) => {
   const noBorderCellStyle={body: classes.tableCellBodyNoBorder,root: clsx(classes.tableCellRoot,classes.paddingRightLeft10,classes.minWidth75)}
   const borderCellStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.paddingRightLeft10,classes.minWidth75)}
   const baseUrl='https://www.pulseemdev.co.il/pulseem';
+  const scriptDialogCookie=getCookie('scriptDialog')
+  const hideScriptDialog=(scriptDialogCookie==='true')
+  const [showScriptDialog,setShowScriptDialog]=useState(!hideScriptDialog)
   const refScriptCode=useRef(null);
-  const cookies=new Cookies()
   moment.locale(language)
 
   const getData=() => {
@@ -152,11 +154,12 @@ const NotificationManagement=({classes}) => {
   }
 
   const handleImplementScript=(value) => {
+    console.log("handleImplementScript")
     if(value) {
-      cookies.set('scriptDialog',scriptDialog,{maxAge: 3600});
+      setCookie('scriptDialog',scriptDialog,{maxAge: 3600});
       dispatch(updateScriptPath(scriptPath));
     }
-    dispatch(setScriptDialog(true));
+    setShowScriptDialog(false)
   }
 
   const renderImplementDialog=() => {
@@ -168,7 +171,7 @@ const NotificationManagement=({classes}) => {
     return (
       <Dialog
         classes={classes}
-        open={!hideScriptDialog}
+        open={showScriptDialog}
         onClose={() => handleImplementScript(false)}
         {...dialog}>
         {dialog.content}

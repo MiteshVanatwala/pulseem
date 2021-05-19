@@ -1,6 +1,7 @@
 import axios from 'axios'
 import jwt_decode from "jwt-decode";
-import Cookies from 'universal-cookie';
+import {getCookie,setCookie} from './cookies';
+
 import moment from 'moment'
 
 const refreshTokenURL='https://www.pulseemdev.co.il/Pulseem/RefreshToken.ashx'
@@ -18,16 +19,15 @@ const instence=axios.create({
 
 instence.interceptors.request.use(async config => {
   try {
-    const cookies=new Cookies()
     const minimumTimeToUpdate=60
-    const jtoken=cookies.get('jtoken')
+    const jtoken=getCookie('jtoken')
     let token=jtoken
     if(jtoken) {
       const jwt=jwt_decode(jtoken)
       const currentUnix=moment().unix()
       const timeToExpires=jwt.exp-currentUnix
       if(timeToExpires<minimumTimeToUpdate) {
-        const language=cookies.get('Culture')
+        const language=getCookie('Culture')
         const {data,request}=await axios.get(refreshTokenURL,{
           headers: {
             language
@@ -38,7 +38,7 @@ instence.interceptors.request.use(async config => {
           return Promise.reject('Unautorized')
         }
         token=data
-        cookies.set('jtoken',token)
+        setCookie('jtoken',token)
       }
     }
     config.headers.Authorization=`Bearer ${token}`

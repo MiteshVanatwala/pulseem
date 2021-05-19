@@ -14,7 +14,7 @@ import {ReactComponent as QuestionIcon} from '../../assets/images/question.svg'
 import {FaBars,FaTimes} from 'react-icons/fa';
 import {getRoutes,getSettingsItem} from '../../helpers/routes'
 //import useCtrlHistory from '../../helpers/useCtrlHistory'
-import Cookies from 'universal-cookie'
+import {setCookie,getCookie} from '../../helpers/cookies'
 import {setScriptDialog} from '../../redux/reducers/notificationSlice';
 
 const AppBarItem=({
@@ -116,8 +116,7 @@ const AppBarItem=({
 }
 
 const LanguageSelector=({classes}) => {
-  const cookies=new Cookies()
-  const cookieData=cookies.get('Culture');
+  const cookieData=getCookie('Culture');
   const language=!!cookieData? cookieData:'he-IL';
   const dispatch=useDispatch();
   //dispatch(setLanguage(language.split('-')[0]));
@@ -139,7 +138,7 @@ const LanguageSelector=({classes}) => {
 
   const changeLanguage=option => {
     const {value}=option
-    cookies.set('Culture',value);
+    setCookie('Culture',value);
     dispatch(setLanguage(value.split('-')[0]));
   }
 
@@ -158,12 +157,11 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
-  const cookies=new Cookies()
   //const history=useCtrlHistory()
   const dispatch=useDispatch();
 
   const handleScriptDialog=() => {
-    let scriptDialog=cookies.get('scriptDialog');
+    let scriptDialog=getCookie('scriptDialog');
     scriptDialog=(scriptDialog==='true');
     dispatch(setScriptDialog(scriptDialog));
   }
@@ -190,7 +188,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
 
   const navigate=({uri}) => {
     if(!!uri) {
-      cookies.set('scriptDialog',false,{maxAge: 3600});
+      setCookie('scriptDialog',false,{maxAge: 3600});
       dispatch(setScriptDialog(false));
       window.location.href=uri
     }

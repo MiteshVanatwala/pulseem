@@ -4,7 +4,7 @@ import AutomationManagment from './screens/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPagesesManagment'
 import MmsManagment from './screens/MmsManagment';
 import SmsManagment from './screens/SmsManagment';
-import Cookies from 'universal-cookie';
+import {getCookie,setCookie,cookieListener} from './helpers/cookies'
 import {create} from 'jss';
 import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
@@ -21,7 +21,6 @@ import MomentUtils from '@date-io/moment';
 import {useHistory} from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/NotificationManagement';
-const cookies=new Cookies();
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -320,7 +319,7 @@ const App=() => {
   useEffect(() => {
 
     const updateToken=() => {
-      const token=cookies.get('jtoken')
+      const token=getCookie('jtoken')
       if(!token) return
       const jwt=jwt_decode(token)
       console.log('JWT',jwt)
@@ -336,7 +335,7 @@ const App=() => {
 
       dispatch(setCoreData({email,basename,phone,locality,imageURL,isWhiteLabel}))
       dispatch(setUsername(unique_name))
-      cookies.set('Culture',locality)
+      setCookie('Culture',locality)
     }
 
     const setWindowWidth=() => {
@@ -354,7 +353,7 @@ const App=() => {
     }
 
     window.addEventListener('resize',setWindowWidth)
-    cookies.addChangeListener((name) => {
+    cookieListener(({name}) => {
       if(name==='jtoken')
         updateToken()
     })
