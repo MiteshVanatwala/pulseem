@@ -30,7 +30,7 @@ export const ManagmentIcon=({
             [classes.managmentIconHide]: hide
           })}>
           <Box
-            component={href? 'div':'a'}
+            component={href? 'a':'div'}
             href={href}
             className={clsx(
               classes.managmentIconContainer,

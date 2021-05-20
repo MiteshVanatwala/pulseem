@@ -1,18 +1,18 @@
-const iconWidth={
+const iconWidth = {
   xs: 20,
   sm: 20,
   md: 25,
   lg: 25
 }
 
-const flex12={
+const flex12 = {
   xs: 5,
   sm: 5,
   md: 7,
   lg: 6
 }
 
-const iconPadding={
+const iconPadding = {
   xs: '0.8rem 1.1rem 0.8rem',
   sm: '0.8rem 1.1rem 0.2rem',
   md: '0.8rem 1.1rem 0.2rem',
@@ -20,7 +20,7 @@ const iconPadding={
   xl: '0.8rem 1.1rem 0.2rem'
 }
 
-const tableRowMinWidth={
+const tableRowMinWidth = {
   xs: 75,
   sm: 75,
   md: 75,
@@ -28,7 +28,7 @@ const tableRowMinWidth={
   xl: 100
 }
 
-export const getManagmentStyle=(windowSize,isRTL,theme) => ({
+export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   managementTitle: {
     fontSize: '36px',
     color: '#333333',
@@ -132,7 +132,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     justifyContent: 'center',
     textDecoration: 'none',
     width: '100%',
-    padding: iconPadding[windowSize]
+    padding: iconPadding[windowSize],
+    color: '#333'
   },
   managmentIcon: {
     width: iconWidth[windowSize],
@@ -317,18 +318,18 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     justifyContent: 'center'
   },
   flex12: {
-    flex: flex12[windowSize]||5,
+    flex: flex12[windowSize] || 5,
     borderBottom: 0,
     justifyContent: 'center'
   },
   cellIconsContainer: {
-    justifyContent: windowSize==='xs'? 'flex-start':'flex-end',
+    justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end',
   },
   datePickerInput: {
     paddingBlock: 10
   },
   datePickerButton: {
-    right: isRTL? 10:-10,
+    right: isRTL ? 10 : -10,
     padding: 10
   },
   groupsLableContainer: {
@@ -414,12 +415,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     }
   },
   tablePadingtonArrow: {
-    transform: isRTL? 'rotateY(0deg)':'rotateY(180deg)',
+    transform: isRTL ? 'rotateY(0deg)' : 'rotateY(180deg)',
     marginInlineStart: 10,
     padding: 10
   },
   tablePadingtonArrowOppisite: {
-    transform: isRTL? 'rotateY(180deg)':'rotateY(0deg)',
+    transform: isRTL ? 'rotateY(180deg)' : 'rotateY(0deg)',
     marginInlineEnd: 10,
     padding: 10
   },

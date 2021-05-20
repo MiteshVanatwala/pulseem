@@ -1,38 +1,38 @@
-import React,{useEffect} from 'react';
+import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/NewsletterManagment';
 import AutomationManagment from './screens/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPagesesManagment'
 import MmsManagment from './screens/MmsManagment';
 import SmsManagment from './screens/SmsManagment';
-import {getCookie,setCookie,cookieListener} from './helpers/cookies'
-import {create} from 'jss';
+import { getCookie, setCookie, cookieListener } from './helpers/cookies'
+import { create } from 'jss';
 import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
-import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
+import { StylesProvider, jssPreset, MuiThemeProvider } from '@material-ui/core/styles';
 import i18n from './i18n'
-import {BrowserRouter,useParams,Route} from 'react-router-dom';
-import {useSelector,useDispatch} from 'react-redux';
-import {setWindowSize,setCoreData} from './redux/reducers/coreSlice'
-import {setUsername} from './redux/reducers/userSlice'
-import {getTheme} from './style/theme'
-import {useClasses} from './style/classes/index'
-import {MuiPickersUtilsProvider} from '@material-ui/pickers';
+import { BrowserRouter, useParams, Route } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { setWindowSize, setCoreData } from './redux/reducers/coreSlice'
+import { setUsername } from './redux/reducers/userSlice'
+import { getTheme } from './style/theme'
+import { useClasses } from './style/classes/index'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-import {useHistory} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/NotificationManagement';
 import NotificationItem from './screens/Notifications/NotificationItem';
 
-const renderRoutes=(classes,history) => {
-  const transferUrl=(url='',param='') => () => {
-    const {campaignID,automationID,id,notificationID}=useParams()
-    const addParam={
+const renderRoutes = (classes, history) => {
+  const transferUrl = (url = '', param = '') => () => {
+    const { campaignID, automationID, id, notificationID } = useParams()
+    const addParam = {
       campaign: campaignID,
       automation: automationID,
       notification: notificationID,
       id: id
     }
-    window.location.href=`https://www.pulseemdev.co.il/${url}${addParam[param]||''}`
+    window.location.href = `https://www.pulseemdev.co.il/${url}${addParam[param] || ''}`
     return <></>
   }
   return (
@@ -44,27 +44,27 @@ const renderRoutes=(classes,history) => {
       />
       <Route
         path={`/notifications/edit/:notificationID`}
-        component={transferUrl('/Pulseem/notifications/Edit/','notification')}
+        component={transferUrl('/Pulseem/notifications/Edit/', 'notification')}
       />
       <Route
         path={`/SendCampaign/:campaignID`}
-        component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=','campaign')}
+        component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'campaign')}
       />
       <Route
         path={`/PreviewCampaign/:campaignID`}
-        component={transferUrl('/Pulseem/PreviewCampaign.aspx?CampaignID=','campaign')}
+        component={transferUrl('/Pulseem/PreviewCampaign.aspx?CampaignID=', 'campaign')}
       />
       <Route
         path={`/Editor/CampaignEdit/:campaignID`}
-        component={transferUrl('/Pulseem/Editor/CampaignEdit/','campaign')}
+        component={transferUrl('/Pulseem/Editor/CampaignEdit/', 'campaign')}
       />
       <Route
         path={`/DuplicateCampign/:campaignID`}
-        component={transferUrl('/Pulseem/DuplicateCampign/','campaign')}
+        component={transferUrl('/Pulseem/DuplicateCampign/', 'campaign')}
       />
       <Route
         path={`/CampaignStatistics/:campaignID`}
-        component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=','campaign')}
+        component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
       />
       <Route
         path={`/homepage`}
@@ -140,11 +140,11 @@ const renderRoutes=(classes,history) => {
       />
       <Route
         path={`/SMSPreviewCampaign/:id`}
-        component={transferUrl('/Pulseem/SMSPreviewCampaign.aspx?SMSCampaignID=','id')}
+        component={transferUrl('/Pulseem/SMSPreviewCampaign.aspx?SMSCampaignID=', 'id')}
       />
       <Route
         path={`/Edit/SMSCampaignEdit/:id`}
-        component={transferUrl('/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=','id')}
+        component={transferUrl('/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=', 'id')}
       />
 
       {/* MMS */}
@@ -158,26 +158,26 @@ const renderRoutes=(classes,history) => {
       />
       <Route
         path='/MmsCampaignEdit/:id'
-        component={transferUrl('/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=','id')}
+        component={transferUrl('/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=', 'id')}
       />
       <Route
         path='/MmsPreviewCampaign/:id'
-        component={transferUrl('/Pulseem/MmsPreviewCampaign.aspx?MmsCampaignID=','id')}
+        component={transferUrl('/Pulseem/MmsPreviewCampaign.aspx?MmsCampaignID=', 'id')}
       />
       <Route
         path='/SendMmsCampaign/:id'
-        component={transferUrl('/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=','id')}
+        component={transferUrl('/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=', 'id')}
       />
       {/* Landing Pages */}
 
       <Route
         path='/NewWebForm/NewFormEdit/:id'
-        component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/','id')}
+        component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
       />
 
       <Route
         path="/ClientSearchResult/:id"
-        component={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=','id')}
+        component={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=', 'id')}
       />
 
       <Route
@@ -257,15 +257,15 @@ const renderRoutes=(classes,history) => {
 
       <Route
         path="/EditAutomations/:id"
-        component={transferUrl('/Pulseem/CreateAutomations.aspx?AutomationID=','id')}
+        component={transferUrl('/Pulseem/CreateAutomations.aspx?AutomationID=', 'id')}
       />
       <Route
         path="/PreviewAutomations/:id"
-        component={transferUrl('/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=','id')}
+        component={transferUrl('/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=', 'id')}
       />
       <Route
         path="/AutomationReport/:id"
-        component={transferUrl('/Pulseem/automationreport.aspx?AutomationID=','id')}
+        component={transferUrl('/Pulseem/automationreport.aspx?AutomationID=', 'id')}
       />
       {/* Notifications */}
       <Route
@@ -317,7 +317,7 @@ const renderRoutes=(classes,history) => {
       <Route
         path={`/Support`}
         component={() => {
-          window.open("https://www.pulseem.co.il/Pages/Home.aspx?action=support","_blank")
+          window.open("https://www.pulseem.co.il/Pages/Home.aspx?action=support", "_blank")
           return null
         }}
       />
@@ -325,70 +325,70 @@ const renderRoutes=(classes,history) => {
   )
 }
 
-const App=() => {
-  const dispatch=useDispatch()
-  const {language,isRTL,windowSize}=useSelector(state => state.core)
+const App = () => {
+  const dispatch = useDispatch()
+  const { language, isRTL, windowSize } = useSelector(state => state.core)
 
   useEffect(() => {
 
-    const updateToken=() => {
-      const token=getCookie('jtoken')
-      if(!token) return
-      const jwt=jwt_decode(token)
-      console.log('JWT',jwt)
+    const updateToken = () => {
+      const token = getCookie('jtoken')
+      if (!token) return
+      const jwt = jwt_decode(token)
+      console.log('JWT', jwt)
       const {
-        email='',
-        unique_name='',
-        given_name: basename='',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone': phone='',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality': locality='he-IL',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince': imageURL='',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri': isWhiteLabel=''
-      }=jwt
+        email = '',
+        unique_name = '',
+        given_name: basename = '',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone': phone = '',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality': locality = 'he-IL',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince': imageURL = '',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri': isWhiteLabel = ''
+      } = jwt
 
-      dispatch(setCoreData({email,basename,phone,locality,imageURL,isWhiteLabel}))
+      dispatch(setCoreData({ email, basename, phone, locality, imageURL, isWhiteLabel }))
       dispatch(setUsername(unique_name))
-      setCookie('Culture',locality)
+      setCookie('Culture', locality)
     }
 
-    const setWindowWidth=() => {
-      const {innerWidth}=window
-      let windowSize='xs'
-      if(innerWidth>769&&innerWidth<1024)
-        windowSize='sm'
-      else if(innerWidth>=1025&&innerWidth<1200)
-        windowSize='md'
-      else if(innerWidth>=1201&&innerWidth<1400)
-        windowSize='lg'
-      else if(innerWidth>=1401)
-        windowSize='xl'
+    const setWindowWidth = () => {
+      const { innerWidth } = window
+      let windowSize = 'xs'
+      if (innerWidth > 769 && innerWidth < 1024)
+        windowSize = 'sm'
+      else if (innerWidth >= 1025 && innerWidth < 1200)
+        windowSize = 'md'
+      else if (innerWidth >= 1201 && innerWidth < 1400)
+        windowSize = 'lg'
+      else if (innerWidth >= 1401)
+        windowSize = 'xl'
       dispatch(setWindowSize(windowSize))
     }
 
-    window.addEventListener('resize',setWindowWidth)
-    cookieListener(({name}) => {
-      if(name==='jtoken')
+    window.addEventListener('resize', setWindowWidth)
+    cookieListener(({ name }) => {
+      if (name === 'jtoken')
         updateToken()
     })
     updateToken()
     setWindowWidth()
-  },[dispatch])
+  }, [dispatch])
 
   useEffect(() => {
     i18n.changeLanguage(language)
-  },[language])
+  }, [language])
 
 
-  const classes=useClasses(windowSize,isRTL)()
-  const theme=getTheme(language)
-  const history=useHistory()
+  const classes = useClasses(windowSize, isRTL)()
+  const theme = getTheme(language)
+  const history = useHistory()
 
 
   return (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
-        <div dir={isRTL? 'rtl':'ltr'}>
-          {renderRoutes(classes,history)}
+        <div dir={isRTL ? 'rtl' : 'ltr'}>
+          {renderRoutes(classes, history)}
         </div>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider>
@@ -396,8 +396,8 @@ const App=() => {
   )
 }
 
-const AppContainer=() => {
-  const jss=create({plugins: [...jssPreset().plugins,rtl()]});
+const AppContainer = () => {
+  const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
 
   return (
     <StylesProvider jss={jss}>

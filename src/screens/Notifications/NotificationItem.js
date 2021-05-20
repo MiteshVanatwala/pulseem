@@ -194,7 +194,7 @@ const NotificationItem = ({ props, classes }) => {
         });
       }
       if (isExit) {
-        history.push("/Notification");
+        history.push("/Notifications");
       }
     }
   }
@@ -214,7 +214,7 @@ const NotificationItem = ({ props, classes }) => {
           setToastMessage(toastMessages.SAVE_SETTINGS);
         }
         else {
-          history.push("/Notification");
+          history.push("/Notifications");
         }
       }
       else {
@@ -279,7 +279,7 @@ const NotificationItem = ({ props, classes }) => {
     }
   }
   const handleSendConfirm = () => {
-    history.push("/Notification");
+    history.push("/Notifications");
   }
   const renderSentDialog = () => {
     if (campaignSent) {
@@ -327,7 +327,7 @@ const NotificationItem = ({ props, classes }) => {
   /* #endregion */
   /* #region  Wizard steps */
   const handleCancel = () => {
-    history.push("/Notification");
+    history.push("/Notifications");
   };
   const handleBack = () => {
     history.push(`/Notification/edit/${model.ID}`);

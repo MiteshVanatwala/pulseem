@@ -1,16 +1,16 @@
 import axios from 'axios'
 import jwt_decode from "jwt-decode";
-import {getCookie,setCookie} from './cookies';
+import { getCookie, setCookie } from './cookies';
 
 import moment from 'moment'
 
-const refreshTokenURL='https://www.pulseemdev.co.il/Pulseem/RefreshToken.ashx'
+const refreshTokenURL = 'https://www.pulseemdev.co.il/Pulseem/RefreshToken.ashx'
 
-const redirectToLogin=() => {
-  //window.location.href='/Pulseem/Login.aspx?ReturnUrl=/Pulseem/homepage.aspx'
+const redirectToLogin = () => {
+  window.location.href='/Pulseem/Login.aspx?ReturnUrl=/Pulseem/homepage.aspx'
 }
 
-const instence=axios.create({
+const instence = axios.create({
   // baseURL: 'http://pulseemsiteapi4react.pulseemdev.co.il/api/',
   baseURL: 'http://siteapi.pulseem.com/api/',
   //baseURL: 'http://api.develop.com/api',
@@ -21,34 +21,33 @@ const instence=axios.create({
 
 instence.interceptors.request.use(async config => {
   try {
-    const minimumTimeToUpdate=60
-    const jtoken=getCookie('jtoken')
-    let token=jtoken
-    if(jtoken) {
-      const jwt=jwt_decode(jtoken)
-      const currentUnix=moment().unix()
-      const timeToExpires=jwt.exp-currentUnix
-      if(timeToExpires<minimumTimeToUpdate) {
-        const language=getCookie('Culture')
-        const {data,request}=await axios.get(refreshTokenURL,{
+    const minimumTimeToUpdate = 60
+    const jtoken = getCookie('jtoken')
+    let token = jtoken
+    if (jtoken) {
+      const jwt = jwt_decode(jtoken)
+      const currentUnix = moment().unix()
+      const timeToExpires = jwt.exp - currentUnix
+      if (timeToExpires < minimumTimeToUpdate) {
+        const language = getCookie('Culture')
+        const { data, request } = await axios.get(refreshTokenURL, {
           headers: {
             language
           }
         })
-        if(refreshTokenURL!==request.responseURL) {
+        if (refreshTokenURL !== request.responseURL) {
           redirectToLogin()
           return Promise.reject('Unautorized')
         }
-        token=data
-        setCookie('jtoken',token)
+        token = data
+        setCookie('jtoken', token)
       }
     }
-    config.headers.Authorization=`Bearer ${token}`
+    config.headers.Authorization = `Bearer ${token}`
     return config
-  } catch(err) {
+  } catch (err) {
     redirectToLogin()
   }
-
 })
 
 export default instence

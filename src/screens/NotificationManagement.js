@@ -1,68 +1,68 @@
-import React,{useState,useEffect,useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from './DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,IconButton,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio,FormGroup,FormControl
+  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, IconButton, InputAdornment, Input, Box, FormControlLabel, Checkbox, Select, MenuItem, CardMedia, Card, CardContent, RadioGroup, Radio, FormGroup, FormControl
 } from '@material-ui/core'
 import {
-  DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
-  GroupsIcon,PreviewIcon
+  DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
+  GroupsIcon, PreviewIcon
 } from '../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,DateField,Dialog
+  TablePagination, ManagmentIcon, DateField, Dialog
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import useCtrlHistory from '../helpers/useCtrlHistory'
-import {useSelector,useDispatch} from 'react-redux'
-import {useTranslation} from 'react-i18next'
+import { useSelector, useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
 import {
-  getNotificationById,getNotificationGroups,getNotificationData,getDeletedNotifications,
-  duplicateNotification,deleteNotification,getNotificationGroupsById,restoreNotifications,
-  getScriptPath,getApiToken,updateScriptPath,setScriptDialog
+  getNotificationById, getNotificationGroups, getNotificationData, getDeletedNotifications,
+  duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
+  getScriptPath, getApiToken, updateScriptPath, setScriptDialog
 } from '../redux/reducers/notificationSlice';
-import {CopyToClipboard} from 'react-copy-to-clipboard';
-import {Preview} from '../components/Notifications/Preview/Preview';
-import {getCookie,setCookie,cookieListener} from '../helpers/cookies'
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Preview } from '../components/Notifications/Preview/Preview';
+import { getCookie, setCookie, cookieListener } from '../helpers/cookies'
 
-const NotificationManagement=({classes}) => {
-  const {language,windowSize}=useSelector(state => state.core)
-  const {notificationData}=useSelector(state => state.notification)
-  const {t}=useTranslation()
-  const [fromDate,handleFromDate]=useState(null);
-  const [toDate,handleToDate]=useState(null);
-  const [scriptDialog,handleScriptDialogCheck]=useState(false);
-  const [notificationNameSearch,setNotificationNameSearch]=useState('');
-  const [scriptDirectory,setScriptDirectory]=useState(0);
-  const [copyStatus,setCopyStatus]=useState(false);
-  const [scriptPath,setScriptPath]=useState(0);
-  const [apiToken,setApiToken]=useState(0);
-  const rowsOptions=[6,12,18]
-  const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
-  const [page,setPage]=useState(1)
-  const [searchArray,setSearchArray]=useState(null)
-  const [dialogType,setDialogType]=useState(null)
-  const [restoreArray,setRestoreArray]=useState([]);
-  const history=useCtrlHistory()
-  const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
-  const dispatch=useDispatch()
-  const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
-  const cellStyle={head: classes.tableCellHead,root: clsx(classes.tableCellRoot,classes.paddingHead)}
-  const cell50wStyle={head: clsx(classes.tableCellHead),root: clsx(classes.tableCellRoot,classes.paddingHead,classes.minWidth75)}
-  const cellBodyStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.paddingRightLeft10)}
-  const noBorderCellStyle={body: classes.tableCellBodyNoBorder,root: clsx(classes.tableCellRoot,classes.paddingRightLeft10,classes.minWidth75)}
-  const borderCellStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.paddingRightLeft10,classes.minWidth75)}
-  const baseUrl='https://www.pulseemdev.co.il/pulseem';
-  const scriptDialogCookie=getCookie('scriptDialog')
-  const hideScriptDialog=(scriptDialogCookie==='true')
-  const [showScriptDialog,setShowScriptDialog]=useState(!hideScriptDialog)
-  const refScriptCode=useRef(null);
+const NotificationManagement = ({ classes }) => {
+  const { language, windowSize } = useSelector(state => state.core)
+  const { notificationData } = useSelector(state => state.notification)
+  const { t } = useTranslation()
+  const [fromDate, handleFromDate] = useState(null);
+  const [toDate, handleToDate] = useState(null);
+  const [scriptDialog, handleScriptDialogCheck] = useState(false);
+  const [notificationNameSearch, setNotificationNameSearch] = useState('');
+  const [scriptDirectory, setScriptDirectory] = useState(0);
+  const [copyStatus, setCopyStatus] = useState(false);
+  const [scriptPath, setScriptPath] = useState(0);
+  const [apiToken, setApiToken] = useState(0);
+  const rowsOptions = [6, 12, 18]
+  const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
+  const [page, setPage] = useState(1)
+  const [searchArray, setSearchArray] = useState(null)
+  const [dialogType, setDialogType] = useState(null)
+  const [restoreArray, setRestoreArray] = useState([]);
+  const history = useCtrlHistory()
+  const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
+  const dispatch = useDispatch()
+  const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
+  const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
+  const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth75) }
+  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.paddingRightLeft10) }
+  const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.paddingRightLeft10, classes.minWidth75) }
+  const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.paddingRightLeft10, classes.minWidth75) }
+  const baseUrl = 'https://www.pulseemdev.co.il/pulseem';
+  const scriptDialogCookie = getCookie('scriptDialog')
+  const hideScriptDialog = (scriptDialogCookie === 'true')
+  const [showScriptDialog, setShowScriptDialog] = useState(!hideScriptDialog)
+  const refScriptCode = useRef(null);
   moment.locale(language)
 
-  const getData=() => {
+  const getData = () => {
     dispatch(getNotificationData());
   }
 
@@ -70,47 +70,47 @@ const NotificationManagement=({classes}) => {
     handleScriptPath();
     handleApiToken();
     getData();
-  },[dispatch]);
+  }, [dispatch]);
 
-  const handleScriptPath=async () => {
-    const scriptPath=await dispatch(getScriptPath());
-    const path=(scriptPath&&scriptPath.payload)||'';
+  const handleScriptPath = async () => {
+    const scriptPath = await dispatch(getScriptPath());
+    const path = (scriptPath && scriptPath.payload) || '';
     setScriptPath(path);
   }
 
-  const handleApiToken=async () => {
-    const apiToken=await dispatch(getApiToken());
-    const token=(apiToken&&apiToken.payload&&apiToken.payload.PublicKey)||'';
+  const handleApiToken = async () => {
+    const apiToken = await dispatch(getApiToken());
+    const token = (apiToken && apiToken.payload && apiToken.payload.PublicKey) || '';
     setApiToken(token);
   }
 
-  const handleScriptDirectory=async (event) => {
-    const value=parseInt(event.target.value);
+  const handleScriptDirectory = async (event) => {
+    const value = parseInt(event.target.value);
     setScriptDirectory(value);
   }
 
-  const handleCopyScript=() => {
+  const handleCopyScript = () => {
     setCopyStatus(true);
     setTimeout(() => {
       setCopyStatus(false);
-    },1000);
+    }, 1000);
   }
 
-  const handleScriptPathChange=(event) => {
+  const handleScriptPathChange = (event) => {
     setScriptPath(event.target.value);
   }
 
-  const handlePreview=async (ID) => {
-    const item=await dispatch(getNotificationById(ID));
+  const handlePreview = async (ID) => {
+    const item = await dispatch(getNotificationById(ID));
     setDialogType({
       type: 'preview',
       data: item.payload
     })
   }
 
-  const handleShowGroups=async (ID) => {
-    const item=await dispatch(getNotificationGroups(ID));
-    if(item&&item.payload) {
+  const handleShowGroups = async (ID) => {
+    const item = await dispatch(getNotificationGroups(ID));
+    if (item && item.payload) {
 
     }
     setDialogType({
@@ -119,34 +119,34 @@ const NotificationManagement=({classes}) => {
     })
   }
 
-  const handleShowGroupsById=async (ID) => {
-    const item=await dispatch(getNotificationGroupsById(ID));
+  const handleShowGroupsById = async (ID) => {
+    const item = await dispatch(getNotificationGroupsById(ID));
     setDialogType({
       type: 'groupsById',
       data: item.payload
     })
   }
 
-  const handleDuplicate=async (ID) => {
-    const res=await dispatch(duplicateNotification(ID));
+  const handleDuplicate = async (ID) => {
+    const res = await dispatch(duplicateNotification(ID));
     clearSearch();
-    if(!res.error) {
+    if (!res.error) {
       dispatch(getNotificationData());
     }
     handleDialogClose();
   }
 
-  const handleDeleteNotification=async (ID) => {
-    const res=await dispatch(deleteNotification(ID));
-    if(res.payload===true&&!res.error) {
+  const handleDeleteNotification = async (ID) => {
+    const res = await dispatch(deleteNotification(ID));
+    if (res.payload === true && !res.error) {
       dispatch(getNotificationData());
     }
     handleDialogClose();
   }
 
-  const handleShowDeletedItems=async () => {
-    const res=await dispatch(getDeletedNotifications());
-    if(!res.error) {
+  const handleShowDeletedItems = async () => {
+    const res = await dispatch(getDeletedNotifications());
+    if (!res.error) {
       setDialogType({
         type: 'restore',
         data: res.payload
@@ -154,21 +154,21 @@ const NotificationManagement=({classes}) => {
     }
   }
 
-  const handleImplementScript=(value) => {
+  const handleImplementScript = (value) => {
     console.log("handleImplementScript")
-    if(value) {
-      setCookie('scriptDialog',scriptDialog,{maxAge: 3600});
+    if (value) {
+      setCookie('scriptDialog', scriptDialog, { maxAge: 3600 });
       dispatch(updateScriptPath(scriptPath));
     }
     setShowScriptDialog(false)
   }
 
-  const renderImplementDialog=() => {
-    if(hideScriptDialog) {
+  const renderImplementDialog = () => {
+    if (hideScriptDialog) {
       return;
     }
 
-    const dialog=renderImplement();
+    const dialog = renderImplement();
     return (
       <Dialog
         classes={classes}
@@ -180,7 +180,7 @@ const NotificationManagement=({classes}) => {
     );
   }
 
-  const renderHeader=() => {
+  const renderHeader = () => {
     return (
       <>
         <Typography className={classes.managementTitle}>
@@ -191,19 +191,19 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const clearSearch=() => {
+  const clearSearch = () => {
     setNotificationNameSearch('')
     handleFromDate(null)
     handleToDate(null)
     setSearchArray(null)
   }
 
-  const renderSearchSection=() => {
-    const handleSearch=() => {
+  const renderSearchSection = () => {
+    const handleSearch = () => {
       setSearchArray([{
         type: 'name',
         notificationName: notificationNameSearch
-      },{
+      }, {
         type: 'date',
         fromDate,
         toDate
@@ -211,14 +211,14 @@ const NotificationManagement=({classes}) => {
       setPage(1);
     }
 
-    const handleFromDateChange=(value) => {
-      if(value>toDate) {
+    const handleFromDateChange = (value) => {
+      if (value > toDate) {
         handleToDate(null);
       }
       handleFromDate(value);
     }
 
-    const handleNotificationNameChange=event => {
+    const handleNotificationNameChange = event => {
       setNotificationNameSearch(event.target.value)
     }
 
@@ -257,7 +257,7 @@ const NotificationManagement=({classes}) => {
           />
         </Grid>
 
-        {windowSize!=='xs'?
+        {windowSize !== 'xs' ?
           <Grid item>
             <DateField
               classes={classes}
@@ -266,19 +266,19 @@ const NotificationManagement=({classes}) => {
               placeholder={t('mms.locFromDateResource1.Text')}
             />
           </Grid>
-          :null}
+          : null}
 
-        {windowSize!=='xs'?
+        {windowSize !== 'xs' ?
           <Grid item>
             <DateField
               classes={classes}
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
-              minDate={fromDate? fromDate:''}
+              minDate={fromDate ? fromDate : ''}
             />
           </Grid>
-          :null}
+          : null}
 
         <Grid item>
           <Button
@@ -290,7 +290,7 @@ const NotificationManagement=({classes}) => {
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
-        {searchArray&&<Grid item>
+        {searchArray && <Grid item>
           <Button
             size='large'
             variant='contained'
@@ -304,7 +304,7 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const renderManagmentLine=() => {
+  const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
         <Grid item>
@@ -352,7 +352,7 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const renderTableHead=() => {
+  const renderTableHead = () => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
@@ -360,23 +360,23 @@ const NotificationManagement=({classes}) => {
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.toSend")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.sent")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.failed")}</TableCell>
-          <TableCell classes={cellStyle} className={clsx(classes.flex1,classes.minWidth75)} align='center'>{t("notifications.tblHeader.clicks")}</TableCell>
-          <TableCell classes={cellStyle} className={clsx(classes.flex1,classes.minWidth75)} align='center'>{t("notifications.tblHeader.status")}</TableCell>
+          <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.minWidth75)} align='center'>{t("notifications.tblHeader.clicks")}</TableCell>
+          <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.minWidth75)} align='center'>{t("notifications.tblHeader.status")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex12} ></TableCell>
         </TableRow>
       </TableHead>
     )
   }
 
-  const renderCellIcons=(row) => {
-    const {StatusID,groups,ID}=row
+  const renderCellIcons = (row) => {
+    const { StatusID, groups, ID } = row
 
-    const iconsMap=[
+    const iconsMap = [
       {
         key: 'send',
         icon: SendGreenIcon,
         lable: t('notifications.buttons.send'),
-        remove: StatusID!==0,
+        remove: StatusID !== 0,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         onClick: () => {
@@ -395,9 +395,9 @@ const NotificationManagement=({classes}) => {
       {
         key: 'edit',
         icon: EditIcon,
-        disable: StatusID!==0,
+        disable: StatusID !== 0,
         lable: t('notifications.buttons.edit'),
-        href: `/Pulseem/notifications/Edit/${ID}`,
+        href: `/react/notification/Edit/${ID}`,
         rootClass: classes.paddingIcon
       },
       {
@@ -415,7 +415,7 @@ const NotificationManagement=({classes}) => {
       {
         key: 'groups',
         icon: GroupsIcon,
-        disable: groups&&groups.length===0,
+        disable: groups && groups.length === 0,
         lable: t('notifications.buttons.groups'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -440,7 +440,7 @@ const NotificationManagement=({classes}) => {
       <Grid
         container
         direction='row'
-        justify={windowSize==='xs'? 'flex-start':'flex-end'}>
+        justify={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
             key={icon.key}
@@ -455,8 +455,8 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const renderStatusCell=(status) => {
-    const statuses={
+  const renderStatusCell = (status) => {
+    const statuses = {
       0: 'common.Created',
       2: 'common.Pending',
       3: 'common.Sending',
@@ -470,12 +470,12 @@ const NotificationManagement=({classes}) => {
           classes.wrapText,
           classes.recipientsStatus,
           {
-            [classes.statusCreated]: status===0,
-            [classes.statusPending]: status===2,
-            [classes.statusSending]: status===3,
-            [classes.statusSent]: status===4,
-            [classes.statusScheduled]: status===5,
-            [classes.statusFailed]: status===7,
+            [classes.statusCreated]: status === 0,
+            [classes.statusPending]: status === 2,
+            [classes.statusSending]: status === 3,
+            [classes.statusSent]: status === 4,
+            [classes.statusScheduled]: status === 5,
+            [classes.statusFailed]: status === 7,
           }
         )}>
           {t(statuses[status])}
@@ -484,48 +484,48 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const renderTotalCell=(value,type) => {
-    let count=value;
-    if(type==="error") {
-      count=value.UnSubscribed+value.FailedCount;
+  const renderTotalCell = (value, type) => {
+    let count = value;
+    if (type === "error") {
+      count = value.UnSubscribed + value.FailedCount;
     }
 
     return (
       <div>
-        <Typography className={clsx(classes.middleText,classes.fontBold,type==="error"&&classes.errorText)}>
+        <Typography className={clsx(classes.middleText, classes.fontBold, type === "error" && classes.errorText)}>
           {count.toLocaleString()}
         </Typography>
-        <Typography className={clsx(classes.middleText,type==="error"&&classes.errorText)}>
+        <Typography className={clsx(classes.middleText, type === "error" && classes.errorText)}>
           {t("notifications.tblBody.total")}
         </Typography>
       </div>
     )
   }
 
-  const renderClickCell=(value,type) => {
+  const renderClickCell = (value, type) => {
     return (
       <>
-        <Typography className={clsx(classes.middleText,classes.fontBold,type==="error"&&classes.errorText)}>
+        <Typography className={clsx(classes.middleText, classes.fontBold, type === "error" && classes.errorText)}>
           {value.toLocaleString()}
         </Typography>
-        <Typography className={clsx(classes.middleText,type==="error"&&classes.errorText)}>
+        <Typography className={clsx(classes.middleText, type === "error" && classes.errorText)}>
           {t("notifications.tblBody.clicks")}
         </Typography>
       </>
     )
   }
 
-  const renderNameCell=(row) => {
-    let date=null
-    let text=''
-    if(!row.SendDate) {
-      date=moment(row.UpdatedDate,dateFormat)
-      text=t('common.UpdatedOn')
+  const renderNameCell = (row) => {
+    let date = null
+    let text = ''
+    if (!row.SendDate) {
+      date = moment(row.UpdatedDate, dateFormat)
+      text = t('common.UpdatedOn')
     } else {
-      date=moment(row.SendDate,dateFormat)
-      const dateMillis=date.valueOf()
-      const currentDateMillis=moment().valueOf()
-      text=dateMillis>currentDateMillis? t('common.WillBeSentOn'):t('common.SentOn')
+      date = moment(row.SendDate, dateFormat)
+      const dateMillis = date.valueOf()
+      const currentDateMillis = moment().valueOf()
+      text = dateMillis > currentDateMillis ? t('common.WillBeSentOn') : t('common.SentOn')
     }
 
     return (
@@ -533,15 +533,15 @@ const NotificationManagement=({classes}) => {
         <Typography noWrap={false} className={classes.nameEllipsis}>
           {row.Name}
         </Typography>
-        <Typography style={{'WebkitLineClamp': 1}}>
+        <Typography style={{ 'WebkitLineClamp': 1 }}>
           {`${text} ${date.format('L')} ${date.format('LT')}`}
         </Typography>
       </>
     )
   }
 
-  const renderRow=(row) => {
-    console.log(`renderRow(): row`,row)
+  const renderRow = (row) => {
+    console.log(`renderRow(): row`, row)
     return (
       <TableRow
         key={row.ID}
@@ -568,24 +568,24 @@ const NotificationManagement=({classes}) => {
           classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderTotalCell(row,"error")}
+          {renderTotalCell(row, "error")}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={clsx(classes.flex1,classes.minWidth75)}>
+          className={clsx(classes.flex1, classes.minWidth75)}>
           {renderClickCell(row.ClickCount)}
         </TableCell>
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={clsx(classes.flex1,classes.minWidth75)}>
+          className={clsx(classes.flex1, classes.minWidth75)}>
           {renderStatusCell(row.StatusID)}
         </TableCell>
         <TableCell
           component="th"
           scope="row"
-          classes={{root: clsx(classes.tableCellRoot,classes.paddingRightLeft10)}}
+          classes={{ root: clsx(classes.tableCellRoot, classes.paddingRightLeft10) }}
           className={classes.flex12}>
           {renderCellIcons(row)}
 
@@ -594,13 +594,13 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const renderPhoneRow=(row) => {
+  const renderPhoneRow = (row) => {
     return (
       <TableRow
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell classes={{root: clsx(classes.tableCellRoot,classes.flex1)}}>
+        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1) }}>
           <Grid container justify='space-between'>
             <Grid item>
               {renderNameCell(row)}
@@ -615,55 +615,55 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const renderTableBody=() => {
-    const filtersObject={
-      name: (row,values) => {
+  const renderTableBody = () => {
+    const filtersObject = {
+      name: (row, values) => {
         return String(row.Name.toLowerCase()).startsWith(values.notificationName.toLowerCase());
       },
-      date: (row,values) => {
-        const {UpdatedDate,SendDate}=row
-        const lastUpdate=SendDate?
-          moment(SendDate,dateFormat).valueOf()
-          :moment(UpdatedDate,dateFormat).valueOf()
-        if(fromDate&&toDate)
-          return ((lastUpdate>=values.fromDate.valueOf())&&(lastUpdate<=values.toDate.valueOf()))
-        if(fromDate)
-          return lastUpdate>=values.fromDate.valueOf()
-        if(toDate)
-          return lastUpdate<=values.toDate.valueOf()
+      date: (row, values) => {
+        const { UpdatedDate, SendDate } = row
+        const lastUpdate = SendDate ?
+          moment(SendDate, dateFormat).valueOf()
+          : moment(UpdatedDate, dateFormat).valueOf()
+        if (fromDate && toDate)
+          return ((lastUpdate >= values.fromDate.valueOf()) && (lastUpdate <= values.toDate.valueOf()))
+        if (fromDate)
+          return lastUpdate >= values.fromDate.valueOf()
+        if (toDate)
+          return lastUpdate <= values.toDate.valueOf()
         return true
       }
     }
 
-    let sortData=notificationData;
-    if(searchArray) {
+    let sortData = notificationData;
+    if (searchArray) {
       searchArray.forEach(values => {
-        sortData=sortData.filter(row => filtersObject[values.type](row,values))
+        sortData = sortData.filter(row => filtersObject[values.type](row, values))
 
       })
     }
 
-    sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    sortData = sortData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
     return (
       <TableBody>
         {sortData
-          .map(windowSize==='xs'? renderPhoneRow:renderRow)}
+          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
       </TableBody>
     )
   }
 
-  const renderTable=() => {
+  const renderTable = () => {
     return (
       <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
-          {windowSize!=='xs'&&renderTableHead()}
+          {windowSize !== 'xs' && renderTableHead()}
           {renderTableBody()}
         </Table>
       </TableContainer>
     )
   }
 
-  const renderTablePagination=() => {
+  const renderTablePagination = () => {
     return (
       <TablePagination
         classes={classes}
@@ -677,26 +677,21 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const handleChange=(id) => () => {
-    const found=restoreArray.includes(id)
-    if(found) {
-      setRestoreArray(restoreArray.filter(restore => restore!==id))
+  const handleChange = (id) => () => {
+    const found = restoreArray.includes(id)
+    if (found) {
+      setRestoreArray(restoreArray.filter(restore => restore !== id))
     } else {
-      setRestoreArray([...restoreArray,id])
+      setRestoreArray([...restoreArray, id])
     }
   }
 
-  const handleDialogClose=() => {
+  const handleDialogClose = () => {
     setDialogType(null);
 
   }
 
-  const renderPreview=(data={}) => {
-    const image=data.Image
-    const name=data.Name
-    const title=data.Title
-    const body=data.Body;
-    const redirectButtonText=data.RedirectButtonText;
+  const renderPreview = (data = {}) => {
     return {
       showDivider: false,
       icon: (
@@ -707,8 +702,8 @@ const NotificationManagement=({classes}) => {
       content: (
         <Box className={classes.dialogBox}>
           <Preview classes={classes}
-            model={dialogType.data}
-            ShowRedirectButton={dialogType.data.RedirectButtonText&&dialogType.data.RedirectButtonText!=''}
+            model={data}
+            ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
             showTitle={false}
           />
         </Box>
@@ -728,8 +723,8 @@ const NotificationManagement=({classes}) => {
     };
   }
 
-  const renderRestore=(data=[]) => {
-    if(!data||!Array.isArray(data)) return null
+  const renderRestore = (data = []) => {
+    if (!data || !Array.isArray(data)) return null
     return {
       title: t('notifications.restoreTitle'),
       showDivider: false,
@@ -745,7 +740,7 @@ const NotificationManagement=({classes}) => {
             classes.dialogBox
           )}>
           {data.map(row => {
-            const checked=restoreArray.includes(row.ID)
+            const checked = restoreArray.includes(row.ID)
             return (
               <FormControlLabel
                 key={row.ID}
@@ -766,8 +761,8 @@ const NotificationManagement=({classes}) => {
         </Box>
       ),
       onConfirm: async () => {
-        const res=await dispatch(restoreNotifications(restoreArray));
-        if(!res.error) {
+        const res = await dispatch(restoreNotifications(restoreArray));
+        if (!res.error) {
           dispatch(getNotificationData());
         }
         handleDialogClose();
@@ -775,8 +770,8 @@ const NotificationManagement=({classes}) => {
     }
   }
 
-  const renderGroups=(data=[]) => {
-    if(!data||!Array.isArray(data)) return null
+  const renderGroups = (data = []) => {
+    if (!data || !Array.isArray(data)) return null
     return {
       title: t('notifications.myGroups'),
       showDivider: false,
@@ -822,8 +817,8 @@ const NotificationManagement=({classes}) => {
     }
   }
 
-  const renderGroupsById=(data=[]) => {
-    if(!data||!Array.isArray(data)) return null
+  const renderGroupsById = (data = []) => {
+    if (!data || !Array.isArray(data)) return null
     return {
       title: t('notifications.groupsByIdTitle'),
       showDivider: false,
@@ -834,7 +829,7 @@ const NotificationManagement=({classes}) => {
       ),
       content: (
         <Box
-          className={clsx(classes.gruopsDialogContent,classes.dialogBox)}>
+          className={clsx(classes.gruopsDialogContent, classes.dialogBox)}>
           {data.map(group => {
             return (
               <Typography
@@ -863,7 +858,7 @@ const NotificationManagement=({classes}) => {
     }
   }
 
-  const renderDelete=(ID) => {
+  const renderDelete = (ID) => {
     return {
       title: t('notifications.deleteTitle'),
       showDivider: false,
@@ -886,7 +881,7 @@ const NotificationManagement=({classes}) => {
     }
   }
 
-  const renderDuplicate=(ID) => {
+  const renderDuplicate = (ID) => {
     return {
       title: t('notifications.duplicateTitle'),
       showDivider: false,
@@ -909,8 +904,8 @@ const NotificationManagement=({classes}) => {
     }
   }
 
-  const renderScriptCode=() => {
-    let scriptCode=`&lt;script type="text/javascript"&gt;
+  const renderScriptCode = () => {
+    let scriptCode = `&lt;script type="text/javascript"&gt;
     (function(d, t) {
         var g = d.createElement(t),
         s = d.getElementsByTagName(t)[0];
@@ -922,22 +917,22 @@ const NotificationManagement=({classes}) => {
 &lt;/script&gt;`;
 
     return scriptCode
-      .replace("#key#",'"'+encodeURI(apiToken)+'"')
-      .replace("&lt;","<")
-      .replace("&gt;",">")
-      .replace("&lt;","<")
-      .replace("&gt;",">")
-      .replace("#scriptSource#",baseUrl)
+      .replace("#key#", '"' + encodeURI(apiToken) + '"')
+      .replace("&lt;", "<")
+      .replace("&gt;", ">")
+      .replace("&lt;", "<")
+      .replace("&gt;", ">")
+      .replace("#scriptSource#", baseUrl)
       .replace(
         "#scriptpath#",
-        scriptDirectory!==0&&scriptPath!==''
-          ? 'g.setAttribute("swfolder", "'+scriptPath+'");'
-          :""
+        scriptDirectory !== 0 && scriptPath !== ''
+          ? 'g.setAttribute("swfolder", "' + scriptPath + '");'
+          : ""
       )
-      .replace(/(^[ \t]*\n)/gm,"");
+      .replace(/(^[ \t]*\n)/gm, "");
   }
 
-  const renderImplement=() => {
+  const renderImplement = () => {
     return {
       title: null,
       showDivider: false,
@@ -953,7 +948,7 @@ const NotificationManagement=({classes}) => {
             {t('notifications.implementDialog.beforeYouStarted')}
           </Typography>
           <Typography
-            className={clsx(classes.f18,classes.pb10)}>
+            className={clsx(classes.f18, classes.pb10)}>
             {t('notifications.implementDialog.startSendingOutMessage')}
           </Typography>
           <Typography>
@@ -967,20 +962,20 @@ const NotificationManagement=({classes}) => {
             </Typography>
             <RadioGroup row value={scriptDirectory} onChange={handleScriptDirectory} className={classes.radioGroup}>
               <FormControlLabel
-                key={Math.round(Math.random()*999999999)}
+                key={Math.round(Math.random() * 999999999)}
                 value={0}
                 control={<Radio color="primary" />}
                 label={t("notifications.siteMainDirectory")}
               />
               <FormControlLabel
-                key={Math.round(Math.random()*999999999)}
+                key={Math.round(Math.random() * 999999999)}
                 value={1}
                 control={<Radio color="primary" />}
                 label={t("notifications.anotherDirectory")}
               />
             </RadioGroup>
           </Grid>
-          {scriptDirectory===1?
+          {scriptDirectory === 1 ?
             <Box>
               <Box className={classes.directoryField}>
                 <Typography>{t("notifications.enterDirectory")}</Typography>
@@ -994,12 +989,12 @@ const NotificationManagement=({classes}) => {
                 onChange={handleScriptPathChange}
                 value={scriptPath}
               />
-            </Box>:null}
+            </Box> : null}
           <hr />
           <Typography>
             3. {t('notifications.copyLineCodeText')}
           </Typography>
-          <Typography className={clsx(classes.bold,classes.pb10,classes.pt10)}>
+          <Typography className={clsx(classes.bold, classes.pb10, classes.pt10)}>
             {t('notifications.payAttentionText')}
           </Typography>
           <CopyToClipboard text={renderScriptCode()} onCopy={handleCopyScript}>
@@ -1007,12 +1002,12 @@ const NotificationManagement=({classes}) => {
               variant="outlined"
               color="primary"
               size="small"
-              startIcon={<div className={classes.copyIcon}>{copyStatus? '\uE134':'\ue0b0'}</div>}
+              startIcon={<div className={classes.copyIcon}>{copyStatus ? '\uE134' : '\ue0b0'}</div>}
             >
-              {copyStatus? t('notifications.copied'):t('notifications.copy')}
+              {copyStatus ? t('notifications.copied') : t('notifications.copy')}
             </Button>
           </CopyToClipboard>
-          <Typography style={{fontWeight: 'bold',fontSize: 14}}>
+          <Typography style={{ fontWeight: 'bold', fontSize: 14 }}>
             {t('notifications.headTagOpenText')} {'<head>'}
           </Typography>
           <pre>
@@ -1020,7 +1015,7 @@ const NotificationManagement=({classes}) => {
               {renderScriptCode()}
             </div>
           </pre>
-          <Typography className={clsx(classes.bold,classes.f14)}>
+          <Typography className={clsx(classes.bold, classes.f14)}>
             {t('notifications.headTagClosesText')} {'</head>'}
           </Typography>
         </Box>
@@ -1053,14 +1048,14 @@ const NotificationManagement=({classes}) => {
     }
   }
 
-  const renderDialog=() => {
-    if(!dialogType||!dialogType.data) {
+  const renderDialog = () => {
+    if (!dialogType || !dialogType.data) {
       return;
     }
 
-    const {data,type}=dialogType||{};
+    const { data, type } = dialogType || {};
 
-    const dialogContent={
+    const dialogContent = {
       preview: renderPreview(data),
       duplicate: renderDuplicate(data),
       groupsById: renderGroupsById(data),
@@ -1069,7 +1064,7 @@ const NotificationManagement=({classes}) => {
       restore: renderRestore(data),
       implement: renderImplement(data),
     }
-    const dialog=dialogContent[type];
+    const dialog = dialogContent[type];
     return (
       <Dialog
         classes={classes}
