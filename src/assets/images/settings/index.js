@@ -6,5 +6,6 @@ import ShareMenuIcon from './shareMenu.png'
 import StarMenuIcon from './starMenu.png'
 import GrafMenuIcon from './grafMenu.png'
 import GroupMenuIcon from './groupMenu.png'
+import CheckAnimation from './check-circle.gif'
 
-export {GrafMenuIcon,GroupMenuIcon,CodeMenuIcon,CrusorMenuIcon,DolarMenuIcon,SettingsMenuIcon,ShareMenuIcon,StarMenuIcon}
+export { GrafMenuIcon, GroupMenuIcon, CodeMenuIcon, CrusorMenuIcon, DolarMenuIcon, SettingsMenuIcon, ShareMenuIcon, StarMenuIcon, CheckAnimation }

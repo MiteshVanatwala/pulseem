@@ -21,6 +21,7 @@ import MomentUtils from '@date-io/moment';
 import {useHistory} from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/NotificationManagement';
+import NotificationItem from './screens/Notifications/NotificationItem';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -268,12 +269,24 @@ const renderRoutes=(classes,history) => {
       />
       {/* Notifications */}
       <Route
+        exact
         path={`/Notifications`}
         render={props => <NotificationManagement {...props} classes={classes} />}
       />
       <Route
+        exact
         path={`/Notification/create`}
-        component={transferUrl('/Pulseem/Notification.aspx?t=add')}
+        render={props => <NotificationItem props={props} classes={classes} />}
+      />
+      <Route
+        exact
+        path={`/Notification/edit/:id/`}
+        render={props => <NotificationItem props={props} classes={classes} />}
+      />
+      <Route
+        exact
+        path={`/Notification/send/:id`}
+        render={props => <NotificationItem props={props} classes={classes} />}
       />
       {/* Settings */}
       <Route

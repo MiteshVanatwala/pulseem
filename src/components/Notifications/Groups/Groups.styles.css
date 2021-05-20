@@ -1,0 +1,22 @@
+.blue {
+    color: "#1c82b2";
+    stroke: "#1c82b2 !important";
+}
+.blue path {
+    stroke: "#1c82b2 !important";
+}
+.green {
+    color: "#48a148";
+    stroke: "#48a148 !important";
+}
+.green path {
+    stroke: "#48a148 !important";
+}
+.groupText span {
+    font-size: 20px;
+    color: #555;
+}
+
+[direction="rtl"] .MuiSelect-select.MuiSelect-select {
+    padding-right: 12px;
+}

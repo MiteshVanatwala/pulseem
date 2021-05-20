@@ -13,7 +13,7 @@ export const Dialog=({
   title='',
   icon=null,
   children,
-  showDivider=true,
+  showDivider=false,
   onClose=() => null,
   onConfirm=() => null,
   renderButtons=null
@@ -104,7 +104,7 @@ export const Dialog=({
   const renderChildren=() => {
     return (
       <Box
-        className={classes.dialogChildren}   style={{overflow: 'auto', maxHeight: 'calc(65vh)'}}>
+        className={classes.dialogChildren} style={{ maxHeight: 'calc(65vh)'}}>
         {children}
       </Box>)
   }

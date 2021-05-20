@@ -1,0 +1,72 @@
+.MuiInput-underline:before,
+.MuiInput-underline:after {
+    border-bottom: none !important;
+}
+
+.dialogButtonsContainer .MuiBox-root {
+    padding: 0 !important;
+}
+
+.direction-radio::before {
+    content: "aaa";
+    width: "100%";
+}
+
+.emoji-picker-react {
+    position: absolute !important;
+    bottom: 0 !important;
+    right: 100% !important;
+}
+
+.MuiDialog-root .mobileBG {
+    max-width: 400px;
+}
+.MuiDialog-root .mobileNotification {
+    top: 60px;
+    right: 45px;
+    width: 100%;
+    position: absolute;
+    max-width: 310px;
+    /* min-height: 335px; */
+}
+
+.MuiDialog-root .notificationContainer {
+    min-height: 190px;
+}
+
+@media screen and (max-width: 768px) {
+    .previewTitle {
+        margin-top: 15px !important;
+    }
+    .MuiDialog-root .mobileBG {
+        max-width: 180px !important;
+        width: 180px !important;
+        min-height: 180px !important;
+    }
+    .MuiDialog-root .mobileBG .mobileNotification {
+        top: 30px !important;
+        right: 20px !important;
+        width: 100% !important;
+        position: absolute !important;
+        max-width: 140px !important;
+    }
+    .MuiDialog-root .mobileBG .notificationSiteAddress {
+        height: 25px !important;
+    }
+    .MuiDialog-root .mobileBG .MuiTypography-body1 {
+        font-size: 9px !important;
+    }
+    .MuiDialog-root .mobileBG .icon {
+        width: 40px !important;
+        max-height: 40px !important;
+        min-height: 40px !important;
+    }
+
+    .MuiDialog-root .mobileBG .iconWrapper {
+        min-width: unset !important;
+    }
+
+    .MuiDialog-root .mobileBG .footerWrapper {
+        min-height: unset !important;
+    }
+}

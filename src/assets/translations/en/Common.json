@@ -432,5 +432,13 @@
   "approved": "Approved",
   "draft": "Draft",
   "failedStatus": "Failed",
-  "deleted": "Deleted"
+  "deleted": "Deleted",
+  "cancel": "Cancel",
+  "imageGallery": "Image Gallery",
+  "chooseImage": "Choose Image...",
+  "uploadNotice": "Please upload in png, jpeg or jpg format and up to 1 MB,<br>Recommended resolution: <br>Image <b>1600x1100px</b>, Icon <b>512x512px</b>",
+  "createFolder": "Create Folder",
+  "save": "Save",
+  "sentAlert": "Sent!",
+  "yourCampaignOnItsWay": "Your campaign is on its way"
 }

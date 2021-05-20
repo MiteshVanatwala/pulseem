@@ -8,12 +8,15 @@ const dialogWidth={
 export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   dialogContainer: {
     '& .MuiPaper-root': {
-      overflow: 'hidden'
+      overflowX: 'hidden'
     },
     '& .MuiDialog-paperWidthSm': {
-      maxWidth: '850px',
-      minWidth: '500px'
+      minWidth: '500px',
+      maxWidth: '1050px'
     }
+  },
+  noPadding: {
+    padding: '0px !important'
   },
   dialogIconContainer: {
     paddingTop: 60,
@@ -90,6 +93,11 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   },
   dialogButtonsContainer: {
     flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center'
+  },
+  wizardFlex: {
+    flex: 1,
     alignContent: 'flex-end',
     justifyContent: 'center'
   },
@@ -100,8 +108,10 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     marginInline: 25
   },
   dialogChildren: {
-    marginInline: 25,
-    marginBlock: 10
+    // marginInline: 25,
+    marginBlock: 10,
+    padding: '0 25px',
+    overflowY: 'auto'
   },
   copyClip: {
     position: 'absolute',
@@ -176,7 +186,14 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     color: 'rgba(0,0,0,0.40)'
   },
   bold: {
-    fontWeight: 'bold',
+    fontWeight: 'bold'
+  },
+  disabled: {
+    opacity: '.65',
+    pointerEvents: 'none !important'
+  },
+  imageInfo: {
+    backgroundColor: 'rgba(255,255,255,.5)',
+    color: '#000 !important'
   }
-
 })

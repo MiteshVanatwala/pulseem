@@ -1,0 +1,66 @@
+#notificationTitle,
+#notificationText {
+    padding-right: 10px;
+    padding-left: 10px;
+    font-family: Assistant;
+    font-weight: 400;
+    font-size: 15px;
+}
+.dialogBox {
+    min-width: 850px;
+}
+@media screen and (max-width: 768px) {
+    .wizardButtonContainer {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        width: 100% !important;
+    }
+    .wizardButtonContainer * {
+        width: 100%;
+        margin: 0 !important;
+        margin-top: 8px !important;
+    }
+    .wizardButtonContainer div:last-child {
+        display: flex;
+        flex-direction: column;
+    }
+}
+@media screen and (max-width: 960px) {
+    .dialogBox {
+        min-width: unset !important;
+    }
+}
+
+.MuiGrid-align-items-xs-flex-start {
+    align-content: flex-start !important;
+}
+
+input.error {
+    border-bottom: 1px solid red;
+    border-radius: 4px;
+}
+
+.MuiTooltip-tooltipPlacementTop,
+.MuiTooltip-tooltipPlacementLeft {
+    font-size: 12px !important;
+}
+.MuiPickersTimePickerToolbar-hourMinuteLabel {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100%;
+}
+
+.MuiPickersTimePickerToolbar-ampmSelection {
+    align-items: flex-end !important;
+    justify-content: flex-end !important;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+}
+
+[direction="rtl"] .MuiDialogActions-spacing,
+[direction="rtl"] .MuiPickersCalendarHeader-switchHeader {
+    direction: rtl;
+}

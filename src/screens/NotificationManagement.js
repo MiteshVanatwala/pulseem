@@ -25,6 +25,7 @@ import {
   getScriptPath,getApiToken,updateScriptPath,setScriptDialog
 } from '../redux/reducers/notificationSlice';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
+import {Preview} from '../components/Notifications/Preview/Preview';
 import {getCookie,setCookie,cookieListener} from '../helpers/cookies'
 
 const NotificationManagement=({classes}) => {
@@ -379,7 +380,7 @@ const NotificationManagement=({classes}) => {
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         onClick: () => {
-          // history.push('/SendCampaign/'+id)
+          history.push(`/Notification/send/${ID}`);
         }
       },
       {
@@ -704,61 +705,12 @@ const NotificationManagement=({classes}) => {
         </div>
       ),
       content: (
-        <Box className={classes.p15}>
-          <Card className={classes.boxShadow}>
-            {image?
-              <CardMedia
-                className={classes.cardMedia}
-                image={image}
-              />:
-              <Box
-                className={clsx(
-                  classes.pictureBoxBig,
-                )}>
-                <div className={clsx(classes.pictureIcon,classes.f80)}>
-                  {'\uE00F'}
-                </div>
-                <Typography className={clsx(
-                  classes.emptyImageLabel,
-                )}>
-                  {t('notifications.chooseImage')}
-                </Typography>
-              </Box>}
-            <CardContent className={classes.previewCardContent}>
-              <Box className={classes.p10}>
-                {image?
-                  <CardMedia
-                    className={classes.cardIcon}
-                    image={image}
-                  />:
-
-                  <Box
-                    className={clsx(
-                      classes.pictureBox,
-                    )}>
-                    <div className={classes.pictureIcon}>
-                      {'\uE00F'}
-                    </div>
-                    <Typography className={clsx(
-                      classes.emptyImageLabel,
-                      classes.mt_10
-                    )}>
-                      {t('notifications.chooseIcon')}
-                    </Typography>
-                  </Box>
-                }
-              </Box>
-              <Box className={classes.w100}>
-                <Typography variant="h5" component="h2">
-                  {title}
-                </Typography>
-                <Typography variant="body" color="textSecondary" component="p">
-                  {body}
-                </Typography>
-              </Box>
-            </CardContent>
-            <Typography align='center' className={classes.previewLabel}>{redirectButtonText}</Typography>
-          </Card>
+        <Box className={classes.dialogBox}>
+          <Preview classes={classes}
+            model={dialogType.data}
+            ShowRedirectButton={dialogType.data.RedirectButtonText&&dialogType.data.RedirectButtonText!=''}
+            showTitle={false}
+          />
         </Box>
       ),
       renderButtons: () => (

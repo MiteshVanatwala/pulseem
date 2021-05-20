@@ -30,7 +30,7 @@ const tableRowMinWidth={
 
 export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   managementTitle: {
-    fontSize: '2rem',
+    fontSize: '36px',
     color: '#333333',
     paddingBlock: '0.5rem',
     fontFamily: "Assistant",
