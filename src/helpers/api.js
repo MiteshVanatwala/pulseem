@@ -12,7 +12,7 @@ const redirectToLogin = () => {
 }
 
 const instence = axios.create({
-  baseURL: 'http://pulseemsiteapi4react.pulseemdev.co.il/api/',
+  baseURL: 'https://pulseemsiteapi4react.pulseemdev.co.il/api/',
   //baseURL: 'http://siteapi.pulseem.com/api/',
   //baseURL: 'http://api.develop.com/api',
   headers: {
