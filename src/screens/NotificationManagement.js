@@ -25,6 +25,7 @@ import {
   duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
   getScriptPath, getApiToken, updateScriptPath
 } from '../redux/reducers/notificationSlice';
+import { Preview } from '../components/Notifications/Preview/Preview';
 
 const NotificationManagement = ({ classes }) => {
   const { language, windowSize } = useSelector(state => state.core)
@@ -739,22 +740,11 @@ const NotificationManagement = ({ classes }) => {
       ),
       content: (
         <Box className={classes.dialogBox}>
-          <Card>
-            {image ?
-              <CardMedia
-                className={classes.cardMedia}
-                image={image}
-                title="Contemplative Reptile"
-              /> : null}
-            <CardContent>
-              <Typography variant="h5" component="h2">
-                {name}
-              </Typography>
-              <Typography variant="body2" color="textSecondary" component="p">
-                {body}
-              </Typography>
-            </CardContent>
-          </Card>
+          <Preview classes={classes}
+            model={dialogType.data}
+            ShowRedirectButton={dialogType.data.RedirectButtonText && dialogType.data.RedirectButtonText != ''}
+            showTitle={false}
+          />
         </Box>
       ),
       renderButtons: () => (
