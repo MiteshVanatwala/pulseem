@@ -398,7 +398,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     return (
         <div className={classes.root}>
             <Divider style={{ margin: '15px 0' }} />
-            <Grid container style={{ minHeight: 400 }} className={classes.galleryGrid}>
+            <Grid container className={classes.galleryGrid}>
                 <Grid item xs={2} className="scroll">
                     {renderFolders()}
                 </Grid>

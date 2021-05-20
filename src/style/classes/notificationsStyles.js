@@ -374,6 +374,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         fontSize: 30
     },
     galleryGrid: {
-        minWidth: galleryWidth[windowSize]
+        minWidth: galleryWidth[windowSize],
+        minHeight: 400
     }
 })
