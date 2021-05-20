@@ -1,5 +1,11 @@
 import mobileBg from '../../assets/images/mobile.png'
 
+const galleryWidth = {
+    xs: 250,
+    sm: 360,
+    md: 960,
+    lg: 1050
+}
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     roundedCircle: {
         borderRadius: '100%',
@@ -366,5 +372,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         margin: '0 10px !important',
         color: '#157eaf',
         fontSize: 30
+    },
+    galleryGrid: {
+        minWidth: galleryWidth[windowSize]
     }
 })

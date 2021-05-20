@@ -4,6 +4,7 @@ import { getCookie, setCookie } from './cookies';
 
 import moment from 'moment'
 
+// const refreshTokenURL = 'http://localhost:60326/RefreshToken.ashx'
 const refreshTokenURL = 'https://www.pulseemdev.co.il/Pulseem/RefreshToken.ashx'
 
 const redirectToLogin = () => {
@@ -11,8 +12,8 @@ const redirectToLogin = () => {
 }
 
 const instence = axios.create({
-  // baseURL: 'http://pulseemsiteapi4react.pulseemdev.co.il/api/',
-  baseURL: 'http://siteapi.pulseem.com/api/',
+  baseURL: 'http://pulseemsiteapi4react.pulseemdev.co.il/api/',
+  //baseURL: 'http://siteapi.pulseem.com/api/',
   //baseURL: 'http://api.develop.com/api',
   headers: {
     'Content-Type': 'application/json; charset=UTF-8'

@@ -216,7 +216,8 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             return (
                 <Grid container
                     direction="row"
-                    alignItems="flex-start" style={{width: '100%', padding: '0 25px', borderRight: isRTL ? '1px solid #ccc' : '', borderLeft: isRTL ? '' : '1px solid #ccc', height: '100%'}}>
+                    alignItems="flex-start"
+                    style={{ width: '100%', padding: '0 25px', borderRight: isRTL ? '1px solid #ccc' : '', borderLeft: isRTL ? '' : '1px solid #ccc', height: '100%' }}>
                     <Grid item xs={12}>{selectedFolder == "main" && isRTL ? "ראשי" : selectedFolder}</Grid>
                     <Grid item lg={4} md={6} xs={12}>
                         <Button
@@ -236,7 +237,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                     </Grid>
                     {
                         currentFolder.files.map((f, index) => {
-                            const filePath = `http://siteapi.pulseem.com/ClientImages/7878/${f.FolderName == "main" ? "" : f.FolderName.replace('main\\', '')}/${f.FileName}`;
+                            const filePath = `${f.Path}/${f.FolderName == "main" ? "" : f.FolderName.replace('main\\', '')}/${f.FileName}`;
                             return (
                                 <Grid item lg={4} md={6} xs={12} key={index}
                                     onMouseEnter={imageEnter(`file_${index}`)}
@@ -397,11 +398,11 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     return (
         <div className={classes.root}>
             <Divider style={{ margin: '15px 0' }} />
-            <Grid container style={{ minHeight: 400 }}>
+            <Grid container style={{ minHeight: 400 }} className={classes.galleryGrid}>
                 <Grid item xs={2} className="scroll">
                     {renderFolders()}
                 </Grid>
-                <Grid item xs={9} className="scroll">
+                <Grid item xs={10} className="scroll">
                     {renderFiles()}
                 </Grid>
             </Grid>
