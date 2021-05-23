@@ -2,7 +2,7 @@
   "name": "pulseem-react-app",
   "version": "0.2.1",
   "private": true,
-  "homepage": ".",
+  "homepage": "https://www.pulseemdev.co.il/react/",
   "dependencies": {
     "@date-io/moment": "1.x",
     "@material-ui/core": "^4.11.3",

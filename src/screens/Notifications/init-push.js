@@ -81,7 +81,7 @@ export const PushService = async (apiToken) => {
             if ("serviceWorker" in navigator) {
 
                 navigator.serviceWorker
-                    .register(process.env.PUBLIC_URL + "/sw.js", { scope: '/react/NotificationItem/' })
+                    .register(process.env.PUBLIC_URL + "/sw.js", { scope: '/react/notification/edit' })
                     .then(function (registration) {
                         resolve(registration);
                     })

@@ -229,12 +229,13 @@ const LandingPagesesManagmentScreen=({classes}) => {
 
     const copyData=copyDataObject[Type]
     const renderCopyToClipoard=(
+      showCopied===ID?
       <PopMassage
         classes={classes}
         show={showCopied===ID}
         timeout={2000}
         label={t('common.copyClip')}
-      />
+      /> : null
     )
 
     const iconsMap=[

@@ -47,7 +47,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         const f = Object.keys(data.payload);
         const tmpFolders = [];
         f.forEach((folder, index) => {
-            if (index == 0) {
+            if (index === 0) {
                 tmpFolders.push({ FolderName: "main", files: data.payload[folder] });
             } else {
                 tmpFolders.push({ FolderName: folder.split("\\")[1], files: data.payload[folder] });
@@ -129,7 +129,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                                 key={`k_${index}`}
                                 style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                                 nodeId={`k_${index}`}
-                                labelText={`${f.FolderName == "main" ? (isRTL ? "ראשי" : "Main") : f.FolderName} (${f.files ? f.files.length : 0})`}
+                                labelText={`${f.FolderName === "main" ? (isRTL ? "ראשי" : "Main") : f.FolderName} (${f.files ? f.files.length : 0})`}
                                 labelIcon={FolderIcon}
                                 bgColor="transparent"
                             >
@@ -210,7 +210,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         if (!folders) {
             return;
         }
-        const currentFolder = folders.find((f) => { return f.FolderName == selectedFolder });
+        const currentFolder = folders.find((f) => { return f.FolderName === selectedFolder });
 
         if (currentFolder.files) {
             return (
@@ -218,7 +218,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                     direction="row"
                     alignItems="flex-start"
                     style={{ width: '100%', padding: '0 25px', borderRight: isRTL ? '1px solid #ccc' : '', borderLeft: isRTL ? '' : '1px solid #ccc', height: '100%' }}>
-                    <Grid item xs={12}>{selectedFolder == "main" && isRTL ? "ראשי" : selectedFolder}</Grid>
+                    <Grid item xs={12}>{selectedFolder === "main" && isRTL ? "ראשי" : selectedFolder}</Grid>
                     <Grid item lg={4} md={6} xs={12}>
                         <Button
                             className={"select-image"}
@@ -237,7 +237,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                     </Grid>
                     {
                         currentFolder.files.map((f, index) => {
-                            const filePath = `${f.Path}/${f.FolderName == "main" ? "" : f.FolderName.replace('main\\', '')}/${f.FileName}`;
+                            const filePath = `${f.Path}/${f.FolderName === "main" ? "" : f.FolderName.replace('main\\', '')}/${f.FileName}`;
                             return (
                                 <Grid item lg={4} md={6} xs={12} key={index}
                                     onMouseEnter={imageEnter(`file_${index}`)}
@@ -259,7 +259,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                                                 <Typography className="elipsis-text" style={{ fontSize: 14 }}>
                                                     {f.FileName}
                                                 </Typography>
-                                                {selectedFile == `${f.FolderName.replace('\\', '')}_${index}` &&
+                                                {selectedFile === `${f.FolderName.replace('\\', '')}_${index}` &&
                                                     <AiOutlineCheckCircle style={{ color: 'green', fontSize: 24, padding: '0 10px', width: 40 }} />
                                                 }
                                             </Box>
@@ -371,7 +371,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                                         classes.actionButton,
                                         classes.actionButtonLightGreen,
                                         classes.backButton,
-                                        folderName != '' ? null : classes.disabled
+                                        folderName !== '' ? null : classes.disabled
                                     )}
                                     style={{ margin: '8px' }}
                                     onClick={createNewFolder}>

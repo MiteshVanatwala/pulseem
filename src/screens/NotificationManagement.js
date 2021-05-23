@@ -26,7 +26,7 @@ import {
 } from '../redux/reducers/notificationSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Preview } from '../components/Notifications/Preview/Preview';
-import { getCookie, setCookie, cookieListener } from '../helpers/cookies'
+import { getCookie, setCookie } from '../helpers/cookies'
 
 const NotificationManagement = ({ classes }) => {
   const { language, windowSize } = useSelector(state => state.core)
@@ -311,7 +311,7 @@ const NotificationManagement = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/Notification.aspx?t=add'
+            href='/react/Notification/create'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -379,9 +379,7 @@ const NotificationManagement = ({ classes }) => {
         remove: StatusID !== 0,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        onClick: () => {
-          history.push(`/Notification/send/${ID}`);
-        }
+        href: `/react/Notification/send/${ID}`
       },
       {
         key: 'preview',

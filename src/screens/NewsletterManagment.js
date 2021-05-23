@@ -219,12 +219,13 @@ const NewsletterManagnentScreen=({classes}) => {
     const {Status,Groups,AutomationID,CampaignID,shareUrl}=row
 
     const renderCopyToClipoard=(
+      showCopied===CampaignID?
       <PopMassage
         classes={classes}
         show={showCopied===CampaignID}
-        timeout={500}
+        timeout={2000}
         label={t('common.copyClip')}
-      />
+      /> : null
     )
 
     const iconsMap=[[

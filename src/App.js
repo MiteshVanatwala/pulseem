@@ -275,17 +275,17 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         exact
-        path={`/Notification/create`}
+        path={"/Notification/create"}
         render={props => <NotificationItem props={props} classes={classes} />}
       />
       <Route
         exact
-        path={`/Notification/edit/:id/`}
+        path={"/Notification/edit/:id"}
         render={props => <NotificationItem props={props} classes={classes} />}
       />
       <Route
         exact
-        path={`/Notification/send/:id`}
+        path={"/Notification/send/:id"}
         render={props => <NotificationItem props={props} classes={classes} />}
       />
       {/* Settings */}
