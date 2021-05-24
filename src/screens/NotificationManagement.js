@@ -539,7 +539,6 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const renderRow = (row) => {
-    console.log(`renderRow(): row`, row)
     return (
       <TableRow
         key={row.ID}
