@@ -18,6 +18,7 @@ import TreeItem from '@material-ui/lab/TreeItem';
 import PropTypes from 'prop-types';
 import { AiOutlineCheckCircle, AiOutlineCloudUpload } from 'react-icons/ai';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import LazyBackground from './Lazy/LazyBackground';
 
 const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     const dispatch = useDispatch();
@@ -109,7 +110,6 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         },
     }));
 
-    const folderImages = () => { }
     const renderFolders = () => {
         if (folders != null) {
             return (
@@ -164,10 +164,14 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             initGallery();
         }
         const imageEnter = (fileId) => () => {
-            document.getElementById(fileId).style.opacity = 1;
+            const elem = document.getElementById(fileId);
+            if (elem)
+                document.getElementById(fileId).style.opacity = 1;
         }
         const imageLeave = (fileId) => () => {
-            document.getElementById(fileId).style.opacity = 0;
+            const elem = document.getElementById(fileId);
+            if (elem)
+                document.getElementById(fileId).style.opacity = 0;
         }
         const handleUploadClick = event => {
             hiddenFileInput.current.click();
@@ -247,14 +251,22 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                                 >
                                     <Box className="select-image" onClick={handleSelectFile(filePath, `${f.FolderName.replace('\\', '')}_${index}`)}>
                                         <Box className="img-container">
-                                            <Box className="responsive-bg" style={{ backgroundImage: `url('${filePath}')` }}>
+                                            <LazyBackground url={filePath}>
                                                 <button
                                                     id={`file_${index}`}
                                                     className={clsx(classes.absTopRight)}
                                                     style={{ border: 'none', cursor: 'pointer', textDecoration: 'none' }}
                                                     onClick={deleteImage(f)}
                                                 >X</button>
-                                            </Box>
+                                            </LazyBackground>
+                                            {/* <Box className="responsive-bg" style={{ backgroundImage: `url('${filePath}')` }}>
+                                                <button
+                                                    id={`file_${index}`}
+                                                    className={clsx(classes.absTopRight)}
+                                                    style={{ border: 'none', cursor: 'pointer', textDecoration: 'none' }}
+                                                    onClick={deleteImage(f)}
+                                                >X</button>
+                                            </Box> */}
                                             <Box title={f.FileName} className="image-info">
                                                 <Typography className="elipsis-text" style={{ fontSize: 14 }}>
                                                     {f.FileName}
