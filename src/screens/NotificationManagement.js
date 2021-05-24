@@ -379,9 +379,7 @@ const NotificationManagement = ({ classes }) => {
         remove: StatusID !== 0,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        onClick: () => {
-          history.push(`/Notification/send/${ID}`);
-        }
+        href: `/react/Notification/send/${ID}`
       },
       {
         key: 'preview',

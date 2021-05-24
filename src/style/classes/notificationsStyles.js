@@ -38,7 +38,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         height: '100%',
         backgroundPosition: 'center top',
         backgroundRepeat: 'no-repeat',
-        minHeight: '200px',
+        minHeight: '175px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',

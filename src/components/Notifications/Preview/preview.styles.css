@@ -27,11 +27,10 @@
     width: 100%;
     position: absolute;
     max-width: 310px;
-    /* min-height: 335px; */
 }
 
 .MuiDialog-root .notificationContainer {
-    min-height: 190px;
+    min-height: 175px;
 }
 
 @media screen and (max-width: 768px) {

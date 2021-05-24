@@ -21,7 +21,7 @@ import MomentUtils from '@date-io/moment';
 import { useHistory } from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/NotificationManagement';
-import NotificationItem from './screens/Notifications/NotificationItem';
+import NotificationEditor from './screens/Notifications/NotificationEditor';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -276,17 +276,17 @@ const renderRoutes = (classes, history) => {
       <Route
         exact
         path={`/Notification/create`}
-        render={props => <NotificationItem props={props} classes={classes} />}
+        render={props => <NotificationEditor props={props} classes={classes} />}
       />
       <Route
         exact
         path={`/Notification/edit/:id/`}
-        render={props => <NotificationItem props={props} classes={classes} />}
+        render={props => <NotificationEditor props={props} classes={classes} />}
       />
       <Route
         exact
         path={`/Notification/send/:id`}
-        render={props => <NotificationItem props={props} classes={classes} />}
+        render={props => <NotificationEditor props={props} classes={classes} />}
       />
       {/* Settings */}
       <Route

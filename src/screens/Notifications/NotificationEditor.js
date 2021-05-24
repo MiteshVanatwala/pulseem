@@ -50,7 +50,7 @@ function BootstrapTooltip(props) {
   return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
 }
 
-const NotificationItem = ({ props, classes }) => {
+const NotificationEditor = ({ props, classes }) => {
 
   /* #region  Component settings constatns */
   const dispatch = useDispatch();
@@ -351,6 +351,7 @@ const NotificationItem = ({ props, classes }) => {
     setModel({ ...model, Name: event.target.value });
   }
   const handleRedirectUrlChange = (event) => {
+    event.target.value = updateUrlValue(event);
     setModel({ ...model, RedirectURL: event.target.value });
   }
   const handleRedirectButtonTextChange = (event) => {
@@ -426,6 +427,23 @@ const NotificationItem = ({ props, classes }) => {
   }
   /* #endregion */
   /* #region  Validators */
+  const isValivalidURL = (str) => {
+    try {
+      new URL(str);
+    } catch (_) {
+      return false;
+    }
+
+    return true;
+  }
+  const updateUrlValue = (e) => {
+    const val = e.target.value;
+    if (val.trim().replace(" ", "") != "" && val.indexOf("http") == -1) {
+      if (val.indexOf("www") == -1) e.target.value = "https://www." + val;
+      else e.target.value = "https://" + val;
+    }
+    return e.target.value.replace(/\s/g, "");
+  }
   const isValidNotification = () => {
     const errorList = [];
     document.querySelector("#notificationName").classList.remove("error");
@@ -437,7 +455,7 @@ const NotificationItem = ({ props, classes }) => {
       errorList.push({ message: t('notifications.validation.notificationName') });
       document.querySelector("#notificationName").classList.add("error");
     }
-    if (model.RedirectURL === '') {
+    if (!isValivalidURL(model.RedirectURL)) {
       errorList.push({ message: t('notifications.validation.redirectUrl') });
       document.querySelector("#notificationRedirectUrl").classList.add("error");
     }
@@ -729,7 +747,7 @@ const NotificationItem = ({ props, classes }) => {
           </div>
           {ShowRedirectButton && model.RedirectButtonText != '' ? redirectButton() : ''}
         </div>
-        <Box pt={1}>
+        <Box pt={1} mt={1}>
           <b>{t("notifications.titleLimitation")}</b>
           {model && model.Title && model.Title != '' && model.Title.length || 0}
         </Box>
@@ -1192,4 +1210,4 @@ const NotificationItem = ({ props, classes }) => {
   );
 }
 
-export default NotificationItem;
+export default NotificationEditor;
