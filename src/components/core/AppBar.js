@@ -16,6 +16,8 @@ import {getRoutes,getSettingsItem} from '../../helpers/routes'
 //import useCtrlHistory from '../../helpers/useCtrlHistory'
 import {setCookie,getCookie} from '../../helpers/cookies'
 import {setScriptDialog} from '../../redux/reducers/notificationSlice';
+import {logout} from '../../helpers/api'
+import axios from 'axios';
 
 const AppBarItem=({
   item,
@@ -206,7 +208,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
           onInnerClick={navigate}
         />
       ))}
-      {windowSize==='lg'&&<>
+      {windowSize==='xl'&&<>
         <Box className={classes.appBerSpace} />
         <Typography
           className={classes.appBarUsername}>
@@ -337,7 +339,9 @@ export const TopAppBar=({classes,currentPage=''}) => {
           {renderAppBar()}
           <AppBarItem
             classes={classes}
-            item={{title: t('appBar.logout')}} />
+            item={{title: t('appBar.logout')}}
+            onMainClick={logout}
+          />
         </Toolbar>
       </AppBar>
       <Box className={classes.appBarBorder} />
