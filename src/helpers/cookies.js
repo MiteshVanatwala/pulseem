@@ -9,6 +9,11 @@ export const getCookie=(name='',options={}) => {
   return cookies.get(name,options)
 }
 
+export const removeCookie=(name='',options={}) => {
+  if(!name)
+    cookies.remove(name,options)
+}
+
 export const cookieListener=(callback=() => null) => {
   cookies.addChangeListener(callback)
 }

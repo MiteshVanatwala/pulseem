@@ -1,6 +1,6 @@
 import axios from 'axios'
 import jwt_decode from "jwt-decode";
-import {getCookie,setCookie} from './cookies';
+import {getCookie,setCookie,removeCookie} from './cookies';
 
 import moment from 'moment'
 
@@ -16,6 +16,7 @@ const redirectToLogin=() => {
 export const logout=async () => {
   try {
     await axios.get(logoutURL)
+    removeCookie('jtoken')
     redirectToLogin()
   } catch(err) {
     console.log("logout error",err)

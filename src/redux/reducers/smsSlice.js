@@ -65,7 +65,7 @@ export const sendVerificationCode=createAsyncThunk(
   'authorization/newAuthorizeNumbers',async (data,thunkAPI) => {
     const {username='',number=''}=data||{};
     try {
-      const response=await instence.post(`authorization/newAuthorizeNumbers/${username}/${number}`);
+      const response=await instence.put(`authorization/newAuthorizeNumbers/${username}/${number}`);
       return JSON.parse(response.data)
     } catch(error) {
       return thunkAPI.rejectWithValue({error: error.message});
