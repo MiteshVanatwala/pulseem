@@ -551,6 +551,7 @@ const SmsManagnentScreen=({classes}) => {
 
   const handleShortVerify=async (number) => {
     handleVerificationCodeInput('');
+    handleNumber(number)
     setDialogType({
       type: 'shortVerify',
       data: number
@@ -574,7 +575,10 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const handleConfirmCode=async () => {
-    const result=await dispatch(verifyCode(verificationCode));
+    const result=await dispatch(verifyCode({
+      optinCode: verificationCode,
+      phoneNumber: number
+    }));
     if(result.error) {
       handleVerificationCodeError(true);
     } else {

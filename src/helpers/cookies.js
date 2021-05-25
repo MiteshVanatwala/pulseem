@@ -11,7 +11,7 @@ export const getCookie=(name='',options={}) => {
 
 export const removeCookie=(name='',options={}) => {
   if(!name)
-    cookies.remove(name,options)
+    cookies.remove(name,{path: '/',...options})
 }
 
 export const cookieListener=(callback=() => null) => {
