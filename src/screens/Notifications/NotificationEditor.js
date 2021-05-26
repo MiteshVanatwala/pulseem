@@ -207,6 +207,9 @@ const NotificationEditor = ({ props, classes }) => {
 
         model.SendDate = m.format();
       }
+      else {
+        model.sendDate = null;
+      }
       const data = { NotificationId: parseInt(props.match.params.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
       const result = await dispatch(saveNotificationSettings(data));
       if (result.payload == true) {
@@ -376,6 +379,10 @@ const NotificationEditor = ({ props, classes }) => {
     setModel({ ...model, Direction: parseInt(event.target.value) })
   }
   const handleSendType = (event) => {
+    if (event.target.value == '1') {
+      setModel({ ...model, SendDate: null });
+      handleFromDate(null);
+    }
     setSendType(event.target.value);
   }
   /* #endregion */

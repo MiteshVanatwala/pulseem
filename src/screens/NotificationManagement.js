@@ -516,7 +516,7 @@ const NotificationManagement = ({ classes }) => {
   const renderNameCell = (row) => {
     let date = null
     let text = ''
-    if (!row.SendDate) {
+    if (!row.SendDate || row.StatusID == 0) {
       date = moment(row.UpdatedDate, dateFormat)
       text = t('common.UpdatedOn')
     } else {
