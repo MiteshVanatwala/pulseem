@@ -37,30 +37,42 @@ instence.interceptors.request.use(async config => {
     const minimumTimeToUpdate=60
     const jtoken=getCookie('jtoken')
     let token=jtoken
-    if(jtoken) {
-      const jwt=jwt_decode(jtoken)
-      const currentUnix=moment().unix()
-      const timeToExpires=jwt.exp-currentUnix
-      if(timeToExpires<minimumTimeToUpdate) {
-        const language=getCookie('Culture')
-        const {data,request}=await axios.get(refreshTokenURL,{
-          headers: {
-            language
-          }
-        })
-        if(refreshTokenURL!==request.responseURL) {
-          redirectToLogin()
-          return Promise.reject('Unautorized')
-        }
-        token=data
-        setCookie('jtoken',token)
-      }
+    if(!jtoken) {
+      redirectToLogin()
+      return Promise.reject('Unautorized')
     }
+    const jwt=jwt_decode(jtoken)
+    const currentUnix=moment().unix()
+    const timeToExpires=jwt.exp-currentUnix
+    if(timeToExpires<minimumTimeToUpdate) {
+      const language=getCookie('Culture')
+      const {data,request}=await axios.get(refreshTokenURL,{
+        headers: {
+          language
+        }
+      })
+      if(refreshTokenURL!==request.responseURL) {
+        redirectToLogin()
+        return Promise.reject('Unautorized')
+      }
+      token=data
+      setCookie('jtoken',token)
+    }
+
     config.headers.Authorization=`Bearer ${token}`
     return config
   } catch(err) {
     redirectToLogin()
   }
 })
+
+instence.interceptors.response.use(
+  res => res,
+  error => {
+    if(error.response.status===401) {
+      redirectToLogin()
+    }
+    return Promise.reject(error.response.data)
+  })
 
 export default instence

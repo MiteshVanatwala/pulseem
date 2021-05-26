@@ -88,7 +88,9 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   },
   appBarQuestionIcon: {
     fontWeight: 'bold',
-    fontSize: 27
+    fontSize: 27,
+    textTransform: 'none'
+
   },
   appBarBorder: {
     backgroundColor: 'black',

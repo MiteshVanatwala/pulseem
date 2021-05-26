@@ -12,7 +12,7 @@ import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/style
 import i18n from './i18n'
 import {BrowserRouter,useParams,Route} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
-import {setWindowSize,setCoreData} from './redux/reducers/coreSlice'
+import {setWindowSize,setCoreData,setLanguage} from './redux/reducers/coreSlice'
 import {setUsername} from './redux/reducers/userSlice'
 import {getTheme} from './style/theme'
 import {useClasses} from './style/classes/index'
@@ -328,6 +328,7 @@ const renderRoutes=(classes,history) => {
 const App=() => {
   const dispatch=useDispatch()
   const {language,isRTL,windowSize}=useSelector(state => state.core)
+  const culture=getCookie('Culture')
 
   useEffect(() => {
 
@@ -347,7 +348,11 @@ const App=() => {
 
       dispatch(setCoreData({email,basename,phone,locality,imageURL,isWhiteLabel}))
       dispatch(setUsername(unique_name))
-      setCookie('Culture',locality)
+      let lang=culture||locality
+      setCookie('Culture',lang)
+      lang=lang.split('-')[0]
+      console.log('lang',lang)
+      dispatch(setLanguage(lang))
     }
 
     const setWindowWidth=() => {
@@ -364,17 +369,24 @@ const App=() => {
       dispatch(setWindowSize(windowSize))
     }
 
+    const cookieFunctionObj={
+      jtoken: updateToken,
+
+    }
+
     window.addEventListener('resize',setWindowWidth)
     cookieListener(({name}) => {
-      if(name==='jtoken')
-        updateToken()
+      const cookieFunction=cookieFunctionObj[name]
+      if(!!cookieFunction)
+        cookieFunction()
     })
     updateToken()
     setWindowWidth()
   },[dispatch])
 
   useEffect(() => {
-    i18n.changeLanguage(language)
+    const lang=culture? culture.split('-')[0]:''
+    i18n.changeLanguage(lang===language? language:lang)
   },[language])
 
 

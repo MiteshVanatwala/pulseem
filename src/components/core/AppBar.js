@@ -24,7 +24,7 @@ const AppBarItem=({
   onMainClick=() => {},
   onInnerClick=() => {},
   chosen=false,
-  textStyle={},
+  textStyle='',
   showIcon=false,
   classes,
 }) => {
@@ -154,7 +154,7 @@ const LanguageSelector=({classes}) => {
 
 
 export const TopAppBar=({classes,currentPage=''}) => {
-  const {username}=useSelector(state => state.user)
+  const {basename}=useSelector(state => state.core)
   const {windowSize}=useSelector(state => state.core)
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
@@ -212,7 +212,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
         <Box className={classes.appBerSpace} />
         <Typography
           className={classes.appBarUsername}>
-          {username}
+          {basename}
         </Typography>
       </>}
       <Box className={classes.appBarAfterTollbarContainer}>
