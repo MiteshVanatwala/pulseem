@@ -48,22 +48,20 @@ const AppBarItem=({
 
   return (
     <Box
-      //component='a'
-      //href={item.href}
       zIndex='tooltip'
       onMouseOver={handleOpen}
       onMouseLeave={handleClose}
-      className={classes.appBarItemContainer}>
+      className={clsx(classes.appBarItemContainer)}>
       <Box
         component='a'
         href={item.href}
-        className={classes.appBarHrefContainer}>
+        className={classes.appBarHrefContainer}
+        onClick={() => {
+          handleOpen()
+          onMainClick(item)
+        }}>
         <IconButton
           ref={buttonRef}
-          onClick={() => {
-            handleOpen()
-            onMainClick(item)
-          }}
           className={clsx(
             currentStyle,
             textStyle,
@@ -71,8 +69,8 @@ const AppBarItem=({
           {showIcon? item.iconUnicode:item.title}
         </IconButton>
 
+        {(chosen||open)&&<ArrowDropUp className={classes.appBarItemArrow} />}
       </Box>
-      {(chosen||open)&&<ArrowDropUp className={classes.appBarItemArrow} />}
       <Popper open={open} anchorEl={buttonRef.current} role={undefined} transition disablePortal>
         {({TransitionProps}) => (
           <Grow
@@ -332,10 +330,15 @@ export const TopAppBar=({classes,currentPage=''}) => {
     <Box style={{flexGrow: 1}}>
       <AppBar position='static' className={classes.appBar}>
         <Toolbar variant='dense'>
-          <img
-            src={Logo}
-            alt='Logo'
-            className={classes.appBarLogo} />
+          <Box
+            component='a'
+            href={routes[0].href}>
+            <Box
+              component='img'
+              src={Logo}
+              alt='Logo'
+              className={classes.appBarLogo} />
+          </Box>
           {renderAppBar()}
           <AppBarItem
             classes={classes}

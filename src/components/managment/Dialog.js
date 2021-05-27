@@ -104,7 +104,7 @@ export const Dialog=({
   const renderChildren=() => {
     return (
       <Box
-        className={classes.dialogChildren} style={{ maxHeight: 'calc(65vh)'}}>
+        className={classes.dialogChildren} style={{maxHeight: 'calc(65vh)'}}>
         {children}
       </Box>)
   }
@@ -126,7 +126,7 @@ export const Dialog=({
       open={!!open}
       className={classes.dialogContainer}
       onClose={onClose}>
-      <Paper>
+      <Paper >
         {renderExitButton()}
         {renderContent()}
         {renderIcon()}

@@ -53,5 +53,6 @@
   "edit": "כדי לערוך את האוטומציה",
   "close": "סגירה",
   "duplicateTitle": "שכפול אוטומציה",
-  "duplicateContent": "האם ברצונך לשכפל את האוטומציה?"
+  "duplicateContent": "האם ברצונך לשכפל את האוטומציה?",
+  "restoreCampaignTitle": "בחר את האוטומציות שברצונך לשחזר"
 }
