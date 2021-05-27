@@ -82,8 +82,8 @@ const NotificationEditor = ({ props, classes }) => {
     RedirectButtonText: ""
   });
 
-  const [activeStep, setActiveStep] = React.useState(0);
-  const [ShowRedirectButton, setRedirectButtonVisibillity] = React.useState(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const [ShowRedirectButton, setRedirectButtonVisibillity] = useState(false);
   const [apiToken, setApiToken] = useState(0);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [inputFocus, setFocusOnInput] = useState(null);
@@ -180,7 +180,14 @@ const NotificationEditor = ({ props, classes }) => {
       else {
         dispatch(save(model)).then((response) => {
           if (props.match.params.create || props.match.url.toLowerCase().indexOf('create') > -1) {
-            history.push(`/Notification/edit/${response.payload}`);
+            if (isExit) {
+              history.push("/Notifications");
+            }
+            else {
+              setTimeout(() => {
+                history.push(`/Notification/edit/${response.payload}`);
+              }, 1000);
+            }
           }
           else {
             setModel({ ...model, ID: response.payload });
@@ -274,6 +281,7 @@ const NotificationEditor = ({ props, classes }) => {
     setTotalRecipients(totalResonse.payload);
     if (sendDate) {
       const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+      m.lang(isRTL ? "he" : "en");
       setSummary({ groups: selectedGroups, sendType: sendType, sendDate: m.format("MMMM Do YYYY, hh:mm a") });
 
     }
@@ -502,31 +510,27 @@ const NotificationEditor = ({ props, classes }) => {
   const handleTestSend = () => {
     PushService(apiToken).then((permissions) => {
       try {
-        if (permissions.subscription) {
-          if (permissions.state == 'granted') {
-            const options = {
-              id: model.ID,
-              dir: model.Direction == 2 ? 'rtl' : 'ltr',
-              renotify: true,
-              body: model.Body,
-              icon: model.Icon,
-              image: model.Image,
-              title: model.Title,
-              vibrate: [200, 100, 200],
-              tag: "test",
-              badge: 'https://pn.pulseem.com/favicon.ico',
-              redirect: model.RedirectURL
-            };
+        if (permissions.subscription && permissions.state == 'granted') {
+          const options = {
+            id: model.ID,
+            dir: model.Direction == '2' ? 'rtl' : 'ltr',
+            renotify: true,
+            body: model.Body,
+            icon: model.Icon,
+            image: model.Image,
+            title: model.Title,
+            renotify: 'false',
+            tag: "test",
+            badge: 'https://www.pulseemdev.co.il/favicon.png',
+            redirect: model.RedirectURL
+          };
 
-            if (model.RedirectURL != '' && model.RedirectButtonText != '' && ShowRedirectButton) {
-              options.actions = [];
-              options.actions.push({ action: model.RedirectURL, title: model.RedirectButtonText });
-            }
-
-            permissions.subscription.showNotification(model.Title, options);
-
+          if (model.RedirectURL != '' && model.RedirectButtonText != '' && ShowRedirectButton) {
+            options.actions = [];
+            options.actions.push({ action: model.RedirectURL, title: model.RedirectButtonText });
           }
 
+          permissions.subscription.showNotification(model.Title, options);
         }
       }
       catch (e) {
@@ -590,7 +594,7 @@ const NotificationEditor = ({ props, classes }) => {
                       onChange={handleRedirectVisibillity}
                     />
                   }
-                  label={t('notifications.redirectUrlButton')}
+                  label={t('notifications.showRedirectUrlButton')}
                 />
               </Grid>
               {ShowRedirectButton && <Grid item md={6} xs={12}>
@@ -642,8 +646,8 @@ const NotificationEditor = ({ props, classes }) => {
       <div>
         <Grid style={{ marginRight: '10px', marginLeft: '10px', marginTop: 35 }}>
           <Box pt={2} style={{ position: 'relative' }}>
-            <FormControl component="fieldset">
-              <RadioGroup defaultValue="2" aria-label="direction" name="direction" className={classes.directionRadio}>
+            <FormControl component="fieldset" className={classes.directionBar}>
+              <RadioGroup defaultValue="2" aria-label="direction" name="direction" className={!isRTL ? classes.flexReveres : classes.directionBar}>
                 <FormControlLabel value="2"
                   control={<Radio
                     name="direction"
@@ -670,13 +674,17 @@ const NotificationEditor = ({ props, classes }) => {
                     />}
                   />}
                 />
-                <button className={classes.emojiIcon} onClick={showEmoji} id="emohiToggle"></button>
-                <ClickAwayListener onClickAway={handleClickOutsideEmoji}>
-                  <div>
-                    {isEmojiShown && <Picker onEmojiClick={onEmojiClick} />}
-                  </div>
-                </ClickAwayListener>
               </RadioGroup>
+              <button className={classes.emojiIcon} onClick={showEmoji} id="emohiToggle"></button>
+              <ClickAwayListener onClickAway={handleClickOutsideEmoji}>
+                <div>
+                  {isEmojiShown && <Picker onEmojiClick={onEmojiClick}
+                    disableSearchBar={true}
+                    disableSkinTonePicker={true}
+                    pickerStyle={{ backgroundColor: '#fff', zIndex: '99999', textAlign: 'left' }}
+                    groupVisibility={{ recently_used: false }} />}
+                </div>
+              </ClickAwayListener>
             </FormControl>
           </Box>
         </Grid>
@@ -752,7 +760,7 @@ const NotificationEditor = ({ props, classes }) => {
               />
             </div>
           </div>
-          {ShowRedirectButton && model.RedirectButtonText != '' ? redirectButton() : ''}
+          {ShowRedirectButton && model.RedirectButtonText != '' ? redirectButton(true) : ''}
         </div>
         <Box pt={1} mt={1}>
           <b>{t("notifications.titleLimitation")}</b>
@@ -1071,8 +1079,8 @@ const NotificationEditor = ({ props, classes }) => {
     setSummary(null);
   }
   /* #endregion */
-  const redirectButton = () => {
-    return <div className={classes.RedirectButtonText}>{model.RedirectButtonText}</div>
+  const redirectButton = (showBorder) => {
+    return <div className={clsx(classes.RedirectButtonText, showBorder ? classes.dashed : null)}>{model.RedirectButtonText}</div>
   }
   const renderHeader = () => {
     return (

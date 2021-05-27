@@ -23,7 +23,8 @@ const useStyles = makeStyles((theme) => ({
         zIndex: 99999999
     },
     center: {
-        alignContent: 'center'
+        alignContent: 'center',
+        justifyContent: 'center'
     }
 }));
 

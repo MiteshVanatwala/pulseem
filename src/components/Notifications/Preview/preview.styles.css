@@ -15,6 +15,9 @@
 .emoji-picker-react {
     position: absolute !important;
     bottom: 0 !important;
+}
+
+.rtl .emoji-picker-react {
     right: 100% !important;
 }
 
