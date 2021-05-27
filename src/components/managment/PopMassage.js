@@ -1,12 +1,13 @@
 import React from 'react'
-import {Box} from '@material-ui/core'
+import {Box, Popper} from '@material-ui/core'
 import {Transition} from 'react-transition-group'
 
 export const PopMassage=({
   classes,
   show=false,
-  timout=500,
-  label=''
+  timeout=500,
+  label='',
+  innerRef=null
 }) => {
   const transitionStyles={
     entering: 1,
@@ -15,17 +16,14 @@ export const PopMassage=({
     exited: 0
   };
   return (
-    <Transition in={show} timeout={timout}>
-      {state => (
-        <Box
+    <Popper open={show} anchorEl={innerRef}>
+      <Box
           className={classes.copyClip}
           style={{
-            transition: `opacity ${timout}ms ease-in-out`,
-            opacity: transitionStyles[state]
+            transition: `opacity ${timeout}ms ease-in-out`,
           }}>
           {label}
         </Box>
-      )}
-    </Transition>
+    </Popper>
   )
 }

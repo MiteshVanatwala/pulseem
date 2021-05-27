@@ -37,6 +37,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
   const [showCopied,setShowCopied]=useState(null)
+  const [copyRef,setCopyRef]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
   const history=useCtrlHistory()
   const dispatch=useDispatch()
@@ -235,6 +236,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         show={showCopied===ID}
         timeout={2000}
         label={t('common.copyClip')}
+        innerRef={copyRef}
       /> : null
     )
 
@@ -287,11 +289,11 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'copy',
         icon: (copyData&&copyData.icon)||null,
         lable: (copyData&&copyData.lable)||'',
-        rootClass: classes.paddingIcon,
+        rootClass: classes.minWidth95,
         text: (copyData&&copyData.copy)||'',
         type: 'copy',
-        onClick: () => {
-          navigator.clipboard.writeText(copyData.copy)
+        onClick: (e) => {
+          setCopyRef(e.current)
           setShowCopied(ID)
           setTimeout(() => {
             setShowCopied(null)
@@ -522,7 +524,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
 
   const handleClose=() => {
-    setDialogType(null)
+    setDialogType(null);
+    setRestoreArray([]);
   }
 
   const getRestorDialog=(data=[]) => {

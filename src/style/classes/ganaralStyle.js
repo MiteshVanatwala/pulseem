@@ -114,13 +114,12 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     overflowY: 'auto'
   },
   copyClip: {
-    position: 'absolute',
     border: '1px solid #3476b0',
     padding: 5,
     color: '#3476b0',
     fontWeight: 600,
     backgroundColor: '#bde5f8',
-    opacity: 0,
+    opacity: 1,
     zIndex: 10
   },
   dialogIconContent: {

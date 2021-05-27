@@ -441,7 +441,7 @@
   "TotalSendPlanResource1": {
     "HeaderText": "Sent"
   },
-  "ShowGroupsTitle": "Groups To Campaign",
+  "ShowGroupsTitle": "Campaign Groups",
   "MethodSendPlan": "Automated Sending",
   "CreditsResource1": {
     "HeaderText": "Messages"

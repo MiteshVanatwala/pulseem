@@ -131,7 +131,7 @@ const MmsManagnentScreen=({classes}) => {
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
-              minDate={fromDate? fromDate:''}
+              minDate={fromDate? fromDate:undefined}
             />
           </Grid>
           :null}

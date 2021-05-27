@@ -21,6 +21,7 @@ import {useTranslation} from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
+import { pulseemNewTab } from '../helpers/functions';
 
 
 const AutomationsManagnentScreen=({classes}) => {
@@ -134,7 +135,7 @@ const AutomationsManagnentScreen=({classes}) => {
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
-              minDate={fromDate? fromDate:''}
+              minDate={fromDate? fromDate:undefined}
             />
           </Grid>
           :null}
@@ -224,8 +225,10 @@ const AutomationsManagnentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${ID}`,
         rootClass: classes.paddingIcon,
+        onClick: () => {
+          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}`)
+        }
       },
       {
         key: 'edit',

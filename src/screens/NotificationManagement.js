@@ -3,7 +3,7 @@ import DefaultScreen from './DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, IconButton, InputAdornment, Input, Box, FormControlLabel, Checkbox, Select, MenuItem, CardMedia, Card, CardContent, RadioGroup, Radio, FormGroup, FormControl
+  Grid, Button, TextField, Box, FormControlLabel, Checkbox, RadioGroup, Radio, FormControl
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
@@ -52,9 +52,9 @@ const NotificationManagement = ({ classes }) => {
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth75) }
-  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.paddingRightLeft10) }
-  const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.paddingRightLeft10, classes.minWidth75) }
-  const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.paddingRightLeft10, classes.minWidth75) }
+  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
+  const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth75) }
+  const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth75) }
   const baseUrl = 'https://www.pulseemdev.co.il/pulseem';
   const scriptDialogCookie = getCookie('scriptDialog')
   const hideScriptDialog = (scriptDialogCookie === 'true')
@@ -275,7 +275,7 @@ const NotificationManagement = ({ classes }) => {
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
-              minDate={fromDate ? fromDate : ''}
+              minDate={fromDate?fromDate:undefined}
             />
           </Grid>
           : null}
@@ -539,7 +539,6 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const renderRow = (row) => {
-    console.log(`renderRow(): row`, row)
     return (
       <TableRow
         key={row.ID}
@@ -583,7 +582,7 @@ const NotificationManagement = ({ classes }) => {
         <TableCell
           component="th"
           scope="row"
-          classes={{ root: clsx(classes.tableCellRoot, classes.paddingRightLeft10) }}
+          classes={{ root: clsx(classes.tableCellRoot) }}
           className={classes.flex12}>
           {renderCellIcons(row)}
 
@@ -686,7 +685,7 @@ const NotificationManagement = ({ classes }) => {
 
   const handleDialogClose = () => {
     setDialogType(null);
-
+    setRestoreArray([]);
   }
 
   const renderPreview = (data = {}) => {

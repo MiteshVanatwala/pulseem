@@ -22,6 +22,7 @@ import {useTranslation} from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
+import { pulseemNewTab } from '../helpers/functions';
 
 const NewsletterManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
@@ -38,6 +39,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
   const [showCopied,setShowCopied]=useState(null)
+  const [copyRef,setCopyRef]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
   const history=useCtrlHistory()
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
@@ -134,7 +136,7 @@ const NewsletterManagnentScreen=({classes}) => {
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
-              minDate={fromDate? fromDate:''}
+              minDate={fromDate? fromDate:undefined}
             />
           </Grid>
           :null}
@@ -225,6 +227,7 @@ const NewsletterManagnentScreen=({classes}) => {
         show={showCopied===CampaignID}
         timeout={2000}
         label={t('common.copyClip')}
+        innerRef={copyRef}
       /> : null
     )
 
@@ -242,8 +245,10 @@ const NewsletterManagnentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        href: `/Pulseem/PreviewCampaign.aspx?CampaignID=${CampaignID}`,
-        rootClass: classes.paddingIcon
+        rootClass: classes.paddingIcon,
+        onClick: () => {
+          pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}`)
+        }
       },
       {
         key: 'edit',
@@ -285,8 +290,8 @@ const NewsletterManagnentScreen=({classes}) => {
         rootClass: classes.paddingIcon,
         text: shareUrl||'',
         type: 'copy',
-        onClick: () => {
-          navigator.clipboard.writeText(shareUrl)
+        onClick: (e) => {
+          setCopyRef(e.current)
           setShowCopied(CampaignID)
           setTimeout(() => {
             setShowCopied(null)

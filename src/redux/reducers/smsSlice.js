@@ -11,6 +11,16 @@ export const getSmsData=createAsyncThunk(
     }
   })
 
+export const getSmsByID=createAsyncThunk(
+  'smsCampaign/GetSmsCampaignById',async (id,thunkAPI) => {
+    try {
+      const response=await instence.get(`smsCampaign/GetSmsCampaignById/${id}`);
+      return JSON.parse(response.data)
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  })
+
 export const restoreSms=createAsyncThunk(
   'smsCampaign/restoreSmsCampaigns',async (deletedsms,thunkAPI) => {
     try {

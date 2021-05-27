@@ -125,6 +125,10 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   paddingIcon: {
     padding: '0.8rem 0rem 0.2rem!important'
   },
+  minWidth95: {
+    minWidth: 95,
+    padding: '0.8rem 0px!important'
+  },
   managmentIconHide: {
     opacity: 0
   },
