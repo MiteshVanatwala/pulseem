@@ -5,13 +5,21 @@ const dialogWidth={
   lg: 350
 }
 
+const paperMinWidthSm={
+  xs: 350,
+  sm: 500,
+  md: 500,
+  lg: 500,
+  xl: 500
+}
+
 export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   dialogContainer: {
     '& .MuiPaper-root': {
       overflowX: 'hidden'
     },
     '& .MuiDialog-paperWidthSm': {
-      minWidth: '500px',
+      minWidth: paperMinWidthSm[windowSize],
       maxWidth: '1050px'
     }
   },
@@ -163,6 +171,9 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   maxWidth400: {
     maxWidth: 400
   },
+  p0: {
+    padding: 0
+  },
   ps25: {
     paddingInlineStart: 25
   },
@@ -194,5 +205,9 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   imageInfo: {
     backgroundColor: 'rgba(255,255,255,.5)',
     color: '#000 !important'
+  },
+  justifyCenter: {
+    display: 'flex',
+    justifyContent: 'center'
   }
 })

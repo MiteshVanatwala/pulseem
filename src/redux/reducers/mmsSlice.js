@@ -11,6 +11,16 @@ export const getMmsData=createAsyncThunk(
     }
   })
 
+export const getMMSByID=createAsyncThunk(
+  'mms/GetPreview/',async (id,thunkAPI) => {
+    try {
+      const response=await instence.get(`mms/GetPreview/${id}`);
+      return JSON.parse(response.data)
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  })
+
 export const restoreMms=createAsyncThunk(
   'mms/restoreMmsCampaigns',async (deletedMms,thunkAPI) => {
     try {

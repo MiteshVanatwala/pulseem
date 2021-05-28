@@ -12,7 +12,7 @@ import {
   TablePagination,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import {getMmsData,restoreMms,deleteMms,duplicteMms} from '../redux/reducers/mmsSlice'
+import {getMmsData,restoreMms,deleteMms,duplicteMms, getMMSByID} from '../redux/reducers/mmsSlice'
 import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
@@ -20,6 +20,7 @@ import {pulseemNewTab} from '../helpers/functions'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
+import { Preview } from '../components/Notifications/Preview/Preview';
 
 const MmsManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
@@ -231,8 +232,12 @@ const MmsManagnentScreen=({classes}) => {
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         rootClass: classes.paddingIcon,
-        onClick: () => {
-          pulseemNewTab(`MmsPreviewCampaign.aspx?MmsCampaignID=${ID}`)
+        onClick: async () => {
+          const mms=await dispatch(getMMSByID(ID));
+          setDialogType({
+            type: 'preview',
+            data: mms.payload
+          })
         }
       },
       {
@@ -622,6 +627,42 @@ const MmsManagnentScreen=({classes}) => {
     }
   })
 
+  const getPreviewDialog = (data = {}) => {
+    return {
+      childrenPadding: false,
+      isMMS: true,
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE0F8'}
+        </div>
+      ),
+      content: (
+        <Box>
+          <Preview classes={classes}
+            mobileFullsize={true}
+            model={data}
+            ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
+            showTitle={false}
+            isMMS={true}
+          />
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleClose}
+          className={clsx(
+            classes.confirmButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.confirm')}
+        </Button>
+      )
+    };
+  }
+
   const renderDialog=() => {
 
     const {data,type}=dialogType||{}
@@ -630,7 +671,8 @@ const MmsManagnentScreen=({classes}) => {
       restore: getRestoreDialog(data),
       groups: getGroupsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data)
+      duplicate: getDuplicateDialog(data),
+      preview: getPreviewDialog(data),
     }
 
     const currentDialog=dialogContent[type]||{}

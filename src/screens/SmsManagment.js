@@ -16,13 +16,12 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
   getSmsData,restoreSms,deleteSms,duplicteSms,getSmsAuthorizationData,getAuthorizeNumbers,sendVerificationCode,verifyCode, getSmsByID
 } from '../redux/reducers/smsSlice'
-import {pulseemNewTab} from '../helpers/functions'
-import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
+import { Preview } from '../components/Notifications/Preview/Preview';
 
 const SmsManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
@@ -44,7 +43,6 @@ const SmsManagnentScreen=({classes}) => {
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
-  const history=useCtrlHistory()
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch=useDispatch()
   moment.locale(language)
@@ -258,8 +256,12 @@ const SmsManagnentScreen=({classes}) => {
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         rootClass: classes.paddingIcon,
-        onClick: () => {
-          pulseemNewTab(`SMSPreviewCampaign.aspx?SMSCampaignID=${Id}`)
+        onClick: async () => {
+          const sms=await dispatch(getSmsByID(Id));
+          setDialogType({
+            type: 'preview',
+            data: sms.payload
+          })
         }
       },
       {
@@ -705,6 +707,41 @@ const SmsManagnentScreen=({classes}) => {
     }
   })
 
+  const getPreviewDialog = (data = {}) => {
+    return {
+      childrenPadding: false,
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE0F8'}
+        </div>
+      ),
+      content: (
+        <Box>
+          <Preview classes={classes}
+            mobileFullsize={true}
+            model={data}
+            ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
+            showTitle={false}
+            isSMS={true}
+          />
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleClose}
+          className={clsx(
+            classes.confirmButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.confirm')}
+        </Button>
+      )
+    };
+  }
+
   const getVerifyDialog=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
     return {
@@ -902,6 +939,7 @@ const SmsManagnentScreen=({classes}) => {
       groups: getGroupsDialog(data),
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data),
+      preview: getPreviewDialog(data),
       verify: getVerifyDialog(data),
       shortVerify: getShortVerifyDialog(data),
       verificationSent: getVerificationSentDialog(data)

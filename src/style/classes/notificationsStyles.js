@@ -1,10 +1,77 @@
-import mobileBg from '../../assets/images/mobile.png'
+import mobileBg from '../../assets/images/mobile.png';
+import mobileFullBg from '../../assets/images/mobile_prev.png';
 
 const galleryWidth = {
     xs: 250,
     sm: 360,
     md: 960,
     lg: 1050
+}
+
+const previewWidth = {
+    xs: 280,
+    sm: 335,
+    md: 335,
+    lg: 335,
+    xl: 335,
+}
+
+const bubble = {
+  fontSize: {
+    xs: 14  ,
+    sm: 18,
+    md: 18,
+    lg: 18,
+    xl: 18,  
+  },
+  container: {
+    width: {
+      xs: 205,
+      sm: 250,
+      md: 250,
+      lg: 250,
+      xl: 250,
+    },
+    top: {
+      xs: 125,
+      sm: 160,
+      md: 160,
+      lg: 160,
+      xl: 160,  
+    },
+    left: {
+      xs: 40,
+      sm: 45,
+      md: 45,
+      lg: 45,
+      xl: 45,
+    },
+    maxHeight: {
+      xs: 278,
+      sm: 348,
+      md: 348,
+      lg: 348,
+      xl: 348,
+    }
+  },
+  paper: {
+    width: {
+      xs: '75%',
+      sm: '80%',
+      md: '80%',
+      lg: '80%',
+      xl: '80%', 
+  }
+  }
+  
+}
+
+const mobileMinHeight = {
+  xs: 500,
+  sm: 630,
+  md: 630,
+  lg: 630,
+  xl: 630,
 }
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     roundedCircle: {
@@ -197,6 +264,63 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         backgroundRepeat: 'no-repeat',
         minHeight: '400px',
         position: 'relative'
+    },
+    mobileFullBG: {
+        backgroundImage: `url(${mobileFullBg})!important`,
+        backgroundPosition: 'center',
+        minHeight: mobileMinHeight[windowSize],
+        backgroundSize: 'contain',
+        width: previewWidth[windowSize]
+    },
+    bubbleContainer: {
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
+        maxHeight: bubble.container.maxHeight[windowSize],
+        overflowY: 'auto',
+        position: 'absolute',
+        width: bubble.container.width[windowSize],
+        top: bubble.container.top[windowSize],
+        left: bubble.container.left[windowSize],
+        '&::-webkit-scrollbar': {
+            width: '5px'
+        },
+        '&::-webkit-scrollbar-thumb': {
+            'backgroundColor': 'darkgrey',
+            borderRadius: '5px'
+        }
+    },
+    bubblePaper: {
+        overflowX: 'unset!important',
+        textAlign: isRTL?'right':'left',
+        borderRadius: 20, 
+        height: '100%',
+        padding: '10px 15px', 
+        position: 'relative',
+        width: bubble.paper.width[windowSize],
+        backgroundColor: '#63bbfa',
+        '&::after': {
+            content: `''`,
+            position: 'absolute',
+            display: 'block',
+            width: 0,
+            zIndex: 1,
+            borderStyle: 'solid',
+            borderWidth: '0 20px 20px 0',
+            borderColor: 'transparent #63bbfa transparent transparent',
+            top: '17px',
+            left: '-10px',
+            marginTop: '-10px'
+        }
+    },
+    bubbleText: {
+        wordWrap: 'break-word',
+        fontWeight: 'bold',
+        maxWidth: 300,
+        fontSize: bubble.fontSize[windowSize]
+    },
+    mmsImage: {
+      width: '100%'
     },
     mobileNotification: {
         width: '100%',

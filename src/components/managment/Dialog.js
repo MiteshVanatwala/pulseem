@@ -8,6 +8,7 @@ import {useTranslation} from 'react-i18next'
 import {AlertIcon} from '../icons/index'
 
 export const Dialog=({
+  childrenPadding=true,
   classes,
   open=false,
   title='',
@@ -104,7 +105,7 @@ export const Dialog=({
   const renderChildren=() => {
     return (
       <Box
-        className={classes.dialogChildren} style={{ maxHeight: 'calc(65vh)'}}>
+        className={clsx(!childrenPadding&&classes.p0, classes.dialogChildren)} style={{ maxHeight: 'calc(65vh)'}}>
         {children}
       </Box>)
   }
