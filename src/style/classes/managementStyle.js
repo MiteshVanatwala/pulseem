@@ -518,7 +518,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     flexDirection: 'column',
     flex: 1,
     height: 300,
-    width: '97%',
+    width: 600,
     border: '1px solid #8b8b8b',
     overflowY: 'auto',
     padding: 5,

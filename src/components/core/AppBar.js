@@ -188,7 +188,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
 
   const navigate=({uri}) => {
     if(!!uri) {
-      setCookie('scriptDialog',false,{maxAge: 3600});
+      setCookie('scriptDialog',false,{maxAge: 36000000000});
       dispatch(setScriptDialog(false));
       window.location.href=uri
     }

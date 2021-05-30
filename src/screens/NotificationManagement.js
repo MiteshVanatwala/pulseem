@@ -157,7 +157,7 @@ const NotificationManagement=({classes}) => {
   const handleImplementScript=(value) => {
     console.log("handleImplementScript")
     if(value) {
-      setCookie('scriptDialog',scriptDialog,{maxAge: 3600});
+      setCookie('scriptDialog',scriptDialog,{maxAge: 360000000000});
       dispatch(updateScriptPath(scriptPath));
     }
     setShowScriptDialog(false)
@@ -345,7 +345,7 @@ const NotificationManagement=({classes}) => {
         </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${notificationData.length} ${t('mms.campaigns')}`}
+            {`${notificationData.length} ${t('notifications.notifications')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -414,7 +414,7 @@ const NotificationManagement=({classes}) => {
       {
         key: 'groups',
         icon: GroupsIcon,
-        disable: (groups&&groups.length===0),
+        disable: (!groups||groups.length===0),
         lable: t('notifications.buttons.groups'),
         rootClass: classes.paddingIcon,
         onClick: () => {
