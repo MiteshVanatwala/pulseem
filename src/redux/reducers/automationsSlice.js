@@ -24,6 +24,7 @@ export const deleteAutomations=createAsyncThunk(
 export const duplicateAutomations=createAsyncThunk(
   'automation/cloneAutomation/',async (id,thunkAPI) => {
     try {
+      console.log('inside Duplicate')
       const response=await instence.put(`automation/cloneAutomation/${id}`);
       return response.data
     } catch(error) {

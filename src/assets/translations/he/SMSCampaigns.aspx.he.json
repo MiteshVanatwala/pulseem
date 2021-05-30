@@ -469,5 +469,6 @@
   "resend": "שליחה חוזרת",
   "verificationCodeError": " הקוד שגוי, נסו שוב או בחרו בשליחה חוזרת",
   "numberError": "יש להקליד לפחות 10 ספרות",
-  "verifyNumber": "אמת מספר"
+  "verifyNumber": "אמת מספר",
+  "restoreCampaignTitle": "בחר את קמפייני הSMS שברצונך לשחזר"
 }

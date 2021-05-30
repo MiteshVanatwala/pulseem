@@ -1,4 +1,4 @@
-const appBarTitleTextSize={xs: 20,sm: 17,md: 15,lg: 17,xl: 20}
+const appBarTitleTextSize={xs: 20,sm: 17,md: 15,lg: 17,xl: 19}
 
 export const appBarStyle=(windowSize,isRTL,theme) => ({
   appBarItemContainer: {
@@ -9,14 +9,21 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   appBarHrefContainer: {
     display: 'flex',
     flex: 1,
-    textDecoration: 'none'
+    textDecoration: 'none',
+    justifyContent: 'center',
+    cursor: 'pointer'
   },
   appBarItemText: {
+    display: 'flex',
+    flexDirection: 'row',
     fontFamily: 'OpenSansHebrew',
     color: 'white',
     textTransform: 'none',
+    whiteSpace: 'wrap',
+    overflow: 'hidden',
     fontSize: appBarTitleTextSize[windowSize],
-    borderRadius: 0
+    borderRadius: 0,
+    flex: 1
   },
   appBarItemIcon: {
     color: 'white',
@@ -63,7 +70,8 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   },
   appBarLogo: {
     marginInlineEnd: '1vw',
-    width: 143
+    width: 143,
+    alignSelf: 'center'
   },
   appBerSpace: {
     display: 'flex',

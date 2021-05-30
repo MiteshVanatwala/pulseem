@@ -530,7 +530,7 @@ const MmsManagnentScreen=({classes}) => {
   const getRestoreDialog=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
     return {
-      title: t('campaigns.restoreCampaginTitle'),
+      title: t('mms.restoreCampaignTitle'),
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>

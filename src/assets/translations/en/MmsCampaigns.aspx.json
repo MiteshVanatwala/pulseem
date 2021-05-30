@@ -449,5 +449,5 @@
   "CampsAmountLimit": "This account has reached maximum MMS campaigns limit, please contact our support to upgrade your account.",
   "create": "Create MMS",
   "campaigns": "Campaigns",
-  "restoreCampaignTitle": "Select the MMS you want to restore"
+  "restoreCampaignTitle": "Select the MMS campaigns you want to restore"
 }

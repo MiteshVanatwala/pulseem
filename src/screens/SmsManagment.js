@@ -599,7 +599,7 @@ const SmsManagnentScreen=({classes}) => {
   const getRestorDialog=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
     return {
-      title: t('campaigns.restoreCampaginTitle'),
+      title: t('sms.restoreCampaignTitle'),
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
