@@ -6,8 +6,11 @@
     font-weight: 400;
     font-size: 15px;
 }
-.dialogBox {
+.summaryModal {
     min-width: 850px;
+}
+.dialogBox {
+    min-width: 100%;
 }
 @media screen and (max-width: 768px) {
     .wizardButtonContainer {
@@ -61,7 +64,7 @@ input.error {
     margin-left: 0 !important;
 }
 
-[direction="rtl"] .MuiDialogActions-spacing,
-[direction="rtl"] .MuiPickersCalendarHeader-switchHeader {
+.rtl .MuiDialogActions-spacing,
+.rtl .MuiPickersCalendarHeader-switchHeader {
     direction: rtl;
 }

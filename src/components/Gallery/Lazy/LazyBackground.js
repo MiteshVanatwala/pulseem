@@ -17,7 +17,7 @@ const LazyBackground = (props) => {
 
     return imageLoaded ? (
         <Box className="responsive-bg" style={{ backgroundImage: `url('${props.url}')` }}>{props.children}</Box>
-    ) : (<Skeleton variant="rect" width={210} height={118} />);
+    ) : (<Skeleton variant="rect" width="100%" height={130} />);
 }
 
 export default LazyBackground;
