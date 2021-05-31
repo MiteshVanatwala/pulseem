@@ -68,7 +68,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                         }
                     </Avatar>
                 </ListItemAvatar>
-                <ListItemText className={'groupText'}
+                <ListItemText className={'groupText'} title={group.GroupName}
                     primary={group.GroupName}
                 />
                 <ListItemSecondaryAction className={'groupText'}>
@@ -92,7 +92,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     }
                 </Avatar>
             </ListItemAvatar>
-            <ListItemText className={'groupText'}
+            <ListItemText className={'groupText'} title={t("notifications.selectAll")}
                 primary={t("notifications.selectAll")}
             />
         </ListItem>)
