@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import { AiOutlineCheckCircle, AiOutlineCloudUpload } from 'react-icons/ai';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import LazyBackground from './Lazy/LazyBackground';
+import Toast from '../Toast/Toast.component';
 
 const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     const dispatch = useDispatch();
@@ -35,7 +36,19 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     const [fileToUpload, setFileToUpload] = useState(null);
     const [isFilePicked, setIsFilePicked] = useState(false);
     const hiddenFileInput = React.useRef(null);
+    const [toastMessage, setToastMessage] = useState(null);
 
+    const renderToast = () => {
+        if (toastMessage) {
+            setTimeout(() => {
+                setToastMessage(null);
+            }, 2000);
+            return (
+                <Toast data={toastMessage} />
+            );
+        }
+        return null;
+    }
 
     moment.locale(language);
 
@@ -259,14 +272,6 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                                                     onClick={deleteImage(f)}
                                                 >X</button>
                                             </LazyBackground>
-                                            {/* <Box className="responsive-bg" style={{ backgroundImage: `url('${filePath}')` }}>
-                                                <button
-                                                    id={`file_${index}`}
-                                                    className={clsx(classes.absTopRight)}
-                                                    style={{ border: 'none', cursor: 'pointer', textDecoration: 'none' }}
-                                                    onClick={deleteImage(f)}
-                                                >X</button>
-                                            </Box> */}
                                             <Box title={f.FileName} className="image-info">
                                                 <Typography className="elipsis-text" style={{ fontSize: 14 }}>
                                                     {f.FileName}
@@ -336,10 +341,16 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         }
         const createNewFolder = async (event) => {
             event.preventDefault();
-            await dispatch(createFolder(folderName));
-            initGallery();
-            setFolderName('');
-            handleCreateFolderRow();
+            const folderExists = folders.filter(f => f.FolderName === folderName).length > 0;
+            if (!folderExists) {
+                await dispatch(createFolder(folderName));
+                initGallery();
+                setFolderName('');
+                handleCreateFolderRow();
+            }
+            else {
+                setToastMessage({ severity: 'error', color: 'error', message: t('common.folderAlreadyExists'), showAnimtionCheck: false });
+            }
         }
         return (
             <Box>
@@ -409,6 +420,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
 
     return (
         <div className={classes.root}>
+            {renderToast()}
             <Divider style={{ margin: '15px 0' }} />
             <Grid container className={classes.galleryGrid}>
                 <Grid item xs={2} className="scroll">

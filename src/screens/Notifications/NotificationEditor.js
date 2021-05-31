@@ -50,6 +50,66 @@ function BootstrapTooltip(props) {
   return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
 }
 
+const DashedInput = withStyles({
+  root: {
+    border: 'none',
+    borderRadius: 0,
+    "& .MuiOutlinedInput-multiline": {
+      padding: 2,
+      height: 60,
+      '& textarea + fieldset': {
+        border: 'none',
+        borderRadius: 0,
+        borderWidth: 1
+      },
+      '& textarea + fieldset': {
+        border: '1px dashed #64a1bd',
+        borderRadius: 0,
+        borderWidth: 1
+      },
+      '& textarea:invalid:focus + fieldset': {
+        borderStyle: 'dashed',
+        borderWidth: 1,
+        borderColor: 'red'
+      },
+      '& textarea:valid:focus + fieldset': {
+        borderStyle: 'dashed',
+        borderWidth: 1
+      },
+      '& textarea + fieldset:hover': {
+        color: 'rgba(0, 0, 0, 0.87)',
+        border: '1px dashed #000',
+      }
+    },
+    '& input': {
+      height: 0,
+    },
+    '& input + fieldset': {
+      borderStyle: 'dashed',
+      borderColor: '#64a1bd',
+      borderRadius: 0
+    },
+    '& input:invalid + fieldset': {
+      borderColor: 'red',
+      borderWidth: 1
+    },
+    '& input:invalid:focus + fieldset': {
+      borderColor: 'red',
+      borderWidth: 1
+    },
+    '& input:valid:focus + fieldset': {
+      borderStyle: 'dashed',
+      borderWidth: 1,
+      borderColor: '#64a1bd'
+    },
+    '& input:hover + fieldset': {
+      color: 'rgba(0, 0, 0, 0.87)',
+      border: '1px dashed rgba(0, 0, 0, 0.87)',
+    }
+  },
+
+})(TextField);
+
 const NotificationEditor = ({ props, classes }) => {
 
   /* #region  Component settings constatns */
@@ -736,26 +796,31 @@ const NotificationEditor = ({ props, classes }) => {
               </div>
             </div>
             <div className={classes.notificationContent}>
-              <TextField
+              <DashedInput
                 aria-label=""
                 required
                 placeholder={t("notifications.ph_title")}
                 value={model.Title}
-                className={clsx(classes.transparent, classes.borderSign, classes.dashed)}
+                className={clsx(classes.transparent, classes.dashed)}
                 onChange={handleNotificationTitle}
                 style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left' }}
                 onFocus={handleTextFocus}
+                variant="outlined"
                 id="notificationTitle"
               />
-              <TextareaAutosize
+              <DashedInput
+                inputProps={{ className: classes.textarea }}
+                multiline
+                rows={2}
                 aria-label=""
                 required
                 placeholder={t("notifications.ph_body")}
                 value={model.Body}
-                className={clsx(classes.transparent, classes.borderSign, classes.dashed, classes.notificationText)}
+                className={clsx(classes.transparent, classes.dashed, classes.notificationText)}
                 onChange={handleNotificationText}
                 style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', maxHeight: 45 }}
                 onFocus={handleTextFocus}
+                variant="outlined"
                 id="notificationText"
               />
             </div>
