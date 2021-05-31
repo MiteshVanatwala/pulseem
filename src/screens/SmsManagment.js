@@ -14,14 +14,14 @@ import {
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
-  getSmsData,restoreSms,deleteSms,duplicteSms,getSmsAuthorizationData,getAuthorizeNumbers,sendVerificationCode,verifyCode, getSmsByID
+  getSmsData,restoreSms,deleteSms,duplicteSms,getSmsAuthorizationData,getAuthorizeNumbers,sendVerificationCode,verifyCode,getSmsByID
 } from '../redux/reducers/smsSlice'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import { Preview } from '../components/Notifications/Preview/Preview';
+import {Preview} from '../components/Notifications/Preview/Preview';
 
 const SmsManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
@@ -95,17 +95,6 @@ const SmsManagnentScreen=({classes}) => {
       setCampaineNameSearch(event.target.value)
     }
 
-    // if(windowSize==='xs') {
-    //   return (
-    //     <SearchField
-    //       classes={classes}
-    //       value={campaineNameSearch}
-    //       onChange={handleCampainNameChange}
-    //       onClick={handleSearch}
-    //       placeholder={t('campaigns.campaginName')}
-    //     />
-    //   )
-    // }
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -137,7 +126,7 @@ const SmsManagnentScreen=({classes}) => {
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
-              minDate={fromDate?fromDate:undefined}
+              minDate={fromDate? fromDate:undefined}
             />
           </Grid>
           :null}
@@ -180,7 +169,7 @@ const SmsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create'
+            href={"/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create&fromreact=true"}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -249,7 +238,7 @@ const SmsManagnentScreen=({classes}) => {
         remove: Status!==1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendCampaign.aspx?CampaignID=${Id}`
+        href: `/Pulseem/SendCampaign.aspx?CampaignID=${Id}&fromreact=true`
       },
       {
         key: 'preview',
@@ -269,7 +258,7 @@ const SmsManagnentScreen=({classes}) => {
         icon: EditIcon,
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        href: `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}`,
+        href: `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&fromreact=true`,
         rootClass: classes.paddingIcon
       },
       {
@@ -302,7 +291,7 @@ const SmsManagnentScreen=({classes}) => {
         icon: AutomationIcon,
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
-        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}`,
+        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -483,19 +472,24 @@ const SmsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return String(row.Name.toLowerCase()).startsWith(values.campaineName.toLowerCase());
+        return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
       },
       date: (row,values) => {
         const {UpdatedDate,SendDate}=row
         const lastUpdate=SendDate?
           moment(SendDate,dateFormat).valueOf()
           :moment(UpdatedDate,dateFormat).valueOf()
-        if(fromDate&&toDate)
-          return ((lastUpdate>=values.fromDate.valueOf())&&(lastUpdate<=values.toDate.valueOf()))
-        if(fromDate)
-          return lastUpdate>=values.fromDate.valueOf()
-        if(toDate)
-          return lastUpdate<=values.toDate.valueOf()
+        const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
+        const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
+
+        if(!values)
+          return true
+        if(fromDate&&toDate&&currentFromDate&&currentToDate)
+          return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
+        if(fromDate&&currentFromDate)
+          return lastUpdate>=currentFromDate
+        if(toDate&&currentToDate)
+          return lastUpdate<=currentToDate
         return true
       }
     }
@@ -707,7 +701,7 @@ const SmsManagnentScreen=({classes}) => {
     }
   })
 
-  const getPreviewDialog = (data = {}) => {
+  const getPreviewDialog=(data={}) => {
     return {
       childrenPadding: false,
       showDivider: false,
@@ -721,7 +715,7 @@ const SmsManagnentScreen=({classes}) => {
           <Preview classes={classes}
             mobileFullsize={true}
             model={data}
-            ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
+            ShowRedirectButton={data.RedirectButtonText&&data.RedirectButtonText!=''}
             showTitle={false}
             isSMS={true}
           />

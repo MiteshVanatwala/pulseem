@@ -616,19 +616,24 @@ const NotificationManagement=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return String(row.Name.toLowerCase()).startsWith(values.notificationName.toLowerCase());
+        return String(row.Name.toLowerCase()).includes(values.notificationName.toLowerCase());
       },
       date: (row,values) => {
         const {UpdatedDate,SendDate}=row
         const lastUpdate=SendDate?
           moment(SendDate,dateFormat).valueOf()
           :moment(UpdatedDate,dateFormat).valueOf()
-        if(fromDate&&toDate)
-          return ((lastUpdate>=values.fromDate.valueOf())&&(lastUpdate<=values.toDate.valueOf()))
-        if(fromDate)
-          return lastUpdate>=values.fromDate.valueOf()
-        if(toDate)
-          return lastUpdate<=values.toDate.valueOf()
+        const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
+        const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
+
+        if(!values)
+          return true
+        if(fromDate&&toDate&&currentFromDate&&currentToDate)
+          return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
+        if(fromDate&&currentFromDate)
+          return lastUpdate>=currentFromDate
+        if(toDate&&currentToDate)
+          return lastUpdate<=currentToDate
         return true
       }
     }
@@ -942,32 +947,40 @@ const NotificationManagement=({classes}) => {
       content: (
         <Box className={classes.dialogBox}>
           <Typography
-            className={classes.f25}>
+            className={classes.f28}>
             {t('notifications.implementDialog.beforeYouStarted')}
           </Typography>
           <Typography
-            className={clsx(classes.f18,classes.pb10)}>
+            className={clsx(classes.f20,classes.pb10)}>
             {t('notifications.implementDialog.startSendingOutMessage')}
           </Typography>
-          <Typography>
+          <Typography className={classes.f18}>
             1. {t('notifications.downloadThe')}
-            <a target="_blank" rel="noreferrer" href="https://pn.pulseem.com/assets/scripts/service-worker.js" download>{t('notifications.attachedScript')}</a>
+            <a
+              download
+              target="_blank"
+              rel="noreferrer"
+              href="https://pn.pulseem.com/assets/scripts/service-worker.js">
+              {t('notifications.attachedScript')}
+            </a>
           </Typography>
           <hr />
           <Grid container direction={'row'} alignItems="center">
-            <Typography>
+            <Typography className={classes.f18}>
               2. {t('notifications.chooseSaveLocation')}
             </Typography>
             <RadioGroup row value={scriptDirectory} onChange={handleScriptDirectory} className={classes.radioGroup}>
               <FormControlLabel
                 key={Math.round(Math.random()*999999999)}
                 value={0}
+                className={classes.f18}
                 control={<Radio color="primary" />}
                 label={t("notifications.siteMainDirectory")}
               />
               <FormControlLabel
                 key={Math.round(Math.random()*999999999)}
                 value={1}
+                className={classes.f18}
                 control={<Radio color="primary" />}
                 label={t("notifications.anotherDirectory")}
               />
@@ -976,8 +989,13 @@ const NotificationManagement=({classes}) => {
           {scriptDirectory===1?
             <Box>
               <Box className={classes.directoryField}>
-                <Typography>{t("notifications.enterDirectory")}</Typography>
-                <Typography variant="body2">{t("notifications.example")}: /examplefolder1/examplefodler2/</Typography>
+                <Typography className={classes.f16}>
+                  {t("notifications.enterDirectory")}
+                </Typography>
+                <Typography
+                  variant="body2" className={classes.f16}>
+                  {t("notifications.example")}: /examplefolder1/examplefodler2/
+                  </Typography>
               </Box>
               <TextField
                 variant="outlined"
@@ -989,10 +1007,10 @@ const NotificationManagement=({classes}) => {
               />
             </Box>:null}
           <hr />
-          <Typography>
+          <Typography className={classes.f18}>
             3. {t('notifications.copyLineCodeText')}
           </Typography>
-          <Typography className={clsx(classes.bold,classes.pb10,classes.pt10)}>
+          <Typography className={clsx(classes.bold,classes.pb10,classes.pt10,classes.f18)}>
             {t('notifications.payAttentionText')}
           </Typography>
           <CopyToClipboard text={renderScriptCode()} onCopy={handleCopyScript}>
@@ -1005,7 +1023,7 @@ const NotificationManagement=({classes}) => {
               {copyStatus? t('notifications.copied'):t('notifications.copy')}
             </Button>
           </CopyToClipboard>
-          <Typography style={{fontWeight: 'bold',fontSize: 14}}>
+          <Typography className={clsx(classes.bold,classes.f16)}>
             {t('notifications.headTagOpenText')} {'<head>'}
           </Typography>
           <pre>
@@ -1013,7 +1031,7 @@ const NotificationManagement=({classes}) => {
               {renderScriptCode()}
             </div>
           </pre>
-          <Typography className={clsx(classes.bold,classes.f14)}>
+          <Typography className={clsx(classes.bold,classes.f16)}>
             {t('notifications.headTagClosesText')} {'</head>'}
           </Typography>
         </Box>

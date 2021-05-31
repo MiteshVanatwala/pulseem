@@ -12,7 +12,7 @@ import {
   TablePagination,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import {getMmsData,restoreMms,deleteMms,duplicteMms, getMMSByID} from '../redux/reducers/mmsSlice'
+import {getMmsData,restoreMms,deleteMms,duplicteMms,getMMSByID} from '../redux/reducers/mmsSlice'
 import useCtrlHistory from '../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
@@ -20,7 +20,7 @@ import {pulseemNewTab} from '../helpers/functions'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import { Preview } from '../components/Notifications/Preview/Preview';
+import {Preview} from '../components/Notifications/Preview/Preview';
 
 const MmsManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
@@ -168,7 +168,7 @@ const MmsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/MmsCampaignEdit.aspx'
+            href='/Pulseem/MmsCampaignEdit.aspx?fromreact=true'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -225,7 +225,7 @@ const MmsManagnentScreen=({classes}) => {
         remove: Status!==1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=${ID}`
+        href: `/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=${ID}&fromreact=true`
       },
       {
         key: 'preview',
@@ -245,7 +245,7 @@ const MmsManagnentScreen=({classes}) => {
         icon: EditIcon,
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        href: `/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=${ID}`,
+        href: `/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=${ID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -454,19 +454,24 @@ const MmsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return String(row.Name.toLowerCase()).startsWith(values.campaineName.toLowerCase());
+        return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
       },
       date: (row,values) => {
         const {LastUpdate,SendDate}=row
         const lastUpdate=SendDate?
           moment(SendDate,dateFormat).valueOf()
           :moment(LastUpdate,dateFormat).valueOf()
-        if(fromDate&&toDate)
-          return ((lastUpdate>=values.fromDate.valueOf())&&(lastUpdate<=values.toDate.valueOf()))
-        if(fromDate)
-          return lastUpdate>=values.fromDate.valueOf()
-        if(toDate)
-          return lastUpdate<=values.toDate.valueOf()
+        const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
+        const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
+
+        if(!values)
+          return true
+        if(fromDate&&toDate&&currentFromDate&&currentToDate)
+          return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
+        if(fromDate&&currentFromDate)
+          return lastUpdate>=currentFromDate
+        if(toDate&&currentToDate)
+          return lastUpdate<=currentToDate
         return true
       }
     }
@@ -627,7 +632,7 @@ const MmsManagnentScreen=({classes}) => {
     }
   })
 
-  const getPreviewDialog = (data = {}) => {
+  const getPreviewDialog=(data={}) => {
     return {
       childrenPadding: false,
       isMMS: true,
@@ -642,7 +647,7 @@ const MmsManagnentScreen=({classes}) => {
           <Preview classes={classes}
             mobileFullsize={true}
             model={data}
-            ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
+            ShowRedirectButton={data.RedirectButtonText&&data.RedirectButtonText!=''}
             showTitle={false}
             isMMS={true}
           />

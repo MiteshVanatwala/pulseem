@@ -186,11 +186,20 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   f14: {
     fontSize: 14
   },
+  f16: {
+    fontSize: 16
+  },
   f18: {
     fontSize: 18
   },
+  f20: {
+    fontSize: 20
+  },
   f25: {
     fontSize: 25
+  },
+  f28: {
+    fontSize: 28
   },
   colorGray: {
     color: 'rgba(0,0,0,0.40)'

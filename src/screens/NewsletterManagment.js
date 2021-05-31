@@ -22,7 +22,7 @@ import {useTranslation} from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import { pulseemNewTab } from '../helpers/functions';
+import {pulseemNewTab} from '../helpers/functions';
 
 const NewsletterManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
@@ -172,7 +172,7 @@ const NewsletterManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/Editor/CampaignInfo?new=1'
+            href='/Pulseem/Editor/CampaignInfo?new=1&fromreact=true'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -222,13 +222,13 @@ const NewsletterManagnentScreen=({classes}) => {
 
     const renderCopyToClipoard=(
       showCopied===CampaignID?
-      <PopMassage
-        classes={classes}
-        show={showCopied===CampaignID}
-        timeout={2000}
-        label={t('common.copyClip')}
-        innerRef={copyRef}
-      /> : null
+        <PopMassage
+          classes={classes}
+          show={showCopied===CampaignID}
+          timeout={2000}
+          label={t('common.copyClip')}
+          innerRef={copyRef}
+        />:null
     )
 
     const iconsMap=[[
@@ -239,7 +239,7 @@ const NewsletterManagnentScreen=({classes}) => {
         remove: Status!==1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}`
+        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
       },
       {
         key: 'preview',
@@ -247,7 +247,7 @@ const NewsletterManagnentScreen=({classes}) => {
         lable: t('campaigns.Image1Resource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
-          pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}`)
+          pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`)
         }
       },
       {
@@ -255,7 +255,7 @@ const NewsletterManagnentScreen=({classes}) => {
         icon: EditIcon,
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        href: `/Pulseem/Editor/CampaignEdit/${CampaignID}`,
+        href: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -303,7 +303,7 @@ const NewsletterManagnentScreen=({classes}) => {
         icon: ReportsIcon,
         disable: Status===1,
         lable: t('campaigns.Reports'),
-        href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`,
+        href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -311,7 +311,7 @@ const NewsletterManagnentScreen=({classes}) => {
         icon: AutomationIcon,
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
-        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}`,
+        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -485,19 +485,24 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return String(row.Name.toLowerCase()).startsWith(values.campaineName.toLowerCase());
+        return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
       },
       date: (row,values) => {
         const {UpdatedDate,SendDate}=row
         const lastUpdate=SendDate?
           moment(SendDate,dateFormat).valueOf()
           :moment(UpdatedDate,dateFormat).valueOf()
-        if(fromDate&&toDate)
-          return ((lastUpdate>=values.fromDate.valueOf())&&(lastUpdate<=values.toDate.valueOf()))
-        if(fromDate)
-          return lastUpdate>=values.fromDate.valueOf()
-        if(toDate)
-          return lastUpdate<=values.toDate.valueOf()
+        const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
+        const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
+
+        if(!values)
+          return true
+        if(fromDate&&toDate&&currentFromDate&&currentToDate)
+          return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
+        if(fromDate&&currentFromDate)
+          return lastUpdate>=currentFromDate
+        if(toDate&&currentToDate)
+          return lastUpdate<=currentToDate
         return true
       }
     }

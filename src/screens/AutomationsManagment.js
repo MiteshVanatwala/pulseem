@@ -21,7 +21,7 @@ import {useTranslation} from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import { pulseemNewTab } from '../helpers/functions';
+import {pulseemNewTab} from '../helpers/functions';
 
 
 const AutomationsManagnentScreen=({classes}) => {
@@ -171,7 +171,7 @@ const AutomationsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/CreateAutomations.aspx'
+            href='/Pulseem/CreateAutomations.aspx?fromreact=true'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -234,7 +234,7 @@ const AutomationsManagnentScreen=({classes}) => {
         key: 'edit',
         icon: EditIcon,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        href: !IsActive? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}`:'',
+        href: !IsActive? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true`:'',
         rootClass: classes.paddingIcon,
         onClick: () => {
           if(IsActive) {
@@ -245,23 +245,23 @@ const AutomationsManagnentScreen=({classes}) => {
           }
         }
       },
-      {
-        key: 'duplicate',
-        icon: DuplicateIcon,
-        lable: t('campaigns.lnkEditResource1.ToolTip'),
-        rootClass: classes.paddingIcon,
-        onClick: () => {
-          setDialogType({
-            type: 'duplicate',
-            data: ID
-          })
-        }
-      },
+      //{
+      //  key: 'duplicate',
+      //  icon: DuplicateIcon,
+      //  lable: t('campaigns.lnkEditResource1.ToolTip'),
+      //  rootClass: classes.paddingIcon,
+      //  onClick: () => {
+      //    setDialogType({
+      //      type: 'duplicate',
+      //      data: ID
+      //    })
+      //  }
+      //},
       {
         key: 'reports',
         icon: ReportsIcon,
         lable: t('campaigns.Reports'),
-        href: `/Pulseem/automationreport.aspx?AutomationID=${ID}`,
+        href: `/Pulseem/automationreport.aspx?AutomationID=${ID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -450,19 +450,24 @@ const AutomationsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return String(row.Name.toLowerCase()).startsWith(values.campaineName.toLowerCase());
+        return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
       },
       date: (row,values) => {
         const {LastUpdate,SendDate}=row
         const lastUpdate=SendDate?
           moment(SendDate,dateFormat).valueOf()
           :moment(LastUpdate,dateFormat).valueOf()
-        if(fromDate&&toDate)
-          return ((lastUpdate>=values.fromDate.valueOf())&&(lastUpdate<=values.toDate.valueOf()))
-        if(fromDate)
-          return lastUpdate>=values.fromDate.valueOf()
-        if(toDate)
-          return lastUpdate<=values.toDate.valueOf()
+        const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
+        const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
+
+        if(!values)
+          return true
+        if(fromDate&&toDate&&currentFromDate&&currentToDate)
+          return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
+        if(fromDate&&currentFromDate)
+          return lastUpdate>=currentFromDate
+        if(toDate&&currentToDate)
+          return lastUpdate<=currentToDate
         return true
       }
     }
@@ -527,7 +532,7 @@ const AutomationsManagnentScreen=({classes}) => {
       await dispatch(activateAutomation(data))
       getData()
       if(isEdit)
-        window.location.href=`/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}`
+        window.location.href=`/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`
     } catch(err) {
       console.log('AutomationManagment.ChangeStatus',err)
       setDialogType({

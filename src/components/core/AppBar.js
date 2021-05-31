@@ -17,7 +17,7 @@ import {getRoutes,getSettingsItem} from '../../helpers/routes'
 import {setCookie,getCookie} from '../../helpers/cookies'
 import {setScriptDialog} from '../../redux/reducers/notificationSlice';
 import {logout} from '../../helpers/api'
-import axios from 'axios';
+import {openInNewTab} from '../../helpers/functions'
 
 const AppBarItem=({
   item,
@@ -82,7 +82,6 @@ const AppBarItem=({
                 <MenuList
                   style={{padding: 0}}>
                   {item.options&&item.options.map((option,index) => (
-                    //<a href={option.href}>
                     <Box
                       key={index}
                       component='a'
@@ -102,7 +101,6 @@ const AppBarItem=({
                         {option.title}
                       </MenuItem>
                     </Box>
-                    //</a>
                   ))}
                 </MenuList>
 
@@ -221,7 +219,10 @@ export const TopAppBar=({classes,currentPage=''}) => {
         <LanguageSelector classes={classes} />
         <AppBarItem
           classes={classes}
-          item={{title: question,href: '/Pages/Home.aspx?action=support'}}
+          item={{title: question}}
+          onMainClick={() => {
+            openInNewTab('/Pages/Home.aspx?action=support&fromreact=true')
+          }}
           textStyle={classes.appBarQuestionIcon}
         />
       </Box>
@@ -229,6 +230,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
   )
 
   const renderPhoneAppBar=() => {
+    const reportsOptions=routes.find(r => r.key==='reports').options
     const smallRoutes=[
       [
         routes[0],
@@ -237,8 +239,8 @@ export const TopAppBar=({classes,currentPage=''}) => {
       ],
       [
         routes[5],
-        {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049'},
-        {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c'}
+        {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049',href: reportsOptions[1].href},
+        {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c',href: reportsOptions[2].href}
       ]
     ]
     return (
@@ -295,6 +297,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
                               <Box
                                 className={classes.phoneAppBarItemContainer}>
                                 <Button
+                                  href={route.href}
                                   style={{alignSelf: 'center'}}>
                                   <Typography
                                     className={classes.phoneAppBarItemIcon}>

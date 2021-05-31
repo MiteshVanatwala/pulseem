@@ -6,7 +6,7 @@ import {KeyboardDatePicker,KeyboardTimePicker} from '@material-ui/pickers';
 import moment from 'moment'
 import 'moment/locale/he'
 import {FiClock} from 'react-icons/fi'
-import { ArrowBackIos, ArrowForwardIos } from '@material-ui/icons';
+import {ArrowBackIos,ArrowForwardIos} from '@material-ui/icons';
 
 export const DateField=({
   minDate,
@@ -43,7 +43,7 @@ export const DateField=({
       variant={buttons? 'dialog':'inline'}
       margin='none'
       placeholder={placeholder}
-      initialFocusedDate={moment()}
+      initialFocusedDate={moment().hours(0).minutes(0)}
       value={value}
       keyboardIcon={<FiClock style={{fontSize: 16}} />}
       onChange={date => onTimeChange(date)}
@@ -54,8 +54,8 @@ export const DateField=({
       cancellabel={buttons&&buttons.cancel}
       oklabel={buttons&&buttons.ok}
       ampm={ampm}
-      leftArrowIcon={isRTL?<ArrowForwardIos className={classes.f14}/>:<ArrowBackIos className={classes.f14}/>}
-      rightArrowIcon={isRTL?<ArrowBackIos className={classes.f14} />:<ArrowForwardIos className={classes.f14}/>}
+      leftArrowIcon={isRTL? <ArrowForwardIos className={classes.f14} />:<ArrowBackIos className={classes.f14} />}
+      rightArrowIcon={isRTL? <ArrowBackIos className={classes.f14} />:<ArrowForwardIos className={classes.f14} />}
     />
   ):
 
@@ -87,8 +87,8 @@ export const DateField=({
       }}
       cancellabel={buttons&&buttons.cancel}
       oklabel={buttons&&buttons.ok}
-      leftArrowIcon={isRTL?<ArrowForwardIos className={classes.f14}/>:<ArrowBackIos className={classes.f14}/>}
-      rightArrowIcon={isRTL?<ArrowBackIos className={classes.f14} />:<ArrowForwardIos className={classes.f14}/>}
+      leftArrowIcon={isRTL? <ArrowForwardIos className={classes.f14} />:<ArrowBackIos className={classes.f14} />}
+      rightArrowIcon={isRTL? <ArrowBackIos className={classes.f14} />:<ArrowForwardIos className={classes.f14} />}
     />
     )
 

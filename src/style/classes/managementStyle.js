@@ -301,6 +301,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     overflowX: 'visible'
   },
   tableContainer: {
+    width: '100%',
     border: '1px solid #7F7F7F',
   },
   flex7: {
@@ -587,7 +588,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   avatarIcon: {
     fontFamily: 'pulseemicons',
     color: '#fff',
-    fontSize: 15
+    fontSize: 18
   },
   checkIcon: {
     backgroundColor: 'green',

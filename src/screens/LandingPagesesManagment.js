@@ -134,7 +134,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/LandingPageWizard.aspx'
+            href='/Pulseem/LandingPageWizard.aspx?fromreact=true'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -231,13 +231,13 @@ const LandingPagesesManagmentScreen=({classes}) => {
     const copyData=copyDataObject[Type]
     const renderCopyToClipoard=(
       showCopied===ID?
-      <PopMassage
-        classes={classes}
-        show={showCopied===ID}
-        timeout={2000}
-        label={t('common.copyClip')}
-        innerRef={copyRef}
-      /> : null
+        <PopMassage
+          classes={classes}
+          show={showCopied===ID}
+          timeout={2000}
+          label={t('common.copyClip')}
+          innerRef={copyRef}
+        />:null
     )
 
     const iconsMap=[
@@ -247,7 +247,6 @@ const LandingPagesesManagmentScreen=({classes}) => {
         lable: IsPayment?
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (!IsPayment&&SurveyCount===0)||windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: async () => {
           if(IsPayment) {
@@ -258,7 +257,6 @@ const LandingPagesesManagmentScreen=({classes}) => {
       {
         key: 'preview',
         icon: PreviewIcon,
-        remove: windowSize==='xs',
         lable: t('campaigns.Image1Resource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -268,9 +266,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
       {
         key: 'edit',
         icon: EditIcon,
-        remove: windowSize==='xs',
         lable: t('landingPages.EditResource1.HeaderText'),
-        href: `/Pulseem/NewWebForm/NewFormEdit/${ID}`,
+        href: `/Pulseem/NewWebForm/NewFormEdit/${ID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -370,7 +367,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderNameCell=(row) => {
     return (
       <>
-        <Typography noWrap={false} className={classes.nameEllipsis}>
+        <Typography noWrap className={classes.nameEllipsis}>
           {row.Name}
         </Typography>
         <Typography
@@ -390,7 +387,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           {(Submits&&Submits.toLocaleString())||0}
         </Typography>
         <a
-          href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}`}
+          href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
           className={classes.middleText}>
           {t('landingPages.SubmitsResource1.HeaderText')}
         </a>
@@ -457,10 +454,9 @@ const LandingPagesesManagmentScreen=({classes}) => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item>
-              {renderCellIcons(row)}
-            </Grid>
           </Grid>
+          {renderCellIcons(row)}
+
         </TableCell>
       </TableRow>
     )
@@ -469,7 +465,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderTableBody=() => {
     const filtersObject={
       name: (row,values) => {
-        return String(row.Name.toLowerCase()).startsWith(values.campaignName.toLowerCase());
+        return String(row.Name.toLowerCase()).includes(values.campaignName.toLowerCase());
       }
     }
 
