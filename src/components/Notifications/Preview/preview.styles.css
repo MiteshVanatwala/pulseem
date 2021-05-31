@@ -17,8 +17,13 @@
     bottom: 0 !important;
 }
 
+.emoji-picker-react {
+    left: 100% !important;
+    right: auto;
+}
 .rtl .emoji-picker-react {
     right: 100% !important;
+    left: auto;
 }
 
 .MuiDialog-root .mobileBG {

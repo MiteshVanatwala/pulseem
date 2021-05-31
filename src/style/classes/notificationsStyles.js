@@ -390,7 +390,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         minHeight: 400
     },
     sidePadding: {
-        padding: '0 80px'
+        padding: '0 95px'
     },
     radioText: {
         color: '#555',
