@@ -394,6 +394,9 @@ const App=() => {
   const theme=getTheme(language)
   const history=useHistory()
 
+  if (isRTL) {
+    document.body.classList.add('rtl');
+  }
 
   return (
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>

@@ -1,31 +1,33 @@
 import React from 'react';
 import clsx from 'clsx';
 import {
-  Typography,Divider,Grid,Button,Dialog as BaseDialog,Paper,Box
+  Typography, Divider, Grid, Button, Dialog as BaseDialog, Paper, Box
 } from '@material-ui/core'
-import {useSelector} from 'react-redux'
-import {useTranslation} from 'react-i18next'
-import {AlertIcon} from '../icons/index'
+import { useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
+import { AlertIcon } from '../icons/index'
 
 export const Dialog=({
   childrenPadding=true,
   classes,
-  open=false,
-  title='',
-  icon=null,
+  open = false,
+  title = '',
+  icon = null,
   children,
-  showDivider=false,
-  onClose=() => null,
-  onConfirm=() => null,
-  renderButtons=null
+  showDivider = false,
+  onClose = () => null,
+  onConfirm = () => null,
+  renderButtons = null,
+  disableBackdropClick = false,
+  minimumWidth = 0
 }) => {
-  const direction={
+  const direction = {
     true: 'rtl',
     false: 'ltr'
   }
-  const {t}=useTranslation()
-  const {isRTL}=useSelector(state => state.core)
-  const renderExitButton=() => {
+  const { t } = useTranslation()
+  const { isRTL } = useSelector(state => state.core)
+  const renderExitButton = () => {
     return (
       <Box
         onClick={onClose}
@@ -41,23 +43,23 @@ export const Dialog=({
     )
   }
 
-  const renderTitle=() => {
+  const renderTitle = () => {
     return (
       <>
         <Typography className={classes.dialogTitle}>
           {title}
         </Typography>
-        {showDivider&&<Divider />}
+        {showDivider && <Divider />}
       </>
     )
   }
 
-  const renderButtonsDefault=() => {
+  const renderButtonsDefault = () => {
     return (
       <Grid
         container
         spacing={4}
-        className={classes.dialogButtonsContainer}>
+        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
         <Grid item>
           <Button
             variant='contained'
@@ -86,8 +88,8 @@ export const Dialog=({
     )
   }
 
-  const renderIcon=() => {
-    const alertIcon=<AlertIcon classes={classes} />
+  const renderIcon = () => {
+    const alertIcon = <AlertIcon classes={classes} />
     return (
       <Box
         className={clsx(
@@ -97,36 +99,37 @@ export const Dialog=({
             [classes.dialogIconContainerLTR]: !isRTL
           }
         )}>
-        {icon||alertIcon}
+        {icon || alertIcon}
       </Box>
     )
   }
 
-  const renderChildren=() => {
+  const renderChildren = () => {
     return (
       <Box
         className={clsx(
           !childrenPadding&&classes.p0,
           classes.dialogChildren)}
-        style={{maxHeight: 'calc(65vh)'}}>
+        style={{maxHeight: 'calc(65vh)', minWidth: minimumWidth}}>
         {children}
       </Box>)
   }
 
-  const renderContent=() => {
+  const renderContent = () => {
     return (
       <Box
         dir={direction[isRTL]}
-        className={classes.dialogContent}>
+        className={clsx(classes.dialogContent)}>
         {renderTitle()}
         {renderChildren()}
-        {renderButtons? renderButtons():renderButtonsDefault()}
+        {renderButtons ? renderButtons() : renderButtonsDefault()}
       </Box>
     )
   }
 
   return (
     <BaseDialog
+      disableBackdropClick={disableBackdropClick}
       open={!!open}
       className={classes.dialogContainer}
       onClose={onClose}>

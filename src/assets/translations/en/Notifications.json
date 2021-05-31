@@ -47,7 +47,7 @@
   "validation": {
     "notificationName": "Notification Name - Required",
     "redirectUrl": "Redirect URL - Required",
-    "title": "Notification Title - Rquired",
+    "title": "Notification Title - Required",
     "body": "Notification Text - Required",
     "notificationDate": "Pick Date and Time",
     "notificationGroups": "Pick at least 1 group"
@@ -87,8 +87,9 @@
   "createNewPush": "Create New Push Notification",
   "createContent": "Create Content",
   "sendSettings": "Send Settings",
-  "redirectUrl": "Redirection Link",
-  "redirectUrlButton": "Readirection Link's button",
+  "redirectUrl": "Redirection URL",
+  "showRedirectUrlButton": "Show Readirect Button",
+  "redirectUrlButton": "Readirect Button Text",
   "ph_title": "Type title",
   "ph_body": "Type text here",
   "ph_chooseImage": "Select Image...",
@@ -101,8 +102,8 @@
   "save": "Save",
   "testSend": "Test Send",
   "createContentText": "Image, icon and button are optional, but recommended for optional results",
-  "titleLimitation": "Title (up to 50 chars): ",
-  "bodyLimitation": "Text (up to 100 chars): ",
+  "titleLimitation": "Title (up to 50 characters): ",
+  "bodyLimitation": "Text (up to 100 characters): ",
   "exampleBody": "Example Text",
   "exampleTitle": "Example Title",
   "noGroupsSelected": "No groups selected",
@@ -128,11 +129,13 @@
   "close": "Close",
   "recipient": "Recipient",
   "recipients": "Recipients",
-  "saved": "Notification Saved!",
-  "settings_saved": "Notification settings Saved!",
+  "saved": "Notification saved sucessfully!",
+  "settings_saved": "Notification settings saved sucessfully!",
   "tooltip": {
     "testSend": "Please note that tests sends for Push Notifications are sent to creator of the notification only.",
     "redirectUrl": "This is the link your customers will be referred to when clicking on your notification.",
-    "firefoxNotSupported": "Please note that images are not supported by Mozilla Firefox"
-  }
+    "firefoxNotSupported": "Note! Mozilla Firefox does not support images for Push Notifications. Recipients using Firefox will see only title, text, icon."
+  },
+  "leaveCampaignCreationTitle": "Leave Campaign Creation",
+  "leaveCampaignCreationText": "Would you like to save your changes before exiting?"
 }

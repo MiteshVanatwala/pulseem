@@ -74,18 +74,21 @@
   "payAttentionText": "*שימו לב. נוטיפקציות יעבדו רק באתרים עם תעודת SSL",
   "headTagOpenText": "(Head תג פותח)",
   "headTagClosesText": "(Head תג סוגר)",
+  "groupName": "שם הקבוצה",
   "createNewPush": "צור נוטיפיקציה חדשה",
   "createContent": "יצירת תוכן",
   "sendSettings": "הגדרות שליחה",
+  "myGroups": "הקבוצות שלי",
   "redirectUrl": "קישור להפניה",
-  "redirectUrlButton": "טקסט כפתור הפניה",
+  "showRedirectUrlButton": "הצג כפתור הפנייה",
+  "redirectUrlButton": "טקסט כפתור הפנייה",
   "ph_title": "הקלד כותרת",
   "ph_body": "הקלד טקסט כאן",
   "ph_chooseImage": "בחר תמונה...",
   "ph_chooseIcon": "בחר אייקון...",
   "preview": "תצוגה מקדימה",
   "cancel": "ביטול",
-  "back": "חזור",
+  "back": "חזרה",
   "saveAndContinue": "שמור והמשך",
   "saveAndExit": "שמור וצא",
   "save": "שמור",
@@ -118,12 +121,12 @@
   "close": "סגור",
   "recipient": "נמען",
   "recipients": "נמענים",
-  "saved": "הנוטיפיקציה נשמרה!",
-  "settings_saved": "הגדרות הנוטיפיקציה נשמרו!",
+  "saved": "הנוטיפיקציה נשמרה בהצלחה!",
+  "settings_saved": "הגדרות הנוטיפיקציה נשמרו בהצלחה!",
   "tooltip": {
     "testSend": "שימו לב ששליחות הניסיון להודעות פוש יישלחו רק ליוצר הנוטיפיקציה",
     "redirectUrl": "הלקוחות שלכם יופנו לכתובת הקישור שתזינו כאן",
-    "firefoxNotSupported": "שים לב שתמונות לא יופיעו במוזילה פיירפוקס"
+    "firefoxNotSupported": "שימו לב שתמונות לא יופיעו במוזילה פיירפוקס. נמענים שמשתמשים בפיירפוקס יראו רק כותרת, טקסט ואייקון"
   },
   "implementDialog": {
     "beforeYouStarted": "לפני שאתה מתחיל...",
@@ -132,6 +135,6 @@
   },
   "copy": "העתק",
   "copied": "הועתק",
-  "myGroups": "הקבוצות שלי",
-  "groupName": "שם הקבוצה"
+  "leaveCampaignCreationTitle": "צא מעריכת קמפיין",
+  "leaveCampaignCreationText": "האם תרצו לשמור את השינויים לפני היציאה?"
 }

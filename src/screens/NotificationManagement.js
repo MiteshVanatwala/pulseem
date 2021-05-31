@@ -514,12 +514,12 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const renderNameCell=(row) => {
-    let date=null
-    let text=''
-    if(!row.SendDate) {
-      date=moment(row.UpdatedDate,dateFormat)
-      text=t('common.UpdatedOn')
+  const renderNameCell = (row) => {
+    let date = null
+    let text = ''
+    if (!row.SendDate || row.StatusID == 0) {
+      date = moment(row.UpdatedDate, dateFormat)
+      text = t('common.UpdatedOn')
     } else {
       date=moment(row.SendDate,dateFormat)
       const dateMillis=date.valueOf()
@@ -539,7 +539,7 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const renderRow=(row) => {
+  const renderRow = (row) => {
     return (
       <TableRow
         key={row.ID}
