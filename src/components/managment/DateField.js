@@ -54,8 +54,6 @@ export const DateField = ({
       cancelLabel={buttons && buttons.cancel}
       okLabel={buttons && buttons.ok}
       ampm={ampm}
-      leftArrowIcon={isRTL? <ArrowForwardIos className={classes.f14} />:<ArrowBackIos className={classes.f14} />}
-      rightArrowIcon={isRTL? <ArrowBackIos className={classes.f14} />:<ArrowForwardIos className={classes.f14} />}
     />
   ) :
 
@@ -87,8 +85,6 @@ export const DateField = ({
       }}
       cancellabel={buttons&&buttons.cancel}
       oklabel={buttons&&buttons.ok}
-      leftArrowIcon={isRTL? <ArrowForwardIos className={classes.f14} />:<ArrowBackIos className={classes.f14} />}
-      rightArrowIcon={isRTL? <ArrowBackIos className={classes.f14} />:<ArrowForwardIos className={classes.f14} />}
     />
     )
 
