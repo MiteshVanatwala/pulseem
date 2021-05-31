@@ -220,7 +220,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     {renderGroups()}
                 </List>
             </div>
-        </Box >
+        </Box>
     )
 }
 
