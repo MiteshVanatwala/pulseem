@@ -3,8 +3,9 @@ import mobileBg from '../../assets/images/mobile.png'
 const galleryWidth = {
     xs: 250,
     sm: 360,
-    md: 960,
-    lg: 1050
+    md: 650,
+    lg: 750,
+    xl: 950
 }
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     roundedCircle: {
@@ -369,7 +370,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     smallNotice: {
         fontSize: 12,
         marginTop: 15,
-        display: 'block'
+        display: 'block',
+        maxWidth: '60%'
     },
     pageSubTitle: {
         fontSize: 28
@@ -382,5 +384,35 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     galleryGrid: {
         minWidth: galleryWidth[windowSize],
         minHeight: 400
+    },
+    dialogWidth: {
+        minWidth: galleryWidth[windowSize],
+        minHeight: 400
+    },
+    sidePadding: {
+        padding: '0 80px'
+    },
+    radioText: {
+        color: '#555',
+        fontSize: '17px',
+        fontWeight: '700',
+        marginTop: '-4px'
+    },
+    sectionTitle: {
+        marginTop: 45,
+        fontWeight: '500',
+        color: '#555',
+        fontSize: '22px'
+    },
+    hoverListItem: {
+        backgroundColor: 'rgba(0,0,0,.05)'
+    },
+    summaryTitle: {
+        marginBottom: '0 !important',
+        fontWeight: '500',
+        fontSize: 20
+    },
+    rowReverse: {
+        flexDirection: 'row-reverse'
     }
 })

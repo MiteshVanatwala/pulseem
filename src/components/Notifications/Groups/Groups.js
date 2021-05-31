@@ -26,6 +26,7 @@ import { HiUserGroup } from 'react-icons/hi';
 import { FaCheck } from 'react-icons/fa';
 import { BsSearch } from 'react-icons/bs';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
+import { MdClear } from 'react-icons/md';
 import './Groups.styles.css';
 
 
@@ -35,9 +36,18 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
     //const [selectedGroups, setSelected] = useState([]);
     const { isRTL } = useSelector(state => state.core)
     const [groupNameSearch, setGroupNameSearch] = useState('');
+    const [clearInput, setClearInput] = useState(false);
+    const [groupHover, setIsHover] = useState(null);
+
 
     const handleSearch = (event) => {
+        setClearInput(event.target.value != '');
         setGroupNameSearch(event.target.value);
+    }
+    const resetSearch = (event) => {
+        document.querySelector('#searchGroup').value = '';
+        setGroupNameSearch('');
+        setClearInput(false);
     }
     const onSelectGroup = (group) => {
         callbackSelectedGroups(group);
@@ -57,7 +67,11 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
             return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
         }).map((group) => {
             const isExist = selectedList.map((group) => { return group.Id }).includes(group.Id);
-            return (<ListItem id={group.Id} key={group.Id} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}>
+            return (<ListItem id={group.Id} key={group.Id} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setIsHover(group.Id)}
+                onMouseLeave={() => setIsHover(null)}
+                className={groupHover === group.Id ? classes.hoverListItem : null}
+            >
                 <ListItemAvatar>
                     <Avatar
                         className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
@@ -171,12 +185,18 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     <Input
                         onChange={handleSearch}
                         placeholder={t('notifications.buttons.search')}
-                        id="input-with-icon-adornment"
+                        id="searchGroup"
                         startAdornment={
                             <InputAdornment position="start">
                                 <BsSearch />
                             </InputAdornment>
                         }
+                        endAdornment={clearInput &&
+                            <InputAdornment position="start" onClick={resetSearch}>
+                                <MdClear />
+                            </InputAdornment>
+                        }
+
                     />
                 </FormControl>
                 <Box>
@@ -214,7 +234,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                 }
             />
 
-            <div className={classes.demo} style={{ minHeight: 400, maxHeight: 400, overflow: 'auto' }}>
+            <div className={classes.demo} style={{ minHeight: 280, maxHeight: 280, overflow: 'auto' }}>
                 <List>
                     {renderSelectAll()}
                     {renderGroups()}

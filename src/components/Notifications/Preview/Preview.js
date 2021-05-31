@@ -102,7 +102,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                     </div>
                     }
                     {!isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right", paddingTop: 10, paddingRight: 15, paddingLeft: 5, marginBottom: '-10px' }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
-                    <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)}>
+                    <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: model.Direction == 1 ? 'row-reverse' : 'row' }}>
                         <div className={classes.iconWrapper}>
                             <div className={clsx(classes.borderSign, classes.icon)}
                                 style={{

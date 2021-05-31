@@ -263,7 +263,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                                     style={{ padding: "6px 10px" }}
                                 >
                                     <Box className="select-image" onClick={handleSelectFile(filePath, `${f.FolderName.replace('\\', '')}_${index}`)}>
-                                        <Box className="img-container">
+                                        <Box className="img-container" style={{ border: selectedFile === `${f.FolderName.replace('\\', '')}_${index}` ? "1px solid #000" : null }}>
                                             <LazyBackground url={filePath}>
                                                 <button
                                                     id={`file_${index}`}
@@ -406,7 +406,6 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                     </Grid>
                 </Box>
             </Box>
-
         );
     }
     const renderUploadNotice = () => {
@@ -419,8 +418,9 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     }
 
     return (
-        <div className={classes.root}>
-            {renderToast()}
+        <div className={classes.root} style={{
+            minWidth: 'calc(50vw - 15px)'
+        }}>
             <Divider style={{ margin: '15px 0' }} />
             <Grid container className={classes.galleryGrid}>
                 <Grid item xs={2} className="scroll">
@@ -439,6 +439,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                     {renderUploadNotice()}
                 </Grid>
             </Grid>
+            {renderToast()}
         </div>
     );
 }

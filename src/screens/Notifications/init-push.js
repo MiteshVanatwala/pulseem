@@ -24,12 +24,12 @@ export const PushService = async (apiToken) => {
             try {
                 // Set the initial subscription value
                 checkPermissions().then((permission) => {
-                    if (permission != 'denied' && permission != 'granted' || permission == 'prompt') {
+                    if (permission !== 'denied' && (permission !== 'granted' || permission === 'prompt')) {
                         subscribeUser().then(() => {
                             resolve();
                         });
                     }
-                    else{
+                    else {
                         resolve();
                     }
                 });
@@ -57,14 +57,14 @@ export const PushService = async (apiToken) => {
                 applicationServerKey: applicationServerKey
             };
             swRegistration.pushManager.permissionState(options).then(function (res) {
-                if (res != 'denied' || res == 'granted') {
+                if (res !== 'denied' || res === 'granted') {
                     swRegistration.pushManager.subscribe(options)
                         .then(function (subscription) {
                             subscription.isSubscribe = true;
                             resolve();
                         })
                         .catch(function (err) {
-                            if (err.toString().indexOf('already exists') == -1 && err.toString().indexOf('permission denied') == -1 || err.name == 'NotAllowedError') {
+                            if (err.toString().indexOf('already exists') === -1 && (err.toString().indexOf('permission denied') === -1 || err.name === 'NotAllowedError')) {
                                 initializeUI().then(() => {
                                     resolve();
                                 });
@@ -101,7 +101,7 @@ export const PushService = async (apiToken) => {
                     registration.installing.addEventListener('statechange', function (e) {
                         if (e.target.state === 'installed') { } else if (e.target.state === 'redundant') {
                             console.log('installed')
-                        } else if (e.target.state == 'active' || e.target.state == 'activated') {
+                        } else if (e.target.state === 'active' || e.target.state === 'activated') {
                             initPushService(registration).then((subscription) => {
                                 resolve(subscription);
                             });
@@ -127,7 +127,7 @@ export const PushService = async (apiToken) => {
 
     function initPushService(reg) {
         return new Promise((resolve) => {
-            if (reg && apiToken != '') {
+            if (reg && apiToken !== '') {
                 var serviceWorker;
                 if (reg.installing) {
                     serviceWorker = reg.installing;
@@ -138,14 +138,14 @@ export const PushService = async (apiToken) => {
                 }
             }
             if (serviceWorker) {
-                if (serviceWorker.state == "activated") {
+                if (serviceWorker.state === "activated") {
                     swRegistration = reg;
                     subscribeUser().then(() => {
                         resolve(swRegistration);
                     });
                 }
                 serviceWorker.addEventListener("statechange", function (e) {
-                    if (e.target.state == "redundant") {
+                    if (e.target.state === "redundant") {
                         console.log(e.target.state);
                     }
                 });
