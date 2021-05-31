@@ -32,7 +32,8 @@ const MmsManagnentScreen=({classes}) => {
   const rowsOptions=[6,12,18]
   const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
-  const [searchArray,setSearchArray]=useState(null)
+  const [searchResults,setSearchResults]=useState(null)
+  const [isSearching,setSearching]=useState(false)
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
@@ -63,19 +64,51 @@ const MmsManagnentScreen=({classes}) => {
     setCampaineNameSearch('')
     handleFromDate(null)
     handleToDate(null)
-    setSearchArray(null)
+    setSearchResults(null)
+    setSearching(false)
   }
 
   const renderSearchLine=() => {
     const handleSearch=() => {
-      setSearchArray([{
+      const searchArray = [{
         type: 'name',
         campaineName: campaineNameSearch
       },{
         type: 'date',
         fromDate,
         toDate
-      }]);
+      }];
+
+      const filtersObject={
+        name: (row,values) => {
+          return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
+        },
+        date: (row,values) => {
+          const {LastUpdate,SendDate}=row
+          const lastUpdate=SendDate?
+            moment(SendDate,dateFormat).valueOf()
+            :moment(LastUpdate,dateFormat).valueOf()
+          const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
+          const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
+  
+          if(!values)
+            return true
+          if(fromDate&&toDate&&currentFromDate&&currentToDate)
+            return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
+          if(fromDate&&currentFromDate)
+            return lastUpdate>=currentFromDate
+          if(toDate&&currentToDate)
+            return lastUpdate<=currentToDate
+          return true
+        }
+      }
+  
+      let sortData=mmsData
+      searchArray.forEach(values => {
+        sortData=sortData.filter(row => filtersObject[values.type](row,values))
+      });
+      setSearchResults(sortData);
+      setSearching(true);
       setPage(1);
     }
 
@@ -147,7 +180,7 @@ const MmsManagnentScreen=({classes}) => {
             {t('mms.locSearchCampaignResource1.Text')}
           </Button>
         </Grid>
-        {searchArray&&<Grid item>
+        {isSearching&&<Grid item>
           <Button
             size='large'
             variant='contained'
@@ -193,7 +226,7 @@ const MmsManagnentScreen=({classes}) => {
         </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${mmsData.length} ${t('mms.campaigns')}`}
+            {`${isSearching?searchResults.length:mmsData.length} ${t('mms.campaigns')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -452,37 +485,8 @@ const MmsManagnentScreen=({classes}) => {
   }
 
   const renderTableBody=() => {
-    const filtersObject={
-      name: (row,values) => {
-        return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
-      },
-      date: (row,values) => {
-        const {LastUpdate,SendDate}=row
-        const lastUpdate=SendDate?
-          moment(SendDate,dateFormat).valueOf()
-          :moment(LastUpdate,dateFormat).valueOf()
-        const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
-        const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
-
-        if(!values)
-          return true
-        if(fromDate&&toDate&&currentFromDate&&currentToDate)
-          return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
-        if(fromDate&&currentFromDate)
-          return lastUpdate>=currentFromDate
-        if(toDate&&currentToDate)
-          return lastUpdate<=currentToDate
-        return true
-      }
-    }
-
-    let sortData=mmsData
-    if(searchArray) {
-      searchArray.forEach(values => {
-        sortData=sortData.filter(row => filtersObject[values.type](row,values))
-      })
-    }
-
+    
+    let sortData = isSearching?searchResults:mmsData;
     sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -507,7 +511,7 @@ const MmsManagnentScreen=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={mmsData.length}
+        rows={isSearching?searchResults.length:mmsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}

@@ -699,5 +699,24 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     fontSize: 12,
     wordBreak: 'break-all',
     overflow: 'auto'
+  },
+  verificationTitle: {
+    fontWeight: 'bold',
+    fontSize: 25
+  },
+  green: {
+    color: '#48a148'
+  },
+  red: {
+    color: 'red!important'
+  },
+  verifySuccessIcon: {
+    fontFamily: 'pulseemicons',
+    fontWeight: 'bold',
+    fontSize: 90,
+    color: '#48a148'
+  },
+  borderRed: {
+    borderColor: 'red!important'
   }
 })

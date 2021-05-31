@@ -38,7 +38,9 @@ const SmsManagnentScreen=({classes}) => {
   const rowsOptions=[6,12,18]
   const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
-  const [searchArray,setSearchArray]=useState(null)
+  const [isSearching,setSearching]=useState(false)
+  const [searchResults,setSearchResults]=useState(null)
+  const [verificationSuccess,setVerificationSuccess]=useState(false)
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
@@ -68,19 +70,50 @@ const SmsManagnentScreen=({classes}) => {
     setCampaineNameSearch('')
     handleFromDate(null)
     handleToDate(null)
-    setSearchArray(null)
+    setSearchResults(null)
+    setSearching(false)
   }
 
   const renderSearchLine=() => {
     const handleSearch=() => {
-      setSearchArray([{
+      const searchArray=[{
         type: 'name',
         campaineName: campaineNameSearch
       },{
         type: 'date',
         fromDate,
         toDate
-      }]);
+      }];
+      const filtersObject={
+        name: (row,values) => {
+          return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
+        },
+        date: (row,values) => {
+          const {UpdatedDate,SendDate}=row
+          const lastUpdate=SendDate?
+            moment(SendDate,dateFormat).valueOf()
+            :moment(UpdatedDate,dateFormat).valueOf()
+          const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
+          const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
+  
+          if(!values)
+            return true
+          if(fromDate&&toDate&&currentFromDate&&currentToDate)
+            return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
+          if(fromDate&&currentFromDate)
+            return lastUpdate>=currentFromDate
+          if(toDate&&currentToDate)
+            return lastUpdate<=currentToDate
+          return true
+        }
+      }
+  
+      let sortData=smsData
+      searchArray.forEach(values => {
+        sortData=sortData.filter(row => filtersObject[values.type](row,values))
+      });
+      setSearchResults(sortData);
+      setSearching(true);
       setPage(1);
     }
 
@@ -141,7 +174,7 @@ const SmsManagnentScreen=({classes}) => {
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
         </Grid>
-        {searchArray&&<Grid item>
+        {isSearching&&<Grid item>
           <Button
             size='large'
             variant='contained'
@@ -206,7 +239,7 @@ const SmsManagnentScreen=({classes}) => {
         </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${smsData.length} ${t('mms.campaigns')}`}
+            {`${isSearching?searchResults.length:smsData.length} ${t('mms.campaigns')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -470,37 +503,7 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderTableBody=() => {
-    const filtersObject={
-      name: (row,values) => {
-        return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
-      },
-      date: (row,values) => {
-        const {UpdatedDate,SendDate}=row
-        const lastUpdate=SendDate?
-          moment(SendDate,dateFormat).valueOf()
-          :moment(UpdatedDate,dateFormat).valueOf()
-        const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
-        const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
-
-        if(!values)
-          return true
-        if(fromDate&&toDate&&currentFromDate&&currentToDate)
-          return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
-        if(fromDate&&currentFromDate)
-          return lastUpdate>=currentFromDate
-        if(toDate&&currentToDate)
-          return lastUpdate<=currentToDate
-        return true
-      }
-    }
-
-    let sortData=smsData
-    if(searchArray) {
-      searchArray.forEach(values => {
-        sortData=sortData.filter(row => filtersObject[values.type](row,values))
-      })
-    }
-
+    let sortData = isSearching?searchResults:smsData;
     sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -525,7 +528,7 @@ const SmsManagnentScreen=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={smsData.length}
+        rows={isSearching?searchResults.length:smsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -577,7 +580,7 @@ const SmsManagnentScreen=({classes}) => {
     if(result.error) {
       handleVerificationCodeError(true);
     } else {
-      handleClose();
+      setVerificationSuccess(true);
     }
   }
 
@@ -588,6 +591,7 @@ const SmsManagnentScreen=({classes}) => {
     handleNumberError(false);
     handleNumber('');
     handleVerificationCodeInput('');
+    setVerificationSuccess(false);
   }
 
   const getRestorDialog=(data=[]) => {
@@ -878,48 +882,56 @@ const SmsManagnentScreen=({classes}) => {
     ),
     content: (
       <Box style={{textAlign: 'center'}}>
-        <Typography align='center' style={{fontWeight: 'bold',fontSize: 25}}>{t('common.Sent')}!</Typography>
+        <Typography 
+          align='center' 
+          className={clsx(classes.verificationTitle, verificationSuccess&&classes.green)}>
+          {verificationSuccess?`${t('sms.verificationSuccessful')}`:`${t('common.Sent')}!`}
+        </Typography>
         <Typography style={{fontSize: 15}} align={'center'}>
           {t('sms.verificationSentToNumber')}{data}
           <br />
           {t('sms.pleaseNoteCode')}
         </Typography>
         <br />
-        <TextField
-          error={verificationCodeError}
-          helperText={verificationCodeError? t('sms.verificationCodeError'):''}
-          variant='outlined'
-          placeholder={t('sms.enterCode')}
-          value={verificationCode}
-          onChange={(e) => handleVerificationCodeInput(e.target.value)}
-          size='small'
-        />
-        <br /><br />
-        <Button
-          variant='contained'
-          onClick={() => handleConfirmCode(verificationCode)}
-          color='primary'
-          style={{minWidth: 150}}>
-          {t('common.Ok')}
-        </Button>
-        <Grid
-          container
-          style={{marginTop: 20}}
-          justify='center'>
-          <Grid item>
-            <Typography >
-              {t('sms.didNotReceived')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography
-              onClick={() => handleShortVerify(data)}
-              style={{textDecoration: 'underline',margin: '0 5px',cursor: 'pointer'}}>
-              {t('sms.resend')}
-            </Typography>
+        {verificationSuccess?<div className={classes.verifySuccessIcon}>{'\uE134'}</div>:
+        <>
+          <TextField
+            error={verificationCodeError}
+            helperText={verificationCodeError? t('sms.verificationCodeError'):''}
+            variant='outlined'
+            placeholder={t('sms.enterCode')}
+            value={verificationCode}
+            onChange={(e) => handleVerificationCodeInput(e.target.value)}
+            size='small'
+          />
+          <br /><br />
+          <Button
+            variant='contained'
+            onClick={() => handleConfirmCode(verificationCode)}
+            color='primary'
+            style={{minWidth: 150}}>
+            {t('common.Ok')}
+          </Button>
+          <Grid
+            container
+            style={{marginTop: 20}}
+            justify='center'>
+            <Grid item>
+              <Typography >
+                {t('sms.didNotReceived')}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography
+                onClick={() => handleShortVerify(data)}
+                style={{textDecoration: 'underline',margin: '0 5px',cursor: 'pointer'}}>
+                {t('sms.resend')}
+              </Typography>
 
+            </Grid>
           </Grid>
-        </Grid>
+        </>}
+        
       </Box>
     ),
     renderButtons: () => null
