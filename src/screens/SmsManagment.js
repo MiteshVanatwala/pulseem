@@ -136,7 +136,7 @@ const SmsManagnentScreen=({classes}) => {
             size='small'
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
-            className={classes.textField}
+            className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('sms.GridBoundColumnResource2.HeaderText')}
           />
         </Grid>

@@ -158,7 +158,7 @@ const NotificationManagement=({classes}) => {
   const handleImplementScript=(value) => {
     console.log("handleImplementScript")
     if(value) {
-      setCookie('scriptDialog',scriptDialog,{maxAge: 360000000000});
+      setCookie('scriptDialog',scriptDialog,{maxAge: 2147483647});
       dispatch(updateScriptPath(scriptPath));
     }
     setShowScriptDialog(false)
@@ -285,7 +285,7 @@ const NotificationManagement=({classes}) => {
             size='small'
             value={notificationNameSearch}
             onChange={handleNotificationNameChange}
-            className={classes.textField}
+            className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('notifications.searchSection.notificationName')}
           />
         </Grid>
