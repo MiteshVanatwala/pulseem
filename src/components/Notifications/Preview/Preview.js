@@ -6,6 +6,7 @@ import './preview.styles.css';
 import PropTypes from 'prop-types';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FaChrome, FaFirefox, FaMobile } from 'react-icons/fa';
+import desktopClock from '../../../assets/images/desktopClock.jpg';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -28,26 +29,26 @@ function TabPanel(props) {
 
 export const Preview = (
   { classes, model, ShowRedirectButton, mobileFullsize = false,
-      showDevices = true, showTitle = true, isSMS = false, isMMS = false
+    showDevices = true, showTitle = true, isSMS = false, isMMS = false
   }) => {
   const { t } = useTranslation();
   const [previewDeviceSelected, setPreviewDevice] = useState(showDevices == false ? 0 : 0);
   const [notificationExpanded, setNotificationExpanded] = useState(!showDevices);
   TabPanel.propTypes = {
-      children: PropTypes.node,
-      index: PropTypes.any.isRequired,
-      value: PropTypes.any.isRequired,
+    children: PropTypes.node,
+    index: PropTypes.any.isRequired,
+    value: PropTypes.any.isRequired,
   };
 
   const handleDeviceChange = (event, newValue) => {
-      setPreviewDevice(newValue);
+    setPreviewDevice(newValue);
   };
 
   function a11yProps(index) {
-      return {
-          id: `scrollable-force-tab-${index}`,
-          'aria-controls': `scrollable-force-tabpanel-${index}`,
-      };
+    return {
+      id: `scrollable-force-tab-${index}`,
+      'aria-controls': `scrollable-force-tabpanel-${index}`,
+    };
   }
   // Image/Icon selection
   const chooseImage = () => {
@@ -86,7 +87,7 @@ export const Preview = (
     return (
       <div>
         <div className={classes.notification}>
-          {isChrome && <div className={clsx(
+          {isChrome && model && model.Image !== '' && <div className={clsx(
             classes.borderSign,
             classes.notificationTop,
             classes.notificationContainer
@@ -106,16 +107,15 @@ export const Preview = (
           }
           {!isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right", paddingTop: 10, paddingRight: 15, paddingLeft: 5, marginBottom: '-10px' }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
           <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)}>
-            <div className={classes.iconWrapper}>
+            {model && model.Icon && model.Icon !== '' && <div className={classes.iconWrapper}>
               <div className={clsx(classes.borderSign, classes.icon)}
                 style={{
                   backgroundImage: `url(${model.Icon})`,
                   cursor: 'unset',
                   maxHeight: 85
                 }}>
-                {model == null || !model.Icon ? chooseIcon() : ""}
               </div>
-            </div>
+            </div>}
             <div className={classes.notificationContent}>
               {isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
               <TextareaAutosize
@@ -132,6 +132,7 @@ export const Preview = (
               <div className={isChrome ? classes.chromeRedirectInnerButton : ''}>{model.RedirectButtonText}</div>
             </div>
           }
+          <img alt="Preview" src={desktopClock} />
         </div>
         {
           !isChrome && <label className={classes.smallNotice}>* {t("notifications.tooltip.firefoxNotSupported")}</label>
@@ -145,21 +146,21 @@ export const Preview = (
   }
 
   const mobileFullPreview = () => {
-    const sms = model.Text&&model.Text.split(/\r\n|\n\r|\n|\r/)||[];
-    const mms = model.NavigateUrl&&model.NavigateUrl.split(/\r\n|\n\r|\n|\r/)||[];
-    
+    const sms = model.Text && model.Text.split(/\r\n|\n\r|\n|\r/) || [];
+    const mms = model.NavigateUrl && model.NavigateUrl.split(/\r\n|\n\r|\n|\r/) || [];
+
     return (
-      <Box className={clsx(mobileFullsize&&classes.mobileFullBG, classes.mobileBG, 'mobileBg')}>
+      <Box className={clsx(mobileFullsize && classes.mobileFullBG, classes.mobileBG, 'mobileBg')}>
         <Box className={classes.bubbleContainer}>
           <Paper elevation={0} className={classes.bubblePaper}>
-            {model.Links&&model.Links.split(',').map((link,index)=>(
-              link&&<img src={link} className={classes.mmsImage} key={`mms${model.MmsCampaignID}${index}`}/>
+            {model.Links && model.Links.split(',').map((link, index) => (
+              link && <img src={link} className={classes.mmsImage} key={`mms${model.MmsCampaignID}${index}`} />
             ))}
-            {isSMS&&sms.map((text, index)=>(
-              <Typography className={classes.bubbleText} key={`smsTxt${index}`}>{text?text:<br/>}</Typography>
+            {isSMS && sms.map((text, index) => (
+              <Typography className={classes.bubbleText} key={`smsTxt${index}`}>{text ? text : <br />}</Typography>
             ))}
-            {isMMS&&mms.map((url, index)=>(
-              <Typography className={classes.bubbleText} key={`mmsTxt${index}`}>{url?url:<br/>}</Typography>
+            {isMMS && mms.map((url, index) => (
+              <Typography className={classes.bubbleText} key={`mmsTxt${index}`}>{url ? url : <br />}</Typography>
             ))}
           </Paper>
         </Box>
@@ -177,18 +178,14 @@ export const Preview = (
           </div>
           <div className={classes.notificationSiteAddress}><Typography>www.pulseem.co.il</Typography></div>
           <div className={clsx(classes.footerWrapper)}>
-            {model.Icon ? (<div className={classes.iconWrapper}>
+            {model.Icon && model.Icon != "" && <div className={classes.iconWrapper}>
               <div className={clsx(classes.borderSign, classes.icon)}
                 style={{
                   backgroundImage: `url(${model.Icon})`,
                   cursor: 'unset'
                 }}>
               </div>
-            </div>) : (
-              <div className={classes.iconWrapper}>
-                {chooseIcon()}
-              </div>
-            )
+            </div>
             }
             <div className={classes.notificationContent}>
               <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title}</b></Typography>
@@ -222,7 +219,7 @@ export const Preview = (
   // Return final template
 
   return (
-    <Grid className={mobileFullsize&&classes.justifyCenter}>
+    <Grid className={mobileFullsize && classes.justifyCenter}>
       {showTitle && <h3 className={clsx(classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</h3>}
       {showDevices && !mobileFullsize && <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
         <Tabs
@@ -238,18 +235,18 @@ export const Preview = (
         </Tabs>
       </AppBar>
       }
-      {mobileFullsize?mobileFullPreview():
-      <>
-        <TabPanel value={previewDeviceSelected} index={0}>
-          {desktopPreview(true)}
-        </TabPanel >
-        <TabPanel value={previewDeviceSelected} index={1}>
-          {desktopPreview(false)}
-        </TabPanel >
-        <TabPanel value={previewDeviceSelected} index={2}>
-          {mobilePreview()}
-        </TabPanel >
-      </>
+      {mobileFullsize ? mobileFullPreview() :
+        <>
+          <TabPanel value={previewDeviceSelected} index={0}>
+            {desktopPreview(true)}
+          </TabPanel >
+          <TabPanel value={previewDeviceSelected} index={1}>
+            {desktopPreview(false)}
+          </TabPanel >
+          <TabPanel value={previewDeviceSelected} index={2}>
+            {mobilePreview()}
+          </TabPanel >
+        </>
       }
 
     </Grid>

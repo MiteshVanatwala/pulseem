@@ -18,62 +18,86 @@ const previewWidth = {
 }
 
 const bubble = {
-  fontSize: {
-    xs: 14  ,
-    sm: 18,
-    md: 18,
-    lg: 18,
-    xl: 18,  
-  },
-  container: {
-    width: {
-      xs: 205,
-      sm: 250,
-      md: 250,
-      lg: 250,
-      xl: 250,
+    fontSize: {
+        xs: 14,
+        sm: 18,
+        md: 18,
+        lg: 18,
+        xl: 18,
     },
-    top: {
-      xs: 125,
-      sm: 160,
-      md: 160,
-      lg: 160,
-      xl: 160,  
+    container: {
+        width: {
+            xs: 205,
+            sm: 250,
+            md: 250,
+            lg: 250,
+            xl: 250,
+        },
+        top: {
+            xs: 125,
+            sm: 160,
+            md: 160,
+            lg: 160,
+            xl: 160,
+        },
+        left: {
+            xs: 40,
+            sm: 45,
+            md: 45,
+            lg: 45,
+            xl: 45,
+        },
+        maxHeight: {
+            xs: 278,
+            sm: 348,
+            md: 348,
+            lg: 348,
+            xl: 348,
+        }
     },
-    left: {
-      xs: 40,
-      sm: 45,
-      md: 45,
-      lg: 45,
-      xl: 45,
-    },
-    maxHeight: {
-      xs: 278,
-      sm: 348,
-      md: 348,
-      lg: 348,
-      xl: 348,
+    paper: {
+        width: {
+            xs: '75%',
+            sm: '80%',
+            md: '80%',
+            lg: '80%',
+            xl: '80%',
+        }
     }
-  },
-  paper: {
-    width: {
-      xs: '75%',
-      sm: '80%',
-      md: '80%',
-      lg: '80%',
-      xl: '80%', 
-  }
-  }
-  
+
 }
 
 const mobileMinHeight = {
-  xs: 500,
-  sm: 630,
-  md: 630,
-  lg: 630,
-  xl: 630,
+    xs: 500,
+    sm: 630,
+    md: 630,
+    lg: 630,
+    xl: 630,
 }
+const sidePaddingSizes = {
+    xs: 15,
+    sm: 25,
+    md: 95,
+    lg: 95,
+    xl: 95
+}
+const summaryTitleMargin = {
+    xs: 0,
+    sm: 0,
+    md: 10,
+    lg: 10,
+    xl: 15
+}
+// const summaryNotificationMargin = {
+//     xs: "-15px",
+//     sm: "-15px",
+//     md: 0,
+//     lg: 0,
+//     xl: 0
+// }
+// const summaryNotificationMinWidth = {
+//     xs: "240px",
+// }
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     roundedCircle: {
         borderRadius: '100%',
@@ -94,6 +118,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         boxShadow: '0 10px 10px 0 rgb(0 0 0 / 50%)',
         maxWidth: '350px',
         fontFamily: 'Assistant',
+        // marginRight: summaryNotificationMargin[windowSize],
+        // marginLeft: summaryNotificationMargin[windowSize],
+        // minWidth: summaryNotificationMinWidth[windowSize]
     },
     textArea: {
         fontFamily: 'Assistant'
@@ -111,6 +138,11 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
         cursor: 'pointer'
+    },
+    summaryContainer: {
+        '&.MuiPaper-root': {
+            width: '100%'
+        }
     },
     borderSign: {
         display: 'flex',
@@ -168,7 +200,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        minHeight: '115px',
+        minHeight: windowSize !== 'xs' && windowSize !== 'sm' ? '115px' : null,
         backgroundColor: 'transparent',
         justifyContent: 'space-between',
         boxSizing: 'border-box'
@@ -190,7 +222,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         cursor: 'pointer',
     },
     notificationContent: {
-        padding: '15px 0',
+        padding: windowSize !== 'xs' && windowSize !== 'sm' ? '15px 0' : 0,
         height: 'auto',
         display: 'flex',
         flexDirection: 'column',
@@ -295,10 +327,10 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     bubblePaper: {
         overflowX: 'unset!important',
-        textAlign: isRTL?'right':'left',
-        borderRadius: 20, 
+        textAlign: isRTL ? 'right' : 'left',
+        borderRadius: 20,
         height: '100%',
-        padding: '10px 15px', 
+        padding: '10px 15px',
         position: 'relative',
         width: bubble.paper.width[windowSize],
         backgroundColor: '#63bbfa',
@@ -323,7 +355,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         fontSize: bubble.fontSize[windowSize]
     },
     mmsImage: {
-      width: '100%'
+        width: '100%'
     },
     mobileNotification: {
         width: '100%',
@@ -334,7 +366,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         borderRadius: '5px',
         position: 'absolute',
         right: '50px',
-        maxHeight: 'calc(100% - 80px)',
+        maxHeight: (windowSize !== 'xs' && windowSize !== 'sm') ? 'calc(100% - 80px)' : null,
         paddingTop: 10
     },
     chromeNotification: {
@@ -514,7 +546,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         minHeight: 400
     },
     sidePadding: {
-        padding: '0 80px'
+        paddingRight: sidePaddingSizes[windowSize],
+        paddingLeft: sidePaddingSizes[windowSize]
     },
     radioText: {
         color: '#555',
@@ -534,7 +567,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     summaryTitle: {
         marginBottom: '0 !important',
         fontWeight: '500',
-        fontSize: 20
+        fontSize: 20,
+        marginTop: summaryTitleMargin[windowSize]
     },
     rowReverse: {
         flexDirection: 'row-reverse'

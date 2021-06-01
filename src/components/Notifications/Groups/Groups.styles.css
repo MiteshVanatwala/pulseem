@@ -21,6 +21,16 @@
     white-space: nowrap;
 }
 
-[direction="rtl"] .MuiSelect-select.MuiSelect-select {
+[dir="rtl"] .MuiSelect-select.MuiSelect-select {
     padding-right: 12px;
 }
+
+/* .MuiListItemSecondaryAction-root {
+    left: auto;
+    right: 16px;
+}
+
+[dir="rtl"] .MuiListItemSecondaryAction-root {
+    right: auto !important;
+    left: 16px !important;
+} */

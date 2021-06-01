@@ -1,4 +1,4 @@
-const dialogWidth={
+const dialogWidth = {
   xs: 200,
   sm: 350,
   md: 350,
@@ -12,15 +12,64 @@ const paperMinWidthSm={
   lg: 500,
   xl: 500
 }
+const minDialogWidth = {
+  xs: 330,
+  sm: 330,
+  md: 500,
+  lg: 500
+}
+const maxDialogWidth = {
+  xs: 350,
+  sm: 350,
+  md: 1050,
+  lg: 1050,
+  xl: 1050
+}
 
-export const getGeneralStyle=(windowSize,isRTL,theme) => ({
+const summaryPadding = {
+  xs: 0,
+  sm: 0,
+  md: 25,
+  lg: 25,
+  xl: 25
+}
+
+const summaryNotificationMargin = {
+  xs: "-15px",
+  sm: "-15px",
+  md: 0,
+  lg: 0,
+  xl: 0
+}
+const iconWrapperMargin = {
+  xs: 5,
+  sm: 10,
+  md: 15,
+  lg: 15,
+  xl: 15
+}
+const iconWrapperMinWidth = {
+  xs: 80,
+  sm: 80,
+  md: 100
+}
+const summaryNotificationMinWidth = {
+  xs: "240px",
+}
+const notificationTitleFontSize = {
+  xs: 12,
+  sm: 12,
+  md: '1rem'
+}
+
+export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dialogContainer: {
     '& .MuiPaper-root': {
       overflowX: 'hidden'
     },
     '& .MuiDialog-paperWidthSm': {
-      minWidth: paperMinWidthSm[windowSize],
-      maxWidth: '1050px'
+      minWidth: minDialogWidth[windowSize],
+      maxWidth: maxDialogWidth[windowSize]
     }
   },
   noPadding: {
@@ -73,7 +122,27 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     borderRadius: 5,
     margin: '1rem',
     padding: '1rem',
-    minWidth: dialogWidth[windowSize]
+    minWidth: dialogWidth[windowSize],
+    '& $notification': {
+      marginRight: summaryNotificationMargin[windowSize],
+      marginLeft: summaryNotificationMargin[windowSize],
+      minWidth: summaryNotificationMinWidth[windowSize],
+      '& $iconWrapper': {
+        margin: iconWrapperMargin[windowSize],
+        minWidth: iconWrapperMinWidth[windowSize]
+      },
+      '& b, & textarea': {
+        fontSize: notificationTitleFontSize[windowSize]
+      }
+    },
+    '& $dialogChildren': {
+      maxHeight: windowSize === 'xs' || windowSize === 'sm' ? '100vh' : 'calc(65vh)'
+    },
+    '& $mobileBG': {
+      '& $iconWrapper': {
+        minWidth: windowSize === 'xs' || windowSize === 'sm' ? 0 : 100
+      }
+    }
   },
   dialogButton: {
     fontFamily: 'OpenSansHebrew',
@@ -118,7 +187,8 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   dialogChildren: {
     // marginInline: 25,
     marginBlock: 10,
-    padding: '0 25px',
+    paddingRight: summaryPadding[windowSize],
+    paddingLeft: summaryPadding[windowSize],
     overflowY: 'auto'
   },
   copyClip: {
