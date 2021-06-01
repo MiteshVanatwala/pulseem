@@ -476,5 +476,6 @@
   "verificationCodeError": "The code is incorrect, please try again or select resend",
   "numberError": "Enter minimum of 10 numbers",
   "verifyNumber": "Verify Number",
-  "restoreCampaignTitle": "Select the SMS campaigns you want to restore"
+  "restoreCampaignTitle": "Select the SMS campaigns you want to restore",
+  "verificationSuccessful": "Verification Successful!"
 }

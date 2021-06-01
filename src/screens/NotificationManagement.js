@@ -43,7 +43,8 @@ const NotificationManagement=({classes}) => {
   const rowsOptions=[6,12,18]
   const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
-  const [searchArray,setSearchArray]=useState(null)
+  const [isSearching,setSearching]=useState(false)
+  const [searchResults,setSearchResults]=useState(null)
   const [dialogType,setDialogType]=useState(null)
   const [restoreArray,setRestoreArray]=useState([]);
   const history=useCtrlHistory()
@@ -195,19 +196,51 @@ const NotificationManagement=({classes}) => {
     setNotificationNameSearch('')
     handleFromDate(null)
     handleToDate(null)
-    setSearchArray(null)
+    setSearchResults(null)
+    setSearching(false)
   }
 
   const renderSearchSection=() => {
     const handleSearch=() => {
-      setSearchArray([{
+      const searchArray = [{
         type: 'name',
         notificationName: notificationNameSearch
       },{
         type: 'date',
         fromDate,
         toDate
-      }]);
+      }];
+
+      const filtersObject={
+        name: (row,values) => {
+          return String(row.Name.toLowerCase()).includes(values.notificationName.toLowerCase());
+        },
+        date: (row,values) => {
+          const {UpdatedDate,SendDate}=row
+          const lastUpdate=SendDate?
+            moment(SendDate,dateFormat).valueOf()
+            :moment(UpdatedDate,dateFormat).valueOf()
+          const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
+          const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
+  
+          if(!values)
+            return true
+          if(fromDate&&toDate&&currentFromDate&&currentToDate)
+            return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
+          if(fromDate&&currentFromDate)
+            return lastUpdate>=currentFromDate
+          if(toDate&&currentToDate)
+            return lastUpdate<=currentToDate
+          return true
+        }
+      }
+
+      let sortData = notificationData;
+      searchArray.forEach(values => {
+        sortData=sortData.filter(row => filtersObject[values.type](row,values))
+      });
+      setSearchResults(sortData);
+      setSearching(true);
       setPage(1);
     }
 
@@ -290,7 +323,7 @@ const NotificationManagement=({classes}) => {
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
-        {searchArray&&<Grid item>
+        {isSearching&&<Grid item>
           <Button
             size='large'
             variant='contained'
@@ -305,6 +338,7 @@ const NotificationManagement=({classes}) => {
   }
 
   const renderManagmentLine=() => {
+    const dataLength = isSearching? searchResults.length:notificationData.length;
     return (
       <Grid container spacing={2} className={classes.linePadding} >
         <Grid item>
@@ -345,7 +379,7 @@ const NotificationManagement=({classes}) => {
         </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${notificationData.length} ${t('notifications.notifications')}`}
+            {`${dataLength} ${t('notifications.notifications')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -369,8 +403,7 @@ const NotificationManagement=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {StatusID,groups,ID}=row
-    console.log('notification Row',row)
+    const {StatusID,HasGroups,ID}=row
 
     const iconsMap=[
       {
@@ -414,7 +447,7 @@ const NotificationManagement=({classes}) => {
       {
         key: 'groups',
         icon: GroupsIcon,
-        disable: (!groups||groups.length===0),
+        disable: (!HasGroups),
         lable: t('notifications.buttons.groups'),
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -614,42 +647,11 @@ const NotificationManagement=({classes}) => {
   }
 
   const renderTableBody=() => {
-    const filtersObject={
-      name: (row,values) => {
-        return String(row.Name.toLowerCase()).includes(values.notificationName.toLowerCase());
-      },
-      date: (row,values) => {
-        const {UpdatedDate,SendDate}=row
-        const lastUpdate=SendDate?
-          moment(SendDate,dateFormat).valueOf()
-          :moment(UpdatedDate,dateFormat).valueOf()
-        const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
-        const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
-
-        if(!values)
-          return true
-        if(fromDate&&toDate&&currentFromDate&&currentToDate)
-          return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
-        if(fromDate&&currentFromDate)
-          return lastUpdate>=currentFromDate
-        if(toDate&&currentToDate)
-          return lastUpdate<=currentToDate
-        return true
-      }
-    }
-
-    let sortData=notificationData;
-    if(searchArray) {
-      searchArray.forEach(values => {
-        sortData=sortData.filter(row => filtersObject[values.type](row,values))
-
-      })
-    }
-
-    sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    let rowData = searchResults || notificationData;
+    rowData=rowData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
-        {sortData
+        {rowData
           .map(windowSize==='xs'? renderPhoneRow:renderRow)}
       </TableBody>
     )
@@ -670,7 +672,7 @@ const NotificationManagement=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={notificationData.length}
+        rows={isSearching?searchResults.length : notificationData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}

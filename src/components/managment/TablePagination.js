@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Typography,Grid,TextField,IconButton} from '@material-ui/core'
 import {PageArrowIcon} from '../../assets/images/managment/index'
 
@@ -16,11 +16,16 @@ export const TablePagination=({
 }) => {
   const {t}=useTranslation()
   const pages=Math.ceil(rows/rowsPerPage)
+  const [innerPage,setPage]=useState('');
+  const [isChanging,setChanging]=useState(false);
 
   const handelPageChange=event => {
     const currentPage=parseInt(event.target.value)
-    if(currentPage>=1&&currentPage<=pages)
+    if (currentPage>=1&&currentPage<=pages) {
       onPageChange(currentPage)
+    }
+    setChanging(true);
+    setPage(currentPage)
   }
 
   const handleRowsPerPageChange=event => {
@@ -59,6 +64,7 @@ export const TablePagination=({
   }
 
   const renderPageNumbers=() => {
+    const pageNum = innerPage?innerPage.toString():'';
     return (
       <Grid
         item
@@ -74,8 +80,9 @@ export const TablePagination=({
           {t('common.page')}
         </Typography>
         <TextField
+          error={!innerPage||innerPage>page}
           type="number"
-          value={page.toString()}
+          value={isChanging?pageNum:page.toString()}
           onChange={handelPageChange}
           variant='outlined'
           margin='none'

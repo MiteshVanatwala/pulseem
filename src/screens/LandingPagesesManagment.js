@@ -32,7 +32,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const rowsOptions=[6,12,18]
   const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
-  const [searchArray,setSearchArray]=useState(null)
+  const [isSearching,setSearching]=useState(false)
+  const [searchResults,setSearchResults]=useState(null)
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
@@ -61,15 +62,29 @@ const LandingPagesesManagmentScreen=({classes}) => {
 
   const clearSearch=() => {
     setLandingPageNameSearch('');
-    setSearchArray(null);
+    setSearchResults(null);
+    setSearching(false);
   }
 
   const renderSearchLine=() => {
     const handleSearch=() => {
-      setSearchArray([{
+      const searchArray = [{
         type: 'name',
         campaignName: landingPageNameSearch
-      }]);
+      }];
+
+      const filtersObject={
+        name: (row,values) => {
+          return String(row.Name.toLowerCase()).includes(values.campaignName.toLowerCase());
+        }
+      }
+  
+      let sortData=landingPagesData
+      searchArray.forEach(values => {
+        sortData=sortData.filter(row => filtersObject[values.type](row,values))
+      });
+      setSearchResults(sortData);
+      setSearching(true);
       setPage(1);
     }
 
@@ -113,7 +128,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
         </Grid>
-        {searchArray&&<Grid item>
+        {isSearching&&<Grid item>
           <Button
             size='large'
             variant='contained'
@@ -159,7 +174,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${landingPagesData.length} ${t('landingPages.landingPages')}`}
+            {`${isSearching?searchResults.length:landingPagesData.length} ${t('landingPages.landingPages')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -463,19 +478,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
 
   const renderTableBody=() => {
-    const filtersObject={
-      name: (row,values) => {
-        return String(row.Name.toLowerCase()).includes(values.campaignName.toLowerCase());
-      }
-    }
-
-    let sortData=landingPagesData
-    if(searchArray) {
-      searchArray.forEach(values => {
-        sortData=sortData.filter(row => filtersObject[values.type](row,values))
-      })
-    }
-
+    
+    let sortData = isSearching?searchResults:landingPagesData;
     sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -500,7 +504,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={landingPagesData.length}
+        rows={isSearching?searchResults.length:landingPagesData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
