@@ -71,7 +71,7 @@ const AppBarItem=({
 
         {(chosen||open)&&<ArrowDropUp className={classes.appBarItemArrow} />}
       </Box>
-      <Popper open={open} anchorEl={buttonRef.current} role={undefined} transition disablePortal>
+      <Popper open={open} anchorEl={buttonRef.current} role={undefined} transition>
         {({TransitionProps}) => (
           <Grow
             {...TransitionProps}>
@@ -113,7 +113,7 @@ const AppBarItem=({
   )
 }
 
-const LanguageSelector=({classes}) => {
+const LanguageSelector=({windowSize,classes}) => {
   const cookieData=getCookie('Culture');
   const language=!!cookieData? cookieData:'he-IL';
   const dispatch=useDispatch();
@@ -140,6 +140,18 @@ const LanguageSelector=({classes}) => {
     dispatch(setLanguage(value.split('-')[0]));
   }
 
+  if (windowSize==='xs') {
+    return (
+      <Button 
+        className={clsx(classes.white, classes.f20)}
+        onClick={()=>{
+          const value = language==='he-IL'?'en-US':'he-IL';
+          changeLanguage({value});
+        }}>
+        {language==='he-IL'?'עב':'EN'}
+      </Button>
+    );
+  }
   return (
     <AppBarItem
       classes={classes}
@@ -259,6 +271,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
             <FaBars />
           </IconButton>
         </Box>
+        <LanguageSelector windowSize={windowSize} classes={classes} />
         <Popper
           open={open}
           anchorEl={phoneMenuButtonRef.current}
