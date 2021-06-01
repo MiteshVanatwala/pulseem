@@ -440,5 +440,6 @@
   "createFolder": "Create Folder",
   "save": "Save",
   "sentAlert": "Sent!",
-  "yourCampaignOnItsWay": "Your campaign is on its way"
+  "yourCampaignOnItsWay": "Your campaign is on its way",
+  "folderAlreadyExists": "A folder with this name already exists. Please try another name"
 }

@@ -18,6 +18,8 @@ import TreeItem from '@material-ui/lab/TreeItem';
 import PropTypes from 'prop-types';
 import { AiOutlineCheckCircle, AiOutlineCloudUpload } from 'react-icons/ai';
 import InputAdornment from '@material-ui/core/InputAdornment';
+import LazyBackground from './Lazy/LazyBackground';
+import Toast from '../Toast/Toast.component';
 
 const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     const dispatch = useDispatch();
@@ -34,7 +36,19 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     const [fileToUpload, setFileToUpload] = useState(null);
     const [isFilePicked, setIsFilePicked] = useState(false);
     const hiddenFileInput = React.useRef(null);
+    const [toastMessage, setToastMessage] = useState(null);
 
+    const renderToast = () => {
+        if (toastMessage) {
+            setTimeout(() => {
+                setToastMessage(null);
+            }, 2000);
+            return (
+                <Toast data={toastMessage} />
+            );
+        }
+        return null;
+    }
 
     moment.locale(language);
 
@@ -109,7 +123,6 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         },
     }));
 
-    const folderImages = () => { }
     const renderFolders = () => {
         if (folders != null) {
             return (
@@ -164,10 +177,14 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             initGallery();
         }
         const imageEnter = (fileId) => () => {
-            document.getElementById(fileId).style.opacity = 1;
+            const elem = document.getElementById(fileId);
+            if (elem)
+                document.getElementById(fileId).style.opacity = 1;
         }
         const imageLeave = (fileId) => () => {
-            document.getElementById(fileId).style.opacity = 0;
+            const elem = document.getElementById(fileId);
+            if (elem)
+                document.getElementById(fileId).style.opacity = 0;
         }
         const handleUploadClick = event => {
             hiddenFileInput.current.click();
@@ -246,15 +263,15 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                                     style={{ padding: "6px 10px" }}
                                 >
                                     <Box className="select-image" onClick={handleSelectFile(filePath, `${f.FolderName.replace('\\', '')}_${index}`)}>
-                                        <Box className="img-container">
-                                            <Box className="responsive-bg" style={{ backgroundImage: `url('${filePath}')` }}>
+                                        <Box className="img-container" style={{ border: selectedFile === `${f.FolderName.replace('\\', '')}_${index}` ? "1px solid #000" : null }}>
+                                            <LazyBackground url={filePath}>
                                                 <button
                                                     id={`file_${index}`}
                                                     className={clsx(classes.absTopRight)}
                                                     style={{ border: 'none', cursor: 'pointer', textDecoration: 'none' }}
                                                     onClick={deleteImage(f)}
                                                 >X</button>
-                                            </Box>
+                                            </LazyBackground>
                                             <Box title={f.FileName} className="image-info">
                                                 <Typography className="elipsis-text" style={{ fontSize: 14 }}>
                                                     {f.FileName}
@@ -324,10 +341,16 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         }
         const createNewFolder = async (event) => {
             event.preventDefault();
-            await dispatch(createFolder(folderName));
-            initGallery();
-            setFolderName('');
-            handleCreateFolderRow();
+            const folderExists = folders.filter(f => f.FolderName === folderName).length > 0;
+            if (!folderExists) {
+                await dispatch(createFolder(folderName));
+                initGallery();
+                setFolderName('');
+                handleCreateFolderRow();
+            }
+            else {
+                setToastMessage({ severity: 'error', color: 'error', message: t('common.folderAlreadyExists'), showAnimtionCheck: false });
+            }
         }
         return (
             <Box>
@@ -383,7 +406,6 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                     </Grid>
                 </Box>
             </Box>
-
         );
     }
     const renderUploadNotice = () => {
@@ -396,7 +418,9 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     }
 
     return (
-        <div className={classes.root}>
+        <div className={classes.root} style={{
+            minWidth: 'calc(50vw - 15px)'
+        }}>
             <Divider style={{ margin: '15px 0' }} />
             <Grid container className={classes.galleryGrid}>
                 <Grid item xs={2} className="scroll">
@@ -415,6 +439,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                     {renderUploadNotice()}
                 </Grid>
             </Grid>
+            {renderToast()}
         </div>
     );
 }

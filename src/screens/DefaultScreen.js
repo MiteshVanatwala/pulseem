@@ -1,8 +1,8 @@
 import React from 'react'
-import {TopAppBar,/*Drawer*/} from '../components/core'
-import {Container} from '@material-ui/core'
+import { TopAppBar,/*Drawer*/ } from '../components/core'
+import { Container } from '@material-ui/core'
 
-const DefaultScreen=({classes,children,currentPage='',}) => {
+const DefaultScreen = ({ classes, children, currentPage = '', customPadding = false }) => {
   return (
     <div>
       <TopAppBar
@@ -13,7 +13,8 @@ const DefaultScreen=({classes,children,currentPage='',}) => {
       <Container
         maxWidth='xl'
         //className={classes.defaultScreen}
-        style={{maxHeight: 'calc(100vh - 53px)'}}>
+        style={{ maxHeight: 'calc(100vh - 53px)' }}
+        className={customPadding ? classes.sidePadding : null}>
         {children}
       </Container>
     </div>
