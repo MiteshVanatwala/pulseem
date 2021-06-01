@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import {
-  Typography, Button, TextField, Grid, TextareaAutosize, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener,
+  Typography, Button, TextField, Grid, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener,
   FormHelperText, Divider
 } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
@@ -31,10 +31,6 @@ import {
 } from '../../assets/images/settings/index'
 
 
-function getSteps() {
-  return ['Create content', 'Send Settings'];
-}
-
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
     color: theme.palette.common.black,
@@ -57,11 +53,6 @@ const DashedInput = withStyles({
     "& .MuiOutlinedInput-multiline": {
       padding: 2,
       height: 60,
-      '& textarea + fieldset': {
-        border: 'none',
-        borderRadius: 0,
-        borderWidth: 1
-      },
       '& textarea + fieldset': {
         border: '1px dashed #64a1bd',
         borderRadius: 0,
@@ -116,9 +107,7 @@ const NotificationEditor = ({ props, classes }) => {
   const dispatch = useDispatch();
   const { language } = useSelector(state => state.core)
   const { t } = useTranslation();
-  const steps = getSteps();
   const history = useHistory();
-  let isEditable = false;
   const { isRTL } = useSelector(state => state.core);
   moment.locale(language);
   /* #endregion */
@@ -179,13 +168,9 @@ const NotificationEditor = ({ props, classes }) => {
     if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
       getData();
       getSubAccountGroups();
-      isEditable = true;
       if (props.match.params.send || props.match.url.toLowerCase().indexOf('send') > -1) {
         setActiveStep(activeStep + 1);
       }
-    }
-    else {
-      isEditable = false;
     }
   }, [dispatch]);
 
@@ -220,9 +205,13 @@ const NotificationEditor = ({ props, classes }) => {
   /* #endregion */
   /* #region  Data Handlers */
   const handleApiToken = async () => {
-    const apiToken = await dispatch(getApiToken());
-    const token = apiToken && apiToken.payload && apiToken.payload.PublicKey || '';
-    setApiToken(token);
+    const t = await dispatch(getApiToken());
+    if (t && t.payload) {
+      setApiToken(t.payload.PublicKey);
+    }
+    else {
+      setApiToken('');
+    }
   }
   const saveNotification = (isExit, isContinue) => {
     // Show loader
