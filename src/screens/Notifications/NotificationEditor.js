@@ -438,6 +438,7 @@ const NotificationEditor = ({ props, classes }) => {
         <Dialog
           classes={classes}
           open={showConfirmCancel}
+          onCancel={() => setShowConfirmCancel(null)}
           onClose={onCancelConfirm(false)}
           onConfirm={onCancelConfirm(true)}
           {...dialog}>
@@ -964,7 +965,7 @@ const NotificationEditor = ({ props, classes }) => {
       dialog = summaryContent();
       return (
         <Dialog
-          minimumWidth={850}
+          customContainerStyle={classes.summaryContainer}
           classes={classes}
           open={summary}
           onClose={handleSummaryClose}

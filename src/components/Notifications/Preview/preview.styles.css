@@ -46,19 +46,19 @@
         margin-top: 15px !important;
     }
     .MuiDialog-root .mobileBG {
-        max-width: 180px !important;
-        width: 180px !important;
+        max-width: 100% !important;
         min-height: 180px !important;
     }
     .MuiDialog-root .mobileBG .mobileNotification {
-        top: 30px !important;
-        right: 20px !important;
-        width: 100% !important;
+        top: 25px !important;
+        right: 27px !important;
+        width: calc(100% - 55px) !important;
         position: absolute !important;
-        max-width: 140px !important;
+        max-width: 190px !important;
     }
     .MuiDialog-root .mobileBG .notificationSiteAddress {
         height: 25px !important;
+        margin-top: 0 !important;
     }
     .MuiDialog-root .mobileBG .MuiTypography-body1 {
         font-size: 9px !important;
@@ -70,10 +70,13 @@
     }
 
     .MuiDialog-root .mobileBG .iconWrapper {
-        min-width: unset !important;
+        min-width: 0 !important;
     }
 
     .MuiDialog-root .mobileBG .footerWrapper {
         min-height: unset !important;
+    }
+    .MuiDialog-root .mobileBG .notificationContainer {
+        min-height: 80px;
     }
 }

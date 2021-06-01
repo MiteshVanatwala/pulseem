@@ -7,6 +7,30 @@ const galleryWidth = {
     lg: 750,
     xl: 950
 }
+const sidePaddingSizes = {
+    xs: 15,
+    sm: 25,
+    md: 95,
+    lg: 95,
+    xl: 95
+}
+const summaryTitleMargin = {
+    xs: 0,
+    sm: 0,
+    md: 10,
+    lg: 10,
+    xl: 15
+}
+// const summaryNotificationMargin = {
+//     xs: "-15px",
+//     sm: "-15px",
+//     md: 0,
+//     lg: 0,
+//     xl: 0
+// }
+// const summaryNotificationMinWidth = {
+//     xs: "240px",
+// }
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     roundedCircle: {
         borderRadius: '100%',
@@ -27,6 +51,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         boxShadow: '0 10px 10px 0 rgb(0 0 0 / 50%)',
         maxWidth: '350px',
         fontFamily: 'Assistant',
+        // marginRight: summaryNotificationMargin[windowSize],
+        // marginLeft: summaryNotificationMargin[windowSize],
+        // minWidth: summaryNotificationMinWidth[windowSize]
     },
     textArea: {
         fontFamily: 'Assistant'
@@ -44,6 +71,11 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         justifyContent: 'center',
         alignItems: 'center',
         cursor: 'pointer'
+    },
+    summaryContainer: {
+        '&.MuiPaper-root': {
+            width: '100%'
+        }
     },
     borderSign: {
         display: 'flex',
@@ -101,7 +133,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        minHeight: '115px',
+        minHeight: windowSize !== 'xs' && windowSize !== 'sm' ? '115px' : null,
         backgroundColor: 'transparent',
         justifyContent: 'space-between',
         boxSizing: 'border-box'
@@ -123,7 +155,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         cursor: 'pointer',
     },
     notificationContent: {
-        padding: '15px 0',
+        padding: windowSize !== 'xs' && windowSize !== 'sm' ? '15px 0' : 0,
         height: 'auto',
         display: 'flex',
         flexDirection: 'column',
@@ -210,7 +242,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         borderRadius: '5px',
         position: 'absolute',
         right: '50px',
-        maxHeight: 'calc(100% - 80px)',
+        maxHeight: (windowSize !== 'xs' && windowSize !== 'sm') ? 'calc(100% - 80px)' : null,
         paddingTop: 10
     },
     chromeNotification: {
@@ -390,7 +422,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         minHeight: 400
     },
     sidePadding: {
-        padding: '0 95px'
+        paddingRight: sidePaddingSizes[windowSize],
+        paddingLeft: sidePaddingSizes[windowSize]
     },
     radioText: {
         color: '#555',
@@ -410,7 +443,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     summaryTitle: {
         marginBottom: '0 !important',
         fontWeight: '500',
-        fontSize: 20
+        fontSize: 20,
+        marginTop: summaryTitleMargin[windowSize]
     },
     rowReverse: {
         flexDirection: 'row-reverse'
