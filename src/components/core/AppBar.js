@@ -140,15 +140,15 @@ const LanguageSelector=({windowSize,classes}) => {
     dispatch(setLanguage(value.split('-')[0]));
   }
 
-  if (windowSize==='xs') {
+  if(windowSize==='xs') {
     return (
-      <Button 
+      <Button
         className={clsx(classes.mobileLanguageBtn)}
-        onClick={()=>{
-          const value = language==='he-IL'?'en-US':'he-IL';
+        onClick={() => {
+          const value=language==='he-IL'? 'en-US':'he-IL';
           changeLanguage({value});
         }}>
-        {language==='he-IL'?'עב':'EN'}
+        {language==='he-IL'? "עב'":'EN'}
       </Button>
     );
   }
