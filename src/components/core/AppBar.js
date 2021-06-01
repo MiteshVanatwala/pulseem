@@ -150,7 +150,7 @@ const LanguageSelector=({classes}) => {
 
 
 export const TopAppBar=({classes,currentPage=''}) => {
-  const {basename}=useSelector(state => state.core)
+  const {companyName}=useSelector(state => state.core)
   const {windowSize}=useSelector(state => state.core)
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
@@ -208,7 +208,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
         <Box className={classes.appBerSpace} />
         <Typography
           className={classes.appBarUsername}>
-          {basename}
+          {companyName}
         </Typography>
       </>}
       <Box className={classes.appBarAfterTollbarContainer}>

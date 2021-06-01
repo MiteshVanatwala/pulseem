@@ -340,19 +340,21 @@ const App=() => {
         email='',
         unique_name='',
         given_name: basename='',
+        nameid: companyName,
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone': phone='',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality': locality='he-IL',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince': imageURL='',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri': isWhiteLabel=''
       }=jwt
 
-      dispatch(setCoreData({email,basename,phone,locality,imageURL,isWhiteLabel}))
-      dispatch(setUsername(unique_name))
-      let lang=culture||locality
+      dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName}))
+      let lang=culture||locality||'he'
       setCookie('Culture',lang)
       lang=lang.split('-')[0]
       console.log('lang',lang)
+      i18n.changeLanguage(lang)
       dispatch(setLanguage(lang))
+      dispatch(setUsername(unique_name))
     }
 
     const setWindowWidth=() => {
@@ -382,12 +384,12 @@ const App=() => {
     })
     updateToken()
     setWindowWidth()
-  },[dispatch])
+  },[dispatch,language])
 
-  useEffect(() => {
-    const lang=culture? culture.split('-')[0]:''
-    i18n.changeLanguage(lang===language? language:lang)
-  },[language])
+  //useEffect(() => {
+  //  const lang=culture? culture.split('-')[0]:''
+  //  i18n.changeLanguage(lang===language? language:lang)
+  //},[language])
 
 
   const classes=useClasses(windowSize,isRTL)()

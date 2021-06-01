@@ -112,30 +112,6 @@ export const getRoutes=(t=() => null) => [
     ]
   },
   {
-    key: 'reports',
-    title: t('master.RadMenuItemResource19.Text'),
-    iconUnicode: '\ue049',
-    href: '/Pulseem/MainReport.aspx?fromreact=true',
-    icon: <img
-      alt='Reports'
-      src={ReportsIcon} />,
-    options: [
-      {title: t('master.clalCollage'),href: '/Pulseem/ClalReport.aspx?fromreact=true'},
-      {title: t('master.RadMenuItemResource13.Text'),href: '/Pulseem/MainReport.aspx?fromreact=true'},
-      {title: t('master.RadMenuItemResource24.Text'),href: '/Pulseem/SMSMainReport.aspx?fromreact=true'},
-      {title: t('master.MmsMainReport.Text'),href: '/Pulseem/MmsMainReport.aspx?fromreact=true'},
-      {title: t('master.AbTestsReport.Text'),href: '/Pulseem/AbTestsReport.aspx?fromreact=true'},
-      {title: t('master.RadMenuItemResource15.Text'),href: '/Pulseem/AccountReport.aspx?fromreact=true'},
-      {title: t('master.RadMenuItemResource16.Text'),href: '/Pulseem/CampaignComparison.aspx?fromreact=true'},
-      {title: t('master.RadMenuItemResource18.Text'),href: '/Pulseem/ClientReport.aspx?fromreact=true'},
-      {title: t('master.RadMenuItemResource30.Text'),href: '/Pulseem/EmailAutoReports.aspx?fromreact=true'},
-      {title: t('master.locRemovedReason.Text'),href: '/Pulseem/RemovedStats.aspx?fromreact=true'},
-      {title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true'},
-      {title: t('master.DirectSmsReport.Text'),href: '/Pulseem/DirectSmsReport.aspx?fromreact=true'},
-      {title: t('master.OpenedClickedReport'),href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true'},
-    ]
-  },
-  {
     key: 'automations',
     title: t('master.Automations'),
     iconUnicode: '\ue087',
@@ -160,6 +136,30 @@ export const getRoutes=(t=() => null) => [
       {title: t('master.createNotification'),href: '/Pulseem/Notification.aspx?t=add&fromreact=true'},
       {title: t('master.manageNotifications'),href: '/react/Notifications'},
       {title: t('master.implementScript'),uri: '/react/Notifications'}
+    ]
+  },
+  {
+    key: 'reports',
+    title: t('master.RadMenuItemResource19.Text'),
+    iconUnicode: '\ue049',
+    href: '/Pulseem/MainReport.aspx?fromreact=true',
+    icon: <img
+      alt='Reports'
+      src={ReportsIcon} />,
+    options: [
+      {title: t('master.clalCollage'),href: '/Pulseem/ClalReport.aspx?fromreact=true'},
+      {title: t('master.RadMenuItemResource13.Text'),href: '/Pulseem/MainReport.aspx?fromreact=true'},
+      {title: t('master.RadMenuItemResource24.Text'),href: '/Pulseem/SMSMainReport.aspx?fromreact=true'},
+      {title: t('master.MmsMainReport.Text'),href: '/Pulseem/MmsMainReport.aspx?fromreact=true'},
+      {title: t('master.AbTestsReport.Text'),href: '/Pulseem/AbTestsReport.aspx?fromreact=true'},
+      {title: t('master.RadMenuItemResource15.Text'),href: '/Pulseem/AccountReport.aspx?fromreact=true'},
+      {title: t('master.RadMenuItemResource16.Text'),href: '/Pulseem/CampaignComparison.aspx?fromreact=true'},
+      {title: t('master.RadMenuItemResource18.Text'),href: '/Pulseem/ClientReport.aspx?fromreact=true'},
+      {title: t('master.RadMenuItemResource30.Text'),href: '/Pulseem/EmailAutoReports.aspx?fromreact=true'},
+      {title: t('master.locRemovedReason.Text'),href: '/Pulseem/RemovedStats.aspx?fromreact=true'},
+      {title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true'},
+      {title: t('master.DirectSmsReport.Text'),href: '/Pulseem/DirectSmsReport.aspx?fromreact=true'},
+      {title: t('master.OpenedClickedReport'),href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true'},
     ]
   }
 ]

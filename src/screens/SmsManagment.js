@@ -238,7 +238,7 @@ const SmsManagnentScreen=({classes}) => {
         remove: Status!==1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendCampaign.aspx?CampaignID=${Id}&fromreact=true`
+        href: `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&fromreact=true`
       },
       {
         key: 'preview',

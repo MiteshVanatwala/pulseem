@@ -12,7 +12,8 @@ export const coreSlice=createSlice({
     email: '',
     phone: '',
     imageURL: '',
-    isWhiteLabel: false
+    isWhiteLabel: false,
+    companyName: ''
   },
   reducers: {
     setLanguage: (state,action) => {
@@ -28,9 +29,7 @@ export const coreSlice=createSlice({
       state.phone=payload.phone
       state.imageURL=payload.imageURL
       state.isWhiteLabel=payload.isWhiteLabel
-      const language=payload.locality.split('-')[0]
-      state.language=language
-      state.isRTL=rtlLanguages.includes(language)
+      state.companyName=payload.companyName
     }
   }
 })
