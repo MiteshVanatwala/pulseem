@@ -3,30 +3,30 @@ import DefaultScreen from './DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,IconButton,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio,FormGroup,FormControl
-} from '@material-ui/core'
+  Grid,Button,TextField,Box,FormControlLabel,Checkbox,RadioGroup,Radio,FormControl
+} from '@material-ui/core';
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
   GroupsIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,DateField,Dialog
+  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import useCtrlHistory from '../helpers/useCtrlHistory'
-import {useSelector,useDispatch} from 'react-redux'
-import {useTranslation} from 'react-i18next'
-import ClearIcon from '@material-ui/icons/Clear'
-import moment from 'moment'
-import 'moment/locale/he'
+import useCtrlHistory from '../helpers/useCtrlHistory';
+import {useSelector,useDispatch} from 'react-redux';
+import {useTranslation} from 'react-i18next';
+import ClearIcon from '@material-ui/icons/Clear';
+import moment from 'moment';
+import 'moment/locale/he';
 import {
   getNotificationById,getNotificationGroups,getNotificationData,getDeletedNotifications,
   duplicateNotification,deleteNotification,getNotificationGroupsById,restoreNotifications,
-  getScriptPath,getApiToken,updateScriptPath,setScriptDialog
+  getScriptPath,getApiToken,updateScriptPath
 } from '../redux/reducers/notificationSlice';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import {Preview} from '../components/Notifications/Preview/Preview';
-import {getCookie,setCookie} from '../helpers/cookies'
+import {getCookie,setCookie} from '../helpers/cookies';
 
 const NotificationManagement=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
@@ -739,31 +739,12 @@ const NotificationManagement=({classes}) => {
         </div>
       ),
       content: (
-        <Box
-          className={clsx(
-            classes.restorDialogContent,
-            classes.dialogBox
-          )}>
-          {data.map(row => {
-            const checked=restoreArray.includes(row.ID)
-            return (
-              <FormControlLabel
-                key={row.ID}
-                className={classes.restoreDialogCheckBoxLable}
-                control={
-                  <Checkbox
-                    checked={checked}
-                    onChange={handleChange(row.ID)}
-                    className={classes.restoreDialogCheckBox}
-                    color='primary'
-                    size='small'
-                  />
-                }
-                label={row.Name}
-              />
-            )
-          })}
-        </Box>
+        <RestorDialogContent
+          classes={classes}
+          data={data}
+          currentChecked={restoreArray}
+          onChange={handleChange}
+        />
       ),
       onConfirm: async () => {
         const res=await dispatch(restoreNotifications(restoreArray));
