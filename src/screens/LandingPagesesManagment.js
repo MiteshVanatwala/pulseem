@@ -3,7 +3,7 @@ import DefaultScreen from './DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField
+  Grid,Button,TextField, Box
 } from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SearchIcon,
@@ -262,6 +262,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         lable: IsPayment?
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
+        remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: async () => {
           if(IsPayment) {
@@ -273,6 +274,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           openInNewTab(PageLink)
@@ -282,6 +284,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'edit',
         icon: EditIcon,
         lable: t('landingPages.EditResource1.HeaderText'),
+        remove: windowSize==='xs',
         href: `/Pulseem/NewWebForm/NewFormEdit/${ID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
@@ -329,7 +332,6 @@ const LandingPagesesManagmentScreen=({classes}) => {
     return (
       <Grid
         container
-        spacing={2}
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
@@ -351,7 +353,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
       <>
         <Typography
           className={classes.middleText}>
-          {(views&&views.toLocaleString())||0}
+          {(views&&views.toLocaleString())||'0'}
         </Typography>
         <Typography
           className={classes.middleText}>
@@ -403,7 +405,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         </Typography>
         <a
           href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
-          className={classes.middleText}>
+          className={clsx(classes.middleText, classes.pt2)}>
           {t('landingPages.SubmitsResource1.HeaderText')}
         </a>
       </>
@@ -457,21 +459,23 @@ const LandingPagesesManagmentScreen=({classes}) => {
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
-          {renderNameCell(row)}
-          <Grid container justify='space-between' alignItems='center' >
-            <Grid item style={{textAlign: 'center'}}>
-              <Grid container spacing={4} >
-                <Grid item >
+          <Box className={classes.inlineGrid}>
+            {renderNameCell(row)}
+          </Box>
+          <Grid container justify={'space-between'}>
+            <Grid item container className={classes.widthUnset}>
+              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
                   {renderViewsCell(row.Views)}
-                </Grid>
-                <Grid item>
-                  {renderSubscribersCell(row)}
-                </Grid>
               </Grid>
+              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+                {renderSubscribersCell(row)}
+              </Grid>
+
+            </Grid>
+            <Grid item>
+              {renderCellIcons(row)}
             </Grid>
           </Grid>
-          {renderCellIcons(row)}
-
         </TableCell>
       </TableRow>
     )

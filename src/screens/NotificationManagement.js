@@ -10,7 +10,7 @@ import {
   GroupsIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent
+  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent, SearchField
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import useCtrlHistory from '../helpers/useCtrlHistory';
@@ -255,27 +255,17 @@ const NotificationManagement=({classes}) => {
       setNotificationNameSearch(event.target.value)
     }
 
-    // if(windowSize==='xs') {
-    //   return (
-    //     <Input
-    //       classes={{
-    //         underline: classes.phoneSearchBar
-    //       }}
-    //       value={notificationNameSearch}
-    //       onChange={handleNotificationNameChange}
-    //       placeholder={t('notifications.searchSection.notificationName')}
-    //       endAdornment={
-    //         <InputAdornment position="end">
-    //           <IconButton
-    //             onClick={handleSearch}
-    //             className={classes.phoneSearchBarIcon}>
-    //             <SearchIcon />
-    //           </IconButton>
-    //         </InputAdornment>
-    //       }>
-    //     </Input>
-    //   )
-    // }
+    if(windowSize==='xs') {
+      return (
+        <SearchField
+          classes={classes}
+          value={notificationNameSearch}
+          onChange={handleNotificationNameChange}
+          onClick={handleSearch}
+          placeholder={t('common.CampaignName')}
+        />
+      )
+    }
 
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
@@ -341,7 +331,7 @@ const NotificationManagement=({classes}) => {
     const dataLength = isSearching? searchResults.length:notificationData.length;
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        <Grid item>
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -352,8 +342,8 @@ const NotificationManagement=({classes}) => {
             )}>
             {t('notifications.buttons.createNotification')}
           </Button>
-        </Grid>
-        <Grid item>
+        </Grid>}
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -364,8 +354,8 @@ const NotificationManagement=({classes}) => {
             onClick={handleShowDeletedItems}>
             {t('notifications.restoreDeleted')}
           </Button>
-        </Grid>
-        <Grid item>
+        </Grid>}
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -376,7 +366,7 @@ const NotificationManagement=({classes}) => {
             onClick={handleShowGroups}>
             {t('notifications.buttons.groups')}
           </Button>
-        </Grid>
+        </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${dataLength} ${t('notifications.notifications')}`}
@@ -419,6 +409,7 @@ const NotificationManagement=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('notifications.buttons.preview'),
+        remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           handlePreview(ID);
@@ -429,6 +420,7 @@ const NotificationManagement=({classes}) => {
         icon: EditIcon,
         disable: StatusID!==0,
         lable: t('notifications.buttons.edit'),
+        remove: windowSize==='xs',
         href: `/react/notification/Edit/${ID}`,
         rootClass: classes.paddingIcon
       },
@@ -632,14 +624,14 @@ const NotificationManagement=({classes}) => {
         component='div'
         classes={rowStyle}>
         <TableCell classes={{root: clsx(classes.tableCellRoot,classes.flex1)}}>
-          <Grid container justify='space-between'>
-            <Grid item>
+          <Box className={classes.justifyBetween}>
+            <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
-            </Grid>
-            <Grid item>
+            </Box>
+            <Box>
               {renderStatusCell(row.StatusID)}
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
           {renderCellIcons(row)}
         </TableCell>
       </TableRow>

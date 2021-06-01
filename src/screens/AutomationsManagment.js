@@ -9,7 +9,7 @@ import {
   DeleteIcon,DuplicateIcon,EditIcon,ReportsIcon,SearchIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,Switch
+  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,Switch, SearchField
 } from '../components/managment/index'
 import {
   getAutomationsData,deleteAutomations,duplicateAutomations,restoreAutomations,activateAutomation
@@ -126,17 +126,18 @@ const AutomationsManagnentScreen=({classes}) => {
       setCampaineNameSearch(event.target.value)
     }
 
-    // if(windowSize==='xs') {
-    //   return (
-    //     <SearchField
-    //       classes={classes}
-    //       value={campaineNameSearch}
-    //       onChange={handleCampainNameChange}
-    //       onClick={handleSearch}
-    //       placeholder={t('automations.labelAutomationName')}
-    //     />
-    //   )
-    // }
+    if(windowSize==='xs') {
+      return (
+        <SearchField
+          classes={classes}
+          value={campaineNameSearch}
+          onChange={handleCampainNameChange}
+          onClick={handleSearch}
+          placeholder={t('automations.labelAutomationName')}
+        />
+      )
+    }
+
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -200,7 +201,7 @@ const AutomationsManagnentScreen=({classes}) => {
   const renderManagmentLine=() => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        <Grid item>
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -211,8 +212,8 @@ const AutomationsManagnentScreen=({classes}) => {
             )}>
             {t('automations.createResource.Text')}
           </Button>
-        </Grid>
-        <Grid item>
+        </Grid>}
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -226,7 +227,7 @@ const AutomationsManagnentScreen=({classes}) => {
             })}>
             {t('automations.restoreResource.Text')}
           </Button>
-        </Grid>
+        </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${isSearching?searchResults.length:automationsData.length} ${t('automations.Automations')}`}
@@ -258,6 +259,7 @@ const AutomationsManagnentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}`)
@@ -267,6 +269,7 @@ const AutomationsManagnentScreen=({classes}) => {
         key: 'edit',
         icon: EditIcon,
         lable: t('campaigns.Image2Resource1.ToolTip'),
+        remove: windowSize==='xs',
         href: !IsActive? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true`:'',
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -294,6 +297,7 @@ const AutomationsManagnentScreen=({classes}) => {
         key: 'reports',
         icon: ReportsIcon,
         lable: t('campaigns.Reports'),
+        remove: windowSize==='xs',
         href: `/Pulseem/automationreport.aspx?AutomationID=${ID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
@@ -314,7 +318,6 @@ const AutomationsManagnentScreen=({classes}) => {
     return (
       <Grid
         container
-        spacing={1}
         direction={'row'}
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
@@ -352,7 +355,7 @@ const AutomationsManagnentScreen=({classes}) => {
 
         <Typography
           className={clsx(
-            classes.middleText,
+            classes.middleText, classes.txtCenter,
             {
               [classes.switchActive]: IsActive,
               [classes.switchInactive]: !IsActive
@@ -466,15 +469,24 @@ const AutomationsManagnentScreen=({classes}) => {
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
-          <Grid container justify='space-between'>
-            <Grid item>
-              {renderNameCell(row)}
+          <Box className={classes.inlineGrid}>
+            {renderNameCell(row)}
+          </Box>
+          <Grid container justify={'space-between'}>
+            <Grid item container className={classes.widthUnset}>
+              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+                {renderRecipientsCell(row.Recipients)}
+              </Grid>
+              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+                {renderDaysActiveCell(row.activeDaysCount)}
+              </Grid>
+
             </Grid>
-            <Grid item>
-              {renderStatusCell(row.Status)}
+            <Grid item style={{display: 'flex', alignItems: 'center'}}>
+              {renderStatusCell(row)}
+              {renderCellIcons(row)}
             </Grid>
           </Grid>
-          {renderCellIcons(row)}
         </TableCell>
       </TableRow>
     )

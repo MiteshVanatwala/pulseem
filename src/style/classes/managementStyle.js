@@ -15,7 +15,7 @@ const flex12={
 }
 
 const iconPadding={
-  xs: '0.8rem 1.1rem 0.8rem',
+  xs: '0.5rem 0.8rem 0.5em',
   sm: '0.8rem 1.1rem 0.2rem',
   md: '0.8rem 1.1rem 0.2rem',
   lg: '0.8rem 1.1rem 0.2rem',
@@ -23,8 +23,8 @@ const iconPadding={
 }
 
 const ellipsisMaxWidth={
-  xs: '200px',
-  sm: '200px',
+  xs: '100%',
+  sm: '250px',
   md: '100%',
   lg: '100%',
   xl: '100%'
@@ -38,9 +38,10 @@ const tableRowMinWidth={
   xl: 100
 }
 
+
 export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   managementTitle: {
-    fontSize: '36px',
+    fontSize: windowSize==='xs'?'25px':'36px',
     color: '#333333',
     paddingBlock: '0.5rem',
     fontFamily: "Assistant",
@@ -116,7 +117,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     borderColor: 'transparent',
   },
   middleText: {
-    fontSize: 18,
+    fontSize: windowSize==='xs'?15:18,
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -160,7 +161,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     textAlign: 'center',
     alignSelf: 'center',
     textTransform: 'none',
-    marginTop: 2
+    marginTop: 2,
+    fontSize: windowSize==='xs'&&15
   },
   sendIcon: {
     border: '1px solid #27AE60',
@@ -348,7 +350,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     padding: 10
   },
   groupsLableContainer: {
-    justifyContent: 'flex-end',
+    justifyContent: windowSize==='xs'?'start':'flex-end',
     display: 'flex',
     flex: 1
   },
@@ -469,6 +471,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   phoneSearchBarIcon: {
     backgroundColor: '#E3E9F0',
+    marginInlineEnd: '-8px',
+    padding: 10,
     '&:hover': {
       backgroundColor: '#dee5ed'
     }

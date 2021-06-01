@@ -127,17 +127,17 @@ const NewsletterManagnentScreen=({classes}) => {
       setCampaineNameSearch(event.target.value)
     }
 
-    // if(windowSize==='xs') {
-    //   return (
-    //     <SearchField
-    //       classes={classes}
-    //       value={campaineNameSearch}
-    //       onChange={handleCampainNameChange}
-    //       onClick={handleSearch}
-    //       placeholder={t('common.CampaignName')}
-    //     />
-    //   )
-    // }
+    if(windowSize==='xs') {
+      return (
+        <SearchField
+          classes={classes}
+          value={campaineNameSearch}
+          onChange={handleCampainNameChange}
+          onClick={handleSearch}
+          placeholder={t('common.CampaignName')}
+        />
+      )
+    }
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -201,7 +201,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderManagmentLine=() => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        <Grid item>
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -212,8 +212,8 @@ const NewsletterManagnentScreen=({classes}) => {
             )}>
             {t('campaigns.create')}
           </Button>
-        </Grid>
-        <Grid item>
+        </Grid>}
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -227,7 +227,7 @@ const NewsletterManagnentScreen=({classes}) => {
             })}>
             {t('campaigns.restoreDeleted')}
           </Button>
-        </Grid>
+        </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${isSearching?searchResults.length:newslettersData.length} ${t('campaigns.newsletters')}`}
@@ -278,6 +278,7 @@ const NewsletterManagnentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`)
@@ -288,6 +289,7 @@ const NewsletterManagnentScreen=({classes}) => {
         icon: EditIcon,
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
+        remove: windowSize==='xs',
         href: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
@@ -308,6 +310,7 @@ const NewsletterManagnentScreen=({classes}) => {
         icon: GroupsIcon,
         disable: Groups&&Groups.length===0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
+        remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
@@ -336,6 +339,7 @@ const NewsletterManagnentScreen=({classes}) => {
         icon: ReportsIcon,
         disable: Status===1,
         lable: t('campaigns.Reports'),
+        remove: windowSize==='xs',
         href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
@@ -344,6 +348,7 @@ const NewsletterManagnentScreen=({classes}) => {
         icon: AutomationIcon,
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
+        remove: windowSize==='xs',
         href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
@@ -501,14 +506,14 @@ const NewsletterManagnentScreen=({classes}) => {
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
-          <Grid container justify='space-between'>
-            <Grid item>
+          <Box className={classes.justifyBetween}>
+            <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
-            </Grid>
-            <Grid item>
+            </Box>
+            <Box>
               {renderStatusCell(row.Status)}
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
           {renderCellIcons(row)}
         </TableCell>
       </TableRow>
