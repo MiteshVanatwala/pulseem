@@ -71,13 +71,13 @@ const AppBarItem=({
 
         {(chosen||open)&&<ArrowDropUp className={classes.appBarItemArrow} />}
       </Box>
-      <Popper open={open} anchorEl={buttonRef.current} role={undefined} transition>
+      <Popper open={open} anchorEl={buttonRef.current} role={undefined} transition placement={'bottom-start'} disablePortal>
         {({TransitionProps}) => (
           <Grow
             {...TransitionProps}>
             <Paper
               className={classes.appBarItemPaper}
-              style={{width: menuWidth,marginInlineStart: menuWidth-buttonWidth}}>
+              style={{width: menuWidth}}>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList
                   style={{padding: 0}}>
@@ -143,7 +143,7 @@ const LanguageSelector=({windowSize,classes}) => {
   if (windowSize==='xs') {
     return (
       <Button 
-        className={clsx(classes.white, classes.f20)}
+        className={clsx(classes.mobileLanguageBtn)}
         onClick={()=>{
           const value = language==='he-IL'?'en-US':'he-IL';
           changeLanguage({value});
@@ -273,7 +273,6 @@ export const TopAppBar=({classes,currentPage=''}) => {
           role={undefined}
           style={{zIndex: '1'}}
           transition
-          disablePortal
         >
           {({TransitionProps}) => (
             <Grow
