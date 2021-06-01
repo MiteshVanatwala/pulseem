@@ -17,14 +17,14 @@ export const TablePagination=({
   const {t}=useTranslation()
   const pages=Math.ceil(rows/rowsPerPage)
   const [innerPage,setPage]=useState('');
-  const [isChanging,setChanging]=useState(false);
+  const [isTyping,setTyping]=useState(false);
 
   const handelPageChange=event => {
     const currentPage=parseInt(event.target.value)
     if (currentPage>=1&&currentPage<=pages) {
       onPageChange(currentPage)
     }
-    setChanging(true);
+    setTyping(true);
     setPage(currentPage)
   }
 
@@ -71,7 +71,10 @@ export const TablePagination=({
         className={classes.tablePadingtonGridItem}>
         {page>1&&
           <IconButton
-            onClick={() => onPageChange(page-1)}
+            onClick={() => {
+              setTyping(false); 
+              onPageChange(page-1)
+            }}
             size='small'
             className={classes.tablePadingtonArrowOppisite}>
             <PageArrowIcon />
@@ -80,9 +83,9 @@ export const TablePagination=({
           {t('common.page')}
         </Typography>
         <TextField
-          error={!innerPage||innerPage>page}
+          error={isTyping&&innerPage>page}
           type="number"
-          value={isChanging?pageNum:page.toString()}
+          value={isTyping?pageNum:page.toString()}
           onChange={handelPageChange}
           variant='outlined'
           margin='none'
@@ -94,7 +97,10 @@ export const TablePagination=({
         </Typography>
         {page<pages&&
           <IconButton
-            onClick={() => onPageChange(page+1)}
+            onClick={() => {
+              setTyping(false); 
+              onPageChange(page+1)
+            }}
             size='small'
             className={classes.tablePadingtonArrow}>
             <PageArrowIcon />

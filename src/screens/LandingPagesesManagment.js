@@ -113,7 +113,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             size='small'
             value={landingPageNameSearch}
             onChange={handleCampainNameChange}
-            className={classes.textField}
+            className={clsx(classes.textField, classes.minWidth252)}
             placeholder={placeholder}
           />
         </Grid>

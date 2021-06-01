@@ -146,7 +146,7 @@ const NewsletterManagnentScreen=({classes}) => {
             size='small'
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
-            className={classes.textField}
+            className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('common.CampaignName')}
           />
         </Grid>

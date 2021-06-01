@@ -718,5 +718,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   borderRed: {
     borderColor: 'red!important'
+  },
+  minWidth252: {
+    minWidth: '252.6px!important'
   }
 })
