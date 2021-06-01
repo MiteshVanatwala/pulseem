@@ -438,6 +438,7 @@ const NotificationEditor = ({ props, classes }) => {
         <Dialog
           classes={classes}
           open={showConfirmCancel}
+          onCancel={() => setShowConfirmCancel(null)}
           onClose={onCancelConfirm(false)}
           onConfirm={onCancelConfirm(true)}
           {...dialog}>
@@ -569,7 +570,8 @@ const NotificationEditor = ({ props, classes }) => {
   const isValidNotification = () => {
     const errorList = [];
     document.querySelector("#notificationName").classList.remove("error");
-    document.querySelector("#notificationRedirectUrl").classList.remove("error");
+    if (ShowRedirectButton)
+      document.querySelector("#notificationRedirectUrl").classList.remove("error");
     document.querySelector("#notificationTitle").classList.remove("error");
     document.querySelector("#notificationText").classList.remove("error");
 
@@ -577,7 +579,7 @@ const NotificationEditor = ({ props, classes }) => {
       errorList.push({ message: t('notifications.validation.notificationName') });
       document.querySelector("#notificationName").classList.add("error");
     }
-    if (!isValivalidURL(model.RedirectURL)) {
+    if (!isValivalidURL(model.RedirectURL) && ShowRedirectButton) {
       errorList.push({ message: t('notifications.validation.redirectUrl') });
       document.querySelector("#notificationRedirectUrl").classList.add("error");
     }
@@ -657,10 +659,10 @@ const NotificationEditor = ({ props, classes }) => {
           direction="row"
           justify="flex-start"
           alignItems="center"
-          spacing={4}
+          spacing={2}
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
           <Grid item md={2} xs={12}>
-            <label>* {t('notifications.notificationName')}</label>
+            {/* <label>* {t('notifications.notificationName')}</label> */}
             <TextField
               label={t('notifications.notificationName')}
               id="notificationName"
@@ -672,28 +674,11 @@ const NotificationEditor = ({ props, classes }) => {
               onChange={handleNotificationName}
             />
           </Grid>
-          <Grid item md={2} xs={12}>
-            <label>* {t('notifications.redirectUrl')}</label>
-            <BootstrapTooltip title={t("notifications.tooltip.redirectUrl")} placement="top">
-              <TextField
-                label={t('notifications.redirectUrl')}
-                id="notificationRedirectUrl"
-                style={{ textAlign: 'left' }}
-                required
-                value={model && model.RedirectURL || ''}
-                className={classes.textField}
-                margin="dense"
-                variant="outlined"
-                onChange={handleRedirectUrlChange}
-                onBlur={event => updateUrlValue(event)}
-              />
-            </BootstrapTooltip>
-
-          </Grid>
-          <Grid item md={4} xs={12}>
+          <Grid item md={10} xs={12}>
             <Grid container justify="flex-start"
+              spacing={4}
               alignItems="center">
-              <Grid item md={isRTL ? 4 : 6} xs={12}>
+              <Grid item md={2} xs={12}>
                 <FormControlLabel
                   control={
                     <Switch
@@ -707,19 +692,40 @@ const NotificationEditor = ({ props, classes }) => {
                   label={t('notifications.showRedirectUrlButton')}
                 />
               </Grid>
-              {ShowRedirectButton && <Grid item md={6} xs={12}>
-                <label>{t('notifications.redirectUrlButton')}</label>
-                <TextField
-                  label={t('notifications.redirectUrlButton')}
-                  id="notificationButton"
-                  value={model && model.RedirectButtonText || ''}
-                  className={classes.textField}
-                  margin="dense"
-                  variant="outlined"
-                  onChange={handleRedirectButtonTextChange}
-                  onFocus={handleTextFocus}
-                />
-              </Grid>}
+              {ShowRedirectButton &&
+                <Grid item sm={3} xs={12}>
+                  {/* <label>* {t('notifications.redirectUrl')}</label> */}
+                  <BootstrapTooltip title={t("notifications.tooltip.redirectUrl")} placement="top">
+                    <TextField
+                      label={t('notifications.redirectUrl')}
+                      id="notificationRedirectUrl"
+                      style={{ textAlign: 'left' }}
+                      required
+                      value={model && model.RedirectURL || ''}
+                      className={classes.textField}
+                      margin="dense"
+                      variant="outlined"
+                      onChange={handleRedirectUrlChange}
+                      onBlur={event => updateUrlValue(event)}
+                    />
+                  </BootstrapTooltip>
+
+                </Grid>
+              }
+              {ShowRedirectButton &&
+                <Grid item sm={3} xs={12}>
+                  {/* <label>{t('notifications.redirectUrlButton')}</label> */}
+                  <TextField
+                    label={t('notifications.redirectUrlButton')}
+                    id="notificationButton"
+                    value={model && model.RedirectButtonText || ''}
+                    className={classes.textField}
+                    margin="dense"
+                    variant="outlined"
+                    onChange={handleRedirectButtonTextChange}
+                    onFocus={handleTextFocus}
+                  />
+                </Grid>}
             </Grid>
           </Grid>
         </Grid>
@@ -816,13 +822,13 @@ const NotificationEditor = ({ props, classes }) => {
             {model == null || !model.Image ? chooseImage() : ""
             }
             <button href="#"
-              className={clsx(classes.absTopRight, notificationHover && model.Image != null ? '' : classes.hidden)}
+              className={clsx(classes.absTopRight, notificationHover && model.Image != null && model.Image !== '' ? '' : classes.hidden)}
               style={{ border: 'none', cursor: 'pointer', textDecoration: 'none', opacity: notificationHover ? 1 : 0 }}
               onClick={removeImage}
               id="removeImage"
             >X</button>
           </div>
-          <div className={clsx(classes.footerWrapper, classes.dashed)} style={{ flexDirection: model.Direction == 1 ? 'row-reverse' : 'row' }}>
+          <div className={clsx(classes.footerWrapper, classes.dashed)} style={{ flexDirection: isRTL ? (model.Direction == 1 ? 'row-reverse' : 'row') : (model.Direction == 1 ? 'row' : 'row-reverse') }}>
             <div className={classes.iconWrapper}>
               <div className={clsx(classes.borderSign, classes.dashed, classes.icon)}
                 onMouseEnter={toggleIconHover}
@@ -839,7 +845,7 @@ const NotificationEditor = ({ props, classes }) => {
                   }
                 </div>
                 <button href="#"
-                  className={clsx(classes.absTopRight, iconHover && model.Icon != null ? '' : classes.hidden)}
+                  className={clsx(classes.absTopRight, iconHover && model.Icon !== null && model.Icon !== '' ? '' : classes.hidden)}
                   style={{ border: 'none', cursor: 'pointer', textDecoration: 'none', opacity: iconHover ? 1 : 0 }}
                   onClick={removeIcon}
                   id="removeIcon"
@@ -959,7 +965,7 @@ const NotificationEditor = ({ props, classes }) => {
       dialog = summaryContent();
       return (
         <Dialog
-          minimumWidth={850}
+          customContainerStyle={classes.summaryContainer}
           classes={classes}
           open={summary}
           onClose={handleSummaryClose}
@@ -1069,7 +1075,7 @@ const NotificationEditor = ({ props, classes }) => {
           <path fillRule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
         </g>
       </svg>
-      <span style={{ fontSize: '14px' }}>{t("notifications.ph_chooseImage")}</span>
+      <span style={{ fontSize: '14px', direction: isRTL ? 'rtl' : 'ltr' }}>{t("notifications.ph_chooseImage")}</span>
     </div>
     )
   }
@@ -1084,7 +1090,7 @@ const NotificationEditor = ({ props, classes }) => {
           <path fillRule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
         </g>
       </svg>
-      <span style={{ fontSize: '14px' }}>{t("notifications.ph_chooseIcon")}</span>
+      <span style={{ fontSize: '14px', direction: isRTL ? 'rtl' : 'ltr' }}>{t("notifications.ph_chooseIcon")}</span>
     </div>
     )
   }
