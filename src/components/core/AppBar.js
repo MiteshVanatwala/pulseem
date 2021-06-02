@@ -71,13 +71,13 @@ const AppBarItem=({
 
         {(chosen||open)&&<ArrowDropUp className={classes.appBarItemArrow} />}
       </Box>
-      <Popper open={open} anchorEl={buttonRef.current} role={undefined} transition disablePortal>
+      <Popper open={open} anchorEl={buttonRef.current} role={undefined} transition placement={'bottom-start'} disablePortal>
         {({TransitionProps}) => (
           <Grow
             {...TransitionProps}>
             <Paper
               className={classes.appBarItemPaper}
-              style={{width: menuWidth,marginInlineStart: menuWidth-buttonWidth}}>
+              style={{width: menuWidth}}>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList
                   style={{padding: 0}}>
@@ -113,7 +113,7 @@ const AppBarItem=({
   )
 }
 
-const LanguageSelector=({classes}) => {
+const LanguageSelector=({windowSize,classes}) => {
   const cookieData=getCookie('Culture');
   const language=!!cookieData? cookieData:'he-IL';
   const dispatch=useDispatch();
@@ -140,6 +140,18 @@ const LanguageSelector=({classes}) => {
     dispatch(setLanguage(value.split('-')[0]));
   }
 
+  if(windowSize==='xs') {
+    return (
+      <Button
+        className={clsx(classes.mobileLanguageBtn)}
+        onClick={() => {
+          const value=language==='he-IL'? 'en-US':'he-IL';
+          changeLanguage({value});
+        }}>
+        {language==='he-IL'? "עב'":'EN'}
+      </Button>
+    );
+  }
   return (
     <AppBarItem
       classes={classes}
@@ -241,6 +253,11 @@ export const TopAppBar=({classes,currentPage=''}) => {
         routes[5],
         {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049',href: reportsOptions[1].href},
         {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c',href: reportsOptions[2].href}
+      ],
+      [
+        routes[6],
+        routes[7],
+        //routes[1]
       ]
     ]
     return (
@@ -254,13 +271,13 @@ export const TopAppBar=({classes,currentPage=''}) => {
             <FaBars />
           </IconButton>
         </Box>
+        <LanguageSelector windowSize={windowSize} classes={classes} />
         <Popper
           open={open}
           anchorEl={phoneMenuButtonRef.current}
           role={undefined}
           style={{zIndex: '1'}}
           transition
-          disablePortal
         >
           {({TransitionProps}) => (
             <Grow

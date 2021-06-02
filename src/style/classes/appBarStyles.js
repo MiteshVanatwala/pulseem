@@ -1,4 +1,4 @@
-const appBarTitleTextSize={xs: 20,sm: 17,md: 15,lg: 17,xl: 19}
+const appBarTitleTextSize={xs: 18,sm: 17,md: 15,lg: 17,xl: 19}
 
 export const appBarStyle=(windowSize,isRTL,theme) => ({
   appBarItemContainer: {
@@ -70,7 +70,7 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   },
   appBarLogo: {
     marginInlineEnd: '1vw',
-    width: 143,
+    width: windowSize==='xs'?125:143,
     alignSelf: 'center'
   },
   appBerSpace: {
@@ -153,5 +153,10 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   },
   chosenText: {
     fontWeight: 'bold'
+  },
+  mobileLanguageBtn: {
+    fontSize: appBarTitleTextSize[windowSize],
+    color: 'white'
   }
+
 })

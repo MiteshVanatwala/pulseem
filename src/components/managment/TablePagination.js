@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React,{useState} from 'react';
 import {Typography,Grid,TextField,IconButton} from '@material-ui/core'
 import {PageArrowIcon} from '../../assets/images/managment/index'
 
 import {useTranslation} from 'react-i18next'
+import {useSelector} from 'react-redux';
 
 
 export const TablePagination=({
@@ -18,10 +19,11 @@ export const TablePagination=({
   const pages=Math.ceil(rows/rowsPerPage)
   const [innerPage,setPage]=useState('');
   const [isTyping,setTyping]=useState(false);
+  const {isRTL}=useSelector(state => state.core)
 
   const handelPageChange=event => {
     const currentPage=parseInt(event.target.value)
-    if (currentPage>=1&&currentPage<=pages) {
+    if(currentPage>=1&&currentPage<=pages) {
       onPageChange(currentPage)
     }
     setTyping(true);
@@ -64,7 +66,7 @@ export const TablePagination=({
   }
 
   const renderPageNumbers=() => {
-    const pageNum = innerPage?innerPage.toString():'';
+    const pageNum=innerPage? innerPage.toString():'';
     return (
       <Grid
         item
@@ -72,7 +74,7 @@ export const TablePagination=({
         {page>1&&
           <IconButton
             onClick={() => {
-              setTyping(false); 
+              setTyping(false);
               onPageChange(page-1)
             }}
             size='small'
@@ -83,9 +85,10 @@ export const TablePagination=({
           {t('common.page')}
         </Typography>
         <TextField
+          dir='ltr'
           error={isTyping&&innerPage>page}
           type="number"
-          value={isTyping?pageNum:page.toString()}
+          value={isTyping? pageNum:page.toString()}
           onChange={handelPageChange}
           variant='outlined'
           margin='none'
@@ -98,7 +101,7 @@ export const TablePagination=({
         {page<pages&&
           <IconButton
             onClick={() => {
-              setTyping(false); 
+              setTyping(false);
               onPageChange(page+1)
             }}
             size='small'

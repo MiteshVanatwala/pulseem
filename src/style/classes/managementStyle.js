@@ -22,6 +22,14 @@ const iconPadding={
   xl: '0.8rem 1.1rem 0.2rem'
 }
 
+const ellipsisMaxWidth={
+  xs: '200px',
+  sm: '200px',
+  md: '100%',
+  lg: '100%',
+  xl: '100%'
+}
+
 const tableRowMinWidth={
   xs: 75,
   sm: 75,
@@ -625,7 +633,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    width: '100%'
+    width: '100%',
+    maxWidth: ellipsisMaxWidth[windowSize]
   },
   p10: {
     padding: 10
@@ -706,6 +715,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   green: {
     color: '#48a148'
+  },
+  white: {
+    color: 'white'
   },
   red: {
     color: 'red!important'
