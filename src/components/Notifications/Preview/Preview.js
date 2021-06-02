@@ -220,7 +220,7 @@ export const Preview = (
 
   return (
     <Grid className={mobileFullsize && classes.justifyCenter}>
-      {showTitle && <h3 className={clsx(classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</h3>}
+      {showTitle && <h3 className={clsx(classes.blue, classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</h3>}
       {showDevices && !mobileFullsize && <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
         <Tabs
           value={previewDeviceSelected}

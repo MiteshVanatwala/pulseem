@@ -989,7 +989,7 @@ const NotificationEditor = ({ props, classes }) => {
             </Grid>
           </Grid>
           <Grid item md={6} xs={12}>
-            <h3 className={classes.blue} style={{ fontWeight: '500', fontSize: 20 }}>{t("notifications.preview")}</h3>
+            <h3 className={classes.blue} style={{ fontWeight: '500', fontSize: 20, marginTop: 10 }}>{t("notifications.preview")}</h3>
             <Preview classes={classes}
               model={model}
               ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText != ''}

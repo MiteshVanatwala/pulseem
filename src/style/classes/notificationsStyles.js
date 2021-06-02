@@ -200,7 +200,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        minHeight: windowSize !== 'xs' && windowSize !== 'sm' ? '115px' : null,
+        //minHeight: windowSize !== 'xs' && windowSize !== 'sm' ? '115px' : null,
         backgroundColor: 'transparent',
         justifyContent: 'space-between',
         boxSizing: 'border-box'
