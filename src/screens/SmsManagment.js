@@ -865,6 +865,7 @@ const SmsManagnentScreen=({classes}) => {
         </Typography>
         <br />
         <TextField
+          autoFocus
           error={numberError}
           helperText={numberError? t('sms.numberError'):''}
           variant='outlined'
@@ -873,13 +874,15 @@ const SmsManagnentScreen=({classes}) => {
           onChange={e => handleNumber(e.target.value)}
           size='small'
           type='tel'
+          className={!data&&classes.verifyField}
           readOnly={!!data}
         />
         <br /><br />
         <Button
+          size={!data?"large":"medium"}
           variant='contained'
           onClick={handleSendVerificationCode}
-          style={{background: 'green',textTransform: 'capitalize',color: 'white'}}
+          className={clsx(classes.verifyButton, !data&&classes.f20)}
         >{t('sms.verificationButtonText')}</Button>
         <Typography className={clsx(classes.contactUs,classes.newLine)}>
           {t('sms.havingIssuesMessage')}
