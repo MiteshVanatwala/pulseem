@@ -2,15 +2,15 @@ import React,{useState,useEffect,useRef} from 'react';
 import DefaultScreen from './DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box,FormControlLabel,Checkbox,RadioGroup,Radio,FormControl
-} from '@material-ui/core';
+  Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,Link,
+  Grid,Button,TextField,IconButton,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio,FormGroup,FormControl
+} from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
   GroupsIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent, SearchField
+  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,SearchField
 } from '../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import useCtrlHistory from '../helpers/useCtrlHistory';
@@ -202,7 +202,7 @@ const NotificationManagement=({classes}) => {
 
   const renderSearchSection=() => {
     const handleSearch=() => {
-      const searchArray = [{
+      const searchArray=[{
         type: 'name',
         notificationName: notificationNameSearch
       },{
@@ -222,7 +222,7 @@ const NotificationManagement=({classes}) => {
             :moment(UpdatedDate,dateFormat).valueOf()
           const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
           const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
-  
+
           if(!values)
             return true
           if(fromDate&&toDate&&currentFromDate&&currentToDate)
@@ -235,7 +235,7 @@ const NotificationManagement=({classes}) => {
         }
       }
 
-      let sortData = notificationData;
+      let sortData=notificationData;
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
       });
@@ -275,7 +275,7 @@ const NotificationManagement=({classes}) => {
             size='small'
             value={notificationNameSearch}
             onChange={handleNotificationNameChange}
-            className={clsx(classes.textField, classes.minWidth252)}
+            className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('notifications.searchSection.notificationName')}
           />
         </Grid>
@@ -328,7 +328,7 @@ const NotificationManagement=({classes}) => {
   }
 
   const renderManagmentLine=() => {
-    const dataLength = isSearching? searchResults.length:notificationData.length;
+    const dataLength=isSearching? searchResults.length:notificationData.length;
     return (
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize!=='xs'&&<Grid item>
@@ -539,12 +539,12 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const renderNameCell = (row) => {
-    let date = null
-    let text = ''
-    if (!row.SendDate || row.StatusID == 0) {
-      date = moment(row.UpdatedDate, dateFormat)
-      text = t('common.UpdatedOn')
+  const renderNameCell=(row) => {
+    let date=null
+    let text=''
+    if(!row.SendDate||row.StatusID==0) {
+      date=moment(row.UpdatedDate,dateFormat)
+      text=t('common.UpdatedOn')
     } else {
       date=moment(row.SendDate,dateFormat)
       const dateMillis=date.valueOf()
@@ -564,7 +564,7 @@ const NotificationManagement=({classes}) => {
     )
   }
 
-  const renderRow = (row) => {
+  const renderRow=(row) => {
     return (
       <TableRow
         key={row.ID}
@@ -639,7 +639,7 @@ const NotificationManagement=({classes}) => {
   }
 
   const renderTableBody=() => {
-    let rowData = searchResults || notificationData;
+    let rowData=searchResults||notificationData;
     rowData=rowData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -664,7 +664,7 @@ const NotificationManagement=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching?searchResults.length : notificationData.length}
+        rows={isSearching? searchResults.length:notificationData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -751,7 +751,25 @@ const NotificationManagement=({classes}) => {
   const renderGroups=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
     return {
-      title: t('notifications.myGroups'),
+      title: null,
+      renderTitle: () => (
+        <Box className={classes.myGroupsTitleSection}>
+          <Typography className={classes.dialogTitle}>{t('notifications.myGroups')}</Typography>
+          <Link
+            component="button"
+            variant="h6"
+            color="textPrimary"
+            underline="always"
+            onClick={() => {
+              setDialogType({
+                type: 'createGroup',
+                data: {}
+              })
+            }}>
+            {t('notifications.howToCreateGroup')}
+          </Link>
+        </Box>
+      ),
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -771,7 +789,14 @@ const NotificationManagement=({classes}) => {
               {data.map(group => {
                 return (
                   <TableRow key={group.Id}>
-                    <TableCell>{group.GroupName}</TableCell>
+                    <TableCell>
+                      <Box style={{display: 'inline-grid'}}>
+                        <Typography style={{overflow: 'hidden',whiteSpace: 'noWrap',textOverflow: 'ellipsis'}}>
+                          {group.GroupName}
+                        </Typography>
+
+                      </Box>
+                    </TableCell>
                     <TableCell align="center">{group.Members}</TableCell>
                   </TableRow>
                 )
@@ -790,6 +815,58 @@ const NotificationManagement=({classes}) => {
             classes.dialogConfirmButton,
           )}>
           {t('common.Ok')}
+        </Button>
+      )
+    }
+  }
+
+  const renderCreateGroup=() => {
+    return {
+      title: null,
+      paperStyle: classes.maxWidth540,
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE0D5'}
+        </div>
+      ),
+      content: (
+        <Box className={windowSize=='xs'&&classes.dialogBox}>
+          <Typography variant="h6" className={classes.bold}>{t('notifications.howToCreateGroup')}</Typography>
+          <Typography>{t('notifications.assigningRecipientsToGroupMessage')}</Typography>
+          <Typography>{t('notifications.doneByMessage')}</Typography>
+          <Typography variant='body'>{t('common.pulseemLink')}</Typography>
+          <Typography className={classes.mt10}>{t('notifications.thenYouWillAdd')}</Typography>
+          <TextField
+            dir="ltr"
+            readOnly
+            fullWidth
+            size="small"
+            variant='outlined'
+            className={classes.mt10}
+            value={t('notifications.sampleUrl')}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Box className={classes.pulseemIcon}>{'\u0075'}</Box>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Typography className={classes.mt10}>{t('notifications.onceYouHaveCreatedTheUrl')}</Typography>
+          <Typography className={classes.mt10}>{t('notifications.assignedToTheGroup')}</Typography>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleDialogClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.confirm')}
         </Button>
       )
     }
@@ -1054,6 +1131,7 @@ const NotificationManagement=({classes}) => {
       delete: renderDelete(data),
       restore: renderRestore(data),
       implement: renderImplement(data),
+      createGroup: renderCreateGroup(),
     }
     const dialog=dialogContent[type];
     return (

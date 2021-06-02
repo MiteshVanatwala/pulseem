@@ -41,7 +41,7 @@ const tableRowMinWidth={
 
 export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   managementTitle: {
-    fontSize: windowSize==='xs'?'25px':'36px',
+    fontSize: windowSize==='xs'? '25px':'36px',
     color: '#333333',
     paddingBlock: '0.5rem',
     fontFamily: "Assistant",
@@ -117,7 +117,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     borderColor: 'transparent',
   },
   middleText: {
-    fontSize: windowSize==='xs'?15:18,
+    fontSize: windowSize==='xs'? 15:18,
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -350,7 +350,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     padding: 10
   },
   groupsLableContainer: {
-    justifyContent: windowSize==='xs'?'start':'flex-end',
+    justifyContent: windowSize==='xs'? 'start':'flex-end',
     display: 'flex',
     flex: 1
   },
@@ -746,5 +746,11 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     '& .MuiOutlinedInput-input': {
       fontSize: 20
     }
+  },
+  myGroupsTitleSection: {
+    display: 'flex',
+    flexDirection: windowSize==='xs'? 'column':'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   }
 })
