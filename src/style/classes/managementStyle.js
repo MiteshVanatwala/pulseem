@@ -471,7 +471,6 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   phoneSearchBarIcon: {
     backgroundColor: '#E3E9F0',
-    marginInlineEnd: '-8px',
     padding: 10,
     '&:hover': {
       backgroundColor: '#dee5ed'
