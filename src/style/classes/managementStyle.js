@@ -736,5 +736,15 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   minWidth252: {
     minWidth: '252.6px!important'
+  },
+  verifyButton: {
+    background: 'green',
+    textTransform: 'capitalize',
+    color: 'white'
+  },
+  verifyField: {
+    '& .MuiOutlinedInput-input': {
+      fontSize: 20
+    }
   }
 })
