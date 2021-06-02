@@ -19,8 +19,10 @@ export const Dialog=({
   onCancel = null,
   onConfirm = () => null,
   renderButtons = null,
+  renderTitle = null,
   disableBackdropClick = false,
-  customContainerStyle = ''
+  customContainerStyle = '',
+  paperStyle = null
 }) => {
   const direction = {
     true: 'rtl',
@@ -55,7 +57,7 @@ export const Dialog=({
     )
   }
 
-  const renderTitle = () => {
+  const renderTitleDefault = () => {
     return (
       <>
         <Typography className={classes.dialogTitle}>
@@ -130,7 +132,7 @@ export const Dialog=({
       <Box
         dir={direction[isRTL]}
         className={clsx(classes.dialogContent)}>
-        {renderTitle()}
+        {renderTitle ? renderTitle() : renderTitleDefault()}
         {renderChildren()}
         {renderButtons ? renderButtons() : renderButtonsDefault()}
       </Box>
@@ -143,7 +145,7 @@ export const Dialog=({
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
       onClose={onClose}>
-      <Paper >
+      <Paper className={paperStyle}>
         {renderExitButton()}
         {renderContent()}
         {renderIcon()}

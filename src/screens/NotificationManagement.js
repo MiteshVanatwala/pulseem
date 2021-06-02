@@ -2,7 +2,7 @@ import React,{useState,useEffect,useRef} from 'react';
 import DefaultScreen from './DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
+  Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer, Link,
   Grid,Button,TextField,IconButton,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio,FormGroup,FormControl
 } from '@material-ui/core'
 import {
@@ -778,7 +778,25 @@ const NotificationManagement=({classes}) => {
   const renderGroups=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
     return {
-      title: t('notifications.myGroups'),
+      title: null,
+      renderTitle: () => (
+        <Box className={classes.myGroupsTitleSection}>
+          <Typography className={classes.dialogTitle}>{t('notifications.myGroups')}</Typography>
+          <Link 
+            component="button" 
+            variant="h6"
+            color="textPrimary"
+            underline="always"
+            onClick={()=>{
+              setDialogType({
+                type: 'createGroup',
+                data: {}
+              })
+            }}>
+            {t('notifications.howToCreateGroup')}
+          </Link>
+        </Box>
+      ),
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -798,7 +816,14 @@ const NotificationManagement=({classes}) => {
               {data.map(group => {
                 return (
                   <TableRow key={group.Id}>
-                    <TableCell>{group.GroupName}</TableCell>
+                    <TableCell>
+                      <Box style={{display: 'inline-grid'}}>
+                        <Typography style={{overflow: 'hidden', whiteSpace: 'noWrap', textOverflow: 'ellipsis'}}>
+                            {group.GroupName}
+                        </Typography>
+
+                      </Box>
+                    </TableCell>
                     <TableCell align="center">{group.Members}</TableCell>
                   </TableRow>
                 )
@@ -817,6 +842,58 @@ const NotificationManagement=({classes}) => {
             classes.dialogConfirmButton,
           )}>
           {t('common.Ok')}
+        </Button>
+      )
+    }
+  }
+
+  const renderCreateGroup=() => {
+    return {
+      title: null,
+      paperStyle: classes.maxWidth540,
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE0D5'}
+        </div>
+      ),
+      content: (
+        <Box className={windowSize=='xs'&&classes.dialogBox}>
+          <Typography variant="h6" className={classes.bold}>{t('notifications.howToCreateGroup')}</Typography>
+          <Typography>{t('notifications.assigningRecipientsToGroupMessage')}</Typography>
+          <Typography>{t('notifications.doneByMessage')}</Typography>
+          <Typography variant='body'>{t('common.pulseemLink')}</Typography>
+          <Typography className={classes.mt10}>{t('notifications.thenYouWillAdd')}</Typography>
+          <TextField
+            dir="ltr"
+            readOnly
+            fullWidth
+            size="small"
+            variant='outlined'
+            className={classes.mt10}
+            value={t('notifications.sampleUrl')}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Box className={classes.pulseemIcon}>{'\u0075'}</Box>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Typography className={classes.mt10}>{t('notifications.onceYouHaveCreatedTheUrl')}</Typography>
+          <Typography className={classes.mt10}>{t('notifications.assignedToTheGroup')}</Typography>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleDialogClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.confirm')}
         </Button>
       )
     }
@@ -1081,6 +1158,7 @@ const NotificationManagement=({classes}) => {
       delete: renderDelete(data),
       restore: renderRestore(data),
       implement: renderImplement(data),
+      createGroup: renderCreateGroup(),
     }
     const dialog=dialogContent[type];
     return (

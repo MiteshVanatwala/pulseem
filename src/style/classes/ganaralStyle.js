@@ -19,8 +19,6 @@ const minDialogWidth = {
   lg: 500
 }
 const maxDialogWidth = {
-  xs: 350,
-  sm: 350,
   md: 1050,
   lg: 1050,
   xl: 1050
@@ -238,8 +236,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   defaultScreen: {
     'overflow': 'visible'
   },
+  pulseemIcon: {
+    fontFamily: 'pulseemicons'
+  },
   maxWidth400: {
     maxWidth: 400
+  },
+  maxWidth540: {
+    maxWidth: 540
   },
   p0: {
     padding: 0
@@ -252,6 +256,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pb10: {
     paddingBottom: 10
+  },
+  mt10: {
+    marginTop: 10
   },
   f14: {
     fontSize: 14

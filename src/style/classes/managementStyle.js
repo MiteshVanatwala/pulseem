@@ -721,5 +721,11 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   minWidth252: {
     minWidth: '252.6px!important'
+  },
+  myGroupsTitleSection: {
+    display: 'flex',
+    flexDirection: windowSize==='xs'?'column':'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
   }
 })
