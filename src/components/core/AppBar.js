@@ -131,9 +131,8 @@ const LanguageSelector=({windowSize,classes}) => {
     }
   ]
 
-  const currentLang = languages.find(lang => lang.value===language)
   const item={
-    title: windowSize==='xs'?currentLang.mobileTitle:currentLang.title,
+    title: languages.find(lang => lang.value===language).title,
     options: languages
   }
 
