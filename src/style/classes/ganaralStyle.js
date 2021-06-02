@@ -241,6 +241,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   maxWidth400: {
     maxWidth: 400
   },
+  widthUnset: {
+    width: 'unset'
+  },
   p0: {
     padding: 0
   },
@@ -248,7 +251,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingInlineStart: 25
   },
   pt10: {
-    paddingBottom: 10
+    paddingTop: 10
+  },
+  pt14: {
+    paddingTop: 14
+  },
+  pt2: {
+    paddingTop: 1.4
   },
   pb10: {
     paddingBottom: 10
@@ -273,6 +282,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   colorGray: {
     color: 'rgba(0,0,0,0.40)'
+  },
+  inlineGrid: {
+    display: 'inline-grid'
+  },
+  justifyBetween: {
+    display: 'flex', 
+    justifyContent: 'space-between'
+  },
+  flexColumn2: {
+    display: 'flex',
+    flexDirection: 'column',
+    paddingTop: 14,
+    paddingInlineEnd: 10
+  },
+  txtCenter: {
+    textAlign: 'center'
   },
   bold: {
     fontWeight: 'bold'

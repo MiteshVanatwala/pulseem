@@ -128,6 +128,18 @@ const SmsManagnentScreen=({classes}) => {
       setCampaineNameSearch(event.target.value)
     }
 
+    if(windowSize==='xs') {
+      return (
+        <SearchField
+          classes={classes}
+          value={campaineNameSearch}
+          onChange={handleCampainNameChange}
+          onClick={handleSearch}
+          placeholder={t('common.CampaignName')}
+        />
+      )
+    }
+
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -198,7 +210,7 @@ const SmsManagnentScreen=({classes}) => {
     }
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        <Grid item>
+        <Grid item xs={windowSize==='xs'&&12}>
           <Button
             variant='contained'
             size='medium'
@@ -210,7 +222,7 @@ const SmsManagnentScreen=({classes}) => {
             {t('sms.create')}
           </Button>
         </Grid>
-        <Grid item>
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -224,8 +236,8 @@ const SmsManagnentScreen=({classes}) => {
             })}>
             {t('campaigns.restoreDeleted')}
           </Button>
-        </Grid>
-        <Grid item>
+        </Grid>}
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -236,8 +248,8 @@ const SmsManagnentScreen=({classes}) => {
             onClick={handleVerificationDialog}>
             {t('sms.verificationDialogTitle')}
           </Button>
-        </Grid>
-        <Grid item className={classes.groupsLableContainer} >
+        </Grid>}
+        <Grid item xs={windowSize==='xs'&&12} className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${isSearching?searchResults.length:smsData.length} ${t('mms.campaigns')}`}
           </Typography>
@@ -277,6 +289,7 @@ const SmsManagnentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: async () => {
           const sms=await dispatch(getSmsByID(Id));
@@ -291,6 +304,7 @@ const SmsManagnentScreen=({classes}) => {
         icon: EditIcon,
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
+        remove: windowSize==='xs',
         href: `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&fromreact=true`,
         rootClass: classes.paddingIcon
       },
@@ -311,6 +325,7 @@ const SmsManagnentScreen=({classes}) => {
         icon: GroupsIcon,
         disable: Groups&&Groups.length===0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
+        remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
@@ -324,6 +339,7 @@ const SmsManagnentScreen=({classes}) => {
         icon: AutomationIcon,
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
+        remove: windowSize==='xs',
         href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
@@ -488,14 +504,14 @@ const SmsManagnentScreen=({classes}) => {
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
-          <Grid container justify='space-between'>
-            <Grid item>
+          <Box className={classes.justifyBetween}>
+            <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
-            </Grid>
-            <Grid item>
+            </Box>
+            <Box>
               {renderStatusCell(row.Status)}
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
           {renderCellIcons(row)}
         </TableCell>
       </TableRow>

@@ -123,17 +123,18 @@ const MmsManagnentScreen=({classes}) => {
       setCampaineNameSearch(event.target.value)
     }
 
-    // if(windowSize==='xs') {
-    //   return (
-    //     <SearchField
-    //       classes={classes}
-    //       value={campaineNameSearch}
-    //       onChange={handleCampainNameChange}
-    //       onClick={handleSearch}
-    //       placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
-    //     />
-    //   )
-    // }
+    if(windowSize==='xs') {
+      return (
+        <SearchField
+          classes={classes}
+          value={campaineNameSearch}
+          onChange={handleCampainNameChange}
+          onClick={handleSearch}
+          placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
+        />
+      )
+    }
+
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -197,7 +198,7 @@ const MmsManagnentScreen=({classes}) => {
   const renderManagmentLine=() => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        <Grid item>
+        <Grid item xs={windowSize==='xs'&&12}>
           <Button
             variant='contained'
             size='medium'
@@ -209,7 +210,7 @@ const MmsManagnentScreen=({classes}) => {
             {t('mms.create')}
           </Button>
         </Grid>
-        <Grid item>
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -223,8 +224,8 @@ const MmsManagnentScreen=({classes}) => {
             })}>
             {t('mms.restoreResource.Text')}
           </Button>
-        </Grid>
-        <Grid item className={classes.groupsLableContainer} >
+        </Grid>}
+        <Grid item xs={windowSize==='xs'&&12} className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${isSearching?searchResults.length:mmsData.length} ${t('mms.campaigns')}`}
           </Typography>
@@ -264,6 +265,7 @@ const MmsManagnentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: async () => {
           const mms=await dispatch(getMMSByID(ID));
@@ -278,6 +280,7 @@ const MmsManagnentScreen=({classes}) => {
         icon: EditIcon,
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
+        remove: windowSize==='xs',
         href: `/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=${ID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
@@ -298,6 +301,7 @@ const MmsManagnentScreen=({classes}) => {
         icon: GroupsIcon,
         disable: GroupNames.length===0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
+        remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
@@ -323,7 +327,6 @@ const MmsManagnentScreen=({classes}) => {
     return (
       <Grid
         container
-        spacing={1}
         direction={'row'}
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
@@ -470,14 +473,14 @@ const MmsManagnentScreen=({classes}) => {
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
-          <Grid container justify='space-between'>
-            <Grid item>
+          <Box className={classes.justifyBetween}>
+            <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
-            </Grid>
-            <Grid item>
+            </Box>
+            <Box>
               {renderStatusCell(row.Status)}
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
           {renderCellIcons(row)}
         </TableCell>
       </TableRow>
