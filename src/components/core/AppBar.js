@@ -162,8 +162,7 @@ const LanguageSelector=({windowSize,classes}) => {
 
 
 export const TopAppBar=({classes,currentPage=''}) => {
-  const {companyName}=useSelector(state => state.core)
-  const {windowSize}=useSelector(state => state.core)
+  const {companyName,windowSize,isRTL}=useSelector(state => state.core)
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
@@ -305,6 +304,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
                           key={i}
                           container
                           xs={12} s
+                          direction={isRTL? 'row-reverse':'row'}
                           pacing={1}>
                           {routesRow.map((route,j) => (
                             <Grid
