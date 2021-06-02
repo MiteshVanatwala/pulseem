@@ -19,8 +19,6 @@ const minDialogWidth = {
   lg: 500
 }
 const maxDialogWidth = {
-  xs: 350,
-  sm: 350,
   md: 1050,
   lg: 1050,
   xl: 1050
@@ -244,6 +242,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   widthUnset: {
     width: 'unset'
   },
+  p10: {
+    padding: 10
+  },
   p0: {
     padding: 0
   },
@@ -280,6 +281,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   f28: {
     fontSize: 28
   },
+  black: {
+    color: 'black'
+  },
   colorGray: {
     color: 'rgba(0,0,0,0.40)'
   },
@@ -313,5 +317,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   justifyCenter: {
     display: 'flex',
     justifyContent: 'center'
+  },
+  textCapitalize: {
+    textTransform: 'capitalize'
   }
 })

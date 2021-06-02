@@ -736,5 +736,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   minWidth252: {
     minWidth: '252.6px!important'
+  },
+  languageSelect: {
+    textTransform: 'capitalize',
+    color: 'white',
+    padding: 10,
+    fontSize: 18,
+    fontFamily: 'OpenSansHebrew'
   }
 })

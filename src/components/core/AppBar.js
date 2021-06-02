@@ -1,7 +1,7 @@
 import React,{useState,useRef,useEffect} from 'react';
 import {
   AppBar,Toolbar,Typography,Button,IconButton,MenuItem,ClickAwayListener,
-  Grow,Paper,Popper,MenuList,SvgIcon,Grid,Box
+  Grow,Paper,Popper,MenuList,SvgIcon,Grid,Box, Select, NativeSelect
 } from '@material-ui/core';
 import clsx from 'clsx';
 import {ArrowDropUp} from '@material-ui/icons';
@@ -18,7 +18,7 @@ import {setCookie,getCookie} from '../../helpers/cookies'
 import {setScriptDialog} from '../../redux/reducers/notificationSlice';
 import {logout} from '../../helpers/api'
 import {openInNewTab} from '../../helpers/functions'
-
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 const AppBarItem=({
   item,
   onMainClick=() => {},
@@ -121,16 +121,19 @@ const LanguageSelector=({windowSize,classes}) => {
   const languages=[
     {
       title: "עברית",
+      mobileTitle: 'עב',
       value: 'he-IL'
     },
     {
       title: 'English',
+      mobileTitle: 'en',
       value: 'en-US'
     }
   ]
 
+  const currentLang = languages.find(lang => lang.value===language)
   const item={
-    title: languages.find(lang => lang.value===language).title,
+    title: windowSize==='xs'?currentLang.mobileTitle:currentLang.title,
     options: languages
   }
 
@@ -140,20 +143,33 @@ const LanguageSelector=({windowSize,classes}) => {
     dispatch(setLanguage(value.split('-')[0]));
   }
 
-  if(windowSize==='xs') {
+  if (windowSize==='xs') {
     return (
-      <Button
-        className={clsx(classes.mobileLanguageBtn)}
-        onClick={() => {
-          const value=language==='he-IL'? 'en-US':'he-IL';
-          changeLanguage({value});
-        }}>
-        {language==='he-IL'? "עב'":'EN'}
-      </Button>
+      <NativeSelect
+        classes={{root: clsx(classes.languageSelect), icon: classes.white}}
+        className={classes.textCapitalize}
+        value={language}
+        onChange={e=>changeLanguage({value : e.target.value})}
+        IconComponent={props=>(
+        <ExpandMoreIcon {...props} />)
+      }
+
+      >
+        {languages.map((lang, index)=>(
+          <option
+            key={`lang${index}`}
+            value={lang.value} 
+            className={clsx(classes.textCapitalize, classes.black)}>
+            {lang.mobileTitle}
+          </option>
+        ))}
+      </NativeSelect>
     );
   }
   return (
     <AppBarItem
+      isMobile={windowSize==='xs'}
+      textStyle={windowSize==='xs'&&classes.textCapitalize}
       classes={classes}
       item={item}
       onInnerClick={changeLanguage} />
