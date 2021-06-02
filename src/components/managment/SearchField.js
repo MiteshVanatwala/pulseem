@@ -1,5 +1,5 @@
 import React from 'react';
-import {IconButton,InputAdornment,Input} from '@material-ui/core'
+import {IconButton,InputAdornment,Input, TextField} from '@material-ui/core'
 import {SearchIcon} from '../../assets/images/managment/index'
 
 
@@ -19,8 +19,7 @@ export const SearchField=({
       onChange={onChange}
       placeholder={placeholder}
       endAdornment={
-        <InputAdornment
-          position="end">
+        <InputAdornment>
           <IconButton
             onClick={onClick}
             className={classes.phoneSearchBarIcon}>
