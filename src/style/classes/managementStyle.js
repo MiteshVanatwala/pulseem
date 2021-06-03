@@ -752,5 +752,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     flexDirection: windowSize==='xs'? 'column':'row',
     alignItems: 'center',
     justifyContent: 'space-between'
+  },
+  languageSelect: {
+    textTransform: 'capitalize',
+    color: 'white',
+    padding: 10,
+    fontSize: 18,
+    fontFamily: 'OpenSansHebrew'
   }
 })
