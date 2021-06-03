@@ -91,4 +91,7 @@
         right: 35px !important;
         max-width: 250px !important;
     }
+    .emoji-picker-react{
+        width: 210px !important;
+    }
 }
