@@ -90,7 +90,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         },
         '& [role="tabpanel"]': {
             width: mobileNotificationSize[windowSize],
-            height: 400
+            minHeight: 400
         },
     },
     flexJustifyCenter: {
@@ -480,12 +480,12 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     osScreen: {},
     previewStep: {
         '& [role="tabpanel"]': {
-            height: 400
+            minHeight: 400
         },
         '& $osScreen': {
             border: windowSize !== 'xs' ? '1px solid #000' : 'none',
             paddingTop: windowSize !== 'xs' ? 50 : 0,
-            height: 330,
+            minHeight: 330,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-end',

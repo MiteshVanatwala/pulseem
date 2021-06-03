@@ -42,7 +42,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         if (toastMessage) {
             setTimeout(() => {
                 setToastMessage(null);
-            }, 2000);
+            }, 3000);
             return (
                 <Toast data={toastMessage} />
             );
@@ -187,19 +187,22 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             if (elem)
                 document.getElementById(fileId).style.opacity = 0;
         }
-        const handleUploadClick = event => {
+        const handleUploadClick = () => {
             hiddenFileInput.current.click();
         };
         const changeHandler = (event) => {
             setFileToUpload(event.target.files[0]);
             setIsFilePicked(true);
+            return false;
         };
         const uploadNewFile = (e) => {
             if (fileToUpload != null) {
                 const formData = new FormData();
                 formData.append('File', fileToUpload);
                 if (fileToUpload.size > 1048576) {
-                    return alert(t("max_image_size"));
+                    setToastMessage({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false });
+                    setFileToUpload(null);
+                    return;
                 }
                 new Promise(resolve => {
                     const reader = new FileReader();
