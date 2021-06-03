@@ -107,7 +107,7 @@ const DashedInput = withStyles({
 })(TextField);
 
 const NotificationEditor = ({ props, classes }) => {
-
+  const ref = useRef();
   /* #region  Component settings constatns */
   const dispatch = useDispatch();
   const { language } = useSelector(state => state.core)
@@ -171,6 +171,10 @@ const NotificationEditor = ({ props, classes }) => {
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('notifications.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('notifications.error'), showAnimtionCheck: true },
   }
+
+  const body = document.querySelector('#root');
+
+  body.scrollIntoView({}, 100);
 
   useEffect(() => {
     handleApiToken();
@@ -450,6 +454,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const handleBack = () => {
+
     history.push(`/Notification/edit/${model.ID}`);
   };
   const getStepContent = (stepIndex) => {
