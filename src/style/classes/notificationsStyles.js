@@ -75,11 +75,25 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     summaryContainer: {
         '&.MuiPaper-root': {
             width: '100%'
+        },
+        '& .MuiDialog-paperWidthSm': {
+            width: '100%'
+        },
+        '& [role="tabpanel"]': {
+            width: 400
         }
     },
-    borderSign: {
+    flexJustifyCenter: {
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+    },
+    flexAlignCetner: {
+        display: 'flex',
+        alignItems: 'center',
+        alignContent: 'center'
+    },
+    flexStart: {
+        justifyContent: 'flex-start'
     },
     dashed: {
         border: '1px dashed #64a1bd'
@@ -448,5 +462,10 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     rowReverse: {
         flexDirection: 'row-reverse'
+    },
+    summaryText: {
+        marginTop: 2,
+        paddingLeft: 5,
+        paddingRight: 5
     }
 })

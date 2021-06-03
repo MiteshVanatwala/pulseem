@@ -85,7 +85,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
             <div>
                 <div className={classes.notification}>
                     {isChrome && <div className={clsx(
-                        classes.borderSign,
+                        classes.flexJustifyCenter,
                         classes.notificationTop,
                         classes.notificationContainer
                     )}
@@ -105,7 +105,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                     {!isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right", paddingTop: 10, paddingRight: 15, paddingLeft: 5, marginBottom: '-10px', wordBreak: 'break-word' }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
                     <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: model.Direction == 1 ? 'row-reverse' : 'row' }}>
                         <div className={classes.iconWrapper}>
-                            <div className={clsx(classes.borderSign, classes.icon)}
+                            <div className={clsx(classes.flexJustifyCenter, classes.icon)}
                                 style={{
                                     backgroundImage: `url(${model.Icon})`,
                                     cursor: 'unset',
@@ -120,7 +120,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                                 rowsMax={4}
                                 style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', color: isChrome ? '#fff' : '' }}
                                 value={model.Body != '' ? model.Body : t('notifications.exampleBody')}
-                                className={clsx(classes.notificationPreviewBody, classes.borderSign, classes.notificationText)}
+                                className={clsx(classes.notificationPreviewBody, classes.flexJustifyCenter, classes.notificationText)}
                             />
                         </div>
                     </div>
@@ -153,7 +153,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                     <div className={classes.notificationSiteAddress}><Typography>www.pulseem.co.il</Typography></div>
                     <div className={clsx(classes.footerWrapper)}>
                         {model.Icon ? (<div className={classes.iconWrapper}>
-                            <div className={clsx(classes.borderSign, classes.icon)}
+                            <div className={clsx(classes.flexJustifyCenter, classes.icon)}
                                 style={{
                                     backgroundImage: `url(${model.Icon})`,
                                     cursor: 'unset'
@@ -173,7 +173,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                     </div>
 
                     {notificationExpanded && <div className={clsx(
-                        classes.borderSign,
+                        classes.flexJustifyCenter,
                         classes.notificationTop,
                         classes.notificationContainer,
                         "notificationContainer"

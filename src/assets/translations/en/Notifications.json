@@ -134,8 +134,10 @@
   "tooltip": {
     "testSend": "Please note that tests sends for Push Notifications are sent to creator of the notification only.",
     "redirectUrl": "This is the link your customers will be referred to when clicking on your notification.",
-    "firefoxNotSupported": "Note! Mozilla Firefox does not support images for Push Notifications. Recipients using Firefox will see only title, text, icon."
+    "firefoxNotSupported": "Note! Mozilla Firefox does not support images for Push Notifications. Recipients using Firefox will see only title, text, icon.",
+    "showRedirectButton": "Add a button to your notification and lead your customers directly to your site"
   },
   "leaveCampaignCreationTitle": "Leave Campaign Creation",
-  "leaveCampaignCreationText": "Would you like to save your changes before exiting?"
+  "leaveCampaignCreationText": "Would you like to save your changes before exiting?",
+  "duplicatedRecipients": "Duplicated Recipients"
 }

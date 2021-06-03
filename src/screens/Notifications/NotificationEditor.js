@@ -89,10 +89,6 @@ const DashedInput = withStyles({
       borderColor: '#64a1bd',
       borderRadius: 0
     },
-    '& input:invalid + fieldset': {
-      borderColor: 'red',
-      borderWidth: 1
-    },
     '& input:invalid:focus + fieldset': {
       borderColor: 'red',
       borderWidth: 1
@@ -168,6 +164,8 @@ const NotificationEditor = ({ props, classes }) => {
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [campaignSent, setCampaignSent] = useState(false);
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
+  const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
+  const [showGroupsList, setShowGroupsList] = useState(false);
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('notifications.settings_saved'), showAnimtionCheck: true },
@@ -345,7 +343,11 @@ const NotificationEditor = ({ props, classes }) => {
   const getSummary = async (event) => {
     event.preventDefault();
     const totalResonse = await dispatch(getUniqueClientsByGroups(selectedGroups.map((g) => { return g.Id; })));
+    const currentTotalRecipients = selectedGroups.reduce(function (a, b) {
+      return a + b['Members'];
+    }, 0);
     setTotalRecipients(totalResonse.payload);
+    setDuplicatedRecipients(currentTotalRecipients - totalResonse.payload);
     if (sendDate) {
       const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
       m.lang(isRTL ? "he" : "en");
@@ -674,60 +676,53 @@ const NotificationEditor = ({ props, classes }) => {
               onChange={handleNotificationName}
             />
           </Grid>
-          <Grid item md={10} xs={12}>
-            <Grid container justify="flex-start"
-              spacing={4}
-              alignItems="center">
-              <Grid item md={2} xs={12}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={ShowRedirectButton}
-                      color="primary"
-                      name="checkedB"
-                      inputProps={{ 'aria-label': 'primary checkbox' }}
-                      onChange={handleRedirectVisibillity}
-                    />
-                  }
-                  label={t('notifications.showRedirectUrlButton')}
-                />
-              </Grid>
-              {ShowRedirectButton &&
-                <Grid item sm={3} xs={12}>
-                  {/* <label>* {t('notifications.redirectUrl')}</label> */}
-                  <BootstrapTooltip title={t("notifications.tooltip.redirectUrl")} placement="top">
-                    <TextField
-                      label={t('notifications.redirectUrl')}
-                      id="notificationRedirectUrl"
-                      style={{ textAlign: 'left' }}
-                      required
-                      value={model && model.RedirectURL || ''}
-                      className={classes.textField}
-                      margin="dense"
-                      variant="outlined"
-                      onChange={handleRedirectUrlChange}
-                      onBlur={event => updateUrlValue(event)}
-                    />
-                  </BootstrapTooltip>
-
-                </Grid>
-              }
-              {ShowRedirectButton &&
-                <Grid item sm={3} xs={12}>
-                  {/* <label>{t('notifications.redirectUrlButton')}</label> */}
-                  <TextField
-                    label={t('notifications.redirectUrlButton')}
-                    id="notificationButton"
-                    value={model && model.RedirectButtonText || ''}
-                    className={classes.textField}
-                    margin="dense"
-                    variant="outlined"
-                    onChange={handleRedirectButtonTextChange}
-                    onFocus={handleTextFocus}
+          <Grid item md={2} xs={12}>
+            <BootstrapTooltip title={t("notifications.tooltip.showRedirectButton")} placement="top">
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={ShowRedirectButton}
+                    color="primary"
+                    name="checkedB"
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                    onChange={handleRedirectVisibillity}
                   />
-                </Grid>}
-            </Grid>
+                }
+                label={t('notifications.showRedirectUrlButton')}
+              />
+            </BootstrapTooltip>
           </Grid>
+          {ShowRedirectButton &&
+            <Grid item md={3} xs={12}>
+              {/* <label>* {t('notifications.redirectUrl')}</label> */}
+              <TextField
+                label={t('notifications.redirectUrl')}
+                id="notificationRedirectUrl"
+                style={{ textAlign: 'left' }}
+                required
+                value={model && model.RedirectURL || ''}
+                className={classes.textField}
+                margin="dense"
+                variant="outlined"
+                onChange={handleRedirectUrlChange}
+                onBlur={event => updateUrlValue(event)}
+              />
+            </Grid>
+          }
+          {ShowRedirectButton &&
+            <Grid item md={3} xs={12}>
+              {/* <label>{t('notifications.redirectUrlButton')}</label> */}
+              <TextField
+                label={t('notifications.redirectUrlButton')}
+                id="notificationButton"
+                value={model && model.RedirectButtonText || ''}
+                className={classes.textField}
+                margin="dense"
+                variant="outlined"
+                onChange={handleRedirectButtonTextChange}
+                onFocus={handleTextFocus}
+              />
+            </Grid>}
         </Grid>
         <Grid
           container
@@ -807,7 +802,7 @@ const NotificationEditor = ({ props, classes }) => {
         </Grid>
         <div className={classes.notification} id={model.ID}>
           <div className={clsx(
-            classes.borderSign,
+            classes.flexJustifyCenter,
             classes.dashed,
             classes.notificationTop,
             classes.notificationContainer
@@ -830,7 +825,7 @@ const NotificationEditor = ({ props, classes }) => {
           </div>
           <div className={clsx(classes.footerWrapper, classes.dashed)} style={{ flexDirection: isRTL ? (model.Direction == 1 ? 'row-reverse' : 'row') : (model.Direction == 1 ? 'row' : 'row-reverse') }}>
             <div className={classes.iconWrapper}>
-              <div className={clsx(classes.borderSign, classes.dashed, classes.icon)}
+              <div className={clsx(classes.flexJustifyCenter, classes.dashed, classes.icon)}
                 onMouseEnter={toggleIconHover}
                 onMouseLeave={toggleIconHover}
                 onClick={openGallery(true)}
@@ -1010,8 +1005,9 @@ const NotificationEditor = ({ props, classes }) => {
           </Grid>
           <Grid item xs={12} style={{ paddingTop: 0 }}>
             {showDetails && <div>
-              <h3>{t("notifications.buttons.groups")} ({selectedGroups.length})</h3>
-              <ul>
+              <h3 style={{ cursor: 'pointer', marginBotton: 0 }} onClick={() => setShowGroupsList(!showGroupsList)}>{t("notifications.buttons.groups")} ({selectedGroups.length})</h3>
+              <Divider />
+              {showGroupsList && <ul>
                 {selectedGroups.map((g, index) => {
                   return (<li key={`group_${g.Id}`}>
                     <div className={classes.flexSpaceBetween}>
@@ -1021,7 +1017,14 @@ const NotificationEditor = ({ props, classes }) => {
                   </li>)
                 })}
               </ul>
+              }
+              {showDetails && duplicatedRecipients &&
+                <div className={clsx(classes.flexStart, classes.flexAlignCetner)}>
+                  <h3 className={classes.blue} style={{ marginTop: 0, marginBottom: 0 }}>{t("notifications.duplicatedRecipients")}: </h3> <b className={classes.summaryText}>{duplicatedRecipients}</b>
+                </div>
+              }
             </div>}
+
           </Grid>
         </Grid>
       ),
