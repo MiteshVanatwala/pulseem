@@ -742,7 +742,7 @@ const NotificationEditor = ({ props, classes }) => {
             {notificationContent()}
           </Grid>
           <Grid item md={1} xs={12}>&nbsp;</Grid>
-          <Grid item md={4} xs={12}>
+          <Grid item md={4} xs={12} class="previewStep">
             <Preview classes={classes}
               model={model}
               ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText && model.RedirectButtonText != ''}

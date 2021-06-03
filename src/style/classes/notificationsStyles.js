@@ -1,3 +1,4 @@
+import { TextsmsTwoTone } from '@material-ui/icons'
 import mobileBg from '../../assets/images/mobile.png'
 
 const galleryWidth = {
@@ -21,16 +22,27 @@ const summaryTitleMargin = {
     lg: 10,
     xl: 15
 }
-// const summaryNotificationMargin = {
-//     xs: "-15px",
-//     sm: "-15px",
-//     md: 0,
-//     lg: 0,
-//     xl: 0
-// }
-// const summaryNotificationMinWidth = {
-//     xs: "240px",
-// }
+const notificationSize = {
+    md: 350,
+    lg: 400,
+    xl: 400
+}
+
+const mobileNotificationSize = {
+    xs: 240,
+    sm: 240,
+    md: 350,
+    lg: 450,
+    xl: 450
+}
+
+const notificationIconWidth = {
+    xs: 40,
+    sm: 40,
+    md: 100,
+    lg: 90,
+    xl: 90,
+}
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     roundedCircle: {
         borderRadius: '100%',
@@ -49,11 +61,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         display: 'flex',
         flexDirection: 'column',
         boxShadow: '0 10px 10px 0 rgb(0 0 0 / 50%)',
-        maxWidth: '350px',
-        fontFamily: 'Assistant',
-        // marginRight: summaryNotificationMargin[windowSize],
-        // marginLeft: summaryNotificationMargin[windowSize],
-        // minWidth: summaryNotificationMinWidth[windowSize]
+        maxWidth: notificationSize[windowSize],
+        fontFamily: 'Assistant'
     },
     textArea: {
         fontFamily: 'Assistant'
@@ -80,7 +89,10 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
             width: '100%'
         },
         '& [role="tabpanel"]': {
-            width: 400
+            width: mobileNotificationSize[windowSize]
+        },
+        '& .notification': {
+
         }
     },
     flexJustifyCenter: {
@@ -153,19 +165,16 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         boxSizing: 'border-box'
     },
     iconWrapper: {
-        margin: '15px',
-        minWidth: '100px',
+        margin: '15px'
     },
     icon: {
         direction: 'rtl',
         position: 'relative',
         backgroundSize: 'cover',
-        width: '100px',
-        height: '100%',
+        width: notificationIconWidth[windowSize],
+        height: notificationIconWidth[windowSize],
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
-        maxHeight: '112px',
-        minHeight: '85px',
         cursor: 'pointer',
     },
     notificationContent: {
@@ -240,7 +249,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     mobileBG: {
         backgroundImage: `url(${mobileBg})`,
-        width: '450px',
+        width: mobileNotificationSize[windowSize],
         height: '100%',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',

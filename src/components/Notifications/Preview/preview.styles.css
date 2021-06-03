@@ -9,31 +9,33 @@
 
 .direction-radio::before {
     content: "aaa";
-    width: "100%";
+    width  : "100%";
 }
 
 .emoji-picker-react {
     position: absolute !important;
-    bottom: 0 !important;
+    bottom  : 0 !important;
 }
 
 .emoji-picker-react {
-    left: 100% !important;
+    left : 100% !important;
     right: auto;
 }
+
 .rtl .emoji-picker-react {
     right: 100% !important;
-    left: auto;
+    left : auto;
 }
 
 .MuiDialog-root .mobileBG {
     max-width: 400px;
 }
+
 .MuiDialog-root .mobileNotification {
-    top: 60px;
-    right: 45px;
-    width: 100%;
-    position: absolute;
+    top      : 60px;
+    right    : 45px;
+    width    : 100%;
+    position : absolute;
     max-width: 310px;
 }
 
@@ -45,26 +47,31 @@
     .previewTitle {
         margin-top: 15px !important;
     }
+
     .MuiDialog-root .mobileBG {
-        max-width: 100% !important;
-        min-height: 180px !important;
+        max-width : 100% !important;
+        min-height: 180px;
     }
+
     .MuiDialog-root .mobileBG .mobileNotification {
-        top: 25px !important;
-        right: 27px !important;
-        width: calc(100% - 55px) !important;
-        position: absolute !important;
+        top      : 25px !important;
+        right    : 27px !important;
+        width    : calc(100% - 55px) !important;
+        position : absolute !important;
         max-width: 190px !important;
     }
+
     .MuiDialog-root .mobileBG .notificationSiteAddress {
-        height: 25px !important;
+        height    : 25px !important;
         margin-top: 0 !important;
     }
+
     .MuiDialog-root .mobileBG .MuiTypography-body1 {
         font-size: 9px !important;
     }
+
     .MuiDialog-root .mobileBG .icon {
-        width: 40px !important;
+        width     : 40px !important;
         max-height: 40px !important;
         min-height: 40px !important;
     }
@@ -76,22 +83,38 @@
     .MuiDialog-root .mobileBG .footerWrapper {
         min-height: unset !important;
     }
+
     .MuiDialog-root .mobileBG .notificationContainer {
         min-height: 80px;
     }
 }
 
-@media screen and (max-width: 375px){
-    .mobileBG{
+@media screen and (max-width: 375px) {
+    .mobileBG {
         background-size: contain !important;
+        width          : 220px !important;
+        min-height     : 400px !important;
+    }
+
+    .mobileBG .mobileNotification {
+        right    : 35px !important;
+        max-width: 250px !important;
+    }
+
+    .previewStep {
+        max-width: 100%;
+        width    : 100%;
+    }
+
+    .previewStep .mobileBG {
         width: 320px !important;
     }
 
-    .mobileBG .mobileNotification{
-        right: 35px !important;
-        max-width: 250px !important;
+    .notification {
+        max-width: 100px !important;
     }
-    .emoji-picker-react{
+
+    .emoji-picker-react {
         width: 210px !important;
     }
 }

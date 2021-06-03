@@ -139,6 +139,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                     {folders.map((f, index) => {
                         return (
                             <StyledTreeItem
+                                title={f.FolderName === "main" ? (isRTL ? "ראשי" : "Main") : f.FolderName}
                                 key={`k_${index}`}
                                 style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                                 nodeId={`k_${index}`}
