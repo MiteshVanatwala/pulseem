@@ -4,17 +4,23 @@ import { getCookie, setCookie } from './cookies';
 
 import moment from 'moment'
 
+const BaseURL = {
+  DEV: 'https://pulseemsiteapi4react.pulseemdev.co.il/api/',
+  LOCAL: 'http://api.develop.com/api',
+  HOME: 'http://siteapi.pulseem.com/api/'
+};
+
+const SelectedBaseURL = BaseURL.LOCAL;
+
 // const refreshTokenURL = 'http://localhost:60326/RefreshToken.ashx'
 const refreshTokenURL = 'https://www.pulseemdev.co.il/Pulseem/RefreshToken.ashx'
 
 const redirectToLogin = () => {
-  window.location.href='/Pulseem/Login.aspx?ReturnUrl=/Pulseem/homepage.aspx'
+  window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/homepage.aspx'
 }
 
 const instence = axios.create({
-  //baseURL: 'https://pulseemsiteapi4react.pulseemdev.co.il/api/',
-  baseURL: 'http://siteapi.pulseem.com/api/',
-  //baseURL: 'http://api.develop.com/api',
+  baseURL: SelectedBaseURL,
   headers: {
     'Content-Type': 'application/json; charset=UTF-8'
   }
@@ -52,3 +58,4 @@ instence.interceptors.request.use(async config => {
 })
 
 export default instence
+export { SelectedBaseURL }
