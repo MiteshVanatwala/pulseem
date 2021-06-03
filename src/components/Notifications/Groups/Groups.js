@@ -193,7 +193,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                         }
                         endAdornment={clearInput &&
                             <InputAdornment position="start" onClick={resetSearch}>
-                                <MdClear />
+                                <MdClear style={{cursor: 'pointer'}} />
                             </InputAdornment>
                         }
 

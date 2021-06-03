@@ -13,16 +13,22 @@
     min-width: 100%;
 }
 @media screen and (max-width: 768px) {
+    .summaryModal {
+        min-width: 330px;
+    }
     .wizardButtonContainer {
         flex-direction: column;
         justify-content: center;
         align-items: center;
         align-content: center;
         width: 100% !important;
+        padding-bottom: 45px;
     }
-    .wizardButtonContainer * {
+    .wizardButtonContainer *  {
         width: 100%;
         margin: 0 !important;
+    }
+    .wizardButtonContainer button {
         margin-top: 8px !important;
     }
     .wizardButtonContainer div:last-child {

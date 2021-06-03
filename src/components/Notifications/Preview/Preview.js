@@ -6,6 +6,7 @@ import './preview.styles.css';
 import PropTypes from 'prop-types';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FaChrome, FaFirefox, FaMobile } from 'react-icons/fa';
+import  desktopClock  from '../../../assets/images/desktopClock.jpg';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -101,7 +102,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                         </div>
                     </div>
                     }
-                    {!isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right", paddingTop: 10, paddingRight: 15, paddingLeft: 5, marginBottom: '-10px' }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
+                    {!isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right", paddingTop: 10, paddingRight: 15, paddingLeft: 5, marginBottom: '-10px', wordBreak: 'break-word' }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
                     <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: model.Direction == 1 ? 'row-reverse' : 'row' }}>
                         <div className={classes.iconWrapper}>
                             <div className={clsx(classes.borderSign, classes.icon)}
@@ -129,6 +130,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                             <div className={isChrome ? classes.chromeRedirectInnerButton : ''}>{model.RedirectButtonText}</div>
                         </div>
                     }
+                    <img alt="Sent" src={desktopClock} />
                 </div>
                 {
                     !isChrome && <label className={classes.smallNotice}>* {t("notifications.tooltip.firefoxNotSupported")}</label>
@@ -159,7 +161,8 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                             </div>
                         </div>) : (
                             <div className={classes.iconWrapper}>
-                                {chooseIcon()}
+                                <chooseIcon />
+                                {/* {chooseIcon()} */}
                             </div>
                         )
                         }

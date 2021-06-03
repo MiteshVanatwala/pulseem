@@ -15,21 +15,33 @@ export const Dialog = ({
   children,
   showDivider = false,
   onClose = () => null,
+  onCancel = null,
   onConfirm = () => null,
   renderButtons = null,
   disableBackdropClick = false,
-  minimumWidth = 0
+  customContainerStyle = ''
 }) => {
   const direction = {
     true: 'rtl',
     false: 'ltr'
   }
+
   const { t } = useTranslation()
   const { isRTL } = useSelector(state => state.core)
+
+  const onExit = () => {
+    if (onCancel !== null) {
+      onCancel();
+    }
+    else {
+      onClose();
+    }
+  }
+
   const renderExitButton = () => {
     return (
       <Box
-        onClick={onClose}
+        onClick={onExit}
         className={clsx(
           classes.dialogExitButton,
           {
@@ -106,7 +118,8 @@ export const Dialog = ({
   const renderChildren = () => {
     return (
       <Box
-        className={classes.dialogChildren} style={{ maxHeight: 'calc(65vh)', minWidth: minimumWidth }}>
+        className={classes.dialogChildren}
+        style={{ maxHeight: 'calc(65vh)' }}>
         {children}
       </Box>)
   }
@@ -127,7 +140,7 @@ export const Dialog = ({
     <BaseDialog
       disableBackdropClick={disableBackdropClick}
       open={!!open}
-      className={classes.dialogContainer}
+      className={clsx(classes.dialogContainer, customContainerStyle)}
       onClose={onClose}>
       <Paper>
         {renderExitButton()}
