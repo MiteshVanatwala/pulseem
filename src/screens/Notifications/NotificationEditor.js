@@ -735,11 +735,11 @@ const NotificationEditor = ({ props, classes }) => {
           justify="flex-start"
           alignItems="flex-start"
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
-          <Grid item md={3} xs={12}>
+          <Grid item md={4} xs={12}>
             {notificationContent()}
           </Grid>
           <Grid item md={1} xs={12}>&nbsp;</Grid>
-          <Grid item md={3} xs={12}>
+          <Grid item md={4} xs={12}>
             <Preview classes={classes}
               model={model}
               ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText && model.RedirectButtonText != ''}

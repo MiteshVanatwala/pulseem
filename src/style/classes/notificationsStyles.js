@@ -169,7 +169,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         cursor: 'pointer',
     },
     notificationContent: {
-        padding: windowSize !== 'xs' && windowSize !== 'sm' ? '15px 0' : 0,
+        padding: '15px 0',
         height: 'auto',
         display: 'flex',
         flexDirection: 'column',
