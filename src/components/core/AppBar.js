@@ -126,7 +126,7 @@ const LanguageSelector=({windowSize,classes}) => {
     },
     {
       title: 'English',
-      mobileTitle: 'en',
+      mobileTitle: 'EN',
       value: 'en-US'
     }
   ]
