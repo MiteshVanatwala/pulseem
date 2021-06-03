@@ -3,7 +3,7 @@ import DefaultScreen from './DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField, Box
+  Grid,Button,TextField,Box
 } from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SearchIcon,
@@ -68,7 +68,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
 
   const renderSearchLine=() => {
     const handleSearch=() => {
-      const searchArray = [{
+      const searchArray=[{
         type: 'name',
         campaignName: landingPageNameSearch
       }];
@@ -78,7 +78,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           return String(row.Name.toLowerCase()).includes(values.campaignName.toLowerCase());
         }
       }
-  
+
       let sortData=landingPagesData
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
@@ -113,7 +113,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             size='small'
             value={landingPageNameSearch}
             onChange={handleCampainNameChange}
-            className={clsx(classes.textField, classes.minWidth252)}
+            className={clsx(classes.textField,classes.minWidth252)}
             placeholder={placeholder}
           />
         </Grid>
@@ -174,7 +174,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching?searchResults.length:landingPagesData.length} ${t('landingPages.landingPages')}`}
+            {`${isSearching? searchResults.length:landingPagesData.length} ${t('landingPages.landingPages')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -262,7 +262,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         lable: IsPayment?
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: windowSize==='xs',
+        remove: (windowSize==='xs'||(!IsPayment&&SurveyCount===0)),
         rootClass: classes.paddingIcon,
         onClick: async () => {
           if(IsPayment) {
@@ -405,7 +405,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         </Typography>
         <a
           href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
-          className={clsx(classes.middleText, classes.pt2)}>
+          className={clsx(classes.middleText,classes.pt2)}>
           {t('landingPages.SubmitsResource1.HeaderText')}
         </a>
       </>
@@ -464,10 +464,10 @@ const LandingPagesesManagmentScreen=({classes}) => {
           </Box>
           <Grid container justify={'space-between'}>
             <Grid item container className={classes.widthUnset}>
-              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
-                  {renderViewsCell(row.Views)}
+              <Grid item className={clsx(classes.flexColumn2,classes.txtCenter,classes.pt14)}>
+                {renderViewsCell(row.Views)}
               </Grid>
-              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+              <Grid item className={clsx(classes.flexColumn2,classes.txtCenter,classes.pt14)}>
                 {renderSubscribersCell(row)}
               </Grid>
 
@@ -482,8 +482,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
 
   const renderTableBody=() => {
-    
-    let sortData = isSearching?searchResults:landingPagesData;
+
+    let sortData=isSearching? searchResults:landingPagesData;
     sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -508,7 +508,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching?searchResults.length:landingPagesData.length}
+        rows={isSearching? searchResults.length:landingPagesData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
