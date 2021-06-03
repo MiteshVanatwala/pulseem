@@ -467,6 +467,7 @@ const NotificationManagement=({classes}) => {
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
+            className={icon.disable&&classes.disabledCursor}
             key={icon.key}
             item >
             <ManagmentIcon
@@ -848,13 +849,12 @@ const NotificationManagement=({classes}) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Box className={classes.pulseemIcon}>{'\u0075'}</Box>
+                  <Box className={clsx(classes.pulseemIcon, classes.bold)}>{'\u0075'}</Box>
                 </InputAdornment>
               ),
             }}
           />
           <Typography className={classes.mt10}>{t('notifications.onceYouHaveCreatedTheUrl')}</Typography>
-          <Typography className={classes.mt10}>{t('notifications.assignedToTheGroup')}</Typography>
         </Box>
       ),
       renderButtons: () => (

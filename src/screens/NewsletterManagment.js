@@ -380,6 +380,7 @@ const NewsletterManagnentScreen=({classes}) => {
               container>
               {map.map(icon => (
                 <Grid
+                  className={icon.disable&&classes.disabledCursor}
                   key={icon.key}
                   item >
                   <ManagmentIcon
@@ -448,7 +449,7 @@ const NewsletterManagnentScreen=({classes}) => {
       date=moment(row.SendDate,dateFormat)
       const dateMillis=date.valueOf()
       const currentDateMillis=moment().valueOf()
-      text=dateMillis>currentDateMillis? t('common.WillBeSentOn'):t('common.SentOn')
+      text=dateMillis>currentDateMillis? t('common.ScheduledFor'):t('common.SentOn')
     }
 
     return (

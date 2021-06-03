@@ -28,7 +28,7 @@ export const ManagmentIcon=({
         disabled={!!disable||!!hide}
         size='small'
         onClick={()=>onClick(buttonRef)}
-        className={clsx(classes.pointerShow, {
+        className={clsx({
           [classes.managmentIconHide]: hide
         })}>
         <Box

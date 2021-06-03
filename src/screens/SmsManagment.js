@@ -363,6 +363,7 @@ const SmsManagnentScreen=({classes}) => {
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
+            className={icon.disable&&classes.disabledCursor}
             key={icon.key}
             item >
             <ManagmentIcon
@@ -439,7 +440,7 @@ const SmsManagnentScreen=({classes}) => {
       date=moment(row.SendDate,dateFormat)
       const dateMillis=date.valueOf()
       const currentDateMillis=moment().valueOf()
-      text=dateMillis>currentDateMillis? t('common.WillBeSentOn'):t('common.SentOn')
+      text=dateMillis>currentDateMillis? t('common.ScheduledFor'):t('common.SentOn')
     }
 
     return (
