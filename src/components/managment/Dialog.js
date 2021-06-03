@@ -19,7 +19,9 @@ export const Dialog = ({
   onConfirm = () => null,
   renderButtons = null,
   disableBackdropClick = false,
-  customContainerStyle = ''
+  customContainerStyle = '',
+  cancelText = 'common.Cancel',
+  confirmText = 'common.Ok'
 }) => {
   const direction = {
     true: 'rtl',
@@ -80,7 +82,7 @@ export const Dialog = ({
               classes.dialogButton,
               classes.dialogConfirmButton
             )}>
-            {t('common.Ok')}
+            {t(confirmText)}
           </Button>
         </Grid>
         <Grid item>
@@ -92,7 +94,7 @@ export const Dialog = ({
               classes.dialogButton,
               classes.dialogCancelButton
             )}>
-            {t('common.Cancel')}
+            {t(cancelText)}
           </Button>
         </Grid>
       </Grid>

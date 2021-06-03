@@ -442,6 +442,9 @@ const NotificationEditor = ({ props, classes }) => {
       }
       return (
         <Dialog
+          cancelText="common.No"
+          confirmText="common.Yes"
+          disableBackdropClick={true}
           classes={classes}
           open={showConfirmCancel}
           onCancel={() => setShowConfirmCancel(null)}
