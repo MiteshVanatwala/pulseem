@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from './DefaultScreen'
 import clsx from 'clsx';
 import {
@@ -14,7 +14,7 @@ import {
 } from '../components/managment/index'
 import {
   getLandingPagesData,restoreLandingPages,deleteLandingPage,
-  duplicteLandingPage,downloadReport
+  duplicteLandingPage,downloadReport,exportSurvey
 } from '../redux/reducers/landingPagesSlice'
 import useCtrlHistory from '../helpers/useCtrlHistory'
 import {openInNewTab} from '../helpers/functions'
@@ -268,6 +268,9 @@ const LandingPagesesManagmentScreen=({classes}) => {
           if(IsPayment) {
             dispatch(downloadReport(row))
           }
+          else {
+            dispatch(exportSurvey(row))
+          }
         }
       },
       {
@@ -381,7 +384,16 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderNameCell=(row) => {
+  const renderGroupNames = () => {
+    function createMarkup() {
+      return { __html: `${t("common.Groups")}: ` };
+    }
+    return (
+      <label dangerouslySetInnerHTML={createMarkup()} style={{ fontWeight: 400 }}></label>
+    );
+  }
+
+  const renderNameCell = (row) => {
     return (
       <>
         <Typography noWrap className={classes.nameEllipsis}>
@@ -389,7 +401,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         </Typography>
         <Typography
           className={classes.grayTextCell}>
-          {row.GroupNames&&row.GroupNames.join(', ')}
+          {row.GroupNames && row.GroupNames.length > 0 && <span>{renderGroupNames()}<b>{row.GroupNames.join(', ').replace('#', '')}</b></span>}
         </Typography>
       </>
 

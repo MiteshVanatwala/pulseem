@@ -4,6 +4,14 @@ import {getCookie,setCookie} from './cookies';
 
 import moment from 'moment'
 
+const BaseURL = {
+  DEV: 'https://pulseemsiteapi4react.pulseemdev.co.il/api/',
+  LOCAL: 'http://api.develop.com/api',
+  HOME: 'http://siteapi.pulseem.com/api/'
+};
+
+const SelectedBaseURL = BaseURL.LOCAL;
+
 // const refreshTokenURL = 'http://localhost:60326/RefreshToken.ashx'
 const actionURL='https://www.pulseemdev.co.il/Pulseem/'
 const refreshTokenURL=`${actionURL}RefreshToken.ashx`
@@ -24,9 +32,7 @@ export const logout=async () => {
 }
 
 const instence=axios.create({
-  baseURL: 'https://pulseemsiteapi4react.pulseemdev.co.il/api/',
-  //baseURL: 'http://siteapi.pulseem.com/api/',
-  //baseURL: 'http://api.develop.com/api',
+  baseURL: SelectedBaseURL,
   headers: {
     'Content-Type': 'application/json; charset=UTF-8'
   }
@@ -76,3 +82,4 @@ instence.interceptors.response.use(
   })
 
 export default instence
+export { SelectedBaseURL }

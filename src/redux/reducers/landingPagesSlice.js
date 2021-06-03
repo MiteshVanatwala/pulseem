@@ -1,5 +1,5 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
-import instence from '../../helpers/api'
+import instence, { SelectedBaseURL } from '../../helpers/api'
 import fileDownloader from 'js-file-download'
 
 export const getLandingPagesData=createAsyncThunk(
@@ -42,16 +42,23 @@ export const duplicteLandingPage=createAsyncThunk(
     }
   })
 
-export const downloadReport=createAsyncThunk(
-  'landingpages/export/purchase/',async ({ID,Name},thunkAPI) => {
+export const downloadReport = createAsyncThunk(
+  'landingpages/export/purchase/', async ({ ID, Name }, thunkAPI) => {
     try {
-      const response=await instence.get(`landingpages/export/purchase/${ID}`,{
-        responseType: 'blob'
-      });
-      fileDownloader(response.data,`${Name}-Report.xls`)
+      window.open(`${SelectedBaseURL}/landingpages/export/purchase/${ID}`);
       return 'Success'
-    } catch(error) {
-      return thunkAPI.rejectWithValue({error: error.message});
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+export const exportSurvey = createAsyncThunk(
+  'landingpages/export/Survey/', async ({ ID, Name }, thunkAPI) => {
+    try {
+      window.open(`${SelectedBaseURL}/landingpages/export/Survey/${ID}`);
+      return 'Success'
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
 
