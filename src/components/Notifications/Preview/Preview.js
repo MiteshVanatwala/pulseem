@@ -48,7 +48,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
         };
     }
     // Image/Icon selection
-    const chooseImage = () => {
+    const ChooseImage = () => {
         return (<div className={clsx(
             classes.flex,
             classes.flexCenter,
@@ -83,54 +83,56 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
     const desktopPreview = (isChrome) => {
         return (
             <div>
-                <div className={classes.notification}>
-                    {isChrome && <div className={clsx(
-                        classes.flexJustifyCenter,
-                        classes.notificationTop,
-                        classes.notificationContainer
-                    )}
-                        style={{
-                            backgroundImage: `url(${model.Image})`,
-                            cursor: 'unset'
-                        }}>
-                        <div className={clsx(
-                            classes.flex,
-                            classes.flexCenter, classes.flexColumn
+                <div className={classes.osScreen}>
+                    <div className={classes.notification}>
+                        {isChrome && <div className={clsx(
+                            classes.flexJustifyCenter,
+                            classes.notificationTop,
+                            classes.notificationContainer
                         )}
-                            style={{ fontSize: '80px' }}>
-                            {model == null || !model.Image ? chooseImage() : ""}
-                        </div>
-                    </div>
-                    }
-                    {!isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right", paddingTop: 10, paddingRight: 15, paddingLeft: 5, marginBottom: '-10px', wordBreak: 'break-word' }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
-                    <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: model.Direction == 1 ? 'row-reverse' : 'row' }}>
-                        <div className={classes.iconWrapper}>
-                            <div className={clsx(classes.flexJustifyCenter, classes.icon)}
-                                style={{
-                                    backgroundImage: `url(${model.Icon})`,
-                                    cursor: 'unset',
-                                    maxHeight: 85
-                                }}>
-                                {model == null || !model.Icon ? <ChooseIcon /> : ""}
+                            style={{
+                                backgroundImage: `url(${model.Image})`,
+                                cursor: 'unset'
+                            }}>
+                            <div className={clsx(
+                                classes.flex,
+                                classes.flexCenter, classes.flexColumn
+                            )}
+                                style={{ fontSize: '80px' }}>
+                                {model == null || !model.Image ? <ChooseImage /> : ""}
                             </div>
                         </div>
-                        <div className={classes.notificationContent}>
-                            {isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
-                            <TextareaAutosize
-                                rowsMax={4}
-                                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', color: isChrome ? '#fff' : '' }}
-                                value={model.Body != '' ? model.Body : t('notifications.exampleBody')}
-                                className={clsx(classes.notificationPreviewBody, classes.flexJustifyCenter, classes.notificationText)}
-                            />
+                        }
+                        {!isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right", paddingTop: 10, paddingRight: 15, paddingLeft: 5, marginBottom: '-10px', wordBreak: 'break-word' }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
+                        <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: model.Direction == 1 ? 'row-reverse' : 'row' }}>
+                            <div className={classes.iconWrapper}>
+                                <div className={clsx(classes.flexJustifyCenter, classes.icon)}
+                                    style={{
+                                        backgroundImage: `url(${model.Icon})`,
+                                        cursor: 'unset',
+                                        maxHeight: 85
+                                    }}>
+                                    {model == null || !model.Icon ? <ChooseIcon /> : ""}
+                                </div>
+                            </div>
+                            <div className={classes.notificationContent}>
+                                {isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
+                                <TextareaAutosize
+                                    rowsMax={4}
+                                    style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', color: isChrome ? '#fff' : '' }}
+                                    value={model.Body != '' ? model.Body : t('notifications.exampleBody')}
+                                    className={clsx(classes.notificationPreviewBody, classes.flexJustifyCenter, classes.notificationText)}
+                                />
+                            </div>
                         </div>
+                        {
+                            isChrome && ShowRedirectButton &&
+                            <div className={clsx(classes.RedirectButtonText, isChrome ? classes.chromeRedirectButtonText : '')}>
+                                <div className={isChrome ? classes.chromeRedirectInnerButton : ''}>{model.RedirectButtonText}</div>
+                            </div>
+                        }
                     </div>
-                    {
-                        isChrome && ShowRedirectButton &&
-                        <div className={clsx(classes.RedirectButtonText, isChrome ? classes.chromeRedirectButtonText : '')}>
-                            <div className={isChrome ? classes.chromeRedirectInnerButton : ''}>{model.RedirectButtonText}</div>
-                        </div>
-                    }
-                    <img alt="Sent" src={desktopClock} />
+                    <img alt="Windows Operatin System Preview" src={desktopClock} style={{ display: 'block', marginTop: 15, width: '100%' }} />
                 </div>
                 {
                     !isChrome && <label className={classes.smallNotice}>* {t("notifications.tooltip.firefoxNotSupported")}</label>

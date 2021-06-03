@@ -10,7 +10,7 @@ const BaseURL = {
   HOME: 'http://siteapi.pulseem.com/api/'
 };
 
-const SelectedBaseURL = BaseURL.LOCAL;
+const SelectedBaseURL = BaseURL.HOME;
 
 // const refreshTokenURL = 'http://localhost:60326/RefreshToken.ashx'
 const refreshTokenURL = 'https://www.pulseemdev.co.il/Pulseem/RefreshToken.ashx'

@@ -89,11 +89,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
             width: '100%'
         },
         '& [role="tabpanel"]': {
-            width: mobileNotificationSize[windowSize]
+            width: mobileNotificationSize[windowSize],
+            height: 400
         },
-        '& .notification': {
-
-        }
     },
     flexJustifyCenter: {
         display: 'flex',
@@ -243,7 +241,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     wizardButtonContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '50px',
+        marginTop: '15px',
         width: '90%',
         display: 'flex'
     },
@@ -420,7 +418,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         marginRight: 30,
         marginLeft: 30,
         marginTop: -10,
-        marginBottom: 25
+        marginBottom: 25,
+        fontSize: 16
     },
     smallNotice: {
         fontSize: 12,
@@ -429,6 +428,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         maxWidth: '60%'
     },
     pageSubTitle: {
+        marginTop: 5,
         fontSize: 28
     },
     subTitle: {
@@ -476,5 +476,24 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         marginTop: 2,
         paddingLeft: 5,
         paddingRight: 5
-    }
+    },
+    osScreen: {},
+    previewStep: {
+        '& [role="tabpanel"]': {
+            height: 400
+        },
+        '& $osScreen': {
+            border: windowSize !== 'xs' ? '1px solid #000' : 'none',
+            paddingTop: windowSize !== 'xs' ? 50 : 0,
+            height: 330,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+        },
+        '& $notification': {
+            marginRight: isRTL ? 15 : 0,
+            marginLeft: isRTL ? 0 : 15,
+        }
+    },
+
 })
