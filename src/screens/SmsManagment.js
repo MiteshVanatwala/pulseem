@@ -592,7 +592,7 @@ const SmsManagnentScreen=({classes}) => {
       optinCode: verificationCode,
       phoneNumber: number
     }));
-    if(!result.error) {
+    if(result.error) {
       handleVerificationCodeError(true);
     } else {
       setDialogType({
