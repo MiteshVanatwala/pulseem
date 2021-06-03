@@ -6,7 +6,7 @@ import './preview.styles.css';
 import PropTypes from 'prop-types';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FaChrome, FaFirefox, FaMobile } from 'react-icons/fa';
-import  desktopClock  from '../../../assets/images/desktopClock.jpg';
+import desktopClock from '../../../assets/images/desktopClock.jpg';
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -63,7 +63,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
         </div>
         )
     }
-    const chooseIcon = () => {
+    const ChooseIcon = () => {
         return (<div className={clsx(
             classes.flex,
             classes.flexCenter,
@@ -111,7 +111,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                                     cursor: 'unset',
                                     maxHeight: 85
                                 }}>
-                                {model == null || !model.Icon ? chooseIcon() : ""}
+                                {model == null || !model.Icon ? <ChooseIcon /> : ""}
                             </div>
                         </div>
                         <div className={classes.notificationContent}>
@@ -161,8 +161,7 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                             </div>
                         </div>) : (
                             <div className={classes.iconWrapper}>
-                                <chooseIcon />
-                                {/* {chooseIcon()} */}
+                                <ChooseIcon />
                             </div>
                         )
                         }

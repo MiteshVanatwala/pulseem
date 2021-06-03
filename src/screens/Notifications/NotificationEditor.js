@@ -841,7 +841,7 @@ const NotificationEditor = ({ props, classes }) => {
                   style={{
                     fontSize: '30px', cursor: 'pointer'
                   }}>
-                  {model == null || !model.Icon ? chooseIcon() : ""
+                  {model == null || !model.Icon ? <ChooseIcon /> : ""
                   }
                 </div>
                 <button href="#"
@@ -1087,7 +1087,7 @@ const NotificationEditor = ({ props, classes }) => {
     </div>
     )
   }
-  const chooseIcon = () => {
+  const ChooseIcon = () => {
     return (<div className={clsx(
       classes.flex,
       classes.flexCenter,

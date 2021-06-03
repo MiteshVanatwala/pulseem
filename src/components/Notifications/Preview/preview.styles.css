@@ -80,3 +80,15 @@
         min-height: 80px;
     }
 }
+
+@media screen and (max-width: 375px){
+    .mobileBG{
+        background-size: contain !important;
+        width: 320px !important;
+    }
+
+    .mobileBG .mobileNotification{
+        right: 35px !important;
+        max-width: 250px !important;
+    }
+}
