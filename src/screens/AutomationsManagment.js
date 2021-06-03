@@ -681,10 +681,10 @@ const AutomationsManagnentScreen=({classes}) => {
       </Typography>
     ),
     onConfirm: async () => {
+      clearSearch()
+      handleClose()
       await dispatch(deleteAutomations(data))
       getData()
-      handleClose()
-      clearSearch()
     }
   })
 
@@ -697,11 +697,10 @@ const AutomationsManagnentScreen=({classes}) => {
       </Typography>
     ),
     onConfirm: async () => {
-      await dispatch(duplicateAutomations(data))
-      getData()
       clearSearch()
       handleClose()
-      clearSearch()
+      await dispatch(duplicateAutomations(data))
+      getData()
     }
   })
 

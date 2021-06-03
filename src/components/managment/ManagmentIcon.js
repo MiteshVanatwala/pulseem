@@ -28,13 +28,13 @@ export const ManagmentIcon=({
         disabled={!!disable||!!hide}
         size='small'
         onClick={()=>onClick(buttonRef)}
-        className={clsx({
+        className={clsx(classes.pointerShow, {
           [classes.managmentIconHide]: hide
         })}>
         <Box
           component={href? 'a':'div'}
           href={href}
-          className={clsx(
+          className={clsx(disable&&classes.disabledCursor,
             classes.managmentIconContainer,
             rootClass
           )}>
@@ -47,7 +47,7 @@ export const ManagmentIcon=({
             })} />
           <Typography className={clsx(
             classes.managmentIconText,
-            textClass
+            textClass, disable&&classes.colorGray
           )}>
             {lable}
           </Typography>

@@ -616,10 +616,10 @@ const MmsManagnentScreen=({classes}) => {
       </Typography>
     ),
     onConfirm: async () => {
+      clearSearch()
+      handleClose()
       await dispatch(deleteMms(data))
       getData()
-      handleClose()
-      clearSearch()
     }
   })
 
@@ -632,10 +632,10 @@ const MmsManagnentScreen=({classes}) => {
       </Typography>
     ),
     onConfirm: async () => {
+      clearSearch()
+      handleClose()
       await dispatch(duplicteMms(data))
       getData()
-      handleClose()
-      clearSearch()
     }
   })
 

@@ -568,10 +568,10 @@ const LandingPagesesManagmentScreen=({classes}) => {
       </Typography>
     ),
     onConfirm: async () => {
-      await dispatch(deleteLandingPage(data))
-      getData()
       handleClose()
       clearSearch()
+      await dispatch(deleteLandingPage(data))
+      getData()
     }
   })
 
@@ -584,10 +584,10 @@ const LandingPagesesManagmentScreen=({classes}) => {
       </Typography>
     ),
     onConfirm: async () => {
+      clearSearch()
+      handleClose()
       await dispatch(duplicteLandingPage(data))
       getData()
-      handleClose()
-      clearSearch()
     }
   })
 

@@ -477,5 +477,6 @@
   "numberError": "Enter minimum of 10 numbers",
   "verifyNumber": "Verify Number",
   "restoreCampaignTitle": "Select the SMS campaigns you want to restore",
-  "verificationSuccessful": "Verification Successful!"
+  "verificationSuccessful": "The number has been successfully verified!",
+  "verificationSuccessMessage": "From now on you can send SMS from this number without needing to re-do this process"
 }
