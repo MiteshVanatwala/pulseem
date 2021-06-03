@@ -653,10 +653,10 @@ const NewsletterManagnentScreen=({classes}) => {
       </Typography>
     ),
     onConfirm: async () => {
+      clearSearch()
+      handleClose()
       await dispatch(deleteCampaign(data))
       getData()
-      handleClose()
-      clearSearch()
     }
   })
 
@@ -674,10 +674,10 @@ const NewsletterManagnentScreen=({classes}) => {
       </Typography>
     ),
     onConfirm: async () => {
+      clearSearch()
+      handleClose()
       await dispatch(duplicteCampaign(data))
       getData()
-      handleClose()
-      clearSearch()
     }
   })
   const renderDialog=() => {

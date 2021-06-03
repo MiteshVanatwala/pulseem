@@ -40,7 +40,6 @@ const SmsManagnentScreen=({classes}) => {
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)
-  const [verificationSuccess,setVerificationSuccess]=useState(false)
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
@@ -593,10 +592,13 @@ const SmsManagnentScreen=({classes}) => {
       optinCode: verificationCode,
       phoneNumber: number
     }));
-    if(result.error) {
+    if(!result.error) {
       handleVerificationCodeError(true);
     } else {
-      setVerificationSuccess(true);
+      setDialogType({
+        type: 'verificationSuccess',
+        data: {}
+      });
     }
   }
 
@@ -607,7 +609,6 @@ const SmsManagnentScreen=({classes}) => {
     handleNumberError(false);
     handleNumber('');
     handleVerificationCodeInput('');
-    setVerificationSuccess(false);
   }
 
   const getRestorDialog=(data=[]) => {
@@ -693,10 +694,10 @@ const SmsManagnentScreen=({classes}) => {
       </Typography>
     ),
     onConfirm: async () => {
+      clearSearch()
+      handleClose()
       await dispatch(deleteSms(data))
       getData()
-      handleClose()
-      clearSearch()
     }
   })
 
@@ -714,10 +715,10 @@ const SmsManagnentScreen=({classes}) => {
       </Typography>
     ),
     onConfirm: async () => {
-      await dispatch(duplicteSms(data))
       clearSearch()
-      getData()
       handleClose()
+      await dispatch(duplicteSms(data))
+      getData()
     }
   })
 
@@ -900,8 +901,8 @@ const SmsManagnentScreen=({classes}) => {
       <Box style={{textAlign: 'center'}}>
         <Typography 
           align='center' 
-          className={clsx(classes.verificationTitle, verificationSuccess&&classes.green)}>
-          {verificationSuccess?`${t('sms.verificationSuccessful')}`:`${t('common.Sent')}!`}
+          className={classes.verificationTitle}>
+          {t('common.Sent')}
         </Typography>
         <Typography style={{fontSize: 15}} align={'center'}>
           {t('sms.verificationSentToNumber')}{data}
@@ -909,49 +910,70 @@ const SmsManagnentScreen=({classes}) => {
           {t('sms.pleaseNoteCode')}
         </Typography>
         <br />
-        {verificationSuccess?<div className={classes.verifySuccessIcon}>{'\uE134'}</div>:
-        <>
-          <TextField
-            error={verificationCodeError}
-            helperText={verificationCodeError? t('sms.verificationCodeError'):''}
-            variant='outlined'
-            placeholder={t('sms.enterCode')}
-            value={verificationCode}
-            onChange={(e) => handleVerificationCodeInput(e.target.value)}
-            size='small'
-          />
-          <br /><br />
-          <Button
-            variant='contained'
-            onClick={() => handleConfirmCode(verificationCode)}
-            color='primary'
-            style={{minWidth: 150}}>
-            {t('common.Ok')}
-          </Button>
-          <Grid
-            container
-            style={{marginTop: 20}}
-            justify='center'>
-            <Grid item>
-              <Typography >
-                {t('sms.didNotReceived')}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Typography
-                onClick={() => handleShortVerify(data)}
-                style={{textDecoration: 'underline',margin: '0 5px',cursor: 'pointer'}}>
-                {t('sms.resend')}
-              </Typography>
-
-            </Grid>
+        <TextField
+          error={verificationCodeError}
+          helperText={verificationCodeError? t('sms.verificationCodeError'):''}
+          variant='outlined'
+          placeholder={t('sms.enterCode')}
+          value={verificationCode}
+          onChange={(e) => handleVerificationCodeInput(e.target.value)}
+          size='small'
+        />
+        <br /><br />
+        <Button
+          variant='contained'
+          onClick={() => handleConfirmCode(verificationCode)}
+          color='primary'
+          style={{minWidth: 150}}>
+          {t('common.Ok')}
+        </Button>
+        <Grid
+          container
+          style={{marginTop: 20}}
+          justify='center'>
+          <Grid item>
+            <Typography >
+              {t('sms.didNotReceived')}
+            </Typography>
           </Grid>
-        </>}
+          <Grid item>
+            <Typography
+              onClick={() => handleShortVerify(data)}
+              style={{textDecoration: 'underline',margin: '0 5px',cursor: 'pointer'}}>
+              {t('sms.resend')}
+            </Typography>
+
+          </Grid>
+        </Grid>
         
       </Box>
     ),
     renderButtons: () => null
-  })
+  });
+
+  const getVerificationSuccessDialog=() => ({
+    showDivider: false,
+    icon: (
+      <div className={classes.dialogIconContent}>
+        {'\uE11B'}
+      </div>
+    ),
+    content: (
+      <Box style={{textAlign: 'center'}}>
+        <Typography 
+          align='center' 
+          className={clsx(classes.verificationTitle, classes.green)}>
+          {t('sms.verificationSuccessful')}
+        </Typography>
+        <Typography style={{fontSize: 15}} align={'center'}>
+          {t('sms.verificationSuccessMessage')}
+        </Typography>
+        <br />
+        <div className={classes.verifySuccessIcon}>{'\uE134'}</div>
+      </Box>
+    ),
+    renderButtons: () => null
+  });
 
   const renderDialog=() => {
     const {data,type}=dialogType||{};
@@ -964,7 +986,8 @@ const SmsManagnentScreen=({classes}) => {
       preview: getPreviewDialog(data),
       verify: getVerifyDialog(data),
       shortVerify: getShortVerifyDialog(data),
-      verificationSent: getVerificationSentDialog(data)
+      verificationSent: getVerificationSentDialog(data),
+      verificationSuccess: getVerificationSuccessDialog(data)
     }
 
     const currentDialog=dialogContent[type]||{}

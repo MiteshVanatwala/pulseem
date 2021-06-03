@@ -743,5 +743,13 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     padding: 10,
     fontSize: 18,
     fontFamily: 'OpenSansHebrew'
+  },
+  disabledCursor: {
+    cursor: 'not-allowed'
+  },
+  pointerShow: {
+    '&.MuiButtonBase-root.Mui-disabled':{
+      pointerEvents: 'visible'
+    }
   }
 })
