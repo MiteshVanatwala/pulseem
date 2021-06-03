@@ -740,7 +740,10 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   verifyButton: {
     background: 'green',
     textTransform: 'capitalize',
-    color: 'white'
+    color: 'white',
+    '&:hover': {
+      background: 'darkgreen'
+    }
   },
   verifyField: {
     '& .MuiOutlinedInput-input': {

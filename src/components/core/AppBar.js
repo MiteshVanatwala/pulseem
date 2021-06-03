@@ -142,29 +142,29 @@ const LanguageSelector=({windowSize,classes}) => {
     dispatch(setLanguage(value.split('-')[0]));
   }
 
-  if(windowSize==='xs') {
-    return (
-      <NativeSelect
-        classes={{root: clsx(classes.languageSelect),icon: classes.white}}
-        className={classes.textCapitalize}
-        value={language}
-        onChange={e => changeLanguage({value: e.target.value})}
-        IconComponent={props => (
-          <ExpandMoreIcon {...props} />)
-        }
+  // if(windowSize==='xs') {
+  //   return (
+  //     <NativeSelect
+  //       classes={{root: clsx(classes.languageSelect),icon: classes.white}}
+  //       className={classes.textCapitalize}
+  //       value={language}
+  //       onChange={e => changeLanguage({value: e.target.value})}
+  //       IconComponent={props => (
+  //         <ExpandMoreIcon {...props} />)
+  //       }
 
-      >
-        {languages.map((lang,index) => (
-          <option
-            key={`lang${index}`}
-            value={lang.value}
-            className={clsx(classes.textCapitalize,classes.black)}>
-            {lang.title}
-          </option>
-        ))}
-      </NativeSelect>
-    );
-  }
+  //     >
+  //       {languages.map((lang,index) => (
+  //         <option
+  //           key={`lang${index}`}
+  //           value={lang.value}
+  //           className={clsx(classes.textCapitalize,classes.black)}>
+  //           {lang.title}
+  //         </option>
+  //       ))}
+  //     </NativeSelect>
+  //   );
+  // }
   return (
     <AppBarItem
       isMobile={windowSize==='xs'}
@@ -285,7 +285,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
             <FaBars />
           </IconButton>
         </Box>
-        <LanguageSelector windowSize={windowSize} classes={classes} />
+        {/* <LanguageSelector windowSize={windowSize} classes={classes} /> */}
         <Popper
           open={open}
           anchorEl={phoneMenuButtonRef.current}
