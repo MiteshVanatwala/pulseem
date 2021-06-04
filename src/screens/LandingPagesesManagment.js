@@ -403,11 +403,14 @@ const LandingPagesesManagmentScreen=({classes}) => {
           className={classes.middleText}>
           {(Submits&&Submits.toLocaleString())||0}
         </Typography>
-        <a
-          href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
-          className={clsx(classes.middleText,classes.pt2)}>
-          {t('landingPages.SubmitsResource1.HeaderText')}
-        </a>
+        {windowSize==='xs'?
+          <Typography className={clsx(classes.middleText)}>{t('landingPages.SubmitsResource1.HeaderText')}</Typography>
+        : <a
+            href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
+            className={clsx(classes.middleText,classes.pt2)}>
+            {t('landingPages.SubmitsResource1.HeaderText')}
+          </a>
+        }
       </>
     )
   }
