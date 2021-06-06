@@ -53,6 +53,7 @@ export const DateField = ({
       cancelLabel={buttons && buttons.cancel}
       okLabel={buttons && buttons.ok}
       ampm={ampm}
+      id="timePicker"
     />
   ) :
 
@@ -85,6 +86,7 @@ export const DateField = ({
       }}
       cancelLabel={buttons && buttons.cancel}
       okLabel={buttons && buttons.ok}
+      id="datePicker"
     />
     )
 

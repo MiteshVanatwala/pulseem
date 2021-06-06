@@ -50,7 +50,8 @@
     "title": "Notification Title - Required",
     "body": "Notification Text - Required",
     "notificationDate": "Pick Date and Time",
-    "notificationGroups": "Pick at least 1 group"
+    "notificationGroups": "Pick at least 1 group",
+    "notificationDatePassed": "The date or time you have chosen has already passed"
   },
   "notificationName": "Notification Name",
   "notifications": "Notifications",

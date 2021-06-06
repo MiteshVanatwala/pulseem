@@ -50,7 +50,8 @@
     "title": "כותרת הנוטיפיקציה - שדה חובה",
     "body": "תוכן הנוטיפיקציה - שדה חובה",
     "notificationDate": "יש לבחור תאריך ושעת שליחה",
-    "notificationGroups": "יש לבחור קבוצה אחת לפחות"
+    "notificationGroups": "יש לבחור קבוצה אחת לפחות",
+    "notificationDatePassed": "התאריך או השעה שבחרת עבר"
   },
   "notificationName": "שם הנוטיפיקציה",
   "notifications": "נוטיפיקציות",

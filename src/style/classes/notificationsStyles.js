@@ -1,4 +1,4 @@
-import { TextsmsTwoTone } from '@material-ui/icons'
+import { TextsmsTwoTone, UnsubscribeTwoTone } from '@material-ui/icons'
 import mobileBg from '../../assets/images/mobile.png'
 
 const galleryWidth = {
@@ -29,7 +29,7 @@ const notificationSize = {
 }
 
 const mobileNotificationSize = {
-    xs: 240,
+    xs: null,
     sm: 240,
     md: 350,
     lg: 450,
@@ -37,7 +37,7 @@ const mobileNotificationSize = {
 }
 
 const notificationIconWidth = {
-    xs: 40,
+    xs: 70,
     sm: 40,
     md: 100,
     lg: 90,
@@ -57,7 +57,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     notification: {
         right: '25px',
         bottom: '25px',
-        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         boxShadow: '0 10px 10px 0 rgb(0 0 0 / 50%)',
@@ -75,7 +74,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         height: '100%',
         backgroundPosition: 'center top',
         backgroundRepeat: 'no-repeat',
-        minHeight: '175px',
+        minHeight: '200px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -157,13 +156,15 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        minHeight: windowSize !== 'xs' && windowSize !== 'sm' ? '115px' : null,
+        minHeight: windowSize !== 'xs' && windowSize !== 'sm' ? '100px' : null,
         backgroundColor: 'transparent',
         justifyContent: 'space-between',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        paddingBottom: 10
     },
     iconWrapper: {
-        margin: '15px'
+        margin: '15px',
+        marginBottom: 0
     },
     icon: {
         direction: 'rtl',
@@ -176,18 +177,22 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         cursor: 'pointer',
     },
     notificationContent: {
-        padding: '15px 0',
+        padding: '15px 0 0 0',
         height: 'auto',
         display: 'flex',
         flexDirection: 'column',
         textAlign: 'left',
         width: '100%',
         maxWidth: '100%',
-        marginRight: '15px',
-        marginLeft: '15px',
+        marginRight: isRTL ? 0 : '15px',
+        marginLeft: !isRTL ? 0 : '15px',
         overflow: 'hidden',
         borderBottom: 'none !important',
-        overflowWrap: 'break-word'
+        overflowWrap: 'break-word',
+        paddingBottom: windowSize === 'xs' && windowSize === 'sm' ? 10 : 'unset',
+        '& p': {
+            lineHeight: windowSize !== 'xs' && windowSize !== 'sm' ? 1.5 : 1
+        }
     },
     notificationTitle: {
 
@@ -210,7 +215,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         justifyContent: 'flex-start !important'
     },
     previewTitle: {
-        marginTop: '0px'
+        marginTop: '0px',
+        marginBottom: '0px'
     },
     deviceSelectorPanel: {
         maxWidth: '200px',
@@ -256,13 +262,13 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     mobileNotification: {
         width: '100%',
-        maxWidth: '350px',
+        maxWidth: (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 300,
         boxShadow: '0 5px 5px 1px rgb(0 0 0 / 50%)',
         fontFamily: 'Assistant',
-        top: '50px',
+        top: 50,
         borderRadius: '5px',
         position: 'absolute',
-        right: '50px',
+        right: (windowSize !== 'xs' && windowSize !== 'sm') ? 50 : 40,
         maxHeight: (windowSize !== 'xs' && windowSize !== 'sm') ? 'calc(100% - 80px)' : null,
         paddingTop: 10
     },
@@ -484,15 +490,15 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         },
         '& $osScreen': {
             border: windowSize !== 'xs' ? '1px solid #000' : 'none',
-            paddingTop: windowSize !== 'xs' ? 50 : 0,
+            paddingTop: windowSize !== 'xs' ? 20 : 0,
             minHeight: 330,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'flex-end',
         },
         '& $notification': {
-            marginRight: isRTL ? 15 : 0,
-            marginLeft: isRTL ? 0 : 15,
+            marginRight: windowSize !== 'xs' && isRTL ? 15 : 0,
+            marginLeft: windowSize !== 'xs' && isRTL ? 0 : 15,
         }
     },
 

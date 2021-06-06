@@ -119,7 +119,13 @@ export const Preview = ({ classes, model, ShowRedirectButton, showDevices = true
                                 {isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
                                 <TextareaAutosize
                                     rowsMax={4}
-                                    style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', color: isChrome ? '#fff' : '' }}
+                                    style={{
+                                        direction: model.Direction == 2 ? 'rtl' : 'ltr',
+                                        textAlign: model.Direction == 2 ? 'right' : 'left',
+                                        color: isChrome ? '#fff' : '',
+                                        marginTop: 0,
+                                        outline: 'none'
+                                    }}
                                     value={model.Body != '' ? model.Body : t('notifications.exampleBody')}
                                     className={clsx(classes.notificationPreviewBody, classes.flexJustifyCenter, classes.notificationText)}
                                 />

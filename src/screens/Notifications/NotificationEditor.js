@@ -138,6 +138,25 @@ const NotificationEditor = ({ props, classes }) => {
     RedirectButtonText: ""
   });
 
+  const [sourceModel, setSourceModel] = useState({
+    ID: 0,
+    Name: "",
+    Title: "",
+    Body: "",
+    Icon: "",
+    Image: "",
+    RedirectURL: "",
+    Tag: "",
+    Direction: 2,
+    IsRenotify: "",
+    SendDate: "",
+    IsDeleted: "",
+    SentCount: "",
+    StatusID: "",
+    NotificationGroups: "",
+    RedirectButtonText: ""
+  });
+
   const [activeStep, setActiveStep] = useState(0);
   const [ShowRedirectButton, setRedirectButtonVisibillity] = useState(false);
   const [apiToken, setApiToken] = useState(0);
@@ -166,6 +185,7 @@ const NotificationEditor = ({ props, classes }) => {
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
   const [showGroupsList, setShowGroupsList] = useState(false);
+
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('notifications.settings_saved'), showAnimtionCheck: true },
@@ -229,6 +249,7 @@ const NotificationEditor = ({ props, classes }) => {
   const saveNotification = (isExit, isContinue) => {
     // Show loader
     // event.preventDefault();
+    setSourceModel(model);
     if (isValidNotification()) {
       if (!ShowRedirectButton) {
         model.RedirectButtonText = '';
@@ -275,6 +296,7 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const saveSettings = async (isExit) => {
     // event.preventDefault();
+    setSourceModel(model);
     if (isValidSettings()) {
       if (sendType === "2") {
         const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
@@ -314,7 +336,7 @@ const NotificationEditor = ({ props, classes }) => {
   const getData = async () => {
     const notificationPayload = await dispatch(getNotificationById(props.match.params.id));
     setModel(notificationPayload.payload);
-
+    setSourceModel(notificationPayload.payload);
     if (notificationPayload.payload.RedirectButtonText != '') {
       setRedirectButtonVisibillity(true);
     }
@@ -411,9 +433,14 @@ const NotificationEditor = ({ props, classes }) => {
   /* #endregion */
   /* #region  Wizard steps */
   const handleCancel = () => {
-    setShowConfirmCancel(true);
+    if (JSON.stringify(sourceModel) !== JSON.stringify(model)) {
+      setShowConfirmCancel(true);
+    }
+    else {
+      onCancelConfirm(false);
+    }
   };
-  const onCancelConfirm = (saveBeforeCancel) => (event) => {
+  const onCancelConfirm = (saveBeforeCancel) => {
     if (saveBeforeCancel) {
       if (activeStep == 0) {
         saveNotification(true, false)
@@ -448,8 +475,8 @@ const NotificationEditor = ({ props, classes }) => {
           classes={classes}
           open={showConfirmCancel}
           onCancel={() => setShowConfirmCancel(null)}
-          onClose={onCancelConfirm(false)}
-          onConfirm={onCancelConfirm(true)}
+          onClose={() => onCancelConfirm(false)}
+          onConfirm={() => onCancelConfirm(true)}
           {...dialog}>
           {dialog.content}
         </Dialog>
@@ -578,6 +605,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const isValidNotification = () => {
+    setShowConfirmCancel(false);
     const errorList = [];
     document.querySelector("#notificationName").classList.remove("error");
     if (ShowRedirectButton)
@@ -610,19 +638,37 @@ const NotificationEditor = ({ props, classes }) => {
     return true;
   }
   const isValidSettings = () => {
+    let result = true;
+    setShowConfirmCancel(false);
     const errorList = [];
+    document.querySelector("#datePicker").classList.remove("error");
+    document.querySelector("#timePicker").classList.remove("error");
 
-    if (sendType == 2 && (!sendDate)) {
-      errorList.push({ message: t('notifications.validation.notificationDate') });
+    if (sendType == 2) {
+      if ((!sendDate)) {
+        errorList.push({ message: t('notifications.validation.notificationDate') });
+      }
+      else {
+        const dateNow = new Date(Date.now());
+        const selectedDate = new Date(sendDate);
+        if (selectedDate < dateNow) {
+          errorList.push({ message: t('notifications.validation.notificationDatePassed') });
+          document.querySelector("#datePicker").classList.add("error");
+          document.querySelector("#timePicker").classList.add("error");
+          document.querySelector("#timePicker").focus();
+          result = false;
+        }
+      }
     }
     if (selectedGroups.length === 0) {
       errorList.push({ message: t('notifications.validation.notificationGroups') });
+      result = false;
     }
     if (errorList.length > 0) {
       setValidationError(errorList);
-      return false;
+      result = false;
     }
-    return true;
+    return result;
   }
   /* #endregion */
   // Test send 
@@ -809,7 +855,7 @@ const NotificationEditor = ({ props, classes }) => {
           </Box>
         </Grid>
         <div className={classes.notification} id={model.ID}>
-          <div className={clsx(
+          <div style={{ marginBottom: 5 }} className={clsx(
             classes.flexJustifyCenter,
             classes.dashed,
             classes.notificationTop,
@@ -855,7 +901,7 @@ const NotificationEditor = ({ props, classes }) => {
                 >X</button>
               </div>
             </div>
-            <div className={classes.notificationContent}>
+            <div className={classes.notificationContent} style={{ marginBottom: 15 }}>
               <DashedInput
                 aria-label=""
                 required
@@ -878,7 +924,7 @@ const NotificationEditor = ({ props, classes }) => {
                 value={model.Body}
                 className={clsx(classes.transparent, classes.dashed, classes.notificationText)}
                 onChange={handleNotificationText}
-                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', maxHeight: 45 }}
+                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', maxHeight: 50 }}
                 onFocus={handleTextFocus}
                 variant="outlined"
                 id="notificationText"
@@ -1157,7 +1203,11 @@ const NotificationEditor = ({ props, classes }) => {
       ),
       title: t("common.imageGallery"),
       content: (
-        <Gallery classes={classes} isConfirm={isGalleryConfirmed} callbackSelectFile={handleSelectedImage} style={{ minWidth: 400 }} />
+        <Gallery 
+          classes={classes} 
+          isConfirm={isGalleryConfirmed} 
+          callbackSelectFile={handleSelectedImage} 
+          style={{ minWidth: 400 }} />
       )
     };
   }
