@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { Grid, Box, Typography, AppBar, Tab, Tabs, TextareaAutosize, Paper } from '@material-ui/core'
 import clsx from 'clsx';
@@ -32,6 +33,7 @@ export const Preview = (
     showDevices = true, showTitle = true, isSMS = false, isMMS = false
   }) => {
   const { t } = useTranslation();
+  const { isRTL } = useSelector(state => state.core);
   const [previewDeviceSelected, setPreviewDevice] = useState(showDevices == false ? 0 : 0);
   const [notificationExpanded, setNotificationExpanded] = useState(!showDevices);
   TabPanel.propTypes = {
@@ -106,7 +108,16 @@ export const Preview = (
               </div>
             </div>
             }
-            {!isChrome && <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right", paddingTop: 10, paddingRight: 15, paddingLeft: 5, marginBottom: '-10px', wordBreak: 'break-word' }}><b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b></Typography>}
+            {!isChrome && <Typography style={{
+              textAlign: model.Direction == 1 ? "left" : "right",
+              paddingTop: 10,
+              paddingRight: 15,
+              paddingLeft: 5,
+              marginBottom: '-10px',
+              wordBreak: 'break-word'
+            }}>
+              <b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b>
+            </Typography>}
             <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: model.Direction == 1 ? 'row-reverse' : 'row' }}>
               <div className={classes.iconWrapper}>
                 <div className={clsx(classes.flexJustifyCenter, classes.icon)}
@@ -125,7 +136,7 @@ export const Preview = (
                   style={{
                     direction: model.Direction == 2 ? 'rtl' : 'ltr',
                     textAlign: model.Direction == 2 ? 'right' : 'left',
-                    color: isChrome ? '#fff' : '',
+                    color: isChrome ? '#a5a5a5' : '',
                     marginTop: 0,
                     outline: 'none'
                   }}
@@ -197,8 +208,16 @@ export const Preview = (
             </div>
             }
             <div className={classes.notificationContent}>
-              <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}><b>{model.Title}</b></Typography>
-              <Typography style={{ textAlign: model.Direction == 1 ? "left" : "right" }}>{model.Body}</Typography>
+              <Typography style={{
+                textAlign: model.Direction == 1 ? "left" : "right",
+                paddingRight: isRTL && (model.Icon === '' || !model.Icon) ? 15 : 0,
+                paddingLeft: !isRTL && (model.Icon === '' || !model.Icon) ? 15 : 0
+              }}><b>{model.Title}</b></Typography>
+              <Typography style={{
+                textAlign: model.Direction == 1 ? "left" : "right",
+                paddingRight: isRTL && (model.Icon === '' || !model.Icon) ? 15 : 0,
+                paddingLeft: !isRTL && (model.Icon === '' || !model.Icon) ? 15 : 0
+              }}>{model.Body}</Typography>
             </div>
           </div>
 

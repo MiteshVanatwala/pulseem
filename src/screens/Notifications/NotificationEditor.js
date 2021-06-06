@@ -667,13 +667,12 @@ const NotificationEditor = ({ props, classes }) => {
           const options = {
             id: model.ID,
             dir: model.Direction == '2' ? 'rtl' : 'ltr',
-            renotify: true,
             body: model.Body,
             icon: model.Icon,
             image: model.Image,
             title: model.Title,
-            renotify: 'false',
-            tag: "test",
+            renotify: 'true',
+            tag: 'pulseem_' + model.ID,
             badge: 'https://www.pulseemdev.co.il/favicon.png',
             redirect: model.RedirectURL
           };
