@@ -53,6 +53,7 @@ export const DateField = ({
       cancelLabel={buttons && buttons.cancel}
       okLabel={buttons && buttons.ok}
       ampm={ampm}
+      id="timePicker"
     />
   ) :
 
@@ -82,8 +83,9 @@ export const DateField = ({
         'aria-label': 'change date',
         className: classes.datePickerButton
       }}
-      cancellabel={buttons&&buttons.cancel}
-      oklabel={buttons&&buttons.ok}
+      cancelLabel={buttons && buttons.cancel}
+      okLabel={buttons && buttons.ok}
+      id="datePicker"
     />
     )
 

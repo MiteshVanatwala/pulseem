@@ -45,7 +45,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     color: '#333333',
     paddingBlock: '0.5rem',
     fontFamily: "Assistant",
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginTop: 20
   },
   tableRow: {
     marginBox: 20

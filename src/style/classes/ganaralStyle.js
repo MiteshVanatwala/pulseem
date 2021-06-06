@@ -33,14 +33,7 @@ const summaryPadding={
   xl: 25
 }
 
-const summaryNotificationMargin={
-  xs: "-15px",
-  sm: "-15px",
-  md: 0,
-  lg: 0,
-  xl: 0
-}
-const iconWrapperMargin={
+const iconWrapperMargin = {
   xs: 5,
   sm: 10,
   md: 15,
@@ -123,8 +116,6 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     padding: '1rem',
     minWidth: dialogWidth[windowSize],
     '& $notification': {
-      marginRight: summaryNotificationMargin[windowSize],
-      marginLeft: summaryNotificationMargin[windowSize],
       minWidth: summaryNotificationMinWidth[windowSize],
       '& $iconWrapper': {
         margin: iconWrapperMargin[windowSize],
