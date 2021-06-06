@@ -74,7 +74,7 @@ const NewsletterManagnentScreen=({classes}) => {
 
   const renderSearchLine=() => {
     const handleSearch=() => {
-      const searchArray = [{
+      const searchArray=[{
         type: 'name',
         campaineName: campaineNameSearch
       },{
@@ -82,7 +82,7 @@ const NewsletterManagnentScreen=({classes}) => {
         fromDate,
         toDate
       }];
-      
+
       const filtersObject={
         name: (row,values) => {
           return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
@@ -93,18 +93,16 @@ const NewsletterManagnentScreen=({classes}) => {
             moment(SendDate,dateFormat).valueOf()
             :moment(UpdatedDate,dateFormat).valueOf()
           const startFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
-          const endFromDate=values.fromDate&&values.fromDate.hour(23).minute(59).valueOf()||null
-          const startToDate=values.toDate&&values.toDate.hour(0).minute(0).valueOf()||null
           const endToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
 
           if(!values)
             return true
-          if(fromDate&&toDate&&startFromDate&&startToDate)
+          if(fromDate&&toDate&&startFromDate&&endToDate)
             return ((lastUpdate>=startFromDate)&&(lastUpdate<=endToDate))
           if(fromDate&&startFromDate)
-            return ((lastUpdate>=startFromDate)&&(lastUpdate<=endFromDate))
-          if(toDate&&startToDate)
-            return ((lastUpdate>=startToDate)&&(lastUpdate<=endToDate))
+            return (lastUpdate>=startFromDate)
+          if(toDate&&endToDate)
+            return (lastUpdate<=endToDate)
           return true
         }
       }
@@ -148,7 +146,7 @@ const NewsletterManagnentScreen=({classes}) => {
             size='small'
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
-            className={clsx(classes.textField, classes.minWidth252)}
+            className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('common.CampaignName')}
           />
         </Grid>
@@ -232,7 +230,7 @@ const NewsletterManagnentScreen=({classes}) => {
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching?searchResults.length:newslettersData.length} ${t('campaigns.newsletters')}`}
+            {`${isSearching? searchResults.length:newslettersData.length} ${t('campaigns.newsletters')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -524,7 +522,7 @@ const NewsletterManagnentScreen=({classes}) => {
   }
 
   const renderTableBody=() => {
-    let sortData = isSearching?searchResults:newslettersData;
+    let sortData=isSearching? searchResults:newslettersData;
     sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -549,7 +547,7 @@ const NewsletterManagnentScreen=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching?searchResults.length:newslettersData.length}
+        rows={isSearching? searchResults.length:newslettersData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}

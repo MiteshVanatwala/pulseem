@@ -258,16 +258,16 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const renderPhoneAppBar=() => {
     const reportsOptions=routes.find(r => r.key==='reports').options
     const smallRoutes=[
-        routes[0],
-        routes[2],
-        routes[3],
-        routes[4],
-        routes[5],
-        {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049',href: reportsOptions[1].href},
-        {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c',href: reportsOptions[2].href},
-        routes[6],
-        routes[7],
-        //routes[1]
+      routes[0],
+      routes[2],
+      routes[3],
+      routes[4],
+      routes[5],
+      {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049',href: reportsOptions[1].href},
+      {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c',href: reportsOptions[2].href},
+      routes[6],
+      routes[7],
+      //routes[1]
     ]
     return (
       <>
@@ -308,28 +308,29 @@ export const TopAppBar=({classes,currentPage=''}) => {
                     </Box>
                     <Grid
                       container
-                      spacing={1} >
+                      spacing={1}
+                      direction={isRTL? 'row-reverse':'row'} >
                       {smallRoutes.map((route,i) => (
                         <Grid
-                        key={`appBarItem${i}`}
-                        item
-                        xs={4}>
-                        <Box
-                          className={classes.phoneAppBarItemContainer}>
-                          <Button
-                            href={route.href}
-                            style={{alignSelf: 'center'}}>
+                          key={`appBarItem${i}`}
+                          item
+                          xs={4}>
+                          <Box
+                            className={classes.phoneAppBarItemContainer}>
+                            <Button
+                              href={route.href}
+                              style={{alignSelf: 'center'}}>
+                              <Typography
+                                className={classes.phoneAppBarItemIcon}>
+                                {route.iconUnicode}
+                              </Typography>
+                            </Button>
                             <Typography
-                              className={classes.phoneAppBarItemIcon}>
-                              {route.iconUnicode}
+                              style={{textAlign: 'center'}}>
+                              {route.title}
                             </Typography>
-                          </Button>
-                          <Typography
-                            style={{textAlign: 'center'}}>
-                            {route.title}
-                          </Typography>
-                        </Box>
-                      </Grid>
+                          </Box>
+                        </Grid>
                       ))}
                     </Grid>
                   </Box>

@@ -9,7 +9,7 @@ import {
   DeleteIcon,DuplicateIcon,EditIcon,ReportsIcon,SearchIcon,PreviewIcon
 } from '../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,Switch, SearchField
+  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,Switch,SearchField
 } from '../components/managment/index'
 import {
   getAutomationsData,deleteAutomations,duplicateAutomations,restoreAutomations,activateAutomation
@@ -73,7 +73,7 @@ const AutomationsManagnentScreen=({classes}) => {
 
   const renderSearchLine=() => {
     const handleSearch=() => {
-      const searchArray = [{
+      const searchArray=[{
         type: 'name',
         campaineName: campaineNameSearch
       },{
@@ -92,23 +92,21 @@ const AutomationsManagnentScreen=({classes}) => {
             moment(SendDate,dateFormat).valueOf()
             :moment(LastUpdate,dateFormat).valueOf()
           const startFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
-          const endFromDate=values.fromDate&&values.fromDate.hour(23).minute(59).valueOf()||null
-          const startToDate=values.toDate&&values.toDate.hour(0).minute(0).valueOf()||null
           const endToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
 
           if(!values)
             return true
-          if(fromDate&&toDate&&startFromDate&&startToDate)
+          if(fromDate&&toDate&&startFromDate&&endToDate)
             return ((lastUpdate>=startFromDate)&&(lastUpdate<=endToDate))
           if(fromDate&&startFromDate)
-            return ((lastUpdate>=startFromDate)&&(lastUpdate<=endFromDate))
-          if(toDate&&startToDate)
-            return ((lastUpdate>=startToDate)&&(lastUpdate<=endToDate))
+            return (lastUpdate>=startFromDate)
+          if(toDate&&endToDate)
+            return (lastUpdate<=endToDate)
           return true
         }
-  
+
       }
-  
+
       let sortData=automationsData
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
@@ -149,7 +147,7 @@ const AutomationsManagnentScreen=({classes}) => {
             size='small'
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
-            className={clsx(classes.textField, classes.minWidth252)}
+            className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('automations.labelAutomationName')}
           />
         </Grid>
@@ -233,7 +231,7 @@ const AutomationsManagnentScreen=({classes}) => {
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching?searchResults.length:automationsData.length} ${t('automations.Automations')}`}
+            {`${isSearching? searchResults.length:automationsData.length} ${t('automations.Automations')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -358,7 +356,7 @@ const AutomationsManagnentScreen=({classes}) => {
 
         <Typography
           className={clsx(
-            classes.middleText, classes.txtCenter,
+            classes.middleText,classes.txtCenter,
             {
               [classes.switchActive]: IsActive,
               [classes.switchInactive]: !IsActive
@@ -477,15 +475,15 @@ const AutomationsManagnentScreen=({classes}) => {
           </Box>
           <Grid container justify={'space-between'}>
             <Grid item container className={classes.widthUnset}>
-              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+              <Grid item className={clsx(classes.flexColumn2,classes.txtCenter,classes.pt14)}>
                 {renderRecipientsCell(row.Recipients)}
               </Grid>
-              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+              <Grid item className={clsx(classes.flexColumn2,classes.txtCenter,classes.pt14)}>
                 {renderDaysActiveCell(row.activeDaysCount)}
               </Grid>
 
             </Grid>
-            <Grid item style={{display: 'flex', alignItems: 'center'}}>
+            <Grid item style={{display: 'flex',alignItems: 'center'}}>
               {renderStatusCell(row)}
               {renderCellIcons(row)}
             </Grid>
@@ -496,8 +494,8 @@ const AutomationsManagnentScreen=({classes}) => {
   }
 
   const renderTableBody=() => {
-    
-    let rowData = searchResults || automationsData;
+
+    let rowData=searchResults||automationsData;
     rowData=rowData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -522,7 +520,7 @@ const AutomationsManagnentScreen=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching?searchResults.length:automationsData.length}
+        rows={isSearching? searchResults.length:automationsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}

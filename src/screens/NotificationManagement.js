@@ -221,18 +221,16 @@ const NotificationManagement=({classes}) => {
             moment(SendDate,dateFormat).valueOf()
             :moment(UpdatedDate,dateFormat).valueOf()
           const startFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
-          const endFromDate=values.fromDate&&values.fromDate.hour(23).minute(59).valueOf()||null
-          const startToDate=values.toDate&&values.toDate.hour(0).minute(0).valueOf()||null
           const endToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
 
           if(!values)
             return true
-          if(fromDate&&toDate&&startFromDate&&startToDate)
+          if(fromDate&&toDate&&startFromDate&&endToDate)
             return ((lastUpdate>=startFromDate)&&(lastUpdate<=endToDate))
           if(fromDate&&startFromDate)
-            return ((lastUpdate>=startFromDate)&&(lastUpdate<=endFromDate))
-          if(toDate&&startToDate)
-            return ((lastUpdate>=startToDate)&&(lastUpdate<=endToDate))
+            return (lastUpdate>=startFromDate)
+          if(toDate&&endToDate)
+            return (lastUpdate<=endToDate)
           return true
         }
       }
@@ -851,7 +849,7 @@ const NotificationManagement=({classes}) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Box className={clsx(classes.pulseemIcon, classes.bold)}>{'\u0075'}</Box>
+                  <Box className={clsx(classes.pulseemIcon,classes.bold)}>{'\u0075'}</Box>
                 </InputAdornment>
               ),
             }}

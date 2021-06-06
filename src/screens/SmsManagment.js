@@ -93,22 +93,20 @@ const SmsManagnentScreen=({classes}) => {
             moment(SendDate,dateFormat).valueOf()
             :moment(UpdatedDate,dateFormat).valueOf()
           const startFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
-          const endFromDate=values.fromDate&&values.fromDate.hour(23).minute(59).valueOf()||null
-          const startToDate=values.toDate&&values.toDate.hour(0).minute(0).valueOf()||null
           const endToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
 
           if(!values)
             return true
-          if(fromDate&&toDate&&startFromDate&&startToDate)
+          if(fromDate&&toDate&&startFromDate&&endToDate)
             return ((lastUpdate>=startFromDate)&&(lastUpdate<=endToDate))
           if(fromDate&&startFromDate)
-            return ((lastUpdate>=startFromDate)&&(lastUpdate<=endFromDate))
-          if(toDate&&startToDate)
-            return ((lastUpdate>=startToDate)&&(lastUpdate<=endToDate))
+            return (lastUpdate>=startFromDate)
+          if(toDate&&endToDate)
+            return (lastUpdate<=endToDate)
           return true
         }
       }
-  
+
       let sortData=smsData
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
@@ -149,7 +147,7 @@ const SmsManagnentScreen=({classes}) => {
             size='small'
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
-            className={clsx(classes.textField, classes.minWidth252)}
+            className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('sms.GridBoundColumnResource2.HeaderText')}
           />
         </Grid>
@@ -252,7 +250,7 @@ const SmsManagnentScreen=({classes}) => {
         </Grid>}
         <Grid item xs={windowSize==='xs'&&12} className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching?searchResults.length:smsData.length} ${t('mms.campaigns')}`}
+            {`${isSearching? searchResults.length:smsData.length} ${t('mms.campaigns')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -521,7 +519,7 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderTableBody=() => {
-    let sortData = isSearching?searchResults:smsData;
+    let sortData=isSearching? searchResults:smsData;
     sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -546,7 +544,7 @@ const SmsManagnentScreen=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching?searchResults.length:smsData.length}
+        rows={isSearching? searchResults.length:smsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -883,10 +881,10 @@ const SmsManagnentScreen=({classes}) => {
         />
         <br /><br />
         <Button
-          size={!data?"large":"medium"}
+          size={!data? "large":"medium"}
           variant='contained'
           onClick={handleSendVerificationCode}
-          className={clsx(classes.verifyButton, !data&&classes.f20)}
+          className={clsx(classes.verifyButton,!data&&classes.f20)}
         >{t('sms.verificationButtonText')}</Button>
         <Typography className={clsx(classes.contactUs,classes.newLine)}>
           {t('sms.havingIssuesMessage')}
@@ -905,8 +903,8 @@ const SmsManagnentScreen=({classes}) => {
     ),
     content: (
       <Box style={{textAlign: 'center'}}>
-        <Typography 
-          align='center' 
+        <Typography
+          align='center'
           className={classes.verificationTitle}>
           {t('common.Sent')}
         </Typography>
@@ -951,7 +949,7 @@ const SmsManagnentScreen=({classes}) => {
 
           </Grid>
         </Grid>
-        
+
       </Box>
     ),
     renderButtons: () => null
@@ -966,9 +964,9 @@ const SmsManagnentScreen=({classes}) => {
     ),
     content: (
       <Box style={{textAlign: 'center'}}>
-        <Typography 
-          align='center' 
-          className={clsx(classes.verificationTitle, classes.green)}>
+        <Typography
+          align='center'
+          className={clsx(classes.verificationTitle,classes.green)}>
           {t('sms.verificationSuccessful')}
         </Typography>
         <Typography style={{fontSize: 15}} align={'center'}>

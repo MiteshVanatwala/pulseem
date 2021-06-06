@@ -70,7 +70,7 @@ const MmsManagnentScreen=({classes}) => {
 
   const renderSearchLine=() => {
     const handleSearch=() => {
-      const searchArray = [{
+      const searchArray=[{
         type: 'name',
         campaineName: campaineNameSearch
       },{
@@ -89,22 +89,20 @@ const MmsManagnentScreen=({classes}) => {
             moment(SendDate,dateFormat).valueOf()
             :moment(LastUpdate,dateFormat).valueOf()
           const startFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
-          const endFromDate=values.fromDate&&values.fromDate.hour(23).minute(59).valueOf()||null
-          const startToDate=values.toDate&&values.toDate.hour(0).minute(0).valueOf()||null
           const endToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
 
           if(!values)
             return true
-          if(fromDate&&toDate&&startFromDate&&startToDate)
+          if(fromDate&&toDate&&startFromDate&&endToDate)
             return ((lastUpdate>=startFromDate)&&(lastUpdate<=endToDate))
           if(fromDate&&startFromDate)
-            return ((lastUpdate>=startFromDate)&&(lastUpdate<=endFromDate))
-          if(toDate&&startToDate)
-            return ((lastUpdate>=startToDate)&&(lastUpdate<=endToDate))
+            return (lastUpdate>=startFromDate)
+          if(toDate&&endToDate)
+            return (lastUpdate<=endToDate)
           return true
         }
       }
-  
+
       let sortData=mmsData
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
@@ -145,7 +143,7 @@ const MmsManagnentScreen=({classes}) => {
             size='small'
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
-            className={clsx(classes.textField, classes.minWidth252)}
+            className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
           />
         </Grid>
@@ -229,7 +227,7 @@ const MmsManagnentScreen=({classes}) => {
         </Grid>}
         <Grid item xs={windowSize==='xs'&&12} className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching?searchResults.length:mmsData.length} ${t('mms.campaigns')}`}
+            {`${isSearching? searchResults.length:mmsData.length} ${t('mms.campaigns')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -491,8 +489,8 @@ const MmsManagnentScreen=({classes}) => {
   }
 
   const renderTableBody=() => {
-    
-    let sortData = isSearching?searchResults:mmsData;
+
+    let sortData=isSearching? searchResults:mmsData;
     sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -517,7 +515,7 @@ const MmsManagnentScreen=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching?searchResults.length:mmsData.length}
+        rows={isSearching? searchResults.length:mmsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
