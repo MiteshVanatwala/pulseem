@@ -220,17 +220,19 @@ const NotificationManagement=({classes}) => {
           const lastUpdate=SendDate?
             moment(SendDate,dateFormat).valueOf()
             :moment(UpdatedDate,dateFormat).valueOf()
-          const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
-          const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
+          const startFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
+          const endFromDate=values.fromDate&&values.fromDate.hour(23).minute(59).valueOf()||null
+          const startToDate=values.toDate&&values.toDate.hour(0).minute(0).valueOf()||null
+          const endToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
 
           if(!values)
             return true
-          if(fromDate&&toDate&&currentFromDate&&currentToDate)
-            return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
-          if(fromDate&&currentFromDate)
-            return lastUpdate>=currentFromDate
-          if(toDate&&currentToDate)
-            return lastUpdate<=currentToDate
+          if(fromDate&&toDate&&startFromDate&&startToDate)
+            return ((lastUpdate>=startFromDate)&&(lastUpdate<=endToDate))
+          if(fromDate&&startFromDate)
+            return ((lastUpdate>=startFromDate)&&(lastUpdate<=endFromDate))
+          if(toDate&&startToDate)
+            return ((lastUpdate>=startToDate)&&(lastUpdate<=endToDate))
           return true
         }
       }
