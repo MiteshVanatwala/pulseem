@@ -39,7 +39,7 @@ export const DateField = ({
       popoverprops={{
         dir: direction[isRTL]
       }}
-      format={isRTL ? "DD/MM/yyyy" : "MM/DD/yyyy"}
+      format={"hh:mm a"}
       margin='none'
       placeholder={placeholder}
       initialFocusedDate={moment().hours(0).minutes(0)}
