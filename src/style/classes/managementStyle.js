@@ -753,8 +753,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   myGroupsTitleSection: {
     display: 'flex',
-    flexDirection: windowSize==='xs'? 'column':'row',
-    alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'space-between'
   },
   languageSelect: {
