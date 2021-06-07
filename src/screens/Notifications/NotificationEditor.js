@@ -704,12 +704,12 @@ const NotificationEditor = ({ props, classes }) => {
           alignItems="center"
           spacing={2}
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
-          <Grid item md={2} xs={12}>
-            {/* <label>* {t('notifications.notificationName')}</label> */}
+          <Grid item md={3} xs={12}>
+            <label>* {t('notifications.notificationName')}</label>
             <TextField
-              label={t('notifications.notificationName')}
               id="notificationName"
               required
+              placeholder={t('notifications.notificationName')}
               value={model && model.Name || ''}
               className={classes.textField}
               margin="dense"
@@ -720,6 +720,7 @@ const NotificationEditor = ({ props, classes }) => {
           <Grid item md={2} xs={12}>
             <BootstrapTooltip title={t("notifications.tooltip.showRedirectButton")} placement="top">
               <FormControlLabel
+                style={{ marginTop: 25, display: 'flex', justifyContent: 'center', alignContent: 'center' }}
                 control={
                   <Switch
                     checked={ShowRedirectButton}
@@ -735,9 +736,9 @@ const NotificationEditor = ({ props, classes }) => {
           </Grid>
           {ShowRedirectButton &&
             <Grid item md={3} xs={12}>
-              {/* <label>* {t('notifications.redirectUrl')}</label> */}
+              <label>* {t('notifications.redirectUrl')}</label>
               <TextField
-                label={t('notifications.redirectUrl')}
+                placeholder={t('notifications.redirectUrl')}
                 id="notificationRedirectUrl"
                 style={{ textAlign: 'left' }}
                 required
@@ -752,9 +753,9 @@ const NotificationEditor = ({ props, classes }) => {
           }
           {ShowRedirectButton &&
             <Grid item md={3} xs={12}>
-              {/* <label>{t('notifications.redirectUrlButton')}</label> */}
+              <label>{t('notifications.redirectUrlButton')}</label>
               <TextField
-                label={t('notifications.redirectUrlButton')}
+                placeholder={t('notifications.redirectUrlButton')}
                 id="notificationButton"
                 value={model && model.RedirectButtonText || ''}
                 className={classes.textField}
@@ -969,6 +970,7 @@ const NotificationEditor = ({ props, classes }) => {
             </RadioGroup>
             <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30 }}>
               <DateField
+                minimumDate={moment()}
                 classes={classes}
                 value={sendDate}
                 onChange={handleFromDate}
@@ -1190,10 +1192,10 @@ const NotificationEditor = ({ props, classes }) => {
       ),
       title: t("common.imageGallery"),
       content: (
-        <Gallery 
-          classes={classes} 
-          isConfirm={isGalleryConfirmed} 
-          callbackSelectFile={handleSelectedImage} 
+        <Gallery
+          classes={classes}
+          isConfirm={isGalleryConfirmed}
+          callbackSelectFile={handleSelectedImage}
           style={{ minWidth: 400 }} />
       )
     };

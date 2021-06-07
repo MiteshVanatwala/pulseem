@@ -226,7 +226,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         backgroundColor: 'transparent',
         justifyContent: 'space-between',
         boxSizing: 'border-box',
-        paddingBottom: 10
+        // paddingBottom: 10
     },
     iconWrapper: {
         margin: '15px',
@@ -398,6 +398,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     chromeNotification: {
         backgroundColor: '#282828 !important',
         color: '#fff'
+    },
+    firefoxNotification: {
+        paddingBottom: 10
     },
     chromeRedirectButtonText: {
         backgroundColor: '#282828 !important',
