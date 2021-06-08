@@ -1,6 +1,6 @@
 import axios from 'axios'
 import {getCookie,setCookie} from './cookies';
-import {apiURL,actionURL} from '../config/index'
+import {apiURL,actionURL,isProdMode} from '../config/index'
 
 const BaseURL={
   DEV: 'https://pulseemsiteapi4react.pulseemdev.co.il/api/',
@@ -39,22 +39,24 @@ instence.interceptors.request.use(async config => {
   try {
     const jtoken=getCookie('jtoken')
     let token=jtoken
-    //if(!jtoken) {
-    //  redirectToLogin()
-    //  return Promise.reject('Unautorized')
-    //}
-    //const language=getCookie('Culture')
-    //const {data,request}=await axios.get(refreshTokenURL,{
-    //  headers: {
-    //    language
-    //  }
-    //})
-    //if(refreshTokenURL!==request.responseURL) {
-    //  redirectToLogin()
-    //  return Promise.reject('Unautorized')
-    //}
-    //token=data
-    //setCookie('jtoken',token)
+    if(isProdMode) {
+      if(!jtoken) {
+        redirectToLogin()
+        return Promise.reject('Unautorized')
+      }
+      const language=getCookie('Culture')
+      const {data,request}=await axios.get(refreshTokenURL,{
+        headers: {
+          language
+        }
+      })
+      if(refreshTokenURL!==request.responseURL) {
+        redirectToLogin()
+        return Promise.reject('Unautorized')
+      }
+      token=data
+      setCookie('jtoken',token)
+    }
     config.headers.Authorization=`Bearer ${token}`
     return config
   } catch(err) {
