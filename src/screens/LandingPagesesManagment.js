@@ -288,7 +288,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: EditIcon,
         lable: t('landingPages.EditResource1.HeaderText'),
         remove: windowSize==='xs',
-        href: `/Pulseem/NewWebForm/NewFormEdit/${ID}&fromreact=true`,
+        href: `/Pulseem/NewWebForm/NewFormEdit/${ID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
