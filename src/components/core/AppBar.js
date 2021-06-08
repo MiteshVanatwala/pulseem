@@ -19,6 +19,8 @@ import {setScriptDialog} from '../../redux/reducers/notificationSlice';
 import {logout} from '../../helpers/api'
 import {openInNewTab} from '../../helpers/functions'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import {actionURL} from '../../config/index'
+
 const AppBarItem=({
   item,
   onMainClick=() => {},
@@ -177,7 +179,7 @@ const LanguageSelector=({windowSize,classes}) => {
 
 
 export const TopAppBar=({classes,currentPage=''}) => {
-  const {companyName,windowSize,isRTL}=useSelector(state => state.core)
+  const {companyName,windowSize,isRTL,imageURL}=useSelector(state => state.core)
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
@@ -357,7 +359,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
             href={routes[0].href}>
             <Box
               component='img'
-              src={Logo}
+              src={`${actionURL}${imageURL}`}
               alt='Logo'
               className={classes.appBarLogo} />
           </Box>

@@ -24,7 +24,7 @@ import 'moment/locale/he'
 import {Preview} from '../components/Notifications/Preview/Preview';
 
 const SmsManagnentScreen=({classes}) => {
-  const {language,windowSize}=useSelector(state => state.core)
+  const {language,windowSize,email,phone}=useSelector(state => state.core)
   const {smsData,smsDataError,smsDeletedData,authorizationData}=useSelector(state => state.sms)
   const {username}=useSelector(state => state.user)
   const {t}=useTranslation()
@@ -888,6 +888,7 @@ const SmsManagnentScreen=({classes}) => {
         >{t('sms.verificationButtonText')}</Button>
         <Typography className={clsx(classes.contactUs,classes.newLine)}>
           {t('sms.havingIssuesMessage')}
+          {`\n${number&&t('sms.inNumber')||''} ${number||''} ${number&&t('sms.or')||''} ${email&&t('sms.inMail')||''} ${email||''}`}
         </Typography>
       </Box>
     ),
