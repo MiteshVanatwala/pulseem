@@ -912,7 +912,7 @@ const NotificationEditor = ({ props, classes }) => {
                 value={model.Body}
                 className={clsx(classes.transparent, classes.dashed, classes.notificationText)}
                 onChange={handleNotificationText}
-                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', maxHeight: 50 }}
+                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', maxHeight: 45 }}
                 onFocus={handleTextFocus}
                 variant="outlined"
                 id="notificationText"

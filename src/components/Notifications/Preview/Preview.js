@@ -118,7 +118,7 @@ export const Preview = (
             }}>
               <b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b>
             </Typography>}
-            <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : classes.firefoxNotification)} style={{ flexDirection: model.Direction == 1 ? 'row-reverse' : 'row' }}>
+            <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: model.Direction == 1 ? 'row-reverse' : 'row' }}>
               <div className={classes.iconWrapper}>
                 <div className={clsx(classes.flexJustifyCenter, classes.icon)}
                   style={{
@@ -197,7 +197,7 @@ export const Preview = (
             <button className={classes.expandNotification} onClick={expandNotification}>{notificationExpanded ? <FaChevronUp /> : <FaChevronDown />}</button>
           </div>
           <div className={classes.notificationSiteAddress}><Typography>www.pulseem.co.il</Typography></div>
-          <div className={clsx(classes.footerWrapper, classes.firefoxNotification)}>
+          <div className={clsx(classes.footerWrapper)}>
             {model.Icon && model.Icon != "" && <div className={classes.iconWrapper}>
               <div className={clsx(classes.borderSign, classes.icon)}
                 style={{
