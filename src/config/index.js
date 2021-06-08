@@ -6,7 +6,7 @@ const {
   REACT_APP_MODE
 }=process.env;
 
-const isProdMode=REACT_APP_MODE!=='DEV'
+const isProdMode=REACT_APP_MODE==='PROD'
 
 export {
   apiURL,
