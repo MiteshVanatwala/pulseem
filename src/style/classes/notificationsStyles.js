@@ -229,8 +229,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         // paddingBottom: 10
     },
     iconWrapper: {
-        margin: '15px',
-        marginBottom: 0
+        margin: '15px'
     },
     icon: {
         direction: 'rtl',
@@ -250,8 +249,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         textAlign: 'left',
         width: '100%',
         maxWidth: '100%',
-        marginRight: isRTL ? 0 : '15px',
-        marginLeft: !isRTL ? 0 : '15px',
+        // marginRight: isRTL ? 0 : '15px',
+        // marginLeft: !isRTL ? 0 : '15px',
+        margin: '0 10px',
         overflow: 'hidden',
         borderBottom: 'none !important',
         overflowWrap: 'break-word',
@@ -398,9 +398,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     chromeNotification: {
         backgroundColor: '#282828 !important',
         color: '#fff'
-    },
-    firefoxNotification: {
-        paddingBottom: 10
     },
     chromeRedirectButtonText: {
         backgroundColor: '#282828 !important',
