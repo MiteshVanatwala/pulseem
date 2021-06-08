@@ -756,8 +756,8 @@ const NotificationManagement = ({ classes }) => {
         <Box className={classes.myGroupsTitleSection}>
           <Typography className={classes.dialogTitle}>{t('notifications.myGroups')}</Typography>
           <Link
+            className={clsx(classes.f15, classes.bold, classes.mt5)}
             component="button"
-            variant="h6"
             color="textPrimary"
             underline="always"
             onClick={() => {
@@ -831,7 +831,7 @@ const NotificationManagement = ({ classes }) => {
         </div>
       ),
       content: (
-        <Box className={windowSize == 'xs' && classes.dialogBox}>
+        <Box className={classes.dialogBox}>
           <Typography variant="h6" className={classes.bold}>{t('notifications.howToCreateGroup')}</Typography>
           <Typography>{t('notifications.assigningRecipientsToGroupMessage')}</Typography>
           <Typography>{t('notifications.doneByMessage')}</Typography>

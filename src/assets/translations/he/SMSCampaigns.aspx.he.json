@@ -471,6 +471,6 @@
   "numberError": "יש להקליד לפחות 10 ספרות",
   "verifyNumber": "אמת מספר",
   "restoreCampaignTitle": "בחר את קמפייני הSMS שברצונך לשחזר",
-  "verificationSuccessful": "המספר אומת בהצלח",
-  "verificationSuccessMessage": "מעתה תוכלו לשלוח דרך מספר זה ללא צורך באימות חוז"
+  "verificationSuccessful": "המספר אומת בהצלחה",
+  "verificationSuccessMessage": "מעתה תוכלו לשלוח דרך מספר זה ללא צורך באימות חוזר"
 }

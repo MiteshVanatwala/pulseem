@@ -28,7 +28,7 @@ const maxDialogWidth={
 const summaryPadding={
   xs: 0,
   sm: 0,
-  md: 25,
+  md: 0,
   lg: 25,
   xl: 25
 }
@@ -261,11 +261,17 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   pb10: {
     paddingBottom: 10
   },
+  mt5: {
+    marginTop: 5
+  },
   mt10: {
     marginTop: 10
   },
   f14: {
     fontSize: 14
+  },
+  f15: {
+    fontSize: 15
   },
   f16: {
     fontSize: 16
