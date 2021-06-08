@@ -1,32 +1,32 @@
 import React,{useState,useEffect} from 'react';
-import DefaultScreen from './DefaultScreen'
+import DefaultScreen from '../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
   Grid,Button,TextField,Box
 } from '@material-ui/core'
 import {
-  DeleteIcon,DuplicateIcon,EditIcon,ReportsIcon,SearchIcon,PreviewIcon
-} from '../assets/images/managment/index'
+  AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
+  GroupsIcon,PreviewIcon,ReportsIcon,CopyIcon
+} from '../../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,Switch,SearchField
-} from '../components/managment/index'
+  TablePagination,ManagmentIcon,DateField,Dialog,PopMassage,SearchField,RestorDialogContent
+} from '../../components/managment/index'
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
-  getAutomationsData,deleteAutomations,duplicateAutomations,restoreAutomations,activateAutomation
-} from '../redux/reducers/automationsSlice'
-import useCtrlHistory from '../helpers/useCtrlHistory'
-import {Link} from "react-router-dom";
+  getNewslatterData,restoreCampaigns,deleteCampaign,duplicteCampaign
+} from '../../redux/reducers/newsletterSlice'
+import useCtrlHistory from '../../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import {pulseemNewTab} from '../helpers/functions';
+import {pulseemNewTab} from '../../helpers/functions';
 
-
-const AutomationsManagnentScreen=({classes}) => {
+const NewsletterManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
-  const {automationsData,automationsDataError,automationsDeletedData}=useSelector(state => state.automations)
+  const {newslettersData,newslettersDataError,newslettersDeletedData}=useSelector(state => state.newsletter)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null)
@@ -34,20 +34,21 @@ const AutomationsManagnentScreen=({classes}) => {
   const rowsOptions=[6,12,18]
   const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
-  const [isSearching,setSearching]=useState(false)
-  const [searchResults,setSearchResults]=useState(null)
+  const [isSearching,setSearching]=useState(false);
+  const [searchResults,setSearchResults]=useState(null);
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
+  const [showCopied,setShowCopied]=useState(null)
+  const [copyRef,setCopyRef]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
+  const history=useCtrlHistory()
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch=useDispatch()
-  const history=useCtrlHistory()
   moment.locale(language)
 
-
   const getData=() => {
-    dispatch(getAutomationsData())
+    dispatch(getNewslatterData())
   }
 
   useEffect(getData,[dispatch])
@@ -56,7 +57,7 @@ const AutomationsManagnentScreen=({classes}) => {
     return (
       <>
         <Typography className={classes.managementTitle}>
-          {t('automations.logPageHeaderResource1.Text')}
+          {t('campaigns.logPageHeaderResource1.Text')}
         </Typography>
         <Divider />
       </>
@@ -64,11 +65,11 @@ const AutomationsManagnentScreen=({classes}) => {
   }
 
   const clearSearch=() => {
-    setCampaineNameSearch('')
-    handleFromDate(null)
-    handleToDate(null)
-    setSearchResults(null)
-    setSearching(false)
+    setCampaineNameSearch('');
+    handleFromDate(null);
+    handleToDate(null);
+    setSearchResults(null);
+    setSearching(false);
   }
 
   const renderSearchLine=() => {
@@ -87,10 +88,10 @@ const AutomationsManagnentScreen=({classes}) => {
           return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
         },
         date: (row,values) => {
-          const {LastUpdate,SendDate}=row
+          const {UpdatedDate,SendDate}=row
           const lastUpdate=SendDate?
             moment(SendDate,dateFormat).valueOf()
-            :moment(LastUpdate,dateFormat).valueOf()
+            :moment(UpdatedDate,dateFormat).valueOf()
           const startFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
           const endToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
 
@@ -104,10 +105,9 @@ const AutomationsManagnentScreen=({classes}) => {
             return (lastUpdate<=endToDate)
           return true
         }
-
       }
 
-      let sortData=automationsData
+      let sortData=newslettersData
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
       });
@@ -134,11 +134,10 @@ const AutomationsManagnentScreen=({classes}) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          placeholder={t('automations.labelAutomationName')}
+          placeholder={t('common.CampaignName')}
         />
       )
     }
-
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -148,7 +147,7 @@ const AutomationsManagnentScreen=({classes}) => {
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
-            placeholder={t('automations.labelAutomationName')}
+            placeholder={t('common.CampaignName')}
           />
         </Grid>
 
@@ -182,7 +181,7 @@ const AutomationsManagnentScreen=({classes}) => {
             onClick={handleSearch}
             className={classes.searchButton}
             endIcon={<SearchIcon />}>
-            {t('mms.locSearchCampaignResource1.Text')}
+            {t('campaigns.btnSearchResource1.Text')}
           </Button>
         </Grid>
         {isSearching&&<Grid item>
@@ -206,12 +205,12 @@ const AutomationsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/CreateAutomations.aspx?fromreact=true'
+            href='/Pulseem/Editor/CampaignInfo?new=1&fromreact=true'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
             )}>
-            {t('automations.createResource.Text')}
+            {t('campaigns.create')}
           </Button>
         </Grid>}
         {windowSize!=='xs'&&<Grid item>
@@ -224,14 +223,14 @@ const AutomationsManagnentScreen=({classes}) => {
             )}
             onClick={() => setDialogType({
               type: 'restore',
-              data: automationsDeletedData
+              data: newslettersDeletedData
             })}>
-            {t('automations.restoreResource.Text')}
+            {t('campaigns.restoreDeleted')}
           </Button>
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching? searchResults.length:automationsData.length} ${t('automations.Automations')}`}
+            {`${isSearching? searchResults.length:newslettersData.length} ${t('campaigns.newsletters')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -242,20 +241,39 @@ const AutomationsManagnentScreen=({classes}) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("automations.labelAutomationName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("common.CampaignName")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.recipients")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("automations.DaysActive")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
-          <TableCell classes={{root: classes.tableCellRoot}} className={classes.flex5} ></TableCell>
+          <TableCell classes={{root: classes.tableCellRoot}} className={classes.flex12} ></TableCell>
         </TableRow>
       </TableHead>
     )
   }
 
   const renderCellIcons=(row) => {
-    const {ID,IsActive}=row
+    const {Status,Groups,AutomationID,CampaignID,shareUrl}=row
 
-    const iconsMap=[
+    const renderCopyToClipoard=(
+      showCopied===CampaignID?
+        <PopMassage
+          classes={classes}
+          show={showCopied===CampaignID}
+          timeout={2000}
+          label={t('common.copyClip')}
+          innerRef={copyRef}
+        />:null
+    )
+
+    const iconsMap=[[
+      {
+        key: 'send',
+        icon: SendGreenIcon,
+        lable: t('campaigns.imgSendResource1.ToolTip'),
+        remove: Status!==1,
+        rootClass: classes.sendIcon,
+        textClass: classes.sendIconText,
+        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+      },
       {
         key: 'preview',
         icon: PreviewIcon,
@@ -263,113 +281,151 @@ const AutomationsManagnentScreen=({classes}) => {
         remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
-          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}`)
+          pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`)
         }
       },
       {
         key: 'edit',
         icon: EditIcon,
+        disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize==='xs',
-        href: !IsActive? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true`:'',
+        href: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
+        rootClass: classes.paddingIcon,
+      },
+      {
+        key: 'duplicate',
+        icon: DuplicateIcon,
+        lable: t('campaigns.lnkEditResource1.ToolTip'),
         rootClass: classes.paddingIcon,
         onClick: () => {
-          if(IsActive) {
-            setDialogType({
-              type: 'editActive',
-              data: row
-            })
-          }
+          setDialogType({
+            type: 'duplicate',
+            data: CampaignID
+          })
         }
       },
-      //{
-      //  key: 'duplicate',
-      //  icon: DuplicateIcon,
-      //  lable: t('campaigns.lnkEditResource1.ToolTip'),
-      //  rootClass: classes.paddingIcon,
-      //  onClick: () => {
-      //    setDialogType({
-      //      type: 'duplicate',
-      //      data: ID
-      //    })
-      //  }
-      //},
+      {
+        key: 'groups',
+        icon: GroupsIcon,
+        disable: Groups&&Groups.length===0,
+        lable: t('campaigns.lnkPreviewResource1.ToolTip'),
+        remove: windowSize==='xs',
+        rootClass: classes.paddingIcon,
+        onClick: () => {
+          setDialogType({
+            type: 'groups',
+            data: row.Groups
+          })
+        }
+      },
+      {
+        key: 'copy',
+        icon: CopyIcon,
+        lable: t('campaigns.CloneResource1.HeaderText'),
+        rootClass: classes.paddingIcon,
+        text: shareUrl||'',
+        type: 'copy',
+        onClick: (e) => {
+          setCopyRef(e.current)
+          setShowCopied(CampaignID)
+          setTimeout(() => {
+            setShowCopied(null)
+          },1000)
+        }
+      },
       {
         key: 'reports',
         icon: ReportsIcon,
+        disable: Status===1,
         lable: t('campaigns.Reports'),
         remove: windowSize==='xs',
-        href: `/Pulseem/automationreport.aspx?AutomationID=${ID}&fromreact=true`,
+        href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`,
+        rootClass: classes.paddingIcon,
+      },
+      {
+        key: 'automation',
+        icon: AutomationIcon,
+        disable: AutomationID===0,
+        lable: t('campaigns.automation'),
+        remove: windowSize==='xs',
+        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
         key: 'delete',
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
-        showPhone: true,
         rootClass: classes.paddingIcon,
+        showPhone: true,
         onClick: () => {
           setDialogType({
             type: 'delete',
-            data: ID
+            data: CampaignID
           })
         }
       }
     ]
+    ]
     return (
       <Grid
         container
-        direction={'row'}
+        direction={windowSize==='sm'? 'column':'row'}
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
-        {iconsMap.map(icon => (
+        {iconsMap.map((map,index) => (
           <Grid
-            key={icon.key}
-            item >
-            <ManagmentIcon
-              classes={classes}
-              {...icon}
-            />
+            key={index}
+            item>
+            <Grid
+              container>
+              {map.map(icon => (
+                <Grid
+                  className={icon.disable&&classes.disabledCursor}
+                  key={icon.key}
+                  item >
+                  <ManagmentIcon
+                    classes={classes}
+                    {...icon}
+                  />
+                  {icon.key==='copy'&&renderCopyToClipoard}
+                </Grid>
+              ))}
+            </Grid>
           </Grid>
         ))}
-
       </Grid>
     )
   }
 
-  const renderStatusCell=(row) => {
-    const {IsActive}=row
+  const renderStatusCell=(status) => {
     const statuses={
-      true: t('automations.AutomationActiveStatusText'),
-      false: t('automations.AutomatoionInActiveStatusText',)
+      1: 'common.Created',
+      2: 'common.Sending',
+      3: 'campaigns.Stopped',
+      4: 'common.Sent',
+      5: 'campaigns.Canceled',
+      6: 'campaigns.Optin',
+      7: 'campaigns.Approve'
     }
     return (
-      <Box>
-        <Switch
-          checked={IsActive}
-          onChange={() => {
-            setDialogType({
-              type: 'switch',
-              data: row
-            })
-          }}
-        />
-
-        <Typography
-          className={clsx(
-            classes.middleText,classes.txtCenter,
-            {
-              [classes.switchActive]: IsActive,
-              [classes.switchInactive]: !IsActive
-            }
-          )}
-        >
-          {statuses[IsActive]}
+      <>
+        <Typography className={clsx(
+          classes.middleText,
+          classes.recipientsStatus,
+          {
+            [classes.recipientsStatusCreated]: status===1,
+            [classes.recipientsStatusSent]: status===4,
+            [classes.recipientsStatusSending]: status===2,
+            [classes.recipientsStatusCanceled]: status===5
+          }
+        )}>
+          {t(statuses[status])}
         </Typography>
-      </Box>
+      </>
     )
   }
 
-  const renderRecipientsCell=(recipients=0) => {
+  const renderRecipientsCell=(recipients) => {
 
     return (
       <>
@@ -387,7 +443,7 @@ const AutomationsManagnentScreen=({classes}) => {
     let date=null
     let text=''
     if(!row.SendDate) {
-      date=moment(row.LastUpdate,dateFormat)
+      date=moment(row.UpdatedDate,dateFormat)
       text=t('common.UpdatedOn')
     } else {
       date=moment(row.SendDate,dateFormat)
@@ -409,23 +465,10 @@ const AutomationsManagnentScreen=({classes}) => {
     )
   }
 
-  const renderDaysActiveCell=(messages=0) => {
-    return (
-      <>
-        <Typography className={classes.middleText}>
-          {messages.toLocaleString()}
-        </Typography>
-        <Typography className={classes.middleText}>
-          {t("automations.days")}
-        </Typography>
-      </>
-    )
-  }
-
   const renderRow=(row) => {
     return (
       <TableRow
-        key={row.ID}
+        key={row.CampaignID}
         classes={rowStyle}>
         <TableCell
           classes={cellStyle}
@@ -437,25 +480,19 @@ const AutomationsManagnentScreen=({classes}) => {
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderRecipientsCell(row.Recipients)}
+          {renderRecipientsCell(row.SentCount)}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderDaysActiveCell(row.activeDaysCount)}
-        </TableCell>
-        <TableCell
-          classes={cellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderStatusCell(row)}
+          {renderStatusCell(row.Status)}
         </TableCell>
         <TableCell
           component="th"
           scope="row"
           classes={{root: classes.tableCellRoot}}
-          className={classes.flex5}>
+          className={classes.flex12}>
           {renderCellIcons(row)}
 
         </TableCell>
@@ -466,40 +503,30 @@ const AutomationsManagnentScreen=({classes}) => {
   const renderPhoneRow=(row) => {
     return (
       <TableRow
-        key={row.ID}
+        key={row.CampaignID}
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
-          <Box className={classes.inlineGrid}>
-            {renderNameCell(row)}
+          <Box className={classes.justifyBetween}>
+            <Box className={classes.inlineGrid}>
+              {renderNameCell(row)}
+            </Box>
+            <Box>
+              {renderStatusCell(row.Status)}
+            </Box>
           </Box>
-          <Grid container justify={'space-between'}>
-            <Grid item container className={classes.widthUnset}>
-              <Grid item className={clsx(classes.flexColumn2,classes.txtCenter,classes.pt14)}>
-                {renderRecipientsCell(row.Recipients)}
-              </Grid>
-              <Grid item className={clsx(classes.flexColumn2,classes.txtCenter,classes.pt14)}>
-                {renderDaysActiveCell(row.activeDaysCount)}
-              </Grid>
-
-            </Grid>
-            <Grid item style={{display: 'flex',alignItems: 'center'}}>
-              {renderStatusCell(row)}
-              {renderCellIcons(row)}
-            </Grid>
-          </Grid>
+          {renderCellIcons(row)}
         </TableCell>
       </TableRow>
     )
   }
 
   const renderTableBody=() => {
-
-    let rowData=searchResults||automationsData;
-    rowData=rowData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    let sortData=isSearching? searchResults:newslettersData;
+    sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
-        {rowData
+        {sortData
           .map(windowSize==='xs'? renderPhoneRow:renderRow)}
       </TableBody>
     )
@@ -516,11 +543,11 @@ const AutomationsManagnentScreen=({classes}) => {
     )
   }
 
-  const renderTablePadington=() => {
+  const renderTablePagination=() => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching? searchResults.length:automationsData.length}
+        rows={isSearching? searchResults.length:newslettersData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -529,41 +556,26 @@ const AutomationsManagnentScreen=({classes}) => {
       />
     )
   }
+
+  const handleChange=(CampaignID) => () => {
+    const found=restoreArray.includes(CampaignID)
+    if(found) {
+      setRestoreArray(restoreArray.filter(restore => restore!==CampaignID))
+    } else {
+      setRestoreArray([...restoreArray,CampaignID])
+    }
+
+  }
+
   const handleClose=() => {
     setRestoreArray([])
     setDialogType(null)
   }
 
-  const handleChange=(id) => () => {
-    const found=restoreArray.includes(id)
-    console.log('restore',id,'found:',found)
-    if(found) {
-      setRestoreArray(restoreArray.filter(restore => restore!==id))
-    } else {
-      setRestoreArray([...restoreArray,id])
-    }
-  }
-
-  const handleActiveChange=(data,isEdit=false) => async () => {
-    try {
-      await dispatch(activateAutomation(data))
-      getData()
-      if(isEdit)
-        window.location.href=`/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`
-    } catch(err) {
-      console.log('AutomationManagment.ChangeStatus',err)
-      setDialogType({
-        type: "statusError",
-        data: data.ID
-      })
-    }
-    handleClose()
-  }
-
   const getRestorDialog=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
     return {
-      title: t('automations.restoreCampaignTitle'),
+      title: t('campaigns.restoreCampaginTitle'),
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -576,144 +588,105 @@ const AutomationsManagnentScreen=({classes}) => {
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
+          dataIdVar='CampaignID'
         />
       ),
       onConfirm: async () => {
-        console.log("restoreArray",restoreArray)
-        await dispatch(restoreAutomations(restoreArray))
+        await dispatch(restoreCampaigns(restoreArray))
         getData()
         handleClose()
       }
     }
   }
 
-  const getEditActiveDialog=(data={}) => ({
-    title: t('automations.HeaderDeactivateAutomationProcess'),
-    showDivider: false,
-    content: (
-      <Typography className={clsx(
-        classes.boxDialog,
-        classes.dialogErrorText
-      )}>
-        {t('automations.TextDeactivateAutomationProcess')}
-      </Typography>
-    ),
-    onConfirm: handleActiveChange(data,true)
-  })
-
-  const getSwitchDialog=(data={}) => {
-    const switchOptions={
-      true: {
-        title: t('automations.HeaderDeactivateAutomationProcess'),
-        content: (
-          <Typography>
-            {t('automations.TextDeactivateAutomationProcess')}
-          </Typography>
-        )
-      },
-      false: {
-        title: t('automations.HeaderActivateAutomationProcess'),
-        content: (
-          <Typography>
-            {t('automations.TextActivateAutomationProcess')}
-          </Typography>
-        )
-      }
-    }
-
-    const switchContent=switchOptions[data.IsActive]||{}
-
+  const getGruopsDialog=(data=[]) => {
+    if(!data||!Array.isArray(data)) return null
     return {
-      title: switchContent.title,
+      title: t('campaigns.ShowGroupsTitle'),
       showDivider: false,
-      content: switchContent.content,
-      onConfirm: handleActiveChange(data)
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE185'}
+        </div>
+      ),
+      content: (
+        <Box
+          className={classes.gruopsDialogContent}>
+          {data.map(group => {
+            return (
+              <Typography
+                key={group}
+                className={classes.gruopsDialogText}>
+                <FiberManualRecordIcon
+                  className={classes.gruopsDialogBullet} />
+                {group}
+              </Typography>
+            )
+          })}
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.Ok')}
+        </Button>
+      )
     }
   }
 
-  const getStatusErrorDioalog=() => ({
-    title: t('automations.errorTitle'),
+  const getDeleteDialog=(data='') => ({
+    title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
     showDivider: false,
-    content: (
-      <Box className={classes.boxDialog}>
-        <Typography className={classes.dialogErrorText}>
-          {t('automations.errorContent')}
-        </Typography>
-        <Grid container spacing={1}>
-          <Grid item>
-            <Typography className={classes.dialogErrorText}>
-              {t('automations.click')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Link className={classes.dialogErrorText}>
-              {` ${t('automations.here')} `}
-            </Link>
-          </Grid>
-          <Grid item>
-            <Typography className={classes.dialogErrorText}>
-              {t('automations.edit')}
-            </Typography>
-          </Grid>
-        </Grid>
+    icon: (
+      <Box className={classes.dialogAlertIcon}>
+        !
       </Box>
     ),
-    renderButtons: () => (
-      <Button
-        variant='contained'
-        size='small'
-        onClick={handleClose}
-        className={clsx(
-          classes.middle,
-          classes.dialogButton,
-          classes.dialogCancelButton
-        )}>
-        {t('automations.close')}
-      </Button>
-    )
-  })
-
-  const getDeleteDialog=(data='') => ({
-    title: t('automations.GridButtonColumnResource2.ConfirmTitle'),
-    showDivider: false,
     content: (
       <Typography style={{fontSize: 18}}>
-        {t('automations.GridButtonColumnResource2.ConfirmText')}
+        {t('campaigns.GridButtonColumnResource2.ConfirmText')}
       </Typography>
     ),
     onConfirm: async () => {
       clearSearch()
       handleClose()
-      await dispatch(deleteAutomations(data))
+      await dispatch(deleteCampaign(data))
       getData()
     }
   })
 
   const getDuplicateDialog=(data='') => ({
-    title: t('automations.duplicateTitle'),
+    title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
+    icon: (
+      <Box className={classes.dialogAlertIcon}>
+        !
+      </Box>
+    ),
     content: (
       <Typography style={{fontSize: 18}}>
-        {t('automations.duplicateContent')}
+        {t('campaigns.dialogDuplicateContent')}
       </Typography>
     ),
     onConfirm: async () => {
       clearSearch()
       handleClose()
-      await dispatch(duplicateAutomations(data))
+      await dispatch(duplicteCampaign(data))
       getData()
     }
   })
-
   const renderDialog=() => {
-
     const {data,type}=dialogType||{}
 
     const dialogContent={
       restore: getRestorDialog(data),
-      editActive: getEditActiveDialog(data),
-      switch: getSwitchDialog(data),
-      statusError: getStatusErrorDioalog(data),
+      groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data)
     }
@@ -729,18 +702,19 @@ const AutomationsManagnentScreen=({classes}) => {
       </Dialog>
     )
   }
+
   return (
     <DefaultScreen
-      currentPage='automations'
+      currentPage='newsletter'
       classes={classes}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}
       {renderTable()}
-      {renderTablePadington()}
+      {renderTablePagination()}
       {renderDialog()}
     </DefaultScreen>
   )
 }
 
-export default AutomationsManagnentScreen
+export default NewsletterManagnentScreen

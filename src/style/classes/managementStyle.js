@@ -2,8 +2,8 @@ const iconWidth={
   xs: 20,
   sm: 20,
   md: 25,
-  lg: 25,
-  xl: 25
+  lg: 30,
+  xl: 35
 }
 
 const flex12={
@@ -98,8 +98,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   tableCellRoot: {
     display: 'flex',
     flexDirection: 'column',
-    minWidth: 75,
-    padding: '0 16px'
+    minWidth: 50,
+    padding: '0 10px'
   },
   tableRowRoot: {
     display: 'flex',
@@ -114,6 +114,10 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   tableRowHead: {
     backgroundColor: '#E3E9F0',
+    borderColor: 'transparent',
+  },
+  tableRowReportHead: {
+    backgroundColor: '#D7D7D7',
     borderColor: 'transparent',
   },
   middleText: {
@@ -227,6 +231,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     color: '#E74C3C',
     fontWeight: 700
   },
+  textColorRed: {
+    color: '#E74C3C'
+  },
   actionButton: {
     color: 'white',
     fontSize: 18,
@@ -237,6 +244,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     '&:hover': {
       backgroundColor: '#219150'
     }
+  },
+  textColorBlue: {
+    color: '#3498DB'
   },
   actionButtonLightBlue: {
     backgroundColor: '#3498DB',
@@ -316,6 +326,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   flex7: {
     flex: 7
+  },
+  flex2: {
+    flex: 2
   },
   flex3: {
     flex: 3
@@ -767,7 +780,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     cursor: 'not-allowed'
   },
   pointerShow: {
-    '&.MuiButtonBase-root.Mui-disabled':{
+    '&.MuiButtonBase-root.Mui-disabled': {
       pointerEvents: 'visible'
     }
   }

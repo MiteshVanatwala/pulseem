@@ -1,32 +1,30 @@
 import React,{useState,useEffect} from 'react';
-import DefaultScreen from './DefaultScreen'
+import DefaultScreen from '../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
   Grid,Button,TextField,Box
 } from '@material-ui/core'
 import {
-  AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
-  GroupsIcon,PreviewIcon,ReportsIcon,CopyIcon
-} from '../assets/images/managment/index'
+  DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,GroupsIcon,PreviewIcon
+} from '../../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,DateField,Dialog,PopMassage,SearchField,RestorDialogContent
-} from '../components/managment/index'
+  TablePagination,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent
+} from '../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import {
-  getNewslatterData,restoreCampaigns,deleteCampaign,duplicteCampaign
-} from '../redux/reducers/newsletterSlice'
-import useCtrlHistory from '../helpers/useCtrlHistory'
+import {getMmsData,restoreMms,deleteMms,duplicteMms,getMMSByID} from '../../redux/reducers/mmsSlice'
+import useCtrlHistory from '../../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
+import {pulseemNewTab} from '../../helpers/functions'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import {pulseemNewTab} from '../helpers/functions';
+import {Preview} from '../../components/Notifications/Preview/Preview';
 
-const NewsletterManagnentScreen=({classes}) => {
+const MmsManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
-  const {newslettersData,newslettersDataError,newslettersDeletedData}=useSelector(state => state.newsletter)
+  const {mmsData,mmsDataError,mmsDeletedData}=useSelector(state => state.mms)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null)
@@ -34,21 +32,19 @@ const NewsletterManagnentScreen=({classes}) => {
   const rowsOptions=[6,12,18]
   const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
-  const [isSearching,setSearching]=useState(false);
-  const [searchResults,setSearchResults]=useState(null);
+  const [searchResults,setSearchResults]=useState(null)
+  const [isSearching,setSearching]=useState(false)
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
-  const [showCopied,setShowCopied]=useState(null)
-  const [copyRef,setCopyRef]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
-  const history=useCtrlHistory()
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
+  const history=useCtrlHistory()
   const dispatch=useDispatch()
   moment.locale(language)
 
   const getData=() => {
-    dispatch(getNewslatterData())
+    dispatch(getMmsData())
   }
 
   useEffect(getData,[dispatch])
@@ -57,7 +53,7 @@ const NewsletterManagnentScreen=({classes}) => {
     return (
       <>
         <Typography className={classes.managementTitle}>
-          {t('campaigns.logPageHeaderResource1.Text')}
+          {t('mms.logPageHeaderResource1.Text')}
         </Typography>
         <Divider />
       </>
@@ -65,11 +61,11 @@ const NewsletterManagnentScreen=({classes}) => {
   }
 
   const clearSearch=() => {
-    setCampaineNameSearch('');
-    handleFromDate(null);
-    handleToDate(null);
-    setSearchResults(null);
-    setSearching(false);
+    setCampaineNameSearch('')
+    handleFromDate(null)
+    handleToDate(null)
+    setSearchResults(null)
+    setSearching(false)
   }
 
   const renderSearchLine=() => {
@@ -88,10 +84,10 @@ const NewsletterManagnentScreen=({classes}) => {
           return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
         },
         date: (row,values) => {
-          const {UpdatedDate,SendDate}=row
+          const {LastUpdate,SendDate}=row
           const lastUpdate=SendDate?
             moment(SendDate,dateFormat).valueOf()
-            :moment(UpdatedDate,dateFormat).valueOf()
+            :moment(LastUpdate,dateFormat).valueOf()
           const startFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
           const endToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
 
@@ -107,7 +103,7 @@ const NewsletterManagnentScreen=({classes}) => {
         }
       }
 
-      let sortData=newslettersData
+      let sortData=mmsData
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
       });
@@ -134,10 +130,11 @@ const NewsletterManagnentScreen=({classes}) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          placeholder={t('common.CampaignName')}
+          placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
         />
       )
     }
+
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -147,7 +144,7 @@ const NewsletterManagnentScreen=({classes}) => {
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
-            placeholder={t('common.CampaignName')}
+            placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
           />
         </Grid>
 
@@ -181,7 +178,7 @@ const NewsletterManagnentScreen=({classes}) => {
             onClick={handleSearch}
             className={classes.searchButton}
             endIcon={<SearchIcon />}>
-            {t('campaigns.btnSearchResource1.Text')}
+            {t('mms.locSearchCampaignResource1.Text')}
           </Button>
         </Grid>
         {isSearching&&<Grid item>
@@ -201,18 +198,18 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderManagmentLine=() => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize!=='xs'&&<Grid item>
+        <Grid item xs={windowSize==='xs'&&12}>
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/Editor/CampaignInfo?new=1&fromreact=true'
+            href='/Pulseem/MmsCampaignEdit.aspx?fromreact=true'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
             )}>
-            {t('campaigns.create')}
+            {t('mms.create')}
           </Button>
-        </Grid>}
+        </Grid>
         {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
@@ -223,14 +220,14 @@ const NewsletterManagnentScreen=({classes}) => {
             )}
             onClick={() => setDialogType({
               type: 'restore',
-              data: newslettersDeletedData
+              data: mmsDeletedData
             })}>
-            {t('campaigns.restoreDeleted')}
+            {t('mms.restoreResource.Text')}
           </Button>
         </Grid>}
-        <Grid item className={classes.groupsLableContainer} >
+        <Grid item xs={windowSize==='xs'&&12} className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching? searchResults.length:newslettersData.length} ${t('campaigns.newsletters')}`}
+            {`${isSearching? searchResults.length:mmsData.length} ${t('mms.campaigns')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -243,28 +240,18 @@ const NewsletterManagnentScreen=({classes}) => {
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("common.CampaignName")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.recipients")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("mms.CreditsResource1.HeaderText")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
-          <TableCell classes={{root: classes.tableCellRoot}} className={classes.flex12} ></TableCell>
+          <TableCell classes={{root: classes.tableCellRoot}} className={classes.flex5} ></TableCell>
         </TableRow>
       </TableHead>
     )
   }
 
   const renderCellIcons=(row) => {
-    const {Status,Groups,AutomationID,CampaignID,shareUrl}=row
+    const {Status,ID,GroupNames}=row
 
-    const renderCopyToClipoard=(
-      showCopied===CampaignID?
-        <PopMassage
-          classes={classes}
-          show={showCopied===CampaignID}
-          timeout={2000}
-          label={t('common.copyClip')}
-          innerRef={copyRef}
-        />:null
-    )
-
-    const iconsMap=[[
+    const iconsMap=[
       {
         key: 'send',
         icon: SendGreenIcon,
@@ -272,7 +259,7 @@ const NewsletterManagnentScreen=({classes}) => {
         remove: Status!==1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+        href: `/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=${ID}&fromreact=true`
       },
       {
         key: 'preview',
@@ -280,8 +267,12 @@ const NewsletterManagnentScreen=({classes}) => {
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
-        onClick: () => {
-          pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`)
+        onClick: async () => {
+          const mms=await dispatch(getMMSByID(ID));
+          setDialogType({
+            type: 'preview',
+            data: mms.payload
+          })
         }
       },
       {
@@ -290,7 +281,7 @@ const NewsletterManagnentScreen=({classes}) => {
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize==='xs',
-        href: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
+        href: `/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=${ID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -301,98 +292,55 @@ const NewsletterManagnentScreen=({classes}) => {
         onClick: () => {
           setDialogType({
             type: 'duplicate',
-            data: CampaignID
+            data: ID
           })
         }
       },
       {
         key: 'groups',
         icon: GroupsIcon,
-        disable: Groups&&Groups.length===0,
+        disable: GroupNames.length===0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
         remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'groups',
-            data: row.Groups
+            data: GroupNames
           })
         }
-      },
-      {
-        key: 'copy',
-        icon: CopyIcon,
-        lable: t('campaigns.CloneResource1.HeaderText'),
-        rootClass: classes.paddingIcon,
-        text: shareUrl||'',
-        type: 'copy',
-        onClick: (e) => {
-          setCopyRef(e.current)
-          setShowCopied(CampaignID)
-          setTimeout(() => {
-            setShowCopied(null)
-          },1000)
-        }
-      },
-      {
-        key: 'reports',
-        icon: ReportsIcon,
-        disable: Status===1,
-        lable: t('campaigns.Reports'),
-        remove: windowSize==='xs',
-        href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`,
-        rootClass: classes.paddingIcon,
-      },
-      {
-        key: 'automation',
-        icon: AutomationIcon,
-        disable: AutomationID===0,
-        lable: t('campaigns.automation'),
-        remove: windowSize==='xs',
-        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`,
-        rootClass: classes.paddingIcon,
       },
       {
         key: 'delete',
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
-        rootClass: classes.paddingIcon,
         showPhone: true,
+        rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'delete',
-            data: CampaignID
+            data: ID
           })
         }
       }
     ]
-    ]
     return (
       <Grid
         container
-        direction={windowSize==='sm'? 'column':'row'}
+        direction={'row'}
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
-        {iconsMap.map((map,index) => (
+        {iconsMap.map(icon => (
           <Grid
-            key={index}
-            item>
-            <Grid
-              container>
-              {map.map(icon => (
-                <Grid
-                  className={icon.disable&&classes.disabledCursor}
-                  key={icon.key}
-                  item >
-                  <ManagmentIcon
-                    classes={classes}
-                    {...icon}
-                  />
-                  {icon.key==='copy'&&renderCopyToClipoard}
-                </Grid>
-              ))}
-            </Grid>
+            className={icon.disable&&classes.disabledCursor}
+            key={icon.key}
+            item >
+            <ManagmentIcon
+              classes={classes}
+              {...icon}
+            />
           </Grid>
         ))}
+
       </Grid>
     )
   }
@@ -443,7 +391,7 @@ const NewsletterManagnentScreen=({classes}) => {
     let date=null
     let text=''
     if(!row.SendDate) {
-      date=moment(row.UpdatedDate,dateFormat)
+      date=moment(row.LastUpdate,dateFormat)
       text=t('common.UpdatedOn')
     } else {
       date=moment(row.SendDate,dateFormat)
@@ -465,10 +413,23 @@ const NewsletterManagnentScreen=({classes}) => {
     )
   }
 
+  const renderMessagesCell=(messages) => {
+    return (
+      <>
+        <Typography className={classes.middleText}>
+          {messages.toLocaleString()}
+        </Typography>
+        <Typography className={classes.middleText}>
+          {t("mms.CreditsResource1.HeaderText")}
+        </Typography>
+      </>
+    )
+  }
+
   const renderRow=(row) => {
     return (
       <TableRow
-        key={row.CampaignID}
+        key={row.ID}
         classes={rowStyle}>
         <TableCell
           classes={cellStyle}
@@ -486,13 +447,19 @@ const NewsletterManagnentScreen=({classes}) => {
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
+          {renderMessagesCell(row.CreditsPerMms)}
+        </TableCell>
+        <TableCell
+          classes={cellStyle}
+          align='center'
+          className={classes.flex1}>
           {renderStatusCell(row.Status)}
         </TableCell>
         <TableCell
           component="th"
           scope="row"
           classes={{root: classes.tableCellRoot}}
-          className={classes.flex12}>
+          className={classes.flex5}>
           {renderCellIcons(row)}
 
         </TableCell>
@@ -503,7 +470,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const renderPhoneRow=(row) => {
     return (
       <TableRow
-        key={row.CampaignID}
+        key={row.ID}
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
@@ -522,7 +489,8 @@ const NewsletterManagnentScreen=({classes}) => {
   }
 
   const renderTableBody=() => {
-    let sortData=isSearching? searchResults:newslettersData;
+
+    let sortData=isSearching? searchResults:mmsData;
     sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -547,7 +515,7 @@ const NewsletterManagnentScreen=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching? searchResults.length:newslettersData.length}
+        rows={isSearching? searchResults.length:mmsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -557,14 +525,14 @@ const NewsletterManagnentScreen=({classes}) => {
     )
   }
 
-  const handleChange=(CampaignID) => () => {
-    const found=restoreArray.includes(CampaignID)
+  const handleChange=(id) => () => {
+    const found=restoreArray.includes(id)
+    console.log('restore',id,'found:',found)
     if(found) {
-      setRestoreArray(restoreArray.filter(restore => restore!==CampaignID))
+      setRestoreArray(restoreArray.filter(restore => restore!==id))
     } else {
-      setRestoreArray([...restoreArray,CampaignID])
+      setRestoreArray([...restoreArray,id])
     }
-
   }
 
   const handleClose=() => {
@@ -572,10 +540,10 @@ const NewsletterManagnentScreen=({classes}) => {
     setDialogType(null)
   }
 
-  const getRestorDialog=(data=[]) => {
+  const getRestoreDialog=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
     return {
-      title: t('campaigns.restoreCampaginTitle'),
+      title: t('mms.restoreCampaignTitle'),
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -588,18 +556,17 @@ const NewsletterManagnentScreen=({classes}) => {
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
-          dataIdVar='CampaignID'
         />
       ),
       onConfirm: async () => {
-        await dispatch(restoreCampaigns(restoreArray))
+        await dispatch(restoreMms(restoreArray))
         getData()
         handleClose()
       }
     }
   }
 
-  const getGruopsDialog=(data=[]) => {
+  const getGroupsDialog=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
     return {
       title: t('campaigns.ShowGroupsTitle'),
@@ -612,17 +579,18 @@ const NewsletterManagnentScreen=({classes}) => {
       content: (
         <Box
           className={classes.gruopsDialogContent}>
-          {data.map(group => {
-            return (
-              <Typography
-                key={group}
-                className={classes.gruopsDialogText}>
-                <FiberManualRecordIcon
-                  className={classes.gruopsDialogBullet} />
-                {group}
-              </Typography>
-            )
-          })}
+          {data
+            .map((group,index) => {
+              return (
+                <Typography
+                  key={index}
+                  className={classes.gruopsDialogText}>
+                  <FiberManualRecordIcon
+                    className={classes.gruopsDialogBullet} />
+                  {group}
+                </Typography>
+              )
+            })}
         </Box>
       ),
       renderButtons: () => (
@@ -643,11 +611,6 @@ const NewsletterManagnentScreen=({classes}) => {
   const getDeleteDialog=(data='') => ({
     title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <Typography style={{fontSize: 18}}>
         {t('campaigns.GridButtonColumnResource2.ConfirmText')}
@@ -656,7 +619,7 @@ const NewsletterManagnentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
-      await dispatch(deleteCampaign(data))
+      await dispatch(deleteMms(data))
       getData()
     }
   })
@@ -664,11 +627,6 @@ const NewsletterManagnentScreen=({classes}) => {
   const getDuplicateDialog=(data='') => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <Typography style={{fontSize: 18}}>
         {t('campaigns.dialogDuplicateContent')}
@@ -677,18 +635,57 @@ const NewsletterManagnentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
-      await dispatch(duplicteCampaign(data))
+      await dispatch(duplicteMms(data))
       getData()
     }
   })
+
+  const getPreviewDialog=(data={}) => {
+    return {
+      childrenPadding: false,
+      isMMS: true,
+      showDivider: false,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE0F8'}
+        </div>
+      ),
+      content: (
+        <Box>
+          <Preview classes={classes}
+            mobileFullsize={true}
+            model={data}
+            ShowRedirectButton={data.RedirectButtonText&&data.RedirectButtonText!=''}
+            showTitle={false}
+            isMMS={true}
+          />
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleClose}
+          className={clsx(
+            classes.confirmButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.confirm')}
+        </Button>
+      )
+    };
+  }
+
   const renderDialog=() => {
+
     const {data,type}=dialogType||{}
 
     const dialogContent={
-      restore: getRestorDialog(data),
-      groups: getGruopsDialog(data),
+      restore: getRestoreDialog(data),
+      groups: getGroupsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data)
+      duplicate: getDuplicateDialog(data),
+      preview: getPreviewDialog(data),
     }
 
     const currentDialog=dialogContent[type]||{}
@@ -702,10 +699,9 @@ const NewsletterManagnentScreen=({classes}) => {
       </Dialog>
     )
   }
-
   return (
     <DefaultScreen
-      currentPage='newsletter'
+      currentPage='mms'
       classes={classes}>
       {renderHeader()}
       {renderSearchLine()}
@@ -717,4 +713,4 @@ const NewsletterManagnentScreen=({classes}) => {
   )
 }
 
-export default NewsletterManagnentScreen
+export default MmsManagnentScreen

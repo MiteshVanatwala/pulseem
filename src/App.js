@@ -1,9 +1,9 @@
 import React,{useEffect} from 'react';
-import NewsletterManagment from './screens/NewsletterManagment';
-import AutomationManagment from './screens/AutomationsManagment';
-import LandingPagesesManagment from './screens/LandingPagesesManagment'
-import MmsManagment from './screens/MmsManagment';
-import SmsManagment from './screens/SmsManagment';
+import NewsletterManagment from './screens/Newsletters/NewsletterManagment';
+import AutomationManagment from './screens/Automations/AutomationsManagment';
+import LandingPagesesManagment from './screens/LandingPages/LandingPagesesManagment'
+import MmsManagment from './screens/mms/MmsManagment';
+import SmsManagment from './screens/sms/SmsManagment';
 import {getCookie,setCookie,cookieListener} from './helpers/cookies'
 import {create} from 'jss';
 import rtl from 'jss-rtl';
@@ -20,7 +20,8 @@ import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import {useHistory} from "react-router-dom";
 import moment from 'moment'
-import NotificationManagement from './screens/NotificationManagement';
+import NewslettersReport from './screens/Newsletters/NewslettersReport'
+import NotificationManagement from './screens/Notifications/NotificationManagement';
 import NotificationEditor from './screens/Notifications/NotificationEditor';
 
 const renderRoutes=(classes,history) => {
@@ -195,7 +196,8 @@ const renderRoutes=(classes,history) => {
       {/* Reports */}
       <Route
         path={`/MainReport`}
-        component={transferUrl('/Pulseem/MainReport.aspx')}
+        //component={transferUrl('/Pulseem/MainReport.aspx')}
+        render={props => <NewslettersReport {...props} classes={classes} />}
       />
       <Route
         path={`/ClalReport`}
@@ -396,7 +398,7 @@ const App=() => {
   const theme=getTheme(language)
   const history=useHistory()
 
-  if (isRTL) document.body.classList.add('rtl');
+  if(isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
   return (

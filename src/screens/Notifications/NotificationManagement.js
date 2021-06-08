@@ -1,5 +1,5 @@
 import React,{useState,useEffect,useRef} from 'react';
-import DefaultScreen from './DefaultScreen';
+import DefaultScreen from '../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,Link,
@@ -8,12 +8,12 @@ import {
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
   GroupsIcon,PreviewIcon
-} from '../assets/images/managment/index'
+} from '../../assets/images/managment/index'
 import {
   TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,SearchField
-} from '../components/managment/index'
+} from '../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import useCtrlHistory from '../helpers/useCtrlHistory';
+import useCtrlHistory from '../../helpers/useCtrlHistory';
 import {useSelector,useDispatch} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -23,10 +23,10 @@ import {
   getNotificationById,getNotificationGroups,getNotificationData,getDeletedNotifications,
   duplicateNotification,deleteNotification,getNotificationGroupsById,restoreNotifications,
   getScriptPath,getApiToken,updateScriptPath
-} from '../redux/reducers/notificationSlice';
+} from '../../redux/reducers/notificationSlice';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-import {Preview} from '../components/Notifications/Preview/Preview';
-import {getCookie,setCookie} from '../helpers/cookies';
+import {Preview} from '../../components/Notifications/Preview/Preview';
+import {getCookie,setCookie} from '../../helpers/cookies';
 
 const NotificationManagement=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)

@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import DefaultScreen from './DefaultScreen'
+import DefaultScreen from '../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
@@ -8,20 +8,20 @@ import {
 import {
   AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
   GroupsIcon,PreviewIcon
-} from '../assets/images/managment/index'
+} from '../../assets/images/managment/index'
 import {
   TablePagination,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent
-} from '../components/managment/index'
+} from '../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
   getSmsData,restoreSms,deleteSms,duplicteSms,getSmsAuthorizationData,getAuthorizeNumbers,sendVerificationCode,verifyCode,getSmsByID
-} from '../redux/reducers/smsSlice'
+} from '../../redux/reducers/smsSlice'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import {Preview} from '../components/Notifications/Preview/Preview';
+import {Preview} from '../../components/Notifications/Preview/Preview';
 
 const SmsManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)

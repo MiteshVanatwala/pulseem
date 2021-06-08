@@ -1,0 +1,420 @@
+{
+  "btnClearSearchResource1": {
+    "Text": "Clear",
+    "ToolTip": ""
+  },
+  "btnSearchResource1": {
+    "Text": "Search",
+    "ToolTip": ""
+  },
+  "chrtMonthlySendsResource1": {
+    "ChartTitle": {
+      "TextBlock": {
+        "Text": "Emails Sent Per Month"
+      }
+    },
+    "Legend": {
+      "TextBlock": {
+        "Text": ""
+      }
+    },
+    "ToolTip": ""
+  },
+  "datFromDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "FastNavigationSettings": {
+        "CancelButtonCaption": "Cancel",
+        "DateIsOutOfRangeMessage": "Date is out of range.",
+        "OkButtonCaption": "OK",
+        "TodayButtonCaption": "Today"
+      },
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Open the calendar popup."
+    },
+    "ToolTip": ""
+  },
+  "datToDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "FastNavigationSettings": {
+        "CancelButtonCaption": "Cancel",
+        "DateIsOutOfRangeMessage": "Date is out of range.",
+        "OkButtonCaption": "OK",
+        "TodayButtonCaption": "Today"
+      },
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Open the calendar popup."
+    },
+    "ToolTip": ""
+  },
+  "grdReportResource1": {
+    "BackImageUrl": "",
+    "FilterMenu": {
+      "ToolTip": ""
+    },
+    "GroupingSettings": {
+      "CollapseTooltip": "Collapse group",
+      "ExpandTooltip": "Expand group",
+      "GroupByFieldsSeparator": "; ",
+      "GroupContinuedFormatString": "... group continued from the previous page. ",
+      "GroupContinuesFormatString": " Group continues on the next page.",
+      "GroupSplitDisplayFormat": "Showing {0} of {1} items.",
+      "GroupSplitFormat": " ({0})",
+      "UnGroupTooltip": "Drag out of the bar to ungroup"
+    },
+    "GroupPanel": {
+      "Text": "Drag a column header and drop it here to group by that column",
+      "ToolTip": ""
+    },
+    "HierarchySettings": {
+      "CollapseTooltip": "Collapse",
+      "ExpandTooltip": "Expand",
+      "SelfCollapseTooltip": "Self reference collapse",
+      "SelfExpandTooltip": "Self reference expand"
+    },
+    "MasterTableView": {
+      "Caption": "",
+      "CommandItemSettings": {
+        "AddNewRecordImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.AddRecord.gif",
+        "AddNewRecordText": "Add new record",
+        "RefreshImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.Refresh.gif",
+        "RefreshText": "Refresh"
+      },
+      "EditFormSettings": {
+        "CaptionFormatString": ""
+      },
+      "ExpandCollapseColumn": {
+        "CollapseImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SingleMinus.gif",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "ExpandImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SinglePlus.gif",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "FilterExpression": "",
+      "NoDetailRecordsText": "No child records to display.",
+      "NoMasterRecordsText": "No records to display.",
+      "PagerStyle": {
+        "NextPagesToolTip": "Next Pages",
+        "NextPageText": "",
+        "NextPageToolTip": "Next Page",
+        "PagerTextFormat": "Change page: {4} &nbsp;Displaying page {0} of {1}, items {2} to {3} of {5}.",
+        "PrevPagesToolTip": "Previous Pages",
+        "PrevPageText": "",
+        "PrevPageToolTip": "Previous Page"
+      },
+      "RowIndicatorColumn": {
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "Summary": "",
+      "ToolTip": ""
+    },
+    "PagerStyle": {
+      "NextPagesToolTip": "Next Pages",
+      "NextPageText": "",
+      "NextPageToolTip": "Next Page",
+      "PagerTextFormat": "Change page: {4} &nbsp;Displaying page {0} of {1}, items {2} to {3} of {5}.",
+      "PrevPagesToolTip": "Previous Pages",
+      "PrevPageText": "",
+      "PrevPageToolTip": "Previous Page"
+    },
+    "SortingSettings": {
+      "SortedAscToolTip": "Sorted asc",
+      "SortedDescToolTip": "Sorted desc",
+      "SortToolTip": "Click here to sort"
+    },
+    "StatusBarSettings": {
+      "LoadingText": "Loading...",
+      "ReadyText": "Ready"
+    },
+    "ToolTip": ""
+  },
+  "GridBoundColumnResource1": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "CampaignID",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource2": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Campaign name",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource3": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Send date",
+    "SortExpression": ""
+  },
+  "GridButtonColumnResource1": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Views / Uniques",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource2": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Link Clicks / Uniques",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource3": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "UnViewed",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource4": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Errors",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource5": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Sent",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource6": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "Graphical",
+    "ImageUrl": "~/Images/Chart Column.png",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "locFromDateResource1": {
+    "Text": "From date:"
+  },
+  "locPageExplanationResource1": {
+    "Text": "Email Campaign sending report. Campaign analysis is avaliable by clicking the relevant numbers."
+  },
+  "locSearchCampaignResource1": {
+    "Text": "Search campaign:"
+  },
+  "locToDateResource1": {
+    "Text": "To Date:"
+  },
+  "logPageHeaderResource1": {
+    "Text": "Email Campaign Report"
+  },
+  "PageResource1": {
+    "Title": "Dashboard | Email Campaign Report"
+  },
+  "txtCampaignNameResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "Apr": "April",
+  "Aug": "August",
+  "Dec": "December",
+  "Feb": "February",
+  "Jan": "January",
+  "Jul": "July",
+  "Jun": "June",
+  "Mar": "March",
+  "May": "May",
+  "Nov": "November",
+  "Oct": "October",
+  "Sep": "September",
+  "chrtMonthlySendsSmlTitle": {
+    "Name": "Amount"
+  },
+  "locCampName": {
+    "HeaderText": "Campaign Name"
+  },
+  "locClickCount": {
+    "HeaderText": "Click"
+  },
+  "locErrors": {
+    "HeaderText": "Bounce"
+  },
+  "locGraph": {
+    "HeaderText": "Graphic Report"
+  },
+  "locNotOpened": {
+    "HeaderText": "Not Viewed"
+  },
+  "locOpenCount": {
+    "HeaderText": "Opened"
+  },
+  "locRemovedClients": {
+    "HeaderText": "Removed"
+  },
+  "locSendDate": {
+    "HeaderText": "Sending Date"
+  },
+  "locTotalSendPlan": {
+    "HeaderText": "Sent"
+  },
+  "btnExportResource1": {
+    "Text": "Export"
+  },
+  "locShowTestCampaigns": {
+    "Text": "Show Test Campaigns"
+  },
+  "btnSectionResource1": {
+    "Text": "Segmentation"
+  },
+  "locUniqueOpens": {
+    "HeaderText": "Unique Opened"
+  },
+  "locUniqueClicks": {
+    "HeaderText": "Unique Clicks"
+  },
+  "Attachments": "File Attachments",
+  "MessageCredits": "Total Message Credits:",
+  "MessageSize": "Total Message Size:",
+  "SizeUnit": "KB",
+  "ChartDesc": "Monthly send amount",
+  "locUniqueClicksPercents": {
+    "HeaderText": "Unique Clicks Percentage"
+  },
+  "locUniqueOpensPercents": {
+    "HeaderText": "Unique Opened Percentage"
+  },
+  "locRemovedReason": {
+    "HeaderText": "Remove Reasons"
+  },
+  "NoAttachments": "No Attachments",
+  "GroupNames": "Groups Names",
+  "CampaignID": "Campaign Number",
+  "ToalSent": "Toal Sent",
+  "Cancelled": "Cancelled",
+  "locStatus": {
+    "HeaderText": "Status"
+  },
+  "Approve": "Approve Pending",
+  "OpensUniqueTooltip": {
+    "Text": "The number of recipients that opened the mail"
+  },
+  "ClicksTotalTooltip": {
+    "Text": "The number of times the links were clicked inside of a mail including multiple clicks"
+  },
+  "ClicksUniqueTooltip": {
+    "Text": "The number of recipients who clicked on the link in the mail"
+  },
+  "OpensTotalTooltip": {
+    "Text": "The number of times the  email was opened, including multiple opens"
+  },
+  "MainReportTitle": {
+    "Text": "Sending reports for campaigns sent in the system. You can explore the sending data in depth by clicking on the campaign data"
+  }
+}

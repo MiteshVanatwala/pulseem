@@ -11,6 +11,17 @@ export const getNewslatterData=createAsyncThunk(
     }
   })
 
+export const getNewsletterReports=createAsyncThunk(
+  'email/GetEmailReports/',async (demo=false,thunkAPI) => {
+    try {
+      const response=await instence.get(`email/GetEmailReports/${demo}`)
+      return JSON.parse(response.data)
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  }
+)
+
 export const restoreCampaigns=createAsyncThunk(
   'email/restoreEmailCampaigns',async (deletedCampaigns,thunkAPI) => {
     try {
@@ -46,7 +57,9 @@ export const newsletterSlice=createSlice({
   initialState: {
     newslettersData: [],
     newslettersDeletedData: [],
-    newslettersDataError: ''
+    newslettersDataError: '',
+    newslettersReports: [],
+    newslettersReportsError: ''
   },
   reducers: {},
   extraReducers: builder => {
@@ -56,6 +69,12 @@ export const newsletterSlice=createSlice({
     })
     builder.addCase(getNewslatterData.rejected,(state,action) => {
       state.newslettersDataError=action.error.message
+    })
+    builder.addCase(getNewsletterReports.fulfilled,(state,{payload}) => {
+      state.newslettersReports=payload
+    })
+    builder.addCase(getNewsletterReports.rejected,(state,action) => {
+      state.newslettersReportsError=action.error.message
     })
     builder.addCase(restoreCampaigns.fulfilled,() => {console.log('api restoreCampaigns success')})
     builder.addCase(deleteCampaign.fulfilled,() => {console.log('api deleteCampaign success')})
