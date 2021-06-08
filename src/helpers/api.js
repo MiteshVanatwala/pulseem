@@ -2,15 +2,6 @@ import axios from 'axios'
 import {getCookie,setCookie} from './cookies';
 import {apiURL,actionURL,isProdMode} from '../config/index'
 
-const BaseURL={
-  DEV: 'https://pulseemsiteapi4react.pulseemdev.co.il/api/',
-  LOCAL: 'http://api.develop.com/api',
-  HOME: 'http://siteapi.pulseem.com/api/'
-};
-
-const SelectedBaseURL=BaseURL.DEV;
-
-// const refreshTokenURL = 'http://localhost:60326/RefreshToken.ashx'
 const refreshTokenURL=`${actionURL}RefreshToken.ashx`
 const logoutURL=`${actionURL}LogoutSession.ashx`
 
@@ -29,7 +20,7 @@ export const logout=async () => {
 }
 
 const instence=axios.create({
-  baseURL: apiURL, //SelectedBaseURL,
+  baseURL: apiURL,
   headers: {
     'Content-Type': 'application/json; charset=UTF-8'
   }
@@ -74,4 +65,3 @@ instence.interceptors.response.use(
   })
 
 export default instence
-export {SelectedBaseURL}

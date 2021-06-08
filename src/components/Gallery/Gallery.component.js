@@ -64,9 +64,17 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         const tmpFolders = [];
         f.forEach((folder, index) => {
             if (index === 0) {
-                tmpFolders.push({ FolderName: "main", files: data.payload[folder] });
+                tmpFolders.push({
+                    FolderName: "main", files: data.payload[folder].sort((a, b) => {
+                        return new Date(b.CreatedDate) - new Date(a.CreatedDate);
+                    })
+                });
             } else {
-                tmpFolders.push({ FolderName: folder.split("\\")[1], files: data.payload[folder] });
+                tmpFolders.push({
+                    FolderName: folder.split("\\")[1], files: data.payload[folder].sort((a, b) => {
+                        return new Date(b.CreatedDate) - new Date(a.CreatedDate);
+                    })
+                });
             }
         });
         setFolders(tmpFolders);

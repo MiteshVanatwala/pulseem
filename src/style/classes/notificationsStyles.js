@@ -313,9 +313,10 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     wizardButtonContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '15px',
-        width: '90%',
-        display: 'flex'
+        paddingTop: '15px',
+        width: '100%',
+        display: 'flex',
+        marginTop: 'auto'
     },
     mobileBG: {
         backgroundImage: `url(${mobileBg})`,

@@ -155,7 +155,7 @@ export const Preview = (
           <img alt="Windows Operatin System Preview" src={desktopClock} style={{ display: 'block', marginTop: 15, width: '100%' }} />
         </div>
         {
-          !isChrome && <label className={classes.smallNotice}>* {t("notifications.tooltip.firefoxNotSupported")}</label>
+          !isChrome && <label className={clsx(classes.smallNotice, classes.red)}>* {t("notifications.tooltip.firefoxNotSupported")}</label>
         }
       </div>
     )

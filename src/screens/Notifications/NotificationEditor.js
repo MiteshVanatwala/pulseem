@@ -180,11 +180,10 @@ const NotificationEditor = ({ props, classes }) => {
     ERROR: { severity: 'error', color: 'error', message: t('notifications.error'), showAnimtionCheck: true },
   }
 
-  const body = document.querySelector('#root');
-
-  body.scrollIntoView({}, 100);
-
   useEffect(() => {
+    const body = document.querySelector('#root');
+
+    body.scrollIntoView({}, 100);
     handleApiToken();
     if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
       getData();
@@ -497,7 +496,11 @@ const NotificationEditor = ({ props, classes }) => {
     setModel({ ...model, RedirectURL: event.target.value });
   }
   const handleRedirectButtonTextChange = (event) => {
-    setModel({ ...model, RedirectButtonText: event.target.value });
+    const textLength = event.target.value.length;
+    if (textLength <= 50) {
+      setModel({ ...model, RedirectButtonText: event.target.value });
+    }
+    return;
   }
   const handleRedirectVisibillity = (event) => {
     setRedirectButtonVisibillity(event.target.checked);
@@ -968,7 +971,7 @@ const NotificationEditor = ({ props, classes }) => {
               <FormHelperText className={classes.helpText}>{t("notifications.immediateDescription")}</FormHelperText>
               <FormControlLabel value="2" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.futureSend")}</span>} />
             </RadioGroup>
-            <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30 }}>
+            <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
               <DateField
                 minimumDate={moment()}
                 classes={classes}
@@ -979,7 +982,7 @@ const NotificationEditor = ({ props, classes }) => {
               />
 
             </Box>
-            <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30 }}>
+            <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
               <DateField
                 classes={classes}
                 value={sendDate}
@@ -1277,100 +1280,101 @@ const NotificationEditor = ({ props, classes }) => {
       <div className={classes.root}>
         <div>
           {getStepContent(activeStep)}
-          <div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")}>
-            {activeStep == 0 &&
-              <Box>
-                <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"} >
-                  <Button
-                    variant='contained'
-                    size='medium'
-                    className={clsx(
-                      classes.actionButton,
-                      classes.actionButtonLightBlue,
-                      classes.backButton
-                    )}
-                    color="primary"
-                    onClick={handleTestSend}>
-                    {t('notifications.testSend')}
-                  </Button>
-                </BootstrapTooltip>
-
-              </Box>
-            }
-            {activeStep > 0 &&
-              <Button
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonLightBlue,
-                  classes.backButton
-                )}
-                onClick={handleBack}
-              >
-                {t('notifications.back')}
-              </Button>
-            }
-
-            <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
-              <Button
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonRed
-                )}
-                style={{ margin: '8px' }}
-                onClick={handleCancel}
-              >
-                {t('notifications.cancel')}
-              </Button>
-              <Button
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonLightBlue,
-                  classes.backButton
-                )}
-                color="primary"
-                style={{ margin: '8px' }}
-                onClick={event => activeStep == 0 ? saveNotification(false, false) : saveSettings(false)}>
-                {t('notifications.save')}
-              </Button>
-              <Button
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonLightBlue,
-                  classes.backButton
-                )}
-                color="primary"
-                style={{ margin: '8px' }}
-                onClick={event => activeStep == 0 ? saveNotification(true, false) : saveSettings(true)}>
-                {t('notifications.saveAndExit')}
-              </Button>
-              <Button
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonLightGreen,
-                  classes.backButton,
-                  activeStep > 0 && selectedGroups.length === 0 ? classes.disabled : ''
-                )}
-                color="primary"
-                style={{ margin: '8px' }}
-                onClick={event => activeStep == 0 ? saveNotification(false, true) : getSummary(event)}>
-                {activeStep == 0 ? t('notifications.saveAndContinue') : t('notifications.summary')}
-              </Button>
-            </Box>
-          </div>
         </div>
       </div>
     )
+  }
+  const WizardButtons = () => {
+    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")}>
+      {activeStep == 0 &&
+        <Box>
+          <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"} >
+            <Button
+              variant='contained'
+              size='medium'
+              className={clsx(
+                classes.actionButton,
+                classes.actionButtonLightBlue,
+                classes.backButton
+              )}
+              color="primary"
+              onClick={handleTestSend}>
+              {t('notifications.testSend')}
+            </Button>
+          </BootstrapTooltip>
 
+        </Box>
+      }
+      {activeStep > 0 &&
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          onClick={handleBack}
+        >
+          {t('notifications.back')}
+        </Button>
+      }
+
+      <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonRed
+          )}
+          style={{ margin: '8px' }}
+          onClick={handleCancel}
+        >
+          {t('notifications.cancel')}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
+          onClick={event => activeStep == 0 ? saveNotification(false, false) : saveSettings(false)}>
+          {t('notifications.save')}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
+          onClick={event => activeStep == 0 ? saveNotification(true, false) : saveSettings(true)}>
+          {t('notifications.saveAndExit')}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightGreen,
+            classes.backButton,
+            activeStep > 0 && selectedGroups.length === 0 ? classes.disabled : ''
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
+          onClick={event => activeStep == 0 ? saveNotification(false, true) : getSummary(event)}>
+          {activeStep == 0 ? t('notifications.saveAndContinue') : t('notifications.summary')}
+        </Button>
+      </Box>
+    </div>)
   }
   const renderToast = () => {
     if (toastMessage) {
@@ -1389,14 +1393,17 @@ const NotificationEditor = ({ props, classes }) => {
       currentPage='notifications'
       customPadding={true}
       classes={classes}>
-      {renderToast()}
-      {renderHeader()}
-      {renderNotification()}
-      {renderDialog()}
-      {renderSummary()}
-      {renderSentDialog()}
-      {showGalleryModal()}
-      {renderConfirmCancel()}
+      <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column' }}>
+        {renderToast()}
+        {renderHeader()}
+        {renderNotification()}
+        {renderDialog()}
+        {renderSummary()}
+        {renderSentDialog()}
+        {showGalleryModal()}
+        {renderConfirmCancel()}
+        <WizardButtons />
+      </div>
     </DefaultScreen>
   );
 }
