@@ -432,7 +432,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         backgroundColor: 'transparent',
         border: 'none',
         fontFamily: 'Assistant !important',
-        fontSize: 16
+        fontSize: 16,
+        paddingBottom: 5
 
     },
     groupsContainer: {

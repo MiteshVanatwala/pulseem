@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useState } from 'react';
 import clsx from 'clsx';
 import { CalendarIcon } from '../../assets/images/managment/index'
 import { useSelector } from 'react-redux'
@@ -18,13 +18,23 @@ export const DateField = ({
   buttons = null,
   ampm = true,
   minimumDate = undefined,
-  maximumDate = undefined
+  maximumDate = undefined,
+  forceOpenTimeAfterDate = false
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
   const direction = {
     true: 'rtl',
     false: 'ltr'
+  }
+  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+
+  const onDateSelected = (date) => {
+    onChange(date);
+    if (forceOpenTimeAfterDate) {
+      setIsTimePickerOpen(true);
+    }
   }
 
   return isTimePicker ? (
@@ -56,6 +66,9 @@ export const DateField = ({
       okLabel={buttons && buttons.ok}
       ampm={ampm}
       id="timePicker"
+      onClick={() => setIsTimePickerOpen(true)}
+      onClose={() => setIsTimePickerOpen(false)}
+      open={isTimePickerOpen}
     />
   ) :
 
@@ -80,7 +93,7 @@ export const DateField = ({
       placeholder={placeholder}
       initialFocusedDate={moment()}
       value={value}
-      onChange={date => onChange(date)}
+      onChange={(date) => onDateSelected(date)}
       KeyboardButtonProps={{
         'aria-label': 'change date',
         className: classes.datePickerButton
@@ -90,6 +103,9 @@ export const DateField = ({
       id="datePicker"
       minDate={minimumDate}
       maxDate={maximumDate}
+      onClick={() => setIsDatePickerOpen(true)}
+      onClose={() => setIsDatePickerOpen(false)}
+      open={isDatePickerOpen}
     />
     )
 

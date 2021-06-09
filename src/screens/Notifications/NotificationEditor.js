@@ -53,6 +53,7 @@ const DashedInput = withStyles({
     "& .MuiOutlinedInput-multiline": {
       padding: 2,
       height: 60,
+      paddingTop: 5,
       '& textarea + fieldset': {
         border: '1px dashed #64a1bd',
         borderRadius: 0,
@@ -103,7 +104,7 @@ const NotificationEditor = ({ props, classes }) => {
   const { language } = useSelector(state => state.core)
   const { t } = useTranslation();
   const history = useHistory();
-  const { isRTL } = useSelector(state => state.core);
+  const { isRTL, windowSize } = useSelector(state => state.core);
   moment.locale(language);
   /* #endregion */
   /* #region  State */
@@ -968,9 +969,9 @@ const NotificationEditor = ({ props, classes }) => {
             </Typography>
           </Box>
         </Grid>
-        <Grid item xs={1}></Grid>
+        {windowSize !== "xs" && <Grid item xs={1}></Grid>}
         <Grid item md={4} xs={12}>
-          <h2 className={classes.sectionTitle}>{t('notifications.whenToSend')}</h2>
+          <h2 className={classes.sectionTitle} style={{ marginTop: windowSize == "xs" ? "0" : null }}>{t('notifications.whenToSend')}</h2>
           <FormControl component="fieldset">
             <RadioGroup aria-label="gender" name="sendType" value={sendType} onChange={handleSendType}>
               <FormControlLabel value="1" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.immediateSend")}</span>} />
@@ -985,6 +986,7 @@ const NotificationEditor = ({ props, classes }) => {
                 onChange={handleFromDate}
                 placeholder={t('notifications.date')}
                 buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
+                forceOpenTimeAfterDate={true}
               />
             </Box>
             <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
@@ -1033,7 +1035,7 @@ const NotificationEditor = ({ props, classes }) => {
       ),
       title: <span style={{ color: '#161616' }}>{`${t("notifications.summaryModalTitle")} "${model.Name}"`}</span>,
       content: (
-        <Grid container className={clsx(classes.root, classes.dialogBox)} spacing={4}>
+        <Grid container  direction={'row'}  className={clsx(classes.root, classes.dialogBox)} spacing={4}>
           <Grid item md={6} xs={12}>
             <h3 className={clsx(classes.blue, classes.summaryTitle)}>{t("notifications.when")}</h3>
             <b>{whenToSend}</b>
@@ -1045,7 +1047,7 @@ const NotificationEditor = ({ props, classes }) => {
               </a>
             </Grid>
           </Grid>
-          <Grid item md={6} xs={12}>
+          {windowSize !== 'xs' && <Grid item md={6}>
             <h3 className={classes.blue} style={{ fontWeight: '500', fontSize: 20, marginTop: 10 }}>{t("notifications.preview")}</h3>
             <Preview classes={classes}
               model={model}
@@ -1054,7 +1056,7 @@ const NotificationEditor = ({ props, classes }) => {
               showTitle={false}
               showOSScreen={false}
             />
-          </Grid>
+          </Grid>}
           <Grid item xs={12} style={{ paddingTop: 0 }}>
             {showDetails && <div>
               <h3 style={{ cursor: 'pointer', marginBotton: 0 }} onClick={() => setShowGroupsList(!showGroupsList)}>{t("notifications.buttons.groups")} ({selectedGroups.length})</h3>
@@ -1070,7 +1072,7 @@ const NotificationEditor = ({ props, classes }) => {
                 })}
               </ul>
               }
-              {showDetails && duplicatedRecipients &&
+              {showDetails && duplicatedRecipients > 0 &&
                 <div className={clsx(classes.flexStart, classes.flexAlignCetner)}>
                   <h3 className={classes.blue} style={{ marginTop: 0, marginBottom: 0 }}>{t("notifications.duplicatedRecipients")}: </h3> <b className={classes.summaryText}>{duplicatedRecipients}</b>
                 </div>

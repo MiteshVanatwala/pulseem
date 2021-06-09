@@ -119,7 +119,7 @@ export const Preview = (
             }}>
               <b>{model.Title != '' ? model.Title : t('notifications.exampleTitle')}</b>
             </Typography>}
-            <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: model.Direction == 1 ? 'row-reverse' : 'row' }}>
+            <div className={clsx(classes.footerWrapper, isChrome ? classes.chromeNotification : null)} style={{ flexDirection: isRTL ? (model.Direction == 1 ? 'row-reverse' : 'row') : (model.Direction == 1 ? 'row' : 'row-reverse') }}>
               <div className={classes.iconWrapper}>
                 <div className={clsx(classes.flexJustifyCenter, classes.icon)}
                   style={{
