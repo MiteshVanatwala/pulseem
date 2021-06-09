@@ -23,6 +23,7 @@ export const Dialog=({
   disableBackdropClick = false,
   customContainerStyle = '',
   paperStyle = null,
+  childrenStyle = null,
   cancelText = 'common.Cancel',
   confirmText = 'common.Ok'
 }) => {
@@ -123,7 +124,7 @@ export const Dialog=({
   const renderChildren = () => {
     return (
       <Box
-        className={classes.dialogChildren}
+        className={clsx(classes.dialogChildren, childrenStyle)}
         style={{ maxHeight: 'calc(65vh)' }}>
         {children}
       </Box>)

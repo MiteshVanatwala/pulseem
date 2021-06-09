@@ -564,6 +564,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
+          dataIdVar='ID'
         />
       ),
       onConfirm: async () => {
