@@ -154,7 +154,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
             width: '100%'
         },
         '& [role="tabpanel"]': {
-            //width: mobileNotificationSize[windowSize],
+            width: mobileNotificationSize[windowSize],
             minHeight: 400
         },
     },
@@ -318,7 +318,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     mobileBG: {
         backgroundImage: `url(${mobileBg})`,
-        width: '100%',// mobileNotificationSize[windowSize],
+        width: mobileNotificationSize[windowSize],
         height: '100%',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
