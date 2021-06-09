@@ -689,6 +689,7 @@ const NotificationManagement=({classes}) => {
   }
 
   const renderPreview=(data={}) => {
+    console.log(`renderPreview(): windowSize`, windowSize)
     return {
       childrenStyle: classes.previewPaper,
       showDivider: false,

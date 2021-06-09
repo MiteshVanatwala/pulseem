@@ -620,7 +620,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         }
     },
     previewPaper: {
-        width: 450,
+        width: windowSize==='xs'?250:450,
         height: 730
     }
 
