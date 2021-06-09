@@ -92,13 +92,12 @@
 @media screen and (max-width: 375px) {
     .mobileBG {
         background-size: contain !important;
-        width          : 220px !important;
         min-height     : 400px !important;
     }
 
     .mobileBG .mobileNotification {
-        right    : 35px !important;
-        max-width: 250px !important;
+        right    : 40px !important;
+        max-width: 265px !important;
     }
 
     .previewStep {

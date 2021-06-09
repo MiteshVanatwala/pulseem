@@ -253,7 +253,7 @@ const AutomationsManagnentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {AutomationID,IsActive}=row
+    const {ID,IsActive}=row
 
     const iconsMap=[
       {
@@ -263,7 +263,7 @@ const AutomationsManagnentScreen=({classes}) => {
         remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
-          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}`)
+          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${ID}`)
         }
       },
       {
@@ -271,7 +271,7 @@ const AutomationsManagnentScreen=({classes}) => {
         icon: EditIcon,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize==='xs',
-        href: !IsActive? `/Pulseem/CreateAutomations.aspx?AutomationID=${AutomationID}&fromreact=true`:'',
+        href: !IsActive? `/Pulseem/CreateAutomations.aspx?AutomationID=${ID}&fromreact=true`:'',
         rootClass: classes.paddingIcon,
         onClick: () => {
           if(IsActive) {
@@ -299,7 +299,7 @@ const AutomationsManagnentScreen=({classes}) => {
         icon: ReportsIcon,
         lable: t('campaigns.Reports'),
         remove: windowSize==='xs',
-        href: `/Pulseem/automationreport.aspx?AutomationID=${AutomationID}&fromreact=true`,
+        href: `/Pulseem/automationreport.aspx?AutomationID=${ID}&fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -311,7 +311,7 @@ const AutomationsManagnentScreen=({classes}) => {
         onClick: () => {
           setDialogType({
             type: 'delete',
-            data: AutomationID
+            data: ID
           })
         }
       }
@@ -425,7 +425,7 @@ const AutomationsManagnentScreen=({classes}) => {
   const renderRow=(row) => {
     return (
       <TableRow
-        key={row.AutomationID}
+        key={row.ID}
         classes={rowStyle}>
         <TableCell
           classes={cellStyle}
@@ -466,7 +466,7 @@ const AutomationsManagnentScreen=({classes}) => {
   const renderPhoneRow=(row) => {
     return (
       <TableRow
-        key={row.AutomationID}
+        key={row.ID}
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
@@ -534,27 +534,27 @@ const AutomationsManagnentScreen=({classes}) => {
     setDialogType(null)
   }
 
-  const handleChange=(AutomationID) => () => {
-    const found=restoreArray.includes(AutomationID)
-    console.log('restore',AutomationID,'found:',found)
+  const handleChange=(ID) => () => {
+    const found=restoreArray.includes(ID)
+    console.log('restore',ID,'found:',found)
     if(found) {
-      setRestoreArray(restoreArray.filter(restore => restore!==AutomationID))
+      setRestoreArray(restoreArray.filter(restore => restore!==ID))
     } else {
-      setRestoreArray([...restoreArray,AutomationID])
+      setRestoreArray([...restoreArray,ID])
     }
   }
 
   const handleActiveChange=(data,isEdit=false) => async () => {
     try {
-      await dispatch(activateAutomation({ ID: data.AutomationID, IsActive: data.IsActive }))
+      await dispatch(activateAutomation({ ID: data.ID, IsActive: data.IsActive }))
       getData()
       if(isEdit)
-        window.location.href=`/Pulseem/CreateAutomations.aspx?AutomationID=${data.AutomationID}&fromreact=true`
+        window.location.href=`/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`
     } catch(err) {
       console.log('AutomationManagment.ChangeStatus',err)
       setDialogType({
         type: "statusError",
-        data: data.AutomationID
+        data: data.ID
       })
     }
     handleClose()

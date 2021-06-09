@@ -154,7 +154,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
             width: '100%'
         },
         '& [role="tabpanel"]': {
-            width: mobileNotificationSize[windowSize],
+            //width: mobileNotificationSize[windowSize],
             minHeight: 400
         },
     },
@@ -249,8 +249,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         textAlign: 'left',
         width: '100%',
         maxWidth: '100%',
-        // marginRight: isRTL ? 0 : '15px',
-        // marginLeft: !isRTL ? 0 : '15px',
         margin: '0 10px',
         overflow: 'hidden',
         borderBottom: 'none !important',
@@ -320,7 +318,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     mobileBG: {
         backgroundImage: `url(${mobileBg})`,
-        width: mobileNotificationSize[windowSize],
+        width: '100%',// mobileNotificationSize[windowSize],
         height: '100%',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
@@ -555,7 +553,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         fontSize: 12,
         marginTop: 15,
         display: 'block',
-        maxWidth: '60%'
+        maxWidth: windowSize !== 'xs' ? '60%' : '100%'
     },
     pageSubTitle: {
         marginTop: 5,

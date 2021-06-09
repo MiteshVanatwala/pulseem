@@ -6,7 +6,7 @@ export const RestorDialogContent=({
   classes,
   data=[],
   currentChecked=[],
-  dataIdVar='AutomationID',
+  dataIdVar='ID',
   dataLabeleVar='Name',
   onChange=() => null
 }) => {

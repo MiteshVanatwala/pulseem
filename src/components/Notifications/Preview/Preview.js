@@ -30,7 +30,8 @@ function TabPanel(props) {
 
 export const Preview = (
   { classes, model, ShowRedirectButton, mobileFullsize = false,
-    showDevices = true, showTitle = true, isSMS = false, isMMS = false
+    showDevices = true, showTitle = true, isSMS = false, isMMS = false,
+    showOSScreen = true
   }) => {
   const { t } = useTranslation();
   const { isRTL } = useSelector(state => state.core);
@@ -112,7 +113,7 @@ export const Preview = (
               textAlign: model.Direction == 1 ? "left" : "right",
               paddingTop: 10,
               paddingRight: 15,
-              paddingLeft: 5,
+              paddingLeft: 15,
               marginBottom: '-10px',
               wordBreak: 'break-word'
             }}>
@@ -152,7 +153,7 @@ export const Preview = (
               </div>
             }
           </div>
-          <img alt="Windows Operatin System Preview" src={desktopClock} style={{ display: 'block', marginTop: 15, width: '100%' }} />
+          {showOSScreen && <img alt="Windows Operatin System Preview" src={desktopClock} style={{ display: 'block', marginTop: 15, width: '100%' }} />}
         </div>
         {
           !isChrome && <label className={clsx(classes.smallNotice, classes.red)}>* {t("notifications.tooltip.firefoxNotSupported")}</label>

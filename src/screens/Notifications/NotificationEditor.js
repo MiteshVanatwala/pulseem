@@ -553,13 +553,19 @@ const NotificationEditor = ({ props, classes }) => {
       }
 
       if (inputFocus == 'notificationTitle') {
-        setModel({ ...model, Title: finalStr });
+        if (finalStr.length <= 50) {
+          setModel({ ...model, Title: finalStr });
+        }
       }
       else if (inputFocus == 'notificationText') {
-        setModel({ ...model, Body: finalStr });
+        if (finalStr.length <= 100) {
+          setModel({ ...model, Body: finalStr });
+        }
       }
       else {
-        setModel({ ...model, RedirectButtonText: finalStr });
+        if (finalStr.length <= 50) {
+          setModel({ ...model, RedirectButtonText: finalStr });
+        }
       }
     }
   };
@@ -791,8 +797,8 @@ const NotificationEditor = ({ props, classes }) => {
 
   }
   const notificationContent = () => {
-    const toggleHover = () => setHovered(!notificationHover);
-    const toggleIconHover = () => setIconHover(!iconHover);
+    // const toggleHover = () => setHovered(!notificationHover);
+    // const toggleIconHover = () => setIconHover(!iconHover);
     const removeImage = () => {
       setModel({ ...model, Image: null });
     }
@@ -852,8 +858,8 @@ const NotificationEditor = ({ props, classes }) => {
             classes.notificationTop,
             classes.notificationContainer
           )}
-            onMouseEnter={toggleHover}
-            onMouseLeave={toggleHover}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
             onClick={openGallery(false)}
             style={{
               backgroundImage: `url(${model.Image})`
@@ -862,7 +868,7 @@ const NotificationEditor = ({ props, classes }) => {
             {model == null || !model.Image ? chooseImage() : ""
             }
             <button href="#"
-              className={clsx(classes.absTopRight, notificationHover && model.Image != null && model.Image !== '' ? '' : classes.hidden)}
+              className={clsx(classes.absTopRight, notificationHover && model.Image != null && model.Image !== '' ? null : classes.hidden)}
               style={{ border: 'none', cursor: 'pointer', textDecoration: 'none', opacity: notificationHover ? 1 : 0 }}
               onClick={removeImage}
               id="removeImage"
@@ -871,8 +877,8 @@ const NotificationEditor = ({ props, classes }) => {
           <div className={clsx(classes.footerWrapper, classes.dashed)} style={{ flexDirection: isRTL ? (model.Direction == 1 ? 'row-reverse' : 'row') : (model.Direction == 1 ? 'row' : 'row-reverse') }}>
             <div className={classes.iconWrapper}>
               <div className={clsx(classes.flexJustifyCenter, classes.dashed, classes.icon)}
-                onMouseEnter={toggleIconHover}
-                onMouseLeave={toggleIconHover}
+                onMouseEnter={() => setIconHover(true)}
+                onMouseLeave={() => setIconHover(false)}
                 onClick={openGallery(true)}
                 style={{
                   backgroundImage: `url(${model.Icon})`
@@ -885,7 +891,7 @@ const NotificationEditor = ({ props, classes }) => {
                   }
                 </div>
                 <button href="#"
-                  className={clsx(classes.absTopRight, iconHover && model.Icon !== null && model.Icon !== '' ? '' : classes.hidden)}
+                  className={clsx(classes.absTopRight, iconHover && model.Icon !== null && model.Icon !== '' ? null : classes.hidden)}
                   style={{ border: 'none', cursor: 'pointer', textDecoration: 'none', opacity: iconHover ? 1 : 0 }}
                   onClick={removeIcon}
                   id="removeIcon"
@@ -980,7 +986,6 @@ const NotificationEditor = ({ props, classes }) => {
                 placeholder={t('notifications.date')}
                 buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
               />
-
             </Box>
             <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
               <DateField
@@ -1047,6 +1052,7 @@ const NotificationEditor = ({ props, classes }) => {
               ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText != ''}
               showDevices={true}
               showTitle={false}
+              showOSScreen={false}
             />
           </Grid>
           <Grid item xs={12} style={{ paddingTop: 0 }}>
