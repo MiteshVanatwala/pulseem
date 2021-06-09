@@ -147,7 +147,7 @@ export const Dialog=({
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
       onClose={onClose}>
-      <Paper className={paperStyle}>
+      <Paper className={clsx(classes.posRelative, paperStyle)}>
         {renderExitButton()}
         {renderContent()}
         {renderIcon()}
