@@ -700,6 +700,7 @@ const AutomationsManagnentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
+      setPage(1)
       await dispatch(duplicateAutomations(data))
       getData()
     }

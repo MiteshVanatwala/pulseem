@@ -677,6 +677,7 @@ const NewsletterManagnentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
+      setPage(1)
       await dispatch(duplicteCampaign(data))
       getData()
     }

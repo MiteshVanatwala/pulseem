@@ -718,6 +718,7 @@ const SmsManagnentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
+      setPage(1)
       await dispatch(duplicteSms(data))
       getData()
     }

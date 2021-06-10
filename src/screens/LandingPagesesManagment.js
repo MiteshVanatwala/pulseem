@@ -602,6 +602,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
+      setPage(1)
       await dispatch(duplicteLandingPage(data))
       getData()
     }

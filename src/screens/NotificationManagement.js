@@ -956,6 +956,7 @@ const NotificationManagement=({classes}) => {
       ),
       onConfirm: async () => {
         handleDuplicate(ID);
+        setPage(1)
         clearSearch()
       }
     }
