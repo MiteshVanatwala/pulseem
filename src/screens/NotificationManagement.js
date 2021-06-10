@@ -837,7 +837,6 @@ const NotificationManagement=({classes}) => {
         <Box className={classes.dialogBox}>
           <Typography variant="h6" className={classes.bold}>{t('notifications.howToCreateGroup')}</Typography>
           <Typography>{t('notifications.assigningRecipientsToGroupMessage')}</Typography>
-          <Typography>{t('notifications.doneByMessage')}</Typography>
           <Typography variant='body'>{t('common.pulseemLink')}</Typography>
           <Typography className={classes.mt10}>{t('notifications.thenYouWillAdd')}</Typography>
           <TextField
