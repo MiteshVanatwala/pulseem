@@ -179,7 +179,43 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             callbackSelectFile(encodeURI(selectedFileURL));
         }
     }, [isConfirm])
+
+    useEffect(() => {
+        if (fileToUpload != null && isFilePicked) {
+            setIsFilePicked(false);
+            const formData = new FormData();
+            formData.append('File', fileToUpload);
+            if (fileToUpload.size > 1048576) {
+                setToastMessage({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false });
+                setFileToUpload(null);
+                return;
+            }
+            new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    var binaryData = e.target.result;
+                    var base64String = window.btoa(binaryData);
+                    const imgBase64 =
+                        "data:" + fileToUpload.type + ";base64," + base64String;
+                    resolve(imgBase64);
+                };
+                reader.readAsBinaryString(fileToUpload);
+            }).then(async (result) => {
+                const fileModel = {
+                    FileName: fileToUpload.name,
+                    Base64: result,
+                    FolderName: selectedFolder
+                }
+
+                setFileToUpload(null);
+                await dispatch(postImage(fileModel));
+                initGallery();
+            });
+        }
+    }, [fileToUpload]);
+
     const renderFiles = () => {
+        // Gallery Functions
         const deleteImage = (fileModel) => async (event) => {
             event.preventDefault();
             event.stopPropagation();
@@ -201,42 +237,13 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             hiddenFileInput.current.click();
         };
         const changeHandler = (event) => {
+            event.preventDefault();
+            event.stopPropagation();
             setFileToUpload(event.target.files[0]);
             setIsFilePicked(true);
             return false;
         };
-        const uploadNewFile = (e) => {
-            if (fileToUpload != null) {
-                const formData = new FormData();
-                formData.append('File', fileToUpload);
-                if (fileToUpload.size > 1048576) {
-                    setToastMessage({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false });
-                    setFileToUpload(null);
-                    return;
-                }
-                new Promise(resolve => {
-                    const reader = new FileReader();
-                    reader.onload = e => {
-                        var binaryData = e.target.result;
-                        var base64String = window.btoa(binaryData);
-                        const imgBase64 =
-                            "data:" + fileToUpload.type + ";base64," + base64String;
-                        resolve(imgBase64);
-                    };
-                    reader.readAsBinaryString(fileToUpload);
-                }).then(async (result) => {
-                    const fileModel = {
-                        FileName: fileToUpload.name,
-                        Base64: result,
-                        FolderName: selectedFolder
-                    }
-
-                    await dispatch(postImage(fileModel));
-                    setFileToUpload(null);
-                    initGallery();
-                });
-            }
-        }
+        // END Gallery Functions
 
         if (!folders) {
             return;
@@ -300,7 +307,6 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                             )
                         })
                     }
-                    { uploadNewFile()}
                 </Grid >
             );
         }

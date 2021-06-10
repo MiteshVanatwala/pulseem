@@ -51,9 +51,9 @@ const DashedInput = withStyles({
     border: 'none',
     borderRadius: 0,
     "& .MuiOutlinedInput-multiline": {
-      padding: 2,
-      height: 60,
-      paddingTop: 5,
+      padding: 0,
+      height: 40,
+      paddingTop: 0,
       '& textarea + fieldset': {
         border: '1px dashed #64a1bd',
         borderRadius: 0,
@@ -71,6 +71,9 @@ const DashedInput = withStyles({
       '& textarea + fieldset:hover': {
         color: 'rgba(0, 0, 0, 0.87)',
         border: '1px dashed #000',
+      },
+      '& textarea.error': {
+        border:'1px dashed red'
       }
     },
     '& input': {
@@ -93,6 +96,9 @@ const DashedInput = withStyles({
     '& input:hover + fieldset': {
       color: 'rgba(0, 0, 0, 0.87)',
       border: '1px dashed rgba(0, 0, 0, 0.87)',
+    },
+    '& input.error': {
+      border:'1px dashed red'
     }
   },
 
@@ -161,6 +167,7 @@ const NotificationEditor = ({ props, classes }) => {
   // Send Type settings
   const [sendType, setSendType] = useState('1'); // Immediate
   const [sendDate, handleFromDate] = useState(null);
+  const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
   const [showDetails, setDetailsVisibility] = useState(false);
   const [notificationHover, setHovered] = useState(false);
@@ -222,6 +229,10 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const callbackUpdateGroups = (groups) => {
     setSelected(groups);
+  }
+  const handleDatePicker = (value) => {
+    handleFromDate(value);
+    setTimePickerOpen(!timePickerOpen);
   }
   /* #endregion */
   /* #region  Data Handlers */
@@ -983,21 +994,21 @@ const NotificationEditor = ({ props, classes }) => {
                 minimumDate={moment()}
                 classes={classes}
                 value={sendDate}
-                onChange={handleFromDate}
+                onChange={handleDatePicker}
                 placeholder={t('notifications.date')}
                 buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
-                forceOpenTimeAfterDate={true}
               />
             </Box>
             <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
               <DateField
                 classes={classes}
                 value={sendDate}
-                onTimeChange={handleFromDate}
+                onTimeChange={handleDatePicker}
                 placeholder={t('notifications.hour')}
                 isTimePicker={true}
                 buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
                 ampm={false}
+                timePickerOpen={timePickerOpen}
               />
             </Box>
           </FormControl>
@@ -1035,7 +1046,7 @@ const NotificationEditor = ({ props, classes }) => {
       ),
       title: <span style={{ color: '#161616' }}>{`${t("notifications.summaryModalTitle")} "${model.Name}"`}</span>,
       content: (
-        <Grid container  direction={'row'}  className={clsx(classes.root, classes.dialogBox)} spacing={4}>
+        <Grid container direction={'row'} className={clsx(classes.root, classes.dialogBox)} spacing={4}>
           <Grid item md={6} xs={12}>
             <h3 className={clsx(classes.blue, classes.summaryTitle)}>{t("notifications.when")}</h3>
             <b>{whenToSend}</b>

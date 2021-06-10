@@ -237,11 +237,12 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         backgroundSize: 'cover',
         width: notificationIconWidth[windowSize],
         height: notificationIconWidth[windowSize],
-        backgroundPosition: 'center center',
+        // backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
         cursor: 'pointer',
     },
     notificationContent: {
+        lineHeight: '1 !important',
         padding: '15px 0 0 0',
         height: 'auto',
         display: 'flex',
@@ -255,7 +256,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         overflowWrap: 'break-word',
         paddingBottom: windowSize === 'xs' && windowSize === 'sm' ? 10 : 'unset',
         '& p': {
-            lineHeight: windowSize !== 'xs' && windowSize !== 'sm' ? 1.5 : 1
+            lineHeight: 1
         }
     },
     notificationTitle: {
@@ -264,7 +265,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     notificationText: {
         marginTop: '5px',
         resize: 'none',
-        minHeight: '45px !important',
+        minHeight: '40px !important',
         overflow: 'hidden',
         textAlign: 'right'
     },

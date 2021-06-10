@@ -19,7 +19,7 @@ export const DateField = ({
   ampm = true,
   minimumDate = undefined,
   maximumDate = undefined,
-  forceOpenTimeAfterDate = false
+  timePickerOpen = false
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -29,13 +29,6 @@ export const DateField = ({
   }
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
-
-  const onDateSelected = (date) => {
-    onChange(date);
-    if (forceOpenTimeAfterDate) {
-      setIsTimePickerOpen(true);
-    }
-  }
 
   return isTimePicker ? (
     <KeyboardTimePicker
@@ -68,7 +61,7 @@ export const DateField = ({
       id="timePicker"
       onClick={() => setIsTimePickerOpen(true)}
       onClose={() => setIsTimePickerOpen(false)}
-      open={isTimePickerOpen}
+      open={isTimePickerOpen || timePickerOpen}
     />
   ) :
 
@@ -93,7 +86,7 @@ export const DateField = ({
       placeholder={placeholder}
       initialFocusedDate={moment()}
       value={value}
-      onChange={(date) => onDateSelected(date)}
+      onChange={onChange}
       KeyboardButtonProps={{
         'aria-label': 'change date',
         className: classes.datePickerButton

@@ -198,7 +198,7 @@ export const Preview = (
             <button className={classes.expandNotification} onClick={expandNotification}>{notificationExpanded ? <FaChevronUp /> : <FaChevronDown />}</button>
           </div>
           <div className={classes.notificationSiteAddress}><Typography>www.pulseem.co.il</Typography></div>
-          <div className={clsx(classes.footerWrapper)}>
+          <div className={clsx(classes.footerWrapper)} style={{ flexDirection: isRTL ? (model.Direction == 1 ? 'row-reverse' : 'row') : (model.Direction == 1 ? 'row' : 'row-reverse') }}>
             {model.Icon && model.Icon != "" && <div className={classes.iconWrapper}>
               <div className={clsx(classes.borderSign, classes.icon)}
                 style={{
@@ -230,7 +230,8 @@ export const Preview = (
           )}
             style={{
               backgroundImage: `url(${model.Image})`,
-              cursor: 'unset'
+              cursor: 'unset',
+              minHeight: 185
             }}>
             <div className={clsx(
               classes.flex,
