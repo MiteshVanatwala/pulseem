@@ -283,13 +283,13 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     paddingBottom: 10
   },
   ml5: {
-    marginLeft: 5
+    marginInlineStart: 5
   },
   ml10: {
-    marginLeft: 10
+    marginInlineStart: 10
   },
   mr15: {
-    marginRight: 15
+    marginInlineEnd: 15
   },
   mt0: {
     marginTop: 0

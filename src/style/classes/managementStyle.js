@@ -867,7 +867,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   shortcutBox: {
     [theme.breakpoints.up('sm')]: {
-      height: 'calc(100vh - 47px)',
+      height: '100vh',
+      position: 'sticky',
+      top: 0,
     },
     [theme.breakpoints.down('xs')]: {
       margin: '10px 10px -10px 10px'
@@ -878,7 +880,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
       borderRadius: 10,
     },
     [theme.breakpoints.up('sm')]: {
-      height: 'calc(100vh - 47px)',
+      height: 'calc(100vh)'
     },
     display: 'flex', 
     flexDirection: 'column', 
@@ -1106,12 +1108,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
       marginTop: 0,
     },
     [theme.breakpoints.up('lg')]: {
-      marginRight: 0
+      marginInlineEnd: 0
     },
   },
   tipMargin: {
     [theme.breakpoints.up('lg')]: {
-      marginRight: 0,
+      marginInlineEnd: 0,
     },
   },
   tipItem: {
