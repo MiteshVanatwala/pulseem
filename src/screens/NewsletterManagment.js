@@ -287,7 +287,7 @@ const NewsletterManagnentScreen=({classes}) => {
       {
         key: 'edit',
         icon: EditIcon,
-        disable: Status!==1,
+        disable: Status!==1 || AutomationID!==0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize==='xs',
         href: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
