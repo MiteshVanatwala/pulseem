@@ -1326,7 +1326,7 @@ const NotificationEditor = ({ props, classes }) => {
   return (
     <DefaultScreen
       currentPage='notifications'
-      customPadding={true}
+      customStyle={classes.sidePadding}
       classes={classes}>
       {renderToast()}
       {renderHeader()}

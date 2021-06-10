@@ -22,6 +22,7 @@ import {useHistory} from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/NotificationManagement';
 import NotificationEditor from './screens/Notifications/NotificationEditor';
+import DashboardScreen from './screens/Dashboard';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -37,10 +38,10 @@ const renderRoutes=(classes,history) => {
   }
   return (
     <>
-
       <Route
         exact
         path="/"
+        render={props => <DashboardScreen {...props} classes={classes} />}
       />
       <Route
         path={`/notifications/edit/:notificationID`}
@@ -360,13 +361,13 @@ const App=() => {
     const setWindowWidth=() => {
       const {innerWidth}=window
       let windowSize='xs'
-      if(innerWidth>769&&innerWidth<1024)
+      if(innerWidth>599&&innerWidth<959)
         windowSize='sm'
-      else if(innerWidth>=1025&&innerWidth<1200)
+      else if(innerWidth>=960&&innerWidth<1279)
         windowSize='md'
-      else if(innerWidth>=1201&&innerWidth<1400)
+      else if(innerWidth>=1280&&innerWidth<1919)
         windowSize='lg'
-      else if(innerWidth>=1401)
+      else if(innerWidth>=1920)
         windowSize='xl'
       dispatch(setWindowSize(windowSize))
     }
