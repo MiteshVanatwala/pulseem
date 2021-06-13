@@ -8,7 +8,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Preview } from '../../components/Notifications/Preview/Preview';
-import { getNotificationById, save, updateNotification, getApiToken, getNotificationGroups, getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } from '../../redux/reducers/notificationSlice';
+import { getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups, getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } from '../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { useHistory } from "react-router-dom";
 import { PushService } from './init-push';
@@ -73,7 +73,7 @@ const DashedInput = withStyles({
         border: '1px dashed #000',
       },
       '& textarea.error': {
-        border:'1px dashed red'
+        border: '1px dashed red'
       }
     },
     '& input': {
@@ -98,7 +98,7 @@ const DashedInput = withStyles({
       border: '1px dashed rgba(0, 0, 0, 0.87)',
     },
     '& input.error': {
-      border:'1px dashed red'
+      border: '1px dashed red'
     }
   },
 
@@ -154,7 +154,7 @@ const NotificationEditor = ({ props, classes }) => {
 
   const [activeStep, setActiveStep] = useState(0);
   const [ShowRedirectButton, setRedirectButtonVisibillity] = useState(false);
-  const [apiToken, setApiToken] = useState(0);
+  const [notificationPublicKey, setPublicKey] = useState(0);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [inputFocus, setFocusOnInput] = useState(null);
   const [cursorPosition, setCursorPosition] = useState(0);
@@ -192,13 +192,15 @@ const NotificationEditor = ({ props, classes }) => {
     const body = document.querySelector('#root');
 
     body.scrollIntoView({}, 100);
-    handleApiToken();
     if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
       getData();
-      getSubAccountGroups();
       if (props.match.params.send || props.match.url.toLowerCase().indexOf('send') > -1) {
+        getSubAccountGroups();
         setActiveStep(activeStep + 1);
       }
+    }
+    else {
+      handlePublicKey();
     }
   }, [dispatch]);
 
@@ -236,13 +238,13 @@ const NotificationEditor = ({ props, classes }) => {
   }
   /* #endregion */
   /* #region  Data Handlers */
-  const handleApiToken = async () => {
-    const t = await dispatch(getApiToken());
+  const handlePublicKey = async () => {
+    const t = await dispatch(getNotificationPublicKey());
     if (t && t.payload) {
-      setApiToken(t.payload.PublicKey);
+      setPublicKey(t.payload.PublicKey);
     }
     else {
-      setApiToken('');
+      setPublicKey('');
     }
   }
   const saveNotification = (isExit, isContinue) => {
@@ -336,6 +338,7 @@ const NotificationEditor = ({ props, classes }) => {
     const notificationPayload = await dispatch(getNotificationById(props.match.params.id));
     setModel(notificationPayload.payload);
     setSourceModel(notificationPayload.payload);
+    setPublicKey(notificationPayload.payload.PublicKey);
     if (notificationPayload.payload.RedirectButtonText != '') {
       setRedirectButtonVisibillity(true);
     }
@@ -682,7 +685,7 @@ const NotificationEditor = ({ props, classes }) => {
   /* #endregion */
   // Test send 
   const handleTestSend = () => {
-    PushService(apiToken).then((permissions) => {
+    PushService(notificationPublicKey).then((permissions) => {
       try {
         if (permissions.subscription && permissions.state == 'granted') {
           const options = {

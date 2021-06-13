@@ -22,7 +22,7 @@ import 'moment/locale/he';
 import {
   getNotificationById, getNotificationGroups, getNotificationData, getDeletedNotifications,
   duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
-  getScriptPath, getApiToken, updateScriptPath
+  getScriptPath, getSubAccountApiKey, updateScriptPath
 } from '../redux/reducers/notificationSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Preview } from '../components/Notifications/Preview/Preview';
@@ -40,7 +40,7 @@ const NotificationManagement = ({ classes }) => {
   const [scriptDirectory, setScriptDirectory] = useState(0);
   const [copyStatus, setCopyStatus] = useState(false);
   const [scriptPath, setScriptPath] = useState(0);
-  const [apiToken, setApiToken] = useState(0);
+  const [apiKey, setApiKey] = useState(0);
   const rowsOptions = [6, 12, 18]
   const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
   const [page, setPage] = useState(1)
@@ -69,7 +69,7 @@ const NotificationManagement = ({ classes }) => {
 
   useEffect(() => {
     handleScriptPath();
-    handleApiToken();
+    handleApiKey();
     getData();
   }, [dispatch]);
 
@@ -79,10 +79,10 @@ const NotificationManagement = ({ classes }) => {
     setScriptPath(path);
   }
 
-  const handleApiToken = async () => {
-    const apiToken = await dispatch(getApiToken());
-    const token = (apiToken && apiToken.payload && apiToken.payload.PublicKey) || '';
-    setApiToken(token);
+  const handleApiKey = async () => {
+    const response = await dispatch(getSubAccountApiKey());
+    const apiKey = (response && response.payload) || '';
+    setApiKey(apiKey);
   }
 
   const handleScriptDirectory = async (event) => {
@@ -972,7 +972,7 @@ const NotificationManagement = ({ classes }) => {
 &lt;/script&gt;`;
 
     return scriptCode
-      .replace("#key#", '"' + encodeURI(apiToken) + '"')
+      .replace("#key#", '"' + encodeURI(apiKey) + '"')
       .replace("&lt;", "<")
       .replace("&gt;", ">")
       .replace("&lt;", "<")
@@ -1047,7 +1047,7 @@ const NotificationManagement = ({ classes }) => {
                 <Typography
                   variant="body2" className={classes.f16}>
                   {t("notifications.example")}: /examplefolder1/examplefodler2/
-                  </Typography>
+                </Typography>
               </Box>
               <TextField
                 variant="outlined"

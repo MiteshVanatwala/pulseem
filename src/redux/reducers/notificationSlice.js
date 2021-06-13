@@ -145,10 +145,20 @@ export const updateScriptPath = createAsyncThunk(
     }
   });
 
-export const getApiToken = createAsyncThunk(
+export const getNotificationPublicKey = createAsyncThunk(
   'notification/GetSubAccountPublicKey/', async (_, thunkAPI) => {
     try {
       const response = await instence.get(`notification/GetSubAccountPublicKey/`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+export const getSubAccountApiKey = createAsyncThunk(
+  'notification/GetSubAccountApiKey/', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`notification/GetSubAccountApiKey/`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -195,8 +205,8 @@ export const notificationSlice = createSlice({
     notificationById: {}
   },
   reducers: {
-    setScriptDialog: (state,action) => {
-      state.hideScriptDialog=action.payload
+    setScriptDialog: (state, action) => {
+      state.hideScriptDialog = action.payload
     }
   },
   extraReducers: builder => {
@@ -211,6 +221,6 @@ export const notificationSlice = createSlice({
 })
 
 
-export const {setScriptDialog}=notificationSlice.actions;
+export const { setScriptDialog } = notificationSlice.actions;
 
 export default notificationSlice.reducer
