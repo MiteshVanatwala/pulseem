@@ -32,7 +32,7 @@ const renderRoutes=(classes,history) => {
       notification: notificationID,
       id: id
     }
-    window.location.href=`https://www.pulseemdev.co.il/${url}${addParam[param]||''}`
+    window.location.href=`https://www.reactstage.club/${url}${addParam[param]||''}`
     return <></>
   }
   return (

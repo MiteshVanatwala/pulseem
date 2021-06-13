@@ -694,7 +694,6 @@ const NotificationEditor = ({ props, classes }) => {
             title: model.Title,
             renotify: 'true',
             tag: 'pulseem_' + model.ID,
-            badge: 'https://www.pulseemdev.co.il/favicon.png',
             redirect: model.RedirectURL
           };
 
@@ -997,6 +996,7 @@ const NotificationEditor = ({ props, classes }) => {
                 onChange={handleDatePicker}
                 placeholder={t('notifications.date')}
                 buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
+                autoOk
               />
             </Box>
             <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
@@ -1009,6 +1009,7 @@ const NotificationEditor = ({ props, classes }) => {
                 buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
                 ampm={false}
                 timePickerOpen={timePickerOpen}
+                autoOk
               />
             </Box>
           </FormControl>
