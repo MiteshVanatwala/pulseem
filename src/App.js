@@ -372,8 +372,7 @@ const App=() => {
     }
 
     const cookieFunctionObj={
-      jtoken: updateToken,
-
+      jtoken: updateToken
     }
 
     window.addEventListener('resize',setWindowWidth)

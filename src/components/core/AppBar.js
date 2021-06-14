@@ -20,6 +20,7 @@ import {logout} from '../../helpers/api'
 import {openInNewTab} from '../../helpers/functions'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {actionURL} from '../../config/index'
+import i18n from '../../i18n'
 
 const AppBarItem=({
   item,
@@ -140,8 +141,11 @@ const LanguageSelector=({windowSize,classes}) => {
 
   const changeLanguage=option => {
     const {value}=option
+    const langSelected = value.split('-')[0];
+    
     setCookie('Culture',value);
-    dispatch(setLanguage(value.split('-')[0]));
+    i18n.changeLanguage(langSelected);
+    dispatch(setLanguage(langSelected));
   }
 
   // if(windowSize==='xs') {
