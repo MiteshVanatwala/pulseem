@@ -349,7 +349,9 @@ const NewsletterManagnentScreen=({classes}) => {
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
         remove: windowSize==='xs',
-        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`,
+        onClick: () => {
+          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`)
+        },
         rootClass: classes.paddingIcon,
       },
       {
