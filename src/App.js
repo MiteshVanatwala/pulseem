@@ -384,7 +384,7 @@ const App=() => {
     })
     updateToken()
     setWindowWidth()
-  },[dispatch,language])
+  },[dispatch])
 
   //useEffect(() => {
   //  const lang=culture? culture.split('-')[0]:''
