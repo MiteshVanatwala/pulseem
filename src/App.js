@@ -328,10 +328,10 @@ const renderRoutes=(classes,history) => {
 const App=() => {
   const dispatch=useDispatch()
   const {language,isRTL,windowSize}=useSelector(state => state.core)
-  const culture=getCookie('Culture')
+  
 
   useEffect(() => {
-
+    const culture=getCookie('Culture')
     const updateToken=() => {
       const token=getCookie('jtoken')
       if(!token) return
