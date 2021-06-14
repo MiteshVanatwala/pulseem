@@ -377,7 +377,7 @@ const App=() => {
 
     window.addEventListener('resize',setWindowWidth)
     cookieListener(({name}) => {
-      const cookieFunction=cookieFunctionObj[name]
+      const cookieFunction=cookieFunctionObj[name] || null
       if(!!cookieFunction)
         cookieFunction()
     })
