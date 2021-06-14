@@ -331,8 +331,8 @@ const App=() => {
   
 
   useEffect(() => {
-    const culture=getCookie('Culture')
     const updateToken=() => {
+      const culture=getCookie('Culture')
       const token=getCookie('jtoken')
       if(!token) return
       const jwt=jwt_decode(token)
@@ -348,7 +348,7 @@ const App=() => {
       }=jwt
 
       dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName}))
-      let lang=locality//culture||locality; //||'he'
+      let lang=culture||locality; //||'he'
       setCookie('Culture',lang)
       lang=lang.split('-')[0]
       console.log('lang',lang)
