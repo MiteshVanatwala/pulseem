@@ -385,10 +385,10 @@
   "SizeUnit": "ק\"ב",
   "ChartDesc": "כמות שליחות לחודש",
   "locUniqueClicksPercents": {
-    "HeaderText": "אחוז הקלקות ייחודיות"
+    "HeaderText": "אחוז הקלקות"
   },
   "locUniqueOpensPercents": {
-    "HeaderText": "אחוז פתיחות ייחודיות"
+    "HeaderText": "אחוז פתיחות"
   },
   "locRemovedReason": {
     "HeaderText": "סיבות הסרה"
@@ -422,5 +422,11 @@
   },
   "MainReportTitle": {
     "Text": "דוחות שליחה לקמפיינים שנשלחו במערכת. ניתן לחקור לעומק את נתוני השליחה בלחיצה על נתוני הקמפיין"
-  }
+  },
+  "date": "תאריך",
+  "removed": "הסרות",
+  "removals": "הסרות",
+  "removedPercents": "אחוז הסרות",
+  "reasons": "סיבות",
+  "compareCampaigns": "השוואת קמפיינים"
 }

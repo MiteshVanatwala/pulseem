@@ -20,9 +20,11 @@ import { AiOutlineCheckCircle, AiOutlineCloudUpload } from 'react-icons/ai';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import LazyBackground from './Lazy/LazyBackground';
 import Toast from '../Toast/Toast.component';
+import { setWindowSize } from '../../redux/reducers/coreSlice';
 
 const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     const dispatch = useDispatch();
+    const { windowSize } = useSelector(state => state.core)
     const { language } = useSelector(state => state.core)
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
@@ -42,7 +44,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         if (toastMessage) {
             setTimeout(() => {
                 setToastMessage(null);
-            }, 2000);
+            }, 3000);
             return (
                 <Toast data={toastMessage} />
             );
@@ -139,6 +141,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                     {folders.map((f, index) => {
                         return (
                             <StyledTreeItem
+                                title={f.FolderName === "main" ? (isRTL ? "ראשי" : "Main") : f.FolderName}
                                 key={`k_${index}`}
                                 style={{ direction: isRTL ? 'rtl' : 'ltr' }}
                                 nodeId={`k_${index}`}
@@ -186,19 +189,22 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             if (elem)
                 document.getElementById(fileId).style.opacity = 0;
         }
-        const handleUploadClick = event => {
+        const handleUploadClick = () => {
             hiddenFileInput.current.click();
         };
         const changeHandler = (event) => {
             setFileToUpload(event.target.files[0]);
             setIsFilePicked(true);
+            return false;
         };
         const uploadNewFile = (e) => {
             if (fileToUpload != null) {
                 const formData = new FormData();
                 formData.append('File', fileToUpload);
                 if (fileToUpload.size > 1048576) {
-                    return alert(t("max_image_size"));
+                    setToastMessage({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false });
+                    setFileToUpload(null);
+                    return;
                 }
                 new Promise(resolve => {
                     const reader = new FileReader();
@@ -423,19 +429,19 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         }}>
             <Divider style={{ margin: '15px 0' }} />
             <Grid container className={classes.galleryGrid}>
-                <Grid item xs={2} className="scroll">
+                <Grid item md={2} xs={12} className="scroll">
                     {renderFolders()}
                 </Grid>
-                <Grid item xs={10} className="scroll">
+                <Grid item md={10} xs={12} className="scroll">
                     {renderFiles()}
                 </Grid>
             </Grid>
             <Divider style={{ margin: '15px 0' }} />
             <Grid container>
-                <Grid item xs={8}>
+                <Grid item md={8} xs={12}>
                     {renderCreateFolder()}
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item md={4} xs={12} style={{ paddingTop: windowSize === "xs" ? 10 : null, paddingBottom: windowSize === "xs" ? 10 : null }}>
                     {renderUploadNotice()}
                 </Grid>
             </Grid>

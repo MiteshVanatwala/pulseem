@@ -25,8 +25,9 @@ import {
   getScriptPath,getApiToken,updateScriptPath
 } from '../../redux/reducers/notificationSlice';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-import {Preview} from '../../components/Notifications/Preview/Preview';
+import {Preview} from '../../components/Notifications/Preview/Preview'
 import {getCookie,setCookie} from '../../helpers/cookies';
+import {actionURL} from '../../config/index'
 
 const NotificationManagement=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
@@ -56,7 +57,6 @@ const NotificationManagement=({classes}) => {
   const cellBodyStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot)}
   const noBorderCellStyle={body: classes.tableCellBodyNoBorder,root: clsx(classes.tableCellRoot,classes.minWidth75)}
   const borderCellStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.minWidth75)}
-  const baseUrl='https://www.pulseemdev.co.il/pulseem';
   const scriptDialogCookie=getCookie('scriptDialog')
   const hideScriptDialog=(scriptDialogCookie==='true')
   const [showScriptDialog,setShowScriptDialog]=useState(!hideScriptDialog)
@@ -156,7 +156,6 @@ const NotificationManagement=({classes}) => {
   }
 
   const handleImplementScript=(value) => {
-    console.log("handleImplementScript")
     if(value) {
       setCookie('scriptDialog',scriptDialog,{maxAge: 2147483647});
       dispatch(updateScriptPath(scriptPath));
@@ -757,8 +756,8 @@ const NotificationManagement=({classes}) => {
         <Box className={classes.myGroupsTitleSection}>
           <Typography className={classes.dialogTitle}>{t('notifications.myGroups')}</Typography>
           <Link
+            className={clsx(classes.f15,classes.bold,classes.mt5)}
             component="button"
-            variant="h6"
             color="textPrimary"
             underline="always"
             onClick={() => {
@@ -832,7 +831,7 @@ const NotificationManagement=({classes}) => {
         </div>
       ),
       content: (
-        <Box className={windowSize=='xs'&&classes.dialogBox}>
+        <Box className={classes.dialogBox}>
           <Typography variant="h6" className={classes.bold}>{t('notifications.howToCreateGroup')}</Typography>
           <Typography>{t('notifications.assigningRecipientsToGroupMessage')}</Typography>
           <Typography>{t('notifications.doneByMessage')}</Typography>
@@ -977,7 +976,7 @@ const NotificationManagement=({classes}) => {
       .replace("&gt;",">")
       .replace("&lt;","<")
       .replace("&gt;",">")
-      .replace("#scriptSource#",baseUrl)
+      .replace("#scriptSource#",actionURL)
       .replace(
         "#scriptpath#",
         scriptDirectory!==0&&scriptPath!==''
@@ -1075,17 +1074,19 @@ const NotificationManagement=({classes}) => {
               {copyStatus? t('notifications.copied'):t('notifications.copy')}
             </Button>
           </CopyToClipboard>
-          <Typography className={clsx(classes.bold,classes.f16)}>
-            {t('notifications.headTagOpenText')} {'<head>'}
-          </Typography>
-          <pre>
-            <div ref={refScriptCode} className={classes.scriptCode}>
-              {renderScriptCode()}
-            </div>
-          </pre>
-          <Typography className={clsx(classes.bold,classes.f16)}>
-            {t('notifications.headTagClosesText')} {'</head>'}
-          </Typography>
+          <Box style={{direction: 'ltr'}}>
+            <Typography className={clsx(classes.bold,classes.f16)}>
+              {t('notifications.headTagOpenText')} {'<head>'}
+            </Typography>
+            <pre>
+              <div ref={refScriptCode} className={classes.scriptCode}>
+                {renderScriptCode()}
+              </div>
+            </pre>
+            <Typography className={clsx(classes.bold,classes.f16)}>
+              {t('notifications.headTagClosesText')} {'</head>'}
+            </Typography>
+          </Box>
         </Box>
       ),
       renderButtons: () => (

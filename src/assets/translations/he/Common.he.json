@@ -438,5 +438,6 @@
   "save": "שמור",
   "sentAlert": "נשלח!",
   "yourCampaignOnItsWay": "הקמפיין שלך בדרך",
-  "folderAlreadyExists": "תיקייה עם שם זה כבר קיימת. יש לבחור שם אחר."
+  "folderAlreadyExists": "תיקייה עם שם זה כבר קיימת. יש לבחור שם אחר.",
+  "maxImageSize": "הקובץ גדול מדי, נסו שנית"
 }

@@ -1,19 +1,16 @@
 import axios from 'axios'
-import jwt_decode from "jwt-decode";
 import {getCookie,setCookie} from './cookies';
+import {apiURL,actionURL,isProdMode} from '../config/index'
 
-import moment from 'moment'
-
-const BaseURL = {
+const BaseURL={
   DEV: 'https://pulseemsiteapi4react.pulseemdev.co.il/api/',
   LOCAL: 'http://api.develop.com/api',
   HOME: 'http://siteapi.pulseem.com/api/'
 };
 
-const SelectedBaseURL = BaseURL.DEV;
+const SelectedBaseURL=BaseURL.DEV;
 
 // const refreshTokenURL = 'http://localhost:60326/RefreshToken.ashx'
-const actionURL='https://www.pulseemdev.co.il/Pulseem/'
 const refreshTokenURL=`${actionURL}RefreshToken.ashx`
 const logoutURL=`${actionURL}LogoutSession.ashx`
 
@@ -32,7 +29,7 @@ export const logout=async () => {
 }
 
 const instence=axios.create({
-  baseURL: SelectedBaseURL,
+  baseURL: apiURL, //SelectedBaseURL,
   headers: {
     'Content-Type': 'application/json; charset=UTF-8'
   }
@@ -40,17 +37,13 @@ const instence=axios.create({
 
 instence.interceptors.request.use(async config => {
   try {
-    const minimumTimeToUpdate=60
     const jtoken=getCookie('jtoken')
     let token=jtoken
-    if(!jtoken) {
-      redirectToLogin()
-      return Promise.reject('Unautorized')
-    }
-    const jwt=jwt_decode(jtoken)
-    const currentUnix=moment().unix()
-    const timeToExpires=jwt.exp-currentUnix
-    if(timeToExpires<minimumTimeToUpdate) {
+    if(isProdMode) {
+      if(!jtoken) {
+        redirectToLogin()
+        return Promise.reject('Unautorized')
+      }
       const language=getCookie('Culture')
       const {data,request}=await axios.get(refreshTokenURL,{
         headers: {
@@ -64,7 +57,6 @@ instence.interceptors.request.use(async config => {
       token=data
       setCookie('jtoken',token)
     }
-
     config.headers.Authorization=`Bearer ${token}`
     return config
   } catch(err) {
@@ -82,4 +74,4 @@ instence.interceptors.response.use(
   })
 
 export default instence
-export { SelectedBaseURL }
+export {SelectedBaseURL}

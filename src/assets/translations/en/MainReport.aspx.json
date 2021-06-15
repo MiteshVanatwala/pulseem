@@ -225,7 +225,7 @@
     "FooterText": "",
     "GroupByExpression": "",
     "HeaderImageUrl": "",
-    "HeaderText": "Views / Uniques",
+    "HeaderText": "Opens",
     "ImageUrl": "",
     "SortExpression": "",
     "Text": ""
@@ -239,7 +239,7 @@
     "FooterText": "",
     "GroupByExpression": "",
     "HeaderImageUrl": "",
-    "HeaderText": "Link Clicks / Uniques",
+    "HeaderText": "Clicks",
     "ImageUrl": "",
     "SortExpression": "",
     "Text": ""
@@ -253,7 +253,7 @@
     "FooterText": "",
     "GroupByExpression": "",
     "HeaderImageUrl": "",
-    "HeaderText": "UnViewed",
+    "HeaderText": "Unopened",
     "ImageUrl": "",
     "SortExpression": "",
     "Text": ""
@@ -313,7 +313,7 @@
     "Text": "To Date:"
   },
   "logPageHeaderResource1": {
-    "Text": "Email Campaign Report"
+    "Text": "Email Campaigns Report"
   },
   "PageResource1": {
     "Title": "Dashboard | Email Campaign Report"
@@ -362,7 +362,7 @@
     "HeaderText": "Sending Date"
   },
   "locTotalSendPlan": {
-    "HeaderText": "Sent"
+    "HeaderText": "To Send"
   },
   "btnExportResource1": {
     "Text": "Export"
@@ -385,18 +385,18 @@
   "SizeUnit": "KB",
   "ChartDesc": "Monthly send amount",
   "locUniqueClicksPercents": {
-    "HeaderText": "Unique Clicks Percentage"
+    "HeaderText": "Percentage"
   },
   "locUniqueOpensPercents": {
-    "HeaderText": "Unique Opened Percentage"
+    "HeaderText": "Percentage"
   },
   "locRemovedReason": {
-    "HeaderText": "Remove Reasons"
+    "HeaderText": "Removal Reasons"
   },
   "NoAttachments": "No Attachments",
   "GroupNames": "Groups Names",
   "CampaignID": "Campaign Number",
-  "ToalSent": "Toal Sent",
+  "ToalSent": "Sent",
   "Cancelled": "Cancelled",
   "locStatus": {
     "HeaderText": "Status"
@@ -416,5 +416,11 @@
   },
   "MainReportTitle": {
     "Text": "Sending reports for campaigns sent in the system. You can explore the sending data in depth by clicking on the campaign data"
-  }
+  },
+  "date": "Date",
+  "removed": "Removed",
+  "removals": "Removals",
+  "removedPercents": "Percentage",
+  "reasons": "Reasons",
+  "compareCampaigns": "Compare Campaigns"
 }

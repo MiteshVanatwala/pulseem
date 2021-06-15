@@ -198,7 +198,7 @@ const MmsManagnentScreen=({classes}) => {
   const renderManagmentLine=() => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        <Grid item xs={windowSize==='xs'&&12}>
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -209,7 +209,7 @@ const MmsManagnentScreen=({classes}) => {
             )}>
             {t('mms.create')}
           </Button>
-        </Grid>
+        </Grid>}
         {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'

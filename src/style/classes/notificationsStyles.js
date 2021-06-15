@@ -88,16 +88,27 @@ const summaryTitleMargin = {
     lg: 10,
     xl: 15
 }
-// const summaryNotificationMargin = {
-//     xs: "-15px",
-//     sm: "-15px",
-//     md: 0,
-//     lg: 0,
-//     xl: 0
-// }
-// const summaryNotificationMinWidth = {
-//     xs: "240px",
-// }
+const notificationSize = {
+    md: 350,
+    lg: 400,
+    xl: 400
+}
+
+const mobileNotificationSize = {
+    xs: null,
+    sm: 240,
+    md: 350,
+    lg: 450,
+    xl: 450
+}
+
+const notificationIconWidth = {
+    xs: 70,
+    sm: 40,
+    md: 100,
+    lg: 90,
+    xl: 90,
+}
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     roundedCircle: {
         borderRadius: '100%',
@@ -112,15 +123,11 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     notification: {
         right: '25px',
         bottom: '25px',
-        width: '100%',
         display: 'flex',
         flexDirection: 'column',
         boxShadow: '0 10px 10px 0 rgb(0 0 0 / 50%)',
-        maxWidth: '350px',
-        fontFamily: 'Assistant',
-        // marginRight: summaryNotificationMargin[windowSize],
-        // marginLeft: summaryNotificationMargin[windowSize],
-        // minWidth: summaryNotificationMinWidth[windowSize]
+        maxWidth: notificationSize[windowSize],
+        fontFamily: 'Assistant'
     },
     textArea: {
         fontFamily: 'Assistant'
@@ -133,7 +140,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         height: '100%',
         backgroundPosition: 'center top',
         backgroundRepeat: 'no-repeat',
-        minHeight: '175px',
+        minHeight: '200px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -142,11 +149,26 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     summaryContainer: {
         '&.MuiPaper-root': {
             width: '100%'
-        }
+        },
+        '& .MuiDialog-paperWidthSm': {
+            width: '100%'
+        },
+        '& [role="tabpanel"]': {
+            width: mobileNotificationSize[windowSize],
+            minHeight: 400
+        },
     },
-    borderSign: {
+    flexJustifyCenter: {
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+    },
+    flexAlignCetner: {
+        display: 'flex',
+        alignItems: 'center',
+        alignContent: 'center'
+    },
+    flexStart: {
+        justifyContent: 'flex-start'
     },
     dashed: {
         border: '1px dashed #64a1bd'
@@ -200,40 +222,43 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        //minHeight: windowSize !== 'xs' && windowSize !== 'sm' ? '115px' : null,
+        minHeight: windowSize !== 'xs' && windowSize !== 'sm' ? '100px' : null,
         backgroundColor: 'transparent',
         justifyContent: 'space-between',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        // paddingBottom: 10
     },
     iconWrapper: {
-        margin: '15px',
-        minWidth: '100px',
+        margin: '15px'
     },
     icon: {
         direction: 'rtl',
         position: 'relative',
         backgroundSize: 'cover',
-        width: '100px',
-        height: '100%',
+        width: notificationIconWidth[windowSize],
+        height: notificationIconWidth[windowSize],
         backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
-        maxHeight: '112px',
-        minHeight: '85px',
         cursor: 'pointer',
     },
     notificationContent: {
-        padding: windowSize !== 'xs' && windowSize !== 'sm' ? '15px 0' : 0,
+        padding: '15px 0 0 0',
         height: 'auto',
         display: 'flex',
         flexDirection: 'column',
         textAlign: 'left',
         width: '100%',
         maxWidth: '100%',
-        marginRight: '15px',
-        marginLeft: '15px',
+        // marginRight: isRTL ? 0 : '15px',
+        // marginLeft: !isRTL ? 0 : '15px',
+        margin: '0 10px',
         overflow: 'hidden',
         borderBottom: 'none !important',
-        overflowWrap: 'break-word'
+        overflowWrap: 'break-word',
+        paddingBottom: windowSize === 'xs' && windowSize === 'sm' ? 10 : 'unset',
+        '& p': {
+            lineHeight: windowSize !== 'xs' && windowSize !== 'sm' ? 1.5 : 1
+        }
     },
     notificationTitle: {
 
@@ -256,7 +281,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         justifyContent: 'flex-start !important'
     },
     previewTitle: {
-        marginTop: '0px'
+        marginTop: '0px',
+        marginBottom: '0px'
     },
     deviceSelectorPanel: {
         maxWidth: '200px',
@@ -287,13 +313,13 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     wizardButtonContainer: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: '50px',
+        marginTop: '15px',
         width: '90%',
         display: 'flex'
     },
     mobileBG: {
         backgroundImage: `url(${mobileBg})`,
-        width: '450px',
+        width: mobileNotificationSize[windowSize],
         height: '100%',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
@@ -359,13 +385,13 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     mobileNotification: {
         width: '100%',
-        maxWidth: '350px',
+        maxWidth: (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 300,
         boxShadow: '0 5px 5px 1px rgb(0 0 0 / 50%)',
         fontFamily: 'Assistant',
-        top: '50px',
+        top: 50,
         borderRadius: '5px',
         position: 'absolute',
-        right: '50px',
+        right: (windowSize !== 'xs' && windowSize !== 'sm') ? 50 : 40,
         maxHeight: (windowSize !== 'xs' && windowSize !== 'sm') ? 'calc(100% - 80px)' : null,
         paddingTop: 10
     },
@@ -521,7 +547,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         marginRight: 30,
         marginLeft: 30,
         marginTop: -10,
-        marginBottom: 25
+        marginBottom: 25,
+        fontSize: 16
     },
     smallNotice: {
         fontSize: 12,
@@ -530,6 +557,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         maxWidth: '60%'
     },
     pageSubTitle: {
+        marginTop: 5,
         fontSize: 28
     },
     subTitle: {
@@ -572,5 +600,29 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     rowReverse: {
         flexDirection: 'row-reverse'
-    }
+    },
+    summaryText: {
+        marginTop: 2,
+        paddingLeft: 5,
+        paddingRight: 5
+    },
+    osScreen: {},
+    previewStep: {
+        '& [role="tabpanel"]': {
+            minHeight: 400
+        },
+        '& $osScreen': {
+            border: windowSize !== 'xs' ? '1px solid #000' : 'none',
+            paddingTop: windowSize !== 'xs' ? 20 : 0,
+            minHeight: 330,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-end',
+        },
+        '& $notification': {
+            marginRight: windowSize !== 'xs' && isRTL ? 15 : 0,
+            marginLeft: windowSize !== 'xs' && isRTL ? 0 : 15,
+        }
+    },
+
 })

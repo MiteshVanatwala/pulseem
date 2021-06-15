@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
 import moment from 'moment'
 import 'moment/locale/he'
-import {FiClock} from 'react-icons/fi'
+import { FiClock } from 'react-icons/fi'
 
 export const DateField = ({
   minDate,
@@ -16,7 +16,9 @@ export const DateField = ({
   placeholder = '',
   isTimePicker = false,
   buttons = null,
-  ampm = true
+  ampm = true,
+  minimumDate = undefined,
+  maximumDate = undefined
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -39,7 +41,7 @@ export const DateField = ({
       popoverprops={{
         dir: direction[isRTL]
       }}
-      format={isRTL ? "DD/MM/yyyy" : "MM/DD/yyyy"}
+      format={"hh:mm a"}
       margin='none'
       placeholder={placeholder}
       initialFocusedDate={moment().hours(0).minutes(0)}
@@ -53,6 +55,7 @@ export const DateField = ({
       cancelLabel={buttons && buttons.cancel}
       okLabel={buttons && buttons.ok}
       ampm={ampm}
+      id="timePicker"
     />
   ) :
 
@@ -82,8 +85,11 @@ export const DateField = ({
         'aria-label': 'change date',
         className: classes.datePickerButton
       }}
-      cancellabel={buttons&&buttons.cancel}
-      oklabel={buttons&&buttons.ok}
+      cancelLabel={buttons && buttons.cancel}
+      okLabel={buttons && buttons.ok}
+      id="datePicker"
+      minDate={minimumDate}
+      maxDate={maximumDate}
     />
     )
 

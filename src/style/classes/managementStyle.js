@@ -1,5 +1,5 @@
 const iconWidth={
-  xs: 20,
+  xs: 25,
   sm: 20,
   md: 25,
   lg: 30,
@@ -45,7 +45,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     color: '#333333',
     paddingBlock: '0.5rem',
     fontFamily: "Assistant",
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginTop: 20
   },
   tableRow: {
     marginBox: 20
@@ -56,7 +57,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     fontSize: 20,
     marginBlock: 0,
     borderBottom: 0,
-    padding: '16px!important'
+    padding: '16px 10px!important'
   },
   tableCellBody: {
     borderInlineEnd: '1px solid #797979',
@@ -77,6 +78,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   minWidth75: {
     minWidth: '75px!important'
+  },
+  minWidth50: {
+    minWidth: '50px!important'
   },
   maxWidth75: {
     maxWidth: '75px!important'
@@ -127,6 +131,11 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     textOverflow: "ellipsis",
     color: '#333'
   },
+  middleWrapText: {
+    fontSize: windowSize==='xs'? 15:18,
+    overflow: "hidden",
+    color: '#333'
+  },
   wrapText: {
     fontSize: 16,
     flexWrap: "wrap",
@@ -156,7 +165,14 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   managmentIcon: {
     width: iconWidth[windowSize],
-    margin: 'auto'
+    margin: 'auto',
+    marginTop: -10
+  },
+  managmentUicon: {
+    fontSize: 30,
+    fontFamily: 'pulseemicons',
+    marginBottom: -15,
+    marginTop: -15
   },
   managmentIconDisable: {
     opacity: 0.5
@@ -765,8 +781,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   myGroupsTitleSection: {
     display: 'flex',
-    flexDirection: windowSize==='xs'? 'column':'row',
-    alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'space-between'
   },
   languageSelect: {
@@ -783,5 +798,13 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     '&.MuiButtonBase-root.Mui-disabled': {
       pointerEvents: 'visible'
     }
+  },
+  mobileReportHead: {
+    fontWeight: 'bold',
+    marginTop: 15,
+    marginInlineStart: 10
+  },
+  tabelCellPadding: {
+    paddingBlock: 15
   }
 })

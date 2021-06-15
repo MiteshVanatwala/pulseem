@@ -28,18 +28,11 @@ const maxDialogWidth={
 const summaryPadding={
   xs: 0,
   sm: 0,
-  md: 25,
+  md: 0,
   lg: 25,
   xl: 25
 }
 
-const summaryNotificationMargin={
-  xs: "-15px",
-  sm: "-15px",
-  md: 0,
-  lg: 0,
-  xl: 0
-}
 const iconWrapperMargin={
   xs: 5,
   sm: 10,
@@ -123,8 +116,6 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     padding: '1rem',
     minWidth: dialogWidth[windowSize],
     '& $notification': {
-      marginRight: summaryNotificationMargin[windowSize],
-      marginLeft: summaryNotificationMargin[windowSize],
       minWidth: summaryNotificationMinWidth[windowSize],
       '& $iconWrapper': {
         margin: iconWrapperMargin[windowSize],
@@ -270,11 +261,17 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   pb10: {
     paddingBottom: 10
   },
+  mt5: {
+    marginTop: 5
+  },
   mt10: {
     marginTop: 10
   },
   f14: {
     fontSize: 14
+  },
+  f15: {
+    fontSize: 15
   },
   f16: {
     fontSize: 16
@@ -330,5 +327,12 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   },
   textCapitalize: {
     textTransform: 'capitalize'
+  },
+  iconsFont: {
+    fontFamily: 'pulseemicons',
+    fontSize: 22
+  },
+  rtlSwitch: {
+    transform: 'rotateY(180deg)'
   }
 })
