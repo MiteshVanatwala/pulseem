@@ -18,7 +18,9 @@ import {useTranslation} from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import {getNewsletterReports} from '../../redux/reducers/newsletterSlice';
+import {apiURL} from '../../config/index'
+import {CSVLink} from 'react-csv'
+import {getNewsletterReports,downloadNewsletterReport} from '../../redux/reducers/newsletterSlice';
 
 const NewslettersReport=({classes}) => {
   const {language,windowSize,isRTL}=useSelector(state => state.core)
@@ -34,6 +36,7 @@ const NewslettersReport=({classes}) => {
   const [searchResults,setSearchResults]=useState(null)
   const [toFileArray,setToFileArray]=useState([])
   const [isDemoSend,setIsDemoSend]=useState(false)
+  const [csvData,setCsvData]=useState('')
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch=useDispatch()
   const rowStyle={head: classes.tableRowReportHead,root: classes.tableRowRoot}
@@ -42,6 +45,7 @@ const NewslettersReport=({classes}) => {
   const cellBodyStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot)}
   const noBorderCellStyle={body: classes.tableCellBodyNoBorder,root: clsx(classes.tableCellRoot,classes.minWidth50)}
   const borderCellStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.minWidth50)}
+  const csvLinkRef=useRef(null)
 
   moment.locale(language)
 
@@ -120,6 +124,18 @@ const NewslettersReport=({classes}) => {
     handleToDate(null)
     setSearchResults(null)
     setSearching(false)
+  }
+
+  const handleDowaloadCsv=async () => {
+    //window.open(`${apiURL}email/EmailReportsByIds/${toFileArray.toString()}`)
+    //const {payload}=await 
+    dispatch(downloadNewsletterReport(toFileArray))
+    //if(payload.error) {
+    //  return
+    //}
+    //console.log("csv data",payload)
+    //setCsvData(payload)
+    //csvLinkRef.current.link.click()
   }
 
   const renderSearchSection=() => {
@@ -295,9 +311,17 @@ const NewslettersReport=({classes}) => {
               classes.actionButton,
               classes.actionButtonGreen
             )}
+            onClick={handleDowaloadCsv}
             startIcon={<ExportIcon />}>
             {t('campaigns.exportFile')}
           </Button>
+          <CSVLink
+            data={csvData}
+            filename='report.csv'
+            className='hidden'
+            ref={csvLinkRef}
+            target='_blank'
+          />
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
@@ -651,7 +675,6 @@ const NewslettersReport=({classes}) => {
 
   return (
     <DefaultScreen
-      currentPage='notifications'
       classes={classes}>
       {renderHeader()}
       {renderSearchSection()}

@@ -1,5 +1,6 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
 import instence from '../../helpers/api'
+import {apiURL} from '../../config/index';
 
 export const getNewslatterData=createAsyncThunk(
   'email/getEmailCampaigns',async (_,thunkAPI) => {
@@ -12,9 +13,9 @@ export const getNewslatterData=createAsyncThunk(
   })
 
 export const getNewsletterReports=createAsyncThunk(
-  'email/GetEmailReports/',async (demo=false,thunkAPI) => {
+  'reports/EmailReports/',async (demo=false,thunkAPI) => {
     try {
-      const response=await instence.get(`email/GetEmailReports/${demo}`)
+      const response=await instence.get(`reports/EmailReports?includeTestCampaign=${demo}`)
       return JSON.parse(response.data)
     } catch(error) {
       return thunkAPI.rejectWithValue({error: error.message});
@@ -52,6 +53,18 @@ export const duplicteCampaign=createAsyncThunk(
     }
   })
 
+export const downloadNewsletterReport=createAsyncThunk(
+  'email/EmailReportsByIds',async (array=[],thunkAPI) => {
+    try {
+      //const response=await instence.get('email/EmailReportsByIds/'+array.toString())
+      window.open(`${apiURL}email/EmailReportsByIds/${array.toString()}`)
+      return 'success' //response.data
+    } catch(err) {
+      return thunkAPI.rejectWithValue({error: err.message});
+    }
+  }
+)
+
 export const newsletterSlice=createSlice({
   name: 'newsletter',
   initialState: {
@@ -79,10 +92,12 @@ export const newsletterSlice=createSlice({
     builder.addCase(restoreCampaigns.fulfilled,() => {console.log('api restoreCampaigns success')})
     builder.addCase(deleteCampaign.fulfilled,() => {console.log('api deleteCampaign success')})
     builder.addCase(duplicteCampaign.fulfilled,() => {console.log('api duplicteCampaign success')})
+    builder.addCase(downloadNewsletterReport.fulfilled,() => {console.log('api downloadNewsletterReport success')})
 
     builder.addCase(restoreCampaigns.rejected,(_,action) => {console.log('Error - api restoreCampaigns: '+action.error)})
     builder.addCase(deleteCampaign.rejected,(_,action) => {console.log('Error - deleteCampaign: '+action.error)})
     builder.addCase(duplicteCampaign.rejected,(_,action) => {console.log('Error - duplicteCampaign: '+action.error)})
+    builder.addCase(downloadNewsletterReport.rejected,(_,action) => {console.log('Error - downloadNewsletterReport',action.error)})
   }
 })
 
