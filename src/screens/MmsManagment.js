@@ -555,6 +555,7 @@ const MmsManagnentScreen=({classes}) => {
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
+          dataIdVar='ID'
         />
       ),
       onConfirm: async () => {
@@ -635,6 +636,7 @@ const MmsManagnentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
+      setPage(1)
       await dispatch(duplicteMms(data))
       getData()
     }

@@ -689,6 +689,7 @@ const NotificationManagement = ({ classes }) => {
 
   const renderPreview = (data = {}) => {
     return {
+      childrenStyle: classes.previewPaper,
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -736,6 +737,7 @@ const NotificationManagement = ({ classes }) => {
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
+          dataIdVar='ID'
         />
       ),
       onConfirm: async () => {
@@ -835,7 +837,6 @@ const NotificationManagement = ({ classes }) => {
         <Box className={classes.dialogBox}>
           <Typography variant="h6" className={classes.bold}>{t('notifications.howToCreateGroup')}</Typography>
           <Typography>{t('notifications.assigningRecipientsToGroupMessage')}</Typography>
-          <Typography>{t('notifications.doneByMessage')}</Typography>
           <Typography variant='body'>{t('common.pulseemLink')}</Typography>
           <Typography className={classes.mt10}>{t('notifications.thenYouWillAdd')}</Typography>
           <TextField
@@ -954,6 +955,7 @@ const NotificationManagement = ({ classes }) => {
       ),
       onConfirm: async () => {
         handleDuplicate(ID);
+        setPage(1)
         clearSearch()
       }
     }

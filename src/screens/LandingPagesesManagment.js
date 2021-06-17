@@ -563,6 +563,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
+          dataIdVar='ID'
         />
       ),
       onConfirm: async () => {
@@ -601,6 +602,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
+      setPage(1)
       await dispatch(duplicteLandingPage(data))
       getData()
     }

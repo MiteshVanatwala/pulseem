@@ -38,7 +38,7 @@
   "HeaderActivateAutomationProcess": "Activate Automation Process",
   "HeaderDeactivateAutomationProcess": "Deactivate Automation Process",
   "TextActivateAutomationProcess": "Clicking Ok will reactivate a paused Marketing Automation process.",
-  "TextDeactivateAutomationProcess": "Clicking Ok will stop an ongoing Marketing Automation process. You can reactivate it later from the Manage Automations page.",
+  "TextDeactivateAutomationProcess": "Clicking Ok will stop an ongoing Marketing Automation process. You can reactivate it later from the Automations Management page.",
   "Report": "Report",
   "labelAutomationName": "Automation Name",
   "labelAutomationSubHeader": "Let’s Go! Create a new Automation.",

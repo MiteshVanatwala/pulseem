@@ -17,7 +17,6 @@ export const DateField = ({
   isTimePicker = false,
   buttons = null,
   ampm = true,
-  minimumDate = undefined,
   maximumDate = undefined,
   timePickerOpen = false
 }) => {
@@ -82,7 +81,7 @@ export const DateField = ({
       keyboardIcon={<CalendarIcon />}
       format={isRTL ? "DD/MM/yyyy" : "MM/DD/yyyy"}
       margin='none'
-      minDate={minDate}
+      minDate={moment(minDate).add(1, 'days')}
       placeholder={placeholder}
       initialFocusedDate={moment()}
       value={value}
@@ -94,7 +93,6 @@ export const DateField = ({
       cancelLabel={buttons && buttons.cancel}
       okLabel={buttons && buttons.ok}
       id="datePicker"
-      minDate={minimumDate}
       maxDate={maximumDate}
       onClick={() => setIsDatePickerOpen(true)}
       onClose={() => setIsDatePickerOpen(false)}
