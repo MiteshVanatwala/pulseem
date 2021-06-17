@@ -536,7 +536,6 @@ const MmsManagnentScreen=({classes}) => {
   }
 
   const handleClose=() => {
-    setRestoreArray([])
     setDialogType(null)
   }
 
@@ -559,9 +558,10 @@ const MmsManagnentScreen=({classes}) => {
         />
       ),
       onConfirm: async () => {
-        await dispatch(restoreMms(restoreArray))
-        getData()
         handleClose()
+        await dispatch(restoreMms(restoreArray))
+        setRestoreArray([])
+        getData()
       }
     }
   }

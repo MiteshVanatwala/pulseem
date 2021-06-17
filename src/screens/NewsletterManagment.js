@@ -568,7 +568,6 @@ const NewsletterManagnentScreen=({classes}) => {
   }
 
   const handleClose=() => {
-    setRestoreArray([])
     setDialogType(null)
   }
 
@@ -592,9 +591,10 @@ const NewsletterManagnentScreen=({classes}) => {
         />
       ),
       onConfirm: async () => {
-        await dispatch(restoreCampaigns(restoreArray))
-        getData()
         handleClose()
+        await dispatch(restoreCampaigns(restoreArray))
+        setRestoreArray([])
+        getData()
       }
     }
   }

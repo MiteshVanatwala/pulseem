@@ -530,7 +530,6 @@ const AutomationsManagnentScreen=({classes}) => {
     )
   }
   const handleClose=() => {
-    setRestoreArray([])
     setDialogType(null)
   }
 
@@ -579,10 +578,10 @@ const AutomationsManagnentScreen=({classes}) => {
         />
       ),
       onConfirm: async () => {
-        console.log("restoreArray",restoreArray)
-        await dispatch(restoreAutomations(restoreArray))
-        getData()
         handleClose()
+        await dispatch(restoreAutomations(restoreArray))
+        setRestoreArray([])
+        getData()
       }
     }
   }
