@@ -236,6 +236,18 @@ const NotificationEditor = ({ props, classes }) => {
     handleFromDate(value);
     setTimePickerOpen(!timePickerOpen);
   }
+  const handleTimePicker = (value) => {
+    var date = moment(sendDate);
+    var time = moment(value, 'HH:mm');
+    date.set({
+      hour: time.get('hour'),
+      minute: time.get('minute')
+    });
+
+    handleFromDate(date);
+    setTimePickerOpen(false);
+  }
+  
   /* #endregion */
   /* #region  Data Handlers */
   const handlePublicKey = async () => {
@@ -1006,7 +1018,7 @@ const NotificationEditor = ({ props, classes }) => {
               <DateField
                 classes={classes}
                 value={sendDate}
-                onTimeChange={handleDatePicker}
+                onTimeChange={handleTimePicker}
                 placeholder={t('notifications.hour')}
                 isTimePicker={true}
                 buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
