@@ -685,7 +685,6 @@ const NotificationManagement = ({ classes }) => {
 
   const handleDialogClose = () => {
     setDialogType(null);
-    setRestoreArray([]);
   }
 
   const renderPreview = (data = {}) => {
@@ -740,11 +739,12 @@ const NotificationManagement = ({ classes }) => {
         />
       ),
       onConfirm: async () => {
+        handleDialogClose();
         const res = await dispatch(restoreNotifications(restoreArray));
         if (!res.error) {
           dispatch(getNotificationData());
         }
-        handleDialogClose();
+        setRestoreArray([]);
       }
     }
   }

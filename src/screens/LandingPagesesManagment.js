@@ -544,7 +544,6 @@ const LandingPagesesManagmentScreen=({classes}) => {
 
   const handleClose=() => {
     setDialogType(null);
-    setRestoreArray([]);
   }
 
   const getRestorDialog=(data=[]) => {
@@ -567,9 +566,10 @@ const LandingPagesesManagmentScreen=({classes}) => {
         />
       ),
       onConfirm: async () => {
-        await dispatch(restoreLandingPages(restoreArray))
-        getData()
         handleClose()
+        await dispatch(restoreLandingPages(restoreArray))
+        setRestoreArray([]);
+        getData()
       }
     }
   }

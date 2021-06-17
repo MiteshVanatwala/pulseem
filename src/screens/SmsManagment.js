@@ -604,7 +604,6 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const handleClose=() => {
-    setRestoreArray([]);
     setDialogType(null);
     handleVerificationCodeError(false);
     handleNumberError(false);
@@ -632,9 +631,10 @@ const SmsManagnentScreen=({classes}) => {
         />
       ),
       onConfirm: async () => {
-        await dispatch(restoreSms(restoreArray))
-        getData()
         handleClose()
+        await dispatch(restoreSms(restoreArray))
+        setRestoreArray([]);
+        getData()
       }
     }
   }
