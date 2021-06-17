@@ -22,6 +22,7 @@ import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
 import {Preview} from '../components/Notifications/Preview/Preview';
+import { pulseemNewTab } from '../helpers/functions';
 
 const SmsManagnentScreen=({classes}) => {
   const {language,windowSize,email,phone}=useSelector(state => state.core)
@@ -339,7 +340,9 @@ const SmsManagnentScreen=({classes}) => {
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
         remove: windowSize==='xs',
-        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`,
+        onClick: () => {
+          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`)
+        },
         rootClass: classes.paddingIcon,
       },
       {
