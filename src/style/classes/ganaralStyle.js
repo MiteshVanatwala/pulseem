@@ -327,5 +327,8 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   },
   textCapitalize: {
     textTransform: 'capitalize'
+  },
+  posRelative: {
+    position: 'relative'
   }
 })
