@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import DefaultScreen from './DefaultScreen'
+import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
@@ -8,21 +8,22 @@ import {
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SearchIcon,
   PreviewIcon,ReportsIcon,CopyIcon,EmbedCodeIcon,SurveryResultsIcon
-} from '../assets/images/managment/index'
+} from '../../../assets/images/managment/index'
 import {
   TablePagination,ManagmentIcon,RestorDialogContent,Dialog,PopMassage,SearchField
-} from '../components/managment/index'
+} from '../../../components/managment/index'
 import {
   getLandingPagesData,restoreLandingPages,deleteLandingPage,
   duplicteLandingPage,downloadReport,exportSurvey
-} from '../redux/reducers/landingPagesSlice'
-import useCtrlHistory from '../helpers/useCtrlHistory'
-import {openInNewTab} from '../helpers/functions'
+} from '../../../redux/reducers/landingPagesSlice'
+import useCtrlHistory from '../../../helpers/useCtrlHistory'
+import {openInNewTab} from '../../../helpers/functions'
 import {Link} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
+import { Loader } from '../../../components/Loader/Loader';
 
 const LandingPagesesManagmentScreen=({classes}) => {
   const {windowSize}=useSelector(state => state.core)
@@ -42,12 +43,17 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const [restoreArray,setRestoreArray]=useState([])
   const history=useCtrlHistory()
   const dispatch=useDispatch()
+  const [showLoader, setLoader] = useState(true);
 
-  const getData=() => {
-    dispatch(getLandingPagesData())
+  const getData= async () => {
+    await dispatch(getLandingPagesData())
+    setLoader(false);
   }
 
-  useEffect(getData,[dispatch])
+  useEffect(() => {
+    setLoader(true);
+    getData();
+  },[dispatch])
 
   const renderHeader=() => {
     return (
@@ -638,6 +644,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
+      <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
 }

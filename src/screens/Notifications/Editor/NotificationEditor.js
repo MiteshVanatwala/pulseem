@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import DefaultScreen from '../DefaultScreen'
+import DefaultScreen from '../../DefaultScreen'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import {
   Typography, Button, TextField, Grid, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener,
@@ -7,28 +7,30 @@ import {
 } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { Preview } from '../../components/Notifications/Preview/Preview';
-import { getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups, getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } from '../../redux/reducers/notificationSlice';
+import { Preview } from '../../../components/Notifications/Preview/Preview';
+import { getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups, 
+         getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } 
+from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { useHistory } from "react-router-dom";
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
 import './notification.styles.css';
-import Groups from '../../components/Notifications/Groups/Groups';
-import Gallery from '../../components/Gallery/Gallery.component';
+import Groups from '../../../components/Notifications/Groups/Groups';
+import Gallery from '../../../components/Gallery/Gallery.component';
 import {
   DateField, Dialog
-} from '../../components/managment/index';
+} from '../../../components/managment/index';
 import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import { IoMdImages } from 'react-icons/io'
 import moment from 'moment'
 import 'moment/locale/he'
-import Toast from '../../components/Toast/Toast.component';
+import Toast from '../../../components/Toast/Toast.component';
 import Tooltip from '@material-ui/core/Tooltip';
 import {
   CheckAnimation
-} from '../../assets/images/settings/index'
+} from '../../../assets/images/settings/index'
 
 
 const useStylesBootstrap = makeStyles((theme) => ({
@@ -524,7 +526,7 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const handleRedirectButtonTextChange = (event) => {
     const textLength = event.target.value.length;
-    if (textLength <= 50) {
+    if (textLength <= 20) {
       setModel({ ...model, RedirectButtonText: event.target.value });
     }
     return;

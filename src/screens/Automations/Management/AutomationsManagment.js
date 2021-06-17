@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import DefaultScreen from './DefaultScreen'
+import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
@@ -7,21 +7,22 @@ import {
 } from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,ReportsIcon,SearchIcon,PreviewIcon
-} from '../assets/images/managment/index'
+} from '../../../assets/images/managment/index'
 import {
   TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,Switch,SearchField
-} from '../components/managment/index'
+} from '../../../components/managment/index'
 import {
   getAutomationsData,deleteAutomations,duplicateAutomations,restoreAutomations,activateAutomation
-} from '../redux/reducers/automationsSlice'
-import useCtrlHistory from '../helpers/useCtrlHistory'
+} from '../../../redux/reducers/automationsSlice'
+import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import {Link} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import {pulseemNewTab} from '../helpers/functions';
+import {pulseemNewTab} from '../../../helpers/functions';
+import { Loader } from '../../../components/Loader/Loader';
 
 
 const AutomationsManagnentScreen=({classes}) => {
@@ -41,16 +42,21 @@ const AutomationsManagnentScreen=({classes}) => {
   const [dialogType,setDialogType]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
+  const [showLoader, setLoader] = useState(true);
   const dispatch=useDispatch()
   const history=useCtrlHistory()
   moment.locale(language)
 
 
-  const getData=() => {
-    dispatch(getAutomationsData())
+  const getData= async () => {
+    await dispatch(getAutomationsData())
+    setLoader(false);
   }
 
-  useEffect(getData,[dispatch])
+  useEffect(() => {
+    setLoader(true);
+    getData();
+  },[dispatch])
 
   const renderHeader=() => {
     return (
@@ -739,6 +745,7 @@ const AutomationsManagnentScreen=({classes}) => {
       {renderTable()}
       {renderTablePadington()}
       {renderDialog()}
+      <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
 }

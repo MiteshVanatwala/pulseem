@@ -1,9 +1,9 @@
 import React,{useEffect} from 'react';
-import NewsletterManagment from './screens/NewsletterManagment';
-import AutomationManagment from './screens/AutomationsManagment';
-import LandingPagesesManagment from './screens/LandingPagesesManagment'
-import MmsManagment from './screens/MmsManagment';
-import SmsManagment from './screens/SmsManagment';
+import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
+import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
+import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
+import MmsManagment from './screens/Mms/Management/MmsManagment';
+import SmsManagment from './screens/Sms/Management/SmsManagment';
 import {getCookie,setCookie,cookieListener} from './helpers/cookies'
 import {create} from 'jss';
 import rtl from 'jss-rtl';
@@ -20,8 +20,8 @@ import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import {useHistory} from "react-router-dom";
 import moment from 'moment'
-import NotificationManagement from './screens/NotificationManagement';
-import NotificationEditor from './screens/Notifications/NotificationEditor';
+import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
+import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
