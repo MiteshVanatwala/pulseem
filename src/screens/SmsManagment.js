@@ -888,7 +888,6 @@ const SmsManagnentScreen=({classes}) => {
         >{t('sms.verificationButtonText')}</Button>
         <Typography className={clsx(classes.contactUs,classes.newLine)}>
           {t('sms.havingIssuesMessage')}
-          {`\n${number&&t('sms.inNumber')||''} ${number||''} ${number&&t('sms.or')||''} ${email&&t('sms.inMail')||''} ${email||''}`}
         </Typography>
       </Box>
     ),
