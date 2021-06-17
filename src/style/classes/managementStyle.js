@@ -770,5 +770,45 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     '&.MuiButtonBase-root.Mui-disabled':{
       pointerEvents: 'visible'
     }
+  },
+  numberBox: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: 10
+  },
+  phoneNumberList: {
+    padding: 0,
+    overflow: 'auto',
+    height: 'calc(100vh - 500px)'
+  },
+  margin0: {
+    margin: 0
+  },
+  padding0: {
+    padding: 0
+  },
+  minWidth25: {
+    minWidth: 25
+  },
+  minWidth150: {
+    minWidth: 150
+  },
+  boldSize25: {
+    fontWeight: 'bold',
+    fontSize: 25
+  },
+  font15: {
+    fontSize: 15
+  },
+  font18: {
+    fontSize: 18
+  },
+  pt20: {
+    paddingTop: 20
+  },
+  link: {
+    textDecoration: 'underline',
+    margin: '0 5px'
   }
+  
 })
