@@ -109,6 +109,7 @@
   "exampleTitle": "Example Title",
   "noGroupsSelected": "No groups selected",
   "selectAll": "Select All",
+  "deSelectAll": "Deselect All",
   "totalRecipients": "Total Recipients: ",
   "sort_by_group": "Sort by: Group Name",
   "sort_by_creation": "Sort by: Creation Date",
