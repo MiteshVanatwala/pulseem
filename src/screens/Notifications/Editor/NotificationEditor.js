@@ -8,9 +8,11 @@ import {
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
-import { getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups, 
-         getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } 
-from '../../../redux/reducers/notificationSlice';
+import {
+  getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups,
+  getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups
+}
+  from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { useHistory } from "react-router-dom";
 import { PushService } from './init-push';
@@ -249,7 +251,7 @@ const NotificationEditor = ({ props, classes }) => {
     handleFromDate(date);
     setTimePickerOpen(false);
   }
-  
+
   /* #endregion */
   /* #region  Data Handlers */
   const handlePublicKey = async () => {
@@ -309,7 +311,7 @@ const NotificationEditor = ({ props, classes }) => {
       }
     }
   }
-  const saveSettings = async (isExit) => {
+  const saveSettings = async (isExit, isSummary = false) => {
     // event.preventDefault();
     setSourceModel(model);
     if (isValidSettings()) {
@@ -329,12 +331,16 @@ const NotificationEditor = ({ props, classes }) => {
           setToastMessage(toastMessages.SAVE_SETTINGS);
         }
         else {
-          history.push("/Notifications");
+          if(isSummary === false)
+            history.push("/Notifications");
         }
       }
       else {
         setToastMessage(toastMessages.ERROR);
       }
+    }
+    else {
+      return false;
     }
 
   }
@@ -384,21 +390,25 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const getSummary = async (event) => {
     event.preventDefault();
-    const totalResonse = await dispatch(getUniqueClientsByGroups(selectedGroups.map((g) => { return g.Id; })));
-    const currentTotalRecipients = selectedGroups.reduce(function (a, b) {
-      return a + b['Members'];
-    }, 0);
-    setTotalRecipients(totalResonse.payload);
-    setDuplicatedRecipients(currentTotalRecipients - totalResonse.payload);
-    if (sendDate) {
-      const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
-      m.lang(isRTL ? "he" : "en");
-      setSummary({ groups: selectedGroups, sendType: sendType, sendDate: m.format("MMMM Do YYYY, hh:mm a") });
+    saveSettings(true, true).then(async (res) => {
+      if (res !== false) {
+        const totalResonse = await dispatch(getUniqueClientsByGroups(selectedGroups.map((g) => { return g.Id; })));
+        const currentTotalRecipients = selectedGroups.reduce(function (a, b) {
+          return a + b['Members'];
+        }, 0);
+        setTotalRecipients(totalResonse.payload);
+        setDuplicatedRecipients(currentTotalRecipients - totalResonse.payload);
+        if (sendDate) {
+          const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+          m.lang(isRTL ? "he" : "en");
+          setSummary({ groups: selectedGroups, sendType: sendType, sendDate: m.format("MMMM Do YYYY, hh:mm a") });
 
-    }
-    else {
-      setSummary({ groups: selectedGroups, sendType: sendType, sendDate: null });
-    }
+        }
+        else {
+          setSummary({ groups: selectedGroups, sendType: sendType, sendDate: null });
+        }
+      }
+    });
   }
   const handleSendConfirm = () => {
     history.push("/Notifications");
@@ -1007,7 +1017,7 @@ const NotificationEditor = ({ props, classes }) => {
             </RadioGroup>
             <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
               <DateField
-                minDate={moment()}
+                minDate={moment().add(-1, 'days')}
                 classes={classes}
                 value={sendDate}
                 onChange={handleDatePicker}
