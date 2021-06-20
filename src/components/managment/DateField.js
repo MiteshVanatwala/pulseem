@@ -18,7 +18,8 @@ export const DateField = ({
   buttons = null,
   ampm = true,
   maximumDate = undefined,
-  timePickerOpen = false
+  timePickerOpen = false,
+  isReadOnly = false
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -61,6 +62,7 @@ export const DateField = ({
       onClick={() => setIsTimePickerOpen(true)}
       onClose={() => setIsTimePickerOpen(false)}
       open={isTimePickerOpen || timePickerOpen}
+      InputProps={{ readOnly: isReadOnly }}
     />
   ) :
 
@@ -97,6 +99,7 @@ export const DateField = ({
       onClick={() => setIsDatePickerOpen(true)}
       onClose={() => setIsDatePickerOpen(false)}
       open={isDatePickerOpen}
+      InputProps={{ readOnly: isReadOnly }}
     />
     )
 

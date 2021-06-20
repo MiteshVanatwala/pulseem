@@ -1018,11 +1018,13 @@ const NotificationEditor = ({ props, classes }) => {
             <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
               <DateField
                 minDate={moment().add(-1, 'days')}
+                disablePast={true}
                 classes={classes}
                 value={sendDate}
                 onChange={handleDatePicker}
                 placeholder={t('notifications.date')}
                 buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
+                isReadOnly={true}
                 autoOk
               />
             </Box>
@@ -1037,6 +1039,7 @@ const NotificationEditor = ({ props, classes }) => {
                 ampm={false}
                 timePickerOpen={timePickerOpen}
                 autoOk
+                isReadOnly={true}
               />
             </Box>
           </FormControl>
