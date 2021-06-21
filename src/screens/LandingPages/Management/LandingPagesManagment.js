@@ -269,7 +269,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
         remove: (windowSize==='xs'||(!IsPayment&&SurveyCount===0)),
-        rootClass: classes.paddingIcon,
+        rootClass: clsx(classes.paddingIcon, classes.minWidth95),
         onClick: async () => {
           if(IsPayment) {
             dispatch(downloadReport(row))
