@@ -1,6 +1,7 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
 import instence from '../../helpers/api'
 import {apiURL} from '../../config/index';
+import fileDownloader from 'js-file-download'
 
 export const getNewslatterData=createAsyncThunk(
   'email/getEmailCampaigns',async (_,thunkAPI) => {
@@ -56,9 +57,17 @@ export const duplicteCampaign=createAsyncThunk(
 export const downloadNewsletterReport=createAsyncThunk(
   'email/EmailReportsByIds',async (array=[],thunkAPI) => {
     try {
-      //const response=await instence.get('email/EmailReportsByIds/'+array.toString())
-      window.open(`${apiURL}email/EmailReportsByIds/${array.toString()}`)
-      return 'success' //response.data
+      var json = [];
+      for (var i = 0; i<= array.length; i++){
+        if (array[i]){
+          json.push({ ID: array[i] });
+        }
+      }
+
+      const response=await instence.put('email/EmailReportsByIds/', json);
+      //window.open(`${apiURL}email/EmailReportsByIds/${array.toString()}`)
+      //return response.data //'success'
+      fileDownloader(response.data, 'EmailReports.xls');
     } catch(err) {
       return thunkAPI.rejectWithValue({error: err.message});
     }

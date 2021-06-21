@@ -323,7 +323,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         minHeight: '400px',
-        position: 'relative'
+        position: 'relative',
+        maxWidth: 450
     },
     mobileFullBG: {
         backgroundImage: `url(${mobileFullBg})!important`,

@@ -195,7 +195,7 @@ const renderRoutes=(classes,history) => {
       />
       {/* Reports */}
       <Route
-        path={`/MainReport`}
+        path={`/Reports/NewsletterReports`}
         //component={transferUrl('/Pulseem/MainReport.aspx')}
         render={props => <NewslettersReport {...props} classes={classes} />}
       />
