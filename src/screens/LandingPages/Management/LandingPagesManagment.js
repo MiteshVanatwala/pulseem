@@ -390,16 +390,16 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderGroupNames = () => {
+  const renderGroupNames=() => {
     function createMarkup() {
-      return { __html: `${t("common.Groups")}: ` };
+      return {__html: `${t("common.Groups")}: `};
     }
     return (
-      <label dangerouslySetInnerHTML={createMarkup()} style={{ fontWeight: 400 }}></label>
+      <label dangerouslySetInnerHTML={createMarkup()} style={{fontWeight: 400}}></label>
     );
   }
 
-  const renderNameCell = (row) => {
+  const renderNameCell=(row) => {
     return (
       <>
         <Typography noWrap className={classes.nameEllipsis}>
@@ -407,7 +407,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         </Typography>
         <Typography
           className={classes.grayTextCell}>
-          {row.GroupNames && row.GroupNames.length > 0 && <span>{renderGroupNames()}<b>{row.GroupNames.join(', ').replace('#', '')}</b></span>}
+          {row.GroupNames&&row.GroupNames.length>0&&<span>{renderGroupNames()}<b>{row.GroupNames.join(', ').replace('#','')}</b></span>}
         </Typography>
       </>
 
@@ -423,7 +423,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         </Typography>
         {windowSize==='xs'?
           <Typography className={clsx(classes.middleText)}>{t('landingPages.SubmitsResource1.HeaderText')}</Typography>
-        : <a
+          :<a
             href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
             className={clsx(classes.middleText,classes.pt2)}>
             {t('landingPages.SubmitsResource1.HeaderText')}

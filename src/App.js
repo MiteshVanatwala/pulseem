@@ -22,6 +22,7 @@ import {useHistory} from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
 import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
+import NewslettersReport from './screens/Reports/NewslettersReport'
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -195,7 +196,8 @@ const renderRoutes=(classes,history) => {
       {/* Reports */}
       <Route
         path={`/MainReport`}
-        component={transferUrl('/Pulseem/MainReport.aspx')}
+        //component={transferUrl('/Pulseem/MainReport.aspx')}
+        render={props => <NewslettersReport {...props} classes={classes} />}
       />
       <Route
         path={`/ClalReport`}
@@ -395,7 +397,7 @@ const App=() => {
   const theme=getTheme(language)
   const history=useHistory()
 
-  if (isRTL) document.body.classList.add('rtl');
+  if(isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
   return (

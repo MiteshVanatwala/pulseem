@@ -1,31 +1,31 @@
-const dialogWidth={
+const dialogWidth = {
   xs: 200,
   sm: 350,
   md: 350,
   lg: 350
 }
 
-const paperMinWidthSm={
+const paperMinWidthSm = {
   xs: 350,
   sm: 500,
   md: 500,
   lg: 500,
   xl: 500
 }
-const minDialogWidth={
+const minDialogWidth = {
   xs: 330,
   sm: 330,
   md: 500,
   lg: 500
 }
 
-const maxDialogWidth={
+const maxDialogWidth = {
   md: 1050,
   lg: 1050,
   xl: 1050
 }
 
-const summaryPadding={
+const summaryPadding = {
   xs: 0,
   sm: 0,
   md: 0,
@@ -40,21 +40,21 @@ const iconWrapperMargin = {
   lg: 15,
   xl: 15
 }
-const iconWrapperMinWidth={
+const iconWrapperMinWidth = {
   xs: 80,
   sm: 80,
   md: 100
 }
-const summaryNotificationMinWidth={
+const summaryNotificationMinWidth = {
   xs: "240px",
 }
-const notificationTitleFontSize={
+const notificationTitleFontSize = {
   xs: 12,
   sm: 12,
   md: '1rem'
 }
 
-export const getGeneralStyle=(windowSize,isRTL,theme) => ({
+export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dialogContainer: {
     '& .MuiPaper-root': {
       overflowX: 'hidden'
@@ -126,11 +126,11 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
       }
     },
     '& $dialogChildren': {
-      maxHeight: windowSize==='xs'||windowSize==='sm'? '100vh':'calc(65vh)'
+      maxHeight: windowSize === 'xs' || windowSize === 'sm' ? '100vh' : 'calc(65vh)'
     },
     '& $mobileBG': {
       '& $iconWrapper': {
-        minWidth: windowSize==='xs'||windowSize==='sm'? 0:100
+        minWidth: windowSize === 'xs' || windowSize === 'sm' ? 0 : 100
       }
     }
   },
@@ -330,5 +330,12 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   },
   posRelative: {
     position: 'relative'
+  },
+  iconsFont: {
+    fontFamily: 'pulseemicons',
+    fontSize: 22
+  },
+  rtlSwitch: {
+    transform: 'rotateY(180deg)'
   }
 })
