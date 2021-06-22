@@ -5,13 +5,13 @@ const dialogWidth={
   lg: 350
 }
 
-const paperMinWidthSm={
-  xs: 350,
-  sm: 500,
-  md: 500,
-  lg: 500,
-  xl: 500
-}
+// const paperMinWidthSm={
+//   xs: 350,
+//   sm: 500,
+//   md: 500,
+//   lg: 500,
+//   xl: 500
+// }
 const minDialogWidth={
   xs: 330,
   sm: 330,
@@ -330,5 +330,14 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   },
   posRelative: {
     position: 'relative'
+  },
+  management: {
+    maxWidth: 1500
+  },
+  editor: {
+    maxWidth: 1920
+  },
+  report: {
+    maxWidth: 1920
   }
 })

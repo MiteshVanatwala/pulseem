@@ -715,7 +715,8 @@ const NewsletterManagnentScreen=({classes}) => {
   return (
     <DefaultScreen
       currentPage='newsletter'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}

@@ -95,10 +95,10 @@
         min-height     : 400px !important;
     }
 
-    .mobileBG .mobileNotification {
+    /* .mobileBG .mobileNotification {
         right    : 40px !important;
         max-width: 265px !important;
-    }
+    } */
 
     .previewStep {
         max-width: 100%;

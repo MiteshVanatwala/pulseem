@@ -30,13 +30,13 @@ const ellipsisMaxWidth={
   xl: '100%'
 }
 
-const tableRowMinWidth={
-  xs: 75,
-  sm: 75,
-  md: 75,
-  lg: 75,
-  xl: 100
-}
+// const tableRowMinWidth={
+//   xs: 75,
+//   sm: 75,
+//   md: 75,
+//   lg: 75,
+//   xl: 100
+// }
 
 
 export const getManagmentStyle=(windowSize,isRTL,theme) => ({

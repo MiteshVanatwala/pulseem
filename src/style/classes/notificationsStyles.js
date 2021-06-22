@@ -74,13 +74,13 @@ const mobileMinHeight = {
     lg: 630,
     xl: 630,
 }
-// const sidePaddingSizes = {
-//     xs: 15,
-//     sm: 25,
-//     md: 95,
-//     lg: 95,
-//     xl: 95
-// }
+const sidePaddingSizes = {
+    xs: 15,
+    sm: 25,
+    md: 95,
+    lg: 95,
+    xl: 95
+}
 const summaryTitleMargin = {
     xs: 0,
     sm: 0,
@@ -166,9 +166,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         display: 'flex',
         alignItems: 'center',
         alignContent: 'center'
-    },
-    flexStart: {
-        justifyContent: 'flex-start'
     },
     dashed: {
         border: '1px dashed #64a1bd'
@@ -323,7 +320,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         minHeight: '400px',
-        position: 'relative'
+        position: 'relative',
+        width: windowSize !== "xs" ? 450 : '100%',
+        maxWidth: 450
     },
     mobileFullBG: {
         backgroundImage: `url(${mobileFullBg})!important`,
@@ -333,7 +332,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         width: previewWidth[windowSize]
     },
     bubbleContainer: {
-        position: 'relative',
+        // position: 'relative',
         display: 'flex',
         justifyContent: 'center',
         maxHeight: bubble.container.maxHeight[windowSize],
@@ -384,15 +383,16 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     mobileNotification: {
         width: '100%',
-        maxWidth: (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 300,
+        maxWidth:  (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 265,
         boxShadow: '0 5px 5px 1px rgb(0 0 0 / 50%)',
         fontFamily: 'Assistant',
         top: 50,
         borderRadius: '5px',
         position: 'absolute',
         right: (windowSize !== 'xs' && windowSize !== 'sm') ? 50 : 40,
-        maxHeight: (windowSize !== 'xs' && windowSize !== 'sm') ? 'calc(100% - 80px)' : null,
-        paddingTop: 10
+        maxHeight: (windowSize !== 'xs' && windowSize !== 'sm') ? 'calc(100% - 60px)' : 'calc(100% - 95px)',
+        paddingTop: 10,
+        overflow: 'hidden'
     },
     chromeNotification: {
         backgroundColor: '#282828 !important',
@@ -573,6 +573,10 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         minWidth: galleryWidth[windowSize],
         minHeight: 400
     },
+    sidePadding: {
+        paddingRight: sidePaddingSizes[windowSize],
+        paddingLeft: sidePaddingSizes[windowSize]
+    },
     radioText: {
         color: '#555',
         fontSize: '17px',
@@ -621,8 +625,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         }
     },
     previewPaper: {
-        width: windowSize==='xs'?250:450,
-        height: windowSize==='xs'?330:730
+        width: windowSize === 'xs' ? 250 : 450,
+        height: windowSize === 'xs' ? 330 : 730
     }
 
 })

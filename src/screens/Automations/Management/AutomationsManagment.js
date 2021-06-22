@@ -738,7 +738,8 @@ const AutomationsManagnentScreen=({classes}) => {
   return (
     <DefaultScreen
       currentPage='automations'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}

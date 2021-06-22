@@ -1,20 +1,18 @@
 import React from 'react'
 import { TopAppBar,/*Drawer*/ } from '../components/core'
 import { Container } from '@material-ui/core'
+import clsx from 'clsx';
 
-const DefaultScreen = ({ classes, children, currentPage = '', customPadding = false }) => {
+const DefaultScreen = ({ classes, children, currentPage = '', containerClass, customPadding = false }) => {
   return (
     <div>
       <TopAppBar
         classes={classes}
         currentPage={currentPage}
       />
-      {/*<Drawer classes={classes} />*/}
       <Container
         maxWidth='xl'
-        //className={classes.defaultScreen}
-        style={{ maxHeight: 'calc(100vh - 53px)' }}
-      // className={customPadding ? classes.sidePadding : null}
+        className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null)}
       >
         {children}
       </Container>
