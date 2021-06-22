@@ -444,5 +444,9 @@
   "yourCampaignOnItsWay": "Your campaign is on its way",
   "folderAlreadyExists": "A folder with this name already exists. Please try another name",
   "pulseemLink": "https://www.pulseem.com",
-  "maxImageSize": "File is too large. Please try again"
+  "maxImageSize": "File is too large. Please try again",
+  "Errors": "Errors",
+  "UpdatedTo": "Updated to",
+  "SelectCategory": "Select Category",
+  "SelectPage": "Select Page"
 }

@@ -13,6 +13,7 @@ const flex12 = {
   lg: 6,
   xl: 6
 }
+const blue = '#0371AD';
 
 const iconPadding = {
   xs: '0.5rem 0.8rem 0.5em',
@@ -38,6 +39,69 @@ const tableRowMinWidth = {
   xl: 100
 }
 
+const barWidth={
+  sm: '460px!important',
+  md: '430px!important',
+  lg: '',
+  xl: ''
+}
+
+const barHeight={
+  sm: '',
+  md: '220px!important',
+  lg: '',
+  xl: ''
+}
+
+const shortcutFontSize={
+  category: {
+    xs: 16,
+    sm: 14,
+    md: 16,
+    lg: 16,
+    xl: 16
+  },
+  page: {
+    xs: 18,
+    sm: 16,
+    md: 18,
+    lg: 18,
+    xl: 18
+  }
+  
+}
+
+const dashboardDirection={
+  xs: 'column-reverse',
+  sm: '',
+  md: '',
+  lg: '',
+  xl: ''
+}
+
+const paperTopHeight={
+  xs: 'auto',
+  sm: 'auto',
+  md: '350px',
+  lg: '350px',
+  xl: '350px'
+}
+
+const paperBottomHeight={
+  xs: 'auto',
+  sm: 'auto',
+  md: '350px',
+  lg: '350px',
+  xl: '350px'
+}
+
+const shortcutEditLeft={
+  xs: '8%',
+  sm: '5%',
+  md: '5%',
+  lg: '5%',
+  xl: '5%'
+}
 
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   managementTitle: {
@@ -845,5 +909,383 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tabelCellPadding: {
     paddingBlock: 15
-  }
+  },
+  dashboard: {
+    background: '#F2F2F2',
+    padding: 0,
+    maxHeight: 'unset'
+  },
+  dashboardContainer: {
+    flexDirection: dashboardDirection[windowSize]
+
+  },
+  chartLabelGreen: {
+    position: 'absolute', 
+    top: 'calc(50% - 28px)', 
+    width: '100%',
+    fontSize: 35,
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    color: '#65d638'
+  },
+  shortcutTitleSection: {
+    width: '85%', 
+    marginTop: '2.1rem', 
+    marginBottom: 20
+  },
+  shortcutTitle: {
+    fontSize: windowSize==='xs'?18:20,
+    fontWeight: 'bold'
+  },
+  shortcutSubtitle: {
+    fontSize: windowSize==='xs'?16:18,
+  },
+  shortcutBox: {
+    [theme.breakpoints.up('sm')]: {
+      height: '100vh',
+      position: 'sticky',
+      top: 0,
+    },
+    [theme.breakpoints.down('xs')]: {
+      margin: '10px 10px -10px 10px'
+    }
+  },
+  shortcutPaper: {
+    [theme.breakpoints.down('xs')]: {
+      borderRadius: 10,
+    },
+    [theme.breakpoints.up('sm')]: {
+      height: 'calc(100vh)'
+    },
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center', 
+    overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      width: '0px'
+    },
+    '&::-webkit-scrollbar-thumb': {
+      'backgroundColor': 'darkgrey',
+      borderRadius: '5px'
+    }
+  },
+  shortcutBtnBox: {
+    position: 'relative', 
+    width: '100%', 
+    textAlign: 'center'
+  },
+  shortcutButton: {
+    height: '80px',
+    width: '85%',
+    background: '#0371AD',
+    borderRadius: '20px',
+    marginBottom: 30,
+    fontSize: '18px',
+    display: 'inline-block',
+    position: 'relative',
+    textTransform: 'capitalize',
+    
+  },
+  shortcutDottedButton: {
+    borderRadius: '20px', 
+    border: '1px dashed #0371AD', 
+    fontFamily: 'pulseemicons', 
+    height: '80px',
+    fontSize: '30px',
+    marginBottom: 30, 
+    width: '85%',
+  },
+  shortcutList: {
+    maxWidth: 350, 
+    background: 'white', 
+    borderRadius: 10, 
+    margin: 10
+  },
+  shortcutEditIcon: {
+    position: 'absolute',
+    left: shortcutEditLeft[windowSize],
+    bottom: 40,
+    fontFamily: 'pulseemicons', 
+    fontSize: 15,
+    color: 'white'
+  },
+  shortcutLabel: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    marginTop: -5
+  },
+  popperPaper: {
+    padding: '5px 0', 
+    width: 300, 
+    background: '#D7D7D7'
+  },
+  hideIndicator: {
+    background: 'none'
+  },
+  pageTitle: {
+    fontSize: shortcutFontSize.page[windowSize],
+    lineHeight: 1
+  },
+  categoryLabel: {
+    fontSize: shortcutFontSize.category[windowSize],
+    lineHeight: 1
+  },
+  carouselPaper: {
+    borderRadius: 10
+  },
+  carouselChart: {
+    '& .carousel-root': {
+      width: '100%'
+    },
+    position: 'relative'
+  },
+  carouselArrows: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    position: 'absolute',
+    zIndex: 1
+  },
+  carouselTipsArrows: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    position: 'absolute',
+    top: 'calc(50% - 24px)',
+    zIndex: 1
+  },
+  carouselTips: {
+    position: 'relative',
+    '& .control-dots .dot': {
+      background: 'white!important',
+      height: '10px!important',
+      width: '10px!important',
+      boxShadow: 'unset!important',
+      border: '1px solid #000',
+      margin: '0 2px!important'
+    },
+    '& .control-dots .dot.selected': {
+      background: '#000!important'
+    }
+  },
+  doughnutGrid: {
+    display: 'flex', 
+    flexDirection: 'column', 
+    alignItems: 'center'
+  },
+  barChart: {
+    '& canvas': {
+      width: barWidth[windowSize],
+      height: barHeight[windowSize]
+    },
+    paddingBottom: 10
+  },
+  emptyDoughnut: {
+    display: 'flex', 
+    justifyContent: 'center', 
+    flexDirection: 'column', 
+    backgroundColor: '#F9F9F9', 
+    border: '1px solid #D7D7D7', 
+    width: 180, 
+    height: 180,
+    margin: 10
+  },
+  recipientTitleSection: {
+    marginBottom: '1.2rem', 
+    borderBottom: '1px solid #ccc'
+  },
+  noRecipients: {
+    color: '#AAAAAA', 
+    marginTop: 40, 
+    fontSize: 20
+  },
+  addRecipientsIcon: {
+    fontFamily: 'pulseemicons', 
+    fontSize: 20
+  },
+  addRecipientsBtn: {
+    textTransform: 'capitalize',
+    marginTop: -10
+  },
+  tipsTitle: {
+    textAlign: 'center',
+    padding: '20px 20px 0px 20px'
+  },
+  bulkStatusTitleSection: {
+    marginBottom: '1rem', 
+    marginTop: '1rem'
+  },
+  bulkStatusBlue: {
+    marginBottom: '1rem',
+    padding: '3px 5px',
+    borderRadius: '.9rem', 
+    background: '#0371AD', 
+    color: 'white', 
+  },
+  bulkOutline: {
+    marginBottom: '1rem',
+    padding: '3px 5px',
+    borderRadius: '.9rem', 
+    border: '1px solid #0371AD', 
+    background: 'transparent',
+    color: '#0371AD', 
+  },
+  bulkTitle: {
+    fontWeight: 700,
+    fontSize: '12',
+    lineHeight: '2.1rem',
+  },
+  bulkContent: {
+    fontWeight: 300,
+    fontSize: '12',
+    lineHeight: '2.1rem',
+    textDecoration: 'underline',
+    color: '#0371AD', 
+  },
+  dashboardTitle: {
+    fontWeight: 'bold', 
+    color: '#0371AD', 
+    marginTop: 10,
+    marginInlineStart: 30,
+    fontSize: 20
+  },
+  dashboardUsername: {
+    fontWeight: 'bold', 
+    color: '#0371AD', 
+    fontSize: 20
+  },
+  dashboardTopPaper: {
+    [theme.breakpoints.up('lg')]: {
+      minHeight: 330
+    },
+    [theme.breakpoints.down('md')]: {
+      paddingBottom: 40
+    },
+    [theme.breakpoints.down('xs')]: {
+      margin: '10px 10px 0px 10px',
+    },
+    margin: '30px 30px 0px 30px',
+    borderRadius: 10
+  },
+  dashboardBottomPaper: {
+    [theme.breakpoints.up('lg')]: {
+      minHeight: 370
+    },
+    [theme.breakpoints.down('xs')]: {
+      margin: 10,
+    },
+    margin: 30,
+    borderRadius: 10
+  },
+  bulkMargin: {
+    [theme.breakpoints.down('xs')]: {
+      marginTop: 0,
+    },
+    [theme.breakpoints.up('lg')]: {
+      marginInlineEnd: 0
+    },
+  },
+  tipMargin: {
+    [theme.breakpoints.up('lg')]: {
+      marginInlineEnd: 0,
+    },
+  },
+  tipItem: {
+    padding: '0 20px 20px 20px'
+  },
+  tipulseemMsg: {
+    fontSize: 18,
+    padding: '0px 20px 20px 20px'
+  },
+  lightBulb: {
+    width: 100, 
+    height: 100, 
+    marginBottom: 10
+  },
+  activeTab: {
+    background: blue,
+    borderRadius: 5,
+    color: 'white',
+  },
+  tabText: {
+    fontSize: 20,
+    textTransform: 'capitalize',
+    padding: 2,
+    minWidth: 120,
+    minHeight: 40
+  },
+  SMSLastReportGrid: {
+    padding: '15px 20px 0px 20px'
+  },
+  newsletterLastReportGrid: {
+    padding: '0px 20px 20px 20px', 
+  },
+  newsletterItemBorder: {
+    borderBottom: '1px solid #ccc'
+  },
+  phoneLastReportTitle: {
+    marginBottom: '1.2rem', 
+    borderBottom: '1px solid #ccc'
+  },
+  lastReportItemText: {
+    display: 'flex',
+    alignItems: 'baseline'
+  },
+  lastReportTitleSection: {
+    marginTop: 5, 
+    marginBottom: '1.2rem', 
+    borderBottom: '1px solid #ccc'
+  },
+  lastReportRowItem: {
+    display: 'flex', 
+    justifyContent: 'space-between', 
+    padding: '5px 0px'
+  },
+  lastReportsTabPanels: {
+    padding: '0 20px 0 30px'
+  },
+  lastReportPadding: {
+    [theme.breakpoints.down('md')] :{
+      marginTop: 0
+    }
+  },
+  chartLabel: {
+    position: 'absolute', 
+    height: 55,
+    top: 0,
+    bottom: 0,
+    width: '55%',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    color: 'gray',
+    right: 0,
+    left: 0,
+    margin: 'auto'
+  },
+  doughnutBox: {
+    width: 200, 
+    height: 200, 
+    position: 'relative', 
+    textAlign: 'center'
+  },
+  doughnutGreenBox: {
+    width: 150, 
+    height: 150, 
+    position: 'relative', 
+    display: 'flex', 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    textAlign: 'center',
+    zIndex: 1
+  },
+  bgLightGreen: {
+    position: 'absolute',
+    background: '#E0FAC6',
+    width: 120,
+    height: 120,
+    marginTop: 10,
+    zIndex: -1
+  },
 })

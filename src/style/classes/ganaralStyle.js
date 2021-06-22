@@ -226,7 +226,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflow: 'auto'
   },
   defaultScreen: {
-    'overflow': 'visible'
+    maxHeight: 'calc(100vh - 53px)'
   },
   pulseemIcon: {
     fontFamily: 'pulseemicons'
@@ -239,6 +239,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   maxWidth540: {
     maxWidth: 540
+  },
+  dFlex: {
+    display: 'flex'
+  },
+  dInline: {
+    display: 'inline'
+  },
+  dInlineBlock: {
+    display: 'inline-block'
+  },
+  pe10: {
+    paddingInlineEnd: 10
   },
   p10: {
     padding: 10
@@ -263,6 +275,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mt5: {
     marginTop: 5
+  },
+  ml5: {
+    marginInlineStart: 5
+  },
+  ml10: {
+    marginInlineStart: 10
+  },
+  mr15: {
+    marginInlineEnd: 15
+  },
+  mt0: {
+    marginTop: 0
   },
   mt10: {
     marginTop: 10
