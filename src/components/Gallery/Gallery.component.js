@@ -20,7 +20,6 @@ import { AiOutlineCheckCircle, AiOutlineCloudUpload } from 'react-icons/ai';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import LazyBackground from './Lazy/LazyBackground';
 import Toast from '../Toast/Toast.component';
-import { setWindowSize } from '../../redux/reducers/coreSlice';
 
 const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     const dispatch = useDispatch();

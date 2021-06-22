@@ -14,7 +14,8 @@ const DefaultScreen = ({ classes, children, currentPage = '', customPadding = fa
         maxWidth='xl'
         //className={classes.defaultScreen}
         style={{ maxHeight: 'calc(100vh - 53px)' }}
-        className={customPadding ? classes.sidePadding : null}>
+      // className={customPadding ? classes.sidePadding : null}
+      >
         {children}
       </Container>
     </div>

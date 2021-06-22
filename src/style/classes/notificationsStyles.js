@@ -74,13 +74,13 @@ const mobileMinHeight = {
     lg: 630,
     xl: 630,
 }
-const sidePaddingSizes = {
-    xs: 15,
-    sm: 25,
-    md: 95,
-    lg: 95,
-    xl: 95
-}
+// const sidePaddingSizes = {
+//     xs: 15,
+//     sm: 25,
+//     md: 95,
+//     lg: 95,
+//     xl: 95
+// }
 const summaryTitleMargin = {
     xs: 0,
     sm: 0,
@@ -572,10 +572,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     dialogWidth: {
         minWidth: galleryWidth[windowSize],
         minHeight: 400
-    },
-    sidePadding: {
-        paddingRight: sidePaddingSizes[windowSize],
-        paddingLeft: sidePaddingSizes[windowSize]
     },
     radioText: {
         color: '#555',
