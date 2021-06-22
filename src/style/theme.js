@@ -43,10 +43,10 @@ export const getTheme=(language) => {
     breakpoints: {
       values: {
         xs: 0,
-        sm: 769,
-        md: 1025,
-        lg: 1201,
-        xl: 1401,
+        sm: 768,
+        md: 1024,
+        lg: 1400,
+        xl: 1920,
       },
     },
   },translation)
