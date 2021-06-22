@@ -388,7 +388,7 @@ const NewsletterManagnentScreen=({classes}) => {
               container>
               {map.map(icon => (
                 <Grid
-                  className={icon.disable&&classes.disabledCursor}
+                  className={clsx(icon.disable&&classes.disabledCursor)}
                   key={icon.key}
                   item >
                   <ManagmentIcon

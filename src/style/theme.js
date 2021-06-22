@@ -39,6 +39,15 @@ export const getTheme=(language) => {
       ],
       fontStyle: 'normal',
       fontSize: 14
-    }
+    },
+    breakpoints: {
+      values: {
+        xs: 0,
+        sm: 769,
+        md: 1025,
+        lg: 1201,
+        xl: 1401,
+      },
+    },
   },translation)
 }
