@@ -1017,7 +1017,7 @@ const NotificationEditor = ({ props, classes }) => {
             </RadioGroup>
             <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
               <DateField
-                minDate={moment().add(-1, 'days')}
+                minDate={moment()}
                 disablePast={true}
                 classes={classes}
                 value={sendDate}
