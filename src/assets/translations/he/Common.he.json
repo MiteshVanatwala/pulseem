@@ -439,5 +439,8 @@
   "sentAlert": "נשלח!",
   "yourCampaignOnItsWay": "הקמפיין שלך בדרך",
   "folderAlreadyExists": "תיקייה עם שם זה כבר קיימת. יש לבחור שם אחר.",
-  "maxImageSize": "הקובץ גדול מדי, נסו שנית"
+  "maxImageSize": "הקובץ גדול מדי, נסו שנית",
+  "smsBulkTitle": "חבילות SMS",
+  "smsBulkDescription": "רכישת חבילת SMS אונליין. אנא ביחרו את החבילה הנדרשת.",
+  "select": "בחר"
 }

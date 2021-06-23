@@ -349,6 +349,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     justifyContent: 'center'
   },
+  alignCenter: {
+    alignContent: 'center',
+    alignItems: 'center'
+  },
   textCapitalize: {
     textTransform: 'capitalize'
   },

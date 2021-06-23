@@ -448,5 +448,8 @@
   "Errors": "Errors",
   "UpdatedTo": "Updated to",
   "SelectCategory": "Select Category",
-  "SelectPage": "Select Page"
+  "SelectPage": "Select Page",
+  "smsBulkTitle": "SMS Bulk",
+  "smsBulkDescription": "Purchase an SMS package online. Please select the desired quantity",
+  "select": "Select"
 }
