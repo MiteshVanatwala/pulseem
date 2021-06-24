@@ -94,6 +94,12 @@ const LandingPagesesManagmentScreen=({classes}) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleCampainNameChange=event => {
       setLandingPageNameSearch(event.target.value)
     }
@@ -107,6 +113,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           value={landingPageNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={placeholder}
         />
       )
