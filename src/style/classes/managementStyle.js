@@ -889,12 +889,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 'bold',
     fontSize: 25
   },
-  font15: {
-    fontSize: 15
-  },
-  font18: {
-    fontSize: 18
-  },
   pt20: {
     paddingTop: 20
   },
@@ -1118,14 +1112,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   bulkStatusBlue: {
     marginBottom: '1rem',
-    padding: '3px 5px',
+    padding: '3px 15px',
     borderRadius: '.9rem', 
     background: '#0371AD', 
     color: 'white', 
   },
   bulkOutline: {
     marginBottom: '1rem',
-    padding: '3px 5px',
+    padding: '3px 15px',
     borderRadius: '.9rem', 
     border: '1px solid #0371AD', 
     background: 'transparent',

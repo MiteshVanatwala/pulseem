@@ -450,6 +450,7 @@
   "SelectCategory": "Select Category",
   "SelectPage": "Select Page",
   "smsBulkTitle": "SMS Bulk",
+  "smsBulk": "SMS Bulk",
   "smsBulkDescription": "Purchase an SMS package online. Please select the desired quantity",
   "select": "Select"
 }

@@ -67,12 +67,15 @@ const DashboardScreen = ({ classes }) => {
             <Typography align='center' className={classes.f20}>{t('dashboard.yourBulkStatus')}</Typography>
           </Grid>
           <Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
-            <Button onClick={() => setIsOpenPackageDialog(true)}>
-              <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
-              <Typography className={classes.bulkTitle}>
-                {isSMSPrepaid ? t('dashboard.perRecipients') : Sms.Credits}
-              </Typography>
-            </Button>
+            <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
+            <Typography className={classes.bulkTitle}>
+              {isSMSPrepaid ? t('dashboard.perRecipients') : Sms.Credits}
+            </Typography>
+            {isSMSPrepaid && Sms.Credits <= 0 &&
+              <Button onClick={() => setIsOpenPackageDialog(true)}>
+                {t('dashboard.purchase')}
+              </Button>
+            }
           </Grid>
           <Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
@@ -692,18 +695,6 @@ const DashboardScreen = ({ classes }) => {
         <Grid item xs={12}>
           <PricePackages classes={classes} />
         </Grid>
-      ),
-      renderButtons: () => (
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleDialogClose}
-          className={clsx(
-            classes.confirmButton,
-            classes.dialogConfirmButton,
-          )}>
-          {t('common.confirm')}
-        </Button>
       )
     };
   }
@@ -723,6 +714,7 @@ const DashboardScreen = ({ classes }) => {
           open={isOpenPackageDialog}
           onClose={handleDialogClose}
           onConfirm={handleDialogClose}
+          showDefaultButtons={false}
           {...dialog}>
           {dialog.content}
         </Dialog>

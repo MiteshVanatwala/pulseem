@@ -441,6 +441,7 @@
   "folderAlreadyExists": "תיקייה עם שם זה כבר קיימת. יש לבחור שם אחר.",
   "maxImageSize": "הקובץ גדול מדי, נסו שנית",
   "smsBulkTitle": "חבילות SMS",
+  "smsBulk": "חבילת SMS",
   "smsBulkDescription": "רכישת חבילת SMS אונליין. אנא ביחרו את החבילה הנדרשת.",
   "select": "בחר"
 }
