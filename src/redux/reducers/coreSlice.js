@@ -13,7 +13,8 @@ export const coreSlice=createSlice({
     phone: '',
     imageURL: '',
     isWhiteLabel: false,
-    companyName: ''
+    companyName: '',
+    rowsPerPage: 6
   },
   reducers: {
     setLanguage: (state,action) => {
@@ -22,6 +23,9 @@ export const coreSlice=createSlice({
     },
     setWindowSize: (state,action) => {
       state.windowSize=action.payload
+    },
+    setRowsPerPage: (state,action) => {
+      state.rowsPerPage=action.payload
     },
     setCoreData: (state,{payload}) => {
       state.basename=payload.basename
@@ -34,6 +38,6 @@ export const coreSlice=createSlice({
   }
 })
 
-export const {setLanguage,setWindowSize,setCoreData}=coreSlice.actions
+export const {setLanguage,setWindowSize,setCoreData,setRowsPerPage}=coreSlice.actions
 
 export default coreSlice.reducer
