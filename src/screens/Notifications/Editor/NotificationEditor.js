@@ -1024,7 +1024,6 @@ const NotificationEditor = ({ props, classes }) => {
                 onChange={handleDatePicker}
                 placeholder={t('notifications.date')}
                 buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
-                isReadOnly={true}
                 autoOk
               />
             </Box>
@@ -1039,7 +1038,6 @@ const NotificationEditor = ({ props, classes }) => {
                 ampm={false}
                 timePickerOpen={timePickerOpen}
                 autoOk
-                isReadOnly={true}
               />
             </Box>
           </FormControl>
