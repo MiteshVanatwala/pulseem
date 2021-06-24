@@ -106,8 +106,8 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     }
                 </Avatar>
             </ListItemAvatar>
-            <ListItemText className={'groupText'} title={allSelected || selectedList.length == 0 ? t("notifications.selectAll") : t("notifications.deSelectAll")}
-                primary={allSelected || selectedList.length == 0 ? t("notifications.selectAll") : t("notifications.deSelectAll")}
+            <ListItemText className={'groupText'} title={t("notifications.selectAll")}
+                primary={t("notifications.selectAll")}
             />
         </ListItem>)
     }

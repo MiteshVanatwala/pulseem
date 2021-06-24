@@ -224,14 +224,14 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const callbackSelectAll = () => {
-    if (!allGroupsSelected) {
+    if (!allGroupsSelected || selectedGroups.length < groupList.length) {
       setSelected(groupList);
+      setAllGroupsSelected(true);
     }
     else {
       setSelected([]);
+      setAllGroupsSelected(false);
     }
-    setAllGroupsSelected(!allGroupsSelected);
-
   }
   const callbackUpdateGroups = (groups) => {
     setSelected(groups);
@@ -331,7 +331,7 @@ const NotificationEditor = ({ props, classes }) => {
           setToastMessage(toastMessages.SAVE_SETTINGS);
         }
         else {
-          if(isSummary === false)
+          if (isSummary === false)
             history.push("/Notifications");
         }
       }
