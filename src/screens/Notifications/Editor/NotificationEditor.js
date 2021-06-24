@@ -241,7 +241,7 @@ const NotificationEditor = ({ props, classes }) => {
     setTimePickerOpen(!timePickerOpen);
   }
   const handleTimePicker = (value) => {
-    var date = moment(sendDate);
+    var date = moment(!moment(sendDate).isValid() ? value : sendDate);
     var time = moment(value, 'HH:mm');
     date.set({
       hour: time.get('hour'),
