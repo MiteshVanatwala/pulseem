@@ -7,6 +7,10 @@
     font-size    : 15px;
 }
 
+#notificationText {
+    height: 100%;
+}
+
 .summaryModal {
     min-width: 850px;
 }
