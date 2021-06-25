@@ -1,11 +1,11 @@
-import React from 'react';
+import { React, useState } from 'react';
 import clsx from 'clsx';
 import { CalendarIcon } from '../../assets/images/managment/index'
 import { useSelector } from 'react-redux'
 import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
 import moment from 'moment'
 import 'moment/locale/he'
-import {FiClock} from 'react-icons/fi'
+import { FiClock } from 'react-icons/fi'
 
 export const DateField = ({
   minDate,
@@ -16,7 +16,9 @@ export const DateField = ({
   placeholder = '',
   isTimePicker = false,
   buttons = null,
-  ampm = true
+  ampm = true,
+  maximumDate = undefined,
+  timePickerOpen = false
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -24,6 +26,8 @@ export const DateField = ({
     true: 'rtl',
     false: 'ltr'
   }
+  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   return isTimePicker ? (
     <KeyboardTimePicker
@@ -39,7 +43,7 @@ export const DateField = ({
       popoverprops={{
         dir: direction[isRTL]
       }}
-      format={isRTL ? "DD/MM/yyyy" : "MM/DD/yyyy"}
+      format={"hh:mm a"}
       margin='none'
       placeholder={placeholder}
       initialFocusedDate={moment().hours(0).minutes(0)}
@@ -53,6 +57,10 @@ export const DateField = ({
       cancelLabel={buttons && buttons.cancel}
       okLabel={buttons && buttons.ok}
       ampm={ampm}
+      id="timePicker"
+      onClick={() => setIsTimePickerOpen(true)}
+      onClose={() => setIsTimePickerOpen(false)}
+      open={isTimePickerOpen || timePickerOpen}
     />
   ) :
 
@@ -73,17 +81,22 @@ export const DateField = ({
       keyboardIcon={<CalendarIcon />}
       format={isRTL ? "DD/MM/yyyy" : "MM/DD/yyyy"}
       margin='none'
-      minDate={minDate}
+      minDate={moment(minDate).add(1, 'days')}
       placeholder={placeholder}
       initialFocusedDate={moment()}
       value={value}
-      onChange={date => onChange(date)}
+      onChange={onChange}
       KeyboardButtonProps={{
         'aria-label': 'change date',
         className: classes.datePickerButton
       }}
-      cancellabel={buttons&&buttons.cancel}
-      oklabel={buttons&&buttons.ok}
+      cancelLabel={buttons && buttons.cancel}
+      okLabel={buttons && buttons.ok}
+      id="datePicker"
+      maxDate={maximumDate}
+      onClick={() => setIsDatePickerOpen(true)}
+      onClose={() => setIsDatePickerOpen(false)}
+      open={isDatePickerOpen}
     />
     )
 

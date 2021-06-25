@@ -1,5 +1,7 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
-import instence, { SelectedBaseURL } from '../../helpers/api'
+import instence from '../../helpers/api'
+import {apiURL,actionURL,isProdMode} from '../../config/index';
+
 import fileDownloader from 'js-file-download'
 
 export const getLandingPagesData=createAsyncThunk(
@@ -43,9 +45,9 @@ export const duplicteLandingPage=createAsyncThunk(
   })
 
 export const downloadReport = createAsyncThunk(
-  'landingpages/export/purchase/', async ({ ID, Name }, thunkAPI) => {
+  'report/ExportPurchase/', async ({ ID, Name }, thunkAPI) => {
     try {
-      window.open(`${SelectedBaseURL}/landingpages/export/purchase/${ID}`);
+      window.open(`${apiURL}/report/ExportPurchase/${ID}`);
       return 'Success'
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -53,9 +55,9 @@ export const downloadReport = createAsyncThunk(
   })
 
 export const exportSurvey = createAsyncThunk(
-  'landingpages/export/Survey/', async ({ ID, Name }, thunkAPI) => {
+  'report/ExportSurvey/', async ({ ID, Name }, thunkAPI) => {
     try {
-      window.open(`${SelectedBaseURL}/landingpages/export/Survey/${ID}`);
+      window.open(`${apiURL}/report/ExportSurvey/${ID}`);
       return 'Success'
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

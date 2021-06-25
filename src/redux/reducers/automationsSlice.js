@@ -2,7 +2,7 @@ import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
 import instence from '../../helpers/api'
 
 export const getAutomationsData=createAsyncThunk(
-  'landingpages/getLandingPages',async (_,thunkAPI) => {
+  'automation/getAutomations',async (_,thunkAPI) => {
     try {
       const response=await instence.get(`automation/getAutomations`);
       return JSON.parse(response.data)

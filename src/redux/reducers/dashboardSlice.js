@@ -77,6 +77,7 @@ export const dashboardSlice = createSlice({
     recipientsReport: [],
     lastCampaignReport: [],
     packagesDetails: [],
+    accountAvailablePackages: [],
     tips: [],
     shortcuts: [],
     recipientsReportError: '',
@@ -100,7 +101,8 @@ export const dashboardSlice = createSlice({
         state.lastCampaignReportError = action.error.message
       })
       .addCase(getPackagesDetails.fulfilled, (state, { payload }) => {
-        state.packagesDetails = payload;
+        state.packagesDetails = payload.PackageDetails;
+        state.accountAvailablePackages = payload.AccountAvailablePackages;
       })
       .addCase(getPackagesDetails.rejected, (state, action) => {
         state.packagesDetailsError = action.error.message

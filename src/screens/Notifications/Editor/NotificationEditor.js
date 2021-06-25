@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import DefaultScreen from '../DefaultScreen'
+import DefaultScreen from '../../DefaultScreen'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import {
   Typography, Button, TextField, Grid, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener,
@@ -7,28 +7,30 @@ import {
 } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { Preview } from '../../components/Notifications/Preview/Preview';
-import { getNotificationById, save, updateNotification, getApiToken, getNotificationGroups, getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } from '../../redux/reducers/notificationSlice';
+import { Preview } from '../../../components/Notifications/Preview/Preview';
+import { getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups, 
+         getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } 
+from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { useHistory } from "react-router-dom";
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
 import './notification.styles.css';
-import Groups from '../../components/Notifications/Groups/Groups';
-import Gallery from '../../components/Gallery/Gallery.component';
+import Groups from '../../../components/Notifications/Groups/Groups';
+import Gallery from '../../../components/Gallery/Gallery.component';
 import {
   DateField, Dialog
-} from '../../components/managment/index';
+} from '../../../components/managment/index';
 import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import { IoMdImages } from 'react-icons/io'
 import moment from 'moment'
 import 'moment/locale/he'
-import Toast from '../../components/Toast/Toast.component';
+import Toast from '../../../components/Toast/Toast.component';
 import Tooltip from '@material-ui/core/Tooltip';
 import {
   CheckAnimation
-} from '../../assets/images/settings/index'
+} from '../../../assets/images/settings/index'
 
 
 const useStylesBootstrap = makeStyles((theme) => ({
@@ -51,8 +53,9 @@ const DashedInput = withStyles({
     border: 'none',
     borderRadius: 0,
     "& .MuiOutlinedInput-multiline": {
-      padding: 2,
-      height: 60,
+      padding: 0,
+      height: 40,
+      paddingTop: 0,
       '& textarea + fieldset': {
         border: '1px dashed #64a1bd',
         borderRadius: 0,
@@ -70,6 +73,9 @@ const DashedInput = withStyles({
       '& textarea + fieldset:hover': {
         color: 'rgba(0, 0, 0, 0.87)',
         border: '1px dashed #000',
+      },
+      '& textarea.error': {
+        border: '1px dashed red'
       }
     },
     '& input': {
@@ -79,10 +85,6 @@ const DashedInput = withStyles({
       borderStyle: 'dashed',
       borderColor: '#64a1bd',
       borderRadius: 0
-    },
-    '& input:invalid + fieldset': {
-      borderColor: 'red',
-      borderWidth: 1
     },
     '& input:invalid:focus + fieldset': {
       borderColor: 'red',
@@ -96,19 +98,21 @@ const DashedInput = withStyles({
     '& input:hover + fieldset': {
       color: 'rgba(0, 0, 0, 0.87)',
       border: '1px dashed rgba(0, 0, 0, 0.87)',
+    },
+    '& input.error': {
+      border: '1px dashed red'
     }
   },
 
 })(TextField);
 
 const NotificationEditor = ({ props, classes }) => {
-
   /* #region  Component settings constatns */
   const dispatch = useDispatch();
   const { language } = useSelector(state => state.core)
   const { t } = useTranslation();
   const history = useHistory();
-  const { isRTL } = useSelector(state => state.core);
+  const { isRTL, windowSize } = useSelector(state => state.core);
   moment.locale(language);
   /* #endregion */
   /* #region  State */
@@ -131,9 +135,28 @@ const NotificationEditor = ({ props, classes }) => {
     RedirectButtonText: ""
   });
 
+  const [sourceModel, setSourceModel] = useState({
+    ID: 0,
+    Name: "",
+    Title: "",
+    Body: "",
+    Icon: "",
+    Image: "",
+    RedirectURL: "",
+    Tag: "",
+    Direction: 2,
+    IsRenotify: "",
+    SendDate: "",
+    IsDeleted: "",
+    SentCount: "",
+    StatusID: "",
+    NotificationGroups: "",
+    RedirectButtonText: ""
+  });
+
   const [activeStep, setActiveStep] = useState(0);
   const [ShowRedirectButton, setRedirectButtonVisibillity] = useState(false);
-  const [apiToken, setApiToken] = useState(0);
+  const [notificationPublicKey, setPublicKey] = useState(0);
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [inputFocus, setFocusOnInput] = useState(null);
   const [cursorPosition, setCursorPosition] = useState(0);
@@ -146,6 +169,7 @@ const NotificationEditor = ({ props, classes }) => {
   // Send Type settings
   const [sendType, setSendType] = useState('1'); // Immediate
   const [sendDate, handleFromDate] = useState(null);
+  const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
   const [showDetails, setDetailsVisibility] = useState(false);
   const [notificationHover, setHovered] = useState(false);
@@ -157,6 +181,9 @@ const NotificationEditor = ({ props, classes }) => {
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [campaignSent, setCampaignSent] = useState(false);
   const [showConfirmCancel, setShowConfirmCancel] = useState(false);
+  const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
+  const [showGroupsList, setShowGroupsList] = useState(false);
+
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('notifications.settings_saved'), showAnimtionCheck: true },
@@ -164,13 +191,18 @@ const NotificationEditor = ({ props, classes }) => {
   }
 
   useEffect(() => {
-    handleApiToken();
+    const body = document.querySelector('#root');
+
+    body.scrollIntoView({}, 100);
     if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
       getData();
-      getSubAccountGroups();
       if (props.match.params.send || props.match.url.toLowerCase().indexOf('send') > -1) {
+        getSubAccountGroups();
         setActiveStep(activeStep + 1);
       }
+    }
+    else {
+      handlePublicKey();
     }
   }, [dispatch]);
 
@@ -202,20 +234,37 @@ const NotificationEditor = ({ props, classes }) => {
   const callbackUpdateGroups = (groups) => {
     setSelected(groups);
   }
+  const handleDatePicker = (value) => {
+    handleFromDate(value);
+    setTimePickerOpen(!timePickerOpen);
+  }
+  const handleTimePicker = (value) => {
+    var date = moment(sendDate);
+    var time = moment(value, 'HH:mm');
+    date.set({
+      hour: time.get('hour'),
+      minute: time.get('minute')
+    });
+
+    handleFromDate(date);
+    setTimePickerOpen(false);
+  }
+  
   /* #endregion */
   /* #region  Data Handlers */
-  const handleApiToken = async () => {
-    const t = await dispatch(getApiToken());
+  const handlePublicKey = async () => {
+    const t = await dispatch(getNotificationPublicKey());
     if (t && t.payload) {
-      setApiToken(t.payload.PublicKey);
+      setPublicKey(t.payload.PublicKey);
     }
     else {
-      setApiToken('');
+      setPublicKey('');
     }
   }
   const saveNotification = (isExit, isContinue) => {
     // Show loader
     // event.preventDefault();
+    setSourceModel(model);
     if (isValidNotification()) {
       if (!ShowRedirectButton) {
         model.RedirectButtonText = '';
@@ -262,6 +311,7 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const saveSettings = async (isExit) => {
     // event.preventDefault();
+    setSourceModel(model);
     if (isValidSettings()) {
       if (sendType === "2") {
         const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
@@ -301,7 +351,8 @@ const NotificationEditor = ({ props, classes }) => {
   const getData = async () => {
     const notificationPayload = await dispatch(getNotificationById(props.match.params.id));
     setModel(notificationPayload.payload);
-
+    setSourceModel(notificationPayload.payload);
+    setPublicKey(notificationPayload.payload.PublicKey);
     if (notificationPayload.payload.RedirectButtonText != '') {
       setRedirectButtonVisibillity(true);
     }
@@ -334,7 +385,11 @@ const NotificationEditor = ({ props, classes }) => {
   const getSummary = async (event) => {
     event.preventDefault();
     const totalResonse = await dispatch(getUniqueClientsByGroups(selectedGroups.map((g) => { return g.Id; })));
+    const currentTotalRecipients = selectedGroups.reduce(function (a, b) {
+      return a + b['Members'];
+    }, 0);
     setTotalRecipients(totalResonse.payload);
+    setDuplicatedRecipients(currentTotalRecipients - totalResonse.payload);
     if (sendDate) {
       const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
       m.lang(isRTL ? "he" : "en");
@@ -394,9 +449,14 @@ const NotificationEditor = ({ props, classes }) => {
   /* #endregion */
   /* #region  Wizard steps */
   const handleCancel = () => {
-    setShowConfirmCancel(true);
+    if (JSON.stringify(sourceModel) !== JSON.stringify(model)) {
+      setShowConfirmCancel(true);
+    }
+    else {
+      onCancelConfirm(false);
+    }
   };
-  const onCancelConfirm = (saveBeforeCancel) => (event) => {
+  const onCancelConfirm = (saveBeforeCancel) => {
     if (saveBeforeCancel) {
       if (activeStep == 0) {
         saveNotification(true, false)
@@ -425,11 +485,14 @@ const NotificationEditor = ({ props, classes }) => {
       }
       return (
         <Dialog
+          cancelText="common.No"
+          confirmText="common.Yes"
+          disableBackdropClick={true}
           classes={classes}
           open={showConfirmCancel}
           onCancel={() => setShowConfirmCancel(null)}
-          onClose={onCancelConfirm(false)}
-          onConfirm={onCancelConfirm(true)}
+          onClose={() => onCancelConfirm(false)}
+          onConfirm={() => onCancelConfirm(true)}
           {...dialog}>
           {dialog.content}
         </Dialog>
@@ -437,6 +500,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const handleBack = () => {
+
     history.push(`/Notification/edit/${model.ID}`);
   };
   const getStepContent = (stepIndex) => {
@@ -461,7 +525,11 @@ const NotificationEditor = ({ props, classes }) => {
     setModel({ ...model, RedirectURL: event.target.value });
   }
   const handleRedirectButtonTextChange = (event) => {
-    setModel({ ...model, RedirectButtonText: event.target.value });
+    const textLength = event.target.value.length;
+    if (textLength <= 20) {
+      setModel({ ...model, RedirectButtonText: event.target.value });
+    }
+    return;
   }
   const handleRedirectVisibillity = (event) => {
     setRedirectButtonVisibillity(event.target.checked);
@@ -514,13 +582,19 @@ const NotificationEditor = ({ props, classes }) => {
       }
 
       if (inputFocus == 'notificationTitle') {
-        setModel({ ...model, Title: finalStr });
+        if (finalStr.length <= 50) {
+          setModel({ ...model, Title: finalStr });
+        }
       }
       else if (inputFocus == 'notificationText') {
-        setModel({ ...model, Body: finalStr });
+        if (finalStr.length <= 100) {
+          setModel({ ...model, Body: finalStr });
+        }
       }
       else {
-        setModel({ ...model, RedirectButtonText: finalStr });
+        if (finalStr.length <= 50) {
+          setModel({ ...model, RedirectButtonText: finalStr });
+        }
       }
     }
   };
@@ -557,6 +631,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const isValidNotification = () => {
+    setShowConfirmCancel(false);
     const errorList = [];
     document.querySelector("#notificationName").classList.remove("error");
     if (ShowRedirectButton)
@@ -589,37 +664,53 @@ const NotificationEditor = ({ props, classes }) => {
     return true;
   }
   const isValidSettings = () => {
+    let result = true;
+    setShowConfirmCancel(false);
     const errorList = [];
+    document.querySelector("#datePicker").classList.remove("error");
+    document.querySelector("#timePicker").classList.remove("error");
 
-    if (sendType == 2 && (!sendDate)) {
-      errorList.push({ message: t('notifications.validation.notificationDate') });
+    if (sendType == 2) {
+      if ((!sendDate)) {
+        errorList.push({ message: t('notifications.validation.notificationDate') });
+      }
+      else {
+        const dateNow = new Date(Date.now());
+        const selectedDate = new Date(sendDate);
+        if (selectedDate < dateNow) {
+          errorList.push({ message: t('notifications.validation.notificationDatePassed') });
+          document.querySelector("#datePicker").classList.add("error");
+          document.querySelector("#timePicker").classList.add("error");
+          document.querySelector("#timePicker").focus();
+          result = false;
+        }
+      }
     }
     if (selectedGroups.length === 0) {
       errorList.push({ message: t('notifications.validation.notificationGroups') });
+      result = false;
     }
     if (errorList.length > 0) {
       setValidationError(errorList);
-      return false;
+      result = false;
     }
-    return true;
+    return result;
   }
   /* #endregion */
   // Test send 
   const handleTestSend = () => {
-    PushService(apiToken).then((permissions) => {
+    PushService(notificationPublicKey).then((permissions) => {
       try {
         if (permissions.subscription && permissions.state == 'granted') {
           const options = {
             id: model.ID,
             dir: model.Direction == '2' ? 'rtl' : 'ltr',
-            renotify: true,
             body: model.Body,
             icon: model.Icon,
             image: model.Image,
             title: model.Title,
-            renotify: 'false',
-            tag: "test",
-            badge: 'https://www.pulseemdev.co.il/favicon.png',
+            renotify: 'true',
+            tag: 'pulseem_' + model.ID,
             redirect: model.RedirectURL
           };
 
@@ -650,12 +741,12 @@ const NotificationEditor = ({ props, classes }) => {
           alignItems="center"
           spacing={2}
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
-          <Grid item md={2} xs={12}>
-            {/* <label>* {t('notifications.notificationName')}</label> */}
+          <Grid item md={3} xs={12}>
+            <label>* {t('notifications.notificationName')}</label>
             <TextField
-              label={t('notifications.notificationName')}
               id="notificationName"
               required
+              placeholder={t('notifications.notificationName')}
               value={model && model.Name || ''}
               className={classes.textField}
               margin="dense"
@@ -663,60 +754,54 @@ const NotificationEditor = ({ props, classes }) => {
               onChange={handleNotificationName}
             />
           </Grid>
-          <Grid item md={10} xs={12}>
-            <Grid container justify="flex-start"
-              spacing={4}
-              alignItems="center">
-              <Grid item md={2} xs={12}>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={ShowRedirectButton}
-                      color="primary"
-                      name="checkedB"
-                      inputProps={{ 'aria-label': 'primary checkbox' }}
-                      onChange={handleRedirectVisibillity}
-                    />
-                  }
-                  label={t('notifications.showRedirectUrlButton')}
-                />
-              </Grid>
-              {ShowRedirectButton &&
-                <Grid item sm={3} xs={12}>
-                  {/* <label>* {t('notifications.redirectUrl')}</label> */}
-                  <BootstrapTooltip title={t("notifications.tooltip.redirectUrl")} placement="top">
-                    <TextField
-                      label={t('notifications.redirectUrl')}
-                      id="notificationRedirectUrl"
-                      style={{ textAlign: 'left' }}
-                      required
-                      value={model && model.RedirectURL || ''}
-                      className={classes.textField}
-                      margin="dense"
-                      variant="outlined"
-                      onChange={handleRedirectUrlChange}
-                      onBlur={event => updateUrlValue(event)}
-                    />
-                  </BootstrapTooltip>
-
-                </Grid>
-              }
-              {ShowRedirectButton &&
-                <Grid item sm={3} xs={12}>
-                  {/* <label>{t('notifications.redirectUrlButton')}</label> */}
-                  <TextField
-                    label={t('notifications.redirectUrlButton')}
-                    id="notificationButton"
-                    value={model && model.RedirectButtonText || ''}
-                    className={classes.textField}
-                    margin="dense"
-                    variant="outlined"
-                    onChange={handleRedirectButtonTextChange}
-                    onFocus={handleTextFocus}
+          <Grid item md={2} xs={12}>
+            <BootstrapTooltip title={t("notifications.tooltip.showRedirectButton")} placement="top">
+              <FormControlLabel
+                style={{ marginTop: 25, display: 'flex', justifyContent: 'center', alignContent: 'center' }}
+                control={
+                  <Switch
+                    checked={ShowRedirectButton}
+                    color="primary"
+                    name="checkedB"
+                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                    onChange={handleRedirectVisibillity}
                   />
-                </Grid>}
-            </Grid>
+                }
+                label={t('notifications.showRedirectUrlButton')}
+              />
+            </BootstrapTooltip>
           </Grid>
+          {ShowRedirectButton &&
+            <Grid item md={3} xs={12}>
+              <label>* {t('notifications.redirectUrl')}</label>
+              <TextField
+                placeholder={t('notifications.redirectUrl')}
+                id="notificationRedirectUrl"
+                style={{ textAlign: 'left' }}
+                required
+                value={model && model.RedirectURL || ''}
+                className={classes.textField}
+                margin="dense"
+                variant="outlined"
+                onChange={handleRedirectUrlChange}
+                onBlur={event => updateUrlValue(event)}
+              />
+            </Grid>
+          }
+          {ShowRedirectButton &&
+            <Grid item md={3} xs={12}>
+              <label>{t('notifications.redirectUrlButton')}</label>
+              <TextField
+                placeholder={t('notifications.redirectUrlButton')}
+                id="notificationButton"
+                value={model && model.RedirectButtonText || ''}
+                className={classes.textField}
+                margin="dense"
+                variant="outlined"
+                onChange={handleRedirectButtonTextChange}
+                onFocus={handleTextFocus}
+              />
+            </Grid>}
         </Grid>
         <Grid
           container
@@ -724,11 +809,11 @@ const NotificationEditor = ({ props, classes }) => {
           justify="flex-start"
           alignItems="flex-start"
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
-          <Grid item md={3} xs={12}>
+          <Grid item md={4} xs={12}>
             {notificationContent()}
           </Grid>
           <Grid item md={1} xs={12}>&nbsp;</Grid>
-          <Grid item md={3} xs={12}>
+          <Grid item md={4} xs={12} className={classes.previewStep}>
             <Preview classes={classes}
               model={model}
               ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText && model.RedirectButtonText != ''}
@@ -740,8 +825,8 @@ const NotificationEditor = ({ props, classes }) => {
 
   }
   const notificationContent = () => {
-    const toggleHover = () => setHovered(!notificationHover);
-    const toggleIconHover = () => setIconHover(!iconHover);
+    // const toggleHover = () => setHovered(!notificationHover);
+    // const toggleIconHover = () => setIconHover(!iconHover);
     const removeImage = () => {
       setModel({ ...model, Image: null });
     }
@@ -795,14 +880,14 @@ const NotificationEditor = ({ props, classes }) => {
           </Box>
         </Grid>
         <div className={classes.notification} id={model.ID}>
-          <div className={clsx(
-            classes.borderSign,
+          <div style={{ marginBottom: 5 }} className={clsx(
+            classes.flexJustifyCenter,
             classes.dashed,
             classes.notificationTop,
             classes.notificationContainer
           )}
-            onMouseEnter={toggleHover}
-            onMouseLeave={toggleHover}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
             onClick={openGallery(false)}
             style={{
               backgroundImage: `url(${model.Image})`
@@ -811,7 +896,7 @@ const NotificationEditor = ({ props, classes }) => {
             {model == null || !model.Image ? chooseImage() : ""
             }
             <button href="#"
-              className={clsx(classes.absTopRight, notificationHover && model.Image != null && model.Image !== '' ? '' : classes.hidden)}
+              className={clsx(classes.absTopRight, notificationHover && model.Image != null && model.Image !== '' ? null : classes.hidden)}
               style={{ border: 'none', cursor: 'pointer', textDecoration: 'none', opacity: notificationHover ? 1 : 0 }}
               onClick={removeImage}
               id="removeImage"
@@ -819,9 +904,9 @@ const NotificationEditor = ({ props, classes }) => {
           </div>
           <div className={clsx(classes.footerWrapper, classes.dashed)} style={{ flexDirection: isRTL ? (model.Direction == 1 ? 'row-reverse' : 'row') : (model.Direction == 1 ? 'row' : 'row-reverse') }}>
             <div className={classes.iconWrapper}>
-              <div className={clsx(classes.borderSign, classes.dashed, classes.icon)}
-                onMouseEnter={toggleIconHover}
-                onMouseLeave={toggleIconHover}
+              <div className={clsx(classes.flexJustifyCenter, classes.dashed, classes.icon)}
+                onMouseEnter={() => setIconHover(true)}
+                onMouseLeave={() => setIconHover(false)}
                 onClick={openGallery(true)}
                 style={{
                   backgroundImage: `url(${model.Icon})`
@@ -830,18 +915,18 @@ const NotificationEditor = ({ props, classes }) => {
                   style={{
                     fontSize: '30px', cursor: 'pointer'
                   }}>
-                  {model == null || !model.Icon ? chooseIcon() : ""
+                  {model == null || !model.Icon ? <ChooseIcon /> : ""
                   }
                 </div>
                 <button href="#"
-                  className={clsx(classes.absTopRight, iconHover && model.Icon !== null && model.Icon !== '' ? '' : classes.hidden)}
+                  className={clsx(classes.absTopRight, iconHover && model.Icon !== null && model.Icon !== '' ? null : classes.hidden)}
                   style={{ border: 'none', cursor: 'pointer', textDecoration: 'none', opacity: iconHover ? 1 : 0 }}
                   onClick={removeIcon}
                   id="removeIcon"
                 >X</button>
               </div>
             </div>
-            <div className={classes.notificationContent}>
+            <div className={classes.notificationContent} style={{ marginBottom: 15 }}>
               <DashedInput
                 aria-label=""
                 required
@@ -911,34 +996,37 @@ const NotificationEditor = ({ props, classes }) => {
             </Typography>
           </Box>
         </Grid>
-        <Grid item xs={1}></Grid>
+        {windowSize !== "xs" && <Grid item xs={1}></Grid>}
         <Grid item md={4} xs={12}>
-          <h2 className={classes.sectionTitle}>{t('notifications.whenToSend')}</h2>
+          <h2 className={classes.sectionTitle} style={{ marginTop: windowSize == "xs" ? "0" : null }}>{t('notifications.whenToSend')}</h2>
           <FormControl component="fieldset">
             <RadioGroup aria-label="gender" name="sendType" value={sendType} onChange={handleSendType}>
               <FormControlLabel value="1" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.immediateSend")}</span>} />
               <FormHelperText className={classes.helpText}>{t("notifications.immediateDescription")}</FormHelperText>
               <FormControlLabel value="2" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.futureSend")}</span>} />
             </RadioGroup>
-            <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30 }}>
+            <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
               <DateField
+                minDate={moment()}
                 classes={classes}
                 value={sendDate}
-                onChange={handleFromDate}
+                onChange={handleDatePicker}
                 placeholder={t('notifications.date')}
                 buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
+                autoOk
               />
-
             </Box>
-            <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30 }}>
+            <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
               <DateField
                 classes={classes}
                 value={sendDate}
-                onTimeChange={handleFromDate}
+                onTimeChange={handleTimePicker}
                 placeholder={t('notifications.hour')}
                 isTimePicker={true}
                 buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
                 ampm={false}
+                timePickerOpen={timePickerOpen}
+                autoOk
               />
             </Box>
           </FormControl>
@@ -976,7 +1064,7 @@ const NotificationEditor = ({ props, classes }) => {
       ),
       title: <span style={{ color: '#161616' }}>{`${t("notifications.summaryModalTitle")} "${model.Name}"`}</span>,
       content: (
-        <Grid container className={clsx(classes.root, classes.dialogBox)} spacing={4}>
+        <Grid container direction={'row'} className={clsx(classes.root, classes.dialogBox)} spacing={4}>
           <Grid item md={6} xs={12}>
             <h3 className={clsx(classes.blue, classes.summaryTitle)}>{t("notifications.when")}</h3>
             <b>{whenToSend}</b>
@@ -988,19 +1076,21 @@ const NotificationEditor = ({ props, classes }) => {
               </a>
             </Grid>
           </Grid>
-          <Grid item md={6} xs={12}>
+          {windowSize !== 'xs' && <Grid item md={6}>
             <h3 className={classes.blue} style={{ fontWeight: '500', fontSize: 20, marginTop: 10 }}>{t("notifications.preview")}</h3>
             <Preview classes={classes}
               model={model}
               ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText != ''}
               showDevices={true}
               showTitle={false}
+              showOSScreen={false}
             />
-          </Grid>
+          </Grid>}
           <Grid item xs={12} style={{ paddingTop: 0 }}>
             {showDetails && <div>
-              <h3>{t("notifications.buttons.groups")} ({selectedGroups.length})</h3>
-              <ul>
+              <h3 style={{ cursor: 'pointer', marginBotton: 0 }} onClick={() => setShowGroupsList(!showGroupsList)}>{t("notifications.buttons.groups")} ({selectedGroups.length})</h3>
+              <Divider />
+              {showGroupsList && <ul>
                 {selectedGroups.map((g, index) => {
                   return (<li key={`group_${g.Id}`}>
                     <div className={classes.flexSpaceBetween}>
@@ -1010,7 +1100,14 @@ const NotificationEditor = ({ props, classes }) => {
                   </li>)
                 })}
               </ul>
+              }
+              {showDetails && duplicatedRecipients > 0 &&
+                <div className={clsx(classes.flexStart, classes.flexAlignCetner)}>
+                  <h3 className={classes.blue} style={{ marginTop: 0, marginBottom: 0 }}>{t("notifications.duplicatedRecipients")}: </h3> <b className={classes.summaryText}>{duplicatedRecipients}</b>
+                </div>
+              }
             </div>}
+
           </Grid>
         </Grid>
       ),
@@ -1068,7 +1165,7 @@ const NotificationEditor = ({ props, classes }) => {
     </div>
     )
   }
-  const chooseIcon = () => {
+  const ChooseIcon = () => {
     return (<div className={clsx(
       classes.flex,
       classes.flexCenter,
@@ -1135,7 +1232,11 @@ const NotificationEditor = ({ props, classes }) => {
       ),
       title: t("common.imageGallery"),
       content: (
-        <Gallery classes={classes} isConfirm={isGalleryConfirmed} callbackSelectFile={handleSelectedImage} style={{ minWidth: 400 }} />
+        <Gallery
+          classes={classes}
+          isConfirm={isGalleryConfirmed}
+          callbackSelectFile={handleSelectedImage}
+          style={{ minWidth: 400 }} />
       )
     };
   }
@@ -1216,100 +1317,101 @@ const NotificationEditor = ({ props, classes }) => {
       <div className={classes.root}>
         <div>
           {getStepContent(activeStep)}
-          <div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")}>
-            {activeStep == 0 &&
-              <Box>
-                <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"} >
-                  <Button
-                    variant='contained'
-                    size='medium'
-                    className={clsx(
-                      classes.actionButton,
-                      classes.actionButtonLightBlue,
-                      classes.backButton
-                    )}
-                    color="primary"
-                    onClick={handleTestSend}>
-                    {t('notifications.testSend')}
-                  </Button>
-                </BootstrapTooltip>
-
-              </Box>
-            }
-            {activeStep > 0 &&
-              <Button
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonLightBlue,
-                  classes.backButton
-                )}
-                onClick={handleBack}
-              >
-                {t('notifications.back')}
-              </Button>
-            }
-
-            <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
-              <Button
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonRed
-                )}
-                style={{ margin: '8px' }}
-                onClick={handleCancel}
-              >
-                {t('notifications.cancel')}
-              </Button>
-              <Button
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonLightBlue,
-                  classes.backButton
-                )}
-                color="primary"
-                style={{ margin: '8px' }}
-                onClick={event => activeStep == 0 ? saveNotification(false, false) : saveSettings(false)}>
-                {t('notifications.save')}
-              </Button>
-              <Button
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonLightBlue,
-                  classes.backButton
-                )}
-                color="primary"
-                style={{ margin: '8px' }}
-                onClick={event => activeStep == 0 ? saveNotification(true, false) : saveSettings(true)}>
-                {t('notifications.saveAndExit')}
-              </Button>
-              <Button
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonLightGreen,
-                  classes.backButton,
-                  activeStep > 0 && selectedGroups.length === 0 ? classes.disabled : ''
-                )}
-                color="primary"
-                style={{ margin: '8px' }}
-                onClick={event => activeStep == 0 ? saveNotification(false, true) : getSummary(event)}>
-                {activeStep == 0 ? t('notifications.saveAndContinue') : t('notifications.summary')}
-              </Button>
-            </Box>
-          </div>
         </div>
       </div>
     )
+  }
+  const WizardButtons = () => {
+    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")}>
+      {activeStep == 0 &&
+        <Box>
+          <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"} >
+            <Button
+              variant='contained'
+              size='medium'
+              className={clsx(
+                classes.actionButton,
+                classes.actionButtonLightBlue,
+                classes.backButton
+              )}
+              color="primary"
+              onClick={handleTestSend}>
+              {t('notifications.testSend')}
+            </Button>
+          </BootstrapTooltip>
 
+        </Box>
+      }
+      {activeStep > 0 &&
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          onClick={handleBack}
+        >
+          {t('notifications.back')}
+        </Button>
+      }
+
+      <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonRed
+          )}
+          style={{ margin: '8px' }}
+          onClick={handleCancel}
+        >
+          {t('notifications.cancel')}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
+          onClick={event => activeStep == 0 ? saveNotification(false, false) : saveSettings(false)}>
+          {t('notifications.save')}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
+          onClick={event => activeStep == 0 ? saveNotification(true, false) : saveSettings(true)}>
+          {t('notifications.saveAndExit')}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightGreen,
+            classes.backButton,
+            activeStep > 0 && selectedGroups.length === 0 ? classes.disabled : ''
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
+          onClick={event => activeStep == 0 ? saveNotification(false, true) : getSummary(event)}>
+          {activeStep == 0 ? t('notifications.saveAndContinue') : t('notifications.summary')}
+        </Button>
+      </Box>
+    </div>)
   }
   const renderToast = () => {
     if (toastMessage) {
@@ -1328,14 +1430,17 @@ const NotificationEditor = ({ props, classes }) => {
       currentPage='notifications'
       customStyle={classes.sidePadding}
       classes={classes}>
-      {renderToast()}
-      {renderHeader()}
-      {renderNotification()}
-      {renderDialog()}
-      {renderSummary()}
-      {renderSentDialog()}
-      {showGalleryModal()}
-      {renderConfirmCancel()}
+      <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column' }}>
+        {renderToast()}
+        {renderHeader()}
+        {renderNotification()}
+        {renderDialog()}
+        {renderSummary()}
+        {renderSentDialog()}
+        {showGalleryModal()}
+        {renderConfirmCancel()}
+        <WizardButtons />
+      </div>
     </DefaultScreen>
   );
 }

@@ -22,7 +22,11 @@ export const Dialog=({
   renderTitle = null,
   disableBackdropClick = false,
   customContainerStyle = '',
-  paperStyle = null
+  paperStyle = null,
+  childrenStyle = null,
+  cancelText = 'common.Cancel',
+  confirmText = 'common.Ok',
+  showDefaultButtons = true
 }) => {
   const direction = {
     true: 'rtl',
@@ -70,7 +74,7 @@ export const Dialog=({
 
   const renderButtonsDefault = () => {
     return (
-      <Grid
+      showDefaultButtons && <Grid
         container
         spacing={4}
         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
@@ -83,7 +87,7 @@ export const Dialog=({
               classes.dialogButton,
               classes.dialogConfirmButton
             )}>
-            {t('common.Ok')}
+            {t(confirmText)}
           </Button>
         </Grid>
         <Grid item>
@@ -95,7 +99,7 @@ export const Dialog=({
               classes.dialogButton,
               classes.dialogCancelButton
             )}>
-            {t('common.Cancel')}
+            {t(cancelText)}
           </Button>
         </Grid>
       </Grid>
@@ -121,7 +125,7 @@ export const Dialog=({
   const renderChildren = () => {
     return (
       <Box
-        className={classes.dialogChildren}
+        className={clsx(classes.dialogChildren, childrenStyle)}
         style={{ maxHeight: 'calc(65vh)' }}>
         {children}
       </Box>)
@@ -145,7 +149,7 @@ export const Dialog=({
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
       onClose={onClose}>
-      <Paper className={paperStyle}>
+      <Paper className={clsx(classes.posRelative, paperStyle)}>
         {renderExitButton()}
         {renderContent()}
         {renderIcon()}

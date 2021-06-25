@@ -19,6 +19,9 @@ import {setScriptDialog} from '../../redux/reducers/notificationSlice';
 import {logout} from '../../helpers/api'
 import {openInNewTab} from '../../helpers/functions'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import {actionURL} from '../../config/index'
+import i18n from '../../i18n'
+
 const AppBarItem=({
   item,
   onMainClick=() => {},
@@ -138,8 +141,11 @@ const LanguageSelector=({windowSize,classes}) => {
 
   const changeLanguage=option => {
     const {value}=option
+    const langSelected = value.split('-')[0];
+    
     setCookie('Culture',value);
-    dispatch(setLanguage(value.split('-')[0]));
+    i18n.changeLanguage(langSelected);
+    dispatch(setLanguage(langSelected));
   }
 
   // if(windowSize==='xs') {
@@ -177,7 +183,7 @@ const LanguageSelector=({windowSize,classes}) => {
 
 
 export const TopAppBar=({classes,currentPage=''}) => {
-  const {companyName,windowSize,isRTL}=useSelector(state => state.core)
+  const {companyName,windowSize,isRTL,imageURL}=useSelector(state => state.core)
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
@@ -258,21 +264,16 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const renderPhoneAppBar=() => {
     const reportsOptions=routes.find(r => r.key==='reports').options
     const smallRoutes=[
-      [
-        routes[0],
-        routes[2],
-        routes[3]
-      ],
-      [
-        routes[5],
-        {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049',href: reportsOptions[1].href},
-        {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c',href: reportsOptions[2].href}
-      ],
-      [
-        routes[6],
-        routes[7],
-        //routes[1]
-      ]
+      routes[0],
+      routes[2],
+      routes[3],
+      routes[4],
+      routes[5],
+      routes[6],
+      routes[7],
+      {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049',href: reportsOptions[1].href},
+      {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c',href: reportsOptions[2].href},
+      //routes[1]
     ]
     return (
       <>
@@ -313,36 +314,28 @@ export const TopAppBar=({classes,currentPage=''}) => {
                     </Box>
                     <Grid
                       container
-                      spacing={1} >
-                      {smallRoutes.map((routesRow,i) => (
+                      spacing={1}
+                      direction={isRTL? 'row-reverse':'row'} >
+                      {smallRoutes.map((route,i) => (
                         <Grid
-                          key={i}
-                          container
-                          xs={12} s
-                          direction={isRTL? 'row-reverse':'row'}
-                          pacing={1}>
-                          {routesRow.map((route,j) => (
-                            <Grid
-                              key={j}
-                              item
-                              xs={4}>
-                              <Box
-                                className={classes.phoneAppBarItemContainer}>
-                                <Button
-                                  href={route.href}
-                                  style={{alignSelf: 'center'}}>
-                                  <Typography
-                                    className={classes.phoneAppBarItemIcon}>
-                                    {route.iconUnicode}
-                                  </Typography>
-                                </Button>
-                                <Typography
-                                  style={{textAlign: 'center'}}>
-                                  {route.title}
-                                </Typography>
-                              </Box>
-                            </Grid>
-                          ))}
+                          key={`appBarItem${i}`}
+                          item
+                          xs={4}>
+                          <Box
+                            className={classes.phoneAppBarItemContainer}>
+                            <Button
+                              href={route.href}
+                              style={{alignSelf: 'center'}}>
+                              <Typography
+                                className={classes.phoneAppBarItemIcon}>
+                                {route.iconUnicode}
+                              </Typography>
+                            </Button>
+                            <Typography
+                              style={{textAlign: 'center'}}>
+                              {route.title}
+                            </Typography>
+                          </Box>
                         </Grid>
                       ))}
                     </Grid>
@@ -370,7 +363,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
             href={routes[0].href}>
             <Box
               component='img'
-              src={Logo}
+              src={`${actionURL}${imageURL}`}
               alt='Logo'
               className={classes.appBarLogo} />
           </Box>

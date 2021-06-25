@@ -1,5 +1,7 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
 import instence from '../../helpers/api'
+import {apiURL} from '../../config/index';
+import fileDownloader from 'js-file-download'
 
 export const getNewslatterData=createAsyncThunk(
   'email/getEmailCampaigns',async (_,thunkAPI) => {
@@ -10,6 +12,17 @@ export const getNewslatterData=createAsyncThunk(
       return thunkAPI.rejectWithValue({error: error.message});
     }
   })
+
+export const getNewsletterReports=createAsyncThunk(
+  'reports/EmailReports/',async (demo=false,thunkAPI) => {
+    try {
+      const response=await instence.get(`reports/EmailReports?includeTestCampaign=${demo}`)
+      return JSON.parse(response.data)
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  }
+)
 
 export const restoreCampaigns=createAsyncThunk(
   'email/restoreEmailCampaigns',async (deletedCampaigns,thunkAPI) => {
@@ -41,12 +54,34 @@ export const duplicteCampaign=createAsyncThunk(
     }
   })
 
+export const downloadNewsletterReport=createAsyncThunk(
+  'email/EmailReportsByIds',async (array=[],thunkAPI) => {
+    try {
+      var json = [];
+      for (var i = 0; i<= array.length; i++){
+        if (array[i]){
+          json.push({ ID: array[i] });
+        }
+      }
+
+      const response=await instence.put('email/EmailReportsByIds/', json);
+      //window.open(`${apiURL}email/EmailReportsByIds/${array.toString()}`)
+      //return response.data //'success'
+      fileDownloader(response.data, 'EmailReports.xls');
+    } catch(err) {
+      return thunkAPI.rejectWithValue({error: err.message});
+    }
+  }
+)
+
 export const newsletterSlice=createSlice({
   name: 'newsletter',
   initialState: {
     newslettersData: [],
     newslettersDeletedData: [],
-    newslettersDataError: ''
+    newslettersDataError: '',
+    newslettersReports: [],
+    newslettersReportsError: ''
   },
   reducers: {},
   extraReducers: builder => {
@@ -57,13 +92,21 @@ export const newsletterSlice=createSlice({
     builder.addCase(getNewslatterData.rejected,(state,action) => {
       state.newslettersDataError=action.error.message
     })
+    builder.addCase(getNewsletterReports.fulfilled,(state,{payload}) => {
+      state.newslettersReports=payload
+    })
+    builder.addCase(getNewsletterReports.rejected,(state,action) => {
+      state.newslettersReportsError=action.error.message
+    })
     builder.addCase(restoreCampaigns.fulfilled,() => {console.log('api restoreCampaigns success')})
     builder.addCase(deleteCampaign.fulfilled,() => {console.log('api deleteCampaign success')})
     builder.addCase(duplicteCampaign.fulfilled,() => {console.log('api duplicteCampaign success')})
+    builder.addCase(downloadNewsletterReport.fulfilled,() => {console.log('api downloadNewsletterReport success')})
 
     builder.addCase(restoreCampaigns.rejected,(_,action) => {console.log('Error - api restoreCampaigns: '+action.error)})
     builder.addCase(deleteCampaign.rejected,(_,action) => {console.log('Error - deleteCampaign: '+action.error)})
     builder.addCase(duplicteCampaign.rejected,(_,action) => {console.log('Error - duplicteCampaign: '+action.error)})
+    builder.addCase(downloadNewsletterReport.rejected,(_,action) => {console.log('Error - downloadNewsletterReport',action.error)})
   }
 })
 

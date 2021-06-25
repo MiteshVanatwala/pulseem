@@ -1,12 +1,12 @@
-const iconWidth={
-  xs: 20,
+const iconWidth = {
+  xs: 25,
   sm: 20,
   md: 25,
-  lg: 25,
-  xl: 25
+  lg: 30,
+  xl: 35
 }
 
-const flex12={
+const flex12 = {
   xs: 5,
   sm: 5,
   md: 7,
@@ -15,7 +15,7 @@ const flex12={
 }
 const blue = '#0371AD';
 
-const iconPadding={
+const iconPadding = {
   xs: '0.5rem 0.8rem 0.5em',
   sm: '0.8rem 1.1rem 0.2rem',
   md: '0.8rem 1.1rem 0.2rem',
@@ -23,7 +23,7 @@ const iconPadding={
   xl: '0.8rem 1.1rem 0.2rem'
 }
 
-const ellipsisMaxWidth={
+const ellipsisMaxWidth = {
   xs: '100%',
   sm: '250px',
   md: '100%',
@@ -31,7 +31,7 @@ const ellipsisMaxWidth={
   xl: '100%'
 }
 
-const tableRowMinWidth={
+const tableRowMinWidth = {
   xs: 75,
   sm: 75,
   md: 75,
@@ -103,13 +103,14 @@ const shortcutEditLeft={
   xl: '5%'
 }
 
-export const getManagmentStyle=(windowSize,isRTL,theme) => ({
+export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   managementTitle: {
-    fontSize: windowSize==='xs'? '25px':'36px',
+    fontSize: windowSize === 'xs' ? '25px' : '36px',
     color: '#333333',
     paddingBlock: '0.5rem',
     fontFamily: "Assistant",
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    marginTop: 20
   },
   tableRow: {
     marginBox: 20
@@ -120,7 +121,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     fontSize: 20,
     marginBlock: 0,
     borderBottom: 0,
-    padding: '16px!important'
+    padding: '16px 10px!important'
   },
   tableCellBody: {
     borderInlineEnd: '1px solid #797979',
@@ -142,6 +143,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   minWidth75: {
     minWidth: '75px!important'
   },
+  minWidth50: {
+    minWidth: '50px!important'
+  },
   maxWidth75: {
     maxWidth: '75px!important'
   },
@@ -162,8 +166,8 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   tableCellRoot: {
     display: 'flex',
     flexDirection: 'column',
-    minWidth: 75,
-    padding: '0 16px'
+    minWidth: 50,
+    padding: '0 10px'
   },
   tableRowRoot: {
     display: 'flex',
@@ -180,11 +184,20 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     backgroundColor: '#E3E9F0',
     borderColor: 'transparent',
   },
+  tableRowReportHead: {
+    backgroundColor: '#D7D7D7',
+    borderColor: 'transparent',
+  },
   middleText: {
-    fontSize: windowSize==='xs'? 15:18,
+    fontSize: windowSize === 'xs' ? 15 : 18,
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
+    color: '#333'
+  },
+  middleWrapText: {
+    fontSize: windowSize === 'xs' ? 15 : 18,
+    overflow: "hidden",
     color: '#333'
   },
   wrapText: {
@@ -216,7 +229,14 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   managmentIcon: {
     width: iconWidth[windowSize],
-    margin: 'auto'
+    margin: 'auto',
+    marginTop: -10
+  },
+  managmentUicon: {
+    fontSize: 30,
+    fontFamily: 'pulseemicons',
+    marginBottom: -15,
+    marginTop: -15
   },
   managmentIconDisable: {
     opacity: 0.5
@@ -226,7 +246,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     alignSelf: 'center',
     textTransform: 'none',
     marginTop: 2,
-    fontSize: windowSize==='xs'&&15
+    fontSize: windowSize === 'xs' && 15
   },
   sendIcon: {
     border: '1px solid #27AE60',
@@ -291,6 +311,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     color: '#E74C3C',
     fontWeight: 700
   },
+  textColorRed: {
+    color: '#E74C3C'
+  },
   actionButton: {
     color: 'white',
     fontSize: 18,
@@ -301,6 +324,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     '&:hover': {
       backgroundColor: '#219150'
     }
+  },
+  textColorBlue: {
+    color: '#3498DB'
   },
   actionButtonLightBlue: {
     backgroundColor: '#3498DB',
@@ -381,6 +407,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   flex7: {
     flex: 7
   },
+  flex2: {
+    flex: 2
+  },
   flex3: {
     flex: 3
   },
@@ -399,22 +428,22 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     justifyContent: 'center'
   },
   flex12: {
-    flex: flex12[windowSize]||5,
+    flex: flex12[windowSize] || 5,
     borderBottom: 0,
     justifyContent: 'center'
   },
   cellIconsContainer: {
-    justifyContent: windowSize==='xs'? 'flex-start':'flex-end',
+    justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end',
   },
   datePickerInput: {
     paddingBlock: 10
   },
   datePickerButton: {
-    right: isRTL? 10:-10,
+    right: isRTL ? 10 : -10,
     padding: 10
   },
   groupsLableContainer: {
-    justifyContent: windowSize==='xs'? 'start':'flex-end',
+    justifyContent: windowSize === 'xs' ? 'start' : 'flex-end',
     display: 'flex',
     flex: 1
   },
@@ -496,12 +525,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     }
   },
   tablePadingtonArrow: {
-    transform: isRTL? 'rotateY(0deg)':'rotateY(180deg)',
+    transform: isRTL ? 'rotateY(0deg)' : 'rotateY(180deg)',
     marginInlineStart: 10,
     padding: 10
   },
   tablePadingtonArrowOppisite: {
-    transform: isRTL? 'rotateY(180deg)':'rotateY(0deg)',
+    transform: isRTL ? 'rotateY(180deg)' : 'rotateY(0deg)',
     marginInlineEnd: 10,
     padding: 10
   },
@@ -816,8 +845,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   myGroupsTitleSection: {
     display: 'flex',
-    flexDirection: windowSize==='xs'? 'column':'row',
-    alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'space-between'
   },
   languageSelect: {
@@ -831,9 +859,50 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     cursor: 'not-allowed'
   },
   pointerShow: {
-    '&.MuiButtonBase-root.Mui-disabled':{
+    '&.MuiButtonBase-root.Mui-disabled': {
       pointerEvents: 'visible'
     }
+  },
+  numberBox: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: 10
+  },
+  phoneNumberList: {
+    padding: 0,
+    overflow: 'auto',
+    height: 'calc(100vh - 500px)'
+  },
+  margin0: {
+    margin: 0
+  },
+  padding0: {
+    padding: 0
+  },
+  minWidth25: {
+    minWidth: 25
+  },
+  minWidth150: {
+    minWidth: 150
+  },
+  boldSize25: {
+    fontWeight: 'bold',
+    fontSize: 25
+  },
+  pt20: {
+    paddingTop: 20
+  },
+  link: {
+    textDecoration: 'underline',
+    margin: '0 5px'
+  },
+  mobileReportHead: {
+    fontWeight: 'bold',
+    marginTop: 15,
+    marginInlineStart: 10
+  },
+  tabelCellPadding: {
+    paddingBlock: 15
   },
   dashboard: {
     background: '#F2F2F2',
@@ -1043,14 +1112,14 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   bulkStatusBlue: {
     marginBottom: '1rem',
-    padding: '3px 5px',
+    padding: '3px 15px',
     borderRadius: '.9rem', 
     background: '#0371AD', 
     color: 'white', 
   },
   bulkOutline: {
     marginBottom: '1rem',
-    padding: '3px 5px',
+    padding: '3px 15px',
     borderRadius: '.9rem', 
     border: '1px solid #0371AD', 
     background: 'transparent',

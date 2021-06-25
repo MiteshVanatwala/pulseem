@@ -1,64 +1,65 @@
 import React,{useState,useEffect} from 'react';
-import DefaultScreen from './DefaultScreen'
+import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction
+  Grid,Button,TextField,Box
 } from '@material-ui/core'
 import {
-  AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
-  GroupsIcon,PreviewIcon
-} from '../assets/images/managment/index'
+  DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,GroupsIcon,PreviewIcon
+} from '../../../assets/images/managment/index'
 import {
   TablePagination,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent
-} from '../components/managment/index'
+} from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import {
-  getSmsData,restoreSms,deleteSms,duplicteSms,getSmsAuthorizationData,getAuthorizeNumbers,sendVerificationCode,verifyCode,getSmsByID
-} from '../redux/reducers/smsSlice'
+import {getMmsData,restoreMms,deleteMms,duplicteMms,getMMSByID} from '../../../redux/reducers/mmsSlice'
+import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
+import {pulseemNewTab} from '../../../helpers/functions'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import {Preview} from '../components/Notifications/Preview/Preview';
+import {Preview} from '../../../components/Notifications/Preview/Preview';
+import { Loader } from '../../../components/Loader/Loader';
 
-const SmsManagnentScreen=({classes}) => {
+const MmsManagnentScreen=({classes}) => {
   const {language,windowSize}=useSelector(state => state.core)
-  const {smsData,smsDataError,smsDeletedData,authorizationData}=useSelector(state => state.sms)
-  const {username}=useSelector(state => state.user)
+  const {mmsData,mmsDataError,mmsDeletedData}=useSelector(state => state.mms)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
-  const [toDate,handleToDate]=useState(null);
-  const [number,handleNumber]=useState('');
-  const [numberError,handleNumberError]=useState(false);
-  const [verificationCode,handleVerificationCodeInput]=useState('');
-  const [verificationCodeError,handleVerificationCodeError]=useState(false);
+  const [toDate,handleToDate]=useState(null)
   const [campaineNameSearch,setCampaineNameSearch]=useState('')
   const rowsOptions=[6,12,18]
   const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
-  const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)
+  const [isSearching,setSearching]=useState(false)
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
+  const [showLoader, setLoader] = useState(true);
+  const history=useCtrlHistory()
   const dispatch=useDispatch()
   moment.locale(language)
 
-  const getData=() => {
-    dispatch(getSmsData())
+  const getData= async () => {
+    await dispatch(getMmsData())
+    setLoader(false);
   }
 
-  useEffect(getData,[dispatch]);
+  useEffect(() =>{
+    setLoader(true);
+    getData();
+  },[dispatch])
 
   const renderHeader=() => {
     return (
       <>
         <Typography className={classes.managementTitle}>
-          {t('sms.PageResource1.Title')}
+          {t('mms.logPageHeaderResource1.Text')}
         </Typography>
         <Divider />
       </>
@@ -83,31 +84,32 @@ const SmsManagnentScreen=({classes}) => {
         fromDate,
         toDate
       }];
+
       const filtersObject={
         name: (row,values) => {
           return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
         },
         date: (row,values) => {
-          const {UpdatedDate,SendDate}=row
+          const {LastUpdate,SendDate}=row
           const lastUpdate=SendDate?
             moment(SendDate,dateFormat).valueOf()
-            :moment(UpdatedDate,dateFormat).valueOf()
-          const currentFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
-          const currentToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
-  
+            :moment(LastUpdate,dateFormat).valueOf()
+          const startFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
+          const endToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
+
           if(!values)
             return true
-          if(fromDate&&toDate&&currentFromDate&&currentToDate)
-            return ((lastUpdate>=currentFromDate)&&(lastUpdate<=currentToDate))
-          if(fromDate&&currentFromDate)
-            return lastUpdate>=currentFromDate
-          if(toDate&&currentToDate)
-            return lastUpdate<=currentToDate
+          if(fromDate&&toDate&&startFromDate&&endToDate)
+            return ((lastUpdate>=startFromDate)&&(lastUpdate<=endToDate))
+          if(fromDate&&startFromDate)
+            return (lastUpdate>=startFromDate)
+          if(toDate&&endToDate)
+            return (lastUpdate<=endToDate)
           return true
         }
       }
-  
-      let sortData=smsData
+
+      let sortData=mmsData
       searchArray.forEach(values => {
         sortData=sortData.filter(row => filtersObject[values.type](row,values))
       });
@@ -134,7 +136,7 @@ const SmsManagnentScreen=({classes}) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          placeholder={t('common.CampaignName')}
+          placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
         />
       )
     }
@@ -147,8 +149,8 @@ const SmsManagnentScreen=({classes}) => {
             size='small'
             value={campaineNameSearch}
             onChange={handleCampainNameChange}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('sms.GridBoundColumnResource2.HeaderText')}
+            className={clsx(classes.textField,classes.minWidth252)}
+            placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
           />
         </Grid>
 
@@ -182,7 +184,7 @@ const SmsManagnentScreen=({classes}) => {
             onClick={handleSearch}
             className={classes.searchButton}
             endIcon={<SearchIcon />}>
-            {t('campaigns.btnSearchResource1.Text')}
+            {t('mms.locSearchCampaignResource1.Text')}
           </Button>
         </Grid>
         {isSearching&&<Grid item>
@@ -200,27 +202,20 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderManagmentLine=() => {
-    const handleVerificationDialog=async () => {
-      const numbers=await dispatch(getAuthorizeNumbers());
-      setDialogType({
-        type: 'verify',
-        data: numbers.payload
-      })
-    }
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        <Grid item xs={windowSize==='xs'&&12}>
+        {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
             size='medium'
-            href={"/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create&fromreact=true"}
+            href='/Pulseem/MmsCampaignEdit.aspx?fromreact=true'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
             )}>
-            {t('sms.create')}
+            {t('mms.create')}
           </Button>
-        </Grid>
+        </Grid>}
         {windowSize!=='xs'&&<Grid item>
           <Button
             variant='contained'
@@ -231,26 +226,14 @@ const SmsManagnentScreen=({classes}) => {
             )}
             onClick={() => setDialogType({
               type: 'restore',
-              data: smsDeletedData
+              data: mmsDeletedData
             })}>
-            {t('campaigns.restoreDeleted')}
-          </Button>
-        </Grid>}
-        {windowSize!=='xs'&&<Grid item>
-          <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonDarkBlue
-            )}
-            onClick={handleVerificationDialog}>
-            {t('sms.verificationDialogTitle')}
+            {t('mms.restoreResource.Text')}
           </Button>
         </Grid>}
         <Grid item xs={windowSize==='xs'&&12} className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching?searchResults.length:smsData.length} ${t('mms.campaigns')}`}
+            {`${isSearching? searchResults.length:mmsData.length} ${t('mms.campaigns')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -261,10 +244,10 @@ const SmsManagnentScreen=({classes}) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("sms.GridBoundColumnResource2.HeaderText")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("common.CampaignName")}</TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.recipients")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("sms.CreditsResource1.HeaderText")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("sms.StatusResource1.HeaderText")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("mms.CreditsResource1.HeaderText")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
           <TableCell classes={{root: classes.tableCellRoot}} className={classes.flex5} ></TableCell>
         </TableRow>
       </TableHead>
@@ -272,7 +255,7 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {Status,Groups,AutomationID,Id}=row
+    const {Status,ID,GroupNames}=row
 
     const iconsMap=[
       {
@@ -282,7 +265,7 @@ const SmsManagnentScreen=({classes}) => {
         remove: Status!==1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&fromreact=true`
+        href: `/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=${ID}&fromreact=true`
       },
       {
         key: 'preview',
@@ -291,10 +274,10 @@ const SmsManagnentScreen=({classes}) => {
         remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: async () => {
-          const sms=await dispatch(getSmsByID(Id));
+          const mms=await dispatch(getMMSByID(ID));
           setDialogType({
             type: 'preview',
-            data: sms.payload
+            data: mms.payload
           })
         }
       },
@@ -304,8 +287,8 @@ const SmsManagnentScreen=({classes}) => {
         disable: Status!==1,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize==='xs',
-        href: `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&fromreact=true`,
-        rootClass: classes.paddingIcon
+        href: `/Pulseem/MmsCampaignEdit.aspx?MmsCampaignID=${ID}&fromreact=true`,
+        rootClass: classes.paddingIcon,
       },
       {
         key: 'duplicate',
@@ -315,32 +298,23 @@ const SmsManagnentScreen=({classes}) => {
         onClick: () => {
           setDialogType({
             type: 'duplicate',
-            data: Id
+            data: ID
           })
         }
       },
       {
         key: 'groups',
         icon: GroupsIcon,
-        disable: Groups&&Groups.length===0,
+        disable: GroupNames.length===0,
         lable: t('campaigns.lnkPreviewResource1.ToolTip'),
         remove: windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
             type: 'groups',
-            data: row.Groups
+            data: GroupNames
           })
         }
-      },
-      {
-        key: 'automation',
-        icon: AutomationIcon,
-        disable: AutomationID===0,
-        lable: t('campaigns.automation'),
-        remove: windowSize==='xs',
-        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`,
-        rootClass: classes.paddingIcon,
       },
       {
         key: 'delete',
@@ -351,7 +325,7 @@ const SmsManagnentScreen=({classes}) => {
         onClick: () => {
           setDialogType({
             type: 'delete',
-            data: Id
+            data: ID
           })
         }
       }
@@ -359,7 +333,7 @@ const SmsManagnentScreen=({classes}) => {
     return (
       <Grid
         container
-        direction='row'
+        direction={'row'}
         justify={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
@@ -372,6 +346,7 @@ const SmsManagnentScreen=({classes}) => {
             />
           </Grid>
         ))}
+
       </Grid>
     )
   }
@@ -405,6 +380,7 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderRecipientsCell=(recipients) => {
+
     return (
       <>
         <Typography className={classes.middleText}>
@@ -417,24 +393,11 @@ const SmsManagnentScreen=({classes}) => {
     )
   }
 
-  const renderMessagesCell=(messages) => {
-    return (
-      <>
-        <Typography className={classes.middleText}>
-          {messages.toLocaleString()}
-        </Typography>
-        <Typography className={classes.middleText}>
-          {t("sms.CreditsResource1.HeaderText")}
-        </Typography>
-      </>
-    )
-  }
-
   const renderNameCell=(row) => {
     let date=null
     let text=''
     if(!row.SendDate) {
-      date=moment(row.UpdatedDate,dateFormat)
+      date=moment(row.LastUpdate,dateFormat)
       text=t('common.UpdatedOn')
     } else {
       date=moment(row.SendDate,dateFormat)
@@ -456,10 +419,23 @@ const SmsManagnentScreen=({classes}) => {
     )
   }
 
+  const renderMessagesCell=(messages) => {
+    return (
+      <>
+        <Typography className={classes.middleText}>
+          {messages.toLocaleString()}
+        </Typography>
+        <Typography className={classes.middleText}>
+          {t("mms.CreditsResource1.HeaderText")}
+        </Typography>
+      </>
+    )
+  }
+
   const renderRow=(row) => {
     return (
       <TableRow
-        key={Math.round(Math.random()*999999999)}
+        key={row.ID}
         classes={rowStyle}>
         <TableCell
           classes={cellStyle}
@@ -470,14 +446,14 @@ const SmsManagnentScreen=({classes}) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={clsx(classes.flex1,classes.maxnWidth75)}>
+          className={classes.flex1}>
           {renderRecipientsCell(row.SentCount)}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderMessagesCell(row.CreditsPerSms)}
+          {renderMessagesCell(row.CreditsPerMms)}
         </TableCell>
         <TableCell
           classes={cellStyle}
@@ -500,7 +476,7 @@ const SmsManagnentScreen=({classes}) => {
   const renderPhoneRow=(row) => {
     return (
       <TableRow
-        key={row.Id}
+        key={row.ID}
         component='div'
         classes={rowStyle}>
         <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
@@ -519,7 +495,8 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderTableBody=() => {
-    let sortData = isSearching?searchResults:smsData;
+
+    let sortData=isSearching? searchResults:mmsData;
     sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody>
@@ -531,7 +508,7 @@ const SmsManagnentScreen=({classes}) => {
 
   const renderTable=() => {
     return (
-      <TableContainer>
+      <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
           {windowSize!=='xs'&&renderTableHead()}
           {renderTableBody()}
@@ -544,7 +521,7 @@ const SmsManagnentScreen=({classes}) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching?searchResults.length:smsData.length}
+        rows={isSearching? searchResults.length:mmsData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
@@ -554,68 +531,24 @@ const SmsManagnentScreen=({classes}) => {
     )
   }
 
-  const handleChange=(Id) => () => {
-    const found=restoreArray.includes(Id)
+  const handleChange=(id) => () => {
+    const found=restoreArray.includes(id)
+    console.log('restore',id,'found:',found)
     if(found) {
-      setRestoreArray(restoreArray.filter(restore => restore!==Id))
+      setRestoreArray(restoreArray.filter(restore => restore!==id))
     } else {
-      setRestoreArray([...restoreArray,Id])
-    }
-  }
-
-  const handleShortVerify=async (number) => {
-    handleVerificationCodeInput('');
-    handleNumber(number)
-    setDialogType({
-      type: 'shortVerify',
-      data: number
-    });
-  }
-
-  const handleSendVerificationCode=async () => {
-    const value=(dialogType&&dialogType.type==='shortVerify'&&dialogType.data)? dialogType.data:number;
-    if(!value||value.length<10) {
-      handleNumberError(true);
-      return
-    }
-    const result=await dispatch(sendVerificationCode({username,number: value}));
-
-    if(!result.error) {
-      setDialogType({
-        type: 'verificationSent',
-        data: value
-      })
-    }
-  }
-
-  const handleConfirmCode=async () => {
-    const result=await dispatch(verifyCode({
-      optinCode: verificationCode,
-      phoneNumber: number
-    }));
-    if(result.error) {
-      handleVerificationCodeError(true);
-    } else {
-      setDialogType({
-        type: 'verificationSuccess',
-        data: {}
-      });
+      setRestoreArray([...restoreArray,id])
     }
   }
 
   const handleClose=() => {
-    setRestoreArray([]);
-    setDialogType(null);
-    handleVerificationCodeError(false);
-    handleNumberError(false);
-    handleNumber('');
-    handleVerificationCodeInput('');
+    setDialogType(null)
   }
 
-  const getRestorDialog=(data=[]) => {
+  const getRestoreDialog=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
     return {
-      title: t('sms.restoreCampaignTitle'),
+      title: t('mms.restoreCampaignTitle'),
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -628,21 +561,21 @@ const SmsManagnentScreen=({classes}) => {
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
-          dataIdVar='Id'
+          dataIdVar='ID'
         />
       ),
       onConfirm: async () => {
-        await dispatch(restoreSms(restoreArray))
-        getData()
         handleClose()
+        await dispatch(restoreMms(restoreArray))
+        setRestoreArray([])
+        getData()
       }
     }
   }
 
   const getGroupsDialog=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
-
-    return ({
+    return {
       title: t('campaigns.ShowGroupsTitle'),
       showDivider: false,
       icon: (
@@ -653,17 +586,18 @@ const SmsManagnentScreen=({classes}) => {
       content: (
         <Box
           className={classes.gruopsDialogContent}>
-          {data.map(group => {
-            return (
-              <Typography
-                key={group}
-                className={classes.gruopsDialogText}>
-                <FiberManualRecordIcon
-                  className={classes.gruopsDialogBullet} />
-                {group}
-              </Typography>
-            )
-          })}
+          {data
+            .map((group,index) => {
+              return (
+                <Typography
+                  key={index}
+                  className={classes.gruopsDialogText}>
+                  <FiberManualRecordIcon
+                    className={classes.gruopsDialogBullet} />
+                  {group}
+                </Typography>
+              )
+            })}
         </Box>
       ),
       renderButtons: () => (
@@ -678,17 +612,12 @@ const SmsManagnentScreen=({classes}) => {
           {t('common.Ok')}
         </Button>
       )
-    })
+    }
   }
 
   const getDeleteDialog=(data='') => ({
     title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <Typography style={{fontSize: 18}}>
         {t('campaigns.GridButtonColumnResource2.ConfirmText')}
@@ -697,7 +626,7 @@ const SmsManagnentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
-      await dispatch(deleteSms(data))
+      await dispatch(deleteMms(data))
       getData()
     }
   })
@@ -705,11 +634,6 @@ const SmsManagnentScreen=({classes}) => {
   const getDuplicateDialog=(data='') => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
     content: (
       <Typography style={{fontSize: 18}}>
         {t('campaigns.dialogDuplicateContent')}
@@ -718,7 +642,8 @@ const SmsManagnentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
-      await dispatch(duplicteSms(data))
+      setPage(1)
+      await dispatch(duplicteMms(data))
       getData()
     }
   })
@@ -726,6 +651,7 @@ const SmsManagnentScreen=({classes}) => {
   const getPreviewDialog=(data={}) => {
     return {
       childrenPadding: false,
+      isMMS: true,
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -739,7 +665,7 @@ const SmsManagnentScreen=({classes}) => {
             model={data}
             ShowRedirectButton={data.RedirectButtonText&&data.RedirectButtonText!=''}
             showTitle={false}
-            isSMS={true}
+            isMMS={true}
           />
         </Box>
       ),
@@ -758,240 +684,16 @@ const SmsManagnentScreen=({classes}) => {
     };
   }
 
-  const getVerifyDialog=(data=[]) => {
-    if(!data||!Array.isArray(data)) return null
-    return {
-      title: t('sms.verificationDialogTitle'),
-      showDivider: false,
-      icon: (
-        <div className={classes.dialogIconContent}>
-          {'\uE11B'}
-        </div>
-      ),
-      content: (
-        <Box>
-          <Typography style={{fontSize: 15}} align={'justify'}>
-            {t('sms.verificationBody')}
-            <b>{t('sms.oneTimeProcess')}</b>
-            {t('sms.foreachSubmission')}
-          </Typography>
-          <br />
-          <Typography style={{fontSize: 15,textDecoration: 'underline'}}>
-            {t('sms.verificationNote')}
-          </Typography>
-          <hr />
-          <Box style={{display: 'flex',justifyContent: 'space-between',marginBottom: 10}}>
-            <Typography style={{fontSize: 15}}>
-              {t('sms.numbersAccount')}
-            </Typography>
-            <Button
-              variant='contained'
-              size='small'
-              color='primary'
-              onClick={() => handleShortVerify()}
-            >{t('sms.verifyAnotherNumber')}
-            </Button>
-          </Box>
-          <List style={{padding: 0,overflow: 'auto',height: 'calc(100vh - 500px)'}}>
-            {data.map(item => {
-              return (
-                <ListItem style={{padding: 0}} key={`verificationNumber${item.ID}`}>
-                  <ListItemAvatar style={{minWidth: 25}}>
-                    <Avatar className={item.IsOptIn? classes.checkIcon:classes.redIcon}>
-                      <div className={clsx(classes.avatarIcon)}>
-                        {item.IsOptIn? '\uE134':'\uE0A7'}
-                      </div>
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    style={{margin: 0}}
-                    primary={
-                      <Grid container >
-                        <Grid item>
-                          <Typography variant="body2">
-                            {item.Number}
-                          </Typography>
-                        </Grid>
-                        {!item.IsOptIn&&<Grid item>
-                          <Typography
-                            className={classes.verifyLink}
-                            onClick={() => handleShortVerify(item.Number)}>
-                            {t('sms.verifyNumber')}
-                          </Typography>
-                        </Grid>
-                        }
-
-                      </Grid>
-                    }
-                  />
-                  <ListItemSecondaryAction>
-
-                  </ListItemSecondaryAction>
-                </ListItem>
-              );
-            })}
-          </List>
-
-        </Box>
-      ),
-      renderButtons: () => (
-        <Button
-          variant='contained'
-          size='small'
-          style={{maxWidth: 100}}
-          onClick={handleClose}
-          className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
-          )}>
-          {t('common.Ok')}
-        </Button>
-      )
-    }
-  }
-
-  const getShortVerifyDialog=(data='') => ({
-    showDivider: false,
-    icon: (
-      <div className={classes.dialogIconContent}>
-        {'\uE11B'}
-      </div>
-    ),
-    content: (
-      <Box style={{textAlign: 'center'}}>
-        <Typography align='center' style={{fontWeight: 'bold',fontSize: 25}}>{t('sms.shortVerificationTitle')}</Typography>
-        <Typography style={{fontSize: 15}} align={'justify'}>
-          {t('sms.verificationBody')}
-          <b>{t('sms.oneTimeProcess')}</b>
-          {t('sms.foreachSubmission')}
-        </Typography>
-        <br />
-        <TextField
-          autoFocus
-          error={numberError}
-          helperText={numberError? t('sms.numberError'):''}
-          variant='outlined'
-          placeholder={t('sms.enterNumberText')}
-          value={data||number}
-          onChange={e => handleNumber(e.target.value)}
-          size='small'
-          type='tel'
-          className={!data&&classes.verifyField}
-          readOnly={!!data}
-        />
-        <br /><br />
-        <Button
-          size={!data?"large":"medium"}
-          variant='contained'
-          onClick={handleSendVerificationCode}
-          className={clsx(classes.verifyButton, !data&&classes.f20)}
-        >{t('sms.verificationButtonText')}</Button>
-        <Typography className={clsx(classes.contactUs,classes.newLine)}>
-          {t('sms.havingIssuesMessage')}
-        </Typography>
-      </Box>
-    ),
-    renderButtons: () => null
-  })
-
-  const getVerificationSentDialog=(data='') => ({
-    showDivider: false,
-    icon: (
-      <div className={classes.dialogIconContent}>
-        {'\uE11B'}
-      </div>
-    ),
-    content: (
-      <Box style={{textAlign: 'center'}}>
-        <Typography 
-          align='center' 
-          className={classes.verificationTitle}>
-          {t('common.Sent')}
-        </Typography>
-        <Typography style={{fontSize: 15}} align={'center'}>
-          {t('sms.verificationSentToNumber')}{data}
-          <br />
-          {t('sms.pleaseNoteCode')}
-        </Typography>
-        <br />
-        <TextField
-          error={verificationCodeError}
-          helperText={verificationCodeError? t('sms.verificationCodeError'):''}
-          variant='outlined'
-          placeholder={t('sms.enterCode')}
-          value={verificationCode}
-          onChange={(e) => handleVerificationCodeInput(e.target.value)}
-          size='small'
-        />
-        <br /><br />
-        <Button
-          variant='contained'
-          onClick={() => handleConfirmCode(verificationCode)}
-          color='primary'
-          style={{minWidth: 150}}>
-          {t('common.Ok')}
-        </Button>
-        <Grid
-          container
-          style={{marginTop: 20}}
-          justify='center'>
-          <Grid item>
-            <Typography >
-              {t('sms.didNotReceived')}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography
-              onClick={() => handleShortVerify(data)}
-              style={{textDecoration: 'underline',margin: '0 5px',cursor: 'pointer'}}>
-              {t('sms.resend')}
-            </Typography>
-
-          </Grid>
-        </Grid>
-        
-      </Box>
-    ),
-    renderButtons: () => null
-  });
-
-  const getVerificationSuccessDialog=() => ({
-    showDivider: false,
-    icon: (
-      <div className={classes.dialogIconContent}>
-        {'\uE11B'}
-      </div>
-    ),
-    content: (
-      <Box style={{textAlign: 'center'}}>
-        <Typography 
-          align='center' 
-          className={clsx(classes.verificationTitle, classes.green)}>
-          {t('sms.verificationSuccessful')}
-        </Typography>
-        <Typography style={{fontSize: 15}} align={'center'}>
-          {t('sms.verificationSuccessMessage')}
-        </Typography>
-        <br />
-        <div className={classes.verifySuccessIcon}>{'\uE134'}</div>
-      </Box>
-    ),
-    renderButtons: () => null
-  });
-
   const renderDialog=() => {
-    const {data,type}=dialogType||{};
+
+    const {data,type}=dialogType||{}
 
     const dialogContent={
-      restore: getRestorDialog(data),
+      restore: getRestoreDialog(data),
       groups: getGroupsDialog(data),
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data),
       preview: getPreviewDialog(data),
-      verify: getVerifyDialog(data),
-      shortVerify: getShortVerifyDialog(data),
-      verificationSent: getVerificationSentDialog(data),
-      verificationSuccess: getVerificationSuccessDialog(data)
     }
 
     const currentDialog=dialogContent[type]||{}
@@ -1007,7 +709,7 @@ const SmsManagnentScreen=({classes}) => {
   }
   return (
     <DefaultScreen
-      currentPage='sms'
+      currentPage='mms'
       classes={classes}>
       {renderHeader()}
       {renderSearchLine()}
@@ -1015,8 +717,9 @@ const SmsManagnentScreen=({classes}) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
+      <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
 }
 
-export default SmsManagnentScreen
+export default MmsManagnentScreen

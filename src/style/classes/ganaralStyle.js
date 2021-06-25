@@ -1,67 +1,60 @@
-const dialogWidth={
+const dialogWidth = {
   xs: 200,
   sm: 350,
   md: 350,
   lg: 350
 }
 
-const paperMinWidthSm={
+const paperMinWidthSm = {
   xs: 350,
   sm: 500,
   md: 500,
   lg: 500,
   xl: 500
 }
-const minDialogWidth={
+const minDialogWidth = {
   xs: 330,
   sm: 330,
   md: 500,
   lg: 500
 }
 
-const maxDialogWidth={
+const maxDialogWidth = {
   md: 1050,
   lg: 1050,
   xl: 1050
 }
 
-const summaryPadding={
+const summaryPadding = {
   xs: 0,
   sm: 0,
-  md: 25,
+  md: 0,
   lg: 25,
   xl: 25
 }
 
-const summaryNotificationMargin={
-  xs: "-15px",
-  sm: "-15px",
-  md: 0,
-  lg: 0,
-  xl: 0
-}
-const iconWrapperMargin={
+const iconWrapperMargin = {
   xs: 5,
   sm: 10,
   md: 15,
   lg: 15,
   xl: 15
 }
-const iconWrapperMinWidth={
+const iconWrapperMinWidth = {
   xs: 80,
   sm: 80,
   md: 100
 }
-const summaryNotificationMinWidth={
+const summaryNotificationMinWidth = {
   xs: "240px",
 }
-const notificationTitleFontSize={
+const notificationTitleFontSize = {
   xs: 12,
   sm: 12,
   md: '1rem'
 }
 
-export const getGeneralStyle=(windowSize,isRTL,theme) => ({
+export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dialogContainer: {
     '& .MuiPaper-root': {
       overflowX: 'hidden'
@@ -123,8 +116,6 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     padding: '1rem',
     minWidth: dialogWidth[windowSize],
     '& $notification': {
-      marginRight: summaryNotificationMargin[windowSize],
-      marginLeft: summaryNotificationMargin[windowSize],
       minWidth: summaryNotificationMinWidth[windowSize],
       '& $iconWrapper': {
         margin: iconWrapperMargin[windowSize],
@@ -135,11 +126,11 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
       }
     },
     '& $dialogChildren': {
-      maxHeight: windowSize==='xs'||windowSize==='sm'? '100vh':'calc(65vh)'
+      maxHeight: windowSize === 'xs' || windowSize === 'sm' ? '100vh' : 'calc(65vh)'
     },
     '& $mobileBG': {
       '& $iconWrapper': {
-        minWidth: windowSize==='xs'||windowSize==='sm'? 0:100
+        minWidth: windowSize === 'xs' || windowSize === 'sm' ? 0 : 100
       }
     }
   },
@@ -282,6 +273,9 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   pb10: {
     paddingBottom: 10
   },
+  mt5: {
+    marginTop: 5
+  },
   ml5: {
     marginInlineStart: 5
   },
@@ -300,6 +294,9 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   f14: {
     fontSize: 14
   },
+  f15: {
+    fontSize: 15
+  },
   f16: {
     fontSize: 16
   },
@@ -314,6 +311,9 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   },
   f28: {
     fontSize: 28
+  },
+  line1: {
+    lineHeight: 1
   },
   black: {
     color: 'black'
@@ -352,7 +352,77 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     display: 'flex',
     justifyContent: 'center'
   },
+  alignCenter: {
+    alignContent: 'center',
+    alignItems: 'center'
+  },
   textCapitalize: {
     textTransform: 'capitalize'
+  },
+  posRelative: {
+    position: 'relative'
+  },
+  iconsFont: {
+    fontFamily: 'pulseemicons',
+    fontSize: 22
+  },
+  rtlSwitch: {
+    transform: 'rotateY(180deg)'
+  },
+  pageSubTitle: {
+    marginTop: 5,
+    fontSize: 28
+  },
+  subTitle: {
+    margin: '0 10px !important',
+    color: '#157eaf',
+    fontSize: 30
+  },
+  blue: {
+    color: '#0a74a9'
+  },
+  black: {
+    color: '#626262'
+  },
+  whiteBox: {
+    backgroundColor: '#fff',
+    boxShadow: "5px 3px 3px 1px rgba(0,0,0,.2)",
+    padding: 5
+  },
+  mt1: {
+    marginTop: 5
+  },
+  mt2: {
+    marginTop: 10
+  },
+  mt3: {
+    marginTop: 15
+  },
+  mt4: {
+    marginTop: 20
+  },
+  mb1: {
+    marginBottom: 5
+  },
+  mb2: {
+    marginBottom: 10
+  },
+  mb3: {
+    marginBottom: 15
+  },
+  mb4: {
+    marginBottom: 20
+  },
+  m5:{
+    margin: '.5rem'
+  },
+  font15: {
+    fontSize: 15
+  },
+  font18: {
+    fontSize: 18
+  },
+  font24: {
+    fontSize: 24
   }
 })

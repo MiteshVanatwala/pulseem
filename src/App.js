@@ -1,9 +1,9 @@
 import React,{useEffect} from 'react';
-import NewsletterManagment from './screens/NewsletterManagment';
-import AutomationManagment from './screens/AutomationsManagment';
-import LandingPagesesManagment from './screens/LandingPagesesManagment'
-import MmsManagment from './screens/MmsManagment';
-import SmsManagment from './screens/SmsManagment';
+import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
+import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
+import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
+import MmsManagment from './screens/Mms/Management/MmsManagment';
+import SmsManagment from './screens/Sms/Management/SmsManagment';
 import {getCookie,setCookie,cookieListener} from './helpers/cookies'
 import {create} from 'jss';
 import rtl from 'jss-rtl';
@@ -20,9 +20,10 @@ import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import {useHistory} from "react-router-dom";
 import moment from 'moment'
-import NotificationManagement from './screens/NotificationManagement';
-import NotificationEditor from './screens/Notifications/NotificationEditor';
-import DashboardScreen from './screens/Dashboard';
+import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
+import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
+import NewslettersReport from './screens/Reports/NewslettersReport'
+import DashboardScreen from './screens/Dashboard/Dashboard';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -33,7 +34,7 @@ const renderRoutes=(classes,history) => {
       notification: notificationID,
       id: id
     }
-    window.location.href=`https://www.pulseemdev.co.il/${url}${addParam[param]||''}`
+    window.location.href=`https://www.reactstage.club/${url}${addParam[param]||''}`
     return <></>
   }
   return (
@@ -195,8 +196,9 @@ const renderRoutes=(classes,history) => {
       />
       {/* Reports */}
       <Route
-        path={`/MainReport`}
-        component={transferUrl('/Pulseem/MainReport.aspx')}
+        path={`/Reports/NewsletterReports`}
+        //component={transferUrl('/Pulseem/MainReport.aspx')}
+        render={props => <NewslettersReport {...props} classes={classes} />}
       />
       <Route
         path={`/ClalReport`}
@@ -329,11 +331,11 @@ const renderRoutes=(classes,history) => {
 const App=() => {
   const dispatch=useDispatch()
   const {language,isRTL,windowSize}=useSelector(state => state.core)
-  const culture=getCookie('Culture')
+  
 
   useEffect(() => {
-
     const updateToken=() => {
+      const culture=getCookie('Culture')
       const token=getCookie('jtoken')
       if(!token) return
       const jwt=jwt_decode(token)
@@ -349,7 +351,7 @@ const App=() => {
       }=jwt
 
       dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName}))
-      let lang=culture||locality||'he'
+      let lang=culture||locality; //||'he'
       setCookie('Culture',lang)
       lang=lang.split('-')[0]
       console.log('lang',lang)
@@ -373,19 +375,18 @@ const App=() => {
     }
 
     const cookieFunctionObj={
-      jtoken: updateToken,
-
+      jtoken: updateToken
     }
 
     window.addEventListener('resize',setWindowWidth)
     cookieListener(({name}) => {
-      const cookieFunction=cookieFunctionObj[name]
+      const cookieFunction=cookieFunctionObj[name] || null
       if(!!cookieFunction)
         cookieFunction()
     })
     updateToken()
     setWindowWidth()
-  },[dispatch,language])
+  },[dispatch])
 
   //useEffect(() => {
   //  const lang=culture? culture.split('-')[0]:''
@@ -397,7 +398,7 @@ const App=() => {
   const theme=getTheme(language)
   const history=useHistory()
 
-  if (isRTL) document.body.classList.add('rtl');
+  if(isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
   return (
