@@ -97,10 +97,10 @@ const paperBottomHeight={
 
 const shortcutEditLeft={
   xs: '8%',
-  sm: '5%',
-  md: '5%',
-  lg: '5%',
-  xl: '5%'
+  sm: '7%',
+  md: '7%',
+  lg: '7%',
+  xl: '7%'
 }
 
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({

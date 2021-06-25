@@ -384,6 +384,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   black: {
     color: '#626262'
   },
+  white: {
+    color: 'white'
+  },
   whiteBox: {
     backgroundColor: '#fff',
     boxShadow: "5px 3px 3px 1px rgba(0,0,0,.2)",
