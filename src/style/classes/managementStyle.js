@@ -975,7 +975,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '20px',
     marginBottom: 30,
     fontSize: '18px',
-    display: 'inline-block',
     position: 'relative',
     textTransform: 'capitalize',
     
@@ -1047,7 +1046,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     width: '100%',
     position: 'absolute',
     top: 'calc(50% - 24px)',
-    zIndex: 1
   },
   carouselTips: {
     position: 'relative',

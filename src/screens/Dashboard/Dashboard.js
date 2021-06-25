@@ -163,7 +163,7 @@ const DashboardScreen = ({ classes }) => {
 
     const renderCircleAdd = (innerTitle) => {
       return (
-        <Grid item xs={12} sm={4} className={classes.doughnutGrid}>
+        <Grid item xs={12} sm={4} className={classes.doughnutGrid} key={`circleAdd${Math.round(Math.random() * 999999999)}`}>
           <Typography align='center' className={classes.f20}>{t(innerTitle.mainTitle)}</Typography>
           <Box className={classes.doughnutBox}>
             <Avatar className={classes.emptyDoughnut}>
@@ -320,7 +320,10 @@ const DashboardScreen = ({ classes }) => {
         }],
       }
       return (
-        <Grid item xs={12} sm={12} md={4} className={classes.doughnutGrid}>
+        <Grid 
+          key={`doughnut${Math.round(Math.random() * 999999999)}`}
+          item xs={12} sm={12} md={4} 
+          className={classes.doughnutGrid}>
           <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
           <Box className={classes.doughnutBox}>
             <Typography className={classes.chartLabel}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Typography>
@@ -405,7 +408,7 @@ const DashboardScreen = ({ classes }) => {
             showArrows={false}>
             {tips.map(tip => {
               return (
-                <Box component='div' className={classes.tipItem}>
+                <Box component='div' className={classes.tipItem} key={`tip${Math.round(Math.random() * 999999999)}`}>
                   <Typography align='center' className={classes.tipulseemMsg}>{tip.TipText}</Typography>
                 </Box>
               );
@@ -485,7 +488,7 @@ const DashboardScreen = ({ classes }) => {
         >
           {value === index && (
             <Box>
-              <Typography>{children}</Typography>
+              {children}
             </Box>
           )}
         </div>
@@ -606,7 +609,7 @@ const DashboardScreen = ({ classes }) => {
         const date = sendDate ? moment(sendDate).format(dateFormat) : '';
         const total = innerData && innerData.TotalSendPlan || 0;
         return (
-          <Grid item xs={12} className={clsx(classes.newsletterLastReportGrid, index === 0 && classes.newsletterItemBorder)}>
+          <Grid key={`phoneGrid${index}`} item xs={12} className={clsx(classes.newsletterLastReportGrid, index === 0 && classes.newsletterItemBorder)}>
             <Typography align='center' className={clsx(classes.f20, classes.pb10)}>{t('appBar.newsletter.title')}</Typography>
             <Typography className={classes.f17}>{innerData && innerData.CampaignName || ''}</Typography>
             <Box className={classes.p0}>
@@ -616,9 +619,9 @@ const DashboardScreen = ({ classes }) => {
                 <Typography variant={'body2'} className={clsx(classes.ml5, classes.dInline)}>{date}</Typography>
               </Box>
             </Box>
-            {phoneData.map(item => {
+            {phoneData.map((item, ind) => {
               return (
-                <Box className={classes.lastReportRowItem}>
+                <Box key={`phoneItem${ind}`} className={classes.lastReportRowItem}>
                   <Typography className={classes.f18}>{item.label}</Typography>
                   <Typography className={classes.f18}>{item.value}</Typography>
                 </Box>

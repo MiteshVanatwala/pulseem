@@ -3,7 +3,7 @@ import {useTranslation} from 'react-i18next'
 import {useSelector,useDispatch} from 'react-redux'
 import { 
   Box, Button, ListItem, ListItemText, Paper, Typography, Popper, Fade, 
-  List, Collapse, Divider, IconButton, CircularProgress 
+  List, Collapse, Divider, IconButton, CircularProgress,Popover
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
@@ -249,71 +249,67 @@ export const Shortcut=({classes}) => {
 
     return(
       <Popper  
+        key={`shortcutMenu${index}`}
         open={open} 
         anchorEl={anchorEl[num]} 
-        placement={windowSize==='xs'?'bottom-start':'left-start'} 
-        transition>
-        {({ TransitionProps }) => (
-          <Fade {...TransitionProps} timeout={350}>
-            <Paper className={classes.popperPaper}>
-              <List component="nav" className={classes.shortcutList}>
-                <ListItem 
-                  key={`selectCategory`}
-                  button 
-                  onClick={()=>setCategoryOpen(!categoryOpen)} 
-                  className={clsx(classes.pt0, classes.pb0)}>
-                  <ListItemText primary={categoryTitle? t(categoryTitle):t('common.SelectCategory')} />
-                  {categoryOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
-                <Collapse in={categoryOpen} timeout="auto" unmountOnExit>
+        placement={windowSize==='xs'?'bottom-start':'left-start'}>
+          <Paper className={classes.popperPaper}>
+            <List component="nav" className={classes.shortcutList}>
+              <ListItem 
+                key={`selectCategory`}
+                button 
+                onClick={()=>setCategoryOpen(!categoryOpen)} 
+                className={clsx(classes.pt0, classes.pb0)}>
+                <ListItemText primary={categoryTitle? t(categoryTitle):t('common.SelectCategory')} />
+                {categoryOpen ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={categoryOpen} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  {Object.keys(categories).map(cat=>{
+                    return (
+                      <ListItem 
+                        key={`category${Math.round(Math.random() * 999999999)}`}
+                        button 
+                        className={clsx(classes.pt0, classes.pb0)} 
+                        onClick={()=>handleCategoryChange(cat)}>
+                        <ListItemText primary={t(categories[cat].title)} />
+                      </ListItem>
+                    )
+                  })}
+                </List>
+              </Collapse>
+            </List>
+            <List component="nav" className={classes.shortcutList}>
+              <ListItem 
+                key={`selectPage`}
+                button 
+                onClick={()=>setPageOpen(!pageOpen)} 
+                className={clsx(classes.pt0, classes.pb0)}
+                disabled={!selectedCategory[num]}>
+                <ListItemText primary={pageTitle? pageTitle: t('common.SelectPage')} />
+                {pageOpen ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              {selectedCategory[num]?
+                <Collapse in={pageOpen} timeout="auto" unmountOnExit>
                   <Divider />
                   <List component="div" disablePadding>
-                    {Object.keys(categories).map((cat, index)=>{
+                    {categories[selectedCategory[num]].pages.map(page=>{
                       return (
                         <ListItem 
-                          key={`category${index}`}
+                          key={`pageItem${Math.round(Math.random() * 999999999)}`}
                           button 
                           className={clsx(classes.pt0, classes.pb0)} 
-                          onClick={()=>handleCategoryChange(cat)}>
-                          <ListItemText primary={t(categories[cat].title)} />
+                          onClick={()=>handlePageChange(page.title, page.link)}>
+                          <ListItemText primary={t(page.title)} />
                         </ListItem>
                       )
                     })}
                   </List>
                 </Collapse>
-              </List>
-              <List component="nav" className={classes.shortcutList}>
-                <ListItem 
-                  key={`selectPage`}
-                  button 
-                  onClick={()=>setPageOpen(!pageOpen)} 
-                  className={clsx(classes.pt0, classes.pb0)}
-                  disabled={!selectedCategory[num]}>
-                  <ListItemText primary={pageTitle? pageTitle: t('common.SelectPage')} />
-                  {pageOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
-                {selectedCategory[num]?
-                  <Collapse in={pageOpen} timeout="auto" unmountOnExit>
-                    <Divider />
-                    <List component="div" disablePadding>
-                      {categories[selectedCategory[num]].pages.map((page, index)=>{
-                        return (
-                          <ListItem 
-                            key={`pageItem${index}`}
-                            button 
-                            className={clsx(classes.pt0, classes.pb0)} 
-                            onClick={()=>handlePageChange(page.title, page.link)}>
-                            <ListItemText primary={t(page.title)} />
-                          </ListItem>
-                        )
-                      })}
-                    </List>
-                  </Collapse>
-                  :null}
-              </List>
-            </Paper>
-          </Fade>
-        )}
+                :null}
+            </List>
+          </Paper>
       </Popper>
     );
   }
@@ -331,10 +327,10 @@ export const Shortcut=({classes}) => {
     setCategoryOpen(false);
   };
 
-  const renderShortcutButton=(data, innerRef, index)=>{
+  const renderShortcutButton=(data, index)=>{
     if (loading[index]) {
       return (
-        <Box className={classes.shortcutBtnBox} ref={innerRef}>
+        <Box className={classes.shortcutBtnBox} key={`shortcutLoading${index}`}>
           <Button 
             variant='contained' 
             color='primary' 
@@ -346,41 +342,42 @@ export const Shortcut=({classes}) => {
         </Box>
       );
     }
-
+    const innerRef=createRef();
     return (
-      <>
-        <Box className={classes.shortcutBtnBox} ref={innerRef}>
-          <Button 
-            variant='contained' 
-            color='primary' 
-            href={data.ShortcutUrl}
-            classes={{
-              label:classes.shortcutLabel,
-              root: classes.shortcutButton}}>
-            <Typography align='center' className={classes.categoryLabel}>{t(data.CategoryName)}</Typography>
-            <Typography align='center' className={classes.pageTitle}>{t(data.ShortcutName)}</Typography>
-          </Button>
-          <IconButton  
-            className={classes.shortcutEditIcon} 
-            onClick={(e)=>handleShortcutMenuOpen(windowSize=='xs'?e:innerRef, data.ID)}>
-            {'\uE09C'}
-          </IconButton>
-        </Box>
+      <Box key={`shortcutButton${index}`} ref={innerRef} className={classes.shortcutBtnBox} >
+        <Button 
+          variant='contained' 
+          color='primary' 
+          href={data.ShortcutUrl}
+          classes={{
+            label:classes.shortcutLabel,
+            root: classes.shortcutButton}}>
+          <Typography align='center' className={classes.categoryLabel}>{t(data.CategoryName)}</Typography>
+          <Typography align='center' className={classes.pageTitle}>{t(data.ShortcutName)}</Typography>
+        </Button>
+        <IconButton  
+          className={classes.shortcutEditIcon} 
+          // onClick={()=>dispatch(deleteShortcuts(data.ID))}>
+          onClick={(e)=>handleShortcutMenuOpen(windowSize=='xs'?e:innerRef, data.ID)}>
+          {'\uE09C'}
+        </IconButton>
         {renderShortcutMenu(data.ID, true, index)}
-      </>
+      </Box>
     );
   }
 
   const renderNewShortcutButtons=()=>{
     let newShortcutButtons = [];
     for (let index = shortcuts.length; index < 5; index++) {
+      const innerRef=createRef();
       newShortcutButtons.push(
-        <Box className={classes.shortcutBtnBox}>
+        <Box className={classes.shortcutBtnBox} key={`emptyShortcutBtn${index}`} ref={innerRef}>
           <Button 
             color='primary' 
             fullWidth 
             className={classes.shortcutDottedButton}
-            onClick={(e)=>handleShortcutMenuOpen(e,index)}>{'\uE0E4'}
+            onClick={(e)=>handleShortcutMenuOpen(innerRef,index)}>
+            {'\uE0E4'}
           </Button>
           {renderShortcutMenu(index)}
         </Box>
@@ -398,8 +395,7 @@ export const Shortcut=({classes}) => {
             <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
           </Box>
           {shortcuts.map((item,index)=>{
-            const innerRef = createRef();
-            return renderShortcutButton(item, innerRef, index)
+            return renderShortcutButton(item, index)
           })}
           {renderNewShortcutButtons()}
         </Paper>
