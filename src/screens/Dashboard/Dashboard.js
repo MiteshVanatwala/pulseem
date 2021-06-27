@@ -34,7 +34,8 @@ const DashboardScreen = ({ classes }) => {
   const dispatch = useDispatch();
   const dateTimeFormat = 'MM/DD/YY, hh:mm a';
   const dateFormat = 'MM/DD/YY';
-
+  const [isShowSmsPackage, showSmsPackage] = useState(false);
+  
   moment.locale(language);
 
   const initData = async () => {
@@ -66,15 +67,23 @@ const DashboardScreen = ({ classes }) => {
             </Typography>
             <Typography align='center' className={classes.f20}>{t('dashboard.yourBulkStatus')}</Typography>
           </Grid>
-          <Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
+          <Grid
+            container
+            item xs={9}
+            className={classes.bulkStatusBlue}
+            justify='space-between'
+            onMouseEnter={() => showSmsPackage(true)}
+            onMouseLeave={() => showSmsPackage(false)}>
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
-            <Typography className={classes.bulkTitle}>
-              {isSMSPrepaid ? t('dashboard.perRecipients') : Sms.Credits}
-            </Typography>
-            {isSMSPrepaid && Sms.Credits <= 0 &&
-              <Button onClick={() => setIsOpenPackageDialog(true)}>
+            {isShowSmsPackage ? (
+              <Button onClick={() => setIsOpenPackageDialog(true)} className={classes.whiteLink}>
                 {t('dashboard.purchase')}
               </Button>
+            )
+              :
+              (<Typography className={classes.bulkTitle}>
+                {!Sms.IsPrepaid ? t('dashboard.perRecipients') : Sms.Credits}
+              </Typography>)
             }
           </Grid>
           <Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
@@ -320,9 +329,9 @@ const DashboardScreen = ({ classes }) => {
         }],
       }
       return (
-        <Grid 
+        <Grid
           key={`doughnut${Math.round(Math.random() * 999999999)}`}
-          item xs={12} sm={12} md={4} 
+          item xs={12} sm={12} md={4}
           className={classes.doughnutGrid}>
           <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
           <Box className={classes.doughnutBox}>
@@ -677,6 +686,7 @@ const DashboardScreen = ({ classes }) => {
         <Grid item xs={12} sm={9} md={10}>
           {renderTopSection()}
           {renderBottomSection()}
+          {renderPackagesDialog()}
         </Grid>
         <Grid item xs={12} sm={3} md={2}>
           <Shortcut
@@ -695,7 +705,7 @@ const DashboardScreen = ({ classes }) => {
         <GoPackage style={{ fontSize: 30 }} />
       ),
       content: (
-        <Grid item xs={12}>
+        <Grid item xs={12} style={{ paddingBottom: 25 }}>
           <PricePackages classes={classes} />
         </Grid>
       )
@@ -731,9 +741,18 @@ const DashboardScreen = ({ classes }) => {
       classes={classes}
       customStyle={classes.dashboard}>
       {renderContent()}
-      {renderPackagesDialog()}
     </DefaultScreen>
   )
 }
 
-export default DashboardScreen;
+function isLoaded(prevProps, nextProps) {
+  return prevProps === nextProps;
+  //console.log(prevProps, nextProps);
+  /*
+  return true if passing nextProps to render would return
+  the same result as passing prevProps to render,
+  otherwise return false
+  */
+}
+
+export default React.memo(DashboardScreen, isLoaded);

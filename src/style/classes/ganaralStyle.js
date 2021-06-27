@@ -315,9 +315,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   line1: {
     lineHeight: 1
   },
-  black: {
-    color: 'black'
-  },
+  // black: {
+  //   color: 'black'
+  // },
   colorGray: {
     color: 'rgba(0,0,0,0.40)'
   },
@@ -416,7 +416,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mb4: {
     marginBottom: 20
   },
-  m5:{
+  m5: {
     margin: '.5rem'
   },
   font15: {
@@ -425,7 +425,31 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   font18: {
     fontSize: 18
   },
+  font20: {
+    fontSize: 20
+  },
   font24: {
     fontSize: 24
+  },
+  font30: {
+    fontSize: 30
+  },
+  borderBox: {
+    border: '3px solid #0371ad',
+    margin: '1rem',
+    display: 'flex',
+    padding: '1rem',
+    borderRadius: 5,
+    flexDirection: 'column'
+  },
+  whiteLink: {
+    textDecoration: 'underline',
+    color: '#fff',
+    textTransform: 'capitalize',
+    lineHeight: 1
+  },
+  blackDivider: {
+    height: 2,
+    backgroundColor: 'rgb(0, 0, 0, 0.5)'
   }
 })
