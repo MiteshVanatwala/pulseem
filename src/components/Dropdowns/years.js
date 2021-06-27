@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import moment from 'moment'
 import { useTranslation } from 'react-i18next'
 
-const DropdownYears = ({ classes, isRTL, onChange = () => null }) => {
+const DropdownYears = ({ classes, isRTL, onChange = () => null, ...props }) => {
     const currentYear = moment().format('YYYY');
     const [years, setYears] = useState(null);
     const [selectedYear, setSelectedYear] = useState(0);
@@ -14,7 +14,7 @@ const DropdownYears = ({ classes, isRTL, onChange = () => null }) => {
     const getExpirationYears = () => {
         const yearsArray = [{ ID: 0, Name: t("common.chooseYear") }];
         for (let i = 1; i <= 10; i++) {
-            yearsArray.push({ ID: parseInt(currentYear) + i, Name: parseInt(currentYear) + i });
+            yearsArray.push({ ID: parseInt(currentYear - 1) + i, Name: parseInt(currentYear - 1) + i });
         }
         setYears(yearsArray);
     }
@@ -33,6 +33,7 @@ const DropdownYears = ({ classes, isRTL, onChange = () => null }) => {
                 style={{ width: "100%" }}
                 onChange={onYearSelected}
                 value={selectedYear}
+                id={props.id}
             >
                 {years !== null && years.map((y) => {
                     return (

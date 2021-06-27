@@ -40,7 +40,8 @@
     "react-sticky": "^6.0.3",
     "react-switch": "^6.0.0",
     "react-transition-group": "^1.2.1",
-    "universal-cookie": "^4.0.4"
+    "universal-cookie": "^4.0.4",
+    "validator": "^13.6.0"
   },
   "scripts": {
     "start": "react-scripts start",

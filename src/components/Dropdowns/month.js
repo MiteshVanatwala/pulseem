@@ -3,7 +3,7 @@ import { FormControl, Select, MenuItem } from '@material-ui/core';
 import { useTranslation } from 'react-i18next'
 
 const DropdownMonthes = (
-    { classes, isNumeric = true, isRTL, onChange = () => null }
+    { classes, isNumeric = true, isRTL, onChange = () => null, ...props }
 ) => {
     const { t } = useTranslation();
     const [selectedMonth, setselectedMonth] = useState(0);
@@ -34,6 +34,7 @@ const DropdownMonthes = (
                 style={{ width: "100%" }}
                 onChange={onMonthSelected}
                 value={selectedMonth}
+                id={props.id}
             >
                 {isNumeric ? (
                     monthes.map((n) => {

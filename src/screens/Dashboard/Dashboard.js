@@ -706,7 +706,7 @@ const DashboardScreen = ({ classes }) => {
       ),
       content: (
         <Grid item xs={12} style={{ paddingBottom: 25 }}>
-          <PricePackages classes={classes} />
+          <PricePackages classes={classes} onComplete={handleDialogClose} />
         </Grid>
       )
     };
