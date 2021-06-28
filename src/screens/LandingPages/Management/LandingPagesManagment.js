@@ -610,12 +610,13 @@ const LandingPagesesManagmentScreen=({classes}) => {
       handleClose()
       setPage(1)
       setLoader(true);
-      await dispatch(duplicteLandingPage(data))
+      const result = await dispatch(duplicteLandingPage(data))
+      const { payload={} } = result || {};
       await getData()
       setLoader(false);
       setDialogType({
         type: 'duplicateSuccessful',
-        data: data
+        data: payload
       })
     }
   })
