@@ -252,7 +252,8 @@ export const Shortcut=({classes}) => {
         key={`shortcutMenu${index}`}
         open={open} 
         anchorEl={anchorEl[num]} 
-        placement={windowSize==='xs'?'bottom-start':'left-start'}>
+        placement={windowSize==='xs'?'bottom-start':'left-start'}
+        style={{zIndex: 2}}>
           <Paper className={classes.popperPaper}>
             <List component="nav" className={classes.shortcutList}>
               <ListItem 
@@ -357,7 +358,6 @@ export const Shortcut=({classes}) => {
         </Button>
         <IconButton  
           className={classes.shortcutEditIcon} 
-          // onClick={()=>dispatch(deleteShortcuts(data.ID))}>
           onClick={(e)=>handleShortcutMenuOpen(windowSize=='xs'?e:innerRef, data.ID)}>
           {'\uE09C'}
         </IconButton>
@@ -376,7 +376,7 @@ export const Shortcut=({classes}) => {
             color='primary' 
             fullWidth 
             className={classes.shortcutDottedButton}
-            onClick={(e)=>handleShortcutMenuOpen(innerRef,index)}>
+            onClick={(e)=>handleShortcutMenuOpen(windowSize=='xs'?e:innerRef,index)}>
             {'\uE0E4'}
           </Button>
           {renderShortcutMenu(index)}

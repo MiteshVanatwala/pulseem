@@ -1046,6 +1046,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     width: '100%',
     position: 'absolute',
     top: 'calc(50% - 24px)',
+    zIndex: 1
   },
   carouselTips: {
     position: 'relative',
