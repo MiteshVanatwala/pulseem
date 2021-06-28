@@ -609,9 +609,51 @@ const LandingPagesesManagmentScreen=({classes}) => {
       clearSearch()
       handleClose()
       setPage(1)
+      setLoader(true);
       await dispatch(duplicteLandingPage(data))
-      getData()
+      await getData()
+      setLoader(false);
+      setDialogType({
+        type: 'duplicateSuccessful',
+        data: {}
+      })
     }
+  })
+
+  const getDuplicateSuccessfulDialog=(data='') => ({
+    paperStyle: classes.maxWidth540,
+    childrenStyle: classes.duplicateSuccessMsg,
+    title: t('landingPages.duplicationSuccessful'),
+    showDivider: false,
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('landingPages.duplicationSuccessfulMessage')}
+      </Typography>
+    ),
+    renderButtons: () => (
+      <Box className={classes.spaceEvenly}>
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogCancelButton,
+          )}>
+          {t('common.Cancel')}
+        </Button>
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+            )}>
+          {t('common.Edit')}
+        </Button>
+      </Box>
+    )
   })
 
   const renderDialog=() => {
@@ -620,7 +662,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
     const dialogContent={
       restore: getRestorDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data)
+      duplicate: getDuplicateDialog(data),
+      duplicateSuccessful: getDuplicateSuccessfulDialog()
     }
 
     const currentDialog=dialogContent[type]||{}

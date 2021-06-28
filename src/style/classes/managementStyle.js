@@ -845,5 +845,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tabelCellPadding: {
     paddingBlock: 15
+  },
+  duplicateSuccessMsg: {
+    padding: '0 25px!important'
   }
 })

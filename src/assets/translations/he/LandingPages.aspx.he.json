@@ -336,5 +336,7 @@
   "embedCode": "קוד הטמעה",
   "restoreLandingPageTitle": "בחר את דפי הנחיתה שברצונך לשחזר",
   "dialogDuplicateTitle": "שיכפול דף נחיתה",
-  "dialogDuplicateContent": "האם ברצונך לשכפל את דף הנחיתה?"
+  "dialogDuplicateContent": "האם ברצונך לשכפל את דף הנחיתה?",
+  "duplicationSuccessful": "דף הנחיתה שלך שוכפל בהצלחה!",
+  "duplicationSuccessfulMessage": "כל הנתונים של דף הנחיתה שוכפל. על מנת לערוך את הגדרות הטופס נא לחץ על אישור למטה."
 }
