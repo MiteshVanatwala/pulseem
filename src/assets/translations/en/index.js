@@ -20,9 +20,6 @@ export const en={
   sms,
   appBar,
   master,
-<<<<<<< HEAD
-=======
   mainReport,
->>>>>>> 64e0143522d474450c1ef3c7141f0b500e0456bd
   dashboard
 }
