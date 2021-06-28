@@ -615,7 +615,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
       setLoader(false);
       setDialogType({
         type: 'duplicateSuccessful',
-        data: {}
+        data: data
       })
     }
   })
@@ -646,6 +646,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           variant='contained'
           size='small'
           onClick={handleClose}
+          href={`/Pulseem/NewWebForm/NewFormInfo/${data}`}
           className={clsx(
             classes.gruopsDialogButton,
             classes.dialogConfirmButton,
@@ -658,12 +659,11 @@ const LandingPagesesManagmentScreen=({classes}) => {
 
   const renderDialog=() => {
     const {data,type}=dialogType||{}
-
     const dialogContent={
       restore: getRestorDialog(data),
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data),
-      duplicateSuccessful: getDuplicateSuccessfulDialog()
+      duplicateSuccessful: getDuplicateSuccessfulDialog(data)
     }
 
     const currentDialog=dialogContent[type]||{}
