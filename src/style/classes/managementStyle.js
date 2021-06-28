@@ -22,14 +22,6 @@ const iconPadding={
   xl: '0.8rem 1.1rem 0.2rem'
 }
 
-const ellipsisMaxWidth={
-  xs: '100%',
-  sm: '250px',
-  md: '100%',
-  lg: '100%',
-  xl: '100%'
-}
-
 // const tableRowMinWidth={
 //   xs: 75,
 //   sm: 75,
@@ -638,7 +630,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '100%',
-    maxWidth: ellipsisMaxWidth[windowSize]
+    [theme.breakpoints.only('sm')] :{
+      maxWidth: 250
+    },
+    [theme.breakpoints.up('md')] :{
+      maxWidth: 350
+    },
   },
   p10: {
     padding: 10
