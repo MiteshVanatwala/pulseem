@@ -54,6 +54,7 @@ export const getRoutes=(t=() => null) => [
   {
     key: 'newsletter',
     title: t('master.newsletter'),
+    pageTitle: t('campaigns.Page.Title'),
     iconUnicode: '\ue0a1',
     href: '/react/Campaigns',
     icon: <img
@@ -72,6 +73,7 @@ export const getRoutes=(t=() => null) => [
   {
     key: 'sms',
     title: 'SMS',
+    pageTitle: t('sms.PageResource1.Title'),
     iconUnicode: '\ue181',
     href: '/react/SMSCampaigns',
     icon: <img
@@ -87,6 +89,7 @@ export const getRoutes=(t=() => null) => [
   {
     key: 'mms',
     title: 'MMS',
+    pageTitle: t('mms.logPageHeaderResource1.Text'),
     iconUnicode: '\ue11b',
     href: '/react/MmsCampaigns',
     icon: <img
@@ -100,6 +103,7 @@ export const getRoutes=(t=() => null) => [
   {
     key: 'landingPages',
     title: t('master.RadItemLandingPagesMenu.Text'),
+    pageTitle: t('landingPages.logPageHeaderResource1.Text'),
     iconUnicode: '\ue09d',
     href: '/react/EditRegistrationPage',
     icon: <img
@@ -114,6 +118,7 @@ export const getRoutes=(t=() => null) => [
   {
     key: 'automations',
     title: t('master.Automations'),
+    pageTitle: t('automations.logPageHeaderResource1.Text'),
     iconUnicode: '\ue087',
     href: '/react/Automations',
     icon: <img
@@ -127,13 +132,18 @@ export const getRoutes=(t=() => null) => [
   {
     key: 'notifications',
     title: t('master.notifications'),
+    pageTitle: t('notifications.notificationManagement'),
     iconUnicode: '\ue117',
     href: '/react/Notifications',
     icon: <img
       alt='Notifications'
       src={NotificationsIcon} />,
     options: [
-      {title: t('master.createNotification'),href: '/react/Notification/create'},
+      {
+        key: 'create',
+        title: t('master.createNotification'),
+        href: '/react/Notification/create'
+      },
       {title: t('master.manageNotifications'),href: '/react/Notifications'},
       {title: t('master.implementScript'),uri: '/react/Notifications'}
     ]
@@ -141,6 +151,7 @@ export const getRoutes=(t=() => null) => [
   {
     key: 'reports',
     title: t('master.RadMenuItemResource19.Text'),
+    pageTitle: t('mainReport.logPageHeaderResource1.Text'),
     iconUnicode: '\ue049',
     href: '/react/Reports/NewsletterReports',
     icon: <img

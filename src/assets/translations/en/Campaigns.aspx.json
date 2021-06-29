@@ -338,6 +338,9 @@
   "PageResource1": {
     "Title": "Campaigns Management | Pulseem System"
   },
+  "Page": {
+    "Title": "Campaigns Management"
+  },
   "txtCampaignNameResource1": {
     "Text": "",
     "ToolTip": ""
