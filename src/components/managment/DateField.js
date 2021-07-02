@@ -17,7 +17,6 @@ export const DateField = ({
   isTimePicker = false,
   buttons = null,
   ampm = true,
-  minimumDate = undefined,
   maximumDate = undefined,
   timePickerOpen = false,
   rootStyle = null
@@ -95,7 +94,7 @@ export const DateField = ({
       }}
       cancelLabel={buttons && buttons.cancel}
       okLabel={buttons && buttons.ok}
-      minDate={minimumDate}
+      id="datePicker"
       maxDate={maximumDate}
       onClick={() => setIsDatePickerOpen(true)}
       onClose={() => setIsDatePickerOpen(false)}

@@ -1,11 +1,11 @@
 {
   "name": "pulseem-react-app",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "private": true,
   "homepage": "https://www.reactstage.club/react/",
   "dependencies": {
     "@date-io/moment": "1.x",
-    "@material-ui/core": "^4.11.3",
+    "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@material-ui/pickers": "^3.3.10",
@@ -24,6 +24,7 @@
     "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-copy-to-clipboard": "^5.0.3",
+    "react-csv": "^2.0.3",
     "react-dom": "^17.0.1",
     "react-ellipsis-pjs": "^2.1.2",
     "react-i18next": "^11.8.10",

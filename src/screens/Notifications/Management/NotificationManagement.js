@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import DefaultScreen from './DefaultScreen';
+import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
@@ -8,12 +8,12 @@ import {
 import {
   DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
   GroupsIcon, PreviewIcon
-} from '../assets/images/managment/index'
+} from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, Dialog, RestorDialogContent, SearchField
-} from '../components/managment/index'
+} from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import useCtrlHistory from '../helpers/useCtrlHistory';
+import useCtrlHistory from '../../../helpers/useCtrlHistory';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -23,11 +23,12 @@ import {
   getNotificationById, getNotificationGroups, getNotificationData, getDeletedNotifications,
   duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
   getScriptPath, getSubAccountApiKey, updateScriptPath
-} from '../redux/reducers/notificationSlice';
+} from '../../../redux/reducers/notificationSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { Preview } from '../components/Notifications/Preview/Preview';
-import { getCookie, setCookie } from '../helpers/cookies';
-import { actionURL } from '../config/index'
+import { Preview } from '../../../components/Notifications/Preview/Preview';
+import { getCookie, setCookie } from '../../../helpers/cookies';
+import { actionURL } from '../../../config/index'
+import { Loader } from '../../../components/Loader/Loader';
 
 const NotificationManagement = ({ classes }) => {
   const { language, windowSize } = useSelector(state => state.core)
@@ -60,14 +61,17 @@ const NotificationManagement = ({ classes }) => {
   const scriptDialogCookie = getCookie('scriptDialog')
   const hideScriptDialog = (scriptDialogCookie === 'true')
   const [showScriptDialog, setShowScriptDialog] = useState(!hideScriptDialog)
+  const [showLoader, setLoader] = useState(true);
   const refScriptCode = useRef(null);
   moment.locale(language)
 
-  const getData = () => {
-    dispatch(getNotificationData());
+  const getData = async () => {
+    await dispatch(getNotificationData());
+    setLoader(false);
   }
 
   useEffect(() => {
+    setLoader(true);
     handleScriptPath();
     handleApiKey();
     getData();
@@ -685,11 +689,11 @@ const NotificationManagement = ({ classes }) => {
 
   const handleDialogClose = () => {
     setDialogType(null);
-    setRestoreArray([]);
   }
 
   const renderPreview = (data = {}) => {
     return {
+      childrenStyle: classes.previewPaper,
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
@@ -737,14 +741,16 @@ const NotificationManagement = ({ classes }) => {
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
+          dataIdVar='ID'
         />
       ),
       onConfirm: async () => {
+        handleDialogClose();
         const res = await dispatch(restoreNotifications(restoreArray));
         if (!res.error) {
           dispatch(getNotificationData());
         }
-        handleDialogClose();
+        setRestoreArray([]);
       }
     }
   }
@@ -835,7 +841,6 @@ const NotificationManagement = ({ classes }) => {
         <Box className={classes.dialogBox}>
           <Typography variant="h6" className={classes.bold}>{t('notifications.howToCreateGroup')}</Typography>
           <Typography>{t('notifications.assigningRecipientsToGroupMessage')}</Typography>
-          <Typography>{t('notifications.doneByMessage')}</Typography>
           <Typography variant='body'>{t('common.pulseemLink')}</Typography>
           <Typography className={classes.mt10}>{t('notifications.thenYouWillAdd')}</Typography>
           <TextField
@@ -954,6 +959,7 @@ const NotificationManagement = ({ classes }) => {
       ),
       onConfirm: async () => {
         handleDuplicate(ID);
+        setPage(1)
         clearSearch()
       }
     }
@@ -1158,6 +1164,7 @@ const NotificationManagement = ({ classes }) => {
       {renderTablePagination()}
       {renderDialog()}
       {renderImplementDialog()}
+      <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
 }

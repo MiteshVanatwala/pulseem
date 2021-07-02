@@ -142,13 +142,13 @@ export const getRoutes=(t=() => null) => [
     key: 'reports',
     title: t('master.RadMenuItemResource19.Text'),
     iconUnicode: '\ue049',
-    href: '/Pulseem/MainReport.aspx?fromreact=true',
+    href: '/react/Reports/NewsletterReports',
     icon: <img
       alt='Reports'
       src={ReportsIcon} />,
     options: [
       {title: t('master.clalCollage'),href: '/Pulseem/ClalReport.aspx?fromreact=true'},
-      {title: t('master.RadMenuItemResource13.Text'),href: '/Pulseem/MainReport.aspx?fromreact=true'},
+      {title: t('master.RadMenuItemResource13.Text'),href: '/react/Reports/NewsletterReports'},
       {title: t('master.RadMenuItemResource24.Text'),href: '/Pulseem/SMSMainReport.aspx?fromreact=true'},
       {title: t('master.MmsMainReport.Text'),href: '/Pulseem/MmsMainReport.aspx?fromreact=true'},
       {title: t('master.AbTestsReport.Text'),href: '/Pulseem/AbTestsReport.aspx?fromreact=true'},

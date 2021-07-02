@@ -1,14 +1,14 @@
 import React,{useEffect} from 'react';
-import NewsletterManagment from './screens/NewsletterManagment';
-import AutomationManagment from './screens/AutomationsManagment';
-import LandingPagesesManagment from './screens/LandingPagesesManagment'
-import MmsManagment from './screens/MmsManagment';
-import SmsManagment from './screens/SmsManagment';
+import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
+import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
+import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
+import MmsManagment from './screens/Mms/Management/MmsManagment';
+import SmsManagment from './screens/Sms/Management/SmsManagment';
 import {getCookie,setCookie,cookieListener} from './helpers/cookies'
 import {create} from 'jss';
 import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
-import {StylesProvider,jssPreset,MuiThemeProvider} from '@material-ui/core/styles';
+import {StylesProvider,jssPreset,MuiThemeProvider, useTheme} from '@material-ui/core/styles';
 import i18n from './i18n'
 import {BrowserRouter,useParams,Route} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
@@ -20,9 +20,11 @@ import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import {useHistory} from "react-router-dom";
 import moment from 'moment'
-import NotificationManagement from './screens/NotificationManagement';
-import NotificationEditor from './screens/Notifications/NotificationEditor';
 import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
+import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
+import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
+import NewslettersReport from './screens/Reports/NewslettersReport'
+import { useMediaQuery } from '@material-ui/core';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -195,8 +197,9 @@ const renderRoutes=(classes,history) => {
       />
       {/* Reports */}
       <Route
-        path={`/MainReport`}
-        component={transferUrl('/Pulseem/MainReport.aspx')}
+        path={`/Reports/NewsletterReports`}
+        //component={transferUrl('/Pulseem/MainReport.aspx')}
+        render={props => <NewslettersReport {...props} classes={classes} />}
       />
       <Route
         path={`/ClalReport`}
@@ -326,10 +329,11 @@ const renderRoutes=(classes,history) => {
   )
 }
 
-const App=() => {
+const App=({screenSize}) => {
   const dispatch=useDispatch()
   const {language,isRTL,windowSize}=useSelector(state => state.core)
   
+  dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
     const updateToken=() => {
@@ -358,32 +362,32 @@ const App=() => {
       dispatch(setUsername(unique_name))
     }
 
-    const setWindowWidth=() => {
-      const {innerWidth}=window
-      let windowSize='xs'
-      if(innerWidth>769&&innerWidth<1024)
-        windowSize='sm'
-      else if(innerWidth>=1025&&innerWidth<1200)
-        windowSize='md'
-      else if(innerWidth>=1201&&innerWidth<1400)
-        windowSize='lg'
-      else if(innerWidth>=1401)
-        windowSize='xl'
-      dispatch(setWindowSize(windowSize))
-    }
+    // const setWindowWidth=() => {
+    //   const {innerWidth, outerWidth}=window
+    //   let windowSize='xs'
+    //   if(innerWidth>769&&innerWidth<1024)
+    //     windowSize='sm'
+    //   else if(innerWidth>=1025&&innerWidth<1200)
+    //     windowSize='md'
+    //   else if(innerWidth>=1201&&innerWidth<1400)
+    //     windowSize='lg'
+    //   else if(innerWidth>=1401)
+    //     windowSize='xl'
+    //   dispatch(setWindowSize(screenSize))
+    // }
 
     const cookieFunctionObj={
       jtoken: updateToken
     }
 
-    window.addEventListener('resize',setWindowWidth)
+    // window.addEventListener('resize',setWindowWidth)
     cookieListener(({name}) => {
       const cookieFunction=cookieFunctionObj[name] || null
       if(!!cookieFunction)
         cookieFunction()
     })
     updateToken()
-    setWindowWidth()
+    // setWindowWidth()
   },[dispatch])
 
   //useEffect(() => {
@@ -392,11 +396,13 @@ const App=() => {
   //},[language])
 
 
+
+
   const classes=useClasses(windowSize,isRTL)()
   const theme=getTheme(language)
   const history=useHistory()
 
-  if (isRTL) document.body.classList.add('rtl');
+  if(isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
   return (
@@ -411,13 +417,27 @@ const App=() => {
   )
 }
 
+function useWidth() {
+  const {language}=useSelector(state => state.core)
+  const theme = getTheme(language);
+  const keys = [...theme.breakpoints.keys].reverse();
+  return (
+    keys.reduce((output, key) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const matches = useMediaQuery(theme.breakpoints.up(key));
+      return !output && matches ? key : output;
+    }, null) || 'xs'
+  );
+}
+
 const AppContainer=() => {
   const jss=create({plugins: [...jssPreset().plugins,rtl()]});
+  const width=useWidth();
 
   return (
     <StylesProvider jss={jss}>
       <BrowserRouter basename='/react'>
-        <App />
+        <App screenSize={width}/>
       </BrowserRouter>
     </StylesProvider>
   )

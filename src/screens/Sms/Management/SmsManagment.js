@@ -1,27 +1,29 @@
 import React,{useState,useEffect} from 'react';
-import DefaultScreen from './DefaultScreen'
+import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction
+  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction, Link
 } from '@material-ui/core'
 import {
   AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
   GroupsIcon,PreviewIcon
-} from '../assets/images/managment/index'
+} from '../../../assets/images/managment/index'
 import {
   TablePagination,ManagmentIcon,DateField,Dialog,SearchField,RestorDialogContent
-} from '../components/managment/index'
+} from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
   getSmsData,restoreSms,deleteSms,duplicteSms,getSmsAuthorizationData,getAuthorizeNumbers,sendVerificationCode,verifyCode,getSmsByID
-} from '../redux/reducers/smsSlice'
+} from '../../../redux/reducers/smsSlice'
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import {Preview} from '../components/Notifications/Preview/Preview';
+import {Preview} from '../../../components/Notifications/Preview/Preview';
+import { pulseemNewTab } from '../../../helpers/functions';
+import { Loader } from '../../../components/Loader/Loader';
 
 const SmsManagnentScreen=({classes}) => {
   const {language,windowSize,email,phone}=useSelector(state => state.core)
@@ -44,15 +46,20 @@ const SmsManagnentScreen=({classes}) => {
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
   const [dialogType,setDialogType]=useState(null)
   const [restoreArray,setRestoreArray]=useState([])
+  const [showLoader, setLoader] = useState(true);
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch=useDispatch()
   moment.locale(language)
 
-  const getData=() => {
-    dispatch(getSmsData())
+  const getData= async () => {
+    await dispatch(getSmsData())
+    setLoader(false);
   }
 
-  useEffect(getData,[dispatch]);
+  useEffect(() =>{
+    setLoader(true);
+    getData();
+  },[dispatch])
 
   const renderHeader=() => {
     return (
@@ -301,7 +308,7 @@ const SmsManagnentScreen=({classes}) => {
       {
         key: 'edit',
         icon: EditIcon,
-        disable: Status!==1,
+        disable: Status!==1 || AutomationID!==0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize==='xs',
         href: `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&fromreact=true`,
@@ -339,7 +346,9 @@ const SmsManagnentScreen=({classes}) => {
         disable: AutomationID===0,
         lable: t('campaigns.automation'),
         remove: windowSize==='xs',
-        href: `/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`,
+        onClick: () => {
+          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`)
+        },
         rootClass: classes.paddingIcon,
       },
       {
@@ -604,7 +613,6 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const handleClose=() => {
-    setRestoreArray([]);
     setDialogType(null);
     handleVerificationCodeError(false);
     handleNumberError(false);
@@ -632,9 +640,10 @@ const SmsManagnentScreen=({classes}) => {
         />
       ),
       onConfirm: async () => {
-        await dispatch(restoreSms(restoreArray))
-        getData()
         handleClose()
+        await dispatch(restoreSms(restoreArray))
+        setRestoreArray([]);
+        getData()
       }
     }
   }
@@ -718,6 +727,7 @@ const SmsManagnentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
+      setPage(1)
       await dispatch(duplicteSms(data))
       getData()
     }
@@ -888,7 +898,6 @@ const SmsManagnentScreen=({classes}) => {
         >{t('sms.verificationButtonText')}</Button>
         <Typography className={clsx(classes.contactUs,classes.newLine)}>
           {t('sms.havingIssuesMessage')}
-          {`\n${number&&t('sms.inNumber')||''} ${number||''} ${number&&t('sms.or')||''} ${email&&t('sms.inMail')||''} ${email||''}`}
         </Typography>
       </Box>
     ),
@@ -1016,6 +1025,7 @@ const SmsManagnentScreen=({classes}) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
+      <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
 }

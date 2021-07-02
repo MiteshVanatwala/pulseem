@@ -95,11 +95,11 @@ const notificationSize = {
 }
 
 const mobileNotificationSize = {
-    xs: null,
-    sm: 240,
-    md: 350,
-    lg: 450,
-    xl: 450
+    // xs: null,
+    // sm: 240,
+    // md: 350,
+    // lg: 450,
+    // xl: 450    
 }
 
 const notificationIconWidth = {
@@ -319,12 +319,12 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     mobileBG: {
         backgroundImage: `url(${mobileBg})`,
-        width: mobileNotificationSize[windowSize],
         height: '100%',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         minHeight: '400px',
-        position: 'relative'
+        position: 'relative',
+        maxWidth: 450
     },
     mobileFullBG: {
         backgroundImage: `url(${mobileFullBg})!important`,
@@ -625,5 +625,9 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
             marginLeft: windowSize !== 'xs' && isRTL ? 0 : 15,
         }
     },
+    previewPaper: {
+        width: windowSize==='xs'?250:450,
+        height: windowSize==='xs'?330:730
+    }
 
 })

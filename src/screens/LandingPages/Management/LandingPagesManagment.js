@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import DefaultScreen from './DefaultScreen'
+import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
@@ -8,21 +8,22 @@ import {
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SearchIcon,
   PreviewIcon,ReportsIcon,CopyIcon,EmbedCodeIcon,SurveryResultsIcon
-} from '../assets/images/managment/index'
+} from '../../../assets/images/managment/index'
 import {
   TablePagination,ManagmentIcon,RestorDialogContent,Dialog,PopMassage,SearchField
-} from '../components/managment/index'
+} from '../../../components/managment/index'
 import {
   getLandingPagesData,restoreLandingPages,deleteLandingPage,
   duplicteLandingPage,downloadReport,exportSurvey
-} from '../redux/reducers/landingPagesSlice'
-import useCtrlHistory from '../helpers/useCtrlHistory'
-import {openInNewTab} from '../helpers/functions'
+} from '../../../redux/reducers/landingPagesSlice'
+import useCtrlHistory from '../../../helpers/useCtrlHistory'
+import {openInNewTab} from '../../../helpers/functions'
 import {Link} from "react-router-dom";
 import {useSelector,useDispatch} from 'react-redux'
 import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
+import { Loader } from '../../../components/Loader/Loader';
 
 const LandingPagesesManagmentScreen=({classes}) => {
   const {windowSize}=useSelector(state => state.core)
@@ -42,12 +43,17 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const [restoreArray,setRestoreArray]=useState([])
   const history=useCtrlHistory()
   const dispatch=useDispatch()
+  const [showLoader, setLoader] = useState(true);
 
-  const getData=() => {
-    dispatch(getLandingPagesData())
+  const getData= async () => {
+    await dispatch(getLandingPagesData())
+    setLoader(false);
   }
 
-  useEffect(getData,[dispatch])
+  useEffect(() => {
+    setLoader(true);
+    getData();
+  },[dispatch])
 
   const renderHeader=() => {
     return (
@@ -384,16 +390,16 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderGroupNames = () => {
+  const renderGroupNames=() => {
     function createMarkup() {
-      return { __html: `${t("common.Groups")}: ` };
+      return {__html: `${t("common.Groups")}: `};
     }
     return (
-      <label dangerouslySetInnerHTML={createMarkup()} style={{ fontWeight: 400 }}></label>
+      <label dangerouslySetInnerHTML={createMarkup()} style={{fontWeight: 400}}></label>
     );
   }
 
-  const renderNameCell = (row) => {
+  const renderNameCell=(row) => {
     return (
       <>
         <Typography noWrap className={classes.nameEllipsis}>
@@ -401,7 +407,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         </Typography>
         <Typography
           className={classes.grayTextCell}>
-          {row.GroupNames && row.GroupNames.length > 0 && <span>{renderGroupNames()}<b>{row.GroupNames.join(', ').replace('#', '')}</b></span>}
+          {row.GroupNames&&row.GroupNames.length>0&&<span>{renderGroupNames()}<b>{row.GroupNames.join(', ').replace('#','')}</b></span>}
         </Typography>
       </>
 
@@ -417,7 +423,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         </Typography>
         {windowSize==='xs'?
           <Typography className={clsx(classes.middleText)}>{t('landingPages.SubmitsResource1.HeaderText')}</Typography>
-        : <a
+          :<a
             href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
             className={clsx(classes.middleText,classes.pt2)}>
             {t('landingPages.SubmitsResource1.HeaderText')}
@@ -544,7 +550,6 @@ const LandingPagesesManagmentScreen=({classes}) => {
 
   const handleClose=() => {
     setDialogType(null);
-    setRestoreArray([]);
   }
 
   const getRestorDialog=(data=[]) => {
@@ -564,12 +569,14 @@ const LandingPagesesManagmentScreen=({classes}) => {
           data={data}
           currentChecked={restoreArray}
           onChange={handleChange}
+          dataIdVar='ID'
         />
       ),
       onConfirm: async () => {
-        await dispatch(restoreLandingPages(restoreArray))
-        getData()
         handleClose()
+        await dispatch(restoreLandingPages(restoreArray))
+        setRestoreArray([]);
+        getData()
       }
     }
   }
@@ -601,6 +608,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
     onConfirm: async () => {
       clearSearch()
       handleClose()
+      setPage(1)
       await dispatch(duplicteLandingPage(data))
       getData()
     }
@@ -636,6 +644,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
+      <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
 }
