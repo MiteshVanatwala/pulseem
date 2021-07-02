@@ -157,8 +157,7 @@ export const getRoutes=(t=() => null) => [
       {title: t('master.RadMenuItemResource18.Text'),href: '/Pulseem/ClientReport.aspx?fromreact=true'},
       {title: t('master.RadMenuItemResource30.Text'),href: '/Pulseem/EmailAutoReports.aspx?fromreact=true'},
       {title: t('master.locRemovedReason.Text'),href: '/Pulseem/RemovedStats.aspx?fromreact=true'},
-      {title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true'},
-      {title: t('master.DirectSmsReport.Text'),href: '/Pulseem/DirectSmsReport.aspx?fromreact=true'},
+      {title: t('report.DirectSendReport'),href: '/react/DirectSendReport'},
       {title: t('master.OpenedClickedReport'),href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true'},
     ]
   }

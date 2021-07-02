@@ -22,6 +22,7 @@ import {useHistory} from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/NotificationManagement';
 import NotificationEditor from './screens/Notifications/NotificationEditor';
+import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -238,8 +239,8 @@ const renderRoutes=(classes,history) => {
         component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
       />
       <Route
-        path={`/DirectSmsReport`}
-        component={transferUrl('/Pulseem/DirectSmsReport.aspx')}
+        path={`/DirectSendReport`}
+        render={props => <DirectSendReport {...props} classes={classes} />}
       />
       <Route
         path={`/EmailCampaignStatistics`}

@@ -19,7 +19,8 @@ export const DateField = ({
   ampm = true,
   minimumDate = undefined,
   maximumDate = undefined,
-  timePickerOpen = false
+  timePickerOpen = false,
+  rootStyle = null
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -66,6 +67,7 @@ export const DateField = ({
   ) :
 
     (<KeyboardDatePicker
+      classes={{root: rootStyle}}
       disableToolbar
       inputVariant="outlined"
       className={clsx(
@@ -93,7 +95,6 @@ export const DateField = ({
       }}
       cancelLabel={buttons && buttons.cancel}
       okLabel={buttons && buttons.ok}
-      id="datePicker"
       minDate={minimumDate}
       maxDate={maximumDate}
       onClick={() => setIsDatePickerOpen(true)}

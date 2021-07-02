@@ -7,6 +7,7 @@ import mmsReducer from './reducers/mmsSlice'
 import automationsReducer from './reducers/automationsSlice'
 import notificationReducer from './reducers/notificationSlice';
 import smsReducer from './reducers/smsSlice'
+import reportReducer from './reducers/reportsSlice'
 
 export default configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export default configureStore({
     mms: mmsReducer,
     automations: automationsReducer,
     notification: notificationReducer,
-    sms: smsReducer
+    sms: smsReducer, 
+    report: reportReducer
   },
 });

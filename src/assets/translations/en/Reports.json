@@ -1,0 +1,20 @@
+{
+  "DirectSendReport": "Direct Send Report",
+  "FromEmail": "From Email",
+  "ToEmail": "To Email",
+  "Recipient": "Recipient",
+  "ExternalRef": "External Ref",
+  "Subject": "Subject",
+  "TotalMessagesSent": "Total Messages Sent",
+  "TotalBillingCredits": "Total Billing Credits",
+  "Opening": "Opening",
+  "SendDate": "Send Date",
+  "ContentOfMessage": "Content of the Message",
+  "Characters": "Characters",
+  "Credits": "Credits",
+  "AdvanceSearch": "Advance Search",
+  "ShowContent": "Show Content",
+  "TotalCredits": "Total Credits",
+  "TotalSent": "Total Sent",
+  "Messages": "messages"
+}

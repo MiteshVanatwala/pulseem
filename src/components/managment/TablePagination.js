@@ -13,8 +13,10 @@ export const TablePagination=({
   rowsPerPageOptions=[],
   rowsPerPage,
   onRowsPerPageChange=() => null,
-  onPageChange=() => null
+  onPageChange=() => null,
+  returnPageOne=true
 }) => {
+  console.log(`rowsperpage`, rowsPerPage)
   const {t}=useTranslation()
   const pages=Math.ceil(rows/rowsPerPage)
   const [innerPage,setPage]=useState('');
@@ -34,7 +36,9 @@ export const TablePagination=({
     const value=parseInt(event.target.value)
     if(value!==rowsPerPage) {
       onRowsPerPageChange(value)
-      onPageChange(1)
+      if (returnPageOne) {
+        onPageChange(1)
+      }
     }
   }
 
