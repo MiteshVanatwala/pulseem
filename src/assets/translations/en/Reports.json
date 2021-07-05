@@ -16,5 +16,9 @@
   "ShowContent": "Show Content",
   "TotalCredits": "Total Credits",
   "TotalSent": "Total Sent",
-  "Messages": "messages"
+  "Messages": "messages",
+  "Attachments": "Attachments",
+  "ToName": "To Name",
+  "FromName": "From Name",
+  "None": "None"
 }

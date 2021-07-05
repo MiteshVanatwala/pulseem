@@ -249,6 +249,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   alignItemsCenter: {
     alignItems: 'center'
   },
+  w80: {
+    width: '80%'
+  },
+  w20: {
+    width: '20%'
+  },
   minWidth100: {
     minWidth: 100
   },

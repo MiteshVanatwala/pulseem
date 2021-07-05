@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import clsx from 'clsx';
-import { Box, Button, Grid, Table, TableContainer, 
+import { Box, Button, Grid, Table, TableContainer, Link,
   TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse } from '@material-ui/core';
 import { TablePagination,DateField } from '../../../components/managment/index';
 import { SearchIcon } from '../../../assets/images/managment';
@@ -17,7 +17,8 @@ const RenderRow=({
   cellStyle,
   noborderCell,
   rowStyle,
-  row
+  row,
+  t=()=>null
 }) => {
   const [open, setOpen]=useState(false);
   
@@ -31,6 +32,57 @@ const RenderRow=({
     return (
       <Typography className={dataType!=='date'?classes.wordBreak:{}}>{text}</Typography>
     );
+  }
+
+  const renderCollapsibleRow=(row)=> {
+    return (
+      <TableRow className={clsx(classes.tableRowCollapse,'directEmailRowCollapse')}>
+        <TableCell className={clsx(classes.pt0, classes.pb0)} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box margin={1} className={classes.dFlex}>
+              <Table size="small" className={classes.w80}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="left" className={classes.tableCollapseHead}>{t('automations.click')}</TableCell>
+                    <TableCell align="left" className={classes.tableCollapseHead}>{t('common.ExternalRef')}</TableCell>
+                    <TableCell align="left" className={classes.tableCollapseHead}>{t('report.Attachments')}</TableCell>
+                    <TableCell align="left" className={classes.tableCollapseHead}>{t('report.ToName')}</TableCell>
+                    <TableCell align="left" className={classes.tableCollapseHead}>{t('report.FromName')}</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  <TableRow>
+                    <TableCell component="th" scope="row" className={classes.noborder}>{row.ClickCount}</TableCell>
+                    <TableCell align="left" className={classes.noborder}>{row.ExternalRef}</TableCell>
+                    <TableCell align="left" className={classes.noborder}>
+                      {row.Attachments?
+                        <Link 
+                          color="primary"
+                          href={row.Attachments} 
+                          className={classes.f16}>
+                          {t('landingPages.GridTemplateColumnResource1.HeaderText')}
+                        </Link>
+                        :t('report.None')
+                      }
+                    </TableCell>
+                    <TableCell align="left" className={classes.noborder}>{row.ToName}</TableCell>
+                    <TableCell align="left" className={classes.noborder}>{row.FromName}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              <Box className={classes.w20}>
+                <Box className={clsx(classes.floatRight, classes.txtCenter)}>
+                  <IconButton>
+                    <VisibilityIcon className={classes.black}/>
+                  </IconButton>
+                  <Typography display='block' align='center' className={classes.mtNeg15}>{t('common.Preview')}</Typography>
+                </Box>
+              </Box>
+            </Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    )
   }
 
   return (
@@ -48,7 +100,7 @@ const RenderRow=({
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderCell(row.Date, 'date')}
+          {renderCell(row.SendDate, 'date')}
         </TableCell>
         <TableCell
           classes={noborderCell}
@@ -78,45 +130,10 @@ const RenderRow=({
           classes={noborderCell}
           align='center'
           className={classes.flexHalf}>
-          {renderCell(row.Opening)}
+          {renderCell(row.OpenCount)}
         </TableCell>
       </TableRow>
-      <TableRow className={clsx(classes.tableRowCollapse,'directEmailRowCollapse')}>
-        <TableCell className={clsx(classes.pt0, classes.pb0)} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box margin={1} style={{display: 'flex'}}>
-              <Table size="small" aria-label="purchases" style={{width: '80%'}}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="left" className={classes.tableCollapseHead}>Click</TableCell>
-                    <TableCell align="left" className={classes.tableCollapseHead}>ExternalRef</TableCell>
-                    <TableCell align="left" className={classes.tableCollapseHead}>Attached Files</TableCell>
-                    <TableCell align="left" className={classes.tableCollapseHead}>Recipient Name</TableCell>
-                    <TableCell align="left" className={classes.tableCollapseHead}>From Name</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell component="th" scope="row" className={classes.noborder}>{row.Click}</TableCell>
-                    <TableCell align="left" className={classes.noborder}>{row.Ref}</TableCell>
-                    <TableCell align="left" className={classes.noborder}>{row.attachedfiles}</TableCell>
-                    <TableCell align="left" className={classes.noborder}>{row.Recipient}</TableCell>
-                    <TableCell align="left" className={classes.noborder}>{row.FromName}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-              <Box style={{width: '20%'}}>
-                <Box className={classes.floatRight}>
-                  <IconButton>
-                    <VisibilityIcon className={classes.black}/>
-                  </IconButton>
-                  <Typography display='block' align='center' className={classes.mtNeg15}>Show</Typography>
-                </Box>
-              </Box>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+      {renderCollapsibleRow(row)}
     </>
   )
 }
@@ -323,8 +340,7 @@ const DirectEmailReportTab=({
   }
 
   const renderTotalSection=()=>{
-    const { TotalCredits=0, TotalSent=0 }=directEmailReport||{};
-    const totalMessages=100000;
+    const { TotalCredits=0, TotalSent=0, TotalMessages=0 }=directEmailReport||{};
     return (
       <>
         <Box className={clsx(classes.mt25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)}>
@@ -346,7 +362,7 @@ const DirectEmailReportTab=({
           </Box>
         </Box>
         <Typography className={clsx(classes.colorGray, classes.mb5)}>
-          {t('common.Total')} {totalMessages.toLocaleString()} {t('report.Messages')}
+          {t('common.Total')} {TotalMessages.toLocaleString()} {t('report.Messages')}
         </Typography>
       </>
     );
@@ -437,16 +453,18 @@ const DirectEmailReportTab=({
     if (!sortData) {
       return;
     }
+
     sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
     return (
       <TableBody className={classes.tableDirectRow}>
-        {sortData.map(row=>windowSize==='xs'? renderPhoneRow:
+        {sortData.map(row=>
           <RenderRow 
             classes={classes} 
             row={row} 
             noborderCell={noborderCell} 
             cellStyle={cellStyle} 
-            rowStyle={rowStyle}/>
+            rowStyle={rowStyle}
+            t={t}/>
         )}
       </TableBody>
     )

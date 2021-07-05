@@ -440,8 +440,7 @@ const DirectSMSReportTab=({
 
     return (
       <TableBody>
-        {sortData
-          .map(windowSize==='xs'? renderPhoneRow:renderRow)}
+        {sortData.map(renderRow)}
       </TableBody>
     )
   }
