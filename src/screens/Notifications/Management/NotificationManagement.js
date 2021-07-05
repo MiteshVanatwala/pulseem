@@ -22,7 +22,7 @@ import 'moment/locale/he';
 import {
   getNotificationById, getNotificationGroups, getNotificationData, getDeletedNotifications,
   duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
-  getScriptPath, getSubAccountApiKey, updateScriptPath
+  getScriptPath, getSubAccountApiKey, updateScriptPath, getNotificationPublicKey
 } from '../../../redux/reducers/notificationSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Preview } from '../../../components/Notifications/Preview/Preview';
@@ -167,11 +167,16 @@ const NotificationManagement = ({ classes }) => {
     setShowScriptDialog(false)
   }
 
+  useEffect(async () => {
+    if(hideScriptDialog === false){
+      await dispatch(getNotificationPublicKey());
+    }
+  }, [hideScriptDialog])
+
   const renderImplementDialog = () => {
     if (hideScriptDialog) {
       return;
     }
-
     const dialog = renderImplement();
     return (
       <Dialog
