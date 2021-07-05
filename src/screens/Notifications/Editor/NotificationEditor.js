@@ -1439,6 +1439,7 @@ const NotificationEditor = ({ props, classes }) => {
   return (
     <DefaultScreen
       currentPage='notifications'
+      subPage='create'
       customPadding={true}
       classes={classes}
       containerClass={classes.editor}>
