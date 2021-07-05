@@ -567,7 +567,7 @@ const NotificationManagement = ({ classes }) => {
           {row.Name}
         </Typography>
         <Typography style={{ 'WebkitLineClamp': 1 }}>
-          {`${text} ${date.format('L')} ${date.format('LT')}`}
+          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
         </Typography>
       </>
     )
