@@ -883,7 +883,7 @@ const NotificationEditor = ({ props, classes }) => {
                     disableSearchBar={true}
                     disableSkinTonePicker={true}
                     pickerStyle={{ backgroundColor: '#fff', zIndex: '99999', textAlign: 'left' }}
-                    groupVisibility={{ recently_used: false }} />}
+                    groupVisibility={{ recently_used: false, flags: false }} />}
                 </div>
               </ClickAwayListener>
             </FormControl>

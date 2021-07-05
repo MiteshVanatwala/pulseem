@@ -975,7 +975,7 @@ const NotificationManagement = ({ classes }) => {
     (function(d, t) {
         var g = d.createElement(t),
         s = d.getElementsByTagName(t)[0];
-        g.src="#scriptSource#?d=" + Math.floor(Date.now() / 1000);
+        g.src="#scriptSource#scripts/application.js?d=" + Math.floor(Date.now() / 1000);
         g.setAttribute("key", #key#);
         #scriptpath#
         s.parentNode.insertBefore(g, s);

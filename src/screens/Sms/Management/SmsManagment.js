@@ -656,7 +656,7 @@ const SmsManagnentScreen=({classes}) => {
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
-          {'\uE185'}
+          {'\uE0D5'}
         </div>
       ),
       content: (
