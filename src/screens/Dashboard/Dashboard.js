@@ -26,15 +26,9 @@ const DashboardScreen = ({ classes }) => {
   const { username } = useSelector(state => state.user);
   const { recipientsReport, lastCampaignReport, packagesDetails, accountAvailablePackages, tips, shortcuts, recipientsReportError,
     lastCampaignReportError, packagesDetailsError, tipsError, shortCutsError } = useSelector(state => state.dashboard);
-  const [tabValue, handleTabValue] = useState(0);
   const [carouselItem, setCarouselItem] = useState(0);
-  const [activeTip, setActiveTip] = useState(0);
-  const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const dateTimeFormat = 'MM/DD/YY, hh:mm a';
-  const dateFormat = 'MM/DD/YY';
-  const [isShowSmsPackage, showSmsPackage] = useState(false);
   
   moment.locale(language);
 
@@ -47,14 +41,83 @@ const DashboardScreen = ({ classes }) => {
 
   useEffect(initData, [dispatch])
 
-  const renderBulkStatus = () => {
+  const renderArrows = (value, length, setItem, className) => {
+    let selectedItem = value;
+    const handleNext = () => {
+      if (value >= length) return;
+      selectedItem++;
+      setItem(selectedItem);
+    }
+    const handlePrevious = () => {
+      if (selectedItem <= 0) return;
+      selectedItem--;
+      setItem(selectedItem);
+    }
+
+    return (
+      <Grid item className={className}>
+        <IconButton onClick={handlePrevious}>
+          <ArrowBackIosIcon />
+        </IconButton>
+        <IconButton onClick={handleNext}>
+          <ArrowForwardIosIcon />
+        </IconButton>
+      </Grid>
+    );
+  }
+
+  const RenderBulkStatus = () => {
+    const [isShowSmsPackage, showSmsPackage] = useState(false);
+    const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
+    
+    
     const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
     const availablePackages = accountAvailablePackages || [];
     let isNewsletterPrepaid = Newsletters.isPrepaid || Newsletters.Credits == -1;
     let isMMSPrepaid = Mms.isPrepaid || Mms.Credits == -1;
     let isNotificationsPrepaid = Notifications.isPrepaid || Notifications.Credits == -1;
     let isSMSPrepaid = Sms.isPrepaid || Sms.Credits == -1;
+  
+    const handleDialogClose = () => {
+      setIsOpenPackageDialog(false);
+    }
+  
+    const renderPackagesDialog = () => {
+      if (isOpenPackageDialog === true) {
+        let dialog = {};
+        dialog = renderPackagesListDialog();
+  
+        return (
+          <Dialog
+            classes={classes}
+            open={isOpenPackageDialog}
+            onClose={handleDialogClose}
+            onConfirm={handleDialogClose}
+            showDefaultButtons={false}
+            {...dialog}>
+            {dialog.content}
+          </Dialog>
+        );
+      }
+    }
+  
+    const renderPackagesListDialog = () => {
+      return {
+        showDivider: false,
+        icon: (
+          <GoPackage style={{ fontSize: 30 }} />
+        ),
+        content: (
+          <Grid item xs={12} style={{ paddingBottom: 25 }}>
+            <PricePackages classes={classes} onComplete={handleDialogClose} />
+          </Grid>
+        )
+      };
+    }
+  
     return (
+      <>
+      {renderPackagesDialog()}
       <Paper
         className={clsx(classes.dashboardTopPaper, classes.bulkMargin)}
         elevation={3}>
@@ -111,35 +174,11 @@ const DashboardScreen = ({ classes }) => {
           </Grid>
         </Grid>
       </Paper>
+      </>
     );
   }
 
-  const renderArrows = (value, length, setItem, className) => {
-    let selectedItem = value;
-    const handleNext = () => {
-      if (value >= length) return;
-      selectedItem++;
-      setItem(selectedItem);
-    }
-    const handlePrevious = () => {
-      if (selectedItem <= 0) return;
-      selectedItem--;
-      setItem(selectedItem);
-    }
-
-    return (
-      <Grid item className={className}>
-        <IconButton onClick={handlePrevious}>
-          <ArrowBackIosIcon />
-        </IconButton>
-        <IconButton onClick={handleNext}>
-          <ArrowForwardIosIcon />
-        </IconButton>
-      </Grid>
-    );
-  }
-
-  const renderRecipients = () => {
+  const RenderRecipients = () => {
     const titles = [
       {
         mainTitle: 'appBar.newsletter.title',
@@ -393,7 +432,34 @@ const DashboardScreen = ({ classes }) => {
     );
   }
 
-  const renderTIPulseem = () => {
+  const RenderTIPulseem = () => {
+    const [activeTip, setActiveTip] = useState(0);
+
+    const renderArrows = (value, length, setItem, className) => {
+      let selectedItem = value;
+      const handleNext = () => {
+        if (value >= length) return;
+        selectedItem++;
+        setItem(selectedItem);
+      }
+      const handlePrevious = () => {
+        if (selectedItem <= 0) return;
+        selectedItem--;
+        setItem(selectedItem);
+      }
+
+      return (
+        <Grid item className={className}>
+          <IconButton onClick={handlePrevious}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <IconButton onClick={handleNext}>
+            <ArrowForwardIosIcon />
+          </IconButton>
+        </Grid>
+      );
+    }
+
     return (
       <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.tipMargin, classes.carouselTips)}>
         <Box className={classes.tipsTitle}>
@@ -428,7 +494,11 @@ const DashboardScreen = ({ classes }) => {
     );
   }
 
-  const renderLastReports = () => {
+  const RenderLastReports = () => {
+    const [tabValue, handleTabValue] = useState(0);
+    const dateTimeFormat = 'MM/DD/YY, hh:mm a';
+    const dateFormat = 'MM/DD/YY';
+
     const barOptions = {
       plugins: {
         legend: {
@@ -662,11 +732,16 @@ const DashboardScreen = ({ classes }) => {
     )
   }
 
+
   const renderTopSection = () => {
     return (
       <Grid container direction='row'>
-        <Grid item xs={12} sm={12} md={12} lg={4}>{renderBulkStatus()}</Grid>
-        <Grid item xs={12} sm={12} md={12} lg={8}>{renderRecipients()}</Grid>
+        <Grid item xs={12} sm={12} md={12} lg={4}>
+          <RenderBulkStatus />
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={8}>
+          <RenderRecipients />
+        </Grid>
       </Grid>
     );
   }
@@ -674,8 +749,21 @@ const DashboardScreen = ({ classes }) => {
   const renderBottomSection = () => {
     return (
       <Grid container direction='row'>
-        <Grid item xs={12} sm={12} md={12} lg={3}>{renderTIPulseem()}</Grid>
-        <Grid item xs={12} sm={12} md={12} lg={9}>{renderLastReports()}</Grid>
+        <Grid item xs={12} sm={12} md={12} lg={3}>
+          <RenderTIPulseem 
+            classes={classes}
+            tips={tips}
+            t={t}
+          />
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={9}>
+          <RenderLastReports 
+            classes={classes}
+            windowSize={windowSize}
+            lastCampaignReport={lastCampaignReport}
+            t={t}
+            />
+        </Grid>
       </Grid>
     );
   }
@@ -686,7 +774,6 @@ const DashboardScreen = ({ classes }) => {
         <Grid item xs={12} sm={9} md={10}>
           {renderTopSection()}
           {renderBottomSection()}
-          {renderPackagesDialog()}
         </Grid>
         <Grid item xs={12} sm={3} md={2}>
           <Shortcut
@@ -696,44 +783,6 @@ const DashboardScreen = ({ classes }) => {
       </Grid>
     );
   };
-
-
-  const renderPackagesListDialog = () => {
-    return {
-      showDivider: false,
-      icon: (
-        <GoPackage style={{ fontSize: 30 }} />
-      ),
-      content: (
-        <Grid item xs={12} style={{ paddingBottom: 25 }}>
-          <PricePackages classes={classes} onComplete={handleDialogClose} />
-        </Grid>
-      )
-    };
-  }
-
-  const handleDialogClose = () => {
-    setIsOpenPackageDialog(false);
-  }
-
-  const renderPackagesDialog = () => {
-    if (isOpenPackageDialog === true) {
-      let dialog = {};
-      dialog = renderPackagesListDialog();
-
-      return (
-        <Dialog
-          classes={classes}
-          open={isOpenPackageDialog}
-          onClose={handleDialogClose}
-          onConfirm={handleDialogClose}
-          showDefaultButtons={false}
-          {...dialog}>
-          {dialog.content}
-        </Dialog>
-      );
-    }
-  }
 
   return (
     <DefaultScreen
