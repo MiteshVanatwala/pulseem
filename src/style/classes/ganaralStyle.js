@@ -156,7 +156,8 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
     backgroundRepeat: 'repeat-x',
     border: '1px solid darkred',
     borderTop: '0px solid darkred',
-    boxShadow: '0px 3px 3px darkred'
+    boxShadow: '0px 3px 3px darkred',
+    maxWidth: 150
   },
   dialogButtonsContainer: {
     flex: 1,
@@ -327,6 +328,10 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   justifyCenter: {
     display: 'flex',
     justifyContent: 'center'
+  },
+  spaceEvenly: {
+    display: 'flex',
+    justifyContent: 'space-evenly'
   },
   textCapitalize: {
     textTransform: 'capitalize'
