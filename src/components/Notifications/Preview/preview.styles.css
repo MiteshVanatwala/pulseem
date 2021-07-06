@@ -50,13 +50,14 @@
 
     .MuiDialog-root .mobileBG {
         max-width : 100% !important;
-        min-height: 235px;
+        min-height: 375px;
     }
 
     .MuiDialog-root .mobileBG .mobileNotification {
-        width    : calc(100% - 55px) !important;
+        width    : calc(100% - 40px) !important;
         position : absolute !important;
-    }
+        right    : 50px;
+}
 
     .MuiDialog-root .mobileBG .notificationSiteAddress {
         height    : 25px !important;
@@ -71,7 +72,7 @@
     }
 
     .MuiDialog-root .mobileBG .iconWrapper {
-        min-width: 0 !important;
+        min-width: 100 !important;
     }
 
     .MuiDialog-root .mobileBG .footerWrapper {
@@ -86,19 +87,17 @@
 @media screen and (max-width: 599px) {
     .MuiDialog-root .mobileBG .mobileNotification {
         top      : 25px !important;
-        right    : 22px !important;
+        right    : 15px !important;
     }
     .MuiDialog-root .mobileBG .MuiTypography-body1 {
         font-size: 9px !important;
     }
+    .MuiDialog-root .mobileBG {
+        min-height: 235px;
+    }
 }
 
 @media screen and (max-width: 375px) {
-    .mobileBG {
-        background-size: contain !important;
-        min-height     : 400px !important;
-    }
-
     /* .mobileBG .mobileNotification {
         right    : 40px !important;
         max-width: 265px !important;
