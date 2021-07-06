@@ -54,7 +54,7 @@ export const getRoutes=(t=() => null) => [
   {
     key: 'newsletter',
     title: t('master.newsletter'),
-    pageTitle: t('campaigns.Page.Title'),
+    pageTitle: t('campaigns.logPageHeaderResource1.Text'),
     iconUnicode: '\ue0a1',
     href: '/react/Campaigns',
     icon: <img
