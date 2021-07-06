@@ -809,6 +809,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   link: {
     textDecoration: 'underline',
     margin: '0 5px'
+  },
+  duplicateSuccessMsg: {
+    padding: '0 25px!important'
   }
   
 })
