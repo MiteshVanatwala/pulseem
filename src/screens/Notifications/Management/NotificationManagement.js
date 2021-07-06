@@ -29,9 +29,10 @@ import { Preview } from '../../../components/Notifications/Preview/Preview';
 import { getCookie, setCookie } from '../../../helpers/cookies';
 import { actionURL } from '../../../config/index'
 import { Loader } from '../../../components/Loader/Loader';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 
 const NotificationManagement = ({ classes }) => {
-  const { language, windowSize } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
   const { notificationData } = useSelector(state => state.notification)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -43,7 +44,6 @@ const NotificationManagement = ({ classes }) => {
   const [scriptPath, setScriptPath] = useState(0);
   const [apiKey, setApiKey] = useState(0);
   const rowsOptions = [6, 12, 18]
-  const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
   const [searchResults, setSearchResults] = useState(null)
@@ -670,12 +670,16 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const renderTablePagination = () => {
+    const handleRowsPerPageChange=(val) => {
+      dispatch(setRowsPerPage(val))
+      setCookie('rpp', val, { maxAge: 2147483647 })
+    }
     return (
       <TablePagination
         classes={classes}
         rows={isSearching ? searchResults.length : notificationData.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={setRowsPerPage}
+        onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}

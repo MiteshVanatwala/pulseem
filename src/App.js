@@ -12,7 +12,7 @@ import {StylesProvider,jssPreset,MuiThemeProvider, useTheme} from '@material-ui/
 import i18n from './i18n'
 import {BrowserRouter,useParams,Route} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
-import {setWindowSize,setCoreData,setLanguage} from './redux/reducers/coreSlice'
+import {setWindowSize,setCoreData,setLanguage, setRowsPerPage} from './redux/reducers/coreSlice'
 import {setUsername} from './redux/reducers/userSlice'
 import {getTheme} from './style/theme'
 import {useClasses} from './style/classes/index'
@@ -336,6 +336,7 @@ const App=({screenSize}) => {
     const updateToken=() => {
       const culture=getCookie('Culture')
       const token=getCookie('jtoken')
+      const rpp=getCookie('rpp')
       if(!token) return
       const jwt=jwt_decode(token)
       const {
@@ -355,45 +356,22 @@ const App=({screenSize}) => {
       lang=lang.split('-')[0]
       console.log('lang',lang)
       i18n.changeLanguage(lang)
+      dispatch(setRowsPerPage(rpp || 6))
       dispatch(setLanguage(lang))
       dispatch(setUsername(unique_name))
     }
-
-    // const setWindowWidth=() => {
-    //   const {innerWidth, outerWidth}=window
-    //   let windowSize='xs'
-    //   if(innerWidth>769&&innerWidth<1024)
-    //     windowSize='sm'
-    //   else if(innerWidth>=1025&&innerWidth<1200)
-    //     windowSize='md'
-    //   else if(innerWidth>=1201&&innerWidth<1400)
-    //     windowSize='lg'
-    //   else if(innerWidth>=1401)
-    //     windowSize='xl'
-    //   dispatch(setWindowSize(screenSize))
-    // }
 
     const cookieFunctionObj={
       jtoken: updateToken
     }
 
-    // window.addEventListener('resize',setWindowWidth)
     cookieListener(({name}) => {
       const cookieFunction=cookieFunctionObj[name] || null
       if(!!cookieFunction)
         cookieFunction()
     })
     updateToken()
-    // setWindowWidth()
   },[dispatch])
-
-  //useEffect(() => {
-  //  const lang=culture? culture.split('-')[0]:''
-  //  i18n.changeLanguage(lang===language? language:lang)
-  //},[language])
-
-
-
 
   const classes=useClasses(windowSize,isRTL)()
   const theme=getTheme(language)
