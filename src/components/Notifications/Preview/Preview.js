@@ -34,7 +34,7 @@ export const Preview = (
     showOSScreen = true
   }) => {
   const { t } = useTranslation();
-  const { isRTL } = useSelector(state => state.core);
+  const { isRTL, windowSize } = useSelector(state => state.core);
   const [previewDeviceSelected, setPreviewDevice] = useState(showDevices == false ? 0 : 0);
   const [notificationExpanded, setNotificationExpanded] = useState(!showDevices);
   TabPanel.propTypes = {
@@ -231,7 +231,7 @@ export const Preview = (
             style={{
               backgroundImage: `url(${model.Image})`,
               cursor: 'unset',
-              minHeight: 185
+              minHeight: windowSize==='xs'?130:185
             }}>
             <div className={clsx(
               classes.flex,
