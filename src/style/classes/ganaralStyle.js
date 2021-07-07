@@ -226,7 +226,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflow: 'auto'
   },
   defaultScreen: {
-    'overflow': 'visible'
+    maxHeight: 'calc(100vh - 53px)'
   },
   pulseemIcon: {
     fontFamily: 'pulseemicons'
@@ -239,6 +239,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   maxWidth540: {
     maxWidth: 540
+  },
+  dFlex: {
+    display: 'flex'
+  },
+  dInline: {
+    display: 'inline'
+  },
+  dInlineBlock: {
+    display: 'inline-block'
+  },
+  pe10: {
+    paddingInlineEnd: 10
   },
   p10: {
     padding: 10
@@ -264,6 +276,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt5: {
     marginTop: 5
   },
+  ml5: {
+    marginInlineStart: 5
+  },
+  ml10: {
+    marginInlineStart: 10
+  },
+  mr15: {
+    marginInlineEnd: 15
+  },
+  mt0: {
+    marginTop: 0
+  },
   mt10: {
     marginTop: 10
   },
@@ -287,6 +311,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   f28: {
     fontSize: 28
+  },
+  line1: {
+    lineHeight: 1
   },
   black: {
     color: 'black'
@@ -325,6 +352,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     justifyContent: 'center'
   },
+  alignCenter: {
+    alignContent: 'center',
+    alignItems: 'center'
+  },
   textCapitalize: {
     textTransform: 'capitalize'
   },
@@ -337,5 +368,61 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   rtlSwitch: {
     transform: 'rotateY(180deg)'
+  },
+  pageSubTitle: {
+    marginTop: 5,
+    fontSize: 28
+  },
+  subTitle: {
+    margin: '0 10px !important',
+    color: '#157eaf',
+    fontSize: 30
+  },
+  blue: {
+    color: '#0a74a9'
+  },
+  black: {
+    color: '#626262'
+  },
+  whiteBox: {
+    backgroundColor: '#fff',
+    boxShadow: "5px 3px 3px 1px rgba(0,0,0,.2)",
+    padding: 5
+  },
+  mt1: {
+    marginTop: 5
+  },
+  mt2: {
+    marginTop: 10
+  },
+  mt3: {
+    marginTop: 15
+  },
+  mt4: {
+    marginTop: 20
+  },
+  mb1: {
+    marginBottom: 5
+  },
+  mb2: {
+    marginBottom: 10
+  },
+  mb3: {
+    marginBottom: 15
+  },
+  mb4: {
+    marginBottom: 20
+  },
+  m5:{
+    margin: '.5rem'
+  },
+  font15: {
+    fontSize: 15
+  },
+  font18: {
+    fontSize: 18
+  },
+  font24: {
+    fontSize: 24
   }
 })

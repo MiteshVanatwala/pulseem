@@ -1428,7 +1428,7 @@ const NotificationEditor = ({ props, classes }) => {
   return (
     <DefaultScreen
       currentPage='notifications'
-      customPadding={true}
+      customStyle={classes.sidePadding}
       classes={classes}>
       <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column' }}>
         {renderToast()}
