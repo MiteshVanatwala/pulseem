@@ -38,7 +38,6 @@ const renderRoutes=(classes,history) => {
   }
   return (
     <>
-
       <Route
         exact
         path="/"
@@ -360,6 +359,20 @@ const App=({screenSize}) => {
       dispatch(setLanguage(lang))
       dispatch(setUsername(unique_name))
     }
+
+    // const setWindowWidth=() => {
+    //   const {innerWidth}=window
+    //   let windowSize='xs'
+    //   if(innerWidth>599&&innerWidth<959)
+    //     windowSize='sm'
+    //   else if(innerWidth>=960&&innerWidth<1279)
+    //     windowSize='md'
+    //   else if(innerWidth>=1280&&innerWidth<1919)
+    //     windowSize='lg'
+    //   else if(innerWidth>=1920)
+    //     windowSize='xl'
+    //   dispatch(setWindowSize(windowSize))
+    // }
 
     const cookieFunctionObj={
       jtoken: updateToken
