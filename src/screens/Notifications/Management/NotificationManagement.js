@@ -294,7 +294,7 @@ const NotificationManagement = ({ classes }) => {
               classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
-              placeholder={t('mms.locFromDateResource1.Text')}
+              placeholder={t('notifications.searchSection.fromDate')}
             />
           </Grid>
           : null}
@@ -305,7 +305,7 @@ const NotificationManagement = ({ classes }) => {
               classes={classes}
               value={toDate}
               onChange={handleToDate}
-              placeholder={t('mms.locToDateResource1.Text')}
+              placeholder={t('notifications.searchSection.toDate')}
               minDate={fromDate ? fromDate : undefined}
             />
           </Grid>
