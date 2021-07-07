@@ -498,7 +498,8 @@ const MmsManagnentScreen = ({ classes }) => {
   const renderTableBody = () => {
 
     let sortData = isSearching ? searchResults : mmsData;
-    sortData = sortData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
+    let rpp=parseInt(rowsPerPage)
+    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
       <TableBody>
         {sortData

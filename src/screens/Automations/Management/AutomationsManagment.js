@@ -503,7 +503,8 @@ const AutomationsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
 
     let rowData=searchResults||automationsData;
-    rowData=rowData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    let rpp=parseInt(rowsPerPage)
+    rowData=rowData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
       <TableBody>
         {rowData
