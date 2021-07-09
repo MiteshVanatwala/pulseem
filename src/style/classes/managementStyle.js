@@ -1282,4 +1282,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginTop: 10,
     zIndex: -1
   },
+  tooltipBlack: {
+    backgroundColor: 'black',
+    maxWidth: 300,
+    fontSize: '14px!important',
+    textAlign: 'center',
+  }
 })

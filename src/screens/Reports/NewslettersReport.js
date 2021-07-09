@@ -3,7 +3,7 @@ import DefaultScreen from '../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,Link,
-  Grid,Button,TextField,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio,FormGroup,FormControl
+  Grid,Button,TextField,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio,FormGroup,FormControl, Tooltip
 } from '@material-ui/core'
 import Switch from "react-switch";
 import {
@@ -434,6 +434,32 @@ const NewslettersReport=({classes}) => {
     )
   }
 
+  const renderDataTooltip=(value,type,data={},tooltip) => {
+    const {title=t("notifications.tblBody.total"),href=''}=data
+    return (
+      <Tooltip 
+        title={`${t(tooltip)}`} 
+        arrow 
+        placement={'right-end'}
+        classes={{
+          tooltip: classes.tooltipBlack, 
+          arrow: classes.fBlack
+        }}>
+        <Box style={{display: 'flex',flexDirection: 'column'}} >
+          <Typography 
+            component='a' 
+            href={href} 
+            className={clsx(classes.middleText,colorTextStyle[type]||'')}>
+            {value&&value.toLocaleString()||'0'}
+          </Typography>
+          <Typography className={clsx(classes.middleWrapText,colorTextStyle[type])}>
+            {title}
+          </Typography>
+        </Box>
+      </Tooltip>
+    );
+  }
+
   const renderIntData=(value,type,data={}) => {
     const {title=t("notifications.tblBody.total"),href=''}=data
     return (
@@ -494,13 +520,13 @@ const NewslettersReport=({classes}) => {
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(OpenCount,'green',hrefs.OpenCount)}
+          {renderDataTooltip(OpenCount,'green',hrefs.OpenCount,'mainReport.OpensTotalTooltip.Text')}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(OpenCountUnique,'green',hrefs.OpenCountUnique)}
+          {renderDataTooltip(OpenCountUnique,'green',hrefs.OpenCountUnique, 'mainReport.OpensUniqueTooltip.Text')}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
@@ -512,13 +538,13 @@ const NewslettersReport=({classes}) => {
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(ClickCount,'blue',hrefs.ClickCount)}
+          {renderDataTooltip(ClickCount,'blue',hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(ClickCountUnique,'blue',hrefs.ClickCountUnique)}
+          {renderDataTooltip(ClickCountUnique,'blue',hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
         </TableCell>
         <TableCell
           classes={borderCellStyle}

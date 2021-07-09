@@ -381,6 +381,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   blue: {
     color: '#0a74a9'
   },
+  bgBlack: {
+    backgroundColor: 'black'
+  },
+  fBlack: {
+    color: 'black'
+  },
   black: {
     color: '#626262'
   },

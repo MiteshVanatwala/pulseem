@@ -412,7 +412,7 @@
     "Text": "The number of recipients who clicked on the link in the mail"
   },
   "OpensTotalTooltip": {
-    "Text": "The number of times the  email was opened, including multiple opens"
+    "Text": "The number of times the email was opened, including multiple opens"
   },
   "MainReportTitle": {
     "Text": "Sending reports for campaigns sent in the system. You can explore the sending data in depth by clicking on the campaign data"
