@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import instence from '../../helpers/api'
 import exportFromJSON from 'export-from-json'
+import { exportFile } from '../../helpers/exportFromJson';
 
 export const getNewslatterData = createAsyncThunk(
   'email/getEmailCampaigns', async (_, thunkAPI) => {
@@ -62,13 +63,11 @@ export const downloadNewsletterReport = createAsyncThunk(
           json.push({ ID: array[i] });
         }
       }
-      instence.post('email/EmailReportsByIds/', json).then((res) => {
-        const arr = [];
-        const exportType = exportFromJSON.types.xls;
-        const d = JSON.parse(res.data);
-        arr.push(d);
-        const fileName = "emailReports";
-        exportFromJSON({ data: arr, fileName, exportType });
+      const response=await instence.post('email/EmailReportsByIds/', json);
+      exportFile({ 
+        data: JSON.parse(response.data), 
+        fileName: 'emailReport', 
+        exportType: 'csv'
       });
     } catch (err) {
       console.log(err);

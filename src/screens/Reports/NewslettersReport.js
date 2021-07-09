@@ -126,10 +126,15 @@ const NewslettersReport=({classes}) => {
     setSearching(false)
   }
 
-  const handleDowaloadCsv=async () => {
+  const handleDownloadCsv=async () => {
     //window.open(`${apiURL}email/EmailReportsByIds/${toFileArray.toString()}`)
-    //const {payload}=await 
-    dispatch(downloadNewsletterReport(toFileArray))
+    //const {payload}=await
+    let fileArray = toFileArray
+    if (!toFileArray.length) {
+      fileArray = newslettersReports.map(a => a.CampaignID);
+    }
+
+    dispatch(downloadNewsletterReport(fileArray))
     //if(payload.error) {
     //  return
     //}
@@ -311,7 +316,7 @@ const NewslettersReport=({classes}) => {
               classes.actionButton,
               classes.actionButtonGreen
             )}
-            onClick={handleDowaloadCsv}
+            onClick={handleDownloadCsv}
             startIcon={<ExportIcon />}>
             {t('campaigns.exportFile')}
           </Button>
