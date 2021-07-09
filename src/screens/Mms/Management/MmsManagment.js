@@ -22,16 +22,17 @@ import moment from 'moment'
 import 'moment/locale/he'
 import {Preview} from '../../../components/Notifications/Preview/Preview';
 import { Loader } from '../../../components/Loader/Loader';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 const MmsManagnentScreen=({classes}) => {
-  const {language,windowSize}=useSelector(state => state.core)
+  const {language,windowSize,rowsPerPage}=useSelector(state => state.core)
   const {mmsData,mmsDataError,mmsDeletedData}=useSelector(state => state.mms)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null)
   const [campaineNameSearch,setCampaineNameSearch]=useState('')
   const rowsOptions=[6,12,18]
-  const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
   const [searchResults,setSearchResults]=useState(null)
   const [isSearching,setSearching]=useState(false)
@@ -497,7 +498,8 @@ const MmsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
 
     let sortData=isSearching? searchResults:mmsData;
-    sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    let rpp=parseInt(rowsPerPage)
+    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
       <TableBody>
         {sortData
@@ -518,12 +520,16 @@ const MmsManagnentScreen=({classes}) => {
   }
 
   const renderTablePagination=() => {
+    const handleRowsPerPageChange=(val) => {
+      dispatch(setRowsPerPage(val))
+      setCookie('rpp', val, { maxAge: 2147483647 })
+    }
     return (
       <TablePagination
         classes={classes}
         rows={isSearching? searchResults.length:mmsData.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={setRowsPerPage}
+        onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}

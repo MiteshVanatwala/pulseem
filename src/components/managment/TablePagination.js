@@ -90,6 +90,7 @@ export const TablePagination=({
           type="number"
           value={isTyping? pageNum:page.toString()}
           onChange={handelPageChange}
+          onBlur={()=>setTyping(false)}
           variant='outlined'
           margin='none'
           size='small'

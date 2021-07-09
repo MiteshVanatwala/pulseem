@@ -24,9 +24,11 @@ import 'moment/locale/he'
 import {Preview} from '../../../components/Notifications/Preview/Preview';
 import { pulseemNewTab } from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 const SmsManagnentScreen=({classes}) => {
-  const {language,windowSize,email,phone}=useSelector(state => state.core)
+  const {language,windowSize,email,phone,rowsPerPage}=useSelector(state => state.core)
   const {smsData,smsDataError,smsDeletedData,authorizationData}=useSelector(state => state.sms)
   const {username}=useSelector(state => state.user)
   const {t}=useTranslation()
@@ -38,7 +40,6 @@ const SmsManagnentScreen=({classes}) => {
   const [verificationCodeError,handleVerificationCodeError]=useState(false);
   const [campaineNameSearch,setCampaineNameSearch]=useState('')
   const rowsOptions=[6,12,18]
-  const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)
@@ -529,7 +530,8 @@ const SmsManagnentScreen=({classes}) => {
 
   const renderTableBody=() => {
     let sortData=isSearching? searchResults:smsData;
-    sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    let rpp=parseInt(rowsPerPage)
+    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
       <TableBody>
         {sortData
@@ -550,12 +552,16 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderTablePagination=() => {
+    const handleRowsPerPageChange=(val) => {
+      dispatch(setRowsPerPage(val))
+      setCookie('rpp', val, { maxAge: 2147483647 })
+    }
     return (
       <TablePagination
         classes={classes}
         rows={isSearching? searchResults.length:smsData.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={setRowsPerPage}
+        onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}
