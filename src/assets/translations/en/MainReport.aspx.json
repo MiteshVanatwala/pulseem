@@ -385,10 +385,10 @@
   "SizeUnit": "KB",
   "ChartDesc": "Monthly send amount",
   "locUniqueClicksPercents": {
-    "HeaderText": "Percentage"
+    "HeaderText": "Unique Percentage"
   },
   "locUniqueOpensPercents": {
-    "HeaderText": "Percentage"
+    "HeaderText": "Unique Percentage"
   },
   "locRemovedReason": {
     "HeaderText": "Removal Reasons"
