@@ -379,7 +379,7 @@ const NewslettersReport=({classes}) => {
     const {CampaignID,Name,SendDate,isChecked=false}=row
 
     const date=SendDate? moment(SendDate):''
-    const showDate=SendDate? date.format('L'):''
+    const showDate=SendDate? date.format('DD/MM/YYYY'):''
     const showTime=SendDate? date.format('LT'):''
     return (
       <Grid container wrap="nowrap" spacing={1} alignItems='center'>

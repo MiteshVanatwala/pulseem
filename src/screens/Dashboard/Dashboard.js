@@ -32,8 +32,8 @@ const DashboardScreen = ({ classes }) => {
   const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const dateTimeFormat = 'MM/DD/YY, hh:mm a';
-  const dateFormat = 'MM/DD/YY';
+  const dateTimeFormat = 'DD/MM/YYYY, hh:mm a';
+  const dateFormat = 'DD/MM/YYYY';
 
   moment.locale(language);
 

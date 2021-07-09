@@ -409,7 +409,7 @@ const AutomationsManagnentScreen=({classes}) => {
         </Typography>
         <Typography
           className={classes.grayTextCell}>
-          {`${text} ${date.format('L')} ${date.format('LT')}`}
+          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
         </Typography>
       </>
     )
