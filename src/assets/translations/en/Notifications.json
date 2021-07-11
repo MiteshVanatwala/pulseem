@@ -42,7 +42,7 @@
     "optin": "Optin",
     "approved": "Approved",
     "failed": "Failed",
-    "pending": "Pending"
+    "pending": "Pending" 
   },
   "validation": {
     "notificationName": "Notification Name - Required",
