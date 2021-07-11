@@ -34,7 +34,6 @@ import {
   CheckAnimation
 } from '../../../assets/images/settings/index'
 
-
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
     color: theme.palette.common.black,
@@ -285,6 +284,7 @@ const NotificationEditor = ({ props, classes }) => {
               history.push("/Notifications");
             }
             else {
+              setToastMessage(toastMessages.SUCCESS);
               setTimeout(() => {
                 if (isContinue) {
                   redirectAfterSave(response.payload);
@@ -292,7 +292,8 @@ const NotificationEditor = ({ props, classes }) => {
                 else {
                   history.push(`/Notification/edit/${response.payload}`);
                 }
-              }, 1000);
+                setToastMessage(null);
+              }, 1500);
             }
           }
           else {
@@ -621,15 +622,12 @@ const NotificationEditor = ({ props, classes }) => {
   }
   /* #endregion */
   /* #region  Validators */
-  const isValivalidURL = (str) => {
-    try {
-      new URL(str);
-    } catch (_) {
-      return false;
-    }
 
-    return true;
-  }
+  const validateWebsiteUrl = (websiteUrl) => {
+    const urlRegEx = new RegExp(/^((http|https):\/\/)?www\.([A-z]+)\.([A-z]{2,})/);
+    return urlRegEx.test(String(websiteUrl).toLowerCase());
+  };
+
   const updateUrlValue = (e) => {
     const val = e.target.value;
     if (val.trim().replace(" ", "") != "" && val.indexOf("http") == -1) {
@@ -653,9 +651,17 @@ const NotificationEditor = ({ props, classes }) => {
       errorList.push({ message: t('notifications.validation.notificationName') });
       document.querySelector("#notificationName").classList.add("error");
     }
-    if (!isValivalidURL(model.RedirectURL) && ShowRedirectButton) {
-      errorList.push({ message: t('notifications.validation.redirectUrl') });
-      document.querySelector("#notificationRedirectUrl").classList.add("error");
+    if (ShowRedirectButton === true) {
+      if (model.RedirectURL.length <= 0) {
+        errorList.push({ message: t('notifications.validation.redirectUrl') });
+        document.querySelector("#notificationRedirectUrl").classList.add("error");
+      }
+      else {
+        if (!validateWebsiteUrl(model.RedirectURL)) {
+          errorList.push({ message: t('notifications.validation.redirectUrlNotValid') });
+          document.querySelector("#notificationRedirectUrl").classList.add("error");
+        }
+      }
     }
     if (model.Title === '') {
       errorList.push({ message: t('notifications.validation.title') });
@@ -709,34 +715,37 @@ const NotificationEditor = ({ props, classes }) => {
   /* #endregion */
   // Test send 
   const handleTestSend = () => {
-    PushService(notificationPublicKey).then((permissions) => {
-      try {
-        if (permissions.subscription && permissions.state == 'granted') {
-          const options = {
-            id: model.ID,
-            dir: model.Direction == '2' ? 'rtl' : 'ltr',
-            body: model.Body,
-            icon: model.Icon,
-            image: model.Image,
-            title: model.Title,
-            renotify: 'true',
-            tag: 'pulseem_' + model.ID,
-            redirect: model.RedirectURL
-          };
+    if (isValidNotification()) {
+      PushService(notificationPublicKey).then((permissions) => {
+        try {
+          if (permissions.subscription && permissions.state == 'granted') {
+            const options = {
+              id: model.ID,
+              dir: model.Direction == '2' ? 'rtl' : 'ltr',
+              body: model.Body,
+              icon: model.Icon,
+              image: model.Image,
+              title: model.Title,
+              renotify: 'true',
+              tag: 'pulseem_' + model.ID,
+              redirect: model.RedirectURL
+            };
 
-          if (model.RedirectURL != '' && model.RedirectButtonText != '' && ShowRedirectButton) {
-            options.actions = [];
-            options.actions.push({ action: model.RedirectURL, title: model.RedirectButtonText });
+            if (model.RedirectURL != '' && model.RedirectButtonText != '' && ShowRedirectButton) {
+              options.actions = [];
+              options.actions.push({ action: model.RedirectURL, title: model.RedirectButtonText });
+            }
+
+            permissions.subscription.showNotification(model.Title, options);
           }
-
-          permissions.subscription.showNotification(model.Title, options);
         }
-      }
-      catch (e) {
-        console.log(e);
-      }
+        catch (e) {
+          console.log(e);
+        }
 
-    });
+      });
+    }
+
   }
 
   /* #region  HTML Renders */

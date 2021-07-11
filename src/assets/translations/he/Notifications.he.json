@@ -51,7 +51,8 @@
     "body": "תוכן הנוטיפיקציה - שדה חובה",
     "notificationDate": "יש לבחור תאריך ושעת שליחה",
     "notificationGroups": "יש לבחור קבוצה אחת לפחות",
-    "notificationDatePassed": "התאריך או השעה שבחרת עבר"
+    "notificationDatePassed": "התאריך או השעה שבחרת עבר",
+    "redirectUrlNotValid": "קישור להפניה - קישור לא תקין"
   },
   "notificationName": "שם הנוטיפיקציה",
   "notifications": "נוטיפיקציות",
