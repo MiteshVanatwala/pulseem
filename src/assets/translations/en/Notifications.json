@@ -52,7 +52,7 @@
     "notificationDate": "Pick Date and Time",
     "notificationGroups": "Pick at least 1 group",
     "notificationDatePassed": "The date or time you have chosen has already passed",
-    "redirectUrlNotValid": "Redirect URL - URL is invalid"
+    "redirectUrlNotValid": "Redirect URL - URL is not valid"
   },
   "notificationName": "Notification Name",
   "notifications": "Notifications",
