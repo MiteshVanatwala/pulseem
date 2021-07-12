@@ -34,15 +34,15 @@ const summaryPadding = {
 }
 
 const iconWrapperMargin = {
-  xs: 5,
+  xs: '10px 5px 5px',
   sm: 10,
   md: 15,
   lg: 15,
   xl: 15
 }
 const iconWrapperMinWidth = {
-  xs: 80,
-  sm: 80,
+  xs: 50,
+  sm: 100,
   md: 100
 }
 const summaryNotificationMinWidth = {
@@ -116,7 +116,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: '1rem',
     minWidth: dialogWidth[windowSize],
     '& $notification': {
-      minWidth: summaryNotificationMinWidth[windowSize],
       '& $iconWrapper': {
         margin: iconWrapperMargin[windowSize],
         minWidth: iconWrapperMinWidth[windowSize]
@@ -130,7 +129,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '& $mobileBG': {
       '& $iconWrapper': {
-        minWidth: windowSize === 'xs' || windowSize === 'sm' ? 0 : 100
+        minWidth: windowSize==='xs'? 0:100
       }
     }
   },
