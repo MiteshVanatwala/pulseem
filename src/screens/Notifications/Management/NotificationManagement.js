@@ -247,6 +247,12 @@ const NotificationManagement = ({ classes }) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleFromDateChange = (value) => {
       if (value > toDate) {
         handleToDate(null);
@@ -265,6 +271,7 @@ const NotificationManagement = ({ classes }) => {
           value={notificationNameSearch}
           onChange={handleNotificationNameChange}
           onClick={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
         />
       )

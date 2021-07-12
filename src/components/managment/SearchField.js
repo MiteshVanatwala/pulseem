@@ -8,6 +8,7 @@ export const SearchField=({
   value,
   onChange=() => null,
   onClick=() => null,
+  onKeyPress=() => null,
   placeholder=''
 }) => {
   return (
@@ -17,6 +18,7 @@ export const SearchField=({
       }}
       value={value}
       onChange={onChange}
+      onKeyPress={onKeyPress}
       placeholder={placeholder}
       endAdornment={
         <InputAdornment>
