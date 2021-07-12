@@ -231,9 +231,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pulseemIcon: {
     fontFamily: 'pulseemicons'
   },
-  newsletterReportCell: {
-    marginBlock: 10
-  },
   lineHeight1point2: {
     lineHeight: 1.2
   },

@@ -43,9 +43,9 @@ const NewslettersReport=({classes}) => {
   const rowStyle={head: classes.tableRowReportHead,root: clsx(classes.tableRowRoot)}
   const cellStyle={head: classes.tableCellHead,root: clsx(classes.tableCellRoot,classes.paddingHead)}
   const cell50wStyle={head: clsx(classes.tableCellHead),root: clsx(classes.tableCellRoot,classes.paddingHead,classes.minWidth50)}
-  const cellBodyStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot, classes.newsletterReportCell)}
+  const cellBodyStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot)}
   const noBorderCellStyle={body: classes.tableCellBodyNoBorder,root: clsx(classes.tableCellRoot,classes.minWidth50)}
-  const borderCellStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.minWidth50, classes.newsletterReportCell)}
+  const borderCellStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.minWidth50)}
   const csvLinkRef=useRef(null)
 
   moment.locale(language)
