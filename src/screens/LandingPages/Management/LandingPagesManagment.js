@@ -619,10 +619,10 @@ const LandingPagesesManagmentScreen=({classes}) => {
       const { payload={} } = result || {};
       await getData()
       setLoader(false);
-      setDialogType({
-        type: 'duplicateSuccessful',
-        data: payload
-      })
+      // setDialogType({
+      //   type: 'duplicateSuccessful',
+      //   data: payload
+      // })
     }
   })
 
@@ -669,8 +669,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
     const dialogContent={
       restore: getRestorDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data),
-      duplicateSuccessful: getDuplicateSuccessfulDialog(data)
+      duplicate: getDuplicateDialog(data) //,
+      // duplicateSuccessful: getDuplicateSuccessfulDialog(data)
     }
 
     const currentDialog=dialogContent[type]||{}
