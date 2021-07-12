@@ -1282,4 +1282,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginTop: 10,
     zIndex: -1
   },
+  duplicateSuccessMsg: {
+    padding: '0 25px!important'
+  }
 })
