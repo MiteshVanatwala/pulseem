@@ -267,7 +267,7 @@ const DashboardScreen = ({ classes }) => {
 
       const options = {
         layout: {
-          padding: 10
+          padding: 9
         },
         rotation: -35,
         responsive: true,
@@ -284,7 +284,6 @@ const DashboardScreen = ({ classes }) => {
             external: externalTooltipHandler,
           }
         },
-        borderWidth: 10,
         hoverOffset: 10,
         backgroundColor: [
           '#67B7DC',
@@ -300,12 +299,7 @@ const DashboardScreen = ({ classes }) => {
           '#67B7DC',
           '#648FD5',
           '#6771DC',
-        ],
-        borderColor: [
-          '#67B7DC',
-          '#648FD5',
-          '#6771DC',
-        ],
+        ]
       };
 
       let innerData = {
