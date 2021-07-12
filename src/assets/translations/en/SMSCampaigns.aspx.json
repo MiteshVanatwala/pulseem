@@ -455,7 +455,7 @@
   },
   "AlertHeading": "Please Note!",
   "NumberChangeErrorMessage": "You have changed the number assigned to you by the Pulseem platform for this campaign. The recipients won’t be able to unsubscribe from your SMS distribution list through a removal message. You can add a removal link instead or revert to your original number.",
-  "restoreCampaginTitle": "Select the campaigns you want to restore",
+  "restoreCampaignTitle": "Select the campaigns you want to restore",
   "create": "Create SMS",
   "verificationDialogTitle": "Verification of Number to Send",
   "verificationBody": "According to new regulations of the Ministry of Communications, we are obliged to make sure that the number you entered for sending is owned by you. This is a ",

@@ -223,7 +223,7 @@ const NewslettersReport=({classes}) => {
             value={notificationNameSearch}
             onChange={handleNotificationNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
-            placeholder={t('campaigns.camapignName')}
+            placeholder={t('common.CampaignName')}
           />
         </Grid>
 
