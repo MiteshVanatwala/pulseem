@@ -21,16 +21,17 @@ import 'moment/locale/he';
 import {apiURL} from '../../config/index'
 import {CSVLink} from 'react-csv'
 import {getNewsletterReports,downloadNewsletterReport} from '../../redux/reducers/newsletterSlice';
+import { setRowsPerPage } from '../../redux/reducers/coreSlice';
+import { setCookie } from '../../helpers/cookies';
 
 const NewslettersReport=({classes}) => {
-  const {language,windowSize,isRTL}=useSelector(state => state.core)
+  const {language,windowSize,isRTL,rowsPerPage}=useSelector(state => state.core)
   const {newslettersReports}=useSelector(state => state.newsletter)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null);
   const [notificationNameSearch,setNotificationNameSearch]=useState('');
   const rowsOptions=[6,12,18]
-  const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)
@@ -638,7 +639,8 @@ const NewslettersReport=({classes}) => {
 
   const renderTableBody=() => {
     let rowData=searchResults||newslettersReports;
-    rowData=rowData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    let rpp=parseInt(rowsPerPage)
+    rowData=rowData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
       <TableBody>
         {rowData
@@ -659,12 +661,16 @@ const NewslettersReport=({classes}) => {
   }
 
   const renderTablePagination=() => {
+    const handleRowsPerPageChange=(val) => {
+      dispatch(setRowsPerPage(val))
+      setCookie('rpp', val, { maxAge: 2147483647 })
+    }
     return (
       <TablePagination
         classes={classes}
         rows={isSearching? searchResults.length:newslettersReports.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={setRowsPerPage}
+        onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}

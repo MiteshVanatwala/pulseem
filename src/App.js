@@ -12,7 +12,7 @@ import {StylesProvider,jssPreset,MuiThemeProvider, useTheme} from '@material-ui/
 import i18n from './i18n'
 import {BrowserRouter,useParams,Route} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
-import {setWindowSize,setCoreData,setLanguage} from './redux/reducers/coreSlice'
+import {setWindowSize,setCoreData,setLanguage, setRowsPerPage} from './redux/reducers/coreSlice'
 import {setUsername} from './redux/reducers/userSlice'
 import {getTheme} from './style/theme'
 import {useClasses} from './style/classes/index'
@@ -339,6 +339,7 @@ const App=({screenSize}) => {
     const updateToken=() => {
       const culture=getCookie('Culture')
       const token=getCookie('jtoken')
+      const rpp=getCookie('rpp')
       if(!token) return
       const jwt=jwt_decode(token)
       const {
@@ -359,6 +360,7 @@ const App=({screenSize}) => {
       console.log('lang',lang)
       i18n.changeLanguage(lang)
       dispatch(setLanguage(lang))
+      dispatch(setRowsPerPage(rpp))
       dispatch(setUsername(unique_name))
     }
 
