@@ -6,7 +6,7 @@ import { getRoutes } from '../helpers/routes';
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
 
-const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', customPadding = false }) => {
+const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', customStyle = '' }) => {
   const { t } = useTranslation();
   let route, title;
 

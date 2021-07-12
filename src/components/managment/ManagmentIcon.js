@@ -9,6 +9,7 @@ export const ManagmentIcon=({
   uIcon,
   lable='',
   rootClass='',
+  iconClass='',
   textClass='',
   disable=false,
   hide=false,
@@ -45,6 +46,7 @@ export const ManagmentIcon=({
               src={icon}
               alt='Icon'
               className={clsx(
+                iconClass,
                 classes.managmentIcon,{
                 [classes.managmentIconDisable]: disable
               })} />}

@@ -231,6 +231,24 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pulseemIcon: {
     fontFamily: 'pulseemicons'
   },
+  newsletterReportCell: {
+    marginBlock: 10
+  },
+  lineHeight1point2: {
+    lineHeight: 1.2
+  },
+  w25: {
+    width: 25
+  },
+  maxHeight87: {
+    maxHeight: 87
+  },
+  w20: {
+    width: '20%'
+  },
+  w80: {
+    width: '80%'
+  },
   maxWidth400: {
     maxWidth: 400
   },
