@@ -675,6 +675,7 @@ const NewslettersReport=({classes}) => {
 
   return (
     <DefaultScreen
+      currentPage='reports'
       classes={classes}>
       {renderHeader()}
       {renderSearchSection()}
