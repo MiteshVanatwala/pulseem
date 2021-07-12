@@ -1284,5 +1284,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   duplicateSuccessMsg: {
     padding: '0 25px!important'
+  },
+  tooltipBlack: {
+    backgroundColor: 'black',
+    maxWidth: 300,
+    fontSize: '14px!important',
+    textAlign: 'center',
   }
 })
