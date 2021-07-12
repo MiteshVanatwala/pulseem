@@ -1020,10 +1020,8 @@ const NotificationManagement = ({ classes }) => {
           <Typography className={classes.f18}>
             1. {t('notifications.downloadThe')}
             <a
-              download
-              target="_blank"
-              rel="noreferrer"
-              href="https://pn.pulseem.com/assets/scripts/service-worker.js">
+              download="service-worker.js"
+              href={process.env.PUBLIC_URL + '/assets/scripts/service-worker.js'}>
               {t('notifications.attachedScript')}
             </a>
           </Typography>
@@ -1161,7 +1159,8 @@ const NotificationManagement = ({ classes }) => {
   return (
     <DefaultScreen
       currentPage='notifications'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchSection()}
       {renderManagmentLine()}
