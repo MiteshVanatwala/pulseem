@@ -25,7 +25,8 @@ export const Dialog=({
   paperStyle = null,
   childrenStyle = null,
   cancelText = 'common.Cancel',
-  confirmText = 'common.Ok'
+  confirmText = 'common.Ok',
+  showDefaultButtons = true
 }) => {
   const direction = {
     true: 'rtl',
@@ -73,7 +74,7 @@ export const Dialog=({
 
   const renderButtonsDefault = () => {
     return (
-      <Grid
+      showDefaultButtons && <Grid
         container
         spacing={4}
         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>

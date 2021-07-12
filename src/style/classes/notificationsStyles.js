@@ -557,15 +557,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         display: 'block',
         maxWidth: windowSize !== 'xs' ? '60%' : '100%'
     },
-    pageSubTitle: {
-        marginTop: 5,
-        fontSize: 28
-    },
-    subTitle: {
-        margin: '0 10px !important',
-        color: '#157eaf',
-        fontSize: 30
-    },
     galleryGrid: {
         minWidth: galleryWidth[windowSize],
         minHeight: 400
