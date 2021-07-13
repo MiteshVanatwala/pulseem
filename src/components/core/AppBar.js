@@ -21,7 +21,7 @@ import {openInNewTab} from '../../helpers/functions'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {actionURL} from '../../config/index'
 import i18n from '../../i18n'
-
+import {isClalAccount, getAccountFeatures} from '../../redux/reducers/commonSlice';
 const AppBarItem=({
   item,
   onMainClick=() => {},
@@ -32,6 +32,7 @@ const AppBarItem=({
   classes,
 }) => {
   const [open,setOpen]=useState(false)
+
   const [buttonWidth,setButtonWidth]=useState(0)
   const buttonRef=useRef(null)
   const menuWidth=290
@@ -48,7 +49,6 @@ const AppBarItem=({
     setOpen(false)
   }
   const currentStyle=showIcon? classes.appBarItemIcon:classes.appBarItemText
-
   return (
     <Box
       zIndex='tooltip'
@@ -85,6 +85,7 @@ const AppBarItem=({
                 <MenuList
                   style={{padding: 0}}>
                   {item.options&&item.options.map((option,index) => (
+                    option.isShow && 
                     <Box
                       key={index}
                       component='a'
@@ -187,6 +188,8 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
+  const [isClal,setIsClal]=useState(false)
+  const [accountFeatures, setAccountFeatures]= useState(null);
   //const history=useCtrlHistory()
   const dispatch=useDispatch();
 
@@ -196,9 +199,12 @@ export const TopAppBar=({classes,currentPage=''}) => {
     dispatch(setScriptDialog(scriptDialog));
   }
 
-  useEffect(() => {
+  useEffect(async () => {
     handleScriptDialog();
-
+    const response = await dispatch(isClalAccount());
+    setIsClal(response.payload);
+    const features = await dispatch(getAccountFeatures());
+    setAccountFeatures(features.payload);
     const resizeWindow=() => {
       setWindowWidth(window.innerWidth)
     }
@@ -213,7 +219,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
     setOpen(!open)
   }
   const {t}=useTranslation();
-  const routes=getRoutes(t)
+  const routes=getRoutes(t, isClal, accountFeatures)
   const settings=getSettingsItem(t,classes.appBarSettingIcon)
 
   const navigate=({uri}) => {
@@ -227,6 +233,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const renderRegularAppBar=() => (
     <>
       {routes.map(route => (
+        route.isShow &&
         <AppBarItem
           key={route.key}
           classes={classes}
@@ -317,6 +324,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
                       spacing={1}
                       direction={isRTL? 'row-reverse':'row'} >
                       {smallRoutes.map((route,i) => (
+                        route.show && 
                         <Grid
                           key={`appBarItem${i}`}
                           item
