@@ -126,12 +126,14 @@ const LanguageSelector=({windowSize,classes}) => {
     {
       title: "עברית",
       mobileTitle: 'עב',
-      value: 'he-IL'
+      value: 'he-IL',
+      isShow: true
     },
     {
       title: 'English',
       mobileTitle: 'EN',
-      value: 'en-US'
+      value: 'en-US',
+      isShow: true
     }
   ]
 
@@ -324,7 +326,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
                       spacing={1}
                       direction={isRTL? 'row-reverse':'row'} >
                       {smallRoutes.map((route,i) => (
-                        route.show && 
+                        route.isShow && 
                         <Grid
                           key={`appBarItem${i}`}
                           item

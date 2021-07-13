@@ -498,8 +498,8 @@ const MmsManagnentScreen = ({ classes }) => {
   const renderTableBody = () => {
 
     let sortData = isSearching ? searchResults : mmsData;
-    let rpp=parseInt(rowsPerPage)
-    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
+    let rpp = parseInt(rowsPerPage)
+    sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
       <TableBody>
         {sortData
@@ -590,11 +590,12 @@ const MmsManagnentScreen = ({ classes }) => {
         </div>
       ),
       content: (
+        data && data.GroupNames &&
         <Box
           className={classes.gruopsDialogContent}>
-          {data
+          {data.GroupNames
             .map((group, index) => {
-              if (group.charAt(0) === '#') {
+              if (group && group.charAt(0) === '#') {
                 group = group.replace('#', '');
               }
               return (
