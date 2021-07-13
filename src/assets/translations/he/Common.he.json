@@ -445,6 +445,7 @@
   "smsBulkDescription": "רכישת חבילת SMS אונליין. אנא ביחרו את החבילה הנדרשת.",
   "select": "בחר",
   "endPurchase": "סיום רכישה",
+  "Errors": "טעויות",
   "productName": "שם המוצר",
   "price": "מחיר",
   "vat": "מע''מ 17%",
@@ -469,5 +470,6 @@
   "november": "נובמבר",
   "december": "דצמבר",
   "chooseYear": "בחר שנה...",
-  "chooseMonth": "בחר חודש..."
+  "chooseMonth": "בחר חודש...",
+  "UpdatedOn": "עודכן בתאריך"
 }

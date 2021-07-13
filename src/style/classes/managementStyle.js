@@ -100,7 +100,15 @@ const shortcutEditLeft={
   sm: '18px',
   md: '15px',
   lg: '22px',
-  xl: '25px'
+  xl: '28px'
+}
+
+const shortcutPaperHeight={
+  xs: '',
+  sm: '100vh',
+  md: '100vh',
+  lg: '95vh',
+  xl: '95vh'
 }
 
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
@@ -925,21 +933,19 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   shortcutTitleSection: {
     width: '85%', 
     marginTop: '2.1rem', 
-    marginBottom: 20
+    marginBottom: 40
   },
   shortcutTitle: {
-    fontSize: windowSize==='xs'?18:20,
+    fontSize: windowSize==='xs'?23:25,
     fontWeight: 'bold'
   },
   shortcutSubtitle: {
     fontSize: windowSize==='xs'?16:18,
   },
   shortcutBox: {
-    [theme.breakpoints.up('sm')]: {
-      height: '100vh',
-      position: 'sticky',
-      top: 0,
-    },
+    position: windowSize==='xs'?'':'sticky',
+    top: 0,
+    height: shortcutPaperHeight[windowSize],
     [theme.breakpoints.down('xs')]: {
       margin: '10px 10px -10px 10px'
     }
@@ -948,9 +954,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     [theme.breakpoints.down('xs')]: {
       borderRadius: 10,
     },
-    [theme.breakpoints.up('sm')]: {
-      height: 'calc(100vh)'
-    },
+    height: shortcutPaperHeight[windowSize],
     display: 'flex', 
     flexDirection: 'column', 
     alignItems: 'center', 
@@ -969,11 +973,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     textAlign: 'center'
   },
   shortcutButton: {
-    height: '80px',
+    height: '92px',
     width: '85%',
     background: '#0371AD',
     borderRadius: '20px',
-    marginBottom: 30,
+    marginBottom: windowSize==='xs'?30:45,
     fontSize: '18px',
     position: 'relative',
     textTransform: 'capitalize',
@@ -984,9 +988,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '20px', 
     border: '1px dashed #0371AD', 
     fontFamily: 'pulseemicons', 
-    height: '80px',
+    height: '92px',
     fontSize: '30px',
-    marginBottom: 30, 
+    marginBottom: 45, 
     width: '85%',
   },
   shortcutList: {
@@ -998,9 +1002,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   shortcutEditIcon: {
     position: 'absolute',
     left: shortcutEditLeft[windowSize],
-    bottom: 40,
+    bottom: windowSize==='xs'?40:50,
     fontFamily: 'pulseemicons', 
-    fontSize: 15,
+    fontSize: 18,
     color: 'white'
   },
   shortcutLabel: {
@@ -1268,8 +1272,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     textAlign: 'center'
   },
   doughnutGreenBox: {
-    width: 170, 
-    height: 170, 
+    width: 180, 
+    height: 180, 
     position: 'relative', 
     display: 'flex', 
     alignItems: 'center', 
@@ -1280,8 +1284,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   bgLightGreen: {
     position: 'absolute',
     background: '#E0FAC6',
-    width: 135,
-    height: 135,
+    width: 145,
+    height: 145,
     marginTop: 10,
     zIndex: -1
   },

@@ -60,7 +60,7 @@ export const Shortcut=({classes}) => {
         },
         {
           title: 'master.RadMenuItemResource9.Text',
-          link: '/Pulseem/Campaigns.aspx'
+          link: '/react/Campaigns'
         },
         {
           title: 'Create A/B Test',
@@ -89,7 +89,7 @@ export const Shortcut=({classes}) => {
         },
         {
           title: 'dashboard.smsManagement',
-          link: '/Pulseem/SMSCampaigns.aspx'
+          link: '/react/SMSCampaigns'
         },
         {
           title: 'master.chatbotSMS',
@@ -110,7 +110,7 @@ export const Shortcut=({classes}) => {
         },
         {
           title: 'dashboard.mmsManagement',
-          link: '/Pulseem/MmsCampaigns.aspx'
+          link: '/react/MmsCampaigns'
         }
       ],
     },
@@ -123,7 +123,7 @@ export const Shortcut=({classes}) => {
         },
         {
           title: 'landingPages.logPageHeaderResource1.Text',
-          link: '/Pulseem/EditRegistrationPage.aspx'
+          link: '/react/EditRegistrationPage'
         }
       ]
     },
@@ -132,7 +132,7 @@ export const Shortcut=({classes}) => {
       pages: [
         {
           title: 'master.RadMenuItemResource13.Text',
-          link: '/Pulseem/MainReport.aspx'
+          link: '/react/Reports/NewsletterReports'
         },
         {
           title: 'master.RadMenuItemResource24.Text',
@@ -186,7 +186,7 @@ export const Shortcut=({classes}) => {
         },
         {
           title: 'dashboard.automationManagement',
-          link: '/Pulseem/Automations.aspx'
+          link: '/react/Automations'
         }
       ]
     },
@@ -195,11 +195,11 @@ export const Shortcut=({classes}) => {
       pages: [
         {
           title: 'Create Notification',
-          link: '/Pulseem/Notification.aspx?t=main'
+          link: '/react/Notification/create'
         },
         {
           title: 'Notification Management',
-          link: '/Pulseem/Notification.aspx?t=main'
+          link: '/react/Notifications'
         }
       ]
     }

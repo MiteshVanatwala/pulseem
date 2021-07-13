@@ -528,7 +528,7 @@ const DashboardScreen = ({ classes }) => {
     };
 
     const doughnutOptions = {
-      cutout: 72,
+      cutout: 77,
       backgroundColor: ['#6EE602', '#E0FAC6'],
       plugins: {
         tooltip: false
@@ -636,6 +636,12 @@ const DashboardScreen = ({ classes }) => {
     }
 
     const renderTabsLastReports = () => {
+      let updatedOnText;
+      if (tabValue===0) {
+        updatedOnText = `${newsletterLastUpdated?t('common.UpdatedOn'):''} ${newsletterLastUpdated}`;
+      } else {
+        updatedOnText = `${smsLastUpdated?t('common.UpdatedOn'):''} ${smsLastUpdated}`;
+      }
       return (
         <Grid container>
           <Grid
@@ -649,7 +655,7 @@ const DashboardScreen = ({ classes }) => {
                 {t('dashboard.lastReports')}
               </Typography>
               <Typography className={clsx(classes.colorGray, classes.f14)}>
-                {t('common.UpdatedTo')}{` ${tabValue === 0 ? newsletterLastUpdated : smsLastUpdated}`}
+                {updatedOnText}
               </Typography>
             </Box>
             <Tabs
