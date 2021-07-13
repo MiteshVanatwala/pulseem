@@ -624,7 +624,7 @@ const NotificationEditor = ({ props, classes }) => {
   /* #region  Validators */
 
   const validateWebsiteUrl = (websiteUrl) => {
-    const urlRegEx = new RegExp(/^((http|https):\/\/)?www\.([A-z]+)\.([A-z]{2,})/);
+    const urlRegEx = new RegExp(/^((http|https):\/\/)?.([A-z]+)\.([A-z]{2,})/);
     return urlRegEx.test(String(websiteUrl).toLowerCase());
   };
 

@@ -192,6 +192,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
   const [isClal,setIsClal]=useState(false)
   const [accountFeatures, setAccountFeatures]= useState(null);
+  const topNavRef = useRef(null)
   //const history=useCtrlHistory()
   const dispatch=useDispatch();
 
@@ -288,7 +289,8 @@ export const TopAppBar=({classes,currentPage=''}) => {
       <>
         <Box
           ref={phoneMenuButtonRef}
-          className={classes.phoneAppBarContainer}>
+          className={classes.phoneAppBarContainer}
+          >
           <IconButton
             className={classes.phoneAppBarButton}
             onClick={handleOpen}>
@@ -298,9 +300,9 @@ export const TopAppBar=({classes,currentPage=''}) => {
         {/* <LanguageSelector windowSize={windowSize} classes={classes} /> */}
         <Popper
           open={open}
-          anchorEl={phoneMenuButtonRef.current}
+          anchorEl={topNavRef.current}
           role={undefined}
-          style={{zIndex: '1'}}
+          style={{zIndex: '1', boxSizing: 'border-box', }}
           transition
         >
           {({TransitionProps}) => (
@@ -366,7 +368,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
   </SvgIcon>
   return (
     <Box style={{flexGrow: 1}}>
-      <AppBar position='static' className={classes.appBar}>
+      <AppBar position='static' className={classes.appBar} ref={topNavRef}>
         <Toolbar variant='dense'>
           <Box
             component='a'
