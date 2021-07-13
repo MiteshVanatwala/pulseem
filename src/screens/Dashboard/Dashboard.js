@@ -20,12 +20,13 @@ import { Shortcut } from '../../components/managment';
 import PricePackages from '../../components/Prices/PricePackages.component';
 import { GoPackage } from 'react-icons/go/index';
 import { Dialog } from '../../components/managment/index';
+import { GroupsIcon } from '../../assets/images/managment/index'
 
 const DashboardScreen = ({ classes }) => {
   const { language, windowSize, isRTL } = useSelector(state => state.core);
   const { username } = useSelector(state => state.user);
-  const { recipientsReport, lastCampaignReport, packagesDetails, accountAvailablePackages, tips, shortcuts, recipientsReportError,
-    lastCampaignReportError, packagesDetailsError, tipsError, shortCutsError } = useSelector(state => state.dashboard);
+  const { recipientsReport, lastCampaignReport, packagesDetails, accountAvailablePackages, tips, recipientsReportError,
+    lastCampaignReportError, packagesDetailsError, tipsError } = useSelector(state => state.dashboard);
   const [tabValue, handleTabValue] = useState(0);
   const [carouselItem, setCarouselItem] = useState(0);
   const [activeTip, setActiveTip] = useState(0);
@@ -412,6 +413,7 @@ const DashboardScreen = ({ classes }) => {
 
   const renderLastReports = () => {
     const barOptions = {
+      responsive: true,
       plugins: {
         legend: {
           display: false
@@ -433,7 +435,7 @@ const DashboardScreen = ({ classes }) => {
           ticks: {
             stepSize: 25,
             callback: function (value, index, values) {
-              return value;
+              return `${value}%`;
             },
             font: { size: 16 },
             color: 'black',
@@ -444,7 +446,7 @@ const DashboardScreen = ({ classes }) => {
     };
 
     const doughnutOptions = {
-      cutout: 62,
+      cutout: 72,
       backgroundColor: ['#6EE602', '#E0FAC6'],
       plugins: {
         tooltip: false
@@ -518,12 +520,12 @@ const DashboardScreen = ({ classes }) => {
             <Grid item lg={4}>
               <Grid container direction='column'>
                 <Grid item>
-                  <Typography className={classes.f20}>{reportData.campaignName}</Typography>
+                  <Typography className={classes.f22}>{reportData.campaignName}</Typography>
                   <Box className={classes.p0}>
-                    <img src={Users} width={15} />
+                    <img src={GroupsIcon} width={20} />
                     <Box className={clsx(classes.colorGray, classes.dInline, classes.ml5)}>
-                      <Typography variant={'body2'} className={clsx(classes.ml5, classes.dInline)}>{reportData.total.toLocaleString()}</Typography>
-                      <Typography variant={'body2'} className={clsx(classes.ml5, classes.dInline)}>{date}</Typography>
+                      <Typography className={clsx(classes.ml5, classes.dInline)}>{reportData.total.toLocaleString()}</Typography>
+                      <Typography className={clsx(classes.ml5, classes.dInline)}>{date}</Typography>
                     </Box>
                   </Box>
                 </Grid>
@@ -589,7 +591,7 @@ const DashboardScreen = ({ classes }) => {
 
     const renderPhoneLastReports = () => {
 
-      const renderItem = (innerData, index) => {
+      const renderItem = (innerData, index, name) => {
         const phoneData = [
           { label: t('common.Opens'), value: innerData && innerData.Opens || 0 },
           { label: t('common.Clicks'), value: innerData && innerData.Clicks || 0 },
@@ -601,13 +603,15 @@ const DashboardScreen = ({ classes }) => {
         const total = innerData && innerData.TotalSendPlan || 0;
         return (
           <Grid item xs={12} className={clsx(classes.newsletterLastReportGrid, index === 0 && classes.newsletterItemBorder)}>
-            <Typography align='center' className={clsx(classes.f20, classes.pb10)}>{t('appBar.newsletter.title')}</Typography>
-            <Typography className={classes.f17}>{innerData && innerData.CampaignName || ''}</Typography>
+            <Typography align='center' className={clsx(classes.f20, classes.pb10)}>
+              {name==='newsletter'?t('appBar.newsletter.title'):t('appBar.sms.title')}
+            </Typography>
+            <Typography className={classes.f20}>{innerData && innerData.CampaignName || ''}</Typography>
             <Box className={classes.p0}>
-              <img src={Users} width={15} />
+              <img src={GroupsIcon} width={20} />
               <Box className={clsx(classes.colorGray, classes.dInline, classes.ml5)}>
-                <Typography variant={'body2'} className={clsx(classes.ml5, classes.dInline)}>{total.toLocaleString()}</Typography>
-                <Typography variant={'body2'} className={clsx(classes.ml5, classes.dInline)}>{date}</Typography>
+                <Typography className={clsx(classes.ml5, classes.dInline)}>{total.toLocaleString()}</Typography>
+                <Typography className={clsx(classes.ml5, classes.dInline)}>{date}</Typography>
               </Box>
             </Box>
             {phoneData.map(item => {
@@ -631,7 +635,7 @@ const DashboardScreen = ({ classes }) => {
             </Typography>
           </Grid>
           {Object.keys(reports).map((name, index) => (
-            renderItem(reports[name], index)
+            renderItem(reports[name], index, name)
           ))}
         </Grid>
       );

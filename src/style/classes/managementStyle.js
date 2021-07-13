@@ -42,15 +42,15 @@ const tableRowMinWidth = {
 const barWidth={
   sm: '460px!important',
   md: '430px!important',
-  lg: '',
-  xl: ''
+  lg: '450px!important',
+  xl: '500px!important'
 }
 
 const barHeight={
   sm: '',
   md: '220px!important',
-  lg: '',
-  xl: ''
+  lg: '250px!important',
+  xl: '250px!important'
 }
 
 const shortcutFontSize={
@@ -97,10 +97,10 @@ const paperBottomHeight={
 
 const shortcutEditLeft={
   xs: '8%',
-  sm: '5%',
-  md: '5%',
-  lg: '5%',
-  xl: '5%'
+  sm: '18px',
+  md: '15px',
+  lg: '22px',
+  xl: '25px'
 }
 
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
@@ -978,6 +978,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: 'inline-block',
     position: 'relative',
     textTransform: 'capitalize',
+    padding: '6px 30px'
     
   },
   shortcutDottedButton: {
@@ -1069,8 +1070,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center'
   },
   barChart: {
+    // maxWidth: 500,
+    float: 'right',
     '& canvas': {
-      width: barWidth[windowSize],
+      // width: barWidth[windowSize],
       height: barHeight[windowSize]
     },
     paddingBottom: 10
@@ -1104,7 +1107,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tipsTitle: {
     textAlign: 'center',
-    padding: '20px 20px 0px 20px'
+    padding: '20px 20px 0px 20px',
+    marginBottom: 10
   },
   bulkStatusTitleSection: {
     marginBottom: '1rem', 
@@ -1164,7 +1168,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   dashboardBottomPaper: {
     [theme.breakpoints.up('lg')]: {
-      minHeight: 370
+      height: 370
     },
     [theme.breakpoints.down('xs')]: {
       margin: 10,
@@ -1186,7 +1190,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
   },
   tipItem: {
-    padding: '0 20px 20px 20px'
+    padding: '0 30px 20px 30px'
   },
   tipulseemMsg: {
     fontSize: 18,
@@ -1265,8 +1269,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     textAlign: 'center'
   },
   doughnutGreenBox: {
-    width: 150, 
-    height: 150, 
+    width: 170, 
+    height: 170, 
     position: 'relative', 
     display: 'flex', 
     alignItems: 'center', 
@@ -1277,8 +1281,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   bgLightGreen: {
     position: 'absolute',
     background: '#E0FAC6',
-    width: 120,
-    height: 120,
+    width: 135,
+    height: 135,
     marginTop: 10,
     zIndex: -1
   },

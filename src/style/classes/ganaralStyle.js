@@ -306,6 +306,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   f20: {
     fontSize: 20
   },
+  f22: {
+    fontSize: 22
+  },
   f25: {
     fontSize: 25
   },
