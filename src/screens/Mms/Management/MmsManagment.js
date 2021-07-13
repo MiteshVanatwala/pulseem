@@ -498,8 +498,8 @@ const MmsManagnentScreen = ({ classes }) => {
   const renderTableBody = () => {
 
     let sortData = isSearching ? searchResults : mmsData;
-    let rpp = parseInt(rowsPerPage)
-    sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+    let rpp=parseInt(rowsPerPage)
+    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
       <TableBody>
         {sortData
@@ -590,12 +590,11 @@ const MmsManagnentScreen = ({ classes }) => {
         </div>
       ),
       content: (
-        data && data.GroupNames &&
         <Box
           className={classes.gruopsDialogContent}>
-          {data.GroupNames
+          {data
             .map((group, index) => {
-              if (group && group.charAt(0) === '#') {
+              if (group.charAt(0) === '#') {
                 group = group.replace('#', '');
               }
               return (
@@ -698,15 +697,31 @@ const MmsManagnentScreen = ({ classes }) => {
 
     const { data, type } = dialogType || {}
 
-    const dialogContent = {
-      restore: getRestoreDialog(data),
-      groups: getGroupsDialog(data),
-      delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data),
-      preview: getPreviewDialog(data),
+    let currentDialog = null;
+
+    switch(type){
+      case 'restore':{
+        currentDialog = getRestoreDialog(data);
+        break;
+      }
+      case 'groups':{
+        currentDialog = getGroupsDialog(data);
+        break;
+      }
+      case 'delete':{
+        currentDialog = getDeleteDialog(data);
+        break;
+      }
+      case 'duplicate':{
+        currentDialog = getDuplicateDialog(data);
+        break;
+      }
+      case 'preview':{
+        currentDialog = getPreviewDialog(data);
+        break;
+      }
     }
 
-    const currentDialog = dialogContent[type] || {}
     return (
       dialogType && <Dialog
         classes={classes}
