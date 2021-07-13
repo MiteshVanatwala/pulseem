@@ -280,8 +280,8 @@ export const TopAppBar=({classes,currentPage=''}) => {
       routes[5],
       routes[6],
       routes[7],
-      {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049',href: reportsOptions[1].href},
-      {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c',href: reportsOptions[2].href},
+      {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049',href: reportsOptions[1].href, isShow: true},
+      {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c',href: reportsOptions[2].href, isShow: true},
       //routes[1]
     ]
     return (

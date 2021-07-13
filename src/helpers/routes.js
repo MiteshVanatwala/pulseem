@@ -150,7 +150,8 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null) =>
       {
         key:'create',
         title: t('master.createNotification'),
-        href: '/react/Notification/create'
+        href: '/react/Notification/create',
+        isShow: true
       },
       {title: t('master.manageNotifications'),href: '/react/Notifications', isShow: true},
       {title: t('master.implementScript'),uri: '/react/Notifications', isShow: true}
