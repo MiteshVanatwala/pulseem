@@ -975,7 +975,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '20px',
     marginBottom: 30,
     fontSize: '18px',
-    display: 'inline-block',
     position: 'relative',
     textTransform: 'capitalize',
     padding: '6px 30px'

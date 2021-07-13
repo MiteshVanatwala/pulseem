@@ -25,17 +25,12 @@ import { GroupsIcon } from '../../assets/images/managment/index'
 const DashboardScreen = ({ classes }) => {
   const { language, windowSize, isRTL } = useSelector(state => state.core);
   const { username } = useSelector(state => state.user);
-  const { recipientsReport, lastCampaignReport, packagesDetails, accountAvailablePackages, tips, recipientsReportError,
-    lastCampaignReportError, packagesDetailsError, tipsError } = useSelector(state => state.dashboard);
-  const [tabValue, handleTabValue] = useState(0);
+  const { recipientsReport, lastCampaignReport, packagesDetails, accountAvailablePackages, tips, shortcuts, recipientsReportError,
+    lastCampaignReportError, packagesDetailsError, tipsError, shortCutsError } = useSelector(state => state.dashboard);
   const [carouselItem, setCarouselItem] = useState(0);
-  const [activeTip, setActiveTip] = useState(0);
-  const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const dateTimeFormat = 'DD/MM/YYYY, hh:mm a';
-  const dateFormat = 'DD/MM/YYYY';
-
+  
   moment.locale(language);
 
   const initData = async () => {
@@ -47,14 +42,83 @@ const DashboardScreen = ({ classes }) => {
 
   useEffect(initData, [dispatch])
 
-  const renderBulkStatus = () => {
+  const renderArrows = (value, length, setItem, className) => {
+    let selectedItem = value;
+    const handleNext = () => {
+      if (value >= length) return;
+      selectedItem++;
+      setItem(selectedItem);
+    }
+    const handlePrevious = () => {
+      if (selectedItem <= 0) return;
+      selectedItem--;
+      setItem(selectedItem);
+    }
+
+    return (
+      <Grid item className={className}>
+        <IconButton onClick={handlePrevious}>
+          <ArrowBackIosIcon />
+        </IconButton>
+        <IconButton onClick={handleNext}>
+          <ArrowForwardIosIcon />
+        </IconButton>
+      </Grid>
+    );
+  }
+
+  const RenderBulkStatus = () => {
+    const [isShowSmsPackage, showSmsPackage] = useState(false);
+    const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
+    
+    
     const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
     const availablePackages = accountAvailablePackages || [];
     let isNewsletterPrepaid = Newsletters.isPrepaid || Newsletters.Credits == -1;
     let isMMSPrepaid = Mms.isPrepaid || Mms.Credits == -1;
     let isNotificationsPrepaid = Notifications.isPrepaid || Notifications.Credits == -1;
     let isSMSPrepaid = Sms.isPrepaid || Sms.Credits == -1;
+  
+    const handleDialogClose = () => {
+      setIsOpenPackageDialog(false);
+    }
+  
+    const renderPackagesDialog = () => {
+      if (isOpenPackageDialog === true) {
+        let dialog = {};
+        dialog = renderPackagesListDialog();
+  
+        return (
+          <Dialog
+            classes={classes}
+            open={isOpenPackageDialog}
+            onClose={handleDialogClose}
+            onConfirm={handleDialogClose}
+            showDefaultButtons={false}
+            {...dialog}>
+            {dialog.content}
+          </Dialog>
+        );
+      }
+    }
+  
+    const renderPackagesListDialog = () => {
+      return {
+        showDivider: false,
+        icon: (
+          <GoPackage style={{ fontSize: 30 }} />
+        ),
+        content: (
+          <Grid item xs={12} style={{ paddingBottom: 25 }}>
+            <PricePackages classes={classes} onComplete={handleDialogClose} />
+          </Grid>
+        )
+      };
+    }
+  
     return (
+      <>
+      {renderPackagesDialog()}
       <Paper
         className={clsx(classes.dashboardTopPaper, classes.bulkMargin)}
         elevation={3}>
@@ -67,15 +131,23 @@ const DashboardScreen = ({ classes }) => {
             </Typography>
             <Typography align='center' className={classes.f20}>{t('dashboard.yourBulkStatus')}</Typography>
           </Grid>
-          <Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
+          <Grid
+            container
+            item xs={9}
+            className={classes.bulkStatusBlue}
+            justify='space-between'
+            onMouseEnter={() => showSmsPackage(true)}
+            onMouseLeave={() => showSmsPackage(false)}>
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
-            <Typography className={classes.bulkTitle}>
-              {isSMSPrepaid ? t('dashboard.perRecipients') : Sms.Credits}
-            </Typography>
-            {isSMSPrepaid && Sms.Credits <= 0 &&
-              <Button onClick={() => setIsOpenPackageDialog(true)}>
+            {isShowSmsPackage ? (
+              <Button onClick={() => setIsOpenPackageDialog(true)} className={classes.whiteLink}>
                 {t('dashboard.purchase')}
               </Button>
+            )
+              :
+              (<Typography className={classes.bulkTitle}>
+                {!Sms.IsPrepaid ? t('dashboard.perRecipients') : Sms.Credits}
+              </Typography>)
             }
           </Grid>
           <Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
@@ -103,35 +175,11 @@ const DashboardScreen = ({ classes }) => {
           </Grid>
         </Grid>
       </Paper>
+      </>
     );
   }
 
-  const renderArrows = (value, length, setItem, className) => {
-    let selectedItem = value;
-    const handleNext = () => {
-      if (value >= length) return;
-      selectedItem++;
-      setItem(selectedItem);
-    }
-    const handlePrevious = () => {
-      if (selectedItem <= 0) return;
-      selectedItem--;
-      setItem(selectedItem);
-    }
-
-    return (
-      <Grid item className={className}>
-        <IconButton onClick={handlePrevious}>
-          <ArrowBackIosIcon />
-        </IconButton>
-        <IconButton onClick={handleNext}>
-          <ArrowForwardIosIcon />
-        </IconButton>
-      </Grid>
-    );
-  }
-
-  const renderRecipients = () => {
+  const RenderRecipients = () => {
     const titles = [
       {
         mainTitle: 'appBar.newsletter.title',
@@ -164,7 +212,7 @@ const DashboardScreen = ({ classes }) => {
 
     const renderCircleAdd = (innerTitle) => {
       return (
-        <Grid item xs={12} sm={4} className={classes.doughnutGrid}>
+        <Grid item xs={12} sm={4} className={classes.doughnutGrid} key={`circleAdd${Math.round(Math.random() * 999999999)}`}>
           <Typography align='center' className={classes.f20}>{t(innerTitle.mainTitle)}</Typography>
           <Box className={classes.doughnutBox}>
             <Avatar className={classes.emptyDoughnut}>
@@ -315,7 +363,10 @@ const DashboardScreen = ({ classes }) => {
         }],
       }
       return (
-        <Grid item xs={12} sm={12} md={4} className={classes.doughnutGrid}>
+        <Grid
+          key={`doughnut${Math.round(Math.random() * 999999999)}`}
+          item xs={12} sm={12} md={4}
+          className={classes.doughnutGrid}>
           <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
           <Box className={classes.doughnutBox}>
             <Typography className={classes.chartLabel}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Typography>
@@ -376,7 +427,34 @@ const DashboardScreen = ({ classes }) => {
     );
   }
 
-  const renderTIPulseem = () => {
+  const RenderTIPulseem = () => {
+    const [activeTip, setActiveTip] = useState(0);
+
+    const renderArrows = (value, length, setItem, className) => {
+      let selectedItem = value;
+      const handleNext = () => {
+        if (value >= length) return;
+        selectedItem++;
+        setItem(selectedItem);
+      }
+      const handlePrevious = () => {
+        if (selectedItem <= 0) return;
+        selectedItem--;
+        setItem(selectedItem);
+      }
+
+      return (
+        <Grid item className={className}>
+          <IconButton onClick={handlePrevious}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <IconButton onClick={handleNext}>
+            <ArrowForwardIosIcon />
+          </IconButton>
+        </Grid>
+      );
+    }
+
     return (
       <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.tipMargin, classes.carouselTips)}>
         <Box className={classes.tipsTitle}>
@@ -400,7 +478,7 @@ const DashboardScreen = ({ classes }) => {
             showArrows={false}>
             {tips.map(tip => {
               return (
-                <Box component='div' className={classes.tipItem}>
+                <Box component='div' className={classes.tipItem} key={`tip${Math.round(Math.random() * 999999999)}`}>
                   <Typography align='center' className={classes.tipulseemMsg}>{tip.TipText}</Typography>
                 </Box>
               );
@@ -411,7 +489,11 @@ const DashboardScreen = ({ classes }) => {
     );
   }
 
-  const renderLastReports = () => {
+  const RenderLastReports = () => {
+    const [tabValue, handleTabValue] = useState(0);
+    const dateTimeFormat = 'MM/DD/YY, hh:mm a';
+    const dateFormat = 'MM/DD/YY';
+
     const barOptions = {
       responsive: true,
       plugins: {
@@ -481,7 +563,7 @@ const DashboardScreen = ({ classes }) => {
         >
           {value === index && (
             <Box>
-              <Typography>{children}</Typography>
+              {children}
             </Box>
           )}
         </div>
@@ -614,9 +696,9 @@ const DashboardScreen = ({ classes }) => {
                 <Typography className={clsx(classes.ml5, classes.dInline)}>{date}</Typography>
               </Box>
             </Box>
-            {phoneData.map(item => {
+            {phoneData.map((item, ind) => {
               return (
-                <Box className={classes.lastReportRowItem}>
+                <Box key={`phoneItem${ind}`} className={classes.lastReportRowItem}>
                   <Typography className={classes.f18}>{item.label}</Typography>
                   <Typography className={classes.f18}>{item.value}</Typography>
                 </Box>
@@ -648,11 +730,16 @@ const DashboardScreen = ({ classes }) => {
     )
   }
 
+
   const renderTopSection = () => {
     return (
       <Grid container direction='row'>
-        <Grid item xs={12} sm={12} md={12} lg={4}>{renderBulkStatus()}</Grid>
-        <Grid item xs={12} sm={12} md={12} lg={8}>{renderRecipients()}</Grid>
+        <Grid item xs={12} sm={12} md={12} lg={4}>
+          <RenderBulkStatus />
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={8}>
+          <RenderRecipients />
+        </Grid>
       </Grid>
     );
   }
@@ -660,8 +747,21 @@ const DashboardScreen = ({ classes }) => {
   const renderBottomSection = () => {
     return (
       <Grid container direction='row'>
-        <Grid item xs={12} sm={12} md={12} lg={3}>{renderTIPulseem()}</Grid>
-        <Grid item xs={12} sm={12} md={12} lg={9}>{renderLastReports()}</Grid>
+        <Grid item xs={12} sm={12} md={12} lg={3}>
+          <RenderTIPulseem 
+            classes={classes}
+            tips={tips}
+            t={t}
+          />
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={9}>
+          <RenderLastReports 
+            classes={classes}
+            windowSize={windowSize}
+            lastCampaignReport={lastCampaignReport}
+            t={t}
+            />
+        </Grid>
       </Grid>
     );
   }
@@ -682,53 +782,24 @@ const DashboardScreen = ({ classes }) => {
     );
   };
 
-
-  const renderPackagesListDialog = () => {
-    return {
-      showDivider: false,
-      icon: (
-        <GoPackage style={{ fontSize: 30 }} />
-      ),
-      content: (
-        <Grid item xs={12}>
-          <PricePackages classes={classes} />
-        </Grid>
-      )
-    };
-  }
-
-  const handleDialogClose = () => {
-    setIsOpenPackageDialog(false);
-  }
-
-  const renderPackagesDialog = () => {
-    if (isOpenPackageDialog === true) {
-      let dialog = {};
-      dialog = renderPackagesListDialog();
-
-      return (
-        <Dialog
-          classes={classes}
-          open={isOpenPackageDialog}
-          onClose={handleDialogClose}
-          onConfirm={handleDialogClose}
-          showDefaultButtons={false}
-          {...dialog}>
-          {dialog.content}
-        </Dialog>
-      );
-    }
-  }
-
   return (
     <DefaultScreen
       currentPage='dashboard'
       classes={classes}
       customStyle={classes.dashboard}>
       {renderContent()}
-      {renderPackagesDialog()}
     </DefaultScreen>
   )
 }
 
-export default DashboardScreen;
+function isLoaded(prevProps, nextProps) {
+  return prevProps === nextProps;
+  //console.log(prevProps, nextProps);
+  /*
+  return true if passing nextProps to render would return
+  the same result as passing prevProps to render,
+  otherwise return false
+  */
+}
+
+export default React.memo(DashboardScreen, isLoaded);

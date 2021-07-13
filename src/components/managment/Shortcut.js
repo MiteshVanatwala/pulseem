@@ -3,11 +3,11 @@ import {useTranslation} from 'react-i18next'
 import {useSelector,useDispatch} from 'react-redux'
 import { 
   Box, Button, ListItem, ListItemText, Paper, Typography, Popper, Fade, 
-  List, Collapse, Divider, IconButton, CircularProgress 
+  List, Collapse, Divider, IconButton, CircularProgress,Popover
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
-import { getShortcuts, setShortcuts } from '../../redux/reducers/dashboardSlice';
+import { getShortcuts, setShortcuts,deleteShortcuts } from '../../redux/reducers/dashboardSlice';
 
 export const Shortcut=({classes}) => {
   const {windowSize}=useSelector(state => state.core);
@@ -18,6 +18,7 @@ export const Shortcut=({classes}) => {
   const [anchorEl, setAnchorEl] = useState({});
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [pageOpen, setPageOpen] = useState(false);
+  const [loading, setLoading] = useState({});
   const {t}=useTranslation();
   const dispatch=useDispatch();
   const categories = {
@@ -26,27 +27,27 @@ export const Shortcut=({classes}) => {
       pages: [
         {
           title: 'dashboard.createGroup',
-          link: 'https://www.pulseem.co.il/Pulseem/Groups.aspx?NewGroup=true'
+          link: '/Pulseem/Groups.aspx?NewGroup=true'
         },
         {
           title: 'appBar.groups.manageRecipients',
-          link: 'https://www.pulseem.co.il/Pulseem/Groups.aspx'
+          link: '/Pulseem/Groups.aspx'
         },
         {
           title: 'appBar.groups.dynamicGroups',
-          link: 'https://www.pulseem.co.il/Pulseem/DynamicGroups.aspx'
+          link: '/Pulseem/DynamicGroups.aspx'
         },
         {
           title: 'appBar.groups.search',
-          link: 'https://www.pulseem.co.il/Pulseem/ClientSearch.aspx'
+          link: '/Pulseem/ClientSearch.aspx'
         },
         {
           title: 'dashboard.advanceSearch',
-          link: 'https://www.pulseem.co.il/Pulseem/ClientAdvancedSearch.aspx'
+          link: '/Pulseem/ClientAdvancedSearch.aspx'
         },
         {
           title: 'appBar.groups.fileUploads',
-          link: 'https://www.pulseem.co.il/Pulseem/FileUploads.aspx'
+          link: '/Pulseem/FileUploads.aspx'
         }
       ]
     },
@@ -55,27 +56,27 @@ export const Shortcut=({classes}) => {
       pages: [
         {
           title: 'campaigns.create',
-          link: 'https://www.pulseem.co.il/Pulseem/CampaignEdit.aspx'
+          link: '/Pulseem/CampaignEdit.aspx'
         },
         {
           title: 'master.RadMenuItemResource9.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/Campaigns.aspx'
+          link: '/Pulseem/Campaigns.aspx'
         },
         {
           title: 'Create A/B Test',
-          link: 'https://www.pulseem.co.il/Pulseem/CampaignsByResults.aspx'
+          link: '/Pulseem/CampaignsByResults.aspx'
         },
         {
           title: 'master.linkAbTestingsResource1.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/CampaignsAbTestings.aspx'
+          link: '/Pulseem/CampaignsAbTestings.aspx'
         },
         {
           title: 'master.RadMenuItemResource9a.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/AutoSendPlans.aspx'
+          link: '/Pulseem/AutoSendPlans.aspx'
         },
         {
           title: 'master.RadMenuItemResource10.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/CampaignTemplates.aspx'
+          link: '/Pulseem/CampaignTemplates.aspx'
         }
       ]
     },
@@ -84,19 +85,19 @@ export const Shortcut=({classes}) => {
       pages: [
         {
           title: 'common.CreateSMS',
-          link: 'https://www.pulseem.co.il/Pulseem/SMSCampaignEdit.aspx'
+          link: '/Pulseem/SMSCampaignEdit.aspx'
         },
         {
           title: 'dashboard.smsManagement',
-          link: 'https://www.pulseem.co.il/Pulseem/SMSCampaigns.aspx'
+          link: '/Pulseem/SMSCampaigns.aspx'
         },
         {
           title: 'master.chatbotSMS',
-          link: 'https://www.pulseem.co.il/Pulseem/SMSSmartResponses.aspx'
+          link: '/Pulseem/SMSSmartResponses.aspx'
         },
         {
           title: 'master.linkSMSResponsesReport.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/ResponsesReport.aspx'
+          link: '/Pulseem/ResponsesReport.aspx'
         }
       ]
     },
@@ -105,11 +106,11 @@ export const Shortcut=({classes}) => {
       pages: [
         {
           title: 'common.CreateMMS',
-          link: 'https://www.pulseem.co.il/Pulseem/MmsCampaignEdit.aspx'
+          link: '/Pulseem/MmsCampaignEdit.aspx'
         },
         {
           title: 'dashboard.mmsManagement',
-          link: 'https://www.pulseem.co.il/Pulseem/MmsCampaigns.aspx'
+          link: '/Pulseem/MmsCampaigns.aspx'
         }
       ],
     },
@@ -118,11 +119,11 @@ export const Shortcut=({classes}) => {
       pages: [
         {
           title: 'landingPages.CreateNewResource.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/LandingPageWizard.aspx'
+          link: '/Pulseem/LandingPageWizard.aspx'
         },
         {
           title: 'landingPages.logPageHeaderResource1.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/EditRegistrationPage.aspx'
+          link: '/Pulseem/EditRegistrationPage.aspx'
         }
       ]
     },
@@ -131,47 +132,47 @@ export const Shortcut=({classes}) => {
       pages: [
         {
           title: 'master.RadMenuItemResource13.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/MainReport.aspx'
+          link: '/Pulseem/MainReport.aspx'
         },
         {
           title: 'master.RadMenuItemResource24.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/SMSMainReport.aspx'
+          link: '/Pulseem/SMSMainReport.aspx'
         },
         {
           title: 'master.MmsMainReport.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/MmsMainReport.aspx'
+          link: '/Pulseem/MmsMainReport.aspx'
         },
         {
           title: 'master.AbTestsReport.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/AbTestsReport.aspx'
+          link: '/Pulseem/AbTestsReport.aspx'
         },
         {
           title: 'master.RadMenuItemResource15.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/AccountReport.aspx'
+          link: '/Pulseem/AccountReport.aspx'
         },
         {
           title: 'master.RadMenuItemResource18.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/ClientReport.aspx'
+          link: '/Pulseem/ClientReport.aspx'
         },
         {
           title: 'master.RadMenuItemResource30.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/EmailAutoReports.aspx'
+          link: '/Pulseem/EmailAutoReports.aspx'
         },
         {
           title: 'dashboard.unsubscribeReports',
-          link: 'https://www.pulseem.co.il/Pulseem/RemovedStats.aspx'
+          link: '/Pulseem/RemovedStats.aspx'
         },
         {
           title: 'master.DirectReportsResource1.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/DirectEmailReport.aspx'
+          link: '/Pulseem/DirectEmailReport.aspx'
         },
         {
           title: 'master.DirectSmsReport.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/DirectSmsReport.aspx'
+          link: '/Pulseem/DirectSmsReport.aspx'
         },
         {
           title: 'dashboard.openedClickedReport',
-          link: 'https://www.pulseem.co.il/Pulseem/EmailCampaignStatistics.aspx'
+          link: '/Pulseem/EmailCampaignStatistics.aspx'
         }
 
       ]
@@ -181,11 +182,11 @@ export const Shortcut=({classes}) => {
       pages: [
         {
           title: 'automations.createResource.Text',
-          link: 'https://www.pulseem.co.il/Pulseem/CreateAutomations.aspx'
+          link: '/Pulseem/CreateAutomations.aspx'
         },
         {
           title: 'dashboard.automationManagement',
-          link: 'https://www.pulseem.co.il/Pulseem/Automations.aspx'
+          link: '/Pulseem/Automations.aspx'
         }
       ]
     },
@@ -194,11 +195,11 @@ export const Shortcut=({classes}) => {
       pages: [
         {
           title: 'Create Notification',
-          link: 'https://www.pulseem.co.il/Pulseem/Notification.aspx?t=main'
+          link: '/Pulseem/Notification.aspx?t=main'
         },
         {
           title: 'Notification Management',
-          link: 'https://www.pulseem.co.il/Pulseem/Notification.aspx?t=main'
+          link: '/Pulseem/Notification.aspx?t=main'
         }
       ]
     }
@@ -210,7 +211,7 @@ export const Shortcut=({classes}) => {
   }
   useEffect(initData,[dispatch])
 
-  const renderShortcutMenu=(num, update)=>{
+  const renderShortcutMenu=(num, update, index)=>{
     const pageTitle = selectedPage[num] && selectedPage[num].title || '';
     const categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
     const open = Boolean(anchorEl[num]);
@@ -234,80 +235,82 @@ export const Shortcut=({classes}) => {
         ShortcutName: title, 
         ShortcutUrl: href
       };
+      let loading={};
+      loading[index]=true;
       setAnchorEl({});
       setCategoryValue({});
       setPageOpen(false);
+      setLoading(loading);
       await dispatch(setShortcuts(data));
       await dispatch(getShortcuts());
+      setLoading({});
+
     }
 
     return(
       <Popper  
+        key={`shortcutMenu${index}`}
         open={open} 
         anchorEl={anchorEl[num]} 
-        placement={windowSize==='xs'?'bottom-start':'left-start'} 
-        transition>
-        {({ TransitionProps }) => (
-          <Fade {...TransitionProps} timeout={350}>
-            <Paper className={classes.popperPaper}>
-              <List component="nav" className={classes.shortcutList}>
-                <ListItem 
-                  key={`selectCategory`}
-                  button 
-                  onClick={()=>setCategoryOpen(!categoryOpen)} 
-                  className={clsx(classes.pt0, classes.pb0)}>
-                  <ListItemText primary={categoryTitle? t(categoryTitle):t('common.SelectCategory')} />
-                  {categoryOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
-                <Collapse in={categoryOpen} timeout="auto" unmountOnExit>
+        placement={windowSize==='xs'?'bottom-start':'left-start'}
+        style={{zIndex: 2}}>
+          <Paper className={classes.popperPaper}>
+            <List component="nav" className={classes.shortcutList}>
+              <ListItem 
+                key={`selectCategory`}
+                button 
+                onClick={()=>setCategoryOpen(!categoryOpen)} 
+                className={clsx(classes.pt0, classes.pb0)}>
+                <ListItemText primary={categoryTitle? t(categoryTitle):t('common.SelectCategory')} />
+                {categoryOpen ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={categoryOpen} timeout="auto" unmountOnExit>
+                <Divider />
+                <List component="div" disablePadding>
+                  {Object.keys(categories).map(cat=>{
+                    return (
+                      <ListItem 
+                        key={`category${Math.round(Math.random() * 999999999)}`}
+                        button 
+                        className={clsx(classes.pt0, classes.pb0)} 
+                        onClick={()=>handleCategoryChange(cat)}>
+                        <ListItemText primary={t(categories[cat].title)} />
+                      </ListItem>
+                    )
+                  })}
+                </List>
+              </Collapse>
+            </List>
+            <List component="nav" className={classes.shortcutList}>
+              <ListItem 
+                key={`selectPage`}
+                button 
+                onClick={()=>setPageOpen(!pageOpen)} 
+                className={clsx(classes.pt0, classes.pb0)}
+                disabled={!selectedCategory[num]}>
+                <ListItemText primary={pageTitle? pageTitle: t('common.SelectPage')} />
+                {pageOpen ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              {selectedCategory[num]?
+                <Collapse in={pageOpen} timeout="auto" unmountOnExit>
                   <Divider />
                   <List component="div" disablePadding>
-                    {Object.keys(categories).map((cat, index)=>{
+                    {categories[selectedCategory[num]].pages.map(page=>{
                       return (
                         <ListItem 
-                          key={`category${index}`}
+                          key={`pageItem${Math.round(Math.random() * 999999999)}`}
                           button 
                           className={clsx(classes.pt0, classes.pb0)} 
-                          onClick={()=>handleCategoryChange(cat)}>
-                          <ListItemText primary={t(categories[cat].title)} />
+                          onClick={()=>handlePageChange(page.title, page.link)}>
+                          <ListItemText primary={t(page.title)} />
                         </ListItem>
                       )
                     })}
                   </List>
                 </Collapse>
-              </List>
-              <List component="nav" className={classes.shortcutList}>
-                <ListItem 
-                  key={`selectPage`}
-                  button 
-                  onClick={()=>setPageOpen(!pageOpen)} 
-                  className={clsx(classes.pt0, classes.pb0)}
-                  disabled={!selectedCategory[num]}>
-                  <ListItemText primary={pageTitle? pageTitle: t('common.SelectPage')} />
-                  {pageOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
-                {selectedCategory[num]?
-                  <Collapse in={pageOpen} timeout="auto" unmountOnExit>
-                    <Divider />
-                    <List component="div" disablePadding>
-                      {categories[selectedCategory[num]].pages.map((page, index)=>{
-                        return (
-                          <ListItem 
-                            key={`pageItem${index}`}
-                            button 
-                            className={clsx(classes.pt0, classes.pb0)} 
-                            onClick={()=>handlePageChange(page.title, page.link)}>
-                            <ListItemText primary={t(page.title)} />
-                          </ListItem>
-                        )
-                      })}
-                    </List>
-                  </Collapse>
-                  :null}
-              </List>
-            </Paper>
-          </Fade>
-        )}
+                :null}
+            </List>
+          </Paper>
       </Popper>
     );
   }
@@ -325,47 +328,56 @@ export const Shortcut=({classes}) => {
     setCategoryOpen(false);
   };
 
-  const renderShortcutButton=(data, innerRef)=>{
-    if (data.loading) {
+  const renderShortcutButton=(data, index)=>{
+    if (loading[index]) {
       return (
-        <CircularProgress />
-      );
-    }
-
-    return (
-      <>
-        <Box className={classes.shortcutBtnBox} ref={innerRef}>
+        <Box className={classes.shortcutBtnBox} key={`shortcutLoading${index}`}>
           <Button 
             variant='contained' 
             color='primary' 
-            href={data.ShortcutUrl}
             classes={{
               label:classes.shortcutLabel,
               root: classes.shortcutButton}}>
-            <Typography align='center' className={classes.categoryLabel}>{t(data.CategoryName)}</Typography>
-            <Typography align='center' className={classes.pageTitle}>{t(data.ShortcutName)}</Typography>
+            <CircularProgress className={classes.white}/>
           </Button>
-          <IconButton  
-            className={classes.shortcutEditIcon} 
-            onClick={(e)=>handleShortcutMenuOpen(windowSize=='xs'?e:innerRef, data.ID)}>
-            {'\uE09C'}
-          </IconButton>
         </Box>
-        {renderShortcutMenu(data.ID, true)}
-      </>
+      );
+    }
+    const innerRef=createRef();
+    return (
+      <Box key={`shortcutButton${index}`} ref={innerRef} className={classes.shortcutBtnBox} >
+        <Button 
+          variant='contained' 
+          color='primary' 
+          href={data.ShortcutUrl}
+          classes={{
+            label:classes.shortcutLabel,
+            root: classes.shortcutButton}}>
+          <Typography align='center' className={classes.categoryLabel}>{t(data.CategoryName)}</Typography>
+          <Typography align='center' className={classes.pageTitle}>{t(data.ShortcutName)}</Typography>
+        </Button>
+        <IconButton  
+          className={classes.shortcutEditIcon} 
+          onClick={(e)=>handleShortcutMenuOpen(windowSize=='xs'?e:innerRef, data.ID)}>
+          {'\uE09C'}
+        </IconButton>
+        {renderShortcutMenu(data.ID, true, index)}
+      </Box>
     );
   }
 
   const renderNewShortcutButtons=()=>{
     let newShortcutButtons = [];
     for (let index = shortcuts.length; index < 5; index++) {
+      const innerRef=createRef();
       newShortcutButtons.push(
-        <Box className={classes.shortcutBtnBox}>
+        <Box className={classes.shortcutBtnBox} key={`emptyShortcutBtn${index}`} ref={innerRef}>
           <Button 
             color='primary' 
             fullWidth 
             className={classes.shortcutDottedButton}
-            onClick={(e)=>handleShortcutMenuOpen(e,index)}>{'\uE0E4'}
+            onClick={(e)=>handleShortcutMenuOpen(windowSize=='xs'?e:innerRef,index)}>
+            {'\uE0E4'}
           </Button>
           {renderShortcutMenu(index)}
         </Box>
@@ -382,9 +394,8 @@ export const Shortcut=({classes}) => {
             <Typography align='center' className={classes.shortcutTitle}>{t('dashboard.myShortcuts')}</Typography>
             <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
           </Box>
-          {shortcuts.map(item=>{
-            const innerRef = createRef();
-            return renderShortcutButton(item, innerRef)
+          {shortcuts.map((item,index)=>{
+            return renderShortcutButton(item, index)
           })}
           {renderNewShortcutButtons()}
         </Paper>
