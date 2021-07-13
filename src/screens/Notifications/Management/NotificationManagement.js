@@ -81,6 +81,9 @@ const NotificationManagement = ({ classes }) => {
     const scriptPath = await dispatch(getScriptPath());
     const path = (scriptPath && scriptPath.payload) || '';
     setScriptPath(path);
+    if (path !== '') {
+      setScriptDirectory(1);
+    }
   }
 
   const handleApiKey = async () => {
@@ -92,6 +95,9 @@ const NotificationManagement = ({ classes }) => {
   const handleScriptDirectory = async (event) => {
     const value = parseInt(event.target.value);
     setScriptDirectory(value);
+    if (value === 0) {
+      setScriptPath(null);
+    }
   }
 
   const handleCopyScript = () => {
@@ -168,7 +174,7 @@ const NotificationManagement = ({ classes }) => {
   }
 
   useEffect(async () => {
-    if(hideScriptDialog === false){
+    if (hideScriptDialog === false) {
       await dispatch(getNotificationPublicKey());
     }
   }, [hideScriptDialog])
@@ -649,8 +655,8 @@ const NotificationManagement = ({ classes }) => {
 
   const renderTableBody = () => {
     let rowData = searchResults || notificationData;
-    let rpp=parseInt(rowsPerPage)
-    rowData=rowData.slice((page-1)*rpp,(page-1)*rpp+rpp)
+    let rpp = parseInt(rowsPerPage)
+    rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
       <TableBody>
         {rowData
@@ -671,7 +677,7 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const renderTablePagination = () => {
-    const handleRowsPerPageChange=(val) => {
+    const handleRowsPerPageChange = (val) => {
       dispatch(setRowsPerPage(val))
       setCookie('rpp', val, { maxAge: 2147483647 })
     }
