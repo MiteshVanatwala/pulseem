@@ -322,6 +322,9 @@
   "MmsCampaignEdit": {
     "Text": "יצירת קמפיין"
   },
+  "NewMMSCampaign": {
+    "Text": "יצירת קמפיין"
+  },
   "MmsCampaignMnage": {
     "Text": "ניהול קמפיינים"
   },
