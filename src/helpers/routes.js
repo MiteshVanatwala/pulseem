@@ -16,7 +16,7 @@ export const getSettingsItem=(t,style='') => ({
   href: '/Pulseem/AccountSettings.aspx',
   options: [
     {title: t('master.RadMenuItemResource2.Text'),href: '/Pulseem/AccountSettings.aspx?fromreact=true',iconSrc: SettingsMenuIcon, isShow: true},
-    {title: t('master.linkAccountBilling.Text'),href: '/Pulseem/AccountUsers.aspx?fromreact=true',iconSrc: DolarMenuIcon, isShow: true},
+    {title: t('master.linkAccountBilling.Text'),href: '/Pulseem/AccountBilling.aspx?fromreact=true',iconSrc: DolarMenuIcon, isShow: true},
     {title: t('master.RadMenuItemResource3.Text'),href: '/Pulseem/AccountUsers.aspx?fromreact=true',iconSrc: GroupMenuIcon, isShow: true},
     {title: t('master.RadMenuItemResource4.Text'),href: '/Pulseem/AccountUsersReport.aspx?fromreact=true',iconSrc: GrafMenuIcon, isShow: true},
     {title: t('master.RadMenuItemResource23.Text'),href: '/Pulseem/ExtraFieldsDefinition.aspx?fromreact=true',iconSrc: StarMenuIcon, isShow: true},
