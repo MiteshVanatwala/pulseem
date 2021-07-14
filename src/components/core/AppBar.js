@@ -69,7 +69,7 @@ const AppBarItem=({
             currentStyle,
             textStyle,
             {[classes.chosenText]: chosen})}>
-          {showIcon? item.iconUnicode:item.title}
+          {showIcon? item.iconUnicode: item && item.title || ''}
         </IconButton>
 
         {(chosen||open)&&<ArrowDropUp className={classes.appBarItemArrow} />}
@@ -138,7 +138,7 @@ const LanguageSelector=({windowSize,classes}) => {
   ]
 
   const item={
-    title: languages.find(lang => lang.value===language).title,
+    title: languages && languages.find(lang => lang.value===language).title || '',
     options: languages
   }
 
