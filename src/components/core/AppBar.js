@@ -202,12 +202,16 @@ export const TopAppBar=({classes,currentPage=''}) => {
     dispatch(setScriptDialog(scriptDialog));
   }
 
-  useEffect(async () => {
-    handleScriptDialog();
+  const initFeatures = async () => {
     const response = await dispatch(isClalAccount());
     setIsClal(response.payload);
     const features = await dispatch(getAccountFeatures());
     setAccountFeatures(features.payload);
+  }
+
+  useEffect(() => {
+    handleScriptDialog();
+    initFeatures();   
     const resizeWindow=() => {
       setWindowWidth(window.innerWidth)
     }
