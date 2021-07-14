@@ -14,7 +14,6 @@ import {
 }
   from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
-import { useHistory } from "react-router-dom";
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
@@ -112,7 +111,6 @@ const NotificationEditor = ({ props, classes }) => {
   const dispatch = useDispatch();
   const { language } = useSelector(state => state.core)
   const { t } = useTranslation();
-  const history = useHistory();
   const { isRTL, windowSize } = useSelector(state => state.core);
   moment.locale(language);
   /* #endregion */
@@ -282,7 +280,7 @@ const NotificationEditor = ({ props, classes }) => {
         dispatch(save(model)).then((response) => {
           if (props.match.params.create || props.match.url.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
-              history.push("/Notifications");
+              location.href = "/react/Notifications";
             }
             else {
               setToastMessage(toastMessages.SUCCESS);
@@ -291,7 +289,7 @@ const NotificationEditor = ({ props, classes }) => {
                   redirectAfterSave(response.payload);
                 }
                 else {
-                  history.push(`/Notification/edit/${response.payload}`);
+                  location.href = `/react/Notification/edit/${response.payload}`;
                 }
                 setToastMessage(null);
               }, 1500);
@@ -309,7 +307,7 @@ const NotificationEditor = ({ props, classes }) => {
         });
       }
       if (isExit) {
-        history.push("/Notifications");
+        location.href = "/react/Notifications";
       }
     }
   }
@@ -334,7 +332,7 @@ const NotificationEditor = ({ props, classes }) => {
         }
         else {
           if (isSummary === false)
-            history.push("/Notifications");
+          location.href = "/react/Notifications";
         }
       }
       else {
@@ -413,7 +411,7 @@ const NotificationEditor = ({ props, classes }) => {
     });
   }
   const handleSendConfirm = () => {
-    history.push("/Notifications");
+    location.href = "/react/Notifications";
   }
   const renderSentDialog = () => {
     if (campaignSent) {
@@ -478,7 +476,7 @@ const NotificationEditor = ({ props, classes }) => {
       }
     }
     else {
-      history.push("/Notifications");
+      location.href = "/react/Notifications";
     }
   }
   const renderConfirmCancel = () => {
@@ -512,8 +510,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const handleBack = () => {
-
-    history.push(`/Notification/edit/${model.ID}`);
+    location.href = `/react/Notification/edit/${model.ID}`;
   };
   const getStepContent = (stepIndex) => {
     switch (stepIndex) {
@@ -525,7 +522,7 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const redirectAfterSave = (notificationId) => {
     if (notificationId > 0) {
-      history.push(`/Notification/send/${notificationId}`);
+      location.href = `/react/Notification/send/${notificationId}`;
     }
   }
   /* #endregion */
