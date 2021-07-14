@@ -269,6 +269,7 @@ const NotificationEditor = ({ props, classes }) => {
     if (isValidNotification()) {
       if (!ShowRedirectButton) {
         model.RedirectButtonText = '';
+        model.RedirectURL = '';
       }
       if (model && model.ID > 0) {
         dispatch(updateNotification(model));
@@ -742,10 +743,8 @@ const NotificationEditor = ({ props, classes }) => {
         catch (e) {
           console.log(e);
         }
-
       });
     }
-
   }
 
   /* #region  HTML Renders */
