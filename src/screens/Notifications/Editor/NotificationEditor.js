@@ -14,7 +14,6 @@ import {
 }
   from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
-import { useHistory } from "react-router-dom";
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
@@ -112,7 +111,6 @@ const NotificationEditor = ({ props, classes }) => {
   const dispatch = useDispatch();
   const { language } = useSelector(state => state.core)
   const { t } = useTranslation();
-  const history = useHistory();
   const { isRTL, windowSize } = useSelector(state => state.core);
   moment.locale(language);
   /* #endregion */
@@ -524,7 +522,7 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const redirectAfterSave = (notificationId) => {
     if (notificationId > 0) {
-      location.href = `/Notification/send/${notificationId}`;
+      location.href = `/react/Notification/send/${notificationId}`;
     }
   }
   /* #endregion */
