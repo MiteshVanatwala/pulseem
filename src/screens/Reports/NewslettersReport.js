@@ -387,6 +387,19 @@ const NewslettersReport=({classes}) => {
     const date=SendDate? moment(SendDate):''
     const showDate=SendDate? date.format('DD/MM/YYYY'):''
     const showTime=SendDate? date.format('LT'):''
+
+    if (windowSize==='xs') {
+      return (
+        <>
+          <Typography noWrap className={classes.nameEllipsis}>
+            {Name}
+          </Typography>
+          <Typography className={classes.grayTextCell}>
+            {`${showDate} ${showTime}`}
+          </Typography>
+        </>
+      )
+    }
     return (
       <Grid container wrap="nowrap" spacing={1} alignItems='center'>
         <Grid item zeroMinWidth>
@@ -425,7 +438,7 @@ const NewslettersReport=({classes}) => {
     return (
       <Box style={{display: 'flex',flexDirection: 'column',flexWrap: 'wrap'}} >
         <Typography component={innerHref? 'a':'p'} href={innerHref} className={clsx(
-          classes.middleText,
+          classes.middleTxt,
           colorTextStyle[type]||'',
           {[classes.iconsFont]: !!icon})}>
           {icon? icon:`${percentage||'0'}%`}
@@ -472,7 +485,7 @@ const NewslettersReport=({classes}) => {
     const innerHref=clickable?href:'';
     return (
       <Box style={{display: 'flex',flexDirection: 'column'}} >
-        <Typography component={innerHref? 'a':'p'} href={clickable?innerHref:''} className={clsx(classes.middleText,colorTextStyle[type]||'')}>
+        <Typography component={innerHref? 'a':'p'} href={clickable?innerHref:''} className={clsx(classes.middleTxt,colorTextStyle[type]||'')}>
           {value&&value.toLocaleString()||'0'}
         </Typography>
         <Typography className={clsx(classes.middleWrapText,colorTextStyle[type])}>
@@ -630,8 +643,13 @@ const NewslettersReport=({classes}) => {
             <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
             </Box>
-            <Box>
-              {renderCellIcons(row)}
+            <Box className={classes.w110}>
+              <Typography 
+                component='a' 
+                href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`}
+                className={classes.linkNoDesign}>
+                {t('mainReport.locGraph.HeaderText')}
+              </Typography>
             </Box>
           </Box>
           <Grid container spacing={2} style={{paddingInlineStart: 10}} >
@@ -667,9 +685,6 @@ const NewslettersReport=({classes}) => {
               <Grid item>
                 {renderIntData(OpenCountUnique,'green',hrefs.OpenCountUnique, false)}
               </Grid>
-              <Grid item>
-                {renderPercetangeData(PercentageOpens,'green',hrefs.PercentageOpens, false)}
-              </Grid>
             </Grid>
             <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
               {t("mainReport.GridButtonColumnResource2.HeaderText")}
@@ -680,9 +695,6 @@ const NewslettersReport=({classes}) => {
               </Grid>
               <Grid item>
                 {renderIntData(ClickCountUnique,'blue',hrefs.ClickCountUnique, false)}
-              </Grid>
-              <Grid item>
-                {renderPercetangeData(PercetangeClicks,'blue',hrefs.PercetangeClicks, false)}
               </Grid>
             </Grid>
           </Box>

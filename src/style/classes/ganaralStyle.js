@@ -231,6 +231,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pulseemIcon: {
     fontFamily: 'pulseemicons'
   },
+  w110: {
+    width: 110
+  },
   maxWidth400: {
     maxWidth: 400
   },
@@ -437,5 +440,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   font24: {
     fontSize: 24
+  },
+  linkNoDesign: {
+    textDecoration: 'none',
+    color: 'black'
   }
 })

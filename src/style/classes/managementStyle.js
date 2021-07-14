@@ -195,8 +195,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     textOverflow: "ellipsis",
     color: '#333'
   },
+  middleTxt: {
+    fontSize: 18,
+    whiteSpace: 'nowrap',
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    color: '#333'
+  },
   middleWrapText: {
-    fontSize: windowSize === 'xs' ? 15 : 18,
+    fontSize: 18,
     overflow: "hidden",
     color: '#333'
   },
