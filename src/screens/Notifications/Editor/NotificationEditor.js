@@ -280,7 +280,7 @@ const NotificationEditor = ({ props, classes }) => {
         dispatch(save(model)).then((response) => {
           if (props.match.params.create || props.match.url.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
-              location.href = "/react/Notifications";
+              window.location.href = "/react/Notifications";
             }
             else {
               setToastMessage(toastMessages.SUCCESS);
@@ -289,7 +289,7 @@ const NotificationEditor = ({ props, classes }) => {
                   redirectAfterSave(response.payload);
                 }
                 else {
-                  location.href = `/react/Notification/edit/${response.payload}`;
+                  window.location.href = `/react/Notification/edit/${response.payload}`;
                 }
                 setToastMessage(null);
               }, 1500);
@@ -307,7 +307,7 @@ const NotificationEditor = ({ props, classes }) => {
         });
       }
       if (isExit) {
-        location.href = "/react/Notifications";
+        window.location.href = "/react/Notifications";
       }
     }
   }
@@ -332,7 +332,7 @@ const NotificationEditor = ({ props, classes }) => {
         }
         else {
           if (isSummary === false)
-          location.href = "/react/Notifications";
+          window.location.href = "/react/Notifications";
         }
       }
       else {
@@ -411,7 +411,7 @@ const NotificationEditor = ({ props, classes }) => {
     });
   }
   const handleSendConfirm = () => {
-    location.href = "/react/Notifications";
+    window.location.href = "/react/Notifications";
   }
   const renderSentDialog = () => {
     if (campaignSent) {
@@ -476,7 +476,7 @@ const NotificationEditor = ({ props, classes }) => {
       }
     }
     else {
-      location.href = "/react/Notifications";
+      window.location.href = "/react/Notifications";
     }
   }
   const renderConfirmCancel = () => {
@@ -510,7 +510,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const handleBack = () => {
-    location.href = `/react/Notification/edit/${model.ID}`
+    window.location.href = `/react/Notification/edit/${model.ID}`
   };
   const getStepContent = (stepIndex) => {
     switch (stepIndex) {
@@ -522,7 +522,7 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const redirectAfterSave = (notificationId) => {
     if (notificationId > 0) {
-      location.href = `/react/Notification/send/${notificationId}`;
+      window.location.href = `/react/Notification/send/${notificationId}`;
     }
   }
   /* #endregion */
