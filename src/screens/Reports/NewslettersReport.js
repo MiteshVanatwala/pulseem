@@ -419,11 +419,12 @@ const NewslettersReport=({classes}) => {
     blue: classes.textColorBlue,
     green: classes.sendIconText
   }
-  const renderPercetangeData=(percentage=0,type,data={}) => {
-    const {title='',href='',icon=''}=data
+  const renderPercetangeData=(percentage=0,type,data={},clickable=true) => {
+    const {title='',href='',icon=''}=data;
+    const innerHref=clickable?href:'';
     return (
       <Box style={{display: 'flex',flexDirection: 'column',flexWrap: 'wrap'}} >
-        <Typography component={href? 'a':'p'} href={href} className={clsx(
+        <Typography component={innerHref? 'a':'p'} href={innerHref} className={clsx(
           classes.middleText,
           colorTextStyle[type]||'',
           {[classes.iconsFont]: !!icon})}>
@@ -466,11 +467,12 @@ const NewslettersReport=({classes}) => {
     );
   }
 
-  const renderIntData=(value,type,data={}) => {
+  const renderIntData=(value,type,data={},clickable=true) => {
     const {title=t("notifications.tblBody.total"),href=''}=data
+    const innerHref=clickable?href:'';
     return (
       <Box style={{display: 'flex',flexDirection: 'column'}} >
-        <Typography component={href? 'a':'p'} href={href} className={clsx(classes.middleText,colorTextStyle[type]||'')}>
+        <Typography component={innerHref? 'a':'p'} href={clickable?innerHref:''} className={clsx(classes.middleText,colorTextStyle[type]||'')}>
           {value&&value.toLocaleString()||'0'}
         </Typography>
         <Typography className={clsx(classes.middleWrapText,colorTextStyle[type])}>
@@ -632,37 +634,78 @@ const NewslettersReport=({classes}) => {
               {renderCellIcons(row)}
             </Box>
           </Box>
-          <Box>
-            <Typography className={classes.mobileReportHead}>
-              {t("mainReport.GridButtonColumnResource1.HeaderText")}
-            </Typography>
-            <Grid container spacing={2} style={{paddingInlineStart: 10}} >
-              <Grid item>
-                {renderIntData(OpenCount,'green',hrefs.OpenCount)}
-              </Grid>
-              <Grid item>
-                {renderIntData(OpenCountUnique,'green',hrefs.OpenCountUnique)}
-              </Grid>
-              <Grid item>
-                {renderPercetangeData(PercentageOpens,'green',hrefs.PercentageOpens)}
+          <Grid container spacing={2} style={{paddingInlineStart: 10}} >
+            <Grid item>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("mainReport.locTotalSendPlan.HeaderText")}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {renderIntData(TotalSendPlan,'')}
+                </Grid>
               </Grid>
             </Grid>
-            <Typography className={classes.mobileReportHead}>
+            <Grid item>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("common.Sent")}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {renderIntData(TotalSendPlan,'')}
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Box className={classes.ml10}>
+            <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+              {t("mainReport.GridButtonColumnResource1.HeaderText")}
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item>
+                {renderIntData(OpenCount,'green',hrefs.OpenCount, false)}
+              </Grid>
+              <Grid item>
+                {renderIntData(OpenCountUnique,'green',hrefs.OpenCountUnique, false)}
+              </Grid>
+              <Grid item>
+                {renderPercetangeData(PercentageOpens,'green',hrefs.PercentageOpens, false)}
+              </Grid>
+            </Grid>
+            <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
               {t("mainReport.GridButtonColumnResource2.HeaderText")}
             </Typography>
-            <Grid container spacing={2} style={{paddingInlineStart: 10}}>
+            <Grid container spacing={2}>
               <Grid item>
-                {renderIntData(ClickCount,'blue',hrefs.ClickCount)}
+                {renderIntData(ClickCount,'blue',hrefs.ClickCount, false)}
               </Grid>
               <Grid item>
-                {renderIntData(ClickCountUnique,'blue',hrefs.ClickCountUnique)}
+                {renderIntData(ClickCountUnique,'blue',hrefs.ClickCountUnique, false)}
               </Grid>
               <Grid item>
-                {renderPercetangeData(PercetangeClicks,'blue',hrefs.PercetangeClicks)}
+                {renderPercetangeData(PercetangeClicks,'blue',hrefs.PercetangeClicks, false)}
               </Grid>
             </Grid>
           </Box>
-
+          <Grid container spacing={2} style={{paddingInlineStart: 10}} >
+            <Grid item>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("mainReport.GridButtonColumnResource4.HeaderText")}
+              </Typography>
+              {renderIntData(SendError,'red',hrefs.SendError, false)}
+            </Grid>
+            <Grid item>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("mainReport.removals")}
+              </Typography>
+              {renderIntData(RemovedClients,'red',hrefs.RemovedClients, false)}
+            </Grid>
+            <Grid item>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("mainReport.GridButtonColumnResource3.HeaderText")}
+              </Typography>
+                {renderIntData(NotOpened,'red',hrefs.NotOpened, false)}
+            </Grid>
+          </Grid>
         </TableCell>
       </TableRow>
     )

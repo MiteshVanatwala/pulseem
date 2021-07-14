@@ -276,6 +276,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt5: {
     marginTop: 5
   },
+  ml0: {
+    marginInlineStart: 0
+  },
   ml5: {
     marginInlineStart: 5
   },
