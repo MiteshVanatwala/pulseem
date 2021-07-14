@@ -222,7 +222,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
     setOpen(!open)
   }
   const {t}=useTranslation();
-  const routes=getRoutes(t, isClal, accountFeatures)
+  const routes=getRoutes(t, isClal, accountFeatures, windowSize)
   const settings=getSettingsItem(t,classes.appBarSettingIcon)
 
   const navigate=({uri}) => {
