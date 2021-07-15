@@ -34,6 +34,7 @@ const renderRoutes=(classes,history) => {
       notification: notificationID,
       id: id
     }
+    
     window.location.href=`https://www.pulseem.co.il/${url}${addParam[param]||''}`
     return <></>
   }
