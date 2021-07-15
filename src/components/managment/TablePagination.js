@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {Typography,Grid,TextField,IconButton} from '@material-ui/core'
+import {Typography,Grid,TextField,IconButton, FormControl,Select,InputLabel} from '@material-ui/core'
 import {PageArrowIcon} from '../../assets/images/managment/index'
 
 import {useTranslation} from 'react-i18next'
@@ -41,6 +41,24 @@ export const TablePagination=({
   const renderRowNumbers=() => {
     return (
       <Grid item className={classes.tablePadingtonGridItem}>
+        {/* <Typography>
+          {t('common.rowNumber')}
+        </Typography>
+        
+        <Select
+          native
+          value={rowsPerPage}
+          className={classes.tablePadingtonSelect}
+          onChange={handleRowsPerPageChange}
+        >
+          {rowsPerPageOptions.map(option => (
+            <option
+              key={option.toString()}
+              value={option}>
+              {option}
+            </option>
+          ))}
+        </Select> */}
         <Typography>
           {t('common.rowNumber')}
         </Typography>
