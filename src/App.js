@@ -12,7 +12,8 @@ import {StylesProvider,jssPreset,MuiThemeProvider, useTheme} from '@material-ui/
 import i18n from './i18n'
 import {BrowserRouter,useParams,Route} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
-import {setWindowSize,setCoreData,setLanguage, setRowsPerPage} from './redux/reducers/coreSlice'
+import {setWindowSize,setCoreData,setLanguage, setRowsPerPage,setIsClal,setAccountFeatures} from './redux/reducers/coreSlice'
+import {isClalAccount, getAccountFeatures} from './redux/reducers/commonSlice';
 import {setUsername} from './redux/reducers/userSlice'
 import {getTheme} from './style/theme'
 import {useClasses} from './style/classes/index'
@@ -332,6 +333,13 @@ const App=({screenSize}) => {
   dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
+    const initFeatures = async () => {
+      const response = await dispatch(isClalAccount());
+      dispatch(setIsClal(response.payload));
+      const features = await dispatch(getAccountFeatures());
+      dispatch(setAccountFeatures(features.payload));
+    }
+
     const updateToken=() => {
       const culture=getCookie('Culture')
       const token=getCookie('jtoken')
@@ -353,11 +361,12 @@ const App=({screenSize}) => {
       let lang=culture||locality; //||'he'
       setCookie('Culture',lang)
       lang=lang.split('-')[0]
-      console.log('lang',lang)
+      console.debug('lang',lang)
       i18n.changeLanguage(lang)
       dispatch(setRowsPerPage(rpp || 6))
       dispatch(setLanguage(lang))
       dispatch(setUsername(unique_name))
+
     }
 
     // const setWindowWidth=() => {
@@ -384,6 +393,7 @@ const App=({screenSize}) => {
         cookieFunction()
     })
     updateToken()
+    initFeatures()
   },[dispatch])
 
   const classes=useClasses(windowSize,isRTL)()

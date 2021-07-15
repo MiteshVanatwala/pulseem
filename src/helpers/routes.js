@@ -25,13 +25,13 @@ export const getSettingsItem=(t,style='') => ({
 })
 
 
-export const getRoutes=(t=() => null, isClalAccount = false, features = null, windowSize) => [
+export const getRoutes=(t=() => null, isClalAccount = false, features = null, windowSize = null) => [
   {
     key: 'dashboard',
     title: t('master.RadMenuItemResource1.Text'),
     iconUnicode: '\uF064',
     href: '/Pulseem/homepage.aspx?fromreact=true',
-    isShow: windowSize === "xs" ? true : false,
+    isShow: windowSize && windowSize === "xs" ? true : false,
     icon: <img
       alt='Dashboard'
       src={DashboardIcon} />

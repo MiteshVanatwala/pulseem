@@ -12,6 +12,8 @@ const themeLanguages={
 }
 
 export const getTheme=(language) => {
+  console.debug("getTheme", themeLanguages);
+  console.debug("getTheme", language);
   const {direction = 'rtl',translation = heIL}=themeLanguages[language] || themeLanguages['he']
 
   return createMuiTheme({

@@ -21,7 +21,6 @@ import {openInNewTab} from '../../helpers/functions'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {actionURL} from '../../config/index'
 import i18n from '../../i18n'
-import {isClalAccount, getAccountFeatures} from '../../redux/reducers/commonSlice';
 const AppBarItem=({
   item,
   onMainClick=() => {},
@@ -186,14 +185,11 @@ const LanguageSelector=({windowSize,classes}) => {
 
 
 export const TopAppBar=({classes,currentPage=''}) => {
-  const {companyName,windowSize,isRTL,imageURL}=useSelector(state => state.core)
+  const {companyName,windowSize,isRTL,imageURL,isClal,accountFeatures}=useSelector(state => state.core)
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
-  const [isClal,setIsClal]=useState(false)
-  const [accountFeatures, setAccountFeatures]= useState(null);
   const topNavRef = useRef(null)
-  //const history=useCtrlHistory()
   const dispatch=useDispatch();
 
   const handleScriptDialog=() => {
@@ -202,16 +198,8 @@ export const TopAppBar=({classes,currentPage=''}) => {
     dispatch(setScriptDialog(scriptDialog));
   }
 
-  const initFeatures = async () => {
-    const response = await dispatch(isClalAccount());
-    setIsClal(response.payload);
-    const features = await dispatch(getAccountFeatures());
-    setAccountFeatures(features.payload);
-  }
-
   useEffect(() => {
     handleScriptDialog();
-    initFeatures();   
     const resizeWindow=() => {
       setWindowWidth(window.innerWidth)
     }
@@ -226,7 +214,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
     setOpen(!open)
   }
   const {t}=useTranslation();
-  const routes=getRoutes(t, isClal, accountFeatures, windowSize)
+  const routes=getRoutes(t,isClal,accountFeatures, windowSize)
   const settings=getSettingsItem(t,classes.appBarSettingIcon)
 
   const navigate=({uri}) => {
