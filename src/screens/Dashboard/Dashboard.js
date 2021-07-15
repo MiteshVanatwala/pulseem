@@ -540,12 +540,6 @@ const DashboardScreen = ({ classes }) => {
       sms: lastCampaignReport.find(report => report.ReportSection === 1) || null
     }
 
-    const labels = [
-      `${t('common.Opens')}`,
-      `${t('common.Clicks')}`,
-      `${t('common.Errors')}`,
-      `${t('common.Removed')}`
-    ];
     const { newsletter = null, sms = null } = reports || {};
     const smsLastUpdated = sms && sms.UpdatedDate ? moment(sms.UpdatedDate).format(dateTimeFormat) : '';
     const newsletterLastUpdated = newsletter && newsletter.UpdatedDate ? moment(newsletter.UpdatedDate).format(dateTimeFormat) : '';
@@ -570,7 +564,15 @@ const DashboardScreen = ({ classes }) => {
       );
     }
 
-    const renderTabPanel = (innerData, tabIndex) => {
+    const renderNewsletterTab = () => {
+      const innerData = reports.newsletter;
+      const labels = [
+        `${t('common.Opens')}`,
+        `${t('common.Clicks')}`,
+        `${t('common.Errors')}`,
+        `${t('common.Removed')}`
+      ];
+
       const reportData = {
         data: {
           labels: labels,
@@ -597,7 +599,80 @@ const DashboardScreen = ({ classes }) => {
       const quality = reportData.quality * 10;
       const date = reportData.sendDate ? moment(reportData.sendDate).format(dateFormat) : '';
       return (
-        <TabPanel value={tabValue} index={tabIndex} key={`tabPanel${tabIndex}`}>
+        <TabPanel value={tabValue} index={0} key={`newsletterTabPanel`}>
+          <Grid container justify={'space-between'}>
+            <Grid item lg={4}>
+              <Grid container direction='column'>
+                <Grid item>
+                  <Typography className={classes.f22}>{reportData.campaignName}</Typography>
+                  <Box className={classes.p0}>
+                    <img src={GroupsIcon} width={20} />
+                    <Box className={clsx(classes.colorGray, classes.dInline, classes.ml5)}>
+                      <Typography className={clsx(classes.ml5, classes.dInline)}>{reportData.total.toLocaleString()}</Typography>
+                      <Typography className={clsx(classes.ml5, classes.dInline)}>{date}</Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                <Grid item>
+                  <Box className={classes.doughnutGreenBox}>
+                    <Avatar className={classes.bgLightGreen}>
+                      <Typography className={classes.chartLabelGreen}>{quality}%</Typography>
+                    </Avatar>
+                    <Doughnut data={{ datasets: [{ data: [quality, 100 - quality] }] }} options={doughnutOptions} />
+                  </Box>
+                </Grid>
+                <Grid item>
+                  <Typography className={classes.f20}>{t('dashboard.campaignQuality')}</Typography>
+                </Grid>
+
+              </Grid>
+            </Grid>
+            <Grid item lg={8}>
+              <Box className={classes.barChart}>
+                <Bar data={reportData.data} options={barOptions} />
+              </Box>
+            </Grid>
+          </Grid>
+        </TabPanel>
+      );
+    }
+
+    const renderSmsTab = () => {
+      const innerData = reports.sms;
+      const labels = [
+        `${t('common.Sent')}`,
+        `${t('common.Clicks')}`,
+        `${t('common.Errors')}`,
+        `${t('common.DLR')}`
+      ];
+
+      const reportData = {
+        data: {
+          labels: labels,
+          datasets: [{
+            data: [
+              innerData && innerData.Sent || 0,
+              innerData && innerData.Clicks || 0,
+              innerData && innerData.Errors || 0,
+              innerData && innerData.DLR || 0
+            ],
+            backgroundColor:
+              '#0371AD',
+            barThickness: 10,
+            borderRadius: 2,
+            borderSkipped: 'left'
+          }]
+        },
+        campaignName: innerData && innerData.CampaignName || '',
+        sendDate: innerData && innerData.SendDate || '',
+        total: innerData && innerData.TotalSendPlan || 0,
+        quality: innerData && innerData.Quality || 0
+      }
+
+      const quality = reportData.quality * 10;
+      const date = reportData.sendDate ? moment(reportData.sendDate).format(dateFormat) : '';
+      return (
+        <TabPanel value={tabValue} index={1} key={`smsTabPanel`}>
           <Grid container justify={'space-between'}>
             <Grid item lg={4}>
               <Grid container direction='column'>
@@ -669,9 +744,8 @@ const DashboardScreen = ({ classes }) => {
             </Tabs>
           </Grid>
           <Grid item xs={12} className={classes.lastReportsTabPanels}>
-            {Object.keys(reports).map((name, ind) => (
-              renderTabPanel(reports[name], ind)
-            ))}
+            {renderNewsletterTab()}
+            {renderSmsTab()}
           </Grid>
         </Grid>
       );
