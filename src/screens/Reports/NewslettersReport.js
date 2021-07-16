@@ -22,7 +22,7 @@ import {apiURL} from '../../config/index'
 import {CSVLink} from 'react-csv'
 import {getNewsletterReports,downloadNewsletterReport} from '../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../redux/reducers/coreSlice';
-import { setCookie } from '../../helpers/cookies';
+import { getCookie, setCookie } from '../../helpers/cookies';
 
 const NewslettersReport=({classes}) => {
   const {language,windowSize,isRTL,rowsPerPage}=useSelector(state => state.core)
@@ -105,7 +105,14 @@ const NewslettersReport=({classes}) => {
     dispatch(getNewsletterReports(isDemoSend));
   }
 
-  useEffect(getData,[dispatch,isDemoSend]);
+  useEffect(()=> {
+    getData();
+
+    const lastPage = getCookie('newsletterReportlastPage') || 1;
+    setPage(parseInt(lastPage))
+    setCookie('newsletterReportlastPage', '', { maxAge: -1 })
+
+  },[dispatch,isDemoSend]);
 
 
   const renderHeader=() => {
@@ -586,6 +593,9 @@ const NewslettersReport=({classes}) => {
             </div>}
             lable={hrefs.RemoveReasons.title}
             href={hrefs.RemoveReasons.href}
+            onClick={()=> {
+              setCookie('newsletterReportlastPage', page)
+            }}
           />
         </TableCell>
         <TableCell
@@ -696,6 +706,10 @@ const NewslettersReport=({classes}) => {
       dispatch(setRowsPerPage(val))
       setCookie('rpp', val, { maxAge: 2147483647 })
     }
+    const handlePageChange=(val) => {
+      setPage(val);
+    }
+
     return (
       <TablePagination
         classes={classes}
@@ -704,7 +718,7 @@ const NewslettersReport=({classes}) => {
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
-        onPageChange={setPage}
+        onPageChange={handlePageChange}
       />
     )
   }
