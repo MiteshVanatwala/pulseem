@@ -137,7 +137,7 @@ const LanguageSelector=({windowSize,classes}) => {
   ]
 
   const item={
-    title: languages && languages.find(lang => lang.value===language).title || '',
+    title: languages && languages.find(lang => lang.value.toLocaleLowerCase()===language.toLocaleLowerCase()).title || '',
     options: languages
   }
 
