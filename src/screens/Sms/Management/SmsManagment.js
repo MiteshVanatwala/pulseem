@@ -280,7 +280,6 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    console.log(row);
     const {Status,Groups,AutomationID,Id,AutomationTriggerInActive}=row
 
     const iconsMap=[
