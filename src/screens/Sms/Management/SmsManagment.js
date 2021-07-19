@@ -318,7 +318,6 @@ const SmsManagnentScreen=({classes}) => {
         icon: EditIcon,
         disable: Status!==1 || AutomationID!==0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        remove: windowSize==='xs',
         href: `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&fromreact=true`,
         rootClass: classes.paddingIcon
       },
