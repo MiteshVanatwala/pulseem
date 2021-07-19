@@ -610,7 +610,7 @@ const SmsManagnentScreen=({classes}) => {
       optinCode: verificationCode,
       phoneNumber: number
     }));
-    if(result.error) {
+    if(result.error || result.payload==='NotMatch') {
       handleVerificationCodeError(true);
     } else {
       setDialogType({
