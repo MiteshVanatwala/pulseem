@@ -92,13 +92,35 @@ export const verifyCode=createAsyncThunk(
     }
   })
 
+  export const getSmsReport=createAsyncThunk(
+    'reports/SmsReport',async (demo=false,thunkAPI) => {
+      try {
+        const response=await instence.get(`reports/SmsReport?includeTestCampaign=${demo}`);
+        return JSON.parse(response.data)
+      } catch(error) {
+        return thunkAPI.rejectWithValue({error: error.message});
+      }
+    })
+
+  export const exportSmsReport=createAsyncThunk(
+    'report/ExportSmsDirectReport',async (demo=false,thunkAPI) => {
+      try {
+        const response=await instence.post(`report/ExportSmsReport/${demo}`);
+        return JSON.parse(response.data)
+      } catch(error) {
+        return thunkAPI.rejectWithValue({error: error.message});
+      }
+    })
+
 export const smsSlice=createSlice({
   name: 'newsletter',
   initialState: {
     smsData: [],
     smsDeletedData: [],
     smsDataError: '',
-    authorizationData: []
+    authorizationData: [],
+    smsReport: [],
+
   },
   reducers: {},
   extraReducers: builder => {
@@ -111,6 +133,9 @@ export const smsSlice=createSlice({
     })
     builder.addCase(getSmsAuthorizationData.fulfilled,(state,{payload}) => {
       state.authorizationData=payload
+    })
+    builder.addCase(getSmsReport.fulfilled,(state,{payload}) => {
+      state.smsReport=payload
     })
     builder.addCase(duplicteSms.fulfilled,() => console.log('api duplicteSms success'))
     builder.addCase(deleteSms.fulfilled,() => console.log('api deleteSms success'))

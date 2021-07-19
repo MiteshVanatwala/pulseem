@@ -422,5 +422,7 @@
   "removals": "Removals",
   "removedPercents": "Percentage",
   "reasons": "Reasons",
-  "compareCampaigns": "Compare Campaigns"
+  "compareCampaigns": "Compare Campaigns",
+  "billingCredits": "Billing Credits",
+  "postCredits": "Credits for the Post"
 }

@@ -149,7 +149,7 @@ export const getRoutes=(t=() => null) => [
     options: [
       {title: t('master.clalCollage'),href: '/Pulseem/ClalReport.aspx?fromreact=true'},
       {title: t('master.RadMenuItemResource13.Text'),href: '/react/Reports/NewsletterReports'},
-      {title: t('master.RadMenuItemResource24.Text'),href: '/Pulseem/SMSMainReport.aspx?fromreact=true'},
+      {title: t('master.RadMenuItemResource24.Text'),href: '/react/Reports/SMSMainReport'},
       {title: t('master.MmsMainReport.Text'),href: '/Pulseem/MmsMainReport.aspx?fromreact=true'},
       {title: t('master.AbTestsReport.Text'),href: '/Pulseem/AbTestsReport.aspx?fromreact=true'},
       {title: t('master.RadMenuItemResource15.Text'),href: '/Pulseem/AccountReport.aspx?fromreact=true'},
