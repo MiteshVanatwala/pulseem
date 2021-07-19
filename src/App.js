@@ -359,12 +359,11 @@ const App=({screenSize}) => {
 
       dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName}))
       let lang=culture||locality; //||'he'
-      setCookie('Culture',lang)
+      setCookie('Culture',lang.toLowerCase())
       lang=lang.split('-')[0]
-      console.debug('lang',lang)
-      i18n.changeLanguage(lang)
+      i18n.changeLanguage(lang.toLowerCase())
       dispatch(setRowsPerPage(rpp || 6))
-      dispatch(setLanguage(lang))
+      dispatch(setLanguage(lang.toLowerCase()))
       dispatch(setUsername(unique_name))
 
     }
