@@ -7,15 +7,16 @@ import { useTranslation } from 'react-i18next'
 import { postImage, deleteGalleryFile } from '../../redux/reducers/commonSlice';
 
 export const GalleryImages = ({
+    classes,
     isRTL,
     folder,
-    classes,
+    onToast = () => null,
     scrollIndex,
     selectedFile,
     selectedFolder,
-    onSelectFile,
-    onReInitGallery,
-    onToast
+    onSelectFile = () => null,
+    onReInitGallery = () => null,
+    onReachToLimit = () => null,
 }) => {
 
     const imagesPerScroll = 100;
@@ -24,6 +25,8 @@ export const GalleryImages = ({
     const { t } = useTranslation();
     const [fileToUpload, setFileToUpload] = useState(null);
     const [isFilePicked, setIsFilePicked] = useState(false);
+    const [galleryReady, setGalleryReady] = useState(false);
+    const [isReInit, setReinit] = useState(false);
     const hiddenFileInput = React.useRef(null);
 
 
@@ -55,6 +58,7 @@ export const GalleryImages = ({
                     FolderName: selectedFolder
                 }
                 await dispatch(postImage(fileModel));
+                setReinit(true);
                 onReInitGallery();
             });
         }
@@ -72,6 +76,7 @@ export const GalleryImages = ({
         event.stopPropagation();
         fileModel.FolderName = fileModel.FolderName.replace('main\\', '');
         await dispatch(deleteGalleryFile(fileModel));
+        setReinit(true);
         onReInitGallery();
     }
     const handleUploadClick = () => {
@@ -79,55 +84,77 @@ export const GalleryImages = ({
     };
     // END Gallery Functions
 
-    if (folder && folder.files) {
-        const currentFeed = [...folder.files].slice(scrollIndex * imagesPerScroll, (scrollIndex + 1) * imagesPerScroll);
-        if(currentFeed && currentFeed.length > 0)
-            setImages(...images, currentFeed);
-
-        return (images && images.length > 0 &&
-            <Grid container
-                direction="row"
-                alignItems="flex-start"
-                style={{ width: '100%', padding: '0 25px', borderRight: isRTL ? '1px solid #ccc' : '', borderLeft: isRTL ? '' : '1px solid #ccc', height: '100%' }}>
-                <Grid item xs={12}>{selectedFolder === "main" && isRTL ? "ראשי" : selectedFolder}</Grid>
-                <Grid item lg={4} md={6} xs={12}>
-                    <Button
-                        className={"select-image"}
-                        onClick={handleUploadClick}
-                        style={{ padding: "6px 8px", backgroundColor: 'transparent !important' }}>
-                        <input type="file" name="file"
-                            ref={hiddenFileInput}
-                            onChange={changeHandler}
-                            hidden
-                            accept=".png,.jpg,.jpeg" />
-                        <Box className="img-container drag-here">
-                            <AiOutlineCloudUpload style={{ fontSize: 30 }} />
-                            {t('common.chooseImage')}
-                        </Box>
-                    </Button>
-                </Grid>
-                {
-                    images.map((f, index) => {
-                        const filePath = `${f.Path}/${f.FolderName === "main" ? "" : f.FolderName.replace('main\\', '')}/${f.FileName}`;
-                        const imgKey = `${f.FolderName.replace('\\', '')}_${index}`;
-                        return (
-                            <Image
-                                classes={classes}
-                                onSelectFile={onSelectFile}
-                                onDelete={deleteImage}
-                                imgSrc={filePath}
-                                imgKey={imgKey}
-                                fileIndex={index}
-                                selectedFile={selectedFile}
-                                imgFile={f}
-                                key={`g_${index}`}
-                            />
-
-                        )
-                    })
+    useEffect(() => {
+        if (folder && folder.files) {
+            if (folder.files.length === 0) {
+                setImages(null);
+            }
+            else {
+                const currentFeed = [...folder.files].slice(scrollIndex * imagesPerScroll, (scrollIndex + 1) * imagesPerScroll);
+                if (folder.files.length < 100) {
+                    setImages(folder.files)
                 }
-            </Grid >
-        );
+                else {
+                    if (scrollIndex > 0) {
+                        if (folder.files.length > images.length) {
+                            setImages([...images, ...currentFeed]);
+                        }
+                        else {
+                            onReachToLimit();
+                        }
+                    }
+                    else {
+                        setImages(currentFeed);
+                    }
+                }
+            }
+            setGalleryReady(true);
+        }
+    }, [scrollIndex, selectedFolder, folder]);
+
+    if (galleryReady) {
+        return (<Grid container
+            direction="row"
+            alignItems="flex-start"
+            style={{ width: '100%', padding: '0 25px', borderRight: isRTL ? '1px solid #ccc' : '', borderLeft: isRTL ? '' : '1px solid #ccc', height: '100%' }}>
+            <Grid item xs={12}>{selectedFolder === "main" && isRTL ? "ראשי" : selectedFolder}</Grid>
+            <Grid item lg={4} md={6} xs={12}>
+                <Button
+                    className={"select-image"}
+                    onClick={handleUploadClick}
+                    style={{ padding: "6px 8px", backgroundColor: 'transparent !important' }}>
+                    <input type="file" name="file"
+                        ref={hiddenFileInput}
+                        onChange={changeHandler}
+                        hidden
+                        accept=".png,.jpg,.jpeg" />
+                    <Box className="img-container drag-here">
+                        <AiOutlineCloudUpload style={{ fontSize: 30 }} />
+                        {t('common.chooseImage')}
+                    </Box>
+                </Button>
+            </Grid>
+            {
+                images && images.map((f, index) => {
+                    const filePath = `${f.Path}/${f.FolderName === "main" ? "" : f.FolderName.replace('main\\', '')}/${f.FileName}`;
+                    const imgKey = `${f.FolderName.replace('\\', '')}_${index}`;
+                    return (
+                        <Image
+                            classes={classes}
+                            onSelectFile={onSelectFile}
+                            onDelete={deleteImage}
+                            imgSrc={filePath}
+                            imgKey={imgKey}
+                            fileIndex={index}
+                            selectedFile={selectedFile}
+                            imgFile={f}
+                            key={`g_${index}`}
+                        />
+
+                    )
+                })
+            }
+        </Grid>)
     }
     return <></>
 }

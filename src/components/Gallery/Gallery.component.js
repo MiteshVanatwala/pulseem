@@ -167,6 +167,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         setSelectedNode(nodeIds);
         const i = nodeIds.replace('k_', '');
         setSelectedFolder(folders[i].FolderName);
+        setScrollIndex(0);
     }
     const handleSelectFile = (fileUrl, fileIndex) => () => {
         setSelectedFile(fileIndex);
@@ -186,6 +187,12 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         const bottom = node.scrollHeight - node.scrollTop === node.clientHeight;
         if (bottom) {
             setScrollIndex(scrollIndex + 1);
+        }
+    }
+
+    const removeScrollHanlder = () => {
+        if (referenceNode) {
+            referenceNode.removeEventListener('scroll', handleScroll);
         }
     }
 
@@ -334,13 +341,16 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                 <Grid item md={10} xs={12} className="scroll"
                     onScroll={handleScroll} ref={paneDidMount}>
                     {folders && <GalleryImages
+                        classes={classes}
                         folder={folders.find((f) => { return f.FolderName === selectedFolder })}
-                        onReInitGallery={() => initGallery()}
+                        onReInitGallery={initGallery}
                         selectedFolder={selectedFolder}
                         scrollIndex={scrollIndex}
                         isRTL={isRTL}
+                        selectedFile={selectedFile}
                         onSelectFile={handleSelectFile}
-                        onToast={setToastMessage} />
+                        onToast={setToastMessage}
+                        onReachToLimit={removeScrollHanlder} />
                     }
                 </Grid>
             </Grid>

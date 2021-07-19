@@ -362,7 +362,6 @@ const App=({screenSize}) => {
       let lang=culture||locality; //||'he'
       setCookie('Culture',lang)
       lang=lang.split('-')[0]
-      console.debug('lang',lang)
       i18n.changeLanguage(lang)
       dispatch(setRowsPerPage(rpp || 6))
       dispatch(setLanguage(lang))
