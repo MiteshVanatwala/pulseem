@@ -729,7 +729,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    width: '100%',
     maxWidth: ellipsisMaxWidth[windowSize]
   },
   p10: {
@@ -1288,7 +1287,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tooltipBlack: {
     backgroundColor: 'black',
     maxWidth: 300,
-    fontSize: '14px!important',
+    fontSize: '16px!important',
     textAlign: 'center',
+  },
+  tooltipPlacement: {
+    '&.MuiTooltip-tooltipPlacementTop': {
+      margin: '10px 0px!important'
+    }
+  },
+  tooltipArrow: {
+    color: 'black',
+    left: '2px!important'
   }
 })
