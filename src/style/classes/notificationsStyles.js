@@ -170,9 +170,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         alignItems: 'center',
         alignContent: 'center'
     },
-    flexStart: {
-        justifyContent: 'flex-start'
-    },
     dashed: {
         border: '1px dashed #64a1bd'
     },
@@ -343,7 +340,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         width: previewWidth[windowSize]
     },
     bubbleContainer: {
-        position: 'relative',
+        // position: 'relative',
         display: 'flex',
         justifyContent: 'center',
         maxHeight: bubble.container.maxHeight[windowSize],

@@ -30,7 +30,7 @@ export const getRoutes=(t=() => null) => [
     key: 'dashboard',
     title: t('master.RadMenuItemResource1.Text'),
     iconUnicode: '\uF064',
-    href: '/Pulseem/homepage.aspx?fromreact=true',
+    href: '/react',
     icon: <img
       alt='Dashboard'
       src={DashboardIcon} />
