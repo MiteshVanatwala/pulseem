@@ -231,6 +231,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pulseemIcon: {
     fontFamily: 'pulseemicons'
   },
+  w110: {
+    width: 110
+  },
   maxWidth400: {
     maxWidth: 400
   },
@@ -275,6 +278,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mt5: {
     marginTop: 5
+  },
+  ml0: {
+    marginInlineStart: 0
   },
   ml5: {
     marginInlineStart: 5
@@ -434,5 +440,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   font24: {
     fontSize: 24
+  },
+  linkNoDesign: {
+    textDecoration: 'none',
+    color: 'black'
   }
 })
