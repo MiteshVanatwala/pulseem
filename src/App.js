@@ -339,7 +339,7 @@ const App=({screenSize}) => {
     const updateToken=() => {
       const culture=getCookie('Culture')
       const token=getCookie('jtoken')
-      const rpp=getCookie('rpp')
+      const rpp=getCookie('rpp') || 6
       if(!token) return
       const jwt=jwt_decode(token)
       const {
