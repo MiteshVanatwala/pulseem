@@ -1294,10 +1294,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   previewID: {
     fontSize: windowSize==='xs'?20:25,
     fontWeight: 'bold',
-    [theme.breakpoints.only('xs')]: {
-      position: 'absolute',
+    position: 'absolute',
       top: 20,
       left: 75
-    }
   }
 })
