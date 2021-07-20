@@ -1290,5 +1290,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 300,
     fontSize: '14px!important',
     textAlign: 'center',
+  },
+  previewID: {
+    fontSize: windowSize==='xs'?20:25,
+    fontWeight: 'bold',
+    [theme.breakpoints.only('xs')]: {
+      position: 'absolute',
+      top: 20,
+      left: 75
+    }
   }
 })
