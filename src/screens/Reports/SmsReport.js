@@ -51,56 +51,35 @@ const SmsReport=({classes}) => {
   moment.locale(language)
 
   const getHrefs=(id) => ({
-    TotalSendCompleted: {
-      href: `/Pulseem/ClientSearchResult.aspx?SentToCampaignID=${id}&fromreact=true`
-    },
-    OpenCount: {
-      title: t('mainReport.GridButtonColumnResource1.HeaderText'),
-      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
-    },
-    OpenCountUnique: {
-      title: t('common.Unique'),
-      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
-    },
-    ClickCount: {
-      title: t('common.Clicks'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+    TotalSendTo: {
+      href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}`
     },
     ClickCountUnique: {
       title: t('common.Unique'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
     },
-    RemovedClients: {
-      title: t('mainReport.removed'),
-      href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`
-    },
-    SendError: {
-      title: t('mainReport.GridButtonColumnResource4.HeaderText'),
-      href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`
-    },
-    PercetangeRemovedClients: {
-      title: t('mainReport.removedPercents'),
-      href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`
-    },
-    PercentageOpens: {
-      title: t('mainReport.locUniqueOpensPercents.HeaderText'),
-      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
+    ClickCount: {
+      title: t('common.Clicks'),
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
     },
     PercetangeClicks: {
       title: t('mainReport.locUniqueClicksPercents.HeaderText'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
     },
-    NotOpened: {
-      title: t("mainReport.GridButtonColumnResource3.HeaderText"),
-      href: `/Pulseem/ClientSearchResult.aspx?NotOpenedCampaignID=${id}&fromreact=true`
+    Failed: {
+      title: t("common.failedStatus"),
+      href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}`
     },
-    RemoveReasons: {
-      title: t("mainReport.locRemovedReason.HeaderText"),
-      href: `/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`,
-      icon: '\uE15D'
+    Removed: {
+      title: t('mainReport.removed'),
+      href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}`
+    },
+    DLR: {
+      title: t('common.DLR'),
+      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}`
     }
   })
-
+  
   const getData=() => {
     dispatch(getSmsReport(isDemoSend));
   }
@@ -234,17 +213,23 @@ const SmsReport=({classes}) => {
           :null}
 
         <Grid item style={{display: 'flex',flexDirection: 'row',alignItems: 'center'}}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isDemoSend}
-                onChange={()=>setIsDemoSend(!isDemoSend)}
-                name="checkedB"
-                color="primary"
-              />
-            }
-            label={t('mainReport.locShowTestCampaigns.Text')}
+          <Switch
+            checked={isDemoSend}
+            onColor="#0371ad"
+            //onHandleColor="#e6f6ff"
+            handleDiameter={20}
+            uncheckedIcon={false}
+            checkedIcon={false}
+            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+            height={15}
+            width={40}
+            className={clsx({[classes.rtlSwitch]: isRTL})}
+            onChange={() => setIsDemoSend(!isDemoSend)}
           />
+          <Typography style={{marginInlineStart: 8}}>
+            {t('mainReport.locShowTestCampaigns.Text')}
+          </Typography>
         </Grid>
         <Grid item>
           <Button
@@ -328,9 +313,11 @@ const SmsReport=({classes}) => {
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("common.Clicks")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' />
 
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("common.failedStatus")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.removals")}</TableCell>
 
-          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("smsReport.credits")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("smsReport.credits")}</TableCell>
+
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.DLR")}</TableCell>
         </TableRow>
       </TableHead>
@@ -407,6 +394,7 @@ const SmsReport=({classes}) => {
       Success,
       ClicksCount,
       UniqueClicksCount,
+      ClicksPercentage=0,
       Removed,
       CreditsPerSms,
       Failure,
@@ -414,6 +402,7 @@ const SmsReport=({classes}) => {
       TotalSendPlan,
       TotalSent,
       Type,
+      PostCredits=0
     }=row
     const hrefs=getHrefs(SMSCampaignID)
     return (
@@ -430,13 +419,13 @@ const SmsReport=({classes}) => {
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(TotalSendPlan,'',hrefs.TotalSendCompleted)}
+          {renderIntData(TotalSendPlan,'',hrefs.TotalSendTo)}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(TotalSent,'',hrefs.TotalSendCompleted)}
+          {renderIntData(TotalSent,'')}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
@@ -454,32 +443,38 @@ const SmsReport=({classes}) => {
           classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderPercetangeData(UniqueClicksCount,'blue',hrefs.PercetangeClicks)}
-        </TableCell>
-        <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderIntData(Failure,'red',hrefs.RemovedClients)}
-        </TableCell>
-
-        <TableCell
-          classes={noBorderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderIntData(TotalSendPlan,'',{title: t("mainReport.billingCredits")})}
-        </TableCell>
-        <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderIntData(TotalSendPlan,'',{title: t("mainReport.postCredits")})}
+          {renderPercetangeData(ClicksPercentage,'blue',hrefs.PercetangeClicks, false)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(TotalSendPlan,'')}
+          {renderIntData(Failure,'red',hrefs.Failed)}
+        </TableCell>
+        <TableCell
+          classes={borderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          {renderIntData(Removed,'red',hrefs.Removed)}
+        </TableCell>
+        <TableCell
+          classes={borderCellStyle}
+          align='center'
+          className={classes.flex2}>
+            <Grid container direction={'row'} noWrap classes={{container: classes.noWrap}}>
+              <Grid item>
+                {renderIntData(CreditsPerSms,'',{title: t("mainReport.billingCredits")})}
+              </Grid>
+              <Grid item className={classes.plr10}>
+                {renderIntData(PostCredits,'',{title: t("mainReport.postCredits")})}
+              </Grid>
+            </Grid>
+        </TableCell>
+        <TableCell
+          classes={noBorderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          {renderIntData(Success,'',hrefs.DLR)}
         </TableCell>
       </TableRow>
     )
@@ -494,6 +489,7 @@ const SmsReport=({classes}) => {
       Success,
       ClicksCount,
       UniqueClicksCount,
+      ClicksPercentage=0,
       Removed,
       CreditsPerSms,
       Failure,
@@ -501,6 +497,7 @@ const SmsReport=({classes}) => {
       TotalSendPlan,
       TotalSent,
       Type,
+      PostCredits=0
     }=row
     const hrefs=getHrefs(SMSCampaignID)
     return (
@@ -514,7 +511,6 @@ const SmsReport=({classes}) => {
               {renderNameCell({SMSCampaignID,Name,SendDate})}
             </Box>
           </Box>
-          <Box>
             <Grid container spacing={2} style={{paddingInlineStart: 10}} >
               <Grid item>
                 <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
@@ -522,7 +518,7 @@ const SmsReport=({classes}) => {
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item>
-                    {renderIntData(TotalSendPlan,'',hrefs.TotalSendCompleted, false)}
+                    {renderIntData(TotalSendPlan,'',hrefs.TotalSendTo, false)}
                   </Grid>
                 </Grid>
               </Grid>
@@ -532,7 +528,7 @@ const SmsReport=({classes}) => {
                 </Typography>
                 <Grid container spacing={2}>
                   <Grid item>
-                    {renderIntData(TotalSent,'',hrefs.TotalSendCompleted, false)}
+                    {renderIntData(TotalSent,'',{},false)}
                   </Grid>
                 </Grid>
               </Grid>
@@ -542,24 +538,37 @@ const SmsReport=({classes}) => {
             </Typography>
             <Grid container spacing={2} style={{paddingInlineStart: 10}}>
               <Grid item>
-                {renderIntData(ClicksCount,'blue',hrefs.ClickCount, false)}
+                {renderIntData(ClicksCount,'blue',hrefs.ClickCount,false)}
               </Grid>
               <Grid item>
-                {renderIntData(UniqueClicksCount,'blue',hrefs.ClickCountUnique, false)}
+                {renderIntData(UniqueClicksCount,'blue',hrefs.ClickCountUnique,false)}
               </Grid>
               <Grid item>
-                {renderPercetangeData(UniqueClicksCount,'blue',hrefs.PercetangeClicks, false)}
+                {renderPercetangeData(ClicksPercentage,'blue',hrefs.PercetangeClicks,false)}
               </Grid>
             </Grid>
-            <Typography className={classes.mobileReportHead}>
-              {t("mainReport.removals")}
-            </Typography>
-            <Grid container spacing={2} style={{paddingInlineStart: 10}}>
-              <Grid item>
-                {renderIntData(Failure,'red',hrefs.RemovedClients, false)}
+          <Grid container spacing={2} style={{paddingInlineStart: 10}} >
+            <Grid item>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("common.failedStatus")}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {renderIntData(Failure,'red',hrefs.Failed,false)}
+                </Grid>
               </Grid>
             </Grid>
-          </Box>
+            <Grid item>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("mainReport.removals")}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {renderIntData(Removed,'red',hrefs.Removed,false)}
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
 
         </TableCell>
       </TableRow>

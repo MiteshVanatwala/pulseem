@@ -258,6 +258,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   p0: {
     padding: 0
   },
+  plr10: {
+    padding: '0 10px'
+  },
+  ps15: {
+    paddingInlineStart: 8
+  },
   ps25: {
     paddingInlineStart: 25
   },
@@ -427,5 +433,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   font24: {
     fontSize: 24
+  },
+  noWrap: {
+    flexWrap: 'nowrap'
   }
 })
