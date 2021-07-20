@@ -363,12 +363,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
       padding: 0,
       paddingBlock: 2,
       paddingInline: 15,
-      marginInlineStart: 5
+      marginInlineStart: 10
     },
     '& .MuiSelect-icon': {
       color: '#000',
       top: 0,
-      marginRight: -5
+      marginInlineEnd: -5
     },
     '& .MuiInput-underline': {
       '&:before': {
