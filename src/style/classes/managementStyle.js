@@ -809,6 +809,18 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   duplicateSuccessMsg: {
     padding: '0 25px!important'
+  },
+  previewID: {
+    fontSize: windowSize==='xs'?20:25,
+    fontWeight: 'bold',
+    [theme.breakpoints.up('sm')]: {
+      marginInlineStart: 15
+    },
+    [theme.breakpoints.only('xs')]: {
+      position: 'absolute',
+      top: 20,
+      left: 75
+    }
   }
   
 })
