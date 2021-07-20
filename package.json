@@ -16,6 +16,7 @@
     "axios": "^0.21.1",
     "dotenv": "^10.0.0",
     "emoji-picker-react": "^3.4.4",
+    "export-from-json": "^1.4.0",
     "firebase": "^8.5.0",
     "i18next": "^19.9.2",
     "js-file-download": "^0.4.12",
