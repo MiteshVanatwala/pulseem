@@ -545,7 +545,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 100
+    marginBottom: 50
   },
   tablePadingtonGridContainer: {
     paddingBlock: 10,

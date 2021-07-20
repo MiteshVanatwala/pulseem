@@ -40,7 +40,7 @@ const NewslettersReport=({classes}) => {
   const [csvData,setCsvData]=useState('')
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch=useDispatch()
-  const rowStyle={head: classes.tableRowReportHead,root: classes.tableRowRoot}
+  const rowStyle={head: classes.tableRowReportHead,root: clsx(classes.tableRowRoot)}
   const cellStyle={head: classes.tableCellHead,root: clsx(classes.tableCellRoot,classes.paddingHead)}
   const cell50wStyle={head: clsx(classes.tableCellHead),root: clsx(classes.tableCellRoot,classes.paddingHead,classes.minWidth50)}
   const cellBodyStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot)}
@@ -380,6 +380,8 @@ const NewslettersReport=({classes}) => {
       <Box style={{display: 'flex',flex: 1,alignItems: 'center',alignSelf: 'center',justifyContent: 'center'}}>
         <ManagmentIcon
           classes={classes}
+          iconClass={classes.w25}
+          textClass={classes.lineHeight1point2}
           icon={ReportsIcon}
           lable={t('mainReport.locGraph.HeaderText')}
           href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`}
@@ -409,7 +411,7 @@ const NewslettersReport=({classes}) => {
     }
     return (
       <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-        <Grid item zeroMinWidth>
+        <Grid item className={clsx(windowSize!=='xs'&&classes.w20)}>
           {isChecked&&<Checkbox
             color='primary'
             value={toFileArray.includes(CampaignID)}
@@ -422,13 +424,13 @@ const NewslettersReport=({classes}) => {
             }}
           />}
         </Grid>
-        <Grid zeroMinWidth item>
-          <Typography noWrap className={classes.nameEllipsis}>
-            {Name}
-          </Typography>
-          <Typography className={classes.grayTextCell}>
-            {`${showDate} ${showTime}`}
-          </Typography>
+        <Grid item className={clsx(windowSize!=='xs'&&classes.w80)}>
+            <Typography noWrap className={classes.nameEllipsis}>
+              {Name}
+            </Typography>
+            <Typography className={classes.grayTextCell}>
+              {`${showDate} ${showTime}`}
+            </Typography>
         </Grid>
       </Grid>
     )
@@ -451,7 +453,7 @@ const NewslettersReport=({classes}) => {
           {icon? icon:`${percentage||'0'}%`}
         </Typography>
         <Typography className={clsx(
-          classes.middleWrapText,
+          classes.middleWrapText,classes.lineHeight1point2,
           colorTextStyle[type]||'',
           //{[classes.f15]: !!icon}
         )}>
@@ -525,7 +527,9 @@ const NewslettersReport=({classes}) => {
     return (
       <TableRow
         key={CampaignID}
-        classes={rowStyle}>
+        classes={rowStyle}
+        className={classes.maxHeight87}
+        >
         <TableCell
           classes={cellBodyStyle}
           align='center'
@@ -603,7 +607,8 @@ const NewslettersReport=({classes}) => {
           className={classes.flex1}>
           <ManagmentIcon
             classes={classes}
-            uIcon={<div className={classes.managmentUicon}>
+            textClass={classes.lineHeight1point2}
+            uIcon={<div className={clsx(classes.managmentUicon, classes.f25)}>
               {'\uE15D'}
             </div>}
             lable={hrefs.RemoveReasons.title}
