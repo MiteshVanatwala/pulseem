@@ -1,8 +1,7 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
 import instence from '../../helpers/api'
 import {apiURL,actionURL,isProdMode} from '../../config/index';
-
-import fileDownloader from 'js-file-download'
+import { exportFile } from '../../helpers/exportFromJson';
 
 export const getLandingPagesData=createAsyncThunk(
   'landingpages/getLandingPages',async (_,thunkAPI) => {
@@ -47,8 +46,13 @@ export const duplicteLandingPage=createAsyncThunk(
 export const downloadReport = createAsyncThunk(
   'report/ExportPurchase/', async ({ ID, Name }, thunkAPI) => {
     try {
-      window.open(`${apiURL}/report/ExportPurchase/${ID}`);
-      return 'Success'
+      const response = await instence.get(`${apiURL}/report/ExportPurchase/${ID}`);
+
+      exportFile({ 
+        data: JSON.parse(response.data), 
+        fileName: 'purchaseReport', 
+        exportType: 'csv'
+      });
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -57,8 +61,14 @@ export const downloadReport = createAsyncThunk(
 export const exportSurvey = createAsyncThunk(
   'report/ExportSurvey/', async ({ ID, Name }, thunkAPI) => {
     try {
-      window.open(`${apiURL}/report/ExportSurvey/${ID}`);
-      return 'Success'
+
+      const response = await instence.get(`${apiURL}/report/ExportSurvey/${ID}`);
+
+      exportFile({ 
+        data: JSON.parse(response.data), 
+        fileName: 'surveyReport', 
+        exportType: 'csv'
+      });
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }

@@ -1,5 +1,6 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
 import instence from '../../helpers/api'
+import { exportFile } from '../../helpers/exportFromJson';
 
 export const getNewslatterData=createAsyncThunk(
   'email/getEmailCampaigns',async (_,thunkAPI) => {
@@ -40,6 +41,30 @@ export const duplicteCampaign=createAsyncThunk(
       return thunkAPI.rejectWithValue({error: error.message});
     }
   })
+
+export const downloadNewsletterReport=createAsyncThunk(
+  'email/EmailReportsByIds',async (array=[],thunkAPI) => {
+    try {
+      var json = [];
+      for (var i = 0; i<= array.length; i++){
+        if (array[i]){
+          json.push({ ID: array[i] });
+        }
+      }
+
+      const response=await instence.post('email/EmailReportsByIds/', json);
+
+      exportFile({ 
+        data: JSON.parse(response.data), 
+        fileName: 'emailReport', 
+        exportType: 'csv'
+      });
+
+    } catch(err) {
+      return thunkAPI.rejectWithValue({error: err.message});
+    }
+  }
+)
 
 export const newsletterSlice=createSlice({
   name: 'newsletter',
