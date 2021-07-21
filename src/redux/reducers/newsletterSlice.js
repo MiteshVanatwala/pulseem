@@ -57,7 +57,7 @@ export const downloadNewsletterReport=createAsyncThunk(
       exportFile({ 
         data: JSON.parse(response.data), 
         fileName: 'emailReport', 
-        exportType: 'csv'
+        exportType: 'xls'
       });
 
     } catch(err) {
