@@ -1322,9 +1322,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   previewID: {
     fontSize: windowSize === 'xs' ? 20 : 25,
-    fontWeight: 'bold',
     position: 'absolute',
     top: 20,
-    left: 75
+    left: isRTL?'unset':75,
+    right: isRTL?75:'unset',
   }
 })
