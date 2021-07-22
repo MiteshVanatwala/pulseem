@@ -28,7 +28,7 @@ import { setCookie } from '../../../helpers/cookies';
 
 
 const AutomationsManagnentScreen=({classes}) => {
-  const {language,windowSize,rowsPerPage}=useSelector(state => state.core)
+  const {language,windowSize,rowsPerPage,isRTL}=useSelector(state => state.core)
   const {automationsData,automationsDataError,automationsDeletedData}=useSelector(state => state.automations)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);

@@ -1318,7 +1318,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tooltipArrow: {
     color: 'black',
-    left: '2px!important'
+    left: isRTL?'unset!important':'2px!important',
+    right: isRTL?'2px!important':'unset!important'
   },
   previewID: {
     fontSize: windowSize === 'xs' ? 20 : 25,

@@ -512,7 +512,7 @@ const NewslettersReport=({classes}) => {
       <Tooltip 
         title={`${t(tooltip)}`} 
         arrow 
-        placement={'right-end'}
+        placement={isRTL?'left-end':'right-end'}
         classes={{
           tooltip: classes.tooltipBlack, 
           arrow: classes.fBlack
