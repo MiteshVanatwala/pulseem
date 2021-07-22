@@ -814,8 +814,24 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     fontSize: windowSize==='xs'?20:25,
     fontWeight: 'bold',
     position: 'absolute',
-      top: 20,
-      left: 75
-  }
+    top: 20,
+    left: 75
+  },
+  tooltipBlack: {
+    backgroundColor: 'black',
+    maxWidth: 300,
+    fontSize: '16px!important',
+    textAlign: 'center',
+  },
+  tooltipPlacement: {
+    '&.MuiTooltip-tooltipPlacementTop': {
+      margin: '10px 0px!important'
+    }
+  },
+  tooltipArrow: {
+    color: 'black',
+    left: isRTL?'unset!important':'2px!important',
+    right: isRTL?'2px!important':'unset!important'
+  },
   
 })

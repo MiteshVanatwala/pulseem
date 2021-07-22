@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
+  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link, Tooltip,
   Grid, Button, TextField, IconButton, InputAdornment, Input, Box, FormControlLabel, Checkbox, Select, MenuItem, CardMedia, Card, CardContent, RadioGroup, Radio, FormGroup, FormControl
 } from '@material-ui/core'
 import {
@@ -569,9 +569,18 @@ const NotificationManagement = ({ classes }) => {
 
     return (
       <>
-        <Typography noWrap={false} className={classes.nameEllipsis}>
-          {row.Name}
-        </Typography>
+        <Tooltip 
+          arrow 
+          title={row.Name} 
+          placement={'top'} 
+          classes={{
+            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+            arrow: classes.black}}
+          >
+          <Typography noWrap={false} className={classes.nameEllipsis}>
+            {row.Name}
+          </Typography>
+        </Tooltip>
         <Typography style={{ 'WebkitLineClamp': 1 }}>
           {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
         </Typography>
