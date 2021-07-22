@@ -473,6 +473,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     textTransform: 'none',
     borderRadius: 6
   },
+  tablePaginationSelect: {
+    '& .MuiSelect-icon': {
+      color: '#000'
+    },
+    color: '#000',
+    marginInlineStart: 15
+  },
   tablePadingtonSelect: {
     '& .MuiSelect-root': {
       padding: 0,
