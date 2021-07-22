@@ -673,6 +673,7 @@ const MmsManagnentScreen=({classes}) => {
   const getPreviewDialog=(data={}) => {
     return {
       childrenPadding: false,
+      contentStyle: classes.pt2rem,
       isMMS: true,
       showDivider: false,
       icon: (
