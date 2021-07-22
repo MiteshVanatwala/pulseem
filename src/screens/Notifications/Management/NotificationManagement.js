@@ -395,10 +395,10 @@ const NotificationManagement = ({ classes }) => {
           <Tooltip 
             title={t('notifications.arrivedTootltip')} 
             arrow 
-            placement={'right-end'} 
-            classes={{tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.tooltipArrow}}>
+            placement={'top'} 
+            classes={{tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.black}}>
             <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>
-                {t("notifications.arrived")}
+              {t("notifications.arrived")}
             </TableCell>
           </Tooltip>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.failed")}</TableCell>
