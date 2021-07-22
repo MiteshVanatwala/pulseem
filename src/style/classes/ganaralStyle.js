@@ -243,6 +243,9 @@ export const getGeneralStyle=(windowSize,isRTL,theme) => ({
   maxWidth540: {
     maxWidth: 540
   },
+  pt2rem: {
+    paddingTop: '2rem'
+  },
   p10: {
     padding: 10
   },

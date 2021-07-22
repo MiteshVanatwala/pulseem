@@ -742,6 +742,7 @@ const SmsManagnentScreen=({classes}) => {
   const getPreviewDialog=(data={}) => {
     return {
       childrenPadding: false,
+      contentStyle: classes.pt2rem,
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
