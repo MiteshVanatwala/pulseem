@@ -46,7 +46,7 @@ export const TablePagination=({
         </Typography>
         <TextField
           select
-          className={classes.tablePadingtonSelect}
+          className={classes.tablePaginationSelect}
           variant='standard'
           SelectProps={{
             native: true,
