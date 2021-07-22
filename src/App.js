@@ -360,7 +360,7 @@ const App=({screenSize}) => {
       console.log('lang',lang)
       i18n.changeLanguage(lang)
       dispatch(setLanguage(lang))
-      dispatch(setRowsPerPage(rpp))
+      dispatch(setRowsPerPage(rpp || 6))
       dispatch(setUsername(unique_name))
     }
 

@@ -64,11 +64,13 @@ export const downloadNewsletterReport = createAsyncThunk(
         }
       }
       const response=await instence.post('email/EmailReportsByIds/', json);
-      exportFile({ 
-        data: JSON.parse(response.data), 
-        fileName: 'emailReport', 
-        exportType: 'csv'
-      });
+      return response.data
+      // console.log(`response.data`, JSON.parse(response.data))
+      // exportFile({ 
+      //   data: JSON.parse(response.data), 
+      //   fileName: 'emailReport', 
+      //   exportType: 'csv'
+      // });
     } catch (err) {
       console.log(err);
       return thunkAPI.rejectWithValue({ error: err.message });
