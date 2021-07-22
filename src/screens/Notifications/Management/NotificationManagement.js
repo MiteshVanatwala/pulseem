@@ -3,7 +3,8 @@ import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
-  Grid, Button, TextField, IconButton, InputAdornment, Input, Box, FormControlLabel, Checkbox, Select, MenuItem, CardMedia, Card, CardContent, RadioGroup, Radio, FormGroup, FormControl
+  Grid, Button, TextField, IconButton, InputAdornment, Input, Box, FormControlLabel, Checkbox, 
+  RadioGroup, Radio, FormControl, Tooltip
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
@@ -396,7 +397,15 @@ const NotificationManagement = ({ classes }) => {
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("notifications.searchSection.notificationName")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.toSend")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.sent")}</TableCell>
+          <Tooltip 
+            title={t('notifications.arrivedTootltip')} 
+            arrow 
+            placement={'top'} 
+            classes={{tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.black}}>
+            <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>
+                {t("notifications.arrived")}
+            </TableCell>
+          </Tooltip>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.failed")}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.minWidth75)} align='center'>{t("notifications.tblHeader.clicks")}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.minWidth75)} align='center'>{t("notifications.tblHeader.status")}</TableCell>
