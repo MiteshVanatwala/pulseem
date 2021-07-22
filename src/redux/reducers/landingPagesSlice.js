@@ -67,7 +67,7 @@ export const exportSurvey = createAsyncThunk(
       exportFile({ 
         data: JSON.parse(response.data), 
         fileName: 'surveyReport', 
-        exportType: 'csv'
+        exportType: 'xls'
       });
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
