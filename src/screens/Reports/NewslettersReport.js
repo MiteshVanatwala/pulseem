@@ -446,12 +446,12 @@ const NewslettersReport=({classes}) => {
           <Tooltip 
             arrow 
             title={Name} 
-            placement={'top-start'} 
+            placement={'top'} 
             classes={{
               tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-              arrow: classes.tooltipArrow}}
+              arrow: classes.fBlack}}
             >
-            <Typography noWrap className={classes.nameEllipsis}>
+            <Typography noWrap={false} className={classes.nameEllipsis}>
               {Name}
             </Typography>
           </Tooltip>
@@ -479,14 +479,14 @@ const NewslettersReport=({classes}) => {
         <Grid item className={clsx(windowSize!=='xs'&&classes.w80)}>
           <Tooltip 
             arrow 
-            title={Name} 
+            title={row.Name} 
             placement={'top'} 
             classes={{
               tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-              arrow: classes.tooltipArrow}}
+              arrow: classes.fBlack}}
             >
-            <Typography className={classes.nameEllipsis}>
-              {Name}
+            <Typography noWrap={false} className={classes.nameEllipsis}>
+              {row.Name}
             </Typography>
           </Tooltip>
             <Typography className={classes.grayTextCell}>

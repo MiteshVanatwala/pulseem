@@ -415,10 +415,10 @@ const AutomationsManagnentScreen=({classes}) => {
         <Tooltip 
           arrow 
           title={row.Name} 
-          placement={'top-start'} 
+          placement={'top'} 
           classes={{
             tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-            arrow: classes.tooltipArrow}}
+            arrow: classes.fBlack}}
           >
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {row.Name}

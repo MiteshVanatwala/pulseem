@@ -751,6 +751,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    width: '100%',
     maxWidth: ellipsisMaxWidth[windowSize]
   },
   p10: {
