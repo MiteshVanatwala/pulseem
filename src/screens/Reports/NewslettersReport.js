@@ -443,9 +443,18 @@ const NewslettersReport=({classes}) => {
     if (windowSize==='xs') {
       return (
         <>
-          <Typography noWrap className={classes.nameEllipsis}>
-            {Name}
-          </Typography>
+          <Tooltip 
+            arrow 
+            title={Name} 
+            placement={'top-start'} 
+            classes={{
+              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+              arrow: classes.tooltipArrow}}
+            >
+            <Typography noWrap className={classes.nameEllipsis}>
+              {Name}
+            </Typography>
+          </Tooltip>
           <Typography className={classes.grayTextCell}>
             {`${showDate} ${showTime}`}
           </Typography>
@@ -468,9 +477,18 @@ const NewslettersReport=({classes}) => {
           />}
         </Grid>
         <Grid item className={clsx(windowSize!=='xs'&&classes.w80)}>
-            <Typography noWrap className={classes.nameEllipsis}>
+          <Tooltip 
+            arrow 
+            title={Name} 
+            placement={'top'} 
+            classes={{
+              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+              arrow: classes.tooltipArrow}}
+            >
+            <Typography className={classes.nameEllipsis}>
               {Name}
             </Typography>
+          </Tooltip>
             <Typography className={classes.grayTextCell}>
               {`${showDate} ${showTime}`}
             </Typography>
