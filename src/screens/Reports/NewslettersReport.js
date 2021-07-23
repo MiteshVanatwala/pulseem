@@ -185,6 +185,7 @@ const NewslettersReport=({classes}) => {
         exportType: 'xls'
       });
     }
+    setToFileArray([]);
     
     //if(payload.error) {
     //  return
@@ -457,7 +458,7 @@ const NewslettersReport=({classes}) => {
         <Grid item className={clsx(windowSize!=='xs'&&classes.w20)}>
           {isChecked&&<Checkbox
             color='primary'
-            value={toFileArray.includes(CampaignID)}
+            checked={toFileArray.includes(CampaignID)}
             onChange={() => {
               if(toFileArray.includes(CampaignID)) {
                 setToFileArray(toFileArray.filter(item => item!==CampaignID))
