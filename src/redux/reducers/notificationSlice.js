@@ -195,6 +195,16 @@ export const save = createAsyncThunk(
     }
   });
 
+export const getSubAccountRegistrations = createAsyncThunk(
+  'notification/GetSubAccountRegistrations/', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`notification/GetSubAccountRegistrations`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 export const notificationSlice = createSlice({
   name: 'notification',
   initialState: {

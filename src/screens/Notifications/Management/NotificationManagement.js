@@ -22,7 +22,7 @@ import 'moment/locale/he';
 import {
   getNotificationById, getNotificationGroups, getNotificationData, getDeletedNotifications,
   duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
-  getScriptPath, getSubAccountApiKey, updateScriptPath, getNotificationPublicKey
+  getScriptPath, getSubAccountApiKey, updateScriptPath, getNotificationPublicKey, getSubAccountRegistrations
 } from '../../../redux/reducers/notificationSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Preview } from '../../../components/Notifications/Preview/Preview';
@@ -30,6 +30,7 @@ import { getCookie, setCookie } from '../../../helpers/cookies';
 import { actionURL } from '../../../config/index'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { MdNotificationsActive } from 'react-icons/md';
 
 const NotificationManagement = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -126,6 +127,15 @@ const NotificationManagement = ({ classes }) => {
     }
     setDialogType({
       type: 'groups',
+      data: item.payload
+    })
+  }
+
+  const handleShowSubscribers = async () => {
+    const item = await dispatch(getSubAccountRegistrations());
+
+    setDialogType({
+      type: 'subscribers',
       data: item.payload
     })
   }
@@ -379,6 +389,18 @@ const NotificationManagement = ({ classes }) => {
             )}
             onClick={handleShowGroups}>
             {t('notifications.buttons.groups')}
+          </Button>
+        </Grid>}
+        {windowSize !== 'xs' && <Grid item>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonLightBlue
+            )}
+            onClick={handleShowSubscribers}>
+            {t('notifications.buttons.subscribers')}
           </Button>
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
@@ -740,6 +762,40 @@ const NotificationManagement = ({ classes }) => {
       )
     };
   }
+
+
+  const renderSubscribers = (data = {}) => {
+    if (!data) return null
+    const d = JSON.parse(data);
+
+    return {
+      title: t('notifications.buttons.subscribers'),
+      showDivider: true,
+      icon: (
+        <MdNotificationsActive style={{ fontSize: 30 }} />
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <Typography className={classes.bold} display='inline'>
+            {t('notifications.activeSubscribers')}
+          </Typography> {d.Count}
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleDialogClose}
+          className={clsx(
+            classes.confirmButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.Ok')}
+        </Button>
+      )
+    };
+  }
+
 
   const renderRestore = (data = []) => {
     if (!data || !Array.isArray(data)) return null
@@ -1144,26 +1200,58 @@ const NotificationManagement = ({ classes }) => {
     }
 
     const { data, type } = dialogType || {};
+    let dialog = null;
 
-    const dialogContent = {
-      preview: renderPreview(data),
-      duplicate: renderDuplicate(data),
-      groupsById: renderGroupsById(data),
-      groups: renderGroups(data),
-      delete: renderDelete(data),
-      restore: renderRestore(data),
-      implement: renderImplement(data),
-      createGroup: renderCreateGroup(),
+    switch (type) {
+      case 'preview': {
+        dialog = renderPreview(data)
+        break;
+      }
+      case 'duplicate': {
+        dialog = renderDuplicate(data)
+        break;
+      }
+      case 'groupsById': {
+        dialog = renderGroupsById(data)
+        break;
+      }
+      case 'groups': {
+        dialog = renderGroups(data)
+        break;
+      }
+      case 'delete': {
+        dialog = renderDelete(data)
+        break;
+      }
+      case 'restore': {
+        dialog = renderRestore(data)
+        break;
+      }
+      case 'implement': {
+        dialog = renderImplement(data)
+        break;
+      }
+      case 'createGroup': {
+        dialog = renderCreateGroup(data)
+        break;
+      }
+      case 'subscribers': {
+        dialog = renderSubscribers(data)
+        break;
+      }
     }
-    const dialog = dialogContent[type];
-    return (
-      <Dialog
+
+    if (dialog) {
+      return (<Dialog
         classes={classes}
         open={dialogType}
         onClose={handleDialogClose}
         {...dialog}>
         {dialog.content}
-      </Dialog>
+      </Dialog>);
+    }
+    return (
+      <></>
     );
   }
 

@@ -15,7 +15,8 @@
     "edit": "Edit",
     "duplicate": "Duplicate",
     "delete": "Delete",
-    "search": "Search"
+    "search": "Search",
+    "subscribers": "Subscribers"
   },
   "tblHeader": {
     "notificationName": "Notification Name",
@@ -148,5 +149,6 @@
   "thenYouWillAdd": "then you will add at the end ?g= and then the name of the group you are creating. The final result will look as follows:",
   "onceYouHaveCreatedTheUrl": "Once you have created this URL, send it to the desired recipients for this group, and once they have agreed to receive notifications, they will be assigned to the specified group.",
   "sampleUrl": "https://www.pulseem.com?g=GroupName",  
-  "duplicatedRecipients": "Duplicated Recipients"
+  "duplicatedRecipients": "Duplicated Recipients",
+  "activeSubscribers": "Active Subscribers:"
 }
