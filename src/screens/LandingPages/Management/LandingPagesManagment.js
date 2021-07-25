@@ -226,7 +226,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {ID,IsPayment,PageLink,SurveyCount,Type,PageUrl}=row
+    const {ID,IsPayment,PageLink,SurveyCount,Type,PageUrl,IsSurvey}=row
     const copyDataObject={
       1: {
         icon: CopyIcon,
@@ -269,7 +269,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         lable: IsPayment?
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (windowSize==='xs'||(!IsPayment&&SurveyCount===0)),
+        remove: (windowSize==='xs'||(!IsPayment&& (!IsSurvey || SurveyCount === 0))),
         rootClass: clsx(classes.paddingIcon, classes.minWidth95),
         onClick: async () => {
           if(IsPayment) {
