@@ -542,6 +542,9 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const handleRedirectVisibillity = (event) => {
     setRedirectButtonVisibillity(event.target.checked);
+    if(event.target.checked === false){
+      setModel({ ...model, RedirectURL: '', RedirectButtonText: '' });
+    }
   }
   const handleNotificationTitle = (event) => {
     if (event.target.value.length <= 50) {
