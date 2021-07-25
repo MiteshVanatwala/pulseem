@@ -12,7 +12,8 @@ import {StylesProvider,jssPreset,MuiThemeProvider, useTheme} from '@material-ui/
 import i18n from './i18n'
 import {BrowserRouter,useParams,Route} from 'react-router-dom';
 import {useSelector,useDispatch} from 'react-redux';
-import {setWindowSize,setCoreData,setLanguage, setRowsPerPage} from './redux/reducers/coreSlice'
+import {setWindowSize,setCoreData,setLanguage, setRowsPerPage,setIsClal,setAccountFeatures} from './redux/reducers/coreSlice'
+import {isClalAccount, getAccountFeatures} from './redux/reducers/commonSlice';
 import {setUsername} from './redux/reducers/userSlice'
 import {getTheme} from './style/theme'
 import {useClasses} from './style/classes/index'
@@ -35,7 +36,8 @@ const renderRoutes=(classes,history) => {
       notification: notificationID,
       id: id
     }
-    window.location.href=`https://www.reactstage.club/${url}${addParam[param]||''}`
+    
+    window.location.href=`https://www.pulseem.co.il/${url}${addParam[param]||''}`
     return <></>
   }
   return (
@@ -336,6 +338,13 @@ const App=({screenSize}) => {
   dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
+    const initFeatures = async () => {
+      const response = await dispatch(isClalAccount());
+      dispatch(setIsClal(response.payload));
+      const features = await dispatch(getAccountFeatures());
+      dispatch(setAccountFeatures(features.payload));
+    }
+
     const updateToken=() => {
       const culture=getCookie('Culture')
       const token=getCookie('jtoken')
@@ -355,28 +364,28 @@ const App=({screenSize}) => {
 
       dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName}))
       let lang=culture||locality; //||'he'
-      setCookie('Culture',lang)
+      setCookie('Culture',lang.toLowerCase())
       lang=lang.split('-')[0]
-      console.log('lang',lang)
-      i18n.changeLanguage(lang)
-      dispatch(setLanguage(lang))
+      i18n.changeLanguage(lang.toLowerCase())
       dispatch(setRowsPerPage(rpp || 6))
+      dispatch(setLanguage(lang.toLowerCase()))
       dispatch(setUsername(unique_name))
+
     }
 
-    const setWindowWidth=() => {
-      const {innerWidth}=window
-      let windowSize='xs'
-      if(innerWidth>599&&innerWidth<959)
-        windowSize='sm'
-      else if(innerWidth>=960&&innerWidth<1279)
-        windowSize='md'
-      else if(innerWidth>=1280&&innerWidth<1919)
-        windowSize='lg'
-      else if(innerWidth>=1920)
-        windowSize='xl'
-      dispatch(setWindowSize(windowSize))
-    }
+    // const setWindowWidth=() => {
+    //   const {innerWidth}=window
+    //   let windowSize='xs'
+    //   if(innerWidth>599&&innerWidth<959)
+    //     windowSize='sm'
+    //   else if(innerWidth>=960&&innerWidth<1279)
+    //     windowSize='md'
+    //   else if(innerWidth>=1280&&innerWidth<1919)
+    //     windowSize='lg'
+    //   else if(innerWidth>=1920)
+    //     windowSize='xl'
+    //   dispatch(setWindowSize(windowSize))
+    // }
 
     const cookieFunctionObj={
       jtoken: updateToken
@@ -389,15 +398,8 @@ const App=({screenSize}) => {
         cookieFunction()
     })
     updateToken()
-    // setWindowWidth()
+    initFeatures()
   },[dispatch])
-
-  //useEffect(() => {
-  //  const lang=culture? culture.split('-')[0]:''
-  //  i18n.changeLanguage(lang===language? language:lang)
-  //},[language])
-
-
 
 
   const classes=useClasses(windowSize,isRTL)()

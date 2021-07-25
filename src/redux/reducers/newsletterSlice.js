@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import instence from '../../helpers/api'
-import exportFromJSON from 'export-from-json'
 import { exportFile } from '../../helpers/exportFromJson';
 
 export const getNewslatterData = createAsyncThunk(
@@ -54,31 +53,31 @@ export const duplicteCampaign = createAsyncThunk(
     }
   })
 
-export const downloadNewsletterReport = createAsyncThunk(
-  'email/EmailReportsByIds', async (array = [], thunkAPI) => {
+export const downloadNewsletterReport=createAsyncThunk(
+  'email/EmailReportsByIds',async (array=[],thunkAPI) => {
     try {
       var json = [];
-      for (var i = 0; i <= array.length; i++) {
-        if (array[i]) {
+      for (var i = 0; i<= array.length; i++){
+        if (array[i]){
           json.push({ ID: array[i] });
         }
       }
+
       const response=await instence.post('email/EmailReportsByIds/', json);
-      return response.data
-      // console.log(`response.data`, JSON.parse(response.data))
-      // exportFile({ 
-      //   data: JSON.parse(response.data), 
-      //   fileName: 'emailReport', 
-      //   exportType: 'csv'
-      // });
-    } catch (err) {
-      console.log(err);
-      return thunkAPI.rejectWithValue({ error: err.message });
+
+      exportFile({ 
+        data: JSON.parse(response.data), 
+        fileName: 'emailReport', 
+        exportType: 'xls'
+      });
+
+    } catch(err) {
+      return thunkAPI.rejectWithValue({error: err.message});
     }
   }
 )
 
-export const newsletterSlice = createSlice({
+export const newsletterSlice=createSlice({
   name: 'newsletter',
   initialState: {
     newslettersData: [],

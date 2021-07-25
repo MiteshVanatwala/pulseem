@@ -21,7 +21,6 @@ import {openInNewTab} from '../../helpers/functions'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {actionURL} from '../../config/index'
 import i18n from '../../i18n'
-
 const AppBarItem=({
   item,
   onMainClick=() => {},
@@ -32,6 +31,7 @@ const AppBarItem=({
   classes,
 }) => {
   const [open,setOpen]=useState(false)
+
   const [buttonWidth,setButtonWidth]=useState(0)
   const buttonRef=useRef(null)
   const menuWidth=290
@@ -48,7 +48,6 @@ const AppBarItem=({
     setOpen(false)
   }
   const currentStyle=showIcon? classes.appBarItemIcon:classes.appBarItemText
-
   return (
     <Box
       zIndex='tooltip'
@@ -69,7 +68,7 @@ const AppBarItem=({
             currentStyle,
             textStyle,
             {[classes.chosenText]: chosen})}>
-          {showIcon? item.iconUnicode:item.title}
+          {showIcon? item.iconUnicode: item && item.title || ''}
         </IconButton>
 
         {(chosen||open)&&<ArrowDropUp className={classes.appBarItemArrow} />}
@@ -85,6 +84,7 @@ const AppBarItem=({
                 <MenuList
                   style={{padding: 0}}>
                   {item.options&&item.options.map((option,index) => (
+                    option.isShow && 
                     <Box
                       key={index}
                       component='a'
@@ -125,17 +125,19 @@ const LanguageSelector=({windowSize,classes}) => {
     {
       title: "עברית",
       mobileTitle: 'עב',
-      value: 'he-IL'
+      value: 'he-IL',
+      isShow: true
     },
     {
       title: 'English',
       mobileTitle: 'EN',
-      value: 'en-US'
+      value: 'en-US',
+      isShow: true
     }
   ]
 
   const item={
-    title: languages.find(lang => lang.value===language).title,
+    title: languages && languages.find(lang => lang.value.toLocaleLowerCase()===language.toLocaleLowerCase()).title || '',
     options: languages
   }
 
@@ -183,11 +185,11 @@ const LanguageSelector=({windowSize,classes}) => {
 
 
 export const TopAppBar=({classes,currentPage=''}) => {
-  const {companyName,windowSize,isRTL,imageURL}=useSelector(state => state.core)
+  const {companyName,windowSize,isRTL,imageURL,isClal,accountFeatures}=useSelector(state => state.core)
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
-  //const history=useCtrlHistory()
+  const topNavRef = useRef(null)
   const dispatch=useDispatch();
 
   const handleScriptDialog=() => {
@@ -198,7 +200,6 @@ export const TopAppBar=({classes,currentPage=''}) => {
 
   useEffect(() => {
     handleScriptDialog();
-
     const resizeWindow=() => {
       setWindowWidth(window.innerWidth)
     }
@@ -213,7 +214,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
     setOpen(!open)
   }
   const {t}=useTranslation();
-  const routes=getRoutes(t)
+  const routes=getRoutes(t,isClal,accountFeatures, windowSize)
   const settings=getSettingsItem(t,classes.appBarSettingIcon)
 
   const navigate=({uri}) => {
@@ -227,6 +228,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
   const renderRegularAppBar=() => (
     <>
       {routes.map(route => (
+        route.isShow &&
         <AppBarItem
           key={route.key}
           classes={classes}
@@ -271,15 +273,16 @@ export const TopAppBar=({classes,currentPage=''}) => {
       routes[5],
       routes[6],
       routes[7],
-      {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049',href: reportsOptions[1].href},
-      {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c',href: reportsOptions[2].href},
+      {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049',href: reportsOptions[1].href, isShow: true},
+      {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c',href: reportsOptions[2].href, isShow: true},
       //routes[1]
     ]
     return (
       <>
         <Box
           ref={phoneMenuButtonRef}
-          className={classes.phoneAppBarContainer}>
+          className={classes.phoneAppBarContainer}
+          >
           <IconButton
             className={classes.phoneAppBarButton}
             onClick={handleOpen}>
@@ -289,9 +292,9 @@ export const TopAppBar=({classes,currentPage=''}) => {
         {/* <LanguageSelector windowSize={windowSize} classes={classes} /> */}
         <Popper
           open={open}
-          anchorEl={phoneMenuButtonRef.current}
+          anchorEl={topNavRef.current}
           role={undefined}
-          style={{zIndex: '1'}}
+          style={{zIndex: '1', boxSizing: 'border-box', }}
           transition
         >
           {({TransitionProps}) => (
@@ -317,6 +320,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
                       spacing={1}
                       direction={isRTL? 'row-reverse':'row'} >
                       {smallRoutes.map((route,i) => (
+                        route.isShow && 
                         <Grid
                           key={`appBarItem${i}`}
                           item
@@ -356,7 +360,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
   </SvgIcon>
   return (
     <Box style={{flexGrow: 1}}>
-      <AppBar position='static' className={classes.appBar}>
+      <AppBar position='static' className={classes.appBar} ref={topNavRef}>
         <Toolbar variant='dense'>
           <Box
             component='a'

@@ -265,7 +265,7 @@ const NewsletterManagnentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {Status,Groups,AutomationID,CampaignID,shareUrl}=row
+    const {Status,Groups,AutomationID,CampaignID,shareUrl,AutomationTriggerInActive}=row
 
     const renderCopyToClipoard=(
       showCopied===CampaignID?
@@ -283,7 +283,7 @@ const NewsletterManagnentScreen=({classes}) => {
         key: 'send',
         icon: SendGreenIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
-        remove: Status!==1,
+        remove: Status!==1 || (AutomationID!==0 &&  AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
@@ -373,6 +373,7 @@ const NewsletterManagnentScreen=({classes}) => {
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         rootClass: classes.paddingIcon,
+        disable: AutomationID!==0,
         showPhone: true,
         onClick: () => {
           setDialogType({

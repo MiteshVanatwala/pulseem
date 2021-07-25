@@ -322,6 +322,9 @@
   "MmsCampaignEdit": {
     "Text": "יצירת קמפיין"
   },
+  "NewMMSCampaign": {
+    "Text": "יצירת קמפיין"
+  },
   "MmsCampaignMnage": {
     "Text": "ניהול קמפיינים"
   },
@@ -369,5 +372,5 @@
   "manageNotifications": "ניהול נוטיפיקציות",
   "guides": "מדריכים",
   "implementScript": "הטמעת סקריפט",
-  "pulseemSystem": "מערכת פולסים"
+  "pulseemSystem": "מערכת פולסים "
 }

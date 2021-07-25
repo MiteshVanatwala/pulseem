@@ -270,7 +270,7 @@ const MmsManagnentScreen=({classes}) => {
         key: 'send',
         icon: SendGreenIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
-        remove: windowSize==='xs' || Status!==1,
+        remove: windowSize === 'xs' || Status !== 1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         href: `/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=${ID}&fromreact=true`
@@ -513,7 +513,7 @@ const MmsManagnentScreen=({classes}) => {
 
   const renderTableBody=() => {
 
-    let sortData=isSearching? searchResults:mmsData;
+    let sortData = isSearching ? searchResults : mmsData;
     let rpp=parseInt(rowsPerPage)
     sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
@@ -602,7 +602,7 @@ const MmsManagnentScreen=({classes}) => {
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
-          {'\uE185'}
+          {'\uE0D5'}
         </div>
       ),
       content: (
@@ -711,15 +711,31 @@ const MmsManagnentScreen=({classes}) => {
 
     const {data,type}=dialogType||{}
 
-    const dialogContent={
-      restore: getRestoreDialog(data),
-      groups: getGroupsDialog(data),
-      delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data),
-      preview: getPreviewDialog(data),
+    let currentDialog = null;
+
+    switch(type){
+      case 'restore':{
+        currentDialog = getRestoreDialog(data);
+        break;
+      }
+      case 'groups':{
+        currentDialog = getGroupsDialog(data);
+        break;
+      }
+      case 'delete':{
+        currentDialog = getDeleteDialog(data);
+        break;
+      }
+      case 'duplicate':{
+        currentDialog = getDuplicateDialog(data);
+        break;
+      }
+      case 'preview':{
+        currentDialog = getPreviewDialog(data);
+        break;
+      }
     }
 
-    const currentDialog=dialogContent[type]||{}
     return (
       dialogType&&<Dialog
         classes={classes}

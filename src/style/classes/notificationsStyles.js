@@ -229,7 +229,10 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         // paddingBottom: 10
     },
     iconWrapper: {
-        margin: '15px'
+        margin: '15px',
+        [theme.breakpoints.down('xs')]: {
+            margin: '5px'
+        }
     },
     icon: {
         direction: 'rtl',

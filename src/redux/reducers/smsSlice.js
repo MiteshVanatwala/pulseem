@@ -32,9 +32,9 @@ export const restoreSms=createAsyncThunk(
   })
 
 export const deleteSms=createAsyncThunk(
-  'smsCampaign/deleteSmsCampaign',async (id,thunkAPI) => {
+  'smsCampaign/DeleteById',async (id,thunkAPI) => {
     try {
-      const response=await instence.delete(`smsCampaign/deleteSmsCampaign/${id}`);
+      const response=await instence.delete(`smsCampaign/DeleteById/${id}`);
       return response.data
     } catch(error) {
       return thunkAPI.rejectWithValue({error: error.message});

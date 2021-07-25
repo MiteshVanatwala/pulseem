@@ -24,7 +24,7 @@ export const getDeletedNotifications = createAsyncThunk(
 export const restoreNotifications = createAsyncThunk(
   'notification/restoreNotifications', async (IdList, thunkAPI) => {
     try {
-      const response = await instence.post(`notification/restoreNotifications`, { IdList: IdList, SubAccountId: 7878 }
+      const response = await instence.post(`notification/restoreNotifications`, { IdList: IdList }
       );
       return JSON.parse(response.data)
     } catch (error) {

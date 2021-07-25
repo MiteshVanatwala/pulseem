@@ -287,14 +287,14 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {Status,Groups,AutomationID,Id}=row
+    const {Status,Groups,AutomationID,Id,AutomationTriggerInActive}=row
 
     const iconsMap=[
       {
         key: 'send',
         icon: SendGreenIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
-        remove: Status!==1,
+        remove: Status!==1 || (AutomationID!==0 &&  AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         href: `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&fromreact=true`
@@ -363,6 +363,7 @@ const SmsManagnentScreen=({classes}) => {
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
+        disable: AutomationID!==0,
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
@@ -623,7 +624,7 @@ const SmsManagnentScreen=({classes}) => {
       optinCode: verificationCode,
       phoneNumber: number
     }));
-    if(result.error) {
+    if(result.error || result.payload==='NotMatch') {
       handleVerificationCodeError(true);
     } else {
       setDialogType({

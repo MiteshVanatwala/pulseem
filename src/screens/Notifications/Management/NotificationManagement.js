@@ -81,6 +81,9 @@ const NotificationManagement = ({ classes }) => {
     const scriptPath = await dispatch(getScriptPath());
     const path = (scriptPath && scriptPath.payload) || '';
     setScriptPath(path);
+    if (path !== '') {
+      setScriptDirectory(1);
+    }
   }
 
   const handleApiKey = async () => {
@@ -92,6 +95,9 @@ const NotificationManagement = ({ classes }) => {
   const handleScriptDirectory = async (event) => {
     const value = parseInt(event.target.value);
     setScriptDirectory(value);
+    if (value === 0) {
+      setScriptPath(null);
+    }
   }
 
   const handleCopyScript = () => {
@@ -296,7 +302,7 @@ const NotificationManagement = ({ classes }) => {
               classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
-              placeholder={t('mms.locFromDateResource1.Text')}
+              placeholder={t('notifications.searchSection.fromDate')}
             />
           </Grid>
           : null}
@@ -307,7 +313,7 @@ const NotificationManagement = ({ classes }) => {
               classes={classes}
               value={toDate}
               onChange={handleToDate}
-              placeholder={t('mms.locToDateResource1.Text')}
+              placeholder={t('notifications.searchSection.toDate')}
               minDate={fromDate ? fromDate : undefined}
             />
           </Grid>
@@ -660,8 +666,8 @@ const NotificationManagement = ({ classes }) => {
 
   const renderTableBody = () => {
     let rowData = searchResults || notificationData;
-    let rpp=parseInt(rowsPerPage)
-    rowData=rowData.slice((page-1)*rpp,(page-1)*rpp+rpp)
+    let rpp = parseInt(rowsPerPage)
+    rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
       <TableBody>
         {rowData
@@ -682,7 +688,7 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const renderTablePagination = () => {
-    const handleRowsPerPageChange=(val) => {
+    const handleRowsPerPageChange = (val) => {
       dispatch(setRowsPerPage(val))
       setCookie('rpp', val, { maxAge: 2147483647 })
     }
