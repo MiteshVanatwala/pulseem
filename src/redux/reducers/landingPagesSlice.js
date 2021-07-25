@@ -51,7 +51,7 @@ export const downloadReport = createAsyncThunk(
       exportFile({ 
         data: JSON.parse(response.data), 
         fileName: 'purchaseReport', 
-        exportType: 'csv'
+        exportType: 'xls'
       });
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
