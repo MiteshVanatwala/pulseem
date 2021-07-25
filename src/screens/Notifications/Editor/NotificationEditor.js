@@ -332,7 +332,7 @@ const NotificationEditor = ({ props, classes }) => {
         }
         else {
           if (isSummary === false)
-          window.location.href = "/react/Notifications";
+            window.location.href = "/react/Notifications";
         }
       }
       else {
@@ -650,6 +650,10 @@ const NotificationEditor = ({ props, classes }) => {
       document.querySelector("#notificationName").classList.add("error");
     }
     if (ShowRedirectButton === true) {
+      if (model.RedirectButtonText.length <= 0) {
+        errorList.push({ message: t('notifications.validation.redirectButtonText') });
+        document.querySelector("#notificationButton").classList.add("error");
+      }
       if (model.RedirectURL.length <= 0) {
         errorList.push({ message: t('notifications.validation.redirectUrl') });
         document.querySelector("#notificationRedirectUrl").classList.add("error");
@@ -805,7 +809,7 @@ const NotificationEditor = ({ props, classes }) => {
           }
           {ShowRedirectButton &&
             <Grid item md={3} xs={12}>
-              <label>{t('notifications.redirectUrlButton')}</label>
+              <label>* {t('notifications.redirectUrlButton')}</label>
               <TextField
                 placeholder={t('notifications.redirectUrlButton')}
                 id="notificationButton"

@@ -52,7 +52,8 @@
     "notificationDate": "יש לבחור תאריך ושעת שליחה",
     "notificationGroups": "יש לבחור קבוצה אחת לפחות",
     "notificationDatePassed": "התאריך או השעה שבחרת עבר",
-    "redirectUrlNotValid": "קישור להפניה - קישור לא תקין"
+    "redirectUrlNotValid": "קישור להפניה - קישור לא תקין",
+    "redirectButtonText": "טקסט כפתור הפניה - שדה חובה"
   },
   "notificationName": "שם הנוטיפיקציה",
   "notifications": "נוטיפיקציות",
