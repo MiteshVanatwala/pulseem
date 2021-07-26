@@ -31,7 +31,7 @@ function TabPanel(props) {
 export const Preview = (
   { classes, model, ShowRedirectButton, mobileFullsize = false,
     showDevices = true, showTitle = true, isSMS = false, isMMS = false,
-    showOSScreen = true
+    showOSScreen = true, showID = false
   }) => {
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector(state => state.core);
@@ -250,7 +250,7 @@ export const Preview = (
   const campaignID=isSMS&&model.SMSCampaignID || isMMS&&model.MmsCampaignID || model.ID || '';
   return (
     <>
-      <Typography className={classes.previewID}><b>{t('common.campaignID')}</b>:&nbsp;{campaignID}</Typography>
+      {showID&&<Typography className={classes.previewID}><b>{t('common.campaignID')}</b>:&nbsp;{campaignID}</Typography>}
       <Grid className={mobileFullsize && classes.justifyCenter}>
         {showTitle && <h3 className={clsx(classes.blue, classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</h3>}
         {showDevices && !mobileFullsize && <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>

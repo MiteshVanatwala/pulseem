@@ -675,6 +675,7 @@ const MmsManagnentScreen = ({ classes }) => {
             model={data}
             ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
             showTitle={false}
+            showID={true}
             isMMS={true}
           />
         </Box>

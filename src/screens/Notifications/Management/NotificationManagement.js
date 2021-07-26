@@ -722,6 +722,7 @@ const NotificationManagement = ({ classes }) => {
             model={data}
             ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
             showTitle={false}
+            showID={true}
             showOSScreen={false}
           />
         </Box>
