@@ -653,10 +653,6 @@ const NotificationEditor = ({ props, classes }) => {
       document.querySelector("#notificationName").classList.add("error");
     }
     if (ShowRedirectButton === true) {
-      if (model.RedirectButtonText.length <= 0) {
-        errorList.push({ message: t('notifications.validation.redirectButtonText') });
-        document.querySelector("#notificationButton").classList.add("error");
-      }
       if (model.RedirectURL.length <= 0) {
         errorList.push({ message: t('notifications.validation.redirectUrl') });
         document.querySelector("#notificationRedirectUrl").classList.add("error");
@@ -666,6 +662,10 @@ const NotificationEditor = ({ props, classes }) => {
           errorList.push({ message: t('notifications.validation.redirectUrlNotValid') });
           document.querySelector("#notificationRedirectUrl").classList.add("error");
         }
+      }
+      if (model.RedirectButtonText.length <= 0) {
+        errorList.push({ message: t('notifications.validation.redirectButtonText') });
+        document.querySelector("#notificationButton").classList.add("error");
       }
     }
     if (model.Title === '') {
