@@ -726,6 +726,7 @@ const NotificationManagement = ({ classes }) => {
           <Preview classes={classes}
             model={data}
             ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
+            showID={true}
             showTitle={false}
             showOSScreen={false}
           />
