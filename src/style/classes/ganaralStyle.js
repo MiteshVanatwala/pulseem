@@ -279,6 +279,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   ps25: {
     paddingInlineStart: 25
   },
+  pt2rem: {
+    paddingTop: '2rem'
+  },
   pt10: {
     paddingTop: 10
   },

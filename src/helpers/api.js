@@ -23,7 +23,8 @@ const instence=axios.create({
   baseURL: apiURL,
   headers: {
     'Content-Type': 'application/json; charset=UTF-8'
-  }
+  },
+  timeout: 300000
 })
 
 instence.interceptors.request.use(async config => {

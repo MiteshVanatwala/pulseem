@@ -23,6 +23,7 @@ import {CSVLink} from 'react-csv'
 import {getNewsletterReports,downloadNewsletterReport} from '../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../helpers/cookies';
+import { exportFile } from '../../helpers/exportFromJson';
 
 const NewslettersReport=({classes}) => {
   const {language,windowSize,isRTL,rowsPerPage}=useSelector(state => state.core)
@@ -101,6 +102,32 @@ const NewslettersReport=({classes}) => {
     }
   })
 
+  const columnHead={
+    CampaignID: t('mainReport.CampaignID'),
+    Name: t('master.lblContactNameResource1.Text'),
+    Names: t('mainReport.names'),
+    SendDate: t('mainReport.GridBoundColumnResource3.HeaderText'),
+    FixedSendingDate: t('mainReport.fixedSendingDate'),
+    TotalSendCompleted: t('mainReport.totalSendCompleted'),
+    TotalSendPlan: t('mainReport.totalSendPlan'),
+    OpenCount: t('mainReport.openCount'),
+    OpenCountUnique: t('mainReport.openCountUnique'),
+    ClickCount: t('mainReport.clickCount'),
+    ClickCountUnique: t('mainReport.clickCountUnique'),
+    NotOpened: t('mainReport.notOpened'),
+    SendError: t('mainReport.sendError'),
+    RemovedClients: t('mainReport.removedClients'),
+    GroupsNames: t('mainReport.groupsNames'),
+    Status: t('common.Status'),
+    Files: t('mainReport.files'),
+    FileNames: t('mainReport.fileNames'),
+    PercentageOpens: t('mainReport.percentageOpens'),
+    PercetangeClicks: t('mainReport.percetangeClicks'),
+    PercetangeRemovedClients: t('mainReport.percetangeRemovedClients'),
+    Attachments: t('mainReport.attachments'),
+    TotalBytes: t('mainReport.totalBytes')
+  }
+
   const getData=() => {
     dispatch(getNewsletterReports(isDemoSend));
   }
@@ -135,14 +162,30 @@ const NewslettersReport=({classes}) => {
   }
 
   const handleDownloadCsv=async () => {
-    //window.open(`${apiURL}email/EmailReportsByIds/${toFileArray.toString()}`)
-    //const {payload}=await
     let fileArray = toFileArray
     if (!toFileArray.length) {
       fileArray = newslettersReports.map(a => a.CampaignID);
     }
 
-    dispatch(downloadNewsletterReport(fileArray))
+    const result = await dispatch(downloadNewsletterReport(fileArray))
+    if (!result.error) {
+      let res =[];
+      JSON.parse(result.payload).map(item=>{
+        let dataItem={};
+        Object.keys(item).map(key=>{
+          const headerTitle=columnHead[key];
+          dataItem[headerTitle]=item[key]
+        })
+        res.push(dataItem);
+      })
+  
+      exportFile({ 
+        data: res, 
+        fileName: 'emailReport', 
+        exportType: 'xls'
+      });
+    }
+    
     //if(payload.error) {
     //  return
     //}

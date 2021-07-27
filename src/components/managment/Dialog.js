@@ -24,6 +24,7 @@ export const Dialog=({
   customContainerStyle = '',
   paperStyle = null,
   childrenStyle = null,
+  contentStyle = null,
   cancelText = 'common.Cancel',
   confirmText = 'common.Ok',
   showDefaultButtons = true
@@ -135,7 +136,7 @@ export const Dialog=({
     return (
       <Box
         dir={direction[isRTL]}
-        className={clsx(classes.dialogContent)}>
+        className={clsx(classes.dialogContent, contentStyle)}>
         {renderTitle ? renderTitle() : renderTitleDefault()}
         {renderChildren()}
         {renderButtons ? renderButtons() : renderButtonsDefault()}

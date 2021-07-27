@@ -1,11 +1,10 @@
 import {createSlice} from '@reduxjs/toolkit';
-//import {getStyle} from '../../style/classes/appBarStyles'
 const rtlLanguages=['he','ar']
 
 export const coreSlice=createSlice({
   name: 'core',
   initialState: {
-    language: 'en',
+    language: 'he',
     isRTL: false,
     windowSize: 'lg',
     basename: '',
@@ -14,9 +13,17 @@ export const coreSlice=createSlice({
     imageURL: '',
     isWhiteLabel: false,
     companyName: '',
-    rowsPerPage: 6
+    rowsPerPage: 6,
+    isClal: false,
+    accountFeatures: null
   },
   reducers: {
+    setIsClal: (state, action) => {
+      state.isClal = action.payload;
+    },
+    setAccountFeatures: (state, action) => {
+      state.accountFeatures = action.payload;
+    },
     setLanguage: (state,action) => {
       state.language=action.payload
       state.isRTL=rtlLanguages.includes(action.payload)
@@ -38,6 +45,6 @@ export const coreSlice=createSlice({
   }
 })
 
-export const {setLanguage,setWindowSize,setCoreData,setRowsPerPage}=coreSlice.actions
+export const {setLanguage,setWindowSize,setCoreData,setRowsPerPage,setIsClal,setAccountFeatures}=coreSlice.actions
 
 export default coreSlice.reducer

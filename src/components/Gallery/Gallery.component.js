@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-    Typography, Button, TextField, Grid, Box, Divider, GridList, GridListTile, GridListTileBar, ListSubheader
+    Typography, Button, TextField, Grid, Box, Divider
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { createFolder, getFileGallery, postImage, deleteGalleryFile } from '../../redux/reducers/commonSlice';
+import { createFolder, getFileGallery } from '../../redux/reducers/commonSlice';
 import clsx from 'clsx';
 import './Gallery.styles.css';
 import moment from 'moment'
@@ -16,11 +16,11 @@ import FolderIcon from '@material-ui/icons/Folder';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 import PropTypes from 'prop-types';
-import { AiOutlineCheckCircle, AiOutlineCloudUpload } from 'react-icons/ai';
 import InputAdornment from '@material-ui/core/InputAdornment';
-import LazyBackground from './Lazy/LazyBackground';
+
 import Toast from '../Toast/Toast.component';
-import { setWindowSize } from '../../redux/reducers/coreSlice';
+import { GalleryImages } from './GalleryImages'
+
 
 const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     const dispatch = useDispatch();
@@ -35,10 +35,8 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     const [selectedNode, setSelectedNode] = useState('k_0');
     const [folderCreationState, setShowFolderCreation] = useState(false);
     const [folderName, setFolderName] = useState('');
-    const [fileToUpload, setFileToUpload] = useState(null);
-    const [isFilePicked, setIsFilePicked] = useState(false);
-    const hiddenFileInput = React.useRef(null);
     const [toastMessage, setToastMessage] = useState(null);
+    const [scrollIndex, setScrollIndex] = useState(0);
 
     const renderToast = () => {
         if (toastMessage) {
@@ -79,9 +77,10 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         });
         setFolders(tmpFolders);
     }
+
     useEffect(() => {
         initGallery();
-    }, [dispatch])
+    }, [])
 
     const useTreeItemStyles = makeStyles((theme) => ({
         root: {
@@ -168,6 +167,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         setSelectedNode(nodeIds);
         const i = nodeIds.replace('k_', '');
         setSelectedFolder(folders[i].FolderName);
+        setScrollIndex(0);
     }
     const handleSelectFile = (fileUrl, fileIndex) => () => {
         setSelectedFile(fileIndex);
@@ -180,137 +180,29 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         }
     }, [isConfirm])
 
-    useEffect(() => {
-        if (fileToUpload != null && isFilePicked) {
-            setIsFilePicked(false);
-            const formData = new FormData();
-            formData.append('File', fileToUpload);
-            if (fileToUpload.size > 1048576) {
-                setToastMessage({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false });
-                setFileToUpload(null);
-                return;
-            }
-            new Promise(resolve => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    var binaryData = e.target.result;
-                    var base64String = window.btoa(binaryData);
-                    const imgBase64 =
-                        "data:" + fileToUpload.type + ";base64," + base64String;
-                    resolve(imgBase64);
-                };
-                reader.readAsBinaryString(fileToUpload);
-            }).then(async (result) => {
-                const fileModel = {
-                    FileName: fileToUpload.name,
-                    Base64: result,
-                    FolderName: selectedFolder
-                }
+    const [referenceNode, setReferenceNode] = useState();
 
-                setFileToUpload(null);
-                await dispatch(postImage(fileModel));
-                initGallery();
-            });
-        }
-    }, [fileToUpload]);
-
-    const renderFiles = () => {
-        // Gallery Functions
-        const deleteImage = (fileModel) => async (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            fileModel.FolderName = fileModel.FolderName.replace('main\\', '');
-            await dispatch(deleteGalleryFile(fileModel));
-            initGallery();
-        }
-        const imageEnter = (fileId) => () => {
-            const elem = document.getElementById(fileId);
-            if (elem)
-                document.getElementById(fileId).style.opacity = 1;
-        }
-        const imageLeave = (fileId) => () => {
-            const elem = document.getElementById(fileId);
-            if (elem)
-                document.getElementById(fileId).style.opacity = 0;
-        }
-        const handleUploadClick = () => {
-            hiddenFileInput.current.click();
-        };
-        const changeHandler = (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            setFileToUpload(event.target.files[0]);
-            setIsFilePicked(true);
-            return false;
-        };
-        // END Gallery Functions
-
-        if (!folders) {
-            return;
-        }
-        const currentFolder = folders.find((f) => { return f.FolderName === selectedFolder });
-
-        if (currentFolder.files) {
-            return (
-                <Grid container
-                    direction="row"
-                    alignItems="flex-start"
-                    style={{ width: '100%', padding: '0 25px', borderRight: isRTL ? '1px solid #ccc' : '', borderLeft: isRTL ? '' : '1px solid #ccc', height: '100%' }}>
-                    <Grid item xs={12}>{selectedFolder === "main" && isRTL ? "ראשי" : selectedFolder}</Grid>
-                    <Grid item lg={4} md={6} xs={12}>
-                        <Button
-                            className={"select-image"}
-                            onClick={handleUploadClick}
-                            style={{ padding: "6px 8px", backgroundColor: 'transparent !important' }}>
-                            <input type="file" name="file"
-                                ref={hiddenFileInput}
-                                onChange={changeHandler}
-                                hidden
-                                accept=".png,.jpg,.jpeg" />
-                            <Box className="img-container drag-here">
-                                <AiOutlineCloudUpload style={{ fontSize: 30 }} />
-                                {t('common.chooseImage')}
-                            </Box>
-                        </Button>
-                    </Grid>
-                    {
-                        currentFolder.files.map((f, index) => {
-                            const filePath = `${f.Path}/${f.FolderName === "main" ? "" : f.FolderName.replace('main\\', '')}/${f.FileName}`;
-                            return (
-                                <Grid item lg={4} md={6} xs={12} key={index}
-                                    onMouseEnter={imageEnter(`file_${index}`)}
-                                    onMouseLeave={imageLeave(`file_${index}`)}
-                                    id={index}
-                                    style={{ padding: "6px 10px" }}
-                                >
-                                    <Box className="select-image" onClick={handleSelectFile(filePath, `${f.FolderName.replace('\\', '')}_${index}`)}>
-                                        <Box className="img-container" style={{ border: selectedFile === `${f.FolderName.replace('\\', '')}_${index}` ? "1px solid #000" : null }}>
-                                            <LazyBackground url={filePath}>
-                                                <button
-                                                    id={`file_${index}`}
-                                                    className={clsx(classes.absTopRight)}
-                                                    style={{ border: 'none', cursor: 'pointer', textDecoration: 'none' }}
-                                                    onClick={deleteImage(f)}
-                                                >X</button>
-                                            </LazyBackground>
-                                            <Box title={f.FileName} className="image-info">
-                                                <Typography className="elipsis-text" style={{ fontSize: 14 }}>
-                                                    {f.FileName}
-                                                </Typography>
-                                                {selectedFile === `${f.FolderName.replace('\\', '')}_${index}` &&
-                                                    <AiOutlineCheckCircle style={{ color: 'green', fontSize: 24, padding: '0 10px', width: 40 }} />
-                                                }
-                                            </Box>
-                                        </Box>
-                                    </Box>
-                                </Grid>
-                            )
-                        })
-                    }
-                </Grid >
-            );
+    const handleScroll = (event) => {
+        var node = event.target;
+        const bottom = node.scrollHeight - node.scrollTop === node.clientHeight;
+        if (bottom) {
+            setScrollIndex(scrollIndex + 1);
         }
     }
+
+    const removeScrollHanlder = () => {
+        if (referenceNode) {
+            referenceNode.removeEventListener('scroll', handleScroll);
+        }
+    }
+
+    const paneDidMount = (node) => {
+        if (node) {
+            node.addEventListener('scroll', handleScroll);
+            setReferenceNode(node);
+        }
+    };
+
     function StyledTreeItem(props) {
         const classes = useTreeItemStyles();
         const { labelText, labelIcon: LabelIcon, labelInfo, color, bgColor, ...other } = props;
@@ -446,8 +338,20 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                 <Grid item md={2} xs={12} className="scroll">
                     {renderFolders()}
                 </Grid>
-                <Grid item md={10} xs={12} className="scroll">
-                    {renderFiles()}
+                <Grid item md={10} xs={12} className="scroll"
+                    onScroll={handleScroll} ref={paneDidMount}>
+                    {folders && <GalleryImages
+                        classes={classes}
+                        folder={folders.find((f) => { return f.FolderName === selectedFolder })}
+                        onReInitGallery={initGallery}
+                        selectedFolder={selectedFolder}
+                        scrollIndex={scrollIndex}
+                        isRTL={isRTL}
+                        selectedFile={selectedFile}
+                        onSelectFile={handleSelectFile}
+                        onToast={setToastMessage}
+                        onReachToLimit={removeScrollHanlder} />
+                    }
                 </Grid>
             </Grid>
             <Divider style={{ margin: '15px 0' }} />

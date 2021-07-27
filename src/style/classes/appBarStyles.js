@@ -106,7 +106,8 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   phoneAppBarContainer: {
     display: 'flex',
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    maxWidth: '100%'
   },
   phoneAppBarButton: {
     color: 'white',

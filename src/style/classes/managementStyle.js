@@ -39,21 +39,21 @@ const tableRowMinWidth = {
   xl: 100
 }
 
-const barWidth={
+const barWidth = {
   sm: '460px!important',
   md: '430px!important',
   lg: '450px!important',
   xl: '500px!important'
 }
 
-const barHeight={
+const barHeight = {
   sm: '',
   md: '220px!important',
   lg: '250px!important',
   xl: '250px!important'
 }
 
-const shortcutFontSize={
+const shortcutFontSize = {
   category: {
     xs: 16,
     sm: 14,
@@ -68,10 +68,10 @@ const shortcutFontSize={
     lg: 18,
     xl: 18
   }
-  
+
 }
 
-const dashboardDirection={
+const dashboardDirection = {
   xs: 'column-reverse',
   sm: '',
   md: '',
@@ -79,7 +79,7 @@ const dashboardDirection={
   xl: ''
 }
 
-const paperTopHeight={
+const paperTopHeight = {
   xs: 'auto',
   sm: 'auto',
   md: '350px',
@@ -87,7 +87,7 @@ const paperTopHeight={
   xl: '350px'
 }
 
-const paperBottomHeight={
+const paperBottomHeight = {
   xs: 'auto',
   sm: 'auto',
   md: '350px',
@@ -95,7 +95,7 @@ const paperBottomHeight={
   xl: '350px'
 }
 
-const shortcutEditLeft={
+const shortcutEditLeft = {
   xs: '8%',
   sm: '18px',
   md: '15px',
@@ -103,7 +103,7 @@ const shortcutEditLeft={
   xl: '28px'
 }
 
-const shortcutPaperHeight={
+const shortcutPaperHeight = {
   xs: '',
   sm: '100vh',
   md: '100vh',
@@ -472,6 +472,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     paddingInline: 25,
     textTransform: 'none',
     borderRadius: 6
+  },
+  tablePaginationSelect: {
+    '& .MuiSelect-icon': {
+      color: '#000'
+    },
+    color: '#000',
+    marginInlineStart: 15
   },
   tablePadingtonSelect: {
     '& .MuiSelect-root': {
@@ -928,8 +935,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
 
   },
   chartLabelGreen: {
-    position: 'absolute', 
-    top: 'calc(50% - 28px)', 
+    position: 'absolute',
+    top: 'calc(50% - 28px)',
     width: '100%',
     fontSize: 35,
     fontWeight: '500',
@@ -937,19 +944,19 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     color: '#65d638'
   },
   shortcutTitleSection: {
-    width: '85%', 
-    marginTop: '2.1rem', 
+    width: '85%',
+    marginTop: '2.1rem',
     marginBottom: 40
   },
   shortcutTitle: {
-    fontSize: windowSize==='xs'?23:25,
+    fontSize: windowSize === 'xs' ? 23 : 25,
     fontWeight: 'bold'
   },
   shortcutSubtitle: {
-    fontSize: windowSize==='xs'?16:18,
+    fontSize: windowSize === 'xs' ? 16 : 18,
   },
   shortcutBox: {
-    position: windowSize==='xs'?'':'sticky',
+    position: windowSize === 'xs' ? '' : 'sticky',
     top: 0,
     height: shortcutPaperHeight[windowSize],
     [theme.breakpoints.down('xs')]: {
@@ -961,9 +968,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       borderRadius: 10,
     },
     height: shortcutPaperHeight[windowSize],
-    display: 'flex', 
-    flexDirection: 'column', 
-    alignItems: 'center', 
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
     overflow: 'auto',
     '&::-webkit-scrollbar': {
       width: '0px'
@@ -974,8 +981,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   shortcutBtnBox: {
-    position: 'relative', 
-    width: '100%', 
+    position: 'relative',
+    width: '100%',
     textAlign: 'center'
   },
   shortcutButton: {
@@ -983,33 +990,33 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     width: '85%',
     background: '#0371AD',
     borderRadius: '20px',
-    marginBottom: windowSize==='xs'?30:45,
+    marginBottom: windowSize === 'xs' ? 30 : 45,
     fontSize: '18px',
     position: 'relative',
     textTransform: 'capitalize',
     padding: '6px 30px'
-    
+
   },
   shortcutDottedButton: {
-    borderRadius: '20px', 
-    border: '1px dashed #0371AD', 
-    fontFamily: 'pulseemicons', 
+    borderRadius: '20px',
+    border: '1px dashed #0371AD',
+    fontFamily: 'pulseemicons',
     height: '92px',
     fontSize: '30px',
-    marginBottom: 45, 
+    marginBottom: 45,
     width: '85%',
   },
   shortcutList: {
-    maxWidth: 350, 
-    background: 'white', 
-    borderRadius: 10, 
+    maxWidth: 350,
+    background: 'white',
+    borderRadius: 10,
     margin: 10
   },
   shortcutEditIcon: {
     position: 'absolute',
     left: shortcutEditLeft[windowSize],
-    bottom: windowSize==='xs'?40:50,
-    fontFamily: 'pulseemicons', 
+    bottom: windowSize === 'xs' ? 40 : 50,
+    fontFamily: 'pulseemicons',
     fontSize: 18,
     color: 'white'
   },
@@ -1020,8 +1027,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginTop: -5
   },
   popperPaper: {
-    padding: '5px 0', 
-    width: 300, 
+    padding: '5px 0',
+    width: 300,
     background: '#D7D7D7'
   },
   hideIndicator: {
@@ -1074,8 +1081,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   doughnutGrid: {
-    display: 'flex', 
-    flexDirection: 'column', 
+    display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center'
   },
   barChart: {
@@ -1088,26 +1095,26 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     paddingBottom: 10
   },
   emptyDoughnut: {
-    display: 'flex', 
-    justifyContent: 'center', 
-    flexDirection: 'column', 
-    backgroundColor: '#F9F9F9', 
-    border: '1px solid #D7D7D7', 
-    width: 180, 
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    backgroundColor: '#F9F9F9',
+    border: '1px solid #D7D7D7',
+    width: 180,
     height: 180,
     margin: 10
   },
   recipientTitleSection: {
-    marginBottom: '1.2rem', 
+    marginBottom: '1.2rem',
     borderBottom: '1px solid #ccc'
   },
   noRecipients: {
-    color: '#AAAAAA', 
-    marginTop: 40, 
+    color: '#AAAAAA',
+    marginTop: 40,
     fontSize: 20
   },
   addRecipientsIcon: {
-    fontFamily: 'pulseemicons', 
+    fontFamily: 'pulseemicons',
     fontSize: 20
   },
   addRecipientsBtn: {
@@ -1120,23 +1127,23 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginBottom: 10
   },
   bulkStatusTitleSection: {
-    marginBottom: '1rem', 
+    marginBottom: '1rem',
     marginTop: '1rem'
   },
   bulkStatusBlue: {
     marginBottom: '1rem',
     padding: '3px 15px',
-    borderRadius: '.9rem', 
-    background: '#0371AD', 
-    color: 'white', 
+    borderRadius: '.9rem',
+    background: '#0371AD',
+    color: 'white',
   },
   bulkOutline: {
     marginBottom: '1rem',
     padding: '3px 15px',
-    borderRadius: '.9rem', 
-    border: '1px solid #0371AD', 
+    borderRadius: '.9rem',
+    border: '1px solid #0371AD',
     background: 'transparent',
-    color: '#0371AD', 
+    color: '#0371AD',
   },
   bulkTitle: {
     fontWeight: 700,
@@ -1148,18 +1155,18 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: '12',
     lineHeight: '2.1rem',
     textDecoration: 'underline',
-    color: '#0371AD', 
+    color: '#0371AD',
   },
   dashboardTitle: {
-    fontWeight: 'bold', 
-    color: '#0371AD', 
+    fontWeight: 'bold',
+    color: '#0371AD',
     marginTop: 10,
     marginInlineStart: 30,
     fontSize: 20
   },
   dashboardUsername: {
-    fontWeight: 'bold', 
-    color: '#0371AD', 
+    fontWeight: 'bold',
+    color: '#0371AD',
     fontSize: 20
   },
   dashboardTopPaper: {
@@ -1206,8 +1213,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: '0px 20px 20px 20px'
   },
   lightBulb: {
-    width: 100, 
-    height: 100, 
+    width: 100,
+    height: 100,
     marginBottom: 10
   },
   activeTab: {
@@ -1226,13 +1233,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: '15px 20px 0px 20px'
   },
   newsletterLastReportGrid: {
-    padding: '0px 20px 20px 20px', 
+    padding: '0px 20px 20px 20px',
   },
   newsletterItemBorder: {
     borderBottom: '1px solid #ccc'
   },
   phoneLastReportTitle: {
-    marginBottom: '1.2rem', 
+    marginBottom: '1.2rem',
     borderBottom: '1px solid #ccc'
   },
   lastReportItemText: {
@@ -1240,25 +1247,25 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'baseline'
   },
   lastReportTitleSection: {
-    marginTop: 5, 
-    marginBottom: '1.2rem', 
+    marginTop: 5,
+    marginBottom: '1.2rem',
     borderBottom: '1px solid #ccc'
   },
   lastReportRowItem: {
-    display: 'flex', 
-    justifyContent: 'space-between', 
+    display: 'flex',
+    justifyContent: 'space-between',
     padding: '5px 0px'
   },
   lastReportsTabPanels: {
     padding: '0 20px 0 30px'
   },
   lastReportPadding: {
-    [theme.breakpoints.down('md')] :{
+    [theme.breakpoints.down('md')]: {
       marginTop: 0
     }
   },
   chartLabel: {
-    position: 'absolute', 
+    position: 'absolute',
     height: 55,
     top: 0,
     bottom: 0,
@@ -1272,17 +1279,17 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     margin: 'auto'
   },
   doughnutBox: {
-    width: 200, 
-    height: 200, 
-    position: 'relative', 
+    width: 200,
+    height: 200,
+    position: 'relative',
     textAlign: 'center'
   },
   doughnutGreenBox: {
-    width: 180, 
-    height: 180, 
-    position: 'relative', 
-    display: 'flex', 
-    alignItems: 'center', 
+    width: 180,
+    height: 180,
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
     zIndex: 1
@@ -1312,5 +1319,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tooltipArrow: {
     color: 'black',
     left: '2px!important'
+  },
+  previewID: {
+    fontSize: windowSize === 'xs' ? 20 : 25,
+    fontWeight: 'bold',
+    position: 'absolute',
+    top: 20,
+    left: 75
   }
 })

@@ -233,7 +233,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {ID,IsPayment,PageLink,SurveyCount,Type,PageUrl}=row
+    const {ID,IsPayment,PageLink,SurveyCount,Type,PageUrl,IsSurvey}=row
     const copyDataObject={
       1: {
         icon: CopyIcon,
@@ -276,7 +276,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         lable: IsPayment?
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (windowSize==='xs'||(!IsPayment&&SurveyCount===0)),
+        remove: (windowSize==='xs'||(!IsPayment&&!IsSurvey)),
         rootClass: classes.paddingIcon,
         onClick: async () => {
           if(IsPayment) {
@@ -292,7 +292,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         disable: !PageLink,
-        remove: windowSize==='xs',
+        remove: !PageLink||windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           openInNewTab(PageLink)
@@ -637,10 +637,10 @@ const LandingPagesesManagmentScreen=({classes}) => {
       const { payload={} } = result || {};
       await getData()
       setLoader(false);
-      setDialogType({
-        type: 'duplicateSuccessful',
-        data: payload
-      })
+      // setDialogType({
+      //   type: 'duplicateSuccessful',
+      //   data: payload
+      // })
     }
   })
 
@@ -686,8 +686,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
     const dialogContent={
       restore: getRestorDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data),
-      duplicateSuccessful: getDuplicateSuccessfulDialog(data)
+      duplicate: getDuplicateDialog(data) //,
+      // duplicateSuccessful: getDuplicateSuccessfulDialog(data)
     }
 
     const currentDialog=dialogContent[type]||{}
