@@ -117,7 +117,7 @@ const AppBarItem=({
 }
 
 const returnToMainAccount = () => {
-  window.location.herf = '/Pulseem/AccountUsers.aspx?fromreact=true';
+  window.location = '/Pulseem/AccountUsers.aspx?fromreact=true';
 }
 const LanguageSelector=({windowSize,classes}) => {
   const cookieData=getCookie('Culture');
@@ -233,7 +233,9 @@ export const TopAppBar=({classes,currentPage=''}) => {
         {cameFromSubAccount && <AppBarItem
             classes={classes}
             item={{title: t('appBar.returnToMainAccount')}}
-            onMainClick={() => returnToMainAccount()}
+            onMainClick={() => { 
+              returnToMainAccount()
+            }}
         />}
         <AppBarItem
           classes={classes}
