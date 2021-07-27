@@ -31,5 +31,6 @@
   "notifications": {
     "title": "נוטיפיקציות"
   },
-  "logout": "יציאה"
+  "logout": "יציאה",
+  "returnToMainAccount": "חשבון ראשי"
 }

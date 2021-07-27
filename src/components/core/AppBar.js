@@ -116,11 +116,13 @@ const AppBarItem=({
   )
 }
 
+const returnToMainAccount = () => {
+  window.location.herf = '/Pulseem/AccountUsers.aspx?fromreact=true';
+}
 const LanguageSelector=({windowSize,classes}) => {
   const cookieData=getCookie('Culture');
   const language=!!cookieData? cookieData:'he-IL';
   const dispatch=useDispatch();
-  //dispatch(setLanguage(language.split('-')[0]));
   const languages=[
     {
       title: "עברית",
@@ -150,29 +152,6 @@ const LanguageSelector=({windowSize,classes}) => {
     dispatch(setLanguage(langSelected));
   }
 
-  // if(windowSize==='xs') {
-  //   return (
-  //     <NativeSelect
-  //       classes={{root: clsx(classes.languageSelect),icon: classes.white}}
-  //       className={classes.textCapitalize}
-  //       value={language}
-  //       onChange={e => changeLanguage({value: e.target.value})}
-  //       IconComponent={props => (
-  //         <ExpandMoreIcon {...props} />)
-  //       }
-
-  //     >
-  //       {languages.map((lang,index) => (
-  //         <option
-  //           key={`lang${index}`}
-  //           value={lang.value}
-  //           className={clsx(classes.textCapitalize,classes.black)}>
-  //           {lang.title}
-  //         </option>
-  //       ))}
-  //     </NativeSelect>
-  //   );
-  // }
   return (
     <AppBarItem
       isMobile={windowSize==='xs'}
@@ -185,7 +164,7 @@ const LanguageSelector=({windowSize,classes}) => {
 
 
 export const TopAppBar=({classes,currentPage=''}) => {
-  const {companyName,windowSize,isRTL,imageURL,isClal,accountFeatures}=useSelector(state => state.core)
+  const {companyName,windowSize,isRTL,imageURL,isClal,accountFeatures,cameFromSubAccount}=useSelector(state => state.core)
   const phoneMenuButtonRef=useRef(null)
   const [open,setOpen]=useState(false)
   const [windowWidth,setWindowWidth]=useState(window.innerWidth)
@@ -251,6 +230,11 @@ export const TopAppBar=({classes,currentPage=''}) => {
           item={settings}
         />
         <LanguageSelector classes={classes} />
+        {cameFromSubAccount && <AppBarItem
+            classes={classes}
+            item={{title: t('appBar.returnToMainAccount')}}
+            onMainClick={() => returnToMainAccount()}
+        />}
         <AppBarItem
           classes={classes}
           item={{title: question}}
