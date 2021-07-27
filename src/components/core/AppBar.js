@@ -55,6 +55,7 @@ const AppBarItem = ({
       onMouseLeave={handleClose}
       className={clsx(classes.appBarItemContainer)}>
       <Box
+        style={{ whiteSpace: 'nowrap' }}
         component='a'
         href={item.href}
         className={classes.appBarHrefContainer}
@@ -117,7 +118,7 @@ const AppBarItem = ({
 }
 
 const returnToMainAccount = () => {
-  window.location = '/Pulseem/AccountUsers.aspx?fromreact=true';
+  window.location = '/Pulseem/ReactRedirect.aspx?fromreact=true';
 }
 const LanguageSelector = ({ windowSize, classes }) => {
   const cookieData = getCookie('Culture');
@@ -231,7 +232,6 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
         />
         <LanguageSelector classes={classes} />
         {cameFromSubAccount && <AppBarItem
-          style={{ whiteSpace: 'nowrap' }}
           classes={classes}
           item={{ title: t('appBar.returnToMainAccount') }}
           onMainClick={() => {
