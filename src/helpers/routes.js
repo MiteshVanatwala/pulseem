@@ -6,6 +6,7 @@ import {
   CodeMenuIcon,DolarMenuIcon,SettingsMenuIcon,StarMenuIcon,GrafMenuIcon,GroupMenuIcon
 } from '../assets/images/settings/index'
 import SettingsLogo from '../assets/images/settings-white.png';
+import { useSelector } from 'react-redux';
 
 const { isAdmin } = useSelector(state => state.core)
 export const getSettingsItem=(t,style='') => ({
