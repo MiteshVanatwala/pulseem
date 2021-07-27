@@ -1,53 +1,53 @@
-import React,{useState,useRef,useEffect} from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
-  AppBar,Toolbar,Typography,Button,IconButton,MenuItem,ClickAwayListener,
-  Grow,Paper,Popper,MenuList,SvgIcon,Grid,Box,Select,NativeSelect
+  AppBar, Toolbar, Typography, Button, IconButton, MenuItem, ClickAwayListener,
+  Grow, Paper, Popper, MenuList, SvgIcon, Grid, Box, Select, NativeSelect
 } from '@material-ui/core';
 import clsx from 'clsx';
-import {ArrowDropUp} from '@material-ui/icons';
-import {useSelector,useDispatch} from 'react-redux';
-import {setLanguage} from '../../redux/reducers/coreSlice'
+import { ArrowDropUp } from '@material-ui/icons';
+import { useSelector, useDispatch } from 'react-redux';
+import { setLanguage } from '../../redux/reducers/coreSlice'
 import Logo from '../../assets/images/pulseemnewlogo.png'
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import DoubleArrowIcon from '../../assets/images/doubleArrow.png'
-import {ReactComponent as QuestionIcon} from '../../assets/images/question.svg'
-import {FaBars,FaTimes} from 'react-icons/fa';
-import {getRoutes,getSettingsItem} from '../../helpers/routes'
+import { ReactComponent as QuestionIcon } from '../../assets/images/question.svg'
+import { FaBars, FaTimes } from 'react-icons/fa';
+import { getRoutes, getSettingsItem } from '../../helpers/routes'
 //import useCtrlHistory from '../../helpers/useCtrlHistory'
-import {setCookie,getCookie} from '../../helpers/cookies'
-import {setScriptDialog} from '../../redux/reducers/notificationSlice';
-import {logout} from '../../helpers/api'
-import {openInNewTab} from '../../helpers/functions'
+import { setCookie, getCookie } from '../../helpers/cookies'
+import { setScriptDialog } from '../../redux/reducers/notificationSlice';
+import { logout } from '../../helpers/api'
+import { openInNewTab } from '../../helpers/functions'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {actionURL} from '../../config/index'
+import { actionURL } from '../../config/index'
 import i18n from '../../i18n'
-const AppBarItem=({
+const AppBarItem = ({
   item,
-  onMainClick=() => {},
-  onInnerClick=() => {},
-  chosen=false,
-  textStyle='',
-  showIcon=false,
+  onMainClick = () => { },
+  onInnerClick = () => { },
+  chosen = false,
+  textStyle = '',
+  showIcon = false,
   classes,
 }) => {
-  const [open,setOpen]=useState(false)
+  const [open, setOpen] = useState(false)
 
-  const [buttonWidth,setButtonWidth]=useState(0)
-  const buttonRef=useRef(null)
-  const menuWidth=290
+  const [buttonWidth, setButtonWidth] = useState(0)
+  const buttonRef = useRef(null)
+  const menuWidth = 290
 
   useEffect(() => {
     setButtonWidth(buttonRef.current.clientWidth)
-  },[])
+  }, [])
 
-  const handleOpen=() => {
+  const handleOpen = () => {
     setOpen(true)
   }
 
-  const handleClose=() => {
+  const handleClose = () => {
     setOpen(false)
   }
-  const currentStyle=showIcon? classes.appBarItemIcon:classes.appBarItemText
+  const currentStyle = showIcon ? classes.appBarItemIcon : classes.appBarItemText
   return (
     <Box
       zIndex='tooltip'
@@ -67,38 +67,38 @@ const AppBarItem=({
           className={clsx(
             currentStyle,
             textStyle,
-            {[classes.chosenText]: chosen})}>
-          {showIcon? item.iconUnicode: item && item.title || ''}
+            { [classes.chosenText]: chosen })}>
+          {showIcon ? item.iconUnicode : item && item.title || ''}
         </IconButton>
 
-        {(chosen||open)&&<ArrowDropUp className={classes.appBarItemArrow} />}
+        {(chosen || open) && <ArrowDropUp className={classes.appBarItemArrow} />}
       </Box>
       <Popper open={open} anchorEl={buttonRef.current} role={undefined} transition placement={'bottom-start'} disablePortal>
-        {({TransitionProps}) => (
+        {({ TransitionProps }) => (
           <Grow
             {...TransitionProps}>
             <Paper
               className={classes.appBarItemPaper}
-              style={{width: menuWidth}}>
+              style={{ width: menuWidth }}>
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList
-                  style={{padding: 0}}>
-                  {item.options&&item.options.map((option,index) => (
-                    option.isShow && 
+                  style={{ padding: 0 }}>
+                  {item.options && item.options.map((option, index) => (
+                    option.isShow &&
                     <Box
                       key={index}
                       component='a'
                       className={classes.appBarItemMenuItem}
                       href={option.href}>
-                      {index!==0&&<Box className={classes.appBarItemBorder} />}
+                      {index !== 0 && <Box className={classes.appBarItemBorder} />}
                       <MenuItem
                         key={option.title}
                         onClick={() => onInnerClick(option)}
-                        classes={{root: classes.appBarItemMenuRoot}}
+                        classes={{ root: classes.appBarItemMenuRoot }}
                         className={classes.appBarItemMenuItem}
                       >
                         <img
-                          src={option.iconSrc||DoubleArrowIcon}
+                          src={option.iconSrc || DoubleArrowIcon}
                           alt='Double Arrow Icon'
                           className={classes.appBarItemDoubleArrowIcon} />
                         {option.title}
@@ -119,11 +119,11 @@ const AppBarItem=({
 const returnToMainAccount = () => {
   window.location = '/Pulseem/AccountUsers.aspx?fromreact=true';
 }
-const LanguageSelector=({windowSize,classes}) => {
-  const cookieData=getCookie('Culture');
-  const language=!!cookieData? cookieData:'he-IL';
-  const dispatch=useDispatch();
-  const languages=[
+const LanguageSelector = ({ windowSize, classes }) => {
+  const cookieData = getCookie('Culture');
+  const language = !!cookieData ? cookieData : 'he-IL';
+  const dispatch = useDispatch();
+  const languages = [
     {
       title: "עברית",
       mobileTitle: 'עב',
@@ -138,24 +138,24 @@ const LanguageSelector=({windowSize,classes}) => {
     }
   ]
 
-  const item={
-    title: languages && languages.find(lang => lang.value.toLocaleLowerCase()===language.toLocaleLowerCase()).title || '',
+  const item = {
+    title: languages && languages.find(lang => lang.value.toLocaleLowerCase() === language.toLocaleLowerCase()).title || '',
     options: languages
   }
 
-  const changeLanguage=option => {
-    const {value}=option
+  const changeLanguage = option => {
+    const { value } = option
     const langSelected = value.split('-')[0];
-    
-    setCookie('Culture',value);
+
+    setCookie('Culture', value);
     i18n.changeLanguage(langSelected);
     dispatch(setLanguage(langSelected));
   }
 
   return (
     <AppBarItem
-      isMobile={windowSize==='xs'}
-      textStyle={windowSize==='xs'&&classes.textCapitalize}
+      isMobile={windowSize === 'xs'}
+      textStyle={windowSize === 'xs' && classes.textCapitalize}
       classes={classes}
       item={item}
       onInnerClick={changeLanguage} />
@@ -163,48 +163,48 @@ const LanguageSelector=({windowSize,classes}) => {
 }
 
 
-export const TopAppBar=({classes,currentPage=''}) => {
-  const {companyName,windowSize,isRTL,imageURL,isClal,accountFeatures,cameFromSubAccount}=useSelector(state => state.core)
-  const phoneMenuButtonRef=useRef(null)
-  const [open,setOpen]=useState(false)
-  const [windowWidth,setWindowWidth]=useState(window.innerWidth)
+export const TopAppBar = ({ classes, currentPage = '' }) => {
+  const { companyName, windowSize, isRTL, imageURL, isClal, accountFeatures, cameFromSubAccount } = useSelector(state => state.core)
+  const phoneMenuButtonRef = useRef(null)
+  const [open, setOpen] = useState(false)
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
   const topNavRef = useRef(null)
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
 
-  const handleScriptDialog=() => {
-    let scriptDialog=getCookie('scriptDialog');
-    scriptDialog=(scriptDialog==='true');
+  const handleScriptDialog = () => {
+    let scriptDialog = getCookie('scriptDialog');
+    scriptDialog = (scriptDialog === 'true');
     dispatch(setScriptDialog(scriptDialog));
   }
 
   useEffect(() => {
     handleScriptDialog();
-    const resizeWindow=() => {
+    const resizeWindow = () => {
       setWindowWidth(window.innerWidth)
     }
-    window.addEventListener('resize',resizeWindow)
+    window.addEventListener('resize', resizeWindow)
 
     return () => {
-      window.removeEventListener('resize',resizeWindow)
+      window.removeEventListener('resize', resizeWindow)
     }
-  },[])
+  }, [])
 
-  const handleOpen=() => {
+  const handleOpen = () => {
     setOpen(!open)
   }
-  const {t}=useTranslation();
-  const routes=getRoutes(t,isClal,accountFeatures, windowSize)
-  const settings=getSettingsItem(t,classes.appBarSettingIcon)
+  const { t } = useTranslation();
+  const routes = getRoutes(t, isClal, accountFeatures, windowSize)
+  const settings = getSettingsItem(t, classes.appBarSettingIcon)
 
-  const navigate=({uri}) => {
-    if(!!uri) {
-      setCookie('scriptDialog',false,{maxAge: 36000000000});
+  const navigate = ({ uri }) => {
+    if (!!uri) {
+      setCookie('scriptDialog', false, { maxAge: 36000000000 });
       dispatch(setScriptDialog(false));
-      window.location.href=uri
+      window.location.href = uri
     }
   }
 
-  const renderRegularAppBar=() => (
+  const renderRegularAppBar = () => (
     <>
       {routes.map(route => (
         route.isShow &&
@@ -212,12 +212,12 @@ export const TopAppBar=({classes,currentPage=''}) => {
           key={route.key}
           classes={classes}
           item={route}
-          chosen={route.key===currentPage}
-          showIcon={windowSize==='sm'||windowSize==='md'}
+          chosen={route.key === currentPage}
+          showIcon={windowSize === 'sm' || windowSize === 'md'}
           onInnerClick={navigate}
         />
       ))}
-      {windowSize==='xl'&&<>
+      {windowSize === 'xl' && <>
         <Box className={classes.appBerSpace} />
         <Typography
           className={classes.appBarUsername}>
@@ -231,15 +231,16 @@ export const TopAppBar=({classes,currentPage=''}) => {
         />
         <LanguageSelector classes={classes} />
         {cameFromSubAccount && <AppBarItem
-            classes={classes}
-            item={{title: t('appBar.returnToMainAccount')}}
-            onMainClick={() => { 
-              returnToMainAccount()
-            }}
+          style={{ whiteSpace: 'nowrap' }}
+          classes={classes}
+          item={{ title: t('appBar.returnToMainAccount') }}
+          onMainClick={() => {
+            returnToMainAccount()
+          }}
         />}
         <AppBarItem
           classes={classes}
-          item={{title: question}}
+          item={{ title: question }}
           onMainClick={() => {
             openInNewTab('/Pages/Home.aspx?action=support&fromreact=true')
           }}
@@ -249,9 +250,9 @@ export const TopAppBar=({classes,currentPage=''}) => {
     </>
   )
 
-  const renderPhoneAppBar=() => {
-    const reportsOptions=routes.find(r => r.key==='reports').options
-    const smallRoutes=[
+  const renderPhoneAppBar = () => {
+    const reportsOptions = routes.find(r => r.key === 'reports').options
+    const smallRoutes = [
       routes[0],
       routes[2],
       routes[3],
@@ -259,8 +260,8 @@ export const TopAppBar=({classes,currentPage=''}) => {
       routes[5],
       routes[6],
       routes[7],
-      {title: t('appBar.reports.newsletterReports'),iconUnicode: '\ue049',href: reportsOptions[1].href, isShow: true},
-      {title: t('appBar.reports.smsReports'),iconUnicode: '\ue04c',href: reportsOptions[2].href, isShow: true},
+      { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
+      { title: t('appBar.reports.smsReports'), iconUnicode: '\ue04c', href: reportsOptions[2].href, isShow: true },
       //routes[1]
     ]
     return (
@@ -268,7 +269,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
         <Box
           ref={phoneMenuButtonRef}
           className={classes.phoneAppBarContainer}
-          >
+        >
           <IconButton
             className={classes.phoneAppBarButton}
             onClick={handleOpen}>
@@ -280,14 +281,14 @@ export const TopAppBar=({classes,currentPage=''}) => {
           open={open}
           anchorEl={topNavRef.current}
           role={undefined}
-          style={{zIndex: '1', boxSizing: 'border-box', }}
+          style={{ zIndex: '1', boxSizing: 'border-box', }}
           transition
         >
-          {({TransitionProps}) => (
+          {({ TransitionProps }) => (
             <Grow
               {...TransitionProps}>
               <Paper
-                style={{width: windowWidth-40}}
+                style={{ width: windowWidth - 40 }}
                 className={classes.phoneAppBarPaper}>
                 <ClickAwayListener
                   onClickAway={handleOpen}>
@@ -304,9 +305,9 @@ export const TopAppBar=({classes,currentPage=''}) => {
                     <Grid
                       container
                       spacing={1}
-                      direction={isRTL? 'row-reverse':'row'} >
-                      {smallRoutes.map((route,i) => (
-                        route.isShow && 
+                      direction={isRTL ? 'row-reverse' : 'row'} >
+                      {smallRoutes.map((route, i) => (
+                        route.isShow &&
                         <Grid
                           key={`appBarItem${i}`}
                           item
@@ -315,14 +316,14 @@ export const TopAppBar=({classes,currentPage=''}) => {
                             className={classes.phoneAppBarItemContainer}>
                             <Button
                               href={route.href}
-                              style={{alignSelf: 'center'}}>
+                              style={{ alignSelf: 'center' }}>
                               <Typography
                                 className={classes.phoneAppBarItemIcon}>
                                 {route.iconUnicode}
                               </Typography>
                             </Button>
                             <Typography
-                              style={{textAlign: 'center'}}>
+                              style={{ textAlign: 'center' }}>
                               {route.title}
                             </Typography>
                           </Box>
@@ -339,13 +340,13 @@ export const TopAppBar=({classes,currentPage=''}) => {
     )
   }
 
-  const renderAppBar=windowSize==='xs'? renderPhoneAppBar:renderRegularAppBar
+  const renderAppBar = windowSize === 'xs' ? renderPhoneAppBar : renderRegularAppBar
 
-  const question=<SvgIcon style={{marginBottom: 5,marginInlineEnd: 5}}>
+  const question = <SvgIcon style={{ marginBottom: 5, marginInlineEnd: 5 }}>
     <QuestionIcon />
   </SvgIcon>
   return (
-    <Box style={{flexGrow: 1}}>
+    <Box style={{ flexGrow: 1 }}>
       <AppBar position='static' className={classes.appBar} ref={topNavRef}>
         <Toolbar variant='dense'>
           <Box
@@ -360,7 +361,7 @@ export const TopAppBar=({classes,currentPage=''}) => {
           {renderAppBar()}
           <AppBarItem
             classes={classes}
-            item={{title: t('appBar.logout')}}
+            item={{ title: t('appBar.logout') }}
             onMainClick={logout}
           />
         </Toolbar>
