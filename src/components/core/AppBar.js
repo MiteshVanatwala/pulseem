@@ -165,7 +165,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
 
 
 export const TopAppBar = ({ classes, currentPage = '' }) => {
-  const { companyName, windowSize, isRTL, imageURL, isClal, accountFeatures, cameFromSubAccount } = useSelector(state => state.core)
+  const { companyName, windowSize, isRTL, imageURL, isClal, accountFeatures, cameFromSubAccount, isAdmin } = useSelector(state => state.core)
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -195,7 +195,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
   }
   const { t } = useTranslation();
   const routes = getRoutes(t, isClal, accountFeatures, windowSize)
-  const settings = getSettingsItem(t, classes.appBarSettingIcon)
+  const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAdmin && (isAdmin.toLowerCase() === 'true' || isAdmin.toLowerCase() === 'superadmin')))
 
   const navigate = ({ uri }) => {
     if (!!uri) {
