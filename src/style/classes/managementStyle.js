@@ -1296,7 +1296,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: '5px 0px'
   },
   lastReportsTabPanels: {
-    padding: '0 20px 0 30px'
+    padding: '0'
   },
   lastReportPadding: {
     [theme.breakpoints.down('md')]: {
