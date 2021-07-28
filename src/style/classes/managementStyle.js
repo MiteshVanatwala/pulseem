@@ -1282,4 +1282,87 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginTop: 10,
     zIndex: -1
   },
+  listBgBrown: {
+    backgroundColor: '#636363',
+    color: 'white'
+  },
+  smsGraph: {
+    position: 'relative',
+    marginBottom: 50,
+    '& .amcharts-amexport-item .amcharts-amexport-item-level-1 .amcharts-amexport-item-blank': {
+      width: 150
+    },
+    '& .amcharts-amexport-menu-level-1': {
+      right: '15px!important',
+      '&::after': {
+        content: `''`,
+        position: 'absolute',
+        top: '5px',
+        left: '100%',
+        zIndex: '1000',
+        borderTop: '8px solid transparent',
+        borderLeft: '8px solid #e2e2e2',
+        borderRight: '8px solid transparent',
+        borderBottom: '8px solid transparent',
+      }
+    }
+  },
+  smsGraphMenu: {
+    width: 35, 
+    height: 35,
+    background: '#fff',
+    border: '1px solid #e2e2e2',
+    '&:hover': {
+      backgroundColor: '#636363',
+    }
+  },
+  smsGraphMenuIcon: {
+    padding: 0,
+    color: 'gray',
+    '&:hover': {
+      color: 'white'
+    }
+  },
+  smsGraphMenuPaper: {
+    borderRadius: 0,
+    boxShadow: 'none',
+    border: '1px solid #e2e2e2',
+    '& .MuiListItem-button:hover': {
+      backgroundColor: '#636363',
+      color: 'white'
+    }
+  }, 
+  smsGraphMenuList: {
+    padding: 0, 
+    position: 'absolute', 
+    top:0, 
+    right: 50, 
+    width: 140, 
+  },
+  arrowRight: {
+    '&::after': {
+      content: `''`,
+      position: 'absolute',
+      top: '13px',
+      left: '100%',
+      zIndex: '1000',
+      border: '1px solid #e2e2e2',
+      borderTop: '7px solid transparent',
+      borderLeft: '7px solid #fff',
+      borderRight: '7px solid transparent',
+      borderBottom: '7px solid transparent',
+    },
+    '&::before': {
+      content: `''`,
+      position: 'absolute',
+      top: '12.5px',
+      left: '100%',
+      zIndex: '1000',
+      borderTop: '7px solid transparent',
+      borderLeft: '7.5px solid black',
+      borderRight: '7.5px solid transparent',
+      borderBottom: '7.5px solid transparent',
+    }
+    
+  }
 })

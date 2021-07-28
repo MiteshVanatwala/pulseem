@@ -8,6 +8,7 @@ import master from './Pulseem.master.he.json'
 import appBar from './AppBar.he.json'
 import notifications from './Notifications.he.json'
 import mainReport from './MainReport.aspx.he.json'
+import smsReport from './SMSReport.he.json'
 
 export const he={
   automations,
@@ -19,5 +20,6 @@ export const he={
   appBar,
   master,
   notifications,
-  mainReport
+  mainReport,
+  smsReport
 }

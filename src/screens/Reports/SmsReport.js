@@ -3,7 +3,7 @@ import DefaultScreen from '../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,Link,
-  Grid,Button,TextField,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio,FormGroup,FormControl
+  Grid,Button,TextField,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio,FormGroup,FormControl, Paper, Avatar, IconButton, Menu, ListItemText, List, ListItem, Popper, Fade
 } from '@material-ui/core'
 import Switch from "react-switch";
 import {
@@ -22,6 +22,11 @@ import {apiURL} from '../../config/index'
 import {CSVLink} from 'react-csv'
 import {getNewsletterReports,downloadNewsletterReport} from '../../redux/reducers/newsletterSlice';
 import {exportSmsReport, getSmsReport} from '../../redux/reducers/smsSlice';
+import * as am4core from "@amcharts/amcharts4/core";
+import * as am4charts from "@amcharts/amcharts4/charts";
+import am4themes_animated from "@amcharts/amcharts4/themes/animated";
+import arrowDown from "../../assets/images/down-arrow-splash.png"
+import * as am4plugins_annotation from "@amcharts/amcharts4/plugins/annotation"; 
 
 const SmsReport=({classes}) => {
   const {language,windowSize,isRTL}=useSelector(state => state.core)
@@ -35,7 +40,6 @@ const SmsReport=({classes}) => {
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)
-  const [toFileArray,setToFileArray]=useState([])
   const [isDemoSend,setIsDemoSend]=useState(false)
   const [csvData,setCsvData]=useState('')
   const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
@@ -47,6 +51,9 @@ const SmsReport=({classes}) => {
   const noBorderCellStyle={body: classes.tableCellBodyNoBorder,root: clsx(classes.tableCellRoot,classes.minWidth50)}
   const borderCellStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.minWidth50)}
   const csvLinkRef=useRef(null)
+
+  let chart;
+  am4core.useTheme(am4themes_animated);
 
   moment.locale(language)
 
@@ -84,7 +91,15 @@ const SmsReport=({classes}) => {
     dispatch(getSmsReport(isDemoSend));
   }
 
-  useEffect(getData,[dispatch,isDemoSend]);
+  const initChart=()=> {
+    
+    
+  }
+
+  useEffect(()=> {
+    getData();
+    initChart();
+  },[dispatch,isDemoSend]);
 
 
   const renderHeader=() => {
@@ -611,6 +626,100 @@ const SmsReport=({classes}) => {
     )
   }
 
+  const renderGraph=() => {
+    chart = am4core.create("chartdiv", am4charts.XYChart3D);
+    // chart.data = [{
+    //   "month": "11/2020",
+    //   "amount": 40,
+    //   "color": "rgb(138, 12, 207)"
+    // }, {
+    //   "month": "12/2020",
+    //   "amount": 59,
+    //   "color": "rgb(205, 13, 116)"
+    // }, {
+    //   "month": "01/2021",
+    //   "amount": 26,
+    //   "color": "rgb(255, 102, 0)"
+    // }, {
+    //   "month": "02/2021",
+    //   "amount": 4,
+    //   "color": "rgb(255, 122, 0)"
+    // }, {
+    //   "month": "03/2021",
+    //   "amount": 432,
+    //   "color": "rgb(255, 158, 1)"
+    // }, {
+    //   "month": "07/2021",
+    //   "amount": 3,
+    //   "color": "rgb(4, 210, 21)"
+    // }];
+    var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+    categoryAxis.dataFields.category = "month";
+    categoryAxis.cursorTooltipEnabled = false;
+    categoryAxis.renderer.labels.template.rotation = 270;
+
+    var  valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+    valueAxis.title.text = `[bold]${t('mainReport.chrtMonthlySendsSmlTitle.Name')}[/]`;
+    valueAxis.cursorTooltipEnabled = false;
+    
+    var series = chart.series.push(new am4charts.ColumnSeries3D());
+    series.dataFields.valueY = "amount";
+    series.dataFields.categoryX = "month";
+    series.dataFields.color = "color";
+    series.tooltipText = "{valueY}";
+    series.tooltip.getFillFromObject = false;
+    series.tooltip.background.strokeWidth = 2;
+    series.tooltip.background.cornerRadius = 0
+    series.tooltip.label.fill = am4core.color("#000000");
+    series.tooltip.background.propertyFields.stroke = "color";
+    series.columns.template.propertyFields.fill = "color";
+
+    chart.cursor = new am4charts.Cursor();
+    chart.exporting.menu = new am4core.ExportMenu();
+    chart.exporting.menu.items = [
+      {
+        "label": "...",
+        "menu": [
+          {
+            "label": "Download As ...",
+            "menu": [
+              { "type": "png", "label": "PNG" },
+              { "type": "jpg", "label": "JPG" },
+              { "type": "svg", "label": "SVG" },
+              { "type": "pdf", "label": "PDF" }
+            ]
+          }, {
+            "label": "Save As ...",
+            "menu": [
+              { "type": "csv", "label": "CSV" },
+              { "type": "xlsx", "label": "XLSX" },
+              { "type": "json", "label": "JSON" },
+              { "type": "pdf", "label": "PDF" },
+              { "type": "html", "label": "HTML" },
+            ]
+          }, {
+            "label": "Print", "type": "print"
+          }
+        ]
+      }
+    ]
+    chart.plugins.push(new am4plugins_annotation.Annotation());
+    
+    return (
+      <>
+        <Box style={{display: 'flex', justifyContent: 'center', marginBottom: 20}}>
+          <img src={arrowDown} width={50} height={50} className={classes.pl25}/>
+          <Typography className={clsx(classes.f28, classes.bold)} align='center'>{t('smsReport.amountOfEmails')}</Typography>
+          <img src={arrowDown} width={50} height={50} className={classes.pr25}/>
+        </Box>
+        <Paper elevation={3} className={classes.smsGraph}>
+          <div dir="ltr" id="chartdiv" style={{ width: "100%", height: "450px" }}></div>
+        </Paper>
+        <br/>
+      </>
+    )
+  }
+
 
   return (
     <DefaultScreen
@@ -620,6 +729,7 @@ const SmsReport=({classes}) => {
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
+      {renderGraph()}
     </DefaultScreen>
   )
 }
