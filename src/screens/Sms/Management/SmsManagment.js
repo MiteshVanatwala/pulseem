@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction, Link
+  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction, Link, Tooltip
 } from '@material-ui/core'
 import {
   AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
@@ -24,9 +24,11 @@ import 'moment/locale/he'
 import {Preview} from '../../../components/Notifications/Preview/Preview';
 import { pulseemNewTab } from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 const SmsManagnentScreen=({classes}) => {
-  const {language,windowSize,email,phone}=useSelector(state => state.core)
+  const {language,windowSize,email,phone,rowsPerPage}=useSelector(state => state.core)
   const {smsData,smsDataError,smsDeletedData,authorizationData}=useSelector(state => state.sms)
   const {username}=useSelector(state => state.user)
   const {t}=useTranslation()
@@ -38,7 +40,6 @@ const SmsManagnentScreen=({classes}) => {
   const [verificationCodeError,handleVerificationCodeError]=useState(false);
   const [campaineNameSearch,setCampaineNameSearch]=useState('')
   const rowsOptions=[6,12,18]
-  const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)
@@ -123,6 +124,12 @@ const SmsManagnentScreen=({classes}) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleFromDateChange=(value) => {
       if(value>toDate) {
         handleToDate(null);
@@ -141,6 +148,7 @@ const SmsManagnentScreen=({classes}) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
         />
       )
@@ -279,14 +287,14 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {Status,Groups,AutomationID,Id}=row
+    const {Status,Groups,AutomationID,Id,AutomationTriggerInActive}=row
 
     const iconsMap=[
       {
         key: 'send',
         icon: SendGreenIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
-        remove: Status!==1,
+        remove: Status!==1 || (AutomationID!==0 &&  AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         href: `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&fromreact=true`
@@ -310,7 +318,6 @@ const SmsManagnentScreen=({classes}) => {
         icon: EditIcon,
         disable: Status!==1 || AutomationID!==0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        remove: windowSize==='xs',
         href: `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&fromreact=true`,
         rootClass: classes.paddingIcon
       },
@@ -356,6 +363,7 @@ const SmsManagnentScreen=({classes}) => {
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         showPhone: true,
+        disable: AutomationID!==0,
         rootClass: classes.paddingIcon,
         onClick: () => {
           setDialogType({
@@ -454,12 +462,21 @@ const SmsManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Typography noWrap={false} className={classes.nameEllipsis}>
-          {row.Name}
-        </Typography>
+        <Tooltip 
+          arrow 
+          title={row.Name} 
+          placement={'top-start'} 
+          classes={{
+            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+            arrow: classes.tooltipArrow}}
+          >
+          <Typography noWrap={false} className={classes.nameEllipsis}>
+            {row.Name}
+          </Typography>
+        </Tooltip>
         <Typography
           className={classes.grayTextCell}>
-          {`${text} ${date.format('L')} ${date.format('LT')}`}
+          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
         </Typography>
       </>
     )
@@ -529,7 +546,8 @@ const SmsManagnentScreen=({classes}) => {
 
   const renderTableBody=() => {
     let sortData=isSearching? searchResults:smsData;
-    sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    let rpp=parseInt(rowsPerPage)
+    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
       <TableBody>
         {sortData
@@ -550,12 +568,16 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderTablePagination=() => {
+    const handleRowsPerPageChange=(val) => {
+      dispatch(setRowsPerPage(val))
+      setCookie('rpp', val, { maxAge: 2147483647 })
+    }
     return (
       <TablePagination
         classes={classes}
         rows={isSearching? searchResults.length:smsData.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={setRowsPerPage}
+        onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}
@@ -602,7 +624,7 @@ const SmsManagnentScreen=({classes}) => {
       optinCode: verificationCode,
       phoneNumber: number
     }));
-    if(result.error) {
+    if(result.error || result.payload==='NotMatch') {
       handleVerificationCodeError(true);
     } else {
       setDialogType({
@@ -736,6 +758,7 @@ const SmsManagnentScreen=({classes}) => {
   const getPreviewDialog=(data={}) => {
     return {
       childrenPadding: false,
+      contentStyle: classes.pt2rem,
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>

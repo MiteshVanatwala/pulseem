@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box
+  Grid,Button,TextField,Box, Tooltip
 } from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,ReportsIcon,SearchIcon,PreviewIcon
@@ -23,17 +23,18 @@ import moment from 'moment'
 import 'moment/locale/he'
 import {pulseemNewTab} from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 
 const AutomationsManagnentScreen=({classes}) => {
-  const {language,windowSize}=useSelector(state => state.core)
+  const {language,windowSize,rowsPerPage}=useSelector(state => state.core)
   const {automationsData,automationsDataError,automationsDeletedData}=useSelector(state => state.automations)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null)
   const [campaineNameSearch,setCampaineNameSearch]=useState('')
   const rowsOptions=[6,12,18]
-  const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)
@@ -122,6 +123,12 @@ const AutomationsManagnentScreen=({classes}) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleFromDateChange=(value) => {
       if(value>toDate) {
         handleToDate(null);
@@ -140,6 +147,7 @@ const AutomationsManagnentScreen=({classes}) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={t('automations.labelAutomationName')}
         />
       )
@@ -404,12 +412,21 @@ const AutomationsManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Typography noWrap={false} className={classes.nameEllipsis}>
-          {row.Name}
-        </Typography>
+        <Tooltip 
+          arrow 
+          title={row.Name} 
+          placement={'top-start'} 
+          classes={{
+            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+            arrow: classes.tooltipArrow}}
+          >
+          <Typography noWrap={false} className={classes.nameEllipsis}>
+            {row.Name}
+          </Typography>
+        </Tooltip>
         <Typography
           className={classes.grayTextCell}>
-          {`${text} ${date.format('L')} ${date.format('LT')}`}
+          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
         </Typography>
       </>
     )
@@ -502,7 +519,8 @@ const AutomationsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
 
     let rowData=searchResults||automationsData;
-    rowData=rowData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    let rpp=parseInt(rowsPerPage)
+    rowData=rowData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
       <TableBody>
         {rowData
@@ -523,12 +541,16 @@ const AutomationsManagnentScreen=({classes}) => {
   }
 
   const renderTablePadington=() => {
+    const handleRowsPerPageChange=(val) => {
+      dispatch(setRowsPerPage(val))
+      setCookie('rpp', val, { maxAge: 2147483647 })
+    }
     return (
       <TablePagination
         classes={classes}
         rows={isSearching? searchResults.length:automationsData.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={setRowsPerPage}
+        onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}

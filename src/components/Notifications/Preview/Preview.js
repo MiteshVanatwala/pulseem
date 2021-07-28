@@ -34,7 +34,7 @@ export const Preview = (
     showOSScreen = true
   }) => {
   const { t } = useTranslation();
-  const { isRTL } = useSelector(state => state.core);
+  const { isRTL, windowSize } = useSelector(state => state.core);
   const [previewDeviceSelected, setPreviewDevice] = useState(showDevices == false ? 0 : 0);
   const [notificationExpanded, setNotificationExpanded] = useState(!showDevices);
   TabPanel.propTypes = {
@@ -87,6 +87,7 @@ export const Preview = (
 
   // Desktop/Mobile Preview
   const desktopPreview = (isChrome) => {
+    console.log(`desktopPreview(): model`, model)
     return (
       <div>
         <div className={classes.osScreen}>
@@ -167,6 +168,7 @@ export const Preview = (
   }
 
   const mobileFullPreview = () => {
+    console.log(`mobileFullPreview(): model`, model)
     const sms = model.Text && model.Text.split(/\r\n|\n\r|\n|\r/) || [];
     const mms = model.NavigateUrl && model.NavigateUrl.split(/\r\n|\n\r|\n|\r/) || [];
 
@@ -191,6 +193,7 @@ export const Preview = (
   }
 
   const mobilePreview = () => {
+    console.log(`mobilePreview(): model`, model)
     return (
       <div className={clsx(classes.mobileBG, "mobileBG")}>
         <div className={clsx(classes.mobileNotification, "mobileNotification")}>
@@ -231,7 +234,7 @@ export const Preview = (
             style={{
               backgroundImage: `url(${model.Image})`,
               cursor: 'unset',
-              minHeight: 185
+              minHeight: windowSize==='xs'?130:185
             }}>
             <div className={clsx(
               classes.flex,
@@ -247,38 +250,40 @@ export const Preview = (
   }
 
   // Return final template
-
+  const campaignID=isSMS&&model.SMSCampaignID || isMMS&&model.MmsCampaignID || model.ID || '';
   return (
-    <Grid className={mobileFullsize && classes.justifyCenter}>
-      {showTitle && <h3 className={clsx(classes.blue, classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</h3>}
-      {showDevices && !mobileFullsize && <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
-        <Tabs
-          value={previewDeviceSelected}
-          onChange={handleDeviceChange}
-          variant="fullWidth"
-          scrollButtons="off"
-          aria-label="scrollable force tabs example"
-        >
-          <Tab className={classes.deviceSelector} icon={<FaChrome style={{ fontSize: '24px' }} />} {...a11yProps(0)} />
-          <Tab className={classes.deviceSelector} icon={<FaFirefox style={{ fontSize: '24px' }} />} {...a11yProps(1)} />
-          <Tab className={classes.deviceSelector} icon={<FaMobile style={{ fontSize: '24px' }} />} {...a11yProps(2)} />
-        </Tabs>
-      </AppBar>
-      }
-      {mobileFullsize ? mobileFullPreview() :
-        <>
-          <TabPanel value={previewDeviceSelected} index={0}>
-            {desktopPreview(true)}
-          </TabPanel >
-          <TabPanel value={previewDeviceSelected} index={1}>
-            {desktopPreview(false)}
-          </TabPanel >
-          <TabPanel value={previewDeviceSelected} index={2}>
-            {mobilePreview()}
-          </TabPanel >
-        </>
-      }
-
-    </Grid>
+    <>
+      <Typography className={classes.previewID}>{campaignID}</Typography>
+      <Grid className={mobileFullsize && classes.justifyCenter}>
+        {showTitle && <h3 className={clsx(classes.blue, classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</h3>}
+        {showDevices && !mobileFullsize && <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
+          <Tabs
+            value={previewDeviceSelected}
+            onChange={handleDeviceChange}
+            variant="fullWidth"
+            scrollButtons="off"
+            aria-label="scrollable force tabs example"
+          >
+            <Tab className={classes.deviceSelector} icon={<FaChrome style={{ fontSize: '24px' }} />} {...a11yProps(0)} />
+            <Tab className={classes.deviceSelector} icon={<FaFirefox style={{ fontSize: '24px' }} />} {...a11yProps(1)} />
+            <Tab className={classes.deviceSelector} icon={<FaMobile style={{ fontSize: '24px' }} />} {...a11yProps(2)} />
+          </Tabs>
+        </AppBar>
+        }
+        {mobileFullsize ? mobileFullPreview() :
+          <>
+            <TabPanel value={previewDeviceSelected} index={0}>
+              {desktopPreview(true)}
+            </TabPanel >
+            <TabPanel value={previewDeviceSelected} index={1}>
+              {desktopPreview(false)}
+            </TabPanel >
+            <TabPanel value={previewDeviceSelected} index={2}>
+              {mobilePreview()}
+            </TabPanel >
+          </>
+        }
+      </Grid>
+    </>
   )
 }

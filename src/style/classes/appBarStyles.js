@@ -33,8 +33,7 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
     fontFamily: 'pulseemicons'
   },
   appBarItemBorder: {
-    backgroundColor: 'black',
-    height: 1
+    borderBottom: '1px solid black',
   },
   appBarItemDoubleArrowIcon: {
     marginInlineEnd: '0.5em',
@@ -107,7 +106,8 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   phoneAppBarContainer: {
     display: 'flex',
     flex: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    maxWidth: '100%'
   },
   phoneAppBarButton: {
     color: 'white',

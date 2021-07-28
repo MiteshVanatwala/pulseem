@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {Typography,Grid,TextField,IconButton} from '@material-ui/core'
+import {Typography,Grid,TextField,IconButton, FormControl,Select,InputLabel} from '@material-ui/core'
 import {PageArrowIcon} from '../../assets/images/managment/index'
 
 import {useTranslation} from 'react-i18next'
@@ -50,7 +50,7 @@ export const TablePagination=({
         </Typography>
         <TextField
           select
-          className={classes.tablePadingtonSelect}
+          className={classes.tablePaginationSelect}
           variant='standard'
           SelectProps={{
             native: true,
@@ -93,7 +93,9 @@ export const TablePagination=({
           error={isTyping&&innerPage>page}
           type="number"
           value={isTyping? pageNum:page.toString()}
+          onBlur={()=>setTyping(false)}
           onChange={handelPageChange}
+          onBlur={()=>setTyping(false)}
           variant='outlined'
           margin='none'
           size='small'

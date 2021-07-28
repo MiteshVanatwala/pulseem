@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box
+  Grid,Button,TextField,Box, Tooltip
 } from '@material-ui/core'
 import {
   AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
@@ -24,16 +24,17 @@ import moment from 'moment'
 import 'moment/locale/he'
 import {pulseemNewTab} from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 const NewsletterManagnentScreen=({classes}) => {
-  const {language,windowSize}=useSelector(state => state.core)
+  const {language,windowSize,rowsPerPage}=useSelector(state => state.core)
   const {newslettersData,newslettersDataError,newslettersDeletedData}=useSelector(state => state.newsletter)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null)
   const [campaineNameSearch,setCampaineNameSearch]=useState('')
   const rowsOptions=[6,12,18]
-  const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false);
   const [searchResults,setSearchResults]=useState(null);
@@ -122,6 +123,12 @@ const NewsletterManagnentScreen=({classes}) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleFromDateChange=(value) => {
       if(value>toDate) {
         handleToDate(null);
@@ -140,6 +147,7 @@ const NewsletterManagnentScreen=({classes}) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
         />
       )
@@ -257,7 +265,7 @@ const NewsletterManagnentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {Status,Groups,AutomationID,CampaignID,shareUrl}=row
+    const {Status,Groups,AutomationID,CampaignID,shareUrl,AutomationTriggerInActive}=row
 
     const renderCopyToClipoard=(
       showCopied===CampaignID?
@@ -275,7 +283,7 @@ const NewsletterManagnentScreen=({classes}) => {
         key: 'send',
         icon: SendGreenIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
-        remove: Status!==1,
+        remove: Status!==1 || (AutomationID!==0 &&  AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
@@ -365,6 +373,7 @@ const NewsletterManagnentScreen=({classes}) => {
         icon: DeleteIcon,
         lable: t('campaigns.DeleteResource1.HeaderText'),
         rootClass: classes.paddingIcon,
+        disable: AutomationID!==0,
         showPhone: true,
         onClick: () => {
           setDialogType({
@@ -462,12 +471,21 @@ const NewsletterManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Typography noWrap={false} className={classes.nameEllipsis}>
-          {row.Name}
-        </Typography>
+        <Tooltip 
+          arrow 
+          title={row.Name} 
+          placement={'top-start'} 
+          classes={{
+            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+            arrow: classes.tooltipArrow}}
+          >
+          <Typography noWrap={false} className={classes.nameEllipsis}>
+            {row.Name}
+          </Typography>
+        </Tooltip>
         <Typography
           className={classes.grayTextCell}>
-          {`${text} ${date.format('L')} ${date.format('LT')}`}
+          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
         </Typography>
       </>
     )
@@ -531,7 +549,8 @@ const NewsletterManagnentScreen=({classes}) => {
 
   const renderTableBody=() => {
     let sortData=isSearching? searchResults:newslettersData;
-    sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    let rpp=parseInt(rowsPerPage)
+    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
       <TableBody>
         {sortData
@@ -552,12 +571,16 @@ const NewsletterManagnentScreen=({classes}) => {
   }
 
   const renderTablePagination=() => {
+    const handleRowsPerPageChange=(val) => {
+      dispatch(setRowsPerPage(val))
+      setCookie('rpp', val, { maxAge: 2147483647 })
+    }
     return (
       <TablePagination
         classes={classes}
         rows={isSearching? searchResults.length:newslettersData.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={setRowsPerPage}
+        onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}
@@ -582,7 +605,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const getRestorDialog=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
     return {
-      title: t('campaigns.restoreCampaginTitle'),
+      title: t('campaigns.restoreCampaignTitle'),
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>

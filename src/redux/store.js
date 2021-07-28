@@ -8,6 +8,7 @@ import automationsReducer from './reducers/automationsSlice'
 import notificationReducer from './reducers/notificationSlice';
 import smsReducer from './reducers/smsSlice'
 import reportReducer from './reducers/reportsSlice'
+import dashboardReducer from './reducers/dashboardSlice'
 
 export default configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export default configureStore({
     automations: automationsReducer,
     notification: notificationReducer,
     sms: smsReducer, 
-    report: reportReducer
+    report: reportReducer,
+    dashboard: dashboardReducer,
   },
 });

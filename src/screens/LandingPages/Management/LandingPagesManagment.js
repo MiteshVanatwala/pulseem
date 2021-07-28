@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box
+  Grid,Button,TextField,Box, Tooltip
 } from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SearchIcon,
@@ -24,14 +24,15 @@ import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import { Loader } from '../../../components/Loader/Loader';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 const LandingPagesesManagmentScreen=({classes}) => {
-  const {windowSize}=useSelector(state => state.core)
+  const {windowSize,rowsPerPage}=useSelector(state => state.core)
   const {landingPagesData,landingPagesDataError,landingPagesDeletedData}=useSelector(state => state.landingPages)
   const {t}=useTranslation()
   const [landingPageNameSearch,setLandingPageNameSearch]=useState('')
   const rowsOptions=[6,12,18]
-  const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)
@@ -94,6 +95,12 @@ const LandingPagesesManagmentScreen=({classes}) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleCampainNameChange=event => {
       setLandingPageNameSearch(event.target.value)
     }
@@ -107,6 +114,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           value={landingPageNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={placeholder}
         />
       )
@@ -225,7 +233,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
 
   const renderCellIcons=(row) => {
-    const {ID,IsPayment,PageLink,SurveyCount,Type,PageUrl}=row
+    const {ID,IsPayment,PageLink,SurveyCount,Type,PageUrl,IsSurvey}=row
     const copyDataObject={
       1: {
         icon: CopyIcon,
@@ -268,7 +276,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         lable: IsPayment?
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (windowSize==='xs'||(!IsPayment&&SurveyCount===0)),
+        remove: (windowSize==='xs'||(!IsPayment&&!IsSurvey)),
         rootClass: classes.paddingIcon,
         onClick: async () => {
           if(IsPayment) {
@@ -283,7 +291,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        remove: windowSize==='xs',
+        disable: !PageLink,
+        remove: !PageLink||windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           openInNewTab(PageLink)
@@ -402,9 +411,18 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderNameCell=(row) => {
     return (
       <>
-        <Typography noWrap className={classes.nameEllipsis}>
-          {row.Name}
-        </Typography>
+        <Tooltip 
+          arrow 
+          title={row.Name} 
+          placement={'top-start'} 
+          classes={{
+            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+            arrow: classes.tooltipArrow}}
+          >
+          <Typography noWrap={false} className={classes.nameEllipsis}>
+            {row.Name}
+          </Typography>
+        </Tooltip>
         <Typography
           className={classes.grayTextCell}>
           {row.GroupNames&&row.GroupNames.length>0&&<span>{renderGroupNames()}<b>{row.GroupNames.join(', ').replace('#','')}</b></span>}
@@ -505,7 +523,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderTableBody=() => {
 
     let sortData=isSearching? searchResults:landingPagesData;
-    sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    let rpp=parseInt(rowsPerPage)
+    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
       <TableBody>
         {sortData
@@ -526,12 +545,16 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
 
   const renderTablePagination=() => {
+    const handleRowsPerPageChange=(val) => {
+      dispatch(setRowsPerPage(val))
+      setCookie('rpp', val, { maxAge: 2147483647 })
+    }
     return (
       <TablePagination
         classes={classes}
         rows={isSearching? searchResults.length:landingPagesData.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={setRowsPerPage}
+        onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}
@@ -609,18 +632,62 @@ const LandingPagesesManagmentScreen=({classes}) => {
       clearSearch()
       handleClose()
       setPage(1)
-      await dispatch(duplicteLandingPage(data))
-      getData()
+      setLoader(true);
+      const result = await dispatch(duplicteLandingPage(data))
+      const { payload={} } = result || {};
+      await getData()
+      setLoader(false);
+      // setDialogType({
+      //   type: 'duplicateSuccessful',
+      //   data: payload
+      // })
     }
+  })
+
+  const getDuplicateSuccessfulDialog=(data='') => ({
+    paperStyle: classes.maxWidth540,
+    childrenStyle: classes.duplicateSuccessMsg,
+    title: t('landingPages.duplicationSuccessful'),
+    showDivider: false,
+    content: (
+      <Typography style={{fontSize: 18}}>
+        {t('landingPages.duplicationSuccessfulMessage')}
+      </Typography>
+    ),
+    renderButtons: () => (
+      <Box className={classes.spaceEvenly}>
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleClose}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogCancelButton,
+          )}>
+          {t('common.Cancel')}
+        </Button>
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleClose}
+          href={`/Pulseem/NewWebForm/NewFormInfo/${data}`}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+            )}>
+          {t('common.Edit')}
+        </Button>
+      </Box>
+    )
   })
 
   const renderDialog=() => {
     const {data,type}=dialogType||{}
-
     const dialogContent={
       restore: getRestorDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data)
+      duplicate: getDuplicateDialog(data) //,
+      // duplicateSuccessful: getDuplicateSuccessfulDialog(data)
     }
 
     const currentDialog=dialogContent[type]||{}

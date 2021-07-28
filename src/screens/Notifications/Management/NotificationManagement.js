@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
-  Grid, Button, TextField, IconButton, InputAdornment, Input, Box, FormControlLabel, Checkbox, Select, MenuItem, CardMedia, Card, CardContent, RadioGroup, Radio, FormGroup, FormControl
+  Grid, Button, TextField, IconButton, InputAdornment, Input, Box, FormControlLabel, Checkbox, Select, MenuItem, CardMedia, Card, CardContent, RadioGroup, Radio, FormGroup, FormControl, Tooltip
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
@@ -29,9 +29,10 @@ import { Preview } from '../../../components/Notifications/Preview/Preview';
 import { getCookie, setCookie } from '../../../helpers/cookies';
 import { actionURL } from '../../../config/index'
 import { Loader } from '../../../components/Loader/Loader';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 
 const NotificationManagement = ({ classes }) => {
-  const { language, windowSize } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage} = useSelector(state => state.core)
   const { notificationData } = useSelector(state => state.notification)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -43,7 +44,6 @@ const NotificationManagement = ({ classes }) => {
   const [scriptPath, setScriptPath] = useState(0);
   const [apiKey, setApiKey] = useState(0);
   const rowsOptions = [6, 12, 18]
-  const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
   const [searchResults, setSearchResults] = useState(null)
@@ -81,6 +81,9 @@ const NotificationManagement = ({ classes }) => {
     const scriptPath = await dispatch(getScriptPath());
     const path = (scriptPath && scriptPath.payload) || '';
     setScriptPath(path);
+    if (path !== '') {
+      setScriptDirectory(1);
+    }
   }
 
   const handleApiKey = async () => {
@@ -92,6 +95,9 @@ const NotificationManagement = ({ classes }) => {
   const handleScriptDirectory = async (event) => {
     const value = parseInt(event.target.value);
     setScriptDirectory(value);
+    if (value === 0) {
+      setScriptPath(null);
+    }
   }
 
   const handleCopyScript = () => {
@@ -247,6 +253,12 @@ const NotificationManagement = ({ classes }) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleFromDateChange = (value) => {
       if (value > toDate) {
         handleToDate(null);
@@ -265,6 +277,7 @@ const NotificationManagement = ({ classes }) => {
           value={notificationNameSearch}
           onChange={handleNotificationNameChange}
           onClick={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
         />
       )
@@ -289,7 +302,7 @@ const NotificationManagement = ({ classes }) => {
               classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
-              placeholder={t('mms.locFromDateResource1.Text')}
+              placeholder={t('notifications.searchSection.fromDate')}
             />
           </Grid>
           : null}
@@ -300,7 +313,7 @@ const NotificationManagement = ({ classes }) => {
               classes={classes}
               value={toDate}
               onChange={handleToDate}
-              placeholder={t('mms.locToDateResource1.Text')}
+              placeholder={t('notifications.searchSection.toDate')}
               minDate={fromDate ? fromDate : undefined}
             />
           </Grid>
@@ -558,11 +571,20 @@ const NotificationManagement = ({ classes }) => {
 
     return (
       <>
-        <Typography noWrap={false} className={classes.nameEllipsis}>
-          {row.Name}
-        </Typography>
+        <Tooltip 
+          arrow 
+          title={row.Name} 
+          placement={'top-start'} 
+          classes={{
+            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+            arrow: classes.tooltipArrow}}
+          >
+          <Typography noWrap={false} className={classes.nameEllipsis}>
+            {row.Name}
+          </Typography>
+        </Tooltip>
         <Typography style={{ 'WebkitLineClamp': 1 }}>
-          {`${text} ${date.format('L')} ${date.format('LT')}`}
+          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
         </Typography>
       </>
     )
@@ -644,7 +666,8 @@ const NotificationManagement = ({ classes }) => {
 
   const renderTableBody = () => {
     let rowData = searchResults || notificationData;
-    rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
+    let rpp = parseInt(rowsPerPage)
+    rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
       <TableBody>
         {rowData
@@ -665,12 +688,16 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const renderTablePagination = () => {
+    const handleRowsPerPageChange = (val) => {
+      dispatch(setRowsPerPage(val))
+      setCookie('rpp', val, { maxAge: 2147483647 })
+    }
     return (
       <TablePagination
         classes={classes}
         rows={isSearching ? searchResults.length : notificationData.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={setRowsPerPage}
+        onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}
@@ -1015,10 +1042,8 @@ const NotificationManagement = ({ classes }) => {
           <Typography className={classes.f18}>
             1. {t('notifications.downloadThe')}
             <a
-              download
-              target="_blank"
-              rel="noreferrer"
-              href="https://pn.pulseem.com/assets/scripts/service-worker.js">
+              download="service-worker.js"
+              href={process.env.PUBLIC_URL + '/assets/scripts/service-worker.js'}>
               {t('notifications.attachedScript')}
             </a>
           </Typography>
@@ -1156,7 +1181,8 @@ const NotificationManagement = ({ classes }) => {
   return (
     <DefaultScreen
       currentPage='notifications'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchSection()}
       {renderManagmentLine()}

@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box
+  Grid,Button,TextField,Box, Tooltip
 } from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,GroupsIcon,PreviewIcon
@@ -22,16 +22,17 @@ import moment from 'moment'
 import 'moment/locale/he'
 import {Preview} from '../../../components/Notifications/Preview/Preview';
 import { Loader } from '../../../components/Loader/Loader';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 const MmsManagnentScreen=({classes}) => {
-  const {language,windowSize}=useSelector(state => state.core)
+  const {language,windowSize,rowsPerPage}=useSelector(state => state.core)
   const {mmsData,mmsDataError,mmsDeletedData}=useSelector(state => state.mms)
   const {t}=useTranslation()
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null)
   const [campaineNameSearch,setCampaineNameSearch]=useState('')
   const rowsOptions=[6,12,18]
-  const [rowsPerPage,setRowsPerPage]=useState(rowsOptions[0])
   const [page,setPage]=useState(1)
   const [searchResults,setSearchResults]=useState(null)
   const [isSearching,setSearching]=useState(false)
@@ -118,6 +119,12 @@ const MmsManagnentScreen=({classes}) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleFromDateChange=(value) => {
       if(value>toDate) {
         handleToDate(null);
@@ -136,6 +143,7 @@ const MmsManagnentScreen=({classes}) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
         />
       )
@@ -262,7 +270,7 @@ const MmsManagnentScreen=({classes}) => {
         key: 'send',
         icon: SendGreenIcon,
         lable: t('campaigns.imgSendResource1.ToolTip'),
-        remove: Status!==1,
+        remove: windowSize === 'xs' || Status !== 1,
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         href: `/Pulseem/SendMmsCampaign.aspx?MmsCampaignID=${ID}&fromreact=true`
@@ -408,12 +416,21 @@ const MmsManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Typography noWrap={false} className={classes.nameEllipsis}>
-          {row.Name}
-        </Typography>
+        <Tooltip 
+          arrow 
+          title={row.Name} 
+          placement={'top-start'} 
+          classes={{
+            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+            arrow: classes.tooltipArrow}}
+          >
+          <Typography noWrap={false} className={classes.nameEllipsis}>
+            {row.Name}
+          </Typography>
+        </Tooltip>
         <Typography
           className={classes.grayTextCell}>
-          {`${text} ${date.format('L')} ${date.format('LT')}`}
+          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
         </Typography>
       </>
     )
@@ -496,8 +513,9 @@ const MmsManagnentScreen=({classes}) => {
 
   const renderTableBody=() => {
 
-    let sortData=isSearching? searchResults:mmsData;
-    sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    let sortData = isSearching ? searchResults : mmsData;
+    let rpp=parseInt(rowsPerPage)
+    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
     return (
       <TableBody>
         {sortData
@@ -518,12 +536,16 @@ const MmsManagnentScreen=({classes}) => {
   }
 
   const renderTablePagination=() => {
+    const handleRowsPerPageChange=(val) => {
+      dispatch(setRowsPerPage(val))
+      setCookie('rpp', val, { maxAge: 2147483647 })
+    }
     return (
       <TablePagination
         classes={classes}
         rows={isSearching? searchResults.length:mmsData.length}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={setRowsPerPage}
+        onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={setPage}
@@ -580,7 +602,7 @@ const MmsManagnentScreen=({classes}) => {
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
-          {'\uE185'}
+          {'\uE0D5'}
         </div>
       ),
       content: (
@@ -651,6 +673,7 @@ const MmsManagnentScreen=({classes}) => {
   const getPreviewDialog=(data={}) => {
     return {
       childrenPadding: false,
+      contentStyle: classes.pt2rem,
       isMMS: true,
       showDivider: false,
       icon: (
@@ -688,15 +711,31 @@ const MmsManagnentScreen=({classes}) => {
 
     const {data,type}=dialogType||{}
 
-    const dialogContent={
-      restore: getRestoreDialog(data),
-      groups: getGroupsDialog(data),
-      delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data),
-      preview: getPreviewDialog(data),
+    let currentDialog = null;
+
+    switch(type){
+      case 'restore':{
+        currentDialog = getRestoreDialog(data);
+        break;
+      }
+      case 'groups':{
+        currentDialog = getGroupsDialog(data);
+        break;
+      }
+      case 'delete':{
+        currentDialog = getDeleteDialog(data);
+        break;
+      }
+      case 'duplicate':{
+        currentDialog = getDuplicateDialog(data);
+        break;
+      }
+      case 'preview':{
+        currentDialog = getPreviewDialog(data);
+        break;
+      }
     }
 
-    const currentDialog=dialogContent[type]||{}
     return (
       dialogType&&<Dialog
         classes={classes}

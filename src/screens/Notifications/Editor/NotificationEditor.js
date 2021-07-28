@@ -12,7 +12,6 @@ import { getNotificationById, save, updateNotification, getNotificationPublicKey
          getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } 
 from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
-import { useHistory } from "react-router-dom";
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
@@ -31,7 +30,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import {
   CheckAnimation
 } from '../../../assets/images/settings/index'
-
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -111,7 +109,6 @@ const NotificationEditor = ({ props, classes }) => {
   const dispatch = useDispatch();
   const { language } = useSelector(state => state.core)
   const { t } = useTranslation();
-  const history = useHistory();
   const { isRTL, windowSize } = useSelector(state => state.core);
   moment.locale(language);
   /* #endregion */
@@ -268,6 +265,7 @@ const NotificationEditor = ({ props, classes }) => {
     if (isValidNotification()) {
       if (!ShowRedirectButton) {
         model.RedirectButtonText = '';
+        model.RedirectURL = '';
       }
       if (model && model.ID > 0) {
         dispatch(updateNotification(model));
@@ -280,17 +278,19 @@ const NotificationEditor = ({ props, classes }) => {
         dispatch(save(model)).then((response) => {
           if (props.match.params.create || props.match.url.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
-              history.push("/Notifications");
+              window.location.href = "/react/Notifications";
             }
             else {
+              setToastMessage(toastMessages.SUCCESS);
               setTimeout(() => {
                 if (isContinue) {
                   redirectAfterSave(response.payload);
                 }
                 else {
-                  history.push(`/Notification/edit/${response.payload}`);
+                  window.location.href = `/react/Notification/edit/${response.payload}`;
                 }
-              }, 1000);
+                setToastMessage(null);
+              }, 1500);
             }
           }
           else {
@@ -305,7 +305,7 @@ const NotificationEditor = ({ props, classes }) => {
         });
       }
       if (isExit) {
-        history.push("/Notifications");
+        window.location.href = "/react/Notifications";
       }
     }
   }
@@ -329,7 +329,7 @@ const NotificationEditor = ({ props, classes }) => {
           setToastMessage(toastMessages.SAVE_SETTINGS);
         }
         else {
-          history.push("/Notifications");
+            window.location.href = "/react/Notifications";
         }
       }
       else {
@@ -401,7 +401,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const handleSendConfirm = () => {
-    history.push("/Notifications");
+    window.location.href = "/react/Notifications";
   }
   const renderSentDialog = () => {
     if (campaignSent) {
@@ -466,7 +466,7 @@ const NotificationEditor = ({ props, classes }) => {
       }
     }
     else {
-      history.push("/Notifications");
+      window.location.href = "/react/Notifications";
     }
   }
   const renderConfirmCancel = () => {
@@ -500,8 +500,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const handleBack = () => {
-
-    history.push(`/Notification/edit/${model.ID}`);
+    window.location.href = `/react/Notification/edit/${model.ID}`
   };
   const getStepContent = (stepIndex) => {
     switch (stepIndex) {
@@ -513,7 +512,7 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const redirectAfterSave = (notificationId) => {
     if (notificationId > 0) {
-      history.push(`/Notification/send/${notificationId}`);
+      window.location.href = `/react/Notification/send/${notificationId}`;
     }
   }
   /* #endregion */
@@ -611,15 +610,12 @@ const NotificationEditor = ({ props, classes }) => {
   }
   /* #endregion */
   /* #region  Validators */
-  const isValivalidURL = (str) => {
-    try {
-      new URL(str);
-    } catch (_) {
-      return false;
-    }
 
-    return true;
-  }
+  const validateWebsiteUrl = (websiteUrl) => {
+    const urlRegEx = new RegExp(/^((http|https):\/\/)?.([A-z]+)\.([A-z]{2,})/);
+    return urlRegEx.test(String(websiteUrl).toLowerCase());
+  };
+
   const updateUrlValue = (e) => {
     const val = e.target.value;
     if (val.trim().replace(" ", "") != "" && val.indexOf("http") == -1) {
@@ -643,9 +639,17 @@ const NotificationEditor = ({ props, classes }) => {
       errorList.push({ message: t('notifications.validation.notificationName') });
       document.querySelector("#notificationName").classList.add("error");
     }
-    if (!isValivalidURL(model.RedirectURL) && ShowRedirectButton) {
-      errorList.push({ message: t('notifications.validation.redirectUrl') });
-      document.querySelector("#notificationRedirectUrl").classList.add("error");
+    if (ShowRedirectButton === true) {
+      if (model.RedirectURL.length <= 0) {
+        errorList.push({ message: t('notifications.validation.redirectUrl') });
+        document.querySelector("#notificationRedirectUrl").classList.add("error");
+      }
+      else {
+        if (!validateWebsiteUrl(model.RedirectURL)) {
+          errorList.push({ message: t('notifications.validation.redirectUrlNotValid') });
+          document.querySelector("#notificationRedirectUrl").classList.add("error");
+        }
+      }
     }
     if (model.Title === '') {
       errorList.push({ message: t('notifications.validation.title') });
@@ -699,34 +703,35 @@ const NotificationEditor = ({ props, classes }) => {
   /* #endregion */
   // Test send 
   const handleTestSend = () => {
-    PushService(notificationPublicKey).then((permissions) => {
-      try {
-        if (permissions.subscription && permissions.state == 'granted') {
-          const options = {
-            id: model.ID,
-            dir: model.Direction == '2' ? 'rtl' : 'ltr',
-            body: model.Body,
-            icon: model.Icon,
-            image: model.Image,
-            title: model.Title,
-            renotify: 'true',
-            tag: 'pulseem_' + model.ID,
-            redirect: model.RedirectURL
-          };
+    if (isValidNotification()) {
+      PushService(notificationPublicKey).then((permissions) => {
+        try {
+          if (permissions.subscription && permissions.state == 'granted') {
+            const options = {
+              id: model.ID,
+              dir: model.Direction == '2' ? 'rtl' : 'ltr',
+              body: model.Body,
+              icon: model.Icon,
+              image: model.Image,
+              title: model.Title,
+              renotify: 'true',
+              tag: 'pulseem_' + model.ID,
+              redirect: model.RedirectURL
+            };
 
-          if (model.RedirectURL != '' && model.RedirectButtonText != '' && ShowRedirectButton) {
-            options.actions = [];
-            options.actions.push({ action: model.RedirectURL, title: model.RedirectButtonText });
+            if (model.RedirectURL != '' && model.RedirectButtonText != '' && ShowRedirectButton) {
+              options.actions = [];
+              options.actions.push({ action: model.RedirectURL, title: model.RedirectButtonText });
+            }
+
+            permissions.subscription.showNotification(model.Title, options);
           }
-
-          permissions.subscription.showNotification(model.Title, options);
         }
-      }
-      catch (e) {
-        console.log(e);
-      }
-
-    });
+        catch (e) {
+          console.log(e);
+        }
+      });
+    }
   }
 
   /* #region  HTML Renders */
@@ -1428,6 +1433,7 @@ const NotificationEditor = ({ props, classes }) => {
   return (
     <DefaultScreen
       currentPage='notifications'
+      subPage='create'
       customPadding={true}
       classes={classes}>
       <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column' }}>

@@ -21,8 +21,8 @@
     white-space: nowrap;
 }
 
-[dir="rtl"] .MuiSelect-select.MuiSelect-select {
-    padding-right: 12px;
+.MuiSelect-select.MuiSelect-select {
+    padding-inline-end: 12px;
 }
 
 /* .MuiListItemSecondaryAction-root {

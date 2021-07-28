@@ -336,5 +336,7 @@
   "embedCode": "Embed Code",
   "restoreLandingPageTitle": "Select the landing pages you want to restore",
   "dialogDuplicateTitle": "Duplicate landing page",
-  "dialogDuplicateContent": "Do you want to duplicate the landing page?"
+  "dialogDuplicateContent": "Do you want to duplicate the landing page?",
+  "duplicationSuccessful": "Duplication successful!",
+  "duplicationSuccessfulMessage": "All of the data from your landing page has been duplicated. If you would like to edit the Form Properties for your new Landing Page, click Edit below."
 }

@@ -385,10 +385,10 @@
   "SizeUnit": "KB",
   "ChartDesc": "Monthly send amount",
   "locUniqueClicksPercents": {
-    "HeaderText": "Percentage"
+    "HeaderText": "Unique Percentage"
   },
   "locUniqueOpensPercents": {
-    "HeaderText": "Percentage"
+    "HeaderText": "Unique Percentage"
   },
   "locRemovedReason": {
     "HeaderText": "Removal Reasons"
@@ -412,7 +412,7 @@
     "Text": "The number of recipients who clicked on the link in the mail"
   },
   "OpensTotalTooltip": {
-    "Text": "The number of times the  email was opened, including multiple opens"
+    "Text": "The number of times the email was opened, including multiple opens"
   },
   "MainReportTitle": {
     "Text": "Sending reports for campaigns sent in the system. You can explore the sending data in depth by clicking on the campaign data"
@@ -422,5 +422,25 @@
   "removals": "Removals",
   "removedPercents": "Percentage",
   "reasons": "Reasons",
-  "compareCampaigns": "Compare Campaigns"
+  "compareCampaigns": "Compare Campaigns",
+  "names": "Names",
+  "fixedSendingDate": "Fixed Sending Date",
+  "totalSendCompleted": "Total Send Completed",
+  "totalSendPlan": "Total Send Plan",
+  "openCount": "Open Count", 
+  "openCountUnique": "Open Count Unique",
+  "clickCount": "Click Count",
+  "clickCountUnique": "Click Count Unique",
+  "notOpened": "Not Opened",
+  "sendError": "Send Error",
+  "removedClients": "Removed Clients",
+  "groupsNames": "Groups Names",
+  "files": "Files",
+  "fileNames": "File Names",
+  "percentageOpens": "Percentage Opens",
+  "percetangeClicks": "Percentage Clicks",
+  "percetangeRemovedClients": "Percentage Removed Clients",
+  "attachments": "Attachments",
+  "totalBytes": "Total Bytes"
+
 }

@@ -13,6 +13,7 @@ const flex12 = {
   lg: 6,
   xl: 6
 }
+const blue = '#0371AD';
 
 const iconPadding = {
   xs: '0.5rem 0.8rem 0.5em',
@@ -38,6 +39,77 @@ const tableRowMinWidth = {
   xl: 100
 }
 
+const barWidth = {
+  sm: '460px!important',
+  md: '430px!important',
+  lg: '450px!important',
+  xl: '500px!important'
+}
+
+const barHeight = {
+  sm: '',
+  md: '220px!important',
+  lg: '250px!important',
+  xl: '250px!important'
+}
+
+const shortcutFontSize = {
+  category: {
+    xs: 16,
+    sm: 14,
+    md: 16,
+    lg: 16,
+    xl: 16
+  },
+  page: {
+    xs: 18,
+    sm: 16,
+    md: 18,
+    lg: 18,
+    xl: 18
+  }
+
+}
+
+const dashboardDirection = {
+  xs: 'column-reverse',
+  sm: '',
+  md: '',
+  lg: '',
+  xl: ''
+}
+
+const paperTopHeight = {
+  xs: 'auto',
+  sm: 'auto',
+  md: '350px',
+  lg: '350px',
+  xl: '350px'
+}
+
+const paperBottomHeight = {
+  xs: 'auto',
+  sm: 'auto',
+  md: '350px',
+  lg: '350px',
+  xl: '350px'
+}
+
+const shortcutEditLeft = {
+  xs: '8%',
+  sm: '18px',
+  md: '15px',
+  lg: '22px',
+  xl: '28px'
+}
+
+const shortcutPaperHeight = {
+  xs: '',
+  sm: '100vh',
+  md: '100vh',
+  lg: '95vh',
+  xl: '95vh'
+}
 
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   managementTitle: {
@@ -155,8 +227,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     textOverflow: "ellipsis",
     color: '#333'
   },
+  middleTxt: {
+    fontSize: 18,
+    whiteSpace: 'nowrap',
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    color: '#333'
+  },
   middleWrapText: {
-    fontSize: windowSize === 'xs' ? 15 : 18,
+    fontSize: 18,
     overflow: "hidden",
     color: '#333'
   },
@@ -418,17 +497,24 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     textTransform: 'none',
     borderRadius: 6
   },
+  tablePaginationSelect: {
+    '& .MuiSelect-icon': {
+      color: '#000'
+    },
+    color: '#000',
+    marginInlineStart: 15
+  },
   tablePadingtonSelect: {
     '& .MuiSelect-root': {
       padding: 0,
       paddingBlock: 2,
       paddingInline: 15,
-      marginInlineStart: 5
+      marginInlineStart: 10
     },
     '& .MuiSelect-icon': {
       color: '#000',
       top: 0,
-      marginRight: -5
+      marginInlineEnd: -5
     },
     '& .MuiInput-underline': {
       '&:before': {
@@ -498,7 +584,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 100
+    marginBottom: 50
   },
   tablePadingtonGridContainer: {
     paddingBlock: 10,
@@ -689,7 +775,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    width: '100%',
     maxWidth: ellipsisMaxWidth[windowSize]
   },
   p10: {
@@ -864,12 +949,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 'bold',
     fontSize: 25
   },
-  font15: {
-    fontSize: 15
-  },
-  font18: {
-    fontSize: 18
-  },
   pt20: {
     paddingTop: 20
   },
@@ -884,5 +963,407 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tabelCellPadding: {
     paddingBlock: 15
+  },
+  dashboard: {
+    background: '#F2F2F2',
+    padding: 0,
+    maxHeight: 'unset'
+  },
+  dashboardContainer: {
+    flexDirection: dashboardDirection[windowSize]
+
+  },
+  chartLabelGreen: {
+    position: 'absolute',
+    top: 'calc(50% - 28px)',
+    width: '100%',
+    fontSize: 35,
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    color: '#65d638'
+  },
+  shortcutTitleSection: {
+    width: '85%',
+    marginTop: '2.1rem',
+    marginBottom: 40
+  },
+  shortcutTitle: {
+    fontSize: windowSize === 'xs' ? 23 : 25,
+    fontWeight: 'bold'
+  },
+  shortcutSubtitle: {
+    fontSize: windowSize === 'xs' ? 16 : 18,
+  },
+  shortcutBox: {
+    position: windowSize === 'xs' ? '' : 'sticky',
+    top: 0,
+    height: shortcutPaperHeight[windowSize],
+    [theme.breakpoints.down('xs')]: {
+      margin: '10px 10px -10px 10px'
+    }
+  },
+  shortcutPaper: {
+    [theme.breakpoints.down('xs')]: {
+      borderRadius: 10,
+    },
+    height: shortcutPaperHeight[windowSize],
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      width: '0px'
+    },
+    '&::-webkit-scrollbar-thumb': {
+      'backgroundColor': 'darkgrey',
+      borderRadius: '5px'
+    }
+  },
+  shortcutBtnBox: {
+    position: 'relative',
+    width: '100%',
+    textAlign: 'center'
+  },
+  shortcutButton: {
+    height: '92px',
+    width: '85%',
+    background: '#0371AD',
+    borderRadius: '20px',
+    marginBottom: windowSize === 'xs' ? 30 : 45,
+    fontSize: '18px',
+    position: 'relative',
+    textTransform: 'capitalize',
+    padding: '6px 30px'
+
+  },
+  shortcutDottedButton: {
+    borderRadius: '20px',
+    border: '1px dashed #0371AD',
+    fontFamily: 'pulseemicons',
+    height: '92px',
+    fontSize: '30px',
+    marginBottom: 45,
+    width: '85%',
+  },
+  shortcutList: {
+    maxWidth: 350,
+    background: 'white',
+    borderRadius: 10,
+    margin: 10
+  },
+  shortcutEditIcon: {
+    position: 'absolute',
+    left: shortcutEditLeft[windowSize],
+    bottom: windowSize === 'xs' ? 40 : 50,
+    fontFamily: 'pulseemicons',
+    fontSize: 18,
+    color: 'white'
+  },
+  shortcutLabel: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    marginTop: -5
+  },
+  popperPaper: {
+    padding: '5px 0',
+    width: 300,
+    background: '#D7D7D7'
+  },
+  hideIndicator: {
+    background: 'none'
+  },
+  pageTitle: {
+    fontSize: shortcutFontSize.page[windowSize],
+    lineHeight: 1
+  },
+  categoryLabel: {
+    fontSize: shortcutFontSize.category[windowSize],
+    lineHeight: 1
+  },
+  carouselPaper: {
+    borderRadius: 10
+  },
+  carouselChart: {
+    '& .carousel-root': {
+      width: '100%'
+    },
+    position: 'relative'
+  },
+  carouselArrows: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    position: 'absolute',
+    zIndex: 1
+  },
+  carouselTipsArrows: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    position: 'absolute',
+    top: 'calc(50% - 24px)',
+    zIndex: 1
+  },
+  carouselTips: {
+    position: 'relative',
+    '& .control-dots .dot': {
+      background: 'white!important',
+      height: '10px!important',
+      width: '10px!important',
+      boxShadow: 'unset!important',
+      border: '1px solid #000',
+      margin: '0 2px!important'
+    },
+    '& .control-dots .dot.selected': {
+      background: '#000!important'
+    }
+  },
+  doughnutGrid: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  barChart: {
+    // maxWidth: 500,
+    float: 'right',
+    '& canvas': {
+      // width: barWidth[windowSize],
+      height: barHeight[windowSize]
+    },
+    paddingBottom: 10
+  },
+  emptyDoughnut: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    backgroundColor: '#F9F9F9',
+    border: '1px solid #D7D7D7',
+    width: 180,
+    height: 180,
+    margin: 10
+  },
+  recipientTitleSection: {
+    marginBottom: '1.2rem',
+    borderBottom: '1px solid #ccc'
+  },
+  noRecipients: {
+    color: '#AAAAAA',
+    marginTop: 40,
+    fontSize: 20
+  },
+  addRecipientsIcon: {
+    fontFamily: 'pulseemicons',
+    fontSize: 20
+  },
+  addRecipientsBtn: {
+    textTransform: 'capitalize',
+    marginTop: -10
+  },
+  tipsTitle: {
+    textAlign: 'center',
+    padding: '20px 20px 0px 20px',
+    marginBottom: 10
+  },
+  bulkStatusTitleSection: {
+    marginBottom: '1rem',
+    marginTop: '1rem'
+  },
+  bulkStatusBlue: {
+    marginBottom: '1rem',
+    padding: '3px 15px',
+    borderRadius: '.9rem',
+    background: '#0371AD',
+    color: 'white',
+  },
+  bulkOutline: {
+    marginBottom: '1rem',
+    padding: '3px 15px',
+    borderRadius: '.9rem',
+    border: '1px solid #0371AD',
+    background: 'transparent',
+    color: '#0371AD',
+  },
+  bulkTitle: {
+    fontWeight: 700,
+    fontSize: '12',
+    lineHeight: '2.1rem',
+  },
+  bulkContent: {
+    fontWeight: 300,
+    fontSize: '12',
+    lineHeight: '2.1rem',
+    textDecoration: 'underline',
+    color: '#0371AD',
+  },
+  dashboardTitle: {
+    fontWeight: 'bold',
+    color: '#0371AD',
+    marginTop: 10,
+    marginInlineStart: 30,
+    fontSize: 20
+  },
+  dashboardUsername: {
+    fontWeight: 'bold',
+    color: '#0371AD',
+    fontSize: 20
+  },
+  dashboardTopPaper: {
+    [theme.breakpoints.up('lg')]: {
+      minHeight: 330
+    },
+    [theme.breakpoints.down('md')]: {
+      paddingBottom: 40
+    },
+    [theme.breakpoints.down('xs')]: {
+      margin: '10px 10px 0px 10px',
+    },
+    margin: '30px 30px 0px 30px',
+    borderRadius: 10
+  },
+  dashboardBottomPaper: {
+    [theme.breakpoints.up('lg')]: {
+      height: 370
+    },
+    [theme.breakpoints.down('xs')]: {
+      margin: 10,
+    },
+    margin: 30,
+    borderRadius: 10
+  },
+  bulkMargin: {
+    [theme.breakpoints.down('xs')]: {
+      marginTop: 0,
+    },
+    [theme.breakpoints.up('lg')]: {
+      marginInlineEnd: 0
+    },
+  },
+  tipMargin: {
+    [theme.breakpoints.up('lg')]: {
+      marginInlineEnd: 0,
+    },
+  },
+  tipItem: {
+    padding: '0 30px 20px 30px'
+  },
+  tipulseemMsg: {
+    fontSize: 18,
+    padding: '0px 20px 20px 20px'
+  },
+  lightBulb: {
+    width: 100,
+    height: 100,
+    marginBottom: 10
+  },
+  activeTab: {
+    background: blue,
+    borderRadius: 5,
+    color: 'white',
+  },
+  tabText: {
+    fontSize: 20,
+    textTransform: 'capitalize',
+    padding: 2,
+    minWidth: 120,
+    minHeight: 40
+  },
+  SMSLastReportGrid: {
+    padding: '15px 20px 0px 20px'
+  },
+  newsletterLastReportGrid: {
+    padding: '0px 20px 20px 20px',
+  },
+  newsletterItemBorder: {
+    borderBottom: '1px solid #ccc'
+  },
+  phoneLastReportTitle: {
+    marginBottom: '1.2rem',
+    borderBottom: '1px solid #ccc'
+  },
+  lastReportItemText: {
+    display: 'flex',
+    alignItems: 'baseline'
+  },
+  lastReportTitleSection: {
+    marginTop: 5,
+    marginBottom: '1.2rem',
+    borderBottom: '1px solid #ccc'
+  },
+  lastReportRowItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '5px 0px'
+  },
+  lastReportsTabPanels: {
+    padding: '0 20px 0 30px'
+  },
+  lastReportPadding: {
+    [theme.breakpoints.down('md')]: {
+      marginTop: 0
+    }
+  },
+  chartLabel: {
+    position: 'absolute',
+    height: 55,
+    top: 0,
+    bottom: 0,
+    width: '55%',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    color: 'gray',
+    right: 0,
+    left: 0,
+    margin: 'auto'
+  },
+  doughnutBox: {
+    width: 200,
+    height: 200,
+    position: 'relative',
+    textAlign: 'center'
+  },
+  doughnutGreenBox: {
+    width: 180,
+    height: 180,
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    zIndex: 1
+  },
+  bgLightGreen: {
+    position: 'absolute',
+    background: '#E0FAC6',
+    width: 145,
+    height: 145,
+    marginTop: 10,
+    zIndex: -1
+  },
+  duplicateSuccessMsg: {
+    padding: '0 25px!important'
+  },
+  tooltipBlack: {
+    backgroundColor: 'black',
+    maxWidth: 300,
+    fontSize: '16px!important',
+    textAlign: 'center',
+  },
+  tooltipPlacement: {
+    '&.MuiTooltip-tooltipPlacementTop': {
+      margin: '10px 0px!important'
+    }
+  },
+  tooltipArrow: {
+    color: 'black',
+    left: '2px!important'
+  },
+  previewID: {
+    fontSize: windowSize === 'xs' ? 20 : 25,
+    fontWeight: 'bold',
+    position: 'absolute',
+    top: 20,
+    left: 75
   }
 })

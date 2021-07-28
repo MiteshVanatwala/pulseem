@@ -321,7 +321,7 @@
     "ToolTip": ""
   },
   "locFromDateResource1": {
-    "Text": "החל מתאריך"
+    "Text": "מתאריך"
   },
   "locPageExplanationResource1": {
     "Text": "במסך זה מוצגת רשימת הקמפיינים במערכת."
@@ -465,8 +465,8 @@
   "restoreDeleted": "שחזור מחוקים",
   "exportFile": "ייצוא קובץ",
   "lastUpdate": "עודכן ב",
-  "campaginName": "שם הקמפיין",
-  "restoreCampaginTitle": "בחר את הקמפיינים שברצונך לשחזר",
+  "campaignName": "שם הקמפיין",
+  "restorecampaignTitle": "בחר את הקמפיינים שברצונך לשחזר",
   "dialogDuplicateTitle": "שיכפול קמפיין",
   "dialogDuplicateContent": "האם ברצונך לשכפל את הקמפיין?",
   "newsletters": "ניוזלטרים"
