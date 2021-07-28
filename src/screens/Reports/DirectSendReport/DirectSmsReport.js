@@ -9,9 +9,9 @@ import {
 } from '../../../components/managment/index';
 import { SearchIcon } from '../../../assets/images/managment';
 import ClearIcon from '@material-ui/icons/Clear';
-import { getSMSReport } from '../../../redux/reducers/reportsSlice';
 import Switch from "react-switch";
 import moment from 'moment';
+import { getSMSDirectReport } from '../../../redux/reducers/smsSlice';
 
 const DirectSMSReportTab=({
   classes,
@@ -59,7 +59,7 @@ const DirectSMSReportTab=({
       }
     })
 
-    dispatch(getSMSReport(searchObjects))
+    dispatch(getSMSDirectReport(searchObjects))
     handleSearching('sms', true);
     handlePageChange(1);
   }
@@ -72,7 +72,7 @@ const DirectSMSReportTab=({
       ...sms
     };
     handlePageChange(val);
-    dispatch(getSMSReport(params));
+    dispatch(getSMSDirectReport(params));
   }
 
   const handleRowsPerPageSearching=async(val)=>{
@@ -82,7 +82,7 @@ const DirectSMSReportTab=({
       PageIndex:page,
       ...sms
     }
-    dispatch(getSMSReport(params));
+    dispatch(getSMSDirectReport(params));
     handleRowsPerPage(val)
   }
 

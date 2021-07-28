@@ -4,17 +4,19 @@ import DefaultScreen from '../../DefaultScreen';
 import {useTranslation} from 'react-i18next';
 import {useSelector,useDispatch} from 'react-redux';
 import clsx from 'clsx';
-import { exportEmailReport, exportSMSReport, getEmailReport, getSMSReport } from '../../../redux/reducers/reportsSlice';
 import moment from 'moment';
 import DirectSMSReportTab from './DirectSmsReport';
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
+import { exportNewsletterDirectReport, getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
+import { exportSMSDirectReport, getSMSDirectReport, getSMSReport } from '../../../redux/reducers/smsSlice';
 
 const DirectSendReport=({classes}) => {
   const {windowSize, isRTL}=useSelector(state => state.core);
-  const {directEmailReport, directSmsReport}=useSelector(state => state.report);
+  const {directNewsletterReport }=useSelector(state => state.newsletter);
+  const {directSmsReport }=useSelector(state => state.sms);
   const [searchData, setSearchData]=useState({});
   const [isSearching,setSearching]=useState({});
   const [searchParam,setSearchParam]=useState({});
@@ -45,10 +47,10 @@ const DirectSendReport=({classes}) => {
   const getEmailReportData=() => {
     const startDate = moment(new Date()).startOf('month').format('L');
     const endDate = moment(new Date()).endOf('month').format('L');
-    dispatch(getEmailReport({FROMDATE: startDate, TODATE: endDate}));
+    dispatch(getNewsletterDirectReport({FROMDATE: startDate, TODATE: endDate}));
   }
   const getSMSReportData=() => {
-    dispatch(getSMSReport({PageSize:6, PageIndex: 1}));
+    dispatch(getSMSDirectReport({PageSize:6, PageIndex: 1}));
   }
 
   useEffect(initData,[dispatch])
@@ -107,11 +109,11 @@ const DirectSendReport=({classes}) => {
   const renderTabs=()=>{
     const handleExportFile=()=> {
       if (tabValue===0) {
-        dispatch(exportEmailReport())
+        dispatch(exportNewsletterDirectReport())
       }
 
       if (tabValue===1) {
-        dispatch(exportSMSReport())
+        dispatch(exportSMSDirectReport())
       }
     }
 
@@ -154,7 +156,7 @@ const DirectSendReport=({classes}) => {
                 rowsPerPage={rowsPerPageEmail}
                 searchData={searchData}
                 isSearching={isSearching}
-                directEmailReport={directEmailReport}
+                directEmailReport={directNewsletterReport}
               />
             </TabPanel>
             <TabPanel value={1} index={1} className={classes.p0}>

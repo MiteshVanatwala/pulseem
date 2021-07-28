@@ -245,7 +245,7 @@ const renderRoutes=(classes,history) => {
         component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
       />
       <Route
-        path={`/DirectSendReport`}
+        path={`/Reports/DirectSendReport`}
         render={props => <DirectSendReport {...props} classes={classes} />}
       />
       <Route

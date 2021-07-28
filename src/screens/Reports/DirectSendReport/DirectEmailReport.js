@@ -6,11 +6,11 @@ import { Box, Button, Grid, Table, TableContainer, Link,
 import { TablePagination,DateField } from '../../../components/managment/index';
 import { SearchIcon } from '../../../assets/images/managment';
 import ClearIcon from '@material-ui/icons/Clear';
-import { getEmailReport } from '../../../redux/reducers/reportsSlice';
 import ControlPointIcon from '@material-ui/icons/ControlPoint';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import moment from 'moment';
+import { getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
 
 const RenderRow=({
   classes,
@@ -179,7 +179,7 @@ const DirectEmailReportTab=({
       }
     })
 
-    dispatch(getEmailReport(searchObjects))
+    dispatch(getNewsletterDirectReport(searchObjects))
     handleSearching('email', true);
     handlePageChange(1);
   }
@@ -192,7 +192,7 @@ const DirectEmailReportTab=({
       ...email
     };
     handlePageChange(val);
-    dispatch(getEmailReport(params));
+    dispatch(getNewsletterDirectReport(params));
   }
 
   const handleRowsPerPageSearching=async(val)=>{
@@ -202,7 +202,7 @@ const DirectEmailReportTab=({
       PageIndex:page,
       ...email
     }
-    await dispatch(getEmailReport(params));
+    await dispatch(getNewsletterDirectReport(params));
     handleRowsPerPage(val)
   }
 
