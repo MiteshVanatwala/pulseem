@@ -263,15 +263,13 @@ const NotificationEditor = ({ props, classes }) => {
   const saveNotification = (isExit, isContinue) => {
     // Show loader
     // event.preventDefault();
+    setSourceModel(model);
+    
     if (isValidNotification()) {
       if (!ShowRedirectButton) {
-        model.RedirectButtonText = '';
-        model.RedirectURL = '';
         setModel({ ...model, RedirectURL: '' });
         setModel({ ...model, RedirectButtonText: '' });
       }
-
-      setSourceModel(model);
 
       if (model && model.ID > 0) {
         dispatch(updateNotification(model)).then(() => {
@@ -548,8 +546,6 @@ const NotificationEditor = ({ props, classes }) => {
   const handleRedirectVisibillity = (event) => {
     setRedirectButtonVisibillity(event.target.checked);
     if (event.target.checked === false) {
-      model.RedirectButtonText = '';
-      model.RedirectURL = '';
       setModel({ ...model, RedirectURL: '' });
       setModel({ ...model, RedirectButtonText: '' });
     }
