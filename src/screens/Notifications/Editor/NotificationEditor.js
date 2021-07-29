@@ -274,11 +274,12 @@ const NotificationEditor = ({ props, classes }) => {
       setSourceModel(model);
 
       if (model && model.ID > 0) {
-        dispatch(updateNotification(model));
-        setToastMessage(toastMessages.SUCCESS);
-        if (isContinue) {
-          redirectAfterSave(model.ID);
-        }
+        dispatch(updateNotification(model)).then(() => {
+          setToastMessage(toastMessages.SUCCESS);
+          if (isContinue) {
+            redirectAfterSave(model.ID);
+          }
+        });
       }
       else {
         dispatch(save(model)).then((response) => {
