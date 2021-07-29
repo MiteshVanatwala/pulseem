@@ -23,9 +23,10 @@ import {useHistory} from "react-router-dom";
 import moment from 'moment'
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
 import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
-import NewslettersReport from './screens/Reports/NewslettersReport'
+import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersReport'
 import { useMediaQuery } from '@material-ui/core';
 import DashboardScreen from './screens/Dashboard/Dashboard';
+import GraphicReport from './screens/Reports/NewslettersReport/GraphicReport';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -69,7 +70,7 @@ const renderRoutes=(classes,history) => {
       />
       <Route
         path={`/CampaignStatistics/:campaignID`}
-        component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=','campaign')}
+        render={props => <GraphicReport {...props} classes={classes} />}
       />
       <Route
         path={`/homepage`}

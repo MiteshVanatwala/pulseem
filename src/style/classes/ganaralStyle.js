@@ -282,6 +282,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pt2rem: {
     paddingTop: '2rem'
   },
+  pt0: {
+    paddingTop: 0
+  },
   pt10: {
     paddingTop: 10
   },
@@ -290,6 +293,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pt2: {
     paddingTop: 1.4
+  },
+  pb0: {
+    paddingBottom: 0
   },
   pb10: {
     paddingBottom: 10
@@ -412,6 +418,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   blue: {
     color: '#0a74a9'
   },
+  bgLightBlue: {
+    backgroundColor: '#E3E9F0'
+  },
   bgBlack: {
     backgroundColor: 'black'
   },
@@ -492,5 +501,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   blackDivider: {
     height: 2,
     backgroundColor: 'rgb(0, 0, 0, 0.5)'
+  },
+  floatRight: {
+    float: 'right'
   }
 })

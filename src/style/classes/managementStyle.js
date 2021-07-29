@@ -1326,5 +1326,31 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     position: 'absolute',
     top: 20,
     left: 75
+  },
+  graphicReportTabs: {
+    '& .MuiTab-root': {
+      padding: '6px 0px'
+    },
+    '& .MuiTab-wrapper': {
+      textTransform: 'capitalize',
+      fontSize: 18
+    },
+    '& .Mui-selected': {
+      fontWeight: 'bold'
+    }
+  },
+  selectedTab: {
+    textTransform: 'capitalize',
+
+  },
+  campaignSummary: {
+    backgroundColor: '#E3E9F0',
+    padding: 24,
+    marginTop: 20
+  },
+  campaignSummaryListItem: {
+    padding: '0px 16px',
+    marginBottom: 20
+
   }
 })

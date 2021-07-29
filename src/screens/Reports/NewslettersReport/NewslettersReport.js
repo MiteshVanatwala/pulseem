@@ -1,5 +1,5 @@
 import React,{useState,useEffect,useRef} from 'react';
-import DefaultScreen from '../DefaultScreen';
+import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,Link,
@@ -8,22 +8,22 @@ import {
 import Switch from "react-switch";
 import {
   SendGreenIcon,SearchIcon,ExportIcon,ReportsIcon
-} from '../../assets/images/managment/index'
+} from '../../../assets/images/managment/index'
 import {
   TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,SearchField
-} from '../../components/managment/index'
-import useCtrlHistory from '../../helpers/useCtrlHistory';
+} from '../../../components/managment/index'
+import useCtrlHistory from '../../../helpers/useCtrlHistory';
 import {useSelector,useDispatch} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import {apiURL} from '../../config/index'
+import {apiURL} from '../../../config/index'
 import {CSVLink} from 'react-csv'
-import {getNewsletterReports,downloadNewsletterReport} from '../../redux/reducers/newsletterSlice';
-import { setRowsPerPage } from '../../redux/reducers/coreSlice';
-import { getCookie, setCookie } from '../../helpers/cookies';
-import { exportFile } from '../../helpers/exportFromJson';
+import {getNewsletterReports,downloadNewsletterReport} from '../../../redux/reducers/newsletterSlice';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { getCookie, setCookie } from '../../../helpers/cookies';
+import { exportFile } from '../../../helpers/exportFromJson';
 
 const NewslettersReport=({classes}) => {
   const {language,windowSize,isRTL,rowsPerPage}=useSelector(state => state.core)
@@ -427,7 +427,7 @@ const NewslettersReport=({classes}) => {
           textClass={classes.lineHeight1point2}
           icon={ReportsIcon}
           lable={t('mainReport.locGraph.HeaderText')}
-          href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`}
+          href={`/CampaignStatistics/${CampaignID}`}
         />
       </Box>
     )

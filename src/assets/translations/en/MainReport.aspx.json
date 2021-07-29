@@ -441,6 +441,14 @@
   "percetangeClicks": "Percentage Clicks",
   "percetangeRemovedClients": "Percentage Removed Clients",
   "attachments": "Attachments",
-  "totalBytes": "Total Bytes"
+  "totalBytes": "Total Bytes",
+  "opensAndClicks": "Opens and Clicks",
+  "geographicalReport": "Geographical Report",
+  "systemsReport": "Systems Report",
+  "backToNewsletterReports": "Back to Newsletter Reports",
+  "subjectLine": "The Subject Line",
+  "fromEmail": "From Email",
+  "fromName": "From Name",
+  "attachedFiles": "Attached Files"
 
 }
