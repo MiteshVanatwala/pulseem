@@ -268,7 +268,7 @@ const NotificationEditor = ({ props, classes }) => {
       if (!ShowRedirectButton) {
         model.RedirectButtonText = '';
         model.RedirectURL = '';
-        setModel({ ...model, RedirectButtonText: '', RedirectURL: '' });
+        setModel({ model, RedirectButtonText: '', RedirectURL: '' });
       }
       if (model && model.ID > 0) {
         dispatch(updateNotification(model));
