@@ -268,7 +268,8 @@ const NotificationEditor = ({ props, classes }) => {
       if (!ShowRedirectButton) {
         model.RedirectButtonText = '';
         model.RedirectURL = '';
-        setModel({ model, RedirectButtonText: '', RedirectURL: '' });
+        setModel({ ...model, RedirectURL: '' });
+        setModel({ ...model, RedirectButtonText: '' });
       }
       if (model && model.ID > 0) {
         dispatch(updateNotification(model));
@@ -543,8 +544,11 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const handleRedirectVisibillity = (event) => {
     setRedirectButtonVisibillity(event.target.checked);
-    if(event.target.checked === false){
-      setModel({ ...model, RedirectURL: '', RedirectButtonText: '' });
+    if (event.target.checked === false) {
+      model.RedirectButtonText = '';
+      model.RedirectURL = '';
+      setModel({ ...model, RedirectURL: '' });
+      setModel({ ...model, RedirectButtonText: '' });
     }
   }
   const handleNotificationTitle = (event) => {
