@@ -260,17 +260,19 @@ const NotificationEditor = ({ props, classes }) => {
       setPublicKey('');
     }
   }
+
+  useEffect(() => {
+    if (!ShowRedirectButton) {
+      setModel({ ...model, RedirectURL: '', RedirectButtonText: ''  });
+    }
+  }, [ShowRedirectButton])
+
   const saveNotification = (isExit, isContinue) => {
     // Show loader
     // event.preventDefault();
     setSourceModel(model);
-    
-    if (isValidNotification()) {
-      if (!ShowRedirectButton) {
-        setModel({ ...model, RedirectURL: '' });
-        setModel({ ...model, RedirectButtonText: '' });
-      }
 
+    if (isValidNotification()) {
       if (model && model.ID > 0) {
         dispatch(updateNotification(model)).then(() => {
           setToastMessage(toastMessages.SUCCESS);
