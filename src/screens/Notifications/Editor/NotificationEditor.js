@@ -263,7 +263,6 @@ const NotificationEditor = ({ props, classes }) => {
   const saveNotification = (isExit, isContinue) => {
     // Show loader
     // event.preventDefault();
-    setSourceModel(model);
     if (isValidNotification()) {
       if (!ShowRedirectButton) {
         model.RedirectButtonText = '';
@@ -271,6 +270,9 @@ const NotificationEditor = ({ props, classes }) => {
         setModel({ ...model, RedirectURL: '' });
         setModel({ ...model, RedirectButtonText: '' });
       }
+
+      setSourceModel(model);
+
       if (model && model.ID > 0) {
         dispatch(updateNotification(model));
         setToastMessage(toastMessages.SUCCESS);
