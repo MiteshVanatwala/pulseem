@@ -31,7 +31,7 @@ function TabPanel(props) {
 export const Preview = (
   { classes, model, ShowRedirectButton, mobileFullsize = false,
     showDevices = true, showTitle = true, isSMS = false, isMMS = false,
-    showOSScreen = true
+    showOSScreen = true, showID = false
   }) => {
   const { t } = useTranslation();
   const { isRTL, windowSize } = useSelector(state => state.core);
@@ -87,7 +87,6 @@ export const Preview = (
 
   // Desktop/Mobile Preview
   const desktopPreview = (isChrome) => {
-    console.log(`desktopPreview(): model`, model)
     return (
       <div>
         <div className={classes.osScreen}>
@@ -168,7 +167,6 @@ export const Preview = (
   }
 
   const mobileFullPreview = () => {
-    console.log(`mobileFullPreview(): model`, model)
     const sms = model.Text && model.Text.split(/\r\n|\n\r|\n|\r/) || [];
     const mms = model.NavigateUrl && model.NavigateUrl.split(/\r\n|\n\r|\n|\r/) || [];
 
@@ -193,7 +191,6 @@ export const Preview = (
   }
 
   const mobilePreview = () => {
-    console.log(`mobilePreview(): model`, model)
     return (
       <div className={clsx(classes.mobileBG, "mobileBG")}>
         <div className={clsx(classes.mobileNotification, "mobileNotification")}>
@@ -253,7 +250,7 @@ export const Preview = (
   const campaignID=isSMS&&model.SMSCampaignID || isMMS&&model.MmsCampaignID || model.ID || '';
   return (
     <>
-      <Typography className={classes.previewID}>{campaignID}</Typography>
+      {showID&&<Typography className={classes.previewID}><b>{t('common.campaignID')}</b>:&nbsp;{campaignID}</Typography>}
       <Grid className={mobileFullsize && classes.justifyCenter}>
         {showTitle && <h3 className={clsx(classes.blue, classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</h3>}
         {showDevices && !mobileFullsize && <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
