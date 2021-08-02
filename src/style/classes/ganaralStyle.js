@@ -267,6 +267,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dInlineBlock: {
     display: 'inline-block'
   },
+  pl25: {
+    paddingInlineEnd: 25
+  },
   pe10: {
     paddingInlineEnd: 10
   },
@@ -275,6 +278,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   p0: {
     padding: 0
+  },
+  plr10: {
+    padding: '0 10px'
+  },
+  pr25: {
+    paddingInlineStart: 25
+  },
+  ps15: {
+    paddingInlineStart: 8
   },
   ps25: {
     paddingInlineStart: 25
@@ -293,6 +305,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pb10: {
     paddingBottom: 10
+  },
+  mr10: {
+    marginInlineEnd: 10
   },
   mt5: {
     marginTop: 5
@@ -344,6 +359,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   black: {
     color: 'black'
+  },
+  bgBrown: {
+    backgroundColor: '#636363',
+  },
+  colorWhite: {
+    color: '#fff'
   },
   colorGray: {
     color: 'rgba(0,0,0,0.40)'
@@ -492,5 +513,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   blackDivider: {
     height: 2,
     backgroundColor: 'rgb(0, 0, 0, 0.5)'
+  },
+  noWrap: {
+    flexWrap: 'nowrap'
   }
 })

@@ -441,6 +441,7 @@
   "percetangeClicks": "Percentage Clicks",
   "percetangeRemovedClients": "Percentage Removed Clients",
   "attachments": "Attachments",
-  "totalBytes": "Total Bytes"
-
+  "totalBytes": "Total Bytes",
+  "billingCredits": "Billing Credits",
+  "postCredits": "Credits for the Post"
 }
