@@ -260,21 +260,26 @@ const NotificationEditor = ({ props, classes }) => {
       setPublicKey('');
     }
   }
+
+  useEffect(() => {
+    if (!ShowRedirectButton) {
+      setModel({ ...model, RedirectURL: '', RedirectButtonText: ''  });
+    }
+  }, [ShowRedirectButton])
+
   const saveNotification = (isExit, isContinue) => {
     // Show loader
     // event.preventDefault();
     setSourceModel(model);
+
     if (isValidNotification()) {
-      if (!ShowRedirectButton) {
-        model.RedirectButtonText = '';
-        model.RedirectURL = '';
-      }
       if (model && model.ID > 0) {
-        dispatch(updateNotification(model));
-        setToastMessage(toastMessages.SUCCESS);
-        if (isContinue) {
-          redirectAfterSave(model.ID);
-        }
+        dispatch(updateNotification(model)).then(() => {
+          setToastMessage(toastMessages.SUCCESS);
+          if (isContinue) {
+            redirectAfterSave(model.ID);
+          }
+        });
       }
       else {
         dispatch(save(model)).then((response) => {
@@ -542,8 +547,9 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const handleRedirectVisibillity = (event) => {
     setRedirectButtonVisibillity(event.target.checked);
-    if(event.target.checked === false){
-      setModel({ ...model, RedirectURL: '', RedirectButtonText: '' });
+    if (event.target.checked === false) {
+      setModel({ ...model, RedirectURL: '' });
+      setModel({ ...model, RedirectButtonText: '' });
     }
   }
   const handleNotificationTitle = (event) => {

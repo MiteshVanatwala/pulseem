@@ -351,6 +351,7 @@ const App=({screenSize}) => {
         email='',
         unique_name='',
         nameid: companyName,
+        role: isAdmin='',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone': phone='',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality': locality='he-IL',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince': imageURL='',
