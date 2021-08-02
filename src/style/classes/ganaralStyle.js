@@ -342,9 +342,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   line1: {
     lineHeight: 1
   },
-  // black: {
-  //   color: 'black'
-  // },
+  black: {
+    color: 'black'
+  },
   colorGray: {
     color: 'rgba(0,0,0,0.40)'
   },

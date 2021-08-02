@@ -146,5 +146,7 @@
   "onceYouHaveCreatedTheUrl": "כעת, שלחו את הכתובת הזו ללקוחות שלכם, וכשהם יאשר קבלת\nנוטיפיקציות הם ישוייכו לקבוצה שצויינה.",
   "assignedToTheGroup": "נוטיפיקציות הם ישוייכו לקבוצה שצויינה.",
   "sampleUrl": "https://www.pulseem.com?g=שם הקבוצה",  
-  "duplicatedRecipients": "נמענים כפולים"
+  "duplicatedRecipients": "נמענים כפולים",
+  "arrived": "הגיעו",
+  "arrivedTootltip": "כמות הנוטיפקציות שהגיעו לדפדפנים של הנמענים שלך"
 }
