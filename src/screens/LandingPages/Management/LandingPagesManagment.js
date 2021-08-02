@@ -284,7 +284,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        remove: !PageLink||windowSize==='xs',
+        remove: windowSize==='xs',
+        disable: !PageLink,
         rootClass: classes.paddingIcon,
         onClick: () => {
           openInNewTab(PageLink)
