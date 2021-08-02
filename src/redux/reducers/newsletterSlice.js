@@ -23,6 +23,17 @@ export const getNewsletterReports = createAsyncThunk(
   }
 )
 
+export const getNewsletterReportsByIds = createAsyncThunk(
+  'email/EmailReportsByIds', async (id, thunkAPI) => {
+    try {
+      const response = await instence.post(`email/EmailReportsByIds`, [{ ID: id }])
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
+
 export const restoreCampaigns = createAsyncThunk(
   'email/restoreEmailCampaigns', async (deletedCampaigns, thunkAPI) => {
     try {

@@ -1327,17 +1327,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     top: 20,
     left: 75
   },
-  graphicReportTabs: {
-    '& .MuiTab-root': {
-      padding: '6px 0px'
-    },
-    '& .MuiTab-wrapper': {
-      textTransform: 'capitalize',
-      fontSize: 18
-    },
-    '& .Mui-selected': {
-      fontWeight: 'bold'
-    }
+  tabWrapper: {
+    textTransform: 'capitalize',
+    fontSize: 18
   },
   selectedTab: {
     textTransform: 'capitalize',
@@ -1352,5 +1344,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: '0px 16px',
     marginBottom: 20
 
-  }
+  },
+  doughnutPaper: {
+    padding: '5px 20px'
+  },
+  reportPaperBgGray: {
+    backgroundColor: 'rgba(242, 242, 242, 1)',
+    padding: 10,
+    marginTop: 15,
+    borderRadius: 0,
+    border: '1px solid #ccc'
+  },
+
 })

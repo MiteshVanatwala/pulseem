@@ -70,7 +70,7 @@ const renderRoutes=(classes,history) => {
       />
       <Route
         path={`/CampaignStatistics/:campaignID`}
-        render={props => <GraphicReport {...props} classes={classes} />}
+        render={props => <GraphicReport props={props} classes={classes} />}
       />
       <Route
         path={`/homepage`}
