@@ -357,10 +357,11 @@ const App=({screenSize}) => {
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri': isWhiteLabel='',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authorizationdecision': cameFromSubAccount='',
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': isAdmin='',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name': basename=''
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name': basename='',
+        'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata': isAllowSwitchAccount=''
       }=jwt
 
-      dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName,cameFromSubAccount,isAdmin}))
+      dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName,cameFromSubAccount,isAdmin,isAllowSwitchAccount}))
       let lang=culture||locality; //||'he'
       setCookie('Culture',lang.toLowerCase())
       lang=lang.split('-')[0]

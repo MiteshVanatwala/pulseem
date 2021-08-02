@@ -17,7 +17,8 @@ export const coreSlice=createSlice({
     isClal: false,
     accountFeatures: null,
     cameFromSubAccount: null,
-    isAdmin: null
+    isAdmin: null,
+    isAllowSwitchAccount: null
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -45,6 +46,7 @@ export const coreSlice=createSlice({
       state.companyName=payload.companyName || payload.basename
       state.cameFromSubAccount=payload.cameFromSubAccount
       state.isAdmin=payload.isAdmin
+      state.isAllowSwitchAccount=payload.isAllowSwitchAccount
     }
   }
 })
