@@ -150,5 +150,7 @@
   "assignedToTheGroup": "נוטיפיקציות הם ישוייכו לקבוצה שצויינה.",
   "sampleUrl": "https://www.pulseem.com?g=שם הקבוצה",  
   "duplicatedRecipients": "נמענים כפולים",
-  "activeSubscribers": "נמענים פעילים:"
+  "activeSubscribers": "נמענים פעילים:",
+  "arrived": "הגיעו",
+  "arrivedTootltip": "כמות הנוטיפקציות שהגיעו לדפדפני הנמענים שלך"
 }

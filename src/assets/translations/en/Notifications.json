@@ -150,5 +150,7 @@
   "onceYouHaveCreatedTheUrl": "Once you have created this URL, send it to the desired recipients for this group, and once they have agreed to receive notifications, they will be assigned to the specified group.",
   "sampleUrl": "https://www.pulseem.com?g=GroupName",  
   "duplicatedRecipients": "Duplicated Recipients",
-  "activeSubscribers": "Active Subscribers:"
+  "activeSubscribers": "Active Subscribers:",
+  "arrived": "Arrived",
+  "arrivedTootltip": "The number of Notifications that arrived to your recipients' browsers"
 }
