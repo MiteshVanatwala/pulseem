@@ -427,7 +427,7 @@ const NewslettersReport=({classes}) => {
           textClass={classes.lineHeight1point2}
           icon={ReportsIcon}
           lable={t('mainReport.locGraph.HeaderText')}
-          href={`/CampaignStatistics/${CampaignID}`}
+          href={`/react/CampaignStatistics/${CampaignID}`}
         />
       </Box>
     )

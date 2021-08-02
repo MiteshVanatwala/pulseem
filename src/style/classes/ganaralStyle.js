@@ -273,8 +273,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   p10: {
     padding: 10
   },
+  p20: {
+    padding: 20
+  },
   p0: {
     padding: 0
+  },
+  pr25: {
+    paddingInlineEnd: 25
   },
   ps25: {
     paddingInlineStart: 25
@@ -303,6 +309,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt5: {
     marginTop: 5
   },
+  mt25: {
+    marginTop: 25
+  },
   ml0: {
     marginInlineStart: 0
   },
@@ -320,6 +329,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mt10: {
     marginTop: 10
+  },
+  mt20: {
+    marginTop: 20
   },
   f14: {
     fontSize: 14
@@ -344,6 +356,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   f28: {
     fontSize: 28
+  },
+  f30: {
+    fontSize: 30
   },
   line1: {
     lineHeight: 1
@@ -388,6 +403,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   alignCenter: {
     alignContent: 'center',
     alignItems: 'center'
+  },
+  spaceBetween: {
+    display: 'flex',
+    justifyContent: 'space-between'
   },
   spaceEvenly: {
     display: 'flex',
@@ -504,5 +523,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   floatRight: {
     float: 'right'
+  },
+  size150: {
+    width: 127,
+    height: 127
+  },
+  size130: {
+    width: 110,
+    height: 110
   }
 })

@@ -449,6 +449,6 @@
   "subjectLine": "The Subject Line",
   "fromEmail": "From Email",
   "fromName": "From Name",
-  "attachedFiles": "Attached Files"
-
+  "attachedFiles": "Attached Files",
+  "campaignQuality": "The Quality of the Campaign"
 }
