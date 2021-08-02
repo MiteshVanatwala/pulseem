@@ -753,6 +753,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+    width: '100%',
     maxWidth: ellipsisMaxWidth[windowSize]
   },
   p10: {
@@ -1320,42 +1321,96 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tooltipArrow: {
     color: 'black',
-    left: '2px!important'
+    left: isRTL ? 'unset!important' : '2px!important',
+    right: isRTL ? '2px!important' : 'unset!important'
   },
   previewID: {
     fontSize: windowSize === 'xs' ? 20 : 25,
-    fontWeight: 'bold',
     position: 'absolute',
     top: 20,
-    left: 75
+    left: isRTL ? 'unset' : 75,
+    right: isRTL ? 75 : 'unset'
   },
-  tabWrapper: {
-    textTransform: 'capitalize',
-    fontSize: 18
+  listBgBrown: {
+    backgroundColor: '#636363',
+    color: 'white'
   },
-  selectedTab: {
-    textTransform: 'capitalize',
-
+  smsGraph: {
+    position: 'relative',
+    marginBottom: 50,
+    '& .amcharts-amexport-item .amcharts-amexport-item-level-1 .amcharts-amexport-item-blank': {
+      width: 150
+    },
+    '& .amcharts-amexport-menu-level-1': {
+      right: '15px!important',
+      '&::after': {
+        content: `''`,
+        position: 'absolute',
+        top: '5px',
+        left: '100%',
+        zIndex: '1000',
+        borderTop: '8px solid transparent',
+        borderLeft: '8px solid #e2e2e2',
+        borderRight: '8px solid transparent',
+        borderBottom: '8px solid transparent',
+      }
+    }
   },
-  campaignSummary: {
-    backgroundColor: '#E3E9F0',
-    padding: 24,
-    marginTop: 20
+  smsGraphMenu: {
+    width: 35,
+    height: 35,
+    background: '#fff',
+    border: '1px solid #e2e2e2',
+    '&:hover': {
+      backgroundColor: '#636363',
+    }
   },
-  campaignSummaryListItem: {
-    padding: '0px 16px',
-    marginBottom: 20
-
+  smsGraphMenuIcon: {
+    padding: 0,
+    color: 'gray',
+    '&:hover': {
+      color: 'white'
+    }
   },
-  doughnutPaper: {
-    padding: '5px 20px'
-  },
-  reportPaperBgGray: {
-    backgroundColor: 'rgba(242, 242, 242, 1)',
-    padding: 10,
-    marginTop: 15,
+  smsGraphMenuPaper: {
     borderRadius: 0,
-    border: '1px solid #ccc'
+    boxShadow: 'none',
+    border: '1px solid #e2e2e2',
+    '& .MuiListItem-button:hover': {
+      backgroundColor: '#636363',
+      color: 'white'
+    }
   },
-
+  smsGraphMenuList: {
+    padding: 0,
+    position: 'absolute',
+    top: 0,
+    right: 50,
+    width: 140,
+  },
+  arrowRight: {
+    '&::after': {
+      content: `''`,
+      position: 'absolute',
+      top: '13px',
+      left: '100%',
+      zIndex: '1000',
+      border: '1px solid #e2e2e2',
+      borderTop: '7px solid transparent',
+      borderLeft: '7px solid #fff',
+      borderRight: '7px solid transparent',
+      borderBottom: '7px solid transparent',
+    },
+    '&::before': {
+      content: `''`,
+      position: 'absolute',
+      top: '12.5px',
+      left: '100%',
+      zIndex: '1000',
+      borderTop: '7px solid transparent',
+      borderLeft: '7.5px solid black',
+      borderRight: '7.5px solid transparent',
+      borderBottom: '7.5px solid transparent',
+    }
+  }
 })

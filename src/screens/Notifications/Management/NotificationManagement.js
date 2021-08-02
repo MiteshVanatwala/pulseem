@@ -398,7 +398,15 @@ const NotificationManagement = ({ classes }) => {
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("notifications.searchSection.notificationName")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.toSend")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.sent")}</TableCell>
+          <Tooltip 
+            title={t('notifications.arrivedTootltip')} 
+            arrow 
+            placement={'top'} 
+            classes={{tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.black}}>
+            <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>
+              {t("notifications.arrived")}
+            </TableCell>
+          </Tooltip>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("notifications.tblHeader.failed")}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.minWidth75)} align='center'>{t("notifications.tblHeader.clicks")}</TableCell>
           <TableCell classes={cellStyle} className={clsx(classes.flex1, classes.minWidth75)} align='center'>{t("notifications.tblHeader.status")}</TableCell>
@@ -574,10 +582,10 @@ const NotificationManagement = ({ classes }) => {
         <Tooltip 
           arrow 
           title={row.Name} 
-          placement={'top-start'} 
+          placement={'top'} 
           classes={{
             tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-            arrow: classes.tooltipArrow}}
+            arrow: classes.fBlack}}
           >
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {row.Name}
@@ -732,6 +740,7 @@ const NotificationManagement = ({ classes }) => {
           <Preview classes={classes}
             model={data}
             ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
+            showID={true}
             showTitle={false}
             showOSScreen={false}
           />

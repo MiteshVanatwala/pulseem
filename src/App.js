@@ -27,6 +27,7 @@ import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersRe
 import { useMediaQuery } from '@material-ui/core';
 import DashboardScreen from './screens/Dashboard/Dashboard';
 import GraphicReport from './screens/Reports/NewslettersReport/GraphicReport';
+import SmsReport from './screens/Reports/SmsReport';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -209,8 +210,8 @@ const renderRoutes=(classes,history) => {
         component={transferUrl('/Pulseem/ClalReport.aspx')}
       />
       <Route
-        path={`/SMSMainReport`}
-        component={transferUrl('/Pulseem/SMSMainReport.aspx')}
+        path={`/Reports/SMSMainReport`}
+        render={props => <SmsReport {...props} classes={classes} />}
       />
       <Route
         path={`/MmsMainReport`}

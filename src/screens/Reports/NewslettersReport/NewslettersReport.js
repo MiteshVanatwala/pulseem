@@ -185,6 +185,7 @@ const NewslettersReport=({classes}) => {
         exportType: 'xls'
       });
     }
+    setToFileArray([]);
     
     //if(payload.error) {
     //  return
@@ -443,9 +444,18 @@ const NewslettersReport=({classes}) => {
     if (windowSize==='xs') {
       return (
         <>
-          <Typography noWrap className={classes.nameEllipsis}>
-            {Name}
-          </Typography>
+          <Tooltip 
+            arrow 
+            title={Name} 
+            placement={'top'} 
+            classes={{
+              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+              arrow: classes.fBlack}}
+            >
+            <Typography noWrap={false} className={classes.nameEllipsis}>
+              {Name}
+            </Typography>
+          </Tooltip>
           <Typography className={classes.grayTextCell}>
             {`${showDate} ${showTime}`}
           </Typography>
@@ -457,7 +467,7 @@ const NewslettersReport=({classes}) => {
         <Grid item className={clsx(windowSize!=='xs'&&classes.w20)}>
           {isChecked&&<Checkbox
             color='primary'
-            value={toFileArray.includes(CampaignID)}
+            checked={toFileArray.includes(CampaignID)}
             onChange={() => {
               if(toFileArray.includes(CampaignID)) {
                 setToFileArray(toFileArray.filter(item => item!==CampaignID))
@@ -468,9 +478,18 @@ const NewslettersReport=({classes}) => {
           />}
         </Grid>
         <Grid item className={clsx(windowSize!=='xs'&&classes.w80)}>
-            <Typography noWrap className={classes.nameEllipsis}>
-              {Name}
+          <Tooltip 
+            arrow 
+            title={row.Name} 
+            placement={'top'} 
+            classes={{
+              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+              arrow: classes.fBlack}}
+            >
+            <Typography noWrap={false} className={classes.nameEllipsis}>
+              {row.Name}
             </Typography>
+          </Tooltip>
             <Typography className={classes.grayTextCell}>
               {`${showDate} ${showTime}`}
             </Typography>
@@ -512,7 +531,7 @@ const NewslettersReport=({classes}) => {
       <Tooltip 
         title={`${t(tooltip)}`} 
         arrow 
-        placement={'right-end'}
+        placement={isRTL?'left-end':'right-end'}
         classes={{
           tooltip: classes.tooltipBlack, 
           arrow: classes.fBlack
