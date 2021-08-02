@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState} from "react";
 import {
   Button,
   Grid,
@@ -14,7 +14,6 @@ import {
   InputAdornment,
   Input,
   Checkbox,
-  NativeSelect
 } from "@material-ui/core";
 
 import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
@@ -33,7 +32,6 @@ import {
   EditIcon,
   GroupsIcon,
 } from "../../../assets/images/managment/index";
-import MenuItem from "@material-ui/core/MenuItem";
 import clsx from "clsx";
 
 const useStyles = makeStyles((theme) => ({
@@ -44,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
-    // backgroundColor: "#efefef",
     padding: "5px",
   },
 }));
@@ -72,7 +69,7 @@ const RecipientsTab = ({ classes }) => {
   const [SearchResults, setSearchResults] = useState(null);
   const [searchValue, setsearchValue] = useState("");
   const dispatch = useDispatch();
-  const [SearchnewResults, setSearchnewResults] = useState(null);
+  const [SearchNewResults, setSearchNewResults] = useState(null);
   const [tableData, settableData] = useState([
     {
       email: "mohit.gupta@gmail.com",
@@ -151,7 +148,7 @@ const RecipientsTab = ({ classes }) => {
       <div style={{ width: "200px" }}>
         <FormControl className={styles.formControl}>
           <Select
-          native
+            native
             onChange={(e) => {
               handleChange(e);
             }}
@@ -172,42 +169,40 @@ const RecipientsTab = ({ classes }) => {
   const renderGroup = () => {
     const handleSearch = (e) => {
       setsearchValue(e.target.value);
-      let sortData = {}
-      if(selectintial !== "1")
-      {
-          sortData = SearchResults;
-          sortData = sortData.filter((val) => {
-            if (e.target.value === "") {
-             return val;
-            } else {
-              if (val.email.toLowerCase().includes(e.target.value.toLowerCase())) {
-                return val;
-              }
-            }
-          });
-          setSearchnewResults(sortData);
-      setSearching(true);
-      setPage(1);
-      }
-      else
-{
-     sortData = tableData;
-     sortData = sortData.filter((val) => {
-        if (e.target.value === "") {
-          return val;
-        } else {
-          if (val.email.toLowerCase().includes(e.target.value.toLowerCase())) {
+      let sortData = {};
+      if (selectintial !== "1") {
+        sortData = SearchResults;
+        sortData = sortData.filter((val) => {
+          if (e.target.value === "") {
             return val;
+          } else {
+            if (
+              val.email.toLowerCase().includes(e.target.value.toLowerCase())
+            ) {
+              return val;
+            }
           }
-        }
-      });
-      setSearchResults(sortData);
-      setSearching(true);
-      setPage(1);
-}
-      
-    
-      
+        });
+        setSearchNewResults(sortData);
+        setSearching(true);
+        setPage(1);
+      } else {
+        sortData = tableData;
+        sortData = sortData.filter((val) => {
+          if (e.target.value === "") {
+            return val;
+          } else {
+            if (
+              val.email.toLowerCase().includes(e.target.value.toLowerCase())
+            ) {
+              return val;
+            }
+          }
+        });
+        setSearchResults(sortData);
+        setSearching(true);
+        setPage(1);
+      }
     };
     return (
       <Input
@@ -357,7 +352,7 @@ const RecipientsTab = ({ classes }) => {
     );
   };
   const renderTableBody = () => {
-    let rowData = SearchnewResults || SearchResults   || tableData;
+    let rowData = SearchNewResults || SearchResults || tableData;
     let rpp = parseInt(rowsPerPage);
     rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
     return (
@@ -612,7 +607,7 @@ const RecipientsTab = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching ? SearchResults.length :  tableData.length}
+        rows={isSearching ? SearchResults.length : tableData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
@@ -623,33 +618,32 @@ const RecipientsTab = ({ classes }) => {
   };
 
   const handleChange = (e) => {
-    console.log("here")
     setselectintial(e.target.value);
     let sortData = tableData;
     if (e.target.value === "2") {
-        setSearchnewResults(null);
-        console.log("here")
+      setSearchNewResults(null);
+
       sortData = sortData.filter((val) => {
         if (val.openess !== "0") {
           return val;
         }
       });
     } else if (e.target.value === "4") {
-        setSearchnewResults(null);
+      setSearchNewResults(null);
       sortData = sortData.filter((val) => {
         if (val.clicks !== "0") {
           return val;
         }
       });
     } else if (e.target.value === "5") {
-        setSearchnewResults(null);
+      setSearchNewResults(null);
       sortData = sortData.filter((val) => {
         if (val.removals !== "No") {
           return val;
         }
       });
     } else {
-        setSearchnewResults(null);
+      setSearchNewResults(null);
       sortData = tableData;
     }
     setSearchResults(sortData);
