@@ -111,6 +111,15 @@ export const verifyCode=createAsyncThunk(
         return thunkAPI.rejectWithValue({error: error.message});
       }
     })
+    // export const SaveSms=createAsyncThunk(
+    //   'smsCampaign/Save/',async (data,thunkAPI) => {
+    //     try {
+    //       const response=await instence.post(`smsCampaign/Save/`,data);
+    //       return response.data
+    //     } catch(error) {
+    //       return thunkAPI.rejectWithValue({error: error.message});
+    //     }
+    //   })
 
 export const smsSlice=createSlice({
   name: 'newsletter',
