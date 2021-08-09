@@ -285,6 +285,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
         remove: !PageLink||windowSize==='xs',
+        //disable: !PageLink,
         rootClass: classes.paddingIcon,
         onClick: () => {
           openInNewTab(PageLink)
@@ -679,7 +680,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
     const dialogContent={
       restore: getRestorDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data) //,
+      duplicate: getDuplicateDialog(data)//,
       // duplicateSuccessful: getDuplicateSuccessfulDialog(data)
     }
 

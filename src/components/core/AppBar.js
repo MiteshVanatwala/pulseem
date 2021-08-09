@@ -354,7 +354,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
             href={routes[0].href}>
             <Box
               component='img'
-              src={`${actionURL}${imageURL}`}
+              src={`${imageURL}`}
               alt='Logo'
               className={classes.appBarLogo} />
           </Box>
