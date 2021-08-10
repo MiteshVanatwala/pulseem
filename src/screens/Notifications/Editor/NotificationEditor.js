@@ -1461,7 +1461,7 @@ const NotificationEditor = ({ props, classes }) => {
       customPadding={true}
       classes={classes}
       containerClass={classes.editor}>
-      <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column', paddingBottom: 40 }}>
         {renderToast()}
         {renderHeader()}
         {renderNotification()}
