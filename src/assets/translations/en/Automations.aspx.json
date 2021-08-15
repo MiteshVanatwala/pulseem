@@ -54,5 +54,6 @@
   "close": "Close",
   "duplicateTitle": "Duplicate automation",
   "duplicateContent": "Do you want to duplicate the automation?",
-  "restoreCampaignTitle": "Select the automations you want to restore"
+  "restoreCampaignTitle": "Select the automations you want to restore",
+  "NoNodesFound": "The automation does not have any workflow saved, please create a workflow first. <br> Click <b><a target='_blank' href='pulseem/CreateAutomations.aspx?AutomationID=##'>here</a></b> to edit the automation"
 }
