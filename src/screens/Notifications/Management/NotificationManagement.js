@@ -356,7 +356,7 @@ const NotificationManagement = ({ classes }) => {
     const dataLength = isSearching ? searchResults.length : notificationData.length;
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize !== 'xs' && <Grid item>
+        {<Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -465,7 +465,7 @@ const NotificationManagement = ({ classes }) => {
         icon: EditIcon,
         disable: StatusID !== 0,
         lable: t('notifications.buttons.edit'),
-        remove: windowSize === 'xs',
+        // remove: windowSize === 'xs',
         href: `/react/notification/Edit/${ID}`,
         rootClass: classes.paddingIcon
       },
