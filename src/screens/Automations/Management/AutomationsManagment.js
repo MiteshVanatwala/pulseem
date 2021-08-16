@@ -354,7 +354,13 @@ const AutomationsManagnentScreen = ({ classes }) => {
         <Switch
           checked={IsActive}
           onChange={() => {
-            if (row.HasNodes) {
+            if (!row.HasNodes) {
+              setDialogType({
+                type: 'noNodes',
+                data: row
+              })
+            }
+            else {
               setDialogType({
                 type: 'switch',
                 data: row
@@ -729,12 +735,21 @@ const AutomationsManagnentScreen = ({ classes }) => {
     }
   })
 
+  const renderUploadNotice = (data) => {
+    function createMarkup() {
+        return { __html: t('automations.NoNodesFound').replace('##', data.ID) };
+    }
+    return (
+        <label dangerouslySetInnerHTML={createMarkup()}></label>
+    );
+}
+
   const showErrorDialog = (data = '') => ({
     title: t('automations.errorTitle'),
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }}>
-        {t('automations.NoNodesFound')}
+        {renderUploadNotice(data)}
       </Typography>
     ),
     onConfirm: async () => {
