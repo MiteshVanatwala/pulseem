@@ -737,23 +737,22 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
   const renderUploadNotice = (data) => {
     function createMarkup() {
-        return { __html: t('automations.NoNodesFound').replace('##', data.ID) };
+      return { __html: t('automations.NoNodesFound').replace('##', data.ID) };
     }
     return (
-        <label dangerouslySetInnerHTML={createMarkup()}></label>
+      <label dangerouslySetInnerHTML={createMarkup()}></label>
     );
-}
+  }
 
   const showErrorDialog = (data = '') => ({
     title: t('automations.errorTitle'),
     showDivider: false,
     content: (
-      <Typography style={{ fontSize: 18 }}>
+      <Typography style={{ fontSize: 18 }} onClick={handleClose}>
         {renderUploadNotice(data)}
       </Typography>
     ),
     onConfirm: async () => {
-      clearSearch()
       handleClose()
       // TODO: Link to the autmation editor
     }
