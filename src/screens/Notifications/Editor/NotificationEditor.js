@@ -268,21 +268,21 @@ const NotificationEditor = ({ props, classes }) => {
   }, [ShowRedirectButton])
 
   const saveNotification = (isExit, isContinue) => {
-    // Show loader
-    // event.preventDefault();
     setSourceModel(model);
 
+    const modelToSave = {...model};
+
     if (isValidNotification()) {
-      if (model && model.ID > 0) {
-        dispatch(updateNotification(model)).then(() => {
+      if (modelToSave && modelToSave.ID > 0) {
+        dispatch(updateNotification(modelToSave)).then(() => {
           setToastMessage(toastMessages.SUCCESS);
           if (isContinue) {
-            redirectAfterSave(model.ID);
+            redirectAfterSave(modelToSave.ID);
           }
         });
       }
       else {
-        dispatch(save(model)).then((response) => {
+        dispatch(save(modelToSave)).then((response) => {
           if (props.match.params.create || props.match.url.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
               window.location.href = "/react/Notifications";
@@ -317,7 +317,6 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const saveSettings = async (isExit, isSummary = false) => {
-    // event.preventDefault();
     setSourceModel(model);
     if (isValidSettings()) {
       if (sendType === "2") {
