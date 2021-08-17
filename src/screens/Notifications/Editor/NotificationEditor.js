@@ -263,7 +263,7 @@ const NotificationEditor = ({ props, classes }) => {
 
   useEffect(() => {
     if (!ShowRedirectButton) {
-      setModel({ ...model, RedirectURL: '', RedirectButtonText: ''  });
+      setModel({ ...model, RedirectURL: '', RedirectButtonText: '' });
     }
   }, [ShowRedirectButton])
 
@@ -1351,7 +1351,7 @@ const NotificationEditor = ({ props, classes }) => {
     )
   }
   const WizardButtons = () => {
-    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")}>
+    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")} style={{ paddingBottom: 40 }}>
       {activeStep == 0 &&
         <Box>
           <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"} >
@@ -1461,7 +1461,7 @@ const NotificationEditor = ({ props, classes }) => {
       customPadding={true}
       classes={classes}
       containerClass={classes.editor}>
-      <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column', paddingBottom: 40 }}>
+      <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column' }}>
         {renderToast()}
         {renderHeader()}
         {renderNotification()}
