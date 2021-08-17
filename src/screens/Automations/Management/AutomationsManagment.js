@@ -79,6 +79,11 @@ const AutomationsManagnentScreen = ({ classes }) => {
   }
 
   const renderSearchLine = () => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13) {
+        handleSearch();
+      }
+    }
     const handleSearch = () => {
       const searchArray = [{
         type: 'name',
@@ -141,6 +146,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
+          onKeyDown={handleKeyDown}
           placeholder={t('automations.labelAutomationName')}
         />
       )
@@ -153,6 +159,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
+            onKeyDown={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('automations.labelAutomationName')}
@@ -737,12 +744,12 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
   const renderUploadNotice = (data) => {
     function createMarkup() {
-        return { __html: t('automations.NoNodesFound').replace('##', data.ID) };
+      return { __html: t('automations.NoNodesFound').replace('##', data.ID) };
     }
     return (
-        <label dangerouslySetInnerHTML={createMarkup()}></label>
+      <label dangerouslySetInnerHTML={createMarkup()}></label>
     );
-}
+  }
 
   const showErrorDialog = (data = '') => ({
     title: t('automations.errorTitle'),

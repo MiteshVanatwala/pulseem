@@ -74,6 +74,11 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
 
   const renderSearchLine=() => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13) {
+        handleSearch();
+      }
+    }
     const handleSearch=() => {
       const searchArray=[{
         type: 'name',
@@ -107,6 +112,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           classes={classes}
           value={landingPageNameSearch}
           onChange={handleCampainNameChange}
+          onKeyDown={handleKeyDown}
           onClick={handleSearch}
           placeholder={placeholder}
         />
@@ -119,6 +125,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={landingPageNameSearch}
+            onKeyDown={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={placeholder}

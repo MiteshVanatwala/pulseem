@@ -80,6 +80,11 @@ const NewsletterManagnentScreen=({classes}) => {
   }
 
   const renderSearchLine=() => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13) {
+        handleSearch();
+      }
+    }
     const handleSearch=() => {
       const searchArray=[{
         type: 'name',
@@ -140,6 +145,7 @@ const NewsletterManagnentScreen=({classes}) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
+          onKeyDown={handleKeyDown}
           onClick={handleSearch}
           placeholder={t('common.CampaignName')}
         />
@@ -152,6 +158,7 @@ const NewsletterManagnentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
+            onKeyDown={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('common.CampaignName')}

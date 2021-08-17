@@ -226,6 +226,11 @@ const NotificationManagement = ({ classes }) => {
   }
 
   const renderSearchSection = () => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13) {
+        handleSearch();
+      }
+    }
     const handleSearch = () => {
       const searchArray = [{
         type: 'name',
@@ -285,6 +290,7 @@ const NotificationManagement = ({ classes }) => {
         <SearchField
           classes={classes}
           value={notificationNameSearch}
+          onKeyDown={handleKeyDown}
           onChange={handleNotificationNameChange}
           onClick={handleSearch}
           placeholder={t('common.CampaignName')}
@@ -299,6 +305,7 @@ const NotificationManagement = ({ classes }) => {
             variant='outlined'
             size='small'
             value={notificationNameSearch}
+            onKeyDown={handleKeyDown}
             onChange={handleNotificationNameChange}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('notifications.searchSection.notificationName')}

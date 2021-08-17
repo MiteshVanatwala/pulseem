@@ -76,6 +76,11 @@ const MmsManagnentScreen = ({ classes }) => {
   }
 
   const renderSearchLine = () => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13) {
+        handleSearch();
+      }
+    }
     const handleSearch = () => {
       const searchArray = [{
         type: 'name',
@@ -137,6 +142,7 @@ const MmsManagnentScreen = ({ classes }) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
+          onKeyDown={handleKeyDown}
           placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
         />
       )
@@ -149,6 +155,7 @@ const MmsManagnentScreen = ({ classes }) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
+            onKeyDown={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
