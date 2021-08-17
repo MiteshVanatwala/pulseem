@@ -1349,7 +1349,7 @@ const NotificationEditor = ({ props, classes }) => {
     )
   }
   const WizardButtons = () => {
-    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")}>
+    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")} style={{ paddingBottom: 40 }}>
       {activeStep == 0 &&
         <Box>
           <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"} >
