@@ -340,7 +340,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         height: '100%',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
-        minHeight: '400px',
+        minHeight: '300px',
         position: 'relative',
         width: windowSize !== "xs" ? 450 : '100%',
         maxWidth: 450
@@ -404,13 +404,13 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     mobileNotification: {
         width: '100%',
-        maxWidth:  (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 265,
+        maxWidth:  (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 220,
         boxShadow: '0 5px 5px 1px rgb(0 0 0 / 50%)',
         fontFamily: 'Assistant',
         top: 50,
         borderRadius: '5px',
         position: 'absolute',
-        right: (windowSize !== 'xs' && windowSize !== 'sm') ? 50 : 40,
+        right: (windowSize !== 'xs' && windowSize !== 'sm') ? 50 : 35,
         maxHeight: windowSize !== 'xs' ? 'calc(100% - 75px)' : 'calc(100% - 35px)',
         paddingTop: 10,
         overflow: 'hidden'
