@@ -263,23 +263,22 @@ const NotificationEditor = ({ props, classes }) => {
 
   useEffect(() => {
     if (!ShowRedirectButton) {
-      setModel({ ...model, RedirectURL: '', RedirectButtonText: ''  });
+      setModel({ ...model, RedirectURL: '', RedirectButtonText: '' });
     }
   }, [ShowRedirectButton])
 
-  const saveNotification = (isExit, isContinue) => {
+  const saveNotification = async (isExit, isContinue) => {
     setSourceModel(model);
 
-    const modelToSave = {...model};
+    const modelToSave = { ...model };
 
     if (isValidNotification()) {
       if (modelToSave && modelToSave.ID > 0) {
-        dispatch(updateNotification(modelToSave)).then(() => {
-          setToastMessage(toastMessages.SUCCESS);
-          if (isContinue) {
-            redirectAfterSave(modelToSave.ID);
-          }
-        });
+        await dispatch(updateNotification(modelToSave));
+        setToastMessage(toastMessages.SUCCESS);
+        if (isContinue) {
+          redirectAfterSave(modelToSave.ID);
+        }
       }
       else {
         dispatch(save(modelToSave)).then((response) => {
