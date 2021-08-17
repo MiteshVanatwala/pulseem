@@ -103,12 +103,22 @@ const mobileNotificationSize = {
 }
 
 const notificationIconWidth = {
-    xs: 40,
+    xs: 100,
     sm: 100,
     md: 100,
     lg: 90,
     xl: 90,
 }
+
+const notificationIconHeight = {
+    xs: 98,
+    sm: 98,
+    md: 100,
+    lg: 90,
+    xl: 90,
+}
+
+
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     roundedCircle: {
         borderRadius: '100%',
@@ -239,7 +249,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         position: 'relative',
         backgroundSize: 'cover',
         width: notificationIconWidth[windowSize],
-        height: notificationIconWidth[windowSize],
+        height: notificationIconHeight[windowSize],
         // backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
         cursor: 'pointer',
