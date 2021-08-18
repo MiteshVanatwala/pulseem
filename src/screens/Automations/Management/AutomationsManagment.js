@@ -575,7 +575,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
   const handleActiveChange = (data, isEdit = false) => async () => {
     try {
-      await dispatch(activateAutomation({ ID: data.ID, IsActive: data.IsActive }))
+      await dispatch(activateAutomation({ ID: data.ID }))
       getData()
       if (isEdit)
         window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`
