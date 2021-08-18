@@ -257,11 +257,6 @@ export const smsSlice = createSlice({
     builder.addCase(getSMSDirectReport.fulfilled, (state, { payload }) => {
       state.directSmsReport = payload
     })
-    
-    builder.addCase(getSmsReport.fulfilled,(state,{payload}) => {
-      state.smsReport=payload
-    })
-
     builder.addCase(getPreviousLandingData.fulfilled,(state,{payload}) => {
       state.previousLandingData=payload
     })
