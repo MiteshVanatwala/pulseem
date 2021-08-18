@@ -765,7 +765,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
       </Typography>
     ),
     onConfirm: async () => {
-      handleClose()
+      window.open(`/pulseem/CreateAutomations.aspx?AutomationID=${data.ID}' id='editAutomation'`, '_blank');
+      handleClose();
     }
   })
 
