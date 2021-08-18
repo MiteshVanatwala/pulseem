@@ -356,7 +356,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           checked={IsActive}
           onChange={() => {
             if (!row.HasNodes) {
-              setErrorMessage(t('automations.NoNodesFound').replace('##', row.ID));
+              setErrorMessage(`${t('automations.NoNodesFound')}<br/>${t('automations.pressHereToEditAutomation').replace('##', row.ID)}`);
               setDialogType({
                 type: 'noNodes',
                 data: row
@@ -580,7 +580,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       const response = await dispatch(activateAutomation({ ID: data.ID }))
       const resJ = JSON.parse(response.payload.d);
       if (resJ.StatusCode !== 1) {
-        setErrorMessage(resJ.StatusMessage);
+        setErrorMessage(`${resJ.StatusMessage} <br/>${t('automations.pressHereToEditAutomation').replace('##', data.ID)}`);
         setDialogType({
           type: 'activateError',
           data: data
@@ -747,7 +747,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
     }
   })
 
-  const renderUploadNotice = (message) => {
+  const renderErrorNotice = () => {
     function createMarkup() {
       return { __html: errorMessage };
     }
@@ -761,12 +761,11 @@ const AutomationsManagnentScreen = ({ classes }) => {
     showDivider: false,
     content: (
       <Typography style={{ fontSize: 18 }}>
-        {renderUploadNotice(data)}
+        {renderErrorNotice()}
       </Typography>
     ),
     onConfirm: async () => {
       handleClose()
-      // TODO: Link to the autmation editor
     }
   })
 
