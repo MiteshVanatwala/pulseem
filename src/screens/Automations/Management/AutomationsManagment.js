@@ -581,6 +581,10 @@ const AutomationsManagnentScreen = ({ classes }) => {
       const resJ = JSON.parse(response.payload.d);
       if (resJ.StatusCode !== 1) {
         setErrorMessage(resJ.StatusMessage);
+        setDialogType({
+          type: 'activateError',
+          data: row
+        })
         return;
       }
 
