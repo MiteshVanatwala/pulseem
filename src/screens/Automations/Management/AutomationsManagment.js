@@ -44,6 +44,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
   const [restoreArray, setRestoreArray] = useState([])
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const [showLoader, setLoader] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch()
   const history = useCtrlHistory()
   moment.locale(language)
@@ -355,6 +356,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           checked={IsActive}
           onChange={() => {
             if (!row.HasNodes) {
+              setErrorMessage(t('automations.NoNodesFound').replace('##', row.ID));
               setDialogType({
                 type: 'noNodes',
                 data: row
@@ -577,13 +579,11 @@ const AutomationsManagnentScreen = ({ classes }) => {
     try {
       const response = await dispatch(activateAutomation({ ID: data.ID }))
       const resJ = JSON.parse(response.payload.d);
-      console.log("Automation Error: ", resJ.StatusMessage);
+      if (resJ.StatusCode !== 1) {
+        setErrorMessage(resJ.StatusMessage);
+        return;
+      }
 
-      // if(resJ.StatusCode !== 1){
-        
-      //   //TODO: Show the error message: StatusMessage
-      // }
-      
       getData()
       if (isEdit)
         window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`
@@ -743,16 +743,16 @@ const AutomationsManagnentScreen = ({ classes }) => {
     }
   })
 
-  const renderUploadNotice = (data) => {
+  const renderUploadNotice = (message) => {
     function createMarkup() {
-      return { __html: t('automations.NoNodesFound').replace('##', data.ID) };
+      return { __html: errorMessage };
     }
     return (
       <label dangerouslySetInnerHTML={createMarkup()}></label>
     );
   }
 
-  const showErrorDialog = (data = '') => ({
+  const showErrorDialog = (data) => ({
     title: t('automations.errorTitle'),
     showDivider: false,
     content: (
@@ -777,7 +777,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
       statusError: getStatusErrorDioalog(data),
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data),
-      noNodes: showErrorDialog(data)
+      noNodes: showErrorDialog(data),
+      activateError: showErrorDialog(data)
     }
 
     const currentDialog = dialogContent[type] || {}
