@@ -33,7 +33,7 @@ import {
 
 
 
-const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, callbackUpdateGroups, callbackSelectAll , callbackReciFilter , bool}) => {
+const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, callbackUpdateGroups, callbackSelectAll , callbackReciFilter , bool , boolNotify}) => {
     const { language } = useSelector(state => state.core)
     const { t } = useTranslation();
     //const [selectedGroups, setSelected] = useState([]);
@@ -272,7 +272,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
             <div className={classes.demo} style={{ minHeight: 280, maxHeight: 280, overflow: 'auto' }}>
                 <List>
                     {renderSelectAll()}
-                    {renderGroups()}
+                 {boolNotify ? renderGroups() : null }   
                     {bool ? renderSmsgroups() : null}
                 </List>
             </div>

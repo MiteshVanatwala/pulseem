@@ -991,6 +991,7 @@ const NotificationEditor = ({ props, classes }) => {
             callbackSelectedGroups={callbackSelectedGroups}
             callbackUpdateGroups={callbackUpdateGroups}
             callbackSelectAll={callbackSelectAll}
+            bootNotify = {true}
           />
           <Box>
             <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>

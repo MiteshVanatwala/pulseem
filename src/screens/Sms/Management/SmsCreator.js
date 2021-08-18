@@ -850,7 +850,7 @@ setselectedGroup(temp);
         UpdateDate: 1628755539174,
       };
       dispatch(smsSave(payload));
-      window.location.href = "/react/smsStep";
+      // window.location.href = "/react/smsStep";
     }
   };
 
