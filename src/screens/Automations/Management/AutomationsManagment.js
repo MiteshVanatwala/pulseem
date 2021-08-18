@@ -760,7 +760,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
     title: t('automations.errorTitle'),
     showDivider: false,
     content: (
-      <Typography style={{ fontSize: 18 }} onClick={handleClose}>
+      <Typography style={{ fontSize: 18 }}>
         {renderUploadNotice(data)}
       </Typography>
     ),
