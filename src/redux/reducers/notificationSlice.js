@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import instence from '../../helpers/api'
+import { instence } from '../../helpers/api'
 
 export const getNotificationData = createAsyncThunk(
   'notification/getNotifications', async (_, thunkAPI) => {

@@ -1,5 +1,5 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
-import instence from '../../helpers/api'
+import { instence } from '../../helpers/api'
 import {apiURL,actionURL,isProdMode} from '../../config/index';
 import { exportFile } from '../../helpers/exportFromJson';
 
