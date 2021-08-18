@@ -576,8 +576,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
   const handleActiveChange = (data, isEdit = false) => async () => {
     try {
       const response = await dispatch(activateAutomation({ ID: data.ID }))
-      console.log(response);
-      const resJ = response.payload.d;
+      const resJ = JSON.parse(response.payload.d);
       console.log("Automation Error: ", resJ.StatusMessage);
 
       // if(resJ.StatusCode !== 1){
