@@ -575,7 +575,16 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
   const handleActiveChange = (data, isEdit = false) => async () => {
     try {
-      await dispatch(activateAutomation({ ID: data.ID }))
+      const response = await dispatch(activateAutomation({ ID: data.ID }))
+      console.log(response);
+      const resJ = JSON.parse(response);
+      console.log("Automation Error: ", resJ.StatusMessage);
+
+      // if(resJ.StatusCode !== 1){
+        
+      //   //TODO: Show the error message: StatusMessage
+      // }
+      
       getData()
       if (isEdit)
         window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`
