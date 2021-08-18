@@ -186,11 +186,35 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
     '&:nth-of-type(even)': {
       backgroundColor: '#E3E9F0',
+    },
+    '&.directEmailRow': {
+      '&:nth-of-type(4n+3)': {
+        backgroundColor: '#E3E9F0',
+      },
     }
   },
   tableRowHead: {
     backgroundColor: '#E3E9F0',
     borderColor: 'transparent',
+  },
+  tableCollapseHead: {
+    fontWeight: 'bold',
+    borderBottom: 'unset',
+    fontSize: 16
+  },
+  tableRowCollapse: {
+    '&.directEmailRowCollapse': {
+      '&:nth-of-type(4n+4)': {
+        backgroundColor: '#E3E9F0',
+      },
+    }
+  },
+  cellExpand: {
+    width: 30, 
+    padding: '8px 0px', 
+    borderBottom: 'unset',
+    display: 'flex',
+    alignItems: 'center'
   },
   tableRowReportHead: {
     backgroundColor: '#D7D7D7',
@@ -850,7 +874,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     borderColor: 'red!important'
   },
   minWidth252: {
-    minWidth: '252.6px!important'
+    minWidth: '150px!important'
   },
   verifyButton: {
     background: 'green',
@@ -884,6 +908,21 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     '&.MuiButtonBase-root.Mui-disabled': {
       pointerEvents: 'visible'
     }
+  },
+  exportButton: {
+    color: 'white',
+    padding: '0 10px',
+    textTransform: 'capitalize',
+    '&>span>*': {
+      paddingInlineStart: 5
+    }
+  },
+  reportPaperBgGray: {
+    backgroundColor: 'rgba(242, 242, 242, 1)',
+    padding: 10,
+    marginTop: 15,
+    borderRadius: 0,
+    border: '1px solid #ccc'
   },
   numberBox: {
     display: 'flex',
@@ -1258,7 +1297,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: '5px 0px'
   },
   lastReportsTabPanels: {
-    padding: '0 20px 0 30px'
+    paddingRight: 25,
+    paddingLeft: 25
   },
   lastReportPadding: {
     [theme.breakpoints.down('md')]: {

@@ -18,7 +18,7 @@ export default configureStore({
     mms: mmsReducer,
     automations: automationsReducer,
     notification: notificationReducer,
-    sms: smsReducer,
+    sms: smsReducer, 
     dashboard: dashboardReducer,
   },
 });

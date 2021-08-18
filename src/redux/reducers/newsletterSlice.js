@@ -23,6 +23,28 @@ export const getNewsletterReports = createAsyncThunk(
   }
 )
 
+export const getNewsletterDirectReport=createAsyncThunk(
+  'report/GetEmailDirectReport',async (data,thunkAPI) => {
+    try {
+      const response=await instence.post(`report/GetEmailDirectReport`, data);
+      return JSON.parse(response.data)
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  }
+)
+
+export const exportNewsletterDirectReport=createAsyncThunk(
+  'report/ExportEmailDirectReport',async (_,thunkAPI) => {
+    try {
+      const response=await instence.post(`report/ExportEmailDirectReport`);
+      return JSON.parse(response.data)
+    } catch(error) {
+      return thunkAPI.rejectWithValue({error: error.message});
+    }
+  }
+)
+
 export const restoreCampaigns = createAsyncThunk(
   'email/restoreEmailCampaigns', async (deletedCampaigns, thunkAPI) => {
     try {
@@ -84,7 +106,9 @@ export const newsletterSlice=createSlice({
     newslettersDeletedData: [],
     newslettersDataError: '',
     newslettersReports: [],
-    newslettersReportsError: ''
+    newslettersReportsError: '',
+    directNewsletterReport: {},
+    directNewsletterReportError: ''
   },
   reducers: {},
   extraReducers: builder => {
@@ -100,6 +124,12 @@ export const newsletterSlice=createSlice({
     })
     builder.addCase(getNewsletterReports.rejected, (state, action) => {
       state.newslettersReportsError = action.error.message
+    })
+    builder.addCase(getNewsletterDirectReport.fulfilled, (state, { payload }) => {
+      state.directNewsletterReport = payload
+    })
+    builder.addCase(getNewsletterDirectReport.rejected, (state, action) => {
+      state.directNewsletterReportError = action.error.message
     })
     builder.addCase(restoreCampaigns.fulfilled, () => { console.log('api restoreCampaigns success') })
     builder.addCase(deleteCampaign.fulfilled, () => { console.log('api deleteCampaign success') })

@@ -32,7 +32,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 
 const NotificationManagement = ({ classes }) => {
-  const { language, windowSize, rowsPerPage} = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
   const { notificationData } = useSelector(state => state.notification)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
