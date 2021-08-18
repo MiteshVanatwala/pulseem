@@ -577,7 +577,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
     try {
       const response = await dispatch(activateAutomation({ ID: data.ID }))
       console.log(response);
-      const resJ = JSON.parse(response);
+      const resJ = response.payload.d;
       console.log("Automation Error: ", resJ.StatusMessage);
 
       // if(resJ.StatusCode !== 1){
