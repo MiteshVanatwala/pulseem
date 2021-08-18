@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://www.reactstage.club/react/",
   "dependencies": {
-    "@amcharts/amcharts4": "^4.10.20",
+    "@amcharts/amcharts4": "^4.10.21",
     "@date-io/moment": "1.x",
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",

@@ -10,7 +10,42 @@ export const getSmsData=createAsyncThunk(
       return thunkAPI.rejectWithValue({error: error.message});
     }
   })
-
+  export const getPreviousLandingData=createAsyncThunk(
+    'smsCampaign/GetLastLandingPages',async (_,thunkAPI) => {
+      try {
+        const response=await instence.get(`smsCampaign/GetLastLandingPages`);
+        return JSON.parse(response.data)
+      } catch(error) {
+        return thunkAPI.rejectWithValue({error: error.message});
+      }
+    })
+    export const getPreviousCampaignData=createAsyncThunk(
+      'smsCampaign/GetLastCampaings',async (_,thunkAPI) => {
+        try {
+          const response=await instence.get(`smsCampaign/GetLastCampaings`);
+          return JSON.parse(response.data)
+        } catch(error) {
+          return thunkAPI.rejectWithValue({error: error.message});
+        }
+      })
+      export const getAccountExtraData=createAsyncThunk(
+        'smsCampaign/GetAccountExtraData',async (_,thunkAPI) => {
+          try {
+            const response=await instence.get(`smsCampaign/GetAccountExtraData`);
+            return JSON.parse(response.data)
+          } catch(error) {
+            return thunkAPI.rejectWithValue({error: error.message});
+          }
+        })
+        export const getAccountId=createAsyncThunk(
+          'smsCampaign/GetGroupsBySubAccountId',async (_,thunkAPI) => {
+            try {
+              const response=await instence.get(`smsCampaign/GetGroupsBySubAccountId`);
+              return JSON.parse(response.data)
+            } catch(error) {
+              return thunkAPI.rejectWithValue({error: error.message});
+            }
+          })
 export const getSmsByID=createAsyncThunk(
   'smsCampaign/GetSmsCampaignById',async (id,thunkAPI) => {
     try {
@@ -50,6 +85,15 @@ export const duplicteSms=createAsyncThunk(
       return thunkAPI.rejectWithValue({error: error.message});
     }
   })
+  export const smsDelete=createAsyncThunk(
+    'smsCampaign/deleteSmsCampaign',async (id,thunkAPI) => {
+      try {
+        const response=await instence.post(`smsCampaign/deleteSmsCampaign/${id}`);
+        return JSON.parse(response.data)
+      } catch(error) {
+        return thunkAPI.rejectWithValue({error: error.message});
+      }
+    })
 
 export const getSmsAuthorizationData=createAsyncThunk(
   'authorization/getAuthorizeNumbers',async (_,thunkAPI) => {
@@ -102,6 +146,44 @@ export const verifyCode=createAsyncThunk(
       }
     })
 
+    export const smsSave=createAsyncThunk(
+      'smsCampaign/Save',async (data,thunkAPI) => {
+        try {
+          const response=await instence.post(`smsCampaign/Save`,data);
+          return JSON.parse(response.data)
+        } catch(error) {
+          return thunkAPI.rejectWithValue({error: error.message});
+        }
+      })
+      export const smsCampSettings=createAsyncThunk(
+        'smsCampaign/SaveCampaignSettings',async (data,thunkAPI) => {
+          try {
+            const response=await instence.post(`smsCampaign/SaveCampaignSettings`,data);
+            return JSON.parse(response.data)
+          } catch(error) {
+            return thunkAPI.rejectWithValue({error: error.message});
+          }
+        })
+      export const smsCombinedGroup=createAsyncThunk(
+        'smsCampaign/CreateCombinedGroup',async (data,thunkAPI) => {
+          try {
+            const response=await instence.post(`smsCampaign/CreateCombinedGroup`,data);
+            return JSON.parse(response.data)
+          } catch(error) {
+            return thunkAPI.rejectWithValue({error: error.message});
+          }
+        })
+      export const smsQuick=createAsyncThunk(
+        'smsCampaign/QuickSend',async (data,thunkAPI) => {
+          try {
+            const response=await instence.post(`smsCampaign/QuickSend`,data);
+            return JSON.parse(response.data)
+          } catch(error) {
+            return thunkAPI.rejectWithValue({error: error.message});
+          }
+        })
+    
+
   export const exportSmsReport=createAsyncThunk(
     'report/ExportSmsDirectReport',async (demo=false,thunkAPI) => {
       try {
@@ -129,6 +211,10 @@ export const smsSlice=createSlice({
     smsDataError: '',
     authorizationData: [],
     smsReport: [],
+    previousLandingData : [],
+    previousCampaignData : [],
+    extraData : [],
+    accountId : [],
 
   },
   reducers: {},
@@ -143,8 +229,27 @@ export const smsSlice=createSlice({
     builder.addCase(getSmsAuthorizationData.fulfilled,(state,{payload}) => {
       state.authorizationData=payload
     })
+    
     builder.addCase(getSmsReport.fulfilled,(state,{payload}) => {
       state.smsReport=payload
+    })
+
+    builder.addCase(getPreviousLandingData.fulfilled,(state,{payload}) => {
+      state.previousLandingData=payload
+    })
+    builder.addCase(getPreviousCampaignData.fulfilled,(state,{payload}) => {
+      state.previousCampaignData=payload
+    })
+    builder.addCase(getAccountExtraData.fulfilled,(state,{payload}) => {
+      state.extraData=payload
+    })
+    builder.addCase(getAccountId.fulfilled,(state,{payload}) => {
+      let tempArr = [];
+      for(let i = 0 ; i< payload.length ; i++)
+      {
+        tempArr.push({...payload[i],selected:false})
+      }
+         state.accountId=tempArr
     })
     builder.addCase(duplicteSms.fulfilled,() => console.log('api duplicteSms success'))
     builder.addCase(deleteSms.fulfilled,() => console.log('api deleteSms success'))
