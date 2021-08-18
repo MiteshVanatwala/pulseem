@@ -583,7 +583,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
         setErrorMessage(resJ.StatusMessage);
         setDialogType({
           type: 'activateError',
-          data: row
+          data: data
         })
         return;
       }
