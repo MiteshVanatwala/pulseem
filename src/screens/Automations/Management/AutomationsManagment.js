@@ -81,7 +81,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
   const renderSearchLine = () => {
     const handleKeyDown = (event) => {
-      if (event.keyCode === 13 || event.key === 'Enter') {
+      if (event.keyCode === 13) {
         handleSearch();
       }
     }
@@ -147,7 +147,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          onKeyPress={handleKeyDown}
+          onKeyPress={handleSearch}
           placeholder={t('automations.labelAutomationName')}
         />
       )
@@ -160,7 +160,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
-            onKeyPress={handleKeyDown}
+            onKeyDown={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('automations.labelAutomationName')}

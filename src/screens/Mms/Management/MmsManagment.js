@@ -142,7 +142,7 @@ const MmsManagnentScreen = ({ classes }) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          onKeyPress={handleKeyDown}
+          onKeyPress={handleSearch}
           placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
         />
       )

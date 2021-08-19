@@ -145,7 +145,7 @@ const SmsManagnentScreen=({classes}) => {
         <SearchField
           classes={classes}
           value={campaineNameSearch}
-          onKeyPress={handleKeyDown}
+          onKeyPress={handleSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
           placeholder={t('common.CampaignName')}

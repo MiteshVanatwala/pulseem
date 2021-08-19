@@ -290,7 +290,7 @@ const NotificationManagement = ({ classes }) => {
         <SearchField
           classes={classes}
           value={notificationNameSearch}
-          onKeyPress={handleKeyDown}
+          onKeyPress={handleSearch}
           onChange={handleNotificationNameChange}
           onClick={handleSearch}
           placeholder={t('common.CampaignName')}

@@ -145,7 +145,7 @@ const NewsletterManagnentScreen=({classes}) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
-          onKeyPress={handleKeyDown}
+          onKeyPress={handleSearch}
           onClick={handleSearch}
           placeholder={t('common.CampaignName')}
         />

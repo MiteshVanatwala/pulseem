@@ -112,7 +112,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           classes={classes}
           value={landingPageNameSearch}
           onChange={handleCampainNameChange}
-          onKeyPress={handleKeyDown}
+          onKeyPress={handleSearch}
           onClick={handleSearch}
           placeholder={placeholder}
         />
