@@ -1,6 +1,6 @@
-import {heIL,enUS} from '@material-ui/core/locale';
-import {createMuiTheme} from '@material-ui/core/styles';
-const themeLanguages={
+import { heIL, enUS } from '@material-ui/core/locale';
+import { createTheme } from '@material-ui/core/styles';
+const themeLanguages = {
   en: {
     direction: 'ltr',
     translation: enUS
@@ -11,12 +11,12 @@ const themeLanguages={
   }
 }
 
-export const getTheme=(language) => {
+export const getTheme = (language) => {
   // console.debug("getTheme", themeLanguages);
   // console.debug("getTheme", language);
-  const {direction = 'rtl',translation = heIL}=themeLanguages[language] || themeLanguages['he']
+  const { direction = 'rtl', translation = heIL } = themeLanguages[language] || themeLanguages['he']
 
-  return createMuiTheme({
+  return createTheme({
     direction,
     palette: {
       primary: {
@@ -42,5 +42,5 @@ export const getTheme=(language) => {
       fontStyle: 'normal',
       fontSize: 14
     }
-  },translation)
+  }, translation)
 }

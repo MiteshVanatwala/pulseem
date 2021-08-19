@@ -24,6 +24,7 @@ import moment from 'moment'
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
 import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
 import { useMediaQuery } from '@material-ui/core';
+import DashboardScreen from './screens/Dashboard/Dashboard';
 
 const renderRoutes=(classes,history) => {
   const transferUrl=(url='',param='') => () => {
@@ -40,9 +41,10 @@ const renderRoutes=(classes,history) => {
   }
   return (
     <>
-      <Route
+     <Route
         exact
         path="/"
+        render={props => <DashboardScreen {...props} classes={classes} />}
       />
       <Route
         path={`/notifications/edit/:notificationID`}

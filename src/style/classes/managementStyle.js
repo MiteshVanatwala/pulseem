@@ -1,4 +1,4 @@
-const iconWidth={
+const iconWidth = {
   xs: 20,
   sm: 20,
   md: 25,
@@ -6,15 +6,16 @@ const iconWidth={
   xl: 25
 }
 
-const flex12={
+const flex12 = {
   xs: 5,
   sm: 5,
   md: 7,
   lg: 6,
   xl: 6
 }
+const blue = '#0371AD';
 
-const iconPadding={
+const iconPadding = {
   xs: '0.5rem 0.8rem 0.5em',
   sm: '0.8rem 1.1rem 0.2rem',
   md: '0.8rem 1.1rem 0.2rem',
@@ -22,18 +23,97 @@ const iconPadding={
   xl: '0.8rem 1.1rem 0.2rem'
 }
 
-// const tableRowMinWidth={
-//   xs: 75,
-//   sm: 75,
-//   md: 75,
-//   lg: 75,
-//   xl: 100
-// }
+const ellipsisMaxWidth = {
+  xs: '100%',
+  sm: '250px',
+  md: '100%',
+  lg: '100%',
+  xl: '100%'
+}
 
+const tableRowMinWidth = {
+  xs: 75,
+  sm: 75,
+  md: 75,
+  lg: 75,
+  xl: 100
+}
 
-export const getManagmentStyle=(windowSize,isRTL,theme) => ({
+const barWidth = {
+  sm: '460px!important',
+  md: '430px!important',
+  lg: '450px!important',
+  xl: '500px!important'
+}
+
+const barHeight = {
+  sm: '',
+  md: '220px!important',
+  lg: '250px!important',
+  xl: '250px!important'
+}
+
+const shortcutFontSize = {
+  category: {
+    xs: 16,
+    sm: 14,
+    md: 16,
+    lg: 16,
+    xl: 16
+  },
+  page: {
+    xs: 18,
+    sm: 16,
+    md: 18,
+    lg: 18,
+    xl: 18
+  }
+
+}
+
+const dashboardDirection = {
+  xs: 'column-reverse',
+  sm: '',
+  md: '',
+  lg: '',
+  xl: ''
+}
+
+const paperTopHeight = {
+  xs: 'auto',
+  sm: 'auto',
+  md: '350px',
+  lg: '350px',
+  xl: '350px'
+}
+
+const paperBottomHeight = {
+  xs: 'auto',
+  sm: 'auto',
+  md: '350px',
+  lg: '350px',
+  xl: '350px'
+}
+
+const shortcutEditLeft = {
+  xs: '8%',
+  sm: '18px',
+  md: '15px',
+  lg: '22px',
+  xl: '28px'
+}
+
+const shortcutPaperHeight = {
+  xs: '',
+  sm: '100vh',
+  md: '100vh',
+  lg: '95vh',
+  xl: '95vh'
+}
+
+export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   managementTitle: {
-    fontSize: windowSize==='xs'? '25px':'36px',
+    fontSize: windowSize === 'xs' ? '25px' : '36px',
     color: '#333333',
     paddingBlock: '0.5rem',
     fontFamily: "Assistant",
@@ -71,6 +151,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   minWidth75: {
     minWidth: '75px!important'
   },
+  minWidth50: {
+    minWidth: '50px!important'
+  },
   maxWidth75: {
     maxWidth: '75px!important'
   },
@@ -103,17 +186,57 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     },
     '&:nth-of-type(even)': {
       backgroundColor: '#E3E9F0',
+    },
+    '&.directEmailRow': {
+      '&:nth-of-type(4n+3)': {
+        backgroundColor: '#E3E9F0',
+      },
     }
   },
   tableRowHead: {
     backgroundColor: '#E3E9F0',
     borderColor: 'transparent',
   },
+  tableCollapseHead: {
+    fontWeight: 'bold',
+    borderBottom: 'unset',
+    fontSize: 16
+  },
+  tableRowCollapse: {
+    '&.directEmailRowCollapse': {
+      '&:nth-of-type(4n+4)': {
+        backgroundColor: '#E3E9F0',
+      },
+    }
+  },
+  cellExpand: {
+    width: 30, 
+    padding: '8px 0px', 
+    borderBottom: 'unset',
+    display: 'flex',
+    alignItems: 'center'
+  },
+  tableRowReportHead: {
+    backgroundColor: '#D7D7D7',
+    borderColor: 'transparent',
+  },
   middleText: {
-    fontSize: windowSize==='xs'? 15:18,
+    fontSize: windowSize === 'xs' ? 15 : 18,
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
+    color: '#333'
+  },
+  middleTxt: {
+    fontSize: 18,
+    whiteSpace: 'nowrap',
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    color: '#333'
+  },
+  middleWrapText: {
+    fontSize: 18,
+    overflow: "hidden",
     color: '#333'
   },
   wrapText: {
@@ -145,7 +268,14 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   managmentIcon: {
     width: iconWidth[windowSize],
-    margin: 'auto'
+    margin: 'auto',
+    marginTop: -10
+  },
+  managmentUicon: {
+    fontSize: 30,
+    fontFamily: 'pulseemicons',
+    marginBottom: -15,
+    marginTop: -15
   },
   managmentIconDisable: {
     opacity: 0.5
@@ -155,7 +285,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     alignSelf: 'center',
     textTransform: 'none',
     marginTop: 2,
-    fontSize: windowSize==='xs'&&15
+    fontSize: windowSize === 'xs' && 15
   },
   sendIcon: {
     border: '1px solid #27AE60',
@@ -220,6 +350,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     color: '#E74C3C',
     fontWeight: 700
   },
+  textColorRed: {
+    color: '#E74C3C'
+  },
   actionButton: {
     color: 'white',
     fontSize: 18,
@@ -230,6 +363,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     '&:hover': {
       backgroundColor: '#219150'
     }
+  },
+  textColorBlue: {
+    color: '#3498DB'
   },
   actionButtonLightBlue: {
     backgroundColor: '#3498DB',
@@ -310,6 +446,9 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   flex7: {
     flex: 7
   },
+  flex2: {
+    flex: 2
+  },
   flex3: {
     flex: 3
   },
@@ -328,22 +467,22 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     justifyContent: 'center'
   },
   flex12: {
-    flex: flex12[windowSize]||5,
+    flex: flex12[windowSize] || 5,
     borderBottom: 0,
     justifyContent: 'center'
   },
   cellIconsContainer: {
-    justifyContent: windowSize==='xs'? 'flex-start':'flex-end',
+    justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end',
   },
   datePickerInput: {
     paddingBlock: 10
   },
   datePickerButton: {
-    right: isRTL? 10:-10,
+    right: isRTL ? 10 : -10,
     padding: 10
   },
   groupsLableContainer: {
-    justifyContent: windowSize==='xs'? 'start':'flex-end',
+    justifyContent: windowSize === 'xs' ? 'start' : 'flex-end',
     display: 'flex',
     flex: 1
   },
@@ -357,6 +496,13 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     paddingInline: 25,
     textTransform: 'none',
     borderRadius: 6
+  },
+  tablePaginationSelect: {
+    '& .MuiSelect-icon': {
+      color: '#000'
+    },
+    color: '#000',
+    marginInlineStart: 15
   },
   tablePadingtonSelect: {
     '& .MuiSelect-root': {
@@ -425,12 +571,12 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     }
   },
   tablePadingtonArrow: {
-    transform: isRTL? 'rotateY(0deg)':'rotateY(180deg)',
+    transform: isRTL ? 'rotateY(0deg)' : 'rotateY(180deg)',
     marginInlineStart: 10,
     padding: 10
   },
   tablePadingtonArrowOppisite: {
-    transform: isRTL? 'rotateY(180deg)':'rotateY(0deg)',
+    transform: isRTL ? 'rotateY(180deg)' : 'rotateY(0deg)',
     marginInlineEnd: 10,
     padding: 10
   },
@@ -438,7 +584,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 100
+    marginBottom: 50
   },
   tablePadingtonGridContainer: {
     paddingBlock: 10,
@@ -630,12 +776,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '100%',
-    [theme.breakpoints.only('sm')] :{
-      maxWidth: 250
-    },
-    [theme.breakpoints.up('md')] :{
-      maxWidth: 350
-    },
+    maxWidth: ellipsisMaxWidth[windowSize]
   },
   p10: {
     padding: 10
@@ -733,7 +874,7 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     borderColor: 'red!important'
   },
   minWidth252: {
-    minWidth: '252.6px!important'
+    minWidth: '150px!important'
   },
   verifyButton: {
     background: 'green',
@@ -764,9 +905,24 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     cursor: 'not-allowed'
   },
   pointerShow: {
-    '&.MuiButtonBase-root.Mui-disabled':{
+    '&.MuiButtonBase-root.Mui-disabled': {
       pointerEvents: 'visible'
     }
+  },
+  exportButton: {
+    color: 'white',
+    padding: '0 10px',
+    textTransform: 'capitalize',
+    '&>span>*': {
+      paddingInlineStart: 5
+    }
+  },
+  reportPaperBgGray: {
+    backgroundColor: 'rgba(242, 242, 242, 1)',
+    padding: 10,
+    marginTop: 15,
+    borderRadius: 0,
+    border: '1px solid #ccc'
   },
   numberBox: {
     display: 'flex',
@@ -807,15 +963,394 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
     textDecoration: 'underline',
     margin: '0 5px'
   },
+  mobileReportHead: {
+    fontWeight: 'bold',
+    marginTop: 15,
+    marginInlineStart: 10
+  },
+  tabelCellPadding: {
+    paddingBlock: 15
+  },
+  dashboard: {
+    background: '#F2F2F2',
+    padding: 0,
+    maxHeight: 'unset'
+  },
+  dashboardContainer: {
+    flexDirection: dashboardDirection[windowSize]
+
+  },
+  chartLabelGreen: {
+    position: 'absolute',
+    top: 'calc(50% - 28px)',
+    width: '100%',
+    fontSize: 35,
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    color: '#65d638'
+  },
+  shortcutTitleSection: {
+    width: '85%',
+    marginTop: '2.1rem',
+    marginBottom: 40
+  },
+  shortcutTitle: {
+    fontSize: windowSize === 'xs' ? 23 : 25,
+    fontWeight: 'bold'
+  },
+  shortcutSubtitle: {
+    fontSize: windowSize === 'xs' ? 16 : 18,
+  },
+  shortcutBox: {
+    position: windowSize === 'xs' ? '' : 'sticky',
+    top: 0,
+    height: shortcutPaperHeight[windowSize],
+    [theme.breakpoints.down('xs')]: {
+      margin: '10px 10px -10px 10px'
+    }
+  },
+  shortcutPaper: {
+    [theme.breakpoints.down('xs')]: {
+      borderRadius: 10,
+    },
+    height: shortcutPaperHeight[windowSize],
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    overflow: 'auto',
+    '&::-webkit-scrollbar': {
+      width: '0px'
+    },
+    '&::-webkit-scrollbar-thumb': {
+      'backgroundColor': 'darkgrey',
+      borderRadius: '5px'
+    }
+  },
+  shortcutBtnBox: {
+    position: 'relative',
+    width: '100%',
+    textAlign: 'center'
+  },
+  shortcutButton: {
+    height: '92px',
+    width: '85%',
+    background: '#0371AD',
+    borderRadius: '20px',
+    marginBottom: windowSize === 'xs' ? 30 : 45,
+    fontSize: '18px',
+    position: 'relative',
+    textTransform: 'capitalize',
+    padding: '6px 30px'
+
+  },
+  shortcutDottedButton: {
+    borderRadius: '20px',
+    border: '1px dashed #0371AD',
+    fontFamily: 'pulseemicons',
+    height: '92px',
+    fontSize: '30px',
+    marginBottom: 45,
+    width: '85%',
+  },
+  shortcutList: {
+    maxWidth: 350,
+    background: 'white',
+    borderRadius: 10,
+    margin: 10
+  },
+  shortcutEditIcon: {
+    position: 'absolute',
+    left: shortcutEditLeft[windowSize],
+    bottom: windowSize === 'xs' ? 40 : 50,
+    fontFamily: 'pulseemicons',
+    fontSize: 18,
+    color: 'white'
+  },
+  shortcutLabel: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    marginTop: -5
+  },
+  popperPaper: {
+    padding: '5px 0',
+    width: 300,
+    background: '#D7D7D7'
+  },
+  hideIndicator: {
+    background: 'none'
+  },
+  pageTitle: {
+    fontSize: shortcutFontSize.page[windowSize],
+    lineHeight: 1
+  },
+  categoryLabel: {
+    fontSize: shortcutFontSize.category[windowSize],
+    lineHeight: 1
+  },
+  carouselPaper: {
+    borderRadius: 10
+  },
+  carouselChart: {
+    '& .carousel-root': {
+      width: '100%'
+    },
+    position: 'relative'
+  },
+  carouselArrows: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    position: 'absolute',
+    zIndex: 1
+  },
+  carouselTipsArrows: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    position: 'absolute',
+    top: 'calc(50% - 24px)',
+    zIndex: 1
+  },
+  carouselTips: {
+    position: 'relative',
+    '& .control-dots .dot': {
+      background: 'white!important',
+      height: '10px!important',
+      width: '10px!important',
+      boxShadow: 'unset!important',
+      border: '1px solid #000',
+      margin: '0 2px!important'
+    },
+    '& .control-dots .dot.selected': {
+      background: '#000!important'
+    }
+  },
+  doughnutGrid: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  },
+  barChart: {
+    // maxWidth: 500,
+    float: 'right',
+    '& canvas': {
+      // width: barWidth[windowSize],
+      height: barHeight[windowSize]
+    },
+    paddingBottom: 10
+  },
+  emptyDoughnut: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    backgroundColor: '#F9F9F9',
+    border: '1px solid #D7D7D7',
+    width: 180,
+    height: 180,
+    margin: 10
+  },
+  recipientTitleSection: {
+    marginBottom: '1.2rem',
+    borderBottom: '1px solid #ccc'
+  },
+  noRecipients: {
+    color: '#AAAAAA',
+    marginTop: 40,
+    fontSize: 20
+  },
+  addRecipientsIcon: {
+    fontFamily: 'pulseemicons',
+    fontSize: 20
+  },
+  addRecipientsBtn: {
+    textTransform: 'capitalize',
+    marginTop: -10
+  },
+  tipsTitle: {
+    textAlign: 'center',
+    padding: '20px 20px 0px 20px',
+    marginBottom: 10
+  },
+  bulkStatusTitleSection: {
+    marginBottom: '1rem',
+    marginTop: '1rem'
+  },
+  bulkStatusBlue: {
+    marginBottom: '1rem',
+    padding: '3px 15px',
+    borderRadius: '.9rem',
+    background: '#0371AD',
+    color: 'white',
+  },
+  bulkOutline: {
+    marginBottom: '1rem',
+    padding: '3px 15px',
+    borderRadius: '.9rem',
+    border: '1px solid #0371AD',
+    background: 'transparent',
+    color: '#0371AD',
+  },
+  bulkTitle: {
+    fontWeight: 700,
+    fontSize: '12',
+    lineHeight: '2.1rem',
+  },
+  bulkContent: {
+    fontWeight: 300,
+    fontSize: '12',
+    lineHeight: '2.1rem',
+    textDecoration: 'underline',
+    color: '#0371AD',
+  },
+  dashboardTitle: {
+    fontWeight: 'bold',
+    color: '#0371AD',
+    marginTop: 10,
+    marginInlineStart: 30,
+    fontSize: 20
+  },
+  dashboardUsername: {
+    fontWeight: 'bold',
+    color: '#0371AD',
+    fontSize: 20
+  },
+  dashboardTopPaper: {
+    [theme.breakpoints.up('lg')]: {
+      minHeight: 330
+    },
+    [theme.breakpoints.down('md')]: {
+      paddingBottom: 40
+    },
+    [theme.breakpoints.down('xs')]: {
+      margin: '10px 10px 0px 10px',
+    },
+    margin: '30px 30px 0px 30px',
+    borderRadius: 10
+  },
+  dashboardBottomPaper: {
+    [theme.breakpoints.up('lg')]: {
+      height: 370
+    },
+    [theme.breakpoints.down('xs')]: {
+      margin: 10,
+    },
+    margin: 30,
+    borderRadius: 10
+  },
+  bulkMargin: {
+    [theme.breakpoints.down('xs')]: {
+      marginTop: 0,
+    },
+    [theme.breakpoints.up('lg')]: {
+      marginInlineEnd: 0
+    },
+  },
+  tipMargin: {
+    [theme.breakpoints.up('lg')]: {
+      marginInlineEnd: 0,
+    },
+  },
+  tipItem: {
+    padding: '0 30px 20px 30px'
+  },
+  tipulseemMsg: {
+    fontSize: 18,
+    padding: '0px 20px 20px 20px'
+  },
+  lightBulb: {
+    width: 100,
+    height: 100,
+    marginBottom: 10
+  },
+  activeTab: {
+    background: blue,
+    borderRadius: 5,
+    color: 'white',
+  },
+  tabText: {
+    fontSize: 20,
+    textTransform: 'capitalize',
+    padding: 2,
+    minWidth: 120,
+    minHeight: 40
+  },
+  SMSLastReportGrid: {
+    padding: '15px 20px 0px 20px'
+  },
+  newsletterLastReportGrid: {
+    padding: '0px 20px 20px 20px',
+  },
+  newsletterItemBorder: {
+    borderBottom: '1px solid #ccc'
+  },
+  phoneLastReportTitle: {
+    marginBottom: '1.2rem',
+    borderBottom: '1px solid #ccc'
+  },
+  lastReportItemText: {
+    display: 'flex',
+    alignItems: 'baseline'
+  },
+  lastReportTitleSection: {
+    marginTop: 5,
+    marginBottom: '1.2rem',
+    borderBottom: '1px solid #ccc'
+  },
+  lastReportRowItem: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    padding: '5px 0px'
+  },
+  lastReportsTabPanels: {
+    paddingRight: 25,
+    paddingLeft: 25
+  },
+  lastReportPadding: {
+    [theme.breakpoints.down('md')]: {
+      marginTop: 0
+    }
+  },
+  chartLabel: {
+    position: 'absolute',
+    height: 55,
+    top: 0,
+    bottom: 0,
+    width: '55%',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    color: 'gray',
+    right: 0,
+    left: 0,
+    margin: 'auto'
+  },
+  doughnutBox: {
+    width: 200,
+    height: 200,
+    position: 'relative',
+    textAlign: 'center'
+  },
+  doughnutGreenBox: {
+    width: 180,
+    height: 180,
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center',
+    zIndex: 1
+  },
+  bgLightGreen: {
+    position: 'absolute',
+    background: '#E0FAC6',
+    width: 145,
+    height: 145,
+    marginTop: 10,
+    zIndex: -1
+  },
   duplicateSuccessMsg: {
     padding: '0 25px!important'
-  },
-  previewID: {
-    fontSize: windowSize==='xs'?20:25,
-    position: 'absolute',
-    top: 20,
-    left: isRTL?'unset':75,
-    right: isRTL?75:'unset',
   },
   tooltipBlack: {
     backgroundColor: 'black',
@@ -830,8 +1365,96 @@ export const getManagmentStyle=(windowSize,isRTL,theme) => ({
   },
   tooltipArrow: {
     color: 'black',
-    left: isRTL?'unset!important':'2px!important',
-    right: isRTL?'2px!important':'unset!important'
+    left: isRTL ? 'unset!important' : '2px!important',
+    right: isRTL ? '2px!important' : 'unset!important'
   },
-  
+  previewID: {
+    fontSize: windowSize === 'xs' ? 20 : 25,
+    position: 'absolute',
+    top: 20,
+    left: isRTL ? 'unset' : 75,
+    right: isRTL ? 75 : 'unset'
+  },
+  listBgBrown: {
+    backgroundColor: '#636363',
+    color: 'white'
+  },
+  smsGraph: {
+    position: 'relative',
+    marginBottom: 50,
+    '& .amcharts-amexport-item .amcharts-amexport-item-level-1 .amcharts-amexport-item-blank': {
+      width: 150
+    },
+    '& .amcharts-amexport-menu-level-1': {
+      right: '15px!important',
+      '&::after': {
+        content: `''`,
+        position: 'absolute',
+        top: '5px',
+        left: '100%',
+        zIndex: '1000',
+        borderTop: '8px solid transparent',
+        borderLeft: '8px solid #e2e2e2',
+        borderRight: '8px solid transparent',
+        borderBottom: '8px solid transparent',
+      }
+    }
+  },
+  smsGraphMenu: {
+    width: 35,
+    height: 35,
+    background: '#fff',
+    border: '1px solid #e2e2e2',
+    '&:hover': {
+      backgroundColor: '#636363',
+    }
+  },
+  smsGraphMenuIcon: {
+    padding: 0,
+    color: 'gray',
+    '&:hover': {
+      color: 'white'
+    }
+  },
+  smsGraphMenuPaper: {
+    borderRadius: 0,
+    boxShadow: 'none',
+    border: '1px solid #e2e2e2',
+    '& .MuiListItem-button:hover': {
+      backgroundColor: '#636363',
+      color: 'white'
+    }
+  },
+  smsGraphMenuList: {
+    padding: 0,
+    position: 'absolute',
+    top: 0,
+    right: 50,
+    width: 140,
+  },
+  arrowRight: {
+    '&::after': {
+      content: `''`,
+      position: 'absolute',
+      top: '13px',
+      left: '100%',
+      zIndex: '1000',
+      border: '1px solid #e2e2e2',
+      borderTop: '7px solid transparent',
+      borderLeft: '7px solid #fff',
+      borderRight: '7px solid transparent',
+      borderBottom: '7px solid transparent',
+    },
+    '&::before': {
+      content: `''`,
+      position: 'absolute',
+      top: '12.5px',
+      left: '100%',
+      zIndex: '1000',
+      borderTop: '7px solid transparent',
+      borderLeft: '7.5px solid black',
+      borderRight: '7.5px solid transparent',
+      borderBottom: '7.5px solid transparent',
+    }
+  }
 })
