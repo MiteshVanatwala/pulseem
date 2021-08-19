@@ -227,7 +227,7 @@ const NotificationManagement = ({ classes }) => {
 
   const renderSearchSection = () => {
     const handleKeyDown = (event) => {
-      if (event.keyCode === 13) {
+      if (event.keyCode === 13 || event.key === 'Enter') {
         handleSearch();
       }
     }
