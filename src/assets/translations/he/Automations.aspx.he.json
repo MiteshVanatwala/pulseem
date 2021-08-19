@@ -55,5 +55,6 @@
   "duplicateTitle": "שכפול אוטומציה",
   "duplicateContent": "האם ברצונך לשכפל את האוטומציה?",
   "restoreCampaignTitle": "בחר את האוטומציות שברצונך לשחזר",
-  "NoNodesFound": "לאוטומציה לא נשמרת זרימת עבודה, אנא צור תחילה זרימת עבודה.<br> לחץ <b><a target='_blank' href='/pulseem/CreateAutomations.aspx?AutomationID=##' id='editAutomation'>כאן</a></b> כדי לערוך את האוטומציה"
+  "NoNodesFound": "לאוטומציה לא נשמרת זרימת עבודה, אנא צור תחילה זרימת עבודה.",
+  "pressHereToEditAutomation": "לחץ <b>אישור</b> כדי לערוך את האוטומציה"
 }

@@ -57,8 +57,6 @@ export const restoreAutomations=createAsyncThunk(
     'AutomationServices.asmx/ChangeAutomationStatus', async ( data, thunkAPI) => {
       try {
         const d = "{'automationID':'" + data.ID + "'}"
-
-        console.log(d);
         const response = await customInstance.post(`AutomationServices.asmx/ChangeAutomationStatus`, d);
         return response.data;
       }

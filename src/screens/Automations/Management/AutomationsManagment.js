@@ -44,6 +44,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
   const [restoreArray, setRestoreArray] = useState([])
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const [showLoader, setLoader] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch()
   const history = useCtrlHistory()
   moment.locale(language)
@@ -362,6 +363,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           checked={IsActive}
           onChange={() => {
             if (!row.HasNodes) {
+              setErrorMessage(`${t('automations.NoNodesFound')}<br/>${t('automations.pressHereToEditAutomation').replace('##', row.ID)}`);
               setDialogType({
                 type: 'noNodes',
                 data: row
@@ -582,7 +584,17 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
   const handleActiveChange = (data, isEdit = false) => async () => {
     try {
-      await dispatch(activateAutomation({ ID: data.ID }))
+      const response = await dispatch(activateAutomation({ ID: data.ID }))
+      const resJ = JSON.parse(response.payload.d);
+      if (resJ.StatusCode !== 1) {
+        setErrorMessage(`${resJ.StatusMessage} <br/>${t('automations.pressHereToEditAutomation').replace('##', data.ID)}`);
+        setDialogType({
+          type: 'activateError',
+          data: data
+        })
+        return;
+      }
+
       getData()
       if (isEdit)
         window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`
@@ -742,26 +754,26 @@ const AutomationsManagnentScreen = ({ classes }) => {
     }
   })
 
-  const renderUploadNotice = (data) => {
+  const renderErrorNotice = () => {
     function createMarkup() {
-      return { __html: t('automations.NoNodesFound').replace('##', data.ID) };
+      return { __html: errorMessage };
     }
     return (
       <label dangerouslySetInnerHTML={createMarkup()}></label>
     );
   }
 
-  const showErrorDialog = (data = '') => ({
+  const showErrorDialog = (data) => ({
     title: t('automations.errorTitle'),
     showDivider: false,
     content: (
-      <Typography style={{ fontSize: 18 }} onClick={handleClose}>
-        {renderUploadNotice(data)}
+      <Typography style={{ fontSize: 18 }}>
+        {renderErrorNotice()}
       </Typography>
     ),
     onConfirm: async () => {
-      handleClose()
-      // TODO: Link to the autmation editor
+      window.open(`/pulseem/CreateAutomations.aspx?AutomationID=${data.ID}`, '_blank');
+      handleClose();
     }
   })
 
@@ -776,7 +788,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
       statusError: getStatusErrorDioalog(data),
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data),
-      noNodes: showErrorDialog(data)
+      noNodes: showErrorDialog(data),
+      activateError: showErrorDialog(data)
     }
 
     const currentDialog = dialogContent[type] || {}
