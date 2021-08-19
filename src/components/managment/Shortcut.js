@@ -7,11 +7,11 @@ import {
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
-import { getShortcuts, setShortcuts /*, deleteShortcuts*/ } from '../../redux/reducers/dashboardSlice';
+import { getShortcuts, setShortcuts } from '../../redux/reducers/shortcutSlice';
 
 const Shortcut = ({ classes }) => {
   const { windowSize } = useSelector(state => state.core);
-  const { shortcuts /*,shortCutsError*/ } = useSelector(state => state.dashboard);
+  const { shortcuts, shortCutsError } = useSelector(state => state.shortcuts);
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
   const [selectedPage, setPageValue] = useState({});
@@ -242,7 +242,8 @@ const Shortcut = ({ classes }) => {
       setPageOpen(false);
       setLoading(loading);
       await dispatch(setShortcuts(data));
-      await dispatch(getShortcuts());
+      //await dispatch(getShortcuts());
+      initData()
       setLoading({});
     }
 

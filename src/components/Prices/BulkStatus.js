@@ -6,8 +6,10 @@ import { Dialog } from '../managment/index';
 import { Grid, Paper, Typography } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
+import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 
 const BulkStatus = ({ classes }) => {
+  const dispatch = useDispatch();
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const { username } = useSelector(state => state.user);
   const [isShowSmsPackage, showSmsPackage] = useState(false);
@@ -20,6 +22,12 @@ const BulkStatus = ({ classes }) => {
   let isMMSPrepaid = Mms.isPrepaid || Mms.Credits == -1;
   let isNotificationsPrepaid = Notifications.isPrepaid || Notifications.Credits == -1;
   //let isSMSPrepaid = Sms.isPrepaid || Sms.Credits == -1;
+
+  const initData = async () => {
+    dispatch(getPackagesDetails());
+  }
+
+  useEffect(initData, [dispatch])
 
   const handleDialogClose = () => {
     setIsOpenPackageDialog(false);

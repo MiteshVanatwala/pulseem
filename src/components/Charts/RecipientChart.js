@@ -6,6 +6,7 @@ import { Doughnut, Bar } from 'react-chartjs-2';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import { getRecipientsReport } from '../../redux/reducers/recipientsReportSlice';
 
 const doughnutOptions = {
     cutout: 77,
@@ -18,8 +19,17 @@ const doughnutOptions = {
 const RecipientChart = ({ classes }) => {
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
-    const { recipientsReport } = useSelector(state => state.dashboard);
+    const { recipientsReport } = useSelector(state => state.recipientReports);
     const { language, windowSize, isRTL } = useSelector(state => state.core);
+
+    const dispatch = useDispatch();
+
+
+    const initData = async () => {
+        dispatch(getRecipientsReport());
+    }
+
+    useEffect(initData, [dispatch]);
 
     const titles = [
         {
@@ -293,4 +303,8 @@ const RecipientChart = ({ classes }) => {
     );
 }
 
-export default RecipientChart;
+function isLoaded(prevProps, nextProps) {
+    return prevProps === nextProps;
+}
+
+export default React.memo(RecipientChart, isLoaded);
