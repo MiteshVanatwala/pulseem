@@ -145,7 +145,7 @@ const NewsletterManagnentScreen=({classes}) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
-          onKeyDown={handleKeyDown}
+          onKeyPress={handleKeyDown}
           onClick={handleSearch}
           placeholder={t('common.CampaignName')}
         />
@@ -158,7 +158,7 @@ const NewsletterManagnentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
-            onKeyDown={handleKeyDown}
+            onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('common.CampaignName')}

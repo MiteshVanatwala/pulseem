@@ -147,7 +147,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          onKeyDown={handleKeyDown}
+          onKeyPress={handleKeyDown}
           placeholder={t('automations.labelAutomationName')}
         />
       )
@@ -160,7 +160,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
-            onKeyDown={handleKeyDown}
+            onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('automations.labelAutomationName')}

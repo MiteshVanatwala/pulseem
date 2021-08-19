@@ -145,7 +145,7 @@ const SmsManagnentScreen=({classes}) => {
         <SearchField
           classes={classes}
           value={campaineNameSearch}
-          onKeyDown={handleKeyDown}
+          onKeyPress={handleKeyDown}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
           placeholder={t('common.CampaignName')}
@@ -160,7 +160,7 @@ const SmsManagnentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
-            onKeyDown={handleKeyDown}
+            onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('sms.GridBoundColumnResource2.HeaderText')}

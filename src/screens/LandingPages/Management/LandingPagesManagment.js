@@ -112,7 +112,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           classes={classes}
           value={landingPageNameSearch}
           onChange={handleCampainNameChange}
-          onKeyDown={handleKeyDown}
+          onKeyPress={handleKeyDown}
           onClick={handleSearch}
           placeholder={placeholder}
         />
@@ -125,7 +125,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={landingPageNameSearch}
-            onKeyDown={handleKeyDown}
+            onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={placeholder}
