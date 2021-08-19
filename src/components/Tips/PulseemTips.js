@@ -1,0 +1,71 @@
+import React, { useState } from 'react';
+import { IconButton, Box, Grid, Paper, Typography } from '@material-ui/core';
+import { Carousel } from 'react-responsive-carousel';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import LighBulb from '../../assets/images/lightbulb.png'
+import clsx from 'clsx';
+
+const PulseemTips = ({classes, tips, t}) => {
+    const [activeTip, setActiveTip] = useState(0);
+
+    const renderArrows = (value, length, setItem, className) => {
+      let selectedItem = value;
+      const handleNext = () => {
+        if (value >= length) return;
+        selectedItem++;
+        setItem(selectedItem);
+      }
+      const handlePrevious = () => {
+        if (selectedItem <= 0) return;
+        selectedItem--;
+        setItem(selectedItem);
+      }
+
+      return (
+        <Grid item className={className}>
+          <IconButton onClick={handlePrevious}>
+            <ArrowBackIosIcon />
+          </IconButton>
+          <IconButton onClick={handleNext}>
+            <ArrowForwardIosIcon />
+          </IconButton>
+        </Grid>
+      );
+    }
+
+    return (
+      <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.tipMargin, classes.carouselTips)}>
+        <Box className={classes.tipsTitle}>
+          <img src={LighBulb} className={classes.lightBulb} />
+          <Typography
+            align='center'
+            variant='h5'
+            className={classes.blue}>
+            <b>{t('dashboard.tip')}</b>{t('dashboard.ulseem')}
+          </Typography>
+        </Box>
+        <Box dir={'ltr'} >
+          {renderArrows(activeTip, tips.length - 1, setActiveTip, classes.carouselTipsArrows)}
+          <Carousel
+            autoPlay={true}
+            interval={8000}
+            infiniteLoop={true}
+            selectedItem={activeTip}
+            showThumbs={false}
+            showStatus={false}
+            showArrows={false}>
+            {tips.map(tip => {
+              return (
+                <Box component='div' className={classes.tipItem} key={`tip${Math.round(Math.random() * 999999999)}`}>
+                  <Typography align='center' className={classes.tipulseemMsg}>{tip.TipText}</Typography>
+                </Box>
+              );
+            })}
+          </Carousel>
+        </Box>
+      </Paper>
+    );
+  }
+
+  export default PulseemTips;

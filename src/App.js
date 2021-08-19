@@ -423,7 +423,7 @@ const App=({screenSize}) => {
   )
 }
 
-function useWidth() {
+const useWidth = () => {
   const {language}=useSelector(state => state.core)
   const theme = getTheme(language);
   const keys = [...theme.breakpoints.keys].reverse();
