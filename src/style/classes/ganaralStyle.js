@@ -693,7 +693,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "5px",
     border: "1px solid #bbb",
     outline: "none",
-    padding: "12px",
+    padding: "12px 12px 12px 4px",
+    fontSize:"16px",
+    '&::placeholder':
+    {
+      fontSize:"16px"
+    }
   },
   success: {
     borderBottom: "2px solid green",
@@ -707,6 +712,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   msgArea: {
     resize: "none",
     height: "240px",
+    fontSize: "16px",
+    fontFamily:"Sans-serif",
     overflow: "hidden",
     textAlign: "left",
     marginTop: "20px",
@@ -717,8 +724,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderInlineEnd: "1px solid rgb(170, 170, 170)",
     outline: "none",
     padding: "10px",
-    fontSize: "16px",
-    // borderRadius:'5px',
     "&::placeholder": {
       color: "rgb(170, 170, 170)",
       fontSize: "16px",
@@ -741,7 +746,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     padding: "10px",
     fontSize: "16px",
-    // borderRadius:'5px',
+    fontFamily:"Sans-serif",
     "&::placeholder": {
       color: "rgb(170, 170, 170)",
       fontSize: "16px",
