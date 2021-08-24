@@ -440,6 +440,7 @@ const SmsCreator = ({ classes }, props) => {
               placeholder="282"
               disabled
               className={classes.buttonField}
+              style={{width:"20%"}}
             />
           </div>
         ) : null}

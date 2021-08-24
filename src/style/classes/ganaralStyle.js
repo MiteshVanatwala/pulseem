@@ -663,9 +663,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   fieldDiv: {
-    width: "90%",
+    width: "100%",
     display: "grid",
-    gridTemplateColumns: "auto auto auto",
+    gridTemplateColumns: "31% 31% 20%",
     gridGap: "20px",
     height: "100px",
     marginTop: "20px",
