@@ -41,6 +41,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
     const [groupNameSearch, setGroupNameSearch] = useState('');
     const [clearInput, setClearInput] = useState(false);
     const [groupHover, setIsHover] = useState(null);
+    const [newSelected, setnewSelected] = useState([]);
 
 
     const handleSearch = (event) => {
@@ -118,7 +119,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     primary={group.GroupName}
                 />
                 <ListItemSecondaryAction className={'groupText'}>
-                    {group.Members} {group.Members != 1 ? t("notifications.recipients") : t("notifications.recipient")}
+                    {group.Recipients} {group.Recipients != 1 ? t("notifications.recipients") : t("notifications.recipient")}
                 </ListItemSecondaryAction>
             </ListItem>)
         })

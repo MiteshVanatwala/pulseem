@@ -13,6 +13,8 @@ import { DateField, Dialog } from "../../../components/managment/index";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
+
+import { parse } from "papaparse";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
@@ -42,10 +44,13 @@ import {
   getAccountExtraData,
   getAccountId,
   smsCombinedGroup,
-  smsCampSettings
+  smsCampSettings,
+  getCampaignSumm,
+  getManual,
 } from "../../../redux/reducers/smsSlice";
 import { AiOutlineDelete } from "react-icons/ai";
-import Summary   from "./smsSummary";
+import Summary from "./smsSummary";
+
 import clsx from "clsx";
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -134,24 +139,16 @@ const SmsCreatorStep = ({ classes }) => {
   const [sendDate, handleFromDate] = useState(null);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
-  const [showDetails, setDetailsVisibility] = useState(false);
-  const [notificationHover, setHovered] = useState(false);
-  const [showGallery, setGalleryState] = useState(false);
-  const [iconHover, setIconHover] = useState(false);
-  const [isIcon, setIsIcon] = useState(false);
-  const [totalRecipients, setTotalRecipients] = useState(null);
-  const [toastMessage, setToastMessage] = useState(null);
-  const [isGalleryConfirmed, setIsFileSelected] = useState(false);
-  const [campaignSent, setCampaignSent] = useState(false);
-  const [showConfirmCancel, setShowConfirmCancel] = useState(false);
   const [groupList, setGroupList] = useState([]);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
   const [showGroupsList, setShowGroupsList] = useState(false);
   const [toggleChecked, settoggleChecked] = useState(false);
   const [groupValue, setgroupValue] = useState("");
+  const [manualTrue, setmanualTrue] = useState(false);
   const [pulse, setpulse] = useState(false);
   const [reciFilter, setreciFilter] = useState(false);
   const [percentTrue, setpercentTrue] = useState(true);
+  const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
   const [model, setModel] = useState({
     ID: 0,
@@ -179,6 +176,53 @@ const SmsCreatorStep = ({ classes }) => {
   const [toggleB, settoggleB] = useState(true);
   const [toggleA, settoggleA] = useState(false);
   const [toggleReci, settoggleReci] = useState(false);
+  const [groupClick, setgroupClick] = useState(true);
+  const [manualClick, setmanualClick] = useState(false);
+  const [highlighted, setHighlighted] = React.useState(false);
+  const [contacts, setContacts] = React.useState([]);
+  const [pulseReci, setpulseReci] = useState("");
+  const [caution, setcaution] = useState(false);
+  const [pulsePer, setpulsePer] = useState("percent");
+  const [inputF, setinputF] = useState("");
+  const [random, setrandom] = useState("");
+  const [inputS, setinputS] = useState("");
+  const [minTrue, setminTrue] = useState(false);
+  const [hoursTrue, sethoursTrue] = useState(true);
+  const [minName, setminName] = useState("");
+  const [hourName, sethourName] = useState("");
+  const [newVal, setnewVal] = useState("")
+  const [areaData, setareaData] = useState("");
+  const [editT, seteditT] = useState(false);
+  const [areatyped, setareatyped] = useState("");
+  const [blank, setblank] = useState([  'first Name', 'Last Name' , 'Cell Phone']);
+  const [typedData, settypedData] = useState([]);
+  const [selectArray, setselectArray] = useState([
+   {
+    isdisabled: false, 
+    idx : -1,
+    value: "first name"
+   },
+   {
+    isdisabled: false,
+    idx : -1,
+    value: "last name"
+   },
+   {
+    isdisabled: false, 
+    idx : -1,
+    value: "cell phone"
+   }
+ 
+  ]);
+  const [Unique, setUnique] = useState(-1);
+
+  let initialheadstate = [];
+
+  
+  
+  const [headers, setheaders] = useState(initialheadstate);
+
+ 
   useEffect(() => {
     getAccount();
   }, [dispatch]);
@@ -191,6 +235,7 @@ const SmsCreatorStep = ({ classes }) => {
     }
     setGroupList(tempGroupList);
   };
+  console.log("new", contacts);
 
   const callbackSelectAll = () => {
     if (!allGroupsSelected) {
@@ -213,7 +258,7 @@ const SmsCreatorStep = ({ classes }) => {
       setModel({ ...model, SendDate: null });
       handleFromDate(null);
     }
-    console.log("hiiiiiiii", event.target.value);
+
     setSendType(event.target.value);
   };
   const callbackSelectedGroups = (group, key, reference) => {
@@ -298,7 +343,7 @@ const SmsCreatorStep = ({ classes }) => {
     setTimePickerOpen(false);
   };
 
-  const handleCombined = () => {
+  const handleCombined = async () => {
     let temp = [];
     for (let i = 0; i < selectedGroups.length; i++) {
       temp.push(selectedGroups[i].GroupID);
@@ -308,7 +353,13 @@ const SmsCreatorStep = ({ classes }) => {
       GroupName: groupValue,
       GroupIds: temp,
     };
-    dispatch(smsCombinedGroup(payload));
+    let r = await dispatch(smsCombinedGroup(payload));
+    let tempres = [];
+    for (let i = 0; i < groupList.length; i++) {
+      tempres.push(groupList[i]);
+    }
+    tempres.push(r.payload);
+    setGroupList(tempres);
   };
   const handleSelect = (id) => {
     let tempArr = [];
@@ -332,6 +383,17 @@ const SmsCreatorStep = ({ classes }) => {
   const handlePulseClose = () => {
     setpulse(false);
   };
+
+  const handleTime = (e) => {
+    setinputS(e.target.value);
+  };
+  const handleRandom = (e) => {
+    setrandom(e.target.value);
+  };
+  const handlePulseInput = (e) => {
+    setinputF(e.target.value);
+  };
+
   const renderPulse = () => {
     return (
       <>
@@ -361,6 +423,8 @@ const SmsCreatorStep = ({ classes }) => {
                 inputProps={{ "aria-label": "secondary checkbox" }}
                 onClick={() => {
                   settogglePulse(!togglePulse);
+                  setinputF("");
+                  setinputS("");
                 }}
               />
               <span>Packets Sending</span>
@@ -401,18 +465,24 @@ const SmsCreatorStep = ({ classes }) => {
                         ? clsx(classes.pulseActive)
                         : clsx(classes.pulseInsert)
                     }
+                    value={inputF}
+                    onChange={handlePulseInput}
                   />
 
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <span
                       className={
-                        togglePulse 
-                          ? percentTrue ? clsx(classes.percentTrue) :  clsx(classes.percentActive) 
+                        togglePulse
+                          ? percentTrue
+                            ? clsx(classes.percentTrue)
+                            : clsx(classes.percentActive)
                           : clsx(classes.percent)
                       }
                       onClick={() => {
                         setpercentTrue(true);
                         setnoTrue(false);
+                        setpulsePer("percent");
+                        setpulseReci("");
                       }}
                     >
                       Percent
@@ -420,12 +490,16 @@ const SmsCreatorStep = ({ classes }) => {
                     <span
                       className={
                         togglePulse
-                          ? noTrue  ? clsx(classes.reciTrue) : clsx(classes.reciActive)
+                          ? noTrue
+                            ? clsx(classes.reciTrue)
+                            : clsx(classes.reciActive)
                           : clsx(classes.reci)
                       }
                       onClick={() => {
                         setpercentTrue(false);
                         setnoTrue(true);
+                        setpulsePer("");
+                        setpulseReci("Recipients");
                       }}
                     >
                       Recipients
@@ -460,24 +534,42 @@ const SmsCreatorStep = ({ classes }) => {
                         ? clsx(classes.pulseActive)
                         : clsx(classes.pulseInsert)
                     }
+                    onChange={handleTime}
+                    value={inputS}
                   />
 
                   <div style={{ display: "flex", alignItems: "center" }}>
                     <span
                       className={
                         togglePulse
-                          ? clsx(classes.percentActive)
+                          ? hoursTrue
+                            ? clsx(classes.percentTrue)
+                            : clsx(classes.percentActive)
                           : clsx(classes.percent)
                       }
+                      onClick={() => {
+                        sethoursTrue(true);
+                        setminTrue(false);
+                        setminName("");
+                        sethourName("hours");
+                      }}
                     >
                       Hours
                     </span>
                     <span
                       className={
                         togglePulse
-                          ? clsx(classes.reciActive)
+                          ? minTrue
+                            ? clsx(classes.reciTrue)
+                            : clsx(classes.reciActive)
                           : clsx(classes.reci)
                       }
+                      onClick={() => {
+                        sethoursTrue(false);
+                        setminTrue(true);
+                        setminName("mins");
+                        sethourName("");
+                      }}
                     >
                       Mins
                     </span>
@@ -526,6 +618,8 @@ const SmsCreatorStep = ({ classes }) => {
                     ? clsx(classes.pulseActive)
                     : clsx(classes.pulseInsert)
                 }
+                onChange={handleRandom}
+                value={random}
               />
             </div>
           </div>
@@ -544,6 +638,7 @@ const SmsCreatorStep = ({ classes }) => {
                 classes.dialogButton,
                 classes.dialogConfirmButton
               )}
+              onClick={handlePulseClose}
             >
               Confirm
             </Button>
@@ -552,15 +647,44 @@ const SmsCreatorStep = ({ classes }) => {
       </>
     );
   };
+  const areaChange = (e) => {
+    setareaData(e.target.value);
+  };
   const renderBody = () => {
     return (
       <div style={{ width: "700px" }}>
         <div className={classes.tabDiv}>
-          <div className={clsx(classes.tab1, classes.activeTab)}>
-            <span>{t("mainReport.groups")}</span>
+          <div
+            className={
+              groupClick
+                ? clsx(classes.tab1, classes.activeTab)
+                : clsx(classes.tab1)
+            }
+          >
+            <span
+              onClick={() => {
+                setgroupClick(true);
+                setmanualClick(false);
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              {t("mainReport.groups")}
+            </span>
           </div>
-          <div className={clsx(classes.tab1)}>
-            <span style={{ marginInlineEnd: "7px" }}>
+          <div
+            className={
+              manualClick
+                ? clsx(classes.tab1, classes.activeTab)
+                : clsx(classes.tab1)
+            }
+          >
+            <span
+              style={{ marginInlineEnd: "7px", cursor: "pointer" }}
+              onClick={() => {
+                setgroupClick(false);
+                setmanualClick(true);
+              }}
+            >
               {t("mainReport.manual")}
             </span>
             <Tooltip
@@ -571,26 +695,83 @@ const SmsCreatorStep = ({ classes }) => {
               <span className={classes.bodyInfo}>i</span>
             </Tooltip>
           </div>
-          {/* <div className={classes.areaManual}>
-            <textarea
-              placeholder="Drag &amp; drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box"
-              spellcheck="false"
-              autocomplete="off"
-              className={classes.areaCon}
-            />
-          </div> */}
+          {manualClick ? (
+            <div
+              className={
+                highlighted
+                  ? clsx(classes.greenManual)
+                  : clsx(classes.areaManual)
+              }
+            >
+              <textarea
+                placeholder="Drag &amp; drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box"
+                spellcheck="false"
+                autocomplete="off"
+                className={
+                  highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
+                }
+                value={areaData}
+                onDragEnter={() => {
+                  setHighlighted(true);
+                }}
+                onChange={areaChange}
+                onDragLeave={() => {
+                  setHighlighted(false);
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                }}
+                onPaste={areaChange}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setHighlighted(false);
+                  setmanualTrue(true);
+
+                  Array.from(e.dataTransfer.files)
+                    .filter((file) => file.type === "text/csv")
+                    .forEach(async (file) => {
+                      const text = await file.text();
+                      const result = parse(text, { header: true });
+                      console.log("res", result.data);
+                      setContacts((existing) => [...existing, ...result.data]);
+                      let res = "";
+                      for (let i = 0; i < result.data.length; i++) {
+                        for (
+                          let j = 0;
+                          j < Object.values(result.data[i]).length;
+                          j++
+                        ) {
+                          res = res + Object.values(result.data[i])[j];
+                        }
+                        res = res + "\n";
+                      }
+                      console.log("final", res);
+                      setareaData(res);
+                      let ddc =[];
+                      for(let i in result.data[0])
+                      {
+                           ddc.push("Adjust Title")
+                      }
+                      setheaders(ddc);
+                    });
+                }}
+              />
+            </div>
+          ) : null}
         </div>
         <div>
-          <Groups
-            classes={classes}
-            groupList={groupList}
-            selectedList={selectedGroups}
-            callbackSelectedGroups={callbackSelectedGroups}
-            callbackUpdateGroups={callbackUpdateGroups}
-            callbackSelectAll={callbackSelectAll}
-            callbackReciFilter={callbackFilter}
-            bool = {true}
-          />
+          {groupClick ? (
+            <Groups
+              classes={classes}
+              groupList={groupList}
+              selectedList={selectedGroups}
+              callbackSelectedGroups={callbackSelectedGroups}
+              callbackUpdateGroups={callbackUpdateGroups}
+              callbackSelectAll={callbackSelectAll}
+              callbackReciFilter={callbackFilter}
+              bool={true}
+            />
+          ) : null}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div
               style={{
@@ -598,34 +779,36 @@ const SmsCreatorStep = ({ classes }) => {
                 flexDirection: "column",
               }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {" "}
-                <Checkbox
-                  disabled={selectedGroups.length >= 2 ? false : true}
-                  checked={toggleChecked}
-                  color="primary"
-                  inputProps={{ "aria-label": "secondary checkbox" }}
-                  onClick={() => {
-                    settoggleChecked(!toggleChecked);
+              {manualClick === false ? (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
-                />
-                <span>{t("mainReport.createNewGroup")}</span>
-                <span>New!</span>
-                <Tooltip
-                  disableFocusListener
-                  title="Choose 2 or more groups and combine into one new one"
-                  classes={{ tooltip: styles.customWidth }}
-                  style={{ marginInlineStart: "5px" }}
                 >
-                  <span className={classes.bodyInfo}>i</span>
-                </Tooltip>
-              </div>
+                  {" "}
+                  <Checkbox
+                    disabled={selectedGroups.length >= 2 ? false : true}
+                    checked={toggleChecked}
+                    color="primary"
+                    inputProps={{ "aria-label": "secondary checkbox" }}
+                    onClick={() => {
+                      settoggleChecked(!toggleChecked);
+                    }}
+                  />
+                  <span>{t("mainReport.createNewGroup")}</span>
+                  <span>New!</span>
+                  <Tooltip
+                    disableFocusListener
+                    title="Choose 2 or more groups and combine into one new one"
+                    classes={{ tooltip: styles.customWidth }}
+                    style={{ marginInlineStart: "5px" }}
+                  >
+                    <span className={classes.bodyInfo}>i</span>
+                  </Tooltip>
+                </div>
+              ) : null}
 
               {toggleChecked ? (
                 <div>
@@ -642,30 +825,92 @@ const SmsCreatorStep = ({ classes }) => {
                 </div>
               ) : null}
             </div>
-            <div
-              style={{
-                display: "flex",
-                marginTop: "10px",
-              }}
-            >
-              <span>{t("mainReport.totalReci")}: 0</span>
-              <Tooltip
-                disableFocusListener
-                title="Please note this value is not the final number of recipients who will receive this campaign. After selecting your sending preferences, you will see the correct value in the Summary page."
-                classes={{ tooltip: styles.customWidth }}
-                style={{ marginInlineStart: "5px" }}
+            {manualClick == false ? (
+              <div
+                style={{
+                  display: "flex",
+                  marginTop: "10px",
+                }}
               >
-                <span className={classes.bodyInfo}>i</span>
-              </Tooltip>
-            </div>
-            {/* <span>Total Records : 0</span> */}
+                <span>{t("mainReport.totalReci")}: 0</span>
+                <Tooltip
+                  disableFocusListener
+                  title="Please note this value is not the final number of recipients who will receive this campaign. After selecting your sending preferences, you will see the correct value in the Summary page."
+                  classes={{ tooltip: styles.customWidth }}
+                  style={{ marginInlineStart: "5px" }}
+                >
+                  <span className={classes.bodyInfo}>i</span>
+                </Tooltip>
+              </div>
+            ) : null}
           </div>
+          {manualClick == true ? (
+            <div className={classes.manualChild}>
+              {areaData !== "" ? (
+                <div>
+                  <span
+                    style={{
+                      padding: "8px",
+                      backgroundColor: "#51AA51",
+                      color: "#fff",
+                      marginInlineEnd: "6px",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      handlePasted();
+                    }}
+                  >
+                    {" "}
+                    Edit fields and save
+                  </span>
+                  <span
+                    style={{
+                      padding: "8px",
+                      color: "#277BFF",
+                      marginInlineEnd: "6px",
+                      borderRadius: "6px",
+                      cursor: "pointer",
+                      border: "1px solid #277BFF",
+                    }}
+                    onClick={() => {
+                      setareaData("");
+                      setContacts([]);
+                    }}
+                  >
+                    Clear list
+                  </span>
+                </div>
+              ) : null}
+              <span>Total Records : 0</span>
+            </div>
+          ) : null}
         </div>
       </div>
     );
   };
   const handleReciClose = () => {
     setreciFilter(false);
+  };
+  const handlePasted = () => {
+    let temp = areaData;
+    let a = temp.split("\n");
+    let b = [];
+    for (let i = 0; i < a.length; i++) {
+      b.push(a[i].split(","));
+    }
+    // ("higconsole.logh",b)
+    settypedData(b);
+
+    let dummyArr = [];
+    for(let i = 0 ; i<b[0].length; i++)
+  {
+    dummyArr.push("Adjust Title");
+  }
+  setheaders(dummyArr)
+
+    seteditT(true);
+    setmanualTrue(true);
   };
   const renderReciFilter = () => {
     return (
@@ -748,7 +993,7 @@ const SmsCreatorStep = ({ classes }) => {
                       marginTop: "0",
                     }}
                   >
-                    {selectedGroup
+                    {selectedGroups
                       .filter((val) => {
                         if (ContactSearch == "") {
                           return val;
@@ -1078,12 +1323,27 @@ const SmsCreatorStep = ({ classes }) => {
             <span className={classes.bodyInfo}>i</span>
           </Tooltip>
         </div>
-        <div style={{display:"flex",flexDirection:"column",justifyContent:"center",color: '#7f7f7f',
-    fontWeight: '400',fontSize: '14px'}}>  <span style={{marginBottom:"5px",marginTop
-    :"5px"}}>Packets sending - 1 Recipients every 3 Min</span>
-        <span>Random sending - 5 random recipients</span>
-</div>
-      
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            color: "#7f7f7f",
+            fontWeight: "400",
+            fontSize: "14px",
+          }}
+        >
+          {" "}
+          {togglePulse ? (
+            <span style={{ marginBottom: "5px", marginTop: "5px" }}>
+              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer}{" "}
+              every {inputS} {hourName == "" ? minName : hourName}
+            </span>
+          ) : null}
+          {toggleRandom ? (
+            <span>Random sending - {random} random recipients</span>
+          ) : null}
+        </div>
 
         <div className={classes.buttonDiv}>
           <span className={classes.rightInput3}>
@@ -1112,66 +1372,455 @@ const SmsCreatorStep = ({ classes }) => {
       </div>
     );
   };
-  const onSummClick = () =>
-  {
-    if(selectedGroups.length > 0)
-    {
-      let payload = 
-      {
-        "SmsCampaignID": 1,
-        "SendTypeID": 1,
-        "RandomSettings": {
-          "ID": 1,
-          "RandomAmount": 2
-        },
-        "PulseSettings": {
-          "PulseSettingsID": 1,
-          "PulseType": 1,
-          "TimeType": 1,
-          "PulseAmount": 2,
-          "TimeInterval": 3
-        },
-        "SpecialSettings": {
-          "Day": 1,
-          "DateFieldID": 1,
-          "SendHour": "2021-08-18T10:57:10.7256675+03:00",
-          "SendDate": "2021-08-18T10:57:10.7256675+03:00",
-          "IntervalTypeID": 2
-        },
-        "SendExeptional": {
-          "ExceptionalID": 1,
-          "ExceptionalDays": 2,
-          "IsExceptionalGroups": true,
-          "IsExceptionSmsCampaigns": true,
-          "Groups": [
-            1,
-            2
-          ],
-          "Campaigns": [
-            1,
-            2
-          ]
-        },
-        "Groups": [
-          1,
-          2
-        ],
-        "FutureDateTime": "2021-08-18T10:57:10.7266686+03:00",
-        "SourceTimeZone": "sample string 2"
+  const onSummClick = async () => {
+    if (selectedGroups.length > 0) {
+      console.log("-------->", sendDate);
+      const m = moment(sendDate, "YYYY-MM-DD HH:mm:ss");
+      m.set({ h: m.format("HH"), m: m.format("mm") });
+      let a = window.location;
+
+      let b = a.search.split("=");
+      let camp = b[1];
+      //  console.log("--->",selectedGroups);
+      let temp = [];
+      for (let i = 0; i < selectedGroups.length; i++) {
+        temp.push(selectedGroups[i].GroupID);
       }
-          dispatch(smsCampSettings(payload))
-          setsummModal(true);
+      let time = -1;
+      let pulse = -1;
+      if (togglePulse) {
+        if (minTrue == true) {
+          time = 1;
+        } else {
+          time = 2;
+        }
+
+        if (percentTrue == true) {
+          pulse = 1;
+        } else {
+          pulse = 2;
+        }
+      }
+      let dm = null;
+      if (sendType === "2") {
+        dm = m.format();
+      } else {
+        dm = null;
+      }
+
+      let payload = {
+        SmsCampaignID: camp,
+        SendTypeID: 1,
+        FutureDateTime: dm,
+        GroupDetails: selectedGroups,
+        Groups: temp,
+
+        PulseSettings: {
+          PulseAmount: inputF,
+          PulseType: pulse,
+          TimeInterval: inputS,
+          TimeType: time,
+        },
+        RandomSettings: {
+          RandomAmount: random,
+        },
+        SendExeptional: {},
+        SendTypeID: 1,
+        SourceTimeZone: "Asia/Calcutta",
+        SpecialSettings: {
+          Type: "",
+          DateFieldID: -1,
+          Day: 0,
+          SendHour: "",
+          IntervalTypeID: -1,
+          SendDate: null,
+        },
+        DateFieldID: -1,
+        Day: 0,
+        IntervalTypeID: -1,
+        SendDate: null,
+        SendHour: "",
+        Type: "",
+        specialDateOptions: [],
+      };
+      await dispatch(smsCampSettings(payload));
+      await dispatch(getCampaignSumm(camp));
+      setsummModal(true);
     }
-  
+  };
+  const renderSummary = () => {
+    return (
+      <>
+        <Summary stepBool={summModal} classes={classes} />
+      </>
+    );
+  };
+  const handleTrueCaution = () => {
+    setcaution(true);
+  };
+  const handleCautionCancel = () => {
+    setcaution(true);
+  };
+  const handleChangeId = (id) => {
+    if (dropIndex == -1) {
+      setdropIndex(id);
+    } else {
+      setdropIndex(-1);
+    }
+  };
+  const handleSelectFirst = (name,id,idx,e) => {
+
+  if  (headers[idx] !== "adjust title")
+  {
+    
+    selectArray[idx].isdisabled = false;
+    selectArray[id].isdisabled = true;
+    let h = headers;
+    h[idx] = name.value;
+    setheaders(h);
 
   }
-  const renderSummary = () =>
+  else
   {
-    return(
-      <>
-      <Summary  stepBool={summModal ? true : false} classes={classes}/></>
-    )
+    let h = headers;
+  h[idx] = name.value;
+  setheaders(h);
+  selectArray[id].isdisabled = true;
   }
+
+  };
+ const handleCloseSpan = (id,name) =>
+ {
+  let h = headers;
+  h[id] = initialheadstate[id];
+  setheaders(h);
+
+  for(let i=0 ; i < selectArray.length ; i++)
+  {
+
+    if(selectArray[i].value === name)
+    {
+      selectArray[i].isdisabled = false;
+      break;
+    }
+  }
+
+ }
+const handleDataManual = async () =>
+{
+  let requestPayload = [];
+
+  
+    for(let j= 0 ; j < typedData.length ; j++)
+    {
+       requestPayload.push({});
+      for(let k= 0 ; k<typedData[j].length ; k++)
+      {
+        let key = headers[k];
+      
+
+         let  obj = requestPayload[j];
+
+
+        obj[key] = typedData[j][k];
+      }
+
+    }
+
+    console.log("",requestPayload)
+
+
+    let finalPayload = {
+
+      GroupName: newVal,
+      Clients : requestPayload
+
+    }
+
+     const r = await dispatch(getManual(finalPayload))
+     console.log("----->",r)
+     let tempres = [];
+     let temp = [];
+     for (let i = 0; i < groupList.length; i++) {
+       tempres.push(groupList[i]);
+     }
+     for (let i = 0; i < selectedGroups.length; i++) {
+      temp.push(selectedGroups[i]);
+    }
+    temp.push({
+      Recipient : r.payload.Recipients,
+      GroupName : newVal,
+      GroupID : r.payload.GroupID
+     });
+     tempres.push({
+      Recipient : r.payload.Recipients,
+      GroupName : newVal,
+      GroupID : r.payload.GroupID
+     });
+     setGroupList(tempres);
+     setSelected(temp);
+     setmanualTrue(false);
+     setareaData("");
+     setgroupClick(true);
+     setmanualClick(false);
+
+
+  
+}
+
+const handleManualDialog = (e) =>
+{
+setnewVal(e.target.value);
+}
+
+  const renderDialogManual = () => {
+    return (
+      <>
+        <Dialog
+          classes={classes}
+          open={manualTrue}
+          onClose={handleTrueCaution}
+          onCancel={handleCautionCancel}
+          onConfirm={handleDataManual}
+          showDefaultButtons={true}
+        >
+          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
+            <span className={classes.groupName}>Column Adjustment</span>
+          </div>
+          <div className={classes.manualModal}>
+            <span style={{ fontSize: "24px", marginInlineEnd: "10px" }}>
+              Group Name :{" "}
+            </span>
+            <input
+              type="text"
+              placeholder="Group Name"
+              className={classes.inputManual}
+              onChange={handleManualDialog}
+            />
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginBottom: "15px",
+            }}
+          >
+            <span style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
+              Total Recipients :
+            </span>
+            <span
+              style={{
+                fontSize: "20px",
+                marginInlineEnd: "10px",
+                fontWeight: "600",
+              }}
+            >
+              10
+            </span>
+            <Tooltip
+              disableFocusListener
+              title="Only the cellphone title is mandatory to include, and any column without a title will not be uploaded to our system. For your convenience, only the first 5 recipients in your file will appear here, but all will be uploaded."
+              classes={{ tooltip: styles.customWidth }}
+            >
+              <span className={classes.bodyInfo}>i</span>
+            </Tooltip>
+          </div>
+          <table
+            style={{
+              borderCollapse: "collapse",
+              overflowX: "auto",
+              minWidth: "100px",
+            }}
+          >
+            <tr>
+              {typedData.length !== 0
+                ? typedData[0].map((item, idx) => {
+                    return (
+                      <th
+                        style={{
+                          border: "1px solid #ddd",
+                          padding: "10px",
+                          maxWidth: "280px",
+                        }}
+                      >
+                        <div
+                          onClick={() => {
+                            handleChangeId(idx);
+                          }}
+                          className={classes.adjustP}
+                          style={{ width: "130px", textAlign: "center" }}
+                        >
+                      {headers[idx]} 
+
+                       <span style={{marginInlineEnd:"5px",marginInlineStart:"5px"}} onClick={() => {handleCloseSpan(idx,headers[idx])}}>x</span>
+
+                          <span>icn</span>
+                          {dropIndex == idx ? (
+                            <div className={classes.adjustC}>
+                              {selectArray.map((item,id) => 
+                              {
+                              
+                                return(
+                                  <span
+                                  className={item.isdisabled  ?  clsx(classes.grayGroup) :   clsx(classes.grouping)}
+                                  onClick={() => {
+                                    handleSelectFirst(item,id,idx);
+                                  }}
+                                >
+                                 {item.value}
+                                </span>
+                                )
+                              })}
+                            </div>
+                          ) : null}
+                        </div>
+                      </th>
+                    );
+                  })
+                : null}
+              {contacts.length !==0 ? headers.map((item,idx) => 
+               {
+              
+                 return(
+                
+                    
+                    <th
+                    style={{
+                      border: "1px solid #ddd",
+                      padding: "10px",
+                      maxWidth: "280px",
+                    }}
+                  >
+                    <div
+                      onClick={() => {
+                        handleChangeId(idx);
+                      }}
+                      className={classes.adjustP}
+                      style={{ width: "130px", textAlign: "center" }}
+                    >
+                       {headers[idx]} 
+                       <span style={{marginInlineEnd:"5px",marginInlineStart:"5px"}} onClick={() => {handleCloseSpan(idx,headers[idx])}}>x</span>
+                      <span>icn</span>
+                      {dropIndex == idx ? (
+                            <div className={classes.adjustC}>
+                              {selectArray.map((item,id) => 
+                              {
+                              
+                                return(
+                                  <span
+                                  className={item.isdisabled  ?  clsx(classes.grayGroup) :   clsx(classes.grouping)}
+                                  onClick={() => {
+                                    handleSelectFirst(item,id,idx);
+                                  }}
+                                >
+                                 {item.value}
+                                </span>
+                                )
+                              })}
+                            </div>
+                          ) : null}
+                    </div>
+                  </th>
+            )
+                      
+                 
+               }) : null}
+            </tr>
+            {contacts.length !== 0
+              ? contacts.map((item, idx) => {
+                  console.log("hello", item);
+                  if (idx > contacts.length - 11) {
+                    return (
+                      <tr id={idx}>
+                        {Object.values(item).map((temp, idx) => {
+                          return (
+                            <td
+                              id={idx}
+                              style={{
+                                border: "1px solid #ddd",
+                                padding: "10px",
+                                maxWidth: "280px",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                textAlign: "center",
+                              }}
+                            >
+                              {temp}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  }
+                })
+              : typedData.map((item, id) => {
+                {console.log("typed data",typedData)}
+                  return (
+                  
+                    <tr>
+                      {item.map((data, idx) => {
+                        return (
+                          <td
+                            style={{
+                              border: "1px solid #ddd",
+                              padding: "10px",
+                              maxWidth: "280px",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              textAlign: "center",
+                            }}
+                          >
+                            {data}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+          </table>
+        </Dialog>
+      </>
+    );
+  };
+  const handleNewM = () => {
+    setcaution(false);
+  };
+  const handleNewC = () => {
+    setcaution(false);
+  };
+  const handleConfirmC = () => {
+    setContacts([]);
+    setareaData("");
+    setContacts([]);
+    setcaution(false);
+    setmanualTrue(false);
+  };
+  const renderCaution = () => {
+    return (
+      <>
+        <Dialog
+          classes={classes}
+          open={caution}
+          onClose={handleNewM}
+          onCancel={handleNewC}
+          onConfirm={handleConfirmC}
+          showDefaultButtons={true}
+        >
+          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
+            <span className={classes.groupName}>Notice!</span>
+          </div>
+          <div>
+            <p>
+              Are you sure you want to cancel? Clicking "yes" will delete the
+              recipients you have entered to the Manual Upload box.
+            </p>
+          </div>
+        </Dialog>
+      </>
+    );
+  };
   return (
     <DefaultScreen currentPage="reports" classes={classes}>
       <div style={{ display: "grid", gridTemplateColumns: "65% auto" }}>
@@ -1190,6 +1839,8 @@ const SmsCreatorStep = ({ classes }) => {
       {renderPulse()}
       {renderReciFilter()}
       {renderSummary()}
+      {renderDialogManual()}
+      {renderCaution()}
     </DefaultScreen>
   );
 };

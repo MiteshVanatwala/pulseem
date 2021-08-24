@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
 import Mobile from "../../../assets/images/mobileiphone.png";
 
-const smsSummary = ({classes , selected  , bool , campaign  , number , totalmsg , stepBool}) => {
+const SmsSummary = ({classes , selected  , bool , campaign  , number , totalmsg , stepBool, grand , final , summ , api}) => {
+
+  const [modal, setmodal] = useState(false);
+useEffect(() => {
+
+setmodal(bool);
+ 
+}, [bool])
+
     return (
-        <div>
-            {bool ?    <Dialog
+    <div>
+      {modal ?   <Dialog
           classes={classes}
-          open={false}
-          // onClose={handleAlertoff}
-          // onConfirm={handleExitYes}
+          open={modal}
+          onClose={() => {setmodal(false)}}
+          onConfirm={api}
           confirmText="Send"
           cancelText="Cancel"
           showDefaultButtons={true}
@@ -35,8 +43,8 @@ const smsSummary = ({classes , selected  , bool , campaign  , number , totalmsg 
                 <div className={classes.sumChild}>
                   <span className={classes.spanSum}>For :</span>
                   <span style={{ fontSize: "18px" }}>
-                    Total Number of Recipients :{" "}
-                    <span className={classes.bodySum}>{selected.length}</span>
+                    Total Number of Recipients :
+                    <span className={classes.bodySum}>{grand}</span>
                   </span>
                   <span
                     style={{
@@ -85,35 +93,30 @@ const smsSummary = ({classes , selected  , bool , campaign  , number , totalmsg 
                       marginBottom: "2px",
                     }}
                   >
-                    Groups (0)
+                    Groups ({grand})
                   </li>
                 </ul>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "8px 8px 8px 55px",
-                    borderTop: "1px solid grey",
-                    fontSize: "16px",
-                  }}
-                >
-                  <span>Name</span>
-                  <span>1 Recipients</span>
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "8px 8px 8px 55px",
-                    borderTop: "1px solid grey",
-                    fontSize: "16px",
-                  }}
-                >
-                  <span>Name</span>
-                  <span>1 Recipients</span>
-                </div>
+                {
+                
+                   final.map((item,idx) => {
+                    console.log("fuckk",item)
+                     return(<div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "8px 8px 8px 55px",
+                        borderTop: "1px solid grey",
+                        fontSize: "16px",
+                      }}
+                    >
+                      <span> {item.GroupName}</span>
+                      <span>{item.Recipients}</span>
+                    </div>)
+                   })
+                }
+                
+                
               </div>
             </div>
           </div>
@@ -126,7 +129,7 @@ const smsSummary = ({classes , selected  , bool , campaign  , number , totalmsg 
                   marginBottom: "2px",
                 }}
               >
-                Recipients Filter (10)
+                Recipients Filter ({summ.FinalCount})
               </li>
             </ul>
             <div
@@ -143,7 +146,7 @@ const smsSummary = ({classes , selected  , bool , campaign  , number , totalmsg 
                   paddingInlineStart: "40px",
                 }}
               >
-                Duplicate Recipients :{" "}
+                Duplicate Recipients :
                 <span
                   style={{
                     fontSize: "17px",
@@ -151,7 +154,7 @@ const smsSummary = ({classes , selected  , bool , campaign  , number , totalmsg 
                     color: "black",
                   }}
                 >
-                  10
+                 {summ.DuplicateCellphoneSharedWithClienCount}
                 </span>
               </span>
               <span
@@ -161,7 +164,7 @@ const smsSummary = ({classes , selected  , bool , campaign  , number , totalmsg 
                   paddingInlineStart: "40px",
                 }}
               >
-                Removed :{" "}
+                Removed :
                 <span
                   style={{
                     fontSize: "17px",
@@ -169,6 +172,7 @@ const smsSummary = ({classes , selected  , bool , campaign  , number , totalmsg 
                     color: "black",
                   }}
                 >
+                  {summ.Removed}
                 </span>
               </span>
               <span
@@ -186,16 +190,33 @@ const smsSummary = ({classes , selected  , bool , campaign  , number , totalmsg 
                     color: "black",
                   }}
                 >
-                  1
+                 {summ.EmptyCellphoneCount}
+                </span>
+              </span>
+              <span
+                style={{
+                  fontSize: "17px",
+                  color: "#1771ad",
+                  paddingInlineStart: "40px",
+                }}
+              >
+                Invalid :{" "}
+                <span
+                  style={{
+                    fontSize: "17px",
+                    fontWeight: "700",
+                    color: "black",
+                  }}
+                >
+                 {summ.Invalid}
                 </span>
               </span>
             </div>
           </div>
-        </Dialog> : null }
-
+        </Dialog>  : null }        
         {stepBool ? <Dialog
           classes={classes}
-          open={false}
+          open={stepBool}
           // onClose={handleAlertoff}
           // onConfirm={handleExitYes}
           confirmText="Send"
@@ -384,4 +405,4 @@ const smsSummary = ({classes , selected  , bool , campaign  , number , totalmsg 
     )
 }
 
-export default smsSummary;
+export default SmsSummary;

@@ -1254,12 +1254,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: "250px",
     backgroundColor: "white !important",
   },
+  greenManual: {
+    border: "2px dashed #4BB543",
+    width: "700px",
+    height: "250px",
+    backgroundColor: "#CCFFE5",
+  },
   areaCon: {
     width: "680px",
     outline: "none",
     border: "none",
     resize: "none",
-    height: "120px",
+    height: "230px",
     backgroundColor: "white !important",
     padding: "10px",
     "&::placeholder": {
@@ -1268,6 +1274,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontFamily: "inherit",
     },
   },
+  greenCon: {
+    width: "680px",
+    outline: "none",
+    border: "none",
+    resize: "none",
+    height: "230px",
+    backgroundColor: "#CCFFE5",
+    padding: "10px",
+    "&::placeholder": {
+      color: "rgb(170, 170, 170)",
+      fontSize: "16px",
+      fontFamily: "inherit",
+    },
+  },
+
   backBtn: {
     marginTop: "30px",
     boxShadow: "0 1px 2px #a5a2a2",
@@ -1826,5 +1847,63 @@ marginTop:"10px"
     height:"40px",
     width:"100%",
     backgroundColor:"#F7F7F7",
+  },
+  manualModal : 
+  {
+    display : "flex",
+    padding : "5px",
+    marginTop:"15px",
+    marginBottom:"15px",
+    width:"100%",
+    alignItems:"center"
+  },
+  inputManual : 
+  {
+    padding:"10px",
+    width:"700px",
+    outline:"none",
+    borderRadius : "4px"
+  },
+  adjustP : 
+  {
+    position:"relative"
+  },
+  adjustC : 
+  {
+    position:"absolute",
+    // height:"80px",
+   
+    width:"150px",
+    display:"flex",
+    flexDirection:"column",
+    borderLeft:"1px solid gray",
+    borderRight:"1px solid gray",
+    borderBottom:"1px solid gray",
+    zIndex:"99",
+    backgroundColor:"#fff"
+
+
+  },
+  grouping : 
+  {
+    padding:"10px",
+    textAlign:"center",
+    borderBottom:"1px solid gray",
+    zIndex:"9",
+    cursor:"pointer",
+
+    '&:hover' : 
+    {
+      backgroundColor:"#3C88BB",
+      color:"#fff",
+      zIndex:"9"
+    }
+  },
+  manualChild : 
+  {
+    display : "flex",
+    justifyContent:"space-between",
+    alignItems:"center",
+    marginTop:"15px"
   }
 });

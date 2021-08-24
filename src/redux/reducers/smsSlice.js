@@ -65,6 +65,15 @@ export const getSMSDirectReport = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+  export const getManual = createAsyncThunk(
+    'smsCampaign/SaveManualClients', async (data, thunkAPI) => {
+      try {
+        const response = await instence.post(`smsCampaign/SaveManualClients`, data);
+        return JSON.parse(response.data)
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    })
 
 export const exportSMSDirectReport = createAsyncThunk(
   'report/ExportSmsDirectReport', async (_, thunkAPI) => {
@@ -166,15 +175,36 @@ export const getSmsReport = createAsyncThunk(
     }
   })
 
+  export const getCampaignSumm = createAsyncThunk(
+    'smsCampaign/GetCampaignSummary', async (id, thunkAPI) => {
+      try {
+        const response = await instence.get(`smsCampaign/GetCampaignSummary/${id}`);
+        return JSON.parse(response.data)
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    })
+
     export const smsSave=createAsyncThunk(
       'smsCampaign/Save',async (data,thunkAPI) => {
         try {
           const response=await instence.post(`smsCampaign/Save`,data);
+         
           return JSON.parse(response.data)
         } catch(error) {
           return thunkAPI.rejectWithValue({error: error.message});
         }
       })
+      export const smsSaveGroup=createAsyncThunk(
+        'smsCampaign/SaveQuickSendGroups',async (data,thunkAPI) => {
+          try {
+            const response=await instence.post(`smsCampaign/SaveQuickSendGroups`,data);
+           
+            return JSON.parse(response.data)
+          } catch(error) {
+            return thunkAPI.rejectWithValue({error: error.message});
+          }
+        })
       export const smsCampSettings=createAsyncThunk(
         'smsCampaign/SaveCampaignSettings',async (data,thunkAPI) => {
           try {
@@ -235,6 +265,7 @@ export const smsSlice = createSlice({
     previousCampaignData : [],
     extraData : [],
     accountId : [],
+    getCampaignSum : [],
 
     directSmsReport: {},
     directSmsReportError: '',
@@ -250,6 +281,9 @@ export const smsSlice = createSlice({
     })
     builder.addCase(getSmsAuthorizationData.fulfilled, (state, { payload }) => {
       state.authorizationData = payload
+    })
+    builder.addCase(getCampaignSumm.fulfilled, (state, { payload }) => {
+      state.getCampaignSum = payload
     })
     builder.addCase(getSmsReport.fulfilled, (state, { payload }) => {
       state.smsReport = payload

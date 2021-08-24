@@ -16,6 +16,7 @@ import Mobile from "../../../assets/images/mobileiphone.png";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import { withStyles } from "@material-ui/core/styles";
+import { useHistory } from "react-router";
 import {
   getPreviousCampaignData,
   getPreviousLandingData,
@@ -23,12 +24,14 @@ import {
   getAccountId,
   smsSave,
   deleteSms,
+  smsSaveGroup,
   smsQuick,
+  getCampaignSumm
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
 import { FcDocument } from "react-icons/fc";
 import { FaUndoAlt } from "react-icons/fa";
-import Summary   from "./smsSummary";
+import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
@@ -43,6 +46,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
+import { useLocation, useParams } from "react-router-dom";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -127,16 +131,18 @@ const IOSSwitch = withStyles((theme) => ({
   );
 });
 
-const SmsCreator = ({ classes }) => {
+const SmsCreator = ({ classes }, props) => {
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const { t } = useTranslation();
+  const history = useHistory();
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { previousLandingData, previousCampaignData, extraData, accountId } =
+  const { previousLandingData, previousCampaignData, extraData, accountId ,getCampaignSum} =
     useSelector((state) => state.sms);
+    console.log("aajaa",getCampaignSum)
   const [alignment, setAlignment] = useState("left");
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [flagemoji, setflagemoji] = useState(false);
@@ -181,13 +187,22 @@ const SmsCreator = ({ classes }) => {
   const [modalOpen, setmodalOpen] = useState(false);
   const [storedValue, setstoredValue] = useState("");
   const [keep, setkeep] = useState(true);
-     console.log("accountId Outer",accountId)
+  const [summary, setsummary] = useState(false);
+  const [total, settotal] = useState(0);
+  const [temp, settemp] = useState([]);
+
+  console.log("accountId Outer", accountId);
 
   const getData = async () => {
     await dispatch(getPreviousLandingData());
 
     setLoader(false);
   };
+
+  const onApiCall = () => 
+  {
+    alert("hi");
+  }
   const getDataCamapaign = async () => {
     await dispatch(getPreviousCampaignData());
 
@@ -202,9 +217,6 @@ const SmsCreator = ({ classes }) => {
     await dispatch(getAccountId());
     setLoader(false);
   };
-//   console.log("a", accountId);
-//   console.log("aa", previousCampaignData);
-//   console.log("aaa", extraData);
   useEffect(() => {
     setLoader(true);
     getData();
@@ -215,25 +227,36 @@ const SmsCreator = ({ classes }) => {
   useEffect(() => {}, [removalMessageButtonDisabled]);
 
   useEffect(() => {
-
-    console.log("heyyyyyyy",selectedGroup)
-    
+    console.log("heyyyyyyy", selectedGroup);
   }, [selectedGroup]);
-
+  useEffect(() => {
+    console.log("props", classes);
+  }, []);
 
   useEffect(() => {
-
     let temp = [];
-    console.log("Acoount Id inner",accountId)
-    for (let i = 0 ; i < accountId.length ; i++)
-    {
-        temp.push(accountId[i])
+    console.log("Acoount Id inner", accountId);
+    for (let i = 0; i < accountId.length; i++) {
+      temp.push(accountId[i]);
     }
-    console.log("heyyyyy2",temp);
+    console.log("heyyyyy2", temp);
     setselectedGroup(temp);
-    
   }, [accountId]);
 
+  useEffect(() => {
+    if (
+      sessionStorage.getItem("data") !== null &&
+      window.location.search !== ""
+    ) {
+      let data = JSON.parse(sessionStorage.getItem("data"));
+      setmsg(data.text);
+      setcampaignName(data.name);
+    } else {
+      setmsg("");
+      setcampaignName("");
+      sessionStorage.removeItem("data");
+    }
+  }, []);
 
   const onEmojiClick = (event, emojiObject) => {
     let msgs = msg;
@@ -256,7 +279,6 @@ const SmsCreator = ({ classes }) => {
     setkeep((prev) => !prev);
   };
 
-
   const renderSwitch = () => {
     return (
       <div className={classes.infoDiv}>
@@ -275,7 +297,9 @@ const SmsCreator = ({ classes }) => {
     return (
       <div className={classes.headDiv}>
         <span className={classes.headNo}>1</span>
-        <span className={classes.contentHead}>{t("mainReport.createContent")}</span>
+        <span className={classes.contentHead}>
+          {t("mainReport.createContent")}
+        </span>
       </div>
     );
   };
@@ -286,21 +310,14 @@ const SmsCreator = ({ classes }) => {
   };
 
   const onCampaignNumber = (e) => {
-      setstoredValue(campaignNumber);
-      console.log("camp",campaignNumber);
-     
-      if(!modalOpen)
-      {
-        setalertToggle(true);
-      }
-      else
-      {
-        setcampaignNumber(e.target.value);
-     
-      }
-     
-    
-  
+    setstoredValue(campaignNumber);
+    console.log("camp", campaignNumber);
+
+    if (!modalOpen) {
+      setalertToggle(true);
+    } else {
+      setcampaignNumber(e.target.value);
+    }
   };
 
   const validationCheck = () => {
@@ -309,12 +326,6 @@ const SmsCreator = ({ classes }) => {
       setsave(true);
       return false;
     }
-
-    // if (campaignNumber === "") {
-    //   setcampaignNumBool(true);
-    //   setsave(true);
-    //   return false;
-    // }
 
     if (msg === "") {
       setsave(true);
@@ -384,13 +395,15 @@ const SmsCreator = ({ classes }) => {
             value={campaignName}
           />
           <span className={classes.buttonContent}>
-          {t("mainReport.campDesc")}
+            {t("mainReport.campDesc")}
           </span>
         </div>
         <div className={classes.buttonForm}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             {" "}
-            <span className={classes.buttonHead}>{t("mainReport.campFrom")}</span>
+            <span className={classes.buttonHead}>
+              {t("mainReport.campFrom")}
+            </span>
             <span
               style={{
                 fontSize: "15px",
@@ -413,12 +426,15 @@ const SmsCreator = ({ classes }) => {
             value={campaignNumber}
           />
           <span className={clsx(classes.buttonContent, classes.alertMsg)}>
-          {t("mainReport.campRemovalDesc")}
+            {t("mainReport.campRemovalDesc")}
           </span>
         </div>
         {restoreBool ? (
           <div className={classes.buttonForm}>
-            <span className={clsx(classes.buttonHead)}> {t("mainReport.removalReply")}</span>
+            <span className={clsx(classes.buttonHead)}>
+              {" "}
+              {t("mainReport.removalReply")}
+            </span>
             <input
               type="text"
               placeholder="282"
@@ -458,10 +474,8 @@ const SmsCreator = ({ classes }) => {
     if (links) {
       setlinkCount(links.length);
       count = count - links.length;
-    }
-    else
-    {
-        setlinkCount(0);
+    } else {
+      setlinkCount(0);
     }
     setmessageCount(count);
   };
@@ -621,11 +635,16 @@ const SmsCreator = ({ classes }) => {
         </div>
         <div className={classes.switchDiv}>
           <FormGroup>
-            <Switch className={classes.reactSwitch}     checked={keep}
-              onChange={toggleKeep}/>
+            <Switch
+              className={classes.reactSwitch}
+              checked={keep}
+              onChange={toggleKeep}
+            />
           </FormGroup>
           <div className={classes.radio}>
-            <span style={{ fontSize: "18px" }}>{t("mainReport.keepTrack")}</span>
+            <span style={{ fontSize: "18px" }}>
+              {t("mainReport.keepTrack")}
+            </span>
             <span
               style={{
                 width: "200px",
@@ -634,7 +653,7 @@ const SmsCreator = ({ classes }) => {
                 color: "#B5B5B5",
               }}
             >
-             {t("mainReport.keepDesc")}
+              {t("mainReport.keepDesc")}
             </span>
           </div>
         </div>
@@ -690,7 +709,10 @@ const SmsCreator = ({ classes }) => {
           <div
             style={{ display: "flex", flexDirection: "column", width: "250px" }}
           >
-            <span style={{ fontSize: "18px" }}> {t("mainReport.testSend")}</span>
+            <span style={{ fontSize: "18px" }}>
+              {" "}
+              {t("mainReport.testSend")}
+            </span>
             <span
               style={{
                 width: "200px",
@@ -699,7 +721,7 @@ const SmsCreator = ({ classes }) => {
                 color: "#B5B5B5",
               }}
             >
-             {t("mainReport.testDesc")}
+              {t("mainReport.testDesc")}
             </span>
           </div>
         </div>
@@ -760,21 +782,61 @@ const SmsCreator = ({ classes }) => {
                 </div>
                 {radioBtn === "bottom" ? (
                   <div className={classes.rightForm}>
-                  <div style={{widht:"250px",height:"200px",height: '30px',width: '230px',padding: '8px',border:"1px solid #bbb",borderRadius:"5px",color:"#bbb",maxHeight:"30px",overflowY:"auto"}}  onClick={() => {
+                    <div
+                      style={{
+                        widht: "250px",
+                        height: "200px",
+                        height: "30px",
+                        width: "230px",
+                        padding: "8px",
+                        border: "1px solid #bbb",
+                        borderRadius: "5px",
+                        color: "#bbb",
+                        maxHeight: "30px",
+                        overflowY: "auto",
+                      }}
+                      onClick={() => {
                         setcontactGroup(true);
-                      }}>
-                         <div > Choose Groups from links</div>
-                {hidden ?  <div style={{display:"flex",flexWrap:"wrap",marginTop:"5px"}}>  {selectedGroup.map((item,index)=>
-                      {
-                          if(item.selected && hidden)
-                          {
-                            return(<div style={{width:'70px',padding: '6px',borderRadius: '20px',backgroundColor:"#1771ad",marginInlineEnd:"4px",marginBottom:"4px",color:"white"}}>{item.GroupName}
-                            <span onClick={() => {handleCross(index)}}>X</span></div>)
-
-                          }
-                        
-                      })}</div> : null}  
-                    
+                      }}
+                    >
+                      <div> Choose Groups from links</div>
+                      {hidden ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            marginTop: "5px",
+                          }}
+                        >
+                          {" "}
+                          {selectedGroup.map((item, index) => {
+                            if (item.selected && hidden) {
+                              return (
+                                <div
+                                  style={{
+                                    width: "70px",
+                                    padding: "6px",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#1771ad",
+                                    marginInlineEnd: "4px",
+                                    marginBottom: "4px",
+                                    color: "white",
+                                  }}
+                                >
+                                  {item.GroupName}
+                                  <span
+                                    onClick={() => {
+                                      handleCross(index);
+                                    }}
+                                  >
+                                    X
+                                  </span>
+                                </div>
+                              );
+                            }
+                          })}
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 ) : null}
@@ -794,10 +856,20 @@ const SmsCreator = ({ classes }) => {
           <span className={classes.rightInput4} onClick={clickExit}>
             Exit{" "}
           </span>
-          <span className={classes.rightInput5} onClick={onContinueClick}>
+          <span
+            className={classes.rightInput5}
+            onClick={() => {
+              onContinueClick(true);
+            }}
+          >
             Save
           </span>
-          <span className={classes.rightInput6} onClick={onContinueClick}>
+          <span
+            className={classes.rightInput6}
+            onClick={() => {
+              onContinueClick(false);
+            }}
+          >
             Continue
           </span>
         </div>
@@ -805,24 +877,17 @@ const SmsCreator = ({ classes }) => {
     );
   };
 
-  const handleCross = (id) =>
-  {
-let temp = [];
-for(let i = 0 ; i <selectedGroup.length ; i++)
-{
-    if(i == id)
-    {
-        temp.push({...selectedGroup[i],selected:false})
+  const handleCross = (id) => {
+    let temp = [];
+    for (let i = 0; i < selectedGroup.length; i++) {
+      if (i == id) {
+        temp.push({ ...selectedGroup[i], selected: false });
+      } else {
+        temp.push(selectedGroup[i]);
+      }
     }
-    else
-    {
-
-        temp.push(selectedGroup[i])
-
-    }
-}
-setselectedGroup(temp);
-  }
+    setselectedGroup(temp);
+  };
   const clickExit = () => {
     setexitClick(true);
   };
@@ -830,7 +895,7 @@ setselectedGroup(temp);
     setdeleteClick(true);
   };
 
-  const onContinueClick = () => {
+  const onContinueClick = async (isSave) => {
     if (validationCheck()) {
       let payload = {
         CreditsPerSms: "1",
@@ -849,8 +914,21 @@ setselectedGroup(temp);
         Type: 0,
         UpdateDate: 1628755539174,
       };
-      dispatch(smsSave(payload));
-      // window.location.href = "/react/smsStep";
+      let r = await dispatch(smsSave(payload));
+      console.log("response", r);
+      sessionStorage.setItem(
+        "data",
+        JSON.stringify({
+          name: campaignName,
+          text: msg,
+        })
+      );
+      if (isSave) {
+        history.push(`/sms?SMSCampaignID=${r.payload.Message}`);
+      } else {
+        history.push(`/sms?SMSCampaignID=${r.payload.Message}`);
+        history.push(`/smsStep?SMSCampaignID=${r.payload.Message}`);
+      }
     }
   };
 
@@ -896,31 +974,18 @@ setselectedGroup(temp);
   };
 
   const handleSelect = (id) => {
-
     let tempArr = [];
-    for (let i = 0 ; i < selectedGroup.length ; i++)
-    {
-      
-         
-         if(id  === i )
-         {
-             if(selectedGroup[i].selected)
-             {
-                tempArr.push({...selectedGroup[i],selected:false})
-             }
-             else
-             {
-                tempArr.push({...selectedGroup[i],selected:true})
-
-             }
-         
-         }
-         else
-         {
-            tempArr.push(selectedGroup[i]);
-         }
-     
-       }
+    for (let i = 0; i < selectedGroup.length; i++) {
+      if (id === i) {
+        if (selectedGroup[i].selected) {
+          tempArr.push({ ...selectedGroup[i], selected: false });
+        } else {
+          tempArr.push({ ...selectedGroup[i], selected: true });
+        }
+      } else {
+        tempArr.push(selectedGroup[i]);
+      }
+    }
     setselectedGroup(tempArr);
   };
 
@@ -929,12 +994,66 @@ setselectedGroup(temp);
     handleClose();
   };
 
-  const makeArr = (id) =>
-  {
-      let arr = [];
-      
-  }
+  const makeArr = (id) => {
+    let arr = [];
+  };
 
+  const handleGroupClose = async () => 
+  {
+    setsummary(true);
+    setsave(false);
+    sethidden(true);
+    setcontactGroup(false);
+    let payload = {
+      CreditsPerSms: "1",
+      FromNumber: campaignNumber,
+      IsLinksStatistics: true,
+      IsResponse: false,
+      IsTestCampaign: false,
+      Name: campaignName,
+      ResponseToEmail: "",
+      SMSCampaignID: -1,
+      SendDate: 1628755539174,
+      SendingMethod: 0,
+      Status: 1,
+      SubAccountID: -1,
+      Text: msg,
+      Type: 0,
+      UpdateDate: 1628755539174,
+    };
+    let r = await dispatch(smsSave(payload));
+    let temp = [];
+    let tempfull = [];
+    let num = 0
+    for(let i =0 ; i < selectedGroup.length ; i++)
+    {
+      if(selectedGroup[i].selected)
+      {
+        temp.push(selectedGroup[i].GroupID);
+        tempfull.push(selectedGroup[i]);
+        ++num;
+        
+      }
+      
+    }
+    settotal(num);
+    settemp(tempfull);
+    let payload2 = 
+    {
+      IsTestGroups: true,
+      SMSCampaignID: r.payload.Message,
+      TestGroupsIds: temp
+    }
+
+    let r2 = await dispatch(smsSaveGroup(payload2));
+    await dispatch(getCampaignSumm(r.payload.Message));
+  
+
+  
+       
+
+
+  }
   const renderSendGroup = () => {
     return (
       <>
@@ -971,7 +1090,9 @@ setselectedGroup(temp);
               </Paper>
             </div>
             <div className={classes.listDiv}>
-              {selectedGroup
+              {
+               
+              selectedGroup
                 .filter((val) => {
                   if (ContactSearch == "") {
                     return val;
@@ -984,6 +1105,7 @@ setselectedGroup(temp);
                   }
                 })
                 .map((item, idx) => {
+                 
                   return (
                     <div className={classes.searchCon} onClick={makeArr(idx)}>
                       <span
@@ -1000,10 +1122,14 @@ setselectedGroup(temp);
                           width: "700px",
                         }}
                       >
-                        <span onClick={() => {handleSelect(idx)}}>
+                        <span
+                          onClick={() => {
+                            handleSelect(idx);
+                          }}
+                        >
                           {item.GroupName}
                         </span>
-                        <span>19 Recipients</span>
+                        <span>{item.Recipients}</span>
                       </div>
                     </div>
                   );
@@ -1021,9 +1147,8 @@ setselectedGroup(temp);
                 variant="contained"
                 size="small"
                 onClick={() => {
-                  setsave(false);
-                  sethidden(true);
-                  setcontactGroup(false);
+                 
+                  handleGroupClose()
                 }}
                 className={clsx(
                   classes.dialogButton,
@@ -1071,18 +1196,15 @@ setselectedGroup(temp);
       </>
     );
   };
-const handlecaution = () =>
-{
+  const handlecaution = () => {
     setalertToggle(false);
     setmodalOpen(true);
-}
+  };
 
-const handlecautioncancel = () =>
-{
-setcampaignNumber(storedValue);
-setalertToggle(false);
-}
-
+  const handlecautioncancel = () => {
+    setcampaignNumber(storedValue);
+    setalertToggle(false);
+  };
 
   const handleAlertoff = () => {
     setalertToggle(false);
@@ -1098,7 +1220,7 @@ setalertToggle(false);
             onClose={handleAlertoff}
             onConfirm={handlecaution}
             confirmText="Confirm"
-            onCancel = {handlecautioncancel}
+            onCancel={handlecautioncancel}
             cancelText="Cancel"
             showDefaultButtons={true}
             icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
@@ -1127,20 +1249,30 @@ setalertToggle(false);
   const renderSummary = () => {
     return (
       <>
-       <Summary  classes={classes}  campaign={campaignName} number={campaignNumber} totalmsg={msg} selected={selectedGroup} bool={true}/>
+    <Summary         
+          classes={classes}
+          campaign={campaignName}
+          number={campaignNumber}
+          totalmsg={msg}
+          selected={selectedGroup}
+          bool={summary}
+          grand = {total}
+          final = {temp}
+          summ = {getCampaignSum}
+          api = {onApiCall}
+        /> 
       </>
     );
   };
-  const onLocation = () =>
-  {
-      let tempmsg = "";
-      tempmsg = msg + "https://waze.to/?q=" + Searched.split(" ").join("%20");
-      setmsg(tempmsg);
-      let lc = linkCount;
-      setlinkCount(++lc);
-      setcharacterCount(tempmsg.length);
-      setwaize(false);
-  }
+  const onLocation = () => {
+    let tempmsg = "";
+    tempmsg = msg + "https://waze.to/?q=" + Searched.split(" ").join("%20");
+    setmsg(tempmsg);
+    let lc = linkCount;
+    setlinkCount(++lc);
+    setcharacterCount(tempmsg.length);
+    setwaize(false);
+  };
   return (
     <DefaultScreen currentPage="reports" classes={classes}>
       <div className={classes.smsInit}>
@@ -1371,12 +1503,19 @@ setalertToggle(false);
                 className={btnStyle.input}
                 placeholder="Search"
                 inputProps={{ "aria-label": "Search" }}
-                onChange = {(e) => {
-                    setSearched(e.target.value)
+                onChange={(e) => {
+                  setSearched(e.target.value);
                 }}
               />
             </Paper>
-            <span className={classes.confirmButton} onClick={() => {onLocation()}}>Confirm</span>
+            <span
+              className={classes.confirmButton}
+              onClick={() => {
+                onLocation();
+              }}
+            >
+              Confirm
+            </span>
           </div>
         </Dialog>
       ) : null}
