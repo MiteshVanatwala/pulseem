@@ -530,11 +530,11 @@ const SmsCreator = ({ classes }, props) => {
                   onChange={handleAlignment}
                   aria-label="text alignment"
                 >
-                  <ToggleButton value="left" aria-label="left aligned">
+                  <ToggleButton value="left" aria-label="left aligned" style={{width:"30px",height:"30px"}}>
                     <FormatAlignLeftIcon />
                   </ToggleButton>
 
-                  <ToggleButton value="right" aria-label="right aligned">
+                  <ToggleButton value="right" aria-label="right aligned" style={{width:"30px",height:"30px"}}>
                     <FormatAlignRightIcon />
                   </ToggleButton>
                 </ToggleButtonGroup>
@@ -583,16 +583,16 @@ const SmsCreator = ({ classes }, props) => {
                     <span
                       style={{
                         marginInlineEnd: "3px",
-                        border: "2px solid #1c82b2",
+                        border: "1px solid #1c82b2",
                         borderRadius: "50%",
                         padding: "5px",
-                        width: "12px",
-                        height: "12px",
+                        width: "10px",
+                        height: "10px",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         color: "#1c82b2",
-                        fontSize: "19px",
+                        fontSize: "14px",
                         fontWeight: "700",
                       }}
                     >

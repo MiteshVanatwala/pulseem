@@ -792,13 +792,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   infoButtons: {
     borderRadius: "20px",
-    width: "150px",
+    width: "106px",
     color: "white",
+    fontSize:"11px",
     backgroundColor: "red",
     padding: "10px",
     backgroundColor: "#1c82b2",
     borderColor: "#1c82b2",
-    marginInlineStart: "10px",
+    marginInlineStart: "5px",
     "@media screen and (max-width: 768px)": {
       width: "80px",
       padding: "8px",
@@ -808,13 +809,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   info2Buttons: {
     borderRadius: "20px",
-    width: "110px",
+    width: "77px",
+    fontSize:"11px",
     color: "white",
     backgroundColor: "red",
     padding: "10px",
     backgroundColor: "#1c82b2",
     borderColor: "#1c82b2",
-    marginInlineStart: "10px",
+    marginInlineStart: "3px",
     marginInlineEnd: "5px",
     "@media screen and (max-width: 768px)": {
       width: "80px",
@@ -824,7 +826,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   selectMsg: {
-    marginInlineStart: "12px",
+    marginInlineStart: "5px",
     borderInlineEnd: "1px solid black",
     "@media screen and (max-width: 768px)": {
       borderRight: "none",
@@ -832,11 +834,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   selectVal: {
     outline: "none",
-    padding: "10px",
+    padding: "5px",
     width: "65px",
     borderRadius: "5px",
     borderColor: "#1c82b2",
-    marginInlineEnd: "12px",
+    marginInlineEnd: "4px",
     "@media screen and (max-width: 768px)": {
       width: "100%",
       marginTop: "8px",
@@ -848,13 +850,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "center",
     position: "relative",
 
-    width: "80px",
+    width: "62px",
   },
   addButtons: {
     padding: "10px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    fontSize:"14px",
     "@media screen and (max-width: 768px)": {
       padding: "5px",
     },
@@ -1396,9 +1399,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   smsInit: {
     display: "grid",
     gridTemplateColumns: "67% auto",
+    padding: "40px 80px 15px 90px",
 
     "@media screen and (max-width: 768px)": {
       gridTemplateColumns: "100%",
+      padding:"0"
     },
   },
   msgDiv: {
@@ -1411,7 +1416,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   boxDiv: {
-    width: "640px",
+    width: "450px",
     "@media screen and (max-width: 768px)": {
       width: "100%",
     },
@@ -1420,7 +1425,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     alignItems: "center",
     borderRight: "1px solid black",
-    paddingInlineEnd: "8px",
+    paddingInlineEnd: "0",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
       borderRight: "1px solid black",
@@ -1438,6 +1443,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   endButtons: {
     display: "flex",
+    alignItems:"center",
     // borderRight: "1px solid black",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
