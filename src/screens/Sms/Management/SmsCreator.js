@@ -15,6 +15,7 @@ import Picker from "emoji-picker-react";
 import Mobile from "../../../assets/images/mobileiphone.png";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
+import Emoj from "../../../assets/images/smile.png";
 import { withStyles } from "@material-ui/core/styles";
 import { useHistory } from "react-router";
 import {
@@ -541,12 +542,19 @@ const SmsCreator = ({ classes }, props) => {
                 <div className={classes.pickerEmoji}>
                   {flagemoji ? <Picker onEmojiClick={onEmojiClick} /> : null}
 
-                  <InsertEmoticonIcon
-                    style={{ marginInlineEnd: "8px" }}
+                  <Tooltip
+          disableFocusListener
+          title="Add Emoji"
+          classes={{ tooltip: styles.customWidth }}
+          placement="top-start"
+        >
+                  <img src={Emoj}
+                    style={{ marginInlineEnd: "8px",widht:"25px",height:"25px" }}
                     onClick={() => {
                       setflagemoji(!flagemoji);
                     }}
                   />
+                  </Tooltip>
                 </div>
               </div>
               <div className={classes.baseButtons}>
