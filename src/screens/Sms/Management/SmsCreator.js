@@ -554,14 +554,14 @@ const SmsCreator = ({ classes }, props) => {
                   className={classes.infoButtons}
                   onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                 >
-                  <span style={{ marginInlineEnd: "5px" }}>+</span>Removal
-                  message
+                  <span style={{ marginInlineEnd: "5px",cursor:"pointer" }}>+</span>Removal
+                  Message
                 </span>
                 <span
                   className={classes.info2Buttons}
                   onClick={removalLinkDisabled ? null : onRemovalLink}
                 >
-                  <span style={{ marginInlineEnd: "5px" }}>+</span>Removal link
+                  <span style={{ marginInlineEnd: "5px",cursor:"pointer" }}>+</span>Removal Link
                 </span>
               </div>
               <div className={classes.endButtons}>
