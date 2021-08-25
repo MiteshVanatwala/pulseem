@@ -866,7 +866,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   rightInput: {
     outline: "none",
     padding: "10px",
-    border: "1px solid #efefef",
+    width:"200px",
+    border: "1px solid #BBBBBB",
+    borderRadius:"4px",
     marginInlineEnd: "5px",
     "@media screen and (max-width: 768px)": {
       width: "100%",
