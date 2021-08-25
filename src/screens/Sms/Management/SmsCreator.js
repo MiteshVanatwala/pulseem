@@ -500,7 +500,7 @@ const SmsCreator = ({ classes }, props) => {
     return (
       <div className={classes.msgDiv}>
         <div>
-          <span className={classes.msgHead}>{t("mainReport.testSend")}</span>
+          <span className={classes.msgHead}>{t("mainReport.yourMessage")}</span>
           <div className={classes.boxDiv}>
             <textarea
               placeholder="Type text"
