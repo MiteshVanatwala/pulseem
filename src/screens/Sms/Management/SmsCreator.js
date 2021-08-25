@@ -583,7 +583,7 @@ const SmsCreator = ({ classes }, props) => {
                     <span
                       style={{
                         marginInlineEnd: "3px",
-                        border: "2px solid #1c82b2",
+                        border: "2px solid #17a2b8",
                         borderRadius: "50%",
                         padding: "5px",
                         width: "12px",
@@ -591,14 +591,15 @@ const SmsCreator = ({ classes }, props) => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        color: "#1c82b2",
+                        color: "#17a2b8",
+                      
                         fontSize: "19px",
                         fontWeight: "700",
                       }}
                     >
-                      +
+                     <span style={{marginBottom:"2px"}}>+</span> 
                     </span>
-                    Add
+                    ADD
                   </span>
                   {editmenuClick ? (
                     <div className={classes.dropDiv}>
@@ -606,6 +607,7 @@ const SmsCreator = ({ classes }, props) => {
                         className={classes.dropCon}
                         onClick={() => {
                           setdialogClickLanding(true);
+                          seteditmenuClick(false);
                         }}
                       >
                         Landing Page Link
@@ -614,6 +616,7 @@ const SmsCreator = ({ classes }, props) => {
                         className={classes.dropCon}
                         onClick={() => {
                           setdialogClickCampaign(true);
+                          seteditmenuClick(false);
                         }}
                       >
                         Campaign Link
@@ -622,6 +625,7 @@ const SmsCreator = ({ classes }, props) => {
                         className={classes.dropCon}
                         onClick={() => {
                           setwaize(true);
+                          seteditmenuClick(false);
                         }}
                       >
                         Waze Navigation
