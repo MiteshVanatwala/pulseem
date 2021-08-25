@@ -409,6 +409,7 @@ const SmsCreator = ({ classes }, props) => {
                 fontSize: "15px",
                 color: "rgb(170, 170, 170)",
                 cursor: "pointer",
+                textDecoration:"underline"
               }}
               onClick={() => {
                 setrestoreBool(!restoreBool);
