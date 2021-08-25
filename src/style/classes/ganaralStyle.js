@@ -753,6 +753,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   smallInfoDiv: {
     display: "flex",
     width: "100%",
+    position:"relative",
+    top:"-3px",
     justifyContent: "flex-end",
     alignItems: "center",
     color: "#1c82b2",
@@ -770,6 +772,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   funcDiv: {
     width: "100%",
     height: "40px",
+    position:"relative",
+    top:"-3px",
     // backgroundColor : "black",
     padding: "10px",
     border: "1px solid rgb(170, 170, 170)",
