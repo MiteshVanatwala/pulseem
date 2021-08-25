@@ -39,6 +39,8 @@ import IconButton from "@material-ui/core/IconButton";
 import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlineDelete } from "react-icons/ai";
+import { BsTrash } from "react-icons/bs";
+
 
 import Snackbar from "@material-ui/core/Snackbar";
 
@@ -851,7 +853,7 @@ const SmsCreator = ({ classes }, props) => {
           }
         >
           <span className={classes.rightInput3} onClick={onHandleDelete}>
-            <AiOutlineDelete style={{ fontSize: "25" }} />
+            <BsTrash style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4} onClick={clickExit}>
             Exit{" "}
