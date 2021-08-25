@@ -215,8 +215,7 @@ const SmsCreatorStep = ({ classes }) => {
  
   ]);
   const [Unique, setUnique] = useState(-1);
-
-  let initialheadstate = [];
+const [initialheadstate, setinitialheadstate] = useState([])
 
   
   
@@ -235,7 +234,7 @@ const SmsCreatorStep = ({ classes }) => {
     }
     setGroupList(tempGroupList);
   };
-  console.log("new", contacts);
+  // console.log("new", contacts);
 
   const callbackSelectAll = () => {
     if (!allGroupsSelected) {
@@ -745,11 +744,12 @@ const SmsCreatorStep = ({ classes }) => {
                         }
                         res = res + "\n";
                       }
-                      console.log("final", res);
+                    
                       setareaData(res);
                       let ddc =[];
                       for(let i in result.data[0])
                       {
+                           console.log("----->",i)
                            ddc.push("Adjust Title")
                       }
                       setheaders(ddc);
@@ -761,16 +761,17 @@ const SmsCreatorStep = ({ classes }) => {
         </div>
         <div>
           {groupClick ? (
-            <Groups
-              classes={classes}
-              groupList={groupList}
-              selectedList={selectedGroups}
-              callbackSelectedGroups={callbackSelectedGroups}
-              callbackUpdateGroups={callbackUpdateGroups}
-              callbackSelectAll={callbackSelectAll}
-              callbackReciFilter={callbackFilter}
-              bool={true}
-            />
+          <></>
+            // <Groups
+            //   classes={classes}
+            //   groupList={groupList}
+            //   selectedList={selectedGroups}
+            //   callbackSelectedGroups={callbackSelectedGroups}
+            //   callbackUpdateGroups={callbackUpdateGroups}
+            //   callbackSelectAll={callbackSelectAll}
+            //   callbackReciFilter={callbackFilter}
+            //   bool={true}
+            // />
           ) : null}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div
@@ -907,6 +908,7 @@ const SmsCreatorStep = ({ classes }) => {
   {
     dummyArr.push("Adjust Title");
   }
+  setinitialheadstate(dummyArr);
   setheaders(dummyArr)
 
     seteditT(true);
@@ -1374,7 +1376,7 @@ const SmsCreatorStep = ({ classes }) => {
   };
   const onSummClick = async () => {
     if (selectedGroups.length > 0) {
-      console.log("-------->", sendDate);
+      // console.log("-------->", sendDate);
       const m = moment(sendDate, "YYYY-MM-DD HH:mm:ss");
       m.set({ h: m.format("HH"), m: m.format("mm") });
       let a = window.location;
@@ -1469,30 +1471,36 @@ const SmsCreatorStep = ({ classes }) => {
     }
   };
   const handleSelectFirst = (name,id,idx,e) => {
-
-  if  (headers[idx] !== "adjust title")
-  {
+    // id -  index of select array 
+    // idx - header index 
+  // if  (headers[idx] !== "adjust title")
+  // {
+  //   selectArray[id].isdisabled = false;
     
-    selectArray[idx].isdisabled = false;
-    selectArray[id].isdisabled = true;
-    let h = headers;
-    h[idx] = name.value;
-    setheaders(h);
+  //   let h = headers;
+  //   h[idx] = name.value;
+  //   setheaders(h);
 
-  }
-  else
-  {
-    let h = headers;
+  // }
+  // else
+  // {
+   
+  let h = headers;
   h[idx] = name.value;
   setheaders(h);
   selectArray[id].isdisabled = true;
-  }
+  selectArray[id].idx = idx;
+  console.log("new------>",selectArray)
+ // }
 
   };
  const handleCloseSpan = (id,name) =>
  {
   let h = headers;
-  h[id] = initialheadstate[id];
+  
+  headers[id] ="Adjust Title";
+  // h[id] = initialheadstate[id];
+
   setheaders(h);
 
   for(let i=0 ; i < selectArray.length ; i++)
@@ -1501,33 +1509,67 @@ const SmsCreatorStep = ({ classes }) => {
     if(selectArray[i].value === name)
     {
       selectArray[i].isdisabled = false;
+      selectArray[i].idx = -1;
       break;
     }
   }
-
+  
  }
 const handleDataManual = async () =>
 {
+  console.log("----->",headers);
+  console.log(typedData)
   let requestPayload = [];
 
-  
+
+  if(typedData.length !==0)
+  {
     for(let j= 0 ; j < typedData.length ; j++)
     {
        requestPayload.push({});
       for(let k= 0 ; k<typedData[j].length ; k++)
       {
-        let key = headers[k];
-      
-
-         let  obj = requestPayload[j];
-
-
-        obj[key] = typedData[j][k];
+         if(headers[k]!=="Adjust Title")
+         {
+          let key = headers[k];
+          let  obj = requestPayload[j];
+         obj[key] = typedData[j][k];
+         }
       }
 
     }
+  }
+  else
+  {
+   
+    
+    for(let j= 0 ; j < contacts.length ; j++)
+    {
+       requestPayload.push({});
+       let i= 0 ;
+    
+      
+        for(let k in contacts[j])
+        {
+          console.log("--->before if",headers[i])
+        
+           if(headers[i]!=="Adjust Title")
+           {
+            console.log("----->printing headers of i th index",headers[i]);
+            let key = headers[i];
+            let  obj = requestPayload[j];
+            obj[key] = contacts[j][k];
+            
+      }
+      i++;
+       }
+      
 
-    console.log("",requestPayload)
+    }
+
+  }
+
+  console.log("request Data",requestPayload)
 
 
     let finalPayload = {
@@ -1538,7 +1580,7 @@ const handleDataManual = async () =>
     }
 
      const r = await dispatch(getManual(finalPayload))
-     console.log("----->",r)
+    //  console.log("----->",r)
      let tempres = [];
      let temp = [];
      for (let i = 0; i < groupList.length; i++) {
@@ -1561,8 +1603,14 @@ const handleDataManual = async () =>
      setSelected(temp);
      setmanualTrue(false);
      setareaData("");
+     settypedData([]);
+     setContacts([]);
      setgroupClick(true);
      setmanualClick(false);
+     for(let i = 0 ; i < selectArray.length;i++){
+       selectArray[i].isdisabled = false;
+       selectArray[i].idx = -1;
+     }
 
 
   
@@ -1728,7 +1776,7 @@ setnewVal(e.target.value);
             </tr>
             {contacts.length !== 0
               ? contacts.map((item, idx) => {
-                  console.log("hello", item);
+                  // console.log("hello", item);
                   if (idx > contacts.length - 11) {
                     return (
                       <tr id={idx}>
@@ -1755,7 +1803,7 @@ setnewVal(e.target.value);
                   }
                 })
               : typedData.map((item, id) => {
-                {console.log("typed data",typedData)}
+                // {console.log("typed data",typedData)}
                   return (
                   
                     <tr>
@@ -1793,6 +1841,12 @@ setnewVal(e.target.value);
   const handleConfirmC = () => {
     setContacts([]);
     setareaData("");
+    for(let i = 0 ; i < selectArray.length;i++){
+      selectArray[i].isdisabled = false;
+      selectArray[i].idx = -1;
+    }
+    settypedData([]);
+    setContacts([]);
     setContacts([]);
     setcaution(false);
     setmanualTrue(false);
