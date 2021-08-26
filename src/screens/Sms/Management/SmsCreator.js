@@ -677,8 +677,8 @@ const SmsCreator = ({ classes }, props) => {
           <img
             src={Mobile}
             style={{
-              width: "350px",
-              height: "400px",
+              width: "375px",
+              height: "415px",
               marginTop: "50px",
               borderBottom: "1px solid black",
             }}
