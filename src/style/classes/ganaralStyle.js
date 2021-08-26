@@ -1426,6 +1426,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderRight: "1px solid black",
     },
   },
+  emojiHe: {
+    display: "flex",
+    alignItems: "center",
+    // borderRight: "1px solid black",
+    paddingInlineStart: "8px",
+    "@media screen and (max-width: 768px)": {
+      flexDirection: "column",
+      // borderRight: "1px solid black",
+    },
+  },
   pickerEmoji: {
     position: "relative",
     height: "100%",
