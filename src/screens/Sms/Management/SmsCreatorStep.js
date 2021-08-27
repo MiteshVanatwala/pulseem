@@ -1353,7 +1353,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
           </span>
           <span className={classes.rightInput4}>
             {" "}
-            {t("mainReport.editSms")}{" "}
+            {t("mainReport.exitSms")}{" "}
           </span>
           <span className={classes.rightInput5}>
             {" "}
