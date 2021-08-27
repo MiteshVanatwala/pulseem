@@ -798,8 +798,8 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       settoggleChecked(!toggleChecked);
                     }}
                   />
-                  <span>{t("mainReport.createNewGroup")}</span>
-                  <span>New!</span>
+                  <span  className={selectedGroups.length >=2 ? classes.spani : classes.spaniDisabled}>{t("mainReport.createNewGroup")}</span>
+                  <span style={{backgroundColor: "#CA332F",color: "#fff",borderRadius: "5px",marginInlineStart: "5px",padding:"5px"}}>New!</span>
                   <Tooltip
                     disableFocusListener
                     title="Choose 2 or more groups and combine into one new one"

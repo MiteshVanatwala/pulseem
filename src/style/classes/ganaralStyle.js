@@ -1905,5 +1905,15 @@ marginTop:"10px"
     justifyContent:"space-between",
     alignItems:"center",
     marginTop:"15px"
+  },
+  spani : 
+  {
+    color:"black",
+    fontSize:"13px"
+  },
+  spaniDisabled : 
+  {
+    color : "#808080",
+    fontSize:"13px"
   }
 });
