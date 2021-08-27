@@ -285,7 +285,7 @@ const SmsCreator = ({ classes }, props) => {
         <span className={classes.headInfo}>{t("mainReport.smsCampaign")}</span>
         <Tooltip
           disableFocusListener
-          title="Create the content you want to send to your recipients and then choose how, when and to whom to send"
+          title={t("mainReport.toolTip1")}
           classes={{ tooltip: styles.customWidth }}
         >
           <span className={classes.bodyInfo}>i</span>
@@ -503,7 +503,7 @@ const SmsCreator = ({ classes }, props) => {
           <span className={classes.msgHead}>{t("mainReport.testSend")}</span>
           <div className={classes.boxDiv}>
             <textarea
-              placeholder="Type text"
+              placeholder= {t("mainReport.typeText")}
               maxlength="1000"
               outlined=""
               id="yourMessage"
@@ -516,11 +516,11 @@ const SmsCreator = ({ classes }, props) => {
               value={msg}
             ></textarea>
             <div className={classes.smallInfoDiv}>
-              <span style={{ marginInlineEnd: "18px" }}>{linkCount} Link</span>
+              <span style={{ marginInlineEnd: "18px" }}>{linkCount} {t("mainReport.link")}</span>
               <span style={{ marginInlineEnd: "18px" }}>
-                {messageCount} Message
+                {messageCount} {t("mainReport.message")}
               </span>
-              <span>{characterCount}/1000 Char</span>
+              <span>{characterCount}/1000 {t("mainReport.char")}</span>
             </div>
             <div className={classes.funcDiv}>
               <div className={classes.emoji}>
@@ -554,14 +554,13 @@ const SmsCreator = ({ classes }, props) => {
                   className={classes.infoButtons}
                   onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                 >
-                  <span style={{ marginInlineEnd: "5px" }}>+</span>Removal
-                  message
+                  <span style={{ marginInlineEnd: "5px" }}>+</span>{t("mainReport.removalMsg")}
                 </span>
                 <span
                   className={classes.info2Buttons}
                   onClick={removalLinkDisabled ? null : onRemovalLink}
                 >
-                  <span style={{ marginInlineEnd: "5px" }}>+</span>Removal link
+                  <span style={{ marginInlineEnd: "5px" }}>+</span>{t("mainReport.removalLink")}
                 </span>
               </div>
               <div className={classes.endButtons}>
@@ -598,7 +597,7 @@ const SmsCreator = ({ classes }, props) => {
                     >
                       +
                     </span>
-                    Add
+                    {t("mainReport.add")}
                   </span>
                   {editmenuClick ? (
                     <div className={classes.dropDiv}>
@@ -608,7 +607,7 @@ const SmsCreator = ({ classes }, props) => {
                           setdialogClickLanding(true);
                         }}
                       >
-                        Landing Page Link
+                         {t("mainReport.landingLink")}
                       </span>
                       <span
                         className={classes.dropCon}
@@ -616,7 +615,7 @@ const SmsCreator = ({ classes }, props) => {
                           setdialogClickCampaign(true);
                         }}
                       >
-                        Campaign Link
+                         {t("mainReport.campLink")}
                       </span>
                       <span
                         className={classes.dropCon}
@@ -624,7 +623,7 @@ const SmsCreator = ({ classes }, props) => {
                           setwaize(true);
                         }}
                       >
-                        Waze Navigation
+                       {t("mainReport.waize")}
                       </span>
                     </div>
                   ) : null}
@@ -677,8 +676,7 @@ const SmsCreator = ({ classes }, props) => {
           <img
             src={Mobile}
             style={{
-              width: "350px",
-              height: "400px",
+          
               marginTop: "50px",
               borderBottom: "1px solid black",
             }}
@@ -686,7 +684,7 @@ const SmsCreator = ({ classes }, props) => {
           <span className={classes.phoneNumber}>050608001</span>
           <div className={classes.wrapChat}>
             <div className={classes.fromMe}>
-              {msg === "" ? "Type text" : msg}
+              {msg === "" ? t("mainReport.typeText") : msg}
             </div>
           </div>
         </div>
@@ -747,13 +745,13 @@ const SmsCreator = ({ classes }, props) => {
                   <div className={classes.rightForm}>
                     <input
                       type="text"
-                      placeholder="Enter Phone Number"
+                      placeholder={t("mainReport.enterPhone")}
                       className={classes.rightInput}
                       value={phone}
                       onChange={handleNumberChange}
                     />
                     <span className={classes.rightSend} onClick={handleSend}>
-                      Send
+                    {t("mainReport.send")}
                     </span>
                     <Snackbar
                       open={OpenS}
@@ -766,7 +764,7 @@ const SmsCreator = ({ classes }, props) => {
                       style={{ zIndex: "9999" }}
                     >
                       <Alert severity="error" onClose={handleCloseSnackbar}>
-                        Invalid Number!
+                      {t("mainReport.invalidNo")}
                       </Alert>
                     </Snackbar>
                   </div>
@@ -799,7 +797,7 @@ const SmsCreator = ({ classes }, props) => {
                         setcontactGroup(true);
                       }}
                     >
-                      <div> Choose Groups from links</div>
+                      <div> {t("mainReport.ChooseLinks")}</div>
                       {hidden ? (
                         <div
                           style={{
@@ -854,7 +852,7 @@ const SmsCreator = ({ classes }, props) => {
             <AiOutlineDelete style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4} onClick={clickExit}>
-            Exit{" "}
+          {t("mainReport.exitSms")}
           </span>
           <span
             className={classes.rightInput5}
@@ -862,7 +860,7 @@ const SmsCreator = ({ classes }, props) => {
               onContinueClick(true);
             }}
           >
-            Save
+           {t("mainReport.saveSms")}
           </span>
           <span
             className={classes.rightInput6}
@@ -870,7 +868,7 @@ const SmsCreator = ({ classes }, props) => {
               onContinueClick(false);
             }}
           >
-            Continue
+           {t("mainReport.continue")}
           </span>
         </div>
       </div>
@@ -1081,7 +1079,7 @@ const SmsCreator = ({ classes }, props) => {
                 </IconButton>
                 <InputBase
                   className={btnStyle.input}
-                  placeholder="Search"
+                  placeholder={t("mainReport.searchSms")}
                   inputProps={{ "aria-label": "Search" }}
                   onChange={(e) => {
                     setContactSearch(e.target.value);
@@ -1155,7 +1153,7 @@ const SmsCreator = ({ classes }, props) => {
                   classes.dialogConfirmButton
                 )}
               >
-                Confirm
+               {t("mainReport.confirmSms")}
               </Button>
             </div>
           </Dialog>
@@ -1219,7 +1217,7 @@ const SmsCreator = ({ classes }, props) => {
             open={alertToggle}
             onClose={handleAlertoff}
             onConfirm={handlecaution}
-            confirmText="Confirm"
+            confirmText={t("mainReport.confirmSms")}
             onCancel={handlecautioncancel}
             cancelText="Cancel"
             showDefaultButtons={true}
@@ -1293,7 +1291,7 @@ const SmsCreator = ({ classes }, props) => {
           icon={<FaUndoAlt style={{ fontSize: 30, color: "#fff" }} />}
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>Select Landing Page</span>
+            <span className={classes.groupName}>{t("mainReport.selectLanding")}</span>
           </div>
           <div className={classes.modalDiv}>
             <Paper component="form" className={btnStyle.root}>
@@ -1306,7 +1304,7 @@ const SmsCreator = ({ classes }, props) => {
               </IconButton>
               <InputBase
                 className={btnStyle.input}
-                placeholder="Search"
+                placeholder={t("mainReport.searchSms")}
                 inputProps={{ "aria-label": "Search" }}
                 onChange={(e) => {
                   setlandingSearch(e.target.value);
@@ -1357,7 +1355,7 @@ const SmsCreator = ({ classes }, props) => {
           icon={<FaUndoAlt style={{ fontSize: 30, color: "#fff" }} />}
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>Select Landing Page</span>
+            <span className={classes.groupName}>{t("mainReport.selectLanding")}</span>
           </div>
           <div className={classes.modalDiv}>
             <Paper component="form" className={btnStyle.root}>
@@ -1370,7 +1368,7 @@ const SmsCreator = ({ classes }, props) => {
               </IconButton>
               <InputBase
                 className={btnStyle.input}
-                placeholder="Search"
+                placeholder={t("mainReport.searchSms")}
                 inputProps={{ "aria-label": "Search" }}
                 onChange={(e) => {
                   setlandingSearch(e.target.value);
@@ -1421,7 +1419,7 @@ const SmsCreator = ({ classes }, props) => {
           icon={<FaUndoAlt style={{ fontSize: 30, color: "#fff" }} />}
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>Select Campaign</span>
+            <span className={classes.groupName}>{t("mainReport.selectCamp")}</span>
           </div>
           <div className={classes.modalDiv}>
             <Paper component="form" className={btnStyle.root}>
@@ -1434,7 +1432,7 @@ const SmsCreator = ({ classes }, props) => {
               </IconButton>
               <InputBase
                 className={btnStyle.input}
-                placeholder="Search"
+                placeholder={t("mainReport.searchSms")}
                 inputProps={{ "aria-label": "Search" }}
                 onChange={(e) => {
                   setCampaignSearch(e.target.value);
@@ -1487,7 +1485,7 @@ const SmsCreator = ({ classes }, props) => {
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
             <span className={classes.groupName}>
-              Type a location for navigation
+            {t("mainReport.waizeTitle")}
             </span>
           </div>
           <div className={classes.modalDiv}>
@@ -1495,13 +1493,13 @@ const SmsCreator = ({ classes }, props) => {
               <IconButton
                 type="submit"
                 className={btnStyle.iconButton}
-                aria-label="search"
+                aria-label={t("mainReport.searchSms")}
               >
                 <FaLocationArrow />
               </IconButton>
               <InputBase
                 className={btnStyle.input}
-                placeholder="Search"
+                placeholder={t("mainReport.searchSms")}
                 inputProps={{ "aria-label": "Search" }}
                 onChange={(e) => {
                   setSearched(e.target.value);
@@ -1514,7 +1512,7 @@ const SmsCreator = ({ classes }, props) => {
                 onLocation();
               }}
             >
-              Confirm
+            {t("mainReport.confirmSms")}
             </span>
           </div>
         </Dialog>
@@ -1527,7 +1525,7 @@ const SmsCreator = ({ classes }, props) => {
           onClose={handleClose}
           onCancel={cancel ? null : true}
           onConfirm={handleDelete}
-          confirmText="Confirm"
+          confirmText={t("mainReport.confirmSms")}
           showDefaultButtons={true}
           icon={
             <AiOutlineExclamationCircle
@@ -1554,15 +1552,15 @@ const SmsCreator = ({ classes }, props) => {
       >
         <div style={{ height: "60px", borderBottom: "1px solid black" }}>
           <span className={classes.groupName}>
-            The following fields are invalid:
+          {t("mainReport.fieldInvalid")}:
           </span>
         </div>
         <div>
           <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }}>
             <li style={{ marginBottom: "8px" }}>
-              Campaign Name - Required field
+            {t("mainReport.campaignRequire")}
             </li>
-            <li>Text for sending - Required field</li>
+            <li> {t("mainReport.msgRequire")}</li>
           </ul>
         </div>
         <div
@@ -1581,7 +1579,7 @@ const SmsCreator = ({ classes }, props) => {
             }}
             className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
           >
-            Confirm
+             {t("mainReport.confirmSms")}
           </Button>
         </div>
       </Dialog>
