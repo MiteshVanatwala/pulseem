@@ -1012,6 +1012,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     top: "31%",
     fontWeight: "700",
   },
+  phoneNumberHe: {
+    position: "absolute",
+    left: "45%",
+    top: "31%",
+    fontWeight: "700",
+  },
   chat: {
    
     
@@ -1084,17 +1090,34 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     position: "absolute",
     top: "180px",
-    left: "10%",
+    left: "13%",
     backgroundColor: "#fff",
     color:"#fff",
     display: 'flex',
     justifyContent: 'flex-end',
     borderRadius: "12px",
- 
-    backgroundAttachment: 'fixed',
+
     width: '260px',
-    maxHeight: '200px',
-    // overflowY:"auto",
+    minHeight: '40px',
+    wordBreak: 'break-all',
+    
+    
+      
+  },
+  wrapChatHe : 
+  {
+    position: "absolute",
+    top: "180px",
+    width: "285px",
+    right: "11%",
+    backgroundColor: "#fff",
+    color:"#fff",
+    display: 'flex',
+    justifyContent: 'flex-start',
+    borderRadius: "12px",
+    height:"220px",
+    maxHeight: 'fit-content',
+    overflow:"auto",
     minHeight: '40px',
     wordBreak: 'break-all',
     
