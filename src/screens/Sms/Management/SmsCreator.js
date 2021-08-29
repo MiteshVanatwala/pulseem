@@ -406,7 +406,10 @@ const SmsCreator = ({ classes }, props) => {
 
     setmsg(e.target.value);
     setcharacterCount(e.target.value.length);
-    setmessageCount(e.target.value.split("\n").length);
+ 
+      setmessageCount(e.target.value.split("\n").length);
+    
+    
     let arr = e.target.value.split("\n");
     let count = 0;
     for (let i = 0; i < arr.length; i++) {
@@ -429,7 +432,9 @@ const SmsCreator = ({ classes }, props) => {
     } else {
       setlinkCount(0);
     }
+  
     setmessageCount(count);
+    
   };
 
   const onRemovalLink = () => {
@@ -475,8 +480,22 @@ const SmsCreator = ({ classes }, props) => {
               <span>{characterCount}/1000 Char</span>
             </div>
             <div className={classes.funcDiv}>
-              <div className={classes.emoji}>
-                <ToggleButtonGroup
+              <div className={ isRTL ? classes.emojiHe  : classes.emoji}>
+           {isRTL ? <ToggleButtonGroup
+                  value={alignment}
+                  exclusive
+                  onChange={handleAlignment}
+                  aria-label="text alignment"
+                >
+                
+
+                  <ToggleButton value="right" aria-label="right aligned" >
+                    <FormatAlignRightIcon />
+                  </ToggleButton>
+                  <ToggleButton value="left" aria-label="left aligned" style={{borderLeft:"1px solid #D5D5D5",marginInlineEnd:"4px"}}>
+                    <FormatAlignLeftIcon />
+                  </ToggleButton>
+                </ToggleButtonGroup> :   <ToggleButtonGroup
                   value={alignment}
                   exclusive
                   onChange={handleAlignment}
@@ -486,10 +505,10 @@ const SmsCreator = ({ classes }, props) => {
                     <FormatAlignLeftIcon />
                   </ToggleButton>
 
-                  <ToggleButton value="right" aria-label="right aligned">
+                  <ToggleButton value="right" aria-label="right aligned" style={{borderRight:"1px solid #D5D5D5",marginInlineEnd:"4px"}}>
                     <FormatAlignRightIcon />
                   </ToggleButton>
-                </ToggleButtonGroup>
+                </ToggleButtonGroup>}   
                 <div className={classes.pickerEmoji}>
                   {flagemoji ? <Picker onEmojiClick={onEmojiClick}  groupVisibility={{
     flags: false,
@@ -705,7 +724,7 @@ const SmsCreator = ({ classes }, props) => {
                   {" "}
                   <FormControlLabel
                     value="top"
-                    control={<Radio color="primary" id="top" />}
+                    control={<Radio color="primary" id="top" style={{color:"#007bff"}}/>}
                   />
                   <span>{t("mainReport.sendToOne")}</span>
                 </div>
@@ -742,7 +761,7 @@ const SmsCreator = ({ classes }, props) => {
                   {" "}
                   <FormControlLabel
                     value="bottom"
-                    control={<Radio color="primary" id="bottom" />}
+                    control={<Radio color="primary" id="bottom" style={{color:"#007bff"}}/>}
                   />
                   <span>{t("mainReport.sendToGroups")}</span>
                 </div>
