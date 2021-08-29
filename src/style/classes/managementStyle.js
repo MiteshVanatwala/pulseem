@@ -210,8 +210,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   cellExpand: {
-    width: 30, 
-    padding: '8px 0px', 
+    width: 30,
+    padding: '8px 0px',
     borderBottom: 'unset',
     display: 'flex',
     alignItems: 'center'
@@ -832,7 +832,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   previewCardContent: {
     display: 'flex',
     alignItems: 'center',
-    justify: 'center',
+    justifyContent: 'center',
     padding: 0,
     minHeight: 115
   },
@@ -1001,7 +1001,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: shortcutPaperHeight[windowSize],
     [theme.breakpoints.down('xs')]: {
       margin: '10px 10px -10px 10px'
-    }
+    },
+    boxShadow: isRTL ? '4px 0px 5px 0px rgba(0,0,0, 0.2)' : '-4px 0px 5px 0px rgba(0,0,0, 0.2) '
   },
   shortcutPaper: {
     [theme.breakpoints.down('xs')]: {
@@ -1127,7 +1128,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   barChart: {
     // maxWidth: 500,
-    float: 'right',
+    float: isRTL ? 'left' : 'right',
     '& canvas': {
       // width: barWidth[windowSize],
       height: barHeight[windowSize]
