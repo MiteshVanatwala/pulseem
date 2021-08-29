@@ -288,13 +288,6 @@ const [initialheadstate, setinitialheadstate] = useState([])
     return (
       <div className={classes.infoDiv}>
         <span className={classes.headInfo}> {t("mainReport.smsCampaign")}</span>
-        <Tooltip
-          disableFocusListener
-          title="Create New SMS Campaign"
-          classes={{ tooltip: styles.customWidth }}
-        >
-          <span className={classes.bodyInfo}>i</span>
-        </Tooltip>
       </div>
     );
   };
