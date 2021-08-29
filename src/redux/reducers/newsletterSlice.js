@@ -2,43 +2,76 @@ import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
 import { instence } from '../../helpers/api'
 import { exportFile } from '../../helpers/exportFromJson';
 
-export const getNewslatterData=createAsyncThunk(
-  'email/getEmailCampaigns',async (_,thunkAPI) => {
+export const getNewslatterData = createAsyncThunk(
+  'email/getEmailCampaigns', async (_, thunkAPI) => {
     try {
-      const response=await instence.get(`email/getEmailCampaigns`);
+      const response = await instence.get(`email/getEmailCampaigns`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+export const getNewsletterReports = createAsyncThunk(
+  'reports/EmailReports/', async (demo = false, thunkAPI) => {
+    try {
+      const response = await instence.get(`reports/EmailReports?includeTestCampaign=${demo}`)
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
+
+export const getNewsletterDirectReport=createAsyncThunk(
+  'report/GetEmailDirectReport',async (data,thunkAPI) => {
+    try {
+      const response=await instence.post(`report/GetEmailDirectReport`, data);
       return JSON.parse(response.data)
     } catch(error) {
       return thunkAPI.rejectWithValue({error: error.message});
     }
-  })
+  }
+)
 
-export const restoreCampaigns=createAsyncThunk(
-  'email/restoreEmailCampaigns',async (deletedCampaigns,thunkAPI) => {
+export const exportNewsletterDirectReport=createAsyncThunk(
+  'report/ExportEmailDirectReport',async (_,thunkAPI) => {
     try {
-      const response=await instence.put(`email/restoreEmailCampaigns`,deletedCampaigns);
-      return response.data
+      const response=await instence.post(`report/ExportEmailDirectReport`);
+      return JSON.parse(response.data)
     } catch(error) {
       return thunkAPI.rejectWithValue({error: error.message});
     }
-  })
+  }
+)
 
-export const deleteCampaign=createAsyncThunk(
-  'email/deleteEmailCampaign/',async (id,thunkAPI) => {
+export const restoreCampaigns = createAsyncThunk(
+  'email/restoreEmailCampaigns', async (deletedCampaigns, thunkAPI) => {
     try {
-      const response=await instence.delete(`email/deleteEmailCampaign/${id}`);
+      const response = await instence.put(`email/restoreEmailCampaigns`, deletedCampaigns);
       return response.data
-    } catch(error) {
-      return thunkAPI.rejectWithValue({error: error.message});
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
 
-export const duplicteCampaign=createAsyncThunk(
-  'email/cloneCampaign',async (id,thunkAPI) => {
+export const deleteCampaign = createAsyncThunk(
+  'email/deleteEmailCampaign/', async (id, thunkAPI) => {
     try {
-      const response=await instence.put(`email/cloneCampaign/${id}`);
+      const response = await instence.delete(`email/deleteEmailCampaign/${id}`);
       return response.data
-    } catch(error) {
-      return thunkAPI.rejectWithValue({error: error.message});
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+export const duplicteCampaign = createAsyncThunk(
+  'email/cloneCampaign', async (id, thunkAPI) => {
+    try {
+      const response = await instence.put(`email/cloneCampaign/${id}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
 
@@ -71,24 +104,42 @@ export const newsletterSlice=createSlice({
   initialState: {
     newslettersData: [],
     newslettersDeletedData: [],
-    newslettersDataError: ''
+    newslettersDataError: '',
+    newslettersReports: [],
+    newslettersReportsError: '',
+    directNewsletterReport: {},
+    directNewsletterReportError: ''
   },
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(getNewslatterData.fulfilled,(state,{payload}) => {
-      state.newslettersData=payload.filter(row => !row.IsDeleted)
-      state.newslettersDeletedData=payload.filter(row => row.IsDeleted)
+    builder.addCase(getNewslatterData.fulfilled, (state, { payload }) => {
+      state.newslettersData = payload.filter(row => !row.IsDeleted)
+      state.newslettersDeletedData = payload.filter(row => row.IsDeleted)
     })
-    builder.addCase(getNewslatterData.rejected,(state,action) => {
-      state.newslettersDataError=action.error.message
+    builder.addCase(getNewslatterData.rejected, (state, action) => {
+      state.newslettersDataError = action.error.message
     })
-    builder.addCase(restoreCampaigns.fulfilled,() => {console.log('api restoreCampaigns success')})
-    builder.addCase(deleteCampaign.fulfilled,() => {console.log('api deleteCampaign success')})
-    builder.addCase(duplicteCampaign.fulfilled,() => {console.log('api duplicteCampaign success')})
+    builder.addCase(getNewsletterReports.fulfilled, (state, { payload }) => {
+      state.newslettersReports = payload
+    })
+    builder.addCase(getNewsletterReports.rejected, (state, action) => {
+      state.newslettersReportsError = action.error.message
+    })
+    builder.addCase(getNewsletterDirectReport.fulfilled, (state, { payload }) => {
+      state.directNewsletterReport = payload
+    })
+    builder.addCase(getNewsletterDirectReport.rejected, (state, action) => {
+      state.directNewsletterReportError = action.error.message
+    })
+    builder.addCase(restoreCampaigns.fulfilled, () => { console.log('api restoreCampaigns success') })
+    builder.addCase(deleteCampaign.fulfilled, () => { console.log('api deleteCampaign success') })
+    builder.addCase(duplicteCampaign.fulfilled, () => { console.log('api duplicteCampaign success') })
+    builder.addCase(downloadNewsletterReport.fulfilled, () => { console.log('api downloadNewsletterReport success') })
 
-    builder.addCase(restoreCampaigns.rejected,(_,action) => {console.log('Error - api restoreCampaigns: '+action.error)})
-    builder.addCase(deleteCampaign.rejected,(_,action) => {console.log('Error - deleteCampaign: '+action.error)})
-    builder.addCase(duplicteCampaign.rejected,(_,action) => {console.log('Error - duplicteCampaign: '+action.error)})
+    builder.addCase(restoreCampaigns.rejected, (_, action) => { console.log('Error - api restoreCampaigns: ' + action.error) })
+    builder.addCase(deleteCampaign.rejected, (_, action) => { console.log('Error - deleteCampaign: ' + action.error) })
+    builder.addCase(duplicteCampaign.rejected, (_, action) => { console.log('Error - duplicteCampaign: ' + action.error) })
+    builder.addCase(downloadNewsletterReport.rejected, (_, action) => { console.log('Error - downloadNewsletterReport', action.error) })
   }
 })
 

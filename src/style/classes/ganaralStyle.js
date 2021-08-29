@@ -227,12 +227,49 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   defaultScreen: {
     'overflow': 'visible'
+    //maxHeight: 'calc(100vh - 53px)'
   },
   pulseemIcon: {
     fontFamily: 'pulseemicons'
   },
-  maxWidth385: {
-    maxWidth: 385
+  borderAround: {
+    border: '1px solid #000'
+  },
+  borderBottom1: {
+    borderBottom: '1px solid #ccc'
+  },
+  dBlock: {
+    display: 'block'
+  },
+  dFlex: {
+    display: 'flex'
+  },
+  rtlSwitch: {
+    transform: 'rotateY(180deg)'
+  },
+  alignItemsCenter: {
+    alignItems: 'center'
+  },
+  w80: {
+    width: '80%'
+  },
+  w110: {
+    width: 110
+  },
+  lineHeight1point2: {
+    lineHeight: 1.2
+  },
+  w25: {
+    width: 25
+  },
+  maxHeight87: {
+    maxHeight: 87
+  },
+  w20: {
+    width: '20%'
+  },
+  minWidth100: {
+    minWidth: 100
   },
   borderAround: {
     border: '1px solid #000'
@@ -606,5 +643,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   report: {
     maxWidth: 1920
+  },
+  blackDivider: {
+    height: 2,
+    backgroundColor: 'rgb(0, 0, 0, 0.5)'
+  },
+  noWrap: {
+    flexWrap: 'nowrap'
   }
 })

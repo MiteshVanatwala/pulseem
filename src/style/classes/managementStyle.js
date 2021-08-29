@@ -129,7 +129,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: 20,
     marginBlock: 0,
     borderBottom: 0,
-    padding: '16px!important'
+    padding: '16px 10px!important'
   },
   tableCellBody: {
     borderInlineEnd: '1px solid #797979',
@@ -268,8 +268,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   managmentIcon: {
     width: iconWidth[windowSize],
-    margin: 'auto',
-    marginTop: -10
+    margin: 'auto'
   },
   managmentUicon: {
     fontSize: 30,
@@ -832,7 +831,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   previewCardContent: {
     display: 'flex',
     alignItems: 'center',
-    justify: 'center',
+    justifyContent: 'center',
     padding: 0,
     minHeight: 115
   },
@@ -1007,7 +1006,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     height: shortcutPaperHeight[windowSize],
     [theme.breakpoints.down('xs')]: {
       margin: '10px 10px -10px 10px'
-    }
+    },
+    boxShadow: isRTL ? '4px 0px 5px 0px rgba(0,0,0, 0.2)' : '-4px 0px 5px 0px rgba(0,0,0, 0.2) '
   },
   shortcutPaper: {
     [theme.breakpoints.down('xs')]: {
@@ -1133,7 +1133,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   barChart: {
     // maxWidth: 500,
-    float: 'right',
+    float: isRTL ? 'left' : 'right',
     '& canvas': {
       // width: barWidth[windowSize],
       height: barHeight[windowSize]

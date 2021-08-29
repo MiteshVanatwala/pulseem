@@ -1,6 +1,6 @@
 {
   "name": "pulseem-react-app",
-  "version": "0.4.2",
+  "version": "0.4.1",
   "private": true,
   "homepage": "https://www.reactstage.club/react/",
   "dependencies": {
@@ -29,6 +29,7 @@
     "react": "^17.0.1",
     "react-chartjs-2": "^3.0.3",
     "react-copy-to-clipboard": "^5.0.3",
+    "react-csv": "^2.0.3",
     "react-dom": "^17.0.1",
     "react-ellipsis-pjs": "^2.1.2",
     "react-helmet": "^6.1.0",

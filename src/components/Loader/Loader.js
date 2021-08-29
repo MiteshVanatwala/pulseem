@@ -16,19 +16,31 @@ export const Loader = ({
   color = "inherit",
   size = 80,
   thickness = 3.6,
-  variant = 'indeterminate'
+  variant = 'indeterminate',
+  showBackdrop = true
+
 }) => {
   const classes = useStyles();
   return (
     <div>
-      <Backdrop className={classes.backdrop} open={isOpen}>
+      {showBackdrop ? (<Backdrop className={classes.backdrop} open={isOpen}>
         <CircularProgress
+          style={{ position: 'absolute', right: 0, left: 0, textAlign: 'center', margin: '0 auto' }}
           color={color}
           size={size}
           thickness={thickness}
           variant={variant}
         />
-      </Backdrop>
+      </Backdrop>)
+        :
+        (<CircularProgress
+          style={{ position: 'absolute', right: 0, left: 0, textAlign: 'center', margin: '0 auto', display: isOpen ? 'block' : 'none' }}
+          color={color}
+          size={size}
+          thickness={thickness}
+          variant={variant}
+        />)
+      }
     </div>
   );
 }
