@@ -491,7 +491,9 @@ const SmsCreator = ({ classes }, props) => {
                   </ToggleButton>
                 </ToggleButtonGroup>
                 <div className={classes.pickerEmoji}>
-                  {flagemoji ? <Picker onEmojiClick={onEmojiClick} /> : null}
+                  {flagemoji ? <Picker onEmojiClick={onEmojiClick}  groupVisibility={{
+    flags: false,
+  }}/> : null}
 
                   <Tooltip
           disableFocusListener
