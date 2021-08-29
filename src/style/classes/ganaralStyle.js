@@ -1667,6 +1667,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     verticalAlign: 'middle',
     marginInlineEnd: '8px'
   },
+  reactSwitchHe :{
+    verticalAlign: 'middle',
+    marginInlineEnd: '8px',
+    transform: 'rotateY(180deg)'
+  },
   icn : 
   {
     fontSize:"30px",

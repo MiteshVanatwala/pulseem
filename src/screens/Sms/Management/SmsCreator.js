@@ -616,7 +616,7 @@ const SmsCreator = ({ classes }, props) => {
         <div className={classes.switchDiv}>
           <FormGroup>
             <Switch
-              className={classes.reactSwitch}
+              className={isRTL ? classes.reactSwitchHe :  classes.reactSwitch}
               checked={keep}
               onChange={toggleKeep}
               onColor="#28a745"
@@ -688,7 +688,7 @@ const SmsCreator = ({ classes }, props) => {
               onColor="#28a745"
               checkedIcon={false}
               uncheckedIcon={false}
-              className={classes.reactSwitch}
+              className={isRTL ? classes.reactSwitchHe :  classes.reactSwitch}
             />
           </FormGroup>
           <div
