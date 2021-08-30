@@ -1928,5 +1928,26 @@ marginTop:"10px"
     fontSize: "15px",
     color: "rgb(170, 170, 170)",
     cursor: "pointer",
+  },
+  selectedGroupsDiv : 
+  {
+    padding: "6px",
+    borderRadius: "20px",
+    backgroundColor: "#1771ad",
+    marginInlineEnd: "4px",
+    marginBottom: "4px",
+    color: "white",
+    display:"flex",
+    alignItems:"center"
+  },
+  nameGroup :
+  {
+    marginInlineEnd:"4px"
+  },
+  groupCloseicn : 
+  {
+    color:"#fff",
+    cursor:"pointer"
+
   }
 });

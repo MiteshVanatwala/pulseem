@@ -35,6 +35,7 @@ import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
+import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid } from "@material-ui/core";
@@ -807,25 +808,16 @@ const SmsCreator = ({ classes }, props) => {
                           {selectedGroup.map((item, index) => {
                             if (item.selected && hidden) {
                               return (
-                                <div
-                                  style={{
-                                    width: "70px",
-                                    padding: "6px",
-                                    borderRadius: "20px",
-                                    backgroundColor: "#1771ad",
-                                    marginInlineEnd: "4px",
-                                    marginBottom: "4px",
-                                    color: "white",
-                                  }}
+                                <div className={classes.selectedGroupsDiv}
                                 >
-                                  {item.GroupName}
-                                  <span
+                                 <span className={classes.nameGroup}>{item.GroupName}</span> 
+                                  <RiCloseFill className={classes.groupCloseicn}
                                     onClick={() => {
                                       handleCross(index);
                                     }}
-                                  >
-                                    X
-                                  </span>
+                                  />
+                                   
+                                 
                                 </div>
                               );
                             }
