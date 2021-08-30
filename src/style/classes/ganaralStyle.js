@@ -803,6 +803,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: "red",
     padding: "10px",
     backgroundColor: "#1c82b2",
+    cursor:"pointer",
     borderColor: "#1c82b2",
     marginInlineStart: "5px",
     "@media screen and (max-width: 768px)": {
@@ -814,12 +815,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   info2Buttons: {
     borderRadius: "20px",
-    width: "77px",
+    width: "111px",
     fontSize:"11px",
     color: "white",
     backgroundColor: "red",
     padding: "10px",
     backgroundColor: "#1c82b2",
+    cursor:"pointer",
     borderColor: "#1c82b2",
     marginInlineStart: "3px",
     marginInlineEnd: "5px",
