@@ -1910,5 +1910,23 @@ marginTop:"10px"
     justifyContent:"space-between",
     alignItems:"center",
     marginTop:"15px"
+  },
+  listValues : 
+  {
+    fontSize: "20px", color: "red", fontWeight: "600"
+  },
+  campNameLi : 
+  {
+    marginBottom: "8px"
+  },
+  inputCampDiv : 
+  {
+    display: "flex", justifyContent: "space-between"
+  },
+  restoreBtn : 
+  {
+    fontSize: "15px",
+    color: "rgb(170, 170, 170)",
+    cursor: "pointer",
   }
 });

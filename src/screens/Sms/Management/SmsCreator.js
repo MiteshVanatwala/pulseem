@@ -399,17 +399,12 @@ const SmsCreator = ({ classes }, props) => {
           </span>
         </div>
         <div className={classes.buttonForm}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            {" "}
+          <div  className={classes.inputCampDiv}>
             <span className={classes.buttonHead}>
               {t("mainReport.campFrom")}
             </span>
             <span
-              style={{
-                fontSize: "15px",
-                color: "rgb(170, 170, 170)",
-                cursor: "pointer",
-              }}
+              className={classes.restoreBtn}
               onClick={() => {
                 setrestoreBool(!restoreBool);
               }}
@@ -432,7 +427,7 @@ const SmsCreator = ({ classes }, props) => {
         {restoreBool ? (
           <div className={classes.buttonForm}>
             <span className={clsx(classes.buttonHead)}>
-              {" "}
+              
               {t("mainReport.removalReply")}
             </span>
             <input
@@ -1558,8 +1553,8 @@ const SmsCreator = ({ classes }, props) => {
           </span>
         </div>
         <div>
-          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }}>
-            <li style={{ marginBottom: "8px" }}>
+          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.listValues}>
+            <li  className={classes.campNameLi}>
               Campaign Name - Required field
             </li>
             <li>Text for sending - Required field</li>
