@@ -94,7 +94,6 @@ const SmsCreator = ({ classes }, props) => {
   );
   const { previousLandingData, previousCampaignData, extraData, accountId ,getCampaignSum} =
     useSelector((state) => state.sms);
-    console.log("aajaa",getCampaignSum)
   const [alignment, setAlignment] = useState("left");
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [flagemoji, setflagemoji] = useState(false);
@@ -142,8 +141,9 @@ const SmsCreator = ({ classes }, props) => {
   const [summary, setsummary] = useState(false);
   const [total, settotal] = useState(0);
   const [temp, settemp] = useState([]);
+  const [selectValue, setselectValue] = useState("");
 
-  console.log("accountId Outer", accountId);
+
 
   const getData = async () => {
     await dispatch(getPreviousLandingData());
@@ -179,19 +179,18 @@ const SmsCreator = ({ classes }, props) => {
   useEffect(() => {}, [removalMessageButtonDisabled]);
 
   useEffect(() => {
-    console.log("heyyyyyyy", selectedGroup);
+    
   }, [selectedGroup]);
   useEffect(() => {
-    console.log("props", classes);
+   
   }, []);
 
   useEffect(() => {
     let temp = [];
-    console.log("Acoount Id inner", accountId);
     for (let i = 0; i < accountId.length; i++) {
       temp.push(accountId[i]);
     }
-    console.log("heyyyyy2", temp);
+    
     setselectedGroup(temp);
   }, [accountId]);
 
@@ -263,8 +262,7 @@ const SmsCreator = ({ classes }, props) => {
 
   const onCampaignNumber = (e) => {
     setstoredValue(campaignNumber);
-    console.log("camp", campaignNumber);
-
+   
     if (!modalOpen) {
       setalertToggle(true);
     } else {
@@ -453,6 +451,15 @@ const SmsCreator = ({ classes }, props) => {
     setremovalMessageButtonDisabled(true);
   };
 
+  const handleSelectChange = (e) =>
+  {
+    setselectValue(e.target.value);
+    let linkMsg = "";
+    linkMsg = msg + e.target.value;
+    setmsg(linkMsg);
+    setcharacterCount(linkMsg.length);
+  }
+
   const renderMsg = () => {
     return (
       <div className={classes.msgDiv}>
@@ -546,11 +553,17 @@ const SmsCreator = ({ classes }, props) => {
               </div>
               <div className={classes.endButtons}>
                 <div className={classes.selectMsg}>
-                  <select className={classes.selectVal}>
-                    <option>Personliazation</option>
-                    <option>First Name</option>
-                    <option>Last Name</option>
-                    <option>Email</option>
+                  <select className={classes.selectVal} value={selectValue} onChange={handleSelectChange}>
+                  {
+                   Object.keys(extraData).map((item, i) => {
+
+                return(<option value={extraData[item]}>{item}</option>
+  
+            )
+
+          })
+      }
+                   
                   </select>
                 </div>
                 <div className={classes.addDiv}>
@@ -900,7 +913,7 @@ const SmsCreator = ({ classes }, props) => {
         UpdateDate: 1628755539174,
       };
       let r = await dispatch(smsSave(payload));
-      console.log("response", r);
+    
       sessionStorage.setItem(
         "data",
         JSON.stringify({
