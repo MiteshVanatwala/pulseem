@@ -1907,5 +1907,13 @@ marginTop:"10px"
     justifyContent:"space-between",
     alignItems:"center",
     marginTop:"15px"
+  },
+  removalLink : 
+  {
+    marginInlineEnd: "5px",cursor:"pointer"
+  },
+  removalMsg : 
+  {
+    marginInlineEnd: "5px",cursor:"pointer"
   }
 });
