@@ -799,7 +799,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     }}
                   />
                   <span  className={selectedGroups.length >=2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
-                  <span  className={classes.iconNew}>New!</span>
+                  <span className={classes.iconNew}>New!</span>
                   <Tooltip
                     disableFocusListener
                     title={t("mainReport.tooltipCreateGroup")}
