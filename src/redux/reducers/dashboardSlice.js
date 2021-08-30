@@ -51,26 +51,6 @@ export const buySmsPackage = createAsyncThunk(
     }
   });
 
-export const getShortcuts = createAsyncThunk(
-  'dashboard/GetShortcuts', async (_, thunkAPI) => {
-    try {
-      const response = await instence.get(`dashboard/GetShortcuts`);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
-export const setShortcuts = createAsyncThunk(
-  'dashboard/SetShortcut', async (data, thunkAPI) => {
-    try {
-      const response = await instence.post(`dashboard/SetShortcut`, data);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
 
 export const dashboardSlice = createSlice({
   name: 'dashboard',
@@ -82,7 +62,6 @@ export const dashboardSlice = createSlice({
     lastCampaignReportError: '',
     packagesDetailsError: '',
     tipsError: '',
-    shortcuts: [],
     shortcutsError: ''
   },
   extraReducers: builder => {
@@ -105,12 +84,6 @@ export const dashboardSlice = createSlice({
       })
       .addCase(getTips.rejected, (state, action) => {
         state.tipsError = action.error.message
-      })
-      .addCase(getShortcuts.fulfilled, (state, { payload }) => {
-        state.shortcuts = payload;
-      })
-      .addCase(getShortcuts.rejected, (state, action) => {
-        state.shortcutsError = action.error.message
       })
   }
 })

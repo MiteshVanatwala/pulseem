@@ -12,7 +12,7 @@ import LatestReports from '../../components/Reports/LatestReports';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize } = useSelector(state => state.core);
-  const { lastCampaignReport, tips, shortcuts } = useSelector(state => state.dashboard);
+  const { lastCampaignReport, tips } = useSelector(state => state.dashboard);
   const { t } = useTranslation();
 
   return (
@@ -51,7 +51,6 @@ const DashboardScreen = ({ classes }) => {
         <Grid item xs={12} sm={3} md={2}>
           <Shortcut
             classes={classes}
-            shortcuts={shortcuts}
           />
         </Grid>
       </Grid>
