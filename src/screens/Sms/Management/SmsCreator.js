@@ -142,6 +142,8 @@ const SmsCreator = ({ classes }, props) => {
   const [summary, setsummary] = useState(false);
   const [total, settotal] = useState(0);
   const [temp, settemp] = useState([]);
+  const [uniqueId, setuniqueId] = useState(null);
+  const [finalApi, setfinalApi] = useState(false);
 
   console.log("accountId Outer", accountId);
 
@@ -151,9 +153,56 @@ const SmsCreator = ({ classes }, props) => {
     setLoader(false);
   };
 
-  const onApiCall = () => 
+  const onApiCall = async () => 
   {
-    alert("hi");
+
+    let temp = [];
+    for(let i = 0 ; i<selectedGroup.length; i++)
+    {
+      if(selectedGroup[i].selected)
+      {
+        temp.push(selectedGroup[i].GroupID);
+      }
+     
+    }
+   let payload = {
+    CreditsPerSms: "1",
+    FromNumber: campaignNumber,
+    IsLinksStatistics: true,
+    IsResponse: false,
+    IsTest: true,
+    IsTestCampaign: false,
+    LogData: 
+    {SmsCampaignID: uniqueId,
+     SubAccountID: 7878,
+      AccountID: 6722, 
+      Credits: "1", 
+      TotalRecipients: 1
+    },
+    AccountID: 6722,
+    Credits: "1",
+    SmsCampaignID: uniqueId,
+    SubAccountID: 7878,
+    TotalRecipients: 1,
+    Name: campaignName,
+    ResponseToEmail: "",
+    SMSCampaignID: uniqueId,
+    SMSCampaignId: uniqueId,
+    SendDate: 1630325875398,
+    SendingMethod: 0,
+    Status: 1,
+    SubAccountID: -1,
+    TestGroupsIds: temp,
+    Text: msg,
+    Type: 0,
+    UpdateDate: 1630325875398
+   }
+   await dispatch(smsQuick(payload));
+   setfinalApi(true);
+   setsummary(false);
+   
+
+
   }
   const getDataCamapaign = async () => {
     await dispatch(getPreviousCampaignData());
@@ -292,6 +341,13 @@ const SmsCreator = ({ classes }, props) => {
     }
 
     setOpenS(false);
+  };
+  const handleCloseSnackbarApi = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setfinalApi(false);
   };
   const handleSend = () => {
     if (validationCheck()) {
@@ -1023,6 +1079,7 @@ const SmsCreator = ({ classes }, props) => {
     }
     settotal(num);
     settemp(tempfull);
+    setuniqueId(r.payload.Message);
     let payload2 = 
     {
       IsTestGroups: true,
@@ -1574,6 +1631,20 @@ const SmsCreator = ({ classes }, props) => {
       {renderExit()}
       {renderAlert()}
       {renderSummary()}
+      <Snackbar
+                      open={finalApi}
+                      autoHideDuration={2000}
+                      onClose={handleClose}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "center",
+                      }}
+                      style={{ zIndex: "9999" }}
+                    >
+                      <Alert severity="success" onClose={handleCloseSnackbarApi}>
+                      Succesfully Sent
+                      </Alert>
+                    </Snackbar>
     </DefaultScreen>
   );
 };
