@@ -782,23 +782,13 @@ const SmsCreator = ({ classes }, props) => {
                     value="bottom"
                     control={<Radio color="primary" id="bottom" />}
                   />
-                  <span>{t("mainReport.sendToGroups")} <span style={{backgroundColor:"#dc3545",color:"#fff",borderRadius:"5px",padding:"5px",fontWeight:"600"}}>New!</span></span>
+                  <span>{t("mainReport.sendToGroups")} <span  className={classes.newIcn}>New!</span></span>
                 </div>
                 {radioBtn === "bottom" ? (
                   <div className={classes.rightForm}>
                     <div
-                      style={{
-                        width: "280px",
-                        
-                        height: "30px",
-                       
-                        padding: "8px",
-                        border: "1px solid #bbb",
-                        borderRadius: "5px",
-                        color: "#bbb",
-                        maxHeight: "30px",
-                        overflowY: "auto",
-                      }}
+                    
+                      className={classes.contactGroupDiv}
                       onClick={() => {
                         setcontactGroup(true);
                       }}
@@ -806,26 +796,13 @@ const SmsCreator = ({ classes }, props) => {
                       <div> Choose test groups from the list</div>
                       {hidden ? (
                         <div
-                          style={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            marginTop: "5px",
-                          }}
+                          className={classes.mappedGroup}
                         >
-                          {" "}
                           {selectedGroup.map((item, index) => {
                             if (item.selected && hidden) {
                               return (
                                 <div
-                                  style={{
-                                    width: "70px",
-                                    padding: "6px",
-                                    borderRadius: "20px",
-                                    backgroundColor: "#1771ad",
-                                    marginInlineEnd: "4px",
-                                    marginBottom: "4px",
-                                    color: "white",
-                                  }}
+                                  className={classes.bubbleGroups}
                                 >
                                   {item.GroupName}
                                   <span

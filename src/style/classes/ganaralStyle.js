@@ -1907,5 +1907,38 @@ marginTop:"10px"
     justifyContent:"space-between",
     alignItems:"center",
     marginTop:"15px"
+  },
+  contactGroupDiv : 
+  {
+    width: "280px",
+                        
+    height: "30px",
+   
+    padding: "8px",
+    border: "1px solid #bbb",
+    borderRadius: "5px",
+    color: "#bbb",
+    maxHeight: "30px",
+    overflowY: "auto",
+  },
+  newIcn :
+  {
+    backgroundColor:"#dc3545",color:"#fff",borderRadius:"5px",padding:"5px",fontWeight:"600"
+  },
+  mappedGroup : 
+  {
+    display: "flex",
+    flexWrap: "wrap",
+    marginTop: "5px",
+  },
+  bubbleGroups : 
+  {
+    width: "70px",
+    padding: "6px",
+    borderRadius: "20px",
+    backgroundColor: "#1771ad",
+    marginInlineEnd: "4px",
+    marginBottom: "4px",
+    color: "white",
   }
 });
