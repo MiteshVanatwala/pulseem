@@ -856,6 +856,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
+    cursor:"pointer",
 
     width: "62px",
   },
