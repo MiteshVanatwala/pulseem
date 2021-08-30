@@ -224,7 +224,8 @@ const Shortcut = ({ classes, windowSize }) => {
     setPageOpen(false);
     setLoading(loading);
     dispatch(setShortcuts(data)).then(() => {
-      initData()
+      //initData()
+      dispatch(getShortcuts());
       setLoading({});
     })
   });
