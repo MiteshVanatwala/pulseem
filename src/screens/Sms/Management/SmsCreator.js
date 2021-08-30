@@ -27,7 +27,8 @@ import {
   deleteSms,
   smsSaveGroup,
   smsQuick,
-  getCampaignSumm
+  getCampaignSumm,
+  getCreditsforSMS
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
 import { FcDocument } from "react-icons/fc";
@@ -308,6 +309,7 @@ const SmsCreator = ({ classes }, props) => {
   const onCamppaignChange = (e) => {
     setcampaignName(e.target.value);
     setcampaignBool(false);
+    
   };
 
   const onCampaignNumber = (e) => {
@@ -454,12 +456,12 @@ const SmsCreator = ({ classes }, props) => {
       </div>
     );
   };
-  const onMsgChange = (e) => {
+  const onMsgChange = async (e) => {
     if (e.target.value.length < msg.length) {
       setremovalMessageButtonDisabled(false);
       setremovalLinkDisabled(false);
     }
-
+   
     setmsg(e.target.value);
     setcharacterCount(e.target.value.length);
  
@@ -473,6 +475,7 @@ const SmsCreator = ({ classes }, props) => {
         count++;
       }
     }
+
 
     const linkRegex =
       /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -488,7 +491,7 @@ const SmsCreator = ({ classes }, props) => {
     } else {
       setlinkCount(0);
     }
-  
+    await dispatch(getCreditsforSMS(e.target.value.length))
     setmessageCount(count);
     
   };
