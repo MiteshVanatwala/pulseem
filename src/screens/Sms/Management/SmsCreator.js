@@ -580,24 +580,9 @@ const SmsCreator = ({ classes }, props) => {
                       seteditmenuClick(!editmenuClick);
                     }}
                   >
-                    <span
-                      style={{
-                        marginInlineEnd: "3px",
-                        border: "2px solid #17a2b8",
-                        borderRadius: "50%",
-                        padding: "5px",
-                        width: "12px",
-                        height: "12px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "#17a2b8",
-                      
-                        fontSize: "19px",
-                        fontWeight: "700",
-                      }}
+                    <span className={classes.addBtn}
                     >
-                     <span style={{marginBottom:"2px"}}>+</span> 
+                     <span className={classes.plusIcn}>+</span> 
                     </span>
                     ADD
                   </span>

@@ -1906,5 +1906,24 @@ marginTop:"10px"
     justifyContent:"space-between",
     alignItems:"center",
     marginTop:"15px"
+  },
+  addBtn : 
+  {
+    marginInlineEnd: "3px",
+    border: "2px solid #17a2b8",
+    borderRadius: "50%",
+    padding: "5px",
+    width: "12px",
+    height: "12px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#17a2b8",
+    fontSize: "19px",
+    fontWeight: "700",
+  },
+  plusIcn :
+  {
+    marginBottom:"2px"
   }
 });
