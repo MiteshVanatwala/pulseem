@@ -10,8 +10,6 @@ const redirectToLogin=() => {
   window.location.href='/Pulseem/Login.aspx?ReturnUrl=/Pulseem/homepage.aspx?fromreact=true'
 }
 
-let lastRequest = Date.now();
-
 export const logout=async () => {
   try {
     await axios.get(logoutURL)
@@ -44,11 +42,6 @@ customInstance.defaults.credentials = 'include';
 
 instence.interceptors.request.use(async config => {
   try {
-    const sourceDateMin = new Date(lastRequest).getMinutes();
-    const currentDateMin = new Date().getMinutes();
-
-    console.log(currentDateMin - sourceDateMin);
-
     const jtoken=getCookie('jtoken')
     let token=jtoken
     if(isProdMode) {
@@ -56,25 +49,18 @@ instence.interceptors.request.use(async config => {
         redirectToLogin()
         return Promise.reject('Unautorized')
       }
-      const language=getCookie('Culture');
-
-      if(currentDateMin - sourceDateMin > 5){
-        lastRequest = Date.now();
-      }
-      else {
-        const {data,request}=await axios.get(refreshTokenURL,{
-          headers: {
-            language
-          }
-        })
-        if(refreshTokenURL!==request.responseURL) {
-          redirectToLogin()
-          return Promise.reject('Unautorized')
+      const language=getCookie('Culture')
+      const {data,request}=await axios.get(refreshTokenURL,{
+        headers: {
+          language
         }
-        token=data
-        setCookie('jtoken',token)
+      })
+      if(refreshTokenURL!==request.responseURL) {
+        redirectToLogin()
+        return Promise.reject('Unautorized')
       }
-      
+      token=data
+      setCookie('jtoken',token)
     }
     config.headers.Authorization=`Bearer ${token}`
     return config
