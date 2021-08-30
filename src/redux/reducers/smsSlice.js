@@ -28,6 +28,16 @@ export const getSmsData = createAsyncThunk(
           return thunkAPI.rejectWithValue({error: error.message});
         }
       })
+
+      export const getFinishedCampaigns=createAsyncThunk(
+        'smsCampaign/GetFinishedSmsCampaigns',async (_,thunkAPI) => {
+          try {
+            const response=await instence.get(`smsCampaign/GetFinishedSmsCampaigns`);
+            return JSON.parse(response.data)
+          } catch(error) {
+            return thunkAPI.rejectWithValue({error: error.message});
+          }
+        })
       export const getAccountExtraData=createAsyncThunk(
         'smsCampaign/GetAccountExtraData',async (_,thunkAPI) => {
           try {
@@ -266,6 +276,7 @@ export const smsSlice = createSlice({
     extraData : [],
     accountId : [],
     getCampaignSum : [],
+    finishedCampaigns : [],
 
     directSmsReport: {},
     directSmsReportError: '',
@@ -294,6 +305,11 @@ export const smsSlice = createSlice({
     builder.addCase(getPreviousLandingData.fulfilled,(state,{payload}) => {
       state.previousLandingData=payload
     })
+
+    builder.addCase(getFinishedCampaigns.fulfilled,(state,{payload}) => {
+      state.finishedCampaigns=payload
+    })
+
     builder.addCase(getPreviousCampaignData.fulfilled,(state,{payload}) => {
       state.previousCampaignData=payload
     })

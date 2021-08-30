@@ -233,9 +233,9 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     />
                 </FormControl>
                 <Box>
-                <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{height:"36px",color:"#1D82B3",fontWeight:"600"}}>
+             {selectedList.length > 0 ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{height:"36px",color:"#1D82B3",fontWeight:"600"}}>
                     <BsFilter style={{fontSize:"22px",color:"#1D82B3"}}/>  {t("mainReport.recipientFilter")}
-                    </Button>
+                    </Button> : null }  
                     <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={() => { handleSortDirection() }}>
                         {sortDirection === 'asc' ? <BiSortDown /> : <BiSortUp />}
                     </Button>

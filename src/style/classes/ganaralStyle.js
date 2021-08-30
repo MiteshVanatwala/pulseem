@@ -1207,6 +1207,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "700px",
     marginTop: "20px",
   },
+  listDivFilter :
+  {
+    height: "300px",
+    maxHeight: "200px",
+    width: "700px",
+    marginTop: "20px",
+    overflowY:"auto"
+  },
   searchCon: {
     padding: "12px",
     display:"flex",
@@ -1632,6 +1640,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   grDoc :
   {
+    border : "2px solid #48a148",
+    borderRadius:"50%",
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
+    padding:"8px",
+    color : "#48a148"
+  },
+  blueDoc : 
+  {
     border : "2px solid #3DA6F7",
     borderRadius:"50%",
     display:"flex",
@@ -1846,6 +1864,9 @@ marginTop:"10px"
     justifyContent:"center",
     height:"40px",
     width:"100%",
+    maxWidth:"702px",
+    overflowY:"auto",
+    flexWrap:"wrap",
     backgroundColor:"#F7F7F7",
   },
   manualModal : 

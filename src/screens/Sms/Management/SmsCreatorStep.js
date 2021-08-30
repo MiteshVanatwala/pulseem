@@ -7,16 +7,15 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import moment from "moment";
 import { MdAutorenew } from "react-icons/md";
 import { FaRegCalendarAlt } from "react-icons/fa";
-
 import PropTypes from "prop-types";
 import { DateField, Dialog } from "../../../components/managment/index";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
-
 import { parse } from "papaparse";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import IconButton from "@material-ui/core/IconButton";
+import { FaCheck } from 'react-icons/fa';
 import CloseIcon from "@material-ui/icons/Close";
 import SortIcon from "@material-ui/icons/Sort";
 import FilterListIcon from "@material-ui/icons/FilterList";
@@ -39,14 +38,12 @@ import {
   Divider,
 } from "@material-ui/core";
 import {
-  getPreviousCampaignData,
-  getPreviousLandingData,
-  getAccountExtraData,
   getAccountId,
   smsCombinedGroup,
   smsCampSettings,
   getCampaignSumm,
   getManual,
+  getFinishedCampaigns
 } from "../../../redux/reducers/smsSlice";
 import { AiOutlineDelete } from "react-icons/ai";
 import Summary from "./smsSummary";
@@ -70,16 +67,11 @@ const useStyleNew = makeStyles((theme) => ({
     width: 400,
   },
   input: {
-    //   marginLeft: theme.spacing(1),
     flex: 1,
   },
   iconButton: {
     padding: 10,
   },
-  // divider: {
-  //   height: 28,
-  //   margin: 4,
-  // },
 }));
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -129,7 +121,7 @@ const SmsCreatorStep = ({ classes }) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { previousLandingData, previousCampaignData, extraData, accountId } =
+  const { previousLandingData, previousCampaignData, extraData, accountId ,finishedCampaigns } =
     useSelector((state) => state.sms);
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -140,6 +132,7 @@ const SmsCreatorStep = ({ classes }) => {
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
   const [groupList, setGroupList] = useState([]);
+  const [filterGroups, setfilterGroups] = useState([]);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
   const [showGroupsList, setShowGroupsList] = useState(false);
   const [toggleChecked, settoggleChecked] = useState(false);
@@ -150,6 +143,7 @@ const SmsCreatorStep = ({ classes }) => {
   const [percentTrue, setpercentTrue] = useState(true);
   const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
+  const [campaignSearch, setcampaignSearch] = useState("");
   const [model, setModel] = useState({
     ID: 0,
     Name: "",
@@ -220,11 +214,20 @@ const [initialheadstate, setinitialheadstate] = useState([])
   
   
   const [headers, setheaders] = useState(initialheadstate);
+  const getData = async () => {
+    await dispatch(getFinishedCampaigns());
 
- 
+  };
   useEffect(() => {
     getAccount();
+   getData();
+   
   }, [dispatch]);
+ 
+
+
+ 
+ 
 
   const getAccount = async () => {
     const list = await dispatch(getAccountId());
@@ -233,6 +236,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
       tempGroupList.Id = tempGroupList.GroupID;
     }
     setGroupList(tempGroupList);
+    setfilterGroups(tempGroupList);
   };
   // console.log("new", contacts);
 
@@ -362,18 +366,18 @@ const [initialheadstate, setinitialheadstate] = useState([])
   };
   const handleSelect = (id) => {
     let tempArr = [];
-    for (let i = 0; i < selectedGroup.length; i++) {
+    for (let i = 0; i < filterGroups.length; i++) {
       if (id === i) {
-        if (selectedGroup[i].selected) {
-          tempArr.push({ ...selectedGroup[i], selected: false });
+        if (filterGroups[i].selected) {
+          tempArr.push({ ...filterGroups[i], selected: false });
         } else {
-          tempArr.push({ ...selectedGroup[i], selected: true });
+          tempArr.push({ ...filterGroups[i], selected: true });
         }
       } else {
-        tempArr.push(selectedGroup[i]);
+        tempArr.push(filterGroups[i]);
       }
     }
-    setselectedGroup(tempArr);
+    setfilterGroups(tempArr);
   };
 
   const inputGroup = (e) => {
@@ -761,17 +765,17 @@ const [initialheadstate, setinitialheadstate] = useState([])
         </div>
         <div>
           {groupClick ? (
-          <></>
-            // <Groups
-            //   classes={classes}
-            //   groupList={groupList}
-            //   selectedList={selectedGroups}
-            //   callbackSelectedGroups={callbackSelectedGroups}
-            //   callbackUpdateGroups={callbackUpdateGroups}
-            //   callbackSelectAll={callbackSelectAll}
-            //   callbackReciFilter={callbackFilter}
-            //   bool={true}
-            // />
+        
+            <Groups
+              classes={classes}
+              groupList={groupList}
+              selectedList={selectedGroups}
+              callbackSelectedGroups={callbackSelectedGroups}
+              callbackUpdateGroups={callbackUpdateGroups}
+              callbackSelectAll={callbackSelectAll}
+              callbackReciFilter={callbackFilter}
+              bool={true}
+            />
           ) : null}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div
@@ -890,6 +894,17 @@ const [initialheadstate, setinitialheadstate] = useState([])
       </div>
     );
   };
+  const handleCross = (id) => {
+    let temp = [];
+    for (let i = 0; i < filterGroups.length; i++) {
+      if (i == id) {
+        temp.push({ ...filterGroups[i], selected: false });
+      } else {
+        temp.push(filterGroups[i]);
+      }
+    }
+    setfilterGroups(temp);
+  };
   const handleReciClose = () => {
     setreciFilter(false);
   };
@@ -923,6 +938,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
             classes={classes}
             open={true}
             onClose={handleReciClose}
+            onConfirm={handleReciClose}
             showDefaultButtons={true}
             icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }} />}
           >
@@ -983,11 +999,39 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       className={classes.inputreci}
                       placeholder="Search"
                       inputProps={{ "aria-label": "Search" }}
+                      onChange={(e) => {
+                        setContactSearch(e.target.value);
+                      }}
                     />
                   </Paper>
-                  <div className={classes.reciList}>No Groups Selected</div>
+                  <div className={classes.reciList}> {filterGroups.map((item, index) => {
+                            if (item.selected) {
+                              return (
+                                <div
+                                  style={{
+                                   
+                                    padding: "6px",
+                                    borderRadius: "20px",
+                                    backgroundColor: "#1771ad",
+                                    marginInlineEnd: "4px",
+                                    marginBottom: "4px",
+                                    color: "white",
+                                  }}
+                                >
+                                  {item.GroupName}
+                                  <span
+                                    onClick={() => {
+                                      handleCross(index);
+                                    }}
+                                  >
+                                    X
+                                  </span>
+                                </div>
+                              );
+                            }
+                          })}</div>
                   <div
-                    className={classes.listDiv}
+                    className={classes.listDivFilter}
                     style={{
                       borderBottom: "1px solid #efefef",
                       borderLeft: "1px solid #efefef",
@@ -995,7 +1039,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       marginTop: "0",
                     }}
                   >
-                    {selectedGroups
+                    {filterGroups
                       .filter((val) => {
                         if (ContactSearch == "") {
                           return val;
@@ -1012,9 +1056,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
                           <div className={classes.searchCon}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
-                              className={classes.grDoc}
+                              className={item.selected ? classes.grDoc :  classes.blueDoc}
                             >
-                              {item.selected ? "hi" : <HiOutlineUserGroup />}
+                              {item.selected ? <FaCheck className={clsx(classes.green)}/> : <HiOutlineUserGroup />}
                             </span>
                             <div
                               style={{
@@ -1031,7 +1075,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                               >
                                 {item.GroupName}
                               </span>
-                              <span>19 Recipients</span>
+                              <span>{item.Recipients} Recipients</span>
                             </div>
                           </div>
                         );
@@ -1057,11 +1101,14 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       className={classes.inputreci}
                       placeholder="Search"
                       inputProps={{ "aria-label": "Search" }}
+                      onChange={(e) => {
+                        setcampaignSearch(e.target.value);
+                      }}
                     />
                   </Paper>
                   <div className={classes.reciList}>No Campaign's Selected</div>
                   <div
-                    className={classes.listDiv}
+                    className={classes.listDivFilter}
                     style={{
                       borderBottom: "1px solid #efefef",
                       borderLeft: "1px solid #efefef",
@@ -1069,13 +1116,13 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       marginTop: "0",
                     }}
                   >
-                    {selectedGroup
+                    {finishedCampaigns
                       .filter((val) => {
-                        if (ContactSearch == "") {
+                        if (campaignSearch == "") {
                           return val;
                         } else if (
-                          val.GroupName.toLowerCase().includes(
-                            ContactSearch.toLowerCase()
+                          val.Name.toLowerCase().includes(
+                            campaignSearch.toLowerCase()
                           )
                         ) {
                           return val;
@@ -1103,9 +1150,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
                                   handleSelect(idx);
                                 }}
                               >
-                                {item.GroupName}
+                                {item.Name}
                               </span>
-                              <span>19 Recipients</span>
+                            
                             </div>
                           </div>
                         );
@@ -1137,7 +1184,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
             >
               <FormControlLabel
                 value="1"
-                control={<Radio color="primary" />}
+                control={<Radio color="primary"/>}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.immediateSend")}
@@ -1290,7 +1337,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               >
                 <DateField
                   classes={classes}
-                  value={sendDate}
+                  value={null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
