@@ -9,7 +9,7 @@ import notificationReducer from './reducers/notificationSlice';
 import smsReducer from './reducers/smsSlice';
 import dashboardReducer from './reducers/dashboardSlice';
 import recipientReportsReducer from './reducers/recipientsReportSlice';
-import shortcutReducer from './reducers/shortcutSlice';
+//import shortcutReducer from './reducers/shortcutSlice';
 
 export default configureStore({
   reducer: {
@@ -23,6 +23,6 @@ export default configureStore({
     sms: smsReducer,
     dashboard: dashboardReducer,
     recipientReports: recipientReportsReducer,
-    shortcuts: shortcutReducer
+    //shortcuts: shortcutReducer
   },
 });
