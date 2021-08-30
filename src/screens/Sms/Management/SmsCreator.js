@@ -590,14 +590,14 @@ const SmsCreator = ({ classes }, props) => {
                       >
                         Landing Page Link
                       </span>
-                      <span
+                   {previousCampaignData.length == 0 ? null : <span
                         className={classes.dropCon}
                         onClick={() => {
                           setdialogClickCampaign(true);
                         }}
                       >
                         Campaign Link
-                      </span>
+                      </span>}   
                       <span
                         className={classes.dropCon}
                         onClick={() => {
