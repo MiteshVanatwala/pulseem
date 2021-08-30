@@ -28,7 +28,7 @@ import {
   smsSaveGroup,
   smsQuick,
   getCampaignSumm,
-  getCreditsforSMS
+  getCreditsforSMS,
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
 import { FcDocument } from "react-icons/fc";
@@ -42,7 +42,6 @@ import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlineDelete } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
-
 
 import Snackbar from "@material-ui/core/Snackbar";
 
@@ -83,7 +82,6 @@ const useStyleNew = makeStyles((theme) => ({
   },
 }));
 
-
 const SmsCreator = ({ classes }, props) => {
   const styles = useStyles();
   const btnStyle = useStyleNew();
@@ -93,9 +91,14 @@ const SmsCreator = ({ classes }, props) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { previousLandingData, previousCampaignData, extraData, accountId ,getCampaignSum} =
-    useSelector((state) => state.sms);
-    console.log("aajaa",getCampaignSum)
+  const {
+    previousLandingData,
+    previousCampaignData,
+    extraData,
+    accountId,
+    getCampaignSum,
+  } = useSelector((state) => state.sms);
+  console.log("aajaa", getCampaignSum);
   const [alignment, setAlignment] = useState("left");
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [flagemoji, setflagemoji] = useState(false);
@@ -154,57 +157,49 @@ const SmsCreator = ({ classes }, props) => {
     setLoader(false);
   };
 
-  const onApiCall = async () => 
-  {
-
+  const onApiCall = async () => {
     let temp = [];
-    for(let i = 0 ; i<selectedGroup.length; i++)
-    {
-      if(selectedGroup[i].selected)
-      {
+    for (let i = 0; i < selectedGroup.length; i++) {
+      if (selectedGroup[i].selected) {
         temp.push(selectedGroup[i].GroupID);
       }
-     
     }
-   let payload = {
-    CreditsPerSms: "1",
-    FromNumber: campaignNumber,
-    IsLinksStatistics: true,
-    IsResponse: false,
-    IsTest: true,
-    IsTestCampaign: false,
-    LogData: 
-    {SmsCampaignID: uniqueId,
-     SubAccountID: 7878,
-      AccountID: 6722, 
-      Credits: "1", 
-      TotalRecipients: 1
-    },
-    AccountID: 6722,
-    Credits: "1",
-    SmsCampaignID: uniqueId,
-    SubAccountID: 7878,
-    TotalRecipients: 1,
-    Name: campaignName,
-    ResponseToEmail: "",
-    SMSCampaignID: uniqueId,
-    SMSCampaignId: uniqueId,
-    SendDate: Date.now(),
-    SendingMethod: 0,
-    Status: 1,
-    SubAccountID: -1,
-    TestGroupsIds: temp,
-    Text: msg,
-    Type: 0,
-    UpdateDate: 1630325875398
-   }
-   await dispatch(smsQuick(payload));
-   setfinalApi(true);
-   setsummary(false);
-   
-
-
-  }
+    let payload = {
+      CreditsPerSms: "1",
+      FromNumber: campaignNumber,
+      IsLinksStatistics: true,
+      IsResponse: false,
+      IsTest: true,
+      IsTestCampaign: false,
+      LogData: {
+        SmsCampaignID: uniqueId,
+        SubAccountID: 7878,
+        AccountID: 6722,
+        Credits: "1",
+        TotalRecipients: 1,
+      },
+      AccountID: 6722,
+      Credits: "1",
+      SmsCampaignID: uniqueId,
+      SubAccountID: 7878,
+      TotalRecipients: 1,
+      Name: campaignName,
+      ResponseToEmail: "",
+      SMSCampaignID: uniqueId,
+      SMSCampaignId: uniqueId,
+      SendDate: Date.now(),
+      SendingMethod: 0,
+      Status: 1,
+      SubAccountID: -1,
+      TestGroupsIds: temp,
+      Text: msg,
+      Type: 0,
+      UpdateDate: 1630325875398,
+    };
+    await dispatch(smsQuick(payload));
+    setfinalApi(true);
+    setsummary(false);
+  };
   const getDataCamapaign = async () => {
     await dispatch(getPreviousCampaignData());
 
@@ -309,7 +304,6 @@ const SmsCreator = ({ classes }, props) => {
   const onCamppaignChange = (e) => {
     setcampaignName(e.target.value);
     setcampaignBool(false);
-    
   };
 
   const onCampaignNumber = (e) => {
@@ -461,13 +455,12 @@ const SmsCreator = ({ classes }, props) => {
       setremovalMessageButtonDisabled(false);
       setremovalLinkDisabled(false);
     }
-   
+
     setmsg(e.target.value);
     setcharacterCount(e.target.value.length);
- 
-      setmessageCount(e.target.value.split("\n").length);
-    
-    
+
+    setmessageCount(e.target.value.split("\n").length);
+
     let arr = e.target.value.split("\n");
     let count = 0;
     for (let i = 0; i < arr.length; i++) {
@@ -475,7 +468,6 @@ const SmsCreator = ({ classes }, props) => {
         count++;
       }
     }
-
 
     const linkRegex =
       /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
@@ -491,9 +483,8 @@ const SmsCreator = ({ classes }, props) => {
     } else {
       setlinkCount(0);
     }
-    await dispatch(getCreditsforSMS(e.target.value.length))
+    await dispatch(getCreditsforSMS(e.target.value.length));
     setmessageCount(count);
-    
   };
 
   const onRemovalLink = () => {
@@ -539,52 +530,78 @@ const SmsCreator = ({ classes }, props) => {
               <span>{characterCount}/1000 Char</span>
             </div>
             <div className={classes.funcDiv}>
-              <div className={ isRTL ? classes.emojiHe  : classes.emoji}>
-           {isRTL ? <ToggleButtonGroup
-                  value={alignment}
-                  exclusive
-                  onChange={handleAlignment}
-                  aria-label="text alignment"
-                >
-                
+              <div className={isRTL ? classes.emojiHe : classes.emoji}>
+                {isRTL ? (
+                  <ToggleButtonGroup
+                    value={alignment}
+                    exclusive
+                    onChange={handleAlignment}
+                    aria-label="text alignment"
+                  >
+                    <ToggleButton value="right" aria-label="right aligned">
+                      <FormatAlignRightIcon />
+                    </ToggleButton>
+                    <ToggleButton
+                      value="left"
+                      aria-label="left aligned"
+                      style={{
+                        borderLeft: "1px solid #D5D5D5",
+                        marginInlineEnd: "4px",
+                      }}
+                    >
+                      <FormatAlignLeftIcon />
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                ) : (
+                  <ToggleButtonGroup
+                    value={alignment}
+                    exclusive
+                    onChange={handleAlignment}
+                    aria-label="text alignment"
+                  >
+                    <ToggleButton value="left" aria-label="left aligned">
+                      <FormatAlignLeftIcon />
+                    </ToggleButton>
 
-                  <ToggleButton value="right" aria-label="right aligned" >
-                    <FormatAlignRightIcon />
-                  </ToggleButton>
-                  <ToggleButton value="left" aria-label="left aligned" style={{borderLeft:"1px solid #D5D5D5",marginInlineEnd:"4px"}}>
-                    <FormatAlignLeftIcon />
-                  </ToggleButton>
-                </ToggleButtonGroup> :   <ToggleButtonGroup
-                  value={alignment}
-                  exclusive
-                  onChange={handleAlignment}
-                  aria-label="text alignment"
-                >
-                  <ToggleButton value="left" aria-label="left aligned">
-                    <FormatAlignLeftIcon />
-                  </ToggleButton>
-
-                  <ToggleButton value="right" aria-label="right aligned" style={{borderRight:"1px solid #D5D5D5",marginInlineEnd:"4px"}}>
-                    <FormatAlignRightIcon />
-                  </ToggleButton>
-                </ToggleButtonGroup>}   
+                    <ToggleButton
+                      value="right"
+                      aria-label="right aligned"
+                      style={{
+                        borderRight: "1px solid #D5D5D5",
+                        marginInlineEnd: "4px",
+                      }}
+                    >
+                      <FormatAlignRightIcon />
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                )}
                 <div className={classes.pickerEmoji}>
-                  {flagemoji ? <Picker onEmojiClick={onEmojiClick}  groupVisibility={{
-    flags: false,
-  }}/> : null}
+                  {flagemoji ? (
+                    <Picker
+                      onEmojiClick={onEmojiClick}
+                      groupVisibility={{
+                        flags: false,
+                      }}
+                    />
+                  ) : null}
 
                   <Tooltip
-          disableFocusListener
-          title="Add Emoji"
-          classes={{ tooltip: styles.customWidth }}
-          placement="top-start"
-        >
-                  <img src={Emoj}
-                    style={{ marginInlineEnd: "8px",widht:"25px",height:"25px" }}
-                    onClick={() => {
-                      setflagemoji(!flagemoji);
-                    }}
-                  />
+                    disableFocusListener
+                    title="Add Emoji"
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-start"
+                  >
+                    <img
+                      src={Emoj}
+                      style={{
+                        marginInlineEnd: "8px",
+                        widht: "25px",
+                        height: "25px",
+                      }}
+                      onClick={() => {
+                        setflagemoji(!flagemoji);
+                      }}
+                    />
                   </Tooltip>
                 </div>
               </div>
@@ -675,7 +692,7 @@ const SmsCreator = ({ classes }, props) => {
         <div className={classes.switchDiv}>
           <FormGroup>
             <Switch
-              className={isRTL ? classes.reactSwitchHe :  classes.reactSwitch}
+              className={isRTL ? classes.reactSwitchHe : classes.reactSwitch}
               checked={keep}
               onChange={toggleKeep}
               onColor="#28a745"
@@ -747,7 +764,7 @@ const SmsCreator = ({ classes }, props) => {
               onColor="#28a745"
               checkedIcon={false}
               uncheckedIcon={false}
-              className={isRTL ? classes.reactSwitchHe :  classes.reactSwitch}
+              className={isRTL ? classes.reactSwitchHe : classes.reactSwitch}
             />
           </FormGroup>
           <div
@@ -783,7 +800,13 @@ const SmsCreator = ({ classes }, props) => {
                   {" "}
                   <FormControlLabel
                     value="top"
-                    control={<Radio color="primary" id="top" style={{color:"#007bff"}}/>}
+                    control={
+                      <Radio
+                        color="primary"
+                        id="top"
+                        style={{ color: "#007bff" }}
+                      />
+                    }
                   />
                   <span>{t("mainReport.sendToOne")}</span>
                 </div>
@@ -817,10 +840,16 @@ const SmsCreator = ({ classes }, props) => {
                 ) : null}
 
                 <div>
-                  {" "}
+                 
                   <FormControlLabel
                     value="bottom"
-                    control={<Radio color="primary" id="bottom" style={{color:"#007bff"}}/>}
+                    control={
+                      <Radio
+                        color="primary"
+                        id="bottom"
+                        style={{ color: "#007bff" }}
+                      />
+                    }
                   />
                   <span>{t("mainReport.sendToGroups")}</span>
                 </div>
@@ -852,7 +881,7 @@ const SmsCreator = ({ classes }, props) => {
                             marginTop: "5px",
                           }}
                         >
-                          {" "}
+                         
                           {selectedGroup.map((item, index) => {
                             if (item.selected && hidden) {
                               return (
@@ -1042,8 +1071,7 @@ const SmsCreator = ({ classes }, props) => {
     let arr = [];
   };
 
-  const handleGroupClose = async () => 
-  {
+  const handleGroupClose = async () => {
     setsummary(true);
     setsave(false);
     sethidden(true);
@@ -1068,37 +1096,26 @@ const SmsCreator = ({ classes }, props) => {
     let r = await dispatch(smsSave(payload));
     let temp = [];
     let tempfull = [];
-    let num = 0
-    for(let i =0 ; i < selectedGroup.length ; i++)
-    {
-      if(selectedGroup[i].selected)
-      {
+    let num = 0;
+    for (let i = 0; i < selectedGroup.length; i++) {
+      if (selectedGroup[i].selected) {
         temp.push(selectedGroup[i].GroupID);
         tempfull.push(selectedGroup[i]);
         ++num;
-        
       }
-      
     }
     settotal(num);
     settemp(tempfull);
     setuniqueId(r.payload.Message);
-    let payload2 = 
-    {
+    let payload2 = {
       IsTestGroups: true,
       SMSCampaignID: r.payload.Message,
-      TestGroupsIds: temp
-    }
+      TestGroupsIds: temp,
+    };
 
     let r2 = await dispatch(smsSaveGroup(payload2));
     await dispatch(getCampaignSumm(r.payload.Message));
-  
-
-  
-       
-
-
-  }
+  };
   const renderSendGroup = () => {
     return (
       <>
@@ -1135,9 +1152,7 @@ const SmsCreator = ({ classes }, props) => {
               </Paper>
             </div>
             <div className={classes.listDivGroups}>
-              {
-               
-              selectedGroup
+              {selectedGroup
                 .filter((val) => {
                   if (ContactSearch == "") {
                     return val;
@@ -1150,7 +1165,6 @@ const SmsCreator = ({ classes }, props) => {
                   }
                 })
                 .map((item, idx) => {
-                 
                   return (
                     <div className={classes.searchCon} onClick={makeArr(idx)}>
                       <span
@@ -1192,8 +1206,7 @@ const SmsCreator = ({ classes }, props) => {
                 variant="contained"
                 size="small"
                 onClick={() => {
-                 
-                  handleGroupClose()
+                  handleGroupClose();
                 }}
                 className={clsx(
                   classes.dialogButton,
@@ -1294,18 +1307,18 @@ const SmsCreator = ({ classes }, props) => {
   const renderSummary = () => {
     return (
       <>
-    <Summary         
+        <Summary
           classes={classes}
           campaign={campaignName}
           number={campaignNumber}
           totalmsg={msg}
           selected={selectedGroup}
           bool={summary}
-          grand = {total}
-          final = {temp}
-          summ = {getCampaignSum}
-          api = {onApiCall}
-        /> 
+          grand={total}
+          final={temp}
+          summ={getCampaignSum}
+          api={onApiCall}
+        />
       </>
     );
   };
@@ -1635,19 +1648,19 @@ const SmsCreator = ({ classes }, props) => {
       {renderAlert()}
       {renderSummary()}
       <Snackbar
-                      open={finalApi}
-                      autoHideDuration={2000}
-                      onClose={handleClose}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "center",
-                      }}
-                      style={{ zIndex: "9999" }}
-                    >
-                      <Alert severity="success" onClose={handleCloseSnackbarApi}>
-                      Quick sent Succefully
-                      </Alert>
-                    </Snackbar>
+        open={finalApi}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        style={{ zIndex: "9999" }}
+      >
+        <Alert severity="success" onClose={handleCloseSnackbarApi}>
+          Quick sent Succefully
+        </Alert>
+      </Snackbar>
     </DefaultScreen>
   );
 };
