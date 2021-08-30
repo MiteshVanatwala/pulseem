@@ -78,4 +78,4 @@ const PulseemTips = ({ classes, tips, t }) => {
   );
 }
 
-export default PulseemTips;
+export default React.memo(PulseemTips);

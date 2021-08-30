@@ -303,8 +303,4 @@ const RecipientChart = ({ classes }) => {
     );
 }
 
-function isLoaded(prevProps, nextProps) {
-    return prevProps === nextProps;
-}
-
-export default React.memo(RecipientChart, isLoaded);
+export default React.memo(RecipientChart);

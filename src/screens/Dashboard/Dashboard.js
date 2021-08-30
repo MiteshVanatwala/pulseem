@@ -58,8 +58,9 @@ const DashboardScreen = ({ classes }) => {
   )
 }
 
-function isLoaded(prevProps, nextProps) {
-  return prevProps === nextProps;
-}
+// function isLoaded(prevProps, nextProps) {
+//   return prevProps === nextProps;
+// }
 
-export default React.memo(DashboardScreen, isLoaded);
+export default DashboardScreen;
+//export default React.memo(DashboardScreen, isLoaded);

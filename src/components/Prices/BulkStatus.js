@@ -123,4 +123,4 @@ const BulkStatus = ({ classes }) => {
   );
 }
 
-export default BulkStatus;
+export default React.memo(BulkStatus);
