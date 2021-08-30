@@ -695,6 +695,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     padding: "12px",
   },
+  buttonFieldRemoval: {
+    borderRadius: "5px",
+    border: "1px solid #bbb",
+    outline: "none",
+    padding: "12px",
+    width:"20%",
+  },
   success: {
     borderBottom: "2px solid green",
   },
