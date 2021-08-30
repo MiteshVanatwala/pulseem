@@ -748,7 +748,7 @@ const SmsCreator = ({ classes }, props) => {
                   {" "}
                   <FormControlLabel
                     value="top"
-                    control={<Radio color="primary" id="top" />}
+                    control={<Radio color="primary" id="top" style={{color:"#007bff"}}/>}
                   />
                   <span>{t("mainReport.sendToOne")}</span>
                 </div>
@@ -785,7 +785,7 @@ const SmsCreator = ({ classes }, props) => {
                   {" "}
                   <FormControlLabel
                     value="bottom"
-                    control={<Radio color="primary" id="bottom" />}
+                    control={<Radio color="primary" id="bottom" style={{color:"#007bff"}}/>}
                   />
                   <span>{t("mainReport.sendToGroups")} <span style={{backgroundColor:"#dc3545",color:"#fff",borderRadius:"5px",padding:"5px",fontWeight:"600"}}>New!</span></span>
                 </div>
