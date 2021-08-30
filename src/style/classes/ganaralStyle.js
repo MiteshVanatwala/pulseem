@@ -1220,6 +1220,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "700px",
     marginTop: "20px",
   },
+  listDivGroups :
+  {
+    height: "300px",
+    maxHeight: "200px",
+   
+    marginTop: "20px",
+    overflowY:"auto"
+  },
   searchCon: {
     padding: "12px",
     display:"flex",

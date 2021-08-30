@@ -1074,7 +1074,7 @@ const SmsCreator = ({ classes }, props) => {
                 />
               </Paper>
             </div>
-            <div className={classes.listDiv}>
+            <div className={classes.listDivGroups}>
               {
                
               selectedGroup
