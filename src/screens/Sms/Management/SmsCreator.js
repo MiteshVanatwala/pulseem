@@ -447,7 +447,7 @@ const SmsCreator = ({ classes }, props) => {
             </span>
             <input
               type="text"
-              placeholder="282"
+              placeholder="2"
               disabled
               className={classes.buttonField}
             />
