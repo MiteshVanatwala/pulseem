@@ -668,6 +668,10 @@ const SmsCreator = ({ classes }, props) => {
 
   const onRadiochange = (e) => {
     setradioBtn(e.target.value);
+    if(e.target.value === "bottom")
+    {
+      setcontactGroup(true);
+    }
   };
 
   const handleNumberChange = (e) => {
@@ -752,13 +756,13 @@ const SmsCreator = ({ classes }, props) => {
                   <div className={classes.rightForm}>
                     <input
                       type="text"
-                      placeholder="Enter Phone Number"
+                      placeholder="Enter phone number"
                       className={classes.rightInput}
                       value={phone}
                       onChange={handleNumberChange}
                     />
                     <span className={classes.rightSend} onClick={handleSend}>
-                      Send
+                      SEND
                     </span>
                     <Snackbar
                       open={OpenS}
@@ -783,16 +787,16 @@ const SmsCreator = ({ classes }, props) => {
                     value="bottom"
                     control={<Radio color="primary" id="bottom" />}
                   />
-                  <span>{t("mainReport.sendToGroups")}</span>
+                  <span>{t("mainReport.sendToGroups")} <span style={{backgroundColor:"#dc3545",color:"#fff",borderRadius:"5px",padding:"5px",fontWeight:"600"}}>New!</span></span>
                 </div>
                 {radioBtn === "bottom" ? (
                   <div className={classes.rightForm}>
                     <div
                       style={{
-                        widht: "250px",
-                        height: "200px",
+                        width: "280px",
+                        
                         height: "30px",
-                        width: "230px",
+                       
                         padding: "8px",
                         border: "1px solid #bbb",
                         borderRadius: "5px",
@@ -804,7 +808,7 @@ const SmsCreator = ({ classes }, props) => {
                         setcontactGroup(true);
                       }}
                     >
-                      <div> Choose Groups from links</div>
+                      <div> Choose test groups from the list</div>
                       {hidden ? (
                         <div
                           style={{
