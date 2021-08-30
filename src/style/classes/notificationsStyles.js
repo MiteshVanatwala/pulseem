@@ -340,7 +340,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         height: '100%',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
-        minHeight: '300px',
+        minHeight: '415px',
         position: 'relative',
         width: windowSize !== "xs" ? 450 : '100%',
         maxWidth: 450
