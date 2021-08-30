@@ -241,10 +241,11 @@ const Shortcut = ({ classes }) => {
       setCategoryValue({});
       setPageOpen(false);
       setLoading(loading);
-      await dispatch(setShortcuts(data));
+      dispatch(setShortcuts(data)).then(() => {
+        initData()
+        setLoading({});
+      })
       //await dispatch(getShortcuts());
-      initData()
-      setLoading({});
     }
 
     return (
