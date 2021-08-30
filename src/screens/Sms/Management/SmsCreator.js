@@ -969,7 +969,7 @@ const SmsCreator = ({ classes }, props) => {
 
   const handleCampClick = (id) => {
     let camp = "";
-    camp = msg + getPreviousCampaignData[id].PageHref;
+    camp = msg + getPreviousCampaignData[id].EncryptURL;
     setdialogClickCampaign(false);
     seteditmenuClick(false);
     setmsg(camp);
@@ -1350,7 +1350,7 @@ const SmsCreator = ({ classes }, props) => {
                     >
                       <FcDocument />
                     </span>
-                    <span>{item.CampaignName}</span>
+                    <span>{item.Name}</span>
                   </div>
                 );
               })}
