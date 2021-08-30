@@ -798,11 +798,11 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       settoggleChecked(!toggleChecked);
                     }}
                   />
-                  <span  className={selectedGroups.length >=2 ? classes.spani : classes.spaniDisabled}>{t("mainReport.createNewGroup")}</span>
-                  <span style={{backgroundColor: "#CA332F",color: "#fff",borderRadius: "5px",marginInlineStart: "5px",padding:"5px"}}>New!</span>
+                  <span  className={selectedGroups.length >=2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
+                  <span  className={classes.iconNew}>New!</span>
                   <Tooltip
                     disableFocusListener
-                    title="Choose 2 or more groups and combine into one new one"
+                    title={t("mainReport.tooltipCreateGroup")}
                     classes={{ tooltip: styles.customWidth }}
                     style={{ marginInlineStart: "5px" }}
                   >

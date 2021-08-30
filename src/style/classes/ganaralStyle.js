@@ -1906,14 +1906,18 @@ marginTop:"10px"
     alignItems:"center",
     marginTop:"15px"
   },
-  spani : 
+  createGroupSpan : 
   {
     color:"black",
     fontSize:"13px"
   },
-  spaniDisabled : 
+  createGroupSpanDisabled : 
   {
     color : "#808080",
     fontSize:"13px"
+  },
+  iconNew :
+  {
+    backgroundColor: "#CA332F",color: "#fff",borderRadius: "5px",marginInlineStart: "5px",padding:"5px"
   }
 });
