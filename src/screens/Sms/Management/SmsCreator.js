@@ -16,6 +16,7 @@ import Mobile from "../../../assets/images/mobileiphone.png";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import { withStyles } from "@material-ui/core/styles";
+import { FaCheck } from 'react-icons/fa';
 import { useHistory } from "react-router";
 import {
   getPreviousCampaignData,
@@ -530,11 +531,11 @@ const SmsCreator = ({ classes }, props) => {
                   onChange={handleAlignment}
                   aria-label="text alignment"
                 >
-                  <ToggleButton value="left" aria-label="left aligned" style={{width:"30px",height:"30px"}}>
+                  <ToggleButton value="left" aria-label="left aligned"  className={classes.leftAlignIcn}>
                     <FormatAlignLeftIcon />
                   </ToggleButton>
 
-                  <ToggleButton value="right" aria-label="right aligned" style={{width:"30px",height:"30px"}}>
+                  <ToggleButton value="right" aria-label="right aligned" className={classes.rightAlignIcn}>
                     <FormatAlignRightIcon />
                   </ToggleButton>
                 </ToggleButtonGroup>
@@ -542,7 +543,7 @@ const SmsCreator = ({ classes }, props) => {
                   {flagemoji ? <Picker onEmojiClick={onEmojiClick} /> : null}
 
                   <InsertEmoticonIcon
-                    style={{ marginInlineEnd: "8px" }}
+                    className={classes.emojiIcon}
                     onClick={() => {
                       setflagemoji(!flagemoji);
                     }}
@@ -580,21 +581,7 @@ const SmsCreator = ({ classes }, props) => {
                       seteditmenuClick(!editmenuClick);
                     }}
                   >
-                    <span
-                      style={{
-                        marginInlineEnd: "3px",
-                        border: "1px solid #1c82b2",
-                        borderRadius: "50%",
-                        padding: "5px",
-                        width: "10px",
-                        height: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "#1c82b2",
-                        fontSize: "14px",
-                        fontWeight: "700",
-                      }}
+                    <span className={classes.addFeatures}
                     >
                       +
                     </span>
@@ -1110,22 +1097,17 @@ const SmsCreator = ({ classes }, props) => {
                     <div className={classes.searchCon} onClick={makeArr(idx)}>
                       <span
                         style={{ marginInlineEnd: "25px" }}
-                        className={classes.grDoc}
+                        className={item.selected ? classes.greenDoc : classes.blueDoc}
                       >
-                        {item.selected ? "hi" : <HiOutlineUserGroup />}
+                        {item.selected ? (<FaCheck className={clsx(classes.green)} />) : <HiOutlineUserGroup />}
                       </span>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                          width: "700px",
+                      <div className={classes.selectGroupDiv}
+                        onClick={() => {
+                          handleSelect(idx);
                         }}
                       >
                         <span
-                          onClick={() => {
-                            handleSelect(idx);
-                          }}
+                        
                         >
                           {item.GroupName}
                         </span>
