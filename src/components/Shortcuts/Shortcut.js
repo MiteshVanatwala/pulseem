@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, createRef } from 'react';
+import React, { useState, useEffect, useRef, createRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next'
 import { useSelector, useDispatch } from 'react-redux'
 import {
@@ -210,6 +210,25 @@ const Shortcut = ({ classes, windowSize }) => {
   }
   useEffect(initData, [dispatch])
 
+  const handlePageChange = useCallback((title, href, update, num, index) => {
+    const data = {
+      ID: update && num,
+      CategoryName: categories[selectedCategory[num]].title,
+      ShortcutName: title,
+      ShortcutUrl: href
+    };
+    let loading = {};
+    loading[index] = true;
+    setAnchorEl({});
+    setCategoryValue({});
+    setPageOpen(false);
+    setLoading(loading);
+    dispatch(setShortcuts(data)).then(() => {
+      initData()
+      setLoading({});
+    })
+  });
+
   const renderShortcutMenu = (num, update, index) => {
     const pageTitle = selectedPage[num] && selectedPage[num].title || '';
     const categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
@@ -225,26 +244,6 @@ const Shortcut = ({ classes, windowSize }) => {
       setCategoryValue(category);
       setCategoryOpen(false);
       setPageOpen(false);
-    }
-
-    const handlePageChange = async (title, href) => {
-      const data = {
-        ID: update && num,
-        CategoryName: categories[selectedCategory[num]].title,
-        ShortcutName: title,
-        ShortcutUrl: href
-      };
-      let loading = {};
-      loading[index] = true;
-      setAnchorEl({});
-      setCategoryValue({});
-      setPageOpen(false);
-      setLoading(loading);
-      dispatch(setShortcuts(data)).then(() => {
-        initData()
-        setLoading({});
-      })
-      //await dispatch(getShortcuts());
     }
 
     return (
@@ -301,7 +300,7 @@ const Shortcut = ({ classes, windowSize }) => {
                         key={`pageItem${Math.round(Math.random() * 999999999)}`}
                         button
                         className={clsx(classes.pt0, classes.pb0)}
-                        onClick={() => handlePageChange(page.title, page.link)}>
+                        onClick={() => handlePageChange(page.title, page.link, update, num, index)}>
                         <ListItemText primary={t(page.title)} />
                       </ListItem>
                     )
