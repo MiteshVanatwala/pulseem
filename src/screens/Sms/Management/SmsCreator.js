@@ -188,7 +188,7 @@ const SmsCreator = ({ classes }, props) => {
     ResponseToEmail: "",
     SMSCampaignID: uniqueId,
     SMSCampaignId: uniqueId,
-    SendDate: 1630325875398,
+    SendDate: Date.now(),
     SendingMethod: 0,
     Status: 1,
     SubAccountID: -1,
@@ -366,7 +366,7 @@ const SmsCreator = ({ classes }, props) => {
           IsTestCampaign: false,
           IsResponse: false,
           IsLinksStatistics: true,
-          SendDate: 1628770145467,
+          SendDate: Date.now(),
           SendingMethod: 0,
           IsTest: false,
           PhoneNumber: phone,
@@ -947,7 +947,7 @@ const SmsCreator = ({ classes }, props) => {
         Name: campaignName,
         ResponseToEmail: "",
         SMSCampaignID: -1,
-        SendDate: 1628755539174,
+        SendDate: Date.now(),
         SendingMethod: 0,
         Status: 1,
         SubAccountID: -1,
@@ -1054,7 +1054,7 @@ const SmsCreator = ({ classes }, props) => {
       Name: campaignName,
       ResponseToEmail: "",
       SMSCampaignID: -1,
-      SendDate: 1628755539174,
+      SendDate: Date.now(),
       SendingMethod: 0,
       Status: 1,
       SubAccountID: -1,
@@ -1642,7 +1642,7 @@ const SmsCreator = ({ classes }, props) => {
                       style={{ zIndex: "9999" }}
                     >
                       <Alert severity="success" onClose={handleCloseSnackbarApi}>
-                      Succesfully Sent
+                      Quick sent Succefully
                       </Alert>
                     </Snackbar>
     </DefaultScreen>
