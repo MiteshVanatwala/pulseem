@@ -1905,5 +1905,12 @@ marginTop:"10px"
     justifyContent:"space-between",
     alignItems:"center",
     marginTop:"15px"
+  },
+  phoneImg : 
+  {
+    width: "375px",
+    height: "415px",
+    marginTop: "50px",
+    borderBottom: "1px solid black",
   }
 });

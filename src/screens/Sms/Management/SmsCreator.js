@@ -676,12 +676,9 @@ const SmsCreator = ({ classes }, props) => {
           {" "}
           <img
             src={Mobile}
-            style={{
-              width: "375px",
-              height: "415px",
-              marginTop: "50px",
-              borderBottom: "1px solid black",
-            }}
+            
+              className={classes.phoneImg}
+           
           />
           <span className={classes.phoneNumber}>050608001</span>
           <div className={classes.wrapChat}>
