@@ -479,5 +479,5 @@
   "testDesc":"מיד לאחר לחיצה על שלח",
   "sendToOne":"שלח לאיש קשר אחד",
   "sendToGroups":"שלח לקבוצות בדיקה אחת",
-  "tooltipCreateGroup" : "Choose 2 or more groups and combine into one new one"
+  "tooltipCreateGroup" : "בחר 2 קבוצות או יותר וחבר לקבוצה אחת חדשה"
 }
