@@ -303,7 +303,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
       <div className={classes.headDiv}>
         <span className={classes.headNo}>2</span>
         <span className={classes.contentHead}>
-          {" "}
+          
           {t("mainReport.sendSetting")}
         </span>
       </div>
@@ -415,7 +415,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                 marginBottom: "10px",
               }}
             >
-              {" "}
+              
               <Checkbox
                 checked={togglePulse}
                 color="primary"
@@ -585,7 +585,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                 marginBottom: "10px",
               }}
             >
-              {" "}
+              
               <Checkbox
                 checked={toggleRandom}
                 color="primary"
@@ -605,7 +605,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                   marginBottom: "10px",
                 }}
               >
-                Number of random recipients{" "}
+                Number of random recipients
               </span>
 
               <input
@@ -788,7 +788,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     justifyContent: "center",
                   }}
                 >
-                  {" "}
+                  
                   <Checkbox
                     disabled={selectedGroups.length >= 2 ? false : true}
                     checked={toggleChecked}
@@ -862,7 +862,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       handlePasted();
                     }}
                   >
-                    {" "}
+                    
                     Edit fields and save
                   </span>
                   <span
@@ -917,7 +917,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
   const renderReciFilter = () => {
     return (
       <>
-        {" "}
+        
         {reciFilter ? (
           <Dialog
             classes={classes}
@@ -942,7 +942,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                 }}
               >
                 <div>
-                  {" "}
+                  
                   <Checkbox
                     checked={toggleReci}
                     color="primary"
@@ -970,7 +970,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               <div>
                 <span>Don't send to recipients from the following groups:</span>
                 <div>
-                  {" "}
+                  
                   <Paper component="form" className={classes.reciMain}>
                     <IconButton
                       type="submit"
@@ -1044,7 +1044,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                   Don't send to recipients from the following campaigns::
                 </span>
                 <div>
-                  {" "}
+                  
                   <Paper component="form" className={classes.reciMain}>
                     <IconButton
                       type="submit"
@@ -1265,7 +1265,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       handlebef();
                     }}
                   >
-                    {" "}
+                    
                     {t("mainReport.before")}
                   </span>
                   <span
@@ -1335,10 +1335,10 @@ const [initialheadstate, setinitialheadstate] = useState([])
             fontSize: "14px",
           }}
         >
-          {" "}
+          
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer}{" "}
+              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer}
               every {inputS} {hourName == "" ? minName : hourName}
             </span>
           ) : null}
@@ -1352,11 +1352,11 @@ const [initialheadstate, setinitialheadstate] = useState([])
             <AiOutlineDelete style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4}>
-            {" "}
-            {t("mainReport.exitSms")}{" "}
+            
+            {t("mainReport.exitSms")}
           </span>
           <span className={classes.rightInput5}>
-            {" "}
+            
             {t("mainReport.saveSms")}
           </span>
           <span
@@ -1637,7 +1637,7 @@ setnewVal(e.target.value);
           </div>
           <div className={classes.manualModal}>
             <span style={{ fontSize: "24px", marginInlineEnd: "10px" }}>
-              Group Name :{" "}
+              Group Name :
             </span>
             <input
               type="text"

@@ -400,7 +400,7 @@ const SmsCreator = ({ classes }, props) => {
         </div>
         <div className={classes.buttonForm}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            {" "}
+            
             <span className={classes.buttonHead}>
               {t("mainReport.campFrom")}
             </span>
@@ -432,7 +432,7 @@ const SmsCreator = ({ classes }, props) => {
         {restoreBool ? (
           <div className={classes.buttonForm}>
             <span className={clsx(classes.buttonHead)}>
-              {" "}
+              
               {t("mainReport.removalReply")}
             </span>
             <input
@@ -673,7 +673,7 @@ const SmsCreator = ({ classes }, props) => {
     return (
       <div>
         <div style={{ position: "relative" }} className={classes.phoneDiv}>
-          {" "}
+          
           <img
             src={Mobile}
             style={{
@@ -710,7 +710,7 @@ const SmsCreator = ({ classes }, props) => {
             style={{ display: "flex", flexDirection: "column", width: "250px" }}
           >
             <span style={{ fontSize: "18px" }}>
-              {" "}
+              
               {t("mainReport.testSend")}
             </span>
             <span
@@ -736,7 +736,7 @@ const SmsCreator = ({ classes }, props) => {
             >
               <div className={{ display: "flex", flexDirection: "column" }}>
                 <div>
-                  {" "}
+                  
                   <FormControlLabel
                     value="top"
                     control={<Radio color="primary" id="top" />}
@@ -773,7 +773,7 @@ const SmsCreator = ({ classes }, props) => {
                 ) : null}
 
                 <div>
-                  {" "}
+                  
                   <FormControlLabel
                     value="bottom"
                     control={<Radio color="primary" id="bottom" />}
@@ -808,7 +808,7 @@ const SmsCreator = ({ classes }, props) => {
                             marginTop: "5px",
                           }}
                         >
-                          {" "}
+                          
                           {selectedGroup.map((item, index) => {
                             if (item.selected && hidden) {
                               return (
@@ -854,7 +854,7 @@ const SmsCreator = ({ classes }, props) => {
             <AiOutlineDelete style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4} onClick={clickExit}>
-            Exit{" "}
+            Exit
           </span>
           <span
             className={classes.rightInput5}
@@ -1159,7 +1159,7 @@ const SmsCreator = ({ classes }, props) => {
               </Button>
             </div>
           </Dialog>
-        ) : null}{" "}
+        ) : null}
       </>
     );
   };
@@ -1212,7 +1212,7 @@ const SmsCreator = ({ classes }, props) => {
   const renderAlert = () => {
     return (
       <>
-        {" "}
+        
         {alertToggle ? (
           <Dialog
             classes={classes}
@@ -1238,7 +1238,7 @@ const SmsCreator = ({ classes }, props) => {
               </span>
             </div>
           </Dialog>
-        ) : null}{" "}
+        ) : null}
       </>
     );
   };
