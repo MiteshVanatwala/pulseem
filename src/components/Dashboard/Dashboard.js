@@ -33,41 +33,6 @@ const DashboardScreen = ({ classes }) => {
 
   useEffect(initData, [dispatch])
 
-  const renderTopSection = () => {
-    return (
-      <Grid container direction='row'>
-        <Grid item xs={12} sm={12} md={12} lg={4}>
-          <BulkStatus classes={classes} />
-        </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={8}>
-          <RecipientChart classes={classes} />
-        </Grid>
-      </Grid>
-    );
-  }
-
-  const renderBottomSection = () => {
-    return (
-      <Grid container direction='row'>
-        <Grid item xs={12} sm={12} md={12} lg={3}>
-          <PulseemTips
-            classes={classes}
-            tips={tips}
-            t={t}
-          />
-        </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={9}>
-          <LatestReports
-            classes={classes}
-            windowSize={windowSize}
-            lastCampaignReport={lastCampaignReport}
-            t={t}
-          />
-        </Grid>
-      </Grid>
-    );
-  }
-
   return (
     <DefaultScreen
       currentPage='dashboard'
@@ -75,12 +40,36 @@ const DashboardScreen = ({ classes }) => {
       customStyle={classes.dashboard}>
       <Grid container className={classes.dashboardContainer}>
         <Grid item xs={12} sm={9} md={10}>
-          {renderTopSection()}
-          {renderBottomSection()}
+          <Grid container direction='row'>
+            <Grid item xs={12} sm={12} md={12} lg={4}>
+              <BulkStatus classes={classes} />
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={8}>
+              <RecipientChart classes={classes} />
+            </Grid>
+          </Grid>
+          <Grid container direction='row'>
+            <Grid item xs={12} sm={12} md={12} lg={3}>
+              <PulseemTips
+                classes={classes}
+                tips={tips}
+                t={t}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} md={12} lg={9}>
+              <LatestReports
+                classes={classes}
+                windowSize={windowSize}
+                lastCampaignReport={lastCampaignReport}
+                t={t}
+              />
+            </Grid>
+          </Grid>
         </Grid>
         <Grid item xs={12} sm={3} md={2}>
           <Shortcut
             classes={classes}
+            windowSize={windowSize}
           />
         </Grid>
       </Grid>
@@ -88,8 +77,9 @@ const DashboardScreen = ({ classes }) => {
   )
 }
 
-function isLoaded(prevProps, nextProps) {
-  return prevProps === nextProps;
-}
+// function isLoaded(prevProps, nextProps) {
+//   return prevProps === nextProps;
+// }
 
-export default React.memo(DashboardScreen, isLoaded);
+export default React.memo(DashboardScreen)
+//export default React.memo(DashboardScreen, isLoaded);

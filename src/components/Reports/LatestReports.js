@@ -142,7 +142,7 @@ const LatestReports = ({ classes, windowSize, lastCampaignReport, t }) => {
               <Grid item>
                 <Box className={classes.doughnutGreenBox}>
                   <Avatar className={classes.bgLightGreen}>
-                    <Typography className={classes.chartLabelGreen}>{quality}%</Typography>
+                    <Typography className={classes.chartLabelGreen}>{quality.toFixed(2)}%</Typography>
                   </Avatar>
                   <Doughnut data={{ datasets: [{ data: [quality, 100 - quality] }] }} options={doughnutOptions} />
                 </Box>
@@ -214,7 +214,7 @@ const LatestReports = ({ classes, windowSize, lastCampaignReport, t }) => {
               <Grid item>
                 <Box className={classes.doughnutGreenBox}>
                   <Avatar className={classes.bgLightGreen}>
-                    <Typography className={classes.chartLabelGreen}>{quality}%</Typography>
+                    <Typography className={classes.chartLabelGreen}>{quality.toFixed(2)}%</Typography>
                   </Avatar>
                   <Doughnut data={{ datasets: [{ data: [quality, 100 - quality] }] }} options={doughnutOptions} />
                 </Box>

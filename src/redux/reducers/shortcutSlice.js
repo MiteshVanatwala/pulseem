@@ -22,7 +22,7 @@ export const setShortcuts = createAsyncThunk(
     });
 
 export const shortcutSlice = createSlice({
-    name: 'dashboard',
+    name: 'shortcuts',
     initialState: {
         shortcuts: [],
         shortcutsError: ''

@@ -9,8 +9,7 @@ import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import { getShortcuts, setShortcuts } from '../../redux/reducers/shortcutSlice';
 
-const Shortcut = ({ classes }) => {
-  const { windowSize } = useSelector(state => state.core);
+const Shortcut = ({ classes, windowSize }) => {
   const { shortcuts, shortCutsError } = useSelector(state => state.shortcuts);
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
