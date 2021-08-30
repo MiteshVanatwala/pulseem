@@ -758,6 +758,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   smallInfoDiv: {
     display: "flex",
     width: "100%",
+    position:"relative",
+    top:"-3px",
     justifyContent: "flex-end",
     alignItems: "center",
     color: "#1c82b2",
@@ -775,6 +777,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   funcDiv: {
     width: "100%",
     height: "40px",
+    position:"relative",
+    top:"-3px",
     // backgroundColor : "black",
     padding: "10px",
     border: "1px solid rgb(170, 170, 170)",
@@ -913,6 +917,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     marginTop: "20px",
     marginBottom: "50px",
+    position:"fixed",
+    bottom:"10px",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
     },
@@ -920,6 +926,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 
   },
   buttonDivAct: {
+    position:"fixed",
+    bottom:"10px",
     display: "flex",
     alignItems: "center",
     marginTop: "150px",
@@ -933,11 +941,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "10px",
     marginInlineEnd: "15px",
     borderRadius: "30px",
+    width:"50px",
+    cursor:"pointer",
     height: "40px",
     boxShadow: "0 1px 2px #a5a2a2",
     border: "0",
     borderColor: "#dc3545",
-    backgroundColor: "#dc3545",
+    backgroundImage: "linear-gradient(180deg,#d9534f 0,#c9302c)",
     color: "white",
     display: "flex",
     alignItems: "center",
@@ -955,12 +965,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "10px",
     marginInlineEnd: "15px",
     borderRadius: "30px",
+    cursor:"pointer",
     height: "40px",
     boxShadow: "0 1px 2px #a5a2a2",
     border: "0",
     width: "80px",
     borderColor: "#5b9bcd",
-    backgroundColor: "#5b9bcd",
+    background: "linear-gradient(180deg,#5b9bcd 0,#4678a3)",
     color: "white",
     display: "flex",
     alignItems: "center",
@@ -981,9 +992,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: "40px",
     boxShadow: "0 1px 2px #a5a2a2",
     border: "0",
+    cursor:"pointer",
     width: "80px",
     borderColor: "#5b9bcd",
-    backgroundColor: "#5b9bcd",
+    background: "linear-gradient(180deg,#5b9bcd 0,#4678a3)",
     color: "white",
     display: "flex",
     alignItems: "center",
@@ -1000,13 +1012,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     padding: "10px",
     marginInlineEnd: "12px",
+    cursor:"pointer",
     borderRadius: "30px",
     height: "40px",
     boxShadow: "0 1px 2px #a5a2a2",
     border: "0",
     width: "100px",
     borderColor: "#449d44",
-    backgroundColor: "#449d44",
+    backgroundImage: "linear-gradient(180deg,#5cb85c 0,#449d44)",
     color: "white",
     display: "flex",
     alignItems: "center",
@@ -1441,6 +1454,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderRight: "1px solid black",
     },
   },
+  emojiHe: {
+    display: "flex",
+    alignItems: "center",
+    // borderRight: "1px solid black",
+    paddingInlineStart: "8px",
+    "@media screen and (max-width: 768px)": {
+      flexDirection: "column",
+      // borderRight: "1px solid black",
+    },
+  },
   pickerEmoji: {
     position: "relative",
     height: "100%",
@@ -1659,6 +1682,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   reactSwitch :{
     verticalAlign: 'middle',
     marginInlineEnd: '8px'
+  },
+  reactSwitchHe :{
+    verticalAlign: 'middle',
+    marginInlineEnd: '8px',
+    transform: 'rotateY(180deg)'
   },
   icn : 
   {
