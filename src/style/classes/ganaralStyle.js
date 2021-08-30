@@ -1636,9 +1636,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding:"8px",
     borderRadius:"5px"
   },
-  grDoc :
+  blueDoc :
   {
     border : "2px solid #3DA6F7",
+    borderRadius:"50%",
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
+    padding:"8px",
+    color : "#3DA6F7"
+  },
+  greenDoc :
+  {
+    border : "2px solid #018901",
     borderRadius:"50%",
     display:"flex",
     alignItems:"center",
@@ -1911,5 +1921,41 @@ marginTop:"10px"
     justifyContent:"space-between",
     alignItems:"center",
     marginTop:"15px"
+  },
+  leftAlignIcn : 
+  {
+    width:"30px",height:"30px",
+  },
+  rightAlignIcn : 
+  {
+    width:"30px",height:"30px"
+  },
+  emojiIcon : 
+  {
+    marginInlineEnd: "8px"
+  },
+  addFeatures : 
+  {
+    marginInlineEnd: "3px",
+    border: "1px solid #1c82b2",
+    borderRadius: "50%",
+    padding: "5px",
+    width: "10px",
+    height: "10px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#1c82b2",
+    fontSize: "14px",
+    fontWeight: "700",
+  },
+  selectGroupDiv : 
+  {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "700px",
+    cursor:"pointer"
   }
+  
 });
