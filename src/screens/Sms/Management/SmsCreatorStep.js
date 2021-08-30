@@ -754,17 +754,17 @@ const [initialheadstate, setinitialheadstate] = useState([])
         </div>
         <div>
           {groupClick ? (
-          <></>
-            // <Groups
-            //   classes={classes}
-            //   groupList={groupList}
-            //   selectedList={selectedGroups}
-            //   callbackSelectedGroups={callbackSelectedGroups}
-            //   callbackUpdateGroups={callbackUpdateGroups}
-            //   callbackSelectAll={callbackSelectAll}
-            //   callbackReciFilter={callbackFilter}
-            //   bool={true}
-            // />
+        
+            <Groups
+              classes={classes}
+              groupList={groupList}
+              selectedList={selectedGroups}
+              callbackSelectedGroups={callbackSelectedGroups}
+              callbackUpdateGroups={callbackUpdateGroups}
+              callbackSelectAll={callbackSelectAll}
+              callbackReciFilter={callbackFilter}
+              bool={true}
+            />
           ) : null}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div

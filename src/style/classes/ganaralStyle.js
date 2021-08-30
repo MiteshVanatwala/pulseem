@@ -1935,6 +1935,15 @@ marginTop:"10px"
       zIndex:"9"
     }
   },
+  grayGroup : 
+  {
+    padding:"10px",
+    textAlign:"center",
+    borderBottom:"1px solid gray",
+    zIndex:"9",
+    cursor:"pointer",
+    pointerEvents:"none"
+  },
   manualChild : 
   {
     display : "flex",
