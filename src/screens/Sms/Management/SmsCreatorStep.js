@@ -184,7 +184,8 @@ const SmsCreatorStep = ({ classes }) => {
   const [hoursTrue, sethoursTrue] = useState(true);
   const [minName, setminName] = useState("");
   const [hourName, sethourName] = useState("");
-  const [newVal, setnewVal] = useState("")
+  const [newVal, setnewVal] = useState("");
+  const [reciToggle, setreciToggle] = useState(false);
   const [areaData, setareaData] = useState("");
   const [editT, seteditT] = useState(false);
   const [areatyped, setareatyped] = useState("");
@@ -1066,12 +1067,14 @@ const [initialheadstate, setinitialheadstate] = useState([])
                                 justifyContent: "space-between",
                                 alignItems: "center",
                                 width: "700px",
+                                cursor:"pointer"
+                              }}
+                              onClick={() => {
+                                handleSelect(idx);
                               }}
                             >
                               <span
-                                onClick={() => {
-                                  handleSelect(idx);
-                                }}
+                               
                               >
                                 {item.GroupName}
                               </span>
