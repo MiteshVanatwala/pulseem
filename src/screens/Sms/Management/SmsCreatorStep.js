@@ -7,7 +7,9 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import moment from "moment";
 import { MdAutorenew } from "react-icons/md";
 import { FaRegCalendarAlt } from "react-icons/fa";
+import Snackbar from "@material-ui/core/Snackbar";
 
+import MuiAlert from "@material-ui/lab/Alert";
 import PropTypes from "prop-types";
 import { DateField, Dialog } from "../../../components/managment/index";
 import Paper from "@material-ui/core/Paper";
@@ -51,7 +53,11 @@ import {
 import { AiOutlineDelete } from "react-icons/ai";
 import Summary from "./smsSummary";
 
+
 import clsx from "clsx";
+function Alert(props) {
+  return <MuiAlert elevation={0} variant="filled" {...props} />;
+}
 const useStyles = makeStyles((theme) => ({
   customWidth: {
     maxWidth: 200,
@@ -147,6 +153,8 @@ const SmsCreatorStep = ({ classes }) => {
   const [manualTrue, setmanualTrue] = useState(false);
   const [pulse, setpulse] = useState(false);
   const [reciFilter, setreciFilter] = useState(false);
+  const [pulseBool, setpulseBool] = useState(false);
+  const [TimeBool, setTimeBool] = useState(false);
   const [percentTrue, setpercentTrue] = useState(true);
   const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
@@ -373,18 +381,56 @@ const [initialheadstate, setinitialheadstate] = useState([])
     setgroupValue(e.target.value);
   };
   const handlePulseClose = () => {
-    setpulse(false);
+    if(onPulseValidations())
+    {
+      setpulse(false);
+    }
+   
   };
 
   const handleTime = (e) => {
     setinputS(e.target.value);
+    setTimeBool(false);
   };
   const handleRandom = (e) => {
     setrandom(e.target.value);
   };
   const handlePulseInput = (e) => {
     setinputF(e.target.value);
+    setpulseBool(false);
   };
+
+  const onPulseValidations = () =>
+  {
+    if(togglePulse)
+    {
+     
+      if(inputF === "")
+      {
+        setpulseBool(true);
+        if(inputS === "" )
+        {
+          setTimeBool(true);
+          return false;
+        }
+      }
+      else if(inputS === "")
+      {
+        setTimeBool(true);
+        if(inputF === "")
+        {
+          setpulseBool(true);
+          return false;
+        }
+      }
+     
+    }
+    else
+    {
+      return true;
+    }
+  
+  }
 
   const renderPulse = () => {
     return (
@@ -454,11 +500,12 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     disabled={togglePulse ? false : true}
                     className={
                       togglePulse
-                        ? clsx(classes.pulseActive)
+                        ?  pulseBool ? clsx(classes.pulseActive,classes.error) : clsx(classes.pulseActive)
                         : clsx(classes.pulseInsert)
                     }
                     value={inputF}
                     onChange={handlePulseInput}
+                    maxLength="1"
                   />
 
                   <div style={{ display: "flex", alignItems: "center" }}>
@@ -523,11 +570,12 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     disabled={togglePulse ? false : true}
                     className={
                       togglePulse
-                        ? clsx(classes.pulseActive)
+                        ? TimeBool ? clsx(classes.pulseActive,classes.error) : clsx(classes.pulseActive)
                         : clsx(classes.pulseInsert)
                     }
                     onChange={handleTime}
                     value={inputS}
+                    maxLength="1"
                   />
 
                   <div style={{ display: "flex", alignItems: "center" }}>
@@ -754,17 +802,17 @@ const [initialheadstate, setinitialheadstate] = useState([])
         </div>
         <div>
           {groupClick ? (
-          <></>
-            // <Groups
-            //   classes={classes}
-            //   groupList={groupList}
-            //   selectedList={selectedGroups}
-            //   callbackSelectedGroups={callbackSelectedGroups}
-            //   callbackUpdateGroups={callbackUpdateGroups}
-            //   callbackSelectAll={callbackSelectAll}
-            //   callbackReciFilter={callbackFilter}
-            //   bool={true}
-            // />
+       
+            <Groups
+              classes={classes}
+              groupList={groupList}
+              selectedList={selectedGroups}
+              callbackSelectedGroups={callbackSelectedGroups}
+              callbackUpdateGroups={callbackUpdateGroups}
+              callbackSelectAll={callbackSelectAll}
+              callbackReciFilter={callbackFilter}
+              bool={true}
+            />
           ) : null}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div
@@ -1888,6 +1936,48 @@ setnewVal(e.target.value);
       {renderSummary()}
       {renderDialogManual()}
       {renderCaution()}
+      <Snackbar
+                      open={pulseBool || TimeBool}
+                      autoHideDuration={2000}
+                      // onClose={handleClose}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      style={{ zIndex: "9999" }}
+                    >
+                      <Alert severity="warning" >
+                       No Pulse Settings are Applied
+                      </Alert>
+                    </Snackbar>
+                    <Snackbar
+                      open={pulseBool}
+                      autoHideDuration={2000}
+                      // onClose={handleClose}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      style={{ zIndex: "9999",marginTop:"60px" }}
+                    >
+                      <Alert severity="error" >
+                       Please Fill Pulse Amount
+                      </Alert>
+                    </Snackbar>
+                    <Snackbar
+                      open={TimeBool}
+                      autoHideDuration={2000}
+                      // onClose={handleClose}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      style={{ zIndex: "9999",marginTop:"120px" }}
+                    >
+                      <Alert severity="error" >
+                       Please Fill Time Interval
+                      </Alert>
+                    </Snackbar>
     </DefaultScreen>
   );
 };

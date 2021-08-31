@@ -704,7 +704,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottom: "2px solid green",
   },
   error: {
-    borderBottom: "2px solid red",
+    borderBottom: "2px solid red !important" ,
   },
   msgHead: {
     fontSize: "20px",
