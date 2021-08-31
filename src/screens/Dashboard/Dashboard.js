@@ -1,7 +1,7 @@
 import React from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
@@ -12,7 +12,6 @@ import LatestReports from '../../components/Reports/LatestReports';
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize } = useSelector(state => state.core);
-  const { lastCampaignReport, tips } = useSelector(state => state.dashboard);
   const { t } = useTranslation();
 
   return (
@@ -34,7 +33,6 @@ const DashboardScreen = ({ classes }) => {
             <Grid item xs={12} sm={12} md={12} lg={3}>
               <PulseemTips
                 classes={classes}
-                tips={tips}
                 t={t}
               />
             </Grid>
@@ -42,7 +40,6 @@ const DashboardScreen = ({ classes }) => {
               <LatestReports
                 classes={classes}
                 windowSize={windowSize}
-                lastCampaignReport={lastCampaignReport}
                 t={t}
               />
             </Grid>
@@ -58,9 +55,8 @@ const DashboardScreen = ({ classes }) => {
   )
 }
 
-// function isLoaded(prevProps, nextProps) {
-//   return prevProps === nextProps;
-// }
+function isLoaded(prevProps, nextProps) {
+  return prevProps === nextProps;
+}
 
-export default DashboardScreen;
-//export default React.memo(DashboardScreen, isLoaded);
+export default React.memo(DashboardScreen, isLoaded);

@@ -4,6 +4,7 @@ import PricePackages from './PricePackages';
 import { GoPackage } from 'react-icons/go/index';
 import { Dialog } from '../managment/index';
 import { Grid, Paper, Typography } from '@material-ui/core';
+import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 
@@ -13,6 +14,7 @@ const BulkStatus = ({ classes }) => {
   const [isShowSmsPackage, showSmsPackage] = useState(false);
   const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
   const availablePackages = accountAvailablePackages || [];
@@ -20,6 +22,12 @@ const BulkStatus = ({ classes }) => {
   let isMMSPrepaid = Mms.isPrepaid || Mms.Credits == -1;
   let isNotificationsPrepaid = Notifications.isPrepaid || Notifications.Credits == -1;
   //let isSMSPrepaid = Sms.isPrepaid || Sms.Credits == -1;
+
+  console.log(packagesDetails);
+
+  useEffect(() => {
+    dispatch(getPackagesDetails());
+  }, []);
 
   const handleDialogClose = () => {
     setIsOpenPackageDialog(false);
@@ -103,20 +111,24 @@ const BulkStatus = ({ classes }) => {
           </Grid>
           <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
-            {isMMSPrepaid?t('dashboard.perRecipients'):Mms.Credits}
+            <Typography className={classes.bulkTitle}>
+              {isMMSPrepaid ? t('dashboard.perRecipients') : Mms.Credits}
+            </Typography>
             {/* {availablePackages.length > 0 && <a href='#' className={classes.bulkContent}>
               {t('dashboard.purchase')}
             </a> */}
           </Grid>
-          <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
+          {Notifications.FeatureExist && <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
-            {isNotificationsPrepaid?t('dashboard.perRecipients'):Notifications.Credits}
+            <Typography className={classes.bulkTitle}>
+              {isNotificationsPrepaid ? t('dashboard.perRecipients') : Notifications.Credits}
+            </Typography>
             {/* {availablePackages.length > 0 &&
               <a href='#' className={classes.bulkContent}>
                 {t('dashboard.purchase')}
               </a>
             } */}
-          </Grid>
+          </Grid>}
         </Grid>
       </Paper>
     </>

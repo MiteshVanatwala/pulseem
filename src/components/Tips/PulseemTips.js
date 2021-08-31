@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { IconButton, Box, Grid, Paper, Typography } from '@material-ui/core';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
@@ -8,7 +8,8 @@ import LighBulb from '../../assets/images/lightbulb.png'
 import clsx from 'clsx';
 import { getTips } from '../../redux/reducers/dashboardSlice';
 
-const PulseemTips = ({ classes, tips, t }) => {
+const PulseemTips = ({ classes, t }) => {
+  const { tips } = useSelector(state => state.dashboard);
   const [activeTip, setActiveTip] = useState(0);
 
   const dispatch = useDispatch();

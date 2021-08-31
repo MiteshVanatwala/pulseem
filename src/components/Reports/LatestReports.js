@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography } from '@material-ui/core';
 import { Doughnut, Bar } from 'react-chartjs-2';
@@ -8,7 +8,8 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { GroupsIcon } from '../../assets/images/managment/index';
 import { getLastCampaignReport } from '../../redux/reducers/dashboardSlice';
 
-const LatestReports = ({ classes, windowSize, lastCampaignReport, t }) => {
+const LatestReports = ({ classes, windowSize, t }) => {
+  const { lastCampaignReport } = useSelector(state => state.dashboard);
   const dispatch = useDispatch();
   const [tabValue, handleTabValue] = useState(0);
   const dateTimeFormat = 'MM/DD/YY, hh:mm a';
@@ -176,7 +177,7 @@ const LatestReports = ({ classes, windowSize, lastCampaignReport, t }) => {
         labels: labels,
         datasets: [{
           data: [
-            innerData && innerData.Sent || 0,
+            innerData && innerData.TotalSendPlan || 0,
             innerData && innerData.Clicks || 0,
             innerData && innerData.Errors || 0,
             innerData && innerData.DLR || 0
