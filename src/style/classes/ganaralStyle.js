@@ -1949,5 +1949,13 @@ marginTop:"10px"
     justifyContent:"space-between",
     alignItems:"center",
     marginTop:"15px"
+  },
+  deleteModalDiv :
+  {
+    height: "60px", borderBottom: "1px solid #DEE2E7"
+  },
+  subDeleteDiv :
+  {
+    fontSize: "22px", marginTop: "5px"
   }
 });

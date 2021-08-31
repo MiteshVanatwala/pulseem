@@ -20,6 +20,7 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import SortIcon from "@material-ui/icons/Sort";
 import FilterListIcon from "@material-ui/icons/FilterList";
+import { AiOutlineExclamationCircle} from "react-icons/ai";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
@@ -45,6 +46,7 @@ import {
   getAccountId,
   smsCombinedGroup,
   smsCampSettings,
+  deleteSms,
   getCampaignSumm,
   getManual,
 } from "../../../redux/reducers/smsSlice";
@@ -139,6 +141,8 @@ const SmsCreatorStep = ({ classes }) => {
   const [sendDate, handleFromDate] = useState(null);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
+  const [cancel, setcancel] = useState(true);
+  const [campaignIdResp, setcampaignIdResp] = useState(-1);
   const [groupList, setGroupList] = useState([]);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
   const [showGroupsList, setShowGroupsList] = useState(false);
@@ -193,6 +197,7 @@ const SmsCreatorStep = ({ classes }) => {
   const [newVal, setnewVal] = useState("")
   const [areaData, setareaData] = useState("");
   const [editT, seteditT] = useState(false);
+  const [deleteClick, setdeleteClick] = useState(false);
   const [areatyped, setareatyped] = useState("");
   const [blank, setblank] = useState([  'first Name', 'Last Name' , 'Cell Phone']);
   const [typedData, settypedData] = useState([]);
@@ -220,6 +225,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
   
   
   const [headers, setheaders] = useState(initialheadstate);
+
 
  
   useEffect(() => {
@@ -368,7 +374,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
     }
     setselectedGroup(tempArr);
   };
-
+  const onHandleDelete = () => {
+    setdeleteClick(true);
+  };
   const inputGroup = (e) => {
     setgroupValue(e.target.value);
   };
@@ -1341,7 +1349,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
         </div>
 
         <div className={classes.buttonDiv}>
-          <span className={classes.rightInput3}>
+          <span className={classes.rightInput3} onClick={onHandleDelete} >
             <AiOutlineDelete style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4}>
@@ -1825,6 +1833,48 @@ setnewVal(e.target.value);
       </>
     );
   };
+
+  const handleClose = () => {
+    setdeleteClick(false);
+  };
+  const handleDelete = () => {
+    let a = window.location;
+
+    let b = a.search.split("=");
+    let camp = b[1];
+    dispatch(deleteSms(camp));
+    handleClose();
+  };
+  const renderDelete = () =>
+  {
+    return(
+      <>
+        {deleteClick ? (
+      <Dialog
+        classes={classes}
+        open={deleteClick}
+        onClose={handleClose}
+        onCancel={cancel ? null : true}
+        onConfirm={handleDelete}
+        confirmText="Confirm"
+        showDefaultButtons={true}
+        icon={
+          <AiOutlineExclamationCircle
+            style={{ fontSize: 30, color: "#fff" }}
+          />
+        }
+      >
+        <div  className={classes.deleteModalDiv}>
+          <span className={classes.groupName}>{t("mainReport.deleteCamp")}</span>
+        </div>
+        <div  className={classes.subDeleteDiv}>
+          <span>{t("mainReport.confirmSure")}</span>
+        </div>
+      </Dialog>
+    ) : null}</>
+    )
+  
+  }
   const handleNewM = () => {
     setcaution(false);
   };
@@ -1888,6 +1938,7 @@ setnewVal(e.target.value);
       {renderSummary()}
       {renderDialogManual()}
       {renderCaution()}
+      {renderDelete()}
     </DefaultScreen>
   );
 };

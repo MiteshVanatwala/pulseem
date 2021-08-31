@@ -474,7 +474,9 @@
   "testSend":"Test Send",
   "testDesc":"Right after you click send",
   "sendToOne":"Send to one contact",
-  "sendToGroups":"Send to test groups"
+  "sendToGroups":"Send to test groups",
+  "deleteCamp":"Delete Campaign",
+  "confirmSure":"Are you sure?"
   
 
 }
