@@ -1213,7 +1213,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxHeight: "200px",
     width: "700px",
     marginTop: "20px",
-    overflowY:"auto"
+    overflowY:"auto",
+    borderBottom: "1px solid #efefef",
+    borderLeft: "1px solid #efefef",
+    borderRight: "1px solid #efefef",
+    marginTop: "0",
   },
   searchCon: {
     padding: "12px",
@@ -1926,5 +1930,41 @@ marginTop:"10px"
     justifyContent:"space-between",
     alignItems:"center",
     marginTop:"15px"
+  },
+  reciFilterDiv : 
+  {
+    height: "60px", borderBottom: "1px solid black"
+  },
+  reciCheckoxContainer :
+  {
+    fontSize: "16px",
+    fontWeight: "700",
+    marginTop: "10px",
+    marginBottom: "10px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "cneter",
+  },
+  bubbleReciDiv :
+  {
+    padding: "6px",
+    borderRadius: "20px",
+    backgroundColor: "#1771ad",
+    marginInlineEnd: "4px",
+    marginBottom: "4px",
+    color: "white",
+  },
+  groupsFilterList :
+  {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "700px",
+    cursor:"pointer"
+
+  },
+  camapignsDiv : 
+  {
+    marginTop: "12px"
   }
 });

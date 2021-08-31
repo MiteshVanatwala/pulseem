@@ -1,4 +1,11 @@
 {
   "credits": "נקודות זכות",
-  "amountOfEmails": "כמות שליחות לפי חודשים"
+  "amountOfEmails": "כמות שליחות לפי חודשים",
+  "searchSms":"לחפש",
+  "recipientsFilter":"מסנן נמענים",
+  "filterInputText":"אל תשלח לנמענים שקיבלו SMS בימים האחרונים",
+  "inputTextFilter":"אל תשלח לנמענים מהקבוצות הבאות",
+  "campaignInfo":"אל תשלח לנמענים מהקמפיינים הבאים",
+  "okBtn":"בסדר",
+  "cancelBtn":"לְבַטֵל"
 }

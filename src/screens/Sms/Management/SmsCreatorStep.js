@@ -135,6 +135,7 @@ const SmsCreatorStep = ({ classes }) => {
   const [filterGroups, setfilterGroups] = useState([]);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
   const [showGroupsList, setShowGroupsList] = useState(false);
+  const [inputRecipients, setinputRecipients] = useState("");
   const [toggleChecked, settoggleChecked] = useState(false);
   const [groupValue, setgroupValue] = useState("");
   const [manualTrue, setmanualTrue] = useState(false);
@@ -187,8 +188,10 @@ const SmsCreatorStep = ({ classes }) => {
   const [newVal, setnewVal] = useState("");
   const [reciToggle, setreciToggle] = useState(false);
   const [areaData, setareaData] = useState("");
+  const [RecipientsBool, setRecipientsBool] = useState(false);
   const [editT, seteditT] = useState(false);
   const [areatyped, setareatyped] = useState("");
+  const [totalCampaigns, settotalCampaigns] = useState([])
   const [blank, setblank] = useState([  'first Name', 'Last Name' , 'Cell Phone']);
   const [typedData, settypedData] = useState([]);
   const [selectArray, setselectArray] = useState([
@@ -216,7 +219,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
   
   const [headers, setheaders] = useState(initialheadstate);
   const getData = async () => {
-    await dispatch(getFinishedCampaigns());
+    const list = await dispatch(getFinishedCampaigns());
+    const tempGroupList = list.payload;
+    settotalCampaigns(tempGroupList);
 
   };
   useEffect(() => {
@@ -379,6 +384,21 @@ const [initialheadstate, setinitialheadstate] = useState([])
       }
     }
     setfilterGroups(tempArr);
+  };
+  const handleSelectCamp = (id) => {
+    let tempArr = [];
+    for (let i = 0; i < totalCampaigns.length; i++) {
+      if (id === i) {
+        if (totalCampaigns[i].selected) {
+          tempArr.push({ ...totalCampaigns[i], selected: false });
+        } else {
+          tempArr.push({ ...totalCampaigns[i], selected: true });
+        }
+      } else {
+        tempArr.push(totalCampaigns[i]);
+      }
+    }
+    settotalCampaigns(tempArr);
   };
 
   const inputGroup = (e) => {
@@ -906,8 +926,31 @@ const [initialheadstate, setinitialheadstate] = useState([])
     }
     setfilterGroups(temp);
   };
+  const handleCrossCamp = (id) => {
+    let temp = [];
+    for (let i = 0; i < totalCampaigns.length; i++) {
+      if (i == id) {
+        temp.push({ ...totalCampaigns[i], selected: false });
+      } else {
+        temp.push(totalCampaigns[i]);
+      }
+    }
+    settotalCampaigns(temp);
+  };
   const handleReciClose = () => {
+
     setreciFilter(false);
+  };
+  const handleReciConfirm = () => {
+
+    if(toggleReci)
+    {
+      if(validationCheck())
+      {
+        console.log("Trueeee");
+          setreciFilter(false);
+      }
+    }
   };
   const handlePasted = () => {
     let temp = areaData;
@@ -930,6 +973,24 @@ const [initialheadstate, setinitialheadstate] = useState([])
     seteditT(true);
     setmanualTrue(true);
   };
+  const handleReciInput = (e) =>
+  {
+
+    setinputRecipients(e.target.value);
+    setRecipientsBool(false);
+   
+  }
+  const validationCheck = () => {
+    if (inputRecipients === "") {
+      setRecipientsBool(true);
+      return false;
+    }
+    else
+    {
+      return true;
+    }
+    
+  };
   const renderReciFilter = () => {
     return (
       <>
@@ -939,24 +1000,18 @@ const [initialheadstate, setinitialheadstate] = useState([])
             classes={classes}
             open={true}
             onClose={handleReciClose}
-            onConfirm={handleReciClose}
+            onConfirm={handleReciConfirm}
+            confirmText={t("smsReport.okBtn")}
+            cancelText={t("smsReport.cancelBtn")}
             showDefaultButtons={true}
             icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }} />}
           >
-            <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-              <span className={classes.groupName}>Recipients Filter</span>
+            <div  className={classes.reciFilterDiv}>
+              <span className={classes.groupName}>{t("smsReport.recipientsFilter")}</span>
             </div>
             <div>
               <div
-                style={{
-                  fontSize: "16px",
-                  fontWeight: "700",
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "cneter",
-                }}
+                className={classes.reciCheckoxContainer}
               >
                 <div>
                   
@@ -969,7 +1024,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     }}
                   />
                   <span>
-                    Don't send to recipients that got SMS in last previous days
+                  {t("smsReport.filterInputText")}
                   </span>
                 </div>
                 <div>
@@ -981,11 +1036,13 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         ? clsx(classes.pulseActive)
                         : clsx(classes.pulseInsert)
                     }
+                    onChange={handleReciInput}
+                    value={inputRecipients}
                   />
                 </div>
               </div>
               <div>
-                <span>Don't send to recipients from the following groups:</span>
+                <span> {t("smsReport.inputTextFilter")}:</span>
                 <div>
                   
                   <Paper component="form" className={classes.reciMain}>
@@ -998,7 +1055,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     </IconButton>
                     <InputBase
                       className={classes.inputreci}
-                      placeholder="Search"
+                      placeholder={t("smsReport.searchSms")}
                       inputProps={{ "aria-label": "Search" }}
                       onChange={(e) => {
                         setContactSearch(e.target.value);
@@ -1009,15 +1066,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                             if (item.selected) {
                               return (
                                 <div
-                                  style={{
-                                   
-                                    padding: "6px",
-                                    borderRadius: "20px",
-                                    backgroundColor: "#1771ad",
-                                    marginInlineEnd: "4px",
-                                    marginBottom: "4px",
-                                    color: "white",
-                                  }}
+                                  className={classes.bubbleReciDiv}
                                 >
                                   {item.GroupName}
                                   <span
@@ -1033,12 +1082,6 @@ const [initialheadstate, setinitialheadstate] = useState([])
                           })}</div>
                   <div
                     className={classes.listDivFilter}
-                    style={{
-                      borderBottom: "1px solid #efefef",
-                      borderLeft: "1px solid #efefef",
-                      borderRight: "1px solid #efefef",
-                      marginTop: "0",
-                    }}
                   >
                     {filterGroups
                       .filter((val) => {
@@ -1062,20 +1105,12 @@ const [initialheadstate, setinitialheadstate] = useState([])
                               {item.selected ? <FaCheck className={clsx(classes.green)}/> : <HiOutlineUserGroup />}
                             </span>
                             <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                width: "700px",
-                                cursor:"pointer"
-                              }}
+                              className={classes.groupsFilterList}
                               onClick={() => {
                                 handleSelect(idx);
                               }}
                             >
-                              <span
-                               
-                              >
+                              <span>
                                 {item.GroupName}
                               </span>
                               <span>{item.Recipients} Recipients</span>
@@ -1086,9 +1121,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
                   </div>
                 </div>
               </div>
-              <div style={{ marginTop: "12px" }}>
+              <div  className={classes.camapignsDiv}>
                 <span>
-                  Don't send to recipients from the following campaigns::
+                {t("smsReport.campaignInfo")}:
                 </span>
                 <div>
                   
@@ -1102,24 +1137,35 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     </IconButton>
                     <InputBase
                       className={classes.inputreci}
-                      placeholder="Search"
+                      placeholder={t("smsReport.searchSms")}
                       inputProps={{ "aria-label": "Search" }}
                       onChange={(e) => {
                         setcampaignSearch(e.target.value);
                       }}
                     />
                   </Paper>
-                  <div className={classes.reciList}>No Campaign's Selected</div>
+                  <div className={classes.reciList}> {totalCampaigns.map((item, index) => {
+                            if (item.selected) {
+                              return (
+                                <div
+                                  className={classes.bubbleReciDiv}
+                                >
+                                  {item.Name}
+                                  <span
+                                    onClick={() => {
+                                      handleCrossCamp(index);
+                                    }}
+                                  >
+                                    X
+                                  </span>
+                                </div>
+                              );
+                            }
+                          })}</div>
                   <div
                     className={classes.listDivFilter}
-                    style={{
-                      borderBottom: "1px solid #efefef",
-                      borderLeft: "1px solid #efefef",
-                      borderRight: "1px solid #efefef",
-                      marginTop: "0",
-                    }}
                   >
-                    {finishedCampaigns
+                    {totalCampaigns
                       .filter((val) => {
                         if (campaignSearch == "") {
                           return val;
@@ -1136,26 +1182,19 @@ const [initialheadstate, setinitialheadstate] = useState([])
                           <div className={classes.searchCon}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
-                              className={classes.grDoc}
+                              className={item.selected ? classes.grDoc :  classes.blueDoc}
                             >
-                              {item.selected ? "hi" : <HiOutlineUserGroup />}
+                              {item.selected ? <FaCheck className={clsx(classes.green)}/> : <HiOutlineUserGroup />}
                             </span>
                             <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                width: "700px",
-                              }}
+                             className={classes.groupsFilterList}
+                             onClick={() => {
+                              handleSelectCamp(idx);
+                            }}
                             >
-                              <span
-                                onClick={() => {
-                                  handleSelect(idx);
-                                }}
-                              >
+                              <span>
                                 {item.Name}
                               </span>
-                            
                             </div>
                           </div>
                         );
