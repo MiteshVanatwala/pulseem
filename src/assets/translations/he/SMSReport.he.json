@@ -1,4 +1,21 @@
 {
   "credits": "נקודות זכות",
-  "amountOfEmails": "כמות שליחות לפי חודשים"
+  "amountOfEmails": "כמות שליחות לפי חודשים",
+  "pulseSending":"שליחת דופק",
+  "packetSend":"מנות נשלחות",
+  "noOfReciPulse":"מספר הנמענים לכל שליחה",
+  "percent":"אָחוּז",
+  "Reci":"נמענים",
+  "timeSend":"זמן בין שליחה",
+  "Hours":"שעה (ות",
+  "min":"דקות",
+  "randomSend":"שליחה אקראית",
+  "noOfReci":"מספר הנמענים האקראיים",
+  "confirmBtn":"לְאַשֵׁר",
+  "insert":"לְהַכנִיס",
+  "NoPulse":"אין הגדרות דופק מיושמות",
+  "pulseAmount":"אנא מלא את סכום הדופק",
+  "timeAmount":"אנא מלא מרווח זמן",
+  "randomAmt":"אנא מלא סכום אקראי"
+  
 }

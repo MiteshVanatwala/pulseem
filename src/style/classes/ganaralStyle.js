@@ -1949,5 +1949,62 @@ marginTop:"10px"
     justifyContent:"space-between",
     alignItems:"center",
     marginTop:"15px"
+  },
+  pulseParentDiv : 
+  {
+    height: "60px", borderBottom: "1px solid black"
+  },
+  pulseChildDiv :
+  {
+    fontSize: "16px",
+    fontWeight: "700",
+    marginTop: "10px",
+    marginBottom: "10px",
+  },
+  topPulseDiv :
+  {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottom: "2px solid #efefef",
+    paddingBottom: "15px",
+  },
+  noOfReci :
+  {
+    fontSize: "18px",
+    fontWeight: "500",
+    marginTop: "10px",
+    marginBottom: "10px",
+  },
+  inputFieldDiv :
+  {
+    display: "flex",
+    alignItems: "center",
+    marginTop: "10px",
+  },
+  commonFieldPulse :
+  {
+    display: "flex", alignItems: "center"
+  },
+  randomSendDiv :
+  {
+    fontSize: "16px",
+    fontWeight: "700",
+    marginTop: "10px",
+    marginBottom: "10px",
+  },
+  randomReciSpan :
+  {
+    fontSize: "18px",
+    fontWeight: "500",
+    marginTop: "10px",
+    marginBottom: "10px",
+  },
+  confirmDiv :
+  {
+    height: "50px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   }
 });

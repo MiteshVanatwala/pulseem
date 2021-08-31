@@ -55,6 +55,7 @@ import Summary from "./smsSummary";
 
 
 import clsx from "clsx";
+import { transform } from "babel-core";
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
 }
@@ -145,6 +146,7 @@ const SmsCreatorStep = ({ classes }) => {
   const [sendDate, handleFromDate] = useState(null);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
+  const [boolRandom, setboolRandom] = useState(false);
   const [groupList, setGroupList] = useState([]);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
   const [showGroupsList, setShowGroupsList] = useState(false);
@@ -381,19 +383,27 @@ const [initialheadstate, setinitialheadstate] = useState([])
     setgroupValue(e.target.value);
   };
   const handlePulseClose = () => {
+   
+      setpulse(false);
+    
+   
+  };
+
+  const handlePulseConfirm = () =>
+  {
+    console.log("hereeee")
     if(onPulseValidations())
     {
       setpulse(false);
     }
-   
-  };
-
+  }
   const handleTime = (e) => {
     setinputS(e.target.value);
     setTimeBool(false);
   };
   const handleRandom = (e) => {
     setrandom(e.target.value);
+    setboolRandom(false);
   };
   const handlePulseInput = (e) => {
     setinputF(e.target.value);
@@ -413,6 +423,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
           setTimeBool(true);
           return false;
         }
+       
       }
       else if(inputS === "")
       {
@@ -422,9 +433,39 @@ const [initialheadstate, setinitialheadstate] = useState([])
           setpulseBool(true);
           return false;
         }
+       
+      }
+      else if(toggleRandom)
+      {
+        if(random === "")
+        { 
+            setboolRandom(true);
+          return false;
+        }
+        else
+        {
+          return true;
+        }
+      }
+      else
+      {
+        return true;
       }
      
     }
+    else if(toggleRandom)
+    {
+      if(random === "")
+      { 
+          setboolRandom(true);
+        return false;
+      }
+      else
+      {
+        return true;
+      }
+    }
+  
     else
     {
       return true;
@@ -442,17 +483,12 @@ const [initialheadstate, setinitialheadstate] = useState([])
           showDefaultButtons={false}
           icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }} />}
         >
-          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>Pulse Sending</span>
+          <div  className={classes.pulseParentDiv}>
+            <span className={classes.groupName}> {t("smsReport.pulseSending")}</span>
           </div>
           <div>
             <div
-              style={{
-                fontSize: "16px",
-                fontWeight: "700",
-                marginTop: "10px",
-                marginBottom: "10px",
-              }}
+              className={classes.pulseChildDiv}
             >
               {" "}
               <Checkbox
@@ -465,38 +501,23 @@ const [initialheadstate, setinitialheadstate] = useState([])
                   setinputS("");
                 }}
               />
-              <span>Packets Sending</span>
+              <span>{t("smsReport.packetSend")}</span>
             </div>
             <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                borderBottom: "2px solid #efefef",
-                paddingBottom: "15px",
-              }}
+              className={classes.topPulseDiv}
             >
               <div>
                 <span
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "500",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                  }}
+                  className={classes.noOfReci}
                 >
-                  Number of Recipients per Sending
+                 {t("smsReport.noOfReciPulse")}
                 </span>
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginTop: "10px",
-                  }}
+                  className={classes.inputFieldDiv}
                 >
                   <input
                     type="text"
-                    placeholder="Insert"
+                    placeholder={t("smsReport.insert")}
                     disabled={togglePulse ? false : true}
                     className={
                       togglePulse
@@ -508,7 +529,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     maxLength="1"
                   />
 
-                  <div style={{ display: "flex", alignItems: "center" }}>
+                  <div  className={classes.commonFieldPulse}>
                     <span
                       className={
                         togglePulse
@@ -523,8 +544,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         setpulsePer("percent");
                         setpulseReci("");
                       }}
+                      style={{transform:isRTL ?  "rotate(180deg)" : "none"}}
                     >
-                      Percent
+                     {t("smsReport.percent")}
                     </span>
                     <span
                       className={
@@ -540,33 +562,25 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         setpulsePer("");
                         setpulseReci("Recipients");
                       }}
+                      style={{transform:isRTL ?  "rotate(180deg)" : "none"}}
                     >
-                      Recipients
+                     {t("smsReport.Reci")}
                     </span>
                   </div>
                 </div>
               </div>
               <div>
                 <span
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "500",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                  }}
+                 className={classes.noOfReci}
                 >
-                  Time between sending
+                  {t("smsReport.timeSend")}
                 </span>
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginTop: "10px",
-                  }}
+                   className={classes.inputFieldDiv} 
                 >
                   <input
                     type="text"
-                    placeholder="Insert"
+                    placeholder={t("smsReport.insert")}
                     disabled={togglePulse ? false : true}
                     className={
                       togglePulse
@@ -578,7 +592,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     maxLength="1"
                   />
 
-                  <div style={{ display: "flex", alignItems: "center" }}>
+                  <div className={classes.commonFieldPulse}>
                     <span
                       className={
                         togglePulse
@@ -593,8 +607,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         setminName("");
                         sethourName("hours");
                       }}
+                      style={{transform:isRTL ?  "rotate(180deg)" : "none"}}
                     >
-                      Hours
+                      {t("smsReport.Hours")}
                     </span>
                     <span
                       className={
@@ -610,8 +625,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         setminName("mins");
                         sethourName("");
                       }}
+                      style={{transform:isRTL ?  "rotate(180deg)" : "none"}}
                     >
-                      Mins
+                      {t("smsReport.min")}
                     </span>
                   </div>
                 </div>
@@ -619,12 +635,8 @@ const [initialheadstate, setinitialheadstate] = useState([])
             </div>
 
             <div
-              style={{
-                fontSize: "16px",
-                fontWeight: "700",
-                marginTop: "10px",
-                marginBottom: "10px",
-              }}
+            
+              className={classes.randomSendDiv}
             >
               {" "}
               <Checkbox
@@ -635,27 +647,22 @@ const [initialheadstate, setinitialheadstate] = useState([])
                   settoggleRandom(!toggleRandom);
                 }}
               />
-              <span>Random Sending</span>
+              <span>{t("smsReport.randomSend")}</span>
             </div>
             <div>
               <span
-                style={{
-                  fontSize: "18px",
-                  fontWeight: "500",
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                }}
+                className={classes.randomReciSpan}
               >
-                Number of random recipients{" "}
+               {t("smsReport.noOfReci")}
               </span>
 
               <input
                 type="text"
-                placeholder="Insert"
+                placeholder={t("smsReport.insert")}
                 disabled={toggleRandom ? false : true}
                 className={
                   toggleRandom
-                    ? clsx(classes.pulseActive)
+                    ?  boolRandom ? clsx(classes.pulseActive,classes.error) : clsx(classes.pulseActive)
                     : clsx(classes.pulseInsert)
                 }
                 onChange={handleRandom}
@@ -664,12 +671,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
             </div>
           </div>
           <div
-            style={{
-              height: "50px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            className={classes.confirmDiv}
           >
             <Button
               variant="contained"
@@ -678,9 +680,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
                 classes.dialogButton,
                 classes.dialogConfirmButton
               )}
-              onClick={handlePulseClose}
+              onClick={handlePulseConfirm}
             >
-              Confirm
+              {t("smsReport.confirmBtn")}
             </Button>
           </div>
         </Dialog>
@@ -1937,7 +1939,7 @@ setnewVal(e.target.value);
       {renderDialogManual()}
       {renderCaution()}
       <Snackbar
-                      open={pulseBool || TimeBool}
+                      open={pulseBool || TimeBool || boolRandom}
                       autoHideDuration={2000}
                       // onClose={handleClose}
                       anchorOrigin={{
@@ -1947,7 +1949,7 @@ setnewVal(e.target.value);
                       style={{ zIndex: "9999" }}
                     >
                       <Alert severity="warning" >
-                       No Pulse Settings are Applied
+                      {t("smsReport.NoPulse")}
                       </Alert>
                     </Snackbar>
                     <Snackbar
@@ -1961,7 +1963,7 @@ setnewVal(e.target.value);
                       style={{ zIndex: "9999",marginTop:"60px" }}
                     >
                       <Alert severity="error" >
-                       Please Fill Pulse Amount
+                      {t("smsReport.pulseAmount")}
                       </Alert>
                     </Snackbar>
                     <Snackbar
@@ -1975,7 +1977,21 @@ setnewVal(e.target.value);
                       style={{ zIndex: "9999",marginTop:"120px" }}
                     >
                       <Alert severity="error" >
-                       Please Fill Time Interval
+                      {t("smsReport.timeAmount")}
+                      </Alert>
+                    </Snackbar>
+                    <Snackbar
+                      open={boolRandom}
+                      autoHideDuration={2000}
+                      // onClose={handleClose}
+                      anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "right",
+                      }}
+                      style={{ zIndex: "9999",marginTop:"60px" }}
+                    >
+                      <Alert severity="error" >
+                      {t("smsReport.randomAmt")}
                       </Alert>
                     </Snackbar>
     </DefaultScreen>
