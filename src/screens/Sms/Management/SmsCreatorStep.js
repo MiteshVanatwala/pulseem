@@ -288,13 +288,6 @@ const [initialheadstate, setinitialheadstate] = useState([])
     return (
       <div className={classes.infoDiv}>
         <span className={classes.headInfo}> {t("mainReport.smsCampaign")}</span>
-        <Tooltip
-          disableFocusListener
-          title="Create New SMS Campaign"
-          classes={{ tooltip: styles.customWidth }}
-        >
-          <span className={classes.bodyInfo}>i</span>
-        </Tooltip>
       </div>
     );
   };
@@ -1137,7 +1130,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
             >
               <FormControlLabel
                 value="1"
-                control={<Radio color="primary" />}
+                control={<Radio color="primary" style={{color:"#007bff"}}/>}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.immediateSend")}
@@ -1149,7 +1142,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               </FormHelperText>
               <FormControlLabel
                 value="2"
-                control={<Radio color="primary" />}
+                control={<Radio color="primary" style={{color:"#007bff"}}/>}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.futureSend")}
@@ -1201,7 +1194,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               </Box>
               <FormControlLabel
                 value="3"
-                control={<Radio color="primary" />}
+                control={<Radio color="primary" style={{color:"#007bff"}}/>}
                 label={
                   <span className={classes.radioText}>
                     {t("mainReport.specialDate")}
