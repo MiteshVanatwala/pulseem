@@ -475,7 +475,8 @@
   "testDesc":"Right after you click send",
   "sendToOne":"Send to one Contact",
   "sendToGroups":"Send to one Test Groups",
-  "tooltipCreateGroup" : "Choose 2 or more groups and combine into one new one"
-  
+  "tooltipCreateGroup" : "Choose 2 or more groups and combine into one new one",
+  "newFeature":"New!",
+  "save":"Save"
 
 }
