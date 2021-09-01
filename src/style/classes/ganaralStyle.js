@@ -791,6 +791,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   infoButtons: {
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
     borderRadius: "20px",
     width: "150px",
     color: "white",
@@ -809,6 +812,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   info2Buttons: {
     borderRadius: "20px",
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
     width: "111px",
     color: "white",
     backgroundColor: "red",
