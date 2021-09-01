@@ -1283,7 +1283,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               >
                 <DateField
                   classes={classes}
-                  value={sendDate}
+                  value={null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
