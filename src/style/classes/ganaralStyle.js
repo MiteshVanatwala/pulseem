@@ -1038,6 +1038,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     top: "31%",
     fontWeight: "700",
   },
+  phoneNumberSum: {
+    top: "24%",
+    left: "38%",
+    position: "absolute",
+    fontWeight: "700",
+    fontSize: "15px",
+  },
   chat: {
    
     
