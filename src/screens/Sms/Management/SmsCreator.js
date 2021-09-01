@@ -26,7 +26,7 @@ import {
   deleteSms,
   smsSaveGroup,
   smsQuick,
-  getCampaignSumm
+  getCampaignSumm,
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
 import { FcDocument } from "react-icons/fc";
@@ -140,9 +140,14 @@ const SmsCreator = ({ classes }, props) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { previousLandingData, previousCampaignData, extraData, accountId ,getCampaignSum} =
-    useSelector((state) => state.sms);
-    console.log("aajaa",getCampaignSum)
+  const {
+    previousLandingData,
+    previousCampaignData,
+    extraData,
+    accountId,
+    getCampaignSum,
+  } = useSelector((state) => state.sms);
+  console.log("aajaa", getCampaignSum);
   const [alignment, setAlignment] = useState("left");
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [flagemoji, setflagemoji] = useState(false);
@@ -199,10 +204,9 @@ const SmsCreator = ({ classes }, props) => {
     setLoader(false);
   };
 
-  const onApiCall = () => 
-  {
+  const onApiCall = () => {
     alert("hi");
-  }
+  };
   const getDataCamapaign = async () => {
     await dispatch(getPreviousCampaignData());
 
@@ -400,7 +404,7 @@ const SmsCreator = ({ classes }, props) => {
         </div>
         <div className={classes.buttonForm}>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            {" "}
+            
             <span className={classes.buttonHead}>
               {t("mainReport.campFrom")}
             </span>
@@ -432,7 +436,7 @@ const SmsCreator = ({ classes }, props) => {
         {restoreBool ? (
           <div className={classes.buttonForm}>
             <span className={clsx(classes.buttonHead)}>
-              {" "}
+              
               {t("mainReport.removalReply")}
             </span>
             <input
@@ -663,8 +667,7 @@ const SmsCreator = ({ classes }, props) => {
 
   const onRadiochange = (e) => {
     setradioBtn(e.target.value);
-    if(e.target.value === "bottom")
-    {
+    if (e.target.value === "bottom") {
       setcontactGroup(true);
     }
   };
@@ -677,7 +680,7 @@ const SmsCreator = ({ classes }, props) => {
     return (
       <div>
         <div style={{ position: "relative" }} className={classes.phoneDiv}>
-          {" "}
+          
           <img
             src={Mobile}
             style={{
@@ -714,7 +717,7 @@ const SmsCreator = ({ classes }, props) => {
             style={{ display: "flex", flexDirection: "column", width: "250px" }}
           >
             <span style={{ fontSize: "18px" }}>
-              {" "}
+              
               {t("mainReport.testSend")}
             </span>
             <span
@@ -740,7 +743,7 @@ const SmsCreator = ({ classes }, props) => {
             >
               <div className={{ display: "flex", flexDirection: "column" }}>
                 <div>
-                  {" "}
+                  
                   <FormControlLabel
                     value="top"
                     control={<Radio color="primary" id="top" />}
@@ -777,17 +780,19 @@ const SmsCreator = ({ classes }, props) => {
                 ) : null}
 
                 <div>
-                  {" "}
+                  
                   <FormControlLabel
                     value="bottom"
                     control={<Radio color="primary" id="bottom" />}
                   />
-                  <span>{t("mainReport.sendToGroups")} <span  className={classes.newIcn}>New!</span></span>
+                  <span>
+                    {t("mainReport.sendToGroups")}
+                    <span className={classes.newIcn}>New!</span>
+                  </span>
                 </div>
                 {radioBtn === "bottom" ? (
                   <div className={classes.rightForm}>
                     <div
-                    
                       className={classes.contactGroupDiv}
                       onClick={() => {
                         setcontactGroup(true);
@@ -795,15 +800,11 @@ const SmsCreator = ({ classes }, props) => {
                     >
                       <div> Choose test groups from the list</div>
                       {hidden ? (
-                        <div
-                          className={classes.mappedGroup}
-                        >
+                        <div className={classes.mappedGroup}>
                           {selectedGroup.map((item, index) => {
                             if (item.selected && hidden) {
                               return (
-                                <div
-                                  className={classes.bubbleGroups}
-                                >
+                                <div className={classes.bubbleGroups}>
                                   {item.GroupName}
                                   <span
                                     onClick={() => {
@@ -835,7 +836,7 @@ const SmsCreator = ({ classes }, props) => {
             <AiOutlineDelete style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4} onClick={clickExit}>
-            Exit{" "}
+            Exit
           </span>
           <span
             className={classes.rightInput5}
@@ -979,8 +980,7 @@ const SmsCreator = ({ classes }, props) => {
     let arr = [];
   };
 
-  const handleGroupClose = async () => 
-  {
+  const handleGroupClose = async () => {
     setsummary(true);
     setsave(false);
     sethidden(true);
@@ -1005,36 +1005,25 @@ const SmsCreator = ({ classes }, props) => {
     let r = await dispatch(smsSave(payload));
     let temp = [];
     let tempfull = [];
-    let num = 0
-    for(let i =0 ; i < selectedGroup.length ; i++)
-    {
-      if(selectedGroup[i].selected)
-      {
+    let num = 0;
+    for (let i = 0; i < selectedGroup.length; i++) {
+      if (selectedGroup[i].selected) {
         temp.push(selectedGroup[i].GroupID);
         tempfull.push(selectedGroup[i]);
         ++num;
-        
       }
-      
     }
     settotal(num);
     settemp(tempfull);
-    let payload2 = 
-    {
+    let payload2 = {
       IsTestGroups: true,
       SMSCampaignID: r.payload.Message,
-      TestGroupsIds: temp
-    }
+      TestGroupsIds: temp,
+    };
 
     let r2 = await dispatch(smsSaveGroup(payload2));
     await dispatch(getCampaignSumm(r.payload.Message));
-  
-
-  
-       
-
-
-  }
+  };
   const renderSendGroup = () => {
     return (
       <>
@@ -1071,9 +1060,7 @@ const SmsCreator = ({ classes }, props) => {
               </Paper>
             </div>
             <div className={classes.listDiv}>
-              {
-               
-              selectedGroup
+              {selectedGroup
                 .filter((val) => {
                   if (ContactSearch == "") {
                     return val;
@@ -1086,7 +1073,6 @@ const SmsCreator = ({ classes }, props) => {
                   }
                 })
                 .map((item, idx) => {
-                 
                   return (
                     <div className={classes.searchCon} onClick={makeArr(idx)}>
                       <span
@@ -1128,8 +1114,7 @@ const SmsCreator = ({ classes }, props) => {
                 variant="contained"
                 size="small"
                 onClick={() => {
-                 
-                  handleGroupClose()
+                  handleGroupClose();
                 }}
                 className={clsx(
                   classes.dialogButton,
@@ -1140,7 +1125,7 @@ const SmsCreator = ({ classes }, props) => {
               </Button>
             </div>
           </Dialog>
-        ) : null}{" "}
+        ) : null}
       </>
     );
   };
@@ -1193,7 +1178,7 @@ const SmsCreator = ({ classes }, props) => {
   const renderAlert = () => {
     return (
       <>
-        {" "}
+        
         {alertToggle ? (
           <Dialog
             classes={classes}
@@ -1219,7 +1204,7 @@ const SmsCreator = ({ classes }, props) => {
               </span>
             </div>
           </Dialog>
-        ) : null}{" "}
+        ) : null}
       </>
     );
   };
@@ -1230,18 +1215,18 @@ const SmsCreator = ({ classes }, props) => {
   const renderSummary = () => {
     return (
       <>
-    <Summary         
+        <Summary
           classes={classes}
           campaign={campaignName}
           number={campaignNumber}
           totalmsg={msg}
           selected={selectedGroup}
           bool={summary}
-          grand = {total}
-          final = {temp}
-          summ = {getCampaignSum}
-          api = {onApiCall}
-        /> 
+          grand={total}
+          final={temp}
+          summ={getCampaignSum}
+          api={onApiCall}
+        />
       </>
     );
   };
