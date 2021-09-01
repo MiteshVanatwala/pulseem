@@ -478,5 +478,6 @@
   "testSend":"שליחת מבחן",
   "testDesc":"מיד לאחר לחיצה על שלח",
   "sendToOne":"שלח לאיש קשר אחד",
-  "sendToGroups":"שלח לקבוצות בדיקה אחת"
+  "sendToGroups":"שלח לקבוצות בדיקה אחת",
+  "campaignNamePlaceholder":"שם הקמפיין"
 }

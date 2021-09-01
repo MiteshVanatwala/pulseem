@@ -386,7 +386,7 @@ const SmsCreator = ({ classes }, props) => {
           <span className={classes.buttonHead}>{t("mainReport.campName")}</span>
           <input
             type="text"
-            placeholder="Campaign Name"
+            placeholder={t("mainReport.campaignNamePlaceholder")}
             className={
               campaignBool
                 ? clsx(classes.buttonField, classes.error)

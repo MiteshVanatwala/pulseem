@@ -474,7 +474,8 @@
   "testSend":"Test Send",
   "testDesc":"Right after you click send",
   "sendToOne":"Send to one Contact",
-  "sendToGroups":"Send to one Test Groups"
+  "sendToGroups":"Send to one Test Groups",
+  "campaignNamePlaceholder":"Campaign Name"
   
 
 }
