@@ -1956,6 +1956,10 @@ marginTop:"10px"
     alignItems: "center",
     width: "700px",
     cursor:"pointer"
+  },
+  smsStepDiv : 
+  {
+    display: "grid", gridTemplateColumns: "65% auto" ,padding: "40px 80px 15px 90px"
   }
   
 });
