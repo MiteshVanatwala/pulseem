@@ -23,6 +23,7 @@ import FilterListIcon from "@material-ui/icons/FilterList";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
+import { BsTrash } from "react-icons/bs";
 import {
   Typography,
   Button,
@@ -1349,7 +1350,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
 
         <div className={classes.buttonDiv}>
           <span className={classes.rightInput3}>
-            <AiOutlineDelete style={{ fontSize: "25" }} />
+          <BsTrash style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4}>
             {" "}
