@@ -11,7 +11,7 @@ import PulseemTips from '../../components/Tips/PulseemTips';
 import LatestReports from '../../components/Reports/LatestReports';
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize } = useSelector(state => state.core);
+  const { windowSize, isRTL } = useSelector(state => state.core);
   const { t } = useTranslation();
 
   return (
@@ -34,6 +34,7 @@ const DashboardScreen = ({ classes }) => {
               <PulseemTips
                 classes={classes}
                 t={t}
+                isRTL={isRTL}
               />
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={9}>

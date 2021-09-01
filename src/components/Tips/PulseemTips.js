@@ -8,7 +8,7 @@ import LighBulb from '../../assets/images/lightbulb.png'
 import clsx from 'clsx';
 import { getTips } from '../../redux/reducers/dashboardSlice';
 
-const PulseemTips = ({ classes, t }) => {
+const PulseemTips = ({ classes, t, isRTL }) => {
   const { tips } = useSelector(state => state.dashboard);
   const [activeTip, setActiveTip] = useState(0);
 
@@ -69,7 +69,7 @@ const PulseemTips = ({ classes, t }) => {
           {tips.map(tip => {
             return (
               <Box component='div' className={classes.tipItem} key={`tip${Math.round(Math.random() * 999999999)}`}>
-                <Typography align='center' className={classes.tipulseemMsg}>{tip.TipText}</Typography>
+                <Typography style={{ direction: isRTL ? 'rtl' : 'ltr'}} align='center' className={classes.tipulseemMsg}>{isRTL ? tip.HebrewTipText : tip.TipText}</Typography>
               </Box>
             );
           })}
