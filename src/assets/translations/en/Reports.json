@@ -20,5 +20,21 @@
   "Attachments": "Attachments",
   "ToName": "To Name",
   "FromName": "From Name",
-  "None": "None"
+  "None": "None",
+  "id": "Reference ID",
+  "takenBySender": "Taken by sender",
+  "pending": "Pending",
+  "sent": "Sent",
+  "success": "Success",
+  "failure": "Failure",
+  "removed": "Removed",
+  "stopped": "Stopped",
+  "canceled": "Canceled",
+  "deleted": "Deleted",
+  "suspended": "Suspended",
+  "requireAproval": "Require Aproval",
+  "invalidFromNumber": "Invalid From Number",
+  "toNumberLonger": "To Number Longer then 16",
+  "blockedSync": "Blocked Due To Sync Feature",
+  "blockedRemoval": "Blocked Due To Removal"
 }
