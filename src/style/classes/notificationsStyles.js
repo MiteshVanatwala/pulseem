@@ -88,11 +88,11 @@ const summaryTitleMargin = {
     lg: 10,
     xl: 15
 }
-const notificationSize = {
-    md: 350,
-    lg: 400,
-    xl: 400
-}
+// const notificationSize = {
+//     md: 350,
+//     lg: 400,
+//     xl: 400
+// }
 
 const mobileNotificationSize = {
     // xs: null,

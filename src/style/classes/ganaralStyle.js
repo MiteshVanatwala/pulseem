@@ -45,9 +45,9 @@ const iconWrapperMinWidth = {
   sm: 100,
   md: 100
 }
-const summaryNotificationMinWidth = {
-  xs: "240px",
-}
+// const summaryNotificationMinWidth = {
+//   xs: "240px",
+// }
 const notificationTitleFontSize = {
   xs: 12,
   sm: 12,
@@ -232,20 +232,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pulseemIcon: {
     fontFamily: 'pulseemicons'
   },
+  dBlock: {
+    display: 'block'
+  },
+  w20: {
+    width: '20%'
+  },
   borderAround: {
     border: '1px solid #000'
   },
   borderBottom1: {
     borderBottom: '1px solid #ccc'
   },
-  dBlock: {
-    display: 'block'
-  },
   dFlex: {
     display: 'flex'
-  },
-  rtlSwitch: {
-    transform: 'rotateY(180deg)'
   },
   alignItemsCenter: {
     alignItems: 'center'
@@ -264,48 +264,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   maxHeight87: {
     maxHeight: 87
-  },
-  w20: {
-    width: '20%'
-  },
-  minWidth100: {
-    minWidth: 100
-  },
-  borderAround: {
-    border: '1px solid #000'
-  },
-  borderBottom1: {
-    borderBottom: '1px solid #ccc'
-  },
-  dBlock: {
-    display: 'block'
-  },
-  dFlex: {
-    display: 'flex'
-  },
-  rtlSwitch: {
-    transform: 'rotateY(180deg)'
-  },
-  alignItemsCenter: {
-    alignItems: 'center'
-  },
-  w80: {
-    width: '80%'
-  },
-  w110: {
-    width: 110
-  },
-  lineHeight1point2: {
-    lineHeight: 1.2
-  },
-  w25: {
-    width: 25
-  },
-  maxHeight87: {
-    maxHeight: 87
-  },
-  w20: {
-    width: '20%'
   },
   minWidth100: {
     minWidth: 100
@@ -321,9 +279,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   maxWidth540: {
     maxWidth: 540
-  },
-  pt2rem: {
-    paddingTop: '2rem'
   },
   flex2: {
     flex: 2
@@ -397,9 +352,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mbNeg10: {
     marginBottom:-10
   },
-  ml10: {
-    marginInlineStart: 10
-  },
   ml25: {
     marginInlineStart: 25
   },
@@ -456,9 +408,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   line1: {
     lineHeight: 1
-  },
-  black: {
-    color: 'black'
   },
   bgBrown: {
     backgroundColor: '#636363',
@@ -627,10 +576,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: '#fff',
     textTransform: 'capitalize',
     lineHeight: 1
-  },
-  blackDivider: {
-    height: 2,
-    backgroundColor: 'rgb(0, 0, 0, 0.5)'
   },
   noWrap: {
     flexWrap: 'nowrap'

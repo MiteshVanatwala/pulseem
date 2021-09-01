@@ -51,7 +51,6 @@ const NotificationManagement = ({ classes }) => {
   const [searchResults, setSearchResults] = useState(null)
   const [dialogType, setDialogType] = useState(null)
   const [restoreArray, setRestoreArray] = useState([]);
-  const history = useCtrlHistory()
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
@@ -602,7 +601,7 @@ const NotificationManagement = ({ classes }) => {
   const renderNameCell = (row) => {
     let date = null
     let text = ''
-    if (!row.SendDate || row.StatusID == 0) {
+    if (!row.SendDate || row.StatusID === 0) {
       date = moment(row.UpdatedDate, dateFormat)
       text = t('common.UpdatedOn')
     } else {

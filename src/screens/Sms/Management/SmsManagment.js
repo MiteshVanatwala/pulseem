@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction, Link, Tooltip
+  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction, Tooltip
 } from '@material-ui/core'
 import {
   AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
@@ -151,7 +151,6 @@ const SmsManagnentScreen=({classes}) => {
         <SearchField
           classes={classes}
           value={campaineNameSearch}
-          onKeyPress={handleSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
@@ -777,7 +776,7 @@ const SmsManagnentScreen=({classes}) => {
           <Preview classes={classes}
             mobileFullsize={true}
             model={data}
-            ShowRedirectButton={data.RedirectButtonText&&data.RedirectButtonText!=''}
+            ShowRedirectButton={data.RedirectButtonText&&data.RedirectButtonText!==''}
             showTitle={false}
             showID={true}
             isSMS={true}

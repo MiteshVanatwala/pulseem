@@ -31,20 +31,20 @@ const ellipsisMaxWidth = {
   xl: '100%'
 }
 
-const tableRowMinWidth = {
-  xs: 75,
-  sm: 75,
-  md: 75,
-  lg: 75,
-  xl: 100
-}
+// const tableRowMinWidth = {
+//   xs: 75,
+//   sm: 75,
+//   md: 75,
+//   lg: 75,
+//   xl: 100
+// }
 
-const barWidth = {
-  sm: '460px!important',
-  md: '430px!important',
-  lg: '450px!important',
-  xl: '500px!important'
-}
+// const barWidth = {
+//   sm: '460px!important',
+//   md: '430px!important',
+//   lg: '450px!important',
+//   xl: '500px!important'
+// }
 
 const barHeight = {
   sm: '',
@@ -79,21 +79,21 @@ const dashboardDirection = {
   xl: ''
 }
 
-const paperTopHeight = {
-  xs: 'auto',
-  sm: 'auto',
-  md: '350px',
-  lg: '350px',
-  xl: '350px'
-}
+// const paperTopHeight = {
+//   xs: 'auto',
+//   sm: 'auto',
+//   md: '350px',
+//   lg: '350px',
+//   xl: '350px'
+// }
 
-const paperBottomHeight = {
-  xs: 'auto',
-  sm: 'auto',
-  md: '350px',
-  lg: '350px',
-  xl: '350px'
-}
+// const paperBottomHeight = {
+//   xs: 'auto',
+//   sm: 'auto',
+//   md: '350px',
+//   lg: '350px',
+//   xl: '350px'
+// }
 
 const shortcutEditLeft = {
   xs: '8%',
