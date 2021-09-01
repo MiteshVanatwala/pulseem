@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import instence from '../../helpers/api'
+import { instence } from '../../helpers/api'
 import { exportFile } from '../../helpers/exportFromJson';
 
 export const getNewslatterData = createAsyncThunk(
@@ -12,39 +12,39 @@ export const getNewslatterData = createAsyncThunk(
     }
   })
 
-export const getNewsletterReports = createAsyncThunk(
-  'reports/EmailReports/', async (demo = false, thunkAPI) => {
-    try {
-      const response = await instence.get(`reports/EmailReports?includeTestCampaign=${demo}`)
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
+  export const getNewsletterReports = createAsyncThunk(
+    'reports/EmailReports/', async (demo = false, thunkAPI) => {
+      try {
+        const response = await instence.get(`reports/EmailReports?includeTestCampaign=${demo}`)
+        return JSON.parse(response.data)
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
     }
-  }
-)
-
-export const getNewsletterDirectReport=createAsyncThunk(
-  'report/GetEmailDirectReport',async (data,thunkAPI) => {
-    try {
-      const response=await instence.post(`report/GetEmailDirectReport`, data);
-      return JSON.parse(response.data)
-    } catch(error) {
-      return thunkAPI.rejectWithValue({error: error.message});
+  )
+  
+  export const getNewsletterDirectReport=createAsyncThunk(
+    'report/GetEmailDirectReport',async (data,thunkAPI) => {
+      try {
+        const response=await instence.post(`report/GetEmailDirectReport`, data);
+        return JSON.parse(response.data)
+      } catch(error) {
+        return thunkAPI.rejectWithValue({error: error.message});
+      }
     }
-  }
-)
-
-export const exportNewsletterDirectReport=createAsyncThunk(
-  'report/ExportEmailDirectReport',async (_,thunkAPI) => {
-    try {
-      const response=await instence.post(`report/ExportEmailDirectReport`);
-      return JSON.parse(response.data)
-    } catch(error) {
-      return thunkAPI.rejectWithValue({error: error.message});
+  )
+  
+  export const exportNewsletterDirectReport=createAsyncThunk(
+    'report/ExportEmailDirectReport',async (_,thunkAPI) => {
+      try {
+        const response=await instence.post(`report/ExportEmailDirectReport`);
+        return JSON.parse(response.data)
+      } catch(error) {
+        return thunkAPI.rejectWithValue({error: error.message});
+      }
     }
-  }
-)
-
+  )
+  
 export const restoreCampaigns = createAsyncThunk(
   'email/restoreEmailCampaigns', async (deletedCampaigns, thunkAPI) => {
     try {
@@ -75,31 +75,31 @@ export const duplicteCampaign = createAsyncThunk(
     }
   })
 
-export const downloadNewsletterReport=createAsyncThunk(
-  'email/EmailReportsByIds',async (array=[],thunkAPI) => {
+export const downloadNewsletterReport = createAsyncThunk(
+  'email/EmailReportsByIds', async (array = [], thunkAPI) => {
     try {
       var json = [];
-      for (var i = 0; i<= array.length; i++){
-        if (array[i]){
+      for (var i = 0; i <= array.length; i++) {
+        if (array[i]) {
           json.push({ ID: array[i] });
         }
       }
 
-      const response=await instence.post('email/EmailReportsByIds/', json);
+      const response = await instence.post('email/EmailReportsByIds/', json);
 
-      exportFile({ 
-        data: JSON.parse(response.data), 
-        fileName: 'emailReport', 
+      exportFile({
+        data: JSON.parse(response.data),
+        fileName: 'emailReport',
         exportType: 'xls'
       });
 
-    } catch(err) {
-      return thunkAPI.rejectWithValue({error: err.message});
+    } catch (err) {
+      return thunkAPI.rejectWithValue({ error: err.message });
     }
   }
 )
 
-export const newsletterSlice=createSlice({
+export const newsletterSlice = createSlice({
   name: 'newsletter',
   initialState: {
     newslettersData: [],

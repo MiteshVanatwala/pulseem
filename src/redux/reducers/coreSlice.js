@@ -15,7 +15,10 @@ export const coreSlice=createSlice({
     companyName: '',
     rowsPerPage: 6,
     isClal: false,
-    accountFeatures: null
+    accountFeatures: null,
+    cameFromSubAccount: null,
+    isAdmin: null,
+    isAllowSwitchAccount: null
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -40,7 +43,10 @@ export const coreSlice=createSlice({
       state.phone=payload.phone
       state.imageURL=payload.imageURL
       state.isWhiteLabel=payload.isWhiteLabel
-      state.companyName=payload.companyName
+      state.companyName=payload.companyName || payload.basename
+      state.cameFromSubAccount=payload.cameFromSubAccount
+      state.isAdmin=payload.isAdmin
+      state.isAllowSwitchAccount=payload.isAllowSwitchAccount
     }
   }
 })
