@@ -500,7 +500,7 @@ const SmsCreator = ({ classes }, props) => {
                   onChange={handleAlignment}
                   aria-label="text alignment"
                 >
-                  <ToggleButton value="left" aria-label="left aligned" style={{ width: "30px", height: "30px" }}>
+                  <ToggleButton value="left" aria-label="left aligned" >
                     <FormatAlignLeftIcon />
                   </ToggleButton>
 
