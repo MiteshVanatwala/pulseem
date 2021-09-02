@@ -2155,6 +2155,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   camapignsDiv:
   {
-    marginTop: "12px"
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: "15px"
+  },
+  createGroupSpan:
+  {
+    color: "black",
+    fontSize: "13px"
+  },
+  createGroupSpanDisabled:
+  {
+    color: "#808080",
+    fontSize: "13px"
+  },
+  iconNew:
+  {
+    backgroundColor: "#CA332F", color: "#fff", borderRadius: "5px", marginInlineStart: "5px", padding: "5px"
   }
 });

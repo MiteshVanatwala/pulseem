@@ -476,5 +476,8 @@
   "sendToOne":"Send to one Contact",
   "campaignNamePlaceholder":"Campaign Name",
   "sendToGroups":"Send to test groups",
-  "smsTitle":"Create SMS Pulseem System"
+  "smsTitle":"Create SMS Pulseem System",
+  "tooltipCreateGroup" : "Choose 2 or more groups and combine into one new one",
+  "newFeature":"New!",
+  "save":"Save"
 }

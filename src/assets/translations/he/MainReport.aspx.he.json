@@ -480,5 +480,8 @@
   "sendToOne":"שלח לאיש קשר אחד",
   "sendToGroups":"שלח לקבוצות בדיקה אחת",
   "campaignNamePlaceholder":"שם הקמפיין",
-  "smsTitle":"יצירת סמס מערכת פולסים"
+  "smsTitle":"יצירת סמס מערכת פולסים",
+  "tooltipCreateGroup" : "בחר 2 קבוצות או יותר וחבר לקבוצה אחת חדשה",
+  "newFeature":"חָדָשׁ!",
+  "save":"לשמור"
 }
