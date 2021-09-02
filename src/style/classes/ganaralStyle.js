@@ -765,8 +765,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   smallInfoDiv: {
     display: "flex",
     width: "100%",
-    position:"relative",
-    top:"-4px",
+    position: "relative",
+    top: "-4px",
     justifyContent: "flex-end",
     alignItems: "center",
     color: "#1c82b2",
@@ -783,8 +783,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   funcDiv: {
     width: "100%",
     height: "40px",
-    position:"relative",
-    top:"-4px",
+    position: "relative",
+    top: "-4px",
     padding: "10px",
     border: "1px solid rgb(170, 170, 170)",
     display: "flex",
@@ -1244,13 +1244,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "700px",
     marginTop: "20px",
   },
-  listDivGroups :
+  listDivFilter:
   {
     height: "300px",
     maxHeight: "200px",
-   
+    width: "700px",
     marginTop: "20px",
-    overflowY:"auto"
+    overflowY: "auto",
+    borderBottom: "1px solid #efefef",
+    borderLeft: "1px solid #efefef",
+    borderRight: "1px solid #efefef",
+    marginTop: "0",
   },
   searchCon: {
     padding: "12px",
@@ -1709,6 +1713,25 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#3DA6F7"
   },
   reactSwitch: {
+    border: "2px solid #48a148",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "8px",
+    color: "#48a148"
+  },
+  blueDoc:
+  {
+    border: "2px solid #3DA6F7",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "8px",
+    color: "#3DA6F7"
+  },
+  reactSwitch: {
     verticalAlign: 'middle',
     marginInlineEnd: '8px'
   },
@@ -1921,14 +1944,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "100%",
     backgroundColor: "#F7F7F7",
   },
-  manualModal:
-  {
+  manualModal: {
     display: "flex",
-    padding: "5px",
-    marginTop: "15px",
-    marginBottom: "15px",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "40px",
     width: "100%",
-    alignItems: "center"
+    maxWidth: "702px",
+    overflowY: "auto",
+    flexWrap: "wrap",
+    backgroundColor: "#F7F7F7",
   },
   inputManual:
   {
@@ -1972,16 +1997,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       zIndex: "9"
     }
   },
-  grayGroup : 
+  grayGroup:
   {
-    padding:"10px",
-    textAlign:"center",
-    borderBottom:"1px solid gray",
-    zIndex:"9",
-    cursor:"pointer",
-    pointerEvents:"none"
+    padding: "10px",
+    textAlign: "center",
+    borderBottom: "1px solid gray",
+    zIndex: "9",
+    cursor: "pointer",
+    pointerEvents: "none"
   },
-  manualChild : 
+  manualChild:
   {
     display: "flex",
     justifyContent: "space-between",
@@ -2006,7 +2031,28 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "rgb(170, 170, 170)",
     cursor: "pointer",
   },
-  selectedGroupsDiv:
+  selectedGroupsDiv: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: "15px"
+  },
+  reciFilterDiv:
+  {
+    height: "60px",
+    borderBottom: "1px solid black"
+  },
+  reciCheckoxContainer:
+  {
+    fontSize: "16px",
+    fontWeight: "700",
+    marginTop: "10px",
+    marginBottom: "10px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "cneter",
+  },
+  bubbleReciDiv:
   {
     padding: "6px",
     borderRadius: "20px",
@@ -2069,10 +2115,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   newIcn:
   {
-    backgroundColor: "#dc3545", 
-    color: "#fff", 
-    borderRadius: "5px", 
-    padding: "5px", 
+    backgroundColor: "#dc3545",
+    color: "#fff",
+    borderRadius: "5px",
+    padding: "5px",
     fontWeight: "600"
   },
   mappedGroup:
@@ -2097,5 +2143,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: "415px",
     marginTop: "50px",
     borderBottom: "1px solid black"
+  },
+  groupsFilterList:
+  {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "700px",
+    cursor: "pointer"
+
+  },
+  camapignsDiv:
+  {
+    marginTop: "12px"
   }
 });

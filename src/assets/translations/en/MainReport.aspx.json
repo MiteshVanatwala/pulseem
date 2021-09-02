@@ -450,7 +450,7 @@
   "groups" : "Groups",
   "manual" : "Manual Upload",
   "saveSms" : "Save",
-  "editSms" : "Edit",
+  "exitSms" : "Exit",
   "summary" : "Summary",
   "specialDate" : "Special Date",
   "totalReci" : "Total recipients for sending",
