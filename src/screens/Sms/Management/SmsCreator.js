@@ -530,14 +530,14 @@ const SmsCreator = ({ classes }, props) => {
                   className={classes.infoButtons}
                   onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                 >
-                  <span  className={classes.removalMsg}>+</span>Removal
+                  <span  className={classes.editorLink}>+</span>Removal
                   Message
                 </span>
                 <span
                   className={classes.info2Buttons}
                   onClick={removalLinkDisabled ? null : onRemovalLink}
                 >
-                  <span  className={classes.removalLink}>+</span>Removal Link
+                  <span  className={classes.editorLink}>+</span>Removal Link
                 </span>
               </div>
               <div className={classes.endButtons}>
@@ -562,9 +562,9 @@ const SmsCreator = ({ classes }, props) => {
                       seteditmenuClick(!editmenuClick);
                     }}
                   >
-                    <span className={classes.addFeatures}
+                    <span className={classes.addBtn}
                     >
-                      <span style={{ marginBottom: "2px" }}>+</span>
+                     <span className={classes.plusIcn}>+</span> 
                     </span>
                     ADD
                   </span>

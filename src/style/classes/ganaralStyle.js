@@ -807,9 +807,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   infoButtons: {
-    display:"flex",
-    alignItems:"center",
-    justifyContent:"center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: "20px",
     width: "106px",
     color: "white",
@@ -829,9 +829,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   info2Buttons: {
     borderRadius: "20px",
-    display:"flex",
-    alignItems:"center",
-    justifyContent:"center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     width: "111px",
     fontSize: "11px",
     color: "white",
@@ -2010,18 +2010,32 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     color: "#fff",
     cursor: "pointer",
-    display : "flex",
-    justifyContent:"space-between",
-    alignItems:"center",
-    marginTop:"15px"
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: "15px"
   },
-  removalLink : 
-  {
-    marginInlineEnd: "5px",cursor:"pointer"
+  editorLink: {
+    marginInlineEnd: "5px",
+    cursor: "pointer"
   },
-  removalMsg : 
+  addBtn:
   {
-    marginInlineEnd: "5px",cursor:"pointer"
+    marginInlineEnd: "3px",
+    border: "2px solid #17a2b8",
+    borderRadius: "50%",
+    padding: "5px",
+    width: "12px",
+    height: "12px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "#17a2b8",
+    fontSize: "19px",
+    fontWeight: "700",
+  },
+  plusIcn:
+  {
+    marginBottom: "3px"
   }
-
 });
