@@ -28,7 +28,7 @@ import {
   deleteSms,
   smsSaveGroup,
   smsQuick,
-  getCampaignSumm
+  getCampaignSumm,
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
 import { FcDocument } from "react-icons/fc";
@@ -94,8 +94,13 @@ const SmsCreator = ({ classes }, props) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { previousLandingData, previousCampaignData, extraData, accountId, getCampaignSum } =
-    useSelector((state) => state.sms);
+  const {
+    previousLandingData,
+    previousCampaignData,
+    extraData,
+    accountId,
+    getCampaignSum,
+  } = useSelector((state) => state.sms);
   const [alignment, setAlignment] = useState("left");
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [flagemoji, setflagemoji] = useState(false);
@@ -155,7 +160,7 @@ const SmsCreator = ({ classes }, props) => {
 
   const onApiCall = () => {
     alert("hi");
-  }
+  };
   const getDataCamapaign = async () => {
     await dispatch(getPreviousCampaignData());
 
@@ -650,7 +655,7 @@ const SmsCreator = ({ classes }, props) => {
     return (
       <div>
         <div style={{ position: "relative" }} className={classes.phoneDiv}>
-          {" "}
+          
           <img
             src={Mobile}
             style={{
@@ -689,7 +694,7 @@ const SmsCreator = ({ classes }, props) => {
             style={{ display: "flex", flexDirection: "column", width: "250px" }}
           >
             <span style={{ fontSize: "18px" }}>
-              {" "}
+              
               {t("mainReport.testSend")}
             </span>
             <span
@@ -715,7 +720,7 @@ const SmsCreator = ({ classes }, props) => {
             >
               <div className={{ display: "flex", flexDirection: "column" }}>
                 <div>
-                  {" "}
+                  
                   <FormControlLabel
                     value="top"
                     control={<Radio color="primary" id="top" style={{ color: "#007bff" }} />}
@@ -752,42 +757,27 @@ const SmsCreator = ({ classes }, props) => {
                 ) : null}
 
                 <div>
-                  {" "}
+                  
                   <FormControlLabel
                     value="bottom"
                     control={<Radio color="primary" id="bottom" style={{ color: "#007bff" }} />}
                   />
-                  <span>{t("mainReport.sendToGroups")} <span style={{ backgroundColor: "#dc3545", color: "#fff", borderRadius: "5px", padding: "5px", fontWeight: "600" }}>New!</span></span>
+                  <span>
+                    {t("mainReport.sendToGroups")}
+                    <span className={classes.newIcn}>New!</span>
+                  </span>
                 </div>
                 {radioBtn === "bottom" ? (
                   <div className={classes.rightForm}>
                     <div
-                      style={{
-                        width: "280px",
-
-                        height: "30px",
-
-                        padding: "8px",
-                        border: "1px solid #bbb",
-                        borderRadius: "5px",
-                        color: "#bbb",
-                        maxHeight: "30px",
-                        overflowY: "auto",
-                      }}
+                      className={classes.contactGroupDiv}
                       onClick={() => {
                         setcontactGroup(true);
                       }}
                     >
                       <div> Choose test groups from the list</div>
                       {hidden ? (
-                        <div
-                          style={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            marginTop: "5px",
-                          }}
-                        >
-                          {" "}
+                        <div className={classes.mappedGroup}>
                           {selectedGroup.map((item, index) => {
                             if (item.selected && hidden) {
                               return (
@@ -824,7 +814,7 @@ const SmsCreator = ({ classes }, props) => {
             <BsTrash style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4} onClick={clickExit}>
-            Exit{" "}
+            Exit
           </span>
           <span
             className={classes.rightInput5}
@@ -999,18 +989,15 @@ const SmsCreator = ({ classes }, props) => {
         temp.push(selectedGroup[i].GroupID);
         tempfull.push(selectedGroup[i]);
         ++num;
-
       }
-
     }
     settotal(num);
     settemp(tempfull);
-    let payload2 =
-    {
+    let payload2 = {
       IsTestGroups: true,
       SMSCampaignID: r.payload.Message,
-      TestGroupsIds: temp
-    }
+      TestGroupsIds: temp,
+    };
 
     let r2 = await dispatch(smsSaveGroup(payload2));
     await dispatch(getCampaignSumm(r.payload.Message));
@@ -1104,8 +1091,7 @@ const SmsCreator = ({ classes }, props) => {
                 variant="contained"
                 size="small"
                 onClick={() => {
-
-                  handleGroupClose()
+                  handleGroupClose();
                 }}
                 className={clsx(
                   classes.dialogButton,
@@ -1116,7 +1102,7 @@ const SmsCreator = ({ classes }, props) => {
               </Button>
             </div>
           </Dialog>
-        ) : null}{" "}
+        ) : null}
       </>
     );
   };
@@ -1169,7 +1155,7 @@ const SmsCreator = ({ classes }, props) => {
   const renderAlert = () => {
     return (
       <>
-        {" "}
+        
         {alertToggle ? (
           <Dialog
             classes={classes}
@@ -1195,7 +1181,7 @@ const SmsCreator = ({ classes }, props) => {
               </span>
             </div>
           </Dialog>
-        ) : null}{" "}
+        ) : null}
       </>
     );
   };
