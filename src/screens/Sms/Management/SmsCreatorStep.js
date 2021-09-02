@@ -122,10 +122,12 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 const SmsCreatorStep = ({ classes }) => {
+  const { t } = useTranslation();
+  document.title=t("mainReport.smsTitle")
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const tabi = useStyle();
-  const { t } = useTranslation();
+ 
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core

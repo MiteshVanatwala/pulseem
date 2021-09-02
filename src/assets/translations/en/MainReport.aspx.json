@@ -474,6 +474,7 @@
   "testSend":"Test Send",
   "testDesc":"Right after you click send",
   "sendToOne":"Send to one Contact",
-  "sendToGroups":"Send to one Test Groups",
-  "campaignNamePlaceholder":"Campaign Name"
+  "campaignNamePlaceholder":"Campaign Name",
+  "sendToGroups":"Send to test groups",
+  "smsTitle":"Create SMS Pulseem System"
 }

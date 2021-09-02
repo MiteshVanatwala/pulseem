@@ -479,5 +479,6 @@
   "testDesc":"מיד לאחר לחיצה על שלח",
   "sendToOne":"שלח לאיש קשר אחד",
   "sendToGroups":"שלח לקבוצות בדיקה אחת",
-  "campaignNamePlaceholder":"שם הקמפיין"
+  "campaignNamePlaceholder":"שם הקמפיין",
+  "smsTitle":"יצירת סמס מערכת פולסים"
 }

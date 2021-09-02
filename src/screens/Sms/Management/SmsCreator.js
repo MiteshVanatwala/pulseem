@@ -86,9 +86,11 @@ const useStyleNew = makeStyles((theme) => ({
 
 
 const SmsCreator = ({ classes }, props) => {
+  const { t } = useTranslation();
+  document.title=t("mainReport.smsTitle")
   const styles = useStyles();
   const btnStyle = useStyleNew();
-  const { t } = useTranslation();
+  
   const history = useHistory();
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
@@ -188,7 +190,7 @@ const SmsCreator = ({ classes }, props) => {
     
   }, [selectedGroup]);
   useEffect(() => {
-   
+    document.title=t("mainReport.smsTitle")
   }, []);
 
   useEffect(() => {
