@@ -1127,6 +1127,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               aria-label="gender"
               name="sendType"
               onChange={handleSendType}
+              value={sendType}
             >
               <FormControlLabel
                 value="1"
@@ -1368,80 +1369,86 @@ const [initialheadstate, setinitialheadstate] = useState([])
     );
   };
   const onSummClick = async () => {
-    if (selectedGroups.length > 0) {
-      // console.log("-------->", sendDate);
-      const m = moment(sendDate, "YYYY-MM-DD HH:mm:ss");
-      m.set({ h: m.format("HH"), m: m.format("mm") });
-      let a = window.location;
+    if(sendType === "1")
+    {
+      if(selectedGroups.length > 0)
+      {
+        let campId = window.location
+        let id = campId.search.split("=");
+        let finalId = id[1];
 
-      let b = a.search.split("=");
-      let camp = b[1];
-      //  console.log("--->",selectedGroups);
-      let temp = [];
-      for (let i = 0; i < selectedGroups.length; i++) {
+        let temp = [];
+        let finalGroups = [];
+        for (let i = 0; i < selectedGroups.length; i++) {
         temp.push(selectedGroups[i].GroupID);
-      }
-      let time = -1;
-      let pulse = -1;
-      if (togglePulse) {
-        if (minTrue == true) {
-          time = 1;
-        } else {
-          time = 2;
+        finalGroups.push(selectedGroups[i]);
+        }
+        let time = -1;
+        let pulse = -1;
+        if (togglePulse) {
+          if (minTrue == true) {
+            time = 1;
+          } else {
+            time = 2;
+          }
+  
+          if (percentTrue == true) {
+            pulse = 1;
+          } else {
+            pulse = 2;
+          }
         }
 
-        if (percentTrue == true) {
-          pulse = 1;
-        } else {
-          pulse = 2;
-        }
-      }
-      let dm = null;
-      if (sendType === "2") {
-        dm = m.format();
-      } else {
-        dm = null;
-      }
-
-      let payload = {
-        SmsCampaignID: camp,
-        SendTypeID: 1,
-        FutureDateTime: dm,
-        GroupDetails: selectedGroups,
+        let quickPayload = {
+        FutureDateTime: null,
+        GroupDetails: finalGroups,
         Groups: temp,
-
         PulseSettings: {
-          PulseAmount: inputF,
           PulseType: pulse,
-          TimeInterval: inputS,
           TimeType: time,
+          PulseAmount: inputF, 
+          TimeInterval: inputS
         },
-        RandomSettings: {
-          RandomAmount: random,
+       RandomSettings: {
+         RandomAmount: random
         },
-        SendExeptional: {},
-        SendTypeID: 1,
-        SourceTimeZone: "Asia/Calcutta",
-        SpecialSettings: {
-          Type: "",
-          DateFieldID: -1,
-          Day: 0,
-          SendHour: "",
-          IntervalTypeID: -1,
-          SendDate: null,
-        },
-        DateFieldID: -1,
-        Day: 0,
-        IntervalTypeID: -1,
-        SendDate: null,
-        SendHour: "",
+       SendExeptional: 
+       {
+        Groups: [], 
+        Campaigns: [], 
+        ExceptionalDays: ""
+      },
+      SendTypeID: 1,
+      SmsCampaignID: finalId,
+      SourceTimeZone: "Asia/Calcutta",
+      SpecialSettings: {
         Type: "",
-        specialDateOptions: [],
-      };
-      await dispatch(smsCampSettings(payload));
-      await dispatch(getCampaignSumm(camp));
+         DateFieldID: -1,
+         Day: 0,
+         SendHour: "",
+         IntervalTypeID: -1,
+         SendDate: null
+            },
+      specialDateOptions: [
+      {
+        text: "Birthday",
+        code: "1"
+        }, 
+      {
+        text: "Creation Day",
+        code: "2"
+      }, 
+        {
+          text: "", 
+          code: "3"
+        }]
+
+      }
+      await dispatch(smsCampSettings(quickPayload));
+      await dispatch(getCampaignSumm(finalId));
       setsummModal(true);
-    }
+        }
+      }
   };
   const renderSummary = () => {
     return (
