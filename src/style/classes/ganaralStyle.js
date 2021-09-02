@@ -2037,14 +2037,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   plusIcn:
   {
     marginBottom: "3px",
-    display : "flex",
-    justifyContent:"space-between",
-    alignItems:"center",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  contactGroupDiv : 
+  contactGroupDiv:
   {
-    width: "280px",                        
-    height: "30px",   
+    width: "280px",
+    height: "30px",
     padding: "8px",
     border: "1px solid #bbb",
     borderRadius: "5px",
@@ -2052,17 +2052,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxHeight: "30px",
     overflowY: "auto",
   },
-  newIcn :
+  newIcn:
   {
-    backgroundColor:"#dc3545",color:"#fff",borderRadius:"5px",padding:"5px",fontWeight:"600"
+    backgroundColor: "#dc3545", 
+    color: "#fff", 
+    borderRadius: "5px", 
+    padding: "5px", 
+    fontWeight: "600"
   },
-  mappedGroup : 
+  mappedGroup:
   {
     display: "flex",
     flexWrap: "wrap",
     marginTop: "5px",
   },
-  bubbleGroups : 
+  bubbleGroups:
   {
     width: "70px",
     padding: "6px",
@@ -2071,5 +2075,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineEnd: "4px",
     marginBottom: "4px",
     color: "white",
+  },
+  phoneImg:
+  {
+    width: "375px",
+    height: "415px",
+    marginTop: "50px",
+    borderBottom: "1px solid black"
   }
 });
