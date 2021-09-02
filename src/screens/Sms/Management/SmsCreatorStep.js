@@ -321,7 +321,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
   };
   const handleDatePicker = (value) => {
     handleFromDate(value);
-    setTimePickerOpen(!timePickerOpen);
+    // setTimePickerOpen(!timePickerOpen);
   };
   const handleTimePicker = (value) => {
     var date = moment(sendDate);
@@ -1131,7 +1131,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
             >
               <FormControlLabel
                 value="1"
-                control={<Radio color="primary" style={{color:"#007bff"}}/>}
+                control={<Radio color="primary" style={{color: sendType !== "1" ? "#d3d3d3" : "#007bff"}}/>}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.immediateSend")}
@@ -1143,7 +1143,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               </FormHelperText>
               <FormControlLabel
                 value="2"
-                control={<Radio color="primary" style={{color:"#007bff"}}/>}
+                control={<Radio color="primary" style={{color: sendType !== "2" ? "#d3d3d3" : "#007bff"}}/>}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.futureSend")}
@@ -1195,7 +1195,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               </Box>
               <FormControlLabel
                 value="3"
-                control={<Radio color="primary" style={{color:"#007bff"}}/>}
+                control={<Radio color="primary" style={{color: sendType !== "3" ? "#d3d3d3" : "#007bff"}}/>}
                 label={
                   <span className={classes.radioText}>
                     {t("mainReport.specialDate")}
@@ -1221,6 +1221,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     outline: "none",
                     marginBottom: "10px",
                   }}
+                  disabled={ sendType === "3" ? false : true}
                 >
                   <option>{t("mainReport.birthday")}</option>
                   <option>Creation Day</option>
@@ -1235,13 +1236,14 @@ const [initialheadstate, setinitialheadstate] = useState([])
                   width: "370px",
                   paddingRight: isRTL ? 30 : "",
                   paddingLeft: isRTL ? "" : 30,
-                  pointerEvents: sendType == "3" ? "auto" : "none",
+                  pointerEvents: sendType === "3" ? "auto" : "none",
                 }}
               >
                 <input
                   type="text"
                   className={classes.inputDays}
                   placeholder="0"
+                  disabled={ sendType == "3" ? false : true}
                 />
 
                 <span style={{ marginInlineEnd: "8px", marginBottom: "8px" }}>
