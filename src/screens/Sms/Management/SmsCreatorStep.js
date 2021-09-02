@@ -141,6 +141,7 @@ const SmsCreatorStep = ({ classes }) => {
   const [manualTrue, setmanualTrue] = useState(false);
   const [pulse, setpulse] = useState(false);
   const [reciFilter, setreciFilter] = useState(false);
+  const [responseQuick, setresponseQuick] = useState(null);
   const [percentTrue, setpercentTrue] = useState(true);
   const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
@@ -945,6 +946,10 @@ const [initialheadstate, setinitialheadstate] = useState([])
           setreciFilter(false);
       }
     }
+    else
+    {
+      setreciFilter(false);
+    }
   };
   const handlePasted = () => {
     let temp = areaData;
@@ -1489,6 +1494,23 @@ const [initialheadstate, setinitialheadstate] = useState([])
           }
         }
 
+        let exceptionGroups = [];
+       
+        for (let i = 0; i < filterGroups.length; i++) {
+          if(filterGroups[i].selected)
+          {
+            exceptionGroups.push(filterGroups[i].GroupID)
+          }
+          }
+
+        
+        let exceptionCampaigns = [];
+        for (let i = 0; i < totalCampaigns.length; i++) {
+          if(totalCampaigns[i].selected)
+          {
+            exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
+          }
+          }
         let quickPayload = {
         FutureDateTime: null,
         GroupDetails: finalGroups,
@@ -1504,9 +1526,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
         },
        SendExeptional: 
        {
-        Groups: [], 
-        Campaigns: [], 
-        ExceptionalDays: ""
+        Groups: exceptionGroups, 
+        Campaigns: exceptionCampaigns, 
+        ExceptionalDays: setinputRecipients
       },
       SendTypeID: 1,
       SmsCampaignID: finalId,
@@ -1535,9 +1557,114 @@ const [initialheadstate, setinitialheadstate] = useState([])
 
       }
       await dispatch(smsCampSettings(quickPayload));
-      await dispatch(getCampaignSumm(finalId));
+      let response =  await dispatch(getCampaignSumm(finalId));
+      setresponseQuick(response);
       setsummModal(true);
         }
+      }
+      else if(sendType === "2")
+      {
+        if(selectedGroups.length > 0)
+      {
+        let campId = window.location
+        let id = campId.search.split("=");
+        let finalId = id[1];
+
+        let temp = [];
+        let finalGroups = [];
+        for (let i = 0; i < selectedGroups.length; i++) {
+        temp.push(selectedGroups[i].GroupID);
+        finalGroups.push(selectedGroups[i]);
+        }
+        let time = -1;
+        let pulse = -1;
+        if (togglePulse) {
+          if (minTrue == true) {
+            time = 1;
+          } else {
+            time = 2;
+          }
+  
+          if (percentTrue == true) {
+            pulse = 1;
+          } else {
+            pulse = 2;
+          }
+        }
+
+        let exceptionGroups = [];
+       
+        for (let i = 0; i < filterGroups.length; i++) {
+          if(filterGroups[i].selected)
+          {
+            exceptionGroups.push(filterGroups[i].GroupID)
+          }
+          }
+
+        
+        let exceptionCampaigns = [];
+        for (let i = 0; i < totalCampaigns.length; i++) {
+          if(totalCampaigns[i].selected)
+          {
+            exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
+          }
+          }
+        const finalDate = moment(sendDate, "YYYY-MM-DD HH:mm:ss");
+        finalDate.set({ h: finalDate.format("HH"), m: finalDate.format("mm") });
+        let displayDate = null;
+        displayDate = finalDate.format();
+         
+        let quickPayload = {
+        FutureDateTime: displayDate,
+        GroupDetails: finalGroups,
+        Groups: temp,
+        PulseSettings: {
+          PulseType: pulse,
+          TimeType: time,
+          PulseAmount: inputF, 
+          TimeInterval: inputS
+        },
+       RandomSettings: {
+         RandomAmount: random
+        },
+       SendExeptional: 
+       {
+        Groups: exceptionGroups, 
+        Campaigns: exceptionCampaigns, 
+        ExceptionalDays: setinputRecipients
+      },
+      SendTypeID: 1,
+      SmsCampaignID: finalId,
+      SourceTimeZone: "Asia/Calcutta",
+      SpecialSettings: {
+        Type: "",
+         DateFieldID: -1,
+         Day: 0,
+         SendHour: "",
+         IntervalTypeID: -1,
+         SendDate: null
+            },
+      specialDateOptions: [
+      {
+        text: "Birthday",
+        code: "1"
+        }, 
+      {
+        text: "Creation Day",
+        code: "2"
+      }, 
+        {
+          text: "", 
+          code: "3"
+        }]
+
+      }
+      await dispatch(smsCampSettings(quickPayload));
+      let response =  await dispatch(getCampaignSumm(finalId));
+      setresponseQuick(response);
+      setsummModal(true);
+        }
+
       }
   };
   const renderSummary = () => {
