@@ -1418,7 +1418,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   boxDiv: {
-    width: "640px",
+    width: "560px",
     "@media screen and (max-width: 768px)": {
       width: "100%",
     },
