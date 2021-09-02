@@ -1014,7 +1014,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   phoneNumberHe: {
     position: "absolute",
-    left: "45%",
+    display:"flex",
+    justifyContent:"center",
+    left: "52%",
     top: "31%",
     fontWeight: "700",
   },
@@ -1096,28 +1098,36 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     justifyContent: 'flex-end',
     borderRadius: "12px",
-
+    maxHeight:"230px",
+    overflowY:"auto",
+    overflowX:"hidden",
     width: '260px',
     minHeight: '40px',
     wordBreak: 'break-all',
-    
-    
-      
+    '&::-webkit-scrollbar' :  { 
+      width: "0px",
+      background:"transparent"
+     },
+     '&::-webkit-scrollbar-thumb': 
+      {
+      background: "transparent"
+      }
   },
   wrapChatHe : 
   {
     position: "absolute",
     top: "180px",
-    width: "285px",
+    width: "260px",
+    maxWidth:"260px",
     right: "11%",
     backgroundColor: "#fff",
     color:"#fff",
     display: 'flex',
     justifyContent: 'flex-start',
     borderRadius: "12px",
-    height:"220px",
-    maxHeight: 'fit-content',
-    overflow:"auto",
+    maxHeight: '230px',
+    overflowY:"auto",
+    overflowX:"hidden",
     minHeight: '40px',
     wordBreak: 'break-all',
     
@@ -1129,11 +1139,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignSelf: 'flex-end',
     borderRadius: '1.15rem',
     lineHeight: '1.25',
-    maxWidth: '75%',
+    maxWidth: '79%',
     padding: '0.5rem .875rem',
     position: 'relative',
     wordWrap: 'break-word',
     backgroundColor: '#248bf5',
+    right:"12px",
+    cursor:"pointer",
     color: '#fff',
     '&::before' : 
     {
