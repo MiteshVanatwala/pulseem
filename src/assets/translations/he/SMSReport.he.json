@@ -7,5 +7,22 @@
   "inputTextFilter":"אל תשלח לנמענים מהקבוצות הבאות",
   "campaignInfo":"אל תשלח לנמענים מהקמפיינים הבאים",
   "okBtn":"בסדר",
-  "cancelBtn":"לְבַטֵל"
+  "cancelBtn":"ביטול",
+  "pulseSending":"שליחה בפולסים",
+  "packetSend":"שליחה במנות",
+  "noOfReciPulse":"מספר הנמענים לכל שליחה",
+  "percent":"אחוזים",
+  "Reci":"נמענים",
+  "timeSend":"זמן בין שליחה",
+  "Hours":"שעות",
+  "min":"דקות",
+  "randomSend":"שליחה רנדומלית",
+  "noOfReci":"מספר הנמענים האקראיים",
+  "confirmBtn":"אישור",
+  "insert":"הכנס",
+  "NoPulse":"אין הגדרות פולסים",
+  "pulseAmount":"אנא מלא את מספר הפולסים",
+  "timeAmount":"אנא מלא מרווח זמן",
+  "randomAmt":"אנא מלא סכום אקראי"
+  
 }

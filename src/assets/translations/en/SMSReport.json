@@ -7,5 +7,21 @@
   "inputTextFilter":"Don't send to recipients from the following groups",
   "campaignInfo":"Don't send to recipients from the following campaigns",
   "okBtn":"Ok",
-  "cancelBtn":"Cancel"
+  "cancelBtn":"Cancel",
+  "pulseSending":"Pulse Sending",
+  "packetSend":"Packets Sending",
+  "noOfReciPulse":"Number of Recipients per Sending",
+  "percent":"Percent",
+  "Reci":"recipients",
+  "timeSend":"Time between sending",
+  "Hours":"Hours",
+  "min":"Mins",
+  "randomSend":"Random Sending",
+  "noOfReci":"Number of random recipients",
+  "confirmBtn":"Confirm",
+  "insert":"Insert",
+  "NoPulse":"No Pulse Settings are Applied",
+  "pulseAmount":"Please Fill Pulse Amount",
+  "timeAmount":"Please Fill Time Interval",
+  "randomAmt":"Please Fill Random Amount"
 }
