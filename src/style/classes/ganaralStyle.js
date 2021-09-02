@@ -705,7 +705,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid #bbb",
     outline: "none",
     padding: "12px",
-    width:"20%",
+    width: "20%",
   },
   success: {
     borderBottom: "2px solid green",
@@ -1967,46 +1967,44 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     marginTop: "15px"
   },
-  leftAlignIcn:
+  listValues:
   {
-    width: "30px",
-    height: "30px",
+    fontSize: "20px", color: "red", fontWeight: "600"
   },
-  rightAlignIcn:
+  campNameLi:
   {
-    width: "30px",
-    height: "30px"
+    marginBottom: "8px"
   },
-  emojiIcon:
+  inputCampDiv:
   {
-    marginInlineEnd: "8px"
+    display: "flex", justifyContent: "space-between"
   },
-  addFeatures:
+  restoreBtn:
   {
-    marginInlineEnd: "3px",
-    border: "1px solid #1c82b2",
-    borderRadius: "50%",
-    padding: "5px",
-    width: "10px",
-    height: "10px",
+    fontSize: "15px",
+    color: "rgb(170, 170, 170)",
+    cursor: "pointer",
+  },
+  selectedGroupsDiv:
+  {
+    padding: "6px",
+    borderRadius: "20px",
+    backgroundColor: "#1771ad",
+    marginInlineEnd: "4px",
+    marginBottom: "4px",
+    color: "white",
     display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "#1c82b2",
-    fontSize: "14px",
-    fontWeight: "700",
+    alignItems: "center"
   },
-  selectGroupDiv:
+  nameGroup:
   {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: "700px",
+    marginInlineEnd: "4px"
+  },
+  groupCloseicn:
+  {
+    color: "#fff",
     cursor: "pointer"
-  },
-  smsStepDiv:
-  {
-    display: "grid", gridTemplateColumns: "65% auto", padding: "40px 80px 15px 90px"
+
   }
 
 });

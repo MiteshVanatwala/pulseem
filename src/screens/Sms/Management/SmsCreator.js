@@ -37,6 +37,7 @@ import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
+import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid } from "@material-ui/core";
@@ -337,7 +338,7 @@ const SmsCreator = ({ classes }, props) => {
           <span className={classes.buttonHead}>{t("mainReport.campName")}</span>
           <input
             type="text"
-            placeholder="Campaign Name"
+            placeholder={t("mainReport.campaignNamePlaceholder")}
             className={
               campaignBool
                 ? clsx(classes.buttonField, classes.error)
@@ -351,18 +352,12 @@ const SmsCreator = ({ classes }, props) => {
           </span>
         </div>
         <div className={classes.buttonForm}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            {" "}
+          <div  className={classes.inputCampDiv}>
             <span className={classes.buttonHead}>
               {t("mainReport.campFrom")}
             </span>
             <span
-              style={{
-                fontSize: "15px",
-                color: "rgb(170, 170, 170)",
-                cursor: "pointer",
-                textDecoration: "underline"
-              }}
+              className={classes.restoreBtn}
               onClick={() => {
                 setrestoreBool(!restoreBool);
               }}
@@ -385,7 +380,7 @@ const SmsCreator = ({ classes }, props) => {
         {restoreBool ? (
           <div className={classes.buttonForm}>
             <span className={clsx(classes.buttonHead)}>
-              {" "}
+              
               {t("mainReport.removalReply")}
             </span>
             <input
@@ -783,25 +778,16 @@ const SmsCreator = ({ classes }, props) => {
                           {selectedGroup.map((item, index) => {
                             if (item.selected && hidden) {
                               return (
-                                <div
-                                  style={{
-                                    width: "70px",
-                                    padding: "6px",
-                                    borderRadius: "20px",
-                                    backgroundColor: "#1771ad",
-                                    marginInlineEnd: "4px",
-                                    marginBottom: "4px",
-                                    color: "white",
-                                  }}
+                                <div className={classes.selectedGroupsDiv}
                                 >
-                                  {item.GroupName}
-                                  <span
+                                 <span className={classes.nameGroup}>{item.GroupName}</span> 
+                                  <RiCloseFill className={classes.groupCloseicn}
                                     onClick={() => {
                                       handleCross(index);
                                     }}
-                                  >
-                                    X
-                                  </span>
+                                  />
+                                   
+                                 
                                 </div>
                               );
                             }
@@ -1516,8 +1502,8 @@ const SmsCreator = ({ classes }, props) => {
           </span>
         </div>
         <div>
-          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }}>
-            <li style={{ marginBottom: "8px" }}>
+          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.listValues}>
+            <li  className={classes.campNameLi}>
               Campaign Name - Required field
             </li>
             <li>Text for sending - Required field</li>

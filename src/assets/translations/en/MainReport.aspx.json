@@ -473,8 +473,7 @@
   "keepDesc":"Turning this switch on will convert your links to a special 35-character link, saving space in your message",
   "testSend":"Test Send",
   "testDesc":"Right after you click send",
-  "sendToOne":"Send to one contact",
-  "sendToGroups":"Send to test groups"
-  
-
+  "sendToOne":"Send to one Contact",
+  "sendToGroups":"Send to one Test Groups",
+  "campaignNamePlaceholder":"Campaign Name"
 }
