@@ -1482,7 +1482,7 @@ const SmsCreator = ({ classes }, props) => {
             <span className={classes.groupName}>Delete Campaign</span>
           </div>
           <div style={{ fontSize: "22px", marginTop: "5px" }}>
-            <span>Are you Sure?</span>
+            <span>Are you sure?</span>
           </div>
         </Dialog>
       ) : null}
