@@ -807,6 +807,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   infoButtons: {
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
     borderRadius: "20px",
     width: "106px",
     color: "white",
@@ -826,6 +829,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   info2Buttons: {
     borderRadius: "20px",
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
     width: "111px",
     fontSize: "11px",
     color: "white",
@@ -2003,8 +2009,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   groupCloseicn:
   {
     color: "#fff",
-    cursor: "pointer"
-
+    cursor: "pointer",
+    display : "flex",
+    justifyContent:"space-between",
+    alignItems:"center",
+    marginTop:"15px"
+  },
+  removalLink : 
+  {
+    marginInlineEnd: "5px",cursor:"pointer"
+  },
+  removalMsg : 
+  {
+    marginInlineEnd: "5px",cursor:"pointer"
   }
 
 });
