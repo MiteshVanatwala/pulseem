@@ -497,7 +497,19 @@ const SmsCreator = ({ classes }, props) => {
                   onChange={handleAlignment}
                   aria-label="text alignment"
                 >
-                  <ToggleButton value="left" aria-label="left aligned" className={classes.leftAlignIcn}>
+                  <ToggleButton value="right" aria-label="right aligned" >
+                    <FormatAlignRightIcon />
+                  </ToggleButton>
+                  <ToggleButton value="left" aria-label="left aligned" style={{ borderLeft: "1px solid #D5D5D5", marginInlineEnd: "4px" }}>
+                    <FormatAlignLeftIcon />
+                  </ToggleButton>
+                </ToggleButtonGroup> : <ToggleButtonGroup
+                  value={alignment}
+                  exclusive
+                  onChange={handleAlignment}
+                  aria-label="text alignment"
+                >
+                  <ToggleButton value="left" aria-label="left aligned" >
                     <FormatAlignLeftIcon />
                   </ToggleButton>
 
