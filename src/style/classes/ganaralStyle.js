@@ -1246,6 +1246,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "700px",
     marginTop: "20px",
   },
+  listDivGroups :
+  {
+    height: "300px",
+    maxHeight: "200px",
+   
+    marginTop: "20px",
+    overflowY:"auto"
+  },
   searchCon: {
     padding: "12px",
     display: "flex",
@@ -1966,7 +1974,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       zIndex: "9"
     }
   },
-  manualChild:
+  grayGroup : 
+  {
+    padding:"10px",
+    textAlign:"center",
+    borderBottom:"1px solid gray",
+    zIndex:"9",
+    cursor:"pointer",
+    pointerEvents:"none"
+  },
+  manualChild : 
   {
     display: "flex",
     justifyContent: "space-between",

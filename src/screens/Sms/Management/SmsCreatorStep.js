@@ -757,7 +757,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
         </div>
         <div>
           {groupClick ? (
-         
+        
             <Groups
               classes={classes}
               groupList={groupList}
