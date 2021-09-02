@@ -321,7 +321,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
   };
   const handleDatePicker = (value) => {
     handleFromDate(value);
-    setTimePickerOpen(!timePickerOpen);
+    // setTimePickerOpen(!timePickerOpen);
   };
   const handleTimePicker = (value) => {
     var date = moment(sendDate);
