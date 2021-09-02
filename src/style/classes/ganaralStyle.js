@@ -2246,7 +2246,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   smsStepDiv:
   {
     display: "grid",
-    gridTemplateColumns: "65% auto",
     padding: "40px 80px 15px 90px"
   }
 });
