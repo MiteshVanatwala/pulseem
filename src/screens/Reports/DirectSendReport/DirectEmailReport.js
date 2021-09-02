@@ -1,9 +1,11 @@
-import React,{useState} from 'react';
-import {useTranslation} from 'react-i18next';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { Box, Button, Grid, Table, TableContainer, Link,
-  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse } from '@material-ui/core';
-import { TablePagination,DateField } from '../../../components/managment/index';
+import {
+  Box, Button, Grid, Table, TableContainer, Link,
+  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse
+} from '@material-ui/core';
+import { TablePagination, DateField } from '../../../components/managment/index';
 import { SearchIcon } from '../../../assets/images/managment';
 import ClearIcon from '@material-ui/icons/Clear';
 import ControlPointIcon from '@material-ui/icons/ControlPoint';
@@ -12,31 +14,75 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import moment from 'moment';
 import { getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
 
-const RenderRow=({
+const RenderRow = ({
   classes,
   cellStyle,
   noborderCell,
   rowStyle,
   row,
-  t=()=>null
+  t = () => null
 }) => {
-  const [open, setOpen]=useState(false);
-  
-  const renderCell=(data, dataType)=>{
+  const [open, setOpen] = useState(false);
+
+  const renderCell = (data, dataType) => {
     let text = data;
     if (dataType === 'date') {
       text = moment(text);
       text = `${text.format('DD/MM/YYYY')} ${text.format('LT')}`
     }
-    
+    if (dataType === 'status') {
+      text = statusText(text)
+    }
+
     return (
-      <Typography className={dataType!=='date'?classes.wordBreak:{}}>{text}</Typography>
+      <Typography className={dataType !== 'date' ? classes.wordBreak : {}}>{text}</Typography>
     );
   }
 
-  const renderCollapsibleRow=(row)=> {
+  const statusText = (statusId) => {
+    switch (statusId.toString()) {
+      case '1': {
+        return t('emailStatus.pending');
+      }
+      case '2': {
+        return t('emailStatus.sending');
+      }
+      case '3': {
+        return t('emailStatus.succeeded');
+      }
+      case '4': {
+        return t('emailStatus.error');
+      }
+      case '5': {
+        return t('emailStatus.retry');
+      }
+      case '6': {
+        return t('emailStatus.paused');
+      }
+      case '7': {
+        return t('emailStatus.cancelled');
+      }
+      case '8': {
+        return t('emailStatus.badError');
+      }
+      case '9': {
+        return t('emailStatus.mediumError');
+      }
+      case '10': {
+        return t('emailStatus.spam');
+      }
+      case '11': {
+        return t('emailStatus.removed');
+      }
+      case '12': {
+        return t('emailStatus.removedBySystem');
+      }
+    }
+  }
+
+  const renderCollapsibleRow = (row) => {
     return (
-      <TableRow className={clsx(classes.tableRowCollapse,'directEmailRowCollapse')}>
+      <TableRow className={clsx(classes.tableRowCollapse, 'directEmailRowCollapse')}>
         <TableCell className={clsx(classes.pt0, classes.pb0)} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box margin={1} className={classes.dFlex}>
@@ -55,14 +101,14 @@ const RenderRow=({
                     <TableCell component="th" scope="row" className={classes.noborder}>{row.ClickCount}</TableCell>
                     <TableCell align="left" className={classes.noborder}>{row.ExternalRef}</TableCell>
                     <TableCell align="left" className={classes.noborder}>
-                      {row.Attachments?
-                        <Link 
+                      {row.Attachments ?
+                        <Link
                           color="primary"
-                          href={row.Attachments} 
+                          href={row.Attachments}
                           className={classes.f16}>
                           {t('landingPages.GridTemplateColumnResource1.HeaderText')}
                         </Link>
-                        :t('report.None')
+                        : t('report.None')
                       }
                     </TableCell>
                     <TableCell align="left" className={classes.noborder}>{row.ToName}</TableCell>
@@ -73,7 +119,7 @@ const RenderRow=({
               <Box className={classes.w20}>
                 <Box className={clsx(classes.floatRight, classes.txtCenter)}>
                   <IconButton>
-                    <VisibilityIcon className={classes.black}/>
+                    <VisibilityIcon className={classes.black} />
                   </IconButton>
                   <Typography display='block' align='center' className={classes.mtNeg15}>{t('common.Preview')}</Typography>
                 </Box>
@@ -92,8 +138,8 @@ const RenderRow=({
         classes={rowStyle}
         className={'directEmailRow'}>
         <TableCell className={classes.cellExpand}>
-          <IconButton onClick={()=>setOpen(!open)}>
-            {open?<RemoveCircleOutlineIcon />:<ControlPointIcon />}
+          <IconButton onClick={() => setOpen(!open)}>
+            {open ? <RemoveCircleOutlineIcon /> : <ControlPointIcon />}
           </IconButton>
         </TableCell>
         <TableCell component='th' scope="row"
@@ -118,7 +164,7 @@ const RenderRow=({
           classes={cellStyle}
           align='center'
           className={classes.flexHalf}>
-          {renderCell(row.Status)}
+          {renderCell(row.Status, 'status')}
         </TableCell>
         <TableCell
           classes={cellStyle}
@@ -138,14 +184,14 @@ const RenderRow=({
   )
 }
 
-const DirectEmailReportTab=({
+const DirectEmailReportTab = ({
   classes,
   dispatch,
   windowSize,
-  handleSearchInput=()=>null,
-  handleSearching=()=>null,
-  handlePageChange=()=>null,
-  handleRowsPerPage=()=>null,
+  handleSearchInput = () => null,
+  handleSearching = () => null,
+  handlePageChange = () => null,
+  handleRowsPerPage = () => null,
   clearSearch,
   page,
   rowsPerPage,
@@ -153,29 +199,30 @@ const DirectEmailReportTab=({
   isSearching,
   directEmailReport,
 }) => {
-  const rowsOptions=[6,12,18];
-  const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot};
-  const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot};
-  const noborderCell={body: clsx(classes.tableCellBody,classes.noborder),root: classes.tableCellRoot};
-  const {t}=useTranslation();
+  const rowsOptions = [6, 12, 18];
+  const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
+  const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
+  const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
+  const { t } = useTranslation();
 
-  const handleSearch= async() => {
+  const handleSearch = async () => {
     const { email = {} } = searchData || {};
-    const { FromEmail='', ToEmail='', ExternalRef='', Status='', FromDate=null, ToDate=null  } = email || {};
-    const param= { 
+    const { FromEmail = '', ToEmail = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ToName = '' } = email || {};
+    const param = {
       FromDate,
       ToDate,
       Status,
       FromEmail,
       ToEmail,
       Reference: ExternalRef,
+      ToName,
       PageIndex: 1,
       PageSize: rowsPerPage
     }
-    let searchObjects={};
-    Object.keys(param).map(item=>{
+    let searchObjects = {};
+    Object.keys(param).map(item => {
       if (param[item]) {
-        searchObjects[item]=param[item];
+        searchObjects[item] = param[item];
       }
     })
 
@@ -184,22 +231,22 @@ const DirectEmailReportTab=({
     handlePageChange(1);
   }
 
-  const handlePageSearching=(val)=>{
+  const handlePageSearching = (val) => {
     let { email = {} } = searchData || {};
-    let params={
-      PageSize:rowsPerPage,
-      PageIndex:val,
+    let params = {
+      PageSize: rowsPerPage,
+      PageIndex: val,
       ...email
     };
     handlePageChange(val);
     dispatch(getNewsletterDirectReport(params));
   }
 
-  const handleRowsPerPageSearching=async(val)=>{
+  const handleRowsPerPageSearching = async (val) => {
     let { email = {} } = searchData || {};
-    let params={
-      PageSize:val,
-      PageIndex:page,
+    let params = {
+      PageSize: val,
+      PageIndex: page,
       ...email
     }
     await dispatch(getNewsletterDirectReport(params));
@@ -207,18 +254,18 @@ const DirectEmailReportTab=({
   }
 
 
-  const renderDateFields=() => {
-    const { email={} } = searchData || {};
-    const { FromDate=null, ToDate=null } = email || {};
+  const renderDateFields = () => {
+    const { email = {} } = searchData || {};
+    const { FromDate = null, ToDate = null } = email || {};
 
-    const handleFromDate=(val)=> {
+    const handleFromDate = (val) => {
       let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
-      handleSearchInput(dateVal,'FromDate', 'email')
+      handleSearchInput(dateVal, 'FromDate', 'email')
     }
 
-    const handleToDate=(val)=> {
+    const handleToDate = (val) => {
       let dateVal = moment(val).endOf('day').format('YYYY-MM-DD HH:mm') || null;
-      handleSearchInput(dateVal,'ToDate', 'email')
+      handleSearchInput(dateVal, 'ToDate', 'email')
     }
 
     return (
@@ -238,7 +285,7 @@ const DirectEmailReportTab=({
             value={ToDate}
             onChange={handleToDate}
             placeholder={t('mms.locToDateResource1.Text')}
-            minDate={FromDate? FromDate:undefined}
+            minDate={FromDate ? FromDate : undefined}
             rootStyle={classes.maxWidth190}
           />
         </Grid>
@@ -246,9 +293,10 @@ const DirectEmailReportTab=({
     )
   }
 
-  const renderAdvanceSearch=()=>{
+
+  const renderAdvanceSearch = () => {
     const { email = {} } = searchData || {};
-    const { FromEmail='', ToEmail='', Recipient='', ExternalRef='', Status='' } = email || {};
+    const { FromEmail = '', ToEmail = '', Recipient = '', ExternalRef = '', Status = '', ToName = '' } = email || {};
     return (
       <>
         <Grid item>
@@ -257,8 +305,8 @@ const DirectEmailReportTab=({
             variant='outlined'
             size='small'
             value={FromEmail}
-            onChange={(e)=>handleSearchInput(e.target.value,'FromEmail', 'email')}
-            className={clsx(classes.textField,classes.minWidth252)}
+            onChange={(e) => handleSearchInput(e.target.value, 'FromEmail', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('report.FromEmail')}
           />
         </Grid>
@@ -268,8 +316,8 @@ const DirectEmailReportTab=({
             variant='outlined'
             size='small'
             value={ToEmail}
-            onChange={(e)=>handleSearchInput(e.target.value,'ToEmail', 'email')}
-            className={clsx(classes.textField,classes.minWidth252)}
+            onChange={(e) => handleSearchInput(e.target.value, 'ToEmail', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('report.ToEmail')}
           />
         </Grid>
@@ -277,9 +325,9 @@ const DirectEmailReportTab=({
           <TextField
             variant='outlined'
             size='small'
-            value={Recipient}
-            onChange={(e)=>handleSearchInput(e.target.value,'Recipient', 'email')}
-            className={clsx(classes.textField,classes.minWidth252)}
+            value={ToName}
+            onChange={(e) => handleSearchInput(e.target.value, 'ToName', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('automations.Recipient')}
           />
         </Grid>
@@ -289,8 +337,8 @@ const DirectEmailReportTab=({
             variant='outlined'
             size='small'
             value={ExternalRef}
-            onChange={(e)=>handleSearchInput(e.target.value,'ExternalRef', 'email')}
-            className={clsx(classes.textField,classes.minWidth252)}
+            onChange={(e) => handleSearchInput(e.target.value, 'ExternalRef', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('report.ExternalRef')}
           />
         </Grid>
@@ -299,8 +347,8 @@ const DirectEmailReportTab=({
             variant='outlined'
             size='small'
             value={Status}
-            onChange={(e)=>handleSearchInput(e.target.value,'Status', 'email')}
-            className={clsx(classes.textField,classes.minWidth252)}
+            onChange={(e) => handleSearchInput(e.target.value, 'Status', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('common.Status')}
           />
         </Grid>
@@ -308,7 +356,7 @@ const DirectEmailReportTab=({
     )
   }
 
-  const renderSearchLine=() => {
+  const renderSearchLine = () => {
     const { email = false } = isSearching || {};
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
@@ -322,59 +370,68 @@ const DirectEmailReportTab=({
             endIcon={<SearchIcon />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
-          
+
         </Grid>
 
-        {email?<Grid item>
+        {email ? <Grid item>
           <Button
             size='large'
             variant='contained'
-            onClick={()=>clearSearch('email')}
+            onClick={() => clearSearch('email')}
             className={classes.searchButton}
             endIcon={<ClearIcon />}>
             {t('common.clear')}
           </Button>
-        </Grid>:null}
+        </Grid> : null}
       </Grid>
     )
   }
 
-  const renderTotalSection=()=>{
-    const { TotalCredits=0, TotalSent=0, TotalMessages=0 }=directEmailReport||{};
+  const renderTotalSection = () => {
+    const { TotalSent = 0, TotalRecords = 0, TotalMessages = 0 } = directEmailReport || {};
     return (
       <>
-        <Box className={clsx(classes.mt25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)}>
-          <Box>
-            <Typography className={clsx(classes.bold, classes.colorBlue)}>
-              {t('report.TotalCredits')}
-            </Typography>
-            <Typography align='center'  className={clsx(classes.colorBlue)}>
-              {TotalCredits.toLocaleString()}
-            </Typography>
+        <Box className={clsx(classes.mt25, classes.paddingSides25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)}>
+          <Grid item container className={classes.widthUnset}>
+            <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+              <Typography className={clsx(classes.bold, classes.colorBlue)}>
+                {t('report.TotalCredits')}
+              </Typography>
+              <Typography align='center' className={clsx(classes.colorBlue)}>
+                {TotalRecords.toLocaleString() || 0}
+              </Typography>
+            </Grid>
+            <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+              <Typography className={clsx(classes.bold, classes.colorBlue)}>
+                {t('report.TotalSent')}
+              </Typography>
+              <Typography align='center' className={clsx(classes.colorBlue)}>
+                {TotalSent.toLocaleString()}
+              </Typography>
+            </Grid>
+
+          </Grid>
+          {/* <Box>
+
           </Box>
           <Box className={classes.ml25}>
-            <Typography className={clsx(classes.bold, classes.colorBlue)}>
-              {t('report.TotalSent')}
-            </Typography>
-            <Typography align='center' className={clsx(classes.colorBlue)}>
-              {TotalSent.toLocaleString()}
-            </Typography>
-          </Box>
+
+          </Box> */}
         </Box>
         <Typography className={clsx(classes.colorGray, classes.mb5)}>
-          {t('common.Total')} {TotalMessages.toLocaleString()} {t('report.Messages')}
+          {t('common.Total')} {directEmailReport.TotalRecords} {t('report.Messages')}
         </Typography>
       </>
     );
   }
 
-  const renderTableHead=()=>{
+  const renderTableHead = () => {
     return (
       <TableHead>
         <TableRow
           classes={rowStyle}>
           <TableCell scope="row"
-            style={{padding:'16px 0px', minWidth: 30}}
+            style={{ padding: '16px 0px', minWidth: 30 }}
             align='center'>
           </TableCell>
           <TableCell
@@ -418,22 +475,22 @@ const DirectEmailReportTab=({
     )
   }
 
-  const renderPhoneRow=(row) => {
+  const renderPhoneRow = (row) => {
     return (
       <TableRow
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
+        <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
           <Box className={classes.inlineGrid}>
             {/* {renderNameCell(row)} */}
           </Box>
           <Grid container justify={'space-between'}>
             <Grid item container className={classes.widthUnset}>
-              <Grid item className={clsx(classes.flexColumn2,classes.txtCenter,classes.pt14)}>
+              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
                 {/* {renderViewsCell(row.Views)} */}
               </Grid>
-              <Grid item className={clsx(classes.flexColumn2,classes.txtCenter,classes.pt14)}>
+              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
                 {/* {renderSubscribersCell(row)} */}
               </Grid>
 
@@ -447,42 +504,42 @@ const DirectEmailReportTab=({
     )
   }
 
-  const renderTableBody=() => {
-    let sortData=directEmailReport&&directEmailReport.DirectReport;
+  const renderTableBody = () => {
+    let sortData = directEmailReport && directEmailReport.DirectReport;
 
     if (!sortData) {
       return;
     }
 
-    sortData=sortData.slice((page-1)*rowsPerPage,(page-1)*rowsPerPage+rowsPerPage)
+    //sortData = sortData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
     return (
       <TableBody className={classes.tableDirectRow}>
-        {sortData.map(row=>
-          <RenderRow 
-            classes={classes} 
-            row={row} 
-            noborderCell={noborderCell} 
-            cellStyle={cellStyle} 
+        {sortData.map(row =>
+          <RenderRow
+            classes={classes}
+            row={row}
+            noborderCell={noborderCell}
+            cellStyle={cellStyle}
             rowStyle={rowStyle}
-            t={t}/>
+            t={t} />
         )}
       </TableBody>
     )
   }
 
-  const renderTable=()=>{
+  const renderTable = () => {
     return (
       <TableContainer className={classes.borderAround}>
-        <Table className={clsx(classes.tableContainer, classes.noborder)}  aria-label="collapsible table">
-          {windowSize!=='xs'&&renderTableHead()}
+        <Table className={clsx(classes.tableContainer, classes.noborder)} aria-label="collapsible table">
+          {windowSize !== 'xs' && renderTableHead()}
           {renderTableBody()}
         </Table>
       </TableContainer>
     )
   }
 
-  const renderTablePagination=() => {
-    const emailData = directEmailReport&&directEmailReport.TotalSent || 0;
+  const renderTablePagination = () => {
+    const emailData = directEmailReport && directEmailReport.TotalRecords || 1;
     return (
       <TablePagination
         classes={classes}

@@ -169,7 +169,7 @@ export const verifyCode = createAsyncThunk(
 export const getSmsReport = createAsyncThunk(
   'reports/SmsReport', async (demo = false, thunkAPI) => {
     try {
-      const response = await instence.get(`reports/SmsReport?includeTestCampaign=${demo}`);
+      const response = await instence.get(`reports/SmsReport/${demo}`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

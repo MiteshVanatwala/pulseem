@@ -82,7 +82,7 @@ const SmsReport=({classes}) => {
       href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}`
     },
     DLR: {
-      title: t('common.DLR'),
+      title: t('common.Total'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}`
     }
   })

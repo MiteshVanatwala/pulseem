@@ -448,6 +448,8 @@
   "percetangeRemovedClients": "אחוז הלקוחות שהוסרו",
   "attachments": "קבצים מצורפים",
   "totalBytes": "סה”כ בתים",
+  "billingCredits": "קרדיטים להודעה",
+  "postCredits": "קרדיטים לחיוב",
   "smsCampaign" : "יצירת קמפיין SMS",
   "sendSetting" : "הגדרות שליחה",
   "whomTosend" : "למי שולחים?",

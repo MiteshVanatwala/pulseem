@@ -90,7 +90,86 @@ const DirectSMSReportTab=({
     let text = data;
     if (dataType === 'date') {
       text = moment(text);
-      text = `${text.format('DD/MM/YYYY')} ${text.format('LT')}`
+      text = `${text.format('DD/MM/YYYY hh:mm')}`
+    }
+    if(dataType === 'status'){
+      switch (text.toString()) {
+        case "-1":
+          {
+            text = t("report.takenBySender");
+            break;
+          }
+          case "1":
+          {
+            text = t("report.pending");
+            break;
+          }
+          case "2":
+          {
+            text = t("report.sent");
+            break;
+          }
+          case "3":
+          {
+            text = t("report.success");
+            break;
+          }
+          case "4":
+          {
+            text = t("report.failure");
+            break;
+          }
+          case "5":
+          {
+            text = t("report.removed");
+            break;
+          }
+          case "6":
+          {
+            text = t("report.stopped");
+            break;
+          }
+          case "7":
+          {
+            text = t("report.canceled");
+            break;
+          }
+          case "8":
+          {
+            text = t("report.deleted");
+            break;
+          }
+          case "9":
+          {
+            text = t("report.suspended");
+            break;
+          }
+          case "10":
+          {
+            text = t("report.requireAproval");
+            break;
+          }
+          case "12":
+          {
+            text = t("report.invalidFromNumber");
+            break;
+          }
+          case "13":
+          {
+            text = t("report.toNumberLonger");
+            break;
+          }
+          case "20":
+          {
+            text = t("report.blockedSync");
+            break;
+          }
+          case "21":
+          {
+            text = t("report.blockedRemoval");
+            break;
+          }
+      }
     }
     
     return (
@@ -213,14 +292,14 @@ const DirectSMSReportTab=({
             endIcon={<SearchIcon />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
-          {!advanceSearch&&<Link 
+          <Link 
             color='initial'
             component='button' 
             underline='none' 
-            onClick={()=>handleAdvanceSearch(true)}
+            onClick={()=>handleAdvanceSearch(!advanceSearch)}
             className={clsx(classes.dBlock, classes.mt5)}>
-            {t('report.AdvanceSearch')}
-          </Link>}
+            {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
+          </Link>
         </Grid>
 
         {sms?<Grid item>
@@ -321,7 +400,7 @@ const DirectSMSReportTab=({
             classes={cellStyle}
             align='center'
             className={classes.flexHalf}>
-            {t('landingPages.GridBoundColumnResource1.HeaderText')}
+            {t('report.id')}
           </TableCell>
           <TableCell
             classes={cellStyle}
@@ -367,7 +446,7 @@ const DirectSMSReportTab=({
           classes={cellStyle}
           align='center'
           className={classes.flexHalf}>
-          {renderCell(row.Status)}
+          {renderCell(row.Status, 'status')}
         </TableCell>
         {showContent&&<TableCell
           classes={cellStyle}

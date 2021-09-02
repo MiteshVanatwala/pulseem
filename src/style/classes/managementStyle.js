@@ -133,7 +133,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tableCellBody: {
     borderInlineEnd: '1px solid #797979',
-    marginBlock: 20,
+    marginBlock: 10,
     borderBottom: 0,
     display: 'flex',
     justifyContent: 'center',
@@ -237,7 +237,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   middleWrapText: {
     fontSize: 18,
     overflow: "hidden",
-    color: '#333'
+    color: '#333',
+    whiteSpace: 'nowrap'
   },
   wrapText: {
     fontSize: 16,

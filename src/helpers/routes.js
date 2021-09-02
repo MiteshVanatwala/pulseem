@@ -170,7 +170,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
     options: [
       {title: t('master.clalCollage'),href: '/Pulseem/ClalReport.aspx?fromreact=true', isShow: isClalAccount },
       {title: t('master.RadMenuItemResource13.Text'),href: '/react/reports/NewsletterReports', isShow: true },
-      {title: t('master.RadMenuItemResource24.Text'),href: '/Pulseem/SMSMainReport.aspx?fromreact=true', isShow: true },
+      {title: t('master.RadMenuItemResource24.Text'),href: '/react/reports/SMSMainReport', isShow: true },
       {title: t('master.MmsMainReport.Text'),href: '/Pulseem/MmsMainReport.aspx?fromreact=true', isShow: true },
       {title: t('master.AbTestsReport.Text'),href: '/Pulseem/AbTestsReport.aspx?fromreact=true', isShow: true },
       {title: t('master.RadMenuItemResource15.Text'),href: '/Pulseem/AccountReport.aspx?fromreact=true', isShow: true },
