@@ -2037,5 +2037,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   plusIcn:
   {
     marginBottom: "3px"
-  }
+  },
+  smsStepDiv : 
+   {
+      display: "grid", gridTemplateColumns: "65% auto" ,padding: "40px 80px 15px 90px"
+     }
 });
