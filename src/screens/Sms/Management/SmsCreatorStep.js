@@ -549,7 +549,7 @@ const SmsCreatorStep = ({ classes }) => {
                     maxLength="1"
                   />
 
-                  <div className={classes.commonFieldPulse}  style={{direction: isRTL ? 'ltr' : 'rtl'}}>
+                  <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
                     <span
                       className={
                         togglePulse
@@ -610,7 +610,7 @@ const SmsCreatorStep = ({ classes }) => {
                     maxLength="1"
                   />
 
-                  <div className={classes.commonFieldPulse} style={{direction: isRTL ? 'ltr' : 'rtl'}}>
+                  <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
                     <span
                       className={
                         togglePulse
@@ -711,6 +711,16 @@ const SmsCreatorStep = ({ classes }) => {
   const renderBody = () => {
     return (
       <div>
+        <div className={classes.infoDiv}>
+          <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
+          <Tooltip
+            disableFocusListener
+            title="First choose who receives your campaign, then choose when."
+            classes={{ tooltip: styles.customWidth }}
+          >
+            <span className={classes.bodyInfo}>i</span>
+          </Tooltip>
+        </div>
         <div className={classes.tabDiv}>
           <div
             className={
@@ -2147,7 +2157,7 @@ const SmsCreatorStep = ({ classes }) => {
         <div>
           {renderSwitch()}
           {renderHead()}
-          {renderContent()}
+          {/* {renderContent()} */}
           <Grid container>
             <Grid md={7} xs={12}>
               {renderBody()}
