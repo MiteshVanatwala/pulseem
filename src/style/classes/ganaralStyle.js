@@ -2242,5 +2242,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   subDeleteDiv:
   {
     fontSize: "22px", marginTop: "5px"
+  },
+  smsStepDiv:
+  {
+    display: "grid",
+    gridTemplateColumns: "65% auto",
+    padding: "40px 80px 15px 90px"
   }
 });
