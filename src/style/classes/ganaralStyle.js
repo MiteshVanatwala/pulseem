@@ -711,7 +711,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottom: "2px solid green",
   },
   error: {
-    borderBottom: "2px solid red !important" ,
+    borderBottom: "2px solid red !important",
   },
   msgHead: {
     fontSize: "20px",
@@ -2173,23 +2173,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   iconNew:
   {
     backgroundColor: "#CA332F",
-    display : "flex",
-    justifyContent:"space-between",
-    alignItems:"center",
-    marginTop:"15px"
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: "15px"
   },
-  pulseParentDiv : 
+  pulseParentDiv:
   {
     height: "60px", borderBottom: "1px solid black"
   },
-  pulseChildDiv :
+  pulseChildDiv:
   {
     fontSize: "16px",
     fontWeight: "700",
     marginTop: "10px",
     marginBottom: "10px",
   },
-  topPulseDiv :
+  topPulseDiv:
   {
     display: "flex",
     justifyContent: "space-between",
@@ -2197,42 +2197,50 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottom: "2px solid #efefef",
     paddingBottom: "15px",
   },
-  noOfReci :
+  noOfReci:
   {
     fontSize: "18px",
     fontWeight: "500",
     marginTop: "10px",
     marginBottom: "10px",
   },
-  inputFieldDiv :
+  inputFieldDiv:
   {
     display: "flex",
     alignItems: "center",
     marginTop: "10px",
   },
-  commonFieldPulse :
+  commonFieldPulse:
   {
     display: "flex", alignItems: "center"
   },
-  randomSendDiv :
+  randomSendDiv:
   {
     fontSize: "16px",
     fontWeight: "700",
     marginTop: "10px",
     marginBottom: "10px",
   },
-  randomReciSpan :
+  randomReciSpan:
   {
     fontSize: "18px",
     fontWeight: "500",
     marginTop: "10px",
     marginBottom: "10px",
   },
-  confirmDiv :
+  confirmDiv:
   {
     height: "50px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+  },
+  deleteModalDiv:
+  {
+    height: "60px", borderBottom: "1px solid #DEE2E7"
+  },
+  subDeleteDiv:
+  {
+    fontSize: "22px", marginTop: "5px"
   }
 });

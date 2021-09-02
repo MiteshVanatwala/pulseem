@@ -21,6 +21,7 @@ import { FaCheck } from 'react-icons/fa';
 import CloseIcon from "@material-ui/icons/Close";
 import SortIcon from "@material-ui/icons/Sort";
 import FilterListIcon from "@material-ui/icons/FilterList";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
@@ -44,6 +45,7 @@ import {
   getAccountId,
   smsCombinedGroup,
   smsCampSettings,
+  deleteSms,
   getCampaignSumm,
   getManual,
   getFinishedCampaigns
@@ -122,16 +124,16 @@ const useStyle = makeStyles((theme) => ({
 
 const SmsCreatorStep = ({ classes }) => {
   const { t } = useTranslation();
-  document.title=t("mainReport.smsTitle")
+  document.title = t("mainReport.smsTitle")
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const tabi = useStyle();
- 
+
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { previousLandingData, previousCampaignData, extraData, accountId ,finishedCampaigns } =
+  const { previousLandingData, previousCampaignData, extraData, accountId, finishedCampaigns } =
     useSelector((state) => state.sms);
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -142,6 +144,8 @@ const SmsCreatorStep = ({ classes }) => {
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
   const [boolRandom, setboolRandom] = useState(false);
+  const [cancel, setcancel] = useState(true);
+  const [campaignIdResp, setcampaignIdResp] = useState(-1);
   const [groupList, setGroupList] = useState([]);
   const [filterGroups, setfilterGroups] = useState([]);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
@@ -204,33 +208,34 @@ const SmsCreatorStep = ({ classes }) => {
   const [areaData, setareaData] = useState("");
   const [RecipientsBool, setRecipientsBool] = useState(false);
   const [editT, seteditT] = useState(false);
+  const [deleteClick, setdeleteClick] = useState(false);
   const [areatyped, setareatyped] = useState("");
   const [totalCampaigns, settotalCampaigns] = useState([])
-  const [blank, setblank] = useState([  'first Name', 'Last Name' , 'Cell Phone']);
+  const [blank, setblank] = useState(['first Name', 'Last Name', 'Cell Phone']);
   const [typedData, settypedData] = useState([]);
   const [selectArray, setselectArray] = useState([
-   {
-    isdisabled: false, 
-    idx : -1,
-    value: "first name"
-   },
-   {
-    isdisabled: false,
-    idx : -1,
-    value: "last name"
-   },
-   {
-    isdisabled: false, 
-    idx : -1,
-    value: "cell phone"
-   }
- 
+    {
+      isdisabled: false,
+      idx: -1,
+      value: "first name"
+    },
+    {
+      isdisabled: false,
+      idx: -1,
+      value: "last name"
+    },
+    {
+      isdisabled: false,
+      idx: -1,
+      value: "cell phone"
+    }
+
   ]);
   const [Unique, setUnique] = useState(-1);
-const [initialheadstate, setinitialheadstate] = useState([])
+  const [initialheadstate, setinitialheadstate] = useState([])
 
-  
-  
+
+
   const [headers, setheaders] = useState(initialheadstate);
   const getData = async () => {
     const list = await dispatch(getFinishedCampaigns());
@@ -240,14 +245,14 @@ const [initialheadstate, setinitialheadstate] = useState([])
   };
   useEffect(() => {
     getAccount();
-   getData();
-   
+    getData();
+
   }, [dispatch]);
- 
 
 
- 
- 
+
+
+
 
   const getAccount = async () => {
     const list = await dispatch(getAccountId());
@@ -320,7 +325,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
       <div className={classes.headDiv}>
         <span className={classes.headNo}>2</span>
         <span className={classes.contentHead}>
-          
+
           {t("mainReport.sendSetting")}
         </span>
       </div>
@@ -407,22 +412,22 @@ const [initialheadstate, setinitialheadstate] = useState([])
     }
     settotalCampaigns(tempArr);
   };
-
+  const onHandleDelete = () => {
+    setdeleteClick(true);
+  };
   const inputGroup = (e) => {
     setgroupValue(e.target.value);
   };
   const handlePulseClose = () => {
-   
-      setpulse(false);
-    
-   
+
+    setpulse(false);
+
+
   };
 
-  const handlePulseConfirm = () =>
-  {
+  const handlePulseConfirm = () => {
     console.log("hereeee")
-    if(onPulseValidations())
-    {
+    if (onPulseValidations()) {
       setpulse(false);
     }
   }
@@ -439,67 +444,53 @@ const [initialheadstate, setinitialheadstate] = useState([])
     setpulseBool(false);
   };
 
-  const onPulseValidations = () =>
-  {
-    if(togglePulse)
-    {
-     
-      if(inputF === "")
-      {
+  const onPulseValidations = () => {
+    if (togglePulse) {
+
+      if (inputF === "") {
         setpulseBool(true);
-        if(inputS === "" )
-        {
+        if (inputS === "") {
           setTimeBool(true);
           return false;
         }
-       
+
       }
-      else if(inputS === "")
-      {
+      else if (inputS === "") {
         setTimeBool(true);
-        if(inputF === "")
-        {
+        if (inputF === "") {
           setpulseBool(true);
           return false;
         }
-       
+
       }
-      else if(toggleRandom)
-      {
-        if(random === "")
-        { 
-            setboolRandom(true);
+      else if (toggleRandom) {
+        if (random === "") {
+          setboolRandom(true);
           return false;
         }
-        else
-        {
+        else {
           return true;
         }
       }
-      else
-      {
+      else {
         return true;
       }
-     
+
     }
-    else if(toggleRandom)
-    {
-      if(random === "")
-      { 
-          setboolRandom(true);
+    else if (toggleRandom) {
+      if (random === "") {
+        setboolRandom(true);
         return false;
       }
-      else
-      {
+      else {
         return true;
       }
     }
-  
-    else
-    {
+
+    else {
       return true;
     }
-  
+
   }
 
   const renderPulse = () => {
@@ -512,14 +503,14 @@ const [initialheadstate, setinitialheadstate] = useState([])
           showDefaultButtons={false}
           icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }} />}
         >
-          <div  className={classes.pulseParentDiv}>
+          <div className={classes.pulseParentDiv}>
             <span className={classes.groupName}> {t("smsReport.pulseSending")}</span>
           </div>
           <div>
             <div
               className={classes.pulseChildDiv}
             >
-              
+
               <Checkbox
                 checked={togglePulse}
                 color="primary"
@@ -539,7 +530,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                 <span
                   className={classes.noOfReci}
                 >
-                 {t("smsReport.noOfReciPulse")}
+                  {t("smsReport.noOfReciPulse")}
                 </span>
                 <div
                   className={classes.inputFieldDiv}
@@ -550,7 +541,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     disabled={togglePulse ? false : true}
                     className={
                       togglePulse
-                        ?  pulseBool ? clsx(classes.pulseActive,classes.error) : clsx(classes.pulseActive)
+                        ? pulseBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
                         : clsx(classes.pulseInsert)
                     }
                     value={inputF}
@@ -558,7 +549,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     maxLength="1"
                   />
 
-                  <div  className={classes.commonFieldPulse}>
+                  <div className={classes.commonFieldPulse}  style={{direction: isRTL ? 'ltr' : 'rtl'}}>
                     <span
                       className={
                         togglePulse
@@ -573,9 +564,8 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         setpulsePer("percent");
                         setpulseReci("");
                       }}
-                      style={{transform:isRTL ?  "rotate(180deg)" : "none"}}
                     >
-                     {t("smsReport.percent")}
+                      {t("smsReport.percent")}
                     </span>
                     <span
                       className={
@@ -591,21 +581,20 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         setpulsePer("");
                         setpulseReci("Recipients");
                       }}
-                      style={{transform:isRTL ?  "rotate(180deg)" : "none"}}
                     >
-                     {t("smsReport.Reci")}
+                      {t("smsReport.Reci")}
                     </span>
                   </div>
                 </div>
               </div>
               <div>
                 <span
-                 className={classes.noOfReci}
+                  className={classes.noOfReci}
                 >
                   {t("smsReport.timeSend")}
                 </span>
                 <div
-                   className={classes.inputFieldDiv} 
+                  className={classes.inputFieldDiv}
                 >
                   <input
                     type="text"
@@ -613,7 +602,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     disabled={togglePulse ? false : true}
                     className={
                       togglePulse
-                        ? TimeBool ? clsx(classes.pulseActive,classes.error) : clsx(classes.pulseActive)
+                        ? TimeBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
                         : clsx(classes.pulseInsert)
                     }
                     onChange={handleTime}
@@ -621,7 +610,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     maxLength="1"
                   />
 
-                  <div className={classes.commonFieldPulse}>
+                  <div className={classes.commonFieldPulse} style={{direction: isRTL ? 'ltr' : 'rtl'}}>
                     <span
                       className={
                         togglePulse
@@ -636,7 +625,6 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         setminName("");
                         sethourName("hours");
                       }}
-                      style={{transform:isRTL ?  "rotate(180deg)" : "none"}}
                     >
                       {t("smsReport.Hours")}
                     </span>
@@ -654,7 +642,6 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         setminName("mins");
                         sethourName("");
                       }}
-                      style={{transform:isRTL ?  "rotate(180deg)" : "none"}}
                     >
                       {t("smsReport.min")}
                     </span>
@@ -664,10 +651,10 @@ const [initialheadstate, setinitialheadstate] = useState([])
             </div>
 
             <div
-            
+
               className={classes.randomSendDiv}
             >
-              
+
               <Checkbox
                 checked={toggleRandom}
                 color="primary"
@@ -682,7 +669,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               <span
                 className={classes.randomReciSpan}
               >
-               {t("smsReport.noOfReci")}
+                {t("smsReport.noOfReci")}
               </span>
 
               <input
@@ -691,7 +678,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                 disabled={toggleRandom ? false : true}
                 className={
                   toggleRandom
-                    ?  boolRandom ? clsx(classes.pulseActive,classes.error) : clsx(classes.pulseActive)
+                    ? boolRandom ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
                     : clsx(classes.pulseInsert)
                 }
                 onChange={handleRandom}
@@ -723,7 +710,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
   };
   const renderBody = () => {
     return (
-      <div style={{ width: "700px" }}>
+      <div>
         <div className={classes.tabDiv}>
           <div
             className={
@@ -816,13 +803,12 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         }
                         res = res + "\n";
                       }
-                    
+
                       setareaData(res);
-                      let ddc =[];
-                      for(let i in result.data[0])
-                      {
-                           console.log("----->",i)
-                           ddc.push("Adjust Title")
+                      let ddc = [];
+                      for (let i in result.data[0]) {
+                        console.log("----->", i)
+                        ddc.push("Adjust Title")
                       }
                       setheaders(ddc);
                     });
@@ -833,7 +819,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
         </div>
         <div>
           {groupClick ? (
-        
+
             <Groups
               classes={classes}
               groupList={groupList}
@@ -860,7 +846,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     justifyContent: "center",
                   }}
                 >
-                  
+
                   <Checkbox
                     disabled={selectedGroups.length >= 2 ? false : true}
                     checked={toggleChecked}
@@ -870,7 +856,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       settoggleChecked(!toggleChecked);
                     }}
                   />
-                  <span  className={selectedGroups.length >=2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
+                  <span className={selectedGroups.length >= 2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
                   <span className={classes.iconNew}>{t("mainReport.newFeature")}</span>
                   <Tooltip
                     disableFocusListener
@@ -893,7 +879,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     value={groupValue}
                   />
                   <span className={classes.saveBtn} onClick={handleCombined}>
-                  {t("mainReport.save")}
+                    {t("mainReport.save")}
                   </span>
                 </div>
               ) : null}
@@ -934,7 +920,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       handlePasted();
                     }}
                   >
-                    
+
                     Edit fields and save
                   </span>
                   <span
@@ -990,16 +976,13 @@ const [initialheadstate, setinitialheadstate] = useState([])
   };
   const handleReciConfirm = () => {
 
-    if(toggleReci)
-    {
-      if(validationCheck())
-      {
+    if (toggleReci) {
+      if (validationCheck()) {
         console.log("Trueeee");
-          setreciFilter(false);
+        setreciFilter(false);
       }
     }
-    else
-    {
+    else {
       setreciFilter(false);
     }
   };
@@ -1014,38 +997,35 @@ const [initialheadstate, setinitialheadstate] = useState([])
     settypedData(b);
 
     let dummyArr = [];
-    for(let i = 0 ; i<b[0].length; i++)
-  {
-    dummyArr.push("Adjust Title");
-  }
-  setinitialheadstate(dummyArr);
-  setheaders(dummyArr)
+    for (let i = 0; i < b[0].length; i++) {
+      dummyArr.push("Adjust Title");
+    }
+    setinitialheadstate(dummyArr);
+    setheaders(dummyArr)
 
     seteditT(true);
     setmanualTrue(true);
   };
-  const handleReciInput = (e) =>
-  {
+  const handleReciInput = (e) => {
 
     setinputRecipients(e.target.value);
     setRecipientsBool(false);
-   
+
   }
   const validationCheck = () => {
     if (inputRecipients === "") {
       setRecipientsBool(true);
       return false;
     }
-    else
-    {
+    else {
       return true;
     }
-    
+
   };
   const renderReciFilter = () => {
     return (
       <>
-        
+
         {reciFilter ? (
           <Dialog
             classes={classes}
@@ -1057,7 +1037,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
             showDefaultButtons={true}
             icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }} />}
           >
-            <div  className={classes.reciFilterDiv}>
+            <div className={classes.reciFilterDiv}>
               <span className={classes.groupName}>{t("smsReport.recipientsFilter")}</span>
             </div>
             <div>
@@ -1065,7 +1045,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                 className={classes.reciCheckoxContainer}
               >
                 <div>
-                  
+
                   <Checkbox
                     checked={toggleReci}
                     color="primary"
@@ -1075,7 +1055,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     }}
                   />
                   <span>
-                  {t("smsReport.filterInputText")}
+                    {t("smsReport.filterInputText")}
                   </span>
                 </div>
                 <div>
@@ -1095,7 +1075,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               <div>
                 <span> {t("smsReport.inputTextFilter")}:</span>
                 <div>
-                  
+
                   <Paper component="form" className={classes.reciMain}>
                     <IconButton
                       type="submit"
@@ -1114,23 +1094,23 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     />
                   </Paper>
                   <div className={classes.reciList}> {filterGroups.map((item, index) => {
-                            if (item.selected) {
-                              return (
-                                <div
-                                  className={classes.bubbleReciDiv}
-                                >
-                                  {item.GroupName}
-                                  <span
-                                    onClick={() => {
-                                      handleCross(index);
-                                    }}
-                                  >
-                                    X
-                                  </span>
-                                </div>
-                              );
-                            }
-                          })}</div>
+                    if (item.selected) {
+                      return (
+                        <div
+                          className={classes.bubbleReciDiv}
+                        >
+                          {item.GroupName}
+                          <span
+                            onClick={() => {
+                              handleCross(index);
+                            }}
+                          >
+                            X
+                          </span>
+                        </div>
+                      );
+                    }
+                  })}</div>
                   <div
                     className={classes.listDivFilter}
                   >
@@ -1151,9 +1131,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
                           <div className={classes.searchCon}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
-                              className={item.selected ? classes.grDoc :  classes.blueDoc}
+                              className={item.selected ? classes.grDoc : classes.blueDoc}
                             >
-                              {item.selected ? <FaCheck className={clsx(classes.green)}/> : <HiOutlineUserGroup />}
+                              {item.selected ? <FaCheck className={clsx(classes.green)} /> : <HiOutlineUserGroup />}
                             </span>
                             <div
                               className={classes.groupsFilterList}
@@ -1172,12 +1152,12 @@ const [initialheadstate, setinitialheadstate] = useState([])
                   </div>
                 </div>
               </div>
-              <div  className={classes.camapignsDiv}>
+              <div className={classes.camapignsDiv}>
                 <span>
-                {t("smsReport.campaignInfo")}:
+                  {t("smsReport.campaignInfo")}:
                 </span>
                 <div>
-                  
+
                   <Paper component="form" className={classes.reciMain}>
                     <IconButton
                       type="submit"
@@ -1196,23 +1176,23 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     />
                   </Paper>
                   <div className={classes.reciList}> {totalCampaigns.map((item, index) => {
-                            if (item.selected) {
-                              return (
-                                <div
-                                  className={classes.bubbleReciDiv}
-                                >
-                                  {item.Name}
-                                  <span
-                                    onClick={() => {
-                                      handleCrossCamp(index);
-                                    }}
-                                  >
-                                    X
-                                  </span>
-                                </div>
-                              );
-                            }
-                          })}</div>
+                    if (item.selected) {
+                      return (
+                        <div
+                          className={classes.bubbleReciDiv}
+                        >
+                          {item.Name}
+                          <span
+                            onClick={() => {
+                              handleCrossCamp(index);
+                            }}
+                          >
+                            X
+                          </span>
+                        </div>
+                      );
+                    }
+                  })}</div>
                   <div
                     className={classes.listDivFilter}
                   >
@@ -1233,15 +1213,15 @@ const [initialheadstate, setinitialheadstate] = useState([])
                           <div className={classes.searchCon}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
-                              className={item.selected ? classes.grDoc :  classes.blueDoc}
+                              className={item.selected ? classes.grDoc : classes.blueDoc}
                             >
-                              {item.selected ? <FaCheck className={clsx(classes.green)}/> : <HiOutlineUserGroup />}
+                              {item.selected ? <FaCheck className={clsx(classes.green)} /> : <HiOutlineUserGroup />}
                             </span>
                             <div
-                             className={classes.groupsFilterList}
-                             onClick={() => {
-                              handleSelectCamp(idx);
-                            }}
+                              className={classes.groupsFilterList}
+                              onClick={() => {
+                                handleSelectCamp(idx);
+                              }}
                             >
                               <span>
                                 {item.Name}
@@ -1261,7 +1241,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
   };
   const renderRight = () => {
     return (
-      <div style={{ marginTop: "35%" }}>
+      <div>
         <Grid item md={10} xs={12}>
           <h2
             className={classes.sectionTitle}
@@ -1278,7 +1258,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
             >
               <FormControlLabel
                 value="1"
-                control={<Radio color="primary" style={{color:"#007bff"}}/>}
+                control={<Radio color="primary" style={{ color: "#007bff" }} />}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.immediateSend")}
@@ -1290,7 +1270,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               </FormHelperText>
               <FormControlLabel
                 value="2"
-                control={<Radio color="primary" style={{color:"#007bff"}}/>}
+                control={<Radio color="primary" style={{ color: "#007bff" }} />}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.futureSend")}
@@ -1342,7 +1322,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               </Box>
               <FormControlLabel
                 value="3"
-                control={<Radio color="primary" style={{color:"#007bff"}}/>}
+                control={<Radio color="primary" style={{ color: "#007bff" }} />}
                 label={
                   <span className={classes.radioText}>
                     {t("mainReport.specialDate")}
@@ -1406,7 +1386,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       handlebef();
                     }}
                   >
-                    
+
                     {t("mainReport.before")}
                   </span>
                   <span
@@ -1476,7 +1456,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
             fontSize: "14px",
           }}
         >
-          
+
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
               Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer}
@@ -1489,15 +1469,15 @@ const [initialheadstate, setinitialheadstate] = useState([])
         </div>
 
         <div className={classes.buttonDiv}>
-          <span className={classes.rightInput3}>
-          <BsTrash style={{ fontSize: "25" }} />
+          <span className={classes.rightInput3} onClick={onHandleDelete} >
+            <AiOutlineDelete style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4}>
-            
+
             {t("mainReport.exitSms")}
           </span>
           <span className={classes.rightInput5}>
-            
+
             {t("mainReport.saveSms")}
           </span>
           <span
@@ -1516,10 +1496,8 @@ const [initialheadstate, setinitialheadstate] = useState([])
     );
   };
   const onSummClick = async () => {
-    if(sendType === "1")
-    {
-      if(selectedGroups.length > 0)
-      {
+    if (sendType === "1") {
+      if (selectedGroups.length > 0) {
         let campId = window.location
         let id = campId.search.split("=");
         let finalId = id[1];
@@ -1527,8 +1505,8 @@ const [initialheadstate, setinitialheadstate] = useState([])
         let temp = [];
         let finalGroups = [];
         for (let i = 0; i < selectedGroups.length; i++) {
-        temp.push(selectedGroups[i].GroupID);
-        finalGroups.push(selectedGroups[i]);
+          temp.push(selectedGroups[i].GroupID);
+          finalGroups.push(selectedGroups[i]);
         }
         let time = -1;
         let pulse = -1;
@@ -1538,7 +1516,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
           } else {
             time = 2;
           }
-  
+
           if (percentTrue == true) {
             pulse = 1;
           } else {
@@ -1547,77 +1525,73 @@ const [initialheadstate, setinitialheadstate] = useState([])
         }
 
         let exceptionGroups = [];
-       
+
         for (let i = 0; i < filterGroups.length; i++) {
-          if(filterGroups[i].selected)
-          {
+          if (filterGroups[i].selected) {
             exceptionGroups.push(filterGroups[i].GroupID)
           }
-          }
+        }
 
-        
+
         let exceptionCampaigns = [];
         for (let i = 0; i < totalCampaigns.length; i++) {
-          if(totalCampaigns[i].selected)
-          {
+          if (totalCampaigns[i].selected) {
             exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
           }
-          }
+        }
         let quickPayload = {
-        FutureDateTime: null,
-        GroupDetails: finalGroups,
-        Groups: temp,
-        PulseSettings: {
-          PulseType: pulse,
-          TimeType: time,
-          PulseAmount: inputF, 
-          TimeInterval: inputS
-        },
-       RandomSettings: {
-         RandomAmount: random
-        },
-       SendExeptional: 
-       {
-        Groups: exceptionGroups, 
-        Campaigns: exceptionCampaigns, 
-        ExceptionalDays: setinputRecipients
-      },
-      SendTypeID: 1,
-      SmsCampaignID: finalId,
-      SourceTimeZone: "Asia/Calcutta",
-      SpecialSettings: {
-        Type: "",
-         DateFieldID: -1,
-         Day: 0,
-         SendHour: "",
-         IntervalTypeID: -1,
-         SendDate: null
+          FutureDateTime: null,
+          GroupDetails: finalGroups,
+          Groups: temp,
+          PulseSettings: {
+            PulseType: pulse,
+            TimeType: time,
+            PulseAmount: inputF,
+            TimeInterval: inputS
+          },
+          RandomSettings: {
+            RandomAmount: random
+          },
+          SendExeptional:
+          {
+            Groups: exceptionGroups,
+            Campaigns: exceptionCampaigns,
+            ExceptionalDays: setinputRecipients
+          },
+          SendTypeID: 1,
+          SmsCampaignID: finalId,
+          SourceTimeZone: "Asia/Calcutta",
+          SpecialSettings: {
+            Type: "",
+            DateFieldID: -1,
+            Day: 0,
+            SendHour: "",
+            IntervalTypeID: -1,
+            SendDate: null
+          },
+          specialDateOptions: [
+            {
+              text: "Birthday",
+              code: "1"
             },
-      specialDateOptions: [
-      {
-        text: "Birthday",
-        code: "1"
-        }, 
-      {
-        text: "Creation Day",
-        code: "2"
-      }, 
-        {
-          text: "", 
-          code: "3"
-        }]
+            {
+              text: "Creation Day",
+              code: "2"
+            },
+            {
+              text: "",
+              code: "3"
+            }]
 
-      }
-      await dispatch(smsCampSettings(quickPayload));
-      let response =  await dispatch(getCampaignSumm(finalId));
-      setresponseQuick(response);
-      setsummModal(true);
         }
+        await dispatch(smsCampSettings(quickPayload));
+        let response = await dispatch(getCampaignSumm(finalId));
+        setresponseQuick(response);
+        setsummModal(true);
       }
-      else if(sendType === "2")
-      {
-        if(selectedGroups.length > 0)
-      {
+    }
+    else if (sendType === "2") {
+      if (selectedGroups.length > 0) {
         let campId = window.location
         let id = campId.search.split("=");
         let finalId = id[1];
@@ -1625,8 +1599,8 @@ const [initialheadstate, setinitialheadstate] = useState([])
         let temp = [];
         let finalGroups = [];
         for (let i = 0; i < selectedGroups.length; i++) {
-        temp.push(selectedGroups[i].GroupID);
-        finalGroups.push(selectedGroups[i]);
+          temp.push(selectedGroups[i].GroupID);
+          finalGroups.push(selectedGroups[i]);
         }
         let time = -1;
         let pulse = -1;
@@ -1636,7 +1610,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
           } else {
             time = 2;
           }
-  
+
           if (percentTrue == true) {
             pulse = 1;
           } else {
@@ -1645,79 +1619,77 @@ const [initialheadstate, setinitialheadstate] = useState([])
         }
 
         let exceptionGroups = [];
-       
+
         for (let i = 0; i < filterGroups.length; i++) {
-          if(filterGroups[i].selected)
-          {
+          if (filterGroups[i].selected) {
             exceptionGroups.push(filterGroups[i].GroupID)
           }
-          }
+        }
 
-        
+
         let exceptionCampaigns = [];
         for (let i = 0; i < totalCampaigns.length; i++) {
-          if(totalCampaigns[i].selected)
-          {
+          if (totalCampaigns[i].selected) {
             exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
           }
-          }
+        }
         const finalDate = moment(sendDate, "YYYY-MM-DD HH:mm:ss");
         finalDate.set({ h: finalDate.format("HH"), m: finalDate.format("mm") });
         let displayDate = null;
         displayDate = finalDate.format();
-         
+
         let quickPayload = {
-        FutureDateTime: displayDate,
-        GroupDetails: finalGroups,
-        Groups: temp,
-        PulseSettings: {
-          PulseType: pulse,
-          TimeType: time,
-          PulseAmount: inputF, 
-          TimeInterval: inputS
-        },
-       RandomSettings: {
-         RandomAmount: random
-        },
-       SendExeptional: 
-       {
-        Groups: exceptionGroups, 
-        Campaigns: exceptionCampaigns, 
-        ExceptionalDays: setinputRecipients
-      },
-      SendTypeID: 1,
-      SmsCampaignID: finalId,
-      SourceTimeZone: "Asia/Calcutta",
-      SpecialSettings: {
-        Type: "",
-         DateFieldID: -1,
-         Day: 0,
-         SendHour: "",
-         IntervalTypeID: -1,
-         SendDate: null
+          FutureDateTime: displayDate,
+          GroupDetails: finalGroups,
+          Groups: temp,
+          PulseSettings: {
+            PulseType: pulse,
+            TimeType: time,
+            PulseAmount: inputF,
+            TimeInterval: inputS
+          },
+          RandomSettings: {
+            RandomAmount: random
+          },
+          SendExeptional:
+          {
+            Groups: exceptionGroups,
+            Campaigns: exceptionCampaigns,
+            ExceptionalDays: setinputRecipients
+          },
+          SendTypeID: 1,
+          SmsCampaignID: finalId,
+          SourceTimeZone: "Asia/Calcutta",
+          SpecialSettings: {
+            Type: "",
+            DateFieldID: -1,
+            Day: 0,
+            SendHour: "",
+            IntervalTypeID: -1,
+            SendDate: null
+          },
+          specialDateOptions: [
+            {
+              text: "Birthday",
+              code: "1"
             },
-      specialDateOptions: [
-      {
-        text: "Birthday",
-        code: "1"
-        }, 
-      {
-        text: "Creation Day",
-        code: "2"
-      }, 
-        {
-          text: "", 
-          code: "3"
-        }]
+            {
+              text: "Creation Day",
+              code: "2"
+            },
+            {
+              text: "",
+              code: "3"
+            }]
 
-      }
-      await dispatch(smsCampSettings(quickPayload));
-      let response =  await dispatch(getCampaignSumm(finalId));
-      setresponseQuick(response);
-      setsummModal(true);
         }
-
+        await dispatch(smsCampSettings(quickPayload));
+        let response = await dispatch(getCampaignSumm(finalId));
+        setresponseQuick(response);
+        setsummModal(true);
       }
+
+    }
   };
   const renderSummary = () => {
     return (
@@ -1739,156 +1711,143 @@ const [initialheadstate, setinitialheadstate] = useState([])
       setdropIndex(-1);
     }
   };
-  const handleSelectFirst = (name,id,idx,e) => {
+  const handleSelectFirst = (name, id, idx, e) => {
     // id -  index of select array 
     // idx - header index 
-  // if  (headers[idx] !== "adjust title")
-  // {
-  //   selectArray[id].isdisabled = false;
-    
-  //   let h = headers;
-  //   h[idx] = name.value;
-  //   setheaders(h);
+    // if  (headers[idx] !== "adjust title")
+    // {
+    //   selectArray[id].isdisabled = false;
 
-  // }
-  // else
-  // {
-   
-  let h = headers;
-  h[idx] = name.value;
-  setheaders(h);
-  selectArray[id].isdisabled = true;
-  selectArray[id].idx = idx;
-  console.log("new------>",selectArray)
- // }
+    //   let h = headers;
+    //   h[idx] = name.value;
+    //   setheaders(h);
+
+    // }
+    // else
+    // {
+
+    let h = headers;
+    h[idx] = name.value;
+    setheaders(h);
+    selectArray[id].isdisabled = true;
+    selectArray[id].idx = idx;
+    console.log("new------>", selectArray)
+    // }
 
   };
- const handleCloseSpan = (id,name) =>
- {
-  let h = headers;
-  
-  headers[id] ="Adjust Title";
-  // h[id] = initialheadstate[id];
+  const handleCloseSpan = (id, name) => {
+    let h = headers;
 
-  setheaders(h);
+    headers[id] = "Adjust Title";
+    // h[id] = initialheadstate[id];
 
-  for(let i=0 ; i < selectArray.length ; i++)
-  {
+    setheaders(h);
 
-    if(selectArray[i].value === name)
-    {
-      selectArray[i].isdisabled = false;
-      selectArray[i].idx = -1;
-      break;
-    }
-  }
-  
- }
-const handleDataManual = async () =>
-{
-  console.log("----->",headers);
-  console.log(typedData)
-  let requestPayload = [];
+    for (let i = 0; i < selectArray.length; i++) {
 
-
-  if(typedData.length !==0)
-  {
-    for(let j= 0 ; j < typedData.length ; j++)
-    {
-       requestPayload.push({});
-      for(let k= 0 ; k<typedData[j].length ; k++)
-      {
-         if(headers[k]!=="Adjust Title")
-         {
-          let key = headers[k];
-          let  obj = requestPayload[j];
-         obj[key] = typedData[j][k];
-         }
+      if (selectArray[i].value === name) {
+        selectArray[i].isdisabled = false;
+        selectArray[i].idx = -1;
+        break;
       }
-
     }
+
   }
-  else
-  {
-   
-    
-    for(let j= 0 ; j < contacts.length ; j++)
-    {
-       requestPayload.push({});
-       let i= 0 ;
-    
-      
-        for(let k in contacts[j])
-        {
-          console.log("--->before if",headers[i])
-        
-           if(headers[i]!=="Adjust Title")
-           {
-            console.log("----->printing headers of i th index",headers[i]);
+  const handleDataManual = async () => {
+    console.log("----->", headers);
+    console.log(typedData)
+    let requestPayload = [];
+
+
+    if (typedData.length !== 0) {
+      for (let j = 0; j < typedData.length; j++) {
+        requestPayload.push({});
+        for (let k = 0; k < typedData[j].length; k++) {
+          if (headers[k] !== "Adjust Title") {
+            let key = headers[k];
+            let obj = requestPayload[j];
+            obj[key] = typedData[j][k];
+          }
+        }
+
+      }
+    }
+    else {
+
+
+      for (let j = 0; j < contacts.length; j++) {
+        requestPayload.push({});
+        let i = 0;
+
+
+        for (let k in contacts[j]) {
+          console.log("--->before if", headers[i])
+
+          if (headers[i] !== "Adjust Title") {
+            console.log("----->printing headers of i th index", headers[i]);
             let key = headers[i];
-            let  obj = requestPayload[j];
+            let obj = requestPayload[j];
             obj[key] = contacts[j][k];
-            
+
+          }
+          i++;
+        }
+
+
       }
-      i++;
-       }
-      
 
     }
 
-  }
-
-  console.log("request Data",requestPayload)
+    console.log("request Data", requestPayload)
 
 
     let finalPayload = {
 
       GroupName: newVal,
-      Clients : requestPayload
+      Clients: requestPayload
 
     }
 
-     const r = await dispatch(getManual(finalPayload))
+    const r = await dispatch(getManual(finalPayload))
     //  console.log("----->",r)
-     let tempres = [];
-     let temp = [];
-     for (let i = 0; i < groupList.length; i++) {
-       tempres.push(groupList[i]);
-     }
-     for (let i = 0; i < selectedGroups.length; i++) {
+    let tempres = [];
+    let temp = [];
+    for (let i = 0; i < groupList.length; i++) {
+      tempres.push(groupList[i]);
+    }
+    for (let i = 0; i < selectedGroups.length; i++) {
       temp.push(selectedGroups[i]);
     }
     temp.push({
-      Recipient : r.payload.Recipients,
-      GroupName : newVal,
-      GroupID : r.payload.GroupID
-     });
-     tempres.push({
-      Recipient : r.payload.Recipients,
-      GroupName : newVal,
-      GroupID : r.payload.GroupID
-     });
-     setGroupList(tempres);
-     setSelected(temp);
-     setmanualTrue(false);
-     setareaData("");
-     settypedData([]);
-     setContacts([]);
-     setgroupClick(true);
-     setmanualClick(false);
-     for(let i = 0 ; i < selectArray.length;i++){
-       selectArray[i].isdisabled = false;
-       selectArray[i].idx = -1;
-     }
+      Recipient: r.payload.Recipients,
+      GroupName: newVal,
+      GroupID: r.payload.GroupID
+    });
+    tempres.push({
+      Recipient: r.payload.Recipients,
+      GroupName: newVal,
+      GroupID: r.payload.GroupID
+    });
+    setGroupList(tempres);
+    setSelected(temp);
+    setmanualTrue(false);
+    setareaData("");
+    settypedData([]);
+    setContacts([]);
+    setgroupClick(true);
+    setmanualClick(false);
+    for (let i = 0; i < selectArray.length; i++) {
+      selectArray[i].isdisabled = false;
+      selectArray[i].idx = -1;
+    }
 
 
-  
-}
 
-const handleManualDialog = (e) =>
-{
-setnewVal(e.target.value);
-}
+  }
+
+  const handleManualDialog = (e) => {
+    setnewVal(e.target.value);
+  }
 
   const renderDialogManual = () => {
     return (
@@ -1952,56 +1911,54 @@ setnewVal(e.target.value);
             <tr>
               {typedData.length !== 0
                 ? typedData[0].map((item, idx) => {
-                    return (
-                      <th
-                        style={{
-                          border: "1px solid #ddd",
-                          padding: "10px",
-                          maxWidth: "280px",
+                  return (
+                    <th
+                      style={{
+                        border: "1px solid #ddd",
+                        padding: "10px",
+                        maxWidth: "280px",
+                      }}
+                    >
+                      <div
+                        onClick={() => {
+                          handleChangeId(idx);
                         }}
+                        className={classes.adjustP}
+                        style={{ width: "130px", textAlign: "center" }}
                       >
-                        <div
-                          onClick={() => {
-                            handleChangeId(idx);
-                          }}
-                          className={classes.adjustP}
-                          style={{ width: "130px", textAlign: "center" }}
-                        >
-                      {headers[idx]} 
+                        {headers[idx]}
 
-                       <span style={{marginInlineEnd:"5px",marginInlineStart:"5px"}} onClick={() => {handleCloseSpan(idx,headers[idx])}}>x</span>
+                        <span style={{ marginInlineEnd: "5px", marginInlineStart: "5px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }}>x</span>
 
-                          <span>icn</span>
-                          {dropIndex == idx ? (
-                            <div className={classes.adjustC}>
-                              {selectArray.map((item,id) => 
-                              {
-                              
-                                return(
-                                  <span
-                                  className={item.isdisabled  ?  clsx(classes.grayGroup) :   clsx(classes.grouping)}
+                        <span>icn</span>
+                        {dropIndex == idx ? (
+                          <div className={classes.adjustC}>
+                            {selectArray.map((item, id) => {
+
+                              return (
+                                <span
+                                  className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
                                   onClick={() => {
-                                    handleSelectFirst(item,id,idx);
+                                    handleSelectFirst(item, id, idx);
                                   }}
                                 >
-                                 {item.value}
+                                  {item.value}
                                 </span>
-                                )
-                              })}
-                            </div>
-                          ) : null}
-                        </div>
-                      </th>
-                    );
-                  })
+                              )
+                            })}
+                          </div>
+                        ) : null}
+                      </div>
+                    </th>
+                  );
+                })
                 : null}
-              {contacts.length !==0 ? headers.map((item,idx) => 
-               {
-              
-                 return(
-                
-                    
-                    <th
+              {contacts.length !== 0 ? headers.map((item, idx) => {
+
+                return (
+
+
+                  <th
                     style={{
                       border: "1px solid #ddd",
                       padding: "10px",
@@ -2015,70 +1972,43 @@ setnewVal(e.target.value);
                       className={classes.adjustP}
                       style={{ width: "130px", textAlign: "center" }}
                     >
-                       {headers[idx]} 
-                       <span style={{marginInlineEnd:"5px",marginInlineStart:"5px"}} onClick={() => {handleCloseSpan(idx,headers[idx])}}>x</span>
+                      {headers[idx]}
+                      <span style={{ marginInlineEnd: "5px", marginInlineStart: "5px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }}>x</span>
                       <span>icn</span>
                       {dropIndex == idx ? (
-                            <div className={classes.adjustC}>
-                              {selectArray.map((item,id) => 
-                              {
-                              
-                                return(
-                                  <span
-                                  className={item.isdisabled  ?  clsx(classes.grayGroup) :   clsx(classes.grouping)}
-                                  onClick={() => {
-                                    handleSelectFirst(item,id,idx);
-                                  }}
-                                >
-                                 {item.value}
-                                </span>
-                                )
-                              })}
-                            </div>
-                          ) : null}
+                        <div className={classes.adjustC}>
+                          {selectArray.map((item, id) => {
+
+                            return (
+                              <span
+                                className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
+                                onClick={() => {
+                                  handleSelectFirst(item, id, idx);
+                                }}
+                              >
+                                {item.value}
+                              </span>
+                            )
+                          })}
+                        </div>
+                      ) : null}
                     </div>
                   </th>
-            )
-                      
-                 
-               }) : null}
+                )
+
+
+              }) : null}
             </tr>
             {contacts.length !== 0
               ? contacts.map((item, idx) => {
-                  // console.log("hello", item);
-                  if (idx > contacts.length - 11) {
-                    return (
-                      <tr id={idx}>
-                        {Object.values(item).map((temp, idx) => {
-                          return (
-                            <td
-                              id={idx}
-                              style={{
-                                border: "1px solid #ddd",
-                                padding: "10px",
-                                maxWidth: "280px",
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                textAlign: "center",
-                              }}
-                            >
-                              {temp}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  }
-                })
-              : typedData.map((item, id) => {
-                // {console.log("typed data",typedData)}
+                // console.log("hello", item);
+                if (idx > contacts.length - 11) {
                   return (
-                  
-                    <tr>
-                      {item.map((data, idx) => {
+                    <tr id={idx}>
+                      {Object.values(item).map((temp, idx) => {
                         return (
                           <td
+                            id={idx}
                             style={{
                               border: "1px solid #ddd",
                               padding: "10px",
@@ -2089,18 +2019,85 @@ setnewVal(e.target.value);
                               textAlign: "center",
                             }}
                           >
-                            {data}
+                            {temp}
                           </td>
                         );
                       })}
                     </tr>
                   );
-                })}
+                }
+              })
+              : typedData.map((item, id) => {
+                // {console.log("typed data",typedData)}
+                return (
+
+                  <tr>
+                    {item.map((data, idx) => {
+                      return (
+                        <td
+                          style={{
+                            border: "1px solid #ddd",
+                            padding: "10px",
+                            maxWidth: "280px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            textAlign: "center",
+                          }}
+                        >
+                          {data}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
           </table>
         </Dialog>
       </>
     );
   };
+
+  const handleClose = () => {
+    setdeleteClick(false);
+  };
+  const handleDelete = () => {
+    let a = window.location;
+
+    let b = a.search.split("=");
+    let camp = b[1];
+    dispatch(deleteSms(camp));
+    handleClose();
+  };
+  const renderDelete = () => {
+    return (
+      <>
+        {deleteClick ? (
+          <Dialog
+            classes={classes}
+            open={deleteClick}
+            onClose={handleClose}
+            onCancel={cancel ? null : true}
+            onConfirm={handleDelete}
+            confirmText="Confirm"
+            showDefaultButtons={true}
+            icon={
+              <AiOutlineExclamationCircle
+                style={{ fontSize: 30, color: "#fff" }}
+              />
+            }
+          >
+            <div className={classes.deleteModalDiv}>
+              <span className={classes.groupName}>{t("mainReport.deleteCamp")}</span>
+            </div>
+            <div className={classes.subDeleteDiv}>
+              <span>{t("mainReport.confirmSure")}</span>
+            </div>
+          </Dialog>
+        ) : null}</>
+    )
+
+  }
   const handleNewM = () => {
     setcaution(false);
   };
@@ -2110,7 +2107,7 @@ setnewVal(e.target.value);
   const handleConfirmC = () => {
     setContacts([]);
     setareaData("");
-    for(let i = 0 ; i < selectArray.length;i++){
+    for (let i = 0; i < selectArray.length; i++) {
       selectArray[i].isdisabled = false;
       selectArray[i].idx = -1;
     }
@@ -2146,18 +2143,26 @@ setnewVal(e.target.value);
   };
   return (
     <DefaultScreen currentPage="reports" classes={classes}>
-      <div  className={classes.smsStepDiv}>
+      <div className={classes.smsStepDiv}>
         <div>
           {renderSwitch()}
           {renderHead()}
           {renderContent()}
-          {renderBody()}
+          <Grid container>
+            <Grid md={7} xs={12}>
+              {renderBody()}
+            </Grid>
+            <Grid md={1} xs={12}></Grid>
+            <Grid md={4} xs={12}>
+              {renderRight()}
+            </Grid>
+          </Grid>
           <div className={classes.backBtn}>
             <span style={{ marginInlineEnd: "4px" }}>{"<"}</span>
             <span>Back</span>
           </div>
         </div>
-        <div>{renderRight()}</div>
+        {/* <div></div> */}
       </div>
       {renderPulse()}
       {renderReciFilter()}
@@ -2165,62 +2170,62 @@ setnewVal(e.target.value);
       {renderDialogManual()}
       {renderCaution()}
       <Snackbar
-                      open={pulseBool || TimeBool || boolRandom}
-                      autoHideDuration={2000}
-                      // onClose={handleClose}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      style={{ zIndex: "9999" }}
-                    >
-                      <Alert severity="warning" >
-                      {t("smsReport.NoPulse")}
-                      </Alert>
-                    </Snackbar>
-                    <Snackbar
-                      open={pulseBool}
-                      autoHideDuration={2000}
-                      // onClose={handleClose}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      style={{ zIndex: "9999",marginTop:"60px" }}
-                    >
-                      <Alert severity="error" >
-                      {t("smsReport.pulseAmount")}
-                      </Alert>
-                    </Snackbar>
-                    <Snackbar
-                      open={TimeBool}
-                      autoHideDuration={2000}
-                      // onClose={handleClose}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      style={{ zIndex: "9999",marginTop:"120px" }}
-                    >
-                      <Alert severity="error" >
-                      {t("smsReport.timeAmount")}
-                      </Alert>
-                    </Snackbar>
-                    <Snackbar
-                      open={boolRandom}
-                      autoHideDuration={2000}
-                      // onClose={handleClose}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      style={{ zIndex: "9999",marginTop:"60px" }}
-                    >
-                      <Alert severity="error" >
-                      {t("smsReport.randomAmt")}
-                      </Alert>
-                    </Snackbar>
-    </DefaultScreen>
+        open={pulseBool || TimeBool || boolRandom}
+        autoHideDuration={2000}
+        // onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ zIndex: "9999" }}
+      >
+        <Alert severity="warning" >
+          {t("smsReport.NoPulse")}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={pulseBool}
+        autoHideDuration={2000}
+        // onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ zIndex: "9999", marginTop: "60px" }}
+      >
+        <Alert severity="error" >
+          {t("smsReport.pulseAmount")}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={TimeBool}
+        autoHideDuration={2000}
+        // onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ zIndex: "9999", marginTop: "120px" }}
+      >
+        <Alert severity="error" >
+          {t("smsReport.timeAmount")}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={boolRandom}
+        autoHideDuration={2000}
+        // onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ zIndex: "9999", marginTop: "60px" }}
+      >
+        <Alert severity="error" >
+          {t("smsReport.randomAmt")}
+        </Alert>
+      </Snackbar>
+    </DefaultScreen >
   );
 };
 

@@ -483,5 +483,7 @@
   "smsTitle":"יצירת סמס מערכת פולסים",
   "tooltipCreateGroup" : "בחר 2 קבוצות או יותר וחבר לקבוצה אחת חדשה",
   "newFeature":"חָדָשׁ!",
-  "save":"לשמור"
+  "save":"לשמור",
+  "deleteCamp":"מחק קמפיין",
+  "confirmSure":"האם אתה בטוח?"
 }

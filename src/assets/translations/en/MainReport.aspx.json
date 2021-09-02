@@ -479,5 +479,9 @@
   "smsTitle":"Create SMS Pulseem System",
   "tooltipCreateGroup" : "Choose 2 or more groups and combine into one new one",
   "newFeature":"New!",
-  "save":"Save"
+  "save":"Save",
+  "deleteCamp":"Delete Campaign",
+  "confirmSure":"Are you sure?"
+  
+
 }
