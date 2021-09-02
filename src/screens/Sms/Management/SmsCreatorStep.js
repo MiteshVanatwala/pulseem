@@ -1385,7 +1385,7 @@ const SmsCreatorStep = ({ classes }) => {
                   {t("mainReport.days")}
                 </span>
 
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", direction: isRTL ? 'ltr' : 'rtl' }}>
                   <span
                     className={
                       toggleB
