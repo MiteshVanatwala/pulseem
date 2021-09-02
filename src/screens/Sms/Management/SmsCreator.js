@@ -17,6 +17,7 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Emoj from "../../../assets/images/smile.png";
 import { withStyles } from "@material-ui/core/styles";
+import { FaCheck } from 'react-icons/fa';
 import { useHistory } from "react-router";
 import {
   getPreviousCampaignData,
@@ -27,7 +28,8 @@ import {
   deleteSms,
   smsSaveGroup,
   smsQuick,
-  getCampaignSumm
+  getCampaignSumm,
+  getCreditsforSMS,
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
 import { FcDocument } from "react-icons/fc";
@@ -36,12 +38,12 @@ import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
+import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlineDelete } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
-
 
 import Snackbar from "@material-ui/core/Snackbar";
 
@@ -82,19 +84,24 @@ const useStyleNew = makeStyles((theme) => ({
   },
 }));
 
-
 const SmsCreator = ({ classes }, props) => {
+  const { t } = useTranslation();
+  document.title=t("mainReport.smsTitle")
   const styles = useStyles();
   const btnStyle = useStyleNew();
-  const { t } = useTranslation();
+  
   const history = useHistory();
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { previousLandingData, previousCampaignData, extraData, accountId, getCampaignSum } =
-    useSelector((state) => state.sms);
-  console.log("aajaa", getCampaignSum)
+  const {
+    previousLandingData,
+    previousCampaignData,
+    extraData,
+    accountId,
+    getCampaignSum,
+  } = useSelector((state) => state.sms);
   const [alignment, setAlignment] = useState("left");
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [flagemoji, setflagemoji] = useState(false);
@@ -142,8 +149,10 @@ const SmsCreator = ({ classes }, props) => {
   const [summary, setsummary] = useState(false);
   const [total, settotal] = useState(0);
   const [temp, settemp] = useState([]);
+  const [selectValue, setselectValue] = useState("");
+  const [uniqueId, setuniqueId] = useState(null);
+  const [finalApi, setfinalApi] = useState(false);
 
-  console.log("accountId Outer", accountId);
 
   const getData = async () => {
     await dispatch(getPreviousLandingData());
@@ -151,9 +160,49 @@ const SmsCreator = ({ classes }, props) => {
     setLoader(false);
   };
 
-  const onApiCall = () => {
-    alert("hi");
-  }
+  const onApiCall = async () => {
+    let temp = [];
+    for (let i = 0; i < selectedGroup.length; i++) {
+      if (selectedGroup[i].selected) {
+        temp.push(selectedGroup[i].GroupID);
+      }
+    }
+    let payload = {
+      CreditsPerSms: "1",
+      FromNumber: campaignNumber,
+      IsLinksStatistics: true,
+      IsResponse: false,
+      IsTest: true,
+      IsTestCampaign: false,
+      LogData: {
+        SmsCampaignID: uniqueId,
+        SubAccountID: 7878,
+        AccountID: 6722,
+        Credits: "1",
+        TotalRecipients: 1,
+      },
+      AccountID: 6722,
+      Credits: "1",
+      SmsCampaignID: uniqueId,
+      SubAccountID: 7878,
+      TotalRecipients: 1,
+      Name: campaignName,
+      ResponseToEmail: "",
+      SMSCampaignID: uniqueId,
+      SMSCampaignId: uniqueId,
+      SendDate: Date.now(),
+      SendingMethod: 0,
+      Status: 1,
+      SubAccountID: -1,
+      TestGroupsIds: temp,
+      Text: msg,
+      Type: 0,
+      UpdateDate: 1630325875398,
+    };
+    await dispatch(smsQuick(payload));
+    setfinalApi(true);
+    setsummary(false);
+  };
   const getDataCamapaign = async () => {
     await dispatch(getPreviousCampaignData());
 
@@ -178,19 +227,18 @@ const SmsCreator = ({ classes }, props) => {
   useEffect(() => { }, [removalMessageButtonDisabled]);
 
   useEffect(() => {
-    console.log("heyyyyyyy", selectedGroup);
+    
   }, [selectedGroup]);
   useEffect(() => {
-    console.log("props", classes);
+    document.title=t("mainReport.smsTitle")
   }, []);
 
   useEffect(() => {
     let temp = [];
-    console.log("Acoount Id inner", accountId);
     for (let i = 0; i < accountId.length; i++) {
       temp.push(accountId[i]);
     }
-    console.log("heyyyyy2", temp);
+    
     setselectedGroup(temp);
   }, [accountId]);
 
@@ -262,8 +310,7 @@ const SmsCreator = ({ classes }, props) => {
 
   const onCampaignNumber = (e) => {
     setstoredValue(campaignNumber);
-    console.log("camp", campaignNumber);
-
+   
     if (!modalOpen) {
       setalertToggle(true);
     } else {
@@ -292,6 +339,13 @@ const SmsCreator = ({ classes }, props) => {
 
     setOpenS(false);
   };
+  const handleCloseSnackbarApi = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setfinalApi(false);
+  };
   const handleSend = () => {
     if (validationCheck()) {
       if (phone !== "") {
@@ -309,7 +363,7 @@ const SmsCreator = ({ classes }, props) => {
           IsTestCampaign: false,
           IsResponse: false,
           IsLinksStatistics: true,
-          SendDate: 1628770145467,
+          SendDate: Date.now(),
           SendingMethod: 0,
           IsTest: false,
           PhoneNumber: phone,
@@ -336,7 +390,7 @@ const SmsCreator = ({ classes }, props) => {
           <span className={classes.buttonHead}>{t("mainReport.campName")}</span>
           <input
             type="text"
-            placeholder="Campaign Name"
+            placeholder={t("mainReport.campaignNamePlaceholder")}
             className={
               campaignBool
                 ? clsx(classes.buttonField, classes.error)
@@ -350,18 +404,12 @@ const SmsCreator = ({ classes }, props) => {
           </span>
         </div>
         <div className={classes.buttonForm}>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            {" "}
+          <div  className={classes.inputCampDiv}>
             <span className={classes.buttonHead}>
               {t("mainReport.campFrom")}
             </span>
             <span
-              style={{
-                fontSize: "15px",
-                color: "rgb(170, 170, 170)",
-                cursor: "pointer",
-                textDecoration: "underline"
-              }}
+              className={classes.restoreBtn}
               onClick={() => {
                 setrestoreBool(!restoreBool);
               }}
@@ -384,22 +432,21 @@ const SmsCreator = ({ classes }, props) => {
         {restoreBool ? (
           <div className={classes.buttonForm}>
             <span className={clsx(classes.buttonHead)}>
-              {" "}
+              
               {t("mainReport.removalReply")}
             </span>
             <input
               type="text"
-              placeholder="282"
+              placeholder="2"
               disabled
-              className={classes.buttonField}
-              style={{ width: "20%" }}
+              className={classes.buttonFieldRemoval}
             />
           </div>
         ) : null}
       </div>
     );
   };
-  const onMsgChange = (e) => {
+  const onMsgChange = async (e) => {
     if (e.target.value.length < msg.length) {
       setremovalMessageButtonDisabled(false);
       setremovalLinkDisabled(false);
@@ -409,7 +456,6 @@ const SmsCreator = ({ classes }, props) => {
     setcharacterCount(e.target.value.length);
 
     setmessageCount(e.target.value.split("\n").length);
-
 
     let arr = e.target.value.split("\n");
     let count = 0;
@@ -433,9 +479,8 @@ const SmsCreator = ({ classes }, props) => {
     } else {
       setlinkCount(0);
     }
-
+    await dispatch(getCreditsforSMS(e.target.value.length));
     setmessageCount(count);
-
   };
 
   const onRemovalLink = () => {
@@ -453,6 +498,15 @@ const SmsCreator = ({ classes }, props) => {
     setcharacterCount(newMsg.length);
     setremovalMessageButtonDisabled(true);
   };
+
+  const handleSelectChange = (e) =>
+  {
+    setselectValue(e.target.value);
+    let linkMsg = "";
+    linkMsg = msg + e.target.value;
+    setmsg(linkMsg);
+    setcharacterCount(linkMsg.length);
+  }
 
   const renderMsg = () => {
     return (
@@ -482,36 +536,59 @@ const SmsCreator = ({ classes }, props) => {
             </div>
             <div className={classes.funcDiv}>
               <div className={isRTL ? classes.emojiHe : classes.emoji}>
-                {isRTL ? <ToggleButtonGroup
-                  value={alignment}
-                  exclusive
-                  onChange={handleAlignment}
-                  aria-label="text alignment"
-                >
-                  <ToggleButton value="right" aria-label="right aligned" >
-                    <FormatAlignRightIcon />
-                  </ToggleButton>
-                  <ToggleButton value="left" aria-label="left aligned" style={{ borderLeft: "1px solid #D5D5D5", marginInlineEnd: "4px" }}>
-                    <FormatAlignLeftIcon />
-                  </ToggleButton>
-                </ToggleButtonGroup> : <ToggleButtonGroup
-                  value={alignment}
-                  exclusive
-                  onChange={handleAlignment}
-                  aria-label="text alignment"
-                >
-                  <ToggleButton value="left" aria-label="left aligned" style={{ width: "30px", height: "30px" }}>
-                    <FormatAlignLeftIcon />
-                  </ToggleButton>
+                {isRTL ? (
+                  <ToggleButtonGroup
+                    value={alignment}
+                    exclusive
+                    onChange={handleAlignment}
+                    aria-label="text alignment"
+                  >
+                    <ToggleButton value="right" aria-label="right aligned">
+                      <FormatAlignRightIcon />
+                    </ToggleButton>
+                    <ToggleButton
+                      value="left"
+                      aria-label="left aligned"
+                      style={{
+                        borderLeft: "1px solid #D5D5D5",
+                        marginInlineEnd: "4px",
+                      }}
+                    >
+                      <FormatAlignLeftIcon />
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                ) : (
+                  <ToggleButtonGroup
+                    value={alignment}
+                    exclusive
+                    onChange={handleAlignment}
+                    aria-label="text alignment"
+                  >
+                    <ToggleButton value="left" aria-label="left aligned">
+                      <FormatAlignLeftIcon />
+                    </ToggleButton>
 
-                  <ToggleButton value="right" aria-label="right aligned" style={{ borderRight: "1px solid #D5D5D5", marginInlineEnd: "4px" }}>
-                    <FormatAlignRightIcon />
-                  </ToggleButton>
-                </ToggleButtonGroup>}
+                    <ToggleButton
+                      value="right"
+                      aria-label="right aligned"
+                      style={{
+                        borderRight: "1px solid #D5D5D5",
+                        marginInlineEnd: "4px",
+                      }}
+                    >
+                      <FormatAlignRightIcon />
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                )}
                 <div className={classes.pickerEmoji}>
-                  {flagemoji ? <Picker onEmojiClick={onEmojiClick} groupVisibility={{
-                    flags: false,
-                  }} /> : null}
+                  {flagemoji ? (
+                    <Picker
+                      onEmojiClick={onEmojiClick}
+                      groupVisibility={{
+                        flags: false,
+                      }}
+                    />
+                  ) : null}
 
                   <Tooltip
                     disableFocusListener
@@ -519,8 +596,13 @@ const SmsCreator = ({ classes }, props) => {
                     classes={{ tooltip: styles.customWidth }}
                     placement="top-start"
                   >
-                    <img src={Emoj}
-                      style={{ marginInlineEnd: "8px", widht: "25px", height: "25px" }}
+                    <img
+                      src={Emoj}
+                      style={{
+                        marginInlineEnd: "8px",
+                        widht: "25px",
+                        height: "25px",
+                      }}
                       onClick={() => {
                         setflagemoji(!flagemoji);
                       }}
@@ -533,23 +615,29 @@ const SmsCreator = ({ classes }, props) => {
                   className={classes.infoButtons}
                   onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                 >
-                  <span style={{ marginInlineEnd: "5px", cursor: "pointer" }}>+</span>Removal
+                  <span  className={classes.editorLink}>+</span>Removal
                   Message
                 </span>
                 <span
                   className={classes.info2Buttons}
                   onClick={removalLinkDisabled ? null : onRemovalLink}
                 >
-                  <span style={{ marginInlineEnd: "5px", cursor: "pointer" }}>+</span>Removal Link
+                  <span  className={classes.editorLink}>+</span>Removal Link
                 </span>
               </div>
               <div className={classes.endButtons}>
                 <div className={classes.selectMsg}>
-                  <select className={classes.selectVal}>
-                    <option>Personliazation</option>
-                    <option>First Name</option>
-                    <option>Last Name</option>
-                    <option>Email</option>
+                  <select className={classes.selectVal} value={selectValue} onChange={handleSelectChange}>
+                  {
+                   Object.keys(extraData).map((item, i) => {
+
+                return(<option value={extraData[item]}>{item}</option>
+  
+            )
+
+          })
+      }
+                   
                   </select>
                 </div>
                 <div className={classes.addDiv}>
@@ -559,23 +647,9 @@ const SmsCreator = ({ classes }, props) => {
                       seteditmenuClick(!editmenuClick);
                     }}
                   >
-                    <span
-                      style={{
-                        marginInlineEnd: "3px",
-                        border: "2px solid #17a2b8",
-                        borderRadius: "50%",
-                        padding: "5px",
-                        width: "10px",
-                        height: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "#17a2b8",
-                        fontSize: "19px",
-                        fontWeight: "700",
-                      }}
+                    <span className={classes.addBtn}
                     >
-                      <span style={{ marginBottom: "2px" }}>+</span>
+                     <span className={classes.plusIcn}>+</span> 
                     </span>
                     ADD
                   </span>
@@ -590,7 +664,7 @@ const SmsCreator = ({ classes }, props) => {
                       >
                         Landing Page Link
                       </span>
-                      <span
+                   {previousCampaignData.length == 0 ? null : <span
                         className={classes.dropCon}
                         onClick={() => {
                           setdialogClickCampaign(true);
@@ -598,7 +672,7 @@ const SmsCreator = ({ classes }, props) => {
                         }}
                       >
                         Campaign Link
-                      </span>
+                      </span>}   
                       <span
                         className={classes.dropCon}
                         onClick={() => {
@@ -661,15 +735,12 @@ const SmsCreator = ({ classes }, props) => {
     return (
       <div>
         <div style={{ position: "relative" }} className={classes.phoneDiv}>
-          {" "}
+          
           <img
             src={Mobile}
-            style={{
-              width: "375px",
-              height: "415px",
-              marginTop: "50px",
-              borderBottom: "1px solid black",
-            }}
+            
+              className={classes.phoneImg}
+           
           />
           <span className={classes.phoneNumber}>050608001</span>
           <div className={classes.wrapChat}>
@@ -700,7 +771,7 @@ const SmsCreator = ({ classes }, props) => {
             style={{ display: "flex", flexDirection: "column", width: "250px" }}
           >
             <span style={{ fontSize: "18px" }}>
-              {" "}
+              
               {t("mainReport.testSend")}
             </span>
             <span
@@ -726,10 +797,16 @@ const SmsCreator = ({ classes }, props) => {
             >
               <div className={{ display: "flex", flexDirection: "column" }}>
                 <div>
-                  {" "}
+                  
                   <FormControlLabel
                     value="top"
-                    control={<Radio color="primary" id="top" style={{ color: "#007bff" }} />}
+                    control={
+                      <Radio
+                        color="primary"
+                        id="top"
+                        style={{ color: "#007bff" }}
+                      />
+                    }
                   />
                   <span>{t("mainReport.sendToOne")}</span>
                 </div>
@@ -763,64 +840,46 @@ const SmsCreator = ({ classes }, props) => {
                 ) : null}
 
                 <div>
-                  {" "}
+                 
                   <FormControlLabel
                     value="bottom"
-                    control={<Radio color="primary" id="bottom" style={{ color: "#007bff" }} />}
+                    control={
+                      <Radio
+                        color="primary"
+                        id="bottom"
+                        style={{ color: "#007bff" }}
+                      />
+                    }
                   />
-                  <span>{t("mainReport.sendToGroups")} <span style={{ backgroundColor: "#dc3545", color: "#fff", borderRadius: "5px", padding: "5px", fontWeight: "600" }}>New!</span></span>
+                  <span>
+                    {t("mainReport.sendToGroups")}
+                    <span className={classes.newIcn}>New!</span>
+                  </span>
                 </div>
                 {radioBtn === "bottom" ? (
                   <div className={classes.rightForm}>
                     <div
-                      style={{
-                        width: "280px",
-
-                        height: "30px",
-
-                        padding: "8px",
-                        border: "1px solid #bbb",
-                        borderRadius: "5px",
-                        color: "#bbb",
-                        maxHeight: "30px",
-                        overflowY: "auto",
-                      }}
+                      className={classes.contactGroupDiv}
                       onClick={() => {
                         setcontactGroup(true);
                       }}
                     >
                       <div> Choose test groups from the list</div>
                       {hidden ? (
-                        <div
-                          style={{
-                            display: "flex",
-                            flexWrap: "wrap",
-                            marginTop: "5px",
-                          }}
-                        >
-                          {" "}
+                        <div className={classes.mappedGroup}>
                           {selectedGroup.map((item, index) => {
                             if (item.selected && hidden) {
                               return (
-                                <div
-                                  style={{
-                                    width: "70px",
-                                    padding: "6px",
-                                    borderRadius: "20px",
-                                    backgroundColor: "#1771ad",
-                                    marginInlineEnd: "4px",
-                                    marginBottom: "4px",
-                                    color: "white",
-                                  }}
+                                <div className={classes.selectedGroupsDiv}
                                 >
-                                  {item.GroupName}
-                                  <span
+                                 <span className={classes.nameGroup}>{item.GroupName}</span> 
+                                  <RiCloseFill className={classes.groupCloseicn}
                                     onClick={() => {
                                       handleCross(index);
                                     }}
-                                  >
-                                    X
-                                  </span>
+                                  />
+                                   
+                                 
                                 </div>
                               );
                             }
@@ -844,7 +903,7 @@ const SmsCreator = ({ classes }, props) => {
             <BsTrash style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4} onClick={clickExit}>
-            Exit{" "}
+            Exit
           </span>
           <span
             className={classes.rightInput5}
@@ -896,7 +955,7 @@ const SmsCreator = ({ classes }, props) => {
         Name: campaignName,
         ResponseToEmail: "",
         SMSCampaignID: -1,
-        SendDate: 1628755539174,
+        SendDate: Date.now(),
         SendingMethod: 0,
         Status: 1,
         SubAccountID: -1,
@@ -905,7 +964,7 @@ const SmsCreator = ({ classes }, props) => {
         UpdateDate: 1628755539174,
       };
       let r = await dispatch(smsSave(payload));
-      console.log("response", r);
+    
       sessionStorage.setItem(
         "data",
         JSON.stringify({
@@ -1002,7 +1061,7 @@ const SmsCreator = ({ classes }, props) => {
       Name: campaignName,
       ResponseToEmail: "",
       SMSCampaignID: -1,
-      SendDate: 1628755539174,
+      SendDate: Date.now(),
       SendingMethod: 0,
       Status: 1,
       SubAccountID: -1,
@@ -1019,28 +1078,19 @@ const SmsCreator = ({ classes }, props) => {
         temp.push(selectedGroup[i].GroupID);
         tempfull.push(selectedGroup[i]);
         ++num;
-
       }
-
     }
     settotal(num);
     settemp(tempfull);
-    let payload2 =
-    {
+    let payload2 = {
       IsTestGroups: true,
       SMSCampaignID: r.payload.Message,
-      TestGroupsIds: temp
-    }
+      TestGroupsIds: temp,
+    };
 
     let r2 = await dispatch(smsSaveGroup(payload2));
     await dispatch(getCampaignSumm(r.payload.Message));
-
-
-
-
-
-
-  }
+  };
   const renderSendGroup = () => {
     return (
       <>
@@ -1078,7 +1128,6 @@ const SmsCreator = ({ classes }, props) => {
             </div>
             <div className={classes.listDiv}>
               {
-
                 selectedGroup
                   .filter((val) => {
                     if (ContactSearch == "") {
@@ -1097,25 +1146,16 @@ const SmsCreator = ({ classes }, props) => {
                       <div className={classes.searchCon} onClick={makeArr(idx)}>
                         <span
                           style={{ marginInlineEnd: "25px" }}
-                          className={classes.grDoc}
+                          className={item.selected ? classes.greenDoc : classes.blueDoc}
                         >
-                          {item.selected ? "hi" : <HiOutlineUserGroup />}
+                          {item.selected ? (<FaCheck className={clsx(classes.green)} />) : <HiOutlineUserGroup />}
                         </span>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            width: "700px",
+                        <div className={classes.selectGroupDiv}
+                          onClick={() => {
+                            handleSelect(idx);
                           }}
                         >
-                          <span
-                            onClick={() => {
-                              handleSelect(idx);
-                            }}
-                          >
-                            {item.GroupName}
-                          </span>
+                          <span>{item.GroupName}</span>
                           <span>{item.Recipients}</span>
                         </div>
                       </div>
@@ -1134,8 +1174,7 @@ const SmsCreator = ({ classes }, props) => {
                 variant="contained"
                 size="small"
                 onClick={() => {
-
-                  handleGroupClose()
+                  handleGroupClose();
                 }}
                 className={clsx(
                   classes.dialogButton,
@@ -1146,7 +1185,7 @@ const SmsCreator = ({ classes }, props) => {
               </Button>
             </div>
           </Dialog>
-        ) : null}{" "}
+        ) : null}
       </>
     );
   };
@@ -1199,7 +1238,7 @@ const SmsCreator = ({ classes }, props) => {
   const renderAlert = () => {
     return (
       <>
-        {" "}
+        
         {alertToggle ? (
           <Dialog
             classes={classes}
@@ -1225,7 +1264,7 @@ const SmsCreator = ({ classes }, props) => {
               </span>
             </div>
           </Dialog>
-        ) : null}{" "}
+        ) : null}
       </>
     );
   };
@@ -1456,7 +1495,7 @@ const SmsCreator = ({ classes }, props) => {
                     >
                       <FcDocument />
                     </span>
-                    <span>{item.CampaignName}</span>
+                    <span>{item.Name}</span>
                   </div>
                 );
               })}
@@ -1526,7 +1565,7 @@ const SmsCreator = ({ classes }, props) => {
             <span className={classes.groupName}>Delete Campaign</span>
           </div>
           <div style={{ fontSize: "22px", marginTop: "5px" }}>
-            <span>Are you Sure?</span>
+            <span>Are you sure?</span>
           </div>
         </Dialog>
       ) : null}
@@ -1545,8 +1584,8 @@ const SmsCreator = ({ classes }, props) => {
           </span>
         </div>
         <div>
-          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }}>
-            <li style={{ marginBottom: "8px" }}>
+          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.listValues}>
+            <li  className={classes.campNameLi}>
               Campaign Name - Required field
             </li>
             <li>Text for sending - Required field</li>
@@ -1576,6 +1615,20 @@ const SmsCreator = ({ classes }, props) => {
       {renderExit()}
       {renderAlert()}
       {renderSummary()}
+      <Snackbar
+        open={finalApi}
+        autoHideDuration={2000}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        style={{ zIndex: "9999" }}
+      >
+        <Alert severity="success" onClose={handleCloseSnackbarApi}>
+          Quick sent Succefully
+        </Alert>
+      </Snackbar>
     </DefaultScreen>
   );
 };

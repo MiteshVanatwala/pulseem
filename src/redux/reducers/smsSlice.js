@@ -47,6 +47,16 @@ export const getAccountId = createAsyncThunk(
     }
   })
 
+export const getCreditsforSMS = createAsyncThunk(
+  'smsCampaign/GetCreditsForSms', async (count, thunkAPI) => {
+    try {
+      const response = await instence.get(`smsCampaign/GetCreditsForSms/${count}`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 export const getSmsByID = createAsyncThunk(
   'smsCampaign/GetSmsCampaignById', async (id, thunkAPI) => {
     try {
@@ -244,6 +254,15 @@ export const exportSmsReport = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+export const getFinishedCampaigns = createAsyncThunk(
+  'smsCampaign/GetFinishedSmsCampaigns', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`smsCampaign/GetFinishedSmsCampaigns`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 // export const SaveSms=createAsyncThunk(
 //   'smsCampaign/Save/',async (data,thunkAPI) => {
 //     try {
@@ -262,11 +281,12 @@ export const smsSlice = createSlice({
     smsDataError: '',
     authorizationData: [],
     smsReport: [],
-    previousLandingData : [],
-    previousCampaignData : [],
-    extraData : [],
-    accountId : [],
-    getCampaignSum : [],
+    previousLandingData: [],
+    previousCampaignData: [],
+    extraData: [],
+    accountId: [],
+    getCampaignSum: [],
+    finishedCampaigns: [],
 
     directSmsReport: {},
     directSmsReportError: '',
@@ -292,22 +312,26 @@ export const smsSlice = createSlice({
     builder.addCase(getSMSDirectReport.fulfilled, (state, { payload }) => {
       state.directSmsReport = payload
     })
-    builder.addCase(getPreviousLandingData.fulfilled,(state,{payload}) => {
-      state.previousLandingData=payload
+    builder.addCase(getPreviousLandingData.fulfilled, (state, { payload }) => {
+      state.previousLandingData = payload
     })
-    builder.addCase(getPreviousCampaignData.fulfilled,(state,{payload}) => {
-      state.previousCampaignData=payload
+
+    builder.addCase(getFinishedCampaigns.fulfilled, (state, { payload }) => {
+      state.finishedCampaigns = payload
     })
-    builder.addCase(getAccountExtraData.fulfilled,(state,{payload}) => {
-      state.extraData=payload
+
+    builder.addCase(getPreviousCampaignData.fulfilled, (state, { payload }) => {
+      state.previousCampaignData = payload
     })
-    builder.addCase(getAccountId.fulfilled,(state,{payload}) => {
+    builder.addCase(getAccountExtraData.fulfilled, (state, { payload }) => {
+      state.extraData = payload
+    })
+    builder.addCase(getAccountId.fulfilled, (state, { payload }) => {
       let tempArr = [];
-      for(let i = 0 ; i< payload.length ; i++)
-      {
-        tempArr.push({...payload[i],selected:false})
+      for (let i = 0; i < payload.length; i++) {
+        tempArr.push({ ...payload[i], selected: false })
       }
-         state.accountId=tempArr
+      state.accountId = tempArr
     })
     builder.addCase(getSMSDirectReport.rejected, (state, action) => {
       state.directSmsReportError = action.error
@@ -315,10 +339,12 @@ export const smsSlice = createSlice({
     builder.addCase(duplicteSms.fulfilled, () => console.log('api duplicteSms success'))
     builder.addCase(deleteSms.fulfilled, () => console.log('api deleteSms success'))
     builder.addCase(restoreSms.fulfilled, () => console.log('api restoreSms success'))
+    builder.addCase(getCreditsforSMS.fulfilled, () => console.log('api getCreditsforSMS success'))
 
     builder.addCase(duplicteSms.rejected, (_, action) => console.log('Error - api duplicteSms: ' + action.error))
     builder.addCase(deleteSms.rejected, (_, action) => console.log('Error - api deleteSms: ' + action.error))
     builder.addCase(restoreSms.rejected, (_, action) => console.log('Error - api restoreSms: ' + action.error))
+    builder.addCase(getCreditsforSMS.rejected, (_, action) => console.log('Error - api getCreditsforSMS: ' + action.error))
   }
 })
 

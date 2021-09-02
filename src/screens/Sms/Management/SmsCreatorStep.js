@@ -7,22 +7,25 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 import moment from "moment";
 import { MdAutorenew } from "react-icons/md";
 import { FaRegCalendarAlt } from "react-icons/fa";
-
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 import PropTypes from "prop-types";
 import { DateField, Dialog } from "../../../components/managment/index";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
-
 import { parse } from "papaparse";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import IconButton from "@material-ui/core/IconButton";
+import { FaCheck } from 'react-icons/fa';
 import CloseIcon from "@material-ui/icons/Close";
 import SortIcon from "@material-ui/icons/Sort";
 import FilterListIcon from "@material-ui/icons/FilterList";
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
+import { BsTrash } from "react-icons/bs";
 import {
   Typography,
   Button,
@@ -39,19 +42,23 @@ import {
   Divider,
 } from "@material-ui/core";
 import {
-  getPreviousCampaignData,
-  getPreviousLandingData,
-  getAccountExtraData,
   getAccountId,
   smsCombinedGroup,
   smsCampSettings,
+  deleteSms,
   getCampaignSumm,
   getManual,
+  getFinishedCampaigns
 } from "../../../redux/reducers/smsSlice";
 import { AiOutlineDelete } from "react-icons/ai";
 import Summary from "./smsSummary";
 
+
 import clsx from "clsx";
+import { transform } from "babel-core";
+function Alert(props) {
+  return <MuiAlert elevation={0} variant="filled" {...props} />;
+}
 const useStyles = makeStyles((theme) => ({
   customWidth: {
     maxWidth: 200,
@@ -70,16 +77,11 @@ const useStyleNew = makeStyles((theme) => ({
     width: 400,
   },
   input: {
-    //   marginLeft: theme.spacing(1),
     flex: 1,
   },
   iconButton: {
     padding: 10,
   },
-  // divider: {
-  //   height: 28,
-  //   margin: 4,
-  // },
 }));
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -121,15 +123,17 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 const SmsCreatorStep = ({ classes }) => {
+  const { t } = useTranslation();
+  document.title = t("mainReport.smsTitle")
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const tabi = useStyle();
-  const { t } = useTranslation();
+
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { previousLandingData, previousCampaignData, extraData, accountId } =
+  const { previousLandingData, previousCampaignData, extraData, accountId, finishedCampaigns } =
     useSelector((state) => state.sms);
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -139,17 +143,26 @@ const SmsCreatorStep = ({ classes }) => {
   const [sendDate, handleFromDate] = useState(null);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
+  const [boolRandom, setboolRandom] = useState(false);
+  const [cancel, setcancel] = useState(true);
+  const [campaignIdResp, setcampaignIdResp] = useState(-1);
   const [groupList, setGroupList] = useState([]);
+  const [filterGroups, setfilterGroups] = useState([]);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
   const [showGroupsList, setShowGroupsList] = useState(false);
+  const [inputRecipients, setinputRecipients] = useState("");
   const [toggleChecked, settoggleChecked] = useState(false);
   const [groupValue, setgroupValue] = useState("");
   const [manualTrue, setmanualTrue] = useState(false);
   const [pulse, setpulse] = useState(false);
   const [reciFilter, setreciFilter] = useState(false);
+  const [responseQuick, setresponseQuick] = useState(null);
+  const [pulseBool, setpulseBool] = useState(false);
+  const [TimeBool, setTimeBool] = useState(false);
   const [percentTrue, setpercentTrue] = useState(true);
   const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
+  const [campaignSearch, setcampaignSearch] = useState("");
   const [model, setModel] = useState({
     ID: 0,
     Name: "",
@@ -190,41 +203,56 @@ const SmsCreatorStep = ({ classes }) => {
   const [hoursTrue, sethoursTrue] = useState(true);
   const [minName, setminName] = useState("");
   const [hourName, sethourName] = useState("");
-  const [newVal, setnewVal] = useState("")
+  const [newVal, setnewVal] = useState("");
+  const [reciToggle, setreciToggle] = useState(false);
   const [areaData, setareaData] = useState("");
+  const [RecipientsBool, setRecipientsBool] = useState(false);
   const [editT, seteditT] = useState(false);
+  const [deleteClick, setdeleteClick] = useState(false);
   const [areatyped, setareatyped] = useState("");
-  const [blank, setblank] = useState([  'first Name', 'Last Name' , 'Cell Phone']);
+  const [totalCampaigns, settotalCampaigns] = useState([])
+  const [blank, setblank] = useState(['first Name', 'Last Name', 'Cell Phone']);
   const [typedData, settypedData] = useState([]);
   const [selectArray, setselectArray] = useState([
-   {
-    isdisabled: false, 
-    idx : -1,
-    value: "first name"
-   },
-   {
-    isdisabled: false,
-    idx : -1,
-    value: "last name"
-   },
-   {
-    isdisabled: false, 
-    idx : -1,
-    value: "cell phone"
-   }
- 
+    {
+      isdisabled: false,
+      idx: -1,
+      value: "first name"
+    },
+    {
+      isdisabled: false,
+      idx: -1,
+      value: "last name"
+    },
+    {
+      isdisabled: false,
+      idx: -1,
+      value: "cell phone"
+    }
+
   ]);
   const [Unique, setUnique] = useState(-1);
-const [initialheadstate, setinitialheadstate] = useState([])
+  const [initialheadstate, setinitialheadstate] = useState([])
 
-  
-  
+
+
   const [headers, setheaders] = useState(initialheadstate);
+  const getData = async () => {
+    const list = await dispatch(getFinishedCampaigns());
+    const tempGroupList = list.payload;
+    settotalCampaigns(tempGroupList);
 
- 
+  };
   useEffect(() => {
     getAccount();
+    getData();
+
   }, [dispatch]);
+
+
+
+
+
 
   const getAccount = async () => {
     const list = await dispatch(getAccountId());
@@ -233,6 +261,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
       tempGroupList.Id = tempGroupList.GroupID;
     }
     setGroupList(tempGroupList);
+    setfilterGroups(tempGroupList);
   };
   // console.log("new", contacts);
 
@@ -296,7 +325,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
       <div className={classes.headDiv}>
         <span className={classes.headNo}>2</span>
         <span className={classes.contentHead}>
-          {" "}
+
           {t("mainReport.sendSetting")}
         </span>
       </div>
@@ -321,7 +350,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
   };
   const handleDatePicker = (value) => {
     handleFromDate(value);
-    setTimePickerOpen(!timePickerOpen);
+    // setTimePickerOpen(!timePickerOpen);
   };
   const handleTimePicker = (value) => {
     var date = moment(sendDate);
@@ -355,36 +384,114 @@ const [initialheadstate, setinitialheadstate] = useState([])
   };
   const handleSelect = (id) => {
     let tempArr = [];
-    for (let i = 0; i < selectedGroup.length; i++) {
+    for (let i = 0; i < filterGroups.length; i++) {
       if (id === i) {
-        if (selectedGroup[i].selected) {
-          tempArr.push({ ...selectedGroup[i], selected: false });
+        if (filterGroups[i].selected) {
+          tempArr.push({ ...filterGroups[i], selected: false });
         } else {
-          tempArr.push({ ...selectedGroup[i], selected: true });
+          tempArr.push({ ...filterGroups[i], selected: true });
         }
       } else {
-        tempArr.push(selectedGroup[i]);
+        tempArr.push(filterGroups[i]);
       }
     }
-    setselectedGroup(tempArr);
+    setfilterGroups(tempArr);
   };
-
+  const handleSelectCamp = (id) => {
+    let tempArr = [];
+    for (let i = 0; i < totalCampaigns.length; i++) {
+      if (id === i) {
+        if (totalCampaigns[i].selected) {
+          tempArr.push({ ...totalCampaigns[i], selected: false });
+        } else {
+          tempArr.push({ ...totalCampaigns[i], selected: true });
+        }
+      } else {
+        tempArr.push(totalCampaigns[i]);
+      }
+    }
+    settotalCampaigns(tempArr);
+  };
+  const onHandleDelete = () => {
+    setdeleteClick(true);
+  };
   const inputGroup = (e) => {
     setgroupValue(e.target.value);
   };
   const handlePulseClose = () => {
+
     setpulse(false);
+
+
   };
 
+  const handlePulseConfirm = () => {
+    console.log("hereeee")
+    if (onPulseValidations()) {
+      setpulse(false);
+    }
+  }
   const handleTime = (e) => {
     setinputS(e.target.value);
+    setTimeBool(false);
   };
   const handleRandom = (e) => {
     setrandom(e.target.value);
+    setboolRandom(false);
   };
   const handlePulseInput = (e) => {
     setinputF(e.target.value);
+    setpulseBool(false);
   };
+
+  const onPulseValidations = () => {
+    if (togglePulse) {
+
+      if (inputF === "") {
+        setpulseBool(true);
+        if (inputS === "") {
+          setTimeBool(true);
+          return false;
+        }
+
+      }
+      else if (inputS === "") {
+        setTimeBool(true);
+        if (inputF === "") {
+          setpulseBool(true);
+          return false;
+        }
+
+      }
+      else if (toggleRandom) {
+        if (random === "") {
+          setboolRandom(true);
+          return false;
+        }
+        else {
+          return true;
+        }
+      }
+      else {
+        return true;
+      }
+
+    }
+    else if (toggleRandom) {
+      if (random === "") {
+        setboolRandom(true);
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
+
+    else {
+      return true;
+    }
+
+  }
 
   const renderPulse = () => {
     return (
@@ -396,19 +503,14 @@ const [initialheadstate, setinitialheadstate] = useState([])
           showDefaultButtons={false}
           icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }} />}
         >
-          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>Pulse Sending</span>
+          <div className={classes.pulseParentDiv}>
+            <span className={classes.groupName}> {t("smsReport.pulseSending")}</span>
           </div>
           <div>
             <div
-              style={{
-                fontSize: "16px",
-                fontWeight: "700",
-                marginTop: "10px",
-                marginBottom: "10px",
-              }}
+              className={classes.pulseChildDiv}
             >
-              {" "}
+
               <Checkbox
                 checked={togglePulse}
                 color="primary"
@@ -419,49 +521,35 @@ const [initialheadstate, setinitialheadstate] = useState([])
                   setinputS("");
                 }}
               />
-              <span>Packets Sending</span>
+              <span>{t("smsReport.packetSend")}</span>
             </div>
             <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                borderBottom: "2px solid #efefef",
-                paddingBottom: "15px",
-              }}
+              className={classes.topPulseDiv}
             >
               <div>
                 <span
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "500",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                  }}
+                  className={classes.noOfReci}
                 >
-                  Number of Recipients per Sending
+                  {t("smsReport.noOfReciPulse")}
                 </span>
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginTop: "10px",
-                  }}
+                  className={classes.inputFieldDiv}
                 >
                   <input
                     type="text"
-                    placeholder="Insert"
+                    placeholder={t("smsReport.insert")}
                     disabled={togglePulse ? false : true}
                     className={
                       togglePulse
-                        ? clsx(classes.pulseActive)
+                        ? pulseBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
                         : clsx(classes.pulseInsert)
                     }
                     value={inputF}
                     onChange={handlePulseInput}
+                    maxLength="1"
                   />
 
-                  <div style={{ display: "flex", alignItems: "center" }}>
+                  <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
                     <span
                       className={
                         togglePulse
@@ -477,7 +565,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         setpulseReci("");
                       }}
                     >
-                      Percent
+                      {t("smsReport.percent")}
                     </span>
                     <span
                       className={
@@ -494,43 +582,35 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         setpulseReci("Recipients");
                       }}
                     >
-                      Recipients
+                      {t("smsReport.Reci")}
                     </span>
                   </div>
                 </div>
               </div>
               <div>
                 <span
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "500",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                  }}
+                  className={classes.noOfReci}
                 >
-                  Time between sending
+                  {t("smsReport.timeSend")}
                 </span>
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginTop: "10px",
-                  }}
+                  className={classes.inputFieldDiv}
                 >
                   <input
                     type="text"
-                    placeholder="Insert"
+                    placeholder={t("smsReport.insert")}
                     disabled={togglePulse ? false : true}
                     className={
                       togglePulse
-                        ? clsx(classes.pulseActive)
+                        ? TimeBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
                         : clsx(classes.pulseInsert)
                     }
                     onChange={handleTime}
                     value={inputS}
+                    maxLength="1"
                   />
 
-                  <div style={{ display: "flex", alignItems: "center" }}>
+                  <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
                     <span
                       className={
                         togglePulse
@@ -546,7 +626,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         sethourName("hours");
                       }}
                     >
-                      Hours
+                      {t("smsReport.Hours")}
                     </span>
                     <span
                       className={
@@ -563,7 +643,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         sethourName("");
                       }}
                     >
-                      Mins
+                      {t("smsReport.min")}
                     </span>
                   </div>
                 </div>
@@ -571,14 +651,10 @@ const [initialheadstate, setinitialheadstate] = useState([])
             </div>
 
             <div
-              style={{
-                fontSize: "16px",
-                fontWeight: "700",
-                marginTop: "10px",
-                marginBottom: "10px",
-              }}
+
+              className={classes.randomSendDiv}
             >
-              {" "}
+
               <Checkbox
                 checked={toggleRandom}
                 color="primary"
@@ -587,27 +663,22 @@ const [initialheadstate, setinitialheadstate] = useState([])
                   settoggleRandom(!toggleRandom);
                 }}
               />
-              <span>Random Sending</span>
+              <span>{t("smsReport.randomSend")}</span>
             </div>
             <div>
               <span
-                style={{
-                  fontSize: "18px",
-                  fontWeight: "500",
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                }}
+                className={classes.randomReciSpan}
               >
-                Number of random recipients{" "}
+                {t("smsReport.noOfReci")}
               </span>
 
               <input
                 type="text"
-                placeholder="Insert"
+                placeholder={t("smsReport.insert")}
                 disabled={toggleRandom ? false : true}
                 className={
                   toggleRandom
-                    ? clsx(classes.pulseActive)
+                    ? boolRandom ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
                     : clsx(classes.pulseInsert)
                 }
                 onChange={handleRandom}
@@ -616,12 +687,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
             </div>
           </div>
           <div
-            style={{
-              height: "50px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            className={classes.confirmDiv}
           >
             <Button
               variant="contained"
@@ -630,9 +696,9 @@ const [initialheadstate, setinitialheadstate] = useState([])
                 classes.dialogButton,
                 classes.dialogConfirmButton
               )}
-              onClick={handlePulseClose}
+              onClick={handlePulseConfirm}
             >
-              Confirm
+              {t("smsReport.confirmBtn")}
             </Button>
           </div>
         </Dialog>
@@ -644,7 +710,17 @@ const [initialheadstate, setinitialheadstate] = useState([])
   };
   const renderBody = () => {
     return (
-      <div style={{ width: "700px" }}>
+      <div>
+        <div className={classes.infoDiv}>
+          <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
+          <Tooltip
+            disableFocusListener
+            title="First choose who receives your campaign, then choose when."
+            classes={{ tooltip: styles.customWidth }}
+          >
+            <span className={classes.bodyInfo}>i</span>
+          </Tooltip>
+        </div>
         <div className={classes.tabDiv}>
           <div
             className={
@@ -737,13 +813,12 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         }
                         res = res + "\n";
                       }
-                    
+
                       setareaData(res);
-                      let ddc =[];
-                      for(let i in result.data[0])
-                      {
-                           console.log("----->",i)
-                           ddc.push("Adjust Title")
+                      let ddc = [];
+                      for (let i in result.data[0]) {
+                        console.log("----->", i)
+                        ddc.push("Adjust Title")
                       }
                       setheaders(ddc);
                     });
@@ -754,7 +829,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
         </div>
         <div>
           {groupClick ? (
-         
+
             <Groups
               classes={classes}
               groupList={groupList}
@@ -781,7 +856,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     justifyContent: "center",
                   }}
                 >
-                  {" "}
+
                   <Checkbox
                     disabled={selectedGroups.length >= 2 ? false : true}
                     checked={toggleChecked}
@@ -791,11 +866,11 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       settoggleChecked(!toggleChecked);
                     }}
                   />
-                  <span>{t("mainReport.createNewGroup")}</span>
-                  <span>New!</span>
+                  <span className={selectedGroups.length >= 2 ? classes.createGroupSpan : classes.createGroupSpanDisabled}>{t("mainReport.createNewGroup")}</span>
+                  <span className={classes.iconNew}>{t("mainReport.newFeature")}</span>
                   <Tooltip
                     disableFocusListener
-                    title="Choose 2 or more groups and combine into one new one"
+                    title={t("mainReport.tooltipCreateGroup")}
                     classes={{ tooltip: styles.customWidth }}
                     style={{ marginInlineStart: "5px" }}
                   >
@@ -814,7 +889,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     value={groupValue}
                   />
                   <span className={classes.saveBtn} onClick={handleCombined}>
-                    Save
+                    {t("mainReport.save")}
                   </span>
                 </div>
               ) : null}
@@ -855,7 +930,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       handlePasted();
                     }}
                   >
-                    {" "}
+
                     Edit fields and save
                   </span>
                   <span
@@ -883,8 +958,43 @@ const [initialheadstate, setinitialheadstate] = useState([])
       </div>
     );
   };
+  const handleCross = (id) => {
+    let temp = [];
+    for (let i = 0; i < filterGroups.length; i++) {
+      if (i == id) {
+        temp.push({ ...filterGroups[i], selected: false });
+      } else {
+        temp.push(filterGroups[i]);
+      }
+    }
+    setfilterGroups(temp);
+  };
+  const handleCrossCamp = (id) => {
+    let temp = [];
+    for (let i = 0; i < totalCampaigns.length; i++) {
+      if (i == id) {
+        temp.push({ ...totalCampaigns[i], selected: false });
+      } else {
+        temp.push(totalCampaigns[i]);
+      }
+    }
+    settotalCampaigns(temp);
+  };
   const handleReciClose = () => {
+
     setreciFilter(false);
+  };
+  const handleReciConfirm = () => {
+
+    if (toggleReci) {
+      if (validationCheck()) {
+        console.log("Trueeee");
+        setreciFilter(false);
+      }
+    }
+    else {
+      setreciFilter(false);
+    }
   };
   const handlePasted = () => {
     let temp = areaData;
@@ -897,45 +1007,55 @@ const [initialheadstate, setinitialheadstate] = useState([])
     settypedData(b);
 
     let dummyArr = [];
-    for(let i = 0 ; i<b[0].length; i++)
-  {
-    dummyArr.push("Adjust Title");
-  }
-  setinitialheadstate(dummyArr);
-  setheaders(dummyArr)
+    for (let i = 0; i < b[0].length; i++) {
+      dummyArr.push("Adjust Title");
+    }
+    setinitialheadstate(dummyArr);
+    setheaders(dummyArr)
 
     seteditT(true);
     setmanualTrue(true);
   };
+  const handleReciInput = (e) => {
+
+    setinputRecipients(e.target.value);
+    setRecipientsBool(false);
+
+  }
+  const validationCheck = () => {
+    if (inputRecipients === "") {
+      setRecipientsBool(true);
+      return false;
+    }
+    else {
+      return true;
+    }
+
+  };
   const renderReciFilter = () => {
     return (
       <>
-        {" "}
+
         {reciFilter ? (
           <Dialog
             classes={classes}
             open={true}
             onClose={handleReciClose}
+            onConfirm={handleReciConfirm}
+            confirmText={t("smsReport.okBtn")}
+            cancelText={t("smsReport.cancelBtn")}
             showDefaultButtons={true}
             icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }} />}
           >
-            <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-              <span className={classes.groupName}>Recipients Filter</span>
+            <div className={classes.reciFilterDiv}>
+              <span className={classes.groupName}>{t("smsReport.recipientsFilter")}</span>
             </div>
             <div>
               <div
-                style={{
-                  fontSize: "16px",
-                  fontWeight: "700",
-                  marginTop: "10px",
-                  marginBottom: "10px",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "cneter",
-                }}
+                className={classes.reciCheckoxContainer}
               >
                 <div>
-                  {" "}
+
                   <Checkbox
                     checked={toggleReci}
                     color="primary"
@@ -945,7 +1065,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     }}
                   />
                   <span>
-                    Don't send to recipients that got SMS in last previous days
+                    {t("smsReport.filterInputText")}
                   </span>
                 </div>
                 <div>
@@ -957,13 +1077,15 @@ const [initialheadstate, setinitialheadstate] = useState([])
                         ? clsx(classes.pulseActive)
                         : clsx(classes.pulseInsert)
                     }
+                    onChange={handleReciInput}
+                    value={inputRecipients}
                   />
                 </div>
               </div>
               <div>
-                <span>Don't send to recipients from the following groups:</span>
+                <span> {t("smsReport.inputTextFilter")}:</span>
                 <div>
-                  {" "}
+
                   <Paper component="form" className={classes.reciMain}>
                     <IconButton
                       type="submit"
@@ -974,21 +1096,35 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     </IconButton>
                     <InputBase
                       className={classes.inputreci}
-                      placeholder="Search"
+                      placeholder={t("smsReport.searchSms")}
                       inputProps={{ "aria-label": "Search" }}
+                      onChange={(e) => {
+                        setContactSearch(e.target.value);
+                      }}
                     />
                   </Paper>
-                  <div className={classes.reciList}>No Groups Selected</div>
+                  <div className={classes.reciList}> {filterGroups.map((item, index) => {
+                    if (item.selected) {
+                      return (
+                        <div
+                          className={classes.bubbleReciDiv}
+                        >
+                          {item.GroupName}
+                          <span
+                            onClick={() => {
+                              handleCross(index);
+                            }}
+                          >
+                            X
+                          </span>
+                        </div>
+                      );
+                    }
+                  })}</div>
                   <div
-                    className={classes.listDiv}
-                    style={{
-                      borderBottom: "1px solid #efefef",
-                      borderLeft: "1px solid #efefef",
-                      borderRight: "1px solid #efefef",
-                      marginTop: "0",
-                    }}
+                    className={classes.listDivFilter}
                   >
-                    {selectedGroups
+                    {filterGroups
                       .filter((val) => {
                         if (ContactSearch == "") {
                           return val;
@@ -1005,26 +1141,20 @@ const [initialheadstate, setinitialheadstate] = useState([])
                           <div className={classes.searchCon}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
-                              className={classes.grDoc}
+                              className={item.selected ? classes.grDoc : classes.blueDoc}
                             >
-                              {item.selected ? "hi" : <HiOutlineUserGroup />}
+                              {item.selected ? <FaCheck className={clsx(classes.green)} /> : <HiOutlineUserGroup />}
                             </span>
                             <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                width: "700px",
+                              className={classes.groupsFilterList}
+                              onClick={() => {
+                                handleSelect(idx);
                               }}
                             >
-                              <span
-                                onClick={() => {
-                                  handleSelect(idx);
-                                }}
-                              >
+                              <span>
                                 {item.GroupName}
                               </span>
-                              <span>19 Recipients</span>
+                              <span>{item.Recipients} Recipients</span>
                             </div>
                           </div>
                         );
@@ -1032,12 +1162,12 @@ const [initialheadstate, setinitialheadstate] = useState([])
                   </div>
                 </div>
               </div>
-              <div style={{ marginTop: "12px" }}>
+              <div className={classes.camapignsDiv}>
                 <span>
-                  Don't send to recipients from the following campaigns::
+                  {t("smsReport.campaignInfo")}:
                 </span>
                 <div>
-                  {" "}
+
                   <Paper component="form" className={classes.reciMain}>
                     <IconButton
                       type="submit"
@@ -1048,27 +1178,41 @@ const [initialheadstate, setinitialheadstate] = useState([])
                     </IconButton>
                     <InputBase
                       className={classes.inputreci}
-                      placeholder="Search"
+                      placeholder={t("smsReport.searchSms")}
                       inputProps={{ "aria-label": "Search" }}
+                      onChange={(e) => {
+                        setcampaignSearch(e.target.value);
+                      }}
                     />
                   </Paper>
-                  <div className={classes.reciList}>No Campaign's Selected</div>
+                  <div className={classes.reciList}> {totalCampaigns.map((item, index) => {
+                    if (item.selected) {
+                      return (
+                        <div
+                          className={classes.bubbleReciDiv}
+                        >
+                          {item.Name}
+                          <span
+                            onClick={() => {
+                              handleCrossCamp(index);
+                            }}
+                          >
+                            X
+                          </span>
+                        </div>
+                      );
+                    }
+                  })}</div>
                   <div
-                    className={classes.listDiv}
-                    style={{
-                      borderBottom: "1px solid #efefef",
-                      borderLeft: "1px solid #efefef",
-                      borderRight: "1px solid #efefef",
-                      marginTop: "0",
-                    }}
+                    className={classes.listDivFilter}
                   >
-                    {selectedGroup
+                    {totalCampaigns
                       .filter((val) => {
-                        if (ContactSearch == "") {
+                        if (campaignSearch == "") {
                           return val;
                         } else if (
-                          val.GroupName.toLowerCase().includes(
-                            ContactSearch.toLowerCase()
+                          val.Name.toLowerCase().includes(
+                            campaignSearch.toLowerCase()
                           )
                         ) {
                           return val;
@@ -1079,26 +1223,19 @@ const [initialheadstate, setinitialheadstate] = useState([])
                           <div className={classes.searchCon}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
-                              className={classes.grDoc}
+                              className={item.selected ? classes.grDoc : classes.blueDoc}
                             >
-                              {item.selected ? "hi" : <HiOutlineUserGroup />}
+                              {item.selected ? <FaCheck className={clsx(classes.green)} /> : <HiOutlineUserGroup />}
                             </span>
                             <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                width: "700px",
+                              className={classes.groupsFilterList}
+                              onClick={() => {
+                                handleSelectCamp(idx);
                               }}
                             >
-                              <span
-                                onClick={() => {
-                                  handleSelect(idx);
-                                }}
-                              >
-                                {item.GroupName}
+                              <span>
+                                {item.Name}
                               </span>
-                              <span>19 Recipients</span>
                             </div>
                           </div>
                         );
@@ -1114,7 +1251,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
   };
   const renderRight = () => {
     return (
-      <div style={{ marginTop: "35%" }}>
+      <div>
         <Grid item md={10} xs={12}>
           <h2
             className={classes.sectionTitle}
@@ -1127,10 +1264,11 @@ const [initialheadstate, setinitialheadstate] = useState([])
               aria-label="gender"
               name="sendType"
               onChange={handleSendType}
+              value={sendType}
             >
               <FormControlLabel
                 value="1"
-                control={<Radio color="primary" style={{color:"#007bff"}}/>}
+                control={<Radio color="primary" style={{ color: "#007bff" }} />}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.immediateSend")}
@@ -1142,7 +1280,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               </FormHelperText>
               <FormControlLabel
                 value="2"
-                control={<Radio color="primary" style={{color:"#007bff"}}/>}
+                control={<Radio color="primary" style={{ color: "#007bff" }} />}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.futureSend")}
@@ -1194,7 +1332,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               </Box>
               <FormControlLabel
                 value="3"
-                control={<Radio color="primary" style={{color:"#007bff"}}/>}
+                control={<Radio color="primary" style={{ color: "#007bff" }} />}
                 label={
                   <span className={classes.radioText}>
                     {t("mainReport.specialDate")}
@@ -1247,7 +1385,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                   {t("mainReport.days")}
                 </span>
 
-                <div style={{ display: "flex" }}>
+                <div style={{ display: "flex", direction: isRTL ? 'ltr' : 'rtl' }}>
                   <span
                     className={
                       toggleB
@@ -1258,7 +1396,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
                       handlebef();
                     }}
                   >
-                    {" "}
+
                     {t("mainReport.before")}
                   </span>
                   <span
@@ -1283,7 +1421,7 @@ const [initialheadstate, setinitialheadstate] = useState([])
               >
                 <DateField
                   classes={classes}
-                  value={sendDate}
+                  value={null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
@@ -1328,10 +1466,10 @@ const [initialheadstate, setinitialheadstate] = useState([])
             fontSize: "14px",
           }}
         >
-          {" "}
+
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer}{" "}
+              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer}
               every {inputS} {hourName == "" ? minName : hourName}
             </span>
           ) : null}
@@ -1341,15 +1479,15 @@ const [initialheadstate, setinitialheadstate] = useState([])
         </div>
 
         <div className={classes.buttonDiv}>
-          <span className={classes.rightInput3}>
+          <span className={classes.rightInput3} onClick={onHandleDelete} >
             <AiOutlineDelete style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4}>
-            {" "}
-            {t("mainReport.editSms")}{" "}
+
+            {t("mainReport.exitSms")}
           </span>
           <span className={classes.rightInput5}>
-            {" "}
+
             {t("mainReport.saveSms")}
           </span>
           <span
@@ -1368,79 +1506,199 @@ const [initialheadstate, setinitialheadstate] = useState([])
     );
   };
   const onSummClick = async () => {
-    if (selectedGroups.length > 0) {
-      // console.log("-------->", sendDate);
-      const m = moment(sendDate, "YYYY-MM-DD HH:mm:ss");
-      m.set({ h: m.format("HH"), m: m.format("mm") });
-      let a = window.location;
+    if (sendType === "1") {
+      if (selectedGroups.length > 0) {
+        let campId = window.location
+        let id = campId.search.split("=");
+        let finalId = id[1];
 
-      let b = a.search.split("=");
-      let camp = b[1];
-      //  console.log("--->",selectedGroups);
-      let temp = [];
-      for (let i = 0; i < selectedGroups.length; i++) {
-        temp.push(selectedGroups[i].GroupID);
-      }
-      let time = -1;
-      let pulse = -1;
-      if (togglePulse) {
-        if (minTrue == true) {
-          time = 1;
-        } else {
-          time = 2;
+        let temp = [];
+        let finalGroups = [];
+        for (let i = 0; i < selectedGroups.length; i++) {
+          temp.push(selectedGroups[i].GroupID);
+          finalGroups.push(selectedGroups[i]);
+        }
+        let time = -1;
+        let pulse = -1;
+        if (togglePulse) {
+          if (minTrue == true) {
+            time = 1;
+          } else {
+            time = 2;
+          }
+
+          if (percentTrue == true) {
+            pulse = 1;
+          } else {
+            pulse = 2;
+          }
         }
 
-        if (percentTrue == true) {
-          pulse = 1;
-        } else {
-          pulse = 2;
+        let exceptionGroups = [];
+
+        for (let i = 0; i < filterGroups.length; i++) {
+          if (filterGroups[i].selected) {
+            exceptionGroups.push(filterGroups[i].GroupID)
+          }
         }
+
+
+        let exceptionCampaigns = [];
+        for (let i = 0; i < totalCampaigns.length; i++) {
+          if (totalCampaigns[i].selected) {
+            exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
+          }
+        }
+        let quickPayload = {
+          FutureDateTime: null,
+          GroupDetails: finalGroups,
+          Groups: temp,
+          PulseSettings: {
+            PulseType: pulse,
+            TimeType: time,
+            PulseAmount: inputF,
+            TimeInterval: inputS
+          },
+          RandomSettings: {
+            RandomAmount: random
+          },
+          SendExeptional:
+          {
+            Groups: exceptionGroups,
+            Campaigns: exceptionCampaigns,
+            ExceptionalDays: setinputRecipients
+          },
+          SendTypeID: 1,
+          SmsCampaignID: finalId,
+          SourceTimeZone: "Asia/Calcutta",
+          SpecialSettings: {
+            Type: "",
+            DateFieldID: -1,
+            Day: 0,
+            SendHour: "",
+            IntervalTypeID: -1,
+            SendDate: null
+          },
+          specialDateOptions: [
+            {
+              text: "Birthday",
+              code: "1"
+            },
+            {
+              text: "Creation Day",
+              code: "2"
+            },
+            {
+              text: "",
+              code: "3"
+            }]
+
+        }
+        await dispatch(smsCampSettings(quickPayload));
+        let response = await dispatch(getCampaignSumm(finalId));
+        setresponseQuick(response);
+        setsummModal(true);
       }
-      let dm = null;
-      if (sendType === "2") {
-        dm = m.format();
-      } else {
-        dm = null;
+    }
+    else if (sendType === "2") {
+      if (selectedGroups.length > 0) {
+        let campId = window.location
+        let id = campId.search.split("=");
+        let finalId = id[1];
+
+        let temp = [];
+        let finalGroups = [];
+        for (let i = 0; i < selectedGroups.length; i++) {
+          temp.push(selectedGroups[i].GroupID);
+          finalGroups.push(selectedGroups[i]);
+        }
+        let time = -1;
+        let pulse = -1;
+        if (togglePulse) {
+          if (minTrue == true) {
+            time = 1;
+          } else {
+            time = 2;
+          }
+
+          if (percentTrue == true) {
+            pulse = 1;
+          } else {
+            pulse = 2;
+          }
+        }
+
+        let exceptionGroups = [];
+
+        for (let i = 0; i < filterGroups.length; i++) {
+          if (filterGroups[i].selected) {
+            exceptionGroups.push(filterGroups[i].GroupID)
+          }
+        }
+
+
+        let exceptionCampaigns = [];
+        for (let i = 0; i < totalCampaigns.length; i++) {
+          if (totalCampaigns[i].selected) {
+            exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
+          }
+        }
+        const finalDate = moment(sendDate, "YYYY-MM-DD HH:mm:ss");
+        finalDate.set({ h: finalDate.format("HH"), m: finalDate.format("mm") });
+        let displayDate = null;
+        displayDate = finalDate.format();
+
+        let quickPayload = {
+          FutureDateTime: displayDate,
+          GroupDetails: finalGroups,
+          Groups: temp,
+          PulseSettings: {
+            PulseType: pulse,
+            TimeType: time,
+            PulseAmount: inputF,
+            TimeInterval: inputS
+          },
+          RandomSettings: {
+            RandomAmount: random
+          },
+          SendExeptional:
+          {
+            Groups: exceptionGroups,
+            Campaigns: exceptionCampaigns,
+            ExceptionalDays: setinputRecipients
+          },
+          SendTypeID: 1,
+          SmsCampaignID: finalId,
+          SourceTimeZone: "Asia/Calcutta",
+          SpecialSettings: {
+            Type: "",
+            DateFieldID: -1,
+            Day: 0,
+            SendHour: "",
+            IntervalTypeID: -1,
+            SendDate: null
+          },
+          specialDateOptions: [
+            {
+              text: "Birthday",
+              code: "1"
+            },
+            {
+              text: "Creation Day",
+              code: "2"
+            },
+            {
+              text: "",
+              code: "3"
+            }]
+
+        }
+        await dispatch(smsCampSettings(quickPayload));
+        let response = await dispatch(getCampaignSumm(finalId));
+        setresponseQuick(response);
+        setsummModal(true);
       }
 
-      let payload = {
-        SmsCampaignID: camp,
-        SendTypeID: 1,
-        FutureDateTime: dm,
-        GroupDetails: selectedGroups,
-        Groups: temp,
-
-        PulseSettings: {
-          PulseAmount: inputF,
-          PulseType: pulse,
-          TimeInterval: inputS,
-          TimeType: time,
-        },
-        RandomSettings: {
-          RandomAmount: random,
-        },
-        SendExeptional: {},
-        SendTypeID: 1,
-        SourceTimeZone: "Asia/Calcutta",
-        SpecialSettings: {
-          Type: "",
-          DateFieldID: -1,
-          Day: 0,
-          SendHour: "",
-          IntervalTypeID: -1,
-          SendDate: null,
-        },
-        DateFieldID: -1,
-        Day: 0,
-        IntervalTypeID: -1,
-        SendDate: null,
-        SendHour: "",
-        Type: "",
-        specialDateOptions: [],
-      };
-      await dispatch(smsCampSettings(payload));
-      await dispatch(getCampaignSumm(camp));
-      setsummModal(true);
     }
   };
   const renderSummary = () => {
@@ -1463,156 +1721,143 @@ const [initialheadstate, setinitialheadstate] = useState([])
       setdropIndex(-1);
     }
   };
-  const handleSelectFirst = (name,id,idx,e) => {
+  const handleSelectFirst = (name, id, idx, e) => {
     // id -  index of select array 
     // idx - header index 
-  // if  (headers[idx] !== "adjust title")
-  // {
-  //   selectArray[id].isdisabled = false;
-    
-  //   let h = headers;
-  //   h[idx] = name.value;
-  //   setheaders(h);
+    // if  (headers[idx] !== "adjust title")
+    // {
+    //   selectArray[id].isdisabled = false;
 
-  // }
-  // else
-  // {
-   
-  let h = headers;
-  h[idx] = name.value;
-  setheaders(h);
-  selectArray[id].isdisabled = true;
-  selectArray[id].idx = idx;
-  console.log("new------>",selectArray)
- // }
+    //   let h = headers;
+    //   h[idx] = name.value;
+    //   setheaders(h);
+
+    // }
+    // else
+    // {
+
+    let h = headers;
+    h[idx] = name.value;
+    setheaders(h);
+    selectArray[id].isdisabled = true;
+    selectArray[id].idx = idx;
+    console.log("new------>", selectArray)
+    // }
 
   };
- const handleCloseSpan = (id,name) =>
- {
-  let h = headers;
-  
-  headers[id] ="Adjust Title";
-  // h[id] = initialheadstate[id];
+  const handleCloseSpan = (id, name) => {
+    let h = headers;
 
-  setheaders(h);
+    headers[id] = "Adjust Title";
+    // h[id] = initialheadstate[id];
 
-  for(let i=0 ; i < selectArray.length ; i++)
-  {
+    setheaders(h);
 
-    if(selectArray[i].value === name)
-    {
-      selectArray[i].isdisabled = false;
-      selectArray[i].idx = -1;
-      break;
-    }
-  }
-  
- }
-const handleDataManual = async () =>
-{
-  console.log("----->",headers);
-  console.log(typedData)
-  let requestPayload = [];
+    for (let i = 0; i < selectArray.length; i++) {
 
-
-  if(typedData.length !==0)
-  {
-    for(let j= 0 ; j < typedData.length ; j++)
-    {
-       requestPayload.push({});
-      for(let k= 0 ; k<typedData[j].length ; k++)
-      {
-         if(headers[k]!=="Adjust Title")
-         {
-          let key = headers[k];
-          let  obj = requestPayload[j];
-         obj[key] = typedData[j][k];
-         }
+      if (selectArray[i].value === name) {
+        selectArray[i].isdisabled = false;
+        selectArray[i].idx = -1;
+        break;
       }
-
     }
+
   }
-  else
-  {
-   
-    
-    for(let j= 0 ; j < contacts.length ; j++)
-    {
-       requestPayload.push({});
-       let i= 0 ;
-    
-      
-        for(let k in contacts[j])
-        {
-          console.log("--->before if",headers[i])
-        
-           if(headers[i]!=="Adjust Title")
-           {
-            console.log("----->printing headers of i th index",headers[i]);
+  const handleDataManual = async () => {
+    console.log("----->", headers);
+    console.log(typedData)
+    let requestPayload = [];
+
+
+    if (typedData.length !== 0) {
+      for (let j = 0; j < typedData.length; j++) {
+        requestPayload.push({});
+        for (let k = 0; k < typedData[j].length; k++) {
+          if (headers[k] !== "Adjust Title") {
+            let key = headers[k];
+            let obj = requestPayload[j];
+            obj[key] = typedData[j][k];
+          }
+        }
+
+      }
+    }
+    else {
+
+
+      for (let j = 0; j < contacts.length; j++) {
+        requestPayload.push({});
+        let i = 0;
+
+
+        for (let k in contacts[j]) {
+          console.log("--->before if", headers[i])
+
+          if (headers[i] !== "Adjust Title") {
+            console.log("----->printing headers of i th index", headers[i]);
             let key = headers[i];
-            let  obj = requestPayload[j];
+            let obj = requestPayload[j];
             obj[key] = contacts[j][k];
-            
+
+          }
+          i++;
+        }
+
+
       }
-      i++;
-       }
-      
 
     }
 
-  }
-
-  console.log("request Data",requestPayload)
+    console.log("request Data", requestPayload)
 
 
     let finalPayload = {
 
       GroupName: newVal,
-      Clients : requestPayload
+      Clients: requestPayload
 
     }
 
-     const r = await dispatch(getManual(finalPayload))
+    const r = await dispatch(getManual(finalPayload))
     //  console.log("----->",r)
-     let tempres = [];
-     let temp = [];
-     for (let i = 0; i < groupList.length; i++) {
-       tempres.push(groupList[i]);
-     }
-     for (let i = 0; i < selectedGroups.length; i++) {
+    let tempres = [];
+    let temp = [];
+    for (let i = 0; i < groupList.length; i++) {
+      tempres.push(groupList[i]);
+    }
+    for (let i = 0; i < selectedGroups.length; i++) {
       temp.push(selectedGroups[i]);
     }
     temp.push({
-      Recipient : r.payload.Recipients,
-      GroupName : newVal,
-      GroupID : r.payload.GroupID
-     });
-     tempres.push({
-      Recipient : r.payload.Recipients,
-      GroupName : newVal,
-      GroupID : r.payload.GroupID
-     });
-     setGroupList(tempres);
-     setSelected(temp);
-     setmanualTrue(false);
-     setareaData("");
-     settypedData([]);
-     setContacts([]);
-     setgroupClick(true);
-     setmanualClick(false);
-     for(let i = 0 ; i < selectArray.length;i++){
-       selectArray[i].isdisabled = false;
-       selectArray[i].idx = -1;
-     }
+      Recipient: r.payload.Recipients,
+      GroupName: newVal,
+      GroupID: r.payload.GroupID
+    });
+    tempres.push({
+      Recipient: r.payload.Recipients,
+      GroupName: newVal,
+      GroupID: r.payload.GroupID
+    });
+    setGroupList(tempres);
+    setSelected(temp);
+    setmanualTrue(false);
+    setareaData("");
+    settypedData([]);
+    setContacts([]);
+    setgroupClick(true);
+    setmanualClick(false);
+    for (let i = 0; i < selectArray.length; i++) {
+      selectArray[i].isdisabled = false;
+      selectArray[i].idx = -1;
+    }
 
 
-  
-}
 
-const handleManualDialog = (e) =>
-{
-setnewVal(e.target.value);
-}
+  }
+
+  const handleManualDialog = (e) => {
+    setnewVal(e.target.value);
+  }
 
   const renderDialogManual = () => {
     return (
@@ -1630,7 +1875,7 @@ setnewVal(e.target.value);
           </div>
           <div className={classes.manualModal}>
             <span style={{ fontSize: "24px", marginInlineEnd: "10px" }}>
-              Group Name :{" "}
+              Group Name :
             </span>
             <input
               type="text"
@@ -1676,56 +1921,54 @@ setnewVal(e.target.value);
             <tr>
               {typedData.length !== 0
                 ? typedData[0].map((item, idx) => {
-                    return (
-                      <th
-                        style={{
-                          border: "1px solid #ddd",
-                          padding: "10px",
-                          maxWidth: "280px",
+                  return (
+                    <th
+                      style={{
+                        border: "1px solid #ddd",
+                        padding: "10px",
+                        maxWidth: "280px",
+                      }}
+                    >
+                      <div
+                        onClick={() => {
+                          handleChangeId(idx);
                         }}
+                        className={classes.adjustP}
+                        style={{ width: "130px", textAlign: "center" }}
                       >
-                        <div
-                          onClick={() => {
-                            handleChangeId(idx);
-                          }}
-                          className={classes.adjustP}
-                          style={{ width: "130px", textAlign: "center" }}
-                        >
-                      {headers[idx]} 
+                        {headers[idx]}
 
-                       <span style={{marginInlineEnd:"5px",marginInlineStart:"5px"}} onClick={() => {handleCloseSpan(idx,headers[idx])}}>x</span>
+                        <span style={{ marginInlineEnd: "5px", marginInlineStart: "5px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }}>x</span>
 
-                          <span>icn</span>
-                          {dropIndex == idx ? (
-                            <div className={classes.adjustC}>
-                              {selectArray.map((item,id) => 
-                              {
-                              
-                                return(
-                                  <span
-                                  className={item.isdisabled  ?  clsx(classes.grayGroup) :   clsx(classes.grouping)}
+                        <span>icn</span>
+                        {dropIndex == idx ? (
+                          <div className={classes.adjustC}>
+                            {selectArray.map((item, id) => {
+
+                              return (
+                                <span
+                                  className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
                                   onClick={() => {
-                                    handleSelectFirst(item,id,idx);
+                                    handleSelectFirst(item, id, idx);
                                   }}
                                 >
-                                 {item.value}
+                                  {item.value}
                                 </span>
-                                )
-                              })}
-                            </div>
-                          ) : null}
-                        </div>
-                      </th>
-                    );
-                  })
+                              )
+                            })}
+                          </div>
+                        ) : null}
+                      </div>
+                    </th>
+                  );
+                })
                 : null}
-              {contacts.length !==0 ? headers.map((item,idx) => 
-               {
-              
-                 return(
-                
-                    
-                    <th
+              {contacts.length !== 0 ? headers.map((item, idx) => {
+
+                return (
+
+
+                  <th
                     style={{
                       border: "1px solid #ddd",
                       padding: "10px",
@@ -1739,70 +1982,43 @@ setnewVal(e.target.value);
                       className={classes.adjustP}
                       style={{ width: "130px", textAlign: "center" }}
                     >
-                       {headers[idx]} 
-                       <span style={{marginInlineEnd:"5px",marginInlineStart:"5px"}} onClick={() => {handleCloseSpan(idx,headers[idx])}}>x</span>
+                      {headers[idx]}
+                      <span style={{ marginInlineEnd: "5px", marginInlineStart: "5px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }}>x</span>
                       <span>icn</span>
                       {dropIndex == idx ? (
-                            <div className={classes.adjustC}>
-                              {selectArray.map((item,id) => 
-                              {
-                              
-                                return(
-                                  <span
-                                  className={item.isdisabled  ?  clsx(classes.grayGroup) :   clsx(classes.grouping)}
-                                  onClick={() => {
-                                    handleSelectFirst(item,id,idx);
-                                  }}
-                                >
-                                 {item.value}
-                                </span>
-                                )
-                              })}
-                            </div>
-                          ) : null}
+                        <div className={classes.adjustC}>
+                          {selectArray.map((item, id) => {
+
+                            return (
+                              <span
+                                className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
+                                onClick={() => {
+                                  handleSelectFirst(item, id, idx);
+                                }}
+                              >
+                                {item.value}
+                              </span>
+                            )
+                          })}
+                        </div>
+                      ) : null}
                     </div>
                   </th>
-            )
-                      
-                 
-               }) : null}
+                )
+
+
+              }) : null}
             </tr>
             {contacts.length !== 0
               ? contacts.map((item, idx) => {
-                  // console.log("hello", item);
-                  if (idx > contacts.length - 11) {
-                    return (
-                      <tr id={idx}>
-                        {Object.values(item).map((temp, idx) => {
-                          return (
-                            <td
-                              id={idx}
-                              style={{
-                                border: "1px solid #ddd",
-                                padding: "10px",
-                                maxWidth: "280px",
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                textAlign: "center",
-                              }}
-                            >
-                              {temp}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  }
-                })
-              : typedData.map((item, id) => {
-                // {console.log("typed data",typedData)}
+                // console.log("hello", item);
+                if (idx > contacts.length - 11) {
                   return (
-                  
-                    <tr>
-                      {item.map((data, idx) => {
+                    <tr id={idx}>
+                      {Object.values(item).map((temp, idx) => {
                         return (
                           <td
+                            id={idx}
                             style={{
                               border: "1px solid #ddd",
                               padding: "10px",
@@ -1813,18 +2029,85 @@ setnewVal(e.target.value);
                               textAlign: "center",
                             }}
                           >
-                            {data}
+                            {temp}
                           </td>
                         );
                       })}
                     </tr>
                   );
-                })}
+                }
+              })
+              : typedData.map((item, id) => {
+                // {console.log("typed data",typedData)}
+                return (
+
+                  <tr>
+                    {item.map((data, idx) => {
+                      return (
+                        <td
+                          style={{
+                            border: "1px solid #ddd",
+                            padding: "10px",
+                            maxWidth: "280px",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            textAlign: "center",
+                          }}
+                        >
+                          {data}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
           </table>
         </Dialog>
       </>
     );
   };
+
+  const handleClose = () => {
+    setdeleteClick(false);
+  };
+  const handleDelete = () => {
+    let a = window.location;
+
+    let b = a.search.split("=");
+    let camp = b[1];
+    dispatch(deleteSms(camp));
+    handleClose();
+  };
+  const renderDelete = () => {
+    return (
+      <>
+        {deleteClick ? (
+          <Dialog
+            classes={classes}
+            open={deleteClick}
+            onClose={handleClose}
+            onCancel={cancel ? null : true}
+            onConfirm={handleDelete}
+            confirmText="Confirm"
+            showDefaultButtons={true}
+            icon={
+              <AiOutlineExclamationCircle
+                style={{ fontSize: 30, color: "#fff" }}
+              />
+            }
+          >
+            <div className={classes.deleteModalDiv}>
+              <span className={classes.groupName}>{t("mainReport.deleteCamp")}</span>
+            </div>
+            <div className={classes.subDeleteDiv}>
+              <span>{t("mainReport.confirmSure")}</span>
+            </div>
+          </Dialog>
+        ) : null}</>
+    )
+
+  }
   const handleNewM = () => {
     setcaution(false);
   };
@@ -1834,7 +2117,7 @@ setnewVal(e.target.value);
   const handleConfirmC = () => {
     setContacts([]);
     setareaData("");
-    for(let i = 0 ; i < selectArray.length;i++){
+    for (let i = 0; i < selectArray.length; i++) {
       selectArray[i].isdisabled = false;
       selectArray[i].idx = -1;
     }
@@ -1870,25 +2153,89 @@ setnewVal(e.target.value);
   };
   return (
     <DefaultScreen currentPage="reports" classes={classes}>
-      <div style={{ display: "grid", gridTemplateColumns: "65% auto" }}>
+      <div className={classes.smsStepDiv}>
         <div>
           {renderSwitch()}
           {renderHead()}
-          {renderContent()}
-          {renderBody()}
+          {/* {renderContent()} */}
+          <Grid container>
+            <Grid md={7} xs={12}>
+              {renderBody()}
+            </Grid>
+            <Grid md={1} xs={12}></Grid>
+            <Grid md={4} xs={12}>
+              {renderRight()}
+            </Grid>
+          </Grid>
           <div className={classes.backBtn}>
             <span style={{ marginInlineEnd: "4px" }}>{"<"}</span>
             <span>Back</span>
           </div>
         </div>
-        <div>{renderRight()}</div>
+        {/* <div></div> */}
       </div>
       {renderPulse()}
       {renderReciFilter()}
       {renderSummary()}
       {renderDialogManual()}
       {renderCaution()}
-    </DefaultScreen>
+      <Snackbar
+        open={pulseBool || TimeBool || boolRandom}
+        autoHideDuration={2000}
+        // onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ zIndex: "9999" }}
+      >
+        <Alert severity="warning" >
+          {t("smsReport.NoPulse")}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={pulseBool}
+        autoHideDuration={2000}
+        // onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ zIndex: "9999", marginTop: "60px" }}
+      >
+        <Alert severity="error" >
+          {t("smsReport.pulseAmount")}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={TimeBool}
+        autoHideDuration={2000}
+        // onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ zIndex: "9999", marginTop: "120px" }}
+      >
+        <Alert severity="error" >
+          {t("smsReport.timeAmount")}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={boolRandom}
+        autoHideDuration={2000}
+        // onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        style={{ zIndex: "9999", marginTop: "60px" }}
+      >
+        <Alert severity="error" >
+          {t("smsReport.randomAmt")}
+        </Alert>
+      </Snackbar>
+    </DefaultScreen >
   );
 };
 

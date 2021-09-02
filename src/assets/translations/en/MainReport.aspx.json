@@ -450,7 +450,7 @@
   "groups" : "Groups",
   "manual" : "Manual Upload",
   "saveSms" : "Save",
-  "editSms" : "Edit",
+  "exitSms" : "Exit",
   "summary" : "Summary",
   "specialDate" : "Special Date",
   "totalReci" : "Total recipients for sending",
@@ -473,8 +473,15 @@
   "keepDesc":"Turning this switch on will convert your links to a special 35-character link, saving space in your message",
   "testSend":"Test Send",
   "testDesc":"Right after you click send",
-  "sendToOne":"Send to one contact",
-  "sendToGroups":"Send to test groups"
+  "sendToOne":"Send to one Contact",
+  "campaignNamePlaceholder":"Campaign Name",
+  "sendToGroups":"Send to test groups",
+  "smsTitle":"Create SMS Pulseem System",
+  "tooltipCreateGroup" : "Choose 2 or more groups and combine into one new one",
+  "newFeature":"New!",
+  "save":"Save",
+  "deleteCamp":"Delete Campaign",
+  "confirmSure":"Are you sure?"
   
 
 }
