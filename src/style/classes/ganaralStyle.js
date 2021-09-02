@@ -1967,6 +1967,6 @@ marginTop:"10px"
   },
   plusIcn :
   {
-    marginBottom:"2px"
+    marginBottom:"3px"
   }
 });
