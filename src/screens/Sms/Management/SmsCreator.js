@@ -584,7 +584,7 @@ const SmsCreator = ({ classes }, props) => {
                       >
                         Landing Page Link
                       </span>
-                   {previousCampaignData.length == 0  ? null :  <span
+                   {previousCampaignData.length == 0 ? null : <span
                         className={classes.dropCon}
                         onClick={() => {
                           setdialogClickCampaign(true);
@@ -592,7 +592,7 @@ const SmsCreator = ({ classes }, props) => {
                         }}
                       >
                         Campaign Link
-                      </span>}  
+                      </span>}   
                       <span
                         className={classes.dropCon}
                         onClick={() => {
@@ -1412,7 +1412,7 @@ const SmsCreator = ({ classes }, props) => {
                     >
                       <FcDocument />
                     </span>
-                    <span>{item.CampaignName}</span>
+                    <span>{item.Name}</span>
                   </div>
                 );
               })}
