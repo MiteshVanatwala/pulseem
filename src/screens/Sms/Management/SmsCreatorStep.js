@@ -1877,7 +1877,7 @@ setnewVal(e.target.value);
   };
   return (
     <DefaultScreen currentPage="reports" classes={classes}>
-      <div style={{ display: "grid", gridTemplateColumns: "65% auto" }}>
+      <div  className={classes.smsStepDiv}>
         <div>
           {renderSwitch()}
           {renderHead()}

@@ -17,6 +17,7 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Emoj from "../../../assets/images/smile.png";
 import { withStyles } from "@material-ui/core/styles";
+import { FaCheck } from 'react-icons/fa';
 import { useHistory } from "react-router";
 import {
   getPreviousCampaignData,
@@ -488,44 +489,39 @@ const SmsCreator = ({ classes }, props) => {
                   onChange={handleAlignment}
                   aria-label="text alignment"
                 >
-                  <ToggleButton value="right" aria-label="right aligned" >
-                    <FormatAlignRightIcon />
-                  </ToggleButton>
-                  <ToggleButton value="left" aria-label="left aligned" style={{ borderLeft: "1px solid #D5D5D5", marginInlineEnd: "4px" }}>
-                    <FormatAlignLeftIcon />
-                  </ToggleButton>
-                </ToggleButtonGroup> : <ToggleButtonGroup
-                  value={alignment}
-                  exclusive
-                  onChange={handleAlignment}
-                  aria-label="text alignment"
-                >
-                  <ToggleButton value="left" aria-label="left aligned" style={{ width: "30px", height: "30px" }}>
+                  <ToggleButton value="left" aria-label="left aligned" className={classes.leftAlignIcn}>
                     <FormatAlignLeftIcon />
                   </ToggleButton>
 
-                  <ToggleButton value="right" aria-label="right aligned" style={{ borderRight: "1px solid #D5D5D5", marginInlineEnd: "4px" }}>
+                  <ToggleButton value="right" aria-label="right aligned" className={classes.rightAlignIcn}>
                     <FormatAlignRightIcon />
                   </ToggleButton>
-                </ToggleButtonGroup>}
+                </ToggleButtonGroup> :
+                  <ToggleButtonGroup
+                    value={alignment}
+                    exclusive
+                    onChange={handleAlignment}
+                    aria-label="text alignment"
+                  >
+                    <ToggleButton value="left" aria-label="left aligned" style={{ width: "30px", height: "30px" }}>
+                      <FormatAlignLeftIcon />
+                    </ToggleButton>
+
+                    <ToggleButton value="right" aria-label="right aligned" style={{ borderRight: "1px solid #D5D5D5", marginInlineEnd: "4px" }}>
+                      <FormatAlignRightIcon />
+                    </ToggleButton>
+                  </ToggleButtonGroup>}
                 <div className={classes.pickerEmoji}>
                   {flagemoji ? <Picker onEmojiClick={onEmojiClick} groupVisibility={{
                     flags: false,
                   }} /> : null}
 
-                  <Tooltip
-                    disableFocusListener
-                    title="Add Emoji"
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-start"
-                  >
-                    <img src={Emoj}
-                      style={{ marginInlineEnd: "8px", widht: "25px", height: "25px" }}
-                      onClick={() => {
-                        setflagemoji(!flagemoji);
-                      }}
-                    />
-                  </Tooltip>
+                  <InsertEmoticonIcon
+                    className={classes.emojiIcon}
+                    onClick={() => {
+                      setflagemoji(!flagemoji);
+                    }}
+                  />
                 </div>
               </div>
               <div className={classes.baseButtons}>
@@ -559,21 +555,7 @@ const SmsCreator = ({ classes }, props) => {
                       seteditmenuClick(!editmenuClick);
                     }}
                   >
-                    <span
-                      style={{
-                        marginInlineEnd: "3px",
-                        border: "2px solid #17a2b8",
-                        borderRadius: "50%",
-                        padding: "5px",
-                        width: "10px",
-                        height: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "#17a2b8",
-                        fontSize: "19px",
-                        fontWeight: "700",
-                      }}
+                    <span className={classes.addFeatures}
                     >
                       <span style={{ marginBottom: "2px" }}>+</span>
                     </span>
@@ -1078,7 +1060,6 @@ const SmsCreator = ({ classes }, props) => {
             </div>
             <div className={classes.listDiv}>
               {
-
                 selectedGroup
                   .filter((val) => {
                     if (ContactSearch == "") {
@@ -1097,25 +1078,16 @@ const SmsCreator = ({ classes }, props) => {
                       <div className={classes.searchCon} onClick={makeArr(idx)}>
                         <span
                           style={{ marginInlineEnd: "25px" }}
-                          className={classes.grDoc}
+                          className={item.selected ? classes.greenDoc : classes.blueDoc}
                         >
-                          {item.selected ? "hi" : <HiOutlineUserGroup />}
+                          {item.selected ? (<FaCheck className={clsx(classes.green)} />) : <HiOutlineUserGroup />}
                         </span>
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            width: "700px",
+                        <div className={classes.selectGroupDiv}
+                          onClick={() => {
+                            handleSelect(idx);
                           }}
                         >
-                          <span
-                            onClick={() => {
-                              handleSelect(idx);
-                            }}
-                          >
-                            {item.GroupName}
-                          </span>
+                          <span>{item.GroupName}</span>
                           <span>{item.Recipients}</span>
                         </div>
                       </div>
