@@ -392,8 +392,7 @@ const SmsCreator = ({ classes }, props) => {
               type="text"
               placeholder="282"
               disabled
-              className={classes.buttonField}
-              style={{ width: "20%" }}
+              className={classes.buttonFieldRemoval}
             />
           </div>
         ) : null}
@@ -572,7 +571,7 @@ const SmsCreator = ({ classes }, props) => {
                       >
                         Landing Page Link
                       </span>
-                      <span
+                   {previousCampaignData.length == 0  ? null :  <span
                         className={classes.dropCon}
                         onClick={() => {
                           setdialogClickCampaign(true);
@@ -580,7 +579,7 @@ const SmsCreator = ({ classes }, props) => {
                         }}
                       >
                         Campaign Link
-                      </span>
+                      </span>}  
                       <span
                         className={classes.dropCon}
                         onClick={() => {

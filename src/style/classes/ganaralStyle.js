@@ -700,6 +700,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: "16px"
     }
   },
+  buttonFieldRemoval: {
+    borderRadius: "5px",
+    border: "1px solid #bbb",
+    outline: "none",
+    padding: "12px",
+    width:"20%",
+  },
   success: {
     borderBottom: "2px solid green",
   },
@@ -1439,7 +1446,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   boxDiv: {
-    width: "450px",
+    width: "560px",
     "@media screen and (max-width: 768px)": {
       width: "100%",
     },
