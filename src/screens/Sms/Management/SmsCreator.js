@@ -1610,14 +1610,11 @@ const SmsCreator = ({ classes }, props) => {
           </span>
         </div>
         <div>
-          <ul
-            style={{ fontSize: "20px", color: "red", fontWeight: "600" }}
-            className={classes.listValues}
-          >
-            <li className={classes.campNameLi}>
+          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }}>
+          {campaignBool ? <li style={{ marginBottom: "8px" }}>
               Campaign Name - Required field
-            </li>
-            <li>Text for sending - Required field</li>
+            </li>  : null } 
+       {msg === "" ?  <li>Text for sending - Required field</li> : null}     
           </ul>
         </div>
         <div
