@@ -1268,6 +1268,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxHeight: "200px",
     width: "700px",
     marginTop: "20px",
+    overflow: "auto"
   },
   listDivFilter:
   {
