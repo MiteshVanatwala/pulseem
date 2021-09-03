@@ -6,11 +6,21 @@ import Mobile from "../../../assets/images/mobileiphone.png";
 const SmsSummary = ({classes , selected  , bool , campaign  , number , totalmsg , stepBool, grand , final , summ , api}) => {
 
   const [modal, setmodal] = useState(false);
+  const [smsCreator, setsmsCreator] = useState(false);
 useEffect(() => {
 
 setmodal(bool);
+
  
 }, [bool])
+useEffect(() => {
+
+ 
+  setsmsCreator(stepBool);
+  
+  
+   
+  }, [stepBool])
 
     return (
     <div>
@@ -214,10 +224,10 @@ setmodal(bool);
             </div>
           </div>
         </Dialog>  : null }        
-        {stepBool ? <Dialog
+        {smsCreator ? <Dialog
           classes={classes}
-          open={stepBool}
-          // onClose={handleAlertoff}
+          open={smsCreator}
+          onClose={() => {setsmsCreator(false)}}
           // onConfirm={handleExitYes}
           confirmText="Send"
           cancelText="Cancel"

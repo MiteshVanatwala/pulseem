@@ -79,7 +79,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
     pageTitle: t('sms.PageResource1.Title'),
     iconUnicode: '\ue181',
     href: '/react/SMSCampaigns',
-    // isShow: features !== null && features.includes('7'),
+    isShow: features !== null && features.includes('7'),
     icon: <img
       alt='Sms'
       src={SmsIcon} />,

@@ -49,7 +49,7 @@ export const DateField = ({
       placeholder={placeholder}
       initialFocusedDate={moment().hours(0).minutes(0)}
       value={value}
-      keyboardIcon={<FiClock style={{ fontSize: 16 }} />}
+      keyboardIcon={<FiClock style={{ fontSize: 16 }}  onClick={() => setIsTimePickerOpen(true)}/>}
       onChange={date => onTimeChange(date)}
       KeyboardButtonProps={{
         'aria-label': 'change time',
@@ -59,7 +59,7 @@ export const DateField = ({
       okLabel={buttons && buttons.ok}
       ampm={ampm}
       id="timePicker"
-      onClick={() => setIsTimePickerOpen(true)}
+     
       onClose={() => setIsTimePickerOpen(false)}
       open={isTimePickerOpen || timePickerOpen}
     />
@@ -80,7 +80,7 @@ export const DateField = ({
         dir: direction[isRTL]
       }}
       variant={buttons ? 'dialog' : 'inline'}
-      keyboardIcon={<CalendarIcon />}
+      keyboardIcon={<CalendarIcon onClick={() => setIsDatePickerOpen(true)}/>}
       format={"DD/MM/YYYY"}
       margin='none'
       minDate={minDate}
@@ -96,7 +96,6 @@ export const DateField = ({
       okLabel={buttons && buttons.ok}
       id="datePicker"
       maxDate={maximumDate}
-      onClick={() => setIsDatePickerOpen(true)}
       onClose={() => setIsDatePickerOpen(false)}
       open={isDatePickerOpen}
     />
