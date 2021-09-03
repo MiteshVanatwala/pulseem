@@ -1041,6 +1041,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineStart:"145px",
     fontSize:"15px"
   },
+  phoneNumberSumm: {
+    position: "absolute",
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
+    fontWeight: "700",
+    top:"92px",
+    marginInlineStart:"133px",
+    fontSize:"15px"
+  },
   chat: {
 
 
@@ -1124,6 +1134,33 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflowX:"hidden",
     backgroundAttachment: 'fixed',
     width: '260px',
+    minHeight: '40px',
+    wordBreak: 'break-all',
+    '&::-webkit-scrollbar' :  { 
+        width: "0px",
+          background:"transparent"
+       },
+          '&::-webkit-scrollbar-thumb': 
+           {
+           background: "transparent"
+           }
+  },
+  wrapChatSumm:
+  {
+    position: "absolute",
+    top: "130px",
+    left: "16%",
+    backgroundColor: "#fff",
+    color: "#fff",
+    display: 'flex',
+    justifyContent: 'flex-end',
+    borderRadius: "12px",
+    maxHeight:"200px",
+    fontSize:"18px",
+     overflowY:"auto",
+    overflowX:"hidden",
+    backgroundAttachment: 'fixed',
+    width: '250px',
     minHeight: '40px',
     wordBreak: 'break-all',
     '&::-webkit-scrollbar' :  { 

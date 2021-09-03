@@ -86,8 +86,8 @@ useEffect(() => {
                       borderBottom: "1px solid #efefef",
                     }}
                   />
-                  <span className={classes.phoneNumber}>050608001</span>
-                  <div className={classes.wrapChat}>
+                  <span className={classes.phoneNumberSumm}>050608001</span>
+                  <div className={classes.wrapChatSumm}>
                     <div className={classes.fromMe}>
                       {totalmsg === "" ? "Type text" : totalmsg}
                     </div>
@@ -116,7 +116,6 @@ useEffect(() => {
         {hideGroups ?  <>    {
                 
                 final.map((item,idx) => {
-                 console.log("fuckk",item)
                   return(<div
                    style={{
                      display: "flex",
