@@ -1106,32 +1106,65 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     position: "absolute",
     top: "180px",
-    left: "10%",
+    left: "16%",
     backgroundColor: "#fff",
     color: "#fff",
     display: 'flex',
     justifyContent: 'flex-end',
     borderRadius: "12px",
-
+    maxHeight:"230px",
+     overflowY:"auto",
+    overflowX:"hidden",
     backgroundAttachment: 'fixed',
     width: '260px',
-    maxHeight: '200px',
-    // overflowY:"auto",
     minHeight: '40px',
     wordBreak: 'break-all',
-
-
-
+    '&::-webkit-scrollbar' :  { 
+        width: "0px",
+          background:"transparent"
+       },
+          '&::-webkit-scrollbar-thumb': 
+           {
+           background: "transparent"
+           }
+  },
+  wrapChatHe:
+  {
+    position: "absolute",
+     top: "180px",
+   width: "285px",
+  width: "260px",
+   maxWidth:"260px",
+     right: "11%",
+     backgroundColor: "#fff",
+     color:"#fff",
+     display: 'flex',
+     justifyContent: 'flex-start',
+     borderRadius: "12px",
+     maxHeight: '230px',
+     overflowY:"auto",
+     overflowX:"hidden",
+     minHeight: '40px',
+    '&::-webkit-scrollbar' :  { 
+        width: "0px",
+          background:"transparent"
+       },
+          '&::-webkit-scrollbar-thumb': 
+           {
+           background: "transparent"
+           }
   },
   fromMe:
   {
     alignSelf: 'flex-end',
     borderRadius: '1.15rem',
     lineHeight: '1.25',
-    maxWidth: '75%',
+    maxWidth: '79%',
     padding: '0.5rem .875rem',
     position: 'relative',
     wordWrap: 'break-word',
+    right:"12px",
+    cursor:"pointer",
     backgroundColor: '#248bf5',
     color: '#fff',
     '&::before':

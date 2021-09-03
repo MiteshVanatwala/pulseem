@@ -752,7 +752,7 @@ const SmsCreator = ({ classes }, props) => {
               className={classes.phoneImg}
           />
           <span className={classes.phoneNumber}>050608001</span>
-          <div className={classes.wrapChat}>
+          <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
             <div className={classes.fromMe}>
               {msg === "" ? "Type text" : msg}
             </div>
