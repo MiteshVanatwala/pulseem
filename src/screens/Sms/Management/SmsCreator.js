@@ -851,7 +851,7 @@ const SmsCreator = ({ classes }, props) => {
                       }}
                       style={{ zIndex: "9999" }}
                     >
-                      <Alert severity="error" onClose={handleCloseSnackbar}>
+                      <Alert severity="error" onClose={handleCloseSnackbar} style={{border:"3px solid #FF2400",backgroundColor:"#ffe6e6",color:"black",width:"400px",padding:"10px",fontWeight:"600"}}>
                         Invalid Number!
                       </Alert>
                     </Snackbar>
@@ -882,7 +882,7 @@ const SmsCreator = ({ classes }, props) => {
                         setcontactGroup(true);
                       }}
                     >
-                      <div> Choose test groups from the list</div>
+                  <div> Choose test groups from the list</div>
                       {hidden ? (
                         <div className={classes.mappedGroup}>
                           {selectedGroup.map((item, index) => {
@@ -1159,12 +1159,15 @@ const SmsCreator = ({ classes }, props) => {
                 })
                 .map((item, idx) => {
                   return (
-                    <div className={classes.searchCon} onClick={makeArr(idx)}>
+                    <div className={classes.searchCon}   onClick={() => {
+                      handleSelect(idx);
+                    }}>
                       <span
                         style={{ marginInlineEnd: "25px" }}
                         className={
                           item.selected ? classes.greenDoc : classes.blueDoc
                         }
+                      
                       >
                         {item.selected ? (
                           <FaCheck className={clsx(classes.green)} />
@@ -1174,12 +1177,10 @@ const SmsCreator = ({ classes }, props) => {
                       </span>
                       <div
                         className={classes.selectGroupDiv}
-                        onClick={() => {
-                          handleSelect(idx);
-                        }}
+                        
                       >
                         <span>{item.GroupName}</span>
-                        <span>{item.Recipients}</span>
+                        <span>{item.Recipients} Recipients</span>
                       </div>
                     </div>
                   );
@@ -1273,18 +1274,18 @@ const SmsCreator = ({ classes }, props) => {
             showDefaultButtons={true}
             icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
           >
-            <div style={{ height: "60px", borderBottom: "1px solid #DEE2E7" }}>
-              <span className={classes.groupName}>Please Note!</span>
-            </div>
-            <div style={{ fontSize: "22px", marginTop: "5px" }}>
-              <span>
+            <Box className={classes.numberChnageModal}>
+              <Typography className={classes.groupName}>Please Note!</Typography>
+            </Box>
+            <Box >
+              <Typography  className={classes.modalText}>
                 You have changed the number assigned to you by the Pulseem
                 platform for this campaign. The recipients won’t be able to
                 unsubscribe from your SMS distribution list through a removal
                 message. You can add a removal link instead or revert to your
                 original number.
-              </span>
-            </div>
+              </Typography>
+            </Box>
           </Dialog>
         ) : null}
       </>

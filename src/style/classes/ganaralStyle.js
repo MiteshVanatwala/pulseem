@@ -835,6 +835,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderRight: "none",
     },
   },
+  selectGroupDiv : 
+  {
+    cursor:"pointer",
+    display:"flex",
+    justifyContent:"space-between",
+    width:"100%"
+  },
   selectVal: {
     outline: "none",
     padding: "10px",
@@ -2046,7 +2053,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: "15px"
+    marginTop: "15px",
+    color:"#fff",
+    backgroundColor: "#007bff",
+    borderRadius: "20px",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "5px",
+    marginInlineStart:"5px"
   },
   reciFilterDiv:
   {
@@ -2082,10 +2096,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     color: "#fff",
     cursor: "pointer",
-    display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
-    marginTop: "15px"
   },
   editorLink: {
     marginInlineEnd: "5px",
@@ -2130,13 +2141,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#fff",
     borderRadius: "5px",
     padding: "5px",
+    marginInlineStart:"3px",
     fontWeight: "600"
   },
   mappedGroup:
   {
     display: "flex",
     flexWrap: "wrap",
-    marginTop: "5px",
+    // marginTop: "5px",
   },
   bubbleGroups:
   {
@@ -2258,5 +2270,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     display: "grid",
     padding: "40px 80px 15px 90px"
+  },
+  numberChnageModal : 
+  {
+    height: "60px", 
+    borderBottom: "1px solid #DEE2E7"
   }
 });

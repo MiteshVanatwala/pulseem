@@ -1450,5 +1450,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       borderRight: '7.5px solid transparent',
       borderBottom: '7.5px solid transparent',
     }
+  },
+  modalText : 
+  {
+    fontSize: "22px", marginTop: "5px"
   }
 })
