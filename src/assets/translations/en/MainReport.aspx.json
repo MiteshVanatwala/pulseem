@@ -498,8 +498,14 @@
   "landingLink":"Landing Page Link",
   "selectCamp":"Select Campaign",
   "selectLanding":"Select Landing Page",
-  "invalidNo":"Invalid Number!"
-
+  "invalidNo":"Invalid Number!",
+  "campaignNamePlaceholder":"Campaign Name",
+  "smsTitle":"Create SMS Pulseem System",
+  "tooltipCreateGroup" : "Choose 2 or more groups and combine into one new one",
+  "newFeature":"New!",
+  "save":"Save",
+  "deleteCamp":"Delete Campaign",
+  "confirmSure":"Are you sure?"
   
 
 }

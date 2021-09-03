@@ -6,11 +6,24 @@ import Mobile from "../../../assets/images/mobileiphone.png";
 const SmsSummary = ({classes , selected  , bool , campaign  , number , totalmsg , stepBool, grand , final , summ , api}) => {
 
   const [modal, setmodal] = useState(false);
+  const [smsCreator, setsmsCreator] = useState(false);
+  const [hideGroups, sethideGroups] = useState(false);
+  const [recipientsDetails, setrecipientsDetails] = useState(false);
+  const [details, setdetails] = useState(false);
 useEffect(() => {
 
 setmodal(bool);
+
  
 }, [bool])
+useEffect(() => {
+
+ 
+  setsmsCreator(stepBool);
+  
+  
+   
+  }, [stepBool])
 
     return (
     <div>
@@ -55,8 +68,9 @@ setmodal(bool);
                       width: "50px",
                       cursor: "pointer",
                     }}
+                    onClick={() => {setdetails(!details)}}
                   >
-                    Details
+                   {details ? "Close" : "Details"} 
                   </span>
                 </div>
               </div>
@@ -72,8 +86,8 @@ setmodal(bool);
                       borderBottom: "1px solid #efefef",
                     }}
                   />
-                  <span className={classes.phoneNumber}>050608001</span>
-                  <div className={classes.wrapChat}>
+                  <span className={classes.phoneNumberSumm}>050608001</span>
+                  <div className={classes.wrapChatSumm}>
                     <div className={classes.fromMe}>
                       {totalmsg === "" ? "Type text" : totalmsg}
                     </div>
@@ -85,54 +99,57 @@ setmodal(bool);
             <div>
               <div>
                 {" "}
-                <ul>
+             {details ?  <ul>
                   <li
                     style={{
                       fontSize: "18px",
                       fontWeight: "700",
                       marginBottom: "2px",
+                      cursor:"pointer"
+
                     }}
+                    onClick = {() => {sethideGroups(!hideGroups)}}
                   >
                     Groups ({grand})
                   </li>
-                </ul>
-                {
+                </ul> : null}  
+        {hideGroups ?  <>    {
                 
-                   final.map((item,idx) => {
-          
-                     return(<div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        padding: "8px 8px 8px 55px",
-                        borderTop: "1px solid grey",
-                        fontSize: "16px",
-                      }}
-                    >
-                      <span> {item.GroupName}</span>
-                      <span>{item.Recipients}</span>
-                    </div>)
-                   })
-                }
+                final.map((item,idx) => {
+                  return(<div
+                   style={{
+                     display: "flex",
+                     alignItems: "center",
+                     justifyContent: "space-between",
+                     padding: "8px 8px 8px 55px",
+                     borderTop: "1px solid grey",
+                     fontSize: "16px",
+                   }}
+                 >
+                   <span> {item.GroupName}</span>
+                   <span>{item.Recipients}</span>
+                 </div>)
+                })
+             }   </>: null}   
                 
-                
+              
               </div>
             </div>
           </div>
           <div>
-            <ul>
+        {details ? <ul>
               <li
                 style={{
                   fontSize: "18px",
                   fontWeight: "700",
                   marginBottom: "2px",
                 }}
+                onClick = {() => {setrecipientsDetails(!recipientsDetails)}}
               >
                 Recipients Filter ({summ.FinalCount})
               </li>
-            </ul>
-            <div
+            </ul> : null}    
+            {recipientsDetails ? <div
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -211,13 +228,13 @@ setmodal(bool);
                  {summ.Invalid}
                 </span>
               </span>
-            </div>
+            </div> : null}
           </div>
         </Dialog>  : null }        
-        {stepBool ? <Dialog
+        {smsCreator ? <Dialog
           classes={classes}
-          open={stepBool}
-          // onClose={handleAlertoff}
+          open={smsCreator}
+          onClose={() => {setsmsCreator(false)}}
           // onConfirm={handleExitYes}
           confirmText="Send"
           cancelText="Cancel"
