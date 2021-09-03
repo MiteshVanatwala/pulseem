@@ -17,7 +17,7 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Emoj from "../../../assets/images/smile.png";
 import { withStyles } from "@material-ui/core/styles";
-import { FaCheck } from 'react-icons/fa';
+import { FaCheck } from "react-icons/fa";
 import { useHistory } from "react-router";
 import {
   getPreviousCampaignData,
@@ -41,7 +41,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
-import { Button, Grid , Box  , TextField } from "@material-ui/core";
+import { Button, Grid, Box, TextField } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlineDelete } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 
@@ -86,10 +86,10 @@ const useStyleNew = makeStyles((theme) => ({
 
 const SmsCreator = ({ classes }, props) => {
   const { t } = useTranslation();
-  document.title=t("mainReport.smsTitle")
+  document.title = t("mainReport.smsTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();
-  
+
   const history = useHistory();
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
@@ -152,7 +152,6 @@ const SmsCreator = ({ classes }, props) => {
   const [selectValue, setselectValue] = useState("");
   const [uniqueId, setuniqueId] = useState(null);
   const [finalApi, setfinalApi] = useState(false);
-
 
   const getData = async () => {
     await dispatch(getPreviousLandingData());
@@ -224,13 +223,11 @@ const SmsCreator = ({ classes }, props) => {
     getDataExtra();
     getAccount();
   }, [dispatch]);
-  useEffect(() => { }, [removalMessageButtonDisabled]);
+  useEffect(() => {}, [removalMessageButtonDisabled]);
 
+  useEffect(() => {}, [selectedGroup]);
   useEffect(() => {
-    
-  }, [selectedGroup]);
-  useEffect(() => {
-    document.title=t("mainReport.smsTitle")
+    document.title = t("mainReport.smsTitle");
   }, []);
 
   useEffect(() => {
@@ -238,7 +235,7 @@ const SmsCreator = ({ classes }, props) => {
     for (let i = 0; i < accountId.length; i++) {
       temp.push(accountId[i]);
     }
-    
+
     setselectedGroup(temp);
   }, [accountId]);
 
@@ -281,7 +278,9 @@ const SmsCreator = ({ classes }, props) => {
   const renderSwitch = () => {
     return (
       <Box className={classes.infoDiv}>
-        <Typography className={classes.headInfo}>{t("mainReport.smsCampaign")}</Typography>
+        <Typography className={classes.headInfo}>
+          {t("mainReport.smsCampaign")}
+        </Typography>
         <Tooltip
           disableFocusListener
           title="Create the content you want to send to your recipients and then choose how, when and to whom to send"
@@ -310,7 +309,7 @@ const SmsCreator = ({ classes }, props) => {
 
   const onCampaignNumber = (e) => {
     setstoredValue(campaignNumber);
-   
+
     if (!modalOpen) {
       setalertToggle(true);
     } else {
@@ -387,8 +386,11 @@ const SmsCreator = ({ classes }, props) => {
     return (
       <Grid container spacing={2} className={classes.fieldDiv}>
         <Grid item xs={4} className={classes.buttonForm}>
-          <Typography className={classes.buttonHead}>{t("mainReport.campName")}</Typography>
-          <TextField id="outlined-basic"
+          <Typography className={classes.buttonHead}>
+            {t("mainReport.campName")}
+          </Typography>
+          <TextField
+            id="outlined-basic"
             type="text"
             placeholder={t("mainReport.campaignNamePlaceholder")}
             className={
@@ -404,7 +406,7 @@ const SmsCreator = ({ classes }, props) => {
           </Typography>
         </Grid>
         <Grid item xs={4} className={classes.buttonForm}>
-          <Box  className={classes.inputCampDiv}>
+          <Box className={classes.inputCampDiv}>
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
             </Typography>
@@ -418,7 +420,8 @@ const SmsCreator = ({ classes }, props) => {
             </Typography>
           </Box>
 
-          <TextField id="outlined-basic"
+          <TextField
+            id="outlined-basic"
             type="text"
             placeholder="0508085670"
             className={clsx(classes.buttonField, classes.success)}
@@ -430,20 +433,20 @@ const SmsCreator = ({ classes }, props) => {
           </Typography>
         </Grid>
         <Grid item xs={4}>
-        {restoreBool ? (
-          <Box className={classes.buttonForm}>
-            <Typography className={clsx(classes.buttonHead)}>
-              
-              {t("mainReport.removalReply")}
-            </Typography>
-            <TextField id="outlined-basic"
-              type="text"
-              placeholder="2"
-              disabled
-              className={classes.buttonFieldRemoval}
-            />
-          </Box>
-        ) : null}
+          {restoreBool ? (
+            <Box className={classes.buttonForm}>
+              <Typography className={clsx(classes.buttonHead)}>
+                {t("mainReport.removalReply")}
+              </Typography>
+              <TextField
+                id="outlined-basic"
+                type="text"
+                placeholder="2"
+                disabled
+                className={classes.buttonFieldRemoval}
+              />
+            </Box>
+          ) : null}
         </Grid>
       </Grid>
     );
@@ -501,45 +504,48 @@ const SmsCreator = ({ classes }, props) => {
     setremovalMessageButtonDisabled(true);
   };
 
-  const handleSelectChange = (e) =>
-  {
+  const handleSelectChange = (e) => {
     setselectValue(e.target.value);
     let linkMsg = "";
     linkMsg = msg + e.target.value;
     setmsg(linkMsg);
     setcharacterCount(linkMsg.length);
-  }
+  };
 
   const renderMsg = () => {
     return (
       <Grid container className={classes.msgDiv}>
         <Grid container>
-         
           <Grid item xs={8} className={classes.boxDiv}>
-          <Typography className={classes.msgHead}>{t("mainReport.yourMessage")}</Typography>
+            <Typography className={classes.msgHead}>
+              {t("mainReport.yourMessage")}
+            </Typography>
             <textarea
               placeholder="Type text"
               maxlength="1000"
               outlined=""
               id="yourMessage"
-              className={
-              clsx(classes.msgArea)
-              }
-              style={{textAlign: alignment == "left" ? "left" : "right"}}
+              className={clsx(classes.msgArea)}
+              style={{ textAlign: alignment == "left" ? "left" : "right" }}
               onChange={onMsgChange}
               value={msg}
             ></textarea>
-            
-       
+
             <Box className={classes.smallInfoDiv}>
-              <Typography style={{ marginInlineEnd: "18px" }}>{linkCount} Link</Typography>
+              <Typography style={{ marginInlineEnd: "18px" }}>
+                {linkCount} Link
+              </Typography>
               <Typography style={{ marginInlineEnd: "18px" }}>
                 {messageCount} Message
               </Typography>
               <Typography>{characterCount}/1000 Char</Typography>
             </Box>
-            <Grid container  className={classes.funcDiv}>
-              <Grid item xs={2.5}  className={isRTL ? classes.emojiHe : classes.emoji}>
+            <Grid container className={classes.funcDiv}>
+              <Grid
+                item
+                xs={2.5}
+                className={isRTL ? classes.emojiHe : classes.emoji}
+              >
                 {isRTL ? (
                   <ToggleButtonGroup
                     value={alignment}
@@ -614,63 +620,60 @@ const SmsCreator = ({ classes }, props) => {
                   </Tooltip>
                 </Box>
               </Grid>
-              <Grid item xs={5.5}  className={classes.baseButtons}>
+              <Grid item xs={5.5} className={classes.baseButtons}>
                 <Typography
                   className={classes.infoButtons}
                   onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                 >
-                  <Typography  className={classes.editorLink}>+</Typography>Removal
-                  Message
+                  <Typography className={classes.editorLink}>+</Typography>
+                  Removal Message
                 </Typography>
                 <Typography
-
                   className={classes.info2Buttons}
                   onClick={removalLinkDisabled ? null : onRemovalLink}
                 >
-                  <Typography  className={classes.editorLink}>+</Typography>Removal Link
+                  <Typography className={classes.editorLink}>+</Typography>
+                  Removal Link
                 </Typography>
               </Grid>
-              <Grid item xs={2.5}className={classes.endButtons}>
+              <Grid item xs={2.5} className={classes.endButtons}>
                 <Box className={classes.selectMsg}>
-                  <select className={classes.selectVal} value={selectValue} onChange={handleSelectChange}>
-                  {
-                   Object.keys(extraData).map((item, i) => {
-
-                return(<option value={extraData[item]}>{item}</option>
-  
-            )
-
-          })
-      }
-                   
+                  <select
+                    className={classes.selectVal}
+                    value={selectValue}
+                    onChange={handleSelectChange}
+                  >
+                    {Object.keys(extraData).map((item, i) => {
+                      return <option value={extraData[item]}>{item}</option>;
+                    })}
                   </select>
                 </Box>
-                </Grid>
-                <Grid item xs={1.5}  className={classes.addDiv}>
-                  <Typography
-                    className={classes.addButtons}
-                    onClick={() => {
-                      seteditmenuClick(!editmenuClick);
-                    }}
-                  >
-                    <Typography className={classes.addBtn}
-                    >
-                     <Typography className={classes.plusIcn}>+</Typography> 
-                    </Typography>
-                    ADD
+              </Grid>
+              <Grid item xs={1.5} className={classes.addDiv}>
+                <Typography
+                  className={classes.addButtons}
+                  onClick={() => {
+                    seteditmenuClick(!editmenuClick);
+                  }}
+                >
+                  <Typography className={classes.addBtn}>
+                    <Typography className={classes.plusIcn}>+</Typography>
                   </Typography>
-                  {editmenuClick ? (
-                    <Box className={classes.dropDiv}>
+                  ADD
+                </Typography>
+                {editmenuClick ? (
+                  <Box className={classes.dropDiv}>
+                    <Typography
+                      className={classes.dropCon}
+                      onClick={() => {
+                        setdialogClickLanding(true);
+                        seteditmenuClick(false);
+                      }}
+                    >
+                      Landing Page Link
+                    </Typography>
+                    {previousCampaignData.length == 0 ? null : (
                       <Typography
-                        className={classes.dropCon}
-                        onClick={() => {
-                          setdialogClickLanding(true);
-                          seteditmenuClick(false);
-                        }}
-                      >
-                        Landing Page Link
-                      </Typography>
-                   {previousCampaignData.length == 0 ? null : <Typography
                         className={classes.dropCon}
                         onClick={() => {
                           setdialogClickCampaign(true);
@@ -678,56 +681,63 @@ const SmsCreator = ({ classes }, props) => {
                         }}
                       >
                         Campaign Link
-                      </Typography>}   
-                      <Typography
-                        className={classes.dropCon}
-                        onClick={() => {
-                          setwaize(true);
-                          seteditmenuClick(false);
-                        }}
-                      >
-                        Waze Navigation
                       </Typography>
-                    </Box>
-                  ) : null}
-                </Grid>
+                    )}
+                    <Typography
+                      className={classes.dropCon}
+                      onClick={() => {
+                        setwaize(true);
+                        seteditmenuClick(false);
+                      }}
+                    >
+                      Waze Navigation
+                    </Typography>
+                  </Box>
+                ) : null}
               </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={4}>
+            <Box className={classes.switchDiv}>
+              <FormGroup>
+                <Switch
+                  className={
+                    isRTL
+                      ? clsx(classes.reactSwitchHe, "react-switch")
+                      : clsx(classes.reactSwitch, "react-switch")
+                  }
+                  checked={keep}
+                  onChange={toggleKeep}
+                  onColor="#28a745"
+                  checkedIcon={false}
+                  uncheckedIcon={false}
+                  handleDiameter={30}
+                  height={20}
+                  width={48}
+                  boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+                  activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+                  id="material-switch"
+                />
+              </FormGroup>
+              <Box className={classes.radio}>
+                <Typography style={{ fontSize: "18px" }}>
+                  {t("mainReport.keepTrack")}
+                </Typography>
+                <Typography
+                  style={{
+                    width: "200px",
+                    fontSize: "15px",
+                    marginTop: "5px",
+                    color: "#C2C2C2",
+                    fontWeight: "600",
+                  }}
+                >
+                  {t("mainReport.keepDesc")}
+                </Typography>
+              </Box>
+            </Box>
+          </Grid>
         </Grid>
-        <Grid item xs={4}>
-       
-       <Box className={classes.switchDiv}>
-       <FormGroup>
-         <Switch
-           className={isRTL ? classes.reactSwitchHe : classes.reactSwitch}
-           checked={keep}
-           onChange={toggleKeep}
-           onColor="#28a745"
-           checkedIcon={false}
-           uncheckedIcon={false}
-         />
-       </FormGroup>
-       <Box className={classes.radio}>
-         <Typography style={{ fontSize: "18px" }}>
-           {t("mainReport.keepTrack")}
-         </Typography>
-         <Typography
-           style={{
-             width: "200px",
-             fontSize: "15px",
-             marginTop: "5px",
-             color: "#C2C2C2",
-             fontWeight:"600"
-           }}
-         >
-           {t("mainReport.keepDesc")}
-         </Typography>
-       </Box>
-     </Box>
-   
-           </Grid>
-        </Grid>
-    
-        
       </Grid>
     );
   };
@@ -747,10 +757,7 @@ const SmsCreator = ({ classes }, props) => {
     return (
       <Box>
         <Box className={classes.phoneDiv}>
-          <img
-            src={Mobile}
-              className={classes.phoneImg}
-          />
+          <img src={Mobile} className={classes.phoneImg} />
           <span className={classes.phoneNumber}>050608001</span>
           <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
             <div className={classes.fromMe}>
@@ -770,19 +777,23 @@ const SmsCreator = ({ classes }, props) => {
               checked={checked}
               onChange={toggleChecked}
               name="checkedB"
+              handleDiameter={30}
               onColor="#28a745"
               checkedIcon={false}
               uncheckedIcon={false}
+              height={20}
+              width={48}
+              boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+              activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+              className="react-switch"
+              id="material-switch"
               className={isRTL ? classes.reactSwitchHe : classes.reactSwitch}
             />
           </FormGroup>
           <div
             style={{ display: "flex", flexDirection: "column", width: "250px" }}
           >
-            <span style={{ fontSize: "18px" }}>
-              
-              {t("mainReport.testSend")}
-            </span>
+            <span style={{ fontSize: "18px" }}>{t("mainReport.testSend")}</span>
             <span
               style={{
                 width: "200px",
@@ -806,7 +817,6 @@ const SmsCreator = ({ classes }, props) => {
             >
               <div className={{ display: "flex", flexDirection: "column" }}>
                 <div>
-                  
                   <FormControlLabel
                     value="top"
                     control={
@@ -849,7 +859,6 @@ const SmsCreator = ({ classes }, props) => {
                 ) : null}
 
                 <div>
-                 
                   <FormControlLabel
                     value="bottom"
                     control={
@@ -879,16 +888,16 @@ const SmsCreator = ({ classes }, props) => {
                           {selectedGroup.map((item, index) => {
                             if (item.selected && hidden) {
                               return (
-                                <div className={classes.selectedGroupsDiv}
-                                >
-                                 <span className={classes.nameGroup}>{item.GroupName}</span> 
-                                  <RiCloseFill className={classes.groupCloseicn}
+                                <div className={classes.selectedGroupsDiv}>
+                                  <span className={classes.nameGroup}>
+                                    {item.GroupName}
+                                  </span>
+                                  <RiCloseFill
+                                    className={classes.groupCloseicn}
                                     onClick={() => {
                                       handleCross(index);
                                     }}
                                   />
-                                   
-                                 
                                 </div>
                               );
                             }
@@ -973,7 +982,7 @@ const SmsCreator = ({ classes }, props) => {
         UpdateDate: 1628755539174,
       };
       let r = await dispatch(smsSave(payload));
-    
+
       sessionStorage.setItem(
         "data",
         JSON.stringify({
@@ -1081,7 +1090,7 @@ const SmsCreator = ({ classes }, props) => {
     let r = await dispatch(smsSave(payload));
     let temp = [];
     let tempfull = [];
-    let num = 0
+    let num = 0;
     for (let i = 0; i < selectedGroup.length; i++) {
       if (selectedGroup[i].selected) {
         temp.push(selectedGroup[i].GroupID);
@@ -1136,40 +1145,45 @@ const SmsCreator = ({ classes }, props) => {
               </Paper>
             </div>
             <div className={classes.listDiv}>
-              {
-                selectedGroup
-                  .filter((val) => {
-                    if (ContactSearch == "") {
-                      return val;
-                    } else if (
-                      val.GroupName.toLowerCase().includes(
-                        ContactSearch.toLowerCase()
-                      )
-                    ) {
-                      return val;
-                    }
-                  })
-                  .map((item, idx) => {
-
-                    return (
-                      <div className={classes.searchCon} onClick={makeArr(idx)}>
-                        <span
-                          style={{ marginInlineEnd: "25px" }}
-                          className={item.selected ? classes.greenDoc : classes.blueDoc}
-                        >
-                          {item.selected ? (<FaCheck className={clsx(classes.green)} />) : <HiOutlineUserGroup />}
-                        </span>
-                        <div className={classes.selectGroupDiv}
-                          onClick={() => {
-                            handleSelect(idx);
-                          }}
-                        >
-                          <span>{item.GroupName}</span>
-                          <span>{item.Recipients}</span>
-                        </div>
+              {selectedGroup
+                .filter((val) => {
+                  if (ContactSearch == "") {
+                    return val;
+                  } else if (
+                    val.GroupName.toLowerCase().includes(
+                      ContactSearch.toLowerCase()
+                    )
+                  ) {
+                    return val;
+                  }
+                })
+                .map((item, idx) => {
+                  return (
+                    <div className={classes.searchCon} onClick={makeArr(idx)}>
+                      <span
+                        style={{ marginInlineEnd: "25px" }}
+                        className={
+                          item.selected ? classes.greenDoc : classes.blueDoc
+                        }
+                      >
+                        {item.selected ? (
+                          <FaCheck className={clsx(classes.green)} />
+                        ) : (
+                          <HiOutlineUserGroup />
+                        )}
+                      </span>
+                      <div
+                        className={classes.selectGroupDiv}
+                        onClick={() => {
+                          handleSelect(idx);
+                        }}
+                      >
+                        <span>{item.GroupName}</span>
+                        <span>{item.Recipients}</span>
                       </div>
-                    );
-                  })}
+                    </div>
+                  );
+                })}
             </div>
             <div
               style={{
@@ -1247,7 +1261,6 @@ const SmsCreator = ({ classes }, props) => {
   const renderAlert = () => {
     return (
       <>
-        
         {alertToggle ? (
           <Dialog
             classes={classes}
@@ -1311,15 +1324,16 @@ const SmsCreator = ({ classes }, props) => {
   return (
     <DefaultScreen currentPage="reports" classes={classes}>
       <Grid container spacing={3} className={classes.smsInit}>
-      <Grid item xs={8}>
+        <Grid item xs={8}>
           {renderSwitch()}
           {renderHead()}
           {renderFields()}
           {renderMsg()}
+        </Grid>
 
-      </Grid>
-     
-        <Grid item xs={4}>{renderPhone()}</Grid>
+        <Grid item xs={4}>
+          {renderPhone()}
+        </Grid>
       </Grid>
       {dialogClick ? (
         <Dialog
@@ -1595,8 +1609,11 @@ const SmsCreator = ({ classes }, props) => {
           </span>
         </div>
         <div>
-          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.listValues}>
-            <li  className={classes.campNameLi}>
+          <ul
+            style={{ fontSize: "20px", color: "red", fontWeight: "600" }}
+            className={classes.listValues}
+          >
+            <li className={classes.campNameLi}>
               Campaign Name - Required field
             </li>
             <li>Text for sending - Required field</li>
