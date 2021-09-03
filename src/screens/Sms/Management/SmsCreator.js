@@ -543,7 +543,7 @@ const SmsCreator = ({ classes }, props) => {
             <Grid container className={classes.funcDiv}>
               <Grid
                 item
-                xs={2.5}
+                xs={3}
                 className={isRTL ? classes.emojiHe : classes.emoji}
               >
                 {isRTL ? (
@@ -620,7 +620,7 @@ const SmsCreator = ({ classes }, props) => {
                   </Tooltip>
                 </Box>
               </Grid>
-              <Grid item xs={5.5} className={classes.baseButtons}>
+              <Grid item xs={6} className={classes.baseButtons}>
                 <Typography
                   className={classes.infoButtons}
                   onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
@@ -636,7 +636,7 @@ const SmsCreator = ({ classes }, props) => {
                   Removal Link
                 </Typography>
               </Grid>
-              <Grid item xs={2.5} className={classes.endButtons}>
+              <Grid item xs={1} className={classes.endButtons}>
                 <Box className={classes.selectMsg}>
                   <select
                     className={classes.selectVal}
@@ -649,7 +649,7 @@ const SmsCreator = ({ classes }, props) => {
                   </select>
                 </Box>
               </Grid>
-              <Grid item xs={1.5} className={classes.addDiv}>
+              {/* <Grid item xs={2} className={classes.addDiv}>
                 <Typography
                   className={classes.addButtons}
                   onClick={() => {
@@ -694,7 +694,7 @@ const SmsCreator = ({ classes }, props) => {
                     </Typography>
                   </Box>
                 ) : null}
-              </Grid>
+              </Grid> */}
             </Grid>
           </Grid>
           <Grid item xs={4}>
@@ -1651,7 +1651,7 @@ const SmsCreator = ({ classes }, props) => {
         }}
         style={{ zIndex: "9999" }}
       >
-        <Alert severity="success" onClose={handleCloseSnackbarApi}>
+        <Alert severity="success" onClose={handleCloseSnackbarApi} style={{border:"3px solid green",backgroundColor:"#c5f1c5",color:"black",width:"400px",padding:"10px",fontWeight:"700",fontSize:"15px"}}>
           Quick sent Succefully
         </Alert>
       </Snackbar>

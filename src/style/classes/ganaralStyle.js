@@ -1267,6 +1267,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: "300px",
     maxHeight: "200px",
     width: "700px",
+    overflowX:"hidden",
     marginTop: "20px",
     overflow: "auto"
   },
