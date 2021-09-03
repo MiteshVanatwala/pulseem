@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Tooltip } from "@material-ui/core";
+import { Tooltip, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
@@ -41,7 +41,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
-import { Button, Grid } from "@material-ui/core";
+import { Button, Grid , Box  , TextField } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlineDelete } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 
@@ -280,26 +280,26 @@ const SmsCreator = ({ classes }, props) => {
 
   const renderSwitch = () => {
     return (
-      <div className={classes.infoDiv}>
-        <span className={classes.headInfo}>{t("mainReport.smsCampaign")}</span>
+      <Box className={classes.infoDiv}>
+        <Typography className={classes.headInfo}>{t("mainReport.smsCampaign")}</Typography>
         <Tooltip
           disableFocusListener
           title="Create the content you want to send to your recipients and then choose how, when and to whom to send"
           classes={{ tooltip: styles.customWidth }}
         >
-          <span className={classes.bodyInfo}>i</span>
+          <Typography className={classes.bodyInfo}>i</Typography>
         </Tooltip>
-      </div>
+      </Box>
     );
   };
   const renderHead = () => {
     return (
-      <div className={classes.headDiv}>
-        <span className={classes.headNo}>1</span>
-        <span className={classes.contentHead}>
+      <Box className={classes.headDiv}>
+        <Typography className={classes.headNo}>1</Typography>
+        <Typography className={classes.contentHead}>
           {t("mainReport.createContent")}
-        </span>
-      </div>
+        </Typography>
+      </Box>
     );
   };
 
@@ -385,10 +385,10 @@ const SmsCreator = ({ classes }, props) => {
 
   const renderFields = () => {
     return (
-      <div className={classes.fieldDiv}>
-        <div className={classes.buttonForm}>
-          <span className={classes.buttonHead}>{t("mainReport.campName")}</span>
-          <input
+      <Grid container spacing={2} className={classes.fieldDiv}>
+        <Grid item xs={4} className={classes.buttonForm}>
+          <Typography className={classes.buttonHead}>{t("mainReport.campName")}</Typography>
+          <TextField id="outlined-basic"
             type="text"
             placeholder={t("mainReport.campaignNamePlaceholder")}
             className={
@@ -399,51 +399,53 @@ const SmsCreator = ({ classes }, props) => {
             onChange={onCamppaignChange}
             value={campaignName}
           />
-          <span className={classes.buttonContent}>
+          <Typography className={classes.buttonContent}>
             {t("mainReport.campDesc")}
-          </span>
-        </div>
-        <div className={classes.buttonForm}>
-          <div  className={classes.inputCampDiv}>
-            <span className={classes.buttonHead}>
+          </Typography>
+        </Grid>
+        <Grid item xs={4} className={classes.buttonForm}>
+          <Box  className={classes.inputCampDiv}>
+            <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
-            </span>
-            <span
+            </Typography>
+            <Typography
               className={classes.restoreBtn}
               onClick={() => {
                 setrestoreBool(!restoreBool);
               }}
             >
               {t("mainReport.restore")}
-            </span>
-          </div>
+            </Typography>
+          </Box>
 
-          <input
+          <TextField id="outlined-basic"
             type="text"
             placeholder="0508085670"
             className={clsx(classes.buttonField, classes.success)}
             onChange={onCampaignNumber}
             value={campaignNumber}
           />
-          <span className={clsx(classes.buttonContent, classes.alertMsg)}>
+          <Typography className={clsx(classes.buttonContent, classes.alertMsg)}>
             {t("mainReport.campRemovalDesc")}
-          </span>
-        </div>
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
         {restoreBool ? (
-          <div className={classes.buttonForm}>
-            <span className={clsx(classes.buttonHead)}>
+          <Box className={classes.buttonForm}>
+            <Typography className={clsx(classes.buttonHead)}>
               
               {t("mainReport.removalReply")}
-            </span>
-            <input
+            </Typography>
+            <TextField id="outlined-basic"
               type="text"
               placeholder="2"
               disabled
               className={classes.buttonFieldRemoval}
             />
-          </div>
+          </Box>
         ) : null}
-      </div>
+        </Grid>
+      </Grid>
     );
   };
   const onMsgChange = async (e) => {
@@ -510,32 +512,34 @@ const SmsCreator = ({ classes }, props) => {
 
   const renderMsg = () => {
     return (
-      <div className={classes.msgDiv}>
-        <div>
-          <span className={classes.msgHead}>{t("mainReport.yourMessage")}</span>
-          <div className={classes.boxDiv}>
+      <Grid container className={classes.msgDiv}>
+        <Grid container>
+         
+          <Grid item xs={8} className={classes.boxDiv}>
+          <Typography className={classes.msgHead}>{t("mainReport.yourMessage")}</Typography>
             <textarea
               placeholder="Type text"
               maxlength="1000"
               outlined=""
               id="yourMessage"
               className={
-                alignment === "left"
-                  ? clsx(classes.msgArea)
-                  : clsx(classes.msgArea1)
+              clsx(classes.msgArea)
               }
+              style={{textAlign: alignment == "left" ? "left" : "right"}}
               onChange={onMsgChange}
               value={msg}
             ></textarea>
-            <div className={classes.smallInfoDiv}>
-              <span style={{ marginInlineEnd: "18px" }}>{linkCount} Link</span>
-              <span style={{ marginInlineEnd: "18px" }}>
+            
+       
+            <Box className={classes.smallInfoDiv}>
+              <Typography style={{ marginInlineEnd: "18px" }}>{linkCount} Link</Typography>
+              <Typography style={{ marginInlineEnd: "18px" }}>
                 {messageCount} Message
-              </span>
-              <span>{characterCount}/1000 Char</span>
-            </div>
-            <div className={classes.funcDiv}>
-              <div className={isRTL ? classes.emojiHe : classes.emoji}>
+              </Typography>
+              <Typography>{characterCount}/1000 Char</Typography>
+            </Box>
+            <Grid container  className={classes.funcDiv}>
+              <Grid item xs={2.5}  className={isRTL ? classes.emojiHe : classes.emoji}>
                 {isRTL ? (
                   <ToggleButtonGroup
                     value={alignment}
@@ -580,7 +584,7 @@ const SmsCreator = ({ classes }, props) => {
                     </ToggleButton>
                   </ToggleButtonGroup>
                 )}
-                <div className={classes.pickerEmoji}>
+                <Box className={classes.pickerEmoji}>
                   {flagemoji ? (
                     <Picker
                       onEmojiClick={onEmojiClick}
@@ -608,25 +612,26 @@ const SmsCreator = ({ classes }, props) => {
                       }}
                     />
                   </Tooltip>
-                </div>
-              </div>
-              <div className={classes.baseButtons}>
-                <span
+                </Box>
+              </Grid>
+              <Grid item xs={5.5}  className={classes.baseButtons}>
+                <Typography
                   className={classes.infoButtons}
                   onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                 >
-                  <span  className={classes.editorLink}>+</span>Removal
+                  <Typography  className={classes.editorLink}>+</Typography>Removal
                   Message
-                </span>
-                <span
+                </Typography>
+                <Typography
+
                   className={classes.info2Buttons}
                   onClick={removalLinkDisabled ? null : onRemovalLink}
                 >
-                  <span  className={classes.editorLink}>+</span>Removal Link
-                </span>
-              </div>
-              <div className={classes.endButtons}>
-                <div className={classes.selectMsg}>
+                  <Typography  className={classes.editorLink}>+</Typography>Removal Link
+                </Typography>
+              </Grid>
+              <Grid item xs={2.5}className={classes.endButtons}>
+                <Box className={classes.selectMsg}>
                   <select className={classes.selectVal} value={selectValue} onChange={handleSelectChange}>
                   {
                    Object.keys(extraData).map((item, i) => {
@@ -639,23 +644,24 @@ const SmsCreator = ({ classes }, props) => {
       }
                    
                   </select>
-                </div>
-                <div className={classes.addDiv}>
-                  <span
+                </Box>
+                </Grid>
+                <Grid item xs={1.5}  className={classes.addDiv}>
+                  <Typography
                     className={classes.addButtons}
                     onClick={() => {
                       seteditmenuClick(!editmenuClick);
                     }}
                   >
-                    <span className={classes.addBtn}
+                    <Typography className={classes.addBtn}
                     >
-                     <span className={classes.plusIcn}>+</span> 
-                    </span>
+                     <Typography className={classes.plusIcn}>+</Typography> 
+                    </Typography>
                     ADD
-                  </span>
+                  </Typography>
                   {editmenuClick ? (
-                    <div className={classes.dropDiv}>
-                      <span
+                    <Box className={classes.dropDiv}>
+                      <Typography
                         className={classes.dropCon}
                         onClick={() => {
                           setdialogClickLanding(true);
@@ -663,8 +669,8 @@ const SmsCreator = ({ classes }, props) => {
                         }}
                       >
                         Landing Page Link
-                      </span>
-                   {previousCampaignData.length == 0 ? null : <span
+                      </Typography>
+                   {previousCampaignData.length == 0 ? null : <Typography
                         className={classes.dropCon}
                         onClick={() => {
                           setdialogClickCampaign(true);
@@ -672,8 +678,8 @@ const SmsCreator = ({ classes }, props) => {
                         }}
                       >
                         Campaign Link
-                      </span>}   
-                      <span
+                      </Typography>}   
+                      <Typography
                         className={classes.dropCon}
                         onClick={() => {
                           setwaize(true);
@@ -681,42 +687,48 @@ const SmsCreator = ({ classes }, props) => {
                         }}
                       >
                         Waze Navigation
-                      </span>
-                    </div>
+                      </Typography>
+                    </Box>
                   ) : null}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className={classes.switchDiv}>
-          <FormGroup>
-            <Switch
-              className={isRTL ? classes.reactSwitchHe : classes.reactSwitch}
-              checked={keep}
-              onChange={toggleKeep}
-              onColor="#28a745"
-              checkedIcon={false}
-              uncheckedIcon={false}
-            />
-          </FormGroup>
-          <div className={classes.radio}>
-            <span style={{ fontSize: "18px" }}>
-              {t("mainReport.keepTrack")}
-            </span>
-            <span
-              style={{
-                width: "200px",
-                fontSize: "13px",
-                marginTop: "5px",
-                color: "#B5B5B5",
-              }}
-            >
-              {t("mainReport.keepDesc")}
-            </span>
-          </div>
-        </div>
-      </div>
+                </Grid>
+              </Grid>
+        </Grid>
+        <Grid item xs={4}>
+       
+       <Box className={classes.switchDiv}>
+       <FormGroup>
+         <Switch
+           className={isRTL ? classes.reactSwitchHe : classes.reactSwitch}
+           checked={keep}
+           onChange={toggleKeep}
+           onColor="#28a745"
+           checkedIcon={false}
+           uncheckedIcon={false}
+         />
+       </FormGroup>
+       <Box className={classes.radio}>
+         <Typography style={{ fontSize: "18px" }}>
+           {t("mainReport.keepTrack")}
+         </Typography>
+         <Typography
+           style={{
+             width: "200px",
+             fontSize: "15px",
+             marginTop: "5px",
+             color: "#C2C2C2",
+             fontWeight:"600"
+           }}
+         >
+           {t("mainReport.keepDesc")}
+         </Typography>
+       </Box>
+     </Box>
+   
+           </Grid>
+        </Grid>
+    
+        
+      </Grid>
     );
   };
 
@@ -733,14 +745,11 @@ const SmsCreator = ({ classes }, props) => {
 
   const renderPhone = () => {
     return (
-      <div>
-        <div style={{ position: "relative" }} className={classes.phoneDiv}>
-          
+      <Box>
+        <Box className={classes.phoneDiv}>
           <img
             src={Mobile}
-            
               className={classes.phoneImg}
-           
           />
           <span className={classes.phoneNumber}>050608001</span>
           <div className={classes.wrapChat}>
@@ -748,7 +757,7 @@ const SmsCreator = ({ classes }, props) => {
               {msg === "" ? "Type text" : msg}
             </div>
           </div>
-        </div>
+        </Box>
         <div
           style={{
             marginInlineStart: "35px",
@@ -922,7 +931,7 @@ const SmsCreator = ({ classes }, props) => {
             Continue
           </span>
         </div>
-      </div>
+      </Box>
     );
   };
 
@@ -1301,15 +1310,17 @@ const SmsCreator = ({ classes }, props) => {
   };
   return (
     <DefaultScreen currentPage="reports" classes={classes}>
-      <div className={classes.smsInit}>
-        <div>
+      <Grid container spacing={3} className={classes.smsInit}>
+      <Grid item xs={8}>
           {renderSwitch()}
           {renderHead()}
           {renderFields()}
           {renderMsg()}
-        </div>
-        <div>{renderPhone()}</div>
-      </div>
+
+      </Grid>
+     
+        <Grid item xs={4}>{renderPhone()}</Grid>
+      </Grid>
       {dialogClick ? (
         <Dialog
           classes={classes}

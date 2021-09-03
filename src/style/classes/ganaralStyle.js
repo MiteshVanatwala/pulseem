@@ -663,16 +663,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   fieldDiv: {
-    width: "100%",
-    display: "grid",
-    gridTemplateColumns: "31% 31% 20%",
-    gridGap: "20px",
     height: "100px",
     marginTop: "20px",
-    "@media screen and (max-width: 768px)": {
-      width: "100%",
-      gridTemplateColumns: "auto",
-    },
+    // "@media screen and (max-width: 768px)": {
+    //   width: "100%",
+    //   gridTemplateColumns: "auto",
+    // },
   },
   buttonForm: {
     display: "flex",
@@ -681,9 +677,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   buttonHead: {
     fontSize: "20px",
     marginBottom: "10px",
+   
   },
   buttonContent: {
-    fontSize: "12px",
+    fontSize: "14px",
     marginTop: "8px",
   },
   alertMsg: {
@@ -693,7 +690,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "5px",
     border: "1px solid #bbb",
     outline: "none",
-    padding: "12px 12px 12px 4px",
+    padding: "8px 12px 8px 4px",
     fontSize: "16px",
     '&::placeholder':
     {
@@ -704,8 +701,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "5px",
     border: "1px solid #bbb",
     outline: "none",
-    padding: "12px",
+    padding: "8px",
     width: "20%",
+    '&::placeholder':
+    {
+      fontSize: "16px"
+    }
   },
   success: {
     borderBottom: "2px solid green",
@@ -719,10 +720,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   msgArea: {
     resize: "none",
     height: "240px",
+    boxSizing:"border-box",
     fontSize: "16px",
     fontFamily: "Sans-serif",
     overflow: "hidden",
-    textAlign: "left",
     marginTop: "20px",
     width: "100%",
     border: "none",
@@ -731,29 +732,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderInlineEnd: "1px solid rgb(170, 170, 170)",
     outline: "none",
     padding: "10px",
-    "&::placeholder": {
-      color: "rgb(170, 170, 170)",
-      fontSize: "16px",
-    },
-    "@media screen and (max-width: 768px)": {
-      width: "92%",
-    },
-  },
-  msgArea1: {
-    resize: "none",
-    height: "240px",
-    overflow: "hidden",
-    textAlign: "right",
-    marginTop: "20px",
-    width: "100%",
-    border: "none",
-    borderTop: "1px solid rgb(170, 170, 170)",
-    borderInlineStart: "1px solid rgb(170, 170, 170)",
-    borderInlineEnd: "1px solid rgb(170, 170, 170)",
-    outline: "none",
-    padding: "10px",
-    fontSize: "16px",
-    fontFamily: "Sans-serif",
     "&::placeholder": {
       color: "rgb(170, 170, 170)",
       fontSize: "16px",
@@ -765,6 +743,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   smallInfoDiv: {
     display: "flex",
     width: "100%",
+    boxSizing:"border-box",
     position: "relative",
     top: "-4px",
     justifyContent: "flex-end",
@@ -782,7 +761,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   funcDiv: {
     width: "100%",
-    height: "40px",
+    height: "70px",
+    boxSizing:"border-box",
     position: "relative",
     top: "-4px",
     padding: "10px",
@@ -809,9 +789,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: "20px",
-    width: "106px",
+    width: "125px",
     color: "white",
-    fontSize: "11px",
+    fontSize: "14px",
     backgroundColor: "red",
     padding: "10px",
     backgroundColor: "#1c82b2",
@@ -831,7 +811,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     justifyContent: "center",
     width: "111px",
-    fontSize: "11px",
+    fontSize: "14px",
     color: "white",
     backgroundColor: "red",
     padding: "10px",
@@ -849,6 +829,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   selectMsg: {
     marginInlineStart: "5px",
+    height:"40px",
     borderInlineEnd: "1px solid black",
     "@media screen and (max-width: 768px)": {
       borderRight: "none",
@@ -856,8 +837,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   selectVal: {
     outline: "none",
-    padding: "5px",
-    width: "65px",
+    padding: "10px",
+    width: "125px",
     borderRadius: "5px",
     borderColor: "#1c82b2",
     marginInlineEnd: "4px",
@@ -873,7 +854,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     position: "relative",
     cursor: "pointer",
 
-    width: "62px",
+    width: "80px",
   },
   addButtons: {
     padding: "10px",
@@ -928,7 +909,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     marginTop: "20px",
     marginBottom: "50px",
-    position: "fixed",
+    position: "sticky",
     bottom: "10px",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
@@ -1045,9 +1026,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   phoneNumber: {
     position: "absolute",
-    left: "28%",
-    top: "31%",
+    display:"flex",
+    alignItems:"center",
+    justifyContent:"center",
     fontWeight: "700",
+    top:"142px",
+    marginInlineStart:"145px",
+    fontSize:"15px"
   },
   chat: {
 
@@ -1443,18 +1428,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer"
   },
   smsInit: {
-    display: "grid",
-    gridTemplateColumns: "67% auto",
     padding: "40px 80px 15px 90px",
-
-    "@media screen and (max-width: 768px)": {
-      gridTemplateColumns: "100%",
-      padding: "0"
-    },
   },
   msgDiv: {
-    display: "flex",
-    marginTop: "50px",
+    
+    marginTop: "80px",
     height: "400px",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
@@ -1462,7 +1440,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   boxDiv: {
-    width: "560px",
+    width: "100%",
     "@media screen and (max-width: 768px)": {
       width: "100%",
     },
@@ -1470,6 +1448,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   emoji: {
     display: "flex",
     alignItems: "center",
+    justifyContent:"center",
     borderRight: "1px solid black",
     paddingInlineEnd: "0",
     "@media screen and (max-width: 768px)": {
@@ -1509,13 +1488,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   radio: {
     display: "flex",
     flexDirection: "column",
-    width: "220px",
     "@media screen and (max-width: 768px)": {
       width: "100%",
     },
   },
   switchDiv: {
-    marginInlineStart: "35px",
     display: "flex",
 
     "@media screen and (max-width: 768px)": {
@@ -1526,13 +1503,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   phoneDiv: {
     position: "relative",
-    marginInlineStart: "5px",
-    "@media screen and (max-width: 768px)": {
-      marginTop: "100px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-    },
+    // marginInlineStart: "5px",
+    // "@media screen and (max-width: 768px)": {
+    //   marginTop: "100px",
+    //   display: "flex",
+    //   alignItems: "center",
+    //   justifyContent: "center",
+    // },
   },
   groupsMan:
   {
@@ -2027,9 +2004,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   restoreBtn:
   {
-    fontSize: "15px",
+    fontSize: "18px",
     color: "rgb(170, 170, 170)",
     cursor: "pointer",
+    textDecoration:"underline"
   },
   selectedGroupsDiv: {
     display: "flex",
