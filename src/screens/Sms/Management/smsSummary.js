@@ -99,7 +99,7 @@ setmodal(bool);
                 {
                 
                    final.map((item,idx) => {
-                    console.log("fuckk",item)
+          
                      return(<div
                       style={{
                         display: "flex",
