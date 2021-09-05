@@ -355,7 +355,7 @@ const Shortcut = ({ classes, windowSize }) => {
             label: classes.shortcutLabel,
             root: classes.shortcutButton
           }}>
-          <Typography align='center' className={classes.categoryLabel}>{t(data.CategoryName)}</Typography>
+          <Typography align='center' className={clsx(classes.categoryLabel, classes.mb5)}>{t(data.CategoryName)}</Typography>
           <Typography align='center' className={classes.pageTitle}>{t(data.ShortcutName)}</Typography>
         </Button>
         <IconButton
