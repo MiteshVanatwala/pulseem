@@ -230,7 +230,11 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   });
 
   const handleClickOutsideShortcut = (event) => {
-    if (event && event.target && event.target.id !== 'shortcutToggle' && event.target.id !== 'shortcutMenu' && event.target.parentNode.id !== 'editIcon') {
+    if (event && event.target
+      && event.target.id !== 'shortcutToggle'
+      && event.target.id !== 'shortcutMenu'
+      && event.target.parentNode.id !== 'editIcon'
+      && event.target.parentNode.id !== 'btnSelectNew') {
       setAnchorEl({});
       setCategoryValue({});
       setPageOpen(false);
@@ -404,6 +408,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
       newShortcutButtons.push(
         <Box className={classes.shortcutBtnBox} key={`emptyShortcutBtn${index}`} ref={innerRef}>
           <Button
+            id="btnSelectNew"
             color='primary'
             fullWidth
             className={classes.shortcutDottedButton}
