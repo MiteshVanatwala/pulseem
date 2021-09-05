@@ -90,7 +90,7 @@ const BulkStatus = ({ classes }) => {
             onMouseLeave={() => showSmsPackage(false)}>
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {!Sms.IsPrepaid ? t('dashboard.perRecipients') : Sms.Credits}
+              {!Sms.IsPrepaid ? t('dashboard.perRecipients') : Sms.Credits ? Sms.Credits.toLocaleString() : null}
             </Typography>
             {/* {isShowSmsPackage ? (
               <Button onClick={() => setIsOpenPackageDialog(true)} className={classes.whiteLink}>
@@ -106,13 +106,13 @@ const BulkStatus = ({ classes }) => {
           <Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {isNewsletterPrepaid ? t('dashboard.perRecipients') : Newsletters.Credits}
+              {isNewsletterPrepaid ? t('dashboard.perRecipients') : Newsletters.Credits ? Newsletters.Credits.toLocaleString() : null}
             </Typography>
           </Grid>
           <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {isMMSPrepaid ? t('dashboard.perRecipients') : Mms.Credits}
+              {isMMSPrepaid ? t('dashboard.perRecipients') :  Mms.Credits? Mms.Credits.toLocaleString()  : null}
             </Typography>
             {/* {availablePackages.length > 0 && <a href='#' className={classes.bulkContent}>
               {t('dashboard.purchase')}
@@ -121,7 +121,7 @@ const BulkStatus = ({ classes }) => {
           {Notifications.FeatureExist && <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {isNotificationsPrepaid ? t('dashboard.perRecipients') : Notifications.Credits}
+              {isNotificationsPrepaid ? t('dashboard.perRecipients') : Notifications.Credits ? Notifications.Credits.toLocaleString() : null}
             </Typography>
             {/* {availablePackages.length > 0 &&
               <a href='#' className={classes.bulkContent}>

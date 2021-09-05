@@ -7,13 +7,14 @@ import clsx from 'clsx';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { GroupsIcon } from '../../assets/images/managment/index';
 import { getLastCampaignReport } from '../../redux/reducers/dashboardSlice';
+import { HiUserGroup } from 'react-icons/hi';
 
-const LatestReports = ({ classes, windowSize, t }) => {
+const LatestReports = ({ classes, windowSize, t, isRTL }) => {
   const { lastCampaignReport } = useSelector(state => state.dashboard);
   const dispatch = useDispatch();
   const [tabValue, handleTabValue] = useState(0);
-  const dateTimeFormat = 'MM/DD/YY, hh:mm a';
-  const dateFormat = 'MM/DD/YY';
+  const dateTimeFormat = 'MM/DD/YY, HH:mm';
+  const dateFormat = 'M.D.YYYY';
 
   const initData = async () => {
     dispatch(getLastCampaignReport());
@@ -23,15 +24,14 @@ const LatestReports = ({ classes, windowSize, t }) => {
 
   const barOptions = {
     responsive: true,
-    plugins: {
-      legend: {
-        display: false
-      }
+    legend: {
+      display: false
     },
+    type: "bar",
     scales: {
       x: {
         ticks: {
-          font: { size: 16 },
+          font: { size: 12 },
           color: 'black',
         },
         grid: {
@@ -63,8 +63,8 @@ const LatestReports = ({ classes, windowSize, t }) => {
   };
 
   let reports = {
-    newsletter: lastCampaignReport.find(report => report.ReportSection === 0) || null,
-    sms: lastCampaignReport.find(report => report.ReportSection === 1) || null
+    newsletter: lastCampaignReport.filter(report => report.ReportSection === 0) || null,
+    sms: lastCampaignReport.filter(report => report.ReportSection === 1) || null
   }
 
   const { newsletter = null, sms = null } = reports || {};
@@ -91,140 +91,69 @@ const LatestReports = ({ classes, windowSize, t }) => {
     );
   }
 
-  const renderNewsletterTab = () => {
-    const innerData = reports.newsletter;
-    const labels = [
-      `${t('common.Opens')}`,
-      `${t('common.Clicks')}`,
-      `${t('common.Errors')}`,
-      `${t('common.Removed')}`
-    ];
+  const renderTab = (tabType) => {
+    const innerData = tabType === "newsletter" ? reports.newsletter : reports.sms;
+    const labels = [];
+    const datasets = [];
+    const opens = [];
+    const clicks = [];
+    const removed = [];
+
+    innerData.forEach(campaign => {
+      labels.push(campaign.CampaignName);
+      opens.push(campaign.Opens.toLocaleString());
+      clicks.push(campaign.Clicks.toLocaleString());
+      removed.push(campaign.Removed.toLocaleString());
+    });
+
+    if (tabType === "newsletter") {
+      datasets.push(
+        { label: `${t('common.Opens')}`, backgroundColor: "#579b53", hoverBackgroundColor: "#579b53", data: opens },
+        { label: `${t('common.Clicks')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: clicks }
+      );
+    }
+
+    if (tabType === 'sms') {
+      datasets.push(
+        { label: `${t('common.Removed')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: removed },
+        { label: `${t('common.Clicks')}`, backgroundColor: "#67B7DC", hoverBackgroundColor: "#67B7DC", data: clicks }
+      );
+    }
+
 
     const reportData = {
       data: {
-        labels: labels,
-        datasets: [{
-          data: [
-            innerData && innerData.Opens || 0,
-            innerData && innerData.Clicks || 0,
-            innerData && innerData.Errors || 0,
-            innerData && innerData.Removed || 0
-          ],
-          backgroundColor:
-            '#0371AD',
-          barThickness: 10,
-          borderRadius: 2,
-          borderSkipped: 'left'
-        }]
-      },
-      campaignName: innerData && innerData.CampaignName || '',
-      sendDate: innerData && innerData.SendDate || '',
-      total: innerData && innerData.TotalSendPlan || 0,
-      quality: innerData && innerData.Quality || 0
+        labels,
+        datasets
+      }
     }
 
-    const quality = reportData.quality * 10;
-    const date = reportData.sendDate ? moment(reportData.sendDate).format(dateFormat) : '';
     return (
-      <TabPanel value={tabValue} index={0} key={`newsletterTabPanel`}>
+      <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel`}>
         <Grid container justify={'space-between'}>
-          <Grid item lg={4}>
-            <Grid container direction='column'>
-              <Grid item>
-                <Typography className={classes.f22}>{reportData.campaignName}</Typography>
-                <Box className={classes.p0}>
-                  <img src={GroupsIcon} width={20} />
-                  <Box className={clsx(classes.colorGray, classes.dInline, classes.ml5)}>
-                    <Typography className={clsx(classes.ml5, classes.dInline)}>{reportData.total.toLocaleString()}</Typography>
-                    <Typography className={clsx(classes.ml5, classes.dInline)}>{date}</Typography>
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box className={classes.doughnutGreenBox}>
-                  <Avatar className={classes.bgLightGreen}>
-                    <Typography className={classes.chartLabelGreen}>{quality.toFixed(2)}%</Typography>
-                  </Avatar>
-                  <Doughnut data={{ datasets: [{ data: [quality, 100 - quality] }] }} options={doughnutOptions} />
-                </Box>
-              </Grid>
-              <Grid item>
-                <Typography className={classes.f20}>{t('dashboard.campaignQuality')}</Typography>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item lg={8}>
-            <Box className={classes.barChart}>
-              <Bar data={reportData.data} options={barOptions} />
-            </Box>
-          </Grid>
-        </Grid>
-      </TabPanel>
-    );
-  }
-
-  const renderSmsTab = () => {
-    const innerData = reports.sms;
-    const labels = [
-      `${t('common.Sent')}`,
-      `${t('common.Clicks')}`,
-      `${t('common.Errors')}`,
-      `${t('common.DLR')}`
-    ];
-
-    const reportData = {
-      data: {
-        labels: labels,
-        datasets: [{
-          data: [
-            innerData && innerData.TotalSendPlan || 0,
-            innerData && innerData.Clicks || 0,
-            innerData && innerData.Errors || 0,
-            innerData && innerData.DLR || 0
-          ],
-          backgroundColor:
-            '#0371AD',
-          barThickness: 10,
-          borderRadius: 2,
-          borderSkipped: 'left'
-        }]
-      },
-      campaignName: innerData && innerData.CampaignName || '',
-      sendDate: innerData && innerData.SendDate || '',
-      total: innerData && innerData.TotalSendPlan || 0,
-      quality: innerData && innerData.Quality || 0
-    }
-
-    const quality = reportData.quality * 10;
-    const date = reportData.sendDate ? moment(reportData.sendDate).format(dateFormat) : '';
-    return (
-      <TabPanel value={tabValue} index={1} key={`smsTabPanel`}>
-        <Grid container justify={'space-between'}>
-          <Grid item lg={4}>
-            <Grid container direction='column'>
-              <Grid item>
-                <Typography className={classes.f22}>{reportData.campaignName}</Typography>
-                <Box className={classes.p0}>
-                  <img src={GroupsIcon} width={20} />
-                  <Box className={clsx(classes.colorGray, classes.dInline, classes.ml5)}>
-                    <Typography className={clsx(classes.ml5, classes.dInline)}>{reportData.total.toLocaleString()}</Typography>
-                    <Typography className={clsx(classes.ml5, classes.dInline)}>{date}</Typography>
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid item>
-                <Box className={classes.doughnutGreenBox}>
-                  <Avatar className={classes.bgLightGreen}>
-                    <Typography className={classes.chartLabelGreen}>{quality.toFixed(2)}%</Typography>
-                  </Avatar>
-                  <Doughnut data={{ datasets: [{ data: [quality, 100 - quality] }] }} options={doughnutOptions} />
-                </Box>
-              </Grid>
-              <Grid item>
-                <Typography className={classes.f20}>{t('dashboard.campaignQuality')}</Typography>
-              </Grid>
-
-            </Grid>
+          <Grid item lg={4} className={classes.flexSpaceBetweenVertical}>
+            {
+              innerData.map((c) => {
+                return (
+                  <Grid container justify={'space-between'} className={classes.mb10}>
+                    <Grid item lg={12}>
+                      <Typography className={clsx(classes.dInline)} style={{ fontWeight: 'bold' }}>
+                        {c.CampaignName}
+                      </Typography>
+                      <Typography className={clsx(classes.dInline, classes.f14, classes.italic, classes.mr5, classes.ml5)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+                        {`${t('common.UpdatedOn')}`} {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
+                      </Typography>
+                      {tabType === "sms" && <Box>
+                        <HiUserGroup />
+                        <Typography className={clsx(classes.dInline, classes.ml5, classes.mr5)}>
+                          {c.TotalSendPlan.toLocaleString()} {`${c.TotalSendPlan === 1 ? t('common.Recipient') : t('common.Recipients')}`}
+                        </Typography>
+                      </Box>}
+                    </Grid>
+                  </Grid>
+                )
+              })
+            }
           </Grid>
           <Grid item lg={8}>
             <Box className={classes.barChart}>
@@ -270,8 +199,8 @@ const LatestReports = ({ classes, windowSize, t }) => {
           </Tabs>
         </Grid>
         <Grid item xs={12} className={classes.lastReportsTabPanels}>
-          {renderNewsletterTab()}
-          {renderSmsTab()}
+          {renderTab('newsletter')}
+          {renderTab('sms')}
         </Grid>
       </Grid>
     );

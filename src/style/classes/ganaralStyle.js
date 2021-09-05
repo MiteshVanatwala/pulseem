@@ -129,7 +129,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '& $mobileBG': {
       '& $iconWrapper': {
-        minWidth: windowSize==='xs'? 0:100
+        minWidth: windowSize === 'xs' ? 0 : 100
       }
     }
   },
@@ -350,7 +350,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBottom: 20
   },
   mbNeg10: {
-    marginBottom:-10
+    marginBottom: -10
   },
   ml25: {
     marginInlineStart: 25
@@ -595,5 +595,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   noWrap: {
     flexWrap: 'nowrap'
+  },
+  italic: {
+    fontStyle: 'italic'
   }
 })

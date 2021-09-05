@@ -42,6 +42,7 @@ const DashboardScreen = ({ classes }) => {
                 classes={classes}
                 windowSize={windowSize}
                 t={t}
+                isRTL={isRTL}
               />
             </Grid>
           </Grid>
