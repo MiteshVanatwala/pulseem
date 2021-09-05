@@ -186,18 +186,18 @@ const RecipientChart = ({ classes }) => {
             },
             hoverOffset: 10,
             backgroundColor: [
-                '#67B7DC',
-                '#648FD5',
+                '#27AE60',
+                '#E74C3C',
                 '#6771DC',
             ],
             hoverBackgroundColor: [
-                '#67B7DC',
-                '#648FD5',
+                '#27AE60',
+                '#E74C3C',
                 '#6771DC',
             ],
             hoverBorderColor: [
-                '#67B7DC',
-                '#648FD5',
+                '#27AE60',
+                '#E74C3C',
                 '#6771DC',
             ]
         };

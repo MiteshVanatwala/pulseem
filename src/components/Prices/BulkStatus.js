@@ -23,8 +23,6 @@ const BulkStatus = ({ classes }) => {
   let isNotificationsPrepaid = Notifications.isPrepaid || Notifications.Credits == -1;
   //let isSMSPrepaid = Sms.isPrepaid || Sms.Credits == -1;
 
-  console.log(packagesDetails);
-
   useEffect(() => {
     dispatch(getPackagesDetails());
   }, []);

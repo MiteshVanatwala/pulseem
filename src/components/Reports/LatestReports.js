@@ -129,13 +129,13 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
     }
 
     return (
-      <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel`}>
+      <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel_${tabType}`}>
         <Grid container justify={'space-between'}>
           <Grid item lg={4} className={classes.flexSpaceBetweenVertical}>
             {
-              innerData.map((c) => {
+              innerData.map((c, index) => {
                 return (
-                  <Grid container justify={'space-between'} className={classes.mb10}>
+                  <Grid container justify={'space-between'} className={classes.mb10} key={`${c.CampaignName}_${index}`}>
                     <Grid item lg={12}>
                       <Typography className={clsx(classes.dInline)} style={{ fontWeight: 'bold' }}>
                         {c.CampaignName}
