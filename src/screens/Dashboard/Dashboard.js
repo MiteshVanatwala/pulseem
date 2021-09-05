@@ -50,6 +50,8 @@ const DashboardScreen = ({ classes }) => {
         <Grid item xs={12} sm={3} md={2}>
           <Shortcut
             classes={classes}
+            t={t}
+            isRTL={isRTL}
           />
         </Grid>
       </Grid>

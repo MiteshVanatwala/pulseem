@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, createRef, useCallback } from 'react';
-import { useTranslation } from 'react-i18next'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   Box, Button, ListItem, ListItemText, Paper, Typography, Popper,
@@ -9,7 +8,7 @@ import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import { getShortcuts, setShortcuts, deleteShortcuts } from '../../redux/reducers/shortcutSlice';
 
-const Shortcut = ({ classes, windowSize }) => {
+const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const { shortcuts, shortCutsError } = useSelector(state => state.shortcuts);
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
@@ -19,8 +18,7 @@ const Shortcut = ({ classes, windowSize }) => {
   const [pageOpen, setPageOpen] = useState(false);
   const [loading, setLoading] = useState({});
   const [activeShortcut, setActiveShortcut] = useState(null);
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
+    const dispatch = useDispatch();
   const categories = {
     Groups: {
       title: 'appBar.groups.title',
@@ -63,7 +61,7 @@ const Shortcut = ({ classes, windowSize }) => {
           link: '/react/Campaigns'
         },
         {
-          title: 'Create A/B Test',
+          title: 'dashboard.createABTest',
           link: '/Pulseem/CampaignsByResults.aspx'
         },
         {
@@ -194,11 +192,11 @@ const Shortcut = ({ classes, windowSize }) => {
       title: 'appBar.notifications.title',
       pages: [
         {
-          title: 'Create Notification',
+          title: 'dashboard.createNotification',
           link: '/react/Notification/create'
         },
         {
-          title: 'Notification Management',
+          title: 'dashboard.notificationManagement',
           link: '/react/Notifications'
         }
       ]
@@ -267,7 +265,7 @@ const Shortcut = ({ classes, windowSize }) => {
             </ListItem>
             <Collapse in={categoryOpen} timeout="auto" unmountOnExit>
               <Divider />
-              <List component="div" disablePadding>
+              <List component="div">
                 {Object.keys(categories).map(cat => {
                   return (
                     <ListItem
@@ -295,7 +293,7 @@ const Shortcut = ({ classes, windowSize }) => {
             {selectedCategory[num] ?
               <Collapse in={pageOpen} timeout="auto" unmountOnExit>
                 <Divider />
-                <List component="div" disablePadding>
+                <List component="div">
                   {categories[selectedCategory[num]].pages.map(page => {
                     return (
                       <ListItem
@@ -303,7 +301,7 @@ const Shortcut = ({ classes, windowSize }) => {
                         button
                         className={clsx(classes.pt0, classes.pb0)}
                         onClick={() => handlePageChange(page.title, page.link, update, num, index)}>
-                        <ListItemText primary={t(page.title)} />
+                        <ListItemText primary={t(page.title)} style={{ direction: isRTL ? 'rtl' : null }} />
                       </ListItem>
                     )
                   })}
