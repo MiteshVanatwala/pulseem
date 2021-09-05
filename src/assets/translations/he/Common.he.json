@@ -474,5 +474,10 @@
   "chooseYear": "בחר שנה...",
   "chooseMonth": "בחר חודש...",
   "campaignID": "מספר קמפיין",
-  "Recipient": "נמען"
+  "Recipient": "נמען",
+  "charStatus": {
+    "active": "פעילים",
+    "error": "שגויים",
+    "removed": "מוסרים"
+  }
 }
