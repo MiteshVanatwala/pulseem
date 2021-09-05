@@ -54,7 +54,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
       pages: [
         {
           title: 'campaigns.create',
-          link: '/Pulseem/CampaignEdit.aspx'
+          link: '/Pulseem/Editor/CampaignInfo?new=1&fromreact=true'
         },
         {
           title: 'master.RadMenuItemResource9.Text',
