@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   Box, Button, ListItem, ListItemText, Paper, Typography, Popper,
-  List, Collapse, Divider, IconButton, CircularProgress
+  List, Collapse, Divider, IconButton, CircularProgress, Link
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
-import { getShortcuts, setShortcuts } from '../../redux/reducers/shortcutSlice';
+import { getShortcuts, setShortcuts, deleteShortcuts } from '../../redux/reducers/shortcutSlice';
 
 const Shortcut = ({ classes, windowSize }) => {
   const { shortcuts, shortCutsError } = useSelector(state => state.shortcuts);
@@ -18,6 +18,7 @@ const Shortcut = ({ classes, windowSize }) => {
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [pageOpen, setPageOpen] = useState(false);
   const [loading, setLoading] = useState({});
+  const [activeShortcut, setActiveShortcut] = useState(null);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const categories = {
@@ -315,6 +316,14 @@ const Shortcut = ({ classes, windowSize }) => {
     );
   }
 
+  const deleteShortcut = async () => {
+    if(activeShortcut !== null){
+      const sid = activeShortcut.replace('short_', '');
+      await dispatch(deleteShortcuts(sid));
+      initData();
+    }
+  }
+
   const handleShortcutMenuOpen = (event, num) => {
     let refElement = event.currentTarget || event.current || '';
     if (!refElement) {
@@ -344,9 +353,16 @@ const Shortcut = ({ classes, windowSize }) => {
         </Box>
       );
     }
+
     const innerRef = createRef();
     return (
-      <Box key={`shortcutButton${index}`} ref={innerRef} className={classes.shortcutBtnBox} >
+      <Box
+        onMouseEnter={() => setActiveShortcut(`short_${data.ID}`)}
+        onMouseLeave={() => setActiveShortcut(null)}
+        key={`shortcutButton${index}`} ref={innerRef} className={classes.shortcutBtnBox}>
+        {activeShortcut === `short_${data.ID}` && <Link className={classes.deleteShortcut}
+          onClick={deleteShortcut}
+        >x</Link>}
         <Button
           variant='contained'
           color='primary'
@@ -396,7 +412,7 @@ const Shortcut = ({ classes, windowSize }) => {
           <Typography align='center' className={classes.shortcutTitle}>{t('dashboard.myShortcuts')}</Typography>
           <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
         </Box>
-        {shortcuts.map((item, index) => {
+        {shortcuts && shortcuts.map((item, index) => {
           return renderShortcutButton(item, index)
         })}
         {renderNewShortcutButtons()}
