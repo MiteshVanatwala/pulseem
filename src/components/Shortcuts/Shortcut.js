@@ -39,10 +39,10 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           title: 'appBar.groups.search',
           link: '/Pulseem/ClientSearch.aspx'
         },
-        {
-          title: 'dashboard.advanceSearch',
-          link: '/Pulseem/ClientAdvancedSearch.aspx'
-        },
+        // {
+        //   title: 'dashboard.advanceSearch',
+        //   link: '/Pulseem/ClientAdvancedSearch.aspx'
+        // },
         {
           title: 'appBar.groups.fileUploads',
           link: '/Pulseem/FileUploads.aspx'
