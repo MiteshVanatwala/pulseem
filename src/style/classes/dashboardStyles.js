@@ -19,8 +19,17 @@ const shortcutPaperHeight = {
     sm: '100vh',
     md: '100vh',
     lg: '95vh',
-    xl: '95vh'
+    xl: '100vh'
 }
+
+const shortcutBoxWidth = {
+    xs: '96%',
+    sm: '25%',
+    md: '18%',
+    lg: '18%',
+    xl: 'auto'
+}
+
 
 export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     mobileReportHead: {
@@ -62,13 +71,17 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         fontSize: windowSize === 'xs' ? 16 : 18,
     },
     shortcutBox: {
-        position: windowSize === 'xs' ? '' : 'sticky',
-        top: 0,
+        position: windowSize !== 'xl' && windowSize !== 'xs' ? 'absolute' : 'sticky',
+        top: windowSize !== 'xl' ? 47 : 0,
+        right: isRTL ? 0 : 'auto',
+        left: isRTL ? 'auto' : 0,
+        width: shortcutBoxWidth[windowSize],
         height: shortcutPaperHeight[windowSize],
         [theme.breakpoints.down('xs')]: {
-            margin: '10px 10px -10px 10px'
+            margin: '10px 10px 10px 10px'
         },
-        boxShadow: isRTL ? '4px 0px 5px 0px rgba(0,0,0, 0.2)' : '-4px 0px 5px 0px rgba(0,0,0, 0.2) '
+        boxShadow: windowSize === 'xs' ? '0px 3px 3px -2px rgb(0 0 0 / 20%), 0px 3px 4px 0px rgb(0 0 0 / 14%), 0px 1px 8px 0px rgb(0 0 0 / 12%)' : isRTL && windowSize !== 'xs' ? '-4px 0px 5px 0px rgba(0,0,0, 0.2)' : '4px 0px 5px 0px rgba(0,0,0, 0.2)',
+        borderRadius: windowSize === 'xs' ? 10 : 0
     },
     shortcutPaper: {
         [theme.breakpoints.down('xs')]: {

@@ -1106,7 +1106,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   bulkMargin: {
     [theme.breakpoints.down('xs')]: {
-      marginTop: 0,
+      marginTop: 10,
     },
     [theme.breakpoints.up('lg')]: {
       marginInlineEnd: 0
