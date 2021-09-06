@@ -540,10 +540,9 @@ const SmsCreator = ({ classes }, props) => {
               </Typography>
               <Typography>{characterCount}/1000 Char</Typography>
             </Box>
-            <Grid container className={classes.funcDiv}>
-              <Grid
-                item
-                xs={3}
+            <Box  className={classes.funcDiv}>
+              <Box
+                
                 className={isRTL ? classes.emojiHe : classes.emoji}
               >
                 {isRTL ? (
@@ -573,8 +572,9 @@ const SmsCreator = ({ classes }, props) => {
                     exclusive
                     onChange={handleAlignment}
                     aria-label="text alignment"
+                    
                   >
-                    <ToggleButton value="left" aria-label="left aligned">
+                    <ToggleButton value="left" aria-label="left aligned" style={{width:"40px",height:"40px"}}>
                       <FormatAlignLeftIcon />
                     </ToggleButton>
 
@@ -585,6 +585,7 @@ const SmsCreator = ({ classes }, props) => {
                         borderRight: "1px solid #D5D5D5",
                         marginInlineEnd: "4px",
                       }}
+                      style={{width:"40px",height:"40px"}}
                     >
                       <FormatAlignRightIcon />
                     </ToggleButton>
@@ -619,8 +620,8 @@ const SmsCreator = ({ classes }, props) => {
                     />
                   </Tooltip>
                 </Box>
-              </Grid>
-              <Grid item xs={6} className={classes.baseButtons}>
+              </Box>
+              <Box className={classes.baseButtons}>
                 <Typography
                   className={classes.infoButtons}
                   onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
@@ -635,8 +636,8 @@ const SmsCreator = ({ classes }, props) => {
                   <Typography className={classes.editorLink}>+</Typography>
                   Removal Link
                 </Typography>
-              </Grid>
-              <Grid item xs={1} className={classes.endButtons}>
+              </Box>
+              <Box className={classes.endButtons}>
                 <Box className={classes.selectMsg}>
                   <select
                     className={classes.selectVal}
@@ -648,8 +649,8 @@ const SmsCreator = ({ classes }, props) => {
                     })}
                   </select>
                 </Box>
-              </Grid>
-              {/* <Grid item xs={2} className={classes.addDiv}>
+              </Box>
+              <Box className={classes.addDiv}>
                 <Typography
                   className={classes.addButtons}
                   onClick={() => {
@@ -694,8 +695,8 @@ const SmsCreator = ({ classes }, props) => {
                     </Typography>
                   </Box>
                 ) : null}
-              </Grid> */}
-            </Grid>
+              </Box>
+            </Box>
           </Grid>
           <Grid item xs={4}>
             <Box className={classes.switchDiv}>
@@ -1066,7 +1067,11 @@ const SmsCreator = ({ classes }, props) => {
   };
 
   const handleGroupClose = async () => {
-    setsummary(true);
+    if(campaignName !== "" && msg !== "")
+    {
+      setsummary(true);
+    }
+   
     setsave(false);
     sethidden(true);
     setcontactGroup(false);

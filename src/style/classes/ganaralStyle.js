@@ -763,11 +763,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "100%",
     height: "70px",
     boxSizing:"border-box",
+    display:"grid",
+    gridTemplateColumns:"auto auto auto auto",
     position: "relative",
     top: "-4px",
     padding: "10px",
     border: "1px solid rgb(170, 170, 170)",
-    display: "flex",
     alignItems: "center",
     "@media screen and (max-width: 768px)": {
       height: "60px",
@@ -777,7 +778,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   baseButtons: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent:"center",
     borderRight: "1px solid black",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
@@ -789,9 +790,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     justifyContent: "center",
     borderRadius: "20px",
-    width: "125px",
+  
     color: "white",
-    fontSize: "14px",
+    fontSize: "10px",
     backgroundColor: "red",
     padding: "10px",
     backgroundColor: "#1c82b2",
@@ -810,8 +811,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    width: "111px",
-    fontSize: "14px",
+    fontSize: "10px",
     color: "white",
     backgroundColor: "red",
     padding: "10px",
@@ -819,7 +819,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer",
     borderColor: "#1c82b2",
     marginInlineStart: "3px",
-    marginInlineEnd: "5px",
+    marginInlineEnd:"2px",
     "@media screen and (max-width: 768px)": {
       width: "80px",
       padding: "8px",
@@ -828,9 +828,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   selectMsg: {
-    marginInlineStart: "5px",
+    marginInlineStart: "3px",
+    marginInlineEnd:"4px",
     height:"40px",
-    borderInlineEnd: "1px solid black",
+    marginInlineEnd: "2px",
     "@media screen and (max-width: 768px)": {
       borderRight: "none",
     },
@@ -839,16 +840,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     cursor:"pointer",
     display:"flex",
+   
     justifyContent:"space-between",
     width:"100%"
   },
   selectVal: {
     outline: "none",
     padding: "10px",
-    width: "125px",
+    width:"100%",
     borderRadius: "5px",
     borderColor: "#1c82b2",
-    marginInlineEnd: "4px",
     "@media screen and (max-width: 768px)": {
       width: "100%",
       marginTop: "8px",
@@ -1558,7 +1559,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   endButtons: {
     display: "flex",
     alignItems: "center",
-    // borderRight: "1px solid black",
+    justifyContent:"center",
+    borderRight: "1px solid black",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
       // borderRight: "1px solid black",
