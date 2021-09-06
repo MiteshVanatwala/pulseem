@@ -505,7 +505,9 @@
   "newFeature":"New!",
   "save":"Save",
   "deleteCamp":"Delete Campaign",
-  "confirmSure":"Are you sure?"
+  "confirmSure":"Are you sure?",
+  "pleaseNoteDsec":"You have changed the number assigned to you by the Pulseem platform for this campaign. The recipients won’t be able to unsubscribe from your SMS distribution list through a removal message. You can add a removal link instead or revert to your original number.",
+  "pleaseNote":"Please Note!"
   
 
 }

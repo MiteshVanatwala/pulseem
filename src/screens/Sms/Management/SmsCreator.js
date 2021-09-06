@@ -534,12 +534,12 @@ const SmsCreator = ({ classes }, props) => {
 
             <Box className={classes.smallInfoDiv}>
               <Typography style={{ marginInlineEnd: "18px" }}>
-                {linkCount} Link
+                {linkCount} {t("mainReport.link")}
               </Typography>
               <Typography style={{ marginInlineEnd: "18px" }}>
-                {messageCount} Message
+                {messageCount} {t("mainReport.message")}
               </Typography>
-              <Typography>{characterCount}/1000 Char</Typography>
+              <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
             </Box>
             <Box  className={classes.funcDiv}>
               <Box
@@ -628,14 +628,14 @@ const SmsCreator = ({ classes }, props) => {
                   onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                 >
                   <Typography className={classes.editorLink}>+</Typography>
-                  Removal Message
+                  {t("mainReport.removalMsg")}
                 </Typography>
                 <Typography
                   className={classes.info2Buttons}
                   onClick={removalLinkDisabled ? null : onRemovalLink}
                 >
                   <Typography className={classes.editorLink}>+</Typography>
-                  Removal Link
+                  {t("mainReport.removalLink")}
                 </Typography>
               </Box>
               <Box className={classes.endButtons}>
@@ -662,7 +662,7 @@ const SmsCreator = ({ classes }, props) => {
                   {/* <Typography className={classes.addBtn}>
                     <Typography className={classes.plusIcn}>+</Typography>
                   </Typography> */}
-                  ADD
+                 {t("mainReport.add")}
                 </Typography>
                 {editmenuClick ? (
                   <Box className={classes.dropDiv}>
@@ -673,7 +673,7 @@ const SmsCreator = ({ classes }, props) => {
                         seteditmenuClick(false);
                       }}
                     >
-                      Landing Page Link
+                     {t("mainReport.landingLink")}
                     </Typography>
                     {previousCampaignData.length == 0 ? null : (
                       <Typography
@@ -683,7 +683,7 @@ const SmsCreator = ({ classes }, props) => {
                           seteditmenuClick(false);
                         }}
                       >
-                        Campaign Link
+                        {t("mainReport.campLink")}
                       </Typography>
                     )}
                     <Typography
@@ -693,7 +693,7 @@ const SmsCreator = ({ classes }, props) => {
                         seteditmenuClick(false);
                       }}
                     >
-                      Waze Navigation
+                       {t("mainReport.waize")}
                     </Typography>
                   </Box>
                 ) : null}
@@ -874,7 +874,7 @@ const SmsCreator = ({ classes }, props) => {
                   />
                   <span>
                     {t("mainReport.sendToGroups")}
-                    <span className={classes.newIcn}>New!</span>
+                    <span className={classes.newIcn}>{t("mainReport.newFeature")}</span>
                   </span>
                 </div>
                 {radioBtn === "bottom" ? (
@@ -1282,15 +1282,11 @@ const SmsCreator = ({ classes }, props) => {
             icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
           >
             <Box className={classes.numberChnageModal}>
-              <Typography className={classes.groupName}>Please Note!</Typography>
+              <Typography className={classes.groupName}>  {t("mainReport.pleaseNote")}</Typography>
             </Box>
             <Box >
               <Typography  className={classes.modalText}>
-                You have changed the number assigned to you by the Pulseem
-                platform for this campaign. The recipients won’t be able to
-                unsubscribe from your SMS distribution list through a removal
-                message. You can add a removal link instead or revert to your
-                original number.
+              {t("mainReport.pleaseNoteDsec")}
               </Typography>
             </Box>
           </Dialog>
