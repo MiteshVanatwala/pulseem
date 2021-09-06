@@ -869,7 +869,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "14px",
+    fontSize: "18px",
+    fontWeight:"600",
     "@media screen and (max-width: 768px)": {
       padding: "5px",
     },

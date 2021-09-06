@@ -42,7 +42,7 @@ import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlineDelete } from "react-icons/ai";
+import { AiOutlineExclamationCircle, AiOutlineDelete ,AiOutlinePlusCircle } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 
 import Snackbar from "@material-ui/core/Snackbar";
@@ -484,7 +484,8 @@ const SmsCreator = ({ classes }, props) => {
     } else {
       setlinkCount(0);
     }
-    await dispatch(getCreditsforSMS(e.target.value.length));
+   let response  =  await dispatch(getCreditsforSMS(JSON.stringify(e.target.value.length)));
+   console.log("---->hey",response);
     setmessageCount(count);
   };
 
@@ -657,9 +658,10 @@ const SmsCreator = ({ classes }, props) => {
                     seteditmenuClick(!editmenuClick);
                   }}
                 >
-                  <Typography className={classes.addBtn}>
+                  <AiOutlinePlusCircle  style={{fontSize:"28px",color:"#1AA2B8",marginInlineEnd:"5px"}}/>
+                  {/* <Typography className={classes.addBtn}>
                     <Typography className={classes.plusIcn}>+</Typography>
-                  </Typography>
+                  </Typography> */}
                   ADD
                 </Typography>
                 {editmenuClick ? (
