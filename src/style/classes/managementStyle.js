@@ -187,8 +187,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   cellExpand: {
-    width: 30, 
-    padding: '8px 0px', 
+    width: 30,
+    padding: '8px 0px',
     borderBottom: 'unset',
     display: 'flex',
     alignItems: 'center'
@@ -999,13 +999,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center'
   },
   barChart: {
-    // maxWidth: 500,
     float: isRTL ? 'left' : 'right',
     '& canvas': {
-      // width: barWidth[windowSize],
       height: barHeight[windowSize]
     },
-    paddingBottom: 10
+    paddingLeft: 15,
+    paddingRight: 15
   },
   emptyDoughnut: {
     display: 'flex',

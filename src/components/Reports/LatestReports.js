@@ -30,6 +30,12 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
     type: "bar",
     scales: {
       x: {
+        beforeCalculateLabelRotation: (event) => {
+          event.ticks.forEach((t) => {
+            if (t.label.length > 10)
+              t.label = `${t.label.substring(0, 10)}...`;
+          });
+        },
         ticks: {
           font: { size: 12 },
           color: 'black',
