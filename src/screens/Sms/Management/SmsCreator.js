@@ -484,7 +484,7 @@ const SmsCreator = ({ classes }, props) => {
     } else {
       setlinkCount(0);
     }
-   let response  =  await dispatch(getCreditsforSMS(JSON.stringify(e.target.value.length)));
+   let response  =  await dispatch(getCreditsforSMS(e.target.value.length));
    console.log("---->hey",response);
     setmessageCount(count);
   };
@@ -1326,7 +1326,7 @@ const SmsCreator = ({ classes }, props) => {
     setwaize(false);
   };
   return (
-    <DefaultScreen currentPage="reports" classes={classes}>
+    <DefaultScreen currentPage="sms" classes={classes}>
       <Grid container spacing={3} className={classes.smsInit}>
         <Grid item xs={8}>
           {renderSwitch()}

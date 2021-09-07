@@ -919,7 +919,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     marginTop: "20px",
     marginBottom: "50px",
-    position: "sticky",
+    position: "relative",
     bottom: "10px",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
@@ -1426,7 +1426,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pulse: {
     border: "1px solid #277bff",
     color: "blue",
-    width: "120px",
+    width: "125px",
     padding: "8px",
     marginInlineEnd: "8px",
     borderRadius: "4px",
@@ -2223,26 +2223,32 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
+    // alignItems: "center",
+    flexDirection:"column",
     marginTop: "15px"
   },
   createGroupSpan:
   {
     color: "black",
-    fontSize: "13px"
+    fontSize: "14px",
+    fontWeight:"500"
   },
   createGroupSpanDisabled:
   {
     color: "#808080",
-    fontSize: "13px"
+    fontSize: "14px",
+    fontWeight:"500"
   },
   iconNew:
   {
     backgroundColor: "#CA332F",
     display: "flex",
+    color:"#fff",
+    padding:"5px",
+    borderRadius:"5px",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: "15px"
+    // marginTop: "15px"
   },
   pulseParentDiv:
   {
@@ -2318,5 +2324,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     height: "60px", 
     borderBottom: "1px solid #DEE2E7"
-  }
+  },
+  
+  creatorButtons :
+  {
+    display:"flex",
+    justifyContent:"space-between",
+    alignItems: "center",
+    marginTop: "20px",
+    position:"relative",
+    bottom:"30px",
+    "@media screen and (max-width: 768px)": {
+      flexDirection: "column",
+    },
+  },
+    rightMostContainer :
+    {
+      display:"flex"
+   }
 });

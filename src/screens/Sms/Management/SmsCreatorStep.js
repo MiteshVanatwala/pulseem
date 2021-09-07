@@ -549,7 +549,7 @@ const SmsCreatorStep = ({ classes }) => {
                     maxLength="1"
                   />
 
-                  <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
+                  <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'none' }}>
                     <span
                       className={
                         togglePulse
@@ -610,7 +610,7 @@ const SmsCreatorStep = ({ classes }) => {
                     maxLength="1"
                   />
 
-                  <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'rtl' }}>
+                  <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'none' }}>
                     <span
                       className={
                         togglePulse
@@ -827,7 +827,7 @@ const SmsCreatorStep = ({ classes }) => {
             </div>
           ) : null}
         </div>
-        <div>
+        <div style={{width:"700px"}}>
           {groupClick ? (
 
             <Groups
@@ -1387,7 +1387,7 @@ const SmsCreatorStep = ({ classes }) => {
                   {t("mainReport.days")}
                 </span>
 
-                <div style={{ display: "flex", direction: isRTL ? 'ltr' : 'rtl' }}>
+                <div style={{ display: "flex", direction: isRTL ? 'ltr' : 'none' }}>
                   <span
                     className={
                       toggleB
@@ -1478,31 +1478,6 @@ const SmsCreatorStep = ({ classes }) => {
           {toggleRandom ? (
             <span>Random sending - {random} random recipients</span>
           ) : null}
-        </div>
-
-        <div className={classes.buttonDiv}>
-          <span className={classes.rightInput3} onClick={onHandleDelete} >
-            <AiOutlineDelete style={{ fontSize: "25" }} />
-          </span>
-          <span className={classes.rightInput4}>
-
-            {t("mainReport.exitSms")}
-          </span>
-          <span className={classes.rightInput5}>
-
-            {t("mainReport.saveSms")}
-          </span>
-          <span
-            className={classes.rightInput6}
-            onClick={onSummClick}
-            style={{
-              pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
-              backgroundColor:
-                selectedGroups.length > 0 ? "#dc3545" : "#91C78D",
-            }}
-          >
-            {t("mainReport.summary")}
-          </span>
         </div>
       </div>
     );
@@ -2154,7 +2129,7 @@ const SmsCreatorStep = ({ classes }) => {
     );
   };
   return (
-    <DefaultScreen currentPage="reports" classes={classes}>
+    <DefaultScreen currentPage="sms" classes={classes}>
       <div className={classes.smsStepDiv}>
         <div>
           {renderSwitch()}
@@ -2169,13 +2144,42 @@ const SmsCreatorStep = ({ classes }) => {
               {renderRight()}
             </Grid>
           </Grid>
-          <div className={classes.backBtn}>
-            <span style={{ marginInlineEnd: "4px" }}>{"<"}</span>
-            <span>Back</span>
+        </div>
+       
+      </div>
+      <div className={classes.creatorButtons}>
+         <div className={classes.back}>
+           
+          <span className={classes.rightInput4}>
+          <span style={{marginInlineEnd:"5px"}}>{"<"}</span>
+            Back
+          </span>
+          </div>
+          <div  className={classes.rightMostContainer}>
+          <span className={classes.rightInput3}>
+            <BsTrash style={{ fontSize: "25" }} />         </span>
+          <span className={classes.rightInput4}>
+            
+            {t("mainReport.exitSms")}
+          </span>
+          <span className={classes.rightInput5}>
+            
+            {t("mainReport.saveSms")}
+          </span>
+          <span
+            className={classes.rightInput6}
+            onClick={onSummClick}
+            style={{
+              pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
+              backgroundColor:
+                selectedGroups.length > 0 ? "#dc3545" : "#91C78D",
+            }}
+          >
+            {t("mainReport.summary")}
+          </span>
           </div>
         </div>
-        {/* <div></div> */}
-      </div>
+      
       {renderPulse()}
       {renderReciFilter()}
       {renderSummary()}
