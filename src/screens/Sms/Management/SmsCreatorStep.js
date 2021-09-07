@@ -144,14 +144,15 @@ const SmsCreatorStep = ({ classes }) => {
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
   const [boolRandom, setboolRandom] = useState(false);
-  const [cancel, setcancel] = useState(true);
-  const [campaignIdResp, setcampaignIdResp] = useState(-1);
   const [groupList, setGroupList] = useState([]);
   const [filterGroups, setfilterGroups] = useState([]);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
   const [showGroupsList, setShowGroupsList] = useState(false);
   const [inputRecipients, setinputRecipients] = useState("");
   const [toggleChecked, settoggleChecked] = useState(false);
+  const [cancel, setcancel] = useState(true);
+  const [campaignIdResp, setcampaignIdResp] = useState(-1);
+  
   const [groupValue, setgroupValue] = useState("");
   const [manualTrue, setmanualTrue] = useState(false);
   const [pulse, setpulse] = useState(false);
@@ -159,6 +160,7 @@ const SmsCreatorStep = ({ classes }) => {
   const [responseQuick, setresponseQuick] = useState(null);
   const [pulseBool, setpulseBool] = useState(false);
   const [TimeBool, setTimeBool] = useState(false);
+  const [totalGroupstoDisplay, settotalGroupstoDisplay] = useState(0);
   const [percentTrue, setpercentTrue] = useState(true);
   const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
@@ -300,9 +302,17 @@ const SmsCreatorStep = ({ classes }) => {
     } else {
       setSelected([...selectedGroups, group]);
     }
+    let temp = 0;
+    for(let i=0 ; i < selectedGroups.length ; i++)
+    {
+      temp = temp  + selectedGroups[i].Recipients
+           
+    }
+    settotalGroupstoDisplay(temp);
   };
   const callbackUpdateGroups = (groups) => {
     setSelected(groups);
+   
   };
 
   const handlebef = () => {
@@ -817,7 +827,6 @@ const SmsCreatorStep = ({ classes }) => {
                       setareaData(res);
                       let ddc = [];
                       for (let i in result.data[0]) {
-                        console.log("----->", i)
                         ddc.push("Adjust Title")
                       }
                       setheaders(ddc);
@@ -901,7 +910,7 @@ const SmsCreatorStep = ({ classes }) => {
                   marginTop: "10px",
                 }}
               >
-                <span>{t("mainReport.totalReci")}: 0</span>
+                <span>{t("mainReport.totalReci")}: {totalGroupstoDisplay}</span>
                 <Tooltip
                   disableFocusListener
                   title="Please note this value is not the final number of recipients who will receive this campaign. After selecting your sending preferences, you will see the correct value in the Summary page."
@@ -2156,7 +2165,7 @@ const SmsCreatorStep = ({ classes }) => {
           </span>
           </div>
           <div  className={classes.rightMostContainer}>
-          <span className={classes.rightInput3}>
+          <span className={classes.rightInput3} onClick={onHandleDelete}>
             <BsTrash style={{ fontSize: "25" }} />         </span>
           <span className={classes.rightInput4}>
             
@@ -2185,6 +2194,7 @@ const SmsCreatorStep = ({ classes }) => {
       {renderSummary()}
       {renderDialogManual()}
       {renderCaution()}
+      {renderDelete()}
       <Snackbar
         open={pulseBool || TimeBool || boolRandom}
         autoHideDuration={2000}
