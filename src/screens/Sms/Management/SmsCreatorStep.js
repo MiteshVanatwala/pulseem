@@ -1920,7 +1920,7 @@ const SmsCreatorStep = ({ classes }) => {
                           handleChangeId(idx);
                         }}
                         className={classes.adjustP}
-                        style={{ width: "130px", textAlign: "center" }}
+                        style={{  textAlign: "center",cursor:"pointer" }}
                       >
                         {headers[idx]}
 

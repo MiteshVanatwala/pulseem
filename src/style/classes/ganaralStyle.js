@@ -1380,6 +1380,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "680px",
     outline: "none",
     border: "none",
+    fontSize: "16px",
+    fontFamily: "Sans-serif",
     resize: "none",
     height: "330px",
     backgroundColor: "white !important",
@@ -2007,31 +2009,29 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   manualModal: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
     height: "40px",
+    marginTop:"15px",
+    marginBottom:"20px",
     width: "100%",
     maxWidth: "702px",
-    overflowY: "auto",
-    flexWrap: "wrap",
-    backgroundColor: "#F7F7F7",
   },
   inputManual:
   {
     padding: "10px",
-    width: "700px",
     outline: "none",
     borderRadius: "4px"
   },
   adjustP:
   {
-    position: "relative"
+    position: "relative",
+    width:"100%"
   },
   adjustC:
   {
     position: "absolute",
     // height:"80px",
 
-    width: "150px",
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     borderLeft: "1px solid gray",
