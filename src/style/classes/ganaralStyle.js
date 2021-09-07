@@ -1367,13 +1367,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
     width: "700px",
-    height: "250px",
+    height: "350px",
     backgroundColor: "white !important",
   },
   greenManual: {
     border: "2px dashed #4BB543",
     width: "700px",
-    height: "250px",
+    height: "350px",
     backgroundColor: "#CCFFE5",
   },
   areaCon: {
@@ -1381,7 +1381,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     border: "none",
     resize: "none",
-    height: "230px",
+    height: "330px",
     backgroundColor: "white !important",
     padding: "10px",
     "&::placeholder": {
