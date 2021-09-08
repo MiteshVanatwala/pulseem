@@ -1018,7 +1018,6 @@ const SmsCreatorStep = ({ classes }) => {
   const renderReciFilter = () => {
     return (
       <>
-
         {reciFilter ? (
           <Dialog
             classes={classes}
@@ -1121,18 +1120,18 @@ const SmsCreatorStep = ({ classes }) => {
                       })
                       .map((item, idx) => {
                         return (
-                          <div className={classes.searchCon}>
+                          <div className={classes.searchCon}  onClick={() => {
+                            handleSelect(idx);
+                          }}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
-                              className={item.selected ? classes.grDoc : classes.blueDoc}
+                              className={item.selected ? classes.greenDoc : classes.blueDoc}
                             >
                               {item.selected ? <FaCheck className={clsx(classes.green)} /> : <HiOutlineUserGroup />}
                             </span>
                             <div
                               className={classes.groupsFilterList}
-                              onClick={() => {
-                                handleSelect(idx);
-                              }}
+                             
                             >
                               <span>
                                 {item.GroupName}
@@ -1203,18 +1202,18 @@ const SmsCreatorStep = ({ classes }) => {
                       })
                       .map((item, idx) => {
                         return (
-                          <div className={classes.searchCon}>
+                          <div className={classes.searchCon}  onClick={() => {
+                            handleSelectCamp(idx);
+                          }}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
-                              className={item.selected ? classes.grDoc : classes.blueDoc}
+                              className={item.selected ? classes.greenDoc : classes.blueDoc}
                             >
                               {item.selected ? <FaCheck className={clsx(classes.green)} /> : <HiOutlineUserGroup />}
                             </span>
                             <div
                               className={classes.groupsFilterList}
-                              onClick={() => {
-                                handleSelectCamp(idx);
-                              }}
+                             
                             >
                               <span>
                                 {item.Name}

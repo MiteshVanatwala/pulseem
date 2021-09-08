@@ -30,6 +30,8 @@ import {
   smsQuick,
   getCampaignSumm,
   getCreditsforSMS,
+  getTestGroups,
+  getCommonFeatures
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
 import { FcDocument } from "react-icons/fc";
@@ -101,7 +103,10 @@ const SmsCreator = ({ classes }, props) => {
     extraData,
     accountId,
     getCampaignSum,
+    testGroups,
+    commonSettings
   } = useSelector((state) => state.sms);
+ 
   const [alignment, setAlignment] = useState("left");
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [flagemoji, setflagemoji] = useState(false);
@@ -117,7 +122,7 @@ const SmsCreator = ({ classes }, props) => {
   const [save, setsave] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [campaignName, setcampaignName] = useState("");
-  const [campaignNumber, setcampaignNumber] = useState("0508085670");
+  const [campaignNumber, setcampaignNumber] = useState("");
   const [campaignNumBool, setcampaignNumBool] = useState(false);
   const [characterCount, setcharacterCount] = useState(0);
   const [linkCount, setlinkCount] = useState(0);
@@ -158,6 +163,11 @@ const SmsCreator = ({ classes }, props) => {
 
     setLoader(false);
   };
+
+  const getTest = async () =>
+  {
+    await dispatch(getTestGroups());
+  }
 
   const onApiCall = async () => {
     let temp = [];
@@ -210,18 +220,25 @@ const SmsCreator = ({ classes }, props) => {
   const getDataExtra = async () => {
     await dispatch(getAccountExtraData());
 
-    setLoader(false);
   };
   const getAccount = async () => {
     await dispatch(getAccountId());
-    setLoader(false);
+ 
   };
+  const getFeatures = async () => {
+   let r =  await dispatch(getCommonFeatures());
+   setcampaignNumber(r.payload.DefaultCellNumber)
+   
+  };
+
   useEffect(() => {
     setLoader(true);
     getData();
     getDataCamapaign();
     getDataExtra();
     getAccount();
+    getTest();
+    getFeatures();
   }, [dispatch]);
   useEffect(() => {}, [removalMessageButtonDisabled]);
 
@@ -485,7 +502,6 @@ const SmsCreator = ({ classes }, props) => {
       setlinkCount(0);
     }
    let response  =  await dispatch(getCreditsforSMS(e.target.value.length));
-   console.log("---->hey",response);
     setmessageCount(count);
   };
 

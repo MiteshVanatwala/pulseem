@@ -10,6 +10,25 @@ export const getSmsData = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+  export const getTestGroups = createAsyncThunk(
+    'smsCampaign/GetTestGroups', async (_, thunkAPI) => {
+      try {
+        const response = await instence.get(`smsCampaign/GetTestGroups`);
+        return JSON.parse(response.data)
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    })
+    export const getCommonFeatures = createAsyncThunk(
+      'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
+        try {
+          const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
+          return JSON.parse(response.data)
+        } catch (error) {
+          return thunkAPI.rejectWithValue({ error: error.message });
+        }
+      })
+   
   export const getPreviousLandingData=createAsyncThunk(
     'smsCampaign/GetLastLandingPages',async (_,thunkAPI) => {
       try {
@@ -286,7 +305,8 @@ export const smsSlice = createSlice({
     accountId : [],
     getCampaignSum : [],
     finishedCampaigns : [],
-
+    testGroups : [],
+    commonSettings:{},
     directSmsReport: {},
     directSmsReportError: '',
   },
@@ -314,7 +334,12 @@ export const smsSlice = createSlice({
     builder.addCase(getPreviousLandingData.fulfilled,(state,{payload}) => {
       state.previousLandingData=payload
     })
-
+    builder.addCase(getTestGroups.fulfilled,(state,{payload}) => {
+      state.testGroups=payload
+    })
+    builder.addCase(getCommonFeatures.fulfilled,(state,{payload}) => {
+      state.commonSettings=payload
+    })
     builder.addCase(getFinishedCampaigns.fulfilled,(state,{payload}) => {
       state.finishedCampaigns=payload
     })
