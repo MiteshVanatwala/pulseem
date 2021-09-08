@@ -1119,7 +1119,7 @@ const SmsCreator = ({ classes }, props) => {
             showDefaultButtons={false}
             icon={<HiOutlineUserGroup className={classes.icn} />}
           >
-            <div style={{ height: "60px", borderBottom: "1px solid black" }}>
+            <div className={classes.baseDialogSetup}>
               <span className={classes.groupName}>
                 Select group for test sending
               </span>
@@ -1234,10 +1234,10 @@ const SmsCreator = ({ classes }, props) => {
               />
             }
           >
-            <div style={{ height: "60px", borderBottom: "1px solid #DEE2E7" }}>
+            <div className={classes.baseDialogSetup}>
               <span className={classes.groupName}>Leave Campaign Creation</span>
             </div>
-            <div style={{ fontSize: "22px", marginTop: "5px" }}>
+            <div className={classes.bodyTextDialog}>
               <span>Would you like to save your changes before exiting?</span>
             </div>
           </Dialog>
@@ -1592,10 +1592,10 @@ const SmsCreator = ({ classes }, props) => {
             />
           }
         >
-          <div style={{ height: "60px", borderBottom: "1px solid #DEE2E7" }}>
+          <div className={classes.baseDialogSetup}>
             <span className={classes.groupName}>Delete Campaign</span>
           </div>
-          <div style={{ fontSize: "22px", marginTop: "5px" }}>
+          <div style={{  }} className={classes.bodyTextDialog}>
             <span>Are you sure?</span>
           </div>
         </Dialog>
@@ -1609,13 +1609,13 @@ const SmsCreator = ({ classes }, props) => {
           <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
         }
       >
-        <div style={{ height: "60px", borderBottom: "1px solid black" }}>
+        <div className={classes.baseDialogSetup}>
           <span className={classes.groupName}>
           {t("mainReport.fieldInvalid")}:
           </span>
         </div>
         <div>
-          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }}>
+          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
           {campaignBool ? <li style={{ marginBottom: "8px" }}>
           {t("mainReport.campaignRequire")}
             </li>  : null } 

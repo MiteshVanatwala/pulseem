@@ -1283,6 +1283,35 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: "32px",
     color: "#006996",
     width: "700px",
+    "@media screen and (max-width: 768px)": {
+      width: "100%",
+      fontSize:"22px",
+    },
+
+  },
+  fieldsRequire : 
+  {
+    fontSize: "20px", color: "red", fontWeight: "600",
+
+    "@media screen and (max-width: 768px)": {
+     
+      fontSize:"12px !important",
+      marginBottom:"4px"
+    },
+  },
+  baseDialogSetup : 
+  {
+    height: "60px", borderBottom: "1px solid #DEE2E7",
+    "@media screen and (max-width: 768px)": {
+    height:"auto"
+    },
+  },
+  bodyTextDialog :
+  {
+    fontSize: "22px", marginTop: "5px",
+    "@media screen and (max-width: 768px)": {
+      fontSize: "16px"
+     },
   },
   modalDiv: {
     display: "flex",
