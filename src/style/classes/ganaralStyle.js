@@ -708,6 +708,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: "16px"
     }
   },
+  buttonFieldRemovalMobile: {
+    borderRadius: "5px",
+    border: "1px solid #bbb",
+    outline: "none",
+    padding: "8px",
+    '&::placeholder':
+    {
+      fontSize: "16px"
+    }
+  },
   success: {
     borderBottom: "2px solid green",
   },
@@ -716,6 +726,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   msgHead: {
     fontSize: "20px",
+    "@media screen and (max-width: 768px)": {
+      marginTop:"40px",
+    },
   },
   msgArea: {
     resize: "none",
@@ -736,9 +749,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: "rgb(170, 170, 170)",
       fontSize: "16px",
     },
-    "@media screen and (max-width: 768px)": {
-      width: "92%",
-    },
   },
   smallInfoDiv: {
     display: "flex",
@@ -755,9 +765,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottom: "1px solid rgb(170, 170, 170)",
     borderLeft: "1px solid rgb(170, 170, 170)",
     borderRight: "1px solid rgb(170, 170, 170)",
-    "@media screen and (max-width: 768px)": {
-      width: "92%",
-    },
+  
   },
   funcDiv: {
     width: "100%",
@@ -771,9 +779,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid rgb(170, 170, 170)",
     alignItems: "center",
     "@media screen and (max-width: 768px)": {
-      height: "60px",
-      width: "92%",
+      height:"110px"
     },
+
   },
   baseButtons: {
     display: "flex",
@@ -800,10 +808,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderColor: "#1c82b2",
     marginInlineStart: "5px",
     "@media screen and (max-width: 768px)": {
-      width: "80px",
+      width: "110px",
       padding: "8px",
       marginBottom: "5px",
-      fontSize: "7px",
+      fontSize: "11px",
     },
   },
   info2Buttons: {
@@ -822,15 +830,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineStart: "3px",
     marginInlineEnd:"2px",
     "@media screen and (max-width: 768px)": {
-      width: "80px",
+      width: "110px",
       padding: "8px",
       marginBottom: "5px",
-      fontSize: "10px",
+      fontSize: "11px",
     },
   },
   selectMsg: {
     marginInlineStart: "3px",
     marginInlineEnd:"4px",
+
+   
     height:"40px",
     marginInlineEnd: "2px",
     "@media screen and (max-width: 768px)": {
@@ -891,6 +901,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       width: "100%",
     },
   },
+  descSwitch : 
+  {
+    width: "200px",
+    fontSize: "15px",
+    marginTop: "5px",
+    color: "#C2C2C2",
+    fontWeight: "600",
+    "@media screen and (max-width: 768px)": {
+      width: "100%",
+    },
+
+  },
   rightSend: {
     display: "flex",
     width: "70px",
@@ -922,20 +944,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     position: "relative",
     bottom: "10px",
     "@media screen and (max-width: 768px)": {
-      flexDirection: "column",
+      flexDirection: "column-reverse",
     },
 
 
   },
   buttonDivAct: {
-    position: "fixed",
+    position: "relative",
     bottom: "10px",
     display: "flex",
     alignItems: "center",
     marginTop: "150px",
     marginBottom: "50px",
     "@media screen and (max-width: 768px)": {
-      flexDirection: "column",
+      flexDirection: "column-reverse",
     },
   },
   rightInput3: {
@@ -1042,8 +1064,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "700",
     top:"142px",
     marginInlineStart:"145px",
-    fontSize:"15px"
+    fontSize:"15px",
+    "@media screen and (max-width: 768px)": {
+      marginInlineStart: "10px",
+    },
   },
+  testDiv : 
+ {
+  marginInlineStart: "35px",
+  display: "flex",
+  marginTop: "20px",
+  "@media screen and (max-width: 768px)": {
+    marginInlineStart: "0px",
+  },
+ },
+ testRadios : 
+ {
+  marginTop: "10px", marginInlineStart: "35px",
+  "@media screen and (max-width: 768px)": {
+    marginInlineStart: "0px",
+  },
+ },
   phoneNumberSumm: {
     position: "absolute",
     display:"flex",
@@ -1055,8 +1096,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize:"15px"
   },
   chat: {
-
-
     backgroundColor: "#3da6f6",
     color: "#fff",
     maxWidth: "260px",
@@ -1527,6 +1566,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "100%",
     "@media screen and (max-width: 768px)": {
       width: "100%",
+      marginBottom:"10px"
     },
   },
   emoji: {
@@ -1553,6 +1593,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pickerEmoji: {
     position: "relative",
     height: "100%",
+    zIndex:"99",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -1564,9 +1605,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent:"center",
-    borderRight: "1px solid black",
     "@media screen and (max-width: 768px)": {
-      flexDirection: "column",
+      flexDirection: "column-reverse",
       // borderRight: "1px solid black",
     },
   },
@@ -1581,20 +1621,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
 
     "@media screen and (max-width: 768px)": {
-      // marginInlineStart: "0px",
-      width: "80%",
+      width: "100%",
       marginInlineStart: "0px",
+      // marginBottom:"30px"
     },
   },
   phoneDiv: {
     position: "relative",
     // marginInlineStart: "5px",
-    // "@media screen and (max-width: 768px)": {
-    //   marginTop: "100px",
-    //   display: "flex",
-    //   alignItems: "center",
-    //   justifyContent: "center",
-    // },
+    "@media screen and (max-width: 768px)": {
+      marginTop: "170px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
   },
   groupsMan:
   {
@@ -2341,5 +2381,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     rightMostContainer :
     {
       display:"flex"
+   },
+   mobileGrid : 
+   {
+     padding :"0px !important",
+     margin:"0px !importannt"
    }
 });

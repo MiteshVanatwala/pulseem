@@ -384,8 +384,8 @@ const SmsCreator = ({ classes }, props) => {
 
   const renderFields = () => {
     return (
-      <Grid container spacing={2} className={classes.fieldDiv}>
-        <Grid item xs={4} className={classes.buttonForm}>
+      <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
+        <Grid item xs={windowSize === "xs" ? 12 : 4} className={classes.buttonForm}>
           <Typography className={classes.buttonHead}>
             {t("mainReport.campName")}
           </Typography>
@@ -405,7 +405,7 @@ const SmsCreator = ({ classes }, props) => {
             {t("mainReport.campDesc")}
           </Typography>
         </Grid>
-        <Grid item xs={4} className={classes.buttonForm}>
+        <Grid item xs={windowSize === "xs" ? 12 : 4} className={classes.buttonForm}>
           <Box className={classes.inputCampDiv}>
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
@@ -432,7 +432,7 @@ const SmsCreator = ({ classes }, props) => {
             {t("mainReport.campRemovalDesc")}
           </Typography>
         </Grid>
-        <Grid item xs={4}>
+        <Grid item xs={windowSize === "xs" ? 12 : 4} >
           {restoreBool ? (
             <Box className={classes.buttonForm}>
               <Typography className={clsx(classes.buttonHead)}>
@@ -443,7 +443,7 @@ const SmsCreator = ({ classes }, props) => {
                 type="text"
                 placeholder="2"
                 disabled
-                className={classes.buttonFieldRemoval}
+                className={windowSize === "xs" ? classes.buttonFieldRemovalMobile : classes.buttonFieldRemoval}
               />
             </Box>
           ) : null}
@@ -517,7 +517,7 @@ const SmsCreator = ({ classes }, props) => {
     return (
       <Grid container className={classes.msgDiv}>
         <Grid container>
-          <Grid item xs={8} className={classes.boxDiv}>
+          <Grid item xs={windowSize === "xs" ? 12 : 8} className={classes.boxDiv}>
             <Typography className={classes.msgHead}>
               {t("mainReport.yourMessage")}
             </Typography>
@@ -585,8 +585,8 @@ const SmsCreator = ({ classes }, props) => {
                       style={{
                         borderRight: "1px solid #D5D5D5",
                         marginInlineEnd: "4px",
+                        width:"40px",height:"40px"
                       }}
-                      style={{width:"40px",height:"40px"}}
                     >
                       <FormatAlignRightIcon />
                     </ToggleButton>
@@ -650,8 +650,7 @@ const SmsCreator = ({ classes }, props) => {
                     })}
                   </select>
                 </Box>
-              </Box>
-              <Box className={classes.addDiv}>
+                <Box className={classes.addDiv}>
                 <Typography
                   className={classes.addButtons}
                   onClick={() => {
@@ -698,9 +697,11 @@ const SmsCreator = ({ classes }, props) => {
                   </Box>
                 ) : null}
               </Box>
+              </Box>
+              
             </Box>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={windowSize === "xs" ? 12 : 4}>
             <Box className={classes.switchDiv}>
               <FormGroup>
                 <Switch
@@ -727,13 +728,8 @@ const SmsCreator = ({ classes }, props) => {
                   {t("mainReport.keepTrack")}
                 </Typography>
                 <Typography
-                  style={{
-                    width: "200px",
-                    fontSize: "15px",
-                    marginTop: "5px",
-                    color: "#C2C2C2",
-                    fontWeight: "600",
-                  }}
+                className={classes.descSwitch}
+                 
                 >
                   {t("mainReport.keepDesc")}
                 </Typography>
@@ -769,11 +765,7 @@ const SmsCreator = ({ classes }, props) => {
           </div>
         </Box>
         <div
-          style={{
-            marginInlineStart: "35px",
-            display: "flex",
-            marginTop: "20px",
-          }}
+        className={classes.testDiv}
         >
           <FormGroup>
             <Switch
@@ -810,7 +802,7 @@ const SmsCreator = ({ classes }, props) => {
           </div>
         </div>
         {checked ? (
-          <div style={{ marginTop: "10px", marginInlineStart: "35px" }}>
+          <div  className={classes.testRadios}>
             <RadioGroup
               row
               aria-label="position"
@@ -1327,17 +1319,27 @@ const SmsCreator = ({ classes }, props) => {
   };
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
-      <Grid container spacing={3} className={classes.smsInit}>
-        <Grid item xs={8}>
+
+      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" ? classes.mobileGrid : classes.smsInit}>
+     {windowSize === "xs" ?    <Grid item xs={12} >
           {renderSwitch()}
           {renderHead()}
           {renderFields()}
           {renderMsg()}
-        </Grid>
-
-        <Grid item xs={4}>
           {renderPhone()}
+        </Grid> : <> <Grid item xs={8}>
+          {renderSwitch()}
+          {renderHead()}
+          {renderFields()}
+          {renderMsg()}
+         
         </Grid>
+         <Grid item xs={4}>
+         {renderPhone()}
+        </Grid> </> }
+      
+
+      
       </Grid>
       {dialogClick ? (
         <Dialog
