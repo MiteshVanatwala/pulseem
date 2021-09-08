@@ -721,16 +721,6 @@ const SmsCreatorStep = ({ classes }) => {
   const renderBody = () => {
     return (
       <div>
-        <div className={classes.infoDiv}>
-          <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
-          <Tooltip
-            disableFocusListener
-            title="First choose who receives your campaign, then choose when."
-            classes={{ tooltip: styles.customWidth }}
-          >
-            <span className={classes.bodyInfo}>i</span>
-          </Tooltip>
-        </div>
         <div className={classes.tabDiv}>
           <div
             className={
@@ -773,7 +763,9 @@ const SmsCreatorStep = ({ classes }) => {
               <span className={classes.bodyInfo}>i</span>
             </Tooltip>
           </div>
-          {manualClick ? (
+          
+        </div>
+        {manualClick ? (
             <div
               className={
                 highlighted
@@ -835,8 +827,7 @@ const SmsCreatorStep = ({ classes }) => {
               />
             </div>
           ) : null}
-        </div>
-        <div style={{width:"700px"}}>
+        <div  className={classes.groupsFilterDiv}>
           {groupClick ? (
 
             <Groups
@@ -927,14 +918,7 @@ const SmsCreatorStep = ({ classes }) => {
               {areaData !== "" ? (
                 <div>
                   <span
-                    style={{
-                      padding: "8px",
-                      backgroundColor: "#51AA51",
-                      color: "#fff",
-                      marginInlineEnd: "6px",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                    }}
+                    className={classes.addManualDiv}
                     onClick={() => {
                       handlePasted();
                     }}
@@ -943,14 +927,7 @@ const SmsCreatorStep = ({ classes }) => {
                     Edit fields and save
                   </span>
                   <span
-                    style={{
-                      padding: "8px",
-                      color: "#277BFF",
-                      marginInlineEnd: "6px",
-                      borderRadius: "6px",
-                      cursor: "pointer",
-                      border: "1px solid #277BFF",
-                    }}
+                    className={classes.clearDiv}
                     onClick={() => {
                       setareaData("");
                       setContacts([]);
@@ -2143,7 +2120,7 @@ const SmsCreatorStep = ({ classes }) => {
         <div>
           {renderSwitch()}
           {renderHead()}
-          {/* {renderContent()} */}
+          {renderContent()}
           <Grid container>
             <Grid md={7} xs={12}>
               {renderBody()}

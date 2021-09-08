@@ -1437,12 +1437,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "700px",
     height: "350px",
     backgroundColor: "white !important",
+    "@media screen and (max-width: 768px)": {
+      width:"auto"
+    },
   },
   greenManual: {
     border: "2px dashed #4BB543",
     width: "700px",
     height: "350px",
     backgroundColor: "#CCFFE5",
+    "@media screen and (max-width: 768px)": {
+      width:"auto"
+    },
   },
   areaCon: {
     width: "680px",
@@ -1459,6 +1465,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: "16px",
       fontFamily: "inherit",
     },
+    "@media screen and (max-width: 768px)": {
+      width:"90%"
+    },
   },
   greenCon: {
     width: "680px",
@@ -1474,7 +1483,37 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontFamily: "inherit",
     },
   },
-
+  groupsFilterDiv :
+  {
+    width:"700px",
+    "@media screen and (max-width: 768px)": {
+      width:"100%"
+    },
+  },
+  addManualDiv : 
+  {
+    padding: "8px",
+    backgroundColor: "#51AA51",
+    color: "#fff",
+    marginInlineEnd: "6px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    "@media screen and (max-width: 768px)": {
+      fontSize:"10px"
+    },
+  },
+  clearDiv : 
+  {
+    padding: "8px",
+    color: "#277BFF",
+    marginInlineEnd: "6px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    border: "1px solid #277BFF",
+    "@media screen and (max-width: 768px)": {
+      fontSize:"10px"
+    },
+  },
   backBtn: {
     marginTop: "30px",
     boxShadow: "0 1px 2px #a5a2a2",
@@ -2387,7 +2426,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   smsStepDiv:
   {
     display: "grid",
-    padding: "40px 80px 15px 90px"
+    padding: "40px 80px 15px 90px",
+    "@media screen and (max-width: 768px)": {
+      gridTemplateColumns:"auto",
+      padding:"0px"
+    },
+
   },
   numberChnageModal : 
   {
@@ -2404,16 +2448,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     position:"relative",
     bottom:"30px",
     "@media screen and (max-width: 768px)": {
-      flexDirection: "column",
+     
+      marginTop:"150px",
+      display:"block"
     },
   },
     rightMostContainer :
     {
-      display:"flex"
+      display:"flex",
+      "@media screen and (max-width: 768px)": {
+        display:"block"
+      }
    },
    mobileGrid : 
    {
      padding :"0px !important",
-     margin:"0px !importannt"
+     margin:"0px !important"
    }
 });
