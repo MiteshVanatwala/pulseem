@@ -144,11 +144,11 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
     return (
       <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel_${tabType}`}>
         <Grid container justify={'space-between'}>
-          <Grid item lg={4} className={classes.flexSpaceBetweenVertical}>
+          <Grid item lg={4} className={tabType !== "newsletter" ? classes.flexSpaceBetweenVertical : null}>
             {
               innerData.map((c, index) => {
                 return (
-                  <Grid container justify={'space-between'} className={classes.mb10} key={`${c.CampaignName}_${index}`}>
+                  <Grid container className={clsx(tabType === "newsletter" ? classes.mb25 : null,  tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
                     <Grid item lg={12}>
                       <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <BootstrapTooltip title={c.CampaignName} placement="top">

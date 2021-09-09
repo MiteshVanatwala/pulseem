@@ -1,11 +1,3 @@
-const dashboardDirection = {
-    xs: 'column-reverse',
-    sm: '',
-    md: '',
-    lg: '',
-    xl: ''
-}
-
 const shortcutEditLeft = {
     xs: '8%',
     sm: '18px',
@@ -44,10 +36,6 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         background: '#F2F2F2',
         padding: 0,
         maxHeight: 'unset'
-    },
-    dashboardContainer: {
-        flexDirection: dashboardDirection[windowSize]
-
     },
     chartLabelGreen: {
         position: 'absolute',
@@ -159,5 +147,15 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         '&:hover': {
             textDecoration: 'none',
         }
+    },
+    dashboardTop: {
+        [theme.breakpoints.down('sm')]: {
+            order: 1
+        },
+    },
+    dashboardSide: {
+        [theme.breakpoints.down('sm')]: {
+            order: 2
+        },
     }
 });

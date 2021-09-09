@@ -390,12 +390,13 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           <Typography align='center' className={clsx(classes.categoryLabel, classes.mb5)}>{t(data.CategoryName)}</Typography>
           <Typography align='center' className={classes.pageTitle}>{t(data.ShortcutName)}</Typography>
         </Button>
-        <IconButton
+        {windowSize !== 'xs' && windowSize !== 'sm' && <IconButton
           id="editIcon"
           className={classes.shortcutEditIcon}
           onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, data.ID)}>
           {'\uE09C'}
         </IconButton>
+        }
         {renderShortcutMenu(data.ID, true, index)}
       </Box>
     );

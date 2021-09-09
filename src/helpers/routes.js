@@ -31,7 +31,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
     key: 'dashboard',
     title: t('master.RadMenuItemResource1.Text'),
     iconUnicode: '\uF064',
-    href: '/Pulseem/homepage.aspx?fromreact=true',
+    href: '/react',
     isShow: windowSize && windowSize === "xs" ? true : false,
     icon: <img
       alt='Dashboard'

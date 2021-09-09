@@ -603,5 +603,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+  },
+  mb25: {
+    marginBottom: 25
+  },
+  mt25: {
+    marginTop: 25
   }
 })

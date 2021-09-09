@@ -21,6 +21,8 @@ const RecipientChart = ({ classes }) => {
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
     const { language, windowSize, isRTL } = useSelector(state => state.core);
+    const { packagesDetails } = useSelector(state => state.dashboard);
+    const { Notifications = {} } = packagesDetails || {};
 
     const dispatch = useDispatch();
 
@@ -46,19 +48,31 @@ const RecipientChart = ({ classes }) => {
         }
     ];
 
+    // if (Notifications.FeatureExist) {
+    //     titles.push({
+    //         mainTitle: 'master.notifications',
+    //         centerTitle: 'dashboard.noNotifications'
+    //     });
+    // }
+
     let data = [];
     recipientsReport.map(report => {
-        data.push({
-            labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
-            datasets: [{
-                data: [
-                    report.Active,
-                    report.Error,
-                    report.Removed
-                ],
-                borderWidth: 0,
-            }],
-        })
+        if (report.ReportSection === 2 && !Notifications.FeatureExist) {
+            return;
+        }
+        else {
+            data.push({
+                labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
+                datasets: [{
+                    data: [
+                        report.Active,
+                        report.Error,
+                        report.Removed
+                    ],
+                    borderWidth: 0,
+                }],
+            })
+        }
     });
 
     const renderCircleAdd = (innerTitle) => {
@@ -238,6 +252,9 @@ const RecipientChart = ({ classes }) => {
                     showArrows={false}
                     selectedItem={carouselItem}>
                     {recipientsReport.map((report, index) => {
+                        if (report.ReportSection === 2 && !Notifications.FeatureExist) {
+                            return;
+                        }
                         if (report.Total) {
                             return renderDoughnut(report, index)
                         } else {
@@ -253,6 +270,9 @@ const RecipientChart = ({ classes }) => {
         return (
             <Grid item container justify='space-evenly'>
                 {recipientsReport.map((report, index) => {
+                    if (report.ReportSection === 2 && !Notifications.FeatureExist) {
+                        return;
+                    }
                     if (report.Total) {
                         return renderDoughnut(report, index)
                     } else {

@@ -25,5 +25,6 @@
     "automationManagement": "Automations Management",
     "hi": "Hi",
     "createNotification": "Create Notification",
-    "notificationManagement": "Notifications Management"
+    "notificationManagement": "Notifications Management",
+    "pageTitle": "Dashboard | Pulseem System"
   }
