@@ -364,6 +364,10 @@ const App=({screenSize}) => {
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/certthumbprint': billingTypeId=''
       }=jwt
 
+      if(!billingTypeId){
+        billingTypeId = jwt.certthumbprint;
+      }
+      
       dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName,cameFromSubAccount,isAdmin,isAllowSwitchAccount, billingTypeId}))
       let lang=culture||locality; //||'he'
       setCookie('Culture',lang.toLowerCase())
