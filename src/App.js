@@ -360,10 +360,12 @@ const App=({screenSize}) => {
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authorizationdecision': cameFromSubAccount='',
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': isAdmin='',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name': basename='',
-        'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata': isAllowSwitchAccount=''
+        'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata': isAllowSwitchAccount='',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/thumbprint': billingTypeId=''
       }=jwt
 
-      dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName,cameFromSubAccount,isAdmin,isAllowSwitchAccount}))
+      console.log(billingTypeId);
+      dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName,cameFromSubAccount,isAdmin,isAllowSwitchAccount, billingTypeId}))
       let lang=culture||locality; //||'he'
       setCookie('Culture',lang.toLowerCase())
       lang=lang.split('-')[0]

@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 
 const BulkStatus = ({ classes }) => {
+  const { billingTypeId } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const { username } = useSelector(state => state.user);
   const [isShowSmsPackage, showSmsPackage] = useState(false);
@@ -22,8 +23,6 @@ const BulkStatus = ({ classes }) => {
   let isMMSPrepaid = Mms.isPrepaid || Mms.Credits == -1;
   let isNotificationsPrepaid = Notifications.isPrepaid || Notifications.Credits == -1;
   //let isSMSPrepaid = Sms.isPrepaid || Sms.Credits == -1;
-
-  console.log(packagesDetails);
 
   useEffect(() => {
     dispatch(getPackagesDetails());
@@ -90,7 +89,7 @@ const BulkStatus = ({ classes }) => {
             onMouseLeave={() => showSmsPackage(false)}>
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {!Sms.IsPrepaid ? t('dashboard.perRecipients') : Sms.Credits}
+              {!Sms.IsPrepaid || billingTypeId === 1 ? t('dashboard.perRecipients') : Sms.Credits}
             </Typography>
             {/* {isShowSmsPackage ? (
               <Button onClick={() => setIsOpenPackageDialog(true)} className={classes.whiteLink}>
@@ -106,13 +105,13 @@ const BulkStatus = ({ classes }) => {
           <Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {isNewsletterPrepaid ? t('dashboard.perRecipients') : Newsletters.Credits}
+              {isNewsletterPrepaid || billingTypeId === 1 ? t('dashboard.perRecipients') : Newsletters.Credits}
             </Typography>
           </Grid>
           <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {isMMSPrepaid ? t('dashboard.perRecipients') : Mms.Credits}
+              {isMMSPrepaid || billingTypeId === 1 ? t('dashboard.perRecipients') : Mms.Credits}
             </Typography>
             {/* {availablePackages.length > 0 && <a href='#' className={classes.bulkContent}>
               {t('dashboard.purchase')}
@@ -121,7 +120,7 @@ const BulkStatus = ({ classes }) => {
           {Notifications.FeatureExist && <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {isNotificationsPrepaid ? t('dashboard.perRecipients') : Notifications.Credits}
+              {isNotificationsPrepaid || billingTypeId === 1 ? t('dashboard.perRecipients') : Notifications.Credits}
             </Typography>
             {/* {availablePackages.length > 0 &&
               <a href='#' className={classes.bulkContent}>
