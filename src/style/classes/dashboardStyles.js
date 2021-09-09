@@ -73,14 +73,14 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     shortcutBox: {
         position: windowSize !== 'xl' && windowSize !== 'xs' ? 'absolute' : 'sticky',
         top: windowSize !== 'xl' ? 47 : 0,
-        right: isRTL ? 0 : 'auto',
-        left: isRTL ? 'auto' : 0,
+        right: isRTL ? 'auto' : 0,
+        left: isRTL ? 0 : 'auto',
         width: shortcutBoxWidth[windowSize],
         height: shortcutPaperHeight[windowSize],
         [theme.breakpoints.down('xs')]: {
             margin: '10px 10px 10px 10px'
         },
-        boxShadow: windowSize === 'xs' ? '0px 3px 3px -2px rgb(0 0 0 / 20%), 0px 3px 4px 0px rgb(0 0 0 / 14%), 0px 1px 8px 0px rgb(0 0 0 / 12%)' : isRTL && windowSize !== 'xs' ? '-4px 0px 5px 0px rgba(0,0,0, 0.2)' : '4px 0px 5px 0px rgba(0,0,0, 0.2)',
+        boxShadow: windowSize === 'xs' ? '0px 3px 3px -2px rgb(0 0 0 / 20%), 0px 3px 4px 0px rgb(0 0 0 / 14%), 0px 1px 8px 0px rgb(0 0 0 / 12%)' : isRTL && windowSize !== 'xs' ? '4px 0px 5px 0px rgba(0,0,0, 0.2)' : '-4px 0px 5px 0px rgba(0,0,0, 0.2)',
         borderRadius: windowSize === 'xs' ? 10 : 0
     },
     shortcutPaper: {

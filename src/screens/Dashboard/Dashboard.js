@@ -20,13 +20,6 @@ const DashboardScreen = ({ classes }) => {
       classes={classes}
       customStyle={classes.dashboard}>
       <Grid container className={classes.dashboardContainer}>
-        <Grid item xs={12} sm={3} md={2}>
-          <Shortcut
-            classes={classes}
-            t={t}
-            isRTL={isRTL}
-          />
-        </Grid>
         <Grid item xs={12} sm={9} md={10}>
           <Grid container direction='row'>
             <Grid item xs={12} sm={12} md={12} lg={4}>
@@ -53,6 +46,13 @@ const DashboardScreen = ({ classes }) => {
               />
             </Grid>
           </Grid>
+        </Grid>
+        <Grid item xs={12} sm={3} md={2}>
+          <Shortcut
+            classes={classes}
+            t={t}
+            isRTL={isRTL}
+          />
         </Grid>
       </Grid>
     </DefaultScreen>

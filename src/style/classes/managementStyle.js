@@ -1003,8 +1003,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     '& canvas': {
       height: barHeight[windowSize]
     },
-    paddingLeft: 15,
-    paddingRight: 15
+    paddingLeft: windowSize !== 'xs' ? 15 : 0,
+    paddingRight: windowSize !== 'xs' ? 15 : 0
   },
   emptyDoughnut: {
     display: 'flex',
