@@ -104,7 +104,7 @@ const SmsCreator = ({ classes }, props) => {
     accountId,
     getCampaignSum,
     testGroups,
-    commonSettings
+    commonSettings,
   } = useSelector((state) => state.sms);
  
   const [alignment, setAlignment] = useState("left");
@@ -502,6 +502,8 @@ const SmsCreator = ({ classes }, props) => {
       setlinkCount(0);
     }
    let response  =  await dispatch(getCreditsforSMS(e.target.value.length));
+   
+   console.log("----->response",JSON.stringify(response));
     setmessageCount(count);
   };
 

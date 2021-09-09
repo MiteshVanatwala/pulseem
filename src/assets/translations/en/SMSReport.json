@@ -23,5 +23,11 @@
   "NoPulse":"No Pulse Settings are Applied",
   "pulseAmount":"Please Fill Pulse Amount",
   "timeAmount":"Please Fill Time Interval",
-  "randomAmt":"Please Fill Random Amount"
+  "randomAmt":"Please Fill Random Amount",
+  "whomtoSendTip":"First choose who receives your campaign, then choose when.",
+  "pulseSendTip":"Choose a group and when to send to organize your Pulse Sending.",
+  "manualTip":"Add recipient information. New! You can now add up to 600,000 recipients",
+  "finalReciTip":"Please note this value is not the final number of recipients who will receive this campaign. After selecting your sending preferences, you will see the correct value in the Summary page.",
+  "groupName":"Group Name",
+  "back":"Back"
 }

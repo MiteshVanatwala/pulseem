@@ -309,6 +309,7 @@ export const smsSlice = createSlice({
     commonSettings:{},
     directSmsReport: {},
     directSmsReportError: '',
+    credits :[],
   },
   reducers: {},
   extraReducers: builder => {
@@ -325,6 +326,7 @@ export const smsSlice = createSlice({
     builder.addCase(getCampaignSumm.fulfilled, (state, { payload }) => {
       state.getCampaignSum = payload
     })
+    
     builder.addCase(getSmsReport.fulfilled, (state, { payload }) => {
       state.smsReport = payload
     })

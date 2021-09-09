@@ -712,11 +712,13 @@ const SmsCreatorStep = ({ classes }) => {
         <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
         <Tooltip
           disableFocusListener
-          title="First choose who receives your campaign, then choose when."
+          title={t("smsReport.whomtoSendTip")}
           classes={{ tooltip: styles.customWidth }}
         >
           <span className={classes.bodyInfo}>i</span>
         </Tooltip>
+
+        
       </div>
         <div className={classes.tabDiv}>
           <div
@@ -754,7 +756,7 @@ const SmsCreatorStep = ({ classes }) => {
             </span>
             <Tooltip
               disableFocusListener
-              title="Add recipient information. New! You can now add up to 600,000 recipients"
+              title={t("smsReport.manualTip")}
               classes={{ tooltip: styles.customWidth }}
             >
               <span className={classes.bodyInfo}>i</span>
@@ -881,7 +883,7 @@ const SmsCreatorStep = ({ classes }) => {
                   <input
                     type="text"
                     className={classes.groupInput}
-                    placeholder="Group Name"
+                    placeholder={t("smsReport.groupName")}
                     onChange={inputGroup}
                     value={groupValue}
                   />
@@ -901,7 +903,7 @@ const SmsCreatorStep = ({ classes }) => {
                 <span>{t("mainReport.totalReci")}: {totalGroupstoDisplay}</span>
                 <Tooltip
                   disableFocusListener
-                  title="Please note this value is not the final number of recipients who will receive this campaign. After selecting your sending preferences, you will see the correct value in the Summary page."
+                  title={t("smsReport.finalReciTip")}
                   classes={{ tooltip: styles.customWidth }}
                   style={{ marginInlineStart: "5px" }}
                 >
@@ -1434,7 +1436,7 @@ const SmsCreatorStep = ({ classes }) => {
           </span>
           <Tooltip
             disableFocusListener
-            title="Choose a group and when to send to organize your Pulse Sending."
+            title={t("smsReport.pulseSendTip")}
             classes={{ tooltip: styles.customWidth }}
           >
             <span className={classes.bodyInfo}>i</span>
@@ -2134,7 +2136,7 @@ const SmsCreatorStep = ({ classes }) => {
            
           <span className={classes.rightInput4}>
           <span style={{marginInlineEnd:"5px"}}>{"<"}</span>
-            Back
+          {t("smsReport.back")}
           </span>
           </div>
           <div  className={classes.rightMostContainer}>
