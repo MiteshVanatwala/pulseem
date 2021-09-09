@@ -361,13 +361,10 @@ const App=({screenSize}) => {
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': isAdmin='',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name': basename='',
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata': isAllowSwitchAccount='',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/certthumbprint': billingTypeId=''
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/thumbprint': billingTypeId=''
       }=jwt
 
-      if(!billingTypeId){
-        billingTypeId = jwt.certthumbprint;
-      }
-      
+
       dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName,cameFromSubAccount,isAdmin,isAllowSwitchAccount, billingTypeId}))
       let lang=culture||locality; //||'he'
       setCookie('Culture',lang.toLowerCase())
