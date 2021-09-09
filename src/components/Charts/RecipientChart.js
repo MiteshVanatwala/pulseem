@@ -49,7 +49,7 @@ const RecipientChart = ({ classes }) => {
     let data = [];
     recipientsReport.map(report => {
         data.push({
-            labels: ['Active', 'Error', 'Removed'],
+            labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
             datasets: [{
                 data: [
                     report.Active,
@@ -203,7 +203,7 @@ const RecipientChart = ({ classes }) => {
         };
 
         let innerData = {
-            labels: ['Active', 'Error', 'Removed'],
+            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
             datasets: [{
                 data: [
                     report.Active,

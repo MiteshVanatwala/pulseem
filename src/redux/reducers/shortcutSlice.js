@@ -21,6 +21,16 @@ export const setShortcuts = createAsyncThunk(
         }
     });
 
+export const deleteShortcuts = createAsyncThunk(
+    'dashboard/DeleteShortcut', async (id, thunkAPI) => {
+        try {
+            const response = await instence.delete(`dashboard/DeleteShortcut/${id}`);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 export const shortcutSlice = createSlice({
     name: 'shortcuts',
     initialState: {

@@ -552,6 +552,11 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         alignItems: 'center',
         alignContent: 'center'
     },
+    flexSpaceBetweenVertical: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between'
+    },
     controlField: {
         marginRight: 5,
         marginLeft: 5,

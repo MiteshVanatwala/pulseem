@@ -71,14 +71,6 @@ const shortcutFontSize = {
 
 }
 
-const dashboardDirection = {
-  xs: 'column-reverse',
-  sm: '',
-  md: '',
-  lg: '',
-  xl: ''
-}
-
 // const paperTopHeight = {
 //   xs: 'auto',
 //   sm: 'auto',
@@ -95,21 +87,6 @@ const dashboardDirection = {
 //   xl: '350px'
 // }
 
-const shortcutEditLeft = {
-  xs: '8%',
-  sm: '18px',
-  md: '15px',
-  lg: '22px',
-  xl: '28px'
-}
-
-const shortcutPaperHeight = {
-  xs: '',
-  sm: '100vh',
-  md: '100vh',
-  lg: '95vh',
-  xl: '95vh'
-}
 
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   managementTitle: {
@@ -210,8 +187,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   cellExpand: {
-    width: 30, 
-    padding: '8px 0px', 
+    width: 30,
+    padding: '8px 0px',
     borderBottom: 'unset',
     display: 'flex',
     alignItems: 'center'
@@ -962,116 +939,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     textDecoration: 'underline',
     margin: '0 5px'
   },
-  mobileReportHead: {
-    fontWeight: 'bold',
-    marginTop: 15,
-    marginInlineStart: 10
-  },
-  tabelCellPadding: {
-    paddingBlock: 15
-  },
-  dashboard: {
-    background: '#F2F2F2',
-    padding: 0,
-    maxHeight: 'unset'
-  },
-  dashboardContainer: {
-    flexDirection: dashboardDirection[windowSize]
-
-  },
-  chartLabelGreen: {
-    position: 'absolute',
-    top: 'calc(50% - 28px)',
-    width: '100%',
-    fontSize: 35,
-    fontWeight: '500',
-    textTransform: 'uppercase',
-    color: '#65d638'
-  },
-  shortcutTitleSection: {
-    width: '85%',
-    marginTop: '2.1rem',
-    marginBottom: 40
-  },
-  shortcutTitle: {
-    fontSize: windowSize === 'xs' ? 23 : 25,
-    fontWeight: 'bold'
-  },
-  shortcutSubtitle: {
-    fontSize: windowSize === 'xs' ? 16 : 18,
-  },
-  shortcutBox: {
-    position: windowSize === 'xs' ? '' : 'sticky',
-    top: 0,
-    height: shortcutPaperHeight[windowSize],
-    [theme.breakpoints.down('xs')]: {
-      margin: '10px 10px -10px 10px'
-    },
-    boxShadow: isRTL ? '4px 0px 5px 0px rgba(0,0,0, 0.2)' : '-4px 0px 5px 0px rgba(0,0,0, 0.2) '
-  },
-  shortcutPaper: {
-    [theme.breakpoints.down('xs')]: {
-      borderRadius: 10,
-    },
-    height: shortcutPaperHeight[windowSize],
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    overflow: 'auto',
-    '&::-webkit-scrollbar': {
-      width: '0px'
-    },
-    '&::-webkit-scrollbar-thumb': {
-      'backgroundColor': 'darkgrey',
-      borderRadius: '5px'
-    }
-  },
-  shortcutBtnBox: {
-    position: 'relative',
-    width: '100%',
-    textAlign: 'center'
-  },
-  shortcutButton: {
-    height: '92px',
-    width: '85%',
-    background: '#0371AD',
-    borderRadius: '20px',
-    marginBottom: windowSize === 'xs' ? 30 : 45,
-    fontSize: '18px',
-    position: 'relative',
-    textTransform: 'capitalize',
-    padding: '6px 30px'
-
-  },
-  shortcutDottedButton: {
-    borderRadius: '20px',
-    border: '1px dashed #0371AD',
-    fontFamily: 'pulseemicons',
-    height: '92px',
-    fontSize: '30px',
-    marginBottom: 45,
-    width: '85%',
-  },
-  shortcutList: {
-    maxWidth: 350,
-    background: 'white',
-    borderRadius: 10,
-    margin: 10
-  },
-  shortcutEditIcon: {
-    position: 'absolute',
-    left: shortcutEditLeft[windowSize],
-    bottom: windowSize === 'xs' ? 40 : 50,
-    fontFamily: 'pulseemicons',
-    fontSize: 18,
-    color: 'white'
-  },
-  shortcutLabel: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    marginTop: -5
-  },
   popperPaper: {
     padding: '5px 0',
     width: 300,
@@ -1132,13 +999,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center'
   },
   barChart: {
-    // maxWidth: 500,
     float: isRTL ? 'left' : 'right',
     '& canvas': {
-      // width: barWidth[windowSize],
       height: barHeight[windowSize]
     },
-    paddingBottom: 10
+    paddingLeft: 15,
+    paddingRight: 15
   },
   emptyDoughnut: {
     display: 'flex',
@@ -1240,7 +1106,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   bulkMargin: {
     [theme.breakpoints.down('xs')]: {
-      marginTop: 0,
+      marginTop: 10,
     },
     [theme.breakpoints.up('lg')]: {
       marginInlineEnd: 0

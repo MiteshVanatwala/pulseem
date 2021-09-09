@@ -80,7 +80,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
     pageTitle: t('sms.PageResource1.Title'),
     iconUnicode: '\ue181',
     href: '/react/SMSCampaigns',
-    isShow: features !== null && features.includes('7'),
+    isShow: features && !features.error && features !== null && features.indexOf('7') > -1,
     icon: <img
       alt='Sms'
       src={SmsIcon} />,
@@ -143,7 +143,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
     pageTitle: t('notifications.notificationManagement'),
     iconUnicode: '\ue117',
     href: '/react/Notifications',
-    isShow: features !== null && features.includes('35'),
+    isShow: features && !features.error && features !== null && features.indexOf('35'),
     icon: <img
       alt='Notifications'
       src={NotificationsIcon} />,

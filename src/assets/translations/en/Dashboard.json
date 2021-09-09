@@ -17,11 +17,13 @@
     "noNewsletters": "No Newsletters",
     "advanceSearch": "Advance Search",
     "createGroup": "Create Group",
-    "createABTest": "Create A/B Test",
+    "createABTest": "Create A/B Testing Campaign",
     "smsManagement": "SMS Management",
     "mmsManagement": "MMS Management",
     "unsubscribeReports": "Unsubscribe Reports",
     "openedClickedReport": "Opened/Clicked Report",
-    "automationManagement": "Automation Management",
-    "hi": "Hi"
+    "automationManagement": "Automations Management",
+    "hi": "Hi",
+    "createNotification": "Create Notification",
+    "notificationManagement": "Notifications Management"
   }
