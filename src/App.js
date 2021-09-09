@@ -353,6 +353,7 @@ const App=({screenSize}) => {
         email='',
         unique_name='',
         nameid: companyName,
+        certthumbprint: billingTypeId,
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone': phone='',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality': locality='he-IL',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince': imageURL='',
@@ -360,8 +361,7 @@ const App=({screenSize}) => {
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authorizationdecision': cameFromSubAccount='',
         'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': isAdmin='',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name': basename='',
-        'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata': isAllowSwitchAccount='',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/thumbprint': billingTypeId=''
+        'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata': isAllowSwitchAccount=''
       }=jwt
 
 
