@@ -126,6 +126,7 @@ const SmsCreator = ({ classes }, props) => {
   const [campaignNumBool, setcampaignNumBool] = useState(false);
   const [characterCount, setcharacterCount] = useState(0);
   const [linkCount, setlinkCount] = useState(0);
+  const [counterBool, setcounterBool] = useState(false);
   const [messageCount, setmessageCount] = useState(0);
   const [msg, setmsg] = useState("");
   const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] =
@@ -228,6 +229,7 @@ const SmsCreator = ({ classes }, props) => {
   const getFeatures = async () => {
    let r =  await dispatch(getCommonFeatures());
    setcampaignNumber(r.payload.DefaultCellNumber)
+   setstoredValue(r.payload.DefaultCellNumber)
    
   };
 
@@ -325,13 +327,11 @@ const SmsCreator = ({ classes }, props) => {
   };
 
   const onCampaignNumber = (e) => {
-    setstoredValue(campaignNumber);
-
-    if (!modalOpen) {
-      setalertToggle(true);
-    } else {
       setcampaignNumber(e.target.value);
-    }
+   
+    
+   
+  
   };
 
   const validationCheck = () => {
@@ -398,7 +398,15 @@ const SmsCreator = ({ classes }, props) => {
       }
     }
   };
-
+   const onLeave = (e) =>
+    {
+      if (!modalOpen) {
+        setalertToggle(true);
+        setcounterBool(true);
+      } else {
+        setcounterBool(false);
+      }
+    }
   const renderFields = () => {
     return (
       <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
@@ -444,6 +452,7 @@ const SmsCreator = ({ classes }, props) => {
             className={clsx(classes.buttonField, classes.success)}
             onChange={onCampaignNumber}
             value={campaignNumber}
+            onBlur={onLeave}
           />
           <Typography className={clsx(classes.buttonContent, classes.alertMsg)}>
             {t("mainReport.campRemovalDesc")}
@@ -1265,6 +1274,7 @@ const SmsCreator = ({ classes }, props) => {
   };
   const handlecaution = () => {
     setalertToggle(false);
+    setcounterBool(false);
     setmodalOpen(true);
   };
 
@@ -1274,6 +1284,7 @@ const SmsCreator = ({ classes }, props) => {
   };
 
   const handleAlertoff = () => {
+    setcampaignNumber(storedValue);
     setalertToggle(false);
   };
   const renderAlert = () => {
