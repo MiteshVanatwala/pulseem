@@ -364,7 +364,6 @@ const App=({screenSize}) => {
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/thumbprint': billingTypeId=''
       }=jwt
 
-      console.log(billingTypeId);
       dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName,cameFromSubAccount,isAdmin,isAllowSwitchAccount, billingTypeId}))
       let lang=culture||locality; //||'he'
       setCookie('Culture',lang.toLowerCase())

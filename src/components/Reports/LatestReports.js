@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
 import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography, Tooltip } from '@material-ui/core';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { Doughnut, Bar } from 'react-chartjs-2';
+import { makeStyles } from '@material-ui/core/styles';
+import { Bar } from 'react-chartjs-2';
 import clsx from 'clsx';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { GroupsIcon } from '../../assets/images/managment/index';
 import { getLastCampaignReport } from '../../redux/reducers/dashboardSlice';
 import { HiUserGroup } from 'react-icons/hi';
 
@@ -122,8 +121,8 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
 
     if (tabType === "newsletter") {
       datasets.push(
-        { label: `${t('common.Opens')}`, backgroundColor: "#579b53", hoverBackgroundColor: "#579b53", data: opens },
-        { label: `${t('common.Clicks')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: clicks }
+        { label: `${t('common.Opens')}`, backgroundColor: "#579b53", hoverBackgroundColor: "#579b53", data: opens, title: 'aaa' },
+        { label: `${t('common.Clicks')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: clicks, title: 'bbb' }
       );
     }
 
@@ -224,61 +223,9 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
     );
   }
 
-  const renderPhoneLastReports = () => {
-
-    const renderItem = (innerData, index, name) => {
-      const phoneData = [
-        { label: t('common.Opens'), value: innerData && innerData.Opens || 0 },
-        { label: t('common.Clicks'), value: innerData && innerData.Clicks || 0 },
-        { label: t('common.Errors'), value: innerData && innerData.Errors || 0 },
-        { label: t('common.Removed'), value: innerData && innerData.Removed || 0 },
-      ]
-      const sendDate = innerData && innerData.SendDate || ''
-      const date = sendDate ? moment(sendDate).format(dateFormat) : '';
-      const total = innerData && innerData.TotalSendPlan || 0;
-      return (
-        <Grid item xs={12} className={clsx(classes.newsletterLastReportGrid, index === 0 && classes.newsletterItemBorder)} key={`item_${index}`}>
-          <Typography align='center' className={clsx(classes.f20, classes.pb10)}>
-            {name === 'newsletter' ? t('appBar.newsletter.title') : t('appBar.sms.title')}
-          </Typography>
-          <Typography className={classes.f20}>{innerData && innerData.CampaignName || ''}</Typography>
-          <Box className={classes.p0}>
-            <img src={GroupsIcon} width={20} />
-            <Box className={clsx(classes.colorGray, classes.dInline, classes.ml5)}>
-              <Typography className={clsx(classes.ml5, classes.dInline)}>{total.toLocaleString()}</Typography>
-              <Typography className={clsx(classes.ml5, classes.dInline)}>{date}</Typography>
-            </Box>
-          </Box>
-          {phoneData.map((item, ind) => {
-            return (
-              <Box key={`phoneItem${ind}`} className={classes.lastReportRowItem}>
-                <Typography className={classes.f18}>{item.label}</Typography>
-                <Typography className={classes.f18}>{item.value}</Typography>
-              </Box>
-            )
-          })}
-        </Grid>
-      )
-    }
-
-    return (
-      <Grid container className={classes.pb10}>
-        <Grid item xs={12} className={classes.phoneLastReportTitle}>
-          <Typography
-            className={classes.dashboardTitle}>
-            {t('dashboard.lastReports')}
-          </Typography>
-        </Grid>
-        {Object.keys(reports).map((name, index) => (
-          renderItem(reports[name], index, name)
-        ))}
-      </Grid>
-    );
-  }
-
   return (
     <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.lastReportPadding)}>
-      {windowSize === 'xs' || windowSize === 'sm' ? renderPhoneLastReports() : renderTabsLastReports()}
+      {renderTabsLastReports()}
     </Paper>
   )
 }
