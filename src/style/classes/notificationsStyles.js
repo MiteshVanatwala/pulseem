@@ -232,7 +232,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        minHeight: windowSize !== 'xs'? '100px' : null,
+        minHeight: windowSize !== 'xs' ? '100px' : null,
         backgroundColor: 'transparent',
         justifyContent: 'space-between',
         boxSizing: 'border-box',
@@ -404,7 +404,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     mobileNotification: {
         width: '100%',
-        maxWidth:  (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 220,
+        maxWidth: (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 220,
         boxShadow: '0 5px 5px 1px rgb(0 0 0 / 50%)',
         fontFamily: 'Assistant',
         top: 50,
@@ -651,8 +651,17 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         }
     },
     previewPaper: {
-        width: windowSize==='xs'?250:450,
-        height: windowSize==='xs'?330:730
+        width: windowSize === 'xs' ? 250 : 450,
+        height: windowSize === 'xs' ? 330 : 730
+    },
+    notificationMobileButtons: {
+        justifyContent: 'space-evenly',
+        minHeight: 50,
+        '& .MuiBox-root': {
+            flex: '100px 0 0',
+            color: '#0371ad',
+            textAlign: 'center'
+        }
     }
 
 })
