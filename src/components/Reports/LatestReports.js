@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography } from '@material-ui/core';
+import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography, Tooltip } from '@material-ui/core';
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import clsx from 'clsx';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
@@ -13,8 +14,23 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
   const { lastCampaignReport } = useSelector(state => state.dashboard);
   const dispatch = useDispatch();
   const [tabValue, handleTabValue] = useState(0);
-  const dateTimeFormat = 'MM/DD/YY, HH:mm';
-  const dateFormat = 'M.D.YYYY';
+  const dateTimeFormat = 'DD/MM/YY, HH:mm';
+  const dateFormat = 'D.M.YYYY';
+
+  const useStylesBootstrap = makeStyles((theme) => ({
+    arrow: {
+      color: theme.palette.common.black,
+    },
+    tooltip: {
+      backgroundColor: theme.palette.common.black,
+    },
+  }));
+
+  function BootstrapTooltip(props) {
+    const classes = useStylesBootstrap();
+
+    return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
+  }
 
   const initData = async () => {
     dispatch(getLastCampaignReport());
@@ -57,14 +73,6 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
           drawTicks: false,
         },
       }
-    }
-  };
-
-  const doughnutOptions = {
-    cutout: 77,
-    backgroundColor: ['#6EE602', '#E0FAC6'],
-    plugins: {
-      tooltip: false
     }
   };
 
@@ -143,12 +151,16 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
                 return (
                   <Grid container justify={'space-between'} className={classes.mb10} key={`${c.CampaignName}_${index}`}>
                     <Grid item lg={12}>
-                      <Typography className={clsx(classes.dInline)} style={{ fontWeight: 'bold' }}>
-                        {c.CampaignName}
-                      </Typography>
-                      <Typography className={clsx(classes.dInline, classes.f14, classes.italic, classes.mr5, classes.ml5)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
-                        {`${t('common.UpdatedOn')}`} {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
-                      </Typography>
+                      <Box style={{ display: 'flex', alignItems: 'center' }}>
+                        <BootstrapTooltip title={c.CampaignName} placement="top">
+                          <Typography className={clsx(classes.dInlineBlock, classes.ellipsisText)} style={{ fontWeight: 'bold', maxWidth: 150 }}>
+                            {c.CampaignName}
+                          </Typography>
+                        </BootstrapTooltip>
+                        <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.italic, classes.mr5, classes.ml5)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+                          {`${t('common.UpdatedOn')}`} {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
+                        </Typography>
+                      </Box>
                       {tabType === "sms" && <Box>
                         <HiUserGroup />
                         <Typography className={clsx(classes.dInline, classes.ml5, classes.mr5)}>

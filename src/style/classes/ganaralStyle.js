@@ -598,5 +598,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   italic: {
     fontStyle: 'italic'
+  },
+  ellipsisText: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   }
 })
