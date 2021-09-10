@@ -223,7 +223,6 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     setPageOpen(false);
     setLoading(loading);
     dispatch(setShortcuts(data)).then(() => {
-      //initData()
       dispatch(getShortcuts());
       setLoading({});
     })
@@ -242,11 +241,18 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   }
 
   const renderShortcutMenu = (num, update, index) => {
-    const pageTitle = selectedPage[num] && selectedPage[num].title || '';
-    const categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
+    let pageTitle = selectedPage[num] && selectedPage[num].title || '';
+    let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
     const open = Boolean(anchorEl[num]);
-
-
+    if (shortcuts.length > 0) {
+      const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
+      if (selectedShortcut) {
+        if (pageTitle === '')
+          pageTitle = selectedShortcut ? t(selectedShortcut.ShortcutName) : '';
+        if (categoryTitle === '')
+          categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
+      }
+    }
 
     const handleCategoryChange = (val) => {
       let page = selectedPage;
@@ -303,7 +309,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
                 button
                 onClick={() => setPageOpen(!pageOpen)}
                 className={clsx(classes.pt0, classes.pb0)}
-                disabled={!selectedCategory[num]}>
+                disabled={!selectedCategory[num] && pageTitle === ''}>
                 <ListItemText primary={pageTitle ? pageTitle : t('common.SelectPage')} />
                 {pageOpen ? <ExpandLess /> : <ExpandMore />}
               </ListItem>
