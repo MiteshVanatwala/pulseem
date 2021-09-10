@@ -16,6 +16,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const [anchorEl, setAnchorEl] = useState({});
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [pageOpen, setPageOpen] = useState(false);
+  const [bool, setbool] = useState([]);
   const [loading, setLoading] = useState({});
   const [activeShortcut, setActiveShortcut] = useState(null);
   const dispatch = useDispatch();
@@ -204,10 +205,13 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
 
   };
 
-  const initData = () => {
-    dispatch(getShortcuts());
+  const initData =  async () => {
+   let r = await  dispatch(getShortcuts());
   }
-  useEffect(initData, [dispatch])
+
+  useEffect(() => {
+      initData();
+  },[dispatch])
 
   const handlePageChange = useCallback((title, href, update, num, index) => {
     const data = {
@@ -223,6 +227,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     setPageOpen(false);
     setLoading(loading);
     dispatch(setShortcuts(data)).then(() => {
+     
       dispatch(getShortcuts());
       setLoading({});
     })
@@ -244,6 +249,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     let pageTitle = selectedPage[num] && selectedPage[num].title || '';
     let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
     const open = Boolean(anchorEl[num]);
+   
     if (shortcuts.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
@@ -253,8 +259,9 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         if (categoryTitle === ''){
           categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
           let category = {};
-          category[num] = t(selectedShortcut.CategoryName);
-          // setCategoryValue(category);
+          category[num] = t(selectedShortcut.CategoryName)
+          console.log("---->",category)
+          // setCategoryValue("hi");
         }
       }
     }
@@ -351,14 +358,30 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     }
   }
 
-  const handleShortcutMenuOpen = (event, num) => {
+  const handleShortcutMenuOpen = (event, num , update , index) => {
+    let pageTitle = selectedPage[num] && selectedPage[num].title || '';
+    let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
     let refElement = event.currentTarget || event.current || '';
     if (!refElement) {
       return;
     }
-
     let data = {};
     data[num] = num == Object.keys(anchorEl) && anchorEl[num] ? null : refElement;
+    if (shortcuts.length > 0) {
+      const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
+      if (selectedShortcut) {
+        if (pageTitle === ''){
+          pageTitle = selectedShortcut ? t(selectedShortcut.ShortcutName) : '';
+        }
+        if (categoryTitle === ''){
+          categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
+          let category = {};
+          category[num] = t(selectedShortcut.CategoryName)
+        
+          setCategoryValue(category);
+        }
+      }
+    }
     setAnchorEl(data);
     setPageOpen(false);
     setCategoryOpen(false);
@@ -384,8 +407,8 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     const innerRef = createRef();
     return (
       <Box
-        onMouseEnter={() => setActiveShortcut(`short_${data.ID}`)}
-        onMouseLeave={() => setActiveShortcut(null)}
+        // onMouseEnter={() => setActiveShortcut(`short_${data.ID}`)}
+        // onMouseLeave={() => setActiveShortcut(null)}
         key={`shortcutButton${index}`} ref={innerRef} className={classes.shortcutBtnBox}>
         {activeShortcut === `short_${data.ID}` && <Link className={classes.deleteShortcut}
           onClick={deleteShortcut}
@@ -404,11 +427,11 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         {windowSize !== 'xs' && windowSize !== 'sm' && <IconButton
           id="editIcon"
           className={classes.shortcutEditIcon}
-          onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, data.ID)}>
+          onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, data.ID , true , index)}>
           {'\uE09C'}
         </IconButton>
         }
-        {renderShortcutMenu(data.ID, true, index)}
+        { renderShortcutMenu(data.ID, true, index)}
       </Box>
     );
   }
