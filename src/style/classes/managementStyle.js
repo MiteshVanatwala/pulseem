@@ -1006,6 +1006,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     paddingLeft: windowSize !== 'xs' ? 15 : 0,
     paddingRight: windowSize !== 'xs' ? 15 : 0
   },
+  barContainer : 
+  {
+     width:"460px"
+  },
+  fontWrap : {
+    fontSize:"10px",
+  },
   emptyDoughnut: {
     display: 'flex',
     justifyContent: 'center',

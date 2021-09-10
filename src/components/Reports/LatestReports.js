@@ -174,11 +174,11 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
                     <Grid item lg={12}>
                       <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <BootstrapTooltip title={c.CampaignName} placement="top">
-                          <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.ellipsisText)} style={{ fontWeight: 'bold', maxWidth: 150 }}>
+                          <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.ellipsisText)} style={{ fontWeight: 'bold', maxWidth: 65 }}>
                             {c.CampaignName}
                           </Link>
                         </BootstrapTooltip>
-                        <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.italic, classes.mr5, classes.ml5)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+                        <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.italic, classes.mr5, classes.ml5,classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
                           {`${t('common.UpdatedOn')}`} {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
                         </Typography>
                       </Box>
@@ -196,7 +196,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
           </Grid>
           <Grid item lg={8}>
             <Box className={classes.barChart}>
-              <Bar data={reportData.data} options={barOptions} />
+              <Bar data={reportData.data} options={barOptions}  className={classes.barContainer}/>
             </Box>
           </Grid>
         </Grid>
