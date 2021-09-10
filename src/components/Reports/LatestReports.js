@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography, Tooltip } from '@material-ui/core';
+import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography, Tooltip, Link } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Bar } from 'react-chartjs-2';
 import clsx from 'clsx';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { getLastCampaignReport } from '../../redux/reducers/dashboardSlice';
 import { HiUserGroup } from 'react-icons/hi';
+import { actionURL } from '../../config/index';
 
 const LatestReports = ({ classes, windowSize, t, isRTL }) => {
   const { lastCampaignReport } = useSelector(state => state.dashboard);
@@ -51,6 +52,11 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
               t.label = `${t.label.substring(0, 10)}...`;
           });
         },
+        afterLabel: function(tooltipItem, data) {
+          var dataset = data['datasets'][0];
+          var percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
+          return '(' + percent + '%)';
+        },
         ticks: {
           font: { size: 12 },
           color: 'black',
@@ -69,7 +75,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
           },
           font: { size: 16 },
           color: 'black',
-          drawTicks: false,
+          drawTicks: true,
         },
       }
     }
@@ -111,25 +117,46 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
     const opens = [];
     const clicks = [];
     const removed = [];
+    const total = [];
+    const rOpens = [];
+    const rClicks = [];
+    const rRemoved = [];
+    const rTotal = [];
 
-    innerData.forEach(campaign => {
+    innerData.forEach((campaign, index) => {
+      let percentOpens = 0;
+      let percentClicks = 0;
+      let perecentRemoved = 0;
+      let errors = campaign.Error ? campaign.Error : 0;
+
+      if ((campaign.TotalSendPlan - errors) > 0) {
+        percentOpens = campaign.Opens / (campaign.TotalSendPlan - errors) * 100;
+        percentClicks = campaign.Clicks / (campaign.TotalSendPlan - errors) * 100;
+        perecentRemoved = campaign.Removed / (campaign.TotalSendPlan - errors) * 100;
+      }
+
       labels.push(campaign.CampaignName);
-      opens.push(campaign.Opens.toLocaleString());
-      clicks.push(campaign.Clicks.toLocaleString());
-      removed.push(campaign.Removed.toLocaleString());
+
+      total.push(campaign.TotalSendPlan);
+      opens.push(percentOpens.toLocaleString());
+      clicks.push(percentClicks.toLocaleString());
+      removed.push(perecentRemoved.toLocaleString());
+
     });
 
     if (tabType === "newsletter") {
       datasets.push(
-        { label: `${t('common.Opens')}`, backgroundColor: "#579b53", hoverBackgroundColor: "#579b53", data: opens, title: 'aaa' },
-        { label: `${t('common.Clicks')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: clicks, title: 'bbb' }
+        // { stack: 1, label: "total", backgroundColor: "#000", hoverBackgroundColor: "#000", data: total, title: 'ccc' },
+        { stack: 2, label: `${t('common.Opens')}`, backgroundColor: "#579b53", hoverBackgroundColor: "#579b53", data: opens, title: 'aaa' },
+        { stack: 3, label: `${t('common.Clicks')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: clicks, title: 'bbb' }
       );
     }
 
     if (tabType === 'sms') {
       datasets.push(
-        { label: `${t('common.Removed')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: removed },
-        { label: `${t('common.Clicks')}`, backgroundColor: "#67B7DC", hoverBackgroundColor: "#67B7DC", data: clicks }
+        // { stack: 4, label: "total", backgroundColor: "#000", hoverBackgroundColor: "#000", data: total, title: 'ccc' },
+        { stack: 5, label: `${t('common.Removed')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: removed },
+        { stack: 6, label: `${t('common.Clicks')}`, backgroundColor: "#67B7DC", hoverBackgroundColor: "#67B7DC", data: clicks }
       );
     }
 
@@ -147,14 +174,15 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
           <Grid item lg={4} className={tabType !== "newsletter" ? classes.flexSpaceBetweenVertical : null}>
             {
               innerData.map((c, index) => {
+                const campaignLink = `${actionURL}Pulseem/CampaignStatistics.aspx?CampaignID=${c.CampaignID}` 
                 return (
-                  <Grid container className={clsx(tabType === "newsletter" ? classes.mb25 : null,  tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
+                  <Grid container className={clsx(tabType === "newsletter" ? classes.mb25 : null, tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
                     <Grid item lg={12}>
                       <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <BootstrapTooltip title={c.CampaignName} placement="top">
-                          <Typography className={clsx(classes.dInlineBlock, classes.ellipsisText)} style={{ fontWeight: 'bold', maxWidth: 150 }}>
+                          <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.ellipsisText)} style={{ fontWeight: 'bold', maxWidth: 150 }}>
                             {c.CampaignName}
-                          </Typography>
+                          </Link>
                         </BootstrapTooltip>
                         <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.italic, classes.mr5, classes.ml5)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
                           {`${t('common.UpdatedOn')}`} {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
@@ -224,9 +252,10 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
   }
 
   return (
-    <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.lastReportPadding)}>
+    <Paper elevation={3} className={clsx(classes.dashboardBottomPaper, classes.lastReportPadding)
+    } >
       {renderTabsLastReports()}
-    </Paper>
+    </Paper >
   )
 }
 
