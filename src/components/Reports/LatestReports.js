@@ -168,7 +168,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
           <Grid item lg={4} className={tabType !== "newsletter" ? classes.flexSpaceBetweenVertical : null}>
             {
               innerData.map((c, index) => {
-                const campaignLink = `${actionURL}Pulseem/CampaignStatistics.aspx?CampaignID=${c.CampaignID}` 
+                const campaignLink = `${actionURL}/CampaignStatistics.aspx?CampaignID=${c.CampaignID}` 
                 return (
                   <Grid container className={clsx(tabType === "newsletter" ? classes.mb25 : null, tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
                     <Grid item lg={12}>
