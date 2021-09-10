@@ -260,8 +260,6 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
           let category = {};
           category[num] = t(selectedShortcut.CategoryName)
-          console.log("---->",category)
-          // setCategoryValue("hi");
         }
       }
     }

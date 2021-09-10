@@ -117,17 +117,12 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
     const opens = [];
     const clicks = [];
     const removed = [];
-    const total = [];
-    const rOpens = [];
-    const rClicks = [];
-    const rRemoved = [];
-    const rTotal = [];
 
     innerData.forEach((campaign, index) => {
       let percentOpens = 0;
       let percentClicks = 0;
       let perecentRemoved = 0;
-      let errors = campaign.Error ? campaign.Error : 0;
+      let errors = campaign.Error && campaign.Error > 0 ? campaign.Error : 0;
 
       if ((campaign.TotalSendPlan - errors) > 0) {
         percentOpens = campaign.Opens / (campaign.TotalSendPlan - errors) * 100;
@@ -137,7 +132,6 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
 
       labels.push(campaign.CampaignName);
 
-      total.push(campaign.TotalSendPlan);
       opens.push(percentOpens.toLocaleString());
       clicks.push(percentClicks.toLocaleString());
       removed.push(perecentRemoved.toLocaleString());
