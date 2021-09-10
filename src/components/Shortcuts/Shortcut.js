@@ -247,10 +247,15 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     if (shortcuts.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
-        if (pageTitle === '')
+        if (pageTitle === ''){
           pageTitle = selectedShortcut ? t(selectedShortcut.ShortcutName) : '';
-        if (categoryTitle === '')
+        }
+        if (categoryTitle === ''){
           categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
+          let category = {};
+          category[num] = t(selectedShortcut.CategoryName);
+          // setCategoryValue(category);
+        }
       }
     }
 
