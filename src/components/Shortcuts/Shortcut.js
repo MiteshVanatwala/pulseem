@@ -76,6 +76,10 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         {
           title: 'master.RadMenuItemResource10.Text',
           link: '/Pulseem/CampaignTemplates.aspx'
+        },
+        {
+          title: 'master.newslatterBasicEditor',
+          link: '/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic'
         }
       ]
     },
