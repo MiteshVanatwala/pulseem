@@ -54,6 +54,14 @@ const notificationTitleFontSize = {
   md: '1rem'
 }
 
+const graphTextWidth = {
+  sm: 65,
+  md: 65,
+  lg: 50,
+  xl: 150
+
+}
+
 export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dialogContainer: {
     '& .MuiPaper-root': {
@@ -603,6 +611,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+  },
+  graphCampaignName:{
+    fontWeight: 'bold',
+    maxWidth: graphTextWidth[windowSize]
   },
   mb25: {
     marginBottom: 25

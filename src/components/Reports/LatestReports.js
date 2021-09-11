@@ -174,7 +174,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
                     <Grid item lg={12}>
                       <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <BootstrapTooltip title={c.CampaignName} placement="top">
-                          <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.ellipsisText)} style={{ fontWeight: 'bold', maxWidth: 65 }}>
+                          <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.ellipsisText, classes.graphCampaignName)}>
                             {c.CampaignName}
                           </Link>
                         </BootstrapTooltip>
