@@ -48,16 +48,11 @@ const RecipientChart = ({ classes }) => {
         }
     ];
 
-    // if (Notifications.FeatureExist) {
-    //     titles.push({
-    //         mainTitle: 'master.notifications',
-    //         centerTitle: 'dashboard.noNotifications'
-    //     });
-    // }
-
     let data = [];
     recipientsReport.map(report => {
-        if (report.ReportSection === 2 && !Notifications.FeatureExist || report.ReportSection === 0 && !Newsletter.FeatureExist || report.ReportSection === 1 && !Sms.FeatureExist) {
+        if (report.ReportSection === 2 && !Notifications.FeatureExist || 
+            report.ReportSection === 0 && !Newsletter.FeatureExist || 
+            report.ReportSection === 1 && !Sms.FeatureExist) {
             return;
         }
         else {
@@ -252,7 +247,8 @@ const RecipientChart = ({ classes }) => {
                     showArrows={false}
                     selectedItem={carouselItem}>
                     {recipientsReport.map((report, index) => {
-                        if (report.ReportSection === 2 && !Notifications.FeatureExist || report.ReportSection === 0 && !Newsletter.FeatureExist || report.ReportSection === 1 && !Sms.FeatureExist) {
+                        if (report.ReportSection === 2 && !Notifications.FeatureExist 
+                            || report.ReportSection === 1 && !Sms.FeatureExist) {
                             return;
                         }
                         if (report.Total) {
@@ -270,7 +266,8 @@ const RecipientChart = ({ classes }) => {
         return (
             <Grid item container justify='space-evenly'>
                 {recipientsReport.map((report, index) => {
-                    if (report.ReportSection === 2 && !Notifications.FeatureExist || report.ReportSection === 0 && !Newsletter.FeatureExist || report.ReportSection === 1 && !Sms.FeatureExist) {
+                    if (report.ReportSection === 2 && !Notifications.FeatureExist || 
+                        report.ReportSection === 1 && !Sms.FeatureExist) {
                         return;
                     }
                     if (report.Total) {
