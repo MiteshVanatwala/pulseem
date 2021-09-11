@@ -21,7 +21,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const [activeShortcut, setActiveShortcut] = useState(null);
   const dispatch = useDispatch();
   const categories = {
-    Groups: {
+    'appBar.groups.title': {
       title: 'appBar.groups.title',
       pages: [
         {
@@ -50,7 +50,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         }
       ]
     },
-    Newsletter: {
+    'appBar.newsletter.title': {
       title: 'appBar.newsletter.title',
       pages: [
         {
@@ -79,7 +79,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         }
       ]
     },
-    SMS: {
+    'appBar.sms.title': {
       title: 'appBar.sms.title',
       pages: [
         {
@@ -100,7 +100,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         }
       ]
     },
-    MMS: {
+    'appBar.mms.title': {
       title: "appBar.mms.title",
       pages: [
         {
@@ -113,7 +113,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         }
       ],
     },
-    LandingPages: {
+    'appBar.landingPages.title': {
       title: "appBar.landingPages.title",
       pages: [
         {
@@ -126,7 +126,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         }
       ]
     },
-    Reports: {
+    'appBar.reports.title': {
       title: 'appBar.reports.title',
       pages: [
         {
@@ -176,7 +176,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
 
       ]
     },
-    Automations: {
+    'appBar.automation.title': {
       title: 'appBar.automation.title',
       pages: [
         {
@@ -189,7 +189,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         }
       ]
     },
-    Notifications: {
+    'appBar.notifications.title': {
       title: 'appBar.notifications.title',
       pages: [
         {
@@ -259,7 +259,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         if (categoryTitle === ''){
           categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
           let category = {};
-          category[num] = t(selectedShortcut.CategoryName)
+          category[num] = selectedShortcut.CategoryName
         }
       }
     }
@@ -374,7 +374,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         if (categoryTitle === ''){
           categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
           let category = {};
-          category[num] = t(selectedShortcut.CategoryName)
+          category[num] = selectedShortcut.CategoryName
         
           setCategoryValue(category);
         }
