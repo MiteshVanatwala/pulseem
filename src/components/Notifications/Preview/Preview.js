@@ -231,7 +231,7 @@ export const Preview = (
             style={{
               backgroundImage: `url(${model.Image})`,
               cursor: 'unset',
-              minHeight: windowSize === 'xs' ? 75 : 135
+              minHeight: windowSize === 'xs' ? 75 : (model.RedirectButtonText !== '' ? 135 : 185)
             }}>
             <div className={clsx(
               classes.flex,

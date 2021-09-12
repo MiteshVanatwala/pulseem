@@ -111,7 +111,7 @@ const notificationIconWidth = {
 }
 
 const notificationIconHeight = {
-    xs: 98,
+    xs: 90,
     sm: 98,
     md: 100,
     lg: 90,
