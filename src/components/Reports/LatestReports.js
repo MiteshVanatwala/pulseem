@@ -44,6 +44,29 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
       display: false
     },
     type: "bar",
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function (context) {
+            var label = context.dataset.label || '';
+
+            if (label) {
+              label += ': ';
+            }
+            if (context.parsed.y !== null) {
+              label += context.parsed.y + '%';
+            }
+            return label;
+          }
+        },
+        beforeEvent(chart, args, pluginOptions) {
+          const event = args.event;
+          if (event.type === 'mouseout') {
+            // process the event
+          }
+        }
+      },
+    },
     scales: {
       x: {
         beforeCalculateLabelRotation: (event) => {
@@ -51,11 +74,6 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
             if (t.label.length > 10)
               t.label = `${t.label.substring(0, 10)}...`;
           });
-        },
-        afterLabel: function(tooltipItem, data) {
-          var dataset = data['datasets'][0];
-          var percent = Math.round((dataset['data'][tooltipItem['index']] / dataset["_meta"][0]['total']) * 100)
-          return '(' + percent + '%)';
         },
         ticks: {
           font: { size: 12 },
@@ -132,9 +150,18 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
 
       labels.push(campaign.CampaignName);
 
-      opens.push(percentOpens.toLocaleString());
-      clicks.push(percentClicks.toLocaleString());
-      removed.push(perecentRemoved.toLocaleString());
+      opens.push(percentOpens.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }));
+      clicks.push(percentClicks.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }));
+      removed.push(perecentRemoved.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }));
 
     });
 
@@ -178,7 +205,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
                             {c.CampaignName}
                           </Link>
                         </BootstrapTooltip>
-                        <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.italic, classes.mr5, classes.ml5,classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
+                        <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.italic, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
                           {`${t('common.UpdatedOn')}`} {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
                         </Typography>
                       </Box>
@@ -196,7 +223,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
           </Grid>
           <Grid item lg={8}>
             <Box className={classes.barChart}>
-              <Bar data={reportData.data} options={barOptions}  className={classes.barContainer}/>
+              <Bar data={reportData.data} options={barOptions} className={classes.barContainer} />
             </Box>
           </Grid>
         </Grid>

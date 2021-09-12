@@ -19,10 +19,29 @@ const BulkStatus = ({ classes }) => {
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
   const availablePackages = accountAvailablePackages || [];
-  let isNewsletterPrepaid = Newsletters.isPrepaid || Newsletters.Credits == -1;
-  let isMMSPrepaid = Mms.isPrepaid || Mms.Credits == -1;
-  let isNotificationsPrepaid = Notifications.isPrepaid || Notifications.Credits == -1;
-  //let isSMSPrepaid = Sms.isPrepaid || Sms.Credits == -1;
+
+  const getBillingTypeText = (product) => {
+    switch (product.eBillingType) {
+      case 2: {
+        return t('dashboard.perRecipients');
+      }
+      case 4: {
+        return t('dashboard.payAsYouGo');
+      }
+      case 5: {
+        return t('dashboard.perBulk');
+      }
+      case 8: {
+        return t('dashboard.perUsage')
+      }
+      case 13: {
+        return t('dashboard.perValidRecipients')
+      }
+      default: {
+        return product.Credits;
+      }
+    }
+  }
 
   useEffect(() => {
     dispatch(getPackagesDetails());
@@ -89,7 +108,7 @@ const BulkStatus = ({ classes }) => {
             onMouseLeave={() => showSmsPackage(false)}>
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {!Sms.IsPrepaid || billingTypeId === "1" ? t('dashboard.perRecipients') : Sms.Credits ? Sms.Credits.toLocaleString() : null}
+              {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Sms)}
             </Typography>
             {/* {isShowSmsPackage ? (
               <Button onClick={() => setIsOpenPackageDialog(true)} className={classes.whiteLink}>
@@ -106,24 +125,24 @@ const BulkStatus = ({ classes }) => {
           {Newsletters.FeatureExist && <Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {isNewsletterPrepaid || billingTypeId === "1" ? t('dashboard.perRecipients') : Newsletters.Credits ? Newsletters.Credits.toLocaleString() : null}
+              {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Newsletters)}
             </Typography>
           </Grid>
           }
-          {Mms.FeatureExist && <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
+          {Mms.Credits > 0 && <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {isMMSPrepaid || billingTypeId === "1" ? t('dashboard.perRecipients') : Mms.Credits ? Mms.Credits.toLocaleString() : null}
+              {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
             </Typography>
             {/* {availablePackages.length > 0 && <a href='#' className={classes.bulkContent}>
-              {t('dashboard.purchase')}
-            </a> */}
+                {t('dashboard.purchase')}
+              </a> */}
           </Grid>
           }
           {Notifications.FeatureExist && <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {isNotificationsPrepaid || billingTypeId === "1" ? t('dashboard.perRecipients') : Notifications.Credits ? Notifications.Credits.toLocaleString() : null}
+              {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Notifications)}
             </Typography>
             {/* {availablePackages.length > 0 &&
               <a href='#' className={classes.bulkContent}>
