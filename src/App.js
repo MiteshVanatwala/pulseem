@@ -372,7 +372,7 @@ const App=({screenSize}) => {
       i18n.changeLanguage(lang.toLowerCase())
       dispatch(setRowsPerPage(rpp || 6))
       dispatch(setLanguage(lang.toLowerCase()))
-      dispatch(setUsername(unique_name))
+      dispatch(setUsername(companyName))
 
     }
 

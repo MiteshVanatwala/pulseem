@@ -252,9 +252,10 @@ const RecipientChart = ({ classes }) => {
                         }
                         if (report.Total) {
                             return renderDoughnut(report, index)
-                        } else {
-                            return renderCircleAdd(titles[index])
-                        }
+                        } 
+                        // else {
+                        //     return renderCircleAdd(titles[index])
+                        // }
                     })}
                 </Carousel>
             </Grid>

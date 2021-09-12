@@ -55,10 +55,10 @@ const notificationTitleFontSize = {
 }
 
 const graphTextWidth = {
-  sm: 65,
-  md: 65,
-  lg: 50,
-  xl: 150
+  sm: 250,
+  md: 250,
+  lg: 110,
+  xl: 250
 
 }
 

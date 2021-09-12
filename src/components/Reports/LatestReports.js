@@ -206,7 +206,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
                           </Link>
                         </BootstrapTooltip>
                         <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.italic, classes.mr5, classes.ml5, classes.fontWrap)} style={{ direction: isRTL ? 'rtl' : 'ltr' }}>
-                          {`${t('common.UpdatedOn')}`} {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
+                          {c.UpdatedDate ? moment(c.UpdatedDate).format(dateFormat) : ''}
                         </Typography>
                       </Box>
                       {tabType === "sms" && <Box>

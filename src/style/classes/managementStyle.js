@@ -49,8 +49,8 @@ const ellipsisMaxWidth = {
 const barHeight = {
   sm: '',
   md: '220px!important',
-  lg: '250px!important',
-  xl: '250px!important'
+  lg: '230px!important',
+  xl: '230px!important'
 }
 
 const shortcutFontSize = {
@@ -1008,7 +1008,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   barContainer:
   {
-    width: "auto !important"
+    width: "460px !important"
   },
   fontWrap: {
     fontSize: "10px",
