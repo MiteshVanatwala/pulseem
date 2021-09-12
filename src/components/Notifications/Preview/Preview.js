@@ -243,7 +243,7 @@ export const Preview = (
           }
           {
             notificationExpanded && model.RedirectButtonText !== '' && <Grid container alignItems="center" className={clsx(classes.flex, classes.root, classes.notificationMobileButtons)}>
-              <Box>{t("common.close")}</Box>
+              <Box>{t("common.settings")}</Box>
               <Divider orientation="vertical" flexItem />
               <Box className={classes.ellipsisText}>{model.RedirectButtonText}</Box>
             </Grid>

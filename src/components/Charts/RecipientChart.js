@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, Box, Avatar, Button, Grid, Paper, Typography } from '@material-ui/core';
+import { IconButton, Box, Avatar, Button, Grid, Paper, Typography, Link } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { getRecipientsReport } from '../../redux/reducers/recipientsReportSlice';
-import { actionURL } from '../../config/index';
-
-const doughnutOptions = {
-    cutout: 77,
-    backgroundColor: ['#6EE602', '#E0FAC6'],
-    plugins: {
-        tooltip: false
-    }
-};
 
 const RecipientChart = ({ classes }) => {
     const { t } = useTranslation();
@@ -237,7 +228,10 @@ const RecipientChart = ({ classes }) => {
                 className={classes.doughnutGrid}>
                 <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
                 <Box className={classes.doughnutBox}>
-                    <Typography className={classes.chartLabel}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Typography>
+                    <Link
+                        href="#"
+                        className={classes.chartLabel}
+                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link>
                     <Doughnut data={innerData} options={options} />
                 </Box>
             </Grid>
@@ -247,42 +241,50 @@ const RecipientChart = ({ classes }) => {
     const openReports = (productType, reportType) => {
         let qReportType = null;
 
-        if(productType === "0")
-        {
-            switch(reportType) {
-                case 0:{
+        if (reportType === "total") {
+            qReportType = 100;
+            if (productType === 0) {
+                window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
+            }
+            if (productType === 1) {
+                window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
+            }
+        }
+        if (productType === "0") {
+            switch (reportType) {
+                case 0: {
                     qReportType = 1;
                     break;
                 }
-                case 1:{
+                case 1: {
                     qReportType = 4;
                     break;
                 }
-                case 2:{
+                case 2: {
                     qReportType = 2;
                     break;
                 }
             }
             window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
         }
-        if(productType === "1"){
-            switch(reportType) {
-                case 0:{
+        if (productType === "1") {
+            switch (reportType) {
+                case 0: {
                     qReportType = 0;
                     break;
                 }
-                case 1:{
+                case 1: {
                     qReportType = 4;
                     break;
                 }
-                case 2:{
+                case 2: {
                     qReportType = 1;
                     break;
                 }
             }
             window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
         }
-        
+
     }
 
     const renderChartsCarousel = () => {

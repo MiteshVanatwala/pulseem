@@ -1202,7 +1202,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     color: 'gray',
     right: 0,
     left: 0,
-    margin: 'auto'
+    margin: 'auto',
+    cursor: 'pointer',
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'none'
+    }
+
   },
   doughnutBox: {
     width: 200,

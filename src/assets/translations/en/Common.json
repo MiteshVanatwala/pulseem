@@ -486,5 +486,6 @@
     "error": "Error",
     "removed": "Removed"
   },
-  "close": "Close"
+  "close": "Close",
+  "settings": "Settings"
 }

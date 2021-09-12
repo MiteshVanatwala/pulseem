@@ -10,6 +10,7 @@ import { getShortcuts, setShortcuts, deleteShortcuts } from '../../redux/reducer
 
 const Shortcut = ({ classes, windowSize, t, isRTL }) => {
   const { shortcuts, shortCutsError } = useSelector(state => state.shortcuts);
+  const { accountFeatures } = useSelector(state => state.core)
   const shortcutRef = useRef();
   const [selectedCategory, setCategoryValue] = useState({});
   const [selectedPage, setPageValue] = useState({});
@@ -192,8 +193,11 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           link: '/react/Automations'
         }
       ]
-    },
-    'appBar.notifications.title': {
+    }
+  };
+
+  if (accountFeatures && !accountFeatures.error && accountFeatures !== null && accountFeatures.indexOf('35') > -1) {
+    categories['appBar.notifications.title'] = {
       title: 'appBar.notifications.title',
       pages: [
         {
@@ -206,16 +210,15 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         }
       ]
     }
+  }
 
-  };
-
-  const initData =  async () => {
-   let r = await  dispatch(getShortcuts());
+  const initData = async () => {
+    let r = await dispatch(getShortcuts());
   }
 
   useEffect(() => {
-      initData();
-  },[dispatch])
+    initData();
+  }, [dispatch])
 
   const handlePageChange = useCallback((title, href, update, num, index) => {
     const data = {
@@ -231,7 +234,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     setPageOpen(false);
     setLoading(loading);
     dispatch(setShortcuts(data)).then(() => {
-     
+
       dispatch(getShortcuts());
       setLoading({});
     })
@@ -253,14 +256,14 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     let pageTitle = selectedPage[num] && selectedPage[num].title || '';
     let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
     const open = Boolean(anchorEl[num]);
-   
+
     if (shortcuts.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
-        if (pageTitle === ''){
+        if (pageTitle === '') {
           pageTitle = selectedShortcut ? t(selectedShortcut.ShortcutName) : '';
         }
-        if (categoryTitle === ''){
+        if (categoryTitle === '') {
           categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
           let category = {};
           category[num] = selectedShortcut.CategoryName
@@ -360,7 +363,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     }
   }
 
-  const handleShortcutMenuOpen = (event, num , update , index) => {
+  const handleShortcutMenuOpen = (event, num, update, index) => {
     let pageTitle = selectedPage[num] && selectedPage[num].title || '';
     let categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
     let refElement = event.currentTarget || event.current || '';
@@ -372,14 +375,14 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     if (shortcuts.length > 0) {
       const selectedShortcut = shortcuts.filter(e => { return e.ID === num })[0];
       if (selectedShortcut) {
-        if (pageTitle === ''){
+        if (pageTitle === '') {
           pageTitle = selectedShortcut ? t(selectedShortcut.ShortcutName) : '';
         }
-        if (categoryTitle === ''){
+        if (categoryTitle === '') {
           categoryTitle = selectedShortcut ? selectedShortcut.CategoryName : '';
           let category = {};
           category[num] = selectedShortcut.CategoryName
-        
+
           setCategoryValue(category);
         }
       }
@@ -429,11 +432,11 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         {windowSize !== 'xs' && windowSize !== 'sm' && <IconButton
           id="editIcon"
           className={classes.shortcutEditIcon}
-          onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, data.ID , true , index)}>
+          onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, data.ID, true, index)}>
           {'\uE09C'}
         </IconButton>
         }
-        { renderShortcutMenu(data.ID, true, index)}
+        {renderShortcutMenu(data.ID, true, index)}
       </Box>
     );
   }
