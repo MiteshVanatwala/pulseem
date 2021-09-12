@@ -67,8 +67,14 @@ const shortcutFontSize = {
     md: 18,
     lg: 18,
     xl: 18
-  }
-
+  },
+}
+const tipsFontSize = {
+  xs: 18,
+  sm: 16,
+  md: 14,
+  lg: 14,
+  xl: 18
 }
 
 // const paperTopHeight = {
@@ -1128,7 +1134,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: '0 30px 20px 30px'
   },
   tipulseemMsg: {
-    fontSize: 18,
+    fontSize: tipsFontSize[windowSize],
     padding: '0px 20px 20px 20px'
   },
   lightBulb: {

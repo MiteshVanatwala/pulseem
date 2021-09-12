@@ -409,8 +409,8 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
     const innerRef = createRef();
     return (
       <Box
-        // onMouseEnter={() => setActiveShortcut(`short_${data.ID}`)}
-        // onMouseLeave={() => setActiveShortcut(null)}
+        onMouseEnter={() => setActiveShortcut(`short_${data.ID}`)}
+        onMouseLeave={() => setActiveShortcut(null)}
         key={`shortcutButton${index}`} ref={innerRef} className={classes.shortcutBtnBox}>
         {activeShortcut === `short_${data.ID}` && <Link className={classes.deleteShortcut}
           onClick={deleteShortcut}
