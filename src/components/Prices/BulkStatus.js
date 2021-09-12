@@ -99,7 +99,7 @@ const BulkStatus = ({ classes }) => {
             </Typography>
             <Typography align='center' className={classes.f20}>{t('dashboard.yourBulkStatus')}</Typography>
           </Grid>
-          {Sms.FeatureExist && <Grid
+          {<Grid
             container
             item xs={9}
             className={classes.bulkStatusBlue}
@@ -122,7 +122,7 @@ const BulkStatus = ({ classes }) => {
             } */}
           </Grid>
           }
-          {Newsletters.FeatureExist && <Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
+          {<Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             <Typography className={classes.bulkTitle}>
               {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Newsletters)}
