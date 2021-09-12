@@ -51,7 +51,6 @@ const NotificationManagement = ({ classes }) => {
   const [searchResults, setSearchResults] = useState(null)
   const [dialogType, setDialogType] = useState(null)
   const [restoreArray, setRestoreArray] = useState([]);
-  const history = useCtrlHistory()
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
@@ -274,6 +273,12 @@ const NotificationManagement = ({ classes }) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleFromDateChange = (value) => {
       if (value > toDate) {
         handleToDate(null);
@@ -293,6 +298,7 @@ const NotificationManagement = ({ classes }) => {
           onKeyPress={handleSearch}
           onChange={handleNotificationNameChange}
           onClick={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
         />
       )
@@ -595,7 +601,7 @@ const NotificationManagement = ({ classes }) => {
   const renderNameCell = (row) => {
     let date = null
     let text = ''
-    if (!row.SendDate || row.StatusID == 0) {
+    if (!row.SendDate || row.StatusID === 0) {
       date = moment(row.UpdatedDate, dateFormat)
       text = t('common.UpdatedOn')
     } else {
@@ -769,6 +775,7 @@ const NotificationManagement = ({ classes }) => {
           <Preview classes={classes}
             model={data}
             ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
+            showID={true}
             showTitle={false}
             showID={true}
             showOSScreen={false}

@@ -124,6 +124,12 @@ const MmsManagnentScreen = ({ classes }) => {
       setPage(1);
     }
 
+    const handleKeyPress = (e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleFromDateChange = (value) => {
       if (value > toDate) {
         handleToDate(null);
@@ -142,7 +148,7 @@ const MmsManagnentScreen = ({ classes }) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          onKeyPress={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
         />
       )
@@ -514,8 +520,8 @@ const MmsManagnentScreen = ({ classes }) => {
   const renderTableBody = () => {
 
     let sortData = isSearching ? searchResults : mmsData;
-    let rpp=parseInt(rowsPerPage)
-    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
+    let rpp = parseInt(rowsPerPage)
+    sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
       <TableBody>
         {sortData
@@ -717,24 +723,24 @@ const MmsManagnentScreen = ({ classes }) => {
 
     let currentDialog = null;
 
-    switch(type){
-      case 'restore':{
+    switch (type) {
+      case 'restore': {
         currentDialog = getRestoreDialog(data);
         break;
       }
-      case 'groups':{
+      case 'groups': {
         currentDialog = getGroupsDialog(data);
         break;
       }
-      case 'delete':{
+      case 'delete': {
         currentDialog = getDeleteDialog(data);
         break;
       }
-      case 'duplicate':{
+      case 'duplicate': {
         currentDialog = getDuplicateDialog(data);
         break;
       }
-      case 'preview':{
+      case 'preview': {
         currentDialog = getPreviewDialog(data);
         break;
       }

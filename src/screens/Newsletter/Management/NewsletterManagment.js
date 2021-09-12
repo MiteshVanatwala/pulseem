@@ -128,6 +128,12 @@ const NewsletterManagnentScreen=({classes}) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleFromDateChange=(value) => {
       if(value>toDate) {
         handleToDate(null);
@@ -147,6 +153,7 @@ const NewsletterManagnentScreen=({classes}) => {
           onChange={handleCampainNameChange}
           onKeyPress={handleSearch}
           onClick={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
         />
       )
@@ -605,7 +612,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const getRestorDialog=(data=[]) => {
     if(!data||!Array.isArray(data)) return null
     return {
-      title: t('campaigns.restoreCampaginTitle'),
+      title: t('campaigns.restoreCampaignTitle'),
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>

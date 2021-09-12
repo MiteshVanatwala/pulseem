@@ -44,25 +44,35 @@ export const deleteGalleryFile = createAsyncThunk(
     }
   });
 
-  export const isClalAccount = createAsyncThunk(
-    '/IsClalAccount', async (_, thunkAPI) => {
-      try {
-        const response = await instence.get(`/IsClalAccount`);
-        return JSON.parse(response.data)
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
-    });
+export const getPackagesList = createAsyncThunk(
+  '/GetPackagesList', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`/GetPackagesList`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
-    export const getAccountFeatures = createAsyncThunk(
-      '/GetAccountFeatures', async (_, thunkAPI) => {
-        try {
-          const response = await instence.get(`/GetAccountFeatures`);
-          return response.data
-        } catch (error) {
-          return thunkAPI.rejectWithValue({ error: error.message });
-        }
-      });
+export const isClalAccount = createAsyncThunk(
+  '/IsClalAccount', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`/IsClalAccount`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+export const getAccountFeatures = createAsyncThunk(
+  '/GetAccountFeatures', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`/GetAccountFeatures`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 
 export const commonSlice = createSlice({

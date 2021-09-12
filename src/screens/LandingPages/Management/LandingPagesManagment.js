@@ -100,6 +100,12 @@ const LandingPagesesManagmentScreen=({classes}) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleCampainNameChange=event => {
       setLandingPageNameSearch(event.target.value)
     }
@@ -114,6 +120,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           onChange={handleCampainNameChange}
           onKeyPress={handleSearch}
           onClick={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={placeholder}
         />
       )
@@ -683,7 +690,6 @@ const LandingPagesesManagmentScreen=({classes}) => {
 
   const renderDialog=() => {
     const {data,type}=dialogType||{}
-
     const dialogContent={
       restore: getRestorDialog(data),
       delete: getDeleteDialog(data),
