@@ -143,7 +143,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
     pageTitle: t('notifications.notificationManagement'),
     iconUnicode: '\ue117',
     href: '/react/Notifications',
-    isShow: features && !features.error && features !== null && features.indexOf('35'),
+    isShow: features && !features.error && features !== null && features.indexOf('35') > -1,
     icon: <img
       alt='Notifications'
       src={NotificationsIcon} />,
