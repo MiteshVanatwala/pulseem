@@ -58,21 +58,15 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
             }
             return label;
           }
-        },
-        beforeEvent(chart, args, pluginOptions) {
-          const event = args.event;
-          if (event.type === 'mouseout') {
-            // process the event
-          }
         }
-      },
+      }
     },
     scales: {
       x: {
         beforeCalculateLabelRotation: (event) => {
           event.ticks.forEach((t) => {
             if (t.label.length > 10)
-              t.label = `${t.label.substring(0, 10)}...`;
+              t.label = `${t.label.substring(0, 9)}..`;
           });
         },
         ticks: {
