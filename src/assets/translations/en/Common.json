@@ -485,5 +485,6 @@
     "active": "Active",
     "error": "Error",
     "removed": "Removed"
-  }
+  },
+  "close": "Close"
 }

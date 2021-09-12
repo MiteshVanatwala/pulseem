@@ -231,7 +231,7 @@ export const Preview = (
             style={{
               backgroundImage: `url(${model.Image})`,
               cursor: 'unset',
-              minHeight: windowSize === 'xs' ? 75 : 130
+              minHeight: windowSize === 'xs' ? 75 : 135
             }}>
             <div className={clsx(
               classes.flex,
@@ -243,7 +243,7 @@ export const Preview = (
           }
           {
             notificationExpanded && model.RedirectButtonText !== '' && <Grid container alignItems="center" className={clsx(classes.flex, classes.root, classes.notificationMobileButtons)}>
-              <Box>{t("close")}</Box>
+              <Box>{t("common.close")}</Box>
               <Divider orientation="vertical" flexItem />
               <Box className={classes.ellipsisText}>{model.RedirectButtonText}</Box>
             </Grid>

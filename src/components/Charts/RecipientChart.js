@@ -263,7 +263,7 @@ const RecipientChart = ({ classes }) => {
                     break;
                 }
             }
-            window.open(`${actionURL}ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
+            window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
         }
         if(productType === "1"){
             switch(reportType) {
@@ -280,7 +280,7 @@ const RecipientChart = ({ classes }) => {
                     break;
                 }
             }
-            window.open(`${actionURL}ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
+            window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
         }
         
     }
