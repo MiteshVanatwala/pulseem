@@ -7,6 +7,7 @@ import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { getRecipientsReport } from '../../redux/reducers/recipientsReportSlice';
+import { actionURL } from '../../config/index';
 
 const doughnutOptions = {
     cutout: 77,
@@ -50,7 +51,7 @@ const RecipientChart = ({ classes }) => {
 
     let data = [];
     recipientsReport.map(report => {
-        if (report.ReportSection === 2 && !Notifications.FeatureExist || 
+        if (report.ReportSection === 2 && !Notifications.FeatureExist ||
             report.ReportSection === 1 && !Sms.FeatureExist) {
             return;
         }
@@ -180,6 +181,13 @@ const RecipientChart = ({ classes }) => {
             rotation: -35,
             responsive: true,
             cutout: 55,
+            onClick: (e) => {
+                const chart = e.chart;
+                if (chart) {
+                    const activeChart = e.chart._active[0];
+                    openReports(chart.data.productType, activeChart.index);
+                }
+            },
             plugins: {
                 datalabels: {
                     backgroundColor: 'white'
@@ -211,6 +219,7 @@ const RecipientChart = ({ classes }) => {
         };
 
         let innerData = {
+            productType: `${report.ReportSection}`,
             labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
             datasets: [{
                 data: [
@@ -223,7 +232,7 @@ const RecipientChart = ({ classes }) => {
         }
         return (
             <Grid
-                key={`doughnut${Math.round(Math.random() * 999999999)}`}
+                key={`doughnut${report.ReportSection}`}
                 item xs={12} sm={12} md={4}
                 className={classes.doughnutGrid}>
                 <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
@@ -234,6 +243,47 @@ const RecipientChart = ({ classes }) => {
             </Grid>
         );
     };
+
+    const openReports = (productType, reportType) => {
+        let qReportType = null;
+
+        if(productType === "0")
+        {
+            switch(reportType) {
+                case 0:{
+                    qReportType = 1;
+                    break;
+                }
+                case 1:{
+                    qReportType = 4;
+                    break;
+                }
+                case 2:{
+                    qReportType = 2;
+                    break;
+                }
+            }
+            window.open(`${actionURL}ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
+        }
+        if(productType === "1"){
+            switch(reportType) {
+                case 0:{
+                    qReportType = 0;
+                    break;
+                }
+                case 1:{
+                    qReportType = 4;
+                    break;
+                }
+                case 2:{
+                    qReportType = 1;
+                    break;
+                }
+            }
+            window.open(`${actionURL}ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
+        }
+        
+    }
 
     const renderChartsCarousel = () => {
         return (
@@ -246,13 +296,13 @@ const RecipientChart = ({ classes }) => {
                     showArrows={false}
                     selectedItem={carouselItem}>
                     {recipientsReport.map((report, index) => {
-                        if (report.ReportSection === 2 && !Notifications.FeatureExist 
+                        if (report.ReportSection === 2 && !Notifications.FeatureExist
                             || report.ReportSection === 1 && !Sms.FeatureExist) {
                             return;
                         }
                         if (report.Total) {
                             return renderDoughnut(report, index)
-                        } 
+                        }
                         // else {
                         //     return renderCircleAdd(titles[index])
                         // }
@@ -266,15 +316,16 @@ const RecipientChart = ({ classes }) => {
         return (
             <Grid item container justify='space-evenly'>
                 {recipientsReport.map((report, index) => {
-                    if (report.ReportSection === 2 && !Notifications.FeatureExist || 
+                    if (report.ReportSection === 2 && !Notifications.FeatureExist ||
                         report.ReportSection === 1 && !Sms.FeatureExist) {
                         return;
                     }
                     if (report.Total) {
                         return renderDoughnut(report, index)
-                    } else {
-                        return renderCircleAdd(titles[index])
                     }
+                    // else {
+                    //     return renderCircleAdd(titles[index])
+                    // }
                 })}
             </Grid>
         );
