@@ -65,8 +65,8 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
       x: {
         beforeCalculateLabelRotation: (event) => {
           event.ticks.forEach((t) => {
-            if (t.label.length > 10)
-              t.label = `${t.label.substring(0, 9)}..`;
+            if (t.label.length >= 8)
+              t.label = `${t.label.substring(0, 8)}..`;
           });
         },
         ticks: {
