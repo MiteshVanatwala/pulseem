@@ -136,7 +136,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
       pages: [
         {
           title: 'master.RadMenuItemResource13.Text',
-          link: '/react/Reports/NewsletterReports'
+          link: '/Pulseem/MainReport.aspx'
         },
         {
           title: 'master.RadMenuItemResource24.Text',

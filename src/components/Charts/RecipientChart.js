@@ -229,7 +229,7 @@ const RecipientChart = ({ classes }) => {
                 <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
                 <Box className={classes.doughnutBox}>
                     <Link
-                        href="#"
+                        href="javascript:void(0)"
                         className={classes.chartLabel}
                         onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link>
                     <Doughnut data={innerData} options={options} />
@@ -284,7 +284,7 @@ const RecipientChart = ({ classes }) => {
             }
             window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
         }
-
+        
     }
 
     const renderChartsCarousel = () => {
