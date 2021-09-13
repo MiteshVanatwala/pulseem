@@ -145,16 +145,16 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
       labels.push(campaign.CampaignName);
 
       opens.push(percentOpens.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
       }));
       clicks.push(percentClicks.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
       }));
       removed.push(perecentRemoved.toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
       }));
 
     });
@@ -170,8 +170,8 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
     if (tabType === 'sms') {
       datasets.push(
         // { stack: 4, label: "total", backgroundColor: "#000", hoverBackgroundColor: "#000", data: total, title: 'ccc' },
-        { stack: 5, label: `${t('common.Removed')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: removed },
-        { stack: 6, label: `${t('common.Clicks')}`, backgroundColor: "#67B7DC", hoverBackgroundColor: "#67B7DC", data: clicks }
+        { stack: 5, label: `${t('common.Removed')}`, backgroundColor: "#6771DC", hoverBackgroundColor: "#6771DC", data: removed },
+        { stack: 6, label: `${t('common.Clicks')}`, backgroundColor: "#648FD5", hoverBackgroundColor: "#648FD5", data: clicks }
       );
     }
 
