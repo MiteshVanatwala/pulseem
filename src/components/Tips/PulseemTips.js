@@ -23,14 +23,22 @@ const PulseemTips = ({ classes, t, isRTL }) => {
   const renderArrows = (value, length, setItem, className) => {
     let selectedItem = value;
     const handleNext = () => {
-      if (value >= length) return;
-      selectedItem++;
-      setItem(selectedItem);
+      if (value >= length) {
+        setItem(0);
+      }
+      else {
+        selectedItem++;
+        setItem(selectedItem);
+      }
     }
     const handlePrevious = () => {
-      if (selectedItem <= 0) return;
-      selectedItem--;
-      setItem(selectedItem);
+      if (selectedItem <= 0) {
+        setItem(tips.length - 1);
+      }
+      else {
+        selectedItem--;
+        setItem(selectedItem);
+      }
     }
 
     return (
@@ -69,7 +77,7 @@ const PulseemTips = ({ classes, t, isRTL }) => {
           {tips.map(tip => {
             return (
               <Box component='div' className={classes.tipItem} key={`tip${Math.round(Math.random() * 999999999)}`}>
-                <Typography style={{ direction: isRTL ? 'rtl' : 'ltr'}} align='center' className={classes.tipulseemMsg}>{isRTL ? tip.HebrewTipText : tip.TipText}</Typography>
+                <Typography style={{ direction: isRTL ? 'rtl' : 'ltr' }} align='center' className={classes.tipulseemMsg}>{isRTL ? tip.HebrewTipText : tip.TipText}</Typography>
               </Box>
             );
           })}
