@@ -475,21 +475,24 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
 
     return newShortcutButtons;
   }
+  if (shortcuts.length > 0 && windowSize === 'xs' || windowSize !== 'xs') {
+    return (
+      <Box className={classes.shortcutBox}>
+        <Paper elevation={windowSize == 'xs' ? 3 : 0} className={classes.shortcutPaper} ref={shortcutRef}>
+          <Box className={classes.shortcutTitleSection}>
+            <Typography align='center' className={classes.shortcutTitle}>{t('dashboard.myShortcuts')}</Typography>
+            <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
+          </Box>
+          {shortcuts && shortcuts.map((item, index) => {
+            return renderShortcutButton(item, index)
+          })}
+          {windowSize !== 'xs' && renderNewShortcutButtons()}
+        </Paper>
+      </Box>
+    )
+  }
+  return (<></>)
 
-  return (
-    <Box className={classes.shortcutBox}>
-      <Paper elevation={windowSize == 'xs' ? 3 : 0} className={classes.shortcutPaper} ref={shortcutRef}>
-        <Box className={classes.shortcutTitleSection}>
-          <Typography align='center' className={classes.shortcutTitle}>{t('dashboard.myShortcuts')}</Typography>
-          <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
-        </Box>
-        {shortcuts && shortcuts.map((item, index) => {
-          return renderShortcutButton(item, index)
-        })}
-        {renderNewShortcutButtons()}
-      </Paper>
-    </Box>
-  )
 }
 
 

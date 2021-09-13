@@ -15,7 +15,7 @@ const shortcutPaperHeight = {
 }
 
 const shortcutBoxWidth = {
-    xs: '100%',
+    xs: 'auto',
     sm: '100%',
     md: '100%',
     lg: '100%',
