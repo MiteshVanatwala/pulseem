@@ -16,7 +16,8 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
     title = route&&route[0].title || '';
   } else {
     route = getRoutes(t).filter(route=>route.key===currentPage);
-    title = route&&route[0]&&route[0].pageTitle || '';
+    title = route&&route[0]&&route[0].pageTitle || route&&route[0]&&route[0].title || '';
+    
   }
 
   title = title? `${title} | ${t('master.pulseemSystem')}`: t('master.pulseemSystem');

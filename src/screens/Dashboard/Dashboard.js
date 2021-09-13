@@ -15,8 +15,6 @@ const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL } = useSelector(state => state.core);
   const { t } = useTranslation();
 
-  document.title = t('dashboard.pageTitle');
-
   return (
     <DefaultScreen
       currentPage='dashboard'

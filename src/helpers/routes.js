@@ -29,7 +29,7 @@ export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
 export const getRoutes=(t=() => null, isClalAccount = false, features = null, windowSize = null) => [
   {
     key: 'dashboard',
-    title: t('master.RadMenuItemResource1.Text'),
+    title: t('dashboard.pageTitle'),
     iconUnicode: '\uF064',
     href: '/react',
     isShow: windowSize && windowSize === "xs" ? true : false,
