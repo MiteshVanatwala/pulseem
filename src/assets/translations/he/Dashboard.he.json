@@ -30,5 +30,6 @@
     "createNotification": "יצירת נוטיפיקציה",
     "notificationManagement": "ניהול נוטיפיקציות",
     "pageTitle": "לוח בקרה | מערכת פולסים",
-    "freeTrial": "תקופת ניסיון"
+    "freeTrial": "תקופת ניסיון",
+    "chartTooltip": "ניתן ללחוץ על הגרף כדי לצפות ברשימת הלקוחות"
   }

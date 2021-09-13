@@ -35,7 +35,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     dashboard: {
         background: '#F2F2F2',
         padding: 0,
-        maxHeight: 'unset'
+        maxHeight: 'unset',
     },
     chartLabelGreen: {
         position: 'absolute',

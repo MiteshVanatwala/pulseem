@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, Box, Avatar, Button, Grid, Paper, Typography, Link } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { IconButton, Box, Avatar, Button, Grid, Paper, Typography, Link, Tooltip } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { getRecipientsReport } from '../../redux/reducers/recipientsReportSlice';
+import { BsInfoCircleFill } from 'react-icons/bs';
+import clsx from 'clsx';
+
 
 const RecipientChart = ({ classes }) => {
     const { t } = useTranslation();
@@ -15,6 +19,21 @@ const RecipientChart = ({ classes }) => {
     const { language, windowSize, isRTL } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
     const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
+
+    const useStylesBootstrap = makeStyles((theme) => ({
+        arrow: {
+            color: theme.palette.common.black,
+        },
+        tooltip: {
+            backgroundColor: theme.palette.common.black,
+        },
+    }));
+
+    function BootstrapTooltip(props) {
+        const classes = useStylesBootstrap();
+
+        return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
+    }
 
     const dispatch = useDispatch();
 
@@ -232,7 +251,7 @@ const RecipientChart = ({ classes }) => {
                         href="javascript:void(0)"
                         className={classes.chartLabel}
                         onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link>
-                    <Doughnut data={innerData} options={options} />
+                    <Doughnut data={innerData} options={options} style={{ cursor: 'pointer' }} />
                 </Box>
             </Grid>
         );
@@ -284,7 +303,7 @@ const RecipientChart = ({ classes }) => {
             }
             window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
         }
-        
+
     }
 
     const renderChartsCarousel = () => {
@@ -362,10 +381,26 @@ const RecipientChart = ({ classes }) => {
         <Paper elevation={3} className={classes.dashboardTopPaper}>
             <Grid container>
                 <Grid item xs={12} className={classes.recipientTitleSection}>
-                    <Typography
-                        className={classes.dashboardTitle}>
-                        {t('dashboard.yourRecipients')}
-                    </Typography>
+                    <Box>
+                        <Typography
+                            className={clsx(classes.dInlineBlock, classes.dashboardTitle)}>
+                            {t('dashboard.yourRecipients')}
+                        </Typography>
+                        <BootstrapTooltip
+                        style={{color:'#000'}}
+                            title={t('dashboard.chartTooltip')}
+                            placement={"top"}>
+                            <IconButton aria-label={t('dashboard.chartTooltip')}>
+                                <BsInfoCircleFill />
+                            </IconButton>
+                        </BootstrapTooltip>
+                    </Box>
+
+                    {/* <Typography
+                        className={clsx(classes.dInlineBlock, classes.mr10, classes.ml10)}
+                    >
+                        ({t('dashboard.chartTooltip')})
+                    </Typography> */}
                 </Grid>
                 {windowSize === 'xs' || windowSize === 'sm' ? renderChartsCarousel() : renderCharts()}
             </Grid>

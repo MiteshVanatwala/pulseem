@@ -381,6 +381,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mr15: {
     marginInlineEnd: 15
   },
+  ml15: {
+    marginInlineStart: 15
+  },
   mt0: {
     marginTop: 0
   },

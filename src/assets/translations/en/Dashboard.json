@@ -31,5 +31,6 @@
     "createNotification": "Create Notification",
     "notificationManagement": "Notifications Management",
     "pageTitle": "Dashboard | Pulseem System",
-    "freeTrial": "Free Trial"
+    "freeTrial": "Free Trial",
+    "chartTooltip": "Click on any section of the graph to see a list of your recipients"
   }
