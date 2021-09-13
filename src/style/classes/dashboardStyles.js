@@ -8,17 +8,17 @@ const shortcutEditLeft = {
 
 const shortcutPaperHeight = {
     xs: '',
-    sm: '100vh',
-    md: '100vh',
+    sm: '100%',
+    md: '100%',
     lg: '95vh',
     xl: '100vh'
 }
 
 const shortcutBoxWidth = {
-    xs: '96%',
-    sm: '25%',
-    md: '18%',
-    lg: '18%',
+    xs: '100%',
+    sm: '100%',
+    md: '100%',
+    lg: '100%',
     xl: 'auto'
 }
 
@@ -59,7 +59,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         fontSize: windowSize === 'xs' ? 16 : 18,
     },
     shortcutBox: {
-        position: windowSize !== 'xl' && windowSize !== 'xs' ? 'absolute' : 'sticky',
+        position: windowSize !== 'xl' && windowSize !== 'xs' ? 'block' : 'sticky',
         top: windowSize !== 'xl' ? 47 : 0,
         right: isRTL ? 'auto' : 0,
         left: isRTL ? 0 : 'auto',
@@ -69,7 +69,12 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
             margin: '10px 10px 10px 10px'
         },
         boxShadow: windowSize === 'xs' ? '0px 3px 3px -2px rgb(0 0 0 / 20%), 0px 3px 4px 0px rgb(0 0 0 / 14%), 0px 1px 8px 0px rgb(0 0 0 / 12%)' : isRTL && windowSize !== 'xs' ? '4px 0px 5px 0px rgba(0,0,0, 0.2)' : '-4px 0px 5px 0px rgba(0,0,0, 0.2)',
-        borderRadius: windowSize === 'xs' ? 10 : 0
+        borderRadius: windowSize === 'xs' ? 10 : 0,
+        '& .MuiPaper-rounded': {
+            scrollbarWidth: 'none',
+            overflow: 'auto',
+            '-ms-overflow-style': 'none' /* IE 11 */
+        }
     },
     shortcutPaper: {
         [theme.breakpoints.down('xs')]: {
@@ -86,7 +91,10 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         '&::-webkit-scrollbar-thumb': {
             'backgroundColor': 'darkgrey',
             borderRadius: '5px'
-        }
+        },
+        scrollbarWidth: 'none',
+        overflow: 'auto',
+        '-ms-overflow-style': 'none' /* IE 11 */
     },
     shortcutBtnBox: {
         position: 'relative',
@@ -157,5 +165,8 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         [theme.breakpoints.down('sm')]: {
             order: 2
         },
+    },
+    transitionElem: {
+        transition: ' ease-in-out .4s'
     }
 });

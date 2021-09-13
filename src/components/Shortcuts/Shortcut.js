@@ -283,14 +283,27 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
       setPageOpen(false);
     }
 
+    let placementPopper = 'left-start';
+    if (windowSize === 'xs') {
+      placementPopper = 'bottom-start'
+    }
+    else {
+      if (index > 2) {
+        placementPopper = isRTL ? 'right-end' : 'left-end';
+      }
+    }
+
+
     return (
       <ClickAwayListener onClickAway={handleClickOutsideShortcut}>
         <Popper
+          transition
           id="shortcutMenu"
           key={`shortcutMenu${index}`}
           open={open}
           anchorEl={anchorEl[num]}
-          placement={windowSize === 'xs' ? 'bottom-start' : 'left-start'}
+          placement={placementPopper}
+          disablePortal={false}
           style={{ zIndex: 2 }}>
 
           <Paper className={classes.popperPaper}>
