@@ -140,9 +140,9 @@ const BulkStatus = ({ classes }) => {
           </Grid>
           }
           {Notifications.FeatureExist && <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
-            <Typography className={classes.bulkTitle}>{t('master.notifications')} ({t('dashboard.freeTrial')})</Typography>
+            <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
             <Typography className={classes.bulkTitle}>
-              {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Notifications)}
+              {t('dashboard.freeTrial')}
             </Typography>
             {/* {availablePackages.length > 0 &&
               <a href='#' className={classes.bulkContent}>

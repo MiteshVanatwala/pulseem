@@ -303,7 +303,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           open={open}
           anchorEl={anchorEl[num]}
           placement={placementPopper}
-          disablePortal={false}
+          // disablePortal={false}
           style={{ zIndex: 2 }}>
 
           <Paper className={classes.popperPaper}>
