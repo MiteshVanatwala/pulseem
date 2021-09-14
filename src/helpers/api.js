@@ -4,6 +4,7 @@ import {apiURL,actionURL,isProdMode} from '../config/index'
 
 const refreshTokenURL=`${actionURL}RefreshToken.ashx`
 const logoutURL=`${actionURL}LogoutSession.ashx`
+const pulseemBaseUrl = `${actionURL}`
 
 const redirectToLogin=() => {
   window.location.href='/Pulseem/Login.aspx?ReturnUrl=/Pulseem/homepage.aspx?fromreact=true'
@@ -26,6 +27,18 @@ const instence=axios.create({
   },
   timeout: 300000
 })
+
+const customInstance = axios.create({
+  baseURL: pulseemBaseUrl,
+  headers: {
+    'Content-Type': 'application/json; charset=UTF-8',
+    dataType: "json"
+  },
+  timeout: 300000
+})
+
+customInstance.defaults.withCredentials = true;
+customInstance.defaults.credentials = 'include';
 
 instence.interceptors.request.use(async config => {
   try {
@@ -65,4 +78,13 @@ instence.interceptors.response.use(
     return Promise.reject(error.response.data)
   })
 
-export default instence
+  customInstance.interceptors.response.use(
+    res => res,
+    error => {
+      if(error.response.status===401) {
+        throw error.response.status;
+      }
+      return Promise.reject(error.response.data)
+    })
+
+export { instence, customInstance }

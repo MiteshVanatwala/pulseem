@@ -1,5 +1,6 @@
 import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
-import instence from '../../helpers/api'
+import { instence, customInstance } from '../../helpers/api'
+
 
 export const getAutomationsData=createAsyncThunk(
   'automation/getAutomations',async (_,thunkAPI) => {
@@ -42,15 +43,28 @@ export const restoreAutomations=createAsyncThunk(
     }
   })
 
-export const activateAutomation=createAsyncThunk(
-  'automation/activateAutomation/',async ({ID,IsActive},thunkAPI) => {
-    try {
-      const response=await instence.put(`automation/activateAutomation/${ID}/${!IsActive}`);
-      return response.data
-    } catch(error) {
-      throw error.message;
+// export const activateAutomation=createAsyncThunk(
+//   'automation/activateAutomation/',async ({ID,IsActive},thunkAPI) => {
+//     try {
+//       const response=await instence.put(`automation/activateAutomation/${ID}/${!IsActive}`);
+//       return response.data
+//     } catch(error) {
+//       throw error.message;
+//     }
+//   })
+
+  export const activateAutomation = createAsyncThunk(
+    'AutomationServices.asmx/ChangeAutomationStatus', async ( data, thunkAPI) => {
+      try {
+        const d = "{'automationID':'" + data.ID + "'}"
+        const response = await customInstance.post(`AutomationServices.asmx/ChangeAutomationStatus`, d);
+        return response.data;
+      }
+      catch (error) {
+        throw error.message;
+      }
     }
-  })
+  )
 
 export const automationsSlice=createSlice({
   name: 'newsletter',
