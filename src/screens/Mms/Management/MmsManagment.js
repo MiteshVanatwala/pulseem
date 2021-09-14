@@ -2,8 +2,8 @@ import React,{useState,useEffect} from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box, Tooltip
+  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box, Tooltip
 } from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,GroupsIcon,PreviewIcon
@@ -75,9 +75,14 @@ const MmsManagnentScreen=({classes}) => {
     setSearching(false)
   }
 
-  const renderSearchLine=() => {
-    const handleSearch=() => {
-      const searchArray=[{
+  const renderSearchLine = () => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13 || event.key === 'Enter') {
+        handleSearch();
+      }
+    }
+    const handleSearch = () => {
+      const searchArray = [{
         type: 'name',
         campaineName: campaineNameSearch
       },{
@@ -119,14 +124,14 @@ const MmsManagnentScreen=({classes}) => {
       setPage(1);
     }
 
-    const handleKeyPress=(e) => {
+    const handleKeyPress = (e) => {
       if (e.charCode === 13) {
         handleSearch()
       }
     }
 
-    const handleFromDateChange=(value) => {
-      if(value>toDate) {
+    const handleFromDateChange = (value) => {
+      if (value > toDate) {
         handleToDate(null);
       }
       handleFromDate(value);
@@ -156,6 +161,7 @@ const MmsManagnentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
+            onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
@@ -416,13 +422,13 @@ const MmsManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Tooltip 
+        <Tooltip
           arrow 
           title={row.Name} 
           placement={'top'} 
           classes={{
             tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-            arrow: classes.fBlack}}
+            arrow: classes.black}}
           >
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {row.Name}
@@ -514,8 +520,8 @@ const MmsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
 
     let sortData = isSearching ? searchResults : mmsData;
-    let rpp=parseInt(rowsPerPage)
-    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
+    let rpp = parseInt(rowsPerPage)
+    sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
       <TableBody>
         {sortData
@@ -714,24 +720,24 @@ const MmsManagnentScreen=({classes}) => {
 
     let currentDialog = null;
 
-    switch(type){
-      case 'restore':{
+    switch (type) {
+      case 'restore': {
         currentDialog = getRestoreDialog(data);
         break;
       }
-      case 'groups':{
+      case 'groups': {
         currentDialog = getGroupsDialog(data);
         break;
       }
-      case 'delete':{
+      case 'delete': {
         currentDialog = getDeleteDialog(data);
         break;
       }
-      case 'duplicate':{
+      case 'duplicate': {
         currentDialog = getDuplicateDialog(data);
         break;
       }
-      case 'preview':{
+      case 'preview': {
         currentDialog = getPreviewDialog(data);
         break;
       }

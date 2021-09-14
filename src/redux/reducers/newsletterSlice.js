@@ -10,7 +10,8 @@ export const getNewslatterData = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  })
+  }
+)
 
   export const getNewsletterReports = createAsyncThunk(
     'reports/EmailReports/', async (demo = false, thunkAPI) => {
@@ -53,7 +54,8 @@ export const restoreCampaigns = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  })
+  }
+)
 
 export const deleteCampaign = createAsyncThunk(
   'email/deleteEmailCampaign/', async (id, thunkAPI) => {

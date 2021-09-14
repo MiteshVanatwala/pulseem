@@ -161,6 +161,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
+            onKeyPress={handleKeyPress}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('automations.labelAutomationName')}

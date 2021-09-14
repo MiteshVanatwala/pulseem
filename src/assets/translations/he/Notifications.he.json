@@ -15,13 +15,14 @@
     "edit": "ערוך",
     "duplicate": "שכפל",
     "delete": "מחק",
-    "search": "חיפוש"
+    "search": "חיפוש",
+    "subscribers": "הרשמות"
   },
   "tblHeader": {
     "notificationName": "שם הנוטיפיקציה",
     "toSend": "לשליחה",
     "sent": "נשלח",
-    "failed": "נכשל",
+    "failed": "נכשלו",
     "clicks": "לחיצות",
     "status": "סטאטוס"
   },
@@ -52,7 +53,8 @@
     "notificationDate": "יש לבחור תאריך ושעת שליחה",
     "notificationGroups": "יש לבחור קבוצה אחת לפחות",
     "notificationDatePassed": "התאריך או השעה שבחרת עבר",
-    "redirectUrlNotValid": "קישור להפניה - קישור לא תקין"
+    "redirectUrlNotValid": "קישור להפניה - קישור לא תקין",
+    "redirectButtonText": "טקסט כפתור הפניה - שדה חובה"
   },
   "notificationName": "שם הנוטיפיקציה",
   "notifications": "נוטיפיקציות",
@@ -147,6 +149,7 @@
   "assignedToTheGroup": "נוטיפיקציות הם ישוייכו לקבוצה שצויינה.",
   "sampleUrl": "https://www.pulseem.com?g=שם הקבוצה",  
   "duplicatedRecipients": "נמענים כפולים",
+  "activeSubscribers": "נמענים פעילים:",
   "arrived": "הגיעו",
-  "arrivedTootltip": "כמות הנוטיפקציות שהגיעו לדפדפנים של הנמענים שלך"
+  "arrivedTootltip": "כמות הנוטיפקציות שהגיעו לדפדפני הנמענים שלך"
 }

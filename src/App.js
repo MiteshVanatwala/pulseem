@@ -46,7 +46,7 @@ const renderRoutes=(classes,history) => {
   }
   return (
     <>
-      <Route
+     <Route
         exact
         path="/"
         render={props => <DashboardScreen {...props} classes={classes} />}
@@ -368,38 +368,29 @@ const App=({screenSize}) => {
       const {
         email='',
         unique_name='',
-        given_name: basename='',
         nameid: companyName,
+        certthumbprint: billingTypeId,
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/homephone': phone='',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/locality': locality='he-IL',
         'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/stateorprovince': imageURL='',
-        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri': isWhiteLabel=''
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/uri': isWhiteLabel='',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/authorizationdecision': cameFromSubAccount='',
+        'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': isAdmin='',
+        'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name': basename='',
+        'http://schemas.microsoft.com/ws/2008/06/identity/claims/userdata': isAllowSwitchAccount=''
       }=jwt
 
-      dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName}))
+
+      dispatch(setCoreData({email,basename,phone,imageURL,isWhiteLabel,companyName,cameFromSubAccount,isAdmin,isAllowSwitchAccount, billingTypeId}))
       let lang=culture||locality; //||'he'
       setCookie('Culture',lang.toLowerCase())
       lang=lang.split('-')[0]
       i18n.changeLanguage(lang.toLowerCase())
       dispatch(setRowsPerPage(rpp || 6))
       dispatch(setLanguage(lang.toLowerCase()))
-      dispatch(setUsername(unique_name))
+      dispatch(setUsername(companyName))
 
     }
-
-    // const setWindowWidth=() => {
-    //   const {innerWidth}=window
-    //   let windowSize='xs'
-    //   if(innerWidth>599&&innerWidth<959)
-    //     windowSize='sm'
-    //   else if(innerWidth>=960&&innerWidth<1279)
-    //     windowSize='md'
-    //   else if(innerWidth>=1280&&innerWidth<1919)
-    //     windowSize='lg'
-    //   else if(innerWidth>=1920)
-    //     windowSize='xl'
-    //   dispatch(setWindowSize(windowSize))
-    // }
 
     const cookieFunctionObj={
       jtoken: updateToken

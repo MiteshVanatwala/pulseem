@@ -7,7 +7,8 @@ import {
 } from '../assets/images/settings/index'
 import SettingsLogo from '../assets/images/settings-white.png';
 
-export const getSettingsItem=(t,style='') => ({
+
+export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
   title: <img
     alt='settings'
     src={SettingsLogo}
@@ -17,8 +18,8 @@ export const getSettingsItem=(t,style='') => ({
   options: [
     {title: t('master.RadMenuItemResource2.Text'),href: '/Pulseem/AccountSettings.aspx?fromreact=true',iconSrc: SettingsMenuIcon, isShow: true},
     {title: t('master.linkAccountBilling.Text'),href: '/Pulseem/AccountBilling.aspx?fromreact=true',iconSrc: DolarMenuIcon, isShow: true},
-    {title: t('master.RadMenuItemResource3.Text'),href: '/Pulseem/AccountUsers.aspx?fromreact=true',iconSrc: GroupMenuIcon, isShow: true},
-    {title: t('master.RadMenuItemResource4.Text'),href: '/Pulseem/AccountUsersReport.aspx?fromreact=true',iconSrc: GrafMenuIcon, isShow: true},
+    {title: t('master.RadMenuItemResource3.Text'),href: '/Pulseem/AccountUsers.aspx?fromreact=true',iconSrc: GroupMenuIcon, isShow: isAllowSwitchAccount },
+    {title: t('master.RadMenuItemResource4.Text'),href: '/Pulseem/AccountUsersReport.aspx?fromreact=true',iconSrc: GrafMenuIcon, isShow: isAllowSwitchAccount},
     {title: t('master.RadMenuItemResource23.Text'),href: '/Pulseem/ExtraFieldsDefinition.aspx?fromreact=true',iconSrc: StarMenuIcon, isShow: true},
     {title: t('master.linkApiSettingsResource1.Text'),href: '/Pulseem/ApiSettings.aspx?fromreact=true',iconSrc: CodeMenuIcon, isShow: true},
   ]
@@ -28,9 +29,9 @@ export const getSettingsItem=(t,style='') => ({
 export const getRoutes=(t=() => null, isClalAccount = false, features = null, windowSize = null) => [
   {
     key: 'dashboard',
-    title: t('master.RadMenuItemResource1.Text'),
+    title: t('dashboard.pageTitle'),
     iconUnicode: '\uF064',
-    href: '/Pulseem/homepage.aspx?fromreact=true',
+    href: '/react',
     isShow: windowSize && windowSize === "xs" ? true : false,
     icon: <img
       alt='Dashboard'
@@ -79,7 +80,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
     pageTitle: t('sms.PageResource1.Title'),
     iconUnicode: '\ue181',
     href: '/react/SMSCampaigns',
-    isShow: features !== null && features.includes('7'),
+    isShow: features && !features.error && features !== null && features.indexOf('7') > -1,
     icon: <img
       alt='Sms'
       src={SmsIcon} />,
@@ -142,7 +143,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
     pageTitle: t('notifications.notificationManagement'),
     iconUnicode: '\ue117',
     href: '/react/Notifications',
-    // isShow: features !== null && features.includes('35'),
+    isShow: features && !features.error && features !== null && features.indexOf('35') > -1,
     icon: <img
       alt='Notifications'
       src={NotificationsIcon} />,

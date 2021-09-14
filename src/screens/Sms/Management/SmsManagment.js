@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction, Link, Tooltip
+  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction, Tooltip
 } from '@material-ui/core'
 import {
   AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
@@ -82,6 +82,11 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderSearchLine=() => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13 || event.key === 'Enter') {
+        handleSearch();
+      }
+    }
     const handleSearch=() => {
       const searchArray=[{
         type: 'name',
@@ -161,6 +166,7 @@ const SmsManagnentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
+            onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('sms.GridBoundColumnResource2.HeaderText')}
@@ -468,7 +474,7 @@ const SmsManagnentScreen=({classes}) => {
           placement={'top'} 
           classes={{
             tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-            arrow: classes.fBlack}}
+            arrow: classes.black}}
           >
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {row.Name}
@@ -770,7 +776,7 @@ const SmsManagnentScreen=({classes}) => {
           <Preview classes={classes}
             mobileFullsize={true}
             model={data}
-            ShowRedirectButton={data.RedirectButtonText&&data.RedirectButtonText!=''}
+            ShowRedirectButton={data.RedirectButtonText&&data.RedirectButtonText!==''}
             showTitle={false}
             showID={true}
             isSMS={true}

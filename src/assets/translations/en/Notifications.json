@@ -15,7 +15,8 @@
     "edit": "Edit",
     "duplicate": "Duplicate",
     "delete": "Delete",
-    "search": "Search"
+    "search": "Search",
+    "subscribers": "Subscribers"
   },
   "tblHeader": {
     "notificationName": "Notification Name",
@@ -52,7 +53,8 @@
     "notificationDate": "Pick Date and Time",
     "notificationGroups": "Pick at least 1 group",
     "notificationDatePassed": "The date or time you have chosen has already passed",
-    "redirectUrlNotValid": "Redirect URL - URL is not valid"
+    "redirectUrlNotValid": "Redirect URL - URL is not valid",
+    "redirectButtonText": "Redirect Button Text - Required"
   },
   "notificationName": "Notification Name",
   "notifications": "Notifications",
@@ -136,7 +138,7 @@
   "tooltip": {
     "testSend": "Please note that tests sends for Push Notifications are sent to creator of the notification only.",
     "redirectUrl": "This is the link your customers will be referred to when clicking on your notification.",
-    "firefoxNotSupported": "Note! Mozilla Firefox does not support images for Push Notifications. Recipients using Firefox will see only title, text, icon.",
+    "firefoxNotSupported": "Note! Firefox does not support images for Push Notifications. Recipients using Firefox will see only title, text, icon.",
     "showRedirectButton": "Add a button to your notification and lead your customers directly to your site"
   },
   "leaveCampaignCreationTitle": "Leave Campaign Creation",
@@ -147,6 +149,7 @@
   "onceYouHaveCreatedTheUrl": "Once you have created this URL, send it to the desired recipients for this group, and once they have agreed to receive notifications, they will be assigned to the specified group.",
   "sampleUrl": "https://www.pulseem.com?g=GroupName",  
   "duplicatedRecipients": "Duplicated Recipients",
+  "activeSubscribers": "Active Subscribers:",
   "arrived": "Arrived",
   "arrivedTootltip": "The number of Notifications that arrived to your recipients' browsers"
 }

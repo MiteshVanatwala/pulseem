@@ -18,7 +18,8 @@ export const coreSlice=createSlice({
     accountFeatures: null,
     cameFromSubAccount: null,
     isAdmin: null,
-    isAllowSwitchAccount: null
+    isAllowSwitchAccount: null,
+    billingTypeId: null
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -47,6 +48,7 @@ export const coreSlice=createSlice({
       state.cameFromSubAccount=payload.cameFromSubAccount
       state.isAdmin=payload.isAdmin
       state.isAllowSwitchAccount=payload.isAllowSwitchAccount
+      state.billingTypeId=payload.billingTypeId
     }
   }
 })

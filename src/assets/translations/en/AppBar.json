@@ -31,5 +31,6 @@
   "notifications": {
     "title": "Notifications"
   },
-  "logout": "Logout"
+  "logout": "Logout",
+  "returnToMainAccount": "Main Account"
 }

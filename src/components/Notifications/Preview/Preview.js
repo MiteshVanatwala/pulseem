@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { Grid, Box, Typography, AppBar, Tab, Tabs, TextareaAutosize, Paper } from '@material-ui/core'
+import { Grid, Box, Typography, AppBar, Tab, Tabs, TextareaAutosize, Paper, Divider } from '@material-ui/core'
 import clsx from 'clsx';
 import './preview.styles.css';
 import PropTypes from 'prop-types';
@@ -231,7 +231,7 @@ export const Preview = (
             style={{
               backgroundImage: `url(${model.Image})`,
               cursor: 'unset',
-              minHeight: windowSize==='xs'?130:185
+              minHeight: windowSize === 'xs' ? 75 : (model.RedirectButtonText !== '' ? 135 : 185)
             }}>
             <div className={clsx(
               classes.flex,
@@ -241,16 +241,23 @@ export const Preview = (
             </div>
           </div>
           }
+          {
+            notificationExpanded && model.RedirectButtonText !== '' && <Grid container alignItems="center" className={clsx(classes.flex, classes.root, classes.notificationMobileButtons)}>
+              <Box>{t("common.settings")}</Box>
+              <Divider orientation="vertical" flexItem />
+              <Box className={classes.ellipsisText}>{model.RedirectButtonText}</Box>
+            </Grid>
+          }
         </div>
       </div>
     )
   }
 
   // Return final template
-  const campaignID=isSMS&&model.SMSCampaignID || isMMS&&model.MmsCampaignID || model.ID || '';
+  const campaignID = isSMS && model.SMSCampaignID || isMMS && model.MmsCampaignID || model.ID || '';
   return (
     <>
-      {showID&&<Typography className={classes.previewID}><b>{t('common.campaignID')}</b>:&nbsp;{campaignID}</Typography>}
+      {showID && <Typography className={classes.previewID}><b>{t('common.campaignID')}</b>:&nbsp;{campaignID}</Typography>}
       <Grid className={mobileFullsize && classes.justifyCenter}>
         {showTitle && <h3 className={clsx(classes.blue, classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</h3>}
         {showDevices && !mobileFullsize && <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>

@@ -250,8 +250,8 @@
   "UserGuides": "User Guides",
   "CreateFacebookPost": "Create Facebook Post",
   "CreateLP": "Select",
-  "CreateMMS": "Create MMS",
-  "CreateSMS": "Create SMS",
+  "CreateMMS": "New MMS Campaign",
+  "CreateSMS": "New SMS Campaign",
   "NewsletterReports": "Newsletter Reports",
   "SMSReports": "SMS Reports",
   "Ok": "OK",
@@ -479,6 +479,13 @@
   "december": "December",
   "chooseYear": "Choose Year...",
   "chooseMonth": "Choose Month...",
-  "UpdatedOn": "Updated on",
-  "campaignID": "Campaign ID"
+  "campaignID": "Campaign ID",
+  "Recipient": "Recipient",
+  "charStatus": {
+    "active": "Active",
+    "error": "Error",
+    "removed": "Removed"
+  },
+  "close": "Close",
+  "settings": "Settings"
 }

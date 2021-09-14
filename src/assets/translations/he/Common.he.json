@@ -249,8 +249,8 @@
   "UserGuides": "מדריכים למשתמש",
   "CreateFacebookPost": "צור פוסט בפייסבוק",
   "CreateLP": "צור דף נחיתה",
-  "CreateMMS": "צור MMS",
-  "CreateSMS": "צור SMS",
+  "CreateMMS": "יצירת קמפיין",
+  "CreateSMS": "יצירת קמפיין",
   "NewsletterReports": "דוחות ניוזלטר",
   "SMSReports": "דוחות SMS",
   "Ok": "אישור",
@@ -445,8 +445,10 @@
   "smsBulkDescription": "רכישת חבילת SMS אונליין. אנא ביחרו את החבילה הנדרשת.",
   "select": "בחר",
   "endPurchase": "סיום רכישה",
-  "Errors": "טעויות",
+  "Errors": "שגיאות",
   "productName": "שם המוצר",
+  "SelectCategory": "בחר קטגוריה",
+  "SelectPage": "בחר עמוד",
   "price": "מחיר",
   "vat": "מע''מ 17%",
   "totalPrice": "סה''כ לתשלום",
@@ -471,6 +473,13 @@
   "december": "דצמבר",
   "chooseYear": "בחר שנה...",
   "chooseMonth": "בחר חודש...",
-  "UpdatedOn": "עודכן בתאריך",
-  "campaignID": "מספר קמפיין"
+  "campaignID": "מספר קמפיין",
+  "Recipient": "נמען",
+  "charStatus": {
+    "active": "פעילים",
+    "error": "שגויים",
+    "removed": "מוסרים"
+  },
+  "close": "סגור",
+  "settings": "הגדרות"
 }

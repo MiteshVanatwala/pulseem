@@ -285,7 +285,7 @@
     "HeaderText": "פעיל"
   },
   "CreateNewResource": {
-    "Text": "צור דף חדש"
+    "Text": "יצירת דף נחיתה"
   },
   "DeleteBody": "האם ברצונך למחוק דף זה?",
   "DeleteResource1": {
@@ -338,5 +338,5 @@
   "dialogDuplicateTitle": "שיכפול דף נחיתה",
   "dialogDuplicateContent": "האם ברצונך לשכפל את דף הנחיתה?",
   "duplicationSuccessful": "דף הנחיתה שלך שוכפל בהצלחה!",
-  "duplicationSuccessfulMessage": "כל הנתונים של דף הנחיתה שוכפל. על מנת לערוך את הגדרות הטופס נא לחץ על אישור למטה."
+  "duplicationSuccessfulMessage": "כל הנתונים של דף הנחיתה שוכפל. על מנת לערוך את הגדרות הטופס נא לחץ על ערוך למטה."
 }

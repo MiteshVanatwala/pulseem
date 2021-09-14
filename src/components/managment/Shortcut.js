@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
-import { getShortcuts, setShortcuts,deleteShortcuts } from '../../redux/reducers/dashboardSlice';
+import { getShortcuts, setShortcuts,deleteShortcuts } from '../../redux/reducers/shortcutSlice';
 
 export const Shortcut=({classes}) => {
   const {windowSize}=useSelector(state => state.core);

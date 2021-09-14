@@ -258,24 +258,28 @@ const NotificationEditor = ({ props, classes }) => {
       setPublicKey('');
     }
   }
-  const saveNotification = (isExit, isContinue) => {
-    // Show loader
-    // event.preventDefault();
+
+  useEffect(() => {
+    if (!ShowRedirectButton) {
+      setModel({ ...model, RedirectURL: '', RedirectButtonText: '' });
+    }
+  }, [ShowRedirectButton])
+
+  const saveNotification = async (isExit, isContinue) => {
     setSourceModel(model);
+
+    const modelToSave = { ...model };
+
     if (isValidNotification()) {
-      if (!ShowRedirectButton) {
-        model.RedirectButtonText = '';
-        model.RedirectURL = '';
-      }
-      if (model && model.ID > 0) {
-        dispatch(updateNotification(model));
+      if (modelToSave && modelToSave.ID > 0) {
+        await dispatch(updateNotification(modelToSave));
         setToastMessage(toastMessages.SUCCESS);
         if (isContinue) {
-          redirectAfterSave(model.ID);
+          redirectAfterSave(modelToSave.ID);
         }
       }
       else {
-        dispatch(save(model)).then((response) => {
+        dispatch(save(modelToSave)).then((response) => {
           if (props.match.params.create || props.match.url.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
               window.location.href = "/react/Notifications";
@@ -309,8 +313,7 @@ const NotificationEditor = ({ props, classes }) => {
       }
     }
   }
-  const saveSettings = async (isExit) => {
-    // event.preventDefault();
+  const saveSettings = async (isExit, isSummary = false) => {
     setSourceModel(model);
     if (isValidSettings()) {
       if (sendType === "2") {
@@ -329,6 +332,7 @@ const NotificationEditor = ({ props, classes }) => {
           setToastMessage(toastMessages.SAVE_SETTINGS);
         }
         else {
+          if (isSummary === false)
             window.location.href = "/react/Notifications";
         }
       }
@@ -532,6 +536,10 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const handleRedirectVisibillity = (event) => {
     setRedirectButtonVisibillity(event.target.checked);
+    if (event.target.checked === false) {
+      setModel({ ...model, RedirectURL: '' });
+      setModel({ ...model, RedirectButtonText: '' });
+    }
   }
   const handleNotificationTitle = (event) => {
     if (event.target.value.length <= 50) {
@@ -649,6 +657,10 @@ const NotificationEditor = ({ props, classes }) => {
           errorList.push({ message: t('notifications.validation.redirectUrlNotValid') });
           document.querySelector("#notificationRedirectUrl").classList.add("error");
         }
+      }
+      if (model.RedirectButtonText.length <= 0) {
+        errorList.push({ message: t('notifications.validation.redirectButtonText') });
+        document.querySelector("#notificationButton").classList.add("error");
       }
     }
     if (model.Title === '') {
@@ -795,7 +807,7 @@ const NotificationEditor = ({ props, classes }) => {
           }
           {ShowRedirectButton &&
             <Grid item md={3} xs={12}>
-              <label>{t('notifications.redirectUrlButton')}</label>
+              <label>* {t('notifications.redirectUrlButton')}</label>
               <TextField
                 placeholder={t('notifications.redirectUrlButton')}
                 id="notificationButton"
@@ -1328,7 +1340,7 @@ const NotificationEditor = ({ props, classes }) => {
     )
   }
   const WizardButtons = () => {
-    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")}>
+    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")} style={{ paddingBottom: 40 }}>
       {activeStep == 0 &&
         <Box>
           <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"} >
@@ -1436,8 +1448,9 @@ const NotificationEditor = ({ props, classes }) => {
       currentPage='notifications'
       subPage='create'
       customPadding={true}
-      classes={classes}>
-      <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column' }}>
+      classes={classes}
+      containerClass={classes.editor}>
+      <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column', paddingBottom: 40 }}>
         {renderToast()}
         {renderHeader()}
         {renderNotification()}
