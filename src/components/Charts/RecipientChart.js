@@ -316,8 +316,7 @@ const RecipientChart = ({ classes }) => {
                     showArrows={false}
                     selectedItem={carouselItem}>
                     {recipientsReport.map((report, index) => {
-                        if (report.ReportSection === 2 && !Notifications.FeatureExist
-                            || report.ReportSection === 1 && !Sms.FeatureExist) {
+                        if (report.ReportSection === 2 && !Notifications.FeatureExist) {
                             return;
                         }
                         if (report.Total) {
