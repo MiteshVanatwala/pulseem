@@ -240,14 +240,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pulseemIcon: {
     fontFamily: "pulseemicons",
   },
-  borderAround: {
-    border: '1px solid #000'
-  },
   borderBottom1: {
     borderBottom: '1px solid #ccc'
-  },
-  dBlock: {
-    display: 'block'
   },
   dFlex: {
     display: 'flex'
@@ -258,23 +252,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dBlock: {
     display: 'block'
   },
-  w20: {
-    width: '20%'
-  },
   borderAround: {
     border: '1px solid #000'
   },
-  borderBottom1: {
-    borderBottom: '1px solid #ccc'
-  },
-  dFlex: {
-    display: 'flex'
-  },
   alignItemsCenter: {
     alignItems: 'center'
-  },
-  w80: {
-    width: '80%'
   },
   w110: {
     width: 110,
@@ -303,9 +285,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   maxWidth190: {
     maxWidth: 190
   },
-  maxWidth190: {
-    maxWidth: 190
-  },
   widthUnset: {
     width: "unset",
   },
@@ -314,9 +293,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   flex2: {
     flex: 2
-  },
-  dFlex: {
-    display: "flex",
   },
   dInline: {
     display: "inline",
@@ -329,24 +305,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pe10: {
     paddingInlineEnd: 10,
-  },
-  flex2: {
-    flex: 2
-  },
-  dFlex: {
-    display: 'flex'
-  },
-  dInline: {
-    display: 'inline'
-  },
-  dInlineBlock: {
-    display: 'inline-block'
-  },
-  pl25: {
-    paddingInlineEnd: 25
-  },
-  pe10: {
-    paddingInlineEnd: 10
   },
   p10: {
     padding: 10,
@@ -363,15 +321,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   ps15: {
     paddingInlineStart: 8,
   },
-  plr10: {
-    padding: '0 10px'
-  },
-  pr25: {
-    paddingInlineStart: 25
-  },
-  ps15: {
-    paddingInlineStart: 8
-  },
   ps25: {
     paddingInlineStart: 25,
   },
@@ -381,12 +330,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pt2rem: {
     paddingTop: "2rem",
   },
-  pt0: {
-    paddingTop: 0
-  },
-  pt2rem: {
-    paddingTop: '2rem'
-  },
   pt10: {
     paddingTop: 10,
   },
@@ -395,9 +338,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pt2: {
     paddingTop: 1.4,
-  },
-  pb0: {
-    paddingBottom: 0
   },
   pb0: {
     paddingBottom: 0
@@ -417,38 +357,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mb20: {
     marginBottom: 20
   },
-  mbNeg10: {
-    marginBottom: -10
-  },
-  ml10: {
-    marginInlineStart: 10
-  },
   ml25: {
     marginInlineStart: 25
   },
   mtNeg15: {
     marginTop: -15
   },
-  mr10: {
-    marginInlineEnd: 10
-  },
-  mb5: {
-    marginBottom: 5
-  },
-  mb10: {
-    marginBottom: 10
-  },
-  mb20: {
-    marginBottom: 20
-  },
   mbNeg10: {
     marginBottom: -10
-  },
-  ml25: {
-    marginInlineStart: 25
-  },
-  mtNeg15: {
-    marginTop: -15
   },
   mt5: {
     marginTop: 5,
@@ -468,29 +384,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt0: {
     marginTop: 0,
   },
-  ml0: {
-    marginInlineStart: 0
-  },
-  ml5: {
-    marginInlineStart: 5
-  },
-  ml10: {
-    marginInlineStart: 10
-  },
-  mr15: {
-    marginInlineEnd: 15
-  },
   ml15: {
     marginInlineStart: 15
   },
-  mt0: {
-    marginTop: 0
-  },
   mt10: {
     marginTop: 10,
-  },
-  mt15: {
-    marginTop: 15
   },
   mt15: {
     marginTop: 15
@@ -513,9 +411,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   f22: {
     fontSize: 22,
   },
-  f22: {
-    fontSize: 22
-  },
   f25: {
     fontSize: 25,
   },
@@ -524,9 +419,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   line1: {
     lineHeight: 1,
-  },
-  line1: {
-    lineHeight: 1
   },
   bgBrown: {
     backgroundColor: '#636363',
@@ -543,17 +435,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   bgGreen: {
     backgroundColor: 'green'
   },
-  colorBlue: {
-    color: '#0371AD'
-  },
-  bgGreen: {
-    backgroundColor: 'green'
-  },
   inlineGrid: {
     display: "inline-grid",
-  },
-  bgLightGray: {
-    backgroundColor: 'rgba(242, 242, 242, 1)'
   },
   bgLightGray: {
     backgroundColor: 'rgba(242, 242, 242, 1)'
@@ -590,29 +473,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     alignCenter: 'center'
   },
-  justifyCenter: {
-    display: "flex",
-    justifyContent: "center",
-  },
-  alignCenter: {
-    alignContent: "center",
-    alignItems: "center",
-  },
   spaceEvenly: {
     display: "flex",
     justifyContent: "space-evenly",
   },
   textCapitalize: {
     textTransform: "capitalize",
-  },
-  noborder: {
-    border: 'none'
-  },
-  floatRight: {
-    float: 'right'
-  },
-  wordBreak: {
-    wordBreak: 'break-all'
   },
   noborder: {
     border: 'none'
@@ -630,9 +496,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontFamily: "pulseemicons",
     fontSize: 22,
   },
-  rtlSwitch: {
-    transform: "rotateY(180deg)",
-  },
   pageSubTitle: {
     marginTop: 5,
     fontSize: 28,
@@ -644,18 +507,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   blue: {
     color: "#0a74a9",
-  },
-  bgBlack: {
-    backgroundColor: "black",
-  },
-  fBlack: {
-    color: "black",
-  },
-  black: {
-    color: "#626262",
-  },
-  white: {
-    color: "white",
   },
   whiteBox: {
     backgroundColor: "#fff",
@@ -927,7 +778,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: "600",
     color: "white",
     fontSize: "12px",
-    backgroundColor: "red",
     padding: "5px 5px 5px 5px",
     backgroundColor: "#1c82b2",
     cursor: "pointer",
@@ -947,7 +797,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "center",
     fontSize: "12px",
     color: "white",
-    backgroundColor: "red",
     fontWeight: "600",
     padding: "5px 5px 5px 5px",
     backgroundColor: "#1c82b2",
@@ -964,9 +813,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   selectMsg: {
     marginInlineStart: "3px",
-    marginInlineEnd: "4px",
-
-
     height: "40px",
     marginInlineEnd: "2px",
     "@media screen and (max-width: 768px)": {
@@ -1054,7 +900,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     padding: "10px",
     border: "1px solid #efefef",
-    marginInlineEnd: "5px",
     width: "240px",
     marginInlineEnd: "5px",
     "@media screen and (max-width: 768px)": {
@@ -1344,7 +1189,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     position: "absolute",
     top: "180px",
-    width: "285px",
     width: "260px",
     maxWidth: "260px",
     right: "11%",
@@ -1512,7 +1356,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: "300px",
     maxHeight: "200px",
     width: "700px",
-    marginTop: "20px",
     overflowY: "auto",
     borderBottom: "1px solid #efefef",
     borderLeft: "1px solid #efefef",
@@ -1662,7 +1505,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pulse: {
     border: "1px solid #277bff",
-    color: "blue",
     width: "125px",
     padding: "8px",
     marginInlineEnd: "8px",
@@ -2011,25 +1853,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#3DA6F7"
   },
   reactSwitch: {
-    border: "2px solid #48a148",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "8px",
-    color: "#48a148"
-  },
-  blueDoc:
-  {
-    border: "2px solid #3DA6F7",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "8px",
-    color: "#3DA6F7"
-  },
-  reactSwitch: {
     verticalAlign: 'middle',
     marginInlineEnd: '8px'
   },
@@ -2262,25 +2085,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     position: "relative",
     width: "100%"
   },
-  iconsFont: {
-    fontFamily: 'pulseemicons',
-    fontSize: 22
-  },
-  rtlSwitch: {
-    transform: 'rotateY(180deg)'
-  },
-  pageSubTitle: {
-    marginTop: 5,
-    fontSize: 28
-  },
-  subTitle: {
-    margin: '0 10px !important',
-    color: '#157eaf',
-    fontSize: 30
-  },
-  blue: {
-    color: '#0a74a9'
-  },
   bgBlack: {
     backgroundColor: 'black'
   },
@@ -2292,74 +2096,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   white: {
     color: 'white'
-  },
-  whiteBox: {
-    backgroundColor: '#fff',
-    boxShadow: "5px 3px 3px 1px rgba(0,0,0,.2)",
-    padding: 5
-  },
-  mt1: {
-    marginTop: 5
-  },
-  mt2: {
-    marginTop: 10
-  },
-  mt3: {
-    marginTop: 15
-  },
-  mt4: {
-    marginTop: 20
-  },
-  mb1: {
-    marginBottom: 5
-  },
-  mb2: {
-    marginBottom: 10
-  },
-  mb3: {
-    marginBottom: 15
-  },
-  mb4: {
-    marginBottom: 20
-  },
-  m5: {
-    margin: '.5rem'
-  },
-  font15: {
-    fontSize: 15
-  },
-  font18: {
-    fontSize: 18
-  },
-  font20: {
-    fontSize: 20
-  },
-  font24: {
-    fontSize: 24
-  },
-  linkNoDesign: {
-    textDecoration: 'none',
-    color: 'black'
-  },
-  font30: {
-    fontSize: 30
-  },
-  borderBox: {
-    border: '3px solid #0371ad',
-    margin: '1rem',
-    display: 'flex',
-    padding: '1rem',
-    borderRadius: 5,
-    flexDirection: 'column'
-  },
-  whiteLink: {
-    textDecoration: 'underline',
-    color: '#fff',
-    textTransform: 'capitalize',
-    lineHeight: 1
-  },
-  noWrap: {
-    flexWrap: 'nowrap'
   },
   management: {
     maxWidth: 1500
@@ -2432,13 +2168,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   selectedGroupsDiv: {
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
     marginTop: "15px",
     color: "#fff",
     backgroundColor: "#007bff",
     borderRadius: "20px",
-    alignItems: "center",
     justifyContent: "center",
     padding: "5px",
     marginInlineStart: "5px"
@@ -2697,13 +2431,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   report: {
     maxWidth: 1920
-  },
-  blackDivider: {
-    height: 2,
-    backgroundColor: 'rgb(0, 0, 0, 0.5)'
-  },
-  noWrap: {
-    flexWrap: 'nowrap'
   },
   italic: {
     fontStyle: 'italic'

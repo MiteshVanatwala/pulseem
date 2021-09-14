@@ -55,14 +55,6 @@ const shortcutFontSize = {
 
 }
 
-const dashboardDirection = {
-  xs: 'column-reverse',
-  sm: '',
-  md: '',
-  lg: '',
-  xl: ''
-}
-
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   management: {
     maxWidth: 1500
@@ -225,12 +217,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     width: iconWidth[windowSize],
     margin: 'auto',
     marginTop: -10
-  },
-  managmentUicon: {
-    fontSize: 30,
-    fontFamily: 'pulseemicons',
-    marginBottom: -15,
-    marginTop: -15
   },
   managmentUicon: {
     fontSize: 30,
