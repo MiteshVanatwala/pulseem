@@ -10,7 +10,7 @@ const shortcutPaperHeight = {
     xs: '',
     sm: '100%',
     md: '100%',
-    lg: '95vh',
+    lg: '100%',
     xl: '100vh'
 }
 
