@@ -112,6 +112,9 @@ const shortcutPaperHeight = {
 }
 
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
+  management: {
+    maxWidth: 1500
+  },
   managementTitle: {
     fontSize: windowSize === 'xs' ? '25px' : '36px',
     color: '#333333',
@@ -210,8 +213,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   cellExpand: {
-    width: 30, 
-    padding: '8px 0px', 
+    width: 30,
+    padding: '8px 0px',
     borderBottom: 'unset',
     display: 'flex',
     alignItems: 'center'
@@ -1451,7 +1454,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       borderBottom: '7.5px solid transparent',
     }
   },
-  modalText : 
+  modalText:
   {
     fontSize: "22px", marginTop: "5px"
   }

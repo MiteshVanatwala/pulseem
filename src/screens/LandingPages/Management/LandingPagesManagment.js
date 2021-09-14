@@ -704,7 +704,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
   return (
     <DefaultScreen
       currentPage='landingPages'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}
