@@ -42,13 +42,14 @@ import {
   Divider,
 } from "@material-ui/core";
 import {
-  getAccountId,
+  getGroupsBySubAccountId,
   smsCombinedGroup,
-  smsCampSettings,
+  saveSmsCampSettings,
   deleteSms,
   getCampaignSumm,
   getManual,
-  getFinishedCampaigns
+  getFinishedCampaigns,
+  getCampaignSettings
 } from "../../../redux/reducers/smsSlice";
 import { AiOutlineDelete } from "react-icons/ai";
 import Summary from "./smsSummary";
@@ -122,7 +123,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const SmsCreatorStep = ({ classes }) => {
+const SmsSend = ({ props, classes }) => {
   const { t } = useTranslation();
   document.title = t("mainReport.smsTitle")
   const styles = useStyles();
@@ -133,7 +134,7 @@ const SmsCreatorStep = ({ classes }) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { previousLandingData, previousCampaignData, extraData, accountId, finishedCampaigns } =
+  const { previousLandingData, previousCampaignData, extraData, accountId, finishedCampaigns, smsCampaignSettings } =
     useSelector((state) => state.sms);
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -152,7 +153,7 @@ const SmsCreatorStep = ({ classes }) => {
   const [toggleChecked, settoggleChecked] = useState(false);
   const [cancel, setcancel] = useState(true);
   const [campaignIdResp, setcampaignIdResp] = useState(-1);
-  
+
   const [groupValue, setgroupValue] = useState("");
   const [manualTrue, setmanualTrue] = useState(false);
   const [pulse, setpulse] = useState(false);
@@ -165,6 +166,41 @@ const SmsCreatorStep = ({ classes }) => {
   const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
   const [campaignSearch, setcampaignSearch] = useState("");
+
+  // const [smsSettingsModel, setSmsSettingsModel] = useState({
+  //   SmsCampaignID: -1,
+  //   SendType: 1,
+  //   RandomSettings: {
+  //     ID: -1,
+  //     RandomAmount: 0
+  //   },
+  //   PulseSettings: {
+  //     PulseSettingsID: -1,
+  //     PulseType: 1,  //Percentage = 1, Recipients = 2
+  //     TimeType: 1, //Minutes = 1, Hours = 2
+  //     PulseAmount: 0,
+  //     TimeInterval: 0
+  //   },
+  //   SpecialSettings: {
+  //      Day: 0,
+  //      DateFields: -1, // Null = -1, Birthday = 1, CreatedDate = 2, ExtraDate1 = 3, ExtraDate2 = 4, ExtraDate3 = 5, ExtraDate4 = 6
+  //      SendHour: null,
+  //      SendDate: null,
+  //      IntervalTypeID: -1
+  //   },
+  //   SendExeptional: {
+  //     ExceptionalID: -1,
+  //     ExceptionalDays: 0,
+  //     IsExceptionalGroups: false,
+  //     IsExceptionSmsCampaigns: false,
+  //     Groups: null, // List of groups ids
+  //     Campaigns: null, // List of campaign ids
+  //   },
+  //   Groups: [], // List of groups to send
+  //   FutureDateTime: null,
+  //   SourceTimeZone: null
+  // });
+
   const [model, setModel] = useState({
     ID: 0,
     Name: "",
@@ -243,16 +279,19 @@ const SmsCreatorStep = ({ classes }) => {
     const list = await dispatch(getFinishedCampaigns());
     const tempGroupList = list.payload;
     settotalCampaigns(tempGroupList);
+    if (props && props.match.params.id != null && parseInt(props.match.params.id) > 0) {
+      await dispatch(getCampaignSettings(props.match.params.id))
+    }
 
   };
   useEffect(() => {
-    getAccount();
+    getSubAccountGroups();
     getData();
 
   }, [dispatch]);
 
-  const getAccount = async () => {
-    const list = await dispatch(getAccountId());
+  const getSubAccountGroups = async () => {
+    const list = await dispatch(getGroupsBySubAccountId());
     const tempGroupList = list.payload;
     if (tempGroupList) {
       tempGroupList.Id = tempGroupList.GroupID;
@@ -296,13 +335,13 @@ const SmsCreatorStep = ({ classes }) => {
     } else {
       setSelected([...selectedGroups, group]);
     }
-   
-  
+
+
   };
   const callbackUpdateGroups = (groups) => {
     setSelected(groups);
-   
-   
+
+
   };
 
   const handlebef = () => {
@@ -413,7 +452,7 @@ const SmsCreatorStep = ({ classes }) => {
   };
 
   const handlePulseConfirm = () => {
-   
+
     if (onPulseValidations()) {
       setpulse(false);
     }
@@ -698,18 +737,18 @@ const SmsCreatorStep = ({ classes }) => {
   const renderBody = () => {
     return (
       <div>
-          <div className={classes.infoDiv}>
-        <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
-        <Tooltip
-          disableFocusListener
-          title={t("smsReport.whomtoSendTip")}
-          classes={{ tooltip: styles.customWidth }}
-        >
-          <span className={classes.bodyInfo}>i</span>
-        </Tooltip>
+        <div className={classes.infoDiv}>
+          <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
+          <Tooltip
+            disableFocusListener
+            title={t("smsReport.whomtoSendTip")}
+            classes={{ tooltip: styles.customWidth }}
+          >
+            <span className={classes.bodyInfo}>i</span>
+          </Tooltip>
 
-        
-      </div>
+
+        </div>
         <div className={classes.tabDiv}>
           <div
             className={
@@ -752,71 +791,71 @@ const SmsCreatorStep = ({ classes }) => {
               <span className={classes.bodyInfo}>i</span>
             </Tooltip>
           </div>
-          
+
         </div>
         {manualClick ? (
-            <div
+          <div
+            className={
+              highlighted
+                ? clsx(classes.greenManual)
+                : clsx(classes.areaManual)
+            }
+          >
+            <textarea
+              placeholder="Drag &amp; drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box"
+              spellcheck="false"
+              autocomplete="off"
               className={
-                highlighted
-                  ? clsx(classes.greenManual)
-                  : clsx(classes.areaManual)
+                highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
               }
-            >
-              <textarea
-                placeholder="Drag &amp; drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box"
-                spellcheck="false"
-                autocomplete="off"
-                className={
-                  highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
-                }
-                value={areaData}
-                onDragEnter={() => {
-                  setHighlighted(true);
-                }}
-                onChange={areaChange}
-                onDragLeave={() => {
-                  setHighlighted(false);
-                }}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                }}
-                onPaste={areaChange}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  setHighlighted(false);
-                  setmanualTrue(true);
+              value={areaData}
+              onDragEnter={() => {
+                setHighlighted(true);
+              }}
+              onChange={areaChange}
+              onDragLeave={() => {
+                setHighlighted(false);
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+              }}
+              onPaste={areaChange}
+              onDrop={(e) => {
+                e.preventDefault();
+                setHighlighted(false);
+                setmanualTrue(true);
 
-                  Array.from(e.dataTransfer.files)
-                    .filter((file) => file.type === "text/csv")
-                    .forEach(async (file) => {
-                      const text = await file.text();
-                      const result = parse(text, { header: true });
-                    
-                      setContacts((existing) => [...existing, ...result.data]);
-                      let res = "";
-                      for (let i = 0; i < result.data.length; i++) {
-                        for (
-                          let j = 0;
-                          j < Object.values(result.data[i]).length;
-                          j++
-                        ) {
-                          res = res + Object.values(result.data[i])[j];
-                        }
-                        res = res + "\n";
-                      }
+                Array.from(e.dataTransfer.files)
+                  .filter((file) => file.type === "text/csv")
+                  .forEach(async (file) => {
+                    const text = await file.text();
+                    const result = parse(text, { header: true });
 
-                      setareaData(res);
-                      let ddc = [];
-                      for (let i in result.data[0]) {
-                        ddc.push("Adjust Title")
+                    setContacts((existing) => [...existing, ...result.data]);
+                    let res = "";
+                    for (let i = 0; i < result.data.length; i++) {
+                      for (
+                        let j = 0;
+                        j < Object.values(result.data[i]).length;
+                        j++
+                      ) {
+                        res = res + Object.values(result.data[i])[j];
                       }
-                      setheaders(ddc);
-                    });
-                }}
-              />
-            </div>
-          ) : null}
-        <div  className={classes.groupsFilterDiv}>
+                      res = res + "\n";
+                    }
+
+                    setareaData(res);
+                    let ddc = [];
+                    for (let i in result.data[0]) {
+                      ddc.push("Adjust Title")
+                    }
+                    setheaders(ddc);
+                  });
+              }}
+            />
+          </div>
+        ) : null}
+        <div className={classes.groupsFilterDiv}>
           {groupClick ? (
 
             <Groups
@@ -891,8 +930,8 @@ const SmsCreatorStep = ({ classes }) => {
                 }}
               >
                 <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
-                return a + b['Recipients'];
-              }, 0)}</span>
+                  return a + b['Recipients'];
+                }, 0)}</span>
                 <Tooltip
                   disableFocusListener
                   title={t("smsReport.finalReciTip")}
@@ -965,7 +1004,7 @@ const SmsCreatorStep = ({ classes }) => {
 
     if (toggleReci) {
       if (validationCheck()) {
-       
+
         setreciFilter(false);
       }
     }
@@ -980,7 +1019,7 @@ const SmsCreatorStep = ({ classes }) => {
     for (let i = 0; i < a.length; i++) {
       b.push(a[i].split(","));
     }
-   
+
     settypedData(b);
 
     let dummyArr = [];
@@ -1114,7 +1153,7 @@ const SmsCreatorStep = ({ classes }) => {
                       })
                       .map((item, idx) => {
                         return (
-                          <div className={classes.searchCon}  onClick={() => {
+                          <div className={classes.searchCon} onClick={() => {
                             handleSelect(idx);
                           }}>
                             <span
@@ -1125,7 +1164,7 @@ const SmsCreatorStep = ({ classes }) => {
                             </span>
                             <div
                               className={classes.groupsFilterList}
-                             
+
                             >
                               <span>
                                 {item.GroupName}
@@ -1196,7 +1235,7 @@ const SmsCreatorStep = ({ classes }) => {
                       })
                       .map((item, idx) => {
                         return (
-                          <div className={classes.searchCon}  onClick={() => {
+                          <div className={classes.searchCon} onClick={() => {
                             handleSelectCamp(idx);
                           }}>
                             <span
@@ -1207,7 +1246,7 @@ const SmsCreatorStep = ({ classes }) => {
                             </span>
                             <div
                               className={classes.groupsFilterList}
-                             
+
                             >
                               <span>
                                 {item.Name}
@@ -1244,7 +1283,7 @@ const SmsCreatorStep = ({ classes }) => {
             >
               <FormControlLabel
                 value="1"
-                control={<Radio color="primary" style={{color: sendType !== "1" ? "#d3d3d3" : "#007bff"}}/>}
+                control={<Radio color="primary" style={{ color: sendType !== "1" ? "#d3d3d3" : "#007bff" }} />}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.immediateSend")}
@@ -1256,7 +1295,7 @@ const SmsCreatorStep = ({ classes }) => {
               </FormHelperText>
               <FormControlLabel
                 value="2"
-                control={<Radio color="primary" style={{color: sendType !== "2" ? "#d3d3d3" : "#007bff"}}/>}
+                control={<Radio color="primary" style={{ color: sendType !== "2" ? "#d3d3d3" : "#007bff" }} />}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.futureSend")}
@@ -1308,7 +1347,7 @@ const SmsCreatorStep = ({ classes }) => {
               </Box>
               <FormControlLabel
                 value="3"
-                control={<Radio color="primary" style={{color: sendType !== "3" ? "#d3d3d3" : "#007bff"}}/>}
+                control={<Radio color="primary" style={{ color: sendType !== "3" ? "#d3d3d3" : "#007bff" }} />}
                 label={
                   <span className={classes.radioText}>
                     {t("mainReport.specialDate")}
@@ -1334,7 +1373,7 @@ const SmsCreatorStep = ({ classes }) => {
                     outline: "none",
                     marginBottom: "10px",
                   }}
-                  disabled={ sendType === "3" ? false : true}
+                  disabled={sendType === "3" ? false : true}
                 >
                   <option>{t("mainReport.birthday")}</option>
                   <option>Creation Day</option>
@@ -1356,7 +1395,7 @@ const SmsCreatorStep = ({ classes }) => {
                   type="text"
                   className={classes.inputDays}
                   placeholder="0"
-                  disabled={ sendType == "3" ? false : true}
+                  disabled={sendType == "3" ? false : true}
                 />
 
                 <span style={{ marginInlineEnd: "8px", marginBottom: "8px" }}>
@@ -1547,7 +1586,7 @@ const SmsCreatorStep = ({ classes }) => {
             }]
 
         }
-        await dispatch(smsCampSettings(quickPayload));
+        await dispatch(saveSmsCampSettings(quickPayload));
         let response = await dispatch(getCampaignSumm(finalId));
         setresponseQuick(response);
         setsummModal(true);
@@ -1646,7 +1685,7 @@ const SmsCreatorStep = ({ classes }) => {
             }]
 
         }
-        await dispatch(smsCampSettings(quickPayload));
+        await dispatch(saveSmsCampSettings(quickPayload));
         let response = await dispatch(getCampaignSumm(finalId));
         setresponseQuick(response);
         setsummModal(true);
@@ -1694,7 +1733,7 @@ const SmsCreatorStep = ({ classes }) => {
     setheaders(h);
     selectArray[id].isdisabled = true;
     selectArray[id].idx = idx;
-  
+
     // }
 
   };
@@ -1717,7 +1756,7 @@ const SmsCreatorStep = ({ classes }) => {
 
   }
   const handleDataManual = async () => {
-    
+
     let requestPayload = [];
 
 
@@ -1743,10 +1782,10 @@ const SmsCreatorStep = ({ classes }) => {
 
 
         for (let k in contacts[j]) {
-          
+
 
           if (headers[i] !== "Adjust Title") {
-          
+
             let key = headers[i];
             let obj = requestPayload[j];
             obj[key] = contacts[j][k];
@@ -1770,7 +1809,7 @@ const SmsCreatorStep = ({ classes }) => {
     }
 
     const r = await dispatch(getManual(finalPayload))
-   
+
     let tempres = [];
     let temp = [];
     for (let i = 0; i < groupList.length; i++) {
@@ -1885,7 +1924,7 @@ const SmsCreatorStep = ({ classes }) => {
                           handleChangeId(idx);
                         }}
                         className={classes.adjustP}
-                        style={{  textAlign: "center",cursor:"pointer" }}
+                        style={{ textAlign: "center", cursor: "pointer" }}
                       >
                         {headers[idx]}
 
@@ -1962,7 +2001,7 @@ const SmsCreatorStep = ({ classes }) => {
             </tr>
             {contacts.length !== 0
               ? contacts.map((item, idx) => {
-               
+
                 if (idx > contacts.length - 11) {
                   return (
                     <tr id={idx}>
@@ -1989,7 +2028,7 @@ const SmsCreatorStep = ({ classes }) => {
                 }
               })
               : typedData.map((item, id) => {
-              
+
                 return (
 
                   <tr>
@@ -2108,7 +2147,7 @@ const SmsCreatorStep = ({ classes }) => {
         <div>
           {renderSwitch()}
           {renderHead()}
-         
+
           <Grid container>
             <Grid md={7} xs={12}>
               {renderBody()}
@@ -2119,25 +2158,25 @@ const SmsCreatorStep = ({ classes }) => {
             </Grid>
           </Grid>
         </div>
-       
+
       </div>
       <div className={classes.creatorButtons}>
-         <div className={classes.back}>
-           
+        <div className={classes.back}>
+
           <span className={classes.rightInput4}>
-          <span style={{marginInlineEnd:"5px"}}>{"<"}</span>
-          {t("smsReport.back")}
+            <span style={{ marginInlineEnd: "5px" }}>{"<"}</span>
+            {t("smsReport.back")}
           </span>
-          </div>
-          <div  className={classes.rightMostContainer}>
+        </div>
+        <div className={classes.rightMostContainer}>
           <span className={classes.rightInput3} onClick={onHandleDelete}>
             <BsTrash style={{ fontSize: "25" }} />         </span>
           <span className={classes.rightInput4}>
-            
+
             {t("mainReport.exitSms")}
           </span>
           <span className={classes.rightInput5}>
-            
+
             {t("mainReport.saveSms")}
           </span>
           <span
@@ -2151,9 +2190,9 @@ const SmsCreatorStep = ({ classes }) => {
           >
             {t("mainReport.summary")}
           </span>
-          </div>
         </div>
-      
+      </div>
+
       {renderPulse()}
       {renderReciFilter()}
       {renderSummary()}
@@ -2220,4 +2259,4 @@ const SmsCreatorStep = ({ classes }) => {
   );
 };
 
-export default SmsCreatorStep;
+export default SmsSend;

@@ -23,7 +23,7 @@ import {
   getPreviousCampaignData,
   getPreviousLandingData,
   getAccountExtraData,
-  getAccountId,
+  getGroupsBySubAccountId,
   smsSave,
   deleteSms,
   smsSaveGroup,
@@ -222,8 +222,8 @@ const SmsCreator = ({ classes }, props) => {
     await dispatch(getAccountExtraData());
 
   };
-  const getAccount = async () => {
-    await dispatch(getAccountId());
+  const getSubAccountGroups = async () => {
+    await dispatch(getGroupsBySubAccountId());
  
   };
   const getFeatures = async () => {
@@ -238,7 +238,7 @@ const SmsCreator = ({ classes }, props) => {
     getData();
     getDataCamapaign();
     getDataExtra();
-    getAccount();
+    getSubAccountGroups();
     getTest();
     getFeatures();
   }, [dispatch]);
@@ -673,7 +673,7 @@ const SmsCreator = ({ classes }, props) => {
                     onChange={handleSelectChange}
                   >
                     {Object.keys(extraData).map((item, i) => {
-                      return <option value={extraData[item]}>{item}</option>;
+                      return <option value={extraData[item]} key={`extrakey_${i}`}>{item}</option>;
                     })}
                   </select>
                 </Box>
@@ -1013,10 +1013,10 @@ const SmsCreator = ({ classes }, props) => {
         })
       );
       if (isSave) {
-        history.push(`/sms?SMSCampaignID=${r.payload.Message}`);
+        history.push(`/sms/send/${r.payload.Message}`);
       } else {
-        history.push(`/sms?SMSCampaignID=${r.payload.Message}`);
-        history.push(`/smsStep?SMSCampaignID=${r.payload.Message}`);
+        history.push(`/sms/edit/${r.payload.Message}`);
+        history.push(`/sms/send/${r.payload.Message}`);
       }
     }
   };
@@ -1624,8 +1624,8 @@ const SmsCreator = ({ classes }, props) => {
           <div className={classes.baseDialogSetup}>
             <span className={classes.groupName}>Delete Campaign</span>
           </div>
-          <div style={{  }} className={classes.bodyTextDialog}>
-            <span>Are you sure?</span>
+          <div className={classes.bodyTextDialog}>
+            <span>{t("mainReport.confirmSure")}</span>
           </div>
         </Dialog>
       ) : null}
@@ -1686,7 +1686,7 @@ const SmsCreator = ({ classes }, props) => {
         style={{ zIndex: "9999" }}
       >
         <Alert severity="success" onClose={handleCloseSnackbarApi} style={{border:"3px solid green",backgroundColor:"#c5f1c5",color:"black",width:"400px",padding:"10px",fontWeight:"700",fontSize:"15px"}}>
-          Quick sent Succefully
+          {t("sms.quickSendSuccess")}
         </Alert>
       </Snackbar>
     </DefaultScreen>

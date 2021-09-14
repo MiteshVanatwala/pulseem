@@ -85,7 +85,7 @@ export const Shortcut=({classes}) => {
       pages: [
         {
           title: 'common.CreateSMS',
-          link: '/Pulseem/SMSCampaignEdit.aspx'
+          link: '/react/sms/create'
         },
         {
           title: 'dashboard.smsManagement',

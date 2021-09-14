@@ -55,7 +55,7 @@ export const getAccountExtraData = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-export const getAccountId = createAsyncThunk(
+export const getGroupsBySubAccountId = createAsyncThunk(
   'smsCampaign/GetGroupsBySubAccountId', async (_, thunkAPI) => {
     try {
       const response = await instence.get(`smsCampaign/GetGroupsBySubAccountId`);
@@ -234,7 +234,7 @@ export const smsSaveGroup = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-export const smsCampSettings = createAsyncThunk(
+export const saveSmsCampSettings = createAsyncThunk(
   'smsCampaign/SaveCampaignSettings', async (data, thunkAPI) => {
     try {
       const response = await instence.post(`smsCampaign/SaveCampaignSettings`, data);
@@ -281,6 +281,16 @@ export const getFinishedCampaigns = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+export const getCampaignSettings = createAsyncThunk(
+  'smsCampaign/GetCampaignSettings', async (campaignId, thunkAPI) => {
+    try {
+      const response = await instence.get(`smsCampaign/GetCampaignSettings/${campaignId}`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 // export const SaveSms=createAsyncThunk(
 //   'smsCampaign/Save/',async (data,thunkAPI) => {
 //     try {
@@ -310,6 +320,7 @@ export const smsSlice = createSlice({
     directSmsReport: {},
     directSmsReportError: '',
     credits: [],
+    smsCampaignSettings: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -352,7 +363,10 @@ export const smsSlice = createSlice({
     builder.addCase(getAccountExtraData.fulfilled, (state, { payload }) => {
       state.extraData = payload
     })
-    builder.addCase(getAccountId.fulfilled, (state, { payload }) => {
+    builder.addCase(getCampaignSettings.fulfilled, (state, { payload }) => {
+      state.smsCampaignSettings = payload
+    })
+    builder.addCase(getGroupsBySubAccountId.fulfilled, (state, { payload }) => {
       let tempArr = [];
       for (let i = 0; i < payload.length; i++) {
         tempArr.push({ ...payload[i], selected: false })
@@ -362,6 +376,10 @@ export const smsSlice = createSlice({
     builder.addCase(getSMSDirectReport.rejected, (state, action) => {
       state.directSmsReportError = action.error
     })
+    builder.addCase(getCampaignSettings.rejected, (state, action) => {
+      state.smsCampaignSettings = action.error
+    })
+
     builder.addCase(duplicteSms.fulfilled, () => console.log('api duplicteSms success'))
     builder.addCase(deleteSms.fulfilled, () => console.log('api deleteSms success'))
     builder.addCase(restoreSms.fulfilled, () => console.log('api restoreSms success'))

@@ -85,7 +85,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
       alt='Sms'
       src={SmsIcon} />,
     options: [
-      {title: t('master.RadMenuItemResource101.Text'),href: '/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create&fromreact=true', isShow: true},
+      {title: t('master.RadMenuItemResource101.Text'),href: '/react/sms/create', isShow: true},
       {title: t('master.RadMenuItemResource102.Text'),href: '/react/SMSCampaigns', isShow: true},
       {title: t('master.chatbotSMS'),href: '/Pulseem/SMSSmartResponses.aspx?fromreact=true', isShow: true},
       {title: t('master.linkSMSResponsesReport.Text'),href: '/Pulseem/ResponsesReport.aspx?fromreact=true', isShow: true},

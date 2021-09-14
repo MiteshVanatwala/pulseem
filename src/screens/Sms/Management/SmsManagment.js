@@ -234,7 +234,7 @@ const SmsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            href={"/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create&fromreact=true"}
+            href={"/react/sms/create"}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -303,7 +303,7 @@ const SmsManagnentScreen=({classes}) => {
         remove: Status!==1 || (AutomationID!==0 &&  AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&fromreact=true`
+        href: `/react/sms/send/${Id}`
       },
       {
         key: 'preview',
@@ -324,7 +324,7 @@ const SmsManagnentScreen=({classes}) => {
         icon: EditIcon,
         disable: Status!==1 || AutomationID!==0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        href: `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&fromreact=true`,
+        href: `/react/sms/edit/${Id}`,
         rootClass: classes.paddingIcon
       },
       {
