@@ -288,7 +288,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
       placementPopper = 'bottom-start'
     }
     else {
-      if (index > 2) {
+      if (!index && num > 2 || index > 2) {
         placementPopper = isRTL ? 'right-end' : 'left-end';
       }
     }
