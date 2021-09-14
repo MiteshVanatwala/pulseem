@@ -102,10 +102,11 @@ const BulkStatus = ({ classes }) => {
           {<Grid
             container
             item xs={9}
-            className={classes.bulkStatusBlue}
+            className={getBillingTypeText(Sms) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
             justify='space-between'
-            onMouseEnter={() => showSmsPackage(true)}
-            onMouseLeave={() => showSmsPackage(false)}>
+          // onMouseEnter={() => showSmsPackage(true)}
+          // onMouseLeave={() => showSmsPackage(false)}
+          >
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             <Typography className={classes.bulkTitle}>
               {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Sms)}
@@ -122,14 +123,22 @@ const BulkStatus = ({ classes }) => {
             } */}
           </Grid>
           }
-          {<Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
+          {<Grid
+            container
+            item xs={9}
+            className={getBillingTypeText(Newsletters) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
+            justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             <Typography className={classes.bulkTitle}>
               {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Newsletters)}
             </Typography>
           </Grid>
           }
-          {Mms.Credits > 0 && <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
+          {Mms.Credits > 0 && <Grid
+            container
+            item xs={9}
+            className={classes.bulkStatusBlue}
+            justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
             <Typography className={classes.bulkTitle}>
               {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
@@ -139,7 +148,11 @@ const BulkStatus = ({ classes }) => {
               </a> */}
           </Grid>
           }
-          {Notifications.FeatureExist && <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
+          {Notifications.FeatureExist && <Grid
+            container
+            item xs={9}
+            className={getBillingTypeText(Notifications) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
+            justify='space-between'>
             <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
             <Typography className={classes.bulkTitle}>
               {t('dashboard.freeTrial')}

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 import { Grid, Box } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
-import BulkStatus from '../../components/Prices/BulkStatus';
+import BulkStatus from '../../components/Balance/BulkStatus';
 import RecipientChart from '../../components/Charts/RecipientChart';
 import PulseemTips from '../../components/Tips/PulseemTips';
 import LatestReports from '../../components/Reports/LatestReports';
