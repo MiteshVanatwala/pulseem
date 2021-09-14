@@ -88,7 +88,7 @@ const useStyleNew = makeStyles((theme) => ({
 
 const SmsCreator = ({ classes }, props) => {
   const { t } = useTranslation();
-  document.title = t("mainReport.smsTitle");
+  document.title = t("sms.pageTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();
 
