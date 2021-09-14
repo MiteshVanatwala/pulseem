@@ -61,8 +61,7 @@ const RecipientChart = ({ classes }) => {
 
     let data = [];
     recipientsReport.map(report => {
-        if (report.ReportSection === 2 && !Notifications.FeatureExist ||
-            report.ReportSection === 1 && !Sms.FeatureExist) {
+        if (report.ReportSection === 2 && !Notifications.FeatureExist) {
             return;
         }
         else {

@@ -264,7 +264,7 @@ export const smsQuick = createAsyncThunk(
 
 
 export const exportSmsReport = createAsyncThunk(
-  'report/ExportSmsDirectReport', async (demo = false, thunkAPI) => {
+  'report/ExportSmsReport', async (demo = false, thunkAPI) => {
     try {
       const response = await instence.post(`report/ExportSmsReport/${demo}`);
       return JSON.parse(response.data)
