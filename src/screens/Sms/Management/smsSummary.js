@@ -76,7 +76,7 @@ useEffect(() => {
               </div>
               <div className={classes.sumRight}>
                 <div style={{ position: "relative" }}>
-                  {" "}
+                  
                   <img
                     src={Mobile}
                     style={{
@@ -89,7 +89,7 @@ useEffect(() => {
                   <span className={classes.phoneNumberSumm}>050608001</span>
                   <div className={classes.wrapChatSumm}>
                     <div className={classes.fromMe}>
-                      {totalmsg === "" ? "Type text" : totalmsg}
+                      {totalmsg}
                     </div>
                   </div>
                 </div>
@@ -98,7 +98,7 @@ useEffect(() => {
 
             <div>
               <div>
-                {" "}
+                
              {details ?  <ul>
                   <li
                     style={{
@@ -199,7 +199,7 @@ useEffect(() => {
                   paddingInlineStart: "40px",
                 }}
               >
-                Empty numbers :{" "}
+                Empty numbers :
                 <span
                   style={{
                     fontSize: "17px",
@@ -217,7 +217,7 @@ useEffect(() => {
                   paddingInlineStart: "40px",
                 }}
               >
-                Invalid :{" "}
+                Invalid :
                 <span
                   style={{
                     fontSize: "17px",
@@ -260,7 +260,7 @@ useEffect(() => {
                 <div className={classes.sumChild}>
                   <span className={classes.spanSum}>For :</span>
                   <span style={{ fontSize: "18px" }}>
-                    Total Number of Recipients :{" "}
+                    Total Number of Recipients :
                     <span className={classes.bodySum}>""</span>
                   </span>
                   <span
@@ -279,7 +279,7 @@ useEffect(() => {
               </div>
               <div className={classes.sumRight}>
                 <div style={{ position: "relative" }}>
-                  {" "}
+                  
                   <img
                     src={Mobile}
                     style={{
@@ -301,7 +301,7 @@ useEffect(() => {
 
             <div>
               <div>
-                {" "}
+                
                 <ul>
                   <li
                     style={{
@@ -368,7 +368,7 @@ useEffect(() => {
                   paddingInlineStart: "40px",
                 }}
               >
-                Duplicate Recipients :{" "}
+                Duplicate Recipients :
                 <span
                   style={{
                     fontSize: "17px",
@@ -386,7 +386,7 @@ useEffect(() => {
                   paddingInlineStart: "40px",
                 }}
               >
-                Removed :{" "}
+                Removed :
                 <span
                   style={{
                     fontSize: "17px",
@@ -403,7 +403,7 @@ useEffect(() => {
                   paddingInlineStart: "40px",
                 }}
               >
-                Empty numbers :{" "}
+                Empty numbers :
                 <span
                   style={{
                     fontSize: "17px",

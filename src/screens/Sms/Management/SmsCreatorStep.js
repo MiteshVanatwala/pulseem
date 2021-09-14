@@ -251,11 +251,6 @@ const SmsCreatorStep = ({ classes }) => {
 
   }, [dispatch]);
 
-
-
-
-
-
   const getAccount = async () => {
     const list = await dispatch(getAccountId());
     const tempGroupList = list.payload;
@@ -265,7 +260,6 @@ const SmsCreatorStep = ({ classes }) => {
     setGroupList(tempGroupList);
     setfilterGroups(tempGroupList);
   };
-  // console.log("new", contacts);
 
   const callbackSelectAll = () => {
     if (!allGroupsSelected) {
@@ -302,16 +296,12 @@ const SmsCreatorStep = ({ classes }) => {
     } else {
       setSelected([...selectedGroups, group]);
     }
-    let temp = 0;
-    for(let i=0 ; i < selectedGroups.length ; i++)
-    {
-      temp = temp  + selectedGroups[i].Recipients
-           
-    }
-    settotalGroupstoDisplay(temp);
+   
+  
   };
   const callbackUpdateGroups = (groups) => {
     setSelected(groups);
+   
    
   };
 
@@ -423,7 +413,7 @@ const SmsCreatorStep = ({ classes }) => {
   };
 
   const handlePulseConfirm = () => {
-    console.log("hereeee")
+   
     if (onPulseValidations()) {
       setpulse(false);
     }
@@ -801,7 +791,7 @@ const SmsCreatorStep = ({ classes }) => {
                     .forEach(async (file) => {
                       const text = await file.text();
                       const result = parse(text, { header: true });
-                      console.log("res", result.data);
+                    
                       setContacts((existing) => [...existing, ...result.data]);
                       let res = "";
                       for (let i = 0; i < result.data.length; i++) {
@@ -900,7 +890,9 @@ const SmsCreatorStep = ({ classes }) => {
                   marginTop: "10px",
                 }}
               >
-                <span>{t("mainReport.totalReci")}: {totalGroupstoDisplay}</span>
+                <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
+                return a + b['Recipients'];
+              }, 0)}</span>
                 <Tooltip
                   disableFocusListener
                   title={t("smsReport.finalReciTip")}
@@ -973,7 +965,7 @@ const SmsCreatorStep = ({ classes }) => {
 
     if (toggleReci) {
       if (validationCheck()) {
-        console.log("Trueeee");
+       
         setreciFilter(false);
       }
     }
@@ -988,7 +980,7 @@ const SmsCreatorStep = ({ classes }) => {
     for (let i = 0; i < a.length; i++) {
       b.push(a[i].split(","));
     }
-    // ("higconsole.logh",b)
+   
     settypedData(b);
 
     let dummyArr = [];
@@ -1702,7 +1694,7 @@ const SmsCreatorStep = ({ classes }) => {
     setheaders(h);
     selectArray[id].isdisabled = true;
     selectArray[id].idx = idx;
-    console.log("new------>", selectArray)
+  
     // }
 
   };
@@ -1725,8 +1717,7 @@ const SmsCreatorStep = ({ classes }) => {
 
   }
   const handleDataManual = async () => {
-    console.log("----->", headers);
-    console.log(typedData)
+    
     let requestPayload = [];
 
 
@@ -1752,10 +1743,10 @@ const SmsCreatorStep = ({ classes }) => {
 
 
         for (let k in contacts[j]) {
-          console.log("--->before if", headers[i])
+          
 
           if (headers[i] !== "Adjust Title") {
-            console.log("----->printing headers of i th index", headers[i]);
+          
             let key = headers[i];
             let obj = requestPayload[j];
             obj[key] = contacts[j][k];
@@ -1769,7 +1760,6 @@ const SmsCreatorStep = ({ classes }) => {
 
     }
 
-    console.log("request Data", requestPayload)
 
 
     let finalPayload = {
@@ -1780,7 +1770,7 @@ const SmsCreatorStep = ({ classes }) => {
     }
 
     const r = await dispatch(getManual(finalPayload))
-    //  console.log("----->",r)
+   
     let tempres = [];
     let temp = [];
     for (let i = 0; i < groupList.length; i++) {
@@ -1972,7 +1962,7 @@ const SmsCreatorStep = ({ classes }) => {
             </tr>
             {contacts.length !== 0
               ? contacts.map((item, idx) => {
-                // console.log("hello", item);
+               
                 if (idx > contacts.length - 11) {
                   return (
                     <tr id={idx}>
@@ -1999,7 +1989,7 @@ const SmsCreatorStep = ({ classes }) => {
                 }
               })
               : typedData.map((item, id) => {
-                // {console.log("typed data",typedData)}
+              
                 return (
 
                   <tr>

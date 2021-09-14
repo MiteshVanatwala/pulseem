@@ -787,7 +787,7 @@ const SmsCreator = ({ classes }, props) => {
           <span className={classes.phoneNumber}>050608001</span>
           <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
             <div className={classes.fromMe}>
-              {msg === "" ? t("mainReport.typeText") : msg}
+              {msg}
             </div>
           </div>
         </Box>

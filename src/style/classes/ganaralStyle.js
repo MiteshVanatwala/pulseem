@@ -1248,6 +1248,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxWidth: '79%',
     padding: '0.5rem .875rem',
     position: 'relative',
+    minWidth: "20px",
+    minHeight: "20px",
     wordWrap: 'break-word',
     right:"12px",
     cursor:"pointer",
