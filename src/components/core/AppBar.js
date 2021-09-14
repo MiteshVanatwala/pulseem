@@ -238,13 +238,13 @@ export const TopAppBar=({classes,currentPage=''}) => {
           onInnerClick={navigate}
         />
       ))}
-      {windowSize==='xl'&&<>
+      {windowSize==='xl'|| windowSize === 'lg' ? <>
         <Box className={classes.appBerSpace} />
         <Typography
           className={classes.appBarUsername}>
           {companyName}
         </Typography>
-      </>}
+      </> : null}
       <Box className={classes.appBarAfterTollbarContainer}>
         <AppBarItem
           classes={classes}
