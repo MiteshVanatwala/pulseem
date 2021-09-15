@@ -25,6 +25,7 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
+import { useHistory } from "react-router";
 import { BsTrash } from "react-icons/bs";
 import {
   Typography,
@@ -47,6 +48,7 @@ import {
   saveSmsCampSettings,
   deleteSms,
   getCampaignSumm,
+  getSmsByID,
   getManual,
   getFinishedCampaigns,
   getCampaignSettings
@@ -129,6 +131,7 @@ const SmsSend = ({ props, classes }) => {
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const tabi = useStyle();
+  const history = useHistory();
 
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
@@ -202,22 +205,7 @@ const SmsSend = ({ props, classes }) => {
   // });
 
   const [model, setModel] = useState({
-    ID: 0,
-    Name: "",
-    Title: "",
-    Body: "",
-    Icon: "",
-    Image: "",
-    RedirectURL: "",
-    Tag: "",
-    Direction: 2,
-    IsRenotify: "",
-    SendDate: "",
-    IsDeleted: "",
-    SentCount: "",
-    StatusID: "",
-    NotificationGroups: "",
-    RedirectButtonText: "",
+    ID: 0
   });
   const [ContactSearch, setContactSearch] = useState("");
   const [selectedGroup, setselectedGroup] = useState([]);
@@ -2117,6 +2105,19 @@ const SmsSend = ({ props, classes }) => {
     setcaution(false);
     setmanualTrue(false);
   };
+
+  const handlePreviousPage = async () =>
+  {
+    if(window.location.pathname.includes("/react/sms/send"))
+    {
+    let retrieveCampaignId  = window.location.pathname.split("/");
+        let response  =   await dispatch(getSmsByID(retrieveCampaignId[4]))
+         if(response)
+         {
+          history.push(`/sms/edit/${response.payload.SMSCampaignID}`);
+         }
+    }
+  }
   const renderCaution = () => {
     return (
       <>
@@ -2161,7 +2162,7 @@ const SmsSend = ({ props, classes }) => {
 
       </div>
       <div className={classes.creatorButtons}>
-        <div className={classes.back}>
+        <div className={classes.back} onClick={() => {handlePreviousPage()}}>
 
           <span className={classes.rightInput4}>
             <span style={{ marginInlineEnd: "5px" }}>{"<"}</span>

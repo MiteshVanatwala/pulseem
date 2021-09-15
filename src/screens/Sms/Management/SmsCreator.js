@@ -265,16 +265,15 @@ const SmsCreator = ({ classes }) => {
     
     if(window.location.pathname.includes("/react/sms/edit"))
     {
-    let a  = window.location.pathname.split("/");
-        let r  =   await dispatch(getSmsByID(a[4]))
-        console.log("heree",r)
-         if(r)
+    let retrieveCampaignId  = window.location.pathname.split("/");
+        let response  =   await dispatch(getSmsByID(retrieveCampaignId[4]))
+         if(response)
          {
-           setcampaignName(r.payload.Name);
-           setmsg(r.payload.Text)
-           setcampaignNumber(r.payload.FromNumber)
-           setcharacterCount(r.payload.Text.length)
-           setmessageCount(r.payload.CreditsPerSms)
+           setcampaignName(response.payload.Name);
+           setmsg(response.payload.Text)
+           setcampaignNumber(response.payload.FromNumber)
+           setcharacterCount(response.payload.Text.length)
+           setmessageCount(response.payload.CreditsPerSms)
          }
     }
   }
@@ -1084,12 +1083,11 @@ const SmsCreator = ({ classes }) => {
   const handleDelete =  async () => {
     if(window.location.pathname.includes("/react/sms/edit"))
     {
-    let a  = window.location.pathname.split("/");
-        let r  =   await dispatch(getSmsByID(a[4]))
-         if(r)
+    let retrieveCampaignId  = window.location.pathname.split("/");
+        let response  =   await dispatch(getSmsByID(retrieveCampaignId[4]))
+         if(response)
          {
-          dispatch(deleteSms(r.payload.SMSCampaignID));
-      
+          dispatch(deleteSms(response.payload.SMSCampaignID));
           handleClose();
           history.push("/SMSCampaigns");
          }
