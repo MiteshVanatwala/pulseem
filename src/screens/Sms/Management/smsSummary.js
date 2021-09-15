@@ -143,6 +143,7 @@ useEffect(() => {
                   fontSize: "18px",
                   fontWeight: "700",
                   marginBottom: "2px",
+                  cursor:"pointer"
                 }}
                 onClick = {() => {setrecipientsDetails(!recipientsDetails)}}
               >

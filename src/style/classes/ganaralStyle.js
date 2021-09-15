@@ -1366,6 +1366,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "12px",
     display: "flex",
     alignItems: "center",
+    cursor:"pointer",
 
     "&:hover": {
       backgroundColor: "#efefef",

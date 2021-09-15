@@ -27,9 +27,11 @@ import {
   smsSave,
   deleteSms,
   smsSaveGroup,
+  getSmsByID,
   smsQuick,
   getCampaignSumm,
   getCreditsforSMS,
+  getCampaignSettings,
   getTestGroups,
   getCommonFeatures
 } from "../../../redux/reducers/smsSlice";
@@ -86,7 +88,7 @@ const useStyleNew = makeStyles((theme) => ({
   },
 }));
 
-const SmsCreator = ({ classes }, props) => {
+const SmsCreator = ({ classes }) => {
   const { t } = useTranslation();
   document.title = t("sms.pageTitle");
   const styles = useStyles();
@@ -258,20 +260,29 @@ const SmsCreator = ({ classes }, props) => {
     setselectedGroup(temp);
   }, [accountId]);
 
-  useEffect(() => {
-    if (
-      sessionStorage.getItem("data") !== null &&
-      window.location.search !== ""
-    ) {
-      let data = JSON.parse(sessionStorage.getItem("data"));
-      setmsg(data.text);
-      setcampaignName(data.name);
-    } else {
-      setmsg("");
-      setcampaignName("");
-      sessionStorage.removeItem("data");
+  const getSavedData = async () =>
+  {
+    
+    if(window.location.pathname.includes("/react/sms/edit"))
+    {
+    let a  = window.location.pathname.split("/");
+        let r  =   await dispatch(getSmsByID(a[4]))
+        console.log("heree",r)
+         if(r)
+         {
+           setcampaignName(r.payload.Name);
+           setmsg(r.payload.Text)
+           setcampaignNumber(r.payload.FromNumber)
+           setcharacterCount(r.payload.Text.length)
+           setmessageCount(r.payload.CreditsPerSms)
+         }
     }
-  }, []);
+  }
+  useEffect(() => {
+
+    getSavedData();
+   
+  }, [])
 
   const onEmojiClick = (event, emojiObject) => {
     let msgs = msg;
@@ -1004,16 +1015,8 @@ const SmsCreator = ({ classes }, props) => {
         UpdateDate: 1628755539174,
       };
       let r = await dispatch(smsSave(payload));
-
-      sessionStorage.setItem(
-        "data",
-        JSON.stringify({
-          name: campaignName,
-          text: msg,
-        })
-      );
       if (isSave) {
-        history.push(`/sms/send/${r.payload.Message}`);
+        history.push(`/sms/edit/${r.payload.Message}`);
       } else {
         history.push(`/sms/edit/${r.payload.Message}`);
         history.push(`/sms/send/${r.payload.Message}`);
@@ -1078,9 +1081,27 @@ const SmsCreator = ({ classes }, props) => {
     setselectedGroup(tempArr);
   };
 
-  const handleDelete = () => {
-    dispatch(deleteSms(-1));
-    handleClose();
+  const handleDelete =  async () => {
+    if(window.location.pathname.includes("/react/sms/edit"))
+    {
+    let a  = window.location.pathname.split("/");
+        let r  =   await dispatch(getSmsByID(a[4]))
+         if(r)
+         {
+          dispatch(deleteSms(r.payload.SMSCampaignID));
+      
+          handleClose();
+          history.push("/SMSCampaigns");
+         }
+    }
+    else
+    {
+          dispatch(deleteSms(-1));
+          handleClose();
+          history.push("/SMSCampaigns"); 
+    }
+    
+   
   };
 
   const makeArr = (id) => {
