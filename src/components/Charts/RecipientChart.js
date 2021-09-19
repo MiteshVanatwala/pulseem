@@ -10,6 +10,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { getRecipientsReport } from '../../redux/reducers/recipientsReportSlice';
 import { BsInfoCircleFill } from 'react-icons/bs';
 import clsx from 'clsx';
+import ButtonWithTitle from '../Buttons/ButtonWithTitle';
 
 
 const RecipientChart = ({ classes }) => {
@@ -60,25 +61,27 @@ const RecipientChart = ({ classes }) => {
     ];
 
     let data = [];
-    recipientsReport.map(report => {
-        if (report.ReportSection === 2 && !Notifications.FeatureExist ||
-            report.ReportSection === 1 && !Sms.FeatureExist) {
-            return;
-        }
-        else {
-            data.push({
-                labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
-                datasets: [{
-                    data: [
-                        report.Active,
-                        report.Error,
-                        report.Removed
-                    ],
-                    borderWidth: 0,
-                }],
-            })
-        }
-    });
+    if (recipientsReport) {
+        recipientsReport.map(report => {
+            if (report.ReportSection === 2 && !Notifications.FeatureExist ||
+                report.ReportSection === 1 && !Sms.FeatureExist) {
+                return;
+            }
+            else {
+                data.push({
+                    labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
+                    datasets: [{
+                        data: [
+                            report.Active,
+                            report.Error,
+                            report.Removed
+                        ],
+                        borderWidth: 0,
+                    }],
+                })
+            }
+        });
+    }
 
     const renderCircleAdd = (innerTitle) => {
         return (
@@ -307,6 +310,9 @@ const RecipientChart = ({ classes }) => {
     }
 
     const renderChartsCarousel = () => {
+        if (!recipientsReport) {
+            return;
+        }
         return (
             <Grid container dir={'ltr'} className={classes.carouselChart}>
                 {renderArrows(carouselItem, 2, setCarouselItem, classes.carouselArrows)}
@@ -334,9 +340,21 @@ const RecipientChart = ({ classes }) => {
     };
 
     const renderCharts = () => {
+        if (!recipientsReport) {
+            return;
+        }
+
+        let totalRecipientsReport = 0;
+
+        if (recipientsReport) {
+            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+                return a + b["Total"];
+            }, 0);
+        }
+
         return (
             <Grid item container justify='space-evenly'>
-                {recipientsReport.map((report, index) => {
+                {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
                     if (report.ReportSection === 2 && !Notifications.FeatureExist ||
                         report.ReportSection === 1 && !Sms.FeatureExist) {
                         return;
@@ -347,7 +365,15 @@ const RecipientChart = ({ classes }) => {
                     // else {
                     //     return renderCircleAdd(titles[index])
                     // }
-                })}
+                }) :
+                    <ButtonWithTitle
+                        innerStyle={{ minHeight: 210 }}
+                        classes={classes}
+                        title={t("common.createFirstGroup")}
+                        buttonText={t("common.addRecipients")}
+                        redirect="/Pulseem/Groups.aspx"
+                        buttonClass={classes.createButton} />
+                }
             </Grid>
         );
     };
@@ -387,7 +413,7 @@ const RecipientChart = ({ classes }) => {
                             {t('dashboard.yourRecipients')}
                         </Typography>
                         <BootstrapTooltip
-                        style={{color:'#000'}}
+                            style={{ color: '#000' }}
                             title={t('dashboard.chartTooltip')}
                             placement={"top"}>
                             <IconButton aria-label={t('dashboard.chartTooltip')}>

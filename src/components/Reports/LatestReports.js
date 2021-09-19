@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography, Tooltip, Link } from '@material-ui/core';
+import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography, Tooltip, Link, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Bar } from 'react-chartjs-2';
 import clsx from 'clsx';
@@ -9,6 +9,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { getLastCampaignReport } from '../../redux/reducers/dashboardSlice';
 import { HiUserGroup } from 'react-icons/hi';
 import { actionURL } from '../../config/index';
+import ButtonWithTitle from '../Buttons/ButtonWithTitle'
 
 const LatestReports = ({ classes, windowSize, t, isRTL }) => {
   const { lastCampaignReport } = useSelector(state => state.dashboard);
@@ -36,7 +37,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
     dispatch(getLastCampaignReport());
   }
 
-  useEffect(initData, [dispatch])
+  useEffect(initData, [dispatch]);
 
   const barOptions = {
     responsive: true,
@@ -94,8 +95,8 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
   };
 
   let reports = {
-    newsletter: lastCampaignReport.filter(report => report.ReportSection === 0) || null,
-    sms: lastCampaignReport.filter(report => report.ReportSection === 1) || null
+    newsletter: lastCampaignReport ? lastCampaignReport.filter(report => report.ReportSection === 0) : null,
+    sms: lastCampaignReport ? lastCampaignReport.filter(report => report.ReportSection === 1) : null
   }
 
   const { newsletter = null, sms = null } = reports || {};
@@ -123,6 +124,9 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
   }
 
   const renderTab = (tabType) => {
+    if (!lastCampaignReport) {
+      return;
+    }
     const innerData = tabType === "newsletter" ? reports.newsletter : reports.sms;
     const labels = [];
     const datasets = [];
@@ -188,7 +192,9 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
         <Grid container justify={'space-between'}>
           <Grid item lg={4} className={tabType !== "newsletter" ? classes.flexSpaceBetweenVertical : null}>
             {
-              innerData.map((c, index) => {
+              // createFirstNewsletter
+              // createFirstNewsletter
+              innerData && innerData.length > 0 ? (innerData.map((c, index) => {
                 const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
                 return (
                   <Grid container className={clsx(tabType === "newsletter" ? classes.mb25 : null, tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
@@ -212,7 +218,15 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
                     </Grid>
                   </Grid>
                 )
-              })
+              })) :
+                (
+                  <ButtonWithTitle
+                    classes={classes}
+                    title={tabType === 'newsletter' ? t("dashboard.createFirstNewsletter") : t("dashboard.createFirstSms")}
+                    buttonText={tabType === 'newsletter' ? t('common.CreateNewsletter') : t('sms.create')}
+                    redirect={tabType === 'newsletter' ? "/Pulseem/Editor/CampaignInfo?new=1&fromreact=true" : "/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create"}
+                    buttonClass={classes.createButton} />
+                )
             }
           </Grid>
           <Grid item lg={8}>

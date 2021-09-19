@@ -473,6 +473,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     justifyContent: 'center'
   },
+  justifyCenterOfCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center'
+  },
   spaceEvenly: {
     display: 'flex',
     justifyContent: 'space-evenly'
@@ -615,7 +622,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
-  graphCampaignName:{
+  graphCampaignName: {
     fontWeight: 'bold',
     maxWidth: graphTextWidth[windowSize]
   },
@@ -624,5 +631,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mt25: {
     marginTop: 25
+  },
+  fullSize: {
+    height: '100%',
+    width: '100%'
+  },
+  spaceEvenly: {
+    justifyContent: 'space-evenly'
   }
 })
