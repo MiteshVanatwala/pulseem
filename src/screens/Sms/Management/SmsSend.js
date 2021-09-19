@@ -49,7 +49,7 @@ import {
   deleteSms,
   getCampaignSumm,
   getSmsByID,
-  getManual,
+  saveManualClients,
   getFinishedCampaigns,
   getCampaignSettings
 } from "../../../redux/reducers/smsSlice";
@@ -1744,9 +1744,7 @@ const SmsSend = ({ props, classes }) => {
 
   }
   const handleDataManual = async () => {
-
     let requestPayload = [];
-
 
     if (typedData.length !== 0) {
       for (let j = 0; j < typedData.length; j++) {
@@ -1758,22 +1756,15 @@ const SmsSend = ({ props, classes }) => {
             obj[key] = typedData[j][k];
           }
         }
-
       }
     }
     else {
-
-
       for (let j = 0; j < contacts.length; j++) {
         requestPayload.push({});
         let i = 0;
 
-
         for (let k in contacts[j]) {
-
-
           if (headers[i] !== "Adjust Title") {
-
             let key = headers[i];
             let obj = requestPayload[j];
             obj[key] = contacts[j][k];
@@ -1781,22 +1772,15 @@ const SmsSend = ({ props, classes }) => {
           }
           i++;
         }
-
-
       }
-
     }
-
-
 
     let finalPayload = {
-
       GroupName: newVal,
       Clients: requestPayload
-
     }
 
-    const r = await dispatch(getManual(finalPayload))
+    const r = await dispatch(saveManualClients(finalPayload))
 
     let tempres = [];
     let temp = [];
@@ -1806,16 +1790,19 @@ const SmsSend = ({ props, classes }) => {
     for (let i = 0; i < selectedGroups.length; i++) {
       temp.push(selectedGroups[i]);
     }
+
     temp.push({
       Recipient: r.payload.Recipients,
       GroupName: newVal,
       GroupID: r.payload.GroupID
     });
+
     tempres.push({
       Recipient: r.payload.Recipients,
       GroupName: newVal,
       GroupID: r.payload.GroupID
     });
+
     setGroupList(tempres);
     setSelected(temp);
     setmanualTrue(false);
@@ -1828,9 +1815,6 @@ const SmsSend = ({ props, classes }) => {
       selectArray[i].isdisabled = false;
       selectArray[i].idx = -1;
     }
-
-
-
   }
 
   const handleManualDialog = (e) => {

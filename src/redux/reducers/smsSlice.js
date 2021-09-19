@@ -94,7 +94,7 @@ export const getSMSDirectReport = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-export const getManual = createAsyncThunk(
+export const saveManualClients = createAsyncThunk(
   'smsCampaign/SaveManualClients', async (data, thunkAPI) => {
     try {
       const response = await instence.post(`smsCampaign/SaveManualClients`, data);
