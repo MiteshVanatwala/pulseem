@@ -86,8 +86,8 @@ useEffect(() => {
                       borderBottom: "1px solid #efefef",
                     }}
                   />
-                  <span className={classes.phoneNumberSumm}>050608001</span>
-                  <div className={classes.wrapChatSumm}>
+                  <span className={classes.phoneNumberSum}>050608001</span>
+                  <div className={classes.wrapChat}>
                     <div className={classes.fromMe}>
                       {totalmsg}
                     </div>
@@ -290,7 +290,7 @@ useEffect(() => {
                       borderBottom: "1px solid #efefef",
                     }}
                   />
-                  <span className={classes.phoneNumber}>050608001</span>
+                  <span className={classes.phoneNumberSum}>050608001</span>
                   <div className={classes.wrapChat}>
                     <div className={classes.fromMe}>
                       Type text
