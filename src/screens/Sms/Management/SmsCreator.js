@@ -46,7 +46,7 @@ import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlineDelete ,AiOutlinePlusCircle } from "react-icons/ai";
+import { AiOutlineExclamationCircle, AiOutlineDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 
 import Snackbar from "@material-ui/core/Snackbar";
@@ -88,7 +88,7 @@ const useStyleNew = makeStyles((theme) => ({
   },
 }));
 
-const SmsCreator = ({ classes }) => {
+const SmsCreator = ({ classes, ...props }) => {
   const { t } = useTranslation();
   document.title = t("sms.pageTitle");
   const styles = useStyles();
@@ -108,7 +108,7 @@ const SmsCreator = ({ classes }) => {
     testGroups,
     commonSettings,
   } = useSelector((state) => state.sms);
- 
+
   const [alignment, setAlignment] = useState("left");
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [flagemoji, setflagemoji] = useState(false);
@@ -167,8 +167,7 @@ const SmsCreator = ({ classes }) => {
     setLoader(false);
   };
 
-  const getTest = async () =>
-  {
+  const getTest = async () => {
     await dispatch(getTestGroups());
   }
 
@@ -226,13 +225,13 @@ const SmsCreator = ({ classes }) => {
   };
   const getSubAccountGroups = async () => {
     await dispatch(getGroupsBySubAccountId());
- 
+
   };
   const getFeatures = async () => {
-   let r =  await dispatch(getCommonFeatures());
-   setcampaignNumber(r.payload.DefaultCellNumber)
-   setstoredValue(r.payload.DefaultCellNumber)
-   
+    let r = await dispatch(getCommonFeatures());
+    setcampaignNumber(r.payload.DefaultCellNumber)
+    setstoredValue(r.payload.DefaultCellNumber)
+
   };
 
   useEffect(() => {
@@ -244,9 +243,9 @@ const SmsCreator = ({ classes }) => {
     getTest();
     getFeatures();
   }, [dispatch]);
-  useEffect(() => {}, [removalMessageButtonDisabled]);
+  useEffect(() => { }, [removalMessageButtonDisabled]);
 
-  useEffect(() => {}, [selectedGroup]);
+  useEffect(() => { }, [selectedGroup]);
   useEffect(() => {
     document.title = t("mainReport.smsTitle");
   }, []);
@@ -260,27 +259,33 @@ const SmsCreator = ({ classes }) => {
     setselectedGroup(temp);
   }, [accountId]);
 
-  const getSavedData = async () =>
-  {
-    
-    if(window.location.pathname.includes("/react/sms/edit"))
-    {
-    let retrieveCampaignId  = window.location.pathname.split("/");
-        let response  =   await dispatch(getSmsByID(retrieveCampaignId[4]))
-         if(response)
-         {
-           setcampaignName(response.payload.Name);
-           setmsg(response.payload.Text)
-           setcampaignNumber(response.payload.FromNumber)
-           setcharacterCount(response.payload.Text.length)
-           setmessageCount(response.payload.CreditsPerSms)
-         }
+  const getSavedData = async () => {
+    if (props && props.match.params.id) {
+      let response = await dispatch(getSmsByID(props.match.params.id))
+      if (response) {
+        setcampaignName(response.payload.Name);
+        setmsg(response.payload.Text)
+        setcampaignNumber(response.payload.FromNumber)
+        setcharacterCount(response.payload.Text.length)
+        setmessageCount(response.payload.CreditsPerSms)
+      }
     }
+    // if (window.location.pathname.includes("/react/sms/edit")) {
+    //   let retrieveCampaignId = window.location.pathname.split("/");
+    //   let response = await dispatch(getSmsByID(retrieveCampaignId[4]))
+    //   if (response) {
+    //     setcampaignName(response.payload.Name);
+    //     setmsg(response.payload.Text)
+    //     setcampaignNumber(response.payload.FromNumber)
+    //     setcharacterCount(response.payload.Text.length)
+    //     setmessageCount(response.payload.CreditsPerSms)
+    //   }
+    // }
   }
   useEffect(() => {
 
     getSavedData();
-   
+
   }, [])
 
   const onEmojiClick = (event, emojiObject) => {
@@ -337,11 +342,11 @@ const SmsCreator = ({ classes }) => {
   };
 
   const onCampaignNumber = (e) => {
-      setcampaignNumber(e.target.value);
-   
-    
-   
-  
+    setcampaignNumber(e.target.value);
+
+
+
+
   };
 
   const validationCheck = () => {
@@ -408,15 +413,14 @@ const SmsCreator = ({ classes }) => {
       }
     }
   };
-   const onLeave = (e) =>
-    {
-      if (!modalOpen) {
-        setalertToggle(true);
-        setcounterBool(true);
-      } else {
-        setcounterBool(false);
-      }
+  const onLeave = (e) => {
+    if (!modalOpen) {
+      setalertToggle(true);
+      setcounterBool(true);
+    } else {
+      setcounterBool(false);
     }
+  }
   const renderFields = () => {
     return (
       <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
@@ -520,9 +524,9 @@ const SmsCreator = ({ classes }) => {
     } else {
       setlinkCount(0);
     }
-   let response  =  await dispatch(getCreditsforSMS(e.target.value.length));
-   
-   console.log("----->response",JSON.stringify(response));
+    let response = await dispatch(getCreditsforSMS(e.target.value.length));
+
+    console.log("----->response", JSON.stringify(response));
     setmessageCount(count);
   };
 
@@ -559,7 +563,7 @@ const SmsCreator = ({ classes }) => {
               {t("mainReport.yourMessage")}
             </Typography>
             <textarea
-              placeholder= {t("mainReport.typeText")}
+              placeholder={t("mainReport.typeText")}
               maxlength="1000"
               outlined=""
               id="yourMessage"
@@ -578,9 +582,9 @@ const SmsCreator = ({ classes }) => {
               </Typography>
               <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
             </Box>
-            <Box  className={classes.funcDiv}>
+            <Box className={classes.funcDiv}>
               <Box
-                
+
                 className={isRTL ? classes.emojiHe : classes.emoji}
               >
                 {isRTL ? (
@@ -610,9 +614,9 @@ const SmsCreator = ({ classes }) => {
                     exclusive
                     onChange={handleAlignment}
                     aria-label="text alignment"
-                    
+
                   >
-                    <ToggleButton value="left" aria-label="left aligned" style={{width:"40px",height:"40px"}}>
+                    <ToggleButton value="left" aria-label="left aligned" style={{ width: "40px", height: "40px" }}>
                       <FormatAlignLeftIcon />
                     </ToggleButton>
 
@@ -622,7 +626,7 @@ const SmsCreator = ({ classes }) => {
                       style={{
                         borderRight: "1px solid #D5D5D5",
                         marginInlineEnd: "4px",
-                        width:"40px",height:"40px"
+                        width: "40px", height: "40px"
                       }}
                     >
                       <FormatAlignRightIcon />
@@ -688,54 +692,54 @@ const SmsCreator = ({ classes }) => {
                   </select>
                 </Box>
                 <Box className={classes.addDiv}>
-                <Typography
-                  className={classes.addButtons}
-                  onClick={() => {
-                    seteditmenuClick(!editmenuClick);
-                  }}
-                >
-                  <AiOutlinePlusCircle  style={{fontSize:"28px",color:"#1AA2B8",marginInlineEnd:"5px"}}/>
-                  {/* <Typography className={classes.addBtn}>
+                  <Typography
+                    className={classes.addButtons}
+                    onClick={() => {
+                      seteditmenuClick(!editmenuClick);
+                    }}
+                  >
+                    <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
+                    {/* <Typography className={classes.addBtn}>
                     <Typography className={classes.plusIcn}>+</Typography>
                   </Typography> */}
-                 {t("mainReport.add")}
-                </Typography>
-                {editmenuClick ? (
-                  <Box className={classes.dropDiv}>
-                    <Typography
-                      className={classes.dropCon}
-                      onClick={() => {
-                        setdialogClickLanding(true);
-                        seteditmenuClick(false);
-                      }}
-                    >
-                     {t("mainReport.landingLink")}
-                    </Typography>
-                    {previousCampaignData.length == 0 ? null : (
+                    {t("mainReport.add")}
+                  </Typography>
+                  {editmenuClick ? (
+                    <Box className={classes.dropDiv}>
                       <Typography
                         className={classes.dropCon}
                         onClick={() => {
-                          setdialogClickCampaign(true);
+                          setdialogClickLanding(true);
                           seteditmenuClick(false);
                         }}
                       >
-                        {t("mainReport.campLink")}
+                        {t("mainReport.landingLink")}
                       </Typography>
-                    )}
-                    <Typography
-                      className={classes.dropCon}
-                      onClick={() => {
-                        setwaize(true);
-                        seteditmenuClick(false);
-                      }}
-                    >
-                       {t("mainReport.waize")}
-                    </Typography>
-                  </Box>
-                ) : null}
+                      {previousCampaignData.length == 0 ? null : (
+                        <Typography
+                          className={classes.dropCon}
+                          onClick={() => {
+                            setdialogClickCampaign(true);
+                            seteditmenuClick(false);
+                          }}
+                        >
+                          {t("mainReport.campLink")}
+                        </Typography>
+                      )}
+                      <Typography
+                        className={classes.dropCon}
+                        onClick={() => {
+                          setwaize(true);
+                          seteditmenuClick(false);
+                        }}
+                      >
+                        {t("mainReport.waize")}
+                      </Typography>
+                    </Box>
+                  ) : null}
+                </Box>
               </Box>
-              </Box>
-              
+
             </Box>
           </Grid>
           <Grid item xs={windowSize === "xs" ? 12 : 4}>
@@ -765,8 +769,8 @@ const SmsCreator = ({ classes }) => {
                   {t("mainReport.keepTrack")}
                 </Typography>
                 <Typography
-                className={classes.descSwitch}
-                 
+                  className={classes.descSwitch}
+
                 >
                   {t("mainReport.keepDesc")}
                 </Typography>
@@ -802,7 +806,7 @@ const SmsCreator = ({ classes }) => {
           </div>
         </Box>
         <div
-        className={classes.testDiv}
+          className={classes.testDiv}
         >
           <FormGroup>
             <Switch
@@ -839,7 +843,7 @@ const SmsCreator = ({ classes }) => {
           </div>
         </div>
         {checked ? (
-          <div  className={classes.testRadios}>
+          <div className={classes.testRadios}>
             <RadioGroup
               row
               aria-label="position"
@@ -871,7 +875,7 @@ const SmsCreator = ({ classes }) => {
                       onChange={handleNumberChange}
                     />
                     <span className={classes.rightSend} onClick={handleSend}>
-                    {t("mainReport.send")}
+                      {t("mainReport.send")}
                     </span>
                     <Snackbar
                       open={OpenS}
@@ -883,8 +887,8 @@ const SmsCreator = ({ classes }) => {
                       }}
                       style={{ zIndex: "9999" }}
                     >
-                      <Alert severity="error" onClose={handleCloseSnackbar} style={{border:"3px solid #FF2400",backgroundColor:"#ffe6e6",color:"black",width:"400px",padding:"10px",fontWeight:"600"}}>
-                      {t("mainReport.invalidNo")}
+                      <Alert severity="error" onClose={handleCloseSnackbar} style={{ border: "3px solid #FF2400", backgroundColor: "#ffe6e6", color: "black", width: "400px", padding: "10px", fontWeight: "600" }}>
+                        {t("mainReport.invalidNo")}
                       </Alert>
                     </Snackbar>
                   </div>
@@ -914,7 +918,7 @@ const SmsCreator = ({ classes }) => {
                         setcontactGroup(true);
                       }}
                     >
-                  <div> {t("mainReport.ChooseLinks")}</div>
+                      <div> {t("mainReport.ChooseLinks")}</div>
                       {hidden ? (
                         <div className={classes.mappedGroup}>
                           {selectedGroup.map((item, index) => {
@@ -953,7 +957,7 @@ const SmsCreator = ({ classes }) => {
             <BsTrash style={{ fontSize: "25" }} />
           </span>
           <span className={classes.rightInput4} onClick={clickExit}>
-          {t("mainReport.exitSms")}
+            {t("mainReport.exitSms")}
           </span>
           <span
             className={classes.rightInput5}
@@ -961,7 +965,7 @@ const SmsCreator = ({ classes }) => {
               onContinueClick(true);
             }}
           >
-           {t("mainReport.saveSms")}
+            {t("mainReport.saveSms")}
           </span>
           <span
             className={classes.rightInput6}
@@ -969,7 +973,7 @@ const SmsCreator = ({ classes }) => {
               onContinueClick(false);
             }}
           >
-           {t("mainReport.continue")}
+            {t("mainReport.continue")}
           </span>
         </div>
       </Box>
@@ -1080,26 +1084,31 @@ const SmsCreator = ({ classes }) => {
     setselectedGroup(tempArr);
   };
 
-  const handleDelete =  async () => {
-    if(window.location.pathname.includes("/react/sms/edit"))
-    {
-    let retrieveCampaignId  = window.location.pathname.split("/");
-        let response  =   await dispatch(getSmsByID(retrieveCampaignId[4]))
-         if(response)
-         {
-          dispatch(deleteSms(response.payload.SMSCampaignID));
-          handleClose();
-          history.push("/SMSCampaigns");
-         }
+  const handleDelete = async () => {
+    if (props && props.match.params.id) {
+      let response = await dispatch(getSmsByID(props.match.params.id))
+      if (response) {
+        dispatch(deleteSms(response.payload.SMSCampaignID));
+        handleClose();
+        history.push("/SMSCampaigns");
+      }
     }
-    else
-    {
-          dispatch(deleteSms(-1));
-          handleClose();
-          history.push("/SMSCampaigns"); 
+    // if (window.location.pathname.includes("/react/sms/edit")) {
+    //   let retrieveCampaignId = window.location.pathname.split("/");
+    //   let response = await dispatch(getSmsByID(retrieveCampaignId[4]))
+    //   if (response) {
+    //     dispatch(deleteSms(response.payload.SMSCampaignID));
+    //     handleClose();
+    //     history.push("/SMSCampaigns");
+    //   }
+    // }
+    else {
+      dispatch(deleteSms(-1));
+      handleClose();
+      history.push("/SMSCampaigns");
     }
-    
-   
+
+
   };
 
   const makeArr = (id) => {
@@ -1107,11 +1116,10 @@ const SmsCreator = ({ classes }) => {
   };
 
   const handleGroupClose = async () => {
-    if(campaignName !== "" && msg !== "")
-    {
+    if (campaignName !== "" && msg !== "") {
       setsummary(true);
     }
-   
+
     setsave(false);
     sethidden(true);
     setcontactGroup(false);
@@ -1204,7 +1212,7 @@ const SmsCreator = ({ classes }) => {
                 })
                 .map((item, idx) => {
                   return (
-                    <div className={classes.searchCon}   onClick={() => {
+                    <div className={classes.searchCon} onClick={() => {
                       handleSelect(idx);
                     }}>
                       <span
@@ -1212,7 +1220,7 @@ const SmsCreator = ({ classes }) => {
                         className={
                           item.selected ? classes.greenDoc : classes.blueDoc
                         }
-                      
+
                       >
                         {item.selected ? (
                           <FaCheck className={clsx(classes.green)} />
@@ -1222,7 +1230,7 @@ const SmsCreator = ({ classes }) => {
                       </span>
                       <div
                         className={classes.selectGroupDiv}
-                        
+
                       >
                         <span>{item.GroupName}</span>
                         <span>{item.Recipients} Recipients</span>
@@ -1250,7 +1258,7 @@ const SmsCreator = ({ classes }) => {
                   classes.dialogConfirmButton
                 )}
               >
-               {t("mainReport.confirmSms")}
+                {t("mainReport.confirmSms")}
               </Button>
             </div>
           </Dialog>
@@ -1325,8 +1333,8 @@ const SmsCreator = ({ classes }) => {
               <Typography className={classes.groupName}>  {t("mainReport.pleaseNote")}</Typography>
             </Box>
             <Box >
-              <Typography  className={classes.modalText}>
-              {t("mainReport.pleaseNoteDsec")}
+              <Typography className={classes.modalText}>
+                {t("mainReport.pleaseNoteDsec")}
               </Typography>
             </Box>
           </Dialog>
@@ -1369,7 +1377,7 @@ const SmsCreator = ({ classes }) => {
     <DefaultScreen currentPage="sms" classes={classes}>
 
       <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" ? classes.mobileGrid : classes.smsInit}>
-     {windowSize === "xs" ?    <Grid item xs={12} >
+        {windowSize === "xs" ? <Grid item xs={12} >
           {renderSwitch()}
           {renderHead()}
           {renderFields()}
@@ -1380,14 +1388,14 @@ const SmsCreator = ({ classes }) => {
           {renderHead()}
           {renderFields()}
           {renderMsg()}
-         
-        </Grid>
-         <Grid item xs={4}>
-         {renderPhone()}
-        </Grid> </> }
-      
 
-      
+        </Grid>
+          <Grid item xs={4}>
+            {renderPhone()}
+          </Grid> </>}
+
+
+
       </Grid>
       {dialogClick ? (
         <Dialog
@@ -1592,7 +1600,7 @@ const SmsCreator = ({ classes }) => {
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
             <span className={classes.groupName}>
-            {t("mainReport.waizeTitle")}
+              {t("mainReport.waizeTitle")}
             </span>
           </div>
           <div className={classes.modalDiv}>
@@ -1619,7 +1627,7 @@ const SmsCreator = ({ classes }) => {
                 onLocation();
               }}
             >
-            {t("mainReport.confirmSms")}
+              {t("mainReport.confirmSms")}
             </span>
           </div>
         </Dialog>
@@ -1659,15 +1667,15 @@ const SmsCreator = ({ classes }) => {
       >
         <div className={classes.baseDialogSetup}>
           <span className={classes.groupName}>
-          {t("mainReport.fieldInvalid")}:
+            {t("mainReport.fieldInvalid")}:
           </span>
         </div>
         <div>
           <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
-          {campaignBool ? <li style={{ marginBottom: "8px" }}>
-          {t("mainReport.campaignRequire")}
-            </li>  : null } 
-       {msg === "" ?  <li>T{t("mainReport.msgRequire")}</li> : null}     
+            {campaignBool ? <li style={{ marginBottom: "8px" }}>
+              {t("mainReport.campaignRequire")}
+            </li> : null}
+            {msg === "" ? <li>T{t("mainReport.msgRequire")}</li> : null}
           </ul>
         </div>
         <div
@@ -1686,7 +1694,7 @@ const SmsCreator = ({ classes }) => {
             }}
             className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
           >
-             {t("mainReport.confirmSms")}
+            {t("mainReport.confirmSms")}
           </Button>
         </div>
       </Dialog>
@@ -1704,7 +1712,7 @@ const SmsCreator = ({ classes }) => {
         }}
         style={{ zIndex: "9999" }}
       >
-        <Alert severity="success" onClose={handleCloseSnackbarApi} style={{border:"3px solid green",backgroundColor:"#c5f1c5",color:"black",width:"400px",padding:"10px",fontWeight:"700",fontSize:"15px"}}>
+        <Alert severity="success" onClose={handleCloseSnackbarApi} style={{ border: "3px solid green", backgroundColor: "#c5f1c5", color: "black", width: "400px", padding: "10px", fontWeight: "700", fontSize: "15px" }}>
           {t("sms.quickSendSuccess")}
         </Alert>
       </Snackbar>
