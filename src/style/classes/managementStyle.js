@@ -991,7 +991,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   barContainer:
   {
-    width: "460px !important"
+    width: windowSize !== "xs" ? "460px !important" : "100%"
   },
   fontWrap: {
     fontSize: "10px",
@@ -1063,7 +1063,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 'bold',
     color: '#0371AD',
     marginTop: 10,
-    marginInlineStart: 30,
+    marginInlineStart: windowSize === "xs" ? 15 : 30,
     fontSize: 20
   },
   dashboardUsername: {

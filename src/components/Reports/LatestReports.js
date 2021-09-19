@@ -265,7 +265,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
           <Tabs
             value={tabValue}
             onChange={(e, value) => handleTabValue(value)}
-            className={classes.mr15}
+            className={clsx(classes.mr15, classes.ml15)}
             classes={{ indicator: classes.hideIndicator }}
           >
             <Tab label={t('appBar.newsletter.title')} classes={{ root: classes.tabText, selected: classes.activeTab }} />

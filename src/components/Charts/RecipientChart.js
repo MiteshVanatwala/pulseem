@@ -313,28 +313,47 @@ const RecipientChart = ({ classes }) => {
         if (!recipientsReport) {
             return;
         }
+
+        let totalRecipientsReport = 0;
+
+        if (recipientsReport) {
+            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+                return a + b["Total"];
+            }, 0);
+        }
+
         return (
             <Grid container dir={'ltr'} className={classes.carouselChart}>
-                {renderArrows(carouselItem, 2, setCarouselItem, classes.carouselArrows)}
-                <Carousel
-                    showIndicators={false}
-                    showStatus={false}
-                    showThumbs={false}
-                    showArrows={false}
-                    selectedItem={carouselItem}>
-                    {recipientsReport.map((report, index) => {
-                        if (report.ReportSection === 2 && !Notifications.FeatureExist
-                            || report.ReportSection === 1 && !Sms.FeatureExist) {
-                            return;
-                        }
-                        if (report.Total) {
-                            return renderDoughnut(report, index)
-                        }
-                        // else {
-                        //     return renderCircleAdd(titles[index])
-                        // }
-                    })}
-                </Carousel>
+                {recipientsReport && totalRecipientsReport > 0 ? renderArrows(carouselItem, 2, setCarouselItem, classes.carouselArrows) : null}
+                {recipientsReport && totalRecipientsReport > 0 ? (
+                    <Carousel
+                        showIndicators={false}
+                        showStatus={false}
+                        showThumbs={false}
+                        showArrows={false}
+                        selectedItem={carouselItem}>
+                        {recipientsReport.map((report, index) => {
+                            if (report.ReportSection === 2 && !Notifications.FeatureExist
+                                || report.ReportSection === 1 && !Sms.FeatureExist) {
+                                return;
+                            }
+                            if (report.Total) {
+                                return renderDoughnut(report, index)
+                            }
+                            // else {
+                            //     return renderCircleAdd(titles[index])
+                            // }
+                        })}
+                    </Carousel>) : (
+                    <ButtonWithTitle
+                        innerStyle={{ minHeight: 210 }}
+                        classes={classes}
+                        title={t("common.createFirstGroup")}
+                        buttonText={t("common.addRecipients")}
+                        redirect="/Pulseem/Groups.aspx"
+                        buttonClass={classes.createButton} />
+                )}
+
             </Grid>
         );
     };
