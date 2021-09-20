@@ -20,14 +20,7 @@ const RecipientChart = ({ classes, }) => {
     const { language, windowSize, isRTL } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
     const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
-    const languages = [
-        {
-          value: 'he-IL',
-        },
-        {
-          value: 'en-US',
-        }
-      ]
+    const [showTooltip, setShowTooltip] = useState(false);
 
     const useStylesBootstrap = makeStyles((theme) => ({
         arrow: {
@@ -429,6 +422,10 @@ const RecipientChart = ({ classes, }) => {
             </Grid>
         );
     }
+    
+    let totalRecipient = recipientsReport && recipientsReport.reduce(function (a, b) {
+        return a + b["Total"];
+    }, 0);
 
     return (
         <Paper elevation={3} className={classes.dashboardTopPaper}>
@@ -439,14 +436,15 @@ const RecipientChart = ({ classes, }) => {
                             className={clsx(classes.dInlineBlock, classes.dashboardTitle)}>
                             {t('dashboard.yourRecipients')}
                         </Typography>
-                        <BootstrapTooltip
+                        {totalRecipient > 0 && <BootstrapTooltip
                             style={{ color: '#000' }}
                             title={t('dashboard.chartTooltip')}
                             placement={"top"}>
-                            <IconButton aria-label={t('dashboard.chartTooltip')}>
-                                <BsInfoCircleFill />
-                            </IconButton>
-                        </BootstrapTooltip>
+                                <IconButton aria-label={t('dashboard.chartTooltip')}>
+                                    <BsInfoCircleFill />
+                                </IconButton>
+                            </BootstrapTooltip>
+                        }
                     </Box>
 
                     {/* <Typography
