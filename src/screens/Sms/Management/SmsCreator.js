@@ -1054,12 +1054,12 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleCampClick = (id) => {
-    let camp = "";
-    camp = msg + getPreviousCampaignData[id].EncryptURL;
+    let campaignData = "";
+    campaignData = msg + getPreviousCampaignData[id].EncryptURL;
     setdialogClickCampaign(false);
     seteditmenuClick(false);
-    setmsg(camp);
-    setcharacterCount(camp.length);
+    setmsg(campaignData);
+    setcharacterCount(campaignData.length);
     let cc = linkCount;
     setlinkCount(++cc);
   };

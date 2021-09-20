@@ -2034,11 +2034,10 @@ const SmsSend = ({ props, classes }) => {
     setdeleteClick(false);
   };
   const handleDelete = () => {
-    let a = window.location;
-
-    let b = a.search.split("=");
-    let camp = b[1];
-    dispatch(deleteSms(camp));
+    let pathName = window.location;
+    let paramsId = pathName.search.split("=");
+    let idDelete = paramsId[1];
+    dispatch(deleteSms(idDelete));
     handleClose();
   };
   const renderDelete = () => {

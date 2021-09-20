@@ -1414,7 +1414,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
     width: "700px",
-    height: "350px",
+    height: "400px",
     backgroundColor: "white !important",
     "@media screen and (max-width: 768px)": {
       width: "auto"
@@ -1423,7 +1423,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   greenManual: {
     border: "2px dashed #4BB543",
     width: "700px",
-    height: "350px",
+    height: "400px",
     backgroundColor: "#CCFFE5",
     "@media screen and (max-width: 768px)": {
       width: "auto"
