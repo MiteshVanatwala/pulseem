@@ -350,7 +350,7 @@ const RecipientChart = ({ classes }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect="/Pulseem/Groups.aspx"
+                        redirect="/Pulseem/Groups.aspx?NewGroup=true"
                         buttonClass={classes.createButton} />
                 )}
 
@@ -390,7 +390,7 @@ const RecipientChart = ({ classes }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect="/Pulseem/Groups.aspx"
+                        redirect="/Pulseem/Groups.aspx?NewGroup=true"
                         buttonClass={classes.createButton} />
                 }
             </Grid>

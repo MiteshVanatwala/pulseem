@@ -187,18 +187,18 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
       }
     }
 
+    const showGraphs = innerData && (innerData.length > 0);
+
     return (
       <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel_${tabType}`}>
-        <Grid container justify={'space-between'}>
-          <Grid item lg={4} className={tabType !== "newsletter" ? classes.flexSpaceBetweenVertical : null}>
+        <Grid container justify={'space-between'} className={!showGraphs ? classes.tabPanel : null}>
+          <Grid item lg={showGraphs ? 4 : 12} xs={12} className={tabType !== "newsletter" ? classes.flexSpaceBetweenVertical : null}>
             {
-              // createFirstNewsletter
-              // createFirstNewsletter
-              innerData && innerData.length > 0 ? (innerData.map((c, index) => {
+              showGraphs ? (innerData.map((c, index) => {
                 const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
                 return (
                   <Grid container className={clsx(tabType === "newsletter" ? classes.mb25 : null, tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
-                    <Grid item lg={12}>
+                    <Grid item lg={12} xs={12}>
                       <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <BootstrapTooltip title={c.CampaignName} placement="top">
                           <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.ellipsisText, classes.graphCampaignName)}>
@@ -229,11 +229,12 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
                 )
             }
           </Grid>
-          <Grid item lg={8}>
+          {showGraphs && <Grid item lg={8} xs={12}>
             <Box className={classes.barChart}>
               <Bar data={reportData.data} options={barOptions} className={classes.barContainer} />
             </Box>
           </Grid>
+          }
         </Grid>
       </TabPanel>
     );
