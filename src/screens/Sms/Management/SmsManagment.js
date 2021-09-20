@@ -461,22 +461,9 @@ const SmsManagnentScreen=({classes}) => {
       text=t('common.UpdatedOn')
     } else {
       date=moment(row.SendDate,dateFormat)
-      // const dateMillis=date.valueOf()
-      // const currentDateMillis=moment().valueOf()
-      // text=dateMillis>currentDateMillis? t('common.ScheduledFor'):t('common.SentOn')
-      switch(row.Status){
-        case 1: {
-          text = t('common.UpdatedOn');
-          break;
-        }
-        case 2: {
-          text = t('common.ScheduledFor')
-          break;
-        }
-        default: {
-          text = t('common.SentOn')
-        }
-      }
+      const dateMillis=date.valueOf()
+      const currentDateMillis=moment().valueOf()
+      text=dateMillis>currentDateMillis? t('common.ScheduledFor'):t('common.SentOn')
     }
 
     return (
