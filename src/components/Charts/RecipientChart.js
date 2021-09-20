@@ -13,13 +13,21 @@ import clsx from 'clsx';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle';
 
 
-const RecipientChart = ({ classes }) => {
+const RecipientChart = ({ classes, }) => {
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
     const { language, windowSize, isRTL } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
     const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
+    const languages = [
+        {
+          value: 'he-IL',
+        },
+        {
+          value: 'en-US',
+        }
+      ]
 
     const useStylesBootstrap = makeStyles((theme) => ({
         arrow: {
@@ -350,7 +358,7 @@ const RecipientChart = ({ classes }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect="/Pulseem/Groups.aspx?NewGroup=true"
+                        redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
                         buttonClass={classes.createButton} />
                 )}
 
@@ -390,7 +398,7 @@ const RecipientChart = ({ classes }) => {
                         classes={classes}
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
-                        redirect="/Pulseem/Groups.aspx?NewGroup=true"
+                        redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
                         buttonClass={classes.createButton} />
                 }
             </Grid>
