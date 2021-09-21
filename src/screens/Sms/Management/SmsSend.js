@@ -1271,7 +1271,7 @@ const SmsSend = ({ props, classes }) => {
             >
               <FormControlLabel
                 value="1"
-                control={<Radio color="primary" style={{ color: sendType !== "1" ? "#d3d3d3" : "#007bff" }} />}
+                control={<Radio color="primary"  disabled={sendType !== "1" ? true : false}/>}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.immediateSend")}
@@ -1283,7 +1283,7 @@ const SmsSend = ({ props, classes }) => {
               </FormHelperText>
               <FormControlLabel
                 value="2"
-                control={<Radio color="primary" style={{ color: sendType !== "2" ? "#d3d3d3" : "#007bff" }} />}
+                control={<Radio color="primary" disabled={sendType !== "2" ? true : false} />}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.futureSend")}
@@ -1335,7 +1335,7 @@ const SmsSend = ({ props, classes }) => {
               </Box>
               <FormControlLabel
                 value="3"
-                control={<Radio color="primary" style={{ color: sendType !== "3" ? "#d3d3d3" : "#007bff" }} />}
+                control={<Radio color="primary" disabled={sendType !== "3" ? true : false} />}
                 label={
                   <span className={classes.radioText}>
                     {t("mainReport.specialDate")}
