@@ -125,7 +125,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const SmsSend = ({ props, classes }) => {
+const SmsSend = ({classes , ...props }) => {
   const { t } = useTranslation();
   document.title = t("sms.sendPageTitle")
   const styles = useStyles();
@@ -2034,11 +2034,10 @@ const SmsSend = ({ props, classes }) => {
     setdeleteClick(false);
   };
   const handleDelete = () => {
-    let pathName = window.location;
-    let paramsId = pathName.search.split("=");
-    let idDelete = paramsId[1];
-    dispatch(deleteSms(idDelete));
-    handleClose();
+    if (props && props.match.params.id) {
+      dispatch(deleteSms(props.match.params.id));
+      handleClose();
+    }
   };
   const renderDelete = () => {
     return (
