@@ -37,7 +37,7 @@ import {
   getCommonFeatures
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
-import { FcDocument } from "react-icons/fc";
+import { GrDocument } from "react-icons/gr";
 import { FaUndoAlt } from "react-icons/fa";
 import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
@@ -47,7 +47,7 @@ import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlineDelete, AiOutlinePlusCircle } from "react-icons/ai";
+import { AiOutlineExclamationCircle, AiOutlineDelete, AiOutlinePlusCircle , AiOutlineFile } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -1357,159 +1357,81 @@ const SmsCreator = ({ classes, ...props }) => {
     setcharacterCount(tempmsg.length);
     setwaize(false);
   };
-  return (
-    <DefaultScreen currentPage="sms" classes={classes}>
 
-      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" ? classes.mobileGrid : classes.smsInit}>
-        {windowSize === "xs" ? <Grid item xs={12} >
-          {renderSwitch()}
-          {renderHead()}
-          {renderFields()}
-          {renderMsg()}
-          {renderPhone()}
-        </Grid> : <> <Grid item xs={8}>
-          {renderSwitch()}
-          {renderHead()}
-          {renderFields()}
-          {renderMsg()}
-
-        </Grid>
-          <Grid item xs={4}>
-            {renderPhone()}
-          </Grid> </>}
-
-
-
-      </Grid>
-      {dialogClick ? (
-        <Dialog
-          classes={classes}
-          open={dialogClickLanding}
-          onClose={handleCloseLanding}
-          showDefaultButtons={false}
-          icon={<FaUndoAlt style={{ fontSize: 30, color: "#fff" }} />}
-        >
-          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>{t("mainReport.selectLanding")}</span>
-          </div>
-          <div className={classes.modalDiv}>
-            <Paper component="form" className={btnStyle.root}>
-              <IconButton
-                type="submit"
-                className={btnStyle.iconButton}
-                aria-label="search"
-              >
-                <SearchIcon />
-              </IconButton>
-              <InputBase
-                className={btnStyle.input}
-                placeholder={t("mainReport.searchSms")}
-                inputProps={{ "aria-label": "Search" }}
-                onChange={(e) => {
-                  setlandingSearch(e.target.value);
-                }}
-              />
-            </Paper>
-          </div>
-          <div className={classes.listDiv}>
-            {previousLandingData
-              .filter((val) => {
-                if (landingSearch == "") {
-                  return val;
-                } else if (
-                  val.CampaignName.toLowerCase().includes(
-                    landingSearch.toLowerCase()
-                  )
-                ) {
-                  return val;
-                }
-              })
-              .map((item, idx) => {
-                return (
-                  <div
-                    className={classes.searchCon}
-                    onClick={() => {
-                      handleLink(idx);
-                    }}
+  const renderPreviousLandingDataModal = () =>
+  {
+    return(
+      <>
+      <Dialog
+        classes={classes}
+        open={dialogClickLanding}
+        onClose={handleCloseLanding}
+        showDefaultButtons={false}
+        icon={<FaUndoAlt style={{ fontSize: 30, color: "#fff" }} />}
+      >
+        <div style={{ height: "60px", borderBottom: "1px solid black" }}>
+          <span className={classes.groupName}>{t("mainReport.selectLanding")}</span>
+        </div>
+        <div className={classes.modalDiv}>
+          <Paper component="form" className={btnStyle.root}>
+            <IconButton
+              type="submit"
+              className={btnStyle.iconButton}
+              aria-label="search"
+            >
+              <SearchIcon />
+            </IconButton>
+            <InputBase
+              className={btnStyle.input}
+              placeholder={t("mainReport.searchSms")}
+              inputProps={{ "aria-label": "Search" }}
+              onChange={(e) => {
+                setlandingSearch(e.target.value);
+              }}
+            />
+          </Paper>
+        </div>
+        <div className={classes.listDiv}>
+          {previousLandingData
+            .filter((val) => {
+              if (landingSearch == "") {
+                return val;
+              } else if (
+                val.CampaignName.toLowerCase().includes(
+                  landingSearch.toLowerCase()
+                )
+              ) {
+                return val;
+              }
+            })
+            .map((item, idx) => {
+              return (
+                <div
+                  className={classes.searchCon}
+                  onClick={() => {
+                    handleLink(idx);
+                  }}
+                >
+                  <span
+                    style={{ marginInlineEnd: "8px" }}
+                    className={classes.grDoc}
                   >
-                    <span
-                      style={{ marginInlineEnd: "8px" }}
-                      className={classes.grDoc}
-                    >
-                      <FcDocument />
-                    </span>
-                    <span>{item.Name}</span>
-                  </div>
-                );
-              })}
-          </div>
-        </Dialog>
-      ) : null}
-      {dialogClickLanding ? (
-        <Dialog
-          classes={classes}
-          open={dialogClickLanding}
-          onClose={handleCloseLanding}
-          showDefaultButtons={false}
-          icon={<FaUndoAlt style={{ fontSize: 30, color: "#fff" }} />}
-        >
-          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>{t("mainReport.selectLanding")}</span>
-          </div>
-          <div className={classes.modalDiv}>
-            <Paper component="form" className={btnStyle.root}>
-              <IconButton
-                type="submit"
-                className={btnStyle.iconButton}
-                aria-label="search"
-              >
-                <SearchIcon />
-              </IconButton>
-              <InputBase
-                className={btnStyle.input}
-                placeholder={t("mainReport.searchSms")}
-                inputProps={{ "aria-label": "Search" }}
-                onChange={(e) => {
-                  setlandingSearch(e.target.value);
-                }}
-              />
-            </Paper>
-          </div>
-          <div className={classes.listDiv}>
-            {previousLandingData
-              .filter((val) => {
-                if (landingSearch == "") {
-                  return val;
-                } else if (
-                  val.CampaignName.toLowerCase().includes(
-                    landingSearch.toLowerCase()
-                  )
-                ) {
-                  return val;
-                }
-              })
-              .map((item, idx) => {
-                return (
-                  <div
-                    className={classes.searchCon}
-                    onClick={() => {
-                      handleLink(idx);
-                    }}
-                  >
-                    <span
-                      style={{ marginInlineEnd: "8px" }}
-                      className={classes.grDoc}
-                    >
-                      <FcDocument />
-                    </span>
-                    <span>{item.CampaignName}</span>
-                  </div>
-                );
-              })}
-          </div>
-        </Dialog>
-      ) : null}
-      {dialogClickCampaign ? (
+                    <AiOutlineFile style={{color:"#1771AD",fill:"#1771AD",stroke:"#1771AD"}} color="#1771AD"/>
+                  </span>
+                  <span>{item.CampaignName}</span>
+                </div>
+              );
+            })}
+        </div>
+      </Dialog>
+  </>
+    )
+   
+  }
+  const  renderPreviousCampaignsData = () =>
+  {
+    <>
+     {dialogClickCampaign ? (
         <Dialog
           classes={classes}
           open={dialogClickCampaign}
@@ -1564,7 +1486,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       style={{ marginInlineEnd: "8px" }}
                       className={classes.grDoc}
                     >
-                      <FcDocument />
+                      <AiOutlineFile />
                     </span>
                     <span>{item.Name}</span>
                   </div>
@@ -1572,7 +1494,11 @@ const SmsCreator = ({ classes, ...props }) => {
               })}
           </div>
         </Dialog>
-      ) : null}
+      ) : null}</>
+  }
+  const renderWaizeNavigationModal = () =>
+  {
+      <>
       {waize ? (
         <Dialog
           classes={classes}
@@ -1615,9 +1541,12 @@ const SmsCreator = ({ classes, ...props }) => {
             </span>
           </div>
         </Dialog>
-      ) : null}
-
-      {deleteClick ? (
+      ) : null}</>
+  }
+  const renderDeleteModal = () =>
+  {
+    <>
+    {deleteClick ? (
         <Dialog
           classes={classes}
           open={deleteClick}
@@ -1640,7 +1569,12 @@ const SmsCreator = ({ classes, ...props }) => {
           </div>
         </Dialog>
       ) : null}
-      <Dialog
+    </>
+  }
+  const renderSaveModal = () =>
+  {
+    <>
+    <Dialog
         classes={classes}
         open={save}
         onClose={handleCloseSave}
@@ -1681,7 +1615,32 @@ const SmsCreator = ({ classes, ...props }) => {
             {t("mainReport.confirmSms")}
           </Button>
         </div>
-      </Dialog>
+      </Dialog></>
+  }
+  return (
+    <DefaultScreen currentPage="sms" classes={classes}>
+      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" ? classes.mobileGrid : classes.smsInit}>
+        {windowSize === "xs" ? <Grid item xs={12} >
+          {renderSwitch()}
+          {renderHead()}
+          {renderFields()}
+          {renderMsg()}
+          {renderPhone()}
+        </Grid> : <> <Grid item xs={8}>
+          {renderSwitch()}
+          {renderHead()}
+          {renderFields()}
+          {renderMsg()}
+        </Grid>
+          <Grid item xs={4}>
+            {renderPhone()}
+          </Grid> </>}
+      </Grid>
+      {renderPreviousLandingDataModal()}
+      {renderPreviousCampaignsData()}
+      {renderWaizeNavigationModal()}
+      {renderDeleteModal()}
+      {renderSaveModal()}
       {renderSendGroup()}
       {renderExit()}
       {renderAlert()}
