@@ -1430,75 +1430,78 @@ const SmsCreator = ({ classes, ...props }) => {
   }
   const  renderPreviousCampaignsData = () =>
   {
-    <>
-     {dialogClickCampaign ? (
-        <Dialog
-          classes={classes}
-          open={dialogClickCampaign}
-          onClose={handleCloseCampaign}
-          showDefaultButtons={false}
-          icon={<FaUndoAlt style={{ fontSize: 30, color: "#fff" }} />}
-        >
-          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>{t("mainReport.selectCamp")}</span>
-          </div>
-          <div className={classes.modalDiv}>
-            <Paper component="form" className={btnStyle.root}>
-              <IconButton
-                type="submit"
-                className={btnStyle.iconButton}
-                aria-label="search"
-              >
-                <SearchIcon />
-              </IconButton>
-              <InputBase
-                className={btnStyle.input}
-                placeholder={t("mainReport.searchSms")}
-                inputProps={{ "aria-label": "Search" }}
-                onChange={(e) => {
-                  setCampaignSearch(e.target.value);
-                }}
-              />
-            </Paper>
-          </div>
-          <div className={classes.listDiv}>
-            {previousCampaignData
-              .filter((val) => {
-                if (CampaignSearch == "") {
-                  return val;
-                } else if (
-                  val.CampaignName.toLowerCase().includes(
-                    CampaignSearch.toLowerCase()
-                  )
-                ) {
-                  return val;
-                }
-              })
-              .map((item, idx) => {
-                return (
-                  <div
-                    className={classes.searchCon}
-                    onClick={() => {
-                      handleCampClick(idx);
-                    }}
-                  >
-                    <span
-                      style={{ marginInlineEnd: "8px" }}
-                      className={classes.grDoc}
-                    >
-                      <AiOutlineFile />
-                    </span>
-                    <span>{item.Name}</span>
-                  </div>
-                );
-              })}
-          </div>
-        </Dialog>
-      ) : null}</>
+    return (
+      <>
+      {dialogClickCampaign ? (
+         <Dialog
+           classes={classes}
+           open={dialogClickCampaign}
+           onClose={handleCloseCampaign}
+           showDefaultButtons={false}
+           icon={<FaUndoAlt style={{ fontSize: 30, color: "#fff" }} />}
+         >
+           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
+             <span className={classes.groupName}>{t("mainReport.selectCamp")}</span>
+           </div>
+           <div className={classes.modalDiv}>
+             <Paper component="form" className={btnStyle.root}>
+               <IconButton
+                 type="submit"
+                 className={btnStyle.iconButton}
+                 aria-label="search"
+               >
+                 <SearchIcon />
+               </IconButton>
+               <InputBase
+                 className={btnStyle.input}
+                 placeholder={t("mainReport.searchSms")}
+                 inputProps={{ "aria-label": "Search" }}
+                 onChange={(e) => {
+                   setCampaignSearch(e.target.value);
+                 }}
+               />
+             </Paper>
+           </div>
+           <div className={classes.listDiv}>
+             {previousCampaignData
+               .filter((val) => {
+                 if (CampaignSearch == "") {
+                   return val;
+                 } else if (
+                   val.CampaignName.toLowerCase().includes(
+                     CampaignSearch.toLowerCase()
+                   )
+                 ) {
+                   return val;
+                 }
+               })
+               .map((item, idx) => {
+                 return (
+                   <div
+                     className={classes.searchCon}
+                     onClick={() => {
+                       handleCampClick(idx);
+                     }}
+                   >
+                     <span
+                       style={{ marginInlineEnd: "8px" }}
+                       className={classes.grDoc}
+                     >
+                       <AiOutlineFile />
+                     </span>
+                     <span>{item.Name}</span>
+                   </div>
+                 );
+               })}
+           </div>
+         </Dialog>
+       ) : null}</>
+    )
+   
   }
   const renderWaizeNavigationModal = () =>
   {
-      <>
+    return(<>
       {waize ? (
         <Dialog
           classes={classes}
@@ -1541,11 +1544,12 @@ const SmsCreator = ({ classes, ...props }) => {
             </span>
           </div>
         </Dialog>
-      ) : null}</>
+      ) : null}</>)
+  
   }
   const renderDeleteModal = () =>
   {
-    <>
+   return( <>
     {deleteClick ? (
         <Dialog
           classes={classes}
@@ -1569,11 +1573,11 @@ const SmsCreator = ({ classes, ...props }) => {
           </div>
         </Dialog>
       ) : null}
-    </>
+    </>)
   }
   const renderSaveModal = () =>
   {
-    <>
+   return( <>
     <Dialog
         classes={classes}
         open={save}
@@ -1615,7 +1619,7 @@ const SmsCreator = ({ classes, ...props }) => {
             {t("mainReport.confirmSms")}
           </Button>
         </div>
-      </Dialog></>
+      </Dialog></>)
   }
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
