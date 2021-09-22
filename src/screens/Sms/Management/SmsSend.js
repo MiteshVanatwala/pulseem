@@ -1314,7 +1314,7 @@ const SmsSend = ({classes , ...props }) => {
                     cancel: t("common.cancel"),
 
                   }}
-                  disabled={sendType == "2" ? false : true}
+                  dateActive={sendType == "2" ? false : true}
                   autoOk
                 />
               </Box>
@@ -1337,10 +1337,11 @@ const SmsSend = ({classes , ...props }) => {
                     cancel: t("common.cancel"),
                   }}
                   ampm={false}
-                
+                  timeActive = {sendType == "2" ? false : true}
                   timePickerOpen={timePickerOpen}
-                  disabled
+                 
                   autoOk
+
                 />
               </Box>
               <FormControlLabel
@@ -1450,6 +1451,7 @@ const SmsSend = ({classes , ...props }) => {
                   }}
                   ampm={false}
                   timePickerOpen={timePickerOpen}
+                  timeActive={sendType == "3" ? false : true}
                   disabled={sendType == "3" ? false : true}
                   autoOk
                 />
@@ -1683,7 +1685,7 @@ const SmsSend = ({classes , ...props }) => {
               code: "2"
             },
             {
-              text: "",
+              text: "ExtraDate1",
               code: "3"
             }]
 
