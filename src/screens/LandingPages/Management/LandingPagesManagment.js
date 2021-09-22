@@ -415,24 +415,33 @@ const LandingPagesesManagmentScreen=({classes}) => {
     );
   }
 
-  const renderNameCell=(row) => {
+  const seperateGroupNames = (groups) => {
+    const splittedGroups = groups.split('##', -1);
+    if (splittedGroups.length === 1) {
+      return splittedGroups.join().replace('#', '');
+    }
+    return splittedGroups.join(', ').replace('#', '');
+  }
+
+  const renderNameCell = (row) => {
     return (
       <>
-        <Tooltip 
-          arrow 
-          title={row.Name} 
-          placement={'top'} 
+        <Tooltip
+          arrow
+          title={row.Name}
+          placement={'top'}
           classes={{
-            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-            arrow: classes.black}}
-          >
+            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+            arrow: classes.black
+          }}
+        >
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {row.Name}
           </Typography>
         </Tooltip>
         <Typography
           className={classes.grayTextCell}>
-          {row.GroupNames&&row.GroupNames.length>0&&<span>{renderGroupNames()}<b>{row.GroupNames.join(', ').replace('#','')}</b></span>}
+          {row.GroupNames && row.GroupNames.length > 0 && <span>{renderGroupNames()}<b>{seperateGroupNames(row.GroupNames)}</b></span>}
         </Typography>
       </>
 
