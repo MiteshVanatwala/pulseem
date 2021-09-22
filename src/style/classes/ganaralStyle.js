@@ -2458,5 +2458,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   radioButtonDisabled : 
   {
     color:"#d3d3d3"
+  },
+  grDoc : 
+  {
+    border : "1px solid #1771AD",
+    color:"#1771AD",
+    borderRadius:"50%",
+    padding:"10px",
+    display:"flex",
+   
   }
 });

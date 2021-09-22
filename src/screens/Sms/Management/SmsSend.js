@@ -381,7 +381,6 @@ const SmsSend = ({classes , ...props }) => {
       });
       handleFromDate(date);
       setTimePickerOpen(false);
-   
   };
 
   const handleRadioTime = (value) =>
