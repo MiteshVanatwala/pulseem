@@ -289,7 +289,17 @@ export const getCampaignSettings = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  })
+  });
+
+  export const sendSms = createAsyncThunk(
+    'smsCampaign/Send', async (sendData, thunkAPI) => {
+      try {
+        const response = await instence.post(`smsCampaign/Send`, sendData);
+        return JSON.parse(response.data)
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    });
 
 // export const SaveSms=createAsyncThunk(
 //   'smsCampaign/Save/',async (data,thunkAPI) => {
@@ -320,10 +330,14 @@ export const smsSlice = createSlice({
     directSmsReport: {},
     directSmsReportError: '',
     credits: [],
-    smsCampaignSettings: []
+    smsCampaignSettings: [],
+    smsSendResult: -1
   },
   reducers: {},
   extraReducers: builder => {
+    builder.addCase(sendSms.fulfilled, (state, {payload}) => {
+      state.smsSendResult = payload;
+    })
     builder.addCase(getSmsData.fulfilled, (state, { payload }) => {
       state.smsData = payload.filter(row => !row.IsDeleted)
       state.smsDeletedData = payload.filter(row => row.IsDeleted)
@@ -389,6 +403,7 @@ export const smsSlice = createSlice({
     builder.addCase(deleteSms.rejected, (_, action) => console.log('Error - api deleteSms: ' + action.error))
     builder.addCase(restoreSms.rejected, (_, action) => console.log('Error - api restoreSms: ' + action.error))
     builder.addCase(getCreditsforSMS.rejected, (_, action) => console.log('Error - api getCreditsforSMS: ' + action.error))
+    builder.addCase(sendSms.rejected, (_, action) => console.log('error - api send sms' + action.error))
   }
 })
 

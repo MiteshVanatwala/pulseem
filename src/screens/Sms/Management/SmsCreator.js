@@ -32,6 +32,7 @@ import {
   getCampaignSumm,
   getCreditsforSMS,
   getCampaignSettings,
+  sendSms,
   getTestGroups,
   getCommonFeatures
 } from "../../../redux/reducers/smsSlice";
@@ -48,14 +49,12 @@ import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlineDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
-
 import Snackbar from "@material-ui/core/Snackbar";
-
 import MuiAlert from "@material-ui/lab/Alert";
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
-import { useLocation, useParams } from "react-router-dom";
+
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -107,6 +106,7 @@ const SmsCreator = ({ classes, ...props }) => {
     getCampaignSum,
     testGroups,
     commonSettings,
+    smsSendResult
   } = useSelector((state) => state.sms);
 
   const [alignment, setAlignment] = useState("left");
@@ -130,7 +130,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [linkCount, setlinkCount] = useState(0);
   const [counterBool, setcounterBool] = useState(false);
   const [messageCount, setmessageCount] = useState(0);
-  const [msg, setmsg] = useState("");
+  const [msg, setmsg] = useState(null);
   const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] =
     useState(false);
   const [radioBtn, setradioBtn] = useState("top");
@@ -160,89 +160,89 @@ const SmsCreator = ({ classes, ...props }) => {
   const [selectValue, setselectValue] = useState("");
   const [uniqueId, setuniqueId] = useState(null);
   const [finalApi, setfinalApi] = useState(false);
+  const [smsModel, setSmsModel] = useState({
+    SubAccountID: -1,
+    CreditsPerSms: "1",
+    FromNumber: campaignNumber,
+    IsLinksStatistics: true,
+    IsResponse: false,
+    IsTest: true,
+    IsTestCampaign: false,
+    AccountID: -1,
+    Credits: "1",
+    SmsCampaignID: -1,
+    TotalRecipients: 1,
+    Name: campaignName,
+    ResponseToEmail: "",
+    SendDate: Date.now(),
+    SendingMethod: 0,
+    Status: 1,
+    TestGroupsIds: temp,
+    Text: msg,
+    Type: 0,
+    UpdateDate: 1630325875398,
+  });
 
-  const getData = async () => {
-    await dispatch(getPreviousLandingData());
-
-    setLoader(false);
-  };
-
-  const getTest = async () => {
-    await dispatch(getTestGroups());
-  }
-
-  const onApiCall = async () => {
-    let temp = [];
-    for (let i = 0; i < selectedGroup.length; i++) {
-      if (selectedGroup[i].selected) {
-        temp.push(selectedGroup[i].GroupID);
+  const handleSendResult = async () => {
+    if (smsSendResult) {
+      switch (smsSendResult) {
+        case -2: {// ALREADY_SENT
+          break;
+        }
+        case -1: {// ERROR
+          break;
+        }
+        case 0: {// SUCCESS
+          break;
+        }
+        case 1: {// PROVISION
+          break;
+        }
+        case 2: {// NO_CREDITS
+          break;
+        }
+        case 3: {// INVALID_NUMBER
+          break;
+        }
+        case 4: {// OTP_NEEDED
+          break;
+        }
+        case 5: {// ACCEPTED
+          break;
+        }
       }
     }
-    let payload = {
-      CreditsPerSms: "1",
-      FromNumber: campaignNumber,
-      IsLinksStatistics: true,
-      IsResponse: false,
-      IsTest: true,
-      IsTestCampaign: false,
-      LogData: {
-        SmsCampaignID: uniqueId,
-        SubAccountID: 7878,
-        AccountID: 6722,
-        Credits: "1",
-        TotalRecipients: 1,
-      },
-      AccountID: 6722,
-      Credits: "1",
-      SmsCampaignID: uniqueId,
-      SubAccountID: 7878,
-      TotalRecipients: 1,
-      Name: campaignName,
-      ResponseToEmail: "",
-      SMSCampaignID: uniqueId,
-      SMSCampaignId: uniqueId,
-      SendDate: Date.now(),
-      SendingMethod: 0,
-      Status: 1,
+  }
+  useEffect(async () => {
+    await handleSendResult();
+  }, [smsSendResult]);
+
+  const onApiCall = async () => {
+    const smsSendData = {
+      SmsCampaignID: -1,
       SubAccountID: -1,
-      TestGroupsIds: temp,
-      Text: msg,
-      Type: 0,
-      UpdateDate: 1630325875398,
-    };
-    await dispatch(smsQuick(payload));
+      AccountID: -1,
+      Credits: 1,
+      TotalRecipients: 0
+    }
+    await dispatch(smsQuick(smsSendData));
     setfinalApi(true);
     setsummary(false);
   };
-  const getDataCamapaign = async () => {
+
+  useEffect(async () => {
+    setLoader(true);
+    await dispatch(getPreviousLandingData());
+    await dispatch(getTestGroups());
     await dispatch(getPreviousCampaignData());
-
-    setLoader(false);
-  };
-  const getDataExtra = async () => {
     await dispatch(getAccountExtraData());
-
-  };
-  const getSubAccountGroups = async () => {
     await dispatch(getGroupsBySubAccountId());
-
-  };
-  const getFeatures = async () => {
     let r = await dispatch(getCommonFeatures());
     setcampaignNumber(r.payload.DefaultCellNumber)
     setstoredValue(r.payload.DefaultCellNumber)
-
-  };
-
-  useEffect(() => {
-    setLoader(true);
-    getData();
-    getDataCamapaign();
-    getDataExtra();
-    getSubAccountGroups();
-    getTest();
-    getFeatures();
+    setLoader(false);
   }, [dispatch]);
+
   useEffect(() => { }, [removalMessageButtonDisabled]);
 
   useEffect(() => { }, [selectedGroup]);
@@ -266,26 +266,20 @@ const SmsCreator = ({ classes, ...props }) => {
         setcampaignName(response.payload.Name);
         setmsg(response.payload.Text)
         setcampaignNumber(response.payload.FromNumber)
-        setcharacterCount(response.payload.Text.length)
-        setmessageCount(response.payload.CreditsPerSms)
+        setmessageCount(response.payload.CreditsPerSms);
+        setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
+        // setSmsModel({
+        //   ...model,
+        //   Name: response.payload.Name,
+        //   Text: response.payload.Text,
+        //   FromNumber: response.payload.FromNumber,
+        //   CreditsPerSms: response.payload.CreditsPerSms
+        // });
       }
     }
-    // if (window.location.pathname.includes("/react/sms/edit")) {
-    //   let retrieveCampaignId = window.location.pathname.split("/");
-    //   let response = await dispatch(getSmsByID(retrieveCampaignId[4]))
-    //   if (response) {
-    //     setcampaignName(response.payload.Name);
-    //     setmsg(response.payload.Text)
-    //     setcampaignNumber(response.payload.FromNumber)
-    //     setcharacterCount(response.payload.Text.length)
-    //     setmessageCount(response.payload.CreditsPerSms)
-    //   }
-    // }
   }
   useEffect(() => {
-
     getSavedData();
-
   }, [])
 
   const onEmojiClick = (event, emojiObject) => {
@@ -343,10 +337,6 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const onCampaignNumber = (e) => {
     setcampaignNumber(e.target.value);
-
-
-
-
   };
 
   const validationCheck = () => {
@@ -398,16 +388,9 @@ const SmsCreator = ({ classes, ...props }) => {
           SendingMethod: 0,
           IsTest: false,
           PhoneNumber: phone,
-          MessageLength: "1",
-          LogData: {
-            SmsCampaignID: -1,
-            SubAccountID: 11048,
-            AccountID: 9494,
-            Credits: "1",
-            TotalRecipients: 1,
-          },
+          MessageLength: "1"
         };
-        dispatch(smsQuick(payload));
+        dispatch(smsQuick(smsModel));
       } else {
         setOpenS(true);
       }
@@ -492,7 +475,7 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
   const onMsgChange = async (e) => {
-    if (e.target.value.length < msg.length) {
+    if (msg !== null && e.target.value.length < msg.length) {
       setremovalMessageButtonDisabled(false);
       setremovalLinkDisabled(false);
     }
@@ -1266,10 +1249,7 @@ const SmsCreator = ({ classes, ...props }) => {
       </>
     );
   };
-  const handleExitYes = () => {
-    setexitClick(false);
-    onContinueClick();
-  };
+
   const renderExit = () => {
     return (
       <>
@@ -1277,8 +1257,8 @@ const SmsCreator = ({ classes, ...props }) => {
           <Dialog
             classes={classes}
             open={exitClick}
-            onClose={handleExit}
-            onConfirm={handleExitYes}
+            onClose={handleExit(false)}
+            onConfirm={handleExit(true)}
             confirmText="Yes"
             cancelText="No"
             showDefaultButtons={true}
@@ -1342,8 +1322,15 @@ const SmsCreator = ({ classes, ...props }) => {
       </>
     );
   };
-  const handleExit = () => {
+  const handleExit = (saveBeforeExit) => {
     setexitClick(false);
+    // if(saveBeforeExit){
+
+    // }
+    // else{
+    //   //todo: exit
+    // }
+    // window.location.href = "/react/SMSCampaigns";
   };
 
   const renderSummary = () => {
@@ -1351,14 +1338,14 @@ const SmsCreator = ({ classes, ...props }) => {
       <>
         <Summary
           classes={classes}
-          campaign={campaignName}
-          number={campaignNumber}
+          campaignName={campaignName}
+          fromNumber={campaignNumber}
           totalmsg={msg}
-          selected={selectedGroup}
-          bool={summary}
-          grand={total}
-          final={temp}
-          summ={getCampaignSum}
+          selectedGroups={selectedGroup}
+          open={summary}
+          totalRecipients={total}
+          groups={temp}
+          summaryPayload={getCampaignSum}
           api={onApiCall}
         />
       </>
@@ -1675,7 +1662,7 @@ const SmsCreator = ({ classes, ...props }) => {
             {campaignBool ? <li style={{ marginBottom: "8px" }}>
               {t("mainReport.campaignRequire")}
             </li> : null}
-            {msg === "" ? <li>T{t("mainReport.msgRequire")}</li> : null}
+            {msg === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
           </ul>
         </div>
         <div
