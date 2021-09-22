@@ -2450,5 +2450,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mt25: {
     marginTop: 25
+  },
+  radioButtonActive : 
+  {
+    color : "#007bff"
+  },
+  radioButtonDisabled : 
+  {
+    color:"#d3d3d3"
   }
 });

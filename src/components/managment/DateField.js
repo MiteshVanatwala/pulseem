@@ -19,7 +19,9 @@ export const DateField = ({
   ampm = true,
   maximumDate = undefined,
   timePickerOpen = false,
-  rootStyle = null
+  rootStyle = null ,
+  timeActive = null , 
+  dateActive = null 
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -59,7 +61,7 @@ export const DateField = ({
       okLabel={buttons && buttons.ok}
       ampm={ampm}
       id="timePicker"
-     
+     disabled = {timeActive}
       onClose={() => setIsTimePickerOpen(false)}
       open={isTimePickerOpen || timePickerOpen}
     />
@@ -96,6 +98,7 @@ export const DateField = ({
       okLabel={buttons && buttons.ok}
       id="datePicker"
       maxDate={maximumDate}
+      disabled = {dateActive}
       onClose={() => setIsDatePickerOpen(false)}
       open={isDatePickerOpen}
     />

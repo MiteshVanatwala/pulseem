@@ -51,7 +51,8 @@ import {
   getSmsByID,
   saveManualClients,
   getFinishedCampaigns,
-  getCampaignSettings
+  getCampaignSettings,
+  getAccountExtraData
 } from "../../../redux/reducers/smsSlice";
 import { AiOutlineDelete } from "react-icons/ai";
 import Summary from "./smsSummary";
@@ -145,6 +146,7 @@ const SmsSend = ({classes , ...props }) => {
   const [allGroupsSelected, setAllGroupsSelected] = useState(false);
   const [sendType, setSendType] = useState("1"); // Immediate
   const [sendDate, handleFromDate] = useState(null);
+  const [sendTime, setsendTime] = useState(null);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
   const [boolRandom, setboolRandom] = useState(false);
@@ -275,9 +277,13 @@ const SmsSend = ({classes , ...props }) => {
   useEffect(() => {
     getSubAccountGroups();
     getData();
+    getDataExtra();
 
   }, [dispatch]);
+  const getDataExtra = async () => {
+    await dispatch(getAccountExtraData());
 
+  };
   const getSubAccountGroups = async () => {
     const list = await dispatch(getGroupsBySubAccountId());
     const tempGroupList = list.payload;
@@ -1271,7 +1277,7 @@ const SmsSend = ({classes , ...props }) => {
             >
               <FormControlLabel
                 value="1"
-                control={<Radio color="primary"  disabled={sendType !== "1" ? true : false}/>}
+                control={<Radio color="primary" className={sendType !=="1" ? classes.radioButtonDisabled : classes.radioButtonActive}/>}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.immediateSend")}
@@ -1283,7 +1289,7 @@ const SmsSend = ({classes , ...props }) => {
               </FormHelperText>
               <FormControlLabel
                 value="2"
-                control={<Radio color="primary" disabled={sendType !== "2" ? true : false} />}
+                control={<Radio color="primary"  className={sendType !=="2" ? classes.radioButtonDisabled : classes.radioButtonActive}/>}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.futureSend")}
@@ -1300,13 +1306,15 @@ const SmsSend = ({classes , ...props }) => {
                 <DateField
                   minDate={moment()}
                   classes={classes}
-                  value={sendDate}
+                  value={sendType == "2" ? sendDate : null}
                   onChange={handleDatePicker}
                   placeholder={t("notifications.date")}
                   buttons={{
                     ok: t("common.confirm"),
                     cancel: t("common.cancel"),
+
                   }}
+                  dateActive={sendType == "2" ? false : true}
                   autoOk
                 />
               </Box>
@@ -1320,7 +1328,7 @@ const SmsSend = ({classes , ...props }) => {
               >
                 <DateField
                   classes={classes}
-                  value={sendDate}
+                  value={sendType == "2" ? sendDate : null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
@@ -1329,13 +1337,16 @@ const SmsSend = ({classes , ...props }) => {
                     cancel: t("common.cancel"),
                   }}
                   ampm={false}
+                  timeActive = {sendType == "2" ? false : true}
                   timePickerOpen={timePickerOpen}
+                 
                   autoOk
+
                 />
               </Box>
               <FormControlLabel
                 value="3"
-                control={<Radio color="primary" disabled={sendType !== "3" ? true : false} />}
+                control={<Radio color="primary" className={sendType !=="3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
                 label={
                   <span className={classes.radioText}>
                     {t("mainReport.specialDate")}
@@ -1365,6 +1376,9 @@ const SmsSend = ({classes , ...props }) => {
                 >
                   <option>{t("mainReport.birthday")}</option>
                   <option>Creation Day</option>
+                  {Object.keys(extraData).map((item, i) => {
+                      return <option value={extraData[item]} key={`extrakey_${i}`}>{item}</option>;
+                    })}
                 </select>
               </Box>
 
@@ -1426,7 +1440,8 @@ const SmsSend = ({classes , ...props }) => {
               >
                 <DateField
                   classes={classes}
-                  value={null}
+                  value={sendType == "3" ? sendTime : null}
+
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
@@ -1436,6 +1451,8 @@ const SmsSend = ({classes , ...props }) => {
                   }}
                   ampm={false}
                   timePickerOpen={timePickerOpen}
+                  timeActive={sendType == "3" ? false : true}
+                  disabled={sendType == "3" ? false : true}
                   autoOk
                 />
               </Box>
@@ -1668,7 +1685,7 @@ const SmsSend = ({classes , ...props }) => {
               code: "2"
             },
             {
-              text: "",
+              text: "ExtraDate1",
               code: "3"
             }]
 
