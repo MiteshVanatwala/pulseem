@@ -1066,6 +1066,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineStart: "133px",
     fontSize: "15px"
   },
+  phoneNumberSum: {
+    top: "24%",
+    left: "38%",
+    position: "absolute",
+    fontWeight: "700",
+    fontSize: "15px",
+  },
   chat: {
     backgroundColor: "#3da6f6",
     color: "#fff",
@@ -1136,7 +1143,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     position: "absolute",
     top: "180px",
-    left: "16%",
+    left: "13%",
     backgroundColor: "#fff",
     color: "#fff",
     display: 'flex',
@@ -1366,6 +1373,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "12px",
     display: "flex",
     alignItems: "center",
+    cursor:"pointer",
 
     "&:hover": {
       backgroundColor: "#efefef",
@@ -1377,7 +1385,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineEnd: "5px",
   },
   tabDiv: {
-    width: "700px",
     display: "grid",
     gridTemplateColumns: "50% 50%",
     "@media screen and (max-width: 768px)": {
@@ -1405,8 +1412,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
-    width: "700px",
-    height: "350px",
+    height: "400px",
     backgroundColor: "white !important",
     "@media screen and (max-width: 768px)": {
       width: "auto"
@@ -1415,14 +1421,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   greenManual: {
     border: "2px dashed #4BB543",
     width: "700px",
-    height: "350px",
+    height: "400px",
     backgroundColor: "#CCFFE5",
     "@media screen and (max-width: 768px)": {
       width: "auto"
     },
   },
   areaCon: {
-    width: "680px",
+    width: "calc(100% - 20px)",
     outline: "none",
     border: "none",
     fontSize: "16px",
@@ -1452,13 +1458,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: "rgb(170, 170, 170)",
       fontSize: "16px",
       fontFamily: "inherit",
-    },
-  },
-  groupsFilterDiv:
-  {
-    width: "700px",
-    "@media screen and (max-width: 768px)": {
-      width: "100%"
     },
   },
   addManualDiv:
@@ -1505,7 +1504,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pulse: {
     border: "1px solid #277bff",
-    width: "125px",
     padding: "8px",
     marginInlineEnd: "8px",
     borderRadius: "4px",
@@ -2287,9 +2285,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    width: "700px",
-    cursor: "pointer"
-
+    width: "calc(100% - 70px)",
+    cursor: "pointer",
+    "& span": {
+      whiteSpace: 'nowrap'
+    }
   },
   camapignsDiv:
   {
@@ -2320,6 +2320,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "5px",
     justifyContent: "space-between",
     alignItems: "center",
+    margin: "0 5px"
     // marginTop: "15px"
   },
   pulseParentDiv:
@@ -2449,5 +2450,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mt25: {
     marginTop: 25
+  },
+  radioButtonActive : 
+  {
+    color : "#007bff"
+  },
+  radioButtonDisabled : 
+  {
+    color:"#d3d3d3"
   }
 });

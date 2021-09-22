@@ -25,6 +25,7 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
+import { useHistory } from "react-router";
 import { BsTrash } from "react-icons/bs";
 import {
   Typography,
@@ -47,9 +48,11 @@ import {
   saveSmsCampSettings,
   deleteSms,
   getCampaignSumm,
-  getManual,
+  getSmsByID,
+  saveManualClients,
   getFinishedCampaigns,
-  getCampaignSettings
+  getCampaignSettings,
+  getAccountExtraData
 } from "../../../redux/reducers/smsSlice";
 import { AiOutlineDelete } from "react-icons/ai";
 import Summary from "./smsSummary";
@@ -123,12 +126,13 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const SmsSend = ({ props, classes }) => {
+const SmsSend = ({classes , ...props }) => {
   const { t } = useTranslation();
   document.title = t("sms.sendPageTitle")
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const tabi = useStyle();
+  const history = useHistory();
 
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
@@ -142,6 +146,7 @@ const SmsSend = ({ props, classes }) => {
   const [allGroupsSelected, setAllGroupsSelected] = useState(false);
   const [sendType, setSendType] = useState("1"); // Immediate
   const [sendDate, handleFromDate] = useState(null);
+  const [sendTime, setsendTime] = useState(null);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
   const [boolRandom, setboolRandom] = useState(false);
@@ -202,22 +207,7 @@ const SmsSend = ({ props, classes }) => {
   // });
 
   const [model, setModel] = useState({
-    ID: 0,
-    Name: "",
-    Title: "",
-    Body: "",
-    Icon: "",
-    Image: "",
-    RedirectURL: "",
-    Tag: "",
-    Direction: 2,
-    IsRenotify: "",
-    SendDate: "",
-    IsDeleted: "",
-    SentCount: "",
-    StatusID: "",
-    NotificationGroups: "",
-    RedirectButtonText: "",
+    ID: 0
   });
   const [ContactSearch, setContactSearch] = useState("");
   const [selectedGroup, setselectedGroup] = useState([]);
@@ -287,9 +277,13 @@ const SmsSend = ({ props, classes }) => {
   useEffect(() => {
     getSubAccountGroups();
     getData();
+    getDataExtra();
 
   }, [dispatch]);
+  const getDataExtra = async () => {
+    await dispatch(getAccountExtraData());
 
+  };
   const getSubAccountGroups = async () => {
     const list = await dispatch(getGroupsBySubAccountId());
     const tempGroupList = list.payload;
@@ -855,7 +849,7 @@ const SmsSend = ({ props, classes }) => {
             />
           </div>
         ) : null}
-        <div className={classes.groupsFilterDiv}>
+        <Box>
           {groupClick ? (
 
             <Groups
@@ -931,7 +925,7 @@ const SmsSend = ({ props, classes }) => {
               >
                 <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
                   return a + b['Recipients'];
-                }, 0)}</span>
+                }, 0).toLocaleString()}</span>
                 <Tooltip
                   disableFocusListener
                   title={t("smsReport.finalReciTip")}
@@ -970,7 +964,7 @@ const SmsSend = ({ props, classes }) => {
               <span>Total Records : 0</span>
             </div>
           ) : null}
-        </div>
+        </Box>
       </div>
     );
   };
@@ -1166,7 +1160,7 @@ const SmsSend = ({ props, classes }) => {
                               className={classes.groupsFilterList}
 
                             >
-                              <span>
+                              <span className={classes.ellipsisText}>
                                 {item.GroupName}
                               </span>
                               <span>{item.Recipients} Recipients</span>
@@ -1283,7 +1277,7 @@ const SmsSend = ({ props, classes }) => {
             >
               <FormControlLabel
                 value="1"
-                control={<Radio color="primary" style={{ color: sendType !== "1" ? "#d3d3d3" : "#007bff" }} />}
+                control={<Radio color="primary" className={sendType !=="1" ? classes.radioButtonDisabled : classes.radioButtonActive}/>}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.immediateSend")}
@@ -1295,7 +1289,7 @@ const SmsSend = ({ props, classes }) => {
               </FormHelperText>
               <FormControlLabel
                 value="2"
-                control={<Radio color="primary" style={{ color: sendType !== "2" ? "#d3d3d3" : "#007bff" }} />}
+                control={<Radio color="primary"  className={sendType !=="2" ? classes.radioButtonDisabled : classes.radioButtonActive}/>}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.futureSend")}
@@ -1312,13 +1306,15 @@ const SmsSend = ({ props, classes }) => {
                 <DateField
                   minDate={moment()}
                   classes={classes}
-                  value={sendDate}
+                  value={sendType == "2" ? sendDate : null}
                   onChange={handleDatePicker}
                   placeholder={t("notifications.date")}
                   buttons={{
                     ok: t("common.confirm"),
                     cancel: t("common.cancel"),
+
                   }}
+                  dateActive={sendType == "2" ? false : true}
                   autoOk
                 />
               </Box>
@@ -1332,7 +1328,7 @@ const SmsSend = ({ props, classes }) => {
               >
                 <DateField
                   classes={classes}
-                  value={sendDate}
+                  value={sendType == "2" ? sendDate : null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
@@ -1341,13 +1337,16 @@ const SmsSend = ({ props, classes }) => {
                     cancel: t("common.cancel"),
                   }}
                   ampm={false}
+                  timeActive = {sendType == "2" ? false : true}
                   timePickerOpen={timePickerOpen}
+                 
                   autoOk
+
                 />
               </Box>
               <FormControlLabel
                 value="3"
-                control={<Radio color="primary" style={{ color: sendType !== "3" ? "#d3d3d3" : "#007bff" }} />}
+                control={<Radio color="primary" className={sendType !=="3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
                 label={
                   <span className={classes.radioText}>
                     {t("mainReport.specialDate")}
@@ -1377,6 +1376,9 @@ const SmsSend = ({ props, classes }) => {
                 >
                   <option>{t("mainReport.birthday")}</option>
                   <option>Creation Day</option>
+                  {Object.keys(extraData).map((item, i) => {
+                      return <option value={extraData[item]} key={`extrakey_${i}`}>{item}</option>;
+                    })}
                 </select>
               </Box>
 
@@ -1438,7 +1440,8 @@ const SmsSend = ({ props, classes }) => {
               >
                 <DateField
                   classes={classes}
-                  value={null}
+                  value={sendType == "3" ? sendTime : null}
+
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
@@ -1448,6 +1451,8 @@ const SmsSend = ({ props, classes }) => {
                   }}
                   ampm={false}
                   timePickerOpen={timePickerOpen}
+                  timeActive={sendType == "3" ? false : true}
+                  disabled={sendType == "3" ? false : true}
                   autoOk
                 />
               </Box>
@@ -1680,7 +1685,7 @@ const SmsSend = ({ props, classes }) => {
               code: "2"
             },
             {
-              text: "",
+              text: "ExtraDate1",
               code: "3"
             }]
 
@@ -1756,9 +1761,7 @@ const SmsSend = ({ props, classes }) => {
 
   }
   const handleDataManual = async () => {
-
     let requestPayload = [];
-
 
     if (typedData.length !== 0) {
       for (let j = 0; j < typedData.length; j++) {
@@ -1770,22 +1773,15 @@ const SmsSend = ({ props, classes }) => {
             obj[key] = typedData[j][k];
           }
         }
-
       }
     }
     else {
-
-
       for (let j = 0; j < contacts.length; j++) {
         requestPayload.push({});
         let i = 0;
 
-
         for (let k in contacts[j]) {
-
-
           if (headers[i] !== "Adjust Title") {
-
             let key = headers[i];
             let obj = requestPayload[j];
             obj[key] = contacts[j][k];
@@ -1793,22 +1789,15 @@ const SmsSend = ({ props, classes }) => {
           }
           i++;
         }
-
-
       }
-
     }
-
-
 
     let finalPayload = {
-
       GroupName: newVal,
       Clients: requestPayload
-
     }
 
-    const r = await dispatch(getManual(finalPayload))
+    const r = await dispatch(saveManualClients(finalPayload))
 
     let tempres = [];
     let temp = [];
@@ -1818,16 +1807,19 @@ const SmsSend = ({ props, classes }) => {
     for (let i = 0; i < selectedGroups.length; i++) {
       temp.push(selectedGroups[i]);
     }
+
     temp.push({
       Recipient: r.payload.Recipients,
       GroupName: newVal,
       GroupID: r.payload.GroupID
     });
+
     tempres.push({
       Recipient: r.payload.Recipients,
       GroupName: newVal,
       GroupID: r.payload.GroupID
     });
+
     setGroupList(tempres);
     setSelected(temp);
     setmanualTrue(false);
@@ -1840,9 +1832,6 @@ const SmsSend = ({ props, classes }) => {
       selectArray[i].isdisabled = false;
       selectArray[i].idx = -1;
     }
-
-
-
   }
 
   const handleManualDialog = (e) => {
@@ -2062,12 +2051,10 @@ const SmsSend = ({ props, classes }) => {
     setdeleteClick(false);
   };
   const handleDelete = () => {
-    let a = window.location;
-
-    let b = a.search.split("=");
-    let camp = b[1];
-    dispatch(deleteSms(camp));
-    handleClose();
+    if (props && props.match.params.id) {
+      dispatch(deleteSms(props.match.params.id));
+      handleClose();
+    }
   };
   const renderDelete = () => {
     return (
@@ -2117,6 +2104,11 @@ const SmsSend = ({ props, classes }) => {
     setcaution(false);
     setmanualTrue(false);
   };
+
+  const handlePreviousPage = () =>
+  {
+    window.location = `/sms/edit/${props.match.params.id}`;
+  }
   const renderCaution = () => {
     return (
       <>
@@ -2161,7 +2153,7 @@ const SmsSend = ({ props, classes }) => {
 
       </div>
       <div className={classes.creatorButtons}>
-        <div className={classes.back}>
+        <div className={classes.back} onClick={() => {handlePreviousPage()}}>
 
           <span className={classes.rightInput4}>
             <span style={{ marginInlineEnd: "5px" }}>{"<"}</span>
