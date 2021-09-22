@@ -79,7 +79,7 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   appBarUsername: {
     display: 'flex',
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-end',
     fontSize: 16,
     fontFamily: 'OpenSansHebrew-Bold'
   },

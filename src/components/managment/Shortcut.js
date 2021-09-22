@@ -1,29 +1,29 @@
-import React,{useState,useEffect, useRef, createRef} from 'react';
-import {useTranslation} from 'react-i18next'
-import {useSelector,useDispatch} from 'react-redux'
-import { 
-  Box, Button, ListItem, ListItemText, Paper, Typography, Popper, Fade, 
-  List, Collapse, Divider, IconButton, CircularProgress,Popover
+import React, { useState, useEffect, useRef, createRef } from 'react';
+import { useTranslation } from 'react-i18next'
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  Box, Button, ListItem, ListItemText, Paper, Typography, Popper,
+  List, Collapse, Divider, IconButton, CircularProgress
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
 import { getShortcuts, setShortcuts,deleteShortcuts } from '../../redux/reducers/shortcutSlice';
 
-export const Shortcut=({classes}) => {
-  const {windowSize}=useSelector(state => state.core);
-  const {shortcuts,shortCutsError }=useSelector(state => state.dashboard);
-  const shortcutRef=useRef();
-  const [selectedCategory, setCategoryValue]=useState({});
-  const [selectedPage, setPageValue]=useState({});
+const Shortcut = ({ classes }) => {
+  const { windowSize } = useSelector(state => state.core);
+  const { shortcuts, shortCutsError } = useSelector(state => state.shortcuts);
+  const shortcutRef = useRef();
+  const [selectedCategory, setCategoryValue] = useState({});
+  const [selectedPage, setPageValue] = useState({});
   const [anchorEl, setAnchorEl] = useState({});
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [pageOpen, setPageOpen] = useState(false);
   const [loading, setLoading] = useState({});
-  const {t}=useTranslation();
-  const dispatch=useDispatch();
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
   const categories = {
     Groups: {
-      title: 'appBar.groups.title', 
+      title: 'appBar.groups.title',
       pages: [
         {
           title: 'dashboard.createGroup',
@@ -81,7 +81,7 @@ export const Shortcut=({classes}) => {
       ]
     },
     SMS: {
-      title: 'appBar.sms.title', 
+      title: 'appBar.sms.title',
       pages: [
         {
           title: 'common.CreateSMS',
@@ -203,24 +203,24 @@ export const Shortcut=({classes}) => {
         }
       ]
     }
-    
+
   };
 
-  const initData=()=>{
+  const initData = () => {
     dispatch(getShortcuts());
   }
-  useEffect(initData,[dispatch])
+  useEffect(initData, [dispatch])
 
-  const renderShortcutMenu=(num, update, index)=>{
+  const renderShortcutMenu = (num, update, index) => {
     const pageTitle = selectedPage[num] && selectedPage[num].title || '';
     const categoryTitle = selectedCategory[num] && categories[selectedCategory[num]].title || '';
     const open = Boolean(anchorEl[num]);
 
-    const handleCategoryChange=(val)=>{
+    const handleCategoryChange = (val) => {
       let page = selectedPage;
       let category = selectedCategory;
-      page[num]=null;
-      category[num]=val;
+      page[num] = null;
+      category[num] = val;
 
       setPageValue(page);
       setCategoryValue(category);
@@ -228,137 +228,139 @@ export const Shortcut=({classes}) => {
       setPageOpen(false);
     }
 
-    const handlePageChange=async (title, href)=>{
-      const data={
-        ID: update&&num,
-        CategoryName: categories[selectedCategory[num]].title, 
-        ShortcutName: title, 
+    const handlePageChange = async (title, href) => {
+      const data = {
+        ID: update && num,
+        CategoryName: categories[selectedCategory[num]].title,
+        ShortcutName: title,
         ShortcutUrl: href
       };
-      let loading={};
-      loading[index]=true;
+      let loading = {};
+      loading[index] = true;
       setAnchorEl({});
       setCategoryValue({});
       setPageOpen(false);
       setLoading(loading);
       await dispatch(setShortcuts(data));
-      await dispatch(getShortcuts());
+      //await dispatch(getShortcuts());
+      initData()
       setLoading({});
-
     }
 
-    return(
-      <Popper  
+    return (
+      <Popper
         key={`shortcutMenu${index}`}
-        open={open} 
-        anchorEl={anchorEl[num]} 
-        placement={windowSize==='xs'?'bottom-start':'left-start'}
-        style={{zIndex: 2}}>
-          <Paper className={classes.popperPaper}>
-            <List component="nav" className={classes.shortcutList}>
-              <ListItem 
-                key={`selectCategory`}
-                button 
-                onClick={()=>setCategoryOpen(!categoryOpen)} 
-                className={clsx(classes.pt0, classes.pb0)}>
-                <ListItemText primary={categoryTitle? t(categoryTitle):t('common.SelectCategory')} />
-                {categoryOpen ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
-              <Collapse in={categoryOpen} timeout="auto" unmountOnExit>
+        open={open}
+        anchorEl={anchorEl[num]}
+        placement={windowSize === 'xs' ? 'bottom-start' : 'left-start'}
+        style={{ zIndex: 2 }}>
+        <Paper className={classes.popperPaper}>
+          <List component="nav" className={classes.shortcutList}>
+            <ListItem
+              key={`selectCategory`}
+              button
+              onClick={() => setCategoryOpen(!categoryOpen)}
+              className={clsx(classes.pt0, classes.pb0)}>
+              <ListItemText primary={categoryTitle ? t(categoryTitle) : t('common.SelectCategory')} />
+              {categoryOpen ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            <Collapse in={categoryOpen} timeout="auto" unmountOnExit>
+              <Divider />
+              <List component="div" disablePadding>
+                {Object.keys(categories).map(cat => {
+                  return (
+                    <ListItem
+                      key={`category${Math.round(Math.random() * 999999999)}`}
+                      button
+                      className={clsx(classes.pt0, classes.pb0)}
+                      onClick={() => handleCategoryChange(cat)}>
+                      <ListItemText primary={t(categories[cat].title)} />
+                    </ListItem>
+                  )
+                })}
+              </List>
+            </Collapse>
+          </List>
+          <List component="nav" className={classes.shortcutList}>
+            <ListItem
+              key={`selectPage`}
+              button
+              onClick={() => setPageOpen(!pageOpen)}
+              className={clsx(classes.pt0, classes.pb0)}
+              disabled={!selectedCategory[num]}>
+              <ListItemText primary={pageTitle ? pageTitle : t('common.SelectPage')} />
+              {pageOpen ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+            {selectedCategory[num] ?
+              <Collapse in={pageOpen} timeout="auto" unmountOnExit>
                 <Divider />
                 <List component="div" disablePadding>
-                  {Object.keys(categories).map(cat=>{
+                  {categories[selectedCategory[num]].pages.map(page => {
                     return (
-                      <ListItem 
-                        key={`category${Math.round(Math.random() * 999999999)}`}
-                        button 
-                        className={clsx(classes.pt0, classes.pb0)} 
-                        onClick={()=>handleCategoryChange(cat)}>
-                        <ListItemText primary={t(categories[cat].title)} />
+                      <ListItem
+                        key={`pageItem${Math.round(Math.random() * 999999999)}`}
+                        button
+                        className={clsx(classes.pt0, classes.pb0)}
+                        onClick={() => handlePageChange(page.title, page.link)}>
+                        <ListItemText primary={t(page.title)} />
                       </ListItem>
                     )
                   })}
                 </List>
               </Collapse>
-            </List>
-            <List component="nav" className={classes.shortcutList}>
-              <ListItem 
-                key={`selectPage`}
-                button 
-                onClick={()=>setPageOpen(!pageOpen)} 
-                className={clsx(classes.pt0, classes.pb0)}
-                disabled={!selectedCategory[num]}>
-                <ListItemText primary={pageTitle? pageTitle: t('common.SelectPage')} />
-                {pageOpen ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
-              {selectedCategory[num]?
-                <Collapse in={pageOpen} timeout="auto" unmountOnExit>
-                  <Divider />
-                  <List component="div" disablePadding>
-                    {categories[selectedCategory[num]].pages.map(page=>{
-                      return (
-                        <ListItem 
-                          key={`pageItem${Math.round(Math.random() * 999999999)}`}
-                          button 
-                          className={clsx(classes.pt0, classes.pb0)} 
-                          onClick={()=>handlePageChange(page.title, page.link)}>
-                          <ListItemText primary={t(page.title)} />
-                        </ListItem>
-                      )
-                    })}
-                  </List>
-                </Collapse>
-                :null}
-            </List>
-          </Paper>
+              : null}
+          </List>
+        </Paper>
       </Popper>
     );
   }
 
-  const handleShortcutMenuOpen=(event, num)=>{
+  const handleShortcutMenuOpen = (event, num) => {
     let refElement = event.currentTarget || event.current || '';
     if (!refElement) {
       return;
     }
 
     let data = {};
-    data[num] = num == Object.keys(anchorEl) && anchorEl[num]? null:refElement;
+    data[num] = num == Object.keys(anchorEl) && anchorEl[num] ? null : refElement;
     setAnchorEl(data);
     setPageOpen(false);
     setCategoryOpen(false);
   };
 
-  const renderShortcutButton=(data, index)=>{
+  const renderShortcutButton = (data, index) => {
     if (loading[index]) {
       return (
         <Box className={classes.shortcutBtnBox} key={`shortcutLoading${index}`}>
-          <Button 
-            variant='contained' 
-            color='primary' 
+          <Button
+            variant='contained'
+            color='primary'
             classes={{
-              label:classes.shortcutLabel,
-              root: classes.shortcutButton}}>
-            <CircularProgress className={classes.white}/>
+              label: classes.shortcutLabel,
+              root: classes.shortcutButton
+            }}>
+            <CircularProgress className={classes.white} />
           </Button>
         </Box>
       );
     }
-    const innerRef=createRef();
+    const innerRef = createRef();
     return (
       <Box key={`shortcutButton${index}`} ref={innerRef} className={classes.shortcutBtnBox} >
-        <Button 
-          variant='contained' 
-          color='primary' 
+        <Button
+          variant='contained'
+          color='primary'
           href={data.ShortcutUrl}
           classes={{
-            label:classes.shortcutLabel,
-            root: classes.shortcutButton}}>
+            label: classes.shortcutLabel,
+            root: classes.shortcutButton
+          }}>
           <Typography align='center' className={classes.categoryLabel}>{t(data.CategoryName)}</Typography>
           <Typography align='center' className={classes.pageTitle}>{t(data.ShortcutName)}</Typography>
         </Button>
-        <IconButton  
-          className={classes.shortcutEditIcon} 
-          onClick={(e)=>handleShortcutMenuOpen(windowSize=='xs'?e:innerRef, data.ID)}>
+        <IconButton
+          className={classes.shortcutEditIcon}
+          onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, data.ID)}>
           {'\uE09C'}
         </IconButton>
         {renderShortcutMenu(data.ID, true, index)}
@@ -366,39 +368,42 @@ export const Shortcut=({classes}) => {
     );
   }
 
-  const renderNewShortcutButtons=()=>{
+  const renderNewShortcutButtons = () => {
     let newShortcutButtons = [];
     for (let index = shortcuts.length; index < 5; index++) {
-      const innerRef=createRef();
+      const innerRef = createRef();
       newShortcutButtons.push(
         <Box className={classes.shortcutBtnBox} key={`emptyShortcutBtn${index}`} ref={innerRef}>
-          <Button 
-            color='primary' 
-            fullWidth 
+          <Button
+            color='primary'
+            fullWidth
             className={classes.shortcutDottedButton}
-            onClick={(e)=>handleShortcutMenuOpen(windowSize=='xs'?e:innerRef,index)}>
+            onClick={(e) => handleShortcutMenuOpen(windowSize == 'xs' ? e : innerRef, index)}>
             {'\uE0E4'}
           </Button>
           {renderShortcutMenu(index)}
         </Box>
-      ) 
+      )
     }
 
     return newShortcutButtons;
   }
 
   return (
-      <Box className={classes.shortcutBox}>
-        <Paper elevation={windowSize=='xs'?3:0} className={classes.shortcutPaper} ref={shortcutRef}>
-          <Box className={classes.shortcutTitleSection}>
-            <Typography align='center' className={classes.shortcutTitle}>{t('dashboard.myShortcuts')}</Typography>
-            <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
-          </Box>
-          {shortcuts.map((item,index)=>{
-            return renderShortcutButton(item, index)
-          })}
-          {renderNewShortcutButtons()}
-        </Paper>
-      </Box>
-  );
+    <Box className={classes.shortcutBox}>
+      <Paper elevation={windowSize == 'xs' ? 3 : 0} className={classes.shortcutPaper} ref={shortcutRef}>
+        <Box className={classes.shortcutTitleSection}>
+          <Typography align='center' className={classes.shortcutTitle}>{t('dashboard.myShortcuts')}</Typography>
+          <Typography align='center' className={classes.shortcutSubtitle}>{t('dashboard.addQuickButtons')}</Typography>
+        </Box>
+        {shortcuts.map((item, index) => {
+          return renderShortcutButton(item, index)
+        })}
+        {renderNewShortcutButtons()}
+      </Paper>
+    </Box>
+  )
 }
+
+
+export default React.memo(Shortcut);
