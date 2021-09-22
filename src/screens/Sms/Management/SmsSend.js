@@ -843,7 +843,7 @@ const SmsSend = ({classes , ...props }) => {
             />
           </div>
         ) : null}
-        <div className={classes.groupsFilterDiv}>
+        <Box>
           {groupClick ? (
 
             <Groups
@@ -919,7 +919,7 @@ const SmsSend = ({classes , ...props }) => {
               >
                 <span>{t("mainReport.totalReci")}:  {selectedGroups.reduce(function (a, b) {
                   return a + b['Recipients'];
-                }, 0)}</span>
+                }, 0).toLocaleString()}</span>
                 <Tooltip
                   disableFocusListener
                   title={t("smsReport.finalReciTip")}
@@ -958,7 +958,7 @@ const SmsSend = ({classes , ...props }) => {
               <span>Total Records : 0</span>
             </div>
           ) : null}
-        </div>
+        </Box>
       </div>
     );
   };
@@ -1154,7 +1154,7 @@ const SmsSend = ({classes , ...props }) => {
                               className={classes.groupsFilterList}
 
                             >
-                              <span>
+                              <span className={classes.ellipsisText}>
                                 {item.GroupName}
                               </span>
                               <span>{item.Recipients} Recipients</span>
@@ -2088,17 +2088,9 @@ const SmsSend = ({classes , ...props }) => {
     setmanualTrue(false);
   };
 
-  const handlePreviousPage = async () =>
+  const handlePreviousPage = () =>
   {
-    if(window.location.pathname.includes("/react/sms/send"))
-    {
-    let retrieveCampaignId  = window.location.pathname.split("/");
-        let response  =   await dispatch(getSmsByID(retrieveCampaignId[4]))
-         if(response)
-         {
-          history.push(`/sms/edit/${response.payload.SMSCampaignID}`);
-         }
-    }
+    window.location = `/sms/edit/${props.match.params.id}`;
   }
   const renderCaution = () => {
     return (

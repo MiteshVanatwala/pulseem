@@ -119,7 +119,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     primary={group.GroupName}
                 />
                 <ListItemSecondaryAction className={'groupText'}>
-                    {group.Recipients} {group.Recipients != 1 ? t("notifications.recipients") : t("notifications.recipient")}
+                    {group.Recipients.toLocaleString()} {group.Recipients != 1 ? t("notifications.recipients") : t("notifications.recipient")}
                 </ListItemSecondaryAction>
             </ListItem>)
         })
@@ -263,7 +263,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                 popupIcon={false}
                 onChange={onTagChange}
                 renderInput={(params) => selectedList.length > 0 ? (
-                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected)}></TextField>
+                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected)} style={{maxHeight: 45}}></TextField>
                 ) : (
                     <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{t('notifications.noGroupsSelected')}</Typography>
                 )
