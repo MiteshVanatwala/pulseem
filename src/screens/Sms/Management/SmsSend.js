@@ -373,16 +373,21 @@ const SmsSend = ({classes , ...props }) => {
     // setTimePickerOpen(!timePickerOpen);
   };
   const handleTimePicker = (value) => {
-    var date = moment(sendDate);
-    var time = moment(value, "HH:mm");
-    date.set({
-      hour: time.get("hour"),
-      minute: time.get("minute"),
-    });
-
-    handleFromDate(date);
-    setTimePickerOpen(false);
+      var date = moment(sendDate);
+      var time = moment(value, "HH:mm");
+      date.set({
+        hour: time.get("hour"),
+        minute: time.get("minute"),
+      });
+      handleFromDate(date);
+      setTimePickerOpen(false);
+   
   };
+
+  const handleRadioTime = (value) =>
+  {
+    setsendTime(value)
+  }
 
   const handleCombined = async () => {
     let temp = [];
@@ -1442,7 +1447,7 @@ const SmsSend = ({classes , ...props }) => {
                   classes={classes}
                   value={sendType == "3" ? sendTime : null}
 
-                  onTimeChange={handleTimePicker}
+                  onTimeChange={handleRadioTime}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
                   buttons={{

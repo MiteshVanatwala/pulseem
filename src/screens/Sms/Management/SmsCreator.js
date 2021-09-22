@@ -682,9 +682,6 @@ const SmsCreator = ({ classes, ...props }) => {
                     }}
                   >
                     <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
-                    {/* <Typography className={classes.addBtn}>
-                    <Typography className={classes.plusIcn}>+</Typography>
-                  </Typography> */}
                     {t("mainReport.add")}
                   </Typography>
                   {editmenuClick ? (
