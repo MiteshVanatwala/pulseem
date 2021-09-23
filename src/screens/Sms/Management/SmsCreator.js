@@ -493,6 +493,7 @@ const SmsCreator = ({ classes, ...props }) => {
       setlinkCount(0);
     }
     let response = await dispatch(getCreditsforSMS(e.target.value.length));
+    console.log("msg credit response",response)
     setmessageCount(count);
   };
 
@@ -658,13 +659,13 @@ const SmsCreator = ({ classes, ...props }) => {
                     })}
                   </select>
                 </Box>
-                <Box className={classes.addDiv} >
-                  <Typography tabindex="0"
+                <Box className={classes.addDiv} tabindex="0" onBlur={() => {seteditmenuClick(false)}}>
+                  <Typography 
                     className={classes.addButtons}
                     onClick={() => {
                       seteditmenuClick(!editmenuClick);
                     }}
-                    onBlur={() => {seteditmenuClick(false)}}
+                    
                   >
                     <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
                     {t("mainReport.add")}

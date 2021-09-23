@@ -1343,9 +1343,7 @@ const SmsSend = ({classes , ...props }) => {
                   ampm={false}
                   timeActive = {sendType == "2" ? false : true}
                   timePickerOpen={timePickerOpen}
-                 
                   autoOk
-
                 />
               </Box>
               <FormControlLabel

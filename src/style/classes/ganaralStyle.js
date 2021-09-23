@@ -872,7 +872,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   rightInput: {
     outline: "none",
     padding: "10px",
-    width: "200px",
+    width: "220px",
+    height:"23px",
     border: "1px solid #BBBBBB",
     borderRadius: "4px",
     marginInlineEnd: "5px",
@@ -897,6 +898,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "70px",
     border: "1px solid green",
     color: "green",
+    height:"25px",
     padding: "9px",
     alignItems: "center",
     justifyContent: "center",
@@ -1863,7 +1865,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   reactSwitchHe: {
     verticalAlign: 'middle',
-    marginInlineEnd: '8px',
+    marginInlineStart: '8px',
     transform: 'rotateY(180deg)'
   },
   icn:
