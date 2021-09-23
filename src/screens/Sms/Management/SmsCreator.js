@@ -1250,7 +1250,9 @@ const SmsCreator = ({ classes, ...props }) => {
             onCancel={handlecautioncancel}
             cancelText={t("mainReport.cancelPleaseNoteModal")}
             showDefaultButtons={true}
-            icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
+            icon={<div className={classes.dialogIconContent}>
+            {'\uE11B'}
+          </div>}
           >
             <Box className={classes.numberChnageModal}>
               <Typography className={classes.groupName}>  {t("mainReport.pleaseNote")}</Typography>
