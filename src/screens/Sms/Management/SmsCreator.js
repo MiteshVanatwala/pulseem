@@ -1196,9 +1196,9 @@ const SmsCreator = ({ classes, ...props }) => {
           <Dialog
             classes={classes}
             open={exitClick}
-            onClose={() => {setexitClick(false)}}
+            onClose={() => {handleExit(false)}}
             onConfirm={() => {handleExit(true)}}
-            onCancel={ () => {handleExit(false)}}
+            onCancel={() => {setexitClick(false)}}
             confirmText="Yes"
             cancelText="No"
             showDefaultButtons={true}
@@ -1269,14 +1269,16 @@ const SmsCreator = ({ classes, ...props }) => {
       let r = await dispatch(smsSave(payloadToPush));
       if(r)
       {
+        console.log("if here")
         setexitClick(false);
-        window.location.href = "/react/SMSCampaigns";
+        history.push("/SMSCampaigns");
       }
     }
-    else
+    else if(saveBeforeExit == false)
     {
+      console.log("here")
       setexitClick(false);
-      window.location.href = "/react/SMSCampaigns";
+      history.push("/SMSCampaigns");
     }
     
   };
