@@ -487,5 +487,7 @@
     "removed": "Removed"
   },
   "close": "Close",
-  "settings": "Settings"
+  "settings": "Settings",
+  "createFirstGroup": "Create your first group!",
+  "addRecipients": "+ Add Recipients"
 }

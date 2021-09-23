@@ -10,15 +10,17 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { getRecipientsReport } from '../../redux/reducers/recipientsReportSlice';
 import { BsInfoCircleFill } from 'react-icons/bs';
 import clsx from 'clsx';
+import ButtonWithTitle from '../Buttons/ButtonWithTitle';
 
 
-const RecipientChart = ({ classes }) => {
+const RecipientChart = ({ classes, }) => {
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
     const { language, windowSize, isRTL } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
     const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
+    const [showTooltip, setShowTooltip] = useState(false);
 
     const useStylesBootstrap = makeStyles((theme) => ({
         arrow: {
@@ -60,24 +62,27 @@ const RecipientChart = ({ classes }) => {
     ];
 
     let data = [];
-    recipientsReport.map(report => {
-        if (report.ReportSection === 2 && !Notifications.FeatureExist) {
-            return;
-        }
-        else {
-            data.push({
-                labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
-                datasets: [{
-                    data: [
-                        report.Active,
-                        report.Error,
-                        report.Removed
-                    ],
-                    borderWidth: 0,
-                }],
-            })
-        }
-    });
+    if (recipientsReport) {
+        recipientsReport.map(report => {
+            if (report.ReportSection === 2 && !Notifications.FeatureExist ||
+                report.ReportSection === 1 && !Sms.FeatureExist) {
+                return;
+            }
+            else {
+                data.push({
+                    labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
+                    datasets: [{
+                        data: [
+                            report.Active,
+                            report.Error,
+                            report.Removed
+                        ],
+                        borderWidth: 0,
+                    }],
+                })
+            }
+        });
+    }
 
     const renderCircleAdd = (innerTitle) => {
         return (
@@ -306,36 +311,72 @@ const RecipientChart = ({ classes }) => {
     }
 
     const renderChartsCarousel = () => {
+        if (!recipientsReport) {
+            return;
+        }
+
+        let totalRecipientsReport = 0;
+
+        if (recipientsReport) {
+            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+                return a + b["Total"];
+            }, 0);
+        }
+
         return (
             <Grid container dir={'ltr'} className={classes.carouselChart}>
-                {renderArrows(carouselItem, 2, setCarouselItem, classes.carouselArrows)}
-                <Carousel
-                    showIndicators={false}
-                    showStatus={false}
-                    showThumbs={false}
-                    showArrows={false}
-                    selectedItem={carouselItem}>
-                    {recipientsReport.map((report, index) => {
-                        if (report.ReportSection === 2 && !Notifications.FeatureExist) {
-                            return;
-                        }
-                        if (report.Total) {
-                            return renderDoughnut(report, index)
-                        }
-                        // else {
-                        //     return renderCircleAdd(titles[index])
-                        // }
-                    })}
-                </Carousel>
+                {recipientsReport && totalRecipientsReport > 0 ? renderArrows(carouselItem, 2, setCarouselItem, classes.carouselArrows) : null}
+                {recipientsReport && totalRecipientsReport > 0 ? (
+                    <Carousel
+                        showIndicators={false}
+                        showStatus={false}
+                        showThumbs={false}
+                        showArrows={false}
+                        selectedItem={carouselItem}>
+                        {recipientsReport.map((report, index) => {
+                            if (report.ReportSection === 2 && !Notifications.FeatureExist
+                                || report.ReportSection === 1 && !Sms.FeatureExist) {
+                                return;
+                            }
+                            if (report.Total) {
+                                return renderDoughnut(report, index)
+                            }
+                            // else {
+                            //     return renderCircleAdd(titles[index])
+                            // }
+                        })}
+                    </Carousel>) : (
+                    <ButtonWithTitle
+                        innerStyle={{ minHeight: 210 }}
+                        classes={classes}
+                        title={t("common.createFirstGroup")}
+                        buttonText={t("common.addRecipients")}
+                        redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+                        buttonClass={classes.createButton} />
+                )}
+
             </Grid>
         );
     };
 
     const renderCharts = () => {
+        if (!recipientsReport) {
+            return;
+        }
+
+        let totalRecipientsReport = 0;
+
+        if (recipientsReport) {
+            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+                return a + b["Total"];
+            }, 0);
+        }
+
         return (
             <Grid item container justify='space-evenly'>
-                {recipientsReport.map((report, index) => {
-                    if (report.ReportSection === 2 && !Notifications.FeatureExist) {
+                {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
+                    if (report.ReportSection === 2 && !Notifications.FeatureExist ||
+                        report.ReportSection === 1 && !Sms.FeatureExist) {
                         return;
                     }
                     if (report.Total) {
@@ -344,7 +385,15 @@ const RecipientChart = ({ classes }) => {
                     // else {
                     //     return renderCircleAdd(titles[index])
                     // }
-                })}
+                }) :
+                    <ButtonWithTitle
+                        innerStyle={{ minHeight: 210 }}
+                        classes={classes}
+                        title={t("common.createFirstGroup")}
+                        buttonText={t("common.addRecipients")}
+                        redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+                        buttonClass={classes.createButton} />
+                }
             </Grid>
         );
     };
@@ -373,6 +422,10 @@ const RecipientChart = ({ classes }) => {
             </Grid>
         );
     }
+    
+    let totalRecipient = recipientsReport && recipientsReport.reduce(function (a, b) {
+        return a + b["Total"];
+    }, 0);
 
     return (
         <Paper elevation={3} className={classes.dashboardTopPaper}>
@@ -383,14 +436,15 @@ const RecipientChart = ({ classes }) => {
                             className={clsx(classes.dInlineBlock, classes.dashboardTitle)}>
                             {t('dashboard.yourRecipients')}
                         </Typography>
-                        <BootstrapTooltip
-                        style={{color:'#000'}}
+                        {totalRecipient > 0 && <BootstrapTooltip
+                            style={{ color: '#000' }}
                             title={t('dashboard.chartTooltip')}
                             placement={"top"}>
-                            <IconButton aria-label={t('dashboard.chartTooltip')}>
-                                <BsInfoCircleFill />
-                            </IconButton>
-                        </BootstrapTooltip>
+                                <IconButton aria-label={t('dashboard.chartTooltip')}>
+                                    <BsInfoCircleFill />
+                                </IconButton>
+                            </BootstrapTooltip>
+                        }
                     </Box>
 
                     {/* <Typography

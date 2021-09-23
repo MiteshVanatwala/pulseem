@@ -14,7 +14,7 @@ export const getRecipientsReport = createAsyncThunk(
 export const recipientsReportSlice = createSlice({
     name: 'recipientReports',
     initialState: {
-        recipientsReport: [],
+        recipientsReport: null,
         recipientsReportError: ''
     },
     extraReducers: builder => {

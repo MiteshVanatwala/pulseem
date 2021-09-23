@@ -473,6 +473,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     alignCenter: 'center'
   },
+  justifyCenterOfCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center'
+  },
   spaceEvenly: {
     display: "flex",
     justifyContent: "space-evenly",
@@ -2465,7 +2472,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color:"#1771AD",
     borderRadius:"50%",
     padding:"10px",
-    display:"flex",
-   
+    display:"flex"
+  },
+  fullSize: {
+    height: '100%',
+    width: '100%'
+  },
+  spaceEvenly: {
+    justifyContent: 'space-evenly'
   }
 });

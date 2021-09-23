@@ -55,7 +55,7 @@ export const buySmsPackage = createAsyncThunk(
 export const dashboardSlice = createSlice({
   name: 'dashboard',
   initialState: {
-    lastCampaignReport: [],
+    lastCampaignReport: null,
     packagesDetails: [],
     accountAvailablePackages: [],
     tips: [],

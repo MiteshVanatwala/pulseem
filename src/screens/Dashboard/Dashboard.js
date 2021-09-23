@@ -26,7 +26,7 @@ const DashboardScreen = ({ classes }) => {
             <Grid item xs={12} sm={12} md={12} lg={4}>
               <BulkStatus classes={classes} />
             </Grid>
-            <Grid item xs={12} sm={12} md={12} lg={8}>
+            <Grid item xs={12} sm={12} md={12} lg={8} className={windowSize === "xs" ? classes.pt20 : null}>
               <RecipientChart classes={classes} />
             </Grid>
           </Grid>
@@ -39,12 +39,12 @@ const DashboardScreen = ({ classes }) => {
               />
             </Grid>
             <Grid item xs={12} sm={12} md={12} lg={9}>
-              {windowSize !== 'xs' && <LatestReports
+              <LatestReports
                 classes={classes}
                 windowSize={windowSize}
                 t={t}
                 isRTL={isRTL}
-              />}
+              />
             </Grid>
           </Grid>
         </Grid>
