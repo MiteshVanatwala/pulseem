@@ -282,6 +282,7 @@
   "PageName": "שם העמוד",
   "PublishedPosts": "פוסטים שפורסמו",
   "ScheduledDate": "תאריך מתזומן",
+  "ScheduledFor": "מתוזמן ל",
   "Comments": "תגובות",
   "FacebookManagment": "ניהול פייסבוק",
   "Name": "שם",
@@ -481,5 +482,7 @@
     "removed": "מוסרים"
   },
   "close": "סגור",
-  "settings": "הגדרות"
+  "settings": "הגדרות",
+  "createFirstGroup": "צור את הקבוצה הראשונה שלך!",
+  "addRecipients": "+ הוסף נמענים"
 }

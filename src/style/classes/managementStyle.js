@@ -215,8 +215,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   managmentIcon: {
     width: iconWidth[windowSize],
-    margin: 'auto',
-    marginTop: -10
+    margin: 'auto'
   },
   managmentUicon: {
     fontSize: 30,
@@ -973,7 +972,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   barContainer:
   {
-    width: "460px !important"
+    width: windowSize !== "xs" ? "460px !important" : "100%"
   },
   fontWrap: {
     fontSize: "10px",
@@ -1045,7 +1044,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 'bold',
     color: '#0371AD',
     marginTop: 10,
-    marginInlineStart: 30,
+    marginInlineStart: windowSize === "xs" ? 15 : 30,
     fontSize: 20
   },
   dashboardUsername: {
@@ -1143,6 +1142,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   lastReportsTabPanels: {
     paddingRight: 25,
     paddingLeft: 25
+  },
+  tabPanel: {
+    minHeight: 220,
+    marginTop: 20
   },
   lastReportPadding: {
     [theme.breakpoints.down('md')]: {

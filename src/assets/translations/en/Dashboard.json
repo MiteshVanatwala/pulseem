@@ -32,5 +32,7 @@
     "notificationManagement": "Notifications Management",
     "pageTitle": "Dashboard",
     "freeTrial": "Free Trial",
-    "chartTooltip": "Click on any section of the graph to see a list of your recipients"
+    "chartTooltip": "Click on any section of the graph to see a list of your recipients",
+    "createFirstNewsletter": "Create your first Newsletter",
+    "createFirstSms": "Create your first SMS"
   }

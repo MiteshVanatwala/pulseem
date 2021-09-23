@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import moment from 'moment'
-import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography, Tooltip, Link } from '@material-ui/core';
+import { Box, Grid, Avatar, Paper, Tab, Tabs, Typography, Tooltip, Link, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { Bar } from 'react-chartjs-2';
 import clsx from 'clsx';
@@ -9,6 +9,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { getLastCampaignReport } from '../../redux/reducers/dashboardSlice';
 import { HiUserGroup } from 'react-icons/hi';
 import { actionURL } from '../../config/index';
+import ButtonWithTitle from '../Buttons/ButtonWithTitle'
 
 const LatestReports = ({ classes, windowSize, t, isRTL }) => {
   const { lastCampaignReport } = useSelector(state => state.dashboard);
@@ -36,7 +37,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
     dispatch(getLastCampaignReport());
   }
 
-  useEffect(initData, [dispatch])
+  useEffect(initData, [dispatch]);
 
   const barOptions = {
     responsive: true,
@@ -94,8 +95,8 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
   };
 
   let reports = {
-    newsletter: lastCampaignReport.filter(report => report.ReportSection === 0) || null,
-    sms: lastCampaignReport.filter(report => report.ReportSection === 1) || null
+    newsletter: lastCampaignReport ? lastCampaignReport.filter(report => report.ReportSection === 0) : null,
+    sms: lastCampaignReport ? lastCampaignReport.filter(report => report.ReportSection === 1) : null
   }
 
   const { newsletter = null, sms = null } = reports || {};
@@ -123,6 +124,9 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
   }
 
   const renderTab = (tabType) => {
+    if (!lastCampaignReport) {
+      return;
+    }
     const innerData = tabType === "newsletter" ? reports.newsletter : reports.sms;
     const labels = [];
     const datasets = [];
@@ -183,16 +187,18 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
       }
     }
 
+    const showGraphs = innerData && (innerData.length > 0);
+
     return (
       <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel_${tabType}`}>
-        <Grid container justify={'space-between'}>
-          <Grid item lg={4} className={tabType !== "newsletter" ? classes.flexSpaceBetweenVertical : null}>
+        <Grid container justify={'space-between'} className={!showGraphs ? classes.tabPanel : null}>
+          <Grid item lg={showGraphs ? 4 : 12} xs={12} className={tabType !== "newsletter" ? classes.flexSpaceBetweenVertical : null}>
             {
-              innerData.map((c, index) => {
+              showGraphs ? (innerData.map((c, index) => {
                 const campaignLink = tabType === 'newsletter' ? `${actionURL}CampaignStatistics.aspx?CampaignID=${c.CampaignID}` : `${actionURL}SMSMainReport.aspx?name=${c.CampaignName}`;
                 return (
                   <Grid container className={clsx(tabType === "newsletter" ? classes.mb25 : null, tabType === "newsletter" ? classes.mt25 : null)} key={`${c.CampaignName}_${index}`}>
-                    <Grid item lg={12}>
+                    <Grid item lg={12} xs={12}>
                       <Box style={{ display: 'flex', alignItems: 'center' }}>
                         <BootstrapTooltip title={c.CampaignName} placement="top">
                           <Link href={campaignLink} className={clsx(classes.dInlineBlock, classes.ellipsisText, classes.graphCampaignName)}>
@@ -212,14 +218,23 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
                     </Grid>
                   </Grid>
                 )
-              })
+              })) :
+                (
+                  <ButtonWithTitle
+                    classes={classes}
+                    title={tabType === 'newsletter' ? t("dashboard.createFirstNewsletter") : t("dashboard.createFirstSms")}
+                    buttonText={tabType === 'newsletter' ? t('common.CreateNewsletter') : t('sms.create')}
+                    redirect={tabType === 'newsletter' ? `/Pulseem/Editor/CampaignInfo?new=1&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+                    buttonClass={classes.createButton} />
+                )
             }
           </Grid>
-          <Grid item lg={8}>
+          {showGraphs && <Grid item lg={8} xs={12}>
             <Box className={classes.barChart}>
               <Bar data={reportData.data} options={barOptions} className={classes.barContainer} />
             </Box>
           </Grid>
+          }
         </Grid>
       </TabPanel>
     );
@@ -251,7 +266,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
           <Tabs
             value={tabValue}
             onChange={(e, value) => handleTabValue(value)}
-            className={classes.mr15}
+            className={clsx(classes.mr15, classes.ml15)}
             classes={{ indicator: classes.hideIndicator }}
           >
             <Tab label={t('appBar.newsletter.title')} classes={{ root: classes.tabText, selected: classes.activeTab }} />

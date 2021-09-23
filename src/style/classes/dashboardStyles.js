@@ -168,5 +168,17 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     },
     transitionElem: {
         transition: ' ease-in-out .4s'
+    },
+    tabTitle: {
+        color: '#006996',
+        fontSize: 32,
+        textAlign: 'center',
+        lineHeight: '1.1'
+    },
+    createButton: {
+        backgroundColor: '#27AE60',
+        '&:hover': {
+            backgroundColor: '#219150'
+        }
     }
 });
