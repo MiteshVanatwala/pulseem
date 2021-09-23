@@ -16,6 +16,8 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Emoj from "../../../assets/images/smile.png";
 import { FaCheck } from "react-icons/fa";
+import { BsArrowClockwise } from "react-icons/bs";
+
 import { useHistory } from "react-router";
 import {
   getPreviousCampaignData,
@@ -1321,7 +1323,7 @@ const SmsCreator = ({ classes, ...props }) => {
         open={dialogClickLanding}
         onClose={handleCloseLanding}
         showDefaultButtons={false}
-        icon={<FaUndoAlt style={{ fontSize: 30, color: "#fff" }} />}
+        icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
       >
         <div style={{ height: "60px", borderBottom: "1px solid black" }}>
           <span className={classes.groupName}>{t("mainReport.selectLanding")}</span>
@@ -1392,7 +1394,7 @@ const SmsCreator = ({ classes, ...props }) => {
            open={dialogClickCampaign}
            onClose={handleCloseCampaign}
            showDefaultButtons={false}
-           icon={<FaUndoAlt style={{ fontSize: 30, color: "#fff" }} />}
+           icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
          >
            <div style={{ height: "60px", borderBottom: "1px solid black" }}>
              <span className={classes.groupName}>{t("mainReport.selectCamp")}</span>
