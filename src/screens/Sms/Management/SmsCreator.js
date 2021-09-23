@@ -145,7 +145,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [summary, setsummary] = useState(false);
   const [total, settotal] = useState(0);
   const [temp, settemp] = useState([]);
-  const [selectValue, setselectValue] = useState("");
+  const [selectValue, setselectValue] = useState("Personilization");
   const [finalApi, setfinalApi] = useState(false);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
@@ -281,13 +281,6 @@ const SmsCreator = ({ classes, ...props }) => {
         setcampaignNumber(response.payload.FromNumber)
         setmessageCount(response.payload.CreditsPerSms);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
-        // setSmsModel({
-        //   ...model,
-        //   Name: response.payload.Name,
-        //   Text: response.payload.Text,
-        //   FromNumber: response.payload.FromNumber,
-        //   CreditsPerSms: response.payload.CreditsPerSms
-        // });
       }
     }
   }
@@ -661,6 +654,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     value={selectValue}
                     onChange={handleSelectChange}
                   >
+                    <option disabled value="Personilization">Personilization</option>
                     {Object.keys(extraData).map((item, i) => {
                       return <option value={extraData[item]} key={`extrakey_${i}`}>{item}</option>;
                     })}
@@ -928,7 +922,7 @@ const SmsCreator = ({ classes, ...props }) => {
           <span className={classes.rightInput3} onClick={onHandleDelete}>
             <BsTrash style={{ fontSize: "25" }} />
           </span>
-          <span className={classes.rightInput4} onClick={clickExit}>
+          <span className={classes.rightInput4} onClick={() => {setexitClick(true)}}>
             {t("mainReport.exitSms")}
           </span>
           <span
@@ -1203,8 +1197,9 @@ const SmsCreator = ({ classes, ...props }) => {
           <Dialog
             classes={classes}
             open={exitClick}
-            onClose={handleExit(false)}
-            onConfirm={handleExit(true)}
+            onClose={() => {setexitClick(false)}}
+            onConfirm={() => {handleExit(true)}}
+            onCancel={ () => {handleExit(false)}}
             confirmText="Yes"
             cancelText="No"
             showDefaultButtons={true}
@@ -1268,15 +1263,23 @@ const SmsCreator = ({ classes, ...props }) => {
       </>
     );
   };
-  const handleExit = (saveBeforeExit) => {
-    setexitClick(false);
-    // if(saveBeforeExit){
-
-    // }
-    // else{
-    //   //todo: exit
-    // }
-    // window.location.href = "/react/SMSCampaigns";
+  const handleExit = async (saveBeforeExit) => {
+   
+    if(saveBeforeExit){
+      const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg  }
+      let r = await dispatch(smsSave(payloadToPush));
+      if(r)
+      {
+        setexitClick(false);
+        window.location.href = "/react/SMSCampaigns";
+      }
+    }
+    else
+    {
+      setexitClick(false);
+      window.location.href = "/react/SMSCampaigns";
+    }
+    
   };
 
   const renderSummary = () => {
