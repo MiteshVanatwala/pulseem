@@ -274,7 +274,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
-      console.log("----->",response);
       if (response) {
         setcampaignName(response.payload.Name);
         setmsg(response.payload.Text)
@@ -432,7 +431,6 @@ const SmsCreator = ({ classes, ...props }) => {
           <TextField
             id="outlined-basic"
             type="text"
-            placeholder="0508085670"
             className={clsx(classes.buttonField, classes.success)}
             onChange={onCampaignNumber}
             value={campaignNumber}
@@ -660,12 +658,13 @@ const SmsCreator = ({ classes, ...props }) => {
                     })}
                   </select>
                 </Box>
-                <Box className={classes.addDiv}>
-                  <Typography
+                <Box className={classes.addDiv} >
+                  <Typography tabindex="0"
                     className={classes.addButtons}
                     onClick={() => {
                       seteditmenuClick(!editmenuClick);
                     }}
+                    onBlur={() => {seteditmenuClick(false)}}
                   >
                     <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
                     {t("mainReport.add")}
@@ -1246,7 +1245,7 @@ const SmsCreator = ({ classes, ...props }) => {
             onConfirm={handlecaution}
             confirmText={t("mainReport.confirmSms")}
             onCancel={handlecautioncancel}
-            cancelText="Cancel"
+            cancelText={t("mainReport.cancelPleaseNoteModal")}
             showDefaultButtons={true}
             icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
           >

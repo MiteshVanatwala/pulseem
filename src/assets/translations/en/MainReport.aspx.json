@@ -473,8 +473,8 @@
   "keepDesc":"Turning this switch on will convert your links to a special 35-character link, saving space in your message",
   "testSend":"Test Send",
   "testDesc":"Right after you click send",
-  "sendToOne":"Send to one Contact",
-  "sendToGroups":"Send to one Test Groups",
+  "sendToOne":"Send to one contact",
+  "sendToGroups":"Send to one test groups",
   "typeText" : "Type Text",
   "char":"Char",
   "message":"message",
@@ -484,8 +484,8 @@
   "add":"ADD",
   "toolTip1":"Create the content you want to send to your recipients and then choose how, when and to whom to send",
   "send":"SEND",
-  "enterPhone":"Enter Phone Number",
-  "ChooseLinks":"Choose Groups from Links",
+  "enterPhone":"Enter phone number",
+  "ChooseLinks":"Choose Groups from links",
   "continue":"Continue",
   "fieldInvalid":" The following fields are invalid",
   "campaignRequire":" Campaign Name - Required field",
@@ -506,7 +506,8 @@
   "deleteCamp":"Delete Campaign",
   "confirmSure":"Are you sure?",
   "pleaseNoteDsec":"You have changed the number assigned to you by the Pulseem platform for this campaign. The recipients won’t be able to unsubscribe from your SMS distribution list through a removal message. You can add a removal link instead or revert to your original number.",
-  "pleaseNote":"Please Note!"
+  "pleaseNote":"Please Note!",
+  "cancelPleaseNoteModal":"Cancel"
   
 
 }

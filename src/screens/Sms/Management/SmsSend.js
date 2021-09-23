@@ -128,7 +128,7 @@ const useStyle = makeStyles((theme) => ({
 
 const SmsSend = ({classes , ...props }) => {
   const { t } = useTranslation();
-  document.title = t("sms.sendPageTitle")
+  // document.title = t("sms.pageTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const tabi = useStyle();

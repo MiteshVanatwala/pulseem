@@ -480,5 +480,18 @@
   "verificationSuccessMessage": "From now on you can send SMS from this number without needing to re-do this process",
   "quickSendSuccess": "Quick sent Succefully",
   "pageTitle":"Create SMS | Pulseem System",
-  "sendPageTitle": "Send SMS | Pulseem System"
+  "sendPageTitle": "Send SMS | Pulseem System",
+  "smsSummaryDialogTitle" : "Campaign Summary",
+  "smsSummaryCampaignFrom" : "Campaign From",
+  "smsDialogWhen":"When",
+  "smsDialogFor":"For",
+  "smsSummaryDialogTotalRecipients" : "Total Number of Recipients",
+  "smsSummaryDetails" : "Details",
+  "smsSummaryClose" : "Close",
+  "smsSummaryGroups" : "Groups",
+  "smsSummaryRecipientsFilter":"Recipients Filter",
+  "filterDuplicateRecipients" : "Duplicate Recipients",
+  "filterRemoved" : "Removed",
+  "filterEmptyNumbers"  : "Empty numbers",
+  "filterInvalid" : "Invalid"
 }
