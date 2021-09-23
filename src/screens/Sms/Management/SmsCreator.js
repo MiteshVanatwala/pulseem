@@ -8,7 +8,6 @@ import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
 import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
-import InsertEmoticonIcon from "@material-ui/icons/InsertEmoticon";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Picker from "emoji-picker-react";
@@ -16,7 +15,6 @@ import Mobile from "../../../assets/images/mobileiphone.png";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Emoj from "../../../assets/images/smile.png";
-import { withStyles } from "@material-ui/core/styles";
 import { FaCheck } from "react-icons/fa";
 import { useHistory } from "react-router";
 import {
@@ -37,7 +35,6 @@ import {
   getCommonFeatures
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
-import { GrDocument } from "react-icons/gr";
 import { FaUndoAlt } from "react-icons/fa";
 import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
@@ -95,7 +92,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const history = useHistory();
   const dispatch = useDispatch();
-  const { language, windowSize, isRTL, rowsPerPage } = useSelector(
+  const { language, windowSize, isRTL} = useSelector(
     (state) => state.core
   );
   const {
@@ -104,8 +101,6 @@ const SmsCreator = ({ classes, ...props }) => {
     extraData,
     accountId,
     getCampaignSum,
-    testGroups,
-    commonSettings,
     smsSendResult
   } = useSelector((state) => state.sms);
 
@@ -113,35 +108,29 @@ const SmsCreator = ({ classes, ...props }) => {
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [flagemoji, setflagemoji] = useState(false);
   const [checked, setChecked] = React.useState(false);
-  const [dialogClick, setdialogClick] = useState(false);
   const [dialogClickLanding, setdialogClickLanding] = useState(false);
   const [dialogClickCampaign, setdialogClickCampaign] = useState(false);
   const [editmenuClick, seteditmenuClick] = useState(false);
   const [campaignBool, setcampaignBool] = useState(false);
   const [restoreBool, setrestoreBool] = useState(false);
-  const [exit, setexit] = useState(true);
-  const [deleteClick, setdeleteClick] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [save, setsave] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [campaignName, setcampaignName] = useState("");
   const [campaignNumber, setcampaignNumber] = useState("");
-  const [campaignNumBool, setcampaignNumBool] = useState(false);
   const [characterCount, setcharacterCount] = useState(0);
   const [linkCount, setlinkCount] = useState(0);
   const [counterBool, setcounterBool] = useState(false);
   const [messageCount, setmessageCount] = useState(0);
   const [msg, setmsg] = useState(null);
-  const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] =
-    useState(false);
+  const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] = useState(false);
   const [radioBtn, setradioBtn] = useState("top");
-  const [previousData, setpreviousData] = useState([]);
   const [landingSearch, setlandingSearch] = useState("");
   const [CampaignSearch, setCampaignSearch] = useState("");
   const [removalLinkDisabled, setremovalLinkDisabled] = useState(false);
   const [waize, setwaize] = useState(false);
   const [contactGroup, setcontactGroup] = useState(false);
   const [ContactSearch, setContactSearch] = useState("");
-  const [select, setselect] = useState(false);
   const [cancel, setcancel] = useState(true);
   const [exitClick, setexitClick] = useState(false);
   const [phone, setphone] = useState("");
@@ -150,7 +139,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [selectedGroup, setselectedGroup] = useState([]);
   const [hidden, sethidden] = useState(false);
   const [Searched, setSearched] = useState("");
-  const [caution, setcaution] = useState(false);
   const [modalOpen, setmodalOpen] = useState(false);
   const [storedValue, setstoredValue] = useState("");
   const [keep, setkeep] = useState(true);
@@ -158,7 +146,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [total, settotal] = useState(0);
   const [temp, settemp] = useState([]);
   const [selectValue, setselectValue] = useState("");
-  const [uniqueId, setuniqueId] = useState(null);
   const [finalApi, setfinalApi] = useState(false);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
@@ -180,8 +167,29 @@ const SmsCreator = ({ classes, ...props }) => {
     TestGroupsIds: temp,
     Text: msg,
     Type: 0,
-    UpdateDate: 1630325875398,
+    UpdateDate: Date.now(),
   });
+  const [quickSendPayload, setquickSendPayload] = useState({
+          SMSCampaignID: "",
+          SubAccountID: -1,
+          Status: -1,
+          Type: 0,
+          CreditsPerSms: "1",
+          UpdateDate: 1628770145467,
+          Name: campaignName,
+          FromNumber: campaignNumber,
+          Text: msg,
+          ResponseToEmail: "",
+          IsTestCampaign: false,
+          IsResponse: false,
+          IsLinksStatistics: true,
+          SendDate: Date.now(),
+          SendingMethod: 0,
+          IsTest: false,
+          PhoneNumber: phone,
+          MessageLength: "1"
+
+  })
 
   const handleSendResult = async () => {
     if (smsSendResult) {
@@ -218,14 +226,18 @@ const SmsCreator = ({ classes, ...props }) => {
   }, [smsSendResult]);
 
   const onApiCall = async () => {
-    const smsSendData = {
-      SmsCampaignID: -1,
-      SubAccountID: -1,
-      AccountID: -1,
-      Credits: 1,
-      TotalRecipients: 0
+    let temp = [];
+    let tempfull = [];
+    for (let i = 0; i < selectedGroup.length; i++) {
+      if (selectedGroup[i].selected) {
+        temp.push(selectedGroup[i].GroupID);
+        tempfull.push(selectedGroup[i]);
+       
+      }
     }
-    await dispatch(smsQuick(smsSendData));
+    settemp(tempfull);
+    const FinalPayloadData = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text: msg , TestGroupsIds : temp }
+    await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
     setsummary(false);
   };
@@ -262,6 +274,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
+      console.log("----->",response);
       if (response) {
         setcampaignName(response.payload.Name);
         setmsg(response.payload.Text)
@@ -370,27 +383,8 @@ const SmsCreator = ({ classes, ...props }) => {
   const handleSend = () => {
     if (validationCheck()) {
       if (phone !== "") {
-        let payload = {
-          SMSCampaignID: "",
-          SubAccountID: -1,
-          Status: -1,
-          Type: 0,
-          CreditsPerSms: "1",
-          UpdateDate: 1628770145467,
-          Name: campaignName,
-          FromNumber: "0508085679",
-          Text: msg,
-          ResponseToEmail: "",
-          IsTestCampaign: false,
-          IsResponse: false,
-          IsLinksStatistics: true,
-          SendDate: Date.now(),
-          SendingMethod: 0,
-          IsTest: false,
-          PhoneNumber: phone,
-          MessageLength: "1"
-        };
-        dispatch(smsQuick(smsModel));
+        const smsQuickSendData = {...quickSendPayload , fromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg }
+        dispatch(smsQuick(smsQuickSendData));
       } else {
         setOpenS(true);
       }
@@ -508,8 +502,6 @@ const SmsCreator = ({ classes, ...props }) => {
       setlinkCount(0);
     }
     let response = await dispatch(getCreditsforSMS(e.target.value.length));
-
-    console.log("----->response", JSON.stringify(response));
     setmessageCount(count);
   };
 
@@ -975,29 +967,13 @@ const SmsCreator = ({ classes, ...props }) => {
     setexitClick(true);
   };
   const onHandleDelete = () => {
-    setdeleteClick(true);
+    setDeleteModalOpen(true);
   };
 
   const onContinueClick = async (isSave) => {
     if (validationCheck()) {
-      let payload = {
-        CreditsPerSms: "1",
-        FromNumber: campaignNumber,
-        IsLinksStatistics: true,
-        IsResponse: false,
-        IsTestCampaign: false,
-        Name: campaignName,
-        ResponseToEmail: "",
-        SMSCampaignID: -1,
-        SendDate: Date.now(),
-        SendingMethod: 0,
-        Status: 1,
-        SubAccountID: -1,
-        Text: msg,
-        Type: 0,
-        UpdateDate: 1628755539174,
-      };
-      let r = await dispatch(smsSave(payload));
+      const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg  }
+      let r = await dispatch(smsSave(payloadToPush));
       if (isSave) {
         history.push(`/sms/edit/${r.payload.Message}`);
       } else {
@@ -1008,7 +984,7 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleClose = () => {
-    setdeleteClick(false);
+    setDeleteModalOpen(false);
   };
   const handleCloseSave = () => {
     setsave(false);
@@ -1073,74 +1049,47 @@ const SmsCreator = ({ classes, ...props }) => {
         history.push("/SMSCampaigns");
       }
     }
-    // if (window.location.pathname.includes("/react/sms/edit")) {
-    //   let retrieveCampaignId = window.location.pathname.split("/");
-    //   let response = await dispatch(getSmsByID(retrieveCampaignId[4]))
-    //   if (response) {
-    //     dispatch(deleteSms(response.payload.SMSCampaignID));
-    //     handleClose();
-    //     history.push("/SMSCampaigns");
-    //   }
-    // }
     else {
       dispatch(deleteSms(-1));
       handleClose();
       history.push("/SMSCampaigns");
     }
-
-
-  };
-
-  const makeArr = (id) => {
-    let arr = [];
   };
 
   const handleGroupClose = async () => {
     if (campaignName !== "" && msg !== "") {
+      
+      let temp = [];
+      let tempfull = [];
+      let num = 0;
+      for (let i = 0; i < selectedGroup.length; i++) {
+        if (selectedGroup[i].selected) {
+          temp.push(selectedGroup[i].GroupID);
+          tempfull.push(selectedGroup[i]);
+          ++num;
+        }
+      }
+      settotal(num);
+      settemp(tempfull);
+      const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg , TestGroupsIds : temp }
+      let r = await dispatch(smsSave(payloadToPush));
+      
+      let payload2 = {
+        IsTestGroups: true,
+        SMSCampaignID: r.payload.Message,
+        TestGroupsIds: temp,
+      };
+  
+      let r2 = await dispatch(smsSaveGroup(payload2));
+      await dispatch(getCampaignSumm(r.payload.Message));
       setsummary(true);
     }
-
     setsave(false);
     sethidden(true);
     setcontactGroup(false);
-    let payload = {
-      CreditsPerSms: "1",
-      FromNumber: campaignNumber,
-      IsLinksStatistics: true,
-      IsResponse: false,
-      IsTestCampaign: false,
-      Name: campaignName,
-      ResponseToEmail: "",
-      SMSCampaignID: -1,
-      SendDate: Date.now(),
-      SendingMethod: 0,
-      Status: 1,
-      SubAccountID: -1,
-      Text: msg,
-      Type: 0,
-      UpdateDate: 1628755539174,
-    };
-    let r = await dispatch(smsSave(payload));
-    let temp = [];
-    let tempfull = [];
-    let num = 0;
-    for (let i = 0; i < selectedGroup.length; i++) {
-      if (selectedGroup[i].selected) {
-        temp.push(selectedGroup[i].GroupID);
-        tempfull.push(selectedGroup[i]);
-        ++num;
-      }
-    }
-    settotal(num);
-    settemp(tempfull);
-    let payload2 = {
-      IsTestGroups: true,
-      SMSCampaignID: r.payload.Message,
-      TestGroupsIds: temp,
-    };
-
-    let r2 = await dispatch(smsSaveGroup(payload2));
-    await dispatch(getCampaignSumm(r.payload.Message));
+    
+    
+   
   };
   const renderSendGroup = () => {
     return (
@@ -1550,10 +1499,10 @@ const SmsCreator = ({ classes, ...props }) => {
   const renderDeleteModal = () =>
   {
    return( <>
-    {deleteClick ? (
+    {deleteModalOpen ? (
         <Dialog
           classes={classes}
-          open={deleteClick}
+          open={deleteModalOpen}
           onClose={handleClose}
           onCancel={cancel ? null : true}
           onConfirm={handleDelete}
