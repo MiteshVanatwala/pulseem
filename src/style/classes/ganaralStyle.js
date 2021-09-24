@@ -771,7 +771,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    borderRight: "1px solid black",
+    height:"100%",
+    borderInlineEnd: "1px solid black",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
       paddingInlineEnd: "8px",
@@ -820,8 +821,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   selectMsg: {
     marginInlineStart: "3px",
-    height: "40px",
-    marginInlineEnd: "2px",
+    height: "100%",
+    borderInlineEnd : "1px solid black",
+    display:"flex",
+    alignItems:"center",
     "@media screen and (max-width: 768px)": {
       borderRight: "none",
     },
@@ -838,6 +841,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     padding: "10px",
     width: "100%",
+    marginInlineEnd:"5px",
     borderRadius: "5px",
     borderColor: "#1c82b2",
     "@media screen and (max-width: 768px)": {
@@ -1160,19 +1164,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "12px",
     maxHeight: "230px",
     overflowY: "auto",
-    overflowX: "hidden",
-    backgroundAttachment: 'fixed',
+    // overflowX: "hidden",
     width: '260px',
     minHeight: '40px',
     wordBreak: 'break-all',
-    '&::-webkit-scrollbar': {
-      width: "0px",
-      background: "transparent"
-    },
-    '&::-webkit-scrollbar-thumb':
-    {
-      background: "transparent"
-    }
   },
   wrapChatSumm:
   {
@@ -1618,7 +1613,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    borderRight: "1px solid black",
+    height:"100%",
+    borderInlineEnd: "1px solid black",
     paddingInlineEnd: "0",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
@@ -1628,8 +1624,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   emojiHe: {
     display: "flex",
     alignItems: "center",
-    // borderRight: "1px solid black",
+    borderInlineEnd: "1px solid black",
     paddingInlineStart: "8px",
+    height:"100%",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
       // borderRight: "1px solid black",
@@ -1650,6 +1647,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    height:"100%",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column-reverse",
       // borderRight: "1px solid black",

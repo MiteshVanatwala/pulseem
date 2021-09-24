@@ -507,7 +507,24 @@
   "confirmSure":"Are you sure?",
   "pleaseNoteDsec":"You have changed the number assigned to you by the Pulseem platform for this campaign. The recipients won’t be able to unsubscribe from your SMS distribution list through a removal message. You can add a removal link instead or revert to your original number.",
   "pleaseNote":"Please Note!",
-  "cancelPleaseNoteModal":"Cancel"
+  "cancelPleaseNoteModal":"Cancel",
+  "alignToLeft":"Align text to the left",
+  "aligntoRight":"Align text to the right",
+  "emoji":"Add Emoji",
+  "removalMsgTooltip":"Add removal message",
+  "removalLinkTooltip":"Add removal link",
+  "selectTooltip":"Add personalization",
+  "addVariantsTooltip":"More options",
+  "personalisationSelect":"Personalization",
+  "typeAddress":"Type Address",
+  "deleteSms":"Delete Campaign",
+  "campaignFromRequire":"Campaign From - Required field",
+  "selectGroups":"Select group for test sending",
+  "handleExitTitle" : "Leave Campaign Creation",
+  "leaveCampaign":"Would you like to save your changes before exiting?",
+  "Ok":"Yes",
+  "No":"No"
+  
   
 
 }

@@ -69,7 +69,7 @@ export const getCreditsforSMS = createAsyncThunk(
   'smsCampaign/GetCreditsForSms', async (count, thunkAPI) => {
     try {
       const response = await instence.get(`smsCampaign/GetCreditsForSms/${count}`);
-      return JSON.parse(response.data)
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }

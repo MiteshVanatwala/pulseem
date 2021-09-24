@@ -46,7 +46,7 @@ import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlineDelete, AiOutlinePlusCircle , AiOutlineFile } from "react-icons/ai";
+import { AiOutlineExclamationCircle, AiOutlineDelete, AiOutlinePlusCircle , AiOutlineFile ,AiOutlineAlignLeft } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -145,6 +145,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [storedValue, setstoredValue] = useState("");
   const [keep, setkeep] = useState(true);
   const [summary, setsummary] = useState(false);
+  const [campaignNumberValidated, setcampaignNumberValidated] = useState(false);
   const [total, settotal] = useState(0);
   const [temp, settemp] = useState([]);
   const [selectValue, setselectValue] = useState("Personilization");
@@ -289,13 +290,16 @@ const SmsCreator = ({ classes, ...props }) => {
     getSavedData();
   }, [])
 
-  const onEmojiClick = (event, emojiObject) => {
+  const onEmojiClick = async (event, emojiObject) => {
     let msgs = msg;
     let count = characterCount;
     count++;
     setcharacterCount(count);
     setChosenEmoji(emojiObject);
     setflagemoji(false);
+    let response = await dispatch(getCreditsforSMS(count));
+    let credits = response.payload.split("#");
+    setmessageCount(credits[0]);
     setmsg(msgs + emojiObject.emoji);
   };
 
@@ -344,6 +348,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const onCampaignNumber = (e) => {
     setcampaignNumber(e.target.value);
+    setcampaignNumberValidated(false);
   };
 
   const validationCheck = () => {
@@ -353,7 +358,14 @@ const SmsCreator = ({ classes, ...props }) => {
       return false;
     }
 
-    if (msg === "") {
+    if (msg === null) {
+      setsave(true);
+      return false;
+    }
+
+    if(campaignNumber === "")
+    {
+      setcampaignNumberValidated(true);
       setsave(true);
       return false;
     }
@@ -406,7 +418,7 @@ const SmsCreator = ({ classes, ...props }) => {
             className={
               campaignBool
                 ? clsx(classes.buttonField, classes.error)
-                : clsx(classes.buttonField)
+                : clsx(classes.buttonField, classes.success)
             }
             onChange={onCamppaignChange}
             value={campaignName}
@@ -433,7 +445,11 @@ const SmsCreator = ({ classes, ...props }) => {
           <TextField
             id="outlined-basic"
             type="text"
-            className={clsx(classes.buttonField, classes.success)}
+            className={
+              campaignNumberValidated
+                ? clsx(classes.buttonField, classes.error)
+                : clsx(classes.buttonField , classes.success)
+            }
             onChange={onCampaignNumber}
             value={campaignNumber}
             onBlur={onLeave}
@@ -494,32 +510,46 @@ const SmsCreator = ({ classes, ...props }) => {
     } else {
       setlinkCount(0);
     }
-    let response = await dispatch(getCreditsforSMS(e.target.value.length));
-    console.log("msg credit response",response)
-    setmessageCount(count);
+    
+      let response = await dispatch(getCreditsforSMS(e.target.value.length));
+      let credits = response.payload.split("#");
+      setmessageCount(credits[0]);
+
   };
 
-  const onRemovalLink = () => {
+  const onRemovalLink = async () => {
     let newLink = "";
     newLink = msg + "##SmsUnsubscribeURL##";
     setmsg(newLink);
     setcharacterCount(newLink.length);
+    let response = await dispatch(getCreditsforSMS(newLink.length));
+    let credits = response.payload.split("#");
+   
+    setmessageCount(credits[0]);
     setremovalLinkDisabled(true);
   };
 
-  const onRemovalMsg = () => {
+  const onRemovalMsg = async () => {
     let newMsg = "";
     newMsg = msg + "To unsubscribe reply 282";
     setmsg(newMsg);
     setcharacterCount(newMsg.length);
+    let response = await dispatch(getCreditsforSMS(newMsg.length));
+    let credits = response.payload.split("#");
+  
+    setmessageCount(credits[0]);
     setremovalMessageButtonDisabled(true);
   };
 
-  const handleSelectChange = (e) => {
+  const handleSelectChange =  async (e) => {
     setselectValue(e.target.value);
     let linkMsg = "";
     linkMsg = msg + e.target.value;
     setmsg(linkMsg);
+    let response = await dispatch(getCreditsforSMS(e.target.value.length));
+    let credits = response.payload.split("#");
+  
+    setmessageCount(credits[0]);
     setcharacterCount(linkMsg.length);
   };
 
@@ -557,50 +587,55 @@ const SmsCreator = ({ classes, ...props }) => {
                 className={isRTL ? classes.emojiHe : classes.emoji}
               >
                 {isRTL ? (
-                  <ToggleButtonGroup
-                    value={alignment}
-                    exclusive
-                    onChange={handleAlignment}
-                    aria-label="text alignment"
+                       <>
+                         <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.aligntoRight")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-start"
+                    arrow
                   >
-                    <ToggleButton value="right" aria-label="right aligned">
-                      <FormatAlignRightIcon />
-                    </ToggleButton>
-                    <ToggleButton
-                      value="left"
-                      aria-label="left aligned"
-                      style={{
-                        borderLeft: "1px solid #D5D5D5",
-                        marginInlineEnd: "4px",
-                      }}
-                    >
-                      <FormatAlignLeftIcon />
-                    </ToggleButton>
-                  </ToggleButtonGroup>
+                        <FormatAlignRightIcon style={{marginInlineEnd:"4px"}} onClick={() => {handleToggleClick("right")}}/>
+                        </Tooltip>
+                        <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.alignToLeft")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-start"
+                    arrow
+                  >
+                       <FormatAlignLeftIcon   onClick={() => {handleToggleClick("left")}}/>
+                    
+                      </Tooltip>
+                    
+                     
+                      
+                       </>
                 ) : (
-                  <ToggleButtonGroup
-                    value={alignment}
-                    exclusive
-                    onChange={handleAlignment}
-                    aria-label="text alignment"
-
+                
+          <>
+            <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.alignToLeft")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-start"
+                    arrow
                   >
-                    <ToggleButton value="left" aria-label="left aligned" style={{ width: "40px", height: "40px" }}>
-                      <FormatAlignLeftIcon />
-                    </ToggleButton>
-
-                    <ToggleButton
-                      value="right"
-                      aria-label="right aligned"
-                      style={{
-                        borderRight: "1px solid #D5D5D5",
-                        marginInlineEnd: "4px",
-                        width: "40px", height: "40px"
-                      }}
-                    >
-                      <FormatAlignRightIcon />
-                    </ToggleButton>
-                  </ToggleButtonGroup>
+                      <FormatAlignLeftIcon  style={{marginInlineEnd:"4px"}} onClick={() => {handleToggleClick("left")}}/>
+                   
+          </Tooltip>
+                   
+          <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.aligntoRight")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-start"
+                    arrow
+                  >
+                      <FormatAlignRightIcon  onClick={() => {handleToggleClick("right")}}/>
+                      </Tooltip>
+                      </>
+                  
                 )}
                 <Box className={classes.pickerEmoji}>
                   {flagemoji ? (
@@ -614,9 +649,10 @@ const SmsCreator = ({ classes, ...props }) => {
 
                   <Tooltip
                     disableFocusListener
-                    title="Add Emoji"
+                    title={t("mainReport.emoji")}
                     classes={{ tooltip: styles.customWidth }}
                     placement="top-start"
+                    arrow
                   >
                     <img
                       src={Emoj}
@@ -633,6 +669,13 @@ const SmsCreator = ({ classes, ...props }) => {
                 </Box>
               </Box>
               <Box className={classes.baseButtons}>
+              <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.removalMsgTooltip")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-center"
+                    arrow
+                  >
                 <Typography
                   className={classes.infoButtons}
                   onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
@@ -640,6 +683,14 @@ const SmsCreator = ({ classes, ...props }) => {
                   <Typography className={classes.editorLink}>+</Typography>
                   {t("mainReport.removalMsg")}
                 </Typography>
+                </Tooltip>
+                <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.removalLinkTooltip")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-center"
+                    arrow
+                  >
                 <Typography
                   className={classes.info2Buttons}
                   onClick={removalLinkDisabled ? null : onRemovalLink}
@@ -647,21 +698,37 @@ const SmsCreator = ({ classes, ...props }) => {
                   <Typography className={classes.editorLink}>+</Typography>
                   {t("mainReport.removalLink")}
                 </Typography>
+                </Tooltip>
               </Box>
               <Box className={classes.endButtons}>
                 <Box className={classes.selectMsg}>
+                <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.selectTooltip")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-center"
+                    arrow
+                  >
                   <select
                     className={classes.selectVal}
                     value={selectValue}
                     onChange={handleSelectChange}
                   >
-                    <option disabled value="Personilization">Personilization</option>
+                    <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
                     {Object.keys(extraData).map((item, i) => {
                       return <option value={extraData[item]} key={`extrakey_${i}`}>{item}</option>;
                     })}
                   </select>
+                  </Tooltip>
                 </Box>
                 <Box className={classes.addDiv} tabindex="0" onBlur={() => {seteditmenuClick(false)}}>
+                <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.addVariantsTooltip")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-center"
+                    arrow
+                  >
                   <Typography 
                     className={classes.addButtons}
                     onClick={() => {
@@ -672,6 +739,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
                     {t("mainReport.add")}
                   </Typography>
+                  </Tooltip>
                   {editmenuClick ? (
                     <Box className={classes.dropDiv}>
                       <Typography
@@ -750,6 +818,18 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
 
+  const handleToggleClick = (val) =>
+  {
+    if(val == "left")
+    {
+      setAlignment("left")
+    }
+    else
+    {
+      setAlignment("right")
+    }
+  }
+
   const onRadiochange = (e) => {
     setradioBtn(e.target.value);
     if (e.target.value === "bottom") {
@@ -766,7 +846,7 @@ const SmsCreator = ({ classes, ...props }) => {
       <Box>
         <Box className={classes.phoneDiv}>
           <img src={Mobile} className={classes.phoneImg} />
-          <span className={classes.phoneNumber}>050608001</span>
+          <span className={classes.phoneNumber}>{campaignNumber}</span>
           <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
             <div className={classes.fromMe}>
               {msg}
@@ -994,24 +1074,30 @@ const SmsCreator = ({ classes, ...props }) => {
   const handleCloseWaize = () => {
     setwaize(false);
   };
-  const handleLink = (id) => {
+  const handleLink = async (id) => {
     let linkMsg = "";
     linkMsg = msg + previousLandingData[id].PageHref;
     setdialogClickLanding(false);
     seteditmenuClick(false);
     setmsg(linkMsg);
     setcharacterCount(linkMsg.length);
+    let response = await dispatch(getCreditsforSMS(linkMsg.length));
+    let credits = response.payload.split("#");
+    setmessageCount(credits[0]);
     let lc = linkCount;
     setlinkCount(++lc);
   };
 
-  const handleCampClick = (id) => {
+  const handleCampClick = async (id) => {
     let campaignData = "";
     campaignData = msg + getPreviousCampaignData[id].EncryptURL;
     setdialogClickCampaign(false);
     seteditmenuClick(false);
     setmsg(campaignData);
     setcharacterCount(campaignData.length);
+    let response = await dispatch(getCreditsforSMS(campaignData.length));
+    let credits = response.payload.split("#");
+    setmessageCount(credits[0]);
     let cc = linkCount;
     setlinkCount(++cc);
   };
@@ -1100,7 +1186,7 @@ const SmsCreator = ({ classes, ...props }) => {
           >
             <div className={classes.baseDialogSetup}>
               <span className={classes.groupName}>
-                Select group for test sending
+              {t("mainReport.selectGroups")}
               </span>
             </div>
             <div className={classes.modalDiv}>
@@ -1202,8 +1288,8 @@ const SmsCreator = ({ classes, ...props }) => {
             onClose={() => {handleExit(false)}}
             onConfirm={() => {handleExit(true)}}
             onCancel={() => {setexitClick(false)}}
-            confirmText="Yes"
-            cancelText="No"
+            confirmText={t("mainReport.Ok")}
+            cancelText={t("mainReport.No")}
             showDefaultButtons={true}
             icon={
               <AiOutlineExclamationCircle
@@ -1212,10 +1298,10 @@ const SmsCreator = ({ classes, ...props }) => {
             }
           >
             <div className={classes.baseDialogSetup}>
-              <span className={classes.groupName}>Leave Campaign Creation</span>
+              <span className={classes.groupName}>{t("mainReport.handleExitTitle")}</span>
             </div>
             <div className={classes.bodyTextDialog}>
-              <span>Would you like to save your changes before exiting?</span>
+              <span>{t("mainReport.leaveCampaign")}</span>
             </div>
           </Dialog>
         ) : null}
@@ -1274,14 +1360,14 @@ const SmsCreator = ({ classes, ...props }) => {
       let r = await dispatch(smsSave(payloadToPush));
       if(r)
       {
-        console.log("if here")
+       
         setexitClick(false);
         history.push("/SMSCampaigns");
       }
     }
     else if(saveBeforeExit == false)
     {
-      console.log("here")
+   
       setexitClick(false);
       history.push("/SMSCampaigns");
     }
@@ -1306,13 +1392,16 @@ const SmsCreator = ({ classes, ...props }) => {
       </>
     );
   };
-  const onLocation = () => {
+  const onLocation = async () => {
     let tempmsg = "";
     tempmsg = msg + "https://waze.to/?q=" + Searched.split(" ").join("%20");
     setmsg(tempmsg);
     let lc = linkCount;
     setlinkCount(++lc);
     setcharacterCount(tempmsg.length);
+    let response = await dispatch(getCreditsforSMS(tempmsg.length));
+    let credits = response.payload.split("#");
+    setmessageCount(credits[0]);
     setwaize(false);
   };
 
@@ -1467,7 +1556,9 @@ const SmsCreator = ({ classes, ...props }) => {
           open={waize}
           onClose={handleCloseWaize}
           showDefaultButtons={false}
-          icon={<FaMapSigns style={{ fontSize: 30, color: "#fff" }} />}
+          icon={<div className={classes.dialogIconContent}>
+          {'\u0056'}
+        </div>}
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
             <span className={classes.groupName}>
@@ -1481,11 +1572,11 @@ const SmsCreator = ({ classes, ...props }) => {
                 className={btnStyle.iconButton}
                 aria-label={t("mainReport.searchSms")}
               >
-                <FaLocationArrow />
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6M0ZFOUE1Q0ExQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6M0ZFOUE1Q0IxQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDozRkU5QTVDODFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDozRkU5QTVDOTFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pu8Ul6cAAAXVSURBVHja1Jd5UJVV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"/>
               </IconButton>
               <InputBase
                 className={btnStyle.input}
-                placeholder={t("mainReport.searchSms")}
+                placeholder={t("mainReport.typeAddress")}
                 inputProps={{ "aria-label": "Search" }}
                 onChange={(e) => {
                   setSearched(e.target.value);
@@ -1524,7 +1615,7 @@ const SmsCreator = ({ classes, ...props }) => {
           }
         >
           <div className={classes.baseDialogSetup}>
-            <span className={classes.groupName}>Delete Campaign</span>
+            <span className={classes.groupName}>{t("mainReport.deleteSms")}</span>
           </div>
           <div className={classes.bodyTextDialog}>
             <span>{t("mainReport.confirmSure")}</span>
@@ -1555,7 +1646,10 @@ const SmsCreator = ({ classes, ...props }) => {
             {campaignBool ? <li style={{ marginBottom: "8px" }}>
               {t("mainReport.campaignRequire")}
             </li> : null}
-            {msg === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
+            {msg === null ? <li>{t("mainReport.msgRequire")}</li> : null}
+            {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
+            {t("mainReport.campaignFromRequire")}
+            </li> : null}
           </ul>
         </div>
         <div
