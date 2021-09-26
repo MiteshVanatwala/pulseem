@@ -1,0 +1,533 @@
+{
+  "btnClearSearchResource1": {
+    "Text": "נקה",
+    "ToolTip": ""
+  },
+  "btnSearchResource1": {
+    "Text": "חפש",
+    "ToolTip": ""
+  },
+  "chrtMonthlySendsResource1": {
+    "ChartTitle": {
+      "TextBlock": {
+        "Text": "כמות שליחות לפי חודשים"
+      }
+    },
+    "Legend": {
+      "TextBlock": {
+        "Text": ""
+      }
+    },
+    "ToolTip": ""
+  },
+  "datFromDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "FastNavigationSettings": {
+        "CancelButtonCaption": "Cancel",
+        "DateIsOutOfRangeMessage": "Date is out of range.",
+        "OkButtonCaption": "OK",
+        "TodayButtonCaption": "Today"
+      },
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Open the calendar popup."
+    },
+    "ToolTip": ""
+  },
+  "datToDateResource1": {
+    "Calendar": {
+      "CellDayFormat": "%d",
+      "ColumnHeaderImage": "",
+      "ColumnHeaderText": "",
+      "DateRangeSeparator": " - ",
+      "DayCellToolTipFormat": "dddd, MMMM dd, yyyy",
+      "FastNavigationNextImage": "fastNavRight.gif",
+      "FastNavigationNextText": ">>",
+      "FastNavigationPrevImage": "fastNavLeft.gif",
+      "FastNavigationPrevText": "<<",
+      "FastNavigationSettings": {
+        "CancelButtonCaption": "Cancel",
+        "DateIsOutOfRangeMessage": "Date is out of range.",
+        "OkButtonCaption": "OK",
+        "TodayButtonCaption": "Today"
+      },
+      "NavigationNextImage": "arrowRight.gif",
+      "NavigationNextText": ">",
+      "NavigationPrevImage": "arrowLeft.gif",
+      "NavigationPrevText": "<",
+      "RowHeaderImage": "",
+      "RowHeaderText": "",
+      "TitleFormat": "MMMM yyyy",
+      "ToolTip": "",
+      "ViewSelectorImage": "",
+      "ViewSelectorText": ""
+    },
+    "DateInput": {
+      "ToolTip": ""
+    },
+    "DatePopupButton": {
+      "ToolTip": "Open the calendar popup."
+    },
+    "ToolTip": ""
+  },
+  "grdReportResource1": {
+    "BackImageUrl": "",
+    "FilterMenu": {
+      "ToolTip": ""
+    },
+    "GroupingSettings": {
+      "CollapseTooltip": "Collapse group",
+      "ExpandTooltip": "Expand group",
+      "GroupByFieldsSeparator": "; ",
+      "GroupContinuedFormatString": "... group continued from the previous page. ",
+      "GroupContinuesFormatString": " Group continues on the next page.",
+      "GroupSplitDisplayFormat": "Showing {0} of {1} items.",
+      "GroupSplitFormat": " ({0})",
+      "UnGroupTooltip": "Drag out of the bar to ungroup"
+    },
+    "GroupPanel": {
+      "Text": "Drag a column header and drop it here to group by that column",
+      "ToolTip": ""
+    },
+    "HierarchySettings": {
+      "CollapseTooltip": "Collapse",
+      "ExpandTooltip": "Expand",
+      "SelfCollapseTooltip": "Self reference collapse",
+      "SelfExpandTooltip": "Self reference expand"
+    },
+    "MasterTableView": {
+      "Caption": "",
+      "CommandItemSettings": {
+        "AddNewRecordImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.AddRecord.gif",
+        "AddNewRecordText": "Add new record",
+        "RefreshImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.Refresh.gif",
+        "RefreshText": "Refresh"
+      },
+      "EditFormSettings": {
+        "CaptionFormatString": ""
+      },
+      "ExpandCollapseColumn": {
+        "CollapseImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SingleMinus.gif",
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "ExpandImageUrl": "mvwres://Telerik.Web.UI, Version=2008.2.723.35, Culture=neutral, PublicKeyToken=121fae78165ba3d4/Telerik.Web.UI.Skins.Default.Grid.SinglePlus.gif",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "FilterExpression": "",
+      "NoDetailRecordsText": "No child records to display.",
+      "NoMasterRecordsText": "No records to display.",
+      "PagerStyle": {
+        "NextPagesToolTip": "Next Pages",
+        "NextPageText": "",
+        "NextPageToolTip": "Next Page",
+        "PagerTextFormat": "Change page: {4} &nbsp;Displaying page {0} of {1}, items {2} to {3} of {5}.",
+        "PrevPagesToolTip": "Previous Pages",
+        "PrevPageText": "",
+        "PrevPageToolTip": "Previous Page"
+      },
+      "RowIndicatorColumn": {
+        "CurrentFilterValue": "",
+        "EditFormHeaderTextFormat": "{0}:",
+        "FooterText": "",
+        "GroupByExpression": "",
+        "HeaderImageUrl": "",
+        "HeaderText": "",
+        "SortExpression": ""
+      },
+      "Summary": "",
+      "ToolTip": ""
+    },
+    "PagerStyle": {
+      "NextPagesToolTip": "Next Pages",
+      "NextPageText": "",
+      "NextPageToolTip": "Next Page",
+      "PagerTextFormat": "Change page: {4} &nbsp;Displaying page {0} of {1}, items {2} to {3} of {5}.",
+      "PrevPagesToolTip": "Previous Pages",
+      "PrevPageText": "",
+      "PrevPageToolTip": "Previous Page"
+    },
+    "SortingSettings": {
+      "SortedAscToolTip": "Sorted asc",
+      "SortedDescToolTip": "Sorted desc",
+      "SortToolTip": "Click here to sort"
+    },
+    "StatusBarSettings": {
+      "LoadingText": "Loading...",
+      "ReadyText": "Ready"
+    },
+    "ToolTip": ""
+  },
+  "GridBoundColumnResource1": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "CampaignID",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource2": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "שם קמפיין",
+    "SortExpression": ""
+  },
+  "GridBoundColumnResource3": {
+    "CurrentFilterValue": "",
+    "DataFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterAggregateFormatString": "",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "תאריך שליחה",
+    "SortExpression": ""
+  },
+  "GridButtonColumnResource1": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "פתיחות",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource2": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "הקלקות",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource3": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "לא נפתחו",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource4": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "שגויים",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource5": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "נשלחו",
+    "ImageUrl": "",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "GridButtonColumnResource6": {
+    "ConfirmText": "",
+    "ConfirmTitle": "",
+    "CurrentFilterValue": "",
+    "DataTextFormatString": "",
+    "EditFormHeaderTextFormat": "{0}:",
+    "FooterText": "",
+    "GroupByExpression": "",
+    "HeaderImageUrl": "",
+    "HeaderText": "דוח גרפי",
+    "ImageUrl": "~/Images/Chart Column.png",
+    "SortExpression": "",
+    "Text": ""
+  },
+  "locFromDateResource1": {
+    "Text": "מתאריך:"
+  },
+  "locPageExplanationResource1": {
+    "Text": "דוחות דיוור אלקטרוני לקמפיינים שנשלחו במערכת. ניתן לחקור לעומק את נתוני השליחה בלחיצה על נתוני הקמפיין"
+  },
+  "locSearchCampaignResource1": {
+    "Text": "חפש קמפיין:"
+  },
+  "locToDateResource1": {
+    "Text": "עד תאריך:"
+  },
+  "logPageHeaderResource1": {
+    "Text": "דוחות ניוזלטר"
+  },
+  "PageResource1": {
+    "Title": "דוחות דיוור אלקטרוני | מערכת פולסים"
+  },
+  "txtCampaignNameResource1": {
+    "Text": "",
+    "ToolTip": ""
+  },
+  "Apr": "אפריל",
+  "Aug": "אוגוסט",
+  "Dec": "דצמבר",
+  "Feb": "פברואר",
+  "Jan": "ינואר",
+  "Jul": "יולי",
+  "Jun": "יוני",
+  "Mar": "מרס",
+  "May": "מאי",
+  "Nov": "נובמבר",
+  "Oct": "אוקטובר",
+  "Sep": "ספטמבר",
+  "chrtMonthlySendsSmlTitle": {
+    "Name": "כמות"
+  },
+  "locCampName": {
+    "HeaderText": "שם קמפין"
+  },
+  "locClickCount": {
+    "HeaderText": "הקלקות"
+  },
+  "locErrors": {
+    "HeaderText": "שגויים"
+  },
+  "locGraph": {
+    "HeaderText": "דוח גרפי"
+  },
+  "locNotOpened": {
+    "HeaderText": "לא נפתחו"
+  },
+  "locOpenCount": {
+    "HeaderText": "פתיחות"
+  },
+  "locRemovedClients": {
+    "HeaderText": "מוסרים"
+  },
+  "locSendDate": {
+    "HeaderText": "תאריך שליחה"
+  },
+  "locTotalSendPlan": {
+    "HeaderText": "לשליחה"
+  },
+  "btnExportResource1": {
+    "Text": "ייצוא"
+  },
+  "locShowTestCampaigns": {
+    "Text": "הצג שליחות ניסיון"
+  },
+  "btnSectionResource1": {
+    "Text": "פילוחים"
+  },
+  "locUniqueOpens": {
+    "HeaderText": "פתיחות ייחודיות"
+  },
+  "locUniqueClicks": {
+    "HeaderText": "הקלקות ייחודיות"
+  },
+  "Attachments": "קבצים מצורפים",
+  "MessageCredits": "סה\"כ קרדיטים להודעה",
+  "MessageSize": "סה\"כ גודל להודעה",
+  "SizeUnit": "ק\"ב",
+  "ChartDesc": "כמות שליחות לחודש",
+  "locUniqueClicksPercents": {
+    "HeaderText": "אחוז הקלקות"
+  },
+  "locUniqueOpensPercents": {
+    "HeaderText": "אחוז פתיחות"
+  },
+  "locRemovedReason": {
+    "HeaderText": "סיבות הסרה"
+  },
+  "NoAttachments": "אין מצורפים",
+  "GroupNames": "שמות קבוצות",
+  "CampaignID": "מספר קמפיין",
+  "ToalSent": "נשלחו",
+  "Cancelled": "מבוטל",
+  "locStatus": {
+    "HeaderText": "סטאטוס"
+  },
+  "locAttachments": {
+    "HeaderText": "קבצים מצורפים"
+  },
+  "locGroupNames": {
+    "Headertext": "שמות קבוצות"
+  },
+  "Approve": "ממתין לאישור",
+  "OpensUniqueTooltip": {
+    "Text": "ייחודיות - מספר הנמענים שפתחו את המייל"
+  },
+  "ClicksTotalTooltip": {
+    "Text": "סה”כ - כמות הפעמים שהקליקו על הקישורים במייל. כולל הקלקות כפולות"
+  },
+  "ClicksUniqueTooltip": {
+    "Text": "ייחודיות - מספר הנמענים שהקליקו על הקישורים במייל"
+  },
+  "OpensTotalTooltip": {
+    "Text": "סה”כ - כמות הפעמים שפתחו את המייל סך הכל. כולל פתיחות כפולות"
+  },
+  "MainReportTitle": {
+    "Text": "דוחות שליחה לקמפיינים שנשלחו במערכת. ניתן לחקור לעומק את נתוני השליחה בלחיצה על נתוני הקמפיין"
+  },
+  "date": "תאריך",
+  "removed": "הסרות",
+  "removals": "הסרות",
+  "removedPercents": "אחוז הסרות",
+  "reasons": "סיבות",
+  "compareCampaigns": "השוואת קמפיינים",
+  "names": "שמות",
+  "fixedSendingDate": "תאריך שליחה קבוע",
+  "totalSendCompleted": "סה”כ השליחה הושלמה",
+  "totalSendPlan": "סה”כ תוכנית שליחה",
+  "openCount": "פתח ספירה", 
+  "openCountUnique": "פתח ספירה ייחודי",
+  "clickCount": "לחץ על ספירה",
+  "clickCountUnique": "לחץ על ספירת ייחודי",
+  "notOpened": "לא נפתח",
+  "sendError": "שלח שגיאה",
+  "removedClients": "הלקוחות הוסרו",
+  "groupsNames": "שמות קבוצות",
+  "files": "קבצים",
+  "fileNames": "שמות קבצים",
+  "percentageOpens": "אחוז נפתח",
+  "percetangeClicks": "אחוז קליקים",
+  "percetangeRemovedClients": "אחוז הלקוחות שהוסרו",
+  "attachments": "קבצים מצורפים",
+  "totalBytes": "סה”כ בתים",
+  "smsCampaign" : "יצירת קמפיין SMS",
+  "sendSetting" : "יצירת תוכן",
+  "whomTosend" : "למי שולחים?",
+  "groups" : "קבוצות",
+  "manual" : "העלאת נמענים ידנית ",
+  "saveSms" : "שמור",
+  "exitSms" : "צא",
+  "summary" : "סיכום",
+  "specialDate" : "תאריך מיוחד",
+  "totalReci" : "סה''כ נמענים לשליחה",
+  "createNewGroup" : "יצירת קבוצה חדשה מהקבוצות שנבחרו",
+  "before" : "לפני",
+  "after" : "אחרי",
+  "pulseSend" : "שליחה בפולסים",
+  "days"  :"ימים",
+  "birthday"  :"יום הולדת",
+  "recipientFilter" : "מסננים של נמענים",
+  "createContent":"צור תוכן",
+  "campName":"שם הקמפיין",
+  "campFrom":"קמפיין מאת",
+  "restore":"שחזר",
+  "removalReply":"מילת הסרה",
+  "campDesc":"משמש לזיהוי הקמפיין במערכת. הנמענים לא יראו שם זה",
+  "campRemovalDesc":"שינוי מספר השליחה לא יאפשר קבלת משובי הסרה מהלקוחות",
+  "yourMessage":"ההודעה שלכם",
+  "keepTrack":"מעקב אחר הקלקות קישורים",
+  "keepDesc":"לצורך זה, הקישורים שהזנתם יוחלפו בקישור ייחודי באורך 35 תווים.",
+  "testSend":"שליחת ניסיון",
+  "testDesc":"ההודעה תשלח מיד כשתלחצו על 'שלח'",
+  "sendToOne":"שלח לנמען בודד",
+  "sendToGroups":"שלח לקבוצות ניסיון",
+  "typeText" : "הכנס טקסט כאן",
+  "char":"תו",
+  "message":"הודעה",
+  "link":"קישור",
+  "removalMsg":"הודעת הסרה",
+  "removalLink":"קישור להסרה",
+  "add":"הוספה",
+  "toolTip1":"צור את התוכן שאתה מעוניין לשלוח ללקוחותיך ולאחר מכן בחר איך, מתי ולמי לשלוח",
+  "send":"שלח",
+  "enterPhone":"הזינו מספר נייד",
+  "ChooseLinks":"ביחרו קבוצות נסיון מהרשימה",
+  "continue":"המשך",
+  "fieldInvalid":"השדות הבאים אינם תקינים",
+  "campaignRequire":"שם הקמפיין - שדה חובה",
+  "msgRequire":"טקסט לשליחה - שדה חובה",
+  "campaignFromRequire":"קמפיין מאת - שדה חובה",
+  "confirmSms":"אישור",
+  "waizeTitle":"הוסף קישור ניווט לווייז",
+  "searchSms":"חיפוש",
+  "waize":"ניווט בWaze",
+  "campLink":"קישור לקמפיין",
+  "landingLink":"קישור לדף נחיתה",
+  "selectCamp":"בחרו קמפיין",
+  "selectLanding":"בחרו דף נחיתה",
+  "invalidNo":"מספר לא תקין!",
+  "campaignNamePlaceholder":"שם הקמפיין",
+  "tooltipCreateGroup" : "בחר 2 קבוצות או יותר וחבר לקבוצה אחת חדשה",
+  "newFeature":"חדש!",
+  "save":"לשמור",
+  "deleteCamp":"מחק קמפיין",
+  "confirmSure":"האם אתה בטוח?",
+  "pleaseNoteDsec":"שיניתם את המספר שהוקצה לכם ממערכת פולסים וכעת נמענים לא יוכלו להסיר את עצמם עי שליחת סמס חזרה.",
+  "pleaseNote":"שימו לב!",
+  "cancelPleaseNoteModal":"ביטול",
+  "alignToLeft":"יישר לימין",
+  "aligntoRight":"יישר לשמאל",
+  "emoji":"אמוג'י",
+  "removalMsgTooltip":"הוספת הודעת הסרה",
+  "removalLinkTooltip":"הוספת קישור להסרה",
+  "selectTooltip":"הודעה אישית",
+  "addVariantsTooltip":"More options",
+  "personalisationSelect":"תוכן אישי",
+  "typeAddress":"הכנס כתובת",
+  "deleteSms":"מחק קמפיין",
+  "selectGroups":"בחר קבוצות לשליחת נסיון",
+  "handleExitTitle":"צא מעריכת קמפיין",
+  "leaveCampaign":"האם תרצה לשמור את השינויים לפני היציאה?",
+  "No":"לא",
+  "Ok":"כן"
+
+
+}

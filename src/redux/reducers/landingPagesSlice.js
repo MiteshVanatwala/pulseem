@@ -47,7 +47,6 @@ export const downloadReport = createAsyncThunk(
   'report/ExportPurchase/', async ({ ID, Name }, thunkAPI) => {
     try {
       const response = await instence.get(`${apiURL}/report/ExportPurchase/${ID}`);
-
       exportFile({
         data: JSON.parse(response.data),
         fileName: 'purchaseReport',

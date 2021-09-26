@@ -342,8 +342,8 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         backgroundRepeat: 'no-repeat',
         minHeight: windowSize !== 'xs' ? 415 : 305,
         position: 'relative',
-        width: windowSize !== "xs" ? 450 : '100%',
-        maxWidth: 450
+        maxWidth: 450,
+        width: 450
     },
     mobileFullBG: {
         backgroundImage: `url(${mobileFullBg})!important`,
@@ -414,6 +414,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         maxHeight: windowSize !== 'xs' ? 'calc(100% - 75px)' : 'calc(100% - 35px)',
         paddingTop: 10,
         overflow: 'hidden'
+
     },
     chromeNotification: {
         backgroundColor: '#282828 !important',
@@ -581,15 +582,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         marginTop: 15,
         display: 'block',
         maxWidth: windowSize !== 'xs' ? '60%' : '100%'
-    },
-    pageSubTitle: {
-        marginTop: 5,
-        fontSize: 28
-    },
-    subTitle: {
-        margin: '0 10px !important',
-        color: '#157eaf',
-        fontSize: 30
     },
     galleryGrid: {
         minWidth: galleryWidth[windowSize],

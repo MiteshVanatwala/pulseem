@@ -24,8 +24,8 @@ import moment from 'moment'
 import 'moment/locale/he'
 import {pulseemNewTab} from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
-import { setCookie } from '../../../helpers/cookies';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 const NewsletterManagnentScreen=({classes}) => {
   const {language,windowSize,rowsPerPage}=useSelector(state => state.core)

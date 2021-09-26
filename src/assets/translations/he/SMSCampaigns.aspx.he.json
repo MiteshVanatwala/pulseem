@@ -472,5 +472,20 @@
   "verifyNumber": "אמת מספר",
   "restoreCampaignTitle": "בחר את קמפייני הSMS שברצונך לשחזר",
   "verificationSuccessful": "המספר אומת בהצלחה",
-  "verificationSuccessMessage": "מעתה תוכלו לשלוח דרך מספר זה ללא צורך באימות חוזר"
+  "verificationSuccessMessage": "מעתה תוכלו לשלוח דרך מספר זה ללא צורך באימות חוזר",
+  "smsSummaryDialogTitle" : "סיכום מסע פרסום",
+  "smsSummaryCampaignFrom" : "קמפיין מאת",
+  "smsDialogWhen":"מתי",
+  "smsDialogFor":"ל",
+  "smsSummaryDialogTotalRecipients" : "סך כל הנמענים",
+  "smsSummaryDetails" : "פרטים",
+  "smsSummaryClose" : "סגור",
+  "smsSummaryGroups" : "קבוצות",
+  "smsSummaryRecipientsFilter":"מסנן נמענים",
+  "filterDuplicateRecipients" : "נמענים כפולים",
+  "filterRemoved" : "הוסר",
+  "filterEmptyNumbers"  : "מספרים ריקים",
+  "filterInvalid" : "לא חוקי",
+  "pageTitle" : "יצירת סמס מערכת פולסים",
+  "sendPageTitle": "Send SMS | Pulseem System"
 }

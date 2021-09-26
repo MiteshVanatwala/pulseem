@@ -24,8 +24,8 @@ import {useTranslation} from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import { Loader } from '../../../components/Loader/Loader';
-import { setCookie } from '../../../helpers/cookies';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 const LandingPagesesManagmentScreen=({classes}) => {
   const {windowSize,rowsPerPage}=useSelector(state => state.core)
@@ -406,33 +406,42 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderGroupNames = () => {
+  const renderGroupNames=() => {
     function createMarkup() {
-      return { __html: `${t("common.Groups")}: ` };
+      return {__html: `${t("common.Groups")}: `};
     }
     return (
-      <label dangerouslySetInnerHTML={createMarkup()} style={{ fontWeight: 400 }}></label>
+      <label dangerouslySetInnerHTML={createMarkup()} style={{fontWeight: 400}}></label>
     );
+  }
+
+  const seperateGroupNames = (groups) => {
+    const splittedGroups = groups.split('##', -1);
+    if (splittedGroups.length === 1) {
+      return splittedGroups.join().replace('#', '');
+    }
+    return splittedGroups.join(', ').replace('#', '');
   }
 
   const renderNameCell = (row) => {
     return (
       <>
         <Tooltip
-          arrow 
-          title={row.Name} 
-          placement={'top'} 
+          arrow
+          title={row.Name}
+          placement={'top'}
           classes={{
-            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-            arrow: classes.black}}
-          >
+            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+            arrow: classes.black
+          }}
+        >
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {row.Name}
           </Typography>
         </Tooltip>
         <Typography
           className={classes.grayTextCell}>
-          {row.GroupNames && row.GroupNames.length > 0 && <span>{renderGroupNames()}<b>{row.GroupNames.join(', ').replace('#', '')}</b></span>}
+          {row.GroupNames && row.GroupNames.length > 0 && <span>{renderGroupNames()}<b>{seperateGroupNames(row.GroupNames)}</b></span>}
         </Typography>
       </>
 
@@ -448,7 +457,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         </Typography>
         {windowSize==='xs'?
           <Typography className={clsx(classes.middleText)}>{t('landingPages.SubmitsResource1.HeaderText')}</Typography>
-        : <a
+          :<a
             href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
             className={clsx(classes.middleText,classes.pt2)}>
             {t('landingPages.SubmitsResource1.HeaderText')}

@@ -89,7 +89,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
       pages: [
         {
           title: 'common.CreateSMS',
-          link: '/Pulseem/SMSCampaignEdit.aspx'
+          link: '/react/sms/create'
         },
         {
           title: 'dashboard.smsManagement',

@@ -23,8 +23,8 @@ import moment from 'moment'
 import 'moment/locale/he'
 import { pulseemNewTab } from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
-import { setCookie } from '../../../helpers/cookies';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
@@ -80,11 +80,6 @@ const AutomationsManagnentScreen = ({ classes }) => {
   }
 
   const renderSearchLine = () => {
-    const handleKeyDown = (event) => {
-      if (event.keyCode === 13) {
-        handleSearch();
-      }
-    }
     const handleSearch = () => {
       const searchArray = [{
         type: 'name',
@@ -129,6 +124,12 @@ const AutomationsManagnentScreen = ({ classes }) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleFromDateChange = (value) => {
       if (value > toDate) {
         handleToDate(null);
@@ -147,7 +148,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          onKeyPress={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={t('automations.labelAutomationName')}
         />
       )
@@ -160,7 +161,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
-            onKeyDown={handleKeyDown}
+            onKeyPress={handleKeyPress}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('automations.labelAutomationName')}

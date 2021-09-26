@@ -29,6 +29,13 @@ const barHeight = {
   lg: '230px!important',
   xl: '230px!important'
 }
+const tipsFontSize = {
+  xs: 18,
+  sm: 16,
+  md: 14,
+  lg: 14,
+  xl: 18
+}
 
 const shortcutFontSize = {
   category: {
@@ -44,34 +51,14 @@ const shortcutFontSize = {
     md: 18,
     lg: 18,
     xl: 18
-  },
+  }
+
 }
-const tipsFontSize = {
-  xs: 18,
-  sm: 16,
-  md: 14,
-  lg: 14,
-  xl: 18
-}
-
-// const paperTopHeight = {
-//   xs: 'auto',
-//   sm: 'auto',
-//   md: '350px',
-//   lg: '350px',
-//   xl: '350px'
-// }
-
-// const paperBottomHeight = {
-//   xs: 'auto',
-//   sm: 'auto',
-//   md: '350px',
-//   lg: '350px',
-//   xl: '350px'
-// }
-
 
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
+  management: {
+    maxWidth: 1500
+  },
   managementTitle: {
     fontSize: windowSize === 'xs' ? '25px' : '36px',
     color: '#333333',
@@ -134,8 +121,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tableCellRoot: {
     display: 'flex',
     flexDirection: 'column',
-    minWidth: 75,
-    padding: '0 16px'
+    minWidth: 50,
+    padding: '0 10px'
   },
   tableRowRoot: {
     display: 'flex',
@@ -909,12 +896,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 'bold',
     fontSize: 25
   },
-  font15: {
-    fontSize: 15
-  },
-  font18: {
-    fontSize: 18
-  },
   pt20: {
     paddingTop: 20
   },
@@ -1322,5 +1303,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       borderRight: '7.5px solid transparent',
       borderBottom: '7.5px solid transparent',
     }
+  },
+  modalText:
+  {
+    fontSize: "22px", marginTop: "5px"
   }
 })

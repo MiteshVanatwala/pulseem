@@ -18,9 +18,10 @@ export const DateField = ({
   buttons = null,
   ampm = true,
   maximumDate = undefined,
-  isReadOnly = false
-  // timePickerOpen = false,
-  // isReadOnly = false
+  timePickerOpen = false,
+  rootStyle = null ,
+  timeActive = null , 
+  dateActive = null 
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -28,10 +29,11 @@ export const DateField = ({
     true: 'rtl',
     false: 'ltr'
   }
+  const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   return isTimePicker ? (
     <KeyboardTimePicker
-      disabled={false}
       disableToolbar={false}
       inputVariant="outlined"
       className={clsx(
@@ -41,12 +43,15 @@ export const DateField = ({
       inputProps={{
         className: classes.datePickerInput,
       }}
-      format={"HH:mm"}
+      popoverprops={{
+        dir: direction[isRTL]
+      }}
+      format={"hh:mm a"}
       margin='none'
       placeholder={placeholder}
       initialFocusedDate={moment().hours(0).minutes(0)}
       value={value}
-      keyboardIcon={<FiClock style={{ fontSize: 16 }} />}
+      keyboardIcon={<FiClock style={{ fontSize: 16 }}  onClick={() => setIsTimePickerOpen(true)}/>}
       onChange={date => onTimeChange(date)}
       KeyboardButtonProps={{
         'aria-label': 'change time',
@@ -56,12 +61,14 @@ export const DateField = ({
       okLabel={buttons && buttons.ok}
       ampm={ampm}
       id="timePicker"
-      InputProps={{ readOnly: false }}
-      allowKeyboardControl={true}
+     disabled = {timeActive}
+      onClose={() => setIsTimePickerOpen(false)}
+      open={isTimePickerOpen || timePickerOpen}
     />
   ) :
 
     (<KeyboardDatePicker
+      classes={{root: rootStyle}}
       disableToolbar
       inputVariant="outlined"
       className={clsx(
@@ -75,8 +82,8 @@ export const DateField = ({
         dir: direction[isRTL]
       }}
       variant={buttons ? 'dialog' : 'inline'}
-      keyboardIcon={<CalendarIcon />}
-      format={"DD/MM/yyyy"}
+      keyboardIcon={<CalendarIcon onClick={() => setIsDatePickerOpen(true)}/>}
+      format={"DD/MM/YYYY"}
       margin='none'
       minDate={minDate}
       placeholder={placeholder}
@@ -91,7 +98,9 @@ export const DateField = ({
       okLabel={buttons && buttons.ok}
       id="datePicker"
       maxDate={maximumDate}
-      InputProps={{ readOnly: isReadOnly }}
+      disabled = {dateActive}
+      onClose={() => setIsDatePickerOpen(false)}
+      open={isDatePickerOpen}
     />
     )
 

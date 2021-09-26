@@ -28,9 +28,12 @@ import { BsSearch } from 'react-icons/bs';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
 import { MdClear } from 'react-icons/md';
 import './Groups.styles.css';
+import { 
+    BsFilter } from 'react-icons/bs';
 
 
-const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, callbackUpdateGroups, callbackSelectAll }) => {
+
+const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, callbackUpdateGroups, callbackSelectAll , callbackReciFilter , bool , boolNotify}) => {
     const { language } = useSelector(state => state.core)
     const { t } = useTranslation();
     //const [selectedGroups, setSelected] = useState([]);
@@ -38,6 +41,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
     const [groupNameSearch, setGroupNameSearch] = useState('');
     const [clearInput, setClearInput] = useState(false);
     const [groupHover, setIsHover] = useState(null);
+    const [newSelected, setnewSelected] = useState([]);
 
 
     const handleSearch = (event) => {
@@ -87,6 +91,35 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                 />
                 <ListItemSecondaryAction className={'groupText'}>
                     {group.Members} {group.Members != 1 ? t("notifications.recipients") : t("notifications.recipient")}
+                </ListItemSecondaryAction>
+            </ListItem>)
+        })
+    }
+    const renderSmsgroups = () => {
+        return groupList.filter((g) => {
+            return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
+        }).map((group) => {
+            const isExist = selectedList.map((group) => { return group.GroupID }).includes(group.GroupID);
+            return (<ListItem id={group.GroupID} key={group.GroupID} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setIsHover(group.GroupID)}
+                onMouseLeave={() => setIsHover(null)}
+                className={groupHover === group.GroupID? classes.hoverListItem : null}
+            >
+                <ListItemAvatar>
+                    <Avatar
+                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
+                      {isExist ?
+                             (<FaCheck className={clsx(classes.green)} />)
+                            :
+                            (<HiUserGroup className={clsx(classes.blue)} />)
+                        } 
+                    </Avatar>
+                </ListItemAvatar>
+                <ListItemText className={'groupText'} title={group.GroupName}
+                    primary={group.GroupName}
+                />
+                <ListItemSecondaryAction className={'groupText'}>
+                    {group.Recipients.toLocaleString()} {group.Recipients != 1 ? t("notifications.recipients") : t("notifications.recipient")}
                 </ListItemSecondaryAction>
             </ListItem>)
         })
@@ -200,6 +233,9 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     />
                 </FormControl>
                 <Box>
+             {selectedList.length > 0 ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{height:"36px",color:"#1D82B3",fontWeight:"600",textTransform:"capitalize"}}>
+                    <BsFilter style={{fontSize:"22px",color:"#1D82B3"}}/>  {t("mainReport.recipientFilter")}
+                    </Button> : null }  
                     <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={() => { handleSortDirection() }}>
                         {sortDirection === 'asc' ? <BiSortDown /> : <BiSortUp />}
                     </Button>
@@ -227,7 +263,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                 popupIcon={false}
                 onChange={onTagChange}
                 renderInput={(params) => selectedList.length > 0 ? (
-                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected)}></TextField>
+                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected)} style={{maxHeight: 45}}></TextField>
                 ) : (
                     <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{t('notifications.noGroupsSelected')}</Typography>
                 )
@@ -237,7 +273,8 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
             <div className={classes.demo} style={{ minHeight: 280, maxHeight: 280, overflow: 'auto' }}>
                 <List>
                     {renderSelectAll()}
-                    {renderGroups()}
+                 {boolNotify ? renderGroups() : null }   
+                    {bool ? renderSmsgroups() : null}
                 </List>
             </div>
         </Box>
