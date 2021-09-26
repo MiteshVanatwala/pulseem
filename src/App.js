@@ -57,7 +57,6 @@ const renderRoutes = (classes, history) => {
         render={props => <SmsCreator {...props} classes={classes} />}
       />
       <Route
-
         path="/sms/edit/:id"
         render={props => <SmsCreator {...props} classes={classes} />}
       />

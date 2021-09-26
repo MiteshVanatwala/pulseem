@@ -2109,7 +2109,7 @@ const SmsSend = ({classes , ...props }) => {
 
   const handlePreviousPage = () =>
   {
-    window.location = `/sms/edit/${props.match.params.id}`;
+    window.location = `/react/sms/edit/${props.match.params.id}`;
   }
   const renderCaution = () => {
     return (

@@ -46,7 +46,7 @@ import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlineDelete, AiOutlinePlusCircle , AiOutlineFile ,AiOutlineAlignLeft } from "react-icons/ai";
+import { AiOutlineExclamationCircle, AiOutlineDelete, AiOutlinePlusCircle, AiOutlineFile, AiOutlineAlignLeft } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -94,7 +94,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const history = useHistory();
   const dispatch = useDispatch();
-  const { language, windowSize, isRTL} = useSelector(
+  const { language, windowSize, isRTL } = useSelector(
     (state) => state.core
   );
   const {
@@ -173,24 +173,24 @@ const SmsCreator = ({ classes, ...props }) => {
     UpdateDate: Date.now(),
   });
   const [quickSendPayload, setquickSendPayload] = useState({
-          SMSCampaignID: "",
-          SubAccountID: -1,
-          Status: -1,
-          Type: 0,
-          CreditsPerSms: "1",
-          UpdateDate: 1628770145467,
-          Name: campaignName,
-          FromNumber: campaignNumber,
-          Text: msg,
-          ResponseToEmail: "",
-          IsTestCampaign: false,
-          IsResponse: false,
-          IsLinksStatistics: true,
-          SendDate: Date.now(),
-          SendingMethod: 0,
-          IsTest: false,
-          PhoneNumber: phone,
-          MessageLength: "1"
+    SMSCampaignID: "",
+    SubAccountID: -1,
+    Status: -1,
+    Type: 0,
+    CreditsPerSms: "1",
+    UpdateDate: 1628770145467,
+    Name: campaignName,
+    FromNumber: campaignNumber,
+    Text: msg,
+    ResponseToEmail: "",
+    IsTestCampaign: false,
+    IsResponse: false,
+    IsLinksStatistics: true,
+    SendDate: Date.now(),
+    SendingMethod: 0,
+    IsTest: false,
+    PhoneNumber: phone,
+    MessageLength: "1"
 
   })
 
@@ -235,11 +235,11 @@ const SmsCreator = ({ classes, ...props }) => {
       if (selectedGroup[i].selected) {
         temp.push(selectedGroup[i].GroupID);
         tempfull.push(selectedGroup[i]);
-       
+
       }
     }
     settemp(tempfull);
-    const FinalPayloadData = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text: msg , TestGroupsIds : temp }
+    const FinalPayloadData = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg, TestGroupsIds: temp }
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
     setsummary(false);
@@ -363,8 +363,7 @@ const SmsCreator = ({ classes, ...props }) => {
       return false;
     }
 
-    if(campaignNumber === "")
-    {
+    if (campaignNumber === "") {
       setcampaignNumberValidated(true);
       setsave(true);
       return false;
@@ -389,7 +388,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const handleSend = () => {
     if (validationCheck()) {
       if (phone !== "") {
-        const smsQuickSendData = {...quickSendPayload , fromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg }
+        const smsQuickSendData = { ...quickSendPayload, fromNumber: campaignNumber, PhoneNumber: phone, Name: campaignName, Text: msg }
         dispatch(smsQuick(smsQuickSendData));
       } else {
         setOpenS(true);
@@ -448,7 +447,7 @@ const SmsCreator = ({ classes, ...props }) => {
             className={
               campaignNumberValidated
                 ? clsx(classes.buttonField, classes.error)
-                : clsx(classes.buttonField , classes.success)
+                : clsx(classes.buttonField, classes.success)
             }
             onChange={onCampaignNumber}
             value={campaignNumber}
@@ -510,10 +509,10 @@ const SmsCreator = ({ classes, ...props }) => {
     } else {
       setlinkCount(0);
     }
-    
-      let response = await dispatch(getCreditsforSMS(e.target.value.length));
-      let credits = response.payload.split("#");
-      setmessageCount(credits[0]);
+
+    let response = await dispatch(getCreditsforSMS(e.target.value.length));
+    let credits = response.payload.split("#");
+    setmessageCount(credits[0]);
 
   };
 
@@ -524,7 +523,7 @@ const SmsCreator = ({ classes, ...props }) => {
     setcharacterCount(newLink.length);
     let response = await dispatch(getCreditsforSMS(newLink.length));
     let credits = response.payload.split("#");
-   
+
     setmessageCount(credits[0]);
     setremovalLinkDisabled(true);
   };
@@ -536,19 +535,19 @@ const SmsCreator = ({ classes, ...props }) => {
     setcharacterCount(newMsg.length);
     let response = await dispatch(getCreditsforSMS(newMsg.length));
     let credits = response.payload.split("#");
-  
+
     setmessageCount(credits[0]);
     setremovalMessageButtonDisabled(true);
   };
 
-  const handleSelectChange =  async (e) => {
+  const handleSelectChange = async (e) => {
     setselectValue(e.target.value);
     let linkMsg = "";
     linkMsg = msg + e.target.value;
     setmsg(linkMsg);
     let response = await dispatch(getCreditsforSMS(e.target.value.length));
     let credits = response.payload.split("#");
-  
+
     setmessageCount(credits[0]);
     setcharacterCount(linkMsg.length);
   };
@@ -587,55 +586,55 @@ const SmsCreator = ({ classes, ...props }) => {
                 className={isRTL ? classes.emojiHe : classes.emoji}
               >
                 {isRTL ? (
-                       <>
-                         <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.aligntoRight")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-start"
-                    arrow
-                  >
-                        <FormatAlignRightIcon style={{marginInlineEnd:"4px"}} onClick={() => {handleToggleClick("right")}}/>
-                        </Tooltip>
-                        <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.alignToLeft")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-start"
-                    arrow
-                  >
-                       <FormatAlignLeftIcon   onClick={() => {handleToggleClick("left")}}/>
-                    
-                      </Tooltip>
-                    
-                     
-                      
-                       </>
+                  <>
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.aligntoRight")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { handleToggleClick("right") }} />
+                    </Tooltip>
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.alignToLeft")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignLeftIcon onClick={() => { handleToggleClick("left") }} />
+
+                    </Tooltip>
+
+
+
+                  </>
                 ) : (
-                
-          <>
-            <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.alignToLeft")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-start"
-                    arrow
-                  >
-                      <FormatAlignLeftIcon  style={{marginInlineEnd:"4px"}} onClick={() => {handleToggleClick("left")}}/>
-                   
-          </Tooltip>
-                   
-          <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.aligntoRight")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-start"
-                    arrow
-                  >
-                      <FormatAlignRightIcon  onClick={() => {handleToggleClick("right")}}/>
-                      </Tooltip>
-                      </>
-                  
+
+                  <>
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.alignToLeft")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { handleToggleClick("left") }} />
+
+                    </Tooltip>
+
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.aligntoRight")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignRightIcon onClick={() => { handleToggleClick("right") }} />
+                    </Tooltip>
+                  </>
+
                 )}
                 <Box className={classes.pickerEmoji}>
                   {flagemoji ? (
@@ -669,76 +668,76 @@ const SmsCreator = ({ classes, ...props }) => {
                 </Box>
               </Box>
               <Box className={classes.baseButtons}>
-              <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.removalMsgTooltip")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-center"
-                    arrow
-                  >
-                <Typography
-                  className={classes.infoButtons}
-                  onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
+                <Tooltip
+                  disableFocusListener
+                  title={t("mainReport.removalMsgTooltip")}
+                  classes={{ tooltip: styles.customWidth }}
+                  placement="top-center"
+                  arrow
                 >
-                  <Typography className={classes.editorLink}>+</Typography>
-                  {t("mainReport.removalMsg")}
-                </Typography>
+                  <Typography
+                    className={classes.infoButtons}
+                    onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
+                  >
+                    <Typography className={classes.editorLink}>+</Typography>
+                    {t("mainReport.removalMsg")}
+                  </Typography>
                 </Tooltip>
                 <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.removalLinkTooltip")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-center"
-                    arrow
-                  >
-                <Typography
-                  className={classes.info2Buttons}
-                  onClick={removalLinkDisabled ? null : onRemovalLink}
+                  disableFocusListener
+                  title={t("mainReport.removalLinkTooltip")}
+                  classes={{ tooltip: styles.customWidth }}
+                  placement="top-center"
+                  arrow
                 >
-                  <Typography className={classes.editorLink}>+</Typography>
-                  {t("mainReport.removalLink")}
-                </Typography>
+                  <Typography
+                    className={classes.info2Buttons}
+                    onClick={removalLinkDisabled ? null : onRemovalLink}
+                  >
+                    <Typography className={classes.editorLink}>+</Typography>
+                    {t("mainReport.removalLink")}
+                  </Typography>
                 </Tooltip>
               </Box>
               <Box className={classes.endButtons}>
                 <Box className={classes.selectMsg}>
-                <Tooltip
+                  <Tooltip
                     disableFocusListener
                     title={t("mainReport.selectTooltip")}
                     classes={{ tooltip: styles.customWidth }}
                     placement="top-center"
                     arrow
                   >
-                  <select
-                    className={classes.selectVal}
-                    value={selectValue}
-                    onChange={handleSelectChange}
-                  >
-                    <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
-                    {Object.keys(extraData).map((item, i) => {
-                      return <option value={extraData[item]} key={`extrakey_${i}`}>{item}</option>;
-                    })}
-                  </select>
+                    <select
+                      className={classes.selectVal}
+                      value={selectValue}
+                      onChange={handleSelectChange}
+                    >
+                      <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
+                      {Object.keys(extraData).map((item, i) => {
+                        return <option value={extraData[item]} key={`extrakey_${i}`}>{item}</option>;
+                      })}
+                    </select>
                   </Tooltip>
                 </Box>
-                <Box className={classes.addDiv} tabindex="0" onBlur={() => {seteditmenuClick(false)}}>
-                <Tooltip
+                <Box className={classes.addDiv} tabindex="0" onBlur={() => { seteditmenuClick(false) }}>
+                  <Tooltip
                     disableFocusListener
                     title={t("mainReport.addVariantsTooltip")}
                     classes={{ tooltip: styles.customWidth }}
                     placement="top-center"
                     arrow
                   >
-                  <Typography 
-                    className={classes.addButtons}
-                    onClick={() => {
-                      seteditmenuClick(!editmenuClick);
-                    }}
-                    
-                  >
-                    <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
-                    {t("mainReport.add")}
-                  </Typography>
+                    <Typography
+                      className={classes.addButtons}
+                      onClick={() => {
+                        seteditmenuClick(!editmenuClick);
+                      }}
+
+                    >
+                      <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
+                      {t("mainReport.add")}
+                    </Typography>
                   </Tooltip>
                   {editmenuClick ? (
                     <Box className={classes.dropDiv}>
@@ -818,16 +817,8 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
 
-  const handleToggleClick = (val) =>
-  {
-    if(val == "left")
-    {
-      setAlignment("left")
-    }
-    else
-    {
-      setAlignment("right")
-    }
+  const handleToggleClick = (val) => {
+    setAlignment(val);
   }
 
   const onRadiochange = (e) => {
@@ -1004,7 +995,7 @@ const SmsCreator = ({ classes, ...props }) => {
           <span className={classes.rightInput3} onClick={onHandleDelete}>
             <BsTrash style={{ fontSize: "25" }} />
           </span>
-          <span className={classes.rightInput4} onClick={() => {setexitClick(true)}}>
+          <span className={classes.rightInput4} onClick={() => { setexitClick(true) }}>
             {t("mainReport.exitSms")}
           </span>
           <span
@@ -1048,14 +1039,9 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const onContinueClick = async (isSave) => {
     if (validationCheck()) {
-      const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg  }
+      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
       let r = await dispatch(smsSave(payloadToPush));
-      if (isSave) {
-        history.push(`/sms/edit/${r.payload.Message}`);
-      } else {
-        history.push(`/sms/edit/${r.payload.Message}`);
-        history.push(`/sms/send/${r.payload.Message}`);
-      }
+      window.location = `/react/sms/${isSave ? 'edit' : 'send'}/${r.payload.Message}`;
     }
   };
 
@@ -1140,7 +1126,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const handleGroupClose = async () => {
     if (campaignName !== "" && msg !== "") {
-      
+
       let temp = [];
       let tempfull = [];
       let num = 0;
@@ -1153,15 +1139,15 @@ const SmsCreator = ({ classes, ...props }) => {
       }
       settotal(num);
       settemp(tempfull);
-      const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg , TestGroupsIds : temp }
+      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg, TestGroupsIds: temp }
       let r = await dispatch(smsSave(payloadToPush));
-      
+
       let payload2 = {
         IsTestGroups: true,
         SMSCampaignID: r.payload.Message,
         TestGroupsIds: temp,
       };
-  
+
       let r2 = await dispatch(smsSaveGroup(payload2));
       await dispatch(getCampaignSumm(r.payload.Message));
       setsummary(true);
@@ -1169,9 +1155,9 @@ const SmsCreator = ({ classes, ...props }) => {
     setsave(false);
     sethidden(true);
     setcontactGroup(false);
-    
-    
-   
+
+
+
   };
   const renderSendGroup = () => {
     return (
@@ -1186,7 +1172,7 @@ const SmsCreator = ({ classes, ...props }) => {
           >
             <div className={classes.baseDialogSetup}>
               <span className={classes.groupName}>
-              {t("mainReport.selectGroups")}
+                {t("mainReport.selectGroups")}
               </span>
             </div>
             <div className={classes.modalDiv}>
@@ -1285,9 +1271,9 @@ const SmsCreator = ({ classes, ...props }) => {
           <Dialog
             classes={classes}
             open={exitClick}
-            onClose={() => {handleExit(false)}}
-            onConfirm={() => {handleExit(true)}}
-            onCancel={() => {setexitClick(false)}}
+            onClose={() => { handleExit(false) }}
+            onConfirm={() => { handleExit(true) }}
+            onCancel={() => { setexitClick(false) }}
             confirmText={t("mainReport.Ok")}
             cancelText={t("mainReport.No")}
             showDefaultButtons={true}
@@ -1337,8 +1323,8 @@ const SmsCreator = ({ classes, ...props }) => {
             cancelText={t("mainReport.cancelPleaseNoteModal")}
             showDefaultButtons={true}
             icon={<div className={classes.dialogIconContent}>
-            {'\uE11B'}
-          </div>}
+              {'\uE11B'}
+            </div>}
           >
             <Box className={classes.numberChnageModal}>
               <Typography className={classes.groupName}>  {t("mainReport.pleaseNote")}</Typography>
@@ -1354,24 +1340,22 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
   const handleExit = async (saveBeforeExit) => {
-   
-    if(saveBeforeExit){
-      const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg  }
+
+    if (saveBeforeExit) {
+      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
       let r = await dispatch(smsSave(payloadToPush));
-      if(r)
-      {
-       
+      if (r) {
+
         setexitClick(false);
         history.push("/SMSCampaigns");
       }
     }
-    else if(saveBeforeExit == false)
-    {
-   
+    else if (saveBeforeExit == false) {
+
       setexitClick(false);
       history.push("/SMSCampaigns");
     }
-    
+
   };
 
   const renderSummary = () => {
@@ -1405,150 +1389,147 @@ const SmsCreator = ({ classes, ...props }) => {
     setwaize(false);
   };
 
-  const renderPreviousLandingDataModal = () =>
-  {
-    return(
-      <>
-      <Dialog
-        classes={classes}
-        open={dialogClickLanding}
-        onClose={handleCloseLanding}
-        showDefaultButtons={false}
-        icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
-      >
-        <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-          <span className={classes.groupName}>{t("mainReport.selectLanding")}</span>
-        </div>
-        <div className={classes.modalDiv}>
-          <Paper component="form" className={btnStyle.root}>
-            <IconButton
-              type="submit"
-              className={btnStyle.iconButton}
-              aria-label="search"
-            >
-              <SearchIcon />
-            </IconButton>
-            <InputBase
-              className={btnStyle.input}
-              placeholder={t("mainReport.searchSms")}
-              inputProps={{ "aria-label": "Search" }}
-              onChange={(e) => {
-                setlandingSearch(e.target.value);
-              }}
-            />
-          </Paper>
-        </div>
-        <div className={classes.listDiv}>
-          {previousLandingData
-            .filter((val) => {
-              if (landingSearch == "") {
-                return val;
-              } else if (
-                val.CampaignName.toLowerCase().includes(
-                  landingSearch.toLowerCase()
-                )
-              ) {
-                return val;
-              }
-            })
-            .map((item, idx) => {
-              return (
-                <div
-                  className={classes.searchCon}
-                  onClick={() => {
-                    handleLink(idx);
-                  }}
-                >
-                  <span
-                    style={{ marginInlineEnd: "8px" }}
-                    className={classes.grDoc}
-                  >
-                    <AiOutlineFile style={{color:"#1771AD",fill:"#1771AD",stroke:"#1771AD"}} color="#1771AD"/>
-                  </span>
-                  <span>{item.CampaignName}</span>
-                </div>
-              );
-            })}
-        </div>
-      </Dialog>
-  </>
-    )
-   
-  }
-  const  renderPreviousCampaignsData = () =>
-  {
+  const renderPreviousLandingDataModal = () => {
     return (
       <>
-      {dialogClickCampaign ? (
-         <Dialog
-           classes={classes}
-           open={dialogClickCampaign}
-           onClose={handleCloseCampaign}
-           showDefaultButtons={false}
-           icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
-         >
-           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-             <span className={classes.groupName}>{t("mainReport.selectCamp")}</span>
-           </div>
-           <div className={classes.modalDiv}>
-             <Paper component="form" className={btnStyle.root}>
-               <IconButton
-                 type="submit"
-                 className={btnStyle.iconButton}
-                 aria-label="search"
-               >
-                 <SearchIcon />
-               </IconButton>
-               <InputBase
-                 className={btnStyle.input}
-                 placeholder={t("mainReport.searchSms")}
-                 inputProps={{ "aria-label": "Search" }}
-                 onChange={(e) => {
-                   setCampaignSearch(e.target.value);
-                 }}
-               />
-             </Paper>
-           </div>
-           <div className={classes.listDiv}>
-             {previousCampaignData
-               .filter((val) => {
-                 if (CampaignSearch == "") {
-                   return val;
-                 } else if (
-                   val.CampaignName.toLowerCase().includes(
-                     CampaignSearch.toLowerCase()
-                   )
-                 ) {
-                   return val;
-                 }
-               })
-               .map((item, idx) => {
-                 return (
-                   <div
-                     className={classes.searchCon}
-                     onClick={() => {
-                       handleCampClick(idx);
-                     }}
-                   >
-                     <span
-                       style={{ marginInlineEnd: "8px" }}
-                       className={classes.grDoc}
-                     >
-                       <AiOutlineFile />
-                     </span>
-                     <span>{item.Name}</span>
-                   </div>
-                 );
-               })}
-           </div>
-         </Dialog>
-       ) : null}</>
+        <Dialog
+          classes={classes}
+          open={dialogClickLanding}
+          onClose={handleCloseLanding}
+          showDefaultButtons={false}
+          icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
+        >
+          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
+            <span className={classes.groupName}>{t("mainReport.selectLanding")}</span>
+          </div>
+          <div className={classes.modalDiv}>
+            <Paper component="form" className={btnStyle.root}>
+              <IconButton
+                type="submit"
+                className={btnStyle.iconButton}
+                aria-label="search"
+              >
+                <SearchIcon />
+              </IconButton>
+              <InputBase
+                className={btnStyle.input}
+                placeholder={t("mainReport.searchSms")}
+                inputProps={{ "aria-label": "Search" }}
+                onChange={(e) => {
+                  setlandingSearch(e.target.value);
+                }}
+              />
+            </Paper>
+          </div>
+          <div className={classes.listDiv}>
+            {previousLandingData
+              .filter((val) => {
+                if (landingSearch == "") {
+                  return val;
+                } else if (
+                  val.CampaignName.toLowerCase().includes(
+                    landingSearch.toLowerCase()
+                  )
+                ) {
+                  return val;
+                }
+              })
+              .map((item, idx) => {
+                return (
+                  <div
+                    className={classes.searchCon}
+                    onClick={() => {
+                      handleLink(idx);
+                    }}
+                  >
+                    <span
+                      style={{ marginInlineEnd: "8px" }}
+                      className={classes.grDoc}
+                    >
+                      <AiOutlineFile style={{ color: "#1771AD", fill: "#1771AD", stroke: "#1771AD" }} color="#1771AD" />
+                    </span>
+                    <span>{item.CampaignName}</span>
+                  </div>
+                );
+              })}
+          </div>
+        </Dialog>
+      </>
     )
-   
+
   }
-  const renderWaizeNavigationModal = () =>
-  {
-    return(<>
+  const renderPreviousCampaignsData = () => {
+    return (
+      <>
+        {dialogClickCampaign ? (
+          <Dialog
+            classes={classes}
+            open={dialogClickCampaign}
+            onClose={handleCloseCampaign}
+            showDefaultButtons={false}
+            icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
+          >
+            <div style={{ height: "60px", borderBottom: "1px solid black" }}>
+              <span className={classes.groupName}>{t("mainReport.selectCamp")}</span>
+            </div>
+            <div className={classes.modalDiv}>
+              <Paper component="form" className={btnStyle.root}>
+                <IconButton
+                  type="submit"
+                  className={btnStyle.iconButton}
+                  aria-label="search"
+                >
+                  <SearchIcon />
+                </IconButton>
+                <InputBase
+                  className={btnStyle.input}
+                  placeholder={t("mainReport.searchSms")}
+                  inputProps={{ "aria-label": "Search" }}
+                  onChange={(e) => {
+                    setCampaignSearch(e.target.value);
+                  }}
+                />
+              </Paper>
+            </div>
+            <div className={classes.listDiv}>
+              {previousCampaignData
+                .filter((val) => {
+                  if (CampaignSearch == "") {
+                    return val;
+                  } else if (
+                    val.CampaignName.toLowerCase().includes(
+                      CampaignSearch.toLowerCase()
+                    )
+                  ) {
+                    return val;
+                  }
+                })
+                .map((item, idx) => {
+                  return (
+                    <div
+                      className={classes.searchCon}
+                      onClick={() => {
+                        handleCampClick(idx);
+                      }}
+                    >
+                      <span
+                        style={{ marginInlineEnd: "8px" }}
+                        className={classes.grDoc}
+                      >
+                        <AiOutlineFile />
+                      </span>
+                      <span>{item.Name}</span>
+                    </div>
+                  );
+                })}
+            </div>
+          </Dialog>
+        ) : null}</>
+    )
+
+  }
+  const renderWaizeNavigationModal = () => {
+    return (<>
       {waize ? (
         <Dialog
           classes={classes}
@@ -1557,8 +1538,8 @@ const SmsCreator = ({ classes, ...props }) => {
           onClose={handleCloseWaize}
           showDefaultButtons={false}
           icon={<div className={classes.dialogIconContent}>
-          {'\u0056'}
-        </div>}
+            {'\u0056'}
+          </div>}
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
             <span className={classes.groupName}>
@@ -1572,7 +1553,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 className={btnStyle.iconButton}
                 aria-label={t("mainReport.searchSms")}
               >
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6M0ZFOUE1Q0ExQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6M0ZFOUE1Q0IxQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDozRkU5QTVDODFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDozRkU5QTVDOTFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pu8Ul6cAAAXVSURBVHja1Jd5UJVV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"/>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6M0ZFOUE1Q0ExQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6M0ZFOUE1Q0IxQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDozRkU5QTVDODFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDozRkU5QTVDOTFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pu8Ul6cAAAXVSURBVHja1Jd5UJVV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" />
               </IconButton>
               <InputBase
                 className={btnStyle.input}
@@ -1594,12 +1575,11 @@ const SmsCreator = ({ classes, ...props }) => {
           </div>
         </Dialog>
       ) : null}</>)
-  
+
   }
-  const renderDeleteModal = () =>
-  {
-   return( <>
-    {deleteModalOpen ? (
+  const renderDeleteModal = () => {
+    return (<>
+      {deleteModalOpen ? (
         <Dialog
           classes={classes}
           open={deleteModalOpen}
@@ -1624,10 +1604,9 @@ const SmsCreator = ({ classes, ...props }) => {
       ) : null}
     </>)
   }
-  const renderSaveModal = () =>
-  {
-   return( <>
-    <Dialog
+  const renderSaveModal = () => {
+    return (<>
+      <Dialog
         classes={classes}
         open={save}
         onClose={handleCloseSave}
@@ -1648,7 +1627,7 @@ const SmsCreator = ({ classes, ...props }) => {
             </li> : null}
             {msg === null ? <li>{t("mainReport.msgRequire")}</li> : null}
             {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
-            {t("mainReport.campaignFromRequire")}
+              {t("mainReport.campaignFromRequire")}
             </li> : null}
           </ul>
         </div>
