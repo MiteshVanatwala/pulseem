@@ -476,7 +476,7 @@
   "sendToOne":"Send to one contact",
   "sendToGroups":"Send to one test groups",
   "typeText" : "Type Text",
-  "char":"Char",
+  "char":"characters",
   "message":"message",
   "link":"Link",
   "removalMsg":"Removal Message",
