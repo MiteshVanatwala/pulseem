@@ -13,6 +13,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Picker from "emoji-picker-react";
 import Mobile from "../../../assets/images/mobileiphone.png";
 import Radio from "@material-ui/core/Radio";
+import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Emoj from "../../../assets/images/smile.png";
 import { FaCheck } from "react-icons/fa";
@@ -34,7 +35,8 @@ import {
   getCampaignSettings,
   sendSms,
   getTestGroups,
-  getCommonFeatures
+  getCommonFeatures,
+  getSMSVirtualNumber
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
 import { FaUndoAlt } from "react-icons/fa";
@@ -91,7 +93,9 @@ const SmsCreator = ({ classes, ...props }) => {
   document.title = t("sms.pageTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();
-
+  const inputProps = {
+    maxlength:"13"
+  }
   const history = useHistory();
   const dispatch = useDispatch();
   const { language, windowSize, isRTL} = useSelector(
@@ -103,7 +107,8 @@ const SmsCreator = ({ classes, ...props }) => {
     extraData,
     accountId,
     getCampaignSum,
-    smsSendResult
+    smsSendResult,
+    commonSettings
   } = useSelector((state) => state.sms);
 
   const [alignment, setAlignment] = useState("left");
@@ -139,9 +144,12 @@ const SmsCreator = ({ classes, ...props }) => {
   const [OpenS, setOpenS] = useState(false);
   const [alertToggle, setalertToggle] = useState(false);
   const [selectedGroup, setselectedGroup] = useState([]);
+  const [StaticNumber, setStaticNumber] = useState("");
   const [hidden, sethidden] = useState(false);
   const [Searched, setSearched] = useState("");
   const [modalOpen, setmodalOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [removalNumber, setremovalNumber] = useState("");
   const [storedValue, setstoredValue] = useState("");
   const [keep, setkeep] = useState(true);
   const [summary, setsummary] = useState(false);
@@ -193,6 +201,13 @@ const SmsCreator = ({ classes, ...props }) => {
           MessageLength: "1"
 
   })
+
+  console.log("-------->",commonSettings)
+  const toastMessages = {
+    SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
+    SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
+    ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
+  }
 
   const handleSendResult = async () => {
     if (smsSendResult) {
@@ -253,7 +268,17 @@ const SmsCreator = ({ classes, ...props }) => {
     await dispatch(getAccountExtraData());
     await dispatch(getGroupsBySubAccountId());
     let r = await dispatch(getCommonFeatures());
-    setcampaignNumber(r.payload.DefaultCellNumber)
+    if (props && props.match.params.id) {
+      getSavedData();
+    }
+    else
+    {
+      setcampaignNumber(r.payload.DefaultCellNumber)
+      let response =  await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber))
+      
+      setStaticNumber(response.payload.Number);
+      setremovalNumber(response.payload.RemovalKey);
+    }
     setstoredValue(r.payload.DefaultCellNumber)
     setLoader(false);
   }, [dispatch]);
@@ -289,7 +314,6 @@ const SmsCreator = ({ classes, ...props }) => {
   useEffect(() => {
     getSavedData();
   }, [])
-
   const onEmojiClick = async (event, emojiObject) => {
     let msgs = msg;
     let count = characterCount;
@@ -347,8 +371,9 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCampaignNumber = (e) => {
-    setcampaignNumber(e.target.value);
-    setcampaignNumberValidated(false);
+      setrestoreBool(false);
+      setcampaignNumber(e.target.value);
+      setcampaignNumberValidated(false);
   };
 
   const validationCheck = () => {
@@ -362,9 +387,9 @@ const SmsCreator = ({ classes, ...props }) => {
       setsave(true);
       return false;
     }
-
-    if(campaignNumber === "")
-    {
+    let english = /^[ A-Za-z0-9]*$/;
+    if(campaignNumber === "" || !english.test(campaignNumber))
+    { 
       setcampaignNumberValidated(true);
       setsave(true);
       return false;
@@ -404,6 +429,17 @@ const SmsCreator = ({ classes, ...props }) => {
       setcounterBool(false);
     }
   }
+  const handleRestore = async  () =>
+  {
+    setrestoreBool(true);
+    setcampaignNumber(StaticNumber);
+    let r = await dispatch(getCommonFeatures());
+    setcampaignNumber(r.payload.DefaultCellNumber)
+    let response =  await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber))
+    setcampaignNumber(response.payload.Number);
+    setremovalNumber(response.payload.RemovalKey);
+
+  }
   const renderFields = () => {
     return (
       <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
@@ -435,7 +471,7 @@ const SmsCreator = ({ classes, ...props }) => {
             <Typography
               className={classes.restoreBtn}
               onClick={() => {
-                setrestoreBool(!restoreBool);
+                handleRestore()
               }}
             >
               {t("mainReport.restore")}
@@ -451,6 +487,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 : clsx(classes.buttonField , classes.success)
             }
             onChange={onCampaignNumber}
+            inputProps={inputProps}
             value={campaignNumber}
             onBlur={onLeave}
           />
@@ -470,6 +507,8 @@ const SmsCreator = ({ classes, ...props }) => {
                 placeholder="2"
                 disabled
                 className={windowSize === "xs" ? classes.buttonFieldRemovalMobile : classes.buttonFieldRemoval}
+                value={removalNumber}
+                disabled
               />
             </Box>
           ) : null}
@@ -1051,7 +1090,12 @@ const SmsCreator = ({ classes, ...props }) => {
       const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg  }
       let r = await dispatch(smsSave(payloadToPush));
       if (isSave) {
-        history.push(`/sms/edit/${r.payload.Message}`);
+        let a = toastMessages.SUCCESS
+        setToastMessage(toastMessages.SUCCESS);
+        setTimeout(() => {
+          history.push(`/sms/edit/${r.payload.Message}`);
+          setToastMessage(null);
+        }, 1500);  
       } else {
         history.push(`/sms/edit/${r.payload.Message}`);
         history.push(`/sms/send/${r.payload.Message}`);
@@ -1596,6 +1640,18 @@ const SmsCreator = ({ classes, ...props }) => {
       ) : null}</>)
   
   }
+  const renderToast = () => {
+    if (toastMessage) {
+      console.log("in toast if")
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 2000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
   const renderDeleteModal = () =>
   {
    return( <>
@@ -1675,8 +1731,9 @@ const SmsCreator = ({ classes, ...props }) => {
   }
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
+        {renderToast()}
       <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" ? classes.mobileGrid : classes.smsInit}>
-        {windowSize === "xs" ? <Grid item xs={12} >
+        {windowSize === "xs" ? <Grid item xs={12} >      
           {renderSwitch()}
           {renderHead()}
           {renderFields()}

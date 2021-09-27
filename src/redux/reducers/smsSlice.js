@@ -10,6 +10,17 @@ export const getSmsData = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+
+  export const getSMSVirtualNumber = createAsyncThunk(
+    'smsCampaign/GetAccountVirtualNumber', async (number, thunkAPI) => {
+      try {
+        const response = await instence.get(`smsCampaign/GetAccountVirtualNumber/${number}`);
+        return JSON.parse(response.data)
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    })
+
 export const getCommonFeatures = createAsyncThunk(
   'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
     try {
