@@ -487,5 +487,8 @@
   "filterEmptyNumbers"  : "מספרים ריקים",
   "filterInvalid" : "לא חוקי",
   "pageTitle" : "יצירת סמס מערכת פולסים",
-  "sendPageTitle": "Send SMS | Pulseem System"
+  "sendPageTitle": "Send SMS | Pulseem System",
+  "saved": "SMS saved sucessfully!",
+  "settings_saved": "SMS settings saved sucessfully!",
+  "error":"Error saving SMS "
 }

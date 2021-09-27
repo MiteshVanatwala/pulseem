@@ -493,5 +493,9 @@
   "filterDuplicateRecipients" : "Duplicate Recipients",
   "filterRemoved" : "Removed",
   "filterEmptyNumbers"  : "Empty numbers",
-  "filterInvalid" : "Invalid"
+  "filterInvalid" : "Invalid",
+  "saved": "SMS saved sucessfully!",
+  "settings_saved": "SMS settings saved sucessfully!",
+  "error":"Error saving SMS "
+  
 }
