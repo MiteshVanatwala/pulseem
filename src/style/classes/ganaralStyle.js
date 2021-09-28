@@ -923,10 +923,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   buttonDiv: {
     display: "flex",
     alignItems: "center",
-    marginTop: "20px",
-    marginBottom: "50px",
     position: "relative",
     bottom: "10px",
+    marginBottom:"40px",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column-reverse",
     },
@@ -938,8 +937,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     bottom: "10px",
     display: "flex",
     alignItems: "center",
-    marginTop: "150px",
-    marginBottom: "50px",
+   
+    marginBottom: "40px",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column-reverse",
     },
@@ -1591,6 +1590,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   smsInit: {
     padding: "40px 80px 15px 90px",
+    justifyContent:"flex-end"
   },
   msgDiv: {
 
@@ -2415,9 +2415,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+    marginBottom:"40px",
     marginTop: "20px",
     position: "relative",
-    bottom: "30px",
+    bottom: "10px",
     "@media screen and (max-width: 768px)": {
 
       marginTop: "150px",

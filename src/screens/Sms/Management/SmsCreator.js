@@ -1038,34 +1038,7 @@ const SmsCreator = ({ classes, ...props }) => {
           </div>
         ) : null}
 
-        <div
-          className={
-            checked ? clsx(classes.buttonDiv) : clsx(classes.buttonDivAct)
-          }
-        >
-          <span className={classes.rightInput3} onClick={onHandleDelete}>
-            <BsTrash style={{ fontSize: "25" }} />
-          </span>
-          <span className={classes.rightInput4} onClick={() => {setexitClick(true)}}>
-            {t("mainReport.exitSms")}
-          </span>
-          <span
-            className={classes.rightInput5}
-            onClick={() => {
-              onContinueClick(true);
-            }}
-          >
-            {t("mainReport.saveSms")}
-          </span>
-          <span
-            className={classes.rightInput6}
-            onClick={() => {
-              onContinueClick(false);
-            }}
-          >
-            {t("mainReport.continue")}
-          </span>
-        </div>
+      
       </Box>
     );
   };
@@ -1683,6 +1656,40 @@ const SmsCreator = ({ classes, ...props }) => {
       ) : null}
     </>)
   }
+
+  const renderDefaultButtons = () =>
+  {
+return(
+  <div
+  className={
+    checked ? clsx(classes.buttonDiv) : clsx(classes.buttonDivAct)
+  }
+>
+  <span className={classes.rightInput3} onClick={onHandleDelete}>
+    <BsTrash style={{ fontSize: "25" }} />
+  </span>
+  <span className={classes.rightInput4} onClick={() => {setexitClick(true)}}>
+    {t("mainReport.exitSms")}
+  </span>
+  <span
+    className={classes.rightInput5}
+    onClick={() => {
+      onContinueClick(true);
+    }}
+  >
+    {t("mainReport.saveSms")}
+  </span>
+  <span
+    className={classes.rightInput6}
+    onClick={() => {
+      onContinueClick(false);
+    }}
+  >
+    {t("mainReport.continue")}
+  </span>
+</div>
+)
+  }
   const renderSaveModal = () =>
   {
    return( <>
@@ -1751,6 +1758,7 @@ const SmsCreator = ({ classes, ...props }) => {
           <Grid item xs={4}>
             {renderPhone()}
           </Grid> </>}
+          {renderDefaultButtons()}
       </Grid>
       {renderPreviousLandingDataModal()}
       {renderPreviousCampaignsData()}
@@ -1761,6 +1769,7 @@ const SmsCreator = ({ classes, ...props }) => {
       {renderExit()}
       {renderAlert()}
       {renderSummary()}
+      
     </DefaultScreen>
   );
 };
