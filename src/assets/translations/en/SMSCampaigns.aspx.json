@@ -496,6 +496,7 @@
   "filterInvalid" : "Invalid",
   "saved": "SMS saved sucessfully!",
   "settings_saved": "SMS settings saved sucessfully!",
-  "error":"Error saving SMS "
+  "error":"Error saving SMS ",
+  "quickSend":"Quick send successfully"
   
 }

@@ -202,9 +202,9 @@ const SmsCreator = ({ classes, ...props }) => {
 
   })
 
-  console.log("-------->",commonSettings)
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
+    QUICKSENDSUCCESSS: { severity: 'success', color: 'success', message: t('sms.quickSend'), showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
   }
@@ -414,8 +414,9 @@ const SmsCreator = ({ classes, ...props }) => {
   const handleSend = () => {
     if (validationCheck()) {
       if (phone !== "") {
-        const smsQuickSendData = {...quickSendPayload , fromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg }
+        const smsQuickSendData = {...quickSendPayload , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg }
         dispatch(smsQuick(smsQuickSendData));
+        setToastMessage(toastMessages.QUICKSENDSUCCESSS);
       } else {
         setOpenS(true);
       }
@@ -1092,7 +1093,7 @@ const SmsCreator = ({ classes, ...props }) => {
       const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg  }
       let r = await dispatch(smsSave(payloadToPush));
       if (isSave) {
-        let a = toastMessages.SUCCESS
+        
         setToastMessage(toastMessages.SUCCESS);
         setTimeout(() => {
           history.push(`/sms/edit/${r.payload.Message}`);
@@ -1644,7 +1645,7 @@ const SmsCreator = ({ classes, ...props }) => {
   }
   const renderToast = () => {
     if (toastMessage) {
-      console.log("in toast if")
+
       setTimeout(() => {
         setToastMessage(null);
       }, 2000);
@@ -1760,20 +1761,6 @@ const SmsCreator = ({ classes, ...props }) => {
       {renderExit()}
       {renderAlert()}
       {renderSummary()}
-      <Snackbar
-        open={finalApi}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        style={{ zIndex: "9999" }}
-      >
-        <Alert severity="success" onClose={handleCloseSnackbarApi} style={{ border: "3px solid green", backgroundColor: "#c5f1c5", color: "black", width: "400px", padding: "10px", fontWeight: "700", fontSize: "15px" }}>
-          {t("sms.quickSendSuccess")}
-        </Alert>
-      </Snackbar>
     </DefaultScreen>
   );
 };
