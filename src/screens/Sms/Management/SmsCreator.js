@@ -587,7 +587,6 @@ const SmsCreator = ({ classes, ...props }) => {
     setmsg(linkMsg);
     let response = await dispatch(getCreditsforSMS(e.target.value.length));
     let credits = response.payload.split("#");
-  
     setmessageCount(credits[0]);
     setcharacterCount(linkMsg.length);
   };
@@ -887,9 +886,12 @@ const SmsCreator = ({ classes, ...props }) => {
           <img src={Mobile} className={classes.phoneImg} />
           <span className={classes.phoneNumber}>{campaignNumber}</span>
           <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
+            <div className={classes.chatBox}>
             <div className={classes.fromMe}>
               {msg}
             </div>
+            </div>
+           
           </div>
         </Box>
         <div

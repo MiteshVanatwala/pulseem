@@ -1159,42 +1159,38 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     left: "13%",
     backgroundColor: "#fff",
     color: "#fff",
-    display: 'flex',
-    justifyContent: 'flex-end',
     borderRadius: "12px",
-    maxHeight: "230px",
+    height: "230px",
     overflowY: "auto",
-    // overflowX: "hidden",
     width: '260px',
-    minHeight: '40px',
     wordBreak: 'break-all',
+    "&::-webkit-scrollbar" :  {
+      visibility: "hidden",
+      width: "0px",
+      }
   },
   wrapChatSumm:
   {
     position: "absolute",
     top: "130px",
-    left: "16%",
+    left: "13%",
     backgroundColor: "#fff",
     color: "#fff",
+    borderRadius: "12px",
+    height: "200px",
+    overflowY: "auto",
+    width: '260px',
+    wordBreak: 'break-all',
+    "&::-webkit-scrollbar" :  {
+      visibility: "hidden",
+      width: "0px",
+      }
+  },
+  chatBox : 
+  {
     display: 'flex',
     justifyContent: 'flex-end',
-    borderRadius: "12px",
-    maxHeight: "200px",
-    fontSize: "18px",
-    overflowY: "auto",
-    overflowX: "hidden",
-    backgroundAttachment: 'fixed',
-    width: '250px',
-    minHeight: '40px',
     wordBreak: 'break-all',
-    '&::-webkit-scrollbar': {
-      width: "0px",
-      background: "transparent"
-    },
-    '&::-webkit-scrollbar-thumb':
-    {
-      background: "transparent"
-    }
   },
   wrapChatHe:
   {
@@ -1204,6 +1200,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxWidth: "260px",
     right: "11%",
     backgroundColor: "#fff",
+    wordBreak: 'break-all',
     color: "#fff",
     display: 'flex',
     justifyContent: 'flex-start',
@@ -1227,10 +1224,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '1.15rem',
     lineHeight: '1.25',
     maxWidth: '79%',
+
+    minHeight: '20px',
+
     padding: '0.5rem .875rem',
     position: 'relative',
     minWidth: "20px",
-    minHeight: "20px",
     wordWrap: 'break-word',
     right: "12px",
     cursor: "pointer",

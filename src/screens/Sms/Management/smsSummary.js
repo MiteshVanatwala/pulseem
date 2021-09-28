@@ -78,10 +78,12 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                     borderBottom: "1px solid #efefef",
                   }}
                 />
-                <span className={classes.phoneNumberSum}>050608001</span>
-                <div className={classes.wrapChat}>
+                <span className={classes.phoneNumberSum}>{fromNumber}</span>
+                <div className={classes.wrapChatSumm}>
+                <div className={classes.chatBox}>
                   <div className={classes.fromMe}>
                     {totalmsg}
+                  </div>
                   </div>
                 </div>
               </div>
@@ -283,9 +285,11 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   }}
                 />
                 <span className={classes.phoneNumberSum}>050608001</span>
-                <div className={classes.wrapChat}>
+                <div className={classes.wrapChatSumm}>
+                <div className={classes.chatBox}>
                   <div className={classes.fromMe}>
                     Type text
+                  </div>
                   </div>
                 </div>
               </div>
