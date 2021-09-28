@@ -1739,6 +1739,47 @@ return(
         </div>
       </Dialog></>)
   }
+
+  const renderOtpVerificationDialog = () => 
+  {
+    return(
+      <Dialog
+      classes={classes}
+      open={true}
+      showDefaultButtons={false}
+      icon={<div className={classes.dialogIconContent}>
+            {'\uE11B'}
+          </div>}
+      
+      >
+         <Box style={{borderBottom:"1px solid #dee2e6",padding:"4px"}}>
+          <Typography className={classes.groupName} style={{textAlign:"center",width:"100%"}}>
+          {t("sms.verificationOtp")}
+          </Typography>
+        </Box>
+       <Box style={{marginTop:"15px",alignItems:"center",display:"flex",flexDirection:"column",width:"100%"}}>
+         <Typography style={{textAlign:"center",width:"100%",fontSize:"18px"}}>
+         {t("sms.OtpRegulations")}
+         </Typography>
+         <Typography style={{textAlign:"center",width:"100%",fontSize:"18px"}}>{t("sms.regulationSecondLine")} <strong>{t("sms.oneTime")}</strong> {t("sms.regulationThirdLine")}</Typography>
+         <TextField
+            id="outlined-basic"
+            type="text"
+            style={{border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"200px",alignContent:"center",marginBottom:"30px",padding:"5px"}}
+          />
+
+<Button
+            variant='contained'
+            size='small'className={clsx(
+              classes.dialogButton,
+              classes.dialogConfirmButton
+            )} style={{width:"250px"}}>{t("sms.sendVerificationCode")}</Button>
+         <Typography style={{marginTop:"30px",fontSize:"14px"}}>{t("sms.otpContactUs")}</Typography>
+         <Typography style={{fontSize:"14px"}}>{t("sms.helplineSMS")}</Typography>
+       </Box>
+      </Dialog>
+    )
+  }
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
         {renderToast()}
@@ -1768,6 +1809,7 @@ return(
       {renderSendGroup()}
       {renderExit()}
       {renderAlert()}
+      {renderOtpVerificationDialog()}
       {renderSummary()}
       
     </DefaultScreen>

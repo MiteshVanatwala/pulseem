@@ -491,5 +491,13 @@
   "saved": "SMS saved sucessfully!",
   "settings_saved": "SMS settings saved sucessfully!",
   "error":"Error saving SMS ",
-  "quickSend":"Quick send successfully"
+  "quickSend":"Quick send successfully",
+  "verificationOtp":"אימות קצר לפני שממשיכים",
+  "OtpRegulations":"על פי תקנות חדשות של משרד התקשורת, אנו מחוייבים לוודא שהמספר שהזנתם לשליחה נמצא בבעלותכם.",
+  "regulationSecondLine":"זהו",
+  "oneTime":"תהליך חד פעמי",
+  "regulationThirdLine":"עבור כל מספר לשליחה.",
+  "sendVerificationCode":"שלחו לי קוד אימות",
+  "otpContactUs":"נתקלת בבעיה? צור איתנו קשר",
+  "helplineSMS":"03-5240290 או במייל support@pulseem.com"
 }

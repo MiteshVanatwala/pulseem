@@ -155,7 +155,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid #345233",
     borderTop: "0px solid #345233",
     boxShadow: "0px 3px 3px #345233",
-    maxWidth: 150,
+    maxWidth: 250,
   },
   dialogCancelButton: {
     background: "rgba(212,137,33,1)",
