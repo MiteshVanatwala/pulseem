@@ -505,6 +505,14 @@
   "regulationThirdLine":"for each number to send.",
   "sendVerificationCode":"Send Verification Code",
   "otpContactUs":"Having trouble? Contact us",
-  "helplineSMS":"At 03-5240290 or email support@pulseem.com"
+  "helplineSMS":"At 03-5240290 or email support@pulseem.com",
+  "weHaveSentOtp":"We have sent!",
+  "OtpSentSuccessLine1":"OTP code successfully sent to",
+  "OtpSentSuccessLine2":"Pay attention, The code is valid for the next 10 minutes.",
+  "typeOtpPlaceholder":"Type OTP here",
+  "didntReceivedOtp":"Didn't receive?",
+  "sendAgainOtp":"Send again",
+  "confirmOtp":"Confirm"
+
   
 }

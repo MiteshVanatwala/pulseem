@@ -1745,7 +1745,7 @@ return(
     return(
       <Dialog
       classes={classes}
-      open={true}
+      open={false}
       showDefaultButtons={false}
       icon={<div className={classes.dialogIconContent}>
             {'\uE11B'}
@@ -1779,6 +1779,47 @@ return(
          <Typography style={{fontSize:"14px"}}>{t("sms.helplineSMS")}</Typography>
        </Box>
       </Dialog>
+    
+    )
+  }
+  const renderOtpNumberDialog = () =>
+  {
+    return(
+      <Dialog
+      classes={classes}
+      open={true}
+      showDefaultButtons={false}
+      icon={<div className={classes.dialogIconContent}>
+            {'\uE11B'}
+          </div>}
+      >
+         <Box className={classes.verificationBoxSMS}>
+          <Typography className={classes.groupName} style={{textAlign:"center",width:"100%"}}>
+          {t("sms.weHaveSentOtp")}
+          </Typography>
+        </Box>
+       <Box  className={classes.verificationBodySMS}>
+         <Typography className={classes.fontSmsRegulations}>
+         {t("sms.OtpSentSuccessLine1")} <strong>9592224549</strong> 
+         </Typography>
+         <Typography className={classes.fontSmsRegulations}>{t("sms.OtpSentSuccessLine2")}</Typography>
+         <TextField
+            id="outlined-basic"
+            type="text"
+            className={classes.OtpPhoneNumberConfirm}
+            placeholder={t("sms.typeOtpPlaceholder")}
+          />
+            <Button
+            variant='contained'
+            size='small'
+            className={clsx(
+              classes.dialogButton,
+              classes.dialogConfirmBlueButton
+            )} style={{width:"250px"}}>{t("sms.confirmOtp")}</Button>
+       <Box style={{display:"flex",marginTop:"20px"}}>  <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography ><Typography style={{textDecoration:"underline",marginInlineStart:"4px"}} className={classes.fontSmsRegulations}>{t("sms.sendAgainOtp")}</Typography></Box>
+       </Box>
+      </Dialog>
+
     )
   }
   return (
@@ -1811,6 +1852,7 @@ return(
       {renderExit()}
       {renderAlert()}
       {renderOtpVerificationDialog()}
+      {renderOtpNumberDialog()}
       {renderSummary()}
       
     </DefaultScreen>

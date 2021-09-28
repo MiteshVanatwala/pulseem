@@ -158,12 +158,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 250,
   },
   dialogCancelButton: {
-    background: "rgba(212,137,33,1)",
+    background: "#c9302c",
     backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
-    backgroundRepeat: "repeat-x",
+    // backgroundRepeat: "repeat-x",
     border: "1px solid darkred",
     borderTop: "0px solid darkred",
     boxShadow: "0px 3px 3px darkred",
+    maxWidth: 150,
+  },
+  dialogConfirmBlueButton: {
+    // background: "rgba(212,137,33,1)",
+    backgroundImage: "linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)",
+    // backgroundRepeat: "repeat-x",
+    // border: "1px solid darkred",
+    // borderTop: "0px solid darkred",
+    // boxShadow: "0px 3px 3px darkred",
     maxWidth: 150,
   },
   dialogButtonsContainer: {
@@ -2496,6 +2505,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   OtpPhoneNumberInput :
   {
     border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"200px",alignContent:"center",marginBottom:"30px",padding:"5px"
+  },
+  OtpPhoneNumberConfirm :
+  {
+    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"300px",textAlign:"center",marginBottom:"30px",padding:"5px",
+    "&::placeholder":
+    {
+      alignContent:"center"
+    }
   },
   otpContactUs : 
   {

@@ -499,5 +499,12 @@
   "regulationThirdLine":"עבור כל מספר לשליחה.",
   "sendVerificationCode":"שלחו לי קוד אימות",
   "otpContactUs":"נתקלת בבעיה? צור איתנו קשר",
-  "helplineSMS":"03-5240290 או במייל support@pulseem.com"
+  "helplineSMS":"03-5240290 או במייל support@pulseem.com",
+  "weHaveSentOtp":"שלחנו!",
+  "OtpSentSuccessLine1":"קוד אימות נשלח בהצלחה למספר",
+  "OtpSentSuccessLine2":"שימו לב, הוא תקף ל-10 הדקות הקרובות בלבד",
+  "typeOtpPlaceholder":"הזינו קוד כאן",
+  "didntReceivedOtp":"לא קיבלתם?",
+  "sendAgainOtp":"שליחה חוזרת",
+  "confirmOtp":"אישור"
 }
