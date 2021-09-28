@@ -2480,5 +2480,25 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   spaceEvenly: {
     justifyContent: 'space-evenly'
+  },
+  verificationBoxSMS:
+  {
+    borderBottom:"1px solid #dee2e6",padding:"4px"
+  },
+  verificationBodySMS:
+  {
+    marginTop:"15px",alignItems:"center",display:"flex",flexDirection:"column",width:"100%",textAlign:"center"
+  },
+  fontSmsRegulations : 
+  {
+    fontSize:"18px"
+  },
+  OtpPhoneNumberInput :
+  {
+    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"200px",alignContent:"center",marginBottom:"30px",padding:"5px"
+  },
+  otpContactUs : 
+  {
+    marginTop:"30px",fontSize:"14px"
   }
 });

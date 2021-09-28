@@ -1752,29 +1752,30 @@ return(
           </div>}
       
       >
-         <Box style={{borderBottom:"1px solid #dee2e6",padding:"4px"}}>
+         <Box className={classes.verificationBoxSMS}>
           <Typography className={classes.groupName} style={{textAlign:"center",width:"100%"}}>
           {t("sms.verificationOtp")}
           </Typography>
         </Box>
-       <Box style={{marginTop:"15px",alignItems:"center",display:"flex",flexDirection:"column",width:"100%"}}>
-         <Typography style={{textAlign:"center",width:"100%",fontSize:"18px"}}>
+       <Box  className={classes.verificationBodySMS}>
+         <Typography className={classes.fontSmsRegulations}>
          {t("sms.OtpRegulations")}
          </Typography>
-         <Typography style={{textAlign:"center",width:"100%",fontSize:"18px"}}>{t("sms.regulationSecondLine")} <strong>{t("sms.oneTime")}</strong> {t("sms.regulationThirdLine")}</Typography>
+         <Typography className={classes.fontSmsRegulations}>{t("sms.regulationSecondLine")} <strong>{t("sms.oneTime")}</strong> {t("sms.regulationThirdLine")}</Typography>
          <TextField
             id="outlined-basic"
             type="text"
-            style={{border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"200px",alignContent:"center",marginBottom:"30px",padding:"5px"}}
+            className={classes.OtpPhoneNumberInput}
           />
 
-<Button
+            <Button
             variant='contained'
-            size='small'className={clsx(
+            size='small'
+            className={clsx(
               classes.dialogButton,
               classes.dialogConfirmButton
             )} style={{width:"250px"}}>{t("sms.sendVerificationCode")}</Button>
-         <Typography style={{marginTop:"30px",fontSize:"14px"}}>{t("sms.otpContactUs")}</Typography>
+         <Typography  className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
          <Typography style={{fontSize:"14px"}}>{t("sms.helplineSMS")}</Typography>
        </Box>
       </Dialog>
