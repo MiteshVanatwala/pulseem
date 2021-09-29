@@ -6,13 +6,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
 import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
-import ToggleButton from "@material-ui/lab/ToggleButton";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Picker from "emoji-picker-react";
 import Mobile from "../../../assets/images/mobileiphone.png";
 import Radio from "@material-ui/core/Radio";
+import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Emoj from "../../../assets/images/smile.png";
 import { FaCheck } from "react-icons/fa";
@@ -31,22 +30,19 @@ import {
   smsQuick,
   getCampaignSumm,
   getCreditsforSMS,
-  getCampaignSettings,
-  sendSms,
   getTestGroups,
-  getCommonFeatures
+  getCommonFeatures,
+  getSMSVirtualNumber
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
-import { FaUndoAlt } from "react-icons/fa";
 import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
-import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlineDelete, AiOutlinePlusCircle, AiOutlineFile, AiOutlineAlignLeft } from "react-icons/ai";
+import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -91,7 +87,9 @@ const SmsCreator = ({ classes, ...props }) => {
   document.title = t("sms.pageTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();
-
+  const inputProps = {
+    maxlength: "13"
+  }
   const history = useHistory();
   const dispatch = useDispatch();
   const { language, windowSize, isRTL } = useSelector(
@@ -103,7 +101,8 @@ const SmsCreator = ({ classes, ...props }) => {
     extraData,
     accountId,
     getCampaignSum,
-    smsSendResult
+    smsSendResult,
+    commonSettings
   } = useSelector((state) => state.sms);
 
   const [alignment, setAlignment] = useState("left");
@@ -139,9 +138,12 @@ const SmsCreator = ({ classes, ...props }) => {
   const [OpenS, setOpenS] = useState(false);
   const [alertToggle, setalertToggle] = useState(false);
   const [selectedGroup, setselectedGroup] = useState([]);
+  const [StaticNumber, setStaticNumber] = useState("");
   const [hidden, sethidden] = useState(false);
   const [Searched, setSearched] = useState("");
   const [modalOpen, setmodalOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
+  const [removalNumber, setremovalNumber] = useState("");
   const [storedValue, setstoredValue] = useState("");
   const [keep, setkeep] = useState(true);
   const [summary, setsummary] = useState(false);
@@ -193,6 +195,13 @@ const SmsCreator = ({ classes, ...props }) => {
     MessageLength: "1"
 
   })
+
+  const toastMessages = {
+    SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
+    QUICKSENDSUCCESSS: { severity: 'success', color: 'success', message: t('sms.quickSend'), showAnimtionCheck: true },
+    SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
+    ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
+  }
 
   const handleSendResult = async () => {
     if (smsSendResult) {
@@ -253,7 +262,16 @@ const SmsCreator = ({ classes, ...props }) => {
     await dispatch(getAccountExtraData());
     await dispatch(getGroupsBySubAccountId());
     let r = await dispatch(getCommonFeatures());
-    setcampaignNumber(r.payload.DefaultCellNumber)
+    if (props && props.match.params.id) {
+      getSavedData();
+    }
+    else {
+      setcampaignNumber(r.payload.DefaultCellNumber)
+      let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber))
+
+      setStaticNumber(response.payload.Number);
+      setremovalNumber(response.payload.RemovalKey);
+    }
     setstoredValue(r.payload.DefaultCellNumber)
     setLoader(false);
   }, [dispatch]);
@@ -289,7 +307,6 @@ const SmsCreator = ({ classes, ...props }) => {
   useEffect(() => {
     getSavedData();
   }, [])
-
   const onEmojiClick = async (event, emojiObject) => {
     let msgs = msg;
     let count = characterCount;
@@ -347,6 +364,7 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCampaignNumber = (e) => {
+    setrestoreBool(false);
     setcampaignNumber(e.target.value);
     setcampaignNumberValidated(false);
   };
@@ -362,8 +380,8 @@ const SmsCreator = ({ classes, ...props }) => {
       setsave(true);
       return false;
     }
-
-    if (campaignNumber === "") {
+    let english = /^[ A-Za-z0-9]*$/;
+    if (campaignNumber === "" || !english.test(campaignNumber)) {
       setcampaignNumberValidated(true);
       setsave(true);
       return false;
@@ -390,6 +408,7 @@ const SmsCreator = ({ classes, ...props }) => {
       if (phone !== "") {
         const smsQuickSendData = { ...quickSendPayload, fromNumber: campaignNumber, PhoneNumber: phone, Name: campaignName, Text: msg }
         dispatch(smsQuick(smsQuickSendData));
+        setToastMessage(toastMessages.QUICKSENDSUCCESSS);
       } else {
         setOpenS(true);
       }
@@ -402,6 +421,16 @@ const SmsCreator = ({ classes, ...props }) => {
     } else {
       setcounterBool(false);
     }
+  }
+  const handleRestore = async () => {
+    setrestoreBool(true);
+    setcampaignNumber(StaticNumber);
+    let r = await dispatch(getCommonFeatures());
+    setcampaignNumber(r.payload.DefaultCellNumber)
+    let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber))
+    setcampaignNumber(response.payload.Number);
+    setremovalNumber(response.payload.RemovalKey);
+
   }
   const renderFields = () => {
     return (
@@ -434,7 +463,7 @@ const SmsCreator = ({ classes, ...props }) => {
             <Typography
               className={classes.restoreBtn}
               onClick={() => {
-                setrestoreBool(!restoreBool);
+                handleRestore()
               }}
             >
               {t("mainReport.restore")}
@@ -450,6 +479,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 : clsx(classes.buttonField, classes.success)
             }
             onChange={onCampaignNumber}
+            inputProps={inputProps}
             value={campaignNumber}
             onBlur={onLeave}
           />
@@ -469,6 +499,8 @@ const SmsCreator = ({ classes, ...props }) => {
                 placeholder="2"
                 disabled
                 className={windowSize === "xs" ? classes.buttonFieldRemovalMobile : classes.buttonFieldRemoval}
+                value={removalNumber}
+                disabled
               />
             </Box>
           ) : null}
@@ -547,7 +579,6 @@ const SmsCreator = ({ classes, ...props }) => {
     setmsg(linkMsg);
     let response = await dispatch(getCreditsforSMS(e.target.value.length));
     let credits = response.payload.split("#");
-
     setmessageCount(credits[0]);
     setcharacterCount(linkMsg.length);
   };
@@ -839,9 +870,12 @@ const SmsCreator = ({ classes, ...props }) => {
           <img src={Mobile} className={classes.phoneImg} />
           <span className={classes.phoneNumber}>{campaignNumber}</span>
           <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
-            <div className={classes.fromMe}>
-              {msg}
+            <div className={classes.chatBox}>
+              <div className={classes.fromMe}>
+                {msg}
+              </div>
             </div>
+
           </div>
         </Box>
         <div
@@ -986,35 +1020,6 @@ const SmsCreator = ({ classes, ...props }) => {
             </RadioGroup>
           </div>
         ) : null}
-
-        <div
-          className={
-            checked ? clsx(classes.buttonDiv) : clsx(classes.buttonDivAct)
-          }
-        >
-          <span className={classes.rightInput3} onClick={onHandleDelete}>
-            <BsTrash style={{ fontSize: "25" }} />
-          </span>
-          <span className={classes.rightInput4} onClick={() => { setexitClick(true) }}>
-            {t("mainReport.exitSms")}
-          </span>
-          <span
-            className={classes.rightInput5}
-            onClick={() => {
-              onContinueClick(true);
-            }}
-          >
-            {t("mainReport.saveSms")}
-          </span>
-          <span
-            className={classes.rightInput6}
-            onClick={() => {
-              onContinueClick(false);
-            }}
-          >
-            {t("mainReport.continue")}
-          </span>
-        </div>
       </Box>
     );
   };
@@ -1041,7 +1046,15 @@ const SmsCreator = ({ classes, ...props }) => {
     if (validationCheck()) {
       const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
       let r = await dispatch(smsSave(payloadToPush));
-      window.location = `/react/sms/${isSave ? 'edit' : 'send'}/${r.payload.Message}`;
+      if (isSave) {
+
+        setToastMessage(toastMessages.SUCCESS);
+        setTimeout(() => {
+          window.location = `/react/sms/edit/${r.payload.Message}`;
+        }, 1500);
+      } else {
+        window.location = `/react/sms/send/${r.payload.Message}`;
+      }
     }
   };
 
@@ -1577,6 +1590,18 @@ const SmsCreator = ({ classes, ...props }) => {
       ) : null}</>)
 
   }
+  const renderToast = () => {
+    if (toastMessage) {
+
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 2000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
   const renderDeleteModal = () => {
     return (<>
       {deleteModalOpen ? (
@@ -1603,6 +1628,39 @@ const SmsCreator = ({ classes, ...props }) => {
         </Dialog>
       ) : null}
     </>)
+  }
+
+  const renderDefaultButtons = () => {
+    return (
+      <div
+        className={
+          checked ? clsx(classes.buttonDiv) : clsx(classes.buttonDivAct)
+        }
+      >
+        <span className={classes.rightInput3} onClick={onHandleDelete}>
+          <BsTrash style={{ fontSize: "25" }} />
+        </span>
+        <span className={classes.rightInput4} onClick={() => { setexitClick(true) }}>
+          {t("mainReport.exitSms")}
+        </span>
+        <span
+          className={classes.rightInput5}
+          onClick={() => {
+            onContinueClick(true);
+          }}
+        >
+          {t("mainReport.saveSms")}
+        </span>
+        <span
+          className={classes.rightInput6}
+          onClick={() => {
+            onContinueClick(false);
+          }}
+        >
+          {t("mainReport.continue")}
+        </span>
+      </div>
+    )
   }
   const renderSaveModal = () => {
     return (<>
@@ -1652,8 +1710,90 @@ const SmsCreator = ({ classes, ...props }) => {
         </div>
       </Dialog></>)
   }
+
+  const renderOtpVerificationDialog = () => {
+    return (
+      <Dialog
+        classes={classes}
+        open={false}
+        showDefaultButtons={false}
+        icon={<div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>}
+
+      >
+        <Box className={classes.verificationBoxSMS}>
+          <Typography className={classes.groupName} style={{ textAlign: "center", width: "100%" }}>
+            {t("sms.verificationOtp")}
+          </Typography>
+        </Box>
+        <Box className={classes.verificationBodySMS}>
+          <Typography className={classes.fontSmsRegulations}>
+            {t("sms.OtpRegulations")}
+          </Typography>
+          <Typography className={classes.fontSmsRegulations}>{t("sms.regulationSecondLine")} <strong>{t("sms.oneTime")}</strong> {t("sms.regulationThirdLine")}</Typography>
+          <TextField
+            id="outlined-basic"
+            type="text"
+            className={classes.OtpPhoneNumberInput}
+          />
+
+          <Button
+            variant='contained'
+            size='small'
+            className={clsx(
+              classes.dialogButton,
+              classes.dialogConfirmButton
+            )} style={{ width: "250px" }}>{t("sms.sendVerificationCode")}</Button>
+          <Typography className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
+          <Typography style={{ fontSize: "14px" }}>{t("sms.helplineSMS")}</Typography>
+        </Box>
+      </Dialog>
+
+    )
+  }
+  const renderOtpNumberDialog = () => {
+    return (
+      <Dialog
+        classes={classes}
+        open={false}
+        showDefaultButtons={false}
+        icon={<div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>}
+      >
+        <Box className={classes.verificationBoxSMS}>
+          <Typography className={classes.groupName} style={{ textAlign: "center", width: "100%" }}>
+            {t("sms.weHaveSentOtp")}
+          </Typography>
+        </Box>
+        <Box className={classes.verificationBodySMS}>
+          <Typography className={classes.fontSmsRegulations}>
+            {t("sms.OtpSentSuccessLine1")} <strong>9592224549</strong>
+          </Typography>
+          <Typography className={classes.fontSmsRegulations}>{t("sms.OtpSentSuccessLine2")}</Typography>
+          <TextField
+            id="outlined-basic"
+            type="text"
+            className={classes.OtpPhoneNumberConfirm}
+            placeholder={t("sms.typeOtpPlaceholder")}
+          />
+          <Button
+            variant='contained'
+            size='small'
+            className={clsx(
+              classes.dialogButton,
+              classes.dialogConfirmBlueButton
+            )} style={{ width: "250px" }}>{t("sms.confirmOtp")}</Button>
+          <Box style={{ display: "flex", marginTop: "20px" }}>  <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography ><Typography style={{ textDecoration: "underline", marginInlineStart: "4px" }} className={classes.fontSmsRegulations}>{t("sms.sendAgainOtp")}</Typography></Box>
+        </Box>
+      </Dialog>
+
+    )
+  }
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
+      {renderToast()}
       <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" ? classes.mobileGrid : classes.smsInit}>
         {windowSize === "xs" ? <Grid item xs={12} >
           {renderSwitch()}
@@ -1670,6 +1810,7 @@ const SmsCreator = ({ classes, ...props }) => {
           <Grid item xs={4}>
             {renderPhone()}
           </Grid> </>}
+        {renderDefaultButtons()}
       </Grid>
       {renderPreviousLandingDataModal()}
       {renderPreviousCampaignsData()}
@@ -1679,21 +1820,10 @@ const SmsCreator = ({ classes, ...props }) => {
       {renderSendGroup()}
       {renderExit()}
       {renderAlert()}
+      {renderOtpVerificationDialog()}
+      {renderOtpNumberDialog()}
       {renderSummary()}
-      <Snackbar
-        open={finalApi}
-        autoHideDuration={2000}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        style={{ zIndex: "9999" }}
-      >
-        <Alert severity="success" onClose={handleCloseSnackbarApi} style={{ border: "3px solid green", backgroundColor: "#c5f1c5", color: "black", width: "400px", padding: "10px", fontWeight: "700", fontSize: "15px" }}>
-          {t("sms.quickSendSuccess")}
-        </Alert>
-      </Snackbar>
+
     </DefaultScreen>
   );
 };

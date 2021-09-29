@@ -493,5 +493,26 @@
   "filterDuplicateRecipients" : "Duplicate Recipients",
   "filterRemoved" : "Removed",
   "filterEmptyNumbers"  : "Empty numbers",
-  "filterInvalid" : "Invalid"
+  "filterInvalid" : "Invalid",
+  "saved": "SMS saved sucessfully!",
+  "settings_saved": "SMS settings saved sucessfully!",
+  "error":"Error saving SMS ",
+  "quickSend":"Quick send successfully",
+  "verificationOtp":"Verification shortly before proceeding",
+  "OtpRegulations":"According to new regulations of the Ministry of Communications, we are obliged to make sure that the number you entered for sending is owned by you.",
+  "regulationSecondLine":"This is a",
+  "oneTime":"one-time process",
+  "regulationThirdLine":"for each number to send.",
+  "sendVerificationCode":"Send Verification Code",
+  "otpContactUs":"Having trouble? Contact us",
+  "helplineSMS":"At 03-5240290 or email support@pulseem.com",
+  "weHaveSentOtp":"We have sent!",
+  "OtpSentSuccessLine1":"OTP code successfully sent to",
+  "OtpSentSuccessLine2":"Pay attention, The code is valid for the next 10 minutes.",
+  "typeOtpPlaceholder":"Type OTP here",
+  "didntReceivedOtp":"Didn't receive?",
+  "sendAgainOtp":"Send again",
+  "confirmOtp":"Confirm"
+
+  
 }

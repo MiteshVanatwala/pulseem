@@ -2138,11 +2138,12 @@ const SmsSend = ({classes , ...props }) => {
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
       <div className={classes.smsStepDiv}>
+
         <div>
           {renderSwitch()}
           {renderHead()}
 
-          <Grid container>
+          <Grid container style={{marginBottom:"40px"}}>
             <Grid md={7} xs={12}>
               {renderBody()}
             </Grid>
@@ -2152,9 +2153,7 @@ const SmsSend = ({classes , ...props }) => {
             </Grid>
           </Grid>
         </div>
-
-      </div>
-      <div className={classes.creatorButtons}>
+   <div className={classes.creatorButtons}>
         <div className={classes.back} onClick={() => {handlePreviousPage()}}>
 
           <span className={classes.rightInput4}>
@@ -2186,6 +2185,8 @@ const SmsSend = ({classes , ...props }) => {
           </span>
         </div>
       </div>
+      </div>
+   
 
       {renderPulse()}
       {renderReciFilter()}
