@@ -21,12 +21,13 @@ import { FaCheck } from 'react-icons/fa';
 import CloseIcon from "@material-ui/icons/Close";
 import SortIcon from "@material-ui/icons/Sort";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import { AiOutlineExclamationCircle } from "react-icons/ai";
+import { AiOutlineExclamationCircle ,AiOutlineClose } from "react-icons/ai";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
 import { useHistory } from "react-router";
-import { BsTrash } from "react-icons/bs";
+import { BsTrash ,BsChevronDown ,BsChevronUp } from "react-icons/bs";
+
 import {
   Typography,
   Button,
@@ -245,17 +246,17 @@ const SmsSend = ({classes , ...props }) => {
     {
       isdisabled: false,
       idx: -1,
-      value: "first name"
+      value: "First Name"
     },
     {
       isdisabled: false,
       idx: -1,
-      value: "last name"
+      value: "Last Name"
     },
     {
       isdisabled: false,
       idx: -1,
-      value: "cell phone"
+      value: "Cell Phone"
     }
 
   ]);
@@ -405,6 +406,7 @@ const SmsSend = ({classes , ...props }) => {
     }
     tempres.push(r.payload);
     setGroupList(tempres);
+    settoggleChecked(false);
   };
   const handleSelect = (id) => {
     let tempArr = [];
@@ -824,7 +826,7 @@ const SmsSend = ({classes , ...props }) => {
                 setmanualTrue(true);
 
                 Array.from(e.dataTransfer.files)
-                  .filter((file) => file.type === "text/csv")
+                .filter((file) => file.type === "text/csv")
                   .forEach(async (file) => {
                     const text = await file.text();
                     const result = parse(text, { header: true });
@@ -1882,7 +1884,7 @@ const SmsSend = ({classes , ...props }) => {
                 fontWeight: "600",
               }}
             >
-              10
+              {contacts.length}
             </span>
             <Tooltip
               disableFocusListener
@@ -1892,11 +1894,13 @@ const SmsSend = ({classes , ...props }) => {
               <span className={classes.bodyInfo}>i</span>
             </Tooltip>
           </div>
+          <div style={{ minHeight:"200px"}}>
           <table
             style={{
               borderCollapse: "collapse",
               overflowX: "auto",
               minWidth: "100px",
+             
             }}
           >
             <tr>
@@ -1917,11 +1921,11 @@ const SmsSend = ({classes , ...props }) => {
                         className={classes.adjustP}
                         style={{ textAlign: "center", cursor: "pointer" }}
                       >
-                        {headers[idx]}
+                          <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
+                       <Typography style={{fontWeight:"700",cursor:"pointer"}}>{headers[idx]}</Typography> 
 
-                        <span style={{ marginInlineEnd: "5px", marginInlineStart: "5px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }}>x</span>
-
-                        <span>icn</span>
+                      <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} />  
+                    {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown  style={{marginInlineStart:"4px"}}/> }  </div>
                         {dropIndex == idx ? (
                           <div className={classes.adjustC}>
                             {selectArray.map((item, id) => {
@@ -1953,7 +1957,7 @@ const SmsSend = ({classes , ...props }) => {
                     style={{
                       border: "1px solid #ddd",
                       padding: "10px",
-                      maxWidth: "280px",
+                      width: "180px",
                     }}
                   >
                     <div
@@ -1961,11 +1965,12 @@ const SmsSend = ({classes , ...props }) => {
                         handleChangeId(idx);
                       }}
                       className={classes.adjustP}
-                      style={{ width: "130px", textAlign: "center" }}
+                      style={{ width: "150px", textAlign: "center" }}
                     >
-                      {headers[idx]}
-                      <span style={{ marginInlineEnd: "5px", marginInlineStart: "5px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }}>x</span>
-                      <span>icn</span>
+                      <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <Typography style={{fontWeight:"700",cursor:"pointer"}}>{headers[idx]}</Typography> 
+               <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} style={{marginInlineStart:"5px"}}/> 
+                    {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown  style={{marginInlineStart:"4px"}}/> } </div>
                       {dropIndex == idx ? (
                         <div className={classes.adjustC}>
                           {selectArray.map((item, id) => {
@@ -2044,6 +2049,7 @@ const SmsSend = ({classes , ...props }) => {
                 );
               })}
           </table>
+          </div>
         </Dialog>
       </>
     );
