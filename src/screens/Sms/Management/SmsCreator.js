@@ -6,8 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import FormatAlignLeftIcon from "@material-ui/icons/FormatAlignLeft";
 import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
-import ToggleButton from "@material-ui/lab/ToggleButton";
-import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Picker from "emoji-picker-react";
@@ -1787,7 +1785,7 @@ return(
     return(
       <Dialog
       classes={classes}
-      open={true}
+      open={false}
       showDefaultButtons={false}
       icon={<div className={classes.dialogIconContent}>
             {'\uE11B'}
