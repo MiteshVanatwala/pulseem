@@ -2504,14 +2504,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   OtpPhoneNumberInput :
   {
-    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"200px",alignContent:"center",marginBottom:"30px",padding:"5px"
+    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"200px",alignContent:"center",marginBottom:"30px",padding:"5px",textAlign:"center"
+  
   },
   OtpPhoneNumberConfirm :
   {
-    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"300px",textAlign:"center",marginBottom:"30px",padding:"5px",
+    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"300px",textAlign:"center",padding:"5px",
     "&::placeholder":
     {
-      alignContent:"center"
+      textAlign: "center"
+    }
+  },
+  OtpPhoneNumberConfirmSuccess :
+  {
+    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"300px",textAlign:"center",padding:"5px",marginBottom:"30px",
+    "&::placeholder":
+    {
+      textAlign: "center"
     }
   },
   otpContactUs : 
