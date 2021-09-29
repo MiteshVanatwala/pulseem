@@ -1813,13 +1813,13 @@ const SmsSend = ({classes , ...props }) => {
     }
 
     temp.push({
-      Recipient: r.payload.Recipients,
+      Recipients: r.payload.Recipients,
       GroupName: newVal,
       GroupID: r.payload.GroupID
     });
 
     tempres.push({
-      Recipient: r.payload.Recipients,
+      Recipients: r.payload.Recipients,
       GroupName: newVal,
       GroupID: r.payload.GroupID
     });
