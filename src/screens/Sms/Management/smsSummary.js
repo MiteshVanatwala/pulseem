@@ -3,13 +3,16 @@ import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
 import Mobile from "../../../assets/images/mobileiphone.png";
 
-const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api }) => {
+const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api , textMsg , activeGroups}) => {
 
   const [modal, setmodal] = useState(false);
   const [smsCreator, setsmsCreator] = useState(false);
   const [hideGroups, sethideGroups] = useState(false);
   const [recipientsDetails, setrecipientsDetails] = useState(false);
   const [details, setdetails] = useState(false);
+  const [detailsHide, setdetailsHide] = useState(true);
+  const [subDetailsActive, setsubDetailsActive] = useState(false);
+  const [subRecipientsDetails, setsubRecipients] = useState(false);
   useEffect(() => {
     setmodal(open);
   }, [open])
@@ -230,7 +233,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
         classes={classes}
         open={smsCreator}
         onClose={() => { setsmsCreator(false) }}
-        // onConfirm={handleExitYes}
+        onConfirm={api}
         confirmText="Send"
         cancelText="Cancel"
         showDefaultButtons={true}
@@ -256,7 +259,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 <span className={classes.spanSum}>For :</span>
                 <span style={{ fontSize: "18px" }}>
                   Total Number of Recipients :
-                  <span className={classes.bodySum}>""</span>
+                  <span className={classes.bodySum}>{activeGroups.length}</span>
                 </span>
                 <span
                   style={{
@@ -267,8 +270,9 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                     width: "50px",
                     cursor: "pointer",
                   }}
+                  onClick={()=>{setdetailsHide(!detailsHide)}}
                 >
-                  Details
+                 {detailsHide ? "Details" : "Close"}
                 </span>
               </div>
             </div>
@@ -284,11 +288,11 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                     borderBottom: "1px solid #efefef",
                   }}
                 />
-                <span className={classes.phoneNumberSum}>050608001</span>
+                <span className={classes.phoneNumberSum}>{fromNumber}</span>
                 <div className={classes.wrapChatSumm}>
                 <div className={classes.chatBox}>
                   <div className={classes.fromMe}>
-                    Type text
+                    {textMsg}
                   </div>
                   </div>
                 </div>
@@ -299,59 +303,55 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
           <div>
             <div>
 
-              <ul>
+           {detailsHide ? null :  <ul>
                 <li
                   style={{
                     fontSize: "18px",
                     fontWeight: "700",
                     marginBottom: "2px",
                   }}
+                  onClick={()=>{setsubDetailsActive(!subDetailsActive)}}
                 >
-                  Groups (0)
+                  Groups ({activeGroups.length})
                 </li>
-              </ul>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "8px 8px 8px 55px",
-                  borderTop: "1px solid grey",
-                  fontSize: "16px",
-                }}
-              >
-                <span>Name</span>
-                <span>1 Recipients</span>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "8px 8px 8px 55px",
-                  borderTop: "1px solid grey",
-                  fontSize: "16px",
-                }}
-              >
-                <span>Name</span>
-                <span>1 Recipients</span>
-              </div>
+              </ul> }  
+             
+
+              {subDetailsActive ? <>    {
+
+                  activeGroups.map((item, idx) => {
+                    return (<div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "8px 8px 8px 55px",
+                        borderTop: "1px solid grey",
+                        fontSize: "16px",
+                      }}
+                    >
+                      <span> {item.GroupName}</span>
+                      <span>{item.Recipients}</span>
+                    </div>)
+                  })
+                  }   </> : null}
             </div>
           </div>
         </div>
         <div>
-          <ul>
+     {detailsHide  ? null :  <ul>
             <li
               style={{
                 fontSize: "18px",
                 fontWeight: "700",
                 marginBottom: "2px",
               }}
+              onClick={()=>{setsubRecipients(!subRecipientsDetails)}}
             >
-              Recipients Filter (10)
+              Recipients Filter ({summaryPayload.FinalCount})
             </li>
-          </ul>
-          <div
+          </ul> }    
+          {subRecipientsDetails ?   <div
             style={{
               display: "flex",
               flexDirection: "column",
@@ -373,7 +373,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   color: "black",
                 }}
               >
-                10
+                {summaryPayload.DuplicateCellphoneSharedWithClienCount}
               </span>
             </span>
             <span
@@ -391,6 +391,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   color: "black",
                 }}
               >
+                  {summaryPayload.Removed}
               </span>
             </span>
             <span
@@ -408,10 +409,10 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   color: "black",
                 }}
               >
-                1
+                 {summaryPayload.EmptyCellphoneCount}
               </span>
             </span>
-          </div>
+          </div> : null}
         </div>
       </Dialog> : null}
 

@@ -27,6 +27,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
 import { useHistory } from "react-router";
 import { BsTrash ,BsChevronDown ,BsChevronUp } from "react-icons/bs";
+import Gif from "../../../assets/images/managment/check-circle.gif"
 
 import {
   Typography,
@@ -53,7 +54,8 @@ import {
   saveManualClients,
   getFinishedCampaigns,
   getCampaignSettings,
-  getAccountExtraData
+  getAccountExtraData,
+  sendSms
 } from "../../../redux/reducers/smsSlice";
 import { AiOutlineDelete } from "react-icons/ai";
 import Summary from "./smsSummary";
@@ -139,7 +141,7 @@ const SmsSend = ({classes , ...props }) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { previousLandingData, previousCampaignData, extraData, accountId, finishedCampaigns, smsCampaignSettings } =
+  const { extraData,getCampaignSum,} =
     useSelector((state) => state.sms);
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -171,6 +173,7 @@ const SmsSend = ({classes , ...props }) => {
   const [percentTrue, setpercentTrue] = useState(true);
   const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
+  const [finalSuccessDialog, setfinalSuccessDialog] = useState(false);
   const [campaignSearch, setcampaignSearch] = useState("");
 
   // const [smsSettingsModel, setSmsSettingsModel] = useState({
@@ -260,6 +263,11 @@ const SmsSend = ({classes , ...props }) => {
     }
 
   ]);
+  const [dataSaved, setdataSaved] = useState({
+    campaignName : "",
+    fromNumber : "",
+    msg : ""
+  })
   const [Unique, setUnique] = useState(-1);
   const [initialheadstate, setinitialheadstate] = useState([])
 
@@ -285,6 +293,23 @@ const SmsSend = ({classes , ...props }) => {
     await dispatch(getAccountExtraData());
 
   };
+
+  useEffect(() => {
+    if (props && props.match.params.id) {
+      getSavedData();
+    }
+   
+  }, [])
+  const getSavedData = async () => {
+    if (props && props.match.params.id) {
+      let response = await dispatch(getSmsByID(props.match.params.id))
+      if (response) {
+         setdataSaved({...dataSaved , campaignName : response.payload.Name , fromNumber : response.payload.FromNumber , msg :response.payload.Text })
+       
+        
+      }
+    }
+  }
   const getSubAccountGroups = async () => {
     const list = await dispatch(getGroupsBySubAccountId());
     const tempGroupList = list.payload;
@@ -1509,9 +1534,9 @@ const SmsSend = ({classes , ...props }) => {
   const onSummClick = async () => {
     if (sendType === "1") {
       if (selectedGroups.length > 0) {
-        let campId = window.location
-        let id = campId.search.split("=");
-        let finalId = id[1];
+       
+        let  FinalId = props.match.params.id
+        
 
         let temp = [];
         let finalGroups = [];
@@ -1570,7 +1595,7 @@ const SmsSend = ({classes , ...props }) => {
             ExceptionalDays: setinputRecipients
           },
           SendTypeID: 1,
-          SmsCampaignID: finalId,
+          SmsCampaignID: FinalId,
           SourceTimeZone: "Asia/Calcutta",
           SpecialSettings: {
             Type: "",
@@ -1596,7 +1621,8 @@ const SmsSend = ({classes , ...props }) => {
 
         }
         await dispatch(saveSmsCampSettings(quickPayload));
-        let response = await dispatch(getCampaignSumm(finalId));
+        let response = await dispatch(getCampaignSumm(FinalId));
+        console.log("here---->",response)
         setresponseQuick(response);
         setsummModal(true);
       }
@@ -1705,9 +1731,22 @@ const SmsSend = ({classes , ...props }) => {
   const renderSummary = () => {
     return (
       <>
-        <Summary stepBool={summModal} classes={classes} />
+        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall}/>
       </>
     );
+  };
+  const onApiCall = async () => {
+   let payload = {
+    "SmsCampaignID" : props.match.params.id,
+    "SubAccountID" : "7322",
+    "AccountID" : "7322",
+    "Credits" : "1",
+    "TotalRecipients":selectedGroups.length
+   }
+   let r = await dispatch(sendSms(payload))
+   console.log("---->final",r)
+    setsummModal(false);
+    setfinalSuccessDialog(true)
   };
   const handleTrueCaution = () => {
     setcaution(true);
@@ -2061,7 +2100,9 @@ const SmsSend = ({classes , ...props }) => {
   const handleDelete = () => {
     if (props && props.match.params.id) {
       dispatch(deleteSms(props.match.params.id));
+      
       handleClose();
+      history.push("/SMSCampaigns");
     }
   };
   const renderDelete = () => {
@@ -2112,6 +2153,36 @@ const SmsSend = ({classes , ...props }) => {
     setcaution(false);
     setmanualTrue(false);
   };
+
+  const renderSuccessDialog = () =>
+  {
+    return(
+      <>
+        <Dialog
+          classes={classes}
+          open={finalSuccessDialog}
+          // onClose={handleNewM}
+          
+          showDefaultButtons={false}
+        >
+          <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
+          <img src={Gif} style={{width:"150px",height:"150px"}}/>
+        
+            <span style={{marginTop:"10px",fontSize:"22px",fontWeight:"700"}}>Sent!</span>
+    
+       
+            <p style={{marginTop:"10px",fontSize:"18px",fontWeight:"600"}}>
+            Your camapign is on its way
+            </p>
+       
+       
+            <span style={{padding:"12px",backgroundColor:"green",marginTop:"10px",cursor:"pointer",color:"#ffffff",borderRadius:"10px"}} onClick={()=>{history.push("/SMSCampaigns")}}>Confirm</span>
+            </div>
+        
+        </Dialog>
+      </>
+    )
+  }
 
   const handlePreviousPage = () =>
   {
@@ -2200,6 +2271,7 @@ const SmsSend = ({classes , ...props }) => {
       {renderDialogManual()}
       {renderCaution()}
       {renderDelete()}
+      {renderSuccessDialog()}
       <Snackbar
         open={pulseBool || TimeBool || boolRandom}
         autoHideDuration={2000}
