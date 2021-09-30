@@ -74,6 +74,11 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
 
   const renderSearchLine=() => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13 || event.key === 'Enter') {
+        handleSearch();
+      }
+    }
     const handleSearch=() => {
       const searchArray=[{
         type: 'name',
@@ -113,6 +118,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           classes={classes}
           value={landingPageNameSearch}
           onChange={handleCampainNameChange}
+          onKeyPress={handleSearch}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
@@ -126,6 +132,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={landingPageNameSearch}
+            onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={placeholder}
@@ -276,8 +283,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
         lable: IsPayment?
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (windowSize==='xs'||(!IsPayment&&!IsSurvey)),
-        rootClass: classes.paddingIcon,
+        remove: (windowSize==='xs'||(!IsPayment&& (!IsSurvey || SurveyCount === 0))),
+        rootClass: clsx(classes.paddingIcon, classes.minWidth95),
         onClick: async () => {
           if(IsPayment) {
             dispatch(downloadReport(row))
@@ -291,8 +298,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        remove: windowSize==='xs',
         disable: !PageLink,
-        remove: !PageLink||windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           openInNewTab(PageLink)
@@ -411,13 +418,13 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderNameCell=(row) => {
     return (
       <>
-        <Tooltip 
+        <Tooltip
           arrow 
           title={row.Name} 
           placement={'top'} 
           classes={{
             tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-            arrow: classes.fBlack}}
+            arrow: classes.black}}
           >
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {row.Name}
@@ -637,10 +644,10 @@ const LandingPagesesManagmentScreen=({classes}) => {
       const { payload={} } = result || {};
       await getData()
       setLoader(false);
-      // setDialogType({
-      //   type: 'duplicateSuccessful',
-      //   data: payload
-      // })
+      setDialogType({
+        type: 'duplicateSuccessful',
+        data: payload
+      })
     }
   })
 
@@ -686,8 +693,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
     const dialogContent={
       restore: getRestorDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data) //,
-      // duplicateSuccessful: getDuplicateSuccessfulDialog(data)
+      duplicate: getDuplicateDialog(data),
+      duplicateSuccessful: getDuplicateSuccessfulDialog(data)
     }
 
     const currentDialog=dialogContent[type]||{}

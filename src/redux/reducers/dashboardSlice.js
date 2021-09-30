@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import instence from '../../helpers/api';
+import { instence } from '../../helpers/api';
 
 export const getPackagesDetails = createAsyncThunk(
   'dashboard/GetPackagesDetails', async (_, thunkAPI) => {
@@ -55,7 +55,7 @@ export const buySmsPackage = createAsyncThunk(
 export const dashboardSlice = createSlice({
   name: 'dashboard',
   initialState: {
-    lastCampaignReport: [],
+    lastCampaignReport: null,
     packagesDetails: [],
     accountAvailablePackages: [],
     tips: [],

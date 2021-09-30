@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { IconButton, Box, Grid, Paper, Typography } from '@material-ui/core';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
@@ -8,7 +8,8 @@ import LighBulb from '../../assets/images/lightbulb.png'
 import clsx from 'clsx';
 import { getTips } from '../../redux/reducers/dashboardSlice';
 
-const PulseemTips = ({ classes, tips, t }) => {
+const PulseemTips = ({ classes, t, isRTL }) => {
+  const { tips } = useSelector(state => state.dashboard);
   const [activeTip, setActiveTip] = useState(0);
 
   const dispatch = useDispatch();
@@ -22,14 +23,22 @@ const PulseemTips = ({ classes, tips, t }) => {
   const renderArrows = (value, length, setItem, className) => {
     let selectedItem = value;
     const handleNext = () => {
-      if (value >= length) return;
-      selectedItem++;
-      setItem(selectedItem);
+      if (value >= length) {
+        setItem(0);
+      }
+      else {
+        selectedItem++;
+        setItem(selectedItem);
+      }
     }
     const handlePrevious = () => {
-      if (selectedItem <= 0) return;
-      selectedItem--;
-      setItem(selectedItem);
+      if (selectedItem <= 0) {
+        setItem(tips.length - 1);
+      }
+      else {
+        selectedItem--;
+        setItem(selectedItem);
+      }
     }
 
     return (
@@ -68,7 +77,7 @@ const PulseemTips = ({ classes, tips, t }) => {
           {tips.map(tip => {
             return (
               <Box component='div' className={classes.tipItem} key={`tip${Math.round(Math.random() * 999999999)}`}>
-                <Typography align='center' className={classes.tipulseemMsg}>{tip.TipText}</Typography>
+                <Typography style={{ direction: isRTL ? 'rtl' : 'ltr' }} align='center' className={classes.tipulseemMsg}>{isRTL ? tip.HebrewTipText : tip.TipText}</Typography>
               </Box>
             );
           })}
@@ -78,4 +87,4 @@ const PulseemTips = ({ classes, tips, t }) => {
   );
 }
 
-export default PulseemTips;
+export default React.memo(PulseemTips);

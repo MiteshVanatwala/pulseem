@@ -54,5 +54,7 @@
   "close": "סגירה",
   "duplicateTitle": "שכפול אוטומציה",
   "duplicateContent": "האם ברצונך לשכפל את האוטומציה?",
-  "restoreCampaignTitle": "בחר את האוטומציות שברצונך לשחזר"
+  "restoreCampaignTitle": "בחר את האוטומציות שברצונך לשחזר",
+  "NoNodesFound": "לאוטומציה לא נשמרת זרימת עבודה, אנא צור תחילה זרימת עבודה.",
+  "pressHereToEditAutomation": "לחץ <b>אישור</b> כדי לערוך את האוטומציה"
 }

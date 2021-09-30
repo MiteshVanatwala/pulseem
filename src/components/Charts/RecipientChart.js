@@ -1,26 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton, Box, Avatar, Button, Grid, Paper, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { IconButton, Box, Avatar, Button, Grid, Paper, Typography, Link, Tooltip } from '@material-ui/core';
 import { useTranslation } from 'react-i18next';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { Carousel } from 'react-responsive-carousel';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import { getRecipientsReport } from '../../redux/reducers/recipientsReportSlice';
+import { BsInfoCircleFill } from 'react-icons/bs';
+import clsx from 'clsx';
+import ButtonWithTitle from '../Buttons/ButtonWithTitle';
 
-const doughnutOptions = {
-    cutout: 77,
-    backgroundColor: ['#6EE602', '#E0FAC6'],
-    plugins: {
-        tooltip: false
-    }
-};
 
-const RecipientChart = ({ classes }) => {
+const RecipientChart = ({ classes, }) => {
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
     const { language, windowSize, isRTL } = useSelector(state => state.core);
+    const { packagesDetails } = useSelector(state => state.dashboard);
+    const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
+    const [showTooltip, setShowTooltip] = useState(false);
+
+    const useStylesBootstrap = makeStyles((theme) => ({
+        arrow: {
+            color: theme.palette.common.black,
+        },
+        tooltip: {
+            backgroundColor: theme.palette.common.black,
+        },
+    }));
+
+    function BootstrapTooltip(props) {
+        const classes = useStylesBootstrap();
+
+        return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
+    }
 
     const dispatch = useDispatch();
 
@@ -47,19 +62,27 @@ const RecipientChart = ({ classes }) => {
     ];
 
     let data = [];
-    recipientsReport.map(report => {
-        data.push({
-            labels: ['Active', 'Error', 'Removed'],
-            datasets: [{
-                data: [
-                    report.Active,
-                    report.Error,
-                    report.Removed
-                ],
-                borderWidth: 0,
-            }],
-        })
-    });
+    if (recipientsReport) {
+        recipientsReport.map(report => {
+            if (report.ReportSection === 2 && !Notifications.FeatureExist ||
+                report.ReportSection === 1 && !Sms.FeatureExist) {
+                return;
+            }
+            else {
+                data.push({
+                    labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
+                    datasets: [{
+                        data: [
+                            report.Active,
+                            report.Error,
+                            report.Removed
+                        ],
+                        borderWidth: 0,
+                    }],
+                })
+            }
+        });
+    }
 
     const renderCircleAdd = (innerTitle) => {
         return (
@@ -172,6 +195,13 @@ const RecipientChart = ({ classes }) => {
             rotation: -35,
             responsive: true,
             cutout: 55,
+            onClick: (e) => {
+                const chart = e.chart;
+                if (chart) {
+                    const activeChart = e.chart._active[0];
+                    openReports(chart.data.productType, activeChart.index);
+                }
+            },
             plugins: {
                 datalabels: {
                     backgroundColor: 'white'
@@ -203,7 +233,8 @@ const RecipientChart = ({ classes }) => {
         };
 
         let innerData = {
-            labels: ['Active', 'Error', 'Removed'],
+            productType: `${report.ReportSection}`,
+            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
             datasets: [{
                 data: [
                     report.Active,
@@ -215,50 +246,154 @@ const RecipientChart = ({ classes }) => {
         }
         return (
             <Grid
-                key={`doughnut${Math.round(Math.random() * 999999999)}`}
+                key={`doughnut${report.ReportSection}`}
                 item xs={12} sm={12} md={4}
                 className={classes.doughnutGrid}>
                 <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
                 <Box className={classes.doughnutBox}>
-                    <Typography className={classes.chartLabel}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Typography>
-                    <Doughnut data={innerData} options={options} />
+                    <Link
+                        href="javascript:void(0)"
+                        className={classes.chartLabel}
+                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link>
+                    <Doughnut data={innerData} options={options} style={{ cursor: 'pointer' }} />
                 </Box>
             </Grid>
         );
     };
 
+    const openReports = (productType, reportType) => {
+        let qReportType = null;
+
+        if (reportType === "total") {
+            qReportType = 100;
+            if (productType === 0) {
+                window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
+            }
+            if (productType === 1) {
+                window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
+            }
+        }
+        if (productType === "0") {
+            switch (reportType) {
+                case 0: {
+                    qReportType = 1;
+                    break;
+                }
+                case 1: {
+                    qReportType = 4;
+                    break;
+                }
+                case 2: {
+                    qReportType = 2;
+                    break;
+                }
+            }
+            window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
+        }
+        if (productType === "1") {
+            switch (reportType) {
+                case 0: {
+                    qReportType = 0;
+                    break;
+                }
+                case 1: {
+                    qReportType = 4;
+                    break;
+                }
+                case 2: {
+                    qReportType = 1;
+                    break;
+                }
+            }
+            window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
+        }
+
+    }
+
     const renderChartsCarousel = () => {
+        if (!recipientsReport) {
+            return;
+        }
+
+        let totalRecipientsReport = 0;
+
+        if (recipientsReport) {
+            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+                return a + b["Total"];
+            }, 0);
+        }
+
         return (
             <Grid container dir={'ltr'} className={classes.carouselChart}>
-                {renderArrows(carouselItem, 2, setCarouselItem, classes.carouselArrows)}
-                <Carousel
-                    showIndicators={false}
-                    showStatus={false}
-                    showThumbs={false}
-                    showArrows={false}
-                    selectedItem={carouselItem}>
-                    {recipientsReport.map((report, index) => {
-                        if (report.Total) {
-                            return renderDoughnut(report, index)
-                        } else {
-                            return renderCircleAdd(titles[index])
-                        }
-                    })}
-                </Carousel>
+                {recipientsReport && totalRecipientsReport > 0 ? renderArrows(carouselItem, 2, setCarouselItem, classes.carouselArrows) : null}
+                {recipientsReport && totalRecipientsReport > 0 ? (
+                    <Carousel
+                        showIndicators={false}
+                        showStatus={false}
+                        showThumbs={false}
+                        showArrows={false}
+                        selectedItem={carouselItem}>
+                        {recipientsReport.map((report, index) => {
+                            if (report.ReportSection === 2 && !Notifications.FeatureExist
+                                || report.ReportSection === 1 && !Sms.FeatureExist) {
+                                return;
+                            }
+                            if (report.Total) {
+                                return renderDoughnut(report, index)
+                            }
+                            // else {
+                            //     return renderCircleAdd(titles[index])
+                            // }
+                        })}
+                    </Carousel>) : (
+                    <ButtonWithTitle
+                        innerStyle={{ minHeight: 210 }}
+                        classes={classes}
+                        title={t("common.createFirstGroup")}
+                        buttonText={t("common.addRecipients")}
+                        redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+                        buttonClass={classes.createButton} />
+                )}
+
             </Grid>
         );
     };
 
     const renderCharts = () => {
+        if (!recipientsReport) {
+            return;
+        }
+
+        let totalRecipientsReport = 0;
+
+        if (recipientsReport) {
+            totalRecipientsReport = recipientsReport.reduce(function (a, b) {
+                return a + b["Total"];
+            }, 0);
+        }
+
         return (
             <Grid item container justify='space-evenly'>
-                {recipientsReport.map((report, index) => {
+                {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
+                    if (report.ReportSection === 2 && !Notifications.FeatureExist ||
+                        report.ReportSection === 1 && !Sms.FeatureExist) {
+                        return;
+                    }
                     if (report.Total) {
                         return renderDoughnut(report, index)
-                    } else {
-                        return renderCircleAdd(titles[index])
                     }
-                })}
+                    // else {
+                    //     return renderCircleAdd(titles[index])
+                    // }
+                }) :
+                    <ButtonWithTitle
+                        innerStyle={{ minHeight: 210 }}
+                        classes={classes}
+                        title={t("common.createFirstGroup")}
+                        buttonText={t("common.addRecipients")}
+                        redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+                        buttonClass={classes.createButton} />
+                }
             </Grid>
         );
     };
@@ -287,15 +422,36 @@ const RecipientChart = ({ classes }) => {
             </Grid>
         );
     }
+    
+    let totalRecipient = recipientsReport && recipientsReport.reduce(function (a, b) {
+        return a + b["Total"];
+    }, 0);
 
     return (
         <Paper elevation={3} className={classes.dashboardTopPaper}>
             <Grid container>
                 <Grid item xs={12} className={classes.recipientTitleSection}>
-                    <Typography
-                        className={classes.dashboardTitle}>
-                        {t('dashboard.yourRecipients')}
-                    </Typography>
+                    <Box>
+                        <Typography
+                            className={clsx(classes.dInlineBlock, classes.dashboardTitle)}>
+                            {t('dashboard.yourRecipients')}
+                        </Typography>
+                        {totalRecipient > 0 && <BootstrapTooltip
+                            style={{ color: '#000' }}
+                            title={t('dashboard.chartTooltip')}
+                            placement={"top"}>
+                                <IconButton aria-label={t('dashboard.chartTooltip')}>
+                                    <BsInfoCircleFill />
+                                </IconButton>
+                            </BootstrapTooltip>
+                        }
+                    </Box>
+
+                    {/* <Typography
+                        className={clsx(classes.dInlineBlock, classes.mr10, classes.ml10)}
+                    >
+                        ({t('dashboard.chartTooltip')})
+                    </Typography> */}
                 </Grid>
                 {windowSize === 'xs' || windowSize === 'sm' ? renderChartsCarousel() : renderCharts()}
             </Grid>
@@ -303,8 +459,4 @@ const RecipientChart = ({ classes }) => {
     );
 }
 
-function isLoaded(prevProps, nextProps) {
-    return prevProps === nextProps;
-}
-
-export default React.memo(RecipientChart, isLoaded);
+export default React.memo(RecipientChart);

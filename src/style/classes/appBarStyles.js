@@ -74,7 +74,7 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   },
   appBerSpace: {
     display: 'flex',
-    flex: 2
+    flex: 1
   },
   appBarUsername: {
     display: 'flex',

@@ -80,6 +80,11 @@ const NewsletterManagnentScreen=({classes}) => {
   }
 
   const renderSearchLine=() => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13 || event.key === 'Enter') {
+        handleSearch();
+      }
+    }
     const handleSearch=() => {
       const searchArray=[{
         type: 'name',
@@ -146,6 +151,7 @@ const NewsletterManagnentScreen=({classes}) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
+          onKeyPress={handleSearch}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
@@ -159,6 +165,7 @@ const NewsletterManagnentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
+            onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('common.CampaignName')}
@@ -471,13 +478,13 @@ const NewsletterManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Tooltip 
+        <Tooltip
           arrow 
           title={row.Name} 
           placement={'top'} 
           classes={{
             tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-            arrow: classes.fBlack}}
+            arrow: classes.black}}
           >
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {row.Name}
@@ -637,7 +644,7 @@ const NewsletterManagnentScreen=({classes}) => {
       showDivider: false,
       icon: (
         <div className={classes.dialogIconContent}>
-          {'\uE185'}
+          {'\uE0D5'}
         </div>
       ),
       content: (

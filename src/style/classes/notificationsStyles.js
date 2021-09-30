@@ -88,11 +88,11 @@ const summaryTitleMargin = {
     lg: 10,
     xl: 15
 }
-const notificationSize = {
-    md: 350,
-    lg: 400,
-    xl: 400
-}
+// const notificationSize = {
+//     md: 350,
+//     lg: 400,
+//     xl: 400
+// }
 
 const mobileNotificationSize = {
     // xs: null,
@@ -103,12 +103,22 @@ const mobileNotificationSize = {
 }
 
 const notificationIconWidth = {
-    xs: 40,
+    xs: 100,
     sm: 100,
     md: 100,
     lg: 90,
     xl: 90,
 }
+
+const notificationIconHeight = {
+    xs: 90,
+    sm: 98,
+    md: 100,
+    lg: 90,
+    xl: 90,
+}
+
+
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     roundedCircle: {
         borderRadius: '100%',
@@ -222,7 +232,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        minHeight: windowSize !== 'xs'? '100px' : null,
+        minHeight: windowSize !== 'xs' ? '100px' : null,
         backgroundColor: 'transparent',
         justifyContent: 'space-between',
         boxSizing: 'border-box',
@@ -239,7 +249,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         position: 'relative',
         backgroundSize: 'cover',
         width: notificationIconWidth[windowSize],
-        height: notificationIconWidth[windowSize],
+        height: notificationIconHeight[windowSize],
         // backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
         cursor: 'pointer',
@@ -330,7 +340,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         height: '100%',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
-        minHeight: '400px',
+        minHeight: windowSize !== 'xs' ? 415 : 305,
         position: 'relative',
         maxWidth: 450,
         width: 450
@@ -394,13 +404,13 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     mobileNotification: {
         width: '100%',
-        maxWidth: (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 300,
+        maxWidth: (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 220,
         boxShadow: '0 5px 5px 1px rgb(0 0 0 / 50%)',
         fontFamily: 'Assistant',
         top: 50,
         borderRadius: '5px',
         position: 'absolute',
-        right: (windowSize !== 'xs' && windowSize !== 'sm') ? 50 : 40,
+        right: (windowSize !== 'xs' && windowSize !== 'sm') ? 50 : 35,
         maxHeight: windowSize !== 'xs' ? 'calc(100% - 75px)' : 'calc(100% - 35px)',
         paddingTop: 10,
         overflow: 'hidden'
@@ -543,6 +553,11 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         alignItems: 'center',
         alignContent: 'center'
     },
+    flexSpaceBetweenVertical: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between'
+    },
     controlField: {
         marginRight: 5,
         marginLeft: 5,
@@ -628,8 +643,17 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         }
     },
     previewPaper: {
-        width: windowSize==='xs'?250:450,
-        height: windowSize==='xs'?330:730
+        width: windowSize === 'xs' ? 250 : 450,
+        height: windowSize === 'xs' ? 330 : 730
+    },
+    notificationMobileButtons: {
+        justifyContent: 'space-evenly',
+        minHeight: 50,
+        '& .MuiBox-root': {
+            flex: '100px 0 0',
+            color: '#0371ad',
+            textAlign: 'center'
+        }
     }
 
 })

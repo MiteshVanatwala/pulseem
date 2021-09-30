@@ -1,5 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import instence from '../../helpers/api'
+import {createSlice,createAsyncThunk} from '@reduxjs/toolkit';
+import { instence } from '../../helpers/api'
 import { exportFile } from '../../helpers/exportFromJson';
 
 export const getNewslatterData = createAsyncThunk(

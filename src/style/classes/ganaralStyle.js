@@ -5,13 +5,13 @@ const dialogWidth = {
   lg: 350
 }
 
-const paperMinWidthSm = {
-  xs: 350,
-  sm: 500,
-  md: 500,
-  lg: 500,
-  xl: 500
-}
+// const paperMinWidthSm = {
+//   xs: 350,
+//   sm: 500,
+//   md: 500,
+//   lg: 500,
+//   xl: 500
+// }
 const minDialogWidth = {
   xs: 330,
   sm: 330,
@@ -45,13 +45,21 @@ const iconWrapperMinWidth = {
   sm: 100,
   md: 100
 }
-const summaryNotificationMinWidth = {
-  xs: "240px",
-}
+// const summaryNotificationMinWidth = {
+//   xs: "240px",
+// }
 const notificationTitleFontSize = {
   xs: 12,
   sm: 12,
   md: '1rem'
+}
+
+const graphTextWidth = {
+  sm: 250,
+  md: 250,
+  lg: 110,
+  xl: 250
+
 }
 
 export const getGeneralStyle = (windowSize, isRTL, theme) => ({
@@ -129,7 +137,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
     '& $mobileBG': {
       '& $iconWrapper': {
-        minWidth: windowSize==='xs'? 0:100
+        minWidth: windowSize === 'xs' ? 0 : 100
       }
     }
   },
@@ -226,10 +234,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflow: 'auto'
   },
   defaultScreen: {
-    maxHeight: 'calc(100vh - 53px)'
+    'overflow': 'visible'
+    //maxHeight: 'calc(100vh - 53px)'
   },
   pulseemIcon: {
     fontFamily: 'pulseemicons'
+  },
+  dBlock: {
+    display: 'block'
+  },
+  w20: {
+    width: '20%'
   },
   borderAround: {
     border: '1px solid #000'
@@ -237,14 +252,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   borderBottom1: {
     borderBottom: '1px solid #ccc'
   },
-  dBlock: {
-    display: 'block'
-  },
   dFlex: {
     display: 'flex'
-  },
-  rtlSwitch: {
-    transform: 'rotateY(180deg)'
   },
   alignItemsCenter: {
     alignItems: 'center'
@@ -263,9 +272,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   maxHeight87: {
     maxHeight: 87
-  },
-  w20: {
-    width: '20%'
   },
   minWidth100: {
     minWidth: 100
@@ -352,10 +358,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBottom: 20
   },
   mbNeg10: {
-    marginBottom:-10
-  },
-  ml10: {
-    marginInlineStart: 10
+    marginBottom: -10
   },
   ml25: {
     marginInlineStart: 25
@@ -377,6 +380,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mr15: {
     marginInlineEnd: 15
+  },
+  ml15: {
+    marginInlineStart: 15
   },
   mt0: {
     marginTop: 0
@@ -414,8 +420,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   line1: {
     lineHeight: 1
   },
-  black: {
-    color: 'black'
+  bgBrown: {
+    backgroundColor: '#636363',
+  },
+  colorWhite: {
+    color: '#fff'
   },
   bgBrown: {
     backgroundColor: '#636363',
@@ -469,6 +478,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   justifyCenter: {
     display: 'flex',
     justifyContent: 'center'
+  },
+  justifyCenterOfCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center'
   },
   spaceEvenly: {
     display: 'flex',
@@ -585,11 +601,49 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textTransform: 'capitalize',
     lineHeight: 1
   },
+  noWrap: {
+    flexWrap: 'nowrap'
+  },
+  management: {
+    maxWidth: 1500
+  },
+  blackDivider: {
+    height: 2,
+    backgroundColor: 'rgb(0, 0, 0, 0.5)'
+  },
+  report: {
+    maxWidth: 1920
+  },
   blackDivider: {
     height: 2,
     backgroundColor: 'rgb(0, 0, 0, 0.5)'
   },
   noWrap: {
     flexWrap: 'nowrap'
+  },
+  italic: {
+    fontStyle: 'italic'
+  },
+  ellipsisText: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+  graphCampaignName: {
+    fontWeight: 'bold',
+    maxWidth: graphTextWidth[windowSize]
+  },
+  mb25: {
+    marginBottom: 25
+  },
+  mt25: {
+    marginTop: 25
+  },
+  fullSize: {
+    height: '100%',
+    width: '100%'
+  },
+  spaceEvenly: {
+    justifyContent: 'space-evenly'
   }
 })

@@ -1,5 +1,5 @@
 const iconWidth = {
-  xs: 25,
+  xs: 20,
   sm: 20,
   md: 25,
   lg: 30,
@@ -23,34 +23,11 @@ const iconPadding = {
   xl: '0.8rem 1.1rem 0.2rem'
 }
 
-const ellipsisMaxWidth = {
-  xs: '100%',
-  sm: '250px',
-  md: '100%',
-  lg: '100%',
-  xl: '100%'
-}
-
-const tableRowMinWidth = {
-  xs: 75,
-  sm: 75,
-  md: 75,
-  lg: 75,
-  xl: 100
-}
-
-const barWidth = {
-  sm: '460px!important',
-  md: '430px!important',
-  lg: '450px!important',
-  xl: '500px!important'
-}
-
 const barHeight = {
   sm: '',
   md: '220px!important',
-  lg: '250px!important',
-  xl: '250px!important'
+  lg: '230px!important',
+  xl: '230px!important'
 }
 
 const shortcutFontSize = {
@@ -67,49 +44,47 @@ const shortcutFontSize = {
     md: 18,
     lg: 18,
     xl: 18
+  },
+}
+const tipsFontSize = {
+  xs: 18,
+  sm: 16,
+  md: 14,
+  lg: 14,
+  xl: 18
+}
+
+// const paperTopHeight = {
+//   xs: 'auto',
+//   sm: 'auto',
+//   md: '350px',
+//   lg: '350px',
+//   xl: '350px'
+// }
+
+// const paperBottomHeight = {
+//   xs: 'auto',
+//   sm: 'auto',
+//   md: '350px',
+//   lg: '350px',
+//   xl: '350px'
+// }
+
+const shortcutFontSize = {
+  category: {
+    xs: 16,
+    sm: 14,
+    md: 16,
+    lg: 16,
+    xl: 16
+  },
+  page: {
+    xs: 18,
+    sm: 16,
+    md: 18,
+    lg: 18,
+    xl: 18
   }
-
-}
-
-const dashboardDirection = {
-  xs: 'column-reverse',
-  sm: '',
-  md: '',
-  lg: '',
-  xl: ''
-}
-
-const paperTopHeight = {
-  xs: 'auto',
-  sm: 'auto',
-  md: '350px',
-  lg: '350px',
-  xl: '350px'
-}
-
-const paperBottomHeight = {
-  xs: 'auto',
-  sm: 'auto',
-  md: '350px',
-  lg: '350px',
-  xl: '350px'
-}
-
-const shortcutEditLeft = {
-  xs: '8%',
-  sm: '18px',
-  md: '15px',
-  lg: '22px',
-  xl: '28px'
-}
-
-const shortcutPaperHeight = {
-  xs: '',
-  sm: '100vh',
-  md: '100vh',
-  lg: '95vh',
-  xl: '95vh'
-}
 
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   managementTitle: {
@@ -270,6 +245,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     width: iconWidth[windowSize],
     margin: 'auto',
     marginTop: -10
+  },
+  managmentUicon: {
+    fontSize: 30,
+    fontFamily: 'pulseemicons',
+    marginBottom: -15,
+    marginTop: -15
   },
   managmentUicon: {
     fontSize: 30,
@@ -776,7 +757,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '100%',
-    maxWidth: ellipsisMaxWidth[windowSize]
+    maxWidth: 250
   },
   p10: {
     padding: 10
@@ -957,116 +938,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     textDecoration: 'underline',
     margin: '0 5px'
   },
-  mobileReportHead: {
-    fontWeight: 'bold',
-    marginTop: 15,
-    marginInlineStart: 10
-  },
-  tabelCellPadding: {
-    paddingBlock: 15
-  },
-  dashboard: {
-    background: '#F2F2F2',
-    padding: 0,
-    maxHeight: 'unset'
-  },
-  dashboardContainer: {
-    flexDirection: dashboardDirection[windowSize]
-
-  },
-  chartLabelGreen: {
-    position: 'absolute',
-    top: 'calc(50% - 28px)',
-    width: '100%',
-    fontSize: 35,
-    fontWeight: '500',
-    textTransform: 'uppercase',
-    color: '#65d638'
-  },
-  shortcutTitleSection: {
-    width: '85%',
-    marginTop: '2.1rem',
-    marginBottom: 40
-  },
-  shortcutTitle: {
-    fontSize: windowSize === 'xs' ? 23 : 25,
-    fontWeight: 'bold'
-  },
-  shortcutSubtitle: {
-    fontSize: windowSize === 'xs' ? 16 : 18,
-  },
-  shortcutBox: {
-    position: windowSize === 'xs' ? '' : 'sticky',
-    top: 0,
-    height: shortcutPaperHeight[windowSize],
-    [theme.breakpoints.down('xs')]: {
-      margin: '10px 10px -10px 10px'
-    },
-    boxShadow: isRTL ? '4px 0px 5px 0px rgba(0,0,0, 0.2)' : '-4px 0px 5px 0px rgba(0,0,0, 0.2) '
-  },
-  shortcutPaper: {
-    [theme.breakpoints.down('xs')]: {
-      borderRadius: 10,
-    },
-    height: shortcutPaperHeight[windowSize],
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    overflow: 'auto',
-    '&::-webkit-scrollbar': {
-      width: '0px'
-    },
-    '&::-webkit-scrollbar-thumb': {
-      'backgroundColor': 'darkgrey',
-      borderRadius: '5px'
-    }
-  },
-  shortcutBtnBox: {
-    position: 'relative',
-    width: '100%',
-    textAlign: 'center'
-  },
-  shortcutButton: {
-    height: '92px',
-    width: '85%',
-    background: '#0371AD',
-    borderRadius: '20px',
-    marginBottom: windowSize === 'xs' ? 30 : 45,
-    fontSize: '18px',
-    position: 'relative',
-    textTransform: 'capitalize',
-    padding: '6px 30px'
-
-  },
-  shortcutDottedButton: {
-    borderRadius: '20px',
-    border: '1px dashed #0371AD',
-    fontFamily: 'pulseemicons',
-    height: '92px',
-    fontSize: '30px',
-    marginBottom: 45,
-    width: '85%',
-  },
-  shortcutList: {
-    maxWidth: 350,
-    background: 'white',
-    borderRadius: 10,
-    margin: 10
-  },
-  shortcutEditIcon: {
-    position: 'absolute',
-    left: shortcutEditLeft[windowSize],
-    bottom: windowSize === 'xs' ? 40 : 50,
-    fontFamily: 'pulseemicons',
-    fontSize: 18,
-    color: 'white'
-  },
-  shortcutLabel: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    marginTop: -5
-  },
   popperPaper: {
     padding: '5px 0',
     width: 300,
@@ -1127,13 +998,19 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center'
   },
   barChart: {
-    // maxWidth: 500,
     float: isRTL ? 'left' : 'right',
     '& canvas': {
-      // width: barWidth[windowSize],
       height: barHeight[windowSize]
     },
-    paddingBottom: 10
+    paddingLeft: windowSize !== 'xs' ? 15 : 0,
+    paddingRight: windowSize !== 'xs' ? 15 : 0
+  },
+  barContainer:
+  {
+    width: windowSize !== "xs" ? "460px !important" : "100%"
+  },
+  fontWrap: {
+    fontSize: "10px",
   },
   emptyDoughnut: {
     display: 'flex',
@@ -1202,7 +1079,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 'bold',
     color: '#0371AD',
     marginTop: 10,
-    marginInlineStart: 30,
+    marginInlineStart: windowSize === "xs" ? 15 : 30,
     fontSize: 20
   },
   dashboardUsername: {
@@ -1235,7 +1112,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   bulkMargin: {
     [theme.breakpoints.down('xs')]: {
-      marginTop: 0,
+      marginTop: 10,
     },
     [theme.breakpoints.up('lg')]: {
       marginInlineEnd: 0
@@ -1250,7 +1127,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: '0 30px 20px 30px'
   },
   tipulseemMsg: {
-    fontSize: 18,
+    fontSize: tipsFontSize[windowSize],
     padding: '0px 20px 20px 20px'
   },
   lightBulb: {
@@ -1301,6 +1178,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     paddingRight: 25,
     paddingLeft: 25
   },
+  tabPanel: {
+    minHeight: 220,
+    marginTop: 20
+  },
   lastReportPadding: {
     [theme.breakpoints.down('md')]: {
       marginTop: 0
@@ -1318,7 +1199,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     color: 'gray',
     right: 0,
     left: 0,
-    margin: 'auto'
+    margin: 'auto',
+    cursor: 'pointer',
+    textDecoration: 'none',
+    '&:hover': {
+      textDecoration: 'none'
+    }
+
   },
   doughnutBox: {
     width: 200,

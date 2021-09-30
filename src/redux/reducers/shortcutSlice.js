@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import instence from '../../helpers/api';
+import { instence } from '../../helpers/api';
 
 export const getShortcuts = createAsyncThunk(
     'dashboard/GetShortcuts', async (_, thunkAPI) => {
@@ -21,8 +21,18 @@ export const setShortcuts = createAsyncThunk(
         }
     });
 
+export const deleteShortcuts = createAsyncThunk(
+    'dashboard/DeleteShortcut', async (id, thunkAPI) => {
+        try {
+            const response = await instence.delete(`dashboard/DeleteShortcut/${id}`);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 export const shortcutSlice = createSlice({
-    name: 'dashboard',
+    name: 'shortcuts',
     initialState: {
         shortcuts: [],
         shortcutsError: ''

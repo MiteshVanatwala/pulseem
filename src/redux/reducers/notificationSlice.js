@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import instence from '../../helpers/api'
+import { instence } from '../../helpers/api'
 
 export const getNotificationData = createAsyncThunk(
   'notification/getNotifications', async (_, thunkAPI) => {
@@ -189,6 +189,16 @@ export const save = createAsyncThunk(
   'notification/Save/', async (data, thunkAPI) => {
     try {
       const response = await instence.post(`notification/Save`, data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+export const getSubAccountRegistrations = createAsyncThunk(
+  'notification/GetSubAccountRegistrations/', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`notification/GetSubAccountRegistrations`);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
