@@ -1018,11 +1018,12 @@ const SmsSend = ({classes , ...props }) => {
             ) : null}
           </div>
           {manualClick == true ? (
-            <div className={classes.manualChild}>
+            <div className={classes.manualChild} style={{justifyContent : areaData === "" ? "flex-end" : "space-between"}}>
               {areaData !== "" ? (
                 <div>
                   <span
                     className={classes.addManualDiv}
+                    
                     onClick={() => {
                       handlePasted();
                     }}
@@ -2004,7 +2005,6 @@ const SmsSend = ({classes , ...props }) => {
               borderCollapse: "collapse",
               overflowX: "auto",
               minWidth: "100px",
-             
             }}
           >
             <tr>

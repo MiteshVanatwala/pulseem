@@ -2160,7 +2160,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   manualChild:
   {
     display: "flex",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     alignItems: "center",
     marginTop: "15px"
   },
