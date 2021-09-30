@@ -1695,7 +1695,7 @@ const SmsSend = ({classes , ...props }) => {
             ExceptionalDays: setinputRecipients
           },
           SendTypeID: 1,
-          SmsCampaignID: finalId,
+          SmsCampaignID: props.match.params.id,
           SourceTimeZone: "Asia/Calcutta",
           SpecialSettings: {
             Type: "",
@@ -1721,7 +1721,7 @@ const SmsSend = ({classes , ...props }) => {
 
         }
         await dispatch(saveSmsCampSettings(quickPayload));
-        let response = await dispatch(getCampaignSumm(finalId));
+        let response = await dispatch(getCampaignSumm(props.match.params.id));
         setresponseQuick(response);
         setsummModal(true);
       }

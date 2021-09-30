@@ -2089,7 +2089,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   inputManual:
   {
     padding: "10px",
-    width:"76%",
+    width:"72%",
     outline: "none",
     borderRadius: "4px",
     border : "1px solid #ddd"
@@ -2143,7 +2143,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 
     '&:hover':
     {
-      backgroundColor: "#1D53CD",
+      backgroundColor: "#277BFF",
       color: "#fff",
       zIndex: "9"
     }
