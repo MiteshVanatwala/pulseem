@@ -119,7 +119,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     primary={group.GroupName}
                 />
                 <ListItemSecondaryAction className={'groupText'}>
-                    {group.Recipients.toLocaleString()} {group.Recipients != 1 ? t("notifications.recipients") : t("notifications.recipient")}
+                    {group.Recipients} {group.Recipients != 1 ? t("notifications.recipients") : t("notifications.recipient")}
                 </ListItemSecondaryAction>
             </ListItem>)
         })

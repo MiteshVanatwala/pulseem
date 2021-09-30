@@ -21,12 +21,15 @@ import { FaCheck } from 'react-icons/fa';
 import CloseIcon from "@material-ui/icons/Close";
 import SortIcon from "@material-ui/icons/Sort";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import { AiOutlineExclamationCircle } from "react-icons/ai";
+import { AiOutlineExclamationCircle ,AiOutlineClose } from "react-icons/ai";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
 import { useHistory } from "react-router";
-import { BsTrash } from "react-icons/bs";
+import { BsTrash ,BsChevronDown ,BsChevronUp } from "react-icons/bs";
+import Gif from "../../../assets/images/managment/check-circle.gif";
+import * as XLSX from 'xlsx';
+
 import {
   Typography,
   Button,
@@ -52,7 +55,8 @@ import {
   saveManualClients,
   getFinishedCampaigns,
   getCampaignSettings,
-  getAccountExtraData
+  getAccountExtraData,
+  sendSms
 } from "../../../redux/reducers/smsSlice";
 import { AiOutlineDelete } from "react-icons/ai";
 import Summary from "./smsSummary";
@@ -138,7 +142,7 @@ const SmsSend = ({classes , ...props }) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { previousLandingData, previousCampaignData, extraData, accountId, finishedCampaigns, smsCampaignSettings } =
+  const { extraData,getCampaignSum,} =
     useSelector((state) => state.sms);
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -158,7 +162,7 @@ const SmsSend = ({classes , ...props }) => {
   const [toggleChecked, settoggleChecked] = useState(false);
   const [cancel, setcancel] = useState(true);
   const [campaignIdResp, setcampaignIdResp] = useState(-1);
-
+  const [groupNameInput, setgroupNameInput] = useState("");
   const [groupValue, setgroupValue] = useState("");
   const [manualTrue, setmanualTrue] = useState(false);
   const [pulse, setpulse] = useState(false);
@@ -170,6 +174,7 @@ const SmsSend = ({classes , ...props }) => {
   const [percentTrue, setpercentTrue] = useState(true);
   const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
+  const [finalSuccessDialog, setfinalSuccessDialog] = useState(false);
   const [campaignSearch, setcampaignSearch] = useState("");
 
   // const [smsSettingsModel, setSmsSettingsModel] = useState({
@@ -231,7 +236,7 @@ const SmsSend = ({classes , ...props }) => {
   const [hoursTrue, sethoursTrue] = useState(true);
   const [minName, setminName] = useState("");
   const [hourName, sethourName] = useState("");
-  const [newVal, setnewVal] = useState("");
+  const [newVal, setnewVal] = useState(false);
   const [reciToggle, setreciToggle] = useState(false);
   const [areaData, setareaData] = useState("");
   const [RecipientsBool, setRecipientsBool] = useState(false);
@@ -245,20 +250,25 @@ const SmsSend = ({classes , ...props }) => {
     {
       isdisabled: false,
       idx: -1,
-      value: "first name"
+      value: "First Name"
     },
     {
       isdisabled: false,
       idx: -1,
-      value: "last name"
+      value: "Last Name"
     },
     {
       isdisabled: false,
       idx: -1,
-      value: "cell phone"
+      value: "Cell Phone"
     }
 
   ]);
+  const [dataSaved, setdataSaved] = useState({
+    campaignName : "",
+    fromNumber : "",
+    msg : ""
+  })
   const [Unique, setUnique] = useState(-1);
   const [initialheadstate, setinitialheadstate] = useState([])
 
@@ -284,6 +294,23 @@ const SmsSend = ({classes , ...props }) => {
     await dispatch(getAccountExtraData());
 
   };
+
+  useEffect(() => {
+    if (props && props.match.params.id) {
+      getSavedData();
+    }
+   
+  }, [])
+  const getSavedData = async () => {
+    if (props && props.match.params.id) {
+      let response = await dispatch(getSmsByID(props.match.params.id))
+      if (response) {
+         setdataSaved({...dataSaved , campaignName : response.payload.Name , fromNumber : response.payload.FromNumber , msg :response.payload.Text })
+       
+        
+      }
+    }
+  }
   const getSubAccountGroups = async () => {
     const list = await dispatch(getGroupsBySubAccountId());
     const tempGroupList = list.payload;
@@ -405,6 +432,7 @@ const SmsSend = ({classes , ...props }) => {
     }
     tempres.push(r.payload);
     setGroupList(tempres);
+    settoggleChecked(false);
   };
   const handleSelect = (id) => {
     let tempArr = [];
@@ -732,6 +760,79 @@ const SmsSend = ({classes , ...props }) => {
   const areaChange = (e) => {
     setareaData(e.target.value);
   };
+
+  const handleFiles = (e) =>
+  {
+    e.preventDefault();
+
+    const file = e.dataTransfer.files[0];
+    const reader = new FileReader();
+      if (file.name.toLowerCase().indexOf("xls") > -1) {
+        console.log("---->inxls",)
+        reader.onload = function(e) {
+          var data = new Uint8Array(e.target.result);
+          setTimeout(() => {
+            var workbook = XLSX.read(data, { type: "array" });
+            var csv = XLSX.utils.sheet_to_csv(
+              workbook.Sheets[workbook.SheetNames[0]]
+            ,{header:1});
+           console.log("--->",csv.split(","));
+           let temp = csv;
+           let a = temp.split("\n");
+           let b = [];
+           for (let i = 0; i < a.length; i++) {
+             b.push(a[i].split(","));
+           }
+           settypedData(b);
+           let dummyArr = [];
+            for (let i = 0; i < b[0].length; i++) {
+              dummyArr.push("Adjust Title");
+            }
+            setinitialheadstate(dummyArr);
+            setheaders(dummyArr)
+          
+          }, 0);
+        };
+       reader.readAsArrayBuffer(file,"utf-8")
+      }
+
+       else if(file.name.toLowerCase().indexOf("csv") > -1)
+      {
+       Array.from(e.dataTransfer.files)
+       .filter((file) => file.type === "text/csv")
+       .forEach(async (file) => {
+        const text = await file.text();
+        const result = parse(text, { header: true });
+        console.log("-->",result.data)
+        setContacts((existing) => [...existing, ...result.data]);
+        let res = "";
+        for (let i = 0; i < result.data.length; i++) {
+          for (
+            let j = 0;
+            j < Object.values(result.data[i]).length;
+            j++
+          ) {
+            res = res + Object.values(result.data[i])[j];
+          }
+          res = res + "\n";
+        }
+
+        setareaData(res);
+        let ddc = [];
+        for (let i in result.data[0]) {
+          ddc.push("Adjust Title")
+        }
+        setheaders(ddc);
+      });
+  }
+  else {
+   
+    return false;
+  }
+
+  }
+
+
   const renderBody = () => {
     return (
       <div>
@@ -822,33 +923,8 @@ const SmsSend = ({classes , ...props }) => {
                 e.preventDefault();
                 setHighlighted(false);
                 setmanualTrue(true);
+                handleFiles(e)
 
-                Array.from(e.dataTransfer.files)
-                  .filter((file) => file.type === "text/csv")
-                  .forEach(async (file) => {
-                    const text = await file.text();
-                    const result = parse(text, { header: true });
-
-                    setContacts((existing) => [...existing, ...result.data]);
-                    let res = "";
-                    for (let i = 0; i < result.data.length; i++) {
-                      for (
-                        let j = 0;
-                        j < Object.values(result.data[i]).length;
-                        j++
-                      ) {
-                        res = res + Object.values(result.data[i])[j];
-                      }
-                      res = res + "\n";
-                    }
-
-                    setareaData(res);
-                    let ddc = [];
-                    for (let i in result.data[0]) {
-                      ddc.push("Adjust Title")
-                    }
-                    setheaders(ddc);
-                  });
               }}
             />
           </div>
@@ -965,7 +1041,7 @@ const SmsSend = ({classes , ...props }) => {
                   </span>
                 </div>
               ) : null}
-              <span>Total Records : 0</span>
+              <span>Total Records :  {contacts.length !==0 ? contacts.length : typedData.length}</span>
             </div>
           ) : null}
         </Box>
@@ -1507,9 +1583,9 @@ const SmsSend = ({classes , ...props }) => {
   const onSummClick = async () => {
     if (sendType === "1") {
       if (selectedGroups.length > 0) {
-        let campId = window.location
-        let id = campId.search.split("=");
-        let finalId = id[1];
+       
+        let  FinalId = props.match.params.id
+        
 
         let temp = [];
         let finalGroups = [];
@@ -1568,7 +1644,7 @@ const SmsSend = ({classes , ...props }) => {
             ExceptionalDays: setinputRecipients
           },
           SendTypeID: 1,
-          SmsCampaignID: finalId,
+          SmsCampaignID: FinalId,
           SourceTimeZone: "Asia/Calcutta",
           SpecialSettings: {
             Type: "",
@@ -1594,7 +1670,8 @@ const SmsSend = ({classes , ...props }) => {
 
         }
         await dispatch(saveSmsCampSettings(quickPayload));
-        let response = await dispatch(getCampaignSumm(finalId));
+        let response = await dispatch(getCampaignSumm(FinalId));
+        console.log("here---->",response)
         setresponseQuick(response);
         setsummModal(true);
       }
@@ -1667,7 +1744,7 @@ const SmsSend = ({classes , ...props }) => {
             ExceptionalDays: setinputRecipients
           },
           SendTypeID: 1,
-          SmsCampaignID: finalId,
+          SmsCampaignID: props.match.params.id,
           SourceTimeZone: "Asia/Calcutta",
           SpecialSettings: {
             Type: "",
@@ -1693,7 +1770,7 @@ const SmsSend = ({classes , ...props }) => {
 
         }
         await dispatch(saveSmsCampSettings(quickPayload));
-        let response = await dispatch(getCampaignSumm(finalId));
+        let response = await dispatch(getCampaignSumm(props.match.params.id));
         setresponseQuick(response);
         setsummModal(true);
       }
@@ -1703,9 +1780,22 @@ const SmsSend = ({classes , ...props }) => {
   const renderSummary = () => {
     return (
       <>
-        <Summary stepBool={summModal} classes={classes} />
+        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall}/>
       </>
     );
+  };
+  const onApiCall = async () => {
+   let payload = {
+    "SmsCampaignID" : props.match.params.id,
+    "SubAccountID" : "7322",
+    "AccountID" : "7322",
+    "Credits" : "1",
+    "TotalRecipients":selectedGroups.length
+   }
+   let r = await dispatch(sendSms(payload))
+   console.log("---->final",r)
+    setsummModal(false);
+    setfinalSuccessDialog(true)
   };
   const handleTrueCaution = () => {
     setcaution(true);
@@ -1763,81 +1853,96 @@ const SmsSend = ({classes , ...props }) => {
 
   }
   const handleDataManual = async () => {
-    let requestPayload = [];
+    if(manualUploadValidationscheck())
+    {
+      let requestPayload = [];
 
-    if (typedData.length !== 0) {
-      for (let j = 0; j < typedData.length; j++) {
-        requestPayload.push({});
-        for (let k = 0; k < typedData[j].length; k++) {
-          if (headers[k] !== "Adjust Title") {
-            let key = headers[k];
-            let obj = requestPayload[j];
-            obj[key] = typedData[j][k];
+      if (typedData.length !== 0) {
+        for (let j = 0; j < typedData.length; j++) {
+          requestPayload.push({});
+          for (let k = 0; k < typedData[j].length; k++) {
+            if (headers[k] !== "Adjust Title") {
+              let key = headers[k];
+              let obj = requestPayload[j];
+              obj[key] = typedData[j][k];
+            }
           }
         }
       }
-    }
-    else {
-      for (let j = 0; j < contacts.length; j++) {
-        requestPayload.push({});
-        let i = 0;
-
-        for (let k in contacts[j]) {
-          if (headers[i] !== "Adjust Title") {
-            let key = headers[i];
-            let obj = requestPayload[j];
-            obj[key] = contacts[j][k];
-
+      else {
+        for (let j = 0; j < contacts.length; j++) {
+          requestPayload.push({});
+          let i = 0;
+  
+          for (let k in contacts[j]) {
+            if (headers[i] !== "Adjust Title") {
+              let key = headers[i];
+              let obj = requestPayload[j];
+              obj[key] = contacts[j][k];
+  
+            }
+            i++;
           }
-          i++;
         }
       }
+  
+      let finalPayload = {
+        GroupName: groupNameInput,
+        Clients: requestPayload
+      }
+  
+      const r = await dispatch(saveManualClients(finalPayload))
+  
+      let tempres = [];
+      let temp = [];
+      for (let i = 0; i < groupList.length; i++) {
+        tempres.push(groupList[i]);
+      }
+      for (let i = 0; i < selectedGroups.length; i++) {
+        temp.push(selectedGroups[i]);
+      }
+  
+      temp.push({
+        Recipients: r.payload.Recipients,
+        GroupName: groupNameInput,
+        GroupID: r.payload.GroupID
+      });
+  
+      tempres.push({
+        Recipients: r.payload.Recipients,
+        GroupName: groupNameInput,
+        GroupID: r.payload.GroupID
+      });
+  
+      setGroupList(tempres);
+      setSelected(temp);
+      setmanualTrue(false);
+      setareaData("");
+      settypedData([]);
+      setContacts([]);
+      setgroupClick(true);
+      setmanualClick(false);
+      for (let i = 0; i < selectArray.length; i++) {
+        selectArray[i].isdisabled = false;
+        selectArray[i].idx = -1;
+      }
     }
-
-    let finalPayload = {
-      GroupName: newVal,
-      Clients: requestPayload
-    }
-
-    const r = await dispatch(saveManualClients(finalPayload))
-
-    let tempres = [];
-    let temp = [];
-    for (let i = 0; i < groupList.length; i++) {
-      tempres.push(groupList[i]);
-    }
-    for (let i = 0; i < selectedGroups.length; i++) {
-      temp.push(selectedGroups[i]);
-    }
-
-    temp.push({
-      Recipient: r.payload.Recipients,
-      GroupName: newVal,
-      GroupID: r.payload.GroupID
-    });
-
-    tempres.push({
-      Recipient: r.payload.Recipients,
-      GroupName: newVal,
-      GroupID: r.payload.GroupID
-    });
-
-    setGroupList(tempres);
-    setSelected(temp);
-    setmanualTrue(false);
-    setareaData("");
-    settypedData([]);
-    setContacts([]);
-    setgroupClick(true);
-    setmanualClick(false);
-    for (let i = 0; i < selectArray.length; i++) {
-      selectArray[i].isdisabled = false;
-      selectArray[i].idx = -1;
-    }
+   
   }
 
   const handleManualDialog = (e) => {
-    setnewVal(e.target.value);
+    setgroupNameInput(e.target.value);
+    setnewVal(false);
+  }
+
+  const manualUploadValidationscheck = () =>
+  {
+    if(groupNameInput === "")
+    {
+      setnewVal(true);
+      return false;
+    }
+    return true;
   }
 
   const renderDialogManual = () => {
@@ -1861,8 +1966,9 @@ const SmsSend = ({classes , ...props }) => {
             <input
               type="text"
               placeholder="Group Name"
-              className={classes.inputManual}
+              className={newVal ? clsx(classes.inputManual,classes.error) : clsx(classes.inputManual,classes.success)}
               onChange={handleManualDialog}
+              value={groupNameInput}
             />
           </div>
           <div
@@ -1882,7 +1988,7 @@ const SmsSend = ({classes , ...props }) => {
                 fontWeight: "600",
               }}
             >
-              10
+              {contacts.length !==0 ? contacts.length : typedData.length}
             </span>
             <Tooltip
               disableFocusListener
@@ -1892,11 +1998,13 @@ const SmsSend = ({classes , ...props }) => {
               <span className={classes.bodyInfo}>i</span>
             </Tooltip>
           </div>
+          <div style={{ minHeight:"200px"}}>
           <table
             style={{
               borderCollapse: "collapse",
               overflowX: "auto",
               minWidth: "100px",
+             
             }}
           >
             <tr>
@@ -1907,6 +2015,7 @@ const SmsSend = ({classes , ...props }) => {
                       style={{
                         border: "1px solid #ddd",
                         padding: "10px",
+                        width:"160px",
                         maxWidth: "280px",
                       }}
                     >
@@ -1917,11 +2026,11 @@ const SmsSend = ({classes , ...props }) => {
                         className={classes.adjustP}
                         style={{ textAlign: "center", cursor: "pointer" }}
                       >
-                        {headers[idx]}
+                          <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
+                       <Typography style={{fontWeight:"700",cursor:"pointer"}}>{headers[idx]}</Typography> 
 
-                        <span style={{ marginInlineEnd: "5px", marginInlineStart: "5px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }}>x</span>
-
-                        <span>icn</span>
+                      <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} />  
+                    {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown  style={{marginInlineStart:"4px"}}/> }  </div>
                         {dropIndex == idx ? (
                           <div className={classes.adjustC}>
                             {selectArray.map((item, id) => {
@@ -1953,7 +2062,7 @@ const SmsSend = ({classes , ...props }) => {
                     style={{
                       border: "1px solid #ddd",
                       padding: "10px",
-                      maxWidth: "280px",
+                      width: "180px",
                     }}
                   >
                     <div
@@ -1961,11 +2070,12 @@ const SmsSend = ({classes , ...props }) => {
                         handleChangeId(idx);
                       }}
                       className={classes.adjustP}
-                      style={{ width: "130px", textAlign: "center" }}
+                      style={{ width: "150px", textAlign: "center" }}
                     >
-                      {headers[idx]}
-                      <span style={{ marginInlineEnd: "5px", marginInlineStart: "5px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }}>x</span>
-                      <span>icn</span>
+                      <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <Typography style={{fontWeight:"700",cursor:"pointer"}}>{headers[idx]}</Typography> 
+               <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} style={{marginInlineStart:"5px"}}/> 
+                    {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown  style={{marginInlineStart:"4px"}}/> } </div>
                       {dropIndex == idx ? (
                         <div className={classes.adjustC}>
                           {selectArray.map((item, id) => {
@@ -2044,6 +2154,7 @@ const SmsSend = ({classes , ...props }) => {
                 );
               })}
           </table>
+          </div>
         </Dialog>
       </>
     );
@@ -2055,7 +2166,9 @@ const SmsSend = ({classes , ...props }) => {
   const handleDelete = () => {
     if (props && props.match.params.id) {
       dispatch(deleteSms(props.match.params.id));
+      
       handleClose();
+      history.push("/SMSCampaigns");
     }
   };
   const renderDelete = () => {
@@ -2106,6 +2219,36 @@ const SmsSend = ({classes , ...props }) => {
     setcaution(false);
     setmanualTrue(false);
   };
+
+  const renderSuccessDialog = () =>
+  {
+    return(
+      <>
+        <Dialog
+          classes={classes}
+          open={finalSuccessDialog}
+          // onClose={handleNewM}
+          
+          showDefaultButtons={false}
+        >
+          <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
+          <img src={Gif} style={{width:"150px",height:"150px"}}/>
+        
+            <span style={{marginTop:"10px",fontSize:"22px",fontWeight:"700"}}>Sent!</span>
+    
+       
+            <p style={{marginTop:"10px",fontSize:"18px",fontWeight:"600"}}>
+            Your camapign is on its way
+            </p>
+       
+       
+            <span style={{padding:"12px",backgroundColor:"green",marginTop:"10px",cursor:"pointer",color:"#ffffff",borderRadius:"10px"}} onClick={()=>{history.push("/SMSCampaigns")}}>Confirm</span>
+            </div>
+        
+        </Dialog>
+      </>
+    )
+  }
 
   const handlePreviousPage = () =>
   {
@@ -2194,6 +2337,7 @@ const SmsSend = ({classes , ...props }) => {
       {renderDialogManual()}
       {renderCaution()}
       {renderDelete()}
+      {renderSuccessDialog()}
       <Snackbar
         open={pulseBool || TimeBool || boolRandom}
         autoHideDuration={2000}

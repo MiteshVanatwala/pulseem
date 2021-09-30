@@ -1431,7 +1431,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   greenManual: {
     border: "2px dashed #4BB543",
-    width: "700px",
     height: "400px",
     backgroundColor: "#CCFFE5",
     "@media screen and (max-width: 768px)": {
@@ -1458,7 +1457,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   greenCon: {
-    width: "680px",
+    width: "calc(100% - 20px)",
     outline: "none",
     border: "none",
     resize: "none",
@@ -2085,18 +2084,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginTop: "15px",
     marginBottom: "20px",
     width: "100%",
-    maxWidth: "702px",
+   
   },
   inputManual:
   {
     padding: "10px",
+    width:"72%",
     outline: "none",
-    borderRadius: "4px"
+    borderRadius: "4px",
+    border : "1px solid #ddd"
   },
   adjustP:
   {
     position: "relative",
-    width: "100%"
+    width: "100%",
+    // display:"flex",
+    // alignItems:"center",
+    // justifyContent:"center"
   },
   bgBlack: {
     backgroundColor: 'black'
@@ -2121,9 +2125,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "100%",
     display: "flex",
     flexDirection: "column",
-    borderLeft: "1px solid gray",
-    borderRight: "1px solid gray",
-    borderBottom: "1px solid gray",
+    borderLeft: "1px solid #ddd",
+    borderRight: "1px solid #ddd",
+    borderBottom: "1px solid #ddd",
     zIndex: "99",
     backgroundColor: "#fff"
 
@@ -2133,13 +2137,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     padding: "10px",
     textAlign: "center",
-    borderBottom: "1px solid gray",
+    borderBottom: "1px solid #ddd",
     zIndex: "9",
     cursor: "pointer",
 
     '&:hover':
     {
-      backgroundColor: "#3C88BB",
+      backgroundColor: "#277BFF",
       color: "#fff",
       zIndex: "9"
     }
@@ -2148,7 +2152,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     padding: "10px",
     textAlign: "center",
-    borderBottom: "1px solid gray",
+    borderBottom: "1px solid #ddd",
     zIndex: "9",
     cursor: "pointer",
     pointerEvents: "none"
