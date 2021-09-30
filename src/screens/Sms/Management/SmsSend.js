@@ -161,7 +161,7 @@ const SmsSend = ({classes , ...props }) => {
   const [toggleChecked, settoggleChecked] = useState(false);
   const [cancel, setcancel] = useState(true);
   const [campaignIdResp, setcampaignIdResp] = useState(-1);
-
+  const [groupNameInput, setgroupNameInput] = useState("");
   const [groupValue, setgroupValue] = useState("");
   const [manualTrue, setmanualTrue] = useState(false);
   const [pulse, setpulse] = useState(false);
@@ -235,7 +235,7 @@ const SmsSend = ({classes , ...props }) => {
   const [hoursTrue, sethoursTrue] = useState(true);
   const [minName, setminName] = useState("");
   const [hourName, sethourName] = useState("");
-  const [newVal, setnewVal] = useState("");
+  const [newVal, setnewVal] = useState(false);
   const [reciToggle, setreciToggle] = useState(false);
   const [areaData, setareaData] = useState("");
   const [RecipientsBool, setRecipientsBool] = useState(false);
@@ -992,7 +992,7 @@ const SmsSend = ({classes , ...props }) => {
                   </span>
                 </div>
               ) : null}
-              <span>Total Records : 0</span>
+              <span>Total Records :  {contacts.length !==0 ? contacts.length : typedData.length}</span>
             </div>
           ) : null}
         </Box>
@@ -1804,81 +1804,96 @@ const SmsSend = ({classes , ...props }) => {
 
   }
   const handleDataManual = async () => {
-    let requestPayload = [];
+    if(manualUploadValidationscheck())
+    {
+      let requestPayload = [];
 
-    if (typedData.length !== 0) {
-      for (let j = 0; j < typedData.length; j++) {
-        requestPayload.push({});
-        for (let k = 0; k < typedData[j].length; k++) {
-          if (headers[k] !== "Adjust Title") {
-            let key = headers[k];
-            let obj = requestPayload[j];
-            obj[key] = typedData[j][k];
+      if (typedData.length !== 0) {
+        for (let j = 0; j < typedData.length; j++) {
+          requestPayload.push({});
+          for (let k = 0; k < typedData[j].length; k++) {
+            if (headers[k] !== "Adjust Title") {
+              let key = headers[k];
+              let obj = requestPayload[j];
+              obj[key] = typedData[j][k];
+            }
           }
         }
       }
-    }
-    else {
-      for (let j = 0; j < contacts.length; j++) {
-        requestPayload.push({});
-        let i = 0;
-
-        for (let k in contacts[j]) {
-          if (headers[i] !== "Adjust Title") {
-            let key = headers[i];
-            let obj = requestPayload[j];
-            obj[key] = contacts[j][k];
-
+      else {
+        for (let j = 0; j < contacts.length; j++) {
+          requestPayload.push({});
+          let i = 0;
+  
+          for (let k in contacts[j]) {
+            if (headers[i] !== "Adjust Title") {
+              let key = headers[i];
+              let obj = requestPayload[j];
+              obj[key] = contacts[j][k];
+  
+            }
+            i++;
           }
-          i++;
         }
       }
+  
+      let finalPayload = {
+        GroupName: groupNameInput,
+        Clients: requestPayload
+      }
+  
+      const r = await dispatch(saveManualClients(finalPayload))
+  
+      let tempres = [];
+      let temp = [];
+      for (let i = 0; i < groupList.length; i++) {
+        tempres.push(groupList[i]);
+      }
+      for (let i = 0; i < selectedGroups.length; i++) {
+        temp.push(selectedGroups[i]);
+      }
+  
+      temp.push({
+        Recipients: r.payload.Recipients,
+        GroupName: groupNameInput,
+        GroupID: r.payload.GroupID
+      });
+  
+      tempres.push({
+        Recipients: r.payload.Recipients,
+        GroupName: groupNameInput,
+        GroupID: r.payload.GroupID
+      });
+  
+      setGroupList(tempres);
+      setSelected(temp);
+      setmanualTrue(false);
+      setareaData("");
+      settypedData([]);
+      setContacts([]);
+      setgroupClick(true);
+      setmanualClick(false);
+      for (let i = 0; i < selectArray.length; i++) {
+        selectArray[i].isdisabled = false;
+        selectArray[i].idx = -1;
+      }
     }
-
-    let finalPayload = {
-      GroupName: newVal,
-      Clients: requestPayload
-    }
-
-    const r = await dispatch(saveManualClients(finalPayload))
-
-    let tempres = [];
-    let temp = [];
-    for (let i = 0; i < groupList.length; i++) {
-      tempres.push(groupList[i]);
-    }
-    for (let i = 0; i < selectedGroups.length; i++) {
-      temp.push(selectedGroups[i]);
-    }
-
-    temp.push({
-      Recipients: r.payload.Recipients,
-      GroupName: newVal,
-      GroupID: r.payload.GroupID
-    });
-
-    tempres.push({
-      Recipients: r.payload.Recipients,
-      GroupName: newVal,
-      GroupID: r.payload.GroupID
-    });
-
-    setGroupList(tempres);
-    setSelected(temp);
-    setmanualTrue(false);
-    setareaData("");
-    settypedData([]);
-    setContacts([]);
-    setgroupClick(true);
-    setmanualClick(false);
-    for (let i = 0; i < selectArray.length; i++) {
-      selectArray[i].isdisabled = false;
-      selectArray[i].idx = -1;
-    }
+   
   }
 
   const handleManualDialog = (e) => {
-    setnewVal(e.target.value);
+    setgroupNameInput(e.target.value);
+    setnewVal(false);
+  }
+
+  const manualUploadValidationscheck = () =>
+  {
+    if(groupNameInput === "")
+    {
+      setnewVal(true);
+      return false;
+    }
+    return true;
   }
 
   const renderDialogManual = () => {
@@ -1902,8 +1917,9 @@ const SmsSend = ({classes , ...props }) => {
             <input
               type="text"
               placeholder="Group Name"
-              className={classes.inputManual}
+              className={newVal ? clsx(classes.inputManual,classes.error) : clsx(classes.inputManual,classes.success)}
               onChange={handleManualDialog}
+              value={groupNameInput}
             />
           </div>
           <div
@@ -1923,7 +1939,7 @@ const SmsSend = ({classes , ...props }) => {
                 fontWeight: "600",
               }}
             >
-              {contacts.length}
+              {contacts.length !==0 ? contacts.length : typedData.length}
             </span>
             <Tooltip
               disableFocusListener
