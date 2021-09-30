@@ -27,7 +27,8 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
 import { useHistory } from "react-router";
 import { BsTrash ,BsChevronDown ,BsChevronUp } from "react-icons/bs";
-import Gif from "../../../assets/images/managment/check-circle.gif"
+import Gif from "../../../assets/images/managment/check-circle.gif";
+import * as XLSX from 'xlsx';
 
 import {
   Typography,
@@ -759,6 +760,79 @@ const SmsSend = ({classes , ...props }) => {
   const areaChange = (e) => {
     setareaData(e.target.value);
   };
+
+  const handleFiles = (e) =>
+  {
+    e.preventDefault();
+
+    const file = e.dataTransfer.files[0];
+    const reader = new FileReader();
+      if (file.name.toLowerCase().indexOf("xls") > -1) {
+        console.log("---->inxls",)
+        reader.onload = function(e) {
+          var data = new Uint8Array(e.target.result);
+          setTimeout(() => {
+            var workbook = XLSX.read(data, { type: "array" });
+            var csv = XLSX.utils.sheet_to_csv(
+              workbook.Sheets[workbook.SheetNames[0]]
+            ,{header:1});
+           console.log("--->",csv.split(","));
+           let temp = csv;
+           let a = temp.split("\n");
+           let b = [];
+           for (let i = 0; i < a.length; i++) {
+             b.push(a[i].split(","));
+           }
+           settypedData(b);
+           let dummyArr = [];
+            for (let i = 0; i < b[0].length; i++) {
+              dummyArr.push("Adjust Title");
+            }
+            setinitialheadstate(dummyArr);
+            setheaders(dummyArr)
+          
+          }, 0);
+        };
+       reader.readAsArrayBuffer(file,"utf-8")
+      }
+
+       else if(file.name.toLowerCase().indexOf("csv") > -1)
+      {
+       Array.from(e.dataTransfer.files)
+       .filter((file) => file.type === "text/csv")
+       .forEach(async (file) => {
+        const text = await file.text();
+        const result = parse(text, { header: true });
+        console.log("-->",result.data)
+        setContacts((existing) => [...existing, ...result.data]);
+        let res = "";
+        for (let i = 0; i < result.data.length; i++) {
+          for (
+            let j = 0;
+            j < Object.values(result.data[i]).length;
+            j++
+          ) {
+            res = res + Object.values(result.data[i])[j];
+          }
+          res = res + "\n";
+        }
+
+        setareaData(res);
+        let ddc = [];
+        for (let i in result.data[0]) {
+          ddc.push("Adjust Title")
+        }
+        setheaders(ddc);
+      });
+  }
+  else {
+   
+    return false;
+  }
+
+  }
+
+
   const renderBody = () => {
     return (
       <div>
@@ -849,33 +923,8 @@ const SmsSend = ({classes , ...props }) => {
                 e.preventDefault();
                 setHighlighted(false);
                 setmanualTrue(true);
+                handleFiles(e)
 
-                Array.from(e.dataTransfer.files)
-                .filter((file) => file.type === "text/csv")
-                  .forEach(async (file) => {
-                    const text = await file.text();
-                    const result = parse(text, { header: true });
-
-                    setContacts((existing) => [...existing, ...result.data]);
-                    let res = "";
-                    for (let i = 0; i < result.data.length; i++) {
-                      for (
-                        let j = 0;
-                        j < Object.values(result.data[i]).length;
-                        j++
-                      ) {
-                        res = res + Object.values(result.data[i])[j];
-                      }
-                      res = res + "\n";
-                    }
-
-                    setareaData(res);
-                    let ddc = [];
-                    for (let i in result.data[0]) {
-                      ddc.push("Adjust Title")
-                    }
-                    setheaders(ddc);
-                  });
               }}
             />
           </div>
@@ -1966,6 +2015,7 @@ const SmsSend = ({classes , ...props }) => {
                       style={{
                         border: "1px solid #ddd",
                         padding: "10px",
+                        width:"160px",
                         maxWidth: "280px",
                       }}
                     >
