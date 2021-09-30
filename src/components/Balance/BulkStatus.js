@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PricePackages from './PricePackages';
 import { GoPackage } from 'react-icons/go/index';
 import { Dialog } from '../managment/index';
-import { Grid, Paper, Typography } from '@material-ui/core';
+import { Grid, Paper, Typography, Button } from '@material-ui/core';
 import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
@@ -104,23 +104,23 @@ const BulkStatus = ({ classes }) => {
             item xs={9}
             className={getBillingTypeText(Sms) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
             justify='space-between'
-          // onMouseEnter={() => showSmsPackage(true)}
-          // onMouseLeave={() => showSmsPackage(false)}
+            onMouseEnter={() => showSmsPackage(true)}
+            onMouseLeave={() => showSmsPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
-            <Typography className={classes.bulkTitle}>
+            {/* <Typography className={classes.bulkTitle}>
               {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Sms)}
-            </Typography>
-            {/* {isShowSmsPackage ? (
+            </Typography> */}
+            {isShowSmsPackage ? (
               <Button onClick={() => setIsOpenPackageDialog(true)} className={classes.whiteLink}>
                 {t('dashboard.purchase')}
               </Button>
             )
               :
               (<Typography className={classes.bulkTitle}>
-                {!Sms.IsPrepaid ? t('dashboard.perRecipients') : Sms.Credits}
+                 {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Sms)}
               </Typography>)
-            } */}
+            }
           </Grid>
           }
           {<Grid
