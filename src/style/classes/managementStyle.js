@@ -44,7 +44,7 @@ const shortcutFontSize = {
     md: 18,
     lg: 18,
     xl: 18
-  },
+  }
 }
 const tipsFontSize = {
   xs: 18,
@@ -69,22 +69,6 @@ const tipsFontSize = {
 //   lg: '350px',
 //   xl: '350px'
 // }
-
-const shortcutFontSize = {
-  category: {
-    xs: 16,
-    sm: 14,
-    md: 16,
-    lg: 16,
-    xl: 16
-  },
-  page: {
-    xs: 18,
-    sm: 16,
-    md: 18,
-    lg: 18,
-    xl: 18
-  }
 
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   managementTitle: {
