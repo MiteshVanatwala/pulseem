@@ -10,7 +10,7 @@
   "cancelBtn":"Cancel",
   "pulseSending":"Pulse Sending",
   "packetSend":"Packets Sending",
-  "noOfReciPulse":"Number of Recipients per Sending",
+  "noOfReciPulse":"Number of recipients per sending",
   "percent":"Percent",
   "Reci":"recipients",
   "timeSend":"Time between sending",
