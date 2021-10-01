@@ -13,6 +13,7 @@ import Mobile from "../../../assets/images/mobileiphone.png";
 import Radio from "@material-ui/core/Radio";
 import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from "@material-ui/core/RadioGroup";
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import Emoj from "../../../assets/images/smile.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
@@ -218,6 +219,8 @@ const SmsCreator = ({ classes, ...props }) => {
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
     OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true}
   }
+
+
 
   const handleSendResult = async () => {
     if (smsSendResult) {
@@ -448,7 +451,7 @@ const SmsCreator = ({ classes, ...props }) => {
     setcampaignNumber(StaticNumber);
     let r = await dispatch(getCommonFeatures());
     // setcampaignNumber(r.payload.DefaultCellNumber)
-    let response =  await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber))
+    let response =  await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
     setcampaignNumber(response.payload.Number);
     setStaticNumber(response.payload.Number);
     setremovalNumber(response.payload.RemovalKey);
@@ -689,7 +692,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       </>
                   
                 )}
-                <Box className={classes.pickerEmoji}>
+                <Box className={classes.pickerEmoji} onBlur={()=>{setflagemoji(false)}}>
                   {flagemoji ? (
                     <Picker
                       onEmojiClick={onEmojiClick}
@@ -980,20 +983,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     <span className={classes.rightSend} onClick={handleSend}>
                       {t("mainReport.send")}
                     </span>
-                    <Snackbar
-                      open={OpenS}
-                      autoHideDuration={2000}
-                      onClose={handleClose}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "center",
-                      }}
-                      style={{ zIndex: "9999" }}
-                    >
-                      <Alert severity="error" onClose={handleCloseSnackbar} style={{ border: "3px solid #FF2400", backgroundColor: "#ffe6e6", color: "black", width: "400px", padding: "10px", fontWeight: "600" }}>
-                        {t("mainReport.invalidNo")}
-                      </Alert>
-                    </Snackbar>
+       
                   </div>
                 ) : null}
 
@@ -1014,37 +1004,38 @@ const SmsCreator = ({ classes, ...props }) => {
                   </span>
                 </div>
                 {radioBtn === "bottom" ? (
-                  <div className={classes.rightForm}>
-                    <div
-                      className={classes.contactGroupDiv}
-                      onClick={() => {
-                        setcontactGroup(true);
-                      }}
-                    >
-                      <div> {t("mainReport.ChooseLinks")}</div>
-                      {hidden ? (
-                        <div className={classes.mappedGroup}>
-                          {selectedGroup.map((item, index) => {
-                            if (item.selected && hidden) {
-                              return (
-                                <div className={classes.selectedGroupsDiv}>
-                                  <span className={classes.nameGroup}>
-                                    {item.GroupName}
-                                  </span>
-                                  <RiCloseFill
-                                    className={classes.groupCloseicn}
-                                    onClick={() => {
-                                      handleCross(index);
-                                    }}
-                                  />
-                                </div>
-                              );
-                            }
-                          })}
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
+             <div className={classes.rightForm}>
+             <div
+               className={classes.contactGroupDiv}
+               onClick={() => {
+                 setcontactGroup(true);
+               }}
+             >
+               <div> {t("mainReport.ChooseLinks")}</div>
+               {hidden ? (
+                 <div className={classes.mappedGroup}>
+                   {selectedGroup.map((item, index) => {
+                     if (item.selected && hidden) {
+                       return (
+                         <div className={classes.selectedGroupsDiv}>
+                           <span className={classes.nameGroup}>
+                             {item.GroupName}
+                           </span>
+                           <RiCloseFill
+                             className={classes.groupCloseicn}
+                             onClick={() => {
+                               handleCross(index);
+                             }}
+                           />
+                         </div>
+                       );
+                     }
+                   })}
+                 </div>
+               ) : null}
+             </div>
+           </div>
+
                 ) : null}
               </div>
             </RadioGroup>
@@ -1161,7 +1152,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const handleCampClick = async (id) => {
     let campaignData = "";
-    campaignData = msg + getPreviousCampaignData[id].EncryptURL;
+    campaignData = msg + previousCampaignData[id].EncryptURL;
     setdialogClickCampaign(false);
     seteditmenuClick(false);
     setmsg(campaignData);

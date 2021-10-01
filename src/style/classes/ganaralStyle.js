@@ -1524,8 +1524,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: "#ffffff",
       backgroundColor: "#277bff",
     }
+  },
 
-
+  pulseDisable : 
+  {
+    border: "1px solid  #808080",
+    padding: "8px",
+    marginInlineEnd: "8px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    color: "#808080",
+    pointerEvents:"none"
+  
   },
   toggleDiv: {
     display: "flex",
@@ -1842,7 +1852,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: '#007bff',
     border: '1px solid #007bff',
     padding: "8px",
-    borderRadius: "5px"
+    borderRadius: "5px",
+    cursor:"pointer"
   },
   blueDoc:
   {

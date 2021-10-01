@@ -12,6 +12,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 import PropTypes from "prop-types";
 import { DateField, Dialog } from "../../../components/managment/index";
 import Paper from "@material-ui/core/Paper";
+import Toast from '../../../components/Toast/Toast.component';
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import { parse } from "papaparse";
@@ -222,6 +223,7 @@ const SmsSend = ({classes , ...props }) => {
   const [toggleB, settoggleB] = useState(true);
   const [toggleA, settoggleA] = useState(false);
   const [toggleReci, settoggleReci] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
   const [groupClick, setgroupClick] = useState(true);
   const [manualClick, setmanualClick] = useState(false);
   const [highlighted, setHighlighted] = React.useState(false);
@@ -272,6 +274,15 @@ const SmsSend = ({classes , ...props }) => {
   const [Unique, setUnique] = useState(-1);
   const [initialheadstate, setinitialheadstate] = useState([])
 
+  const toastMessages = {
+    SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
+    GROUPCREATEDSUCCESS: { severity: 'success', color: 'success', message:"Group successfully created. ", showAnimtionCheck: true },
+    SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
+    ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
+    OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true}
+  }
+
+
 
 
   const [headers, setheaders] = useState(initialheadstate);
@@ -314,10 +325,12 @@ const SmsSend = ({classes , ...props }) => {
   const getSubAccountGroups = async () => {
     const list = await dispatch(getGroupsBySubAccountId());
     const tempGroupList = list.payload;
+   
     if (tempGroupList) {
       tempGroupList.Id = tempGroupList.GroupID;
     }
-    setGroupList(tempGroupList);
+  
+    setGroupList(tempGroupList);  
     setfilterGroups(tempGroupList);
   };
 
@@ -433,7 +446,9 @@ const SmsSend = ({classes , ...props }) => {
     tempres.push(r.payload);
     setGroupList(tempres);
     settoggleChecked(false);
+    setToastMessage(toastMessages.GROUPCREATEDSUCCESS);
   };
+
   const handleSelect = (id) => {
     let tempArr = [];
     for (let i = 0; i < filterGroups.length; i++) {
@@ -1540,7 +1555,7 @@ const SmsSend = ({classes , ...props }) => {
 
         <div className={classes.pulseDiv}>
           <span
-            className={classes.pulse}
+            className={(selectedGroups.length >= 1 && sendType !== "3")  ?   classes.pulse : classes.pulseDisable}
             onClick={() => {
               setpulse(true);
             }}
@@ -2171,6 +2186,19 @@ const SmsSend = ({classes , ...props }) => {
       history.push("/SMSCampaigns");
     }
   };
+  const renderToast = () => {
+    if (toastMessage) {
+
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 2000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
+
   const renderDelete = () => {
     return (
       <>
@@ -2280,6 +2308,7 @@ const SmsSend = ({classes , ...props }) => {
   };
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
+      {renderToast()}
       <div className={classes.smsStepDiv}>
 
         <div>
