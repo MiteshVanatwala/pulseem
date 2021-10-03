@@ -1,26 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import './PricePackages.styles.css'
 import clsx from 'clsx';
-import { getPackagesList } from '../../redux/reducers/commonSlice';
 import { useTranslation } from 'react-i18next'
-import { Box, Button, Grid, Typography, Divider, TextField, FormControl, Select, MenuItem } from '@material-ui/core';
-import { Loader } from '../Loader/Loader';
+import { Button, Grid, Typography, Divider, TextField, FormControl, Select, MenuItem } from '@material-ui/core';
+import { Loader } from '../../Loader/Loader';
 import NumberFormat from 'react-number-format';
-import DropdownMonthes from '../Dropdowns/month';
-import DropdownYears from '../Dropdowns/years';
+import DropdownMonthes from '../../Dropdowns/month';
+import DropdownYears from '../../Dropdowns/years';
 import moment from 'moment';
 import validator from 'validator'
-import { buySmsPackage } from '../../redux/reducers/dashboardSlice';
+import { buySmsPackage } from '../../../redux/reducers/dashboardSlice';
+import Package from '../PackageBox/Package';
+import PurchaseLogs from '../PurhcaseLogs/Logs';
 
 const PricePackages = ({ classes,
     onComplete = () => null,
+    packageType,
     ...props }) => {
-    const { language } = useSelector(state => state.core)
+    const { language } = useSelector(state => state.core);
     const { isRTL } = useSelector(state => state.core);
+    const { accountAvailablePackages, purchaseLogs } = useSelector(state => state.dashboard);
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [data, setData] = useState(null);
+    const [newsletterBulkData, setNewsletterBulkData] = useState(null);
+    const [smsBulkData, setSmsBulkData] = useState(null);
+    const [notificationsBulkData, setNotificationsBulkData] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [packageId, setPackageId] = useState(null);
     const [step, setStep] = useState(1);
@@ -37,12 +42,16 @@ const PricePackages = ({ classes,
     const CardTypeOptions = [{ ID: 0, Type: "Visa" }, { ID: 1, Type: "MasterCard" }, { ID: 2, Type: "AmericanExpress" }];
     const [isCreditCardValid, setIsCreditCardValid] = useState(null);
     const [isValidCVV, setIsValidCVV] = useState(null);
+    const israelTax = 0.17;
+
     // const [expiredSet, setExpiredSet] = useState(false);
 
 
-    const initData = async () => {
-        const d = await dispatch(getPackagesList());
-        setData(d.payload);
+    const initData = () => {
+        setSmsBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 1 }));
+        setNewsletterBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 3 }));
+
+        setData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === packageType }));
         setLoader(false);
     }
 
@@ -54,38 +63,12 @@ const PricePackages = ({ classes,
             expiredDate.set("month", expiredMonth - 1);
             expiredDate.set("year", expiredYear);
             setCreditCard({ ...creditInfo, ExpirtaionDate: moment(expiredDate).format("YYYY/MM") });
-
-            // if(moment(expiredDate).isValid()){
-            //     setExpiredSet(true);
-            // }
         }
     }, [expiredMonth, expiredYear]);
 
-    const Package = ({ pack, packSize }) => {
-        return (
-            <Grid item xs={12} sm={6} md={4} lg={packSize} className={clsx(classes.mb4, classes.mt4)}>
-                <Box className={clsx(classes.alignCenter, classes.whiteBox)}>
-                    <Box className={clsx(classes.borderBox, classes.alignCenter, classes.m5)}>
-                        <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font24)}>{t('common.smsBulk')}</Typography>
-                        <Typography className={classes.dialogTitle}><NumberFormat value={pack.Quantity} displayType={'text'} thousandSeparator={true} /></Typography>
-                        <Typography className={clsx(classes.black, classes.bold, classes.mb2)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={pack.Price} displayType={'text'} thousandSeparator={true} prefix={'₪'} /></Typography>
-                        <Button
-                            variant='contained'
-                            size='medium'
-                            className={clsx(
-                                classes.actionButton,
-                                classes.actionButtonLightGreen)}
-                            onClick={() => selectPackage(pack.ID)}
-                        >{t('common.select')}</Button>
-                    </Box>
-                </Box>
-            </Grid>
-        )
-    }
-
     const selectPackage = (packageId) => {
         const pack = data.find((p) => { return p.ID === packageId });
-        const vat = (pack.Price * 0.17).toFixed(2);
+        const vat = (pack.Price * israelTax).toFixed(2);
         const totalPrice = pack.Price + parseFloat(vat);
         setPackageId(packageId);
         setStep(step + 1);
@@ -100,15 +83,55 @@ const PricePackages = ({ classes,
     const packagesDetails = () => {
         if (data !== null) {
             const packageLength = data.length;
-            const packPerLine = Math.ceil(12 / packageLength);
-            return (
-                data !== null &&
-                data.map((d) => {
+            let packPerLine = Math.ceil(12 / packageLength);
+            packPerLine = packPerLine < 3 ? 3 : packPerLine;
+            switch (packageType) {
+                case 1: {
                     return (
-                        <Package pack={d} packSize={packPerLine} key={d.ID} />
-                    )
-                })
-            );
+                        <>
+                            {purchaseLogs && <PurchaseLogs classes={classes} data={purchaseLogs} />}
+                            <Grid item xs={12}>
+                                <Typography className={classes.dialogTitle} style={{ marginInline: 0 }}>{t('common.smsBulkTitle')}</Typography>
+                                <Divider />
+                                <Typography className={classes.mt3}>{t('common.smsBulkDescription')}</Typography>
+                            </Grid>
+                            {
+                                smsBulkData.sort((a, b) => a.Quantity - b.Quantity).map((d) => {
+                                    return (
+                                        <Package pack={d}
+                                            packSize={packPerLine}
+                                            key={d.ID}
+                                            onSelect={selectPackage}
+                                            packageType={packageType}
+                                            classes={classes} />
+                                    )
+                                })
+                            }
+                        </>);
+                }
+                case 3: {
+                    return (
+                        <>
+                            <Grid item xs={12}>
+                                <Typography className={classes.dialogTitle} style={{ marginInline: 0 }}>{t('common.newsletterBulkTitle')}</Typography>
+                                <Divider />
+                                <Typography className={classes.mt3}>{t('common.newsletterBulkDescription')}</Typography>
+                            </Grid>
+                            {
+                                newsletterBulkData.sort((a, b) => a.Quantity - b.Quantity).map((d) => {
+                                    return (
+                                        <Package pack={d}
+                                            packSize={packPerLine}
+                                            key={d.ID}
+                                            onSelect={selectPackage}
+                                            packageType={packageType}
+                                            classes={classes} />
+                                    )
+                                })
+                            }
+                        </>);
+                }
+            }
         }
     }
 
@@ -125,7 +148,7 @@ const PricePackages = ({ classes,
 
     const renderSummary = () => {
         const pack = data.find((p) => { return p.ID === packageId });
-        const vat = (pack.Price * 0.17).toFixed(2);
+        const vat = (pack.Price * israelTax).toFixed(2);
         const totalPrice = pack.Price + parseFloat(vat);
         return (
             <Grid container spacing={1}>
@@ -385,11 +408,6 @@ const PricePackages = ({ classes,
 
     return (
         <Grid container spacing={1} style={{ maxWidth: '100%' }}>
-            {step === 1 && <Grid item xs={12}>
-                <Typography className={classes.dialogTitle} style={{ marginInline: 0 }}>{t('common.smsBulkTitle')}</Typography>
-                <Divider />
-                <Typography className={classes.mt3}>{t('common.smsBulkDescription')}</Typography>
-            </Grid>}
             {purchaseWizard()}
             <Loader isOpen={showLoader} showBackdrop={false} />
         </Grid>

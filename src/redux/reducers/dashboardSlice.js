@@ -51,6 +51,17 @@ export const buySmsPackage = createAsyncThunk(
     }
   });
 
+export const getPurchaseLog = createAsyncThunk(
+  'dashboard/GetPurchaseLog', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`dashboard/GetPurchaseLog`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+
 
 export const dashboardSlice = createSlice({
   name: 'dashboard',
@@ -62,7 +73,10 @@ export const dashboardSlice = createSlice({
     lastCampaignReportError: '',
     packagesDetailsError: '',
     tipsError: '',
-    shortcutsError: ''
+    shortcutsError: '',
+    purchaseLogs: []
+    // packagesList: [],
+    // packagesListError: ''
   },
   extraReducers: builder => {
     builder
@@ -85,6 +99,13 @@ export const dashboardSlice = createSlice({
       .addCase(getTips.rejected, (state, action) => {
         state.tipsError = action.error.message
       })
+      .addCase(getPurchaseLog.fulfilled, (state, { payload }) => {
+        state.purchaseLogs = payload;
+      })
+      .addCase(getPurchaseLog.rejected, (state, action) => {
+        state.purchaseLogs = action.error.message
+      })
+
   }
 })
 

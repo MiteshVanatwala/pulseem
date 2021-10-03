@@ -599,7 +599,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textDecoration: 'underline',
     color: '#fff',
     textTransform: 'capitalize',
-    lineHeight: 1
+    lineHeight: 1,
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
   },
   noWrap: {
     flexWrap: 'nowrap'
@@ -645,5 +648,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   spaceEvenly: {
     justifyContent: 'space-evenly'
+  },
+  textCenter: {
+    textAlign: 'center'
   }
 })
