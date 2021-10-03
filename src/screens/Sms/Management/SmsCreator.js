@@ -893,7 +893,12 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleNumberChange = (e) => {
-    setphone(e.target.value);
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) 
+    {
+      setphone(e.target.value);
+    }
+    
   };
 
   const renderPhone = () => {
@@ -978,6 +983,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placeholder={t("mainReport.enterPhone")}
                       className={classes.rightInput}
                       value={phone}
+                      maxLength="12"
                       onChange={handleNumberChange}
                     />
                     <span className={classes.rightSend} onClick={handleSend}>

@@ -78,6 +78,25 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "none",
   },
 }));
+
+const useSnack = makeStyles((theme) => ({
+
+ customcolor : 
+ {
+  backgroundColor: "#F1EB9C",
+  color:"black",
+  border:"3px solid #AC9F3C",
+  width:"250px",
+  height:"30px",
+  display:"flex",
+  justifyContent:"center",
+  fontWeight: 900
+ }
+   
+  
+
+}));
+
 const useStyleNew = makeStyles((theme) => ({
   root: {
     padding: "2px 4px",
@@ -137,6 +156,7 @@ const SmsSend = ({classes , ...props }) => {
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const tabi = useStyle();
+  const snacki = useSnack();
   const history = useHistory();
 
   const dispatch = useDispatch();
@@ -237,7 +257,7 @@ const SmsSend = ({classes , ...props }) => {
   const [minTrue, setminTrue] = useState(false);
   const [hoursTrue, sethoursTrue] = useState(true);
   const [minName, setminName] = useState("");
-  const [hourName, sethourName] = useState("");
+  const [hourName, sethourName] = useState("Hours");
   const [newVal, setnewVal] = useState(false);
   const [RecipientsSnackbar, setRecipientsSnackbar] = useState(false);
   const [reciToggle, setreciToggle] = useState(false);
@@ -487,7 +507,15 @@ const SmsSend = ({classes , ...props }) => {
     setgroupValue(e.target.value);
   };
   const handlePulseClose = () => {
-
+   
+    if(inputF == "" || inputS == "")
+    {
+      settogglePulse(false)
+    }
+    if(random == "")
+    {
+      settoggleRandom(false)
+    }
     setpulse(false);
 
 
@@ -500,16 +528,31 @@ const SmsSend = ({classes , ...props }) => {
     }
   }
   const handleTime = (e) => {
-    setinputS(e.target.value);
-    setTimeBool(false);
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) 
+    {
+      setinputS(e.target.value);
+      setTimeBool(false);
+    }
+   
   };
   const handleRandom = (e) => {
-    setrandom(e.target.value);
-    setboolRandom(false);
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) 
+    {
+      setrandom(e.target.value);
+      setboolRandom(false);
+    }
+    
   };
   const handlePulseInput = (e) => {
-    setinputF(e.target.value);
-    setpulseBool(false);
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) 
+    {
+      setinputF(e.target.value);
+      setpulseBool(false);
+    }
+   
   };
 
   const onPulseValidations = () => {
@@ -1591,7 +1634,7 @@ const SmsSend = ({classes , ...props }) => {
 
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer}
+              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer} 
               every {inputS} {hourName == "" ? minName : hourName}
             </span>
           ) : null}
@@ -2426,9 +2469,7 @@ const SmsSend = ({classes , ...props }) => {
         }}
         style={{ zIndex: "9999", marginTop: "60px" }}
       >
-        <Alert severity="error" >
-          {t("smsReport.randomAmt")}
-        </Alert>
+     
       </Snackbar>
 
       <Snackbar
@@ -2436,12 +2477,17 @@ const SmsSend = ({classes , ...props }) => {
    autoHideDuration={2000}
    onClose={()=>{setRecipientsSnackbar(false);}}
    style={{ zIndex: "9999", marginTop: "30px",fontWeight: 900, fontSize: 16}}
+  
    anchorOrigin={{
     vertical: "top",
     horizontal: "right",
   }}
-   message="Please add no of days"
-/>
+  
+>
+<Alert   severity="warning"  className={snacki.customcolor}>
+Please Add No of Days
+        </Alert>
+        </Snackbar>
     </DefaultScreen >
   );
 };
