@@ -2085,7 +2085,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     justifyContent: "center",
     height: "40px",
-    width: "100%",
+    width: "700px",
+    flexWrap:"wrap",
+    overflowY:"auto",
     backgroundColor: "#F7F7F7",
   },
   manualModal: {

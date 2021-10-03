@@ -239,6 +239,7 @@ const SmsSend = ({classes , ...props }) => {
   const [minName, setminName] = useState("");
   const [hourName, sethourName] = useState("");
   const [newVal, setnewVal] = useState(false);
+  const [RecipientsSnackbar, setRecipientsSnackbar] = useState(false);
   const [reciToggle, setreciToggle] = useState(false);
   const [areaData, setareaData] = useState("");
   const [RecipientsBool, setRecipientsBool] = useState(false);
@@ -1122,14 +1123,19 @@ const SmsSend = ({classes , ...props }) => {
     setmanualTrue(true);
   };
   const handleReciInput = (e) => {
-
-    setinputRecipients(e.target.value);
-    setRecipientsBool(false);
+   
+      const re = /^[0-9\b]+$/;
+      if (e.target.value === '' || re.test(e.target.value)) 
+        {
+          setinputRecipients(e.target.value);
+          setRecipientsBool(false);
+        }
 
   }
   const validationCheck = () => {
     if (inputRecipients === "") {
       setRecipientsBool(true);
+      setRecipientsSnackbar(true);
       return false;
     }
     else {
@@ -1178,10 +1184,10 @@ const SmsSend = ({classes , ...props }) => {
                     disabled={toggleReci ? false : true}
                     className={
                       toggleReci
-                        ? clsx(classes.pulseActive)
+                        ? RecipientsBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive,classes.success)
                         : clsx(classes.pulseInsert)
                     }
-                    onChange={handleReciInput}
+                    onChange={(e)=>{handleReciInput(e)}}
                     value={inputRecipients}
                   />
                 </div>
@@ -1207,7 +1213,8 @@ const SmsSend = ({classes , ...props }) => {
                       }}
                     />
                   </Paper>
-                  <div className={classes.reciList}> {filterGroups.map((item, index) => {
+          
+                <div className={classes.reciList}> {filterGroups.map((item, index) => {
                     if (item.selected) {
                       return (
                         <div
@@ -2423,6 +2430,18 @@ const SmsSend = ({classes , ...props }) => {
           {t("smsReport.randomAmt")}
         </Alert>
       </Snackbar>
+
+      <Snackbar
+   open={RecipientsSnackbar}
+   autoHideDuration={2000}
+   onClose={()=>{setRecipientsSnackbar(false);}}
+   style={{ zIndex: "9999", marginTop: "30px",fontWeight: 900, fontSize: 16}}
+   anchorOrigin={{
+    vertical: "top",
+    horizontal: "right",
+  }}
+   message="Please add no of days"
+/>
     </DefaultScreen >
   );
 };
