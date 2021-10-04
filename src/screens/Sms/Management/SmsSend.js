@@ -207,6 +207,7 @@ const SmsSend = ({classes , ...props }) => {
   const [pulse, setpulse] = useState(false);
   const [afterClick, setafterClick] = useState(false);
   const [exitClick, setexitClick] = useState(false);
+  const [specialSettingValidation, setspecialSettingValidation] = useState(false);
   const [reciFilter, setreciFilter] = useState(false);
   const [responseQuick, setresponseQuick] = useState(null);
   const [pulseBool, setpulseBool] = useState(false);
@@ -279,7 +280,7 @@ const SmsSend = ({classes , ...props }) => {
   const [hoursTrue, sethoursTrue] = useState(true);
   const [minName, setminName] = useState("");
   const [hourName, sethourName] = useState("Hours");
-  const [SpecialValue, setSpecialValue] = useState("");
+  const [SpecialValue, setSpecialValue] = useState("0");
   const [newVal, setnewVal] = useState(false);
   const [RecipientsSnackbar, setRecipientsSnackbar] = useState(false);
   const [reciToggle, setreciToggle] = useState(false);
@@ -1553,6 +1554,7 @@ const SmsSend = ({classes , ...props }) => {
                   onChange={(e) => {handleSelectChange(e)}}
                   value={SpecialValue}
                 >
+                    <option value="0" disabled>Select</option>
                   <option value="1">{t("mainReport.birthday")}</option>
                   <option value="2">Creation Day</option>
                   {Object.keys(extraData).map((item, i) => {
@@ -1588,9 +1590,8 @@ const SmsSend = ({classes , ...props }) => {
                 <div style={{ display: "flex", direction: isRTL ? 'ltr' : 'none' }}>
                   <span
                     className={
-                      toggleB
-                        ? clsx(classes.beforeActive)
-                        : clsx(classes.before)
+                      
+                    sendType == "3" ?  toggleB ? classes.beforeActive : classes.before : classes.disabledBefore 
                     }
                     onClick={() => {
                       handlebef();
@@ -1601,7 +1602,7 @@ const SmsSend = ({classes , ...props }) => {
                   </span>
                   <span
                     className={
-                      toggleA ? clsx(classes.afterActive) : clsx(classes.after)
+                      sendType == "3" ?  toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                     }
                     onClick={() => {
                       handleaf();
@@ -1899,111 +1900,120 @@ const SmsSend = ({classes , ...props }) => {
     else if(sendType === "3")
     {
       if (selectedGroups.length > 0) {
-       
-        let  FinalId = props.match.params.id
+
+        if(sendTime == null || daysBeforeAfter == "" || SpecialValue == "0")
+        {
+          setspecialSettingValidation(true);
+        }
+        else
+        {
+          let  FinalId = props.match.params.id
         
 
-        let temp = [];
-        let finalGroups = [];
-        for (let i = 0; i < selectedGroups.length; i++) {
-          temp.push(selectedGroups[i].GroupID);
-          finalGroups.push(selectedGroups[i]);
-        }
-        let time = -1;
-        let pulse = -1;
-        if (togglePulse) {
-          if (minTrue == true) {
-            time = 1;
-          } else {
-            time = 2;
+          let temp = [];
+          let finalGroups = [];
+          for (let i = 0; i < selectedGroups.length; i++) {
+            temp.push(selectedGroups[i].GroupID);
+            finalGroups.push(selectedGroups[i]);
           }
-
-          if (percentTrue == true) {
-            pulse = 1;
-          } else {
-            pulse = 2;
+          let time = -1;
+          let pulse = -1;
+          if (togglePulse) {
+            if (minTrue == true) {
+              time = 1;
+            } else {
+              time = 2;
+            }
+  
+            if (percentTrue == true) {
+              pulse = 1;
+            } else {
+              pulse = 2;
+            }
           }
-        }
-
-        let exceptionGroups = [];
-
-        for (let i = 0; i < filterGroups.length; i++) {
-          if (filterGroups[i].selected) {
-            exceptionGroups.push(filterGroups[i].GroupID)
+  
+          let exceptionGroups = [];
+  
+          for (let i = 0; i < filterGroups.length; i++) {
+            if (filterGroups[i].selected) {
+              exceptionGroups.push(filterGroups[i].GroupID)
+            }
           }
-        }
-
-
-        let exceptionCampaigns = [];
-        for (let i = 0; i < totalCampaigns.length; i++) {
-          if (totalCampaigns[i].selected) {
-            exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
+  
+  
+          let exceptionCampaigns = [];
+          for (let i = 0; i < totalCampaigns.length; i++) {
+            if (totalCampaigns[i].selected) {
+              exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
+            }
           }
-        }
-        let beforeAfter = 0;
-        if(afterClick)
-        {
-           beforeAfter = 1
-        }
-        else
-        {
-          beforeAfter = -1
-        }
-        let quickPayload = {
-          FutureDateTime: null,
-          GroupDetails: finalGroups,
-          Groups: temp,
-          PulseSettings: {
-            PulseType: pulse,
-            TimeType: time,
-            PulseAmount: inputF,
-            TimeInterval: inputS
-          },
-          RandomSettings: {
-            RandomAmount: random
-          },
-          SendExeptional:
+          let beforeAfter = 0;
+          if(afterClick)
           {
-            Groups: exceptionGroups,
-            Campaigns: exceptionCampaigns,
-            ExceptionalDays: setinputRecipients
-          },
-          SendTypeID: 1,
-          SmsCampaignID: FinalId,
-          SourceTimeZone: "Asia/Calcutta",
-          SpecialSettings: {
-            Type: SpecialValue,
-            DateFieldID: SpecialValue,
-            Day: daysBeforeAfter,
-            SendHour: sendTime,
-            IntervalTypeID: beforeAfter,
-          },
-          specialDateOptions: [
-            {
-              text: "Birthday",
-              code: "1"
+             beforeAfter = 1
+          }
+          else
+          {
+            beforeAfter = -1
+          }
+          let quickPayload = {
+            FutureDateTime: null,
+            GroupDetails: finalGroups,
+            Groups: temp,
+            PulseSettings: {
+              PulseType: pulse,
+              TimeType: time,
+              PulseAmount: inputF,
+              TimeInterval: inputS
             },
-            {
-              text: "Creation Day",
-              code: "2"
+            RandomSettings: {
+              RandomAmount: random
             },
+            SendExeptional:
             {
-              text: "",
-              code: "3"
-            }]
-
+              Groups: exceptionGroups,
+              Campaigns: exceptionCampaigns,
+              ExceptionalDays: setinputRecipients
+            },
+            SendTypeID: 1,
+            SmsCampaignID: FinalId,
+            SourceTimeZone: "Asia/Calcutta",
+            SpecialSettings: {
+              Type: SpecialValue,
+              DateFieldID: SpecialValue,
+              Day: daysBeforeAfter,
+              SendHour: sendTime,
+              IntervalTypeID: beforeAfter,
+            },
+            specialDateOptions: [
+              {
+                text: "Birthday",
+                code: "1"
+              },
+              {
+                text: "Creation Day",
+                code: "2"
+              },
+              {
+                text: "",
+                code: "3"
+              }]
+  
+          }
+          await dispatch(saveSmsCampSettings(quickPayload));
+          if(toggle)
+          {
+            setToastMessage(toastMessages.SUCCESS);
+          }
+          else
+          {
+            let response = await dispatch(getCampaignSumm(FinalId));
+            setresponseQuick(response);
+            setsummModal(true);
+          }
         }
-        await dispatch(saveSmsCampSettings(quickPayload));
-        if(toggle)
-        {
-          setToastMessage(toastMessages.SUCCESS);
-        }
-        else
-        {
-          let response = await dispatch(getCampaignSumm(FinalId));
-          setresponseQuick(response);
-          setsummModal(true);
-        }
+       
+       
         }
 
     }
@@ -2011,7 +2021,7 @@ const SmsSend = ({classes , ...props }) => {
   const renderSummary = () => {
     return (
       <>
-        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall}/>
+        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall} sendType={sendType} days={daysBeforeAfter} after={afterClick} time={sendTime}/>
       </>
     );
   };
@@ -2552,6 +2562,52 @@ const SmsSend = ({classes , ...props }) => {
       </>
     );
   };
+  const renderSpecialModal = () =>
+  {
+   return( <>
+    <Dialog
+        classes={classes}
+        open={specialSettingValidation}
+        onClose={()=>{setspecialSettingValidation(false)}}
+        showDefaultButtons={false}
+        icon={
+          <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
+        }
+      >
+        <div className={classes.baseDialogSetup}>
+          <span className={classes.groupName}>
+            {t("mainReport.fieldInvalid")}:
+          </span>
+        </div>
+        <div>
+          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
+           {SpecialValue == "0" ? <li>Must select Special Date Type</li> : null} 
+          {daysBeforeAfter == "" ? <li>Must insert Number of Days</li> :null}  
+         {sendTime == null ? <li>Must select Sending Time</li> : null}   
+          
+          </ul>
+        </div>
+        <div
+          style={{
+            height: "50px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => {
+              setspecialSettingValidation(false);
+            }}
+            className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
+          >
+            {t("mainReport.confirmSms")}
+          </Button>
+        </div>
+      </Dialog></>)
+  }
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
       {renderToast()}
@@ -2614,6 +2670,7 @@ const SmsSend = ({classes , ...props }) => {
       {renderDelete()}
       {renderExit()}
       {renderSuccessDialog()}
+      {renderSpecialModal()}
       <Snackbar
         open={pulseBool || TimeBool || boolRandom}
         autoHideDuration={2000}

@@ -1562,6 +1562,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#277BFF",
     cursor: "pointer"
   },
+  disabledBefore : 
+  {
+    display: "flex",
+    width: "72px",
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomLeftRadius: "4px",
+    borderTopLeftRadius: "4px",
+    border: "1px solid #D3D3D3",
+    padding: "10px",
+    marginBottom: "8px",
+    color: "#D3D3D3",
+    cursor: "pointer"
+  },
   after: {
     display: "flex",
     width: "72px",
@@ -1574,6 +1588,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "10px",
     marginBottom: "8px",
     color: "#277BFF",
+    cursor: "pointer"
+  },
+  disabledAfter : 
+  {
+    display: "flex",
+    width: "72px",
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomRightRadius: "4px",
+    borderTopRightRadius: "4px",
+    borderLeft: "none",
+    border: "1px solid #D3D3D3",
+    padding: "10px",
+    marginBottom: "8px",
+    color: "#D3D3D3",
     cursor: "pointer"
   },
   beforeActive: {

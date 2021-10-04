@@ -3,7 +3,7 @@ import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
 import Mobile from "../../../assets/images/mobileiphone.png";
 
-const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api , textMsg , activeGroups}) => {
+const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api , textMsg , activeGroups , ...props}) => {
 
   const [modal, setmodal] = useState(false);
   const [smsCreator, setsmsCreator] = useState(false);
@@ -19,6 +19,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
   useEffect(() => {
     setsmsCreator(stepBool);
   }, [stepBool])
+
 
   return (
     <div>
@@ -252,7 +253,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
 
               <div className={classes.sumChild}>
                 <span className={classes.spanSum}>When :</span>
-                <span className={classes.bodySum}>Send Now</span>
+                <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} Days ${props.after ? "After" : "Before"} Birthday at ${props.time.format('h:mm a')}  ` : "send now"}</span>
               </div>
 
               <div className={classes.sumChild}>
