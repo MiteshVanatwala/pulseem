@@ -83,19 +83,36 @@ const useSnack = makeStyles((theme) => ({
 
  customcolor : 
  {
-  backgroundColor: "#F1EB9C",
+  backgroundColor: "#EFF6B2",
   color:"black",
-  border:"3px solid #AC9F3C",
+  border:"3px solid #CCCC00",
   width:"250px",
   height:"30px",
   display:"flex",
   justifyContent:"center",
   fontWeight: 900
  }
+ 
    
   
 
 }));
+
+const useSnackSevere = makeStyles((theme) => ({
+
+  customcolor : 
+  {
+   backgroundColor: "#F6B2B2",
+   color:"black",
+   border:"3px solid #DC143C",
+   width:"200px",
+   height:"30px",
+   display:"flex",
+   justifyContent:"center",
+   fontWeight: 900
+  }
+
+ }));
 
 const useStyleNew = makeStyles((theme) => ({
   root: {
@@ -158,6 +175,7 @@ const SmsSend = ({classes , ...props }) => {
   const tabi = useStyle();
   const snacki = useSnack();
   const history = useHistory();
+  const severe = useSnackSevere();
 
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
@@ -187,6 +205,8 @@ const SmsSend = ({classes , ...props }) => {
   const [groupValue, setgroupValue] = useState("");
   const [manualTrue, setmanualTrue] = useState(false);
   const [pulse, setpulse] = useState(false);
+  const [afterClick, setafterClick] = useState(false);
+  const [exitClick, setexitClick] = useState(false);
   const [reciFilter, setreciFilter] = useState(false);
   const [responseQuick, setresponseQuick] = useState(null);
   const [pulseBool, setpulseBool] = useState(false);
@@ -248,6 +268,7 @@ const SmsSend = ({classes , ...props }) => {
   const [manualClick, setmanualClick] = useState(false);
   const [highlighted, setHighlighted] = React.useState(false);
   const [contacts, setContacts] = React.useState([]);
+  const [daysBeforeAfter, setdaysBeforeAfter] = useState("");
   const [pulseReci, setpulseReci] = useState("");
   const [caution, setcaution] = useState(false);
   const [pulsePer, setpulsePer] = useState("percent");
@@ -258,6 +279,7 @@ const SmsSend = ({classes , ...props }) => {
   const [hoursTrue, sethoursTrue] = useState(true);
   const [minName, setminName] = useState("");
   const [hourName, sethourName] = useState("Hours");
+  const [SpecialValue, setSpecialValue] = useState("");
   const [newVal, setnewVal] = useState(false);
   const [RecipientsSnackbar, setRecipientsSnackbar] = useState(false);
   const [reciToggle, setreciToggle] = useState(false);
@@ -296,7 +318,7 @@ const SmsSend = ({classes , ...props }) => {
   const [initialheadstate, setinitialheadstate] = useState([])
 
   const toastMessages = {
-    SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
+    SUCCESS: { severity: 'success', color: 'success', message: "SMS campaign has been saved", showAnimtionCheck: true },
     GROUPCREATEDSUCCESS: { severity: 'success', color: 'success', message:"Group successfully created. ", showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
@@ -400,10 +422,12 @@ const SmsSend = ({classes , ...props }) => {
   };
 
   const handlebef = () => {
+    setafterClick(false);
     settoggleA(false);
     settoggleB(true);
   };
   const handleaf = () => {
+    setafterClick(true);
     settoggleA(true);
     settoggleB(false);
   };
@@ -1403,6 +1427,16 @@ const SmsSend = ({classes , ...props }) => {
       </>
     );
   };
+  const handleSpecialDayChange = (e) =>
+  {
+      setdaysBeforeAfter(e.target.value);
+  }
+  const handleSelectChange = (e) =>
+  {
+    console.log("-->special",e.target.value)
+    setSpecialValue(e.target.value)
+   
+  }
   const renderRight = () => {
     return (
       <div>
@@ -1516,11 +1550,13 @@ const SmsSend = ({classes , ...props }) => {
                     marginBottom: "10px",
                   }}
                   disabled={sendType === "3" ? false : true}
+                  onChange={(e) => {handleSelectChange(e)}}
+                  value={SpecialValue}
                 >
-                  <option>{t("mainReport.birthday")}</option>
-                  <option>Creation Day</option>
+                  <option value="1">{t("mainReport.birthday")}</option>
+                  <option value="2">Creation Day</option>
                   {Object.keys(extraData).map((item, i) => {
-                      return <option value={extraData[item]} key={`extrakey_${i}`}>{item}</option>;
+                      return <option value={i+3} key={`extrakey_${i}`}>{item}</option>;
                     })}
                 </select>
               </Box>
@@ -1541,6 +1577,8 @@ const SmsSend = ({classes , ...props }) => {
                   className={classes.inputDays}
                   placeholder="0"
                   disabled={sendType == "3" ? false : true}
+                  value={daysBeforeAfter}
+                  onChange={(e)=>{handleSpecialDayChange(e)}}
                 />
 
                 <span style={{ marginInlineEnd: "8px", marginBottom: "8px" }}>
@@ -1645,7 +1683,8 @@ const SmsSend = ({classes , ...props }) => {
       </div>
     );
   };
-  const onSummClick = async () => {
+  const onSummClick = async (toggle) => {
+
     if (sendType === "1") {
       if (selectedGroups.length > 0) {
        
@@ -1735,11 +1774,18 @@ const SmsSend = ({classes , ...props }) => {
 
         }
         await dispatch(saveSmsCampSettings(quickPayload));
-        let response = await dispatch(getCampaignSumm(FinalId));
-        console.log("here---->",response)
-        setresponseQuick(response);
-        setsummModal(true);
-      }
+        if(toggle)
+        {
+          setToastMessage(toastMessages.SUCCESS);
+        }
+        else
+        {
+          let response = await dispatch(getCampaignSumm(FinalId));
+          setresponseQuick(response);
+          setsummModal(true);
+        }
+        }
+      
     }
     else if (sendType === "2") {
       if (selectedGroups.length > 0) {
@@ -1835,10 +1881,130 @@ const SmsSend = ({classes , ...props }) => {
 
         }
         await dispatch(saveSmsCampSettings(quickPayload));
-        let response = await dispatch(getCampaignSumm(props.match.params.id));
-        setresponseQuick(response);
-        setsummModal(true);
+        if(toggle)
+        {
+          setToastMessage(toastMessages.SUCCESS);
+        }
+        else
+        {
+          
+          let response = await dispatch(getCampaignSumm(props.match.params.id));
+          setresponseQuick(response);
+          setsummModal(true);
+        }
+     
       }
+
+    }
+    else if(sendType === "3")
+    {
+      if (selectedGroups.length > 0) {
+       
+        let  FinalId = props.match.params.id
+        
+
+        let temp = [];
+        let finalGroups = [];
+        for (let i = 0; i < selectedGroups.length; i++) {
+          temp.push(selectedGroups[i].GroupID);
+          finalGroups.push(selectedGroups[i]);
+        }
+        let time = -1;
+        let pulse = -1;
+        if (togglePulse) {
+          if (minTrue == true) {
+            time = 1;
+          } else {
+            time = 2;
+          }
+
+          if (percentTrue == true) {
+            pulse = 1;
+          } else {
+            pulse = 2;
+          }
+        }
+
+        let exceptionGroups = [];
+
+        for (let i = 0; i < filterGroups.length; i++) {
+          if (filterGroups[i].selected) {
+            exceptionGroups.push(filterGroups[i].GroupID)
+          }
+        }
+
+
+        let exceptionCampaigns = [];
+        for (let i = 0; i < totalCampaigns.length; i++) {
+          if (totalCampaigns[i].selected) {
+            exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
+          }
+        }
+        let beforeAfter = 0;
+        if(afterClick)
+        {
+           beforeAfter = 1
+        }
+        else
+        {
+          beforeAfter = -1
+        }
+        let quickPayload = {
+          FutureDateTime: null,
+          GroupDetails: finalGroups,
+          Groups: temp,
+          PulseSettings: {
+            PulseType: pulse,
+            TimeType: time,
+            PulseAmount: inputF,
+            TimeInterval: inputS
+          },
+          RandomSettings: {
+            RandomAmount: random
+          },
+          SendExeptional:
+          {
+            Groups: exceptionGroups,
+            Campaigns: exceptionCampaigns,
+            ExceptionalDays: setinputRecipients
+          },
+          SendTypeID: 1,
+          SmsCampaignID: FinalId,
+          SourceTimeZone: "Asia/Calcutta",
+          SpecialSettings: {
+            Type: SpecialValue,
+            DateFieldID: SpecialValue,
+            Day: daysBeforeAfter,
+            SendHour: sendTime,
+            IntervalTypeID: beforeAfter,
+          },
+          specialDateOptions: [
+            {
+              text: "Birthday",
+              code: "1"
+            },
+            {
+              text: "Creation Day",
+              code: "2"
+            },
+            {
+              text: "",
+              code: "3"
+            }]
+
+        }
+        await dispatch(saveSmsCampSettings(quickPayload));
+        if(toggle)
+        {
+          setToastMessage(toastMessages.SUCCESS);
+        }
+        else
+        {
+          let response = await dispatch(getCampaignSumm(FinalId));
+          setresponseQuick(response);
+          setsummModal(true);
+        }
+        }
 
     }
   };
@@ -2356,6 +2522,36 @@ const SmsSend = ({classes , ...props }) => {
       </>
     );
   };
+  const renderExit = () => {
+    return (
+      <>
+        {exitClick ? (
+          <Dialog
+            classes={classes}
+            open={exitClick}
+            // onClose={() => {handleExit(false)}}
+            // onConfirm={() => {handleExit(true)}}
+            // onCancel={() => {setexitClick(false)}}
+            confirmText={t("mainReport.Ok")}
+            cancelText={t("mainReport.No")}
+            showDefaultButtons={true}
+            icon={
+              <AiOutlineExclamationCircle
+                style={{ fontSize: 30, color: "#fff" }}
+              />
+            }
+          >
+            <div className={classes.baseDialogSetup}>
+              <span className={classes.groupName}>{t("mainReport.handleExitTitle")}</span>
+            </div>
+            <div className={classes.bodyTextDialog}>
+              <span>{t("mainReport.leaveCampaign")}</span>
+            </div>
+          </Dialog>
+        ) : null}
+      </>
+    );
+  };
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
       {renderToast()}
@@ -2386,17 +2582,17 @@ const SmsSend = ({classes , ...props }) => {
         <div className={classes.rightMostContainer}>
           <span className={classes.rightInput3} onClick={onHandleDelete}>
             <BsTrash style={{ fontSize: "25" }} />         </span>
-          <span className={classes.rightInput4}>
+          <span className={classes.rightInput4} onClick={()=> {setexitClick(true)}}>
 
             {t("mainReport.exitSms")}
           </span>
-          <span className={classes.rightInput5}>
+          <span className={classes.rightInput5} onClick={() => {onSummClick(true)}}>
 
             {t("mainReport.saveSms")}
           </span>
           <span
             className={classes.rightInput6}
-            onClick={onSummClick}
+            onClick={() => {onSummClick(false)}}
             style={{
               pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
               backgroundColor:
@@ -2416,6 +2612,7 @@ const SmsSend = ({classes , ...props }) => {
       {renderDialogManual()}
       {renderCaution()}
       {renderDelete()}
+      {renderExit()}
       {renderSuccessDialog()}
       <Snackbar
         open={pulseBool || TimeBool || boolRandom}
@@ -2427,7 +2624,7 @@ const SmsSend = ({classes , ...props }) => {
         }}
         style={{ zIndex: "9999" }}
       >
-        <Alert severity="warning" >
+        <Alert severity="warning"  className={snacki.customcolor}>
           {t("smsReport.NoPulse")}
         </Alert>
       </Snackbar>
@@ -2441,7 +2638,7 @@ const SmsSend = ({classes , ...props }) => {
         }}
         style={{ zIndex: "9999", marginTop: "60px" }}
       >
-        <Alert severity="error" >
+        <Alert severity="error" className={severe.customcolor}>
           {t("smsReport.pulseAmount")}
         </Alert>
       </Snackbar>
@@ -2455,7 +2652,7 @@ const SmsSend = ({classes , ...props }) => {
         }}
         style={{ zIndex: "9999", marginTop: "120px" }}
       >
-        <Alert severity="error" >
+        <Alert severity="error" className={severe.customcolor}>
           {t("smsReport.timeAmount")}
         </Alert>
       </Snackbar>
