@@ -4,7 +4,7 @@ import { FaMobileAlt } from "react-icons/fa";
 import Mobile from "../../../assets/images/mobileiphone.png";
 
 const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api , textMsg , activeGroups , ...props}) => {
-
+   console.log("props",props,stepBool)
   const [modal, setmodal] = useState(false);
   const [smsCreator, setsmsCreator] = useState(false);
   const [hideGroups, sethideGroups] = useState(false);
@@ -20,7 +20,11 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
     setsmsCreator(stepBool);
   }, [stepBool])
 
-
+   const handleSmsSettings = () =>
+   {
+     setsmsCreator(false)
+     props.handleCallback()
+   }
   return (
     <div>
       {modal ? <Dialog
@@ -233,7 +237,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
       {smsCreator ? <Dialog
         classes={classes}
         open={smsCreator}
-        onClose={() => { setsmsCreator(false) }}
+        onClose={() => {handleSmsSettings() }}
         onConfirm={api}
         confirmText="Send"
         cancelText="Cancel"
@@ -253,7 +257,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
 
               <div className={classes.sumChild}>
                 <span className={classes.spanSum}>When :</span>
-                <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} Days ${props.after ? "After" : "Before"} Birthday at ${props.time.format('h:mm a')}  ` : "send now"}</span>
+                <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} Days ${props.after ? "After" : "Before"} Birthday at ${props.time.format('h:mm a')}  ` : "Send Now"}</span>
               </div>
 
               <div className={classes.sumChild}>

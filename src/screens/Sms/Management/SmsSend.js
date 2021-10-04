@@ -1240,6 +1240,7 @@ const SmsSend = ({classes , ...props }) => {
                     inputProps={{ "aria-label": "secondary checkbox" }}
                     onClick={() => {
                       settoggleReci(!toggleReci);
+                      setinputRecipients("");
                     }}
                   />
                   <span>
@@ -1912,25 +1913,25 @@ const SmsSend = ({classes , ...props }) => {
 
           let temp = [];
           let finalGroups = [];
+          let specialgroups = [{
+            text: "Birthday",
+            code: 1
+          },
+        {
+          text: "Creation Day",
+                code: 2
+        }];
           for (let i = 0; i < selectedGroups.length; i++) {
             temp.push(selectedGroups[i].GroupID);
             finalGroups.push(selectedGroups[i]);
           }
-          let time = -1;
-          let pulse = -1;
-          if (togglePulse) {
-            if (minTrue == true) {
-              time = 1;
-            } else {
-              time = 2;
-            }
-  
-            if (percentTrue == true) {
-              pulse = 1;
-            } else {
-              pulse = 2;
-            }
-          }
+
+
+          {Object.keys(extraData).map((item, i) => {
+            specialgroups.push({text : item,
+            code: i +3})
+          })}
+          console.log("--->here",specialgroups)
   
           let exceptionGroups = [];
   
@@ -1961,19 +1962,19 @@ const SmsSend = ({classes , ...props }) => {
             GroupDetails: finalGroups,
             Groups: temp,
             PulseSettings: {
-              PulseType: pulse,
-              TimeType: time,
-              PulseAmount: inputF,
-              TimeInterval: inputS
+              PulseType: -1,
+              TimeType: -1,
+              PulseAmount: -1,
+              TimeInterval: -1
             },
             RandomSettings: {
-              RandomAmount: random
+              RandomAmount: 0
             },
             SendExeptional:
             {
               Groups: exceptionGroups,
               Campaigns: exceptionCampaigns,
-              ExceptionalDays: setinputRecipients
+              ExceptionalDays: inputRecipients
             },
             SendTypeID: 1,
             SmsCampaignID: FinalId,
@@ -1982,22 +1983,12 @@ const SmsSend = ({classes , ...props }) => {
               Type: SpecialValue,
               DateFieldID: SpecialValue,
               Day: daysBeforeAfter,
-              SendHour: sendTime,
+              SendHour: sendTime.format('h:mm a'),
               IntervalTypeID: beforeAfter,
             },
-            specialDateOptions: [
-              {
-                text: "Birthday",
-                code: "1"
-              },
-              {
-                text: "Creation Day",
-                code: "2"
-              },
-              {
-                text: "",
-                code: "3"
-              }]
+            specialDateOptions: specialgroups
+             ,
+             
   
           }
           await dispatch(saveSmsCampSettings(quickPayload));
@@ -2018,10 +2009,14 @@ const SmsSend = ({classes , ...props }) => {
 
     }
   };
+  const handleSummary = () =>
+  {
+    setsummModal(false);
+  }
   const renderSummary = () => {
     return (
       <>
-        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall} sendType={sendType} days={daysBeforeAfter} after={afterClick} time={sendTime}/>
+        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall} sendType={sendType} days={daysBeforeAfter} after={afterClick} time={sendTime} handleCallback={handleSummary}/>
       </>
     );
   };
