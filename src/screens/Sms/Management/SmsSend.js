@@ -285,6 +285,9 @@ const SmsSend = ({classes , ...props }) => {
   const [contacts, setContacts] = React.useState([]);
   const [daysBeforeAfter, setdaysBeforeAfter] = useState("");
   const [pulseReci, setpulseReci] = useState("");
+  const [snackBarPulseBoolean, setsnackBarPulseBoolean] = useState(false);
+  const [snackbarTimeBoolean, setsnackbarTimeBoolean] = useState(false);
+  const [snackbarMainPulse, setsnackbarMainPulse] = useState(false);
   const [caution, setcaution] = useState(false);
   const [pulsePer, setpulsePer] = useState("percent");
   const [inputF, setinputF] = useState("");
@@ -605,16 +608,20 @@ const SmsSend = ({classes , ...props }) => {
 
       if (inputF === "") {
         setpulseBool(true);
+        setsnackBarPulseBoolean(true);
         if (inputS === "") {
+          setsnackbarTimeBoolean(true);
           setTimeBool(true);
           return false;
         }
 
       }
       else if (inputS === "") {
+        setsnackbarTimeBoolean(true);
         setTimeBool(true);
         if (inputF === "") {
           setpulseBool(true);
+          setsnackBarPulseBoolean(true);
           return false;
         }
 
@@ -622,6 +629,8 @@ const SmsSend = ({classes , ...props }) => {
       else if (toggleRandom) {
         if (random === "") {
           setboolRandom(true);
+          setsnackbarMainPulse(true);
+          
           return false;
         }
         else {
@@ -636,6 +645,7 @@ const SmsSend = ({classes , ...props }) => {
     else if (toggleRandom) {
       if (random === "") {
         setboolRandom(true);
+        setsnackbarMainPulse(true);
         return false;
       }
       else {
@@ -1724,7 +1734,7 @@ const SmsSend = ({classes , ...props }) => {
 
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer} 
+              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer} {" "}
               every {inputS} {hourName == "" ? minName : hourName}
             </span>
           ) : null}
@@ -2708,6 +2718,17 @@ const SmsSend = ({classes , ...props }) => {
         </div>
       </Dialog></>)
   }
+  const handleMainWarningPulse = () =>
+  {
+    if(snackbarTimeBoolean == false || snackBarPulseBoolean == false)
+    {
+      return false;
+    }
+    else if(snackbarMainPulse == false)
+    {
+      return false;
+    }
+  }
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
       {renderToast()}
@@ -2773,9 +2794,9 @@ const SmsSend = ({classes , ...props }) => {
       {renderSpecialModal()}
       {renderSendType2validation()}
       <Snackbar
-        open={pulseBool || TimeBool || boolRandom}
-        autoHideDuration={2000}
-        // onClose={handleClose}
+        open={snackbarTimeBoolean || snackBarPulseBoolean || snackbarMainPulse}
+        autoHideDuration={5000}
+        onClose={() => {handleMainWarningPulse()}}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
@@ -2787,9 +2808,9 @@ const SmsSend = ({classes , ...props }) => {
         </Alert>
       </Snackbar>
       <Snackbar
-        open={pulseBool}
-        autoHideDuration={2000}
-        // onClose={handleClose}
+        open={snackBarPulseBoolean}
+        autoHideDuration={3000}
+        onClose={()=>{setsnackBarPulseBoolean(false)}}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
@@ -2801,9 +2822,9 @@ const SmsSend = ({classes , ...props }) => {
         </Alert>
       </Snackbar>
       <Snackbar
-        open={TimeBool}
-        autoHideDuration={2000}
-        // onClose={handleClose}
+        open={snackbarTimeBoolean}
+        autoHideDuration={3000}
+        onClose={()=>{setsnackbarTimeBoolean(false)}}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
@@ -2815,16 +2836,18 @@ const SmsSend = ({classes , ...props }) => {
         </Alert>
       </Snackbar>
       <Snackbar
-        open={boolRandom}
-        autoHideDuration={2000}
-        // onClose={handleClose}
+        open={snackbarMainPulse}
+        autoHideDuration={3000}
+        onClose={()=>{setsnackbarMainPulse(false)}}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
         }}
         style={{ zIndex: "9999", marginTop: "60px" }}
       >
-     
+       <Alert severity="error" className={severe.customcolor}>
+          Enter Random Amount
+        </Alert>
       </Snackbar>
 
       <Snackbar
