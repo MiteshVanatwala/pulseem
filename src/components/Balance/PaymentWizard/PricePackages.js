@@ -89,7 +89,7 @@ const PricePackages = ({ classes,
                 case 1: {
                     return (
                         <>
-                            {purchaseLogs && <PurchaseLogs classes={classes} data={purchaseLogs} />}
+                            {/* {purchaseLogs && <PurchaseLogs classes={classes} data={purchaseLogs} />} */}
                             <Grid item xs={12}>
                                 <Typography className={classes.dialogTitle} style={{ marginInline: 0 }}>{t('common.smsBulkTitle')}</Typography>
                                 <Divider />

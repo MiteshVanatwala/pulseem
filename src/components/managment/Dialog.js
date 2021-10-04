@@ -27,7 +27,8 @@ export const Dialog=({
   contentStyle = null,
   cancelText = 'common.Cancel',
   confirmText = 'common.Ok',
-  showDefaultButtons = true
+  showDefaultButtons = true,
+  style = null
 }) => {
   const direction = {
     true: 'rtl',
@@ -146,6 +147,7 @@ export const Dialog=({
 
   return (
     <BaseDialog
+      style={style}
       disableBackdropClick={disableBackdropClick}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}

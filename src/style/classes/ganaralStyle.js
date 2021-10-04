@@ -596,8 +596,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: 'column'
   },
   whiteLink: {
-    textDecoration: 'underline',
+    textDecoration: 'none',
     color: '#fff',
+    textTransform: 'capitalize',
+    lineHeight: 1,
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
+  },
+  blueLink: {
+    textDecoration: 'none',
+    color: '#0371ad',
     textTransform: 'capitalize',
     lineHeight: 1,
     '&:hover': {

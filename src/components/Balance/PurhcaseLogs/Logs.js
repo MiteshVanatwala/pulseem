@@ -1,50 +1,58 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
-import NumberFormat from 'react-number-format'
 import { useSelector } from 'react-redux'
-import { Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Checkbox } from '@material-ui/core';
+import { Grid, Checkbox, Select, InputLabel, FormControl, OutlinedInput, MenuItem, ListItemText } from '@material-ui/core';
 
 
 const PurchaseLogs = ({ classes, data }) => {
     const { isRTL } = useSelector(state => state.core);
     const { t } = useTranslation();
-    const [selected, setSelected] = useState(null);
-    const switchStatus = (status) => {
-        switch (status) {
-            case 0: {
-                return "success";
-            }
-            case 1: {
-                return "pending";
-            }
-            case 2: {
-                return "fail";
-            }
-        }
-    }
-    const swithCampaignName = (campaignTypeId) => {
-        switch (campaignTypeId) {
-            case 1: {
-                return "SMS";
-            }
-            case 3: {
-                return "Newsletter";
-            }
-        }
-    }
-    const handleClick = (event, id) => {
-        if (id === selected) {
-            setSelected(null);
-        }
-        else {
-            setSelected(id);
-        }
+    const [selectedProductId, setProductID] = useState([]);
+
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250,
+            },
+        },
+    };
+
+    const handleChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        console.log(value);
+        setProductID(value);
     };
 
     return (
         <Grid container>
-            <TableContainer>
+            <Grid item xs={12}>
+                <FormControl  style={{width: '100%', marginTop: 15}}>
+                    <InputLabel id="demo-multiple-checkbox-label">Purchase history</InputLabel>
+                    <Select
+                        labelId="demo-multiple-checkbox-label"
+                        id="demo-multiple-checkbox"
+                        value={selectedProductId}
+                        onChange={handleChange}
+                        input={<OutlinedInput label="Purchase history" />}
+                        renderValue={(selected) => selected}
+                        MenuProps={MenuProps}
+                    >
+                        {data.map((d) => (
+                            <MenuItem key={d.ID} value={d.ID} style={{paddingRight: 15}}>
+                                <Checkbox checked={selectedProductId} />
+                                <ListItemText primary={d.Name} />
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Grid>
+            {/* <TableContainer>
                 <Table
                     className={classes.table}
                     aria-labelledby="tableTitle"
@@ -133,7 +141,7 @@ const PurchaseLogs = ({ classes, data }) => {
                         })}
                     </TableBody>
                 </Table>
-            </TableContainer>
+            </TableContainer> */}
         </Grid>
     )
 }

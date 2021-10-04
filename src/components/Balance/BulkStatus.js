@@ -7,10 +7,12 @@ import { Grid, Paper, Typography, Button } from '@material-ui/core';
 import { getPackagesDetails, getPurchaseLog } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
+import { CgShoppingCart } from 'react-icons/cg'
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
+  const { accountFeatures } = useSelector(state => state.core)
   const { username } = useSelector(state => state.user);
   const [isShowSmsPackage, showSmsPackage] = useState(false);
   const [isShowEmailPackage, showEmailPackage] = useState(false);
@@ -46,7 +48,7 @@ const BulkStatus = ({ classes }) => {
 
   useEffect(async () => {
     await dispatch(getPackagesDetails());
-    dispatch(getPurchaseLog());
+    await dispatch(getPurchaseLog());
   }, []);
 
   const handleDialogClose = () => {
@@ -65,6 +67,7 @@ const BulkStatus = ({ classes }) => {
           onClose={handleDialogClose}
           onConfirm={handleDialogClose}
           showDefaultButtons={false}
+          style={{ maxWidth: accountAvailablePackages.length < 3 ? 600 : null, margin: accountAvailablePackages.length < 3 ? '0 auto' : null }}
           {...dialog}>
           {dialog.content}
         </Dialog>
@@ -91,7 +94,7 @@ const BulkStatus = ({ classes }) => {
     setIsOpenPackageDialog(true);
   }
 
-  const isAllowEmailPurchase = accountAvailablePackages.filter((pl) => {return pl.CampaignType === 3}).length > 0;
+  const isAllowEmailPurchase = accountAvailablePackages.filter((pl) => { return pl.CampaignType === 3 }).length > 0;
 
   return (
     <>
@@ -118,8 +121,14 @@ const BulkStatus = ({ classes }) => {
           >
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             {isShowSmsPackage && billingTypeId !== "1" ? (
-              <Button onClick={() => showPackageDialogType(1)} className={classes.whiteLink}>
+              <Button
+                onClick={() => showPackageDialogType(1)}
+                className={getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink}
+                startIcon={<CgShoppingCart />}
+              >
                 {t('dashboard.purchase')}
+
+
               </Button>
             )
               :
@@ -138,8 +147,11 @@ const BulkStatus = ({ classes }) => {
             onMouseLeave={() => showEmailPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
-            {isShowEmailPackage && billingTypeId !== "1" && isAllowEmailPurchase ? (
-              <Button onClick={() => showPackageDialogType(3)} className={classes.whiteLink}>
+            {isShowEmailPackage && billingTypeId !== "1" && accountFeatures.includes('36') ? (
+              <Button
+                onClick={() => showPackageDialogType(3)}
+                className={getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink}
+                startIcon={<CgShoppingCart />}>
                 {t('dashboard.purchase')}
               </Button>
             )
@@ -169,8 +181,7 @@ const BulkStatus = ({ classes }) => {
             <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
             <Typography className={classes.bulkTitle}>
               {t('dashboard.freeTrial')}
-            </Typography>
-          </Grid>}
+            </Typography>          </Grid>}
         </Grid>
       </Paper>
     </>
