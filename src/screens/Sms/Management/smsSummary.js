@@ -264,7 +264,9 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 <span className={classes.spanSum}>For :</span>
                 <span style={{ fontSize: "18px" }}>
                   Total Number of Recipients :
-                  <span className={classes.bodySum}>{activeGroups.length}</span>
+                  <span className={classes.bodySum}>{activeGroups.reduce(function (a, b) {
+                  return a + b['Recipients'];
+                }, 0).toLocaleString()}</span>
                 </span>
                 <span
                   style={{
@@ -314,6 +316,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                     fontSize: "18px",
                     fontWeight: "700",
                     marginBottom: "2px",
+                    cursor:"pointer"
                   }}
                   onClick={()=>{setsubDetailsActive(!subDetailsActive)}}
                 >
@@ -350,6 +353,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 fontSize: "18px",
                 fontWeight: "700",
                 marginBottom: "2px",
+                cursor:"pointer"
               }}
               onClick={()=>{setsubRecipients(!subRecipientsDetails)}}
             >
@@ -363,7 +367,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               justifyContent: "center",
             }}
           >
-            <span
+      {summaryPayload.DuplicateCellphoneSharedWithClienCount == 0 ? null :    <span
               style={{
                 fontSize: "17px",
                 color: "#1771ad",
@@ -379,9 +383,9 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 }}
               >
                 {summaryPayload.DuplicateCellphoneSharedWithClienCount}
-              </span>
-            </span>
-            <span
+              </span>  </span>}   
+           
+          {summaryPayload.Removed == 0 ? null : <span
               style={{
                 fontSize: "17px",
                 color: "#1771ad",
@@ -398,8 +402,8 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               >
                   {summaryPayload.Removed}
               </span>
-            </span>
-            <span
+            </span> }  
+            {summaryPayload.EmptyCellphoneCount == 0 ? null : <span
               style={{
                 fontSize: "17px",
                 color: "#1771ad",
@@ -416,7 +420,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               >
                  {summaryPayload.EmptyCellphoneCount}
               </span>
-            </span>
+            </span>}        
           </div> : null}
         </div>
       </Dialog> : null}
