@@ -3,8 +3,8 @@ import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
 import Mobile from "../../../assets/images/mobileiphone.png";
 
-const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api , textMsg , activeGroups}) => {
-
+const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api , textMsg , activeGroups , ...props}) => {
+   console.log("props",props,stepBool)
   const [modal, setmodal] = useState(false);
   const [smsCreator, setsmsCreator] = useState(false);
   const [hideGroups, sethideGroups] = useState(false);
@@ -20,6 +20,11 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
     setsmsCreator(stepBool);
   }, [stepBool])
 
+   const handleSmsSettings = () =>
+   {
+     setsmsCreator(false)
+     props.handleCallback()
+   }
   return (
     <div>
       {modal ? <Dialog
@@ -232,7 +237,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
       {smsCreator ? <Dialog
         classes={classes}
         open={smsCreator}
-        onClose={() => { setsmsCreator(false) }}
+        onClose={() => {handleSmsSettings() }}
         onConfirm={api}
         confirmText="Send"
         cancelText="Cancel"
@@ -252,14 +257,16 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
 
               <div className={classes.sumChild}>
                 <span className={classes.spanSum}>When :</span>
-                <span className={classes.bodySum}>Send Now</span>
+                <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} Days ${props.after ? "After" : "Before"} ${props.specialVal} at ${props.time.format('h:mm a')}  `  : props.sendType == "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : "Send Now"}</span>
               </div>
 
               <div className={classes.sumChild}>
                 <span className={classes.spanSum}>For :</span>
                 <span style={{ fontSize: "18px" }}>
                   Total Number of Recipients :
-                  <span className={classes.bodySum}>{activeGroups.length}</span>
+                  <span className={classes.bodySum}>{activeGroups.reduce(function (a, b) {
+                  return a + b['Recipients'];
+                }, 0).toLocaleString()}</span>
                 </span>
                 <span
                   style={{
@@ -309,6 +316,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                     fontSize: "18px",
                     fontWeight: "700",
                     marginBottom: "2px",
+                    cursor:"pointer"
                   }}
                   onClick={()=>{setsubDetailsActive(!subDetailsActive)}}
                 >
@@ -345,6 +353,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 fontSize: "18px",
                 fontWeight: "700",
                 marginBottom: "2px",
+                cursor:"pointer"
               }}
               onClick={()=>{setsubRecipients(!subRecipientsDetails)}}
             >
@@ -358,7 +367,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               justifyContent: "center",
             }}
           >
-            <span
+      {summaryPayload.DuplicateCellphoneSharedWithClienCount == 0 ? null :    <span
               style={{
                 fontSize: "17px",
                 color: "#1771ad",
@@ -374,9 +383,9 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 }}
               >
                 {summaryPayload.DuplicateCellphoneSharedWithClienCount}
-              </span>
-            </span>
-            <span
+              </span>  </span>}   
+           
+          {summaryPayload.Removed == 0 ? null : <span
               style={{
                 fontSize: "17px",
                 color: "#1771ad",
@@ -393,8 +402,8 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               >
                   {summaryPayload.Removed}
               </span>
-            </span>
-            <span
+            </span> }  
+            {summaryPayload.EmptyCellphoneCount == 0 ? null : <span
               style={{
                 fontSize: "17px",
                 color: "#1771ad",
@@ -411,7 +420,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               >
                  {summaryPayload.EmptyCellphoneCount}
               </span>
-            </span>
+            </span>}        
           </div> : null}
         </div>
       </Dialog> : null}
