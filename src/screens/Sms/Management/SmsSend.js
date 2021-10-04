@@ -2768,12 +2768,12 @@ const SmsSend = ({classes , ...props }) => {
             {t("mainReport.saveSms")}
           </span>
           <span
-            className={classes.rightInput6}
+            className={classes.summaryBtn}
             onClick={() => {onSummClick(false)}}
             style={{
               pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
               backgroundColor:
-                selectedGroups.length > 0 ? "#dc3545" : "#91C78D",
+                selectedGroups.length > 0 ? "#5cb85c" : "#91C78D",
             }}
           >
             {t("mainReport.summary")}
