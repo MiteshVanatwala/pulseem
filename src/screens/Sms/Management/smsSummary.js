@@ -257,7 +257,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
 
               <div className={classes.sumChild}>
                 <span className={classes.spanSum}>When :</span>
-                <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} Days ${props.after ? "After" : "Before"} ${props.specialVal} at ${props.time.format('h:mm a')}  ` : "Send Now"}</span>
+                <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} Days ${props.after ? "After" : "Before"} ${props.specialVal} at ${props.time.format('h:mm a')}  `  : props.sendType == "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : "Send Now"}</span>
               </div>
 
               <div className={classes.sumChild}>

@@ -30,6 +30,7 @@ import { useHistory } from "react-router";
 import { BsTrash ,BsChevronDown ,BsChevronUp } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
+import { DateTimePicker , KeyboardDateTimePicker} from "@material-ui/pickers";
 
 import {
   Typography,
@@ -114,6 +115,16 @@ const useSnackSevere = makeStyles((theme) => ({
 
  }));
 
+ const useStyleKeyboardInput = makeStyles((theme) => ({
+
+  custom : 
+  {
+  width:"370px",
+  padding:"5px"
+  }
+
+ }));
+
 const useStyleNew = makeStyles((theme) => ({
   root: {
     padding: "2px 4px",
@@ -176,6 +187,7 @@ const SmsSend = ({classes , ...props }) => {
   const snacki = useSnack();
   const history = useHistory();
   const severe = useSnackSevere();
+  const keyboardclass = useStyleKeyboardInput();
 
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
@@ -193,6 +205,7 @@ const SmsSend = ({classes , ...props }) => {
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
   const [boolRandom, setboolRandom] = useState(false);
+  const [sendType2Dialog, setsendType2Dialog] = useState(false);
   const [groupList, setGroupList] = useState([]);
   const [filterGroups, setfilterGroups] = useState([]);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
@@ -400,6 +413,12 @@ const SmsSend = ({classes , ...props }) => {
       setModel({ ...model, SendDate: null });
       handleFromDate(null);
     }
+    else if (event.target.value == "3")
+    {
+      setModel({ ...model, SendDate: null });
+      handleFromDate(null);
+    }
+
 
     setSendType(event.target.value);
   };
@@ -1432,7 +1451,12 @@ const SmsSend = ({classes , ...props }) => {
   };
   const handleSpecialDayChange = (e) =>
   {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) 
+    {
       setdaysBeforeAfter(e.target.value);
+    }
+     
   }
   const handleSelectChange = (e) =>
   {
@@ -1500,7 +1524,7 @@ const SmsSend = ({classes , ...props }) => {
                   pointerEvents: sendType == "2" ? "auto" : "none",
                 }}
               >
-                <DateField
+                {/* <DateField
                   minDate={moment()}
                   classes={classes}
                   value={sendType == "2" ? sendDate : null}
@@ -1513,9 +1537,19 @@ const SmsSend = ({classes , ...props }) => {
                   }}
                   dateActive={sendType == "2" ? false : true}
                   autoOk
-                />
+                /> */}
+                <KeyboardDateTimePicker
+                minDate={moment()}
+                classes={keyboardclass.custom}
+                inputVariant="outlined"
+                value={sendType == "2" ? sendDate : null}
+                placeholder={t("notifications.date")}
+                onChange={handleDatePicker}
+                disabled={sendType=="2" ? false : true}
+                style={{width:"370px",padding:"5px"}}
+                 />
               </Box>
-              <Box
+              {/* <Box
                 style={{
                   marginTop: 10,
                   paddingRight: isRTL ? 30 : "",
@@ -1538,7 +1572,7 @@ const SmsSend = ({classes , ...props }) => {
                   timePickerOpen={timePickerOpen}
                   autoOk
                 />
-              </Box>
+              </Box> */}
               <FormControlLabel
                 value="3"
                 control={<Radio color="primary" className={sendType !=="3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
@@ -1746,6 +1780,18 @@ const SmsSend = ({classes , ...props }) => {
             exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
           }
         }
+        let specialgroups = [{
+          text: "Birthday",
+          code: 1
+        },
+      {
+        text: "Creation Day",
+              code: 2
+      }];
+      {Object.keys(extraData).map((item, i) => {
+        specialgroups.push({text : item,
+        code: i +3})
+      })}
         let quickPayload = {
           FutureDateTime: null,
           GroupDetails: finalGroups,
@@ -1763,7 +1809,7 @@ const SmsSend = ({classes , ...props }) => {
           {
             Groups: exceptionGroups,
             Campaigns: exceptionCampaigns,
-            ExceptionalDays: setinputRecipients
+            ExceptionalDays: inputRecipients
           },
           SendTypeID: 1,
           SmsCampaignID: FinalId,
@@ -1776,20 +1822,7 @@ const SmsSend = ({classes , ...props }) => {
             IntervalTypeID: -1,
             SendDate: null
           },
-          specialDateOptions: [
-            {
-              text: "Birthday",
-              code: "1"
-            },
-            {
-              text: "Creation Day",
-              code: "2"
-            },
-            {
-              text: "",
-              code: "3"
-            }]
-
+          specialDateOptions: specialgroups
         }
         await dispatch(saveSmsCampSettings(quickPayload));
         if(toggle)
@@ -1807,109 +1840,119 @@ const SmsSend = ({classes , ...props }) => {
     }
     else if (sendType === "2") {
       if (selectedGroups.length > 0) {
-        let campId = window.location
-        let id = campId.search.split("=");
-        let finalId = id[1];
 
-        let temp = [];
-        let finalGroups = [];
-        for (let i = 0; i < selectedGroups.length; i++) {
-          temp.push(selectedGroups[i].GroupID);
-          finalGroups.push(selectedGroups[i]);
-        }
-        let time = -1;
-        let pulse = -1;
-        if (togglePulse) {
-          if (minTrue == true) {
-            time = 1;
-          } else {
-            time = 2;
-          }
-
-          if (percentTrue == true) {
-            pulse = 1;
-          } else {
-            pulse = 2;
-          }
-        }
-
-        let exceptionGroups = [];
-
-        for (let i = 0; i < filterGroups.length; i++) {
-          if (filterGroups[i].selected) {
-            exceptionGroups.push(filterGroups[i].GroupID)
-          }
-        }
-
-
-        let exceptionCampaigns = [];
-        for (let i = 0; i < totalCampaigns.length; i++) {
-          if (totalCampaigns[i].selected) {
-            exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
-          }
-        }
-        const finalDate = moment(sendDate, "YYYY-MM-DD HH:mm:ss");
-        finalDate.set({ h: finalDate.format("HH"), m: finalDate.format("mm") });
-        let displayDate = null;
-        displayDate = finalDate.format();
-
-        let quickPayload = {
-          FutureDateTime: displayDate,
-          GroupDetails: finalGroups,
-          Groups: temp,
-          PulseSettings: {
-            PulseType: pulse,
-            TimeType: time,
-            PulseAmount: inputF,
-            TimeInterval: inputS
-          },
-          RandomSettings: {
-            RandomAmount: random
-          },
-          SendExeptional:
-          {
-            Groups: exceptionGroups,
-            Campaigns: exceptionCampaigns,
-            ExceptionalDays: setinputRecipients
-          },
-          SendTypeID: 1,
-          SmsCampaignID: props.match.params.id,
-          SourceTimeZone: "Asia/Calcutta",
-          SpecialSettings: {
-            Type: "",
-            DateFieldID: -1,
-            Day: 0,
-            SendHour: "",
-            IntervalTypeID: -1,
-            SendDate: null
-          },
-          specialDateOptions: [
-            {
-              text: "Birthday",
-              code: "1"
-            },
-            {
-              text: "Creation Day",
-              code: "2"
-            },
-            {
-              text: "ExtraDate1",
-              code: "3"
-            }]
-
-        }
-        await dispatch(saveSmsCampSettings(quickPayload));
-        if(toggle)
+        if(sendDate == null)
         {
-          setToastMessage(toastMessages.SUCCESS);
+          setsendType2Dialog(true);
         }
         else
+         {
+          let campId = window.location
+          let id = campId.search.split("=");
+          let finalId = id[1];
+  
+          let temp = [];
+          let finalGroups = [];
+          for (let i = 0; i < selectedGroups.length; i++) {
+            temp.push(selectedGroups[i].GroupID);
+            finalGroups.push(selectedGroups[i]);
+          }
+          let time = -1;
+          let pulse = -1;
+          if (togglePulse) {
+            if (minTrue == true) {
+              time = 1;
+            } else {
+              time = 2;
+            }
+  
+            if (percentTrue == true) {
+              pulse = 1;
+            } else {
+              pulse = 2;
+            }
+          }
+          let specialgroups = [{
+            text: "Birthday",
+            code: 1
+          },
         {
-          
-          let response = await dispatch(getCampaignSumm(props.match.params.id));
-          setresponseQuick(response);
-          setsummModal(true);
-        }
+          text: "Creation Day",
+                code: 2
+        }];
+        {Object.keys(extraData).map((item, i) => {
+          specialgroups.push({text : item,
+          code: i +3})
+        })}
+  
+          let exceptionGroups = [];
+  
+          for (let i = 0; i < filterGroups.length; i++) {
+            if (filterGroups[i].selected) {
+              exceptionGroups.push(filterGroups[i].GroupID)
+            }
+          }
+  
+  
+          let exceptionCampaigns = [];
+          for (let i = 0; i < totalCampaigns.length; i++) {
+            if (totalCampaigns[i].selected) {
+              exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
+            }
+          }
+          const finalDate = moment(sendDate, "YYYY-MM-DD HH:mm:ss");
+          finalDate.set({ h: finalDate.format("HH"), m: finalDate.format("mm") });
+          let displayDate = null;
+          displayDate = finalDate.format();
+  
+          let quickPayload = {
+            FutureDateTime: displayDate,
+            GroupDetails: finalGroups,
+            Groups: temp,
+            PulseSettings: {
+              PulseType: pulse,
+              TimeType: time,
+              PulseAmount: inputF,
+              TimeInterval: inputS
+            },
+            RandomSettings: {
+              RandomAmount: random
+            },
+            SendExeptional:
+            {
+              Groups: exceptionGroups,
+              Campaigns: exceptionCampaigns,
+              ExceptionalDays: inputRecipients
+            },
+            SendTypeID: 2,
+            SmsCampaignID: props.match.params.id,
+            SourceTimeZone: "Asia/Calcutta",
+            SpecialSettings: {
+              Type: "",
+              DateFieldID: -1,
+              Day: 0,
+              SendHour: "",
+              IntervalTypeID: -1,
+              SendDate: null
+            },
+            specialDateOptions: specialgroups
+  
+          }
+          await dispatch(saveSmsCampSettings(quickPayload));
+          if(toggle)
+          {
+            setToastMessage(toastMessages.SUCCESS);
+          }
+          else
+          {
+            
+            let response = await dispatch(getCampaignSumm(props.match.params.id));
+            setresponseQuick(response);
+            setsummModal(true);
+          }
+         }
+
+       
      
       }
 
@@ -1992,7 +2035,7 @@ const SmsSend = ({classes , ...props }) => {
               Campaigns: exceptionCampaigns,
               ExceptionalDays: inputRecipients
             },
-            SendTypeID: 1,
+            SendTypeID: 3,
             SmsCampaignID: FinalId,
             SourceTimeZone: "Asia/Calcutta",
             SpecialSettings: {
@@ -2032,7 +2075,7 @@ const SmsSend = ({classes , ...props }) => {
   const renderSummary = () => {
     return (
       <>
-        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall} sendType={sendType} days={daysBeforeAfter} after={afterClick} time={sendTime} handleCallback={handleSummary} specialVal={SelectedSpecialValue}/>
+        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall} sendType={sendType} days={daysBeforeAfter} after={afterClick} time={sendTime} handleCallback={handleSummary} specialVal={SelectedSpecialValue} sendDateTime={sendDate}/>
       </>
     );
   };
@@ -2573,6 +2616,52 @@ const SmsSend = ({classes , ...props }) => {
       </>
     );
   };
+  const renderSendType2validation = () =>
+  {
+    return( <>
+      <Dialog
+          classes={classes}
+          open={sendType2Dialog}
+          onClose={()=>{setsendType2Dialog(false)}}
+          showDefaultButtons={false}
+          icon={
+            <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
+          }
+        >
+          <div className={classes.baseDialogSetup}>
+            <span className={classes.groupName}>
+              {t("mainReport.fieldInvalid")}:
+            </span>
+          </div>
+          <div>
+            <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
+           
+           <li>Must select Sending Type - Required field</li>
+            
+            </ul>
+          </div>
+          <div
+            style={{
+              height: "50px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => {
+                setsendType2Dialog(false);
+              }}
+              className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
+            >
+              {t("mainReport.confirmSms")}
+            </Button>
+          </div>
+        </Dialog></>)
+  }
+
   const renderSpecialModal = () =>
   {
    return( <>
@@ -2682,6 +2771,7 @@ const SmsSend = ({classes , ...props }) => {
       {renderExit()}
       {renderSuccessDialog()}
       {renderSpecialModal()}
+      {renderSendType2validation()}
       <Snackbar
         open={pulseBool || TimeBool || boolRandom}
         autoHideDuration={2000}
