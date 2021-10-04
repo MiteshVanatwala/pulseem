@@ -266,6 +266,7 @@ const SmsSend = ({classes , ...props }) => {
   const [toggleReci, settoggleReci] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const [groupClick, setgroupClick] = useState(true);
+  const [SelectedSpecialValue, setSelectedSpecialValue] = useState("")
   const [manualClick, setmanualClick] = useState(false);
   const [highlighted, setHighlighted] = React.useState(false);
   const [contacts, setContacts] = React.useState([]);
@@ -1437,6 +1438,21 @@ const SmsSend = ({classes , ...props }) => {
   {
     console.log("-->special",e.target.value)
     setSpecialValue(e.target.value)
+    {Object.keys(extraData).map((item, i) => {
+     if(e.target.value == i+3)
+     {
+       setSelectedSpecialValue(item)
+     }
+     else if(e.target.value == 1)
+     {
+      setSelectedSpecialValue("Birthday")
+     }
+     else if (e.target.value == 2)
+     {
+      setSelectedSpecialValue("Creation day")
+     }
+    })}
+
    
   }
   const renderRight = () => {
@@ -2016,7 +2032,7 @@ const SmsSend = ({classes , ...props }) => {
   const renderSummary = () => {
     return (
       <>
-        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall} sendType={sendType} days={daysBeforeAfter} after={afterClick} time={sendTime} handleCallback={handleSummary}/>
+        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall} sendType={sendType} days={daysBeforeAfter} after={afterClick} time={sendTime} handleCallback={handleSummary} specialVal={SelectedSpecialValue}/>
       </>
     );
   };
