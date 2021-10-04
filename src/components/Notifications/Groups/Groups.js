@@ -196,17 +196,35 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                             )
                     );
             } else if (sortBy === "Update Date") {
+                
+             if(bool)
+             {
                 direction === 'asc'
-                    ? groupList.sort((a, b) =>
-                        a.CreatedDate !== null && b.CreatedDate !== null
-                            ? Date.parse(a.CreatedDate) - Date.parse(b.CreatedDate)
-                            : -1
-                    )
-                    : groupList.sort((a, b) =>
-                        a.CreatedDate !== null && b.CreatedDate !== null
-                            ? Date.parse(b.CreatedDate) - Date.parse(a.CreatedDate)
-                            : -1
-                    );
+                ? groupList.sort((a, b) =>
+                    a.CreationDate !== null && b.CreationDate !== null
+                        ? Date.parse(a.CreationDate) - Date.parse(b.CreationDate)
+                        : -1
+                )
+                : groupList.sort((a, b) =>
+                    a.CreationDate !== null && b.CreationDate !== null
+                        ? Date.parse(b.CreationDate) - Date.parse(a.CreationDate)
+                        : -1
+                );
+             }
+             else
+             {
+                direction === 'asc'
+                ? groupList.sort((a, b) =>
+                    a.CreatedDate !== null && b.CreatedDate !== null
+                        ? Date.parse(a.CreatedDate) - Date.parse(b.CreatedDate)
+                        : -1
+                )
+                : groupList.sort((a, b) =>
+                    a.CreatedDate !== null && b.CreatedDate !== null
+                        ? Date.parse(b.CreatedDate) - Date.parse(a.CreatedDate)
+                        : -1
+                );
+             }
             }
         }
     }

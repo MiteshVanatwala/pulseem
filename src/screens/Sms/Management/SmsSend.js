@@ -12,6 +12,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 import PropTypes from "prop-types";
 import { DateField, Dialog } from "../../../components/managment/index";
 import Paper from "@material-ui/core/Paper";
+import Toast from '../../../components/Toast/Toast.component';
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import { parse } from "papaparse";
@@ -29,6 +30,7 @@ import { useHistory } from "react-router";
 import { BsTrash ,BsChevronDown ,BsChevronUp } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
+import { DateTimePicker , KeyboardDateTimePicker} from "@material-ui/pickers";
 
 import {
   Typography,
@@ -77,6 +79,52 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "none",
   },
 }));
+
+const useSnack = makeStyles((theme) => ({
+
+ customcolor : 
+ {
+  backgroundColor: "#EFF6B2",
+  color:"black",
+  border:"3px solid #CCCC00",
+  width:"250px",
+  height:"30px",
+  display:"flex",
+  justifyContent:"center",
+  fontWeight: 900
+ }
+ 
+   
+  
+
+}));
+
+const useSnackSevere = makeStyles((theme) => ({
+
+  customcolor : 
+  {
+   backgroundColor: "#F6B2B2",
+   color:"black",
+   border:"3px solid #DC143C",
+   width:"200px",
+   height:"30px",
+   display:"flex",
+   justifyContent:"center",
+   fontWeight: 900
+  }
+
+ }));
+
+ const useStyleKeyboardInput = makeStyles((theme) => ({
+
+  custom : 
+  {
+  width:"370px",
+  padding:"5px"
+  }
+
+ }));
+
 const useStyleNew = makeStyles((theme) => ({
   root: {
     padding: "2px 4px",
@@ -136,7 +184,10 @@ const SmsSend = ({classes , ...props }) => {
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const tabi = useStyle();
+  const snacki = useSnack();
   const history = useHistory();
+  const severe = useSnackSevere();
+  const keyboardclass = useStyleKeyboardInput();
 
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
@@ -154,6 +205,7 @@ const SmsSend = ({classes , ...props }) => {
   const [timePickerOpen, setTimePickerOpen] = useState(false);
   const [summary, setSummary] = useState(null);
   const [boolRandom, setboolRandom] = useState(false);
+  const [sendType2Dialog, setsendType2Dialog] = useState(false);
   const [groupList, setGroupList] = useState([]);
   const [filterGroups, setfilterGroups] = useState([]);
   const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
@@ -166,6 +218,9 @@ const SmsSend = ({classes , ...props }) => {
   const [groupValue, setgroupValue] = useState("");
   const [manualTrue, setmanualTrue] = useState(false);
   const [pulse, setpulse] = useState(false);
+  const [afterClick, setafterClick] = useState(false);
+  const [exitClick, setexitClick] = useState(false);
+  const [specialSettingValidation, setspecialSettingValidation] = useState(false);
   const [reciFilter, setreciFilter] = useState(false);
   const [responseQuick, setresponseQuick] = useState(null);
   const [pulseBool, setpulseBool] = useState(false);
@@ -222,11 +277,17 @@ const SmsSend = ({classes , ...props }) => {
   const [toggleB, settoggleB] = useState(true);
   const [toggleA, settoggleA] = useState(false);
   const [toggleReci, settoggleReci] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
   const [groupClick, setgroupClick] = useState(true);
+  const [SelectedSpecialValue, setSelectedSpecialValue] = useState("")
   const [manualClick, setmanualClick] = useState(false);
   const [highlighted, setHighlighted] = React.useState(false);
   const [contacts, setContacts] = React.useState([]);
+  const [daysBeforeAfter, setdaysBeforeAfter] = useState("");
   const [pulseReci, setpulseReci] = useState("");
+  const [snackBarPulseBoolean, setsnackBarPulseBoolean] = useState(false);
+  const [snackbarTimeBoolean, setsnackbarTimeBoolean] = useState(false);
+  const [snackbarMainPulse, setsnackbarMainPulse] = useState(false);
   const [caution, setcaution] = useState(false);
   const [pulsePer, setpulsePer] = useState("percent");
   const [inputF, setinputF] = useState("");
@@ -235,8 +296,10 @@ const SmsSend = ({classes , ...props }) => {
   const [minTrue, setminTrue] = useState(false);
   const [hoursTrue, sethoursTrue] = useState(true);
   const [minName, setminName] = useState("");
-  const [hourName, sethourName] = useState("");
+  const [hourName, sethourName] = useState("Hours");
+  const [SpecialValue, setSpecialValue] = useState("0");
   const [newVal, setnewVal] = useState(false);
+  const [RecipientsSnackbar, setRecipientsSnackbar] = useState(false);
   const [reciToggle, setreciToggle] = useState(false);
   const [areaData, setareaData] = useState("");
   const [RecipientsBool, setRecipientsBool] = useState(false);
@@ -271,6 +334,15 @@ const SmsSend = ({classes , ...props }) => {
   })
   const [Unique, setUnique] = useState(-1);
   const [initialheadstate, setinitialheadstate] = useState([])
+
+  const toastMessages = {
+    SUCCESS: { severity: 'success', color: 'success', message: "SMS campaign has been saved", showAnimtionCheck: true },
+    GROUPCREATEDSUCCESS: { severity: 'success', color: 'success', message:"Group successfully created. ", showAnimtionCheck: true },
+    SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
+    ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
+    OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true}
+  }
+
 
 
 
@@ -314,10 +386,12 @@ const SmsSend = ({classes , ...props }) => {
   const getSubAccountGroups = async () => {
     const list = await dispatch(getGroupsBySubAccountId());
     const tempGroupList = list.payload;
+   
     if (tempGroupList) {
       tempGroupList.Id = tempGroupList.GroupID;
     }
-    setGroupList(tempGroupList);
+  
+    setGroupList(tempGroupList);  
     setfilterGroups(tempGroupList);
   };
 
@@ -342,6 +416,12 @@ const SmsSend = ({classes , ...props }) => {
       setModel({ ...model, SendDate: null });
       handleFromDate(null);
     }
+    else if (event.target.value == "3")
+    {
+      setModel({ ...model, SendDate: null });
+      handleFromDate(null);
+    }
+
 
     setSendType(event.target.value);
   };
@@ -366,10 +446,12 @@ const SmsSend = ({classes , ...props }) => {
   };
 
   const handlebef = () => {
+    setafterClick(false);
     settoggleA(false);
     settoggleB(true);
   };
   const handleaf = () => {
+    setafterClick(true);
     settoggleA(true);
     settoggleB(false);
   };
@@ -433,7 +515,9 @@ const SmsSend = ({classes , ...props }) => {
     tempres.push(r.payload);
     setGroupList(tempres);
     settoggleChecked(false);
+    setToastMessage(toastMessages.GROUPCREATEDSUCCESS);
   };
+
   const handleSelect = (id) => {
     let tempArr = [];
     for (let i = 0; i < filterGroups.length; i++) {
@@ -471,7 +555,15 @@ const SmsSend = ({classes , ...props }) => {
     setgroupValue(e.target.value);
   };
   const handlePulseClose = () => {
-
+   
+    if(inputF == "" || inputS == "")
+    {
+      settogglePulse(false)
+    }
+    if(random == "")
+    {
+      settoggleRandom(false)
+    }
     setpulse(false);
 
 
@@ -484,16 +576,31 @@ const SmsSend = ({classes , ...props }) => {
     }
   }
   const handleTime = (e) => {
-    setinputS(e.target.value);
-    setTimeBool(false);
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) 
+    {
+      setinputS(e.target.value);
+      setTimeBool(false);
+    }
+   
   };
   const handleRandom = (e) => {
-    setrandom(e.target.value);
-    setboolRandom(false);
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) 
+    {
+      setrandom(e.target.value);
+      setboolRandom(false);
+    }
+    
   };
   const handlePulseInput = (e) => {
-    setinputF(e.target.value);
-    setpulseBool(false);
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) 
+    {
+      setinputF(e.target.value);
+      setpulseBool(false);
+    }
+   
   };
 
   const onPulseValidations = () => {
@@ -501,16 +608,20 @@ const SmsSend = ({classes , ...props }) => {
 
       if (inputF === "") {
         setpulseBool(true);
+        setsnackBarPulseBoolean(true);
         if (inputS === "") {
+          setsnackbarTimeBoolean(true);
           setTimeBool(true);
           return false;
         }
 
       }
       else if (inputS === "") {
+        setsnackbarTimeBoolean(true);
         setTimeBool(true);
         if (inputF === "") {
           setpulseBool(true);
+          setsnackBarPulseBoolean(true);
           return false;
         }
 
@@ -518,6 +629,8 @@ const SmsSend = ({classes , ...props }) => {
       else if (toggleRandom) {
         if (random === "") {
           setboolRandom(true);
+          setsnackbarMainPulse(true);
+          
           return false;
         }
         else {
@@ -532,6 +645,7 @@ const SmsSend = ({classes , ...props }) => {
     else if (toggleRandom) {
       if (random === "") {
         setboolRandom(true);
+        setsnackbarMainPulse(true);
         return false;
       }
       else {
@@ -1107,14 +1221,19 @@ const SmsSend = ({classes , ...props }) => {
     setmanualTrue(true);
   };
   const handleReciInput = (e) => {
-
-    setinputRecipients(e.target.value);
-    setRecipientsBool(false);
+   
+      const re = /^[0-9\b]+$/;
+      if (e.target.value === '' || re.test(e.target.value)) 
+        {
+          setinputRecipients(e.target.value);
+          setRecipientsBool(false);
+        }
 
   }
   const validationCheck = () => {
     if (inputRecipients === "") {
       setRecipientsBool(true);
+      setRecipientsSnackbar(true);
       return false;
     }
     else {
@@ -1151,6 +1270,7 @@ const SmsSend = ({classes , ...props }) => {
                     inputProps={{ "aria-label": "secondary checkbox" }}
                     onClick={() => {
                       settoggleReci(!toggleReci);
+                      setinputRecipients("");
                     }}
                   />
                   <span>
@@ -1163,10 +1283,10 @@ const SmsSend = ({classes , ...props }) => {
                     disabled={toggleReci ? false : true}
                     className={
                       toggleReci
-                        ? clsx(classes.pulseActive)
+                        ? RecipientsBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive,classes.success)
                         : clsx(classes.pulseInsert)
                     }
-                    onChange={handleReciInput}
+                    onChange={(e)=>{handleReciInput(e)}}
                     value={inputRecipients}
                   />
                 </div>
@@ -1192,7 +1312,8 @@ const SmsSend = ({classes , ...props }) => {
                       }}
                     />
                   </Paper>
-                  <div className={classes.reciList}> {filterGroups.map((item, index) => {
+          
+                <div className={classes.reciList}> {filterGroups.map((item, index) => {
                     if (item.selected) {
                       return (
                         <div
@@ -1338,6 +1459,36 @@ const SmsSend = ({classes , ...props }) => {
       </>
     );
   };
+  const handleSpecialDayChange = (e) =>
+  {
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) 
+    {
+      setdaysBeforeAfter(e.target.value);
+    }
+     
+  }
+  const handleSelectChange = (e) =>
+  {
+    console.log("-->special",e.target.value)
+    setSpecialValue(e.target.value)
+    {Object.keys(extraData).map((item, i) => {
+     if(e.target.value == i+3)
+     {
+       setSelectedSpecialValue(item)
+     }
+     else if(e.target.value == 1)
+     {
+      setSelectedSpecialValue("Birthday")
+     }
+     else if (e.target.value == 2)
+     {
+      setSelectedSpecialValue("Creation day")
+     }
+    })}
+
+   
+  }
   const renderRight = () => {
     return (
       <div>
@@ -1383,7 +1534,7 @@ const SmsSend = ({classes , ...props }) => {
                   pointerEvents: sendType == "2" ? "auto" : "none",
                 }}
               >
-                <DateField
+                {/* <DateField
                   minDate={moment()}
                   classes={classes}
                   value={sendType == "2" ? sendDate : null}
@@ -1396,9 +1547,19 @@ const SmsSend = ({classes , ...props }) => {
                   }}
                   dateActive={sendType == "2" ? false : true}
                   autoOk
-                />
+                /> */}
+                <KeyboardDateTimePicker
+                minDate={moment()}
+                classes={keyboardclass.custom}
+                inputVariant="outlined"
+                value={sendType == "2" ? sendDate : null}
+                placeholder={t("notifications.date")}
+                onChange={handleDatePicker}
+                disabled={sendType=="2" ? false : true}
+                style={{width:"370px",padding:"5px"}}
+                 />
               </Box>
-              <Box
+              {/* <Box
                 style={{
                   marginTop: 10,
                   paddingRight: isRTL ? 30 : "",
@@ -1421,7 +1582,7 @@ const SmsSend = ({classes , ...props }) => {
                   timePickerOpen={timePickerOpen}
                   autoOk
                 />
-              </Box>
+              </Box> */}
               <FormControlLabel
                 value="3"
                 control={<Radio color="primary" className={sendType !=="3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
@@ -1451,11 +1612,14 @@ const SmsSend = ({classes , ...props }) => {
                     marginBottom: "10px",
                   }}
                   disabled={sendType === "3" ? false : true}
+                  onChange={(e) => {handleSelectChange(e)}}
+                  value={SpecialValue}
                 >
-                  <option>{t("mainReport.birthday")}</option>
-                  <option>Creation Day</option>
+                    <option value="0" disabled>Select</option>
+                  <option value="1">{t("mainReport.birthday")}</option>
+                  <option value="2">Creation Day</option>
                   {Object.keys(extraData).map((item, i) => {
-                      return <option value={extraData[item]} key={`extrakey_${i}`}>{item}</option>;
+                      return <option value={i+3} key={`extrakey_${i}`}>{item}</option>;
                     })}
                 </select>
               </Box>
@@ -1476,6 +1640,8 @@ const SmsSend = ({classes , ...props }) => {
                   className={classes.inputDays}
                   placeholder="0"
                   disabled={sendType == "3" ? false : true}
+                  value={daysBeforeAfter}
+                  onChange={(e)=>{handleSpecialDayChange(e)}}
                 />
 
                 <span style={{ marginInlineEnd: "8px", marginBottom: "8px" }}>
@@ -1485,9 +1651,8 @@ const SmsSend = ({classes , ...props }) => {
                 <div style={{ display: "flex", direction: isRTL ? 'ltr' : 'none' }}>
                   <span
                     className={
-                      toggleB
-                        ? clsx(classes.beforeActive)
-                        : clsx(classes.before)
+                      
+                    sendType == "3" ?  toggleB ? classes.beforeActive : classes.before : classes.disabledBefore 
                     }
                     onClick={() => {
                       handlebef();
@@ -1498,7 +1663,7 @@ const SmsSend = ({classes , ...props }) => {
                   </span>
                   <span
                     className={
-                      toggleA ? clsx(classes.afterActive) : clsx(classes.after)
+                      sendType == "3" ?  toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
                     }
                     onClick={() => {
                       handleaf();
@@ -1540,7 +1705,7 @@ const SmsSend = ({classes , ...props }) => {
 
         <div className={classes.pulseDiv}>
           <span
-            className={classes.pulse}
+            className={(selectedGroups.length >= 1 && sendType !== "3")  ?   classes.pulse : classes.pulseDisable}
             onClick={() => {
               setpulse(true);
             }}
@@ -1569,7 +1734,7 @@ const SmsSend = ({classes , ...props }) => {
 
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer}
+              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer} {" "}
               every {inputS} {hourName == "" ? minName : hourName}
             </span>
           ) : null}
@@ -1580,7 +1745,8 @@ const SmsSend = ({classes , ...props }) => {
       </div>
     );
   };
-  const onSummClick = async () => {
+  const onSummClick = async (toggle) => {
+
     if (sendType === "1") {
       if (selectedGroups.length > 0) {
        
@@ -1624,6 +1790,18 @@ const SmsSend = ({classes , ...props }) => {
             exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
           }
         }
+        let specialgroups = [{
+          text: "Birthday",
+          code: 1
+        },
+      {
+        text: "Creation Day",
+              code: 2
+      }];
+      {Object.keys(extraData).map((item, i) => {
+        specialgroups.push({text : item,
+        code: i +3})
+      })}
         let quickPayload = {
           FutureDateTime: null,
           GroupDetails: finalGroups,
@@ -1641,7 +1819,7 @@ const SmsSend = ({classes , ...props }) => {
           {
             Groups: exceptionGroups,
             Campaigns: exceptionCampaigns,
-            ExceptionalDays: setinputRecipients
+            ExceptionalDays: inputRecipients
           },
           SendTypeID: 1,
           SmsCampaignID: FinalId,
@@ -1654,133 +1832,260 @@ const SmsSend = ({classes , ...props }) => {
             IntervalTypeID: -1,
             SendDate: null
           },
-          specialDateOptions: [
-            {
-              text: "Birthday",
-              code: "1"
-            },
-            {
-              text: "Creation Day",
-              code: "2"
-            },
-            {
-              text: "",
-              code: "3"
-            }]
-
+          specialDateOptions: specialgroups
         }
         await dispatch(saveSmsCampSettings(quickPayload));
-        let response = await dispatch(getCampaignSumm(FinalId));
-        console.log("here---->",response)
-        setresponseQuick(response);
-        setsummModal(true);
-      }
+        if(toggle)
+        {
+          setToastMessage(toastMessages.SUCCESS);
+        }
+        else
+        {
+          let response = await dispatch(getCampaignSumm(FinalId));
+          setresponseQuick(response);
+          setsummModal(true);
+        }
+        }
+      
     }
     else if (sendType === "2") {
       if (selectedGroups.length > 0) {
-        let campId = window.location
-        let id = campId.search.split("=");
-        let finalId = id[1];
 
-        let temp = [];
-        let finalGroups = [];
-        for (let i = 0; i < selectedGroups.length; i++) {
-          temp.push(selectedGroups[i].GroupID);
-          finalGroups.push(selectedGroups[i]);
+        if(sendDate == null)
+        {
+          setsendType2Dialog(true);
         }
-        let time = -1;
-        let pulse = -1;
-        if (togglePulse) {
-          if (minTrue == true) {
-            time = 1;
-          } else {
-            time = 2;
+        else
+         {
+          let campId = window.location
+          let id = campId.search.split("=");
+          let finalId = id[1];
+  
+          let temp = [];
+          let finalGroups = [];
+          for (let i = 0; i < selectedGroups.length; i++) {
+            temp.push(selectedGroups[i].GroupID);
+            finalGroups.push(selectedGroups[i]);
           }
-
-          if (percentTrue == true) {
-            pulse = 1;
-          } else {
-            pulse = 2;
+          let time = -1;
+          let pulse = -1;
+          if (togglePulse) {
+            if (minTrue == true) {
+              time = 1;
+            } else {
+              time = 2;
+            }
+  
+            if (percentTrue == true) {
+              pulse = 1;
+            } else {
+              pulse = 2;
+            }
           }
-        }
-
-        let exceptionGroups = [];
-
-        for (let i = 0; i < filterGroups.length; i++) {
-          if (filterGroups[i].selected) {
-            exceptionGroups.push(filterGroups[i].GroupID)
-          }
-        }
-
-
-        let exceptionCampaigns = [];
-        for (let i = 0; i < totalCampaigns.length; i++) {
-          if (totalCampaigns[i].selected) {
-            exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
-          }
-        }
-        const finalDate = moment(sendDate, "YYYY-MM-DD HH:mm:ss");
-        finalDate.set({ h: finalDate.format("HH"), m: finalDate.format("mm") });
-        let displayDate = null;
-        displayDate = finalDate.format();
-
-        let quickPayload = {
-          FutureDateTime: displayDate,
-          GroupDetails: finalGroups,
-          Groups: temp,
-          PulseSettings: {
-            PulseType: pulse,
-            TimeType: time,
-            PulseAmount: inputF,
-            TimeInterval: inputS
+          let specialgroups = [{
+            text: "Birthday",
+            code: 1
           },
-          RandomSettings: {
-            RandomAmount: random
-          },
-          SendExeptional:
+        {
+          text: "Creation Day",
+                code: 2
+        }];
+        {Object.keys(extraData).map((item, i) => {
+          specialgroups.push({text : item,
+          code: i +3})
+        })}
+  
+          let exceptionGroups = [];
+  
+          for (let i = 0; i < filterGroups.length; i++) {
+            if (filterGroups[i].selected) {
+              exceptionGroups.push(filterGroups[i].GroupID)
+            }
+          }
+  
+  
+          let exceptionCampaigns = [];
+          for (let i = 0; i < totalCampaigns.length; i++) {
+            if (totalCampaigns[i].selected) {
+              exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
+            }
+          }
+          const finalDate = moment(sendDate, "YYYY-MM-DD HH:mm:ss");
+          finalDate.set({ h: finalDate.format("HH"), m: finalDate.format("mm") });
+          let displayDate = null;
+          displayDate = finalDate.format();
+  
+          let quickPayload = {
+            FutureDateTime: displayDate,
+            GroupDetails: finalGroups,
+            Groups: temp,
+            PulseSettings: {
+              PulseType: pulse,
+              TimeType: time,
+              PulseAmount: inputF,
+              TimeInterval: inputS
+            },
+            RandomSettings: {
+              RandomAmount: random
+            },
+            SendExeptional:
+            {
+              Groups: exceptionGroups,
+              Campaigns: exceptionCampaigns,
+              ExceptionalDays: inputRecipients
+            },
+            SendTypeID: 2,
+            SmsCampaignID: props.match.params.id,
+            SourceTimeZone: "Asia/Calcutta",
+            SpecialSettings: {
+              Type: "",
+              DateFieldID: -1,
+              Day: 0,
+              SendHour: "",
+              IntervalTypeID: -1,
+              SendDate: null
+            },
+            specialDateOptions: specialgroups
+  
+          }
+          await dispatch(saveSmsCampSettings(quickPayload));
+          if(toggle)
           {
-            Groups: exceptionGroups,
-            Campaigns: exceptionCampaigns,
-            ExceptionalDays: setinputRecipients
-          },
-          SendTypeID: 1,
-          SmsCampaignID: props.match.params.id,
-          SourceTimeZone: "Asia/Calcutta",
-          SpecialSettings: {
-            Type: "",
-            DateFieldID: -1,
-            Day: 0,
-            SendHour: "",
-            IntervalTypeID: -1,
-            SendDate: null
-          },
-          specialDateOptions: [
-            {
-              text: "Birthday",
-              code: "1"
-            },
-            {
-              text: "Creation Day",
-              code: "2"
-            },
-            {
-              text: "ExtraDate1",
-              code: "3"
-            }]
+            setToastMessage(toastMessages.SUCCESS);
+          }
+          else
+          {
+            
+            let response = await dispatch(getCampaignSumm(props.match.params.id));
+            setresponseQuick(response);
+            setsummModal(true);
+          }
+         }
 
-        }
-        await dispatch(saveSmsCampSettings(quickPayload));
-        let response = await dispatch(getCampaignSumm(props.match.params.id));
-        setresponseQuick(response);
-        setsummModal(true);
+       
+     
       }
 
     }
+    else if(sendType === "3")
+    {
+      if (selectedGroups.length > 0) {
+
+        if(sendTime == null || daysBeforeAfter == "" || SpecialValue == "0")
+        {
+          setspecialSettingValidation(true);
+        }
+        else
+        {
+          let  FinalId = props.match.params.id
+        
+
+          let temp = [];
+          let finalGroups = [];
+          let specialgroups = [{
+            text: "Birthday",
+            code: 1
+          },
+        {
+          text: "Creation Day",
+                code: 2
+        }];
+          for (let i = 0; i < selectedGroups.length; i++) {
+            temp.push(selectedGroups[i].GroupID);
+            finalGroups.push(selectedGroups[i]);
+          }
+
+
+          {Object.keys(extraData).map((item, i) => {
+            specialgroups.push({text : item,
+            code: i +3})
+          })}
+          console.log("--->here",specialgroups)
+  
+          let exceptionGroups = [];
+  
+          for (let i = 0; i < filterGroups.length; i++) {
+            if (filterGroups[i].selected) {
+              exceptionGroups.push(filterGroups[i].GroupID)
+            }
+          }
+  
+  
+          let exceptionCampaigns = [];
+          for (let i = 0; i < totalCampaigns.length; i++) {
+            if (totalCampaigns[i].selected) {
+              exceptionCampaigns.push(totalCampaigns[i].SMSCampaignID)
+            }
+          }
+          let beforeAfter = 0;
+          if(afterClick)
+          {
+             beforeAfter = 1
+          }
+          else
+          {
+            beforeAfter = -1
+          }
+          let quickPayload = {
+            FutureDateTime: null,
+            GroupDetails: finalGroups,
+            Groups: temp,
+            PulseSettings: {
+              PulseType: -1,
+              TimeType: -1,
+              PulseAmount: -1,
+              TimeInterval: -1
+            },
+            RandomSettings: {
+              RandomAmount: 0
+            },
+            SendExeptional:
+            {
+              Groups: exceptionGroups,
+              Campaigns: exceptionCampaigns,
+              ExceptionalDays: inputRecipients
+            },
+            SendTypeID: 3,
+            SmsCampaignID: FinalId,
+            SourceTimeZone: "Asia/Calcutta",
+            SpecialSettings: {
+              Type: SpecialValue,
+              DateFieldID: SpecialValue,
+              Day: daysBeforeAfter,
+              SendHour: sendTime.format('h:mm a'),
+              IntervalTypeID: beforeAfter,
+            },
+            specialDateOptions: specialgroups
+             ,
+             
+  
+          }
+          await dispatch(saveSmsCampSettings(quickPayload));
+          if(toggle)
+          {
+            setToastMessage(toastMessages.SUCCESS);
+          }
+          else
+          {
+            let response = await dispatch(getCampaignSumm(FinalId));
+            setresponseQuick(response);
+            setsummModal(true);
+          }
+        }
+       
+       
+        }
+
+    }
   };
+  const handleSummary = () =>
+  {
+    setsummModal(false);
+  }
   const renderSummary = () => {
     return (
       <>
-        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall}/>
+        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall} sendType={sendType} days={daysBeforeAfter} after={afterClick} time={sendTime} handleCallback={handleSummary} specialVal={SelectedSpecialValue} sendDateTime={sendDate}/>
       </>
     );
   };
@@ -2171,6 +2476,19 @@ const SmsSend = ({classes , ...props }) => {
       history.push("/SMSCampaigns");
     }
   };
+  const renderToast = () => {
+    if (toastMessage) {
+
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 2000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
+
   const renderDelete = () => {
     return (
       <>
@@ -2278,8 +2596,142 @@ const SmsSend = ({classes , ...props }) => {
       </>
     );
   };
+  const renderExit = () => {
+    return (
+      <>
+        {exitClick ? (
+          <Dialog
+            classes={classes}
+            open={exitClick}
+            // onClose={() => {handleExit(false)}}
+            // onConfirm={() => {handleExit(true)}}
+            // onCancel={() => {setexitClick(false)}}
+            confirmText={t("mainReport.Ok")}
+            cancelText={t("mainReport.No")}
+            showDefaultButtons={true}
+            icon={
+              <AiOutlineExclamationCircle
+                style={{ fontSize: 30, color: "#fff" }}
+              />
+            }
+          >
+            <div className={classes.baseDialogSetup}>
+              <span className={classes.groupName}>{t("mainReport.handleExitTitle")}</span>
+            </div>
+            <div className={classes.bodyTextDialog}>
+              <span>{t("mainReport.leaveCampaign")}</span>
+            </div>
+          </Dialog>
+        ) : null}
+      </>
+    );
+  };
+  const renderSendType2validation = () =>
+  {
+    return( <>
+      <Dialog
+          classes={classes}
+          open={sendType2Dialog}
+          onClose={()=>{setsendType2Dialog(false)}}
+          showDefaultButtons={false}
+          icon={
+            <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
+          }
+        >
+          <div className={classes.baseDialogSetup}>
+            <span className={classes.groupName}>
+              {t("mainReport.fieldInvalid")}:
+            </span>
+          </div>
+          <div>
+            <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
+           
+           <li>Must select Sending Type - Required field</li>
+            
+            </ul>
+          </div>
+          <div
+            style={{
+              height: "50px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() => {
+                setsendType2Dialog(false);
+              }}
+              className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
+            >
+              {t("mainReport.confirmSms")}
+            </Button>
+          </div>
+        </Dialog></>)
+  }
+
+  const renderSpecialModal = () =>
+  {
+   return( <>
+    <Dialog
+        classes={classes}
+        open={specialSettingValidation}
+        onClose={()=>{setspecialSettingValidation(false)}}
+        showDefaultButtons={false}
+        icon={
+          <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
+        }
+      >
+        <div className={classes.baseDialogSetup}>
+          <span className={classes.groupName}>
+            {t("mainReport.fieldInvalid")}:
+          </span>
+        </div>
+        <div>
+          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
+           {SpecialValue == "0" ? <li>Must select Special Date Type</li> : null} 
+          {daysBeforeAfter == "" ? <li>Must insert Number of Days</li> :null}  
+         {sendTime == null ? <li>Must select Sending Time</li> : null}   
+          
+          </ul>
+        </div>
+        <div
+          style={{
+            height: "50px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => {
+              setspecialSettingValidation(false);
+            }}
+            className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
+          >
+            {t("mainReport.confirmSms")}
+          </Button>
+        </div>
+      </Dialog></>)
+  }
+  const handleMainWarningPulse = () =>
+  {
+    if(snackbarTimeBoolean == false || snackBarPulseBoolean == false)
+    {
+      return false;
+    }
+    else if(snackbarMainPulse == false)
+    {
+      return false;
+    }
+  }
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
+      {renderToast()}
       <div className={classes.smsStepDiv}>
 
         <div>
@@ -2307,17 +2759,17 @@ const SmsSend = ({classes , ...props }) => {
         <div className={classes.rightMostContainer}>
           <span className={classes.rightInput3} onClick={onHandleDelete}>
             <BsTrash style={{ fontSize: "25" }} />         </span>
-          <span className={classes.rightInput4}>
+          <span className={classes.rightInput4} onClick={()=> {setexitClick(true)}}>
 
             {t("mainReport.exitSms")}
           </span>
-          <span className={classes.rightInput5}>
+          <span className={classes.rightInput5} onClick={() => {onSummClick(true)}}>
 
             {t("mainReport.saveSms")}
           </span>
           <span
             className={classes.rightInput6}
-            onClick={onSummClick}
+            onClick={() => {onSummClick(false)}}
             style={{
               pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
               backgroundColor:
@@ -2337,63 +2789,83 @@ const SmsSend = ({classes , ...props }) => {
       {renderDialogManual()}
       {renderCaution()}
       {renderDelete()}
+      {renderExit()}
       {renderSuccessDialog()}
+      {renderSpecialModal()}
+      {renderSendType2validation()}
       <Snackbar
-        open={pulseBool || TimeBool || boolRandom}
-        autoHideDuration={2000}
-        // onClose={handleClose}
+        open={snackbarTimeBoolean || snackBarPulseBoolean || snackbarMainPulse}
+        autoHideDuration={5000}
+        onClose={() => {handleMainWarningPulse()}}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
         }}
         style={{ zIndex: "9999" }}
       >
-        <Alert severity="warning" >
+        <Alert severity="warning"  className={snacki.customcolor}>
           {t("smsReport.NoPulse")}
         </Alert>
       </Snackbar>
       <Snackbar
-        open={pulseBool}
-        autoHideDuration={2000}
-        // onClose={handleClose}
+        open={snackBarPulseBoolean}
+        autoHideDuration={3000}
+        onClose={()=>{setsnackBarPulseBoolean(false)}}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
         }}
         style={{ zIndex: "9999", marginTop: "60px" }}
       >
-        <Alert severity="error" >
+        <Alert severity="error" className={severe.customcolor}>
           {t("smsReport.pulseAmount")}
         </Alert>
       </Snackbar>
       <Snackbar
-        open={TimeBool}
-        autoHideDuration={2000}
-        // onClose={handleClose}
+        open={snackbarTimeBoolean}
+        autoHideDuration={3000}
+        onClose={()=>{setsnackbarTimeBoolean(false)}}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
         }}
         style={{ zIndex: "9999", marginTop: "120px" }}
       >
-        <Alert severity="error" >
+        <Alert severity="error" className={severe.customcolor}>
           {t("smsReport.timeAmount")}
         </Alert>
       </Snackbar>
       <Snackbar
-        open={boolRandom}
-        autoHideDuration={2000}
-        // onClose={handleClose}
+        open={snackbarMainPulse}
+        autoHideDuration={3000}
+        onClose={()=>{setsnackbarMainPulse(false)}}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
         }}
         style={{ zIndex: "9999", marginTop: "60px" }}
       >
-        <Alert severity="error" >
-          {t("smsReport.randomAmt")}
+       <Alert severity="error" className={severe.customcolor}>
+          Enter Random Amount
         </Alert>
       </Snackbar>
+
+      <Snackbar
+   open={RecipientsSnackbar}
+   autoHideDuration={2000}
+   onClose={()=>{setRecipientsSnackbar(false);}}
+   style={{ zIndex: "9999", marginTop: "30px",fontWeight: 900, fontSize: 16}}
+  
+   anchorOrigin={{
+    vertical: "top",
+    horizontal: "right",
+  }}
+  
+>
+<Alert   severity="warning"  className={snacki.customcolor}>
+Please Add No of Days
+        </Alert>
+        </Snackbar>
     </DefaultScreen >
   );
 };
