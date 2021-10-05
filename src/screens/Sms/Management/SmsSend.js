@@ -220,6 +220,7 @@ const SmsSend = ({classes , ...props }) => {
   const [pulse, setpulse] = useState(false);
   const [afterClick, setafterClick] = useState(false);
   const [exitClick, setexitClick] = useState(false);
+  const [exitDialog, setexitDialog] = useState(false);
   const [specialSettingValidation, setspecialSettingValidation] = useState(false);
   const [reciFilter, setreciFilter] = useState(false);
   const [responseQuick, setresponseQuick] = useState(null);
@@ -827,6 +828,7 @@ const SmsSend = ({classes , ...props }) => {
                 inputProps={{ "aria-label": "secondary checkbox" }}
                 onClick={() => {
                   settoggleRandom(!toggleRandom);
+                  setrandom("");
                 }}
               />
               <span>{t("smsReport.randomSend")}</span>
@@ -1746,7 +1748,7 @@ const SmsSend = ({classes , ...props }) => {
       </div>
     );
   };
-  const onSummClick = async (toggle) => {
+  const onSummClick = async (toggle,exit) => {
 
     if (sendType === "1") {
       if (selectedGroups.length > 0) {
@@ -1836,9 +1838,13 @@ const SmsSend = ({classes , ...props }) => {
           specialDateOptions: specialgroups
         }
         await dispatch(saveSmsCampSettings(quickPayload));
-        if(toggle)
+        if(toggle && exit !=="exit")
         {
           setToastMessage(toastMessages.SUCCESS);
+        }
+        else if(toggle && exit == "exit")
+        {
+          history.push("/SMSCampaigns");
         }
         else
         {
@@ -1950,9 +1956,13 @@ const SmsSend = ({classes , ...props }) => {
   
           }
           await dispatch(saveSmsCampSettings(quickPayload));
-          if(toggle)
+          if(toggle && exit !=="exit")
           {
             setToastMessage(toastMessages.SUCCESS);
+          }
+          else if(toggle && exit == "exit")
+          {
+            history.push("/SMSCampaigns");
           }
           else
           {
@@ -2062,9 +2072,13 @@ const SmsSend = ({classes , ...props }) => {
   
           }
           await dispatch(saveSmsCampSettings(quickPayload));
-          if(toggle)
+          if(toggle && exit !=="exit")
           {
             setToastMessage(toastMessages.SUCCESS);
+          }
+          else if(toggle && exit == "exit")
+          {
+            history.push("/SMSCampaigns");
           }
           else
           {
@@ -2086,7 +2100,32 @@ const SmsSend = ({classes , ...props }) => {
   const renderSummary = () => {
     return (
       <>
-        <Summary stepBool={summModal} classes={classes}  campaignName={dataSaved.campaignName} fromNumber={dataSaved.fromNumber} textMsg={dataSaved.msg} activeGroups={selectedGroups}  summaryPayload={getCampaignSum} api={onApiCall} sendType={sendType} days={daysBeforeAfter} after={afterClick} time={sendTime} handleCallback={handleSummary} specialVal={SelectedSpecialValue} sendDateTime={sendDate}/>
+        <Summary 
+        stepBool={summModal} 
+        classes={classes}  
+        campaignName={dataSaved.campaignName} 
+        fromNumber={dataSaved.fromNumber} 
+        textMsg={dataSaved.msg} 
+        activeGroups={selectedGroups}  
+        summaryPayload={getCampaignSum} 
+        api={onApiCall} sendType={sendType} 
+        days={daysBeforeAfter} 
+        after={afterClick} 
+        time={sendTime} 
+        handleCallback={handleSummary} 
+        specialVal={SelectedSpecialValue} 
+        sendDateTime={sendDate}
+        pulseTrue={togglePulse}
+        pulseInput1={inputF}
+        pulseInput2={inputS}
+        pulsePer={pulsePer}
+        pulseReci={pulseReci}
+        hourName={hourName}
+        minName={minName}
+        toggleRandom={toggleRandom}
+        random={random}
+        
+        />
       </>
     );
   };
@@ -2602,10 +2641,10 @@ const SmsSend = ({classes , ...props }) => {
         {exitClick ? (
           <Dialog
             classes={classes}
-            open={exitClick}
-            // onClose={() => {handleExit(false)}}
-            // onConfirm={() => {handleExit(true)}}
-            // onCancel={() => {setexitClick(false)}}
+            open={exitDialog}
+            onClose={() => {setexitDialog(false);history.push("/SMSCampaigns");}}
+            onConfirm={() => {onSummClick(true,"exit")}}
+            onCancel={() => {setexitDialog(false)}}
             confirmText={t("mainReport.Ok")}
             cancelText={t("mainReport.No")}
             showDefaultButtons={true}
@@ -2759,7 +2798,7 @@ const SmsSend = ({classes , ...props }) => {
         <div className={classes.rightMostContainer}>
           <span className={classes.rightInput3} onClick={onHandleDelete}>
             <BsTrash style={{ fontSize: "25" }} />         </span>
-          <span className={classes.rightInput4} onClick={()=> {setexitClick(true)}}>
+          <span className={classes.rightInput4} onClick={()=> {setexitDialog(true)}}>
 
             {t("mainReport.exitSms")}
           </span>

@@ -260,6 +260,14 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} Days ${props.after ? "After" : "Before"} ${props.specialVal} at ${props.time.format('h:mm a')}  `  : props.sendType == "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : "Send Now"}</span>
               </div>
 
+              {props.pulseTrue || props.toggleRandom ?     <div className={classes.sumChild}>
+               <span className={classes.spanSum}>Pulse Sending</span>
+              {props.pulseTrue ?  <span style={{ fontSize: "18px" }}> Packets sending - {props.pulseInput1} {props.pulsePer == "" ? props.pulseReci : props.pulsePer} {" "}
+              every {props.pulseInput2} {props.hourName == "" ? props.minName : props.hourName}</span> : null}  
+              {props.toggleRandom ?  <span style={{ fontSize: "18px" }}>Random sending - {props.random} random recipients</span> : null} 
+               {props.pulseTrue ? <span style={{ fontSize: "18px" }}>Estimated End Date : 4/10/2021 - 22:30</span> : null} 
+              </div>
+              : null}     
               <div className={classes.sumChild}>
                 <span className={classes.spanSum}>For :</span>
                 <span style={{ fontSize: "18px" }}>
