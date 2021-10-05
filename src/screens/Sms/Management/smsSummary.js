@@ -265,16 +265,14 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               {props.pulseTrue ?  <span style={{ fontSize: "18px" }}> Packets sending - {props.pulseInput1} {props.pulsePer == "" ? props.pulseReci : props.pulsePer} {" "}
               every {props.pulseInput2} {props.hourName == "" ? props.minName : props.hourName}</span> : null}  
               {props.toggleRandom ?  <span style={{ fontSize: "18px" }}>Random sending - {props.random} random recipients</span> : null} 
-               {props.pulseTrue ? <span style={{ fontSize: "18px" }}>Estimated End Date : 4/10/2021 - 22:30</span> : null} 
+               {props.pulseTrue ? <span style={{ fontSize: "18px" }}>Estimated End Date : <span style={{color:"#1D82B3"}}>{props.estimationDate}</span></span> : null} 
               </div>
               : null}     
               <div className={classes.sumChild}>
                 <span className={classes.spanSum}>For :</span>
                 <span style={{ fontSize: "18px" }}>
                   Total Number of Recipients :
-                  <span className={classes.bodySum}>{activeGroups.reduce(function (a, b) {
-                  return a + b['Recipients'];
-                }, 0).toLocaleString()}</span>
+                  <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
                 </span>
                 <span
                   style={{
@@ -365,7 +363,9 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               }}
               onClick={()=>{setsubRecipients(!subRecipientsDetails)}}
             >
-              Recipients Filter ({summaryPayload.FinalCount})
+              Recipients Filter ({(activeGroups.reduce(function (a, b) {
+                  return a + b['Recipients'];
+                }, 0).toLocaleString() - summaryPayload.FinalCount)})
             </li>
           </ul> }    
           {subRecipientsDetails ?   <div
@@ -428,7 +428,25 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               >
                  {summaryPayload.EmptyCellphoneCount}
               </span>
-            </span>}        
+            </span>} 
+            {summaryPayload.Invalid == 0 ? null : <span
+              style={{
+                fontSize: "17px",
+                color: "#1771ad",
+                paddingInlineStart: "40px",
+              }}
+            >
+              Invalid:
+              <span
+                style={{
+                  fontSize: "17px",
+                  fontWeight: "700",
+                  color: "black",
+                }}
+              >
+                 {summaryPayload.Invalid}
+              </span>
+            </span>}              
           </div> : null}
         </div>
       </Dialog> : null}

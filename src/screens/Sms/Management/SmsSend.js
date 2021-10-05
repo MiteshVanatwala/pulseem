@@ -31,11 +31,9 @@ import { BsTrash ,BsChevronDown ,BsChevronUp } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
 import { DateTimePicker , KeyboardDateTimePicker} from "@material-ui/pickers";
-
 import {
   Typography,
   Button,
-  TextField,
   Grid,
   Switch,
   Box,
@@ -46,6 +44,7 @@ import {
   ClickAwayListener,
   FormHelperText,
   Divider,
+  TextField
 } from "@material-ui/core";
 import {
   getGroupsBySubAccountId,
@@ -62,6 +61,8 @@ import {
 } from "../../../redux/reducers/smsSlice";
 import { AiOutlineDelete } from "react-icons/ai";
 import Summary from "./smsSummary";
+import Autocomplete from '@material-ui/lab/Autocomplete';
+
 
 
 import clsx from "clsx";
@@ -285,6 +286,7 @@ const SmsSend = ({classes , ...props }) => {
   const [highlighted, setHighlighted] = React.useState(false);
   const [contacts, setContacts] = React.useState([]);
   const [daysBeforeAfter, setdaysBeforeAfter] = useState("");
+  const [Header, setHeader] = useState("");
   const [pulseReci, setpulseReci] = useState("");
   const [snackBarPulseBoolean, setsnackBarPulseBoolean] = useState(false);
   const [snackbarTimeBoolean, setsnackbarTimeBoolean] = useState(false);
@@ -296,6 +298,7 @@ const SmsSend = ({classes , ...props }) => {
   const [inputS, setinputS] = useState("");
   const [minTrue, setminTrue] = useState(false);
   const [hoursTrue, sethoursTrue] = useState(true);
+  const [estimationDate, setestimationDate] = useState(null);
   const [minName, setminName] = useState("");
   const [hourName, sethourName] = useState("Hours");
   const [SpecialValue, setSpecialValue] = useState("0");
@@ -326,7 +329,6 @@ const SmsSend = ({classes , ...props }) => {
       idx: -1,
       value: "Cell Phone"
     }
-
   ]);
   const [dataSaved, setdataSaved] = useState({
     campaignName : "",
@@ -344,6 +346,10 @@ const SmsSend = ({classes , ...props }) => {
     OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true}
   }
 
+  const defaultProps = {
+    options: selectArray,
+    getOptionLabel: (option) => option.label,
+  };
 
 
 
@@ -421,6 +427,10 @@ const SmsSend = ({classes , ...props }) => {
     {
       setModel({ ...model, SendDate: null });
       handleFromDate(null);
+      setinputS("");
+      setinputF("");
+      setrandom("");
+      settogglePulse(false);
     }
 
 
@@ -903,13 +913,16 @@ const SmsSend = ({classes , ...props }) => {
            for (let i = 0; i < a.length; i++) {
              b.push(a[i].split(","));
            }
+           b.pop();
            settypedData(b);
+           setareaData(b);
            let dummyArr = [];
             for (let i = 0; i < b[0].length; i++) {
               dummyArr.push("Adjust Title");
             }
             setinitialheadstate(dummyArr);
             setheaders(dummyArr)
+           
           
           }, 0);
         };
@@ -1855,6 +1868,33 @@ const SmsSend = ({classes , ...props }) => {
           let response = await dispatch(getCampaignSumm(FinalId));
           setresponseQuick(response);
           setsummModal(true);
+          let date = moment();
+          let addTime = 0;
+    
+          if ( percentTrue == false) {
+            console.log("in if")
+            addTime =
+              ((response.payload.FinalCount -
+                inputF) *
+                inputS) /
+              inputF;
+              let final =  moment(date).add(addTime,hoursTrue ? "h":"m").format("DD/MM/YYYY - HH:mm");
+              setestimationDate(final);
+          } 
+
+          else {
+            console.log("in else")
+            let recipientPercents =
+              (response.payload.FinalCount *
+                inputF) /
+              100;
+            addTime =
+              ((response.payload.FinalCount - recipientPercents.toFixed(1)) *
+                inputS) /
+              recipientPercents.toFixed(1);
+              let final =  moment(date).add(addTime,hoursTrue ? "h":"m").format("DD/MM/YYYY - HH:mm");
+               setestimationDate(final);
+          }
         }
         }
       
@@ -1973,6 +2013,33 @@ const SmsSend = ({classes , ...props }) => {
             
             let response = await dispatch(getCampaignSumm(props.match.params.id));
             setresponseQuick(response);
+            let date = sendDate;
+            let addTime = 0;
+
+            if ( percentTrue == false) {
+              console.log("in if")
+              addTime =
+                ((response.payload.FinalCount -
+                  inputF) *
+                  inputS) /
+                inputF;
+                let final =  moment(date).add(addTime,hoursTrue ? "h":"m").format("DD/MM/YYYY - HH:mm");
+                setestimationDate(final);
+            } 
+  
+            else {
+              console.log("in else")
+              let recipientPercents =
+                (response.payload.FinalCount *
+                  inputF) /
+                100;
+              addTime =
+                ((response.payload.FinalCount - recipientPercents.toFixed(1)) *
+                  inputS) /
+                recipientPercents.toFixed(1);
+                let final =  moment(date).add(addTime,hoursTrue ? "h":"m").format("DD/MM/YYYY - HH:mm");
+                 setestimationDate(final);
+            }
             setsummModal(true);
           }
          }
@@ -2128,6 +2195,7 @@ const SmsSend = ({classes , ...props }) => {
         minName={minName}
         toggleRandom={toggleRandom}
         random={random}
+        estimationDate={estimationDate}
         
         />
       </>
@@ -2280,13 +2348,21 @@ const SmsSend = ({classes , ...props }) => {
   }
 
   const handleManualDialog = (e) => {
-    setgroupNameInput(e.target.value);
-    setnewVal(false);
+    
+        setgroupNameInput(e.target.value);
+        setnewVal(false);
   }
 
   const manualUploadValidationscheck = () =>
   {
-    if(groupNameInput === "")
+    let temp = []
+    for(let i = 0 ; i < groupList.length ; i++)
+    {
+      temp.push(groupList[i].GroupName)
+    }
+
+   
+    if(groupNameInput === "" || temp.includes(groupNameInput))
     {
       setnewVal(true);
       return false;
@@ -2312,6 +2388,7 @@ const SmsSend = ({classes , ...props }) => {
             <span style={{ fontSize: "24px", marginInlineEnd: "10px" }}>
               Group Name :
             </span>
+            <div style={{display:"flex",flexDirection:"column",width:"75%"}}>
             <input
               type="text"
               placeholder="Group Name"
@@ -2319,7 +2396,12 @@ const SmsSend = ({classes , ...props }) => {
               onChange={handleManualDialog}
               value={groupNameInput}
             />
+             {newVal ? <span style={{marginTop:"8px",color:"red",fontSize:"12px"}}>Group name is either blank or already exists</span> : null  }  
+            </div>
+          
+         
           </div>
+         
           <div
             style={{
               display: "flex",
@@ -2382,7 +2464,7 @@ const SmsSend = ({classes , ...props }) => {
                         {dropIndex == idx ? (
                           <div className={classes.adjustC}>
                             {selectArray.map((item, id) => {
-
+                            
                               return (
                                 <span
                                   className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
@@ -2397,6 +2479,17 @@ const SmsSend = ({classes , ...props }) => {
                           </div>
                         ) : null}
                       </div>
+                        {/* <Autocomplete
+                         {...defaultProps}
+                          id="combo-box-demo"
+                          onChange={(event , newValue) => {
+                            console.log("--->",newValue)
+                            setHeader(newValue);
+                          }}
+                          value={Header[idx]}
+                          sx={{ width: 300 }}
+                          renderInput={(params) => <TextField {...params} label="Adjust Title" />}
+                        /> */}
                     </th>
                   );
                 })
@@ -2451,7 +2544,7 @@ const SmsSend = ({classes , ...props }) => {
             {contacts.length !== 0
               ? contacts.map((item, idx) => {
 
-                if (idx > contacts.length - 11) {
+                if (idx > contacts.length - 6) {
                   return (
                     <tr id={idx}>
                       {Object.values(item).map((temp, idx) => {
@@ -2477,9 +2570,9 @@ const SmsSend = ({classes , ...props }) => {
                 }
               })
               : typedData.map((item, id) => {
-
+                if (id > typedData.length - 6) {
                 return (
-
+                 
                   <tr>
                     {item.map((data, idx) => {
                       return (
@@ -2500,6 +2593,7 @@ const SmsSend = ({classes , ...props }) => {
                     })}
                   </tr>
                 );
+                  }
               })}
           </table>
           </div>
