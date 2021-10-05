@@ -587,7 +587,9 @@ const SmsSend = ({classes , ...props }) => {
   };
   const handleRandom = (e) => {
     const re = /^[0-9\b]+$/;
-    if (e.target.value === '' || re.test(e.target.value)) 
+    if ((e.target.value === '' || re.test(e.target.value)) && e.target.value <= (selectedGroups.reduce(function (a, b) {
+      return a + b['Recipients'];
+    }, 0).toLocaleString())) 
     {
       setrandom(e.target.value);
       setboolRandom(false);
@@ -596,7 +598,9 @@ const SmsSend = ({classes , ...props }) => {
   };
   const handlePulseInput = (e) => {
     const re = /^[0-9\b]+$/;
-    if (e.target.value === '' || re.test(e.target.value)) 
+    if ((e.target.value === '' || re.test(e.target.value)) && e.target.value <= (selectedGroups.reduce(function (a, b) {
+      return a + b['Recipients'];
+    }, 0).toLocaleString())) 
     {
       setinputF(e.target.value);
       setpulseBool(false);
@@ -713,7 +717,7 @@ const SmsSend = ({classes , ...props }) => {
                     }
                     value={inputF}
                     onChange={handlePulseInput}
-                    maxLength="1"
+                    
                   />
 
                   <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'none' }}>
@@ -774,7 +778,7 @@ const SmsSend = ({classes , ...props }) => {
                     }
                     onChange={handleTime}
                     value={inputS}
-                    maxLength="1"
+                    maxLength="3"
                   />
 
                   <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'none' }}>
@@ -2585,6 +2589,10 @@ const SmsSend = ({classes , ...props }) => {
           classes={classes}
           open={finalSuccessDialog}
           // onClose={handleNewM}
+          renderButtons={false}
+          showDefaultButtons={false}
+          exit={true}
+
           
           showDefaultButtons={false}
         >
