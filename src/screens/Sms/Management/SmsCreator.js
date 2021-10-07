@@ -1329,7 +1329,7 @@ getcredits(e.target.value.length)
   const handleSelect = (id) => {
     let tempArr = [];
     for (let i = 0; i < selectedGroup.length; i++) {
-      if (id === i) {
+      if (id === selectedGroup[i].GroupID) {
         if (selectedGroup[i].selected) {
           tempArr.push({ ...selectedGroup[i], selected: false });
         } else {
@@ -1374,7 +1374,7 @@ getcredits(e.target.value.length)
         }
         settotal(num);
         settemp(tempfull);
-        const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg , TestGroupsIds : temp }
+        const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg , TestGroupsIds : temp , IsTest : true }
         let r = await dispatch(smsSave(payloadToPush));
         if(r.payload.Status == 2)
         {
@@ -1449,9 +1449,10 @@ getcredits(e.target.value.length)
                   }
                 })
                 .map((item, idx) => {
+                 
                   return (
                     <div className={classes.searchCon} onClick={() => {
-                      handleSelect(idx);
+                      handleSelect(item.GroupID);
                     }}>
                       <span
                         style={{ marginInlineEnd: "25px" }}

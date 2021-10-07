@@ -532,7 +532,7 @@ const SmsSend = ({classes , ...props }) => {
   const handleSelect = (id) => {
     let tempArr = [];
     for (let i = 0; i < filterGroups.length; i++) {
-      if (id === i) {
+      if (id === filterGroups[i].GroupID) {
         if (filterGroups[i].selected) {
           tempArr.push({ ...filterGroups[i], selected: false });
         } else {
@@ -547,7 +547,7 @@ const SmsSend = ({classes , ...props }) => {
   const handleSelectCamp = (id) => {
     let tempArr = [];
     for (let i = 0; i < totalCampaigns.length; i++) {
-      if (id === i) {
+      if (id === totalCampaigns[i].SMSCampaignID) {
         if (totalCampaigns[i].selected) {
           tempArr.push({ ...totalCampaigns[i], selected: false });
         } else {
@@ -1369,7 +1369,7 @@ const SmsSend = ({classes , ...props }) => {
                       .map((item, idx) => {
                         return (
                           <div className={classes.searchCon} onClick={() => {
-                            handleSelect(idx);
+                            handleSelect(item.GroupID);
                           }}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
@@ -1449,9 +1449,10 @@ const SmsSend = ({classes , ...props }) => {
                         }
                       })
                       .map((item, idx) => {
+                        console.log("iiiiiii",item)
                         return (
                           <div className={classes.searchCon} onClick={() => {
-                            handleSelectCamp(idx);
+                            handleSelectCamp(item.SMSCampaignID);
                           }}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
