@@ -1359,12 +1359,7 @@ getcredits(e.target.value.length)
   };
 
   const handleGroupClose = async () => {
-    if(campaignNumber !== storedValue && campaignNumber !== StaticNumber)
-    {
-            setOtpVerifyDialog(true);
-    }
-    else
-    {
+
       if (campaignName !== "" && msg !== "") {
       
         let temp = [];
@@ -1381,22 +1376,26 @@ getcredits(e.target.value.length)
         settemp(tempfull);
         const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg , TestGroupsIds : temp }
         let r = await dispatch(smsSave(payloadToPush));
-        
-        let payload2 = {
-          IsTestGroups: true,
-          SMSCampaignID: r.payload.Message,
-          TestGroupsIds: temp,
-        };
-    
-        let r2 = await dispatch(smsSaveGroup(payload2));
-        await dispatch(getCampaignSumm(r.payload.Message));
-        setsummary(true);
+        if(r.payload.Status == 2)
+        {
+          let payload2 = {
+            IsTestGroups: true,
+            SMSCampaignID: r.payload.Message,
+            TestGroupsIds: temp,
+          };
+      
+          let r2 = await dispatch(smsSaveGroup(payload2));
+          await dispatch(getCampaignSumm(r.payload.Message));
+          setsummary(true);
+        }
+        else if(r.payload.Status == 3)
+        {
+          setOtpVerifyDialog(true);
+        }
       }
-    }
-  
-    setsave(false);
-    sethidden(true);
-    setcontactGroup(false);
+        setsave(false);
+        sethidden(true);
+        setcontactGroup(false);
     
     
    
@@ -1601,6 +1600,10 @@ getcredits(e.target.value.length)
     }
     
   };
+  const handleSummary = () =>
+  {
+    setsummary(false);
+  }
 
   const renderSummary = () => {
     return (
@@ -1613,6 +1616,7 @@ getcredits(e.target.value.length)
           selectedGroups={selectedGroup}
           open={summary}
           totalRecipients={total}
+          handleCallback={handleSummary} 
           groups={temp}
           summaryPayload={getCampaignSum}
           api={onApiCall}

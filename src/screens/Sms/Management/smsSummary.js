@@ -25,12 +25,17 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
      setsmsCreator(false)
      props.handleCallback()
    }
+   const handleSmsCreate = () =>
+   {
+     setmodal(false)
+     props.handleCallback()
+   }
   return (
     <div>
       {modal ? <Dialog
         classes={classes}
         open={modal}
-        onClose={() => { setmodal(false) }}
+        onClose={() => {handleSmsCreate() }}
         onConfirm={api}
         confirmText="Send"
         cancelText="Cancel"
@@ -57,7 +62,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 <span className={classes.spanSum}>For :</span>
                 <span style={{ fontSize: "18px" }}>
                   Total Number of Recipients :
-                  <span className={classes.bodySum}>{totalRecipients}</span>
+                  <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
                 </span>
                 <span
                   style={{
@@ -149,7 +154,9 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               }}
               onClick={() => { setrecipientsDetails(!recipientsDetails) }}
             >
-              Recipients Filter ({summaryPayload.FinalCount})
+              Recipients Filter ({(groups.reduce(function (a, b) {
+                  return a + b['Recipients'];
+                }, 0).toLocaleString() - summaryPayload.FinalCount)})
             </li>
           </ul> : null}
           {recipientsDetails ? <div
