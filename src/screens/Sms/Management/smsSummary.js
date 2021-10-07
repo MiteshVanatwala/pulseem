@@ -3,13 +3,16 @@ import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
 import Mobile from "../../../assets/images/mobileiphone.png";
 
-const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api }) => {
-
+const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api , textMsg , activeGroups , ...props}) => {
+   console.log("props",props,stepBool)
   const [modal, setmodal] = useState(false);
   const [smsCreator, setsmsCreator] = useState(false);
   const [hideGroups, sethideGroups] = useState(false);
   const [recipientsDetails, setrecipientsDetails] = useState(false);
   const [details, setdetails] = useState(false);
+  const [detailsHide, setdetailsHide] = useState(true);
+  const [subDetailsActive, setsubDetailsActive] = useState(false);
+  const [subRecipientsDetails, setsubRecipients] = useState(false);
   useEffect(() => {
     setmodal(open);
   }, [open])
@@ -17,12 +20,22 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
     setsmsCreator(stepBool);
   }, [stepBool])
 
+   const handleSmsSettings = () =>
+   {
+     setsmsCreator(false)
+     props.handleCallback()
+   }
+   const handleSmsCreate = () =>
+   {
+     setmodal(false)
+     props.handleCallback()
+   }
   return (
     <div>
       {modal ? <Dialog
         classes={classes}
         open={modal}
-        onClose={() => { setmodal(false) }}
+        onClose={() => {handleSmsCreate() }}
         onConfirm={api}
         confirmText="Send"
         cancelText="Cancel"
@@ -49,7 +62,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 <span className={classes.spanSum}>For :</span>
                 <span style={{ fontSize: "18px" }}>
                   Total Number of Recipients :
-                  <span className={classes.bodySum}>{totalRecipients}</span>
+                  <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
                 </span>
                 <span
                   style={{
@@ -141,7 +154,9 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               }}
               onClick={() => { setrecipientsDetails(!recipientsDetails) }}
             >
-              Recipients Filter ({summaryPayload.FinalCount})
+              Recipients Filter ({(groups.reduce(function (a, b) {
+                  return a + b['Recipients'];
+                }, 0).toLocaleString() - summaryPayload.FinalCount)})
             </li>
           </ul> : null}
           {recipientsDetails ? <div
@@ -229,8 +244,8 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
       {smsCreator ? <Dialog
         classes={classes}
         open={smsCreator}
-        onClose={() => { setsmsCreator(false) }}
-        // onConfirm={handleExitYes}
+        onClose={() => {handleSmsSettings() }}
+        onConfirm={api}
         confirmText="Send"
         cancelText="Cancel"
         showDefaultButtons={true}
@@ -249,14 +264,22 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
 
               <div className={classes.sumChild}>
                 <span className={classes.spanSum}>When :</span>
-                <span className={classes.bodySum}>Send Now</span>
+                <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} Days ${props.after ? "After" : "Before"} ${props.specialVal} at ${props.time.format('h:mm a')}  `  : props.sendType == "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : "Send Now"}</span>
               </div>
 
+              {props.pulseTrue || props.toggleRandom ?     <div className={classes.sumChild}>
+               <span className={classes.spanSum}>Pulse Sending</span>
+              {props.pulseTrue ?  <span style={{ fontSize: "18px" }}> Packets sending - {props.pulseInput1} {props.pulsePer == "" ? props.pulseReci : props.pulsePer} {" "}
+              every {props.pulseInput2} {props.hourName == "" ? props.minName : props.hourName}</span> : null}  
+              {props.toggleRandom ?  <span style={{ fontSize: "18px" }}>Random sending - {props.random} random recipients</span> : null} 
+               {props.pulseTrue ? <span style={{ fontSize: "18px" }}>Estimated End Date : <span style={{color:"#1D82B3"}}>{props.estimationDate}</span></span> : null} 
+              </div>
+              : null}     
               <div className={classes.sumChild}>
                 <span className={classes.spanSum}>For :</span>
                 <span style={{ fontSize: "18px" }}>
                   Total Number of Recipients :
-                  <span className={classes.bodySum}>""</span>
+                  <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
                 </span>
                 <span
                   style={{
@@ -267,8 +290,9 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                     width: "50px",
                     cursor: "pointer",
                   }}
+                  onClick={()=>{setdetailsHide(!detailsHide)}}
                 >
-                  Details
+                 {detailsHide ? "Details" : "Close"}
                 </span>
               </div>
             </div>
@@ -284,11 +308,11 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                     borderBottom: "1px solid #efefef",
                   }}
                 />
-                <span className={classes.phoneNumberSum}>050608001</span>
+                <span className={classes.phoneNumberSum}>{fromNumber}</span>
                 <div className={classes.wrapChatSumm}>
                 <div className={classes.chatBox}>
                   <div className={classes.fromMe}>
-                    Type text
+                    {textMsg}
                   </div>
                   </div>
                 </div>
@@ -299,66 +323,66 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
           <div>
             <div>
 
-              <ul>
+           {detailsHide ? null :  <ul>
                 <li
                   style={{
                     fontSize: "18px",
                     fontWeight: "700",
                     marginBottom: "2px",
+                    cursor:"pointer"
                   }}
+                  onClick={()=>{setsubDetailsActive(!subDetailsActive)}}
                 >
-                  Groups (0)
+                  Groups ({activeGroups.length})
                 </li>
-              </ul>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "8px 8px 8px 55px",
-                  borderTop: "1px solid grey",
-                  fontSize: "16px",
-                }}
-              >
-                <span>Name</span>
-                <span>1 Recipients</span>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  padding: "8px 8px 8px 55px",
-                  borderTop: "1px solid grey",
-                  fontSize: "16px",
-                }}
-              >
-                <span>Name</span>
-                <span>1 Recipients</span>
-              </div>
+              </ul> }  
+             
+
+              {subDetailsActive ? <>    {
+
+                  activeGroups.map((item, idx) => {
+                    return (<div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "8px 8px 8px 55px",
+                        borderTop: "1px solid grey",
+                        fontSize: "16px",
+                      }}
+                    >
+                      <span> {item.GroupName}</span>
+                      <span>{item.Recipients}</span>
+                    </div>)
+                  })
+                  }   </> : null}
             </div>
           </div>
         </div>
         <div>
-          <ul>
+     {detailsHide  ? null :  <ul>
             <li
               style={{
                 fontSize: "18px",
                 fontWeight: "700",
                 marginBottom: "2px",
+                cursor:"pointer"
               }}
+              onClick={()=>{setsubRecipients(!subRecipientsDetails)}}
             >
-              Recipients Filter (10)
+              Recipients Filter ({(activeGroups.reduce(function (a, b) {
+                  return a + b['Recipients'];
+                }, 0).toLocaleString() - summaryPayload.FinalCount)})
             </li>
-          </ul>
-          <div
+          </ul> }    
+          {subRecipientsDetails ?   <div
             style={{
               display: "flex",
               flexDirection: "column",
               justifyContent: "center",
             }}
           >
-            <span
+      {summaryPayload.DuplicateCellphoneSharedWithClienCount == 0 ? null :    <span
               style={{
                 fontSize: "17px",
                 color: "#1771ad",
@@ -373,10 +397,10 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   color: "black",
                 }}
               >
-                10
-              </span>
-            </span>
-            <span
+                {summaryPayload.DuplicateCellphoneSharedWithClienCount}
+              </span>  </span>}   
+           
+          {summaryPayload.Removed == 0 ? null : <span
               style={{
                 fontSize: "17px",
                 color: "#1771ad",
@@ -391,9 +415,10 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   color: "black",
                 }}
               >
+                  {summaryPayload.Removed}
               </span>
-            </span>
-            <span
+            </span> }  
+            {summaryPayload.EmptyCellphoneCount == 0 ? null : <span
               style={{
                 fontSize: "17px",
                 color: "#1771ad",
@@ -408,10 +433,28 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   color: "black",
                 }}
               >
-                1
+                 {summaryPayload.EmptyCellphoneCount}
               </span>
-            </span>
-          </div>
+            </span>} 
+            {summaryPayload.Invalid == 0 ? null : <span
+              style={{
+                fontSize: "17px",
+                color: "#1771ad",
+                paddingInlineStart: "40px",
+              }}
+            >
+              Invalid:
+              <span
+                style={{
+                  fontSize: "17px",
+                  fontWeight: "700",
+                  color: "black",
+                }}
+              >
+                 {summaryPayload.Invalid}
+              </span>
+            </span>}              
+          </div> : null}
         </div>
       </Dialog> : null}
 

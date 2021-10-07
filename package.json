@@ -47,7 +47,8 @@
     "react-switch": "^6.0.0",
     "react-transition-group": "^1.2.1",
     "universal-cookie": "^4.0.4",
-    "validator": "^13.6.0"
+    "validator": "^13.6.0",
+    "xlsx": "^0.17.2"
   },
   "scripts": {
     "start": "react-scripts start",

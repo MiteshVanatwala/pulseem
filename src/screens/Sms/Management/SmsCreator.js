@@ -13,9 +13,11 @@ import Mobile from "../../../assets/images/mobileiphone.png";
 import Radio from "@material-ui/core/Radio";
 import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from "@material-ui/core/RadioGroup";
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import Emoj from "../../../assets/images/smile.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
+import Gif from "../../../assets/images/managment/check-circle.gif";
 
 import { useHistory } from "react-router";
 import {
@@ -32,7 +34,9 @@ import {
   getCreditsforSMS,
   getTestGroups,
   getCommonFeatures,
-  getSMSVirtualNumber
+  getSMSVirtualNumber,
+  getSMSRequestOTP,
+  getSMSConfirmOTP
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
 import Summary from "./smsSummary";
@@ -49,6 +53,7 @@ import MuiAlert from "@material-ui/lab/Alert";
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
+import { LinkSharp } from "@material-ui/icons";
 
 
 function Alert(props) {
@@ -90,6 +95,9 @@ const SmsCreator = ({ classes, ...props }) => {
   const inputProps = {
     maxlength: "13"
   }
+  const otpProps = {
+    maxlength:"5"
+  }
   const history = useHistory();
   const dispatch = useDispatch();
   const { language, windowSize, isRTL } = useSelector(
@@ -113,6 +121,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [dialogClickCampaign, setdialogClickCampaign] = useState(false);
   const [editmenuClick, seteditmenuClick] = useState(false);
   const [campaignBool, setcampaignBool] = useState(false);
+  const [OtpCounter, setOtpCounter] = useState(false);
   const [restoreBool, setrestoreBool] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [save, setsave] = useState(false);
@@ -134,24 +143,33 @@ const SmsCreator = ({ classes, ...props }) => {
   const [ContactSearch, setContactSearch] = useState("");
   const [cancel, setcancel] = useState(true);
   const [exitClick, setexitClick] = useState(false);
+  const [otpConfirm, setOtpConfirm] = useState(false);
   const [phone, setphone] = useState("");
   const [OpenS, setOpenS] = useState(false);
   const [alertToggle, setalertToggle] = useState(false);
   const [selectedGroup, setselectedGroup] = useState([]);
   const [StaticNumber, setStaticNumber] = useState("");
   const [hidden, sethidden] = useState(false);
+  const [splittedMsg, setsplittedMsg] = useState([])
+  const [SplittedLinks, setSplittedLinks] = useState(null);
+  const [otpSuccess, setotpSuccess] = useState(false);
   const [Searched, setSearched] = useState("");
   const [modalOpen, setmodalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const [removalNumber, setremovalNumber] = useState("");
+  const [otpVerifyDialog, setOtpVerifyDialog] = useState(false);
   const [storedValue, setstoredValue] = useState("");
   const [keep, setkeep] = useState(true);
   const [summary, setsummary] = useState(false);
   const [campaignNumberValidated, setcampaignNumberValidated] = useState(false);
   const [total, settotal] = useState(0);
   const [temp, settemp] = useState([]);
+  const [otpValue, setotpValue] = useState("");
   const [selectValue, setselectValue] = useState("Personilization");
   const [finalApi, setfinalApi] = useState(false);
+  const [isTestCampaign, setIsTestCampaign] = useState(false);
+  const [isLinksStatistics, setIsLinksStatistics] = useState(true);
+  const [otpMsgs, setotpMsgs] = useState("Required Field")
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -175,45 +193,61 @@ const SmsCreator = ({ classes, ...props }) => {
     UpdateDate: Date.now(),
   });
   const [quickSendPayload, setquickSendPayload] = useState({
-    SMSCampaignID: "",
-    SubAccountID: -1,
-    Status: -1,
-    Type: 0,
-    CreditsPerSms: "1",
-    UpdateDate: 1628770145467,
-    Name: campaignName,
-    FromNumber: campaignNumber,
-    Text: msg,
-    ResponseToEmail: "",
-    IsTestCampaign: false,
-    IsResponse: false,
-    IsLinksStatistics: true,
-    SendDate: Date.now(),
-    SendingMethod: 0,
-    IsTest: false,
-    PhoneNumber: phone,
-    MessageLength: "1"
-
+          SMSCampaignID: -1,
+          SubAccountID: -1,
+          Status: -1,
+          Type: 0,
+          CreditsPerSms: "1",
+          UpdateDate: Date.now(),
+          Name: campaignName,
+          FromNumber: campaignNumber,
+          Text: msg,
+          ResponseToEmail: "",
+          IsTestCampaign: false,
+          IsResponse: false,
+          IsLinksStatistics: isLinksStatistics,
+          SendDate: Date.now(),
+          SendingMethod: 0,
+          IsTest: isTestCampaign,
+          PhoneNumber: phone,
+          MessageLength: "1",
+          LogData: {
+            SmsCampaignID: -1, 
+            SubAccountID: "", 
+            AccountID: "", 
+            Credits: "1", 
+            TotalRecipients: 1
+          }
   })
+
 
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
     QUICKSENDSUCCESSS: { severity: 'success', color: 'success', message: t('sms.quickSend'), showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
+    OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true},
+    INVALIDNUMBER : { severity: 'error', color: 'error', message: "Invalid phone number", showAnimtionCheck: false},
+    QUICKSENDERROR : { severity: 'error', color: 'error', message: "Error sending message", showAnimtionCheck: false},
+    SENTALREADY : { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true}
   }
 
-  const handleSendResult = async () => {
-    if (smsSendResult) {
+
+
+  const handleSendResult = async (smsSendResult) => {
+  
+   
       switch (smsSendResult) {
         case -2: {// ALREADY_SENT
+          setToastMessage(toastMessages.SENTALREADY)
           break;
         }
         case -1: {// ERROR
+          setToastMessage(toastMessages.QUICKSENDERROR)
           break;
         }
         case 0: {// SUCCESS
-          break;
+        setToastMessage(toastMessages.QUICKSENDSUCCESSS)
         }
         case 1: {// PROVISION
           break;
@@ -222,17 +256,61 @@ const SmsCreator = ({ classes, ...props }) => {
           break;
         }
         case 3: {// INVALID_NUMBER
+          setToastMessage(toastMessages.INVALIDNUMBER)
           break;
         }
         case 4: {// OTP_NEEDED
+          setOtpVerifyDialog(true);
           break;
         }
         case 5: {// ACCEPTED
           break;
         }
-      }
+      
     }
   }
+
+  const handleOtpResult = async (otpSendResult) => {
+  
+   
+    switch (otpSendResult) {
+      case 1: {// Request
+       
+        break;
+      }
+      case 2: {// Success
+      setOtpConfirm(false);
+      setotpSuccess(true);
+        break;
+      }
+      case 3: {// Not_Authirized
+     
+      }
+      case 4: {// Failed
+        setOtpCounter(true);
+        setotpMsgs("Session Expired , please send again");
+        break;
+      }
+      case 5: {// NotMatch
+        setOtpCounter(true);
+        setotpMsgs("Incorrect code, try again or click on Send again");
+        break;
+      }
+      case 6: {//  CellphoneNotProvided
+        setOtpCounter(true);
+        setotpMsgs("Cellphone not correct , please try again later");
+      
+        break;
+      }
+      case 7: {// CodeNotProvided
+        setOtpCounter(true);
+        setotpMsgs("Required field");
+       
+        break;
+      }
+    
+  }
+}
   useEffect(async () => {
     await handleSendResult();
   }, [smsSendResult]);
@@ -248,10 +326,11 @@ const SmsCreator = ({ classes, ...props }) => {
       }
     }
     settemp(tempfull);
-    const FinalPayloadData = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg, TestGroupsIds: temp }
+    const FinalPayloadData = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text: msg , TestGroupsIds : temp ,IsTestCampaign : isTestCampaign , IsTest : true , IsLinksStatistics : isLinksStatistics}
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
     setsummary(false);
+    setToastMessage(toastMessages.QUICKSENDSUCCESSS);
   };
 
   useEffect(async () => {
@@ -265,13 +344,13 @@ const SmsCreator = ({ classes, ...props }) => {
     if (props && props.match.params.id) {
       getSavedData();
     }
-    else {
+  
       setcampaignNumber(r.payload.DefaultCellNumber)
-      let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber))
-
-      setStaticNumber(response.payload.Number);
-      setremovalNumber(response.payload.RemovalKey);
-    }
+      // let response =  await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber))
+      
+      // setStaticNumber(response.payload.Number);
+      // setremovalNumber(response.payload.RemovalKey);
+    
     setstoredValue(r.payload.DefaultCellNumber)
     setLoader(false);
   }, [dispatch]);
@@ -308,15 +387,14 @@ const SmsCreator = ({ classes, ...props }) => {
     getSavedData();
   }, [])
   const onEmojiClick = async (event, emojiObject) => {
+    console.log("--->emoji")
     let msgs = msg;
     let count = characterCount;
     count++;
     setcharacterCount(count);
     setChosenEmoji(emojiObject);
     setflagemoji(false);
-    let response = await dispatch(getCreditsforSMS(count));
-    let credits = response.payload.split("#");
-    setmessageCount(credits[0]);
+    getcredits(count);
     setmsg(msgs + emojiObject.emoji);
   };
 
@@ -326,10 +404,27 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const toggleChecked = () => {
     setChecked((prev) => !prev);
+    setIsTestCampaign(!isTestCampaign)
   };
   const toggleKeep = () => {
+    let toggle = !isLinksStatistics
     setkeep((prev) => !prev);
+    setIsLinksStatistics(!isLinksStatistics);
+    // if(toggle)
+    // {
+    //   set
+    // }
+    
+
   };
+
+  const getcredits = async (count) =>
+  {
+    let response = await dispatch(getCreditsforSMS(count));
+    let credits = response.payload.split("#");
+    setmessageCount(credits[0]);
+
+  }
 
   const renderSwitch = () => {
     return (
@@ -403,12 +498,31 @@ const SmsCreator = ({ classes, ...props }) => {
 
     setfinalApi(false);
   };
-  const handleSend = () => {
+  const handleSend = async () => {
     if (validationCheck()) {
       if (phone !== "") {
-        const smsQuickSendData = { ...quickSendPayload, fromNumber: campaignNumber, PhoneNumber: phone, Name: campaignName, Text: msg }
-        dispatch(smsQuick(smsQuickSendData));
-        setToastMessage(toastMessages.QUICKSENDSUCCESSS);
+        if(props && props.match.params.id)
+        {
+          console.log("inif")
+          const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false , IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
+          TotalRecipients: 1 } }
+          let r = await  dispatch(smsQuick(smsQuickSendData));
+          
+          handleSendResult(r.payload.Result)
+          //  setToastMessage(toastMessages.QUICKSENDSUCCESSS);
+        }
+        else
+        {
+          console.log("inelse")
+          const smsQuickSendData = {...quickSendPayload , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  -1 , Credits: messageCount, 
+          TotalRecipients: 1} }
+          let r = await  dispatch(smsQuick(smsQuickSendData));
+        
+          handleSendResult(r.payload.Result)
+          // setToastMessage(toastMessages.QUICKSENDSUCCESSS);
+        }
+        
+      
       } else {
         setOpenS(true);
       }
@@ -426,9 +540,10 @@ const SmsCreator = ({ classes, ...props }) => {
     setrestoreBool(true);
     setcampaignNumber(StaticNumber);
     let r = await dispatch(getCommonFeatures());
-    setcampaignNumber(r.payload.DefaultCellNumber)
-    let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber))
+    // setcampaignNumber(r.payload.DefaultCellNumber)
+    let response =  await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
     setcampaignNumber(response.payload.Number);
+    setStaticNumber(response.payload.Number);
     setremovalNumber(response.payload.RemovalKey);
 
   }
@@ -510,65 +625,130 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const onMsgChange = async (e) => {
     if (msg !== null && e.target.value.length < msg.length) {
-      setremovalMessageButtonDisabled(false);
-      setremovalLinkDisabled(false);
+      if(msg.includes("To unsubscribe reply 282"))
+      {
+        setremovalMessageButtonDisabled(true);
+      }
+      else
+      {
+        setremovalMessageButtonDisabled(false);
+      }
+      if(msg.includes("##SmsUnsubscribeURL##"))
+      {
+        setremovalLinkDisabled(true);
+      }
+      else
+      {
+        setremovalLinkDisabled(false);
+      }
+     
+     
     }
-
     setmsg(e.target.value);
     setcharacterCount(e.target.value.length);
+let tempMsg = "";
+tempMsg = e.target.value
+let arr = e.target.value.split("\n");
+setsplittedMsg(arr);
 
-    setmessageCount(e.target.value.split("\n").length);
+let count = 0;
+for (let i = 0; i < arr.length; i++) {
+  if (arr[i] != "") {
+    count++;
+  }
+}
+const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
+let links = e.target.value.match(linkRegex);
+setSplittedLinks(links);
 
-    let arr = e.target.value.split("\n");
-    let count = 0;
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i] != "") {
-        count++;
+
+if(links)
+{
+    let linkSize = links.length;
+    if(isLinksStatistics)
+    {
+      let a= 0 
+      for (let i = 0; i < arr.length; i++) { 
+        if(arr[i].includes("https://") == false)
+        {
+            a = a+arr[i].length
+        }
       }
+      setcharacterCount(a+35)
     }
-
-    const linkRegex =
-      /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
-    let links = e.target.value.match(linkRegex);
-
-    let link = 0;
-    let arr2 = e.target.value.split("https://");
-
-    link = arr2.length - 1;
-    if (links) {
-      setlinkCount(links.length);
-      count = count - links.length;
-    } else {
-      setlinkCount(0);
+    else
+    {
+           setcharacterCount(tempMsg.length)
     }
-
-    let response = await dispatch(getCreditsforSMS(e.target.value.length));
-    let credits = response.payload.split("#");
-    setmessageCount(credits[0]);
-
+}
+else
+{
+    setlinkCount(0);
+}
+getcredits(e.target.value.length)
   };
 
   const onRemovalLink = async () => {
     let newLink = "";
     newLink = msg + "##SmsUnsubscribeURL##";
     setmsg(newLink);
-    setcharacterCount(newLink.length);
-    let response = await dispatch(getCreditsforSMS(newLink.length));
-    let credits = response.payload.split("#");
+    let total = splittedMsg;
+    total.push("##SmsUnsubscribeURL##")
+    console.log("--->totu",total)
+    if(isLinksStatistics && SplittedLinks !== null)
+    {
+      let a=0;
+      for(let i = 0 ; i<total.length;i++)
+      {
+        if(total[i].includes("https://") == false)
+        {
+          a = a + total[i].length
+        }
+      }
+      console.log("a",a)
+      setcharacterCount(a+35)
+      setremovalLinkDisabled(true);
 
-    setmessageCount(credits[0]);
+    }
+    else
+    {
+       setcharacterCount(newLink.length);
+       setremovalLinkDisabled(true);
+    }
+    getcredits(newLink.length)
     setremovalLinkDisabled(true);
+   
   };
 
   const onRemovalMsg = async () => {
+
+    console.log("------>",msg)
     let newMsg = "";
     newMsg = msg + "To unsubscribe reply 282";
     setmsg(newMsg);
-    setcharacterCount(newMsg.length);
-    let response = await dispatch(getCreditsforSMS(newMsg.length));
-    let credits = response.payload.split("#");
+    let total = splittedMsg;
+    total.push("To unsubscribe reply 282")
 
-    setmessageCount(credits[0]);
+    if(isLinksStatistics && SplittedLinks !== null)
+    {
+      let a=0;
+      for(let i = 0 ; i<total.length;i++)
+      {
+        if(total[i].includes("https://") == false)
+        {
+          a = a + total[i].length
+        }
+      }
+      console.log("a",a)
+      setcharacterCount(a+35)
+      setremovalMessageButtonDisabled(true);
+    }
+    else
+    {
+      setcharacterCount(newMsg.length);
+      setremovalMessageButtonDisabled(true);
+    }
+    getcredits(newMsg.length)
     setremovalMessageButtonDisabled(true);
   };
 
@@ -577,9 +757,7 @@ const SmsCreator = ({ classes, ...props }) => {
     let linkMsg = "";
     linkMsg = msg + e.target.value;
     setmsg(linkMsg);
-    let response = await dispatch(getCreditsforSMS(e.target.value.length));
-    let credits = response.payload.split("#");
-    setmessageCount(credits[0]);
+    getcredits(e.target.value.length)
     setcharacterCount(linkMsg.length);
   };
 
@@ -667,10 +845,10 @@ const SmsCreator = ({ classes, ...props }) => {
                   </>
 
                 )}
-                <Box className={classes.pickerEmoji}>
+                <Box className={classes.pickerEmoji} onBlur={()=>{setflagemoji(false)}}>
                   {flagemoji ? (
                     <Picker
-                      onEmojiClick={onEmojiClick}
+                      onEmojiClick={() => {onEmojiClick()}}
                       groupVisibility={{
                         flags: false,
                       }}
@@ -860,7 +1038,12 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleNumberChange = (e) => {
-    setphone(e.target.value);
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) 
+    {
+      setphone(e.target.value);
+    }
+    
   };
 
   const renderPhone = () => {
@@ -945,25 +1128,13 @@ const SmsCreator = ({ classes, ...props }) => {
                       placeholder={t("mainReport.enterPhone")}
                       className={classes.rightInput}
                       value={phone}
+                      maxLength="12"
                       onChange={handleNumberChange}
                     />
                     <span className={classes.rightSend} onClick={handleSend}>
                       {t("mainReport.send")}
                     </span>
-                    <Snackbar
-                      open={OpenS}
-                      autoHideDuration={2000}
-                      onClose={handleClose}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "center",
-                      }}
-                      style={{ zIndex: "9999" }}
-                    >
-                      <Alert severity="error" onClose={handleCloseSnackbar} style={{ border: "3px solid #FF2400", backgroundColor: "#ffe6e6", color: "black", width: "400px", padding: "10px", fontWeight: "600" }}>
-                        {t("mainReport.invalidNo")}
-                      </Alert>
-                    </Snackbar>
+       
                   </div>
                 ) : null}
 
@@ -984,37 +1155,38 @@ const SmsCreator = ({ classes, ...props }) => {
                   </span>
                 </div>
                 {radioBtn === "bottom" ? (
-                  <div className={classes.rightForm}>
-                    <div
-                      className={classes.contactGroupDiv}
-                      onClick={() => {
-                        setcontactGroup(true);
-                      }}
-                    >
-                      <div> {t("mainReport.ChooseLinks")}</div>
-                      {hidden ? (
-                        <div className={classes.mappedGroup}>
-                          {selectedGroup.map((item, index) => {
-                            if (item.selected && hidden) {
-                              return (
-                                <div className={classes.selectedGroupsDiv}>
-                                  <span className={classes.nameGroup}>
-                                    {item.GroupName}
-                                  </span>
-                                  <RiCloseFill
-                                    className={classes.groupCloseicn}
-                                    onClick={() => {
-                                      handleCross(index);
-                                    }}
-                                  />
-                                </div>
-                              );
-                            }
-                          })}
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
+             <div className={classes.rightForm}>
+             <div
+               className={classes.contactGroupDiv}
+               onClick={() => {
+                 setcontactGroup(true);
+               }}
+             >
+               <div> {t("mainReport.ChooseLinks")}</div>
+               {hidden ? (
+                 <div className={classes.mappedGroup}>
+                   {selectedGroup.map((item, index) => {
+                     if (item.selected && hidden) {
+                       return (
+                         <div className={classes.selectedGroupsDiv}>
+                           <span className={classes.nameGroup}>
+                             {item.GroupName}
+                           </span>
+                           <RiCloseFill
+                             className={classes.groupCloseicn}
+                             onClick={() => {
+                               handleCross(index);
+                             }}
+                           />
+                         </div>
+                       );
+                     }
+                   })}
+                 </div>
+               ) : null}
+             </div>
+           </div>
+
                 ) : null}
               </div>
             </RadioGroup>
@@ -1044,17 +1216,53 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const onContinueClick = async (isSave) => {
     if (validationCheck()) {
-      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
-      let r = await dispatch(smsSave(payloadToPush));
-      if (isSave) {
-
+     
+      if(props && props.match.params.id)
+      {
+        const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : props.match.params.id}
+        let r = await dispatch(smsSave(payloadToPush));
+        if(r.payload.Status == 2)
+        {
+          if (isSave) {  
+            setToastMessage(toastMessages.SUCCESS);
+            setTimeout(() => {
+              history.push(`/sms/edit/${props.match.params.id}`);
+              setToastMessage(null);
+            }, 1500);  
+          } else {
+    
+                history.push(`/sms/edit/${props.match.params.id}`);
+                history.push(`/sms/send/${props.match.params.id}`);
+          }
+        }
+        else if(r.payload.Status == 3)
+        {
+          setOtpVerifyDialog(true);
+        }
+     
+      }
+      else
+     {
+      const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : -1}
+       let r = await dispatch(smsSave(payloadToPush));
+       if(r.payload.Status == 2)
+       {
+       
+       if (isSave) {
         setToastMessage(toastMessages.SUCCESS);
         setTimeout(() => {
           window.location = `/react/sms/edit/${r.payload.Message}`;
         }, 1500);
       } else {
-        window.location = `/react/sms/send/${r.payload.Message}`;
+            history.push(`/sms/edit/${r.payload.Message}`);
+            history.push(`/sms/send/${r.payload.Message}`); 
       }
+    }
+      else if(r.payload.Status == 3)
+        {
+          setOtpVerifyDialog(true);
+        }
+     }
     }
   };
 
@@ -1080,23 +1288,19 @@ const SmsCreator = ({ classes, ...props }) => {
     seteditmenuClick(false);
     setmsg(linkMsg);
     setcharacterCount(linkMsg.length);
-    let response = await dispatch(getCreditsforSMS(linkMsg.length));
-    let credits = response.payload.split("#");
-    setmessageCount(credits[0]);
+    getcredits(linkMsg.length)
     let lc = linkCount;
     setlinkCount(++lc);
   };
 
   const handleCampClick = async (id) => {
     let campaignData = "";
-    campaignData = msg + getPreviousCampaignData[id].EncryptURL;
+    campaignData = msg + previousCampaignData[id].EncryptURL;
     setdialogClickCampaign(false);
     seteditmenuClick(false);
     setmsg(campaignData);
     setcharacterCount(campaignData.length);
-    let response = await dispatch(getCreditsforSMS(campaignData.length));
-    let credits = response.payload.split("#");
-    setmessageCount(credits[0]);
+    getcredits(campaignData.length)
     let cc = linkCount;
     setlinkCount(++cc);
   };
@@ -1138,39 +1342,46 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleGroupClose = async () => {
-    if (campaignName !== "" && msg !== "") {
 
-      let temp = [];
-      let tempfull = [];
-      let num = 0;
-      for (let i = 0; i < selectedGroup.length; i++) {
-        if (selectedGroup[i].selected) {
-          temp.push(selectedGroup[i].GroupID);
-          tempfull.push(selectedGroup[i]);
-          ++num;
+      if (campaignName !== "" && msg !== "") {
+      
+        let temp = [];
+        let tempfull = [];
+        let num = 0;
+        for (let i = 0; i < selectedGroup.length; i++) {
+          if (selectedGroup[i].selected) {
+            temp.push(selectedGroup[i].GroupID);
+            tempfull.push(selectedGroup[i]);
+            ++num;
+          }
+        }
+        settotal(num);
+        settemp(tempfull);
+        const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg , TestGroupsIds : temp }
+        let r = await dispatch(smsSave(payloadToPush));
+        if(r.payload.Status == 2)
+        {
+          let payload2 = {
+            IsTestGroups: true,
+            SMSCampaignID: r.payload.Message,
+            TestGroupsIds: temp,
+          };
+      
+          let r2 = await dispatch(smsSaveGroup(payload2));
+          await dispatch(getCampaignSumm(r.payload.Message));
+          setsummary(true);
+        }
+        else if(r.payload.Status == 3)
+        {
+          setOtpVerifyDialog(true);
         }
       }
-      settotal(num);
-      settemp(tempfull);
-      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg, TestGroupsIds: temp }
-      let r = await dispatch(smsSave(payloadToPush));
-
-      let payload2 = {
-        IsTestGroups: true,
-        SMSCampaignID: r.payload.Message,
-        TestGroupsIds: temp,
-      };
-
-      let r2 = await dispatch(smsSaveGroup(payload2));
-      await dispatch(getCampaignSumm(r.payload.Message));
-      setsummary(true);
-    }
-    setsave(false);
-    sethidden(true);
-    setcontactGroup(false);
-
-
-
+        setsave(false);
+        sethidden(true);
+        setcontactGroup(false);
+    
+    
+   
   };
   const renderSendGroup = () => {
     return (
@@ -1370,6 +1581,10 @@ const SmsCreator = ({ classes, ...props }) => {
     }
 
   };
+  const handleSummary = () =>
+  {
+    setsummary(false);
+  }
 
   const renderSummary = () => {
     return (
@@ -1382,6 +1597,7 @@ const SmsCreator = ({ classes, ...props }) => {
           selectedGroups={selectedGroup}
           open={summary}
           totalRecipients={total}
+          handleCallback={handleSummary} 
           groups={temp}
           summaryPayload={getCampaignSum}
           api={onApiCall}
@@ -1396,9 +1612,7 @@ const SmsCreator = ({ classes, ...props }) => {
     let lc = linkCount;
     setlinkCount(++lc);
     setcharacterCount(tempmsg.length);
-    let response = await dispatch(getCreditsforSMS(tempmsg.length));
-    let credits = response.payload.split("#");
-    setmessageCount(credits[0]);
+    getcredits(tempmsg.length)
     setwaize(false);
   };
 
@@ -1711,16 +1925,63 @@ const SmsCreator = ({ classes, ...props }) => {
       </Dialog></>)
   }
 
-  const renderOtpVerificationDialog = () => {
-    return (
-      <Dialog
-        classes={classes}
-        open={false}
-        showDefaultButtons={false}
-        icon={<div className={classes.dialogIconContent}>
-          {'\uE11B'}
-        </div>}
+  const renderOtpSuccessDialog = () =>
+  {
+    return(
+      <>
+        <Dialog
+          classes={classes}
+          open={otpSuccess}
+          // onClose={handleNewM}
+          renderButtons={false}
+          showDefaultButtons={false}
+          exit={true}
 
+          
+          showDefaultButtons={false}
+        >
+          <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
+          <img src={Gif} style={{width:"150px",height:"150px"}}/>
+        
+            <span style={{marginTop:"10px",fontSize:"22px",fontWeight:"700"}}>Verified!</span>
+    
+       
+            <p style={{marginTop:"10px",fontSize:"18px",fontWeight:"600"}}>
+            You can now send campaigns from this number
+            </p>
+       
+       
+            <span style={{padding:"12px",backgroundColor:"green",marginTop:"10px",cursor:"pointer",color:"#ffffff",borderRadius:"10px"}} onClick={()=>{setotpSuccess(false)}}>Confirm</span>
+            </div>
+        
+        </Dialog>
+      </>
+    )
+  }
+
+  const handleVerifyOTP = async () =>
+  {
+    let payload = {
+      "Cellphone": campaignNumber,
+    }
+    let r = await dispatch(getSMSRequestOTP(payload))
+    setOtpVerifyDialog(false);
+    setOtpConfirm(true);
+   
+  }
+
+  const renderOtpVerificationDialog = () => 
+  {
+    return(
+      <Dialog
+      classes={classes}
+      open={otpVerifyDialog}
+      onCancel={()=>{setOtpVerifyDialog(false)}}
+      showDefaultButtons={false}
+      icon={<div className={classes.dialogIconContent}>
+            {'\uE11B'}
+          </div>}
+      
       >
         <Box className={classes.verificationBoxSMS}>
           <Typography className={classes.groupName} style={{ textAlign: "center", width: "100%" }}>
@@ -1736,6 +1997,8 @@ const SmsCreator = ({ classes, ...props }) => {
             id="outlined-basic"
             type="text"
             className={classes.OtpPhoneNumberInput}
+            value={campaignNumber}
+            disabled
           />
 
           <Button
@@ -1744,49 +2007,82 @@ const SmsCreator = ({ classes, ...props }) => {
             className={clsx(
               classes.dialogButton,
               classes.dialogConfirmButton
-            )} style={{ width: "250px" }}>{t("sms.sendVerificationCode")}</Button>
-          <Typography className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
-          <Typography style={{ fontSize: "14px" }}>{t("sms.helplineSMS")}</Typography>
-        </Box>
+            )} style={{width:"250px"}} onClick={() => {handleVerifyOTP()}}>{t("sms.sendVerificationCode")}</Button>
+         <Typography  className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
+         <Typography style={{fontSize:"14px"}}>{t("sms.helplineSMS")}</Typography>
+       </Box>
       </Dialog>
 
     )
   }
-  const renderOtpNumberDialog = () => {
-    return (
+
+  const submitOtp =  async () =>
+  {
+    let payload = 
+    {
+      "Cellphone": campaignNumber,
+      "Code": otpValue,
+    }
+    if(otpValidationscheck())
+    {
+    let r =  await dispatch(getSMSConfirmOTP(payload))
+    handleOtpResult(r.payload.Status)
+
+    }
+  }
+  const handleOtpChnage = (e) =>
+  {
+    setotpValue(e.target.value);
+    setOtpCounter(false);
+    setotpMsgs("Required field")
+  }
+  const otpValidationscheck = () => {
+    if (otpValue === "") {
+      setOtpCounter(true);
+      return false;
+    }
+    return true;
+  };
+  const renderOtpNumberDialog = () =>
+  {
+    return(
       <Dialog
-        classes={classes}
-        open={false}
-        showDefaultButtons={false}
-        icon={<div className={classes.dialogIconContent}>
-          {'\uE11B'}
-        </div>}
+      classes={classes}
+      open={otpConfirm}
+      showDefaultButtons={false}
+      onCancel={()=>{setOtpConfirm(false)}}
+      icon={<div className={classes.dialogIconContent}>
+            {'\uE11B'}
+          </div>}
       >
         <Box className={classes.verificationBoxSMS}>
           <Typography className={classes.groupName} style={{ textAlign: "center", width: "100%" }}>
             {t("sms.weHaveSentOtp")}
           </Typography>
         </Box>
-        <Box className={classes.verificationBodySMS}>
-          <Typography className={classes.fontSmsRegulations}>
-            {t("sms.OtpSentSuccessLine1")} <strong>9592224549</strong>
-          </Typography>
-          <Typography className={classes.fontSmsRegulations}>{t("sms.OtpSentSuccessLine2")}</Typography>
-          <TextField
+       <Box  className={classes.verificationBodySMS}>
+         <Typography className={classes.fontSmsRegulations}>
+         {t("sms.OtpSentSuccessLine1")} <strong>{campaignNumber}</strong> 
+         </Typography>
+         <Typography className={classes.fontSmsRegulations}>{t("sms.OtpSentSuccessLine2")}</Typography>
+         <TextField
             id="outlined-basic"
             type="text"
-            className={classes.OtpPhoneNumberConfirm}
+            className={OtpCounter ?   clsx(classes.OtpPhoneNumberConfirm,classes.error) :  clsx(classes.OtpPhoneNumberConfirmSuccess,classes.success)}
             placeholder={t("sms.typeOtpPlaceholder")}
+            onChange={(e)=>{handleOtpChnage(e)}}
+            inputProps={otpProps}
           />
-          <Button
+        {OtpCounter ?  <Typography style={{marginBottom:"30px",color:"red"}}>{otpMsgs}</Typography> : null } 
+            <Button
             variant='contained'
             size='small'
             className={clsx(
               classes.dialogButton,
               classes.dialogConfirmBlueButton
-            )} style={{ width: "250px" }}>{t("sms.confirmOtp")}</Button>
-          <Box style={{ display: "flex", marginTop: "20px" }}>  <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography ><Typography style={{ textDecoration: "underline", marginInlineStart: "4px" }} className={classes.fontSmsRegulations}>{t("sms.sendAgainOtp")}</Typography></Box>
-        </Box>
+            )} style={{width:"250px"}} onClick={()=>{submitOtp()}}>{t("sms.confirmOtp")}</Button>
+       <Box style={{display:"flex",marginTop:"20px"}}>  <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography ><Typography style={{textDecoration:"underline",marginInlineStart:"4px"}} className={classes.fontSmsRegulations} onClick={()=>{handleVerifyOTP()}}>{t("sms.sendAgainOtp")}</Typography></Box>
+       </Box>
       </Dialog>
 
     )
@@ -1823,7 +2119,9 @@ const SmsCreator = ({ classes, ...props }) => {
       {renderOtpVerificationDialog()}
       {renderOtpNumberDialog()}
       {renderSummary()}
+      {renderOtpSuccessDialog()}
 
+    
     </DefaultScreen>
   );
 };

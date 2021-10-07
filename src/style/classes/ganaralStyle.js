@@ -1048,6 +1048,31 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginBottom: "8px",
     },
   },
+  summaryBtn : 
+{
+  outline: "none",
+  padding: "10px",
+  marginInlineEnd: "12px",
+  cursor: "pointer",
+  borderRadius: "30px",
+  height: "40px",
+  boxShadow: "0 1px 2px #a5a2a2",
+  border: "0",
+  width: "100px",
+  borderColor: "#449d44",
+  // backgroundImage: "linear-gradient(180deg,#5cb85c 0,#449d44)",
+  color: "white",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  fontWeight: "700",
+  "@media screen and (max-width: 768px)": {
+    marginInlineEnd: "0px",
+    height: "30px",
+    width: "90%",
+    marginBottom: "8px",
+  },
+},
   phoneNumber: {
     position: "absolute",
     display: "flex",
@@ -1431,7 +1456,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   greenManual: {
     border: "2px dashed #4BB543",
-    width: "700px",
     height: "400px",
     backgroundColor: "#CCFFE5",
     "@media screen and (max-width: 768px)": {
@@ -1458,7 +1482,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   greenCon: {
-    width: "680px",
+    width: "calc(100% - 20px)",
     outline: "none",
     border: "none",
     resize: "none",
@@ -1525,8 +1549,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: "#ffffff",
       backgroundColor: "#277bff",
     }
+  },
 
-
+  pulseDisable : 
+  {
+    border: "1px solid  #808080",
+    padding: "8px",
+    marginInlineEnd: "8px",
+    borderRadius: "4px",
+    cursor: "pointer",
+    color: "#808080",
+    pointerEvents:"none"
+  
   },
   toggleDiv: {
     display: "flex",
@@ -1553,6 +1587,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#277BFF",
     cursor: "pointer"
   },
+  disabledBefore : 
+  {
+    display: "flex",
+    width: "72px",
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomLeftRadius: "4px",
+    borderTopLeftRadius: "4px",
+    border: "1px solid #D3D3D3",
+    padding: "10px",
+    marginBottom: "8px",
+    color: "#D3D3D3",
+    cursor: "pointer"
+  },
   after: {
     display: "flex",
     width: "72px",
@@ -1565,6 +1613,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "10px",
     marginBottom: "8px",
     color: "#277BFF",
+    cursor: "pointer"
+  },
+  disabledAfter : 
+  {
+    display: "flex",
+    width: "72px",
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomRightRadius: "4px",
+    borderTopRightRadius: "4px",
+    borderLeft: "none",
+    border: "1px solid #D3D3D3",
+    padding: "10px",
+    marginBottom: "8px",
+    color: "#D3D3D3",
     cursor: "pointer"
   },
   beforeActive: {
@@ -1843,7 +1906,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: '#007bff',
     border: '1px solid #007bff',
     padding: "8px",
-    borderRadius: "5px"
+    borderRadius: "5px",
+    cursor:"pointer"
   },
   blueDoc:
   {
@@ -2075,7 +2139,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     justifyContent: "center",
     height: "40px",
-    width: "100%",
+    width: "700px",
+    flexWrap:"wrap",
+    overflowY:"auto",
     backgroundColor: "#F7F7F7",
   },
   manualModal: {
@@ -2085,18 +2151,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginTop: "15px",
     marginBottom: "20px",
     width: "100%",
-    maxWidth: "702px",
+   
   },
   inputManual:
   {
     padding: "10px",
+    width:"72%",
     outline: "none",
-    borderRadius: "4px"
+    borderRadius: "4px",
+    border : "1px solid #ddd"
   },
   adjustP:
   {
     position: "relative",
-    width: "100%"
+    width: "100%",
+    // display:"flex",
+    // alignItems:"center",
+    // justifyContent:"center"
   },
   bgBlack: {
     backgroundColor: 'black'
@@ -2121,9 +2192,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "100%",
     display: "flex",
     flexDirection: "column",
-    borderLeft: "1px solid gray",
-    borderRight: "1px solid gray",
-    borderBottom: "1px solid gray",
+    borderLeft: "1px solid #ddd",
+    borderRight: "1px solid #ddd",
+    borderBottom: "1px solid #ddd",
     zIndex: "99",
     backgroundColor: "#fff"
 
@@ -2133,13 +2204,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     padding: "10px",
     textAlign: "center",
-    borderBottom: "1px solid gray",
+    borderBottom: "1px solid #ddd",
     zIndex: "9",
     cursor: "pointer",
 
     '&:hover':
     {
-      backgroundColor: "#3C88BB",
+      backgroundColor: "#277BFF",
       color: "#fff",
       zIndex: "9"
     }
@@ -2148,7 +2219,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     padding: "10px",
     textAlign: "center",
-    borderBottom: "1px solid gray",
+    borderBottom: "1px solid #ddd",
     zIndex: "9",
     cursor: "pointer",
     pointerEvents: "none"
@@ -2156,7 +2227,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   manualChild:
   {
     display: "flex",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     alignItems: "center",
     marginTop: "15px"
   },
@@ -2504,14 +2575,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   OtpPhoneNumberInput :
   {
-    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"200px",alignContent:"center",marginBottom:"30px",padding:"5px"
+    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"200px",alignContent:"center",marginBottom:"30px",padding:"5px",textAlign:"center"
+  
   },
   OtpPhoneNumberConfirm :
   {
-    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"300px",textAlign:"center",marginBottom:"30px",padding:"5px",
+    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"300px",textAlign:"center",padding:"5px",
     "&::placeholder":
     {
-      alignContent:"center"
+      textAlign: "center"
+    }
+  },
+  OtpPhoneNumberConfirmSuccess :
+  {
+    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"300px",textAlign:"center",padding:"5px",marginBottom:"30px",
+    "&::placeholder":
+    {
+      textAlign: "center"
     }
   },
   otpContactUs : 
