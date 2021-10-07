@@ -1032,12 +1032,43 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     marginBottom: '1rem',
     marginTop: '1rem'
   },
+  statusBlue: {
+    marginBottom: '1rem',
+    padding: '3px 15px',
+    borderRadius: '.9rem',
+    background: '#0371AD',
+    color: 'white',
+    border: '1px solid #0371AD'
+  },
   bulkStatusBlue: {
     marginBottom: '1rem',
     padding: '3px 15px',
     borderRadius: '.9rem',
     background: '#0371AD',
     color: 'white',
+    border: '1px solid #0371AD',
+    transition: 'all ease-in-out 0.2s',
+    '&:hover': {
+      background: 'white',
+      color: '#0371AD',
+      border: '1px solid #0371AD',
+      '& a': {
+        background: 'transparent',
+        color: '#0371AD',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center'
+      }
+
+    }
+  },
+  statusOutline: {
+    marginBottom: '1rem',
+    padding: '3px 15px',
+    borderRadius: '.9rem',
+    border: '1px solid #0371AD',
+    background: 'transparent',
+    color: '#0371AD'
   },
   bulkOutline: {
     marginBottom: '1rem',
@@ -1046,6 +1077,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     border: '1px solid #0371AD',
     background: 'transparent',
     color: '#0371AD',
+    transition: 'all ease-in-out 0.2s',
+    '&:hover': {
+      border: '1px solid #0371AD',
+      background: '#0371AD',
+      color: '#fff',
+    }
   },
   bulkTitle: {
     fontWeight: 700,

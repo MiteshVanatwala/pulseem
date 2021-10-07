@@ -183,5 +183,9 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     },
     paymentDialog: {
         maxWidth: 480
+    },
+    shoppingCartIcon: {
+        fontSize: 24,
+        marginBottom: -6
     }
 });

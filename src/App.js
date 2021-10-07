@@ -28,8 +28,6 @@ import NewslettersReport from './screens/Reports/NewslettersReport'
 import { useMediaQuery } from '@material-ui/core';
 import DashboardScreen from './screens/Dashboard/Dashboard';
 import SmsReport from './screens/Reports/SmsReport';
-import SmsCreator from './screens/Sms/Management/SmsCreator';
-import SmsSend from './screens/Sms/Management/SmsSend';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -50,21 +48,6 @@ const renderRoutes = (classes, history) => {
         exact
         path="/"
         render={props => <DashboardScreen {...props} classes={classes} />}
-      />
-      <Route
-
-        path="/sms/create/"
-        render={props => <SmsCreator {...props} classes={classes} />}
-      />
-      <Route
-
-        path="/sms/edit/:id"
-        render={props => <SmsCreator {...props} classes={classes} />}
-      />
-      <Route
-
-        path="/sms/send/:id"
-        render={props => <SmsSend {...props} classes={classes} />}
       />
       <Route
         path={`/notifications/edit/:notificationID`}
