@@ -17,6 +17,7 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import Emoj from "../../../assets/images/smile.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
+import Gif from "../../../assets/images/managment/check-circle.gif";
 
 import { useHistory } from "react-router";
 import {
@@ -154,7 +155,8 @@ const SmsCreator = ({ classes, ...props }) => {
   const [StaticNumber, setStaticNumber] = useState("");
   const [hidden, sethidden] = useState(false);
   const [splittedMsg, setsplittedMsg] = useState([])
-  const [SplittedLinks, setSplittedLinks] = useState(null)
+  const [SplittedLinks, setSplittedLinks] = useState(null);
+  const [otpSuccess, setotpSuccess] = useState(false);
   const [Searched, setSearched] = useState("");
   const [modalOpen, setmodalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
@@ -171,6 +173,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [finalApi, setfinalApi] = useState(false);
   const [isTestCampaign, setIsTestCampaign] = useState(false);
   const [isLinksStatistics, setIsLinksStatistics] = useState(true);
+  const [otpMsgs, setotpMsgs] = useState("Required Field")
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -270,6 +273,48 @@ const SmsCreator = ({ classes, ...props }) => {
       
     }
   }
+
+  const handleOtpResult = async (otpSendResult) => {
+  
+   
+    switch (otpSendResult) {
+      case 1: {// Request
+       
+        break;
+      }
+      case 2: {// Success
+      setOtpConfirm(false);
+      setotpSuccess(true);
+        break;
+      }
+      case 3: {// Not_Authirized
+     
+      }
+      case 4: {// Failed
+        setOtpCounter(true);
+        setotpMsgs("Session Expired , please send again");
+        break;
+      }
+      case 5: {// NotMatch
+        setOtpCounter(true);
+        setotpMsgs("Incorrect code, try again or click on Send again");
+        break;
+      }
+      case 6: {//  CellphoneNotProvided
+        setOtpCounter(true);
+        setotpMsgs("Cellphone not correct , please try again later");
+      
+        break;
+      }
+      case 7: {// CodeNotProvided
+        setOtpCounter(true);
+        setotpMsgs("Required field");
+       
+        break;
+      }
+    
+  }
+}
   useEffect(async () => {
     await handleSendResult();
   }, [smsSendResult]);
@@ -285,7 +330,7 @@ const SmsCreator = ({ classes, ...props }) => {
       }
     }
     settemp(tempfull);
-    const FinalPayloadData = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text: msg , TestGroupsIds : temp ,IsTestCampaign : isTestCampaign , IsTest : isTestCampaign , isLinksStatistics : isLinksStatistics}
+    const FinalPayloadData = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text: msg , TestGroupsIds : temp ,IsTestCampaign : isTestCampaign , IsTest : true , IsLinksStatistics : isLinksStatistics}
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
     setsummary(false);
@@ -463,7 +508,8 @@ const SmsCreator = ({ classes, ...props }) => {
       if (phone !== "") {
         if(props && props.match.params.id)
         {
-          const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : isTestCampaign , isLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
+          console.log("inif")
+          const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false , IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
           TotalRecipients: 1 } }
           let r = await  dispatch(smsQuick(smsQuickSendData));
           
@@ -472,7 +518,8 @@ const SmsCreator = ({ classes, ...props }) => {
         }
         else
         {
-          const smsQuickSendData = {...quickSendPayload , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : isTestCampaign , isLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  -1 , Credits: messageCount, 
+          console.log("inelse")
+          const smsQuickSendData = {...quickSendPayload , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  -1 , Credits: messageCount, 
           TotalRecipients: 1} }
           let r = await  dispatch(smsQuick(smsQuickSendData));
         
@@ -1188,7 +1235,7 @@ getcredits(e.target.value.length)
      
       if(props && props.match.params.id)
       {
-        const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , isLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : props.match.params.id}
+        const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : props.match.params.id}
         let r = await dispatch(smsSave(payloadToPush));
         if(r.payload.Status == 2)
         {
@@ -1212,7 +1259,7 @@ getcredits(e.target.value.length)
       }
       else
      {
-      const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , isLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : -1}
+      const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : -1}
        let r = await dispatch(smsSave(payloadToPush));
        if(r.payload.Status == 2)
        {
@@ -1899,6 +1946,40 @@ return(
       </Dialog></>)
   }
 
+  const renderOtpSuccessDialog = () =>
+  {
+    return(
+      <>
+        <Dialog
+          classes={classes}
+          open={otpSuccess}
+          // onClose={handleNewM}
+          renderButtons={false}
+          showDefaultButtons={false}
+          exit={true}
+
+          
+          showDefaultButtons={false}
+        >
+          <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
+          <img src={Gif} style={{width:"150px",height:"150px"}}/>
+        
+            <span style={{marginTop:"10px",fontSize:"22px",fontWeight:"700"}}>Verified!</span>
+    
+       
+            <p style={{marginTop:"10px",fontSize:"18px",fontWeight:"600"}}>
+            You can now send campaigns from this number
+            </p>
+       
+       
+            <span style={{padding:"12px",backgroundColor:"green",marginTop:"10px",cursor:"pointer",color:"#ffffff",borderRadius:"10px"}} onClick={()=>{setotpSuccess(false)}}>Confirm</span>
+            </div>
+        
+        </Dialog>
+      </>
+    )
+  }
+
   const handleVerifyOTP = async () =>
   {
     let payload = {
@@ -1966,12 +2047,7 @@ return(
     if(otpValidationscheck())
     {
     let r =  await dispatch(getSMSConfirmOTP(payload))
-    setOtpConfirm(false);
-    setToastMessage(toastMessages.OTP);
-
-    }
-    else
-    {
+    handleOtpResult(r.payload.Status)
 
     }
   }
@@ -1979,6 +2055,7 @@ return(
   {
     setotpValue(e.target.value);
     setOtpCounter(false);
+    setotpMsgs("Required field")
   }
   const otpValidationscheck = () => {
     if (otpValue === "") {
@@ -2017,7 +2094,7 @@ return(
             onChange={(e)=>{handleOtpChnage(e)}}
             inputProps={otpProps}
           />
-        {OtpCounter ?  <Typography style={{marginBottom:"30px",color:"red"}}>Required Field</Typography> : null } 
+        {OtpCounter ?  <Typography style={{marginBottom:"30px",color:"red"}}>{otpMsgs}</Typography> : null } 
             <Button
             variant='contained'
             size='small'
@@ -2063,6 +2140,7 @@ return(
       {renderOtpVerificationDialog()}
       {renderOtpNumberDialog()}
       {renderSummary()}
+      {renderOtpSuccessDialog()}
 
     
     </DefaultScreen>
