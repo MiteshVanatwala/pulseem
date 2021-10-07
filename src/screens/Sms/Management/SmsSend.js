@@ -286,7 +286,7 @@ const SmsSend = ({classes , ...props }) => {
   const [highlighted, setHighlighted] = React.useState(false);
   const [contacts, setContacts] = React.useState([]);
   const [daysBeforeAfter, setdaysBeforeAfter] = useState("");
-  const [Header, setHeader] = useState("");
+  const [Header, setHeader] = useState([]);
   const [pulseReci, setpulseReci] = useState("");
   const [snackBarPulseBoolean, setsnackBarPulseBoolean] = useState(false);
   const [snackbarTimeBoolean, setsnackbarTimeBoolean] = useState(false);
@@ -348,7 +348,7 @@ const SmsSend = ({classes , ...props }) => {
 
   const defaultProps = {
     options: selectArray,
-    getOptionLabel: (option) => option.label,
+    getOptionLabel: (option) => option.value,
   };
 
 
@@ -2242,11 +2242,11 @@ const SmsSend = ({classes , ...props }) => {
     // else
     // {
 
-    let h = headers;
-    h[idx] = name.value;
-    setheaders(h);
-    selectArray[id].isdisabled = true;
-    selectArray[id].idx = idx;
+      let h = headers;
+      h[idx] = name.value;
+      setheaders(h);
+      selectArray[id].isdisabled = true;
+      selectArray[id].idx = idx;
 
     // }
 
@@ -2484,10 +2484,10 @@ const SmsSend = ({classes , ...props }) => {
                           id="combo-box-demo"
                           onChange={(event , newValue) => {
                             console.log("--->",newValue)
-                            setHeader(newValue);
+                            Header.push(newValue);
                           }}
-                          value={Header[idx]}
-                          sx={{ width: 300 }}
+                         
+                          sx={{ width: 400 }}
                           renderInput={(params) => <TextField {...params} label="Adjust Title" />}
                         /> */}
                     </th>
