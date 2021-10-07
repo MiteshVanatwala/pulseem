@@ -53,11 +53,13 @@ import { Button, Grid, Box, TextField } from "@material-ui/core";
 import { AiOutlineExclamationCircle, AiOutlineDelete, AiOutlinePlusCircle , AiOutlineFile ,AiOutlineAlignLeft } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 import Snackbar from "@material-ui/core/Snackbar";
+import { Loader } from '../../../components/Loader/Loader';
 import MuiAlert from "@material-ui/lab/Alert";
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
 import { LinkSharp } from "@material-ui/icons";
+
 
 
 function Alert(props) {
@@ -129,7 +131,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [restoreBool, setrestoreBool] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [save, setsave] = useState(false);
-  const [showLoader, setLoader] = useState(true);
   const [campaignName, setcampaignName] = useState("");
   const [campaignNumber, setcampaignNumber] = useState("");
   const [characterCount, setcharacterCount] = useState(0);
@@ -169,6 +170,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [total, settotal] = useState(0);
   const [temp, settemp] = useState([]);
   const [otpValue, setotpValue] = useState("");
+  const [showLoader, setLoader] = useState(true);
   const [selectValue, setselectValue] = useState("Personilization");
   const [finalApi, setfinalApi] = useState(false);
   const [isTestCampaign, setIsTestCampaign] = useState(false);
@@ -500,7 +502,9 @@ const SmsCreator = ({ classes, ...props }) => {
           console.log("inif")
           const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false , IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData : { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
           TotalRecipients: 1 } }
+          setLoader(true);
           let r = await  dispatch(smsQuick(smsQuickSendData));
+          setLoader(false);
           
           handleSendResult(r.payload.Result)
           //  setToastMessage(toastMessages.QUICKSENDSUCCESSS);
@@ -510,8 +514,9 @@ const SmsCreator = ({ classes, ...props }) => {
           console.log("inelse")
           const smsQuickSendData = {...quickSendPayload , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  -1 , Credits: messageCount, 
           TotalRecipients: 1} }
+          setLoader(true);
           let r = await  dispatch(smsQuick(smsQuickSendData));
-        
+          setLoader(false);
           handleSendResult(r.payload.Result)
           // setToastMessage(toastMessages.QUICKSENDSUCCESSS);
         }
@@ -534,9 +539,13 @@ const SmsCreator = ({ classes, ...props }) => {
   {
     setrestoreBool(true);
     setcampaignNumber(StaticNumber);
+    setLoader(true);
     let r = await dispatch(getCommonFeatures());
+    setLoader(false);
     // setcampaignNumber(r.payload.DefaultCellNumber)
+    setLoader(true);
     let response =  await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
+    setLoader(false);
     setcampaignNumber(response.payload.Number);
     setStaticNumber(response.payload.Number);
     setremovalNumber(response.payload.RemovalKey);
@@ -1219,10 +1228,13 @@ getcredits(e.target.value.length)
 
       if(props && props.match.params.id)
       {
-        const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: campaignName, Text: msg, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: props.match.params.id }
+        const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : props.match.params.id}
+        setLoader(true);
         let r = await dispatch(smsSave(payloadToPush));
-        if (r.payload.Status == 2) {
-          if (isSave) {
+        setLoader(false);
+        if(r.payload.Status == 2)
+        {
+          if (isSave) {  
             setToastMessage(toastMessages.SUCCESS);
             setTimeout(() => {
               history.push(`/sms/edit/${props.match.params.id}`);
@@ -1239,18 +1251,22 @@ getcredits(e.target.value.length)
         }
 
       }
-      else {
-        const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: campaignName, Text: msg, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: -1 }
-        let r = await dispatch(smsSave(payloadToPush));
-        if (r.payload.Status == 2) {
-
-          if (isSave) {
-            setToastMessage(toastMessages.SUCCESS);
-            setTimeout(() => {
-              history.push(`/sms/edit/${r.payload.Message}`);
-              setToastMessage(null);
-            }, 1500);
-          } else {
+      else
+     {
+      const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : -1}
+      setLoader(true);
+      let r = await dispatch(smsSave(payloadToPush));
+      setLoader(false);
+       if(r.payload.Status == 2)
+       {
+       
+       if (isSave) {
+        setToastMessage(toastMessages.SUCCESS);
+        setTimeout(() => {
+          history.push(`/sms/edit/${r.payload.Message}`);
+          setToastMessage(null);
+        }, 1500);  
+      } else {
             history.push(`/sms/edit/${r.payload.Message}`);
             history.push(`/sms/send/${r.payload.Message}`);
           }
@@ -1308,7 +1324,7 @@ getcredits(e.target.value.length)
   const handleSelect = (id) => {
     let tempArr = [];
     for (let i = 0; i < selectedGroup.length; i++) {
-      if (id === i) {
+      if (id === selectedGroup[i].GroupID) {
         if (selectedGroup[i].selected) {
           tempArr.push({ ...selectedGroup[i], selected: false });
         } else {
@@ -1426,9 +1442,10 @@ getcredits(e.target.value.length)
                   }
                 })
                 .map((item, idx) => {
+                 
                   return (
                     <div className={classes.searchCon} onClick={() => {
-                      handleSelect(idx);
+                      handleSelect(item.GroupID);
                     }}>
                       <span
                         style={{ marginInlineEnd: "25px" }}
@@ -2106,8 +2123,7 @@ getcredits(e.target.value.length)
       {renderOtpNumberDialog()}
       {renderSummary()}
       {renderOtpSuccessDialog()}
-
-
+      <Loader isOpen={showLoader} />
     </DefaultScreen>
   );
 };

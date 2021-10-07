@@ -18,6 +18,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { parse } from "papaparse";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import IconButton from "@material-ui/core/IconButton";
+import { Loader } from '../../../components/Loader/Loader';
 import { FaCheck } from 'react-icons/fa';
 import CloseIcon from "@material-ui/icons/Close";
 import SortIcon from "@material-ui/icons/Sort";
@@ -308,6 +309,7 @@ const SmsSend = ({classes , ...props }) => {
   const [areaData, setareaData] = useState("");
   const [RecipientsBool, setRecipientsBool] = useState(false);
   const [editT, seteditT] = useState(false);
+  const [showLoader, setLoader] = useState(true);
   const [deleteClick, setdeleteClick] = useState(false);
   const [areatyped, setareatyped] = useState("");
   const [totalCampaigns, settotalCampaigns] = useState([])
@@ -360,6 +362,7 @@ const SmsSend = ({classes , ...props }) => {
     settotalCampaigns(tempGroupList);
     if (props && props.match.params.id != null && parseInt(props.match.params.id) > 0) {
       await dispatch(getCampaignSettings(props.match.params.id))
+      setLoader(false)
     }
 
   };
@@ -370,7 +373,9 @@ const SmsSend = ({classes , ...props }) => {
 
   }, [dispatch]);
   const getDataExtra = async () => {
+    
     await dispatch(getAccountExtraData());
+    setLoader(false);
 
   };
 
@@ -383,6 +388,7 @@ const SmsSend = ({classes , ...props }) => {
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
+      setLoader(false)
       if (response) {
          setdataSaved({...dataSaved , campaignName : response.payload.Name , fromNumber : response.payload.FromNumber , msg :response.payload.Text })
        
@@ -392,6 +398,7 @@ const SmsSend = ({classes , ...props }) => {
   }
   const getSubAccountGroups = async () => {
     const list = await dispatch(getGroupsBySubAccountId());
+    setLoader(false);
     const tempGroupList = list.payload;
    
     if (tempGroupList) {
@@ -532,7 +539,7 @@ const SmsSend = ({classes , ...props }) => {
   const handleSelect = (id) => {
     let tempArr = [];
     for (let i = 0; i < filterGroups.length; i++) {
-      if (id === i) {
+      if (id === filterGroups[i].GroupID) {
         if (filterGroups[i].selected) {
           tempArr.push({ ...filterGroups[i], selected: false });
         } else {
@@ -547,7 +554,7 @@ const SmsSend = ({classes , ...props }) => {
   const handleSelectCamp = (id) => {
     let tempArr = [];
     for (let i = 0; i < totalCampaigns.length; i++) {
-      if (id === i) {
+      if (id === totalCampaigns[i].SMSCampaignID) {
         if (totalCampaigns[i].selected) {
           tempArr.push({ ...totalCampaigns[i], selected: false });
         } else {
@@ -898,6 +905,7 @@ const SmsSend = ({classes , ...props }) => {
     const file = e.dataTransfer.files[0];
     const reader = new FileReader();
       if (file.name.toLowerCase().indexOf("xls") > -1) {
+        setLoader(true);
         console.log("---->inxls",)
         reader.onload = function(e) {
           var data = new Uint8Array(e.target.result);
@@ -922,7 +930,12 @@ const SmsSend = ({classes , ...props }) => {
             }
             setinitialheadstate(dummyArr);
             setheaders(dummyArr)
-           
+
+           setLoader(false);
+           if(dummyArr !== 0)
+           {
+             setmanualTrue(true);
+           }
           
           }, 0);
         };
@@ -931,9 +944,11 @@ const SmsSend = ({classes , ...props }) => {
 
        else if(file.name.toLowerCase().indexOf("csv") > -1)
       {
+      
        Array.from(e.dataTransfer.files)
        .filter((file) => file.type === "text/csv")
        .forEach(async (file) => {
+        setLoader(true);
         const text = await file.text();
         const result = parse(text, { header: true });
         console.log("-->",result.data)
@@ -956,13 +971,24 @@ const SmsSend = ({classes , ...props }) => {
           ddc.push("Adjust Title")
         }
         setheaders(ddc);
+        if(res !== "")
+        {
+          setmanualTrue(true);
+        }
+        setLoader(false);
       });
+   
+     
+     
+   
+      
   }
   else {
    
     return false;
   }
-
+ 
+  
   }
 
 
@@ -1055,7 +1081,7 @@ const SmsSend = ({classes , ...props }) => {
               onDrop={(e) => {
                 e.preventDefault();
                 setHighlighted(false);
-                setmanualTrue(true);
+                
                 handleFiles(e)
 
               }}
@@ -1369,7 +1395,7 @@ const SmsSend = ({classes , ...props }) => {
                       .map((item, idx) => {
                         return (
                           <div className={classes.searchCon} onClick={() => {
-                            handleSelect(idx);
+                            handleSelect(item.GroupID);
                           }}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
@@ -1449,9 +1475,10 @@ const SmsSend = ({classes , ...props }) => {
                         }
                       })
                       .map((item, idx) => {
+                        console.log("iiiiiii",item)
                         return (
                           <div className={classes.searchCon} onClick={() => {
-                            handleSelectCamp(idx);
+                            handleSelectCamp(item.SMSCampaignID);
                           }}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
@@ -1854,7 +1881,9 @@ const SmsSend = ({classes , ...props }) => {
           },
           specialDateOptions: specialgroups
         }
+        setLoader(true);
         await dispatch(saveSmsCampSettings(quickPayload));
+        setLoader(false);
         if(toggle && exit !=="exit")
         {
           setToastMessage(toastMessages.SUCCESS);
@@ -1865,7 +1894,9 @@ const SmsSend = ({classes , ...props }) => {
         }
         else
         {
+          setLoader(true);
           let response = await dispatch(getCampaignSumm(FinalId));
+          setLoader(false);
           setresponseQuick(response);
           setsummModal(true);
           let date = moment();
@@ -1999,7 +2030,9 @@ const SmsSend = ({classes , ...props }) => {
             specialDateOptions: specialgroups
   
           }
+         setLoader(true);
           await dispatch(saveSmsCampSettings(quickPayload));
+          setLoader(false);
           if(toggle && exit !=="exit")
           {
             setToastMessage(toastMessages.SUCCESS);
@@ -2010,8 +2043,9 @@ const SmsSend = ({classes , ...props }) => {
           }
           else
           {
-            
+            setLoader(true);
             let response = await dispatch(getCampaignSumm(props.match.params.id));
+            setLoader(false);
             setresponseQuick(response);
             let date = sendDate;
             let addTime = 0;
@@ -2142,7 +2176,9 @@ const SmsSend = ({classes , ...props }) => {
              
   
           }
+          setLoader(true);
           await dispatch(saveSmsCampSettings(quickPayload));
+          setLoader(false);
           if(toggle && exit !=="exit")
           {
             setToastMessage(toastMessages.SUCCESS);
@@ -2153,7 +2189,10 @@ const SmsSend = ({classes , ...props }) => {
           }
           else
           {
+            setLoader(true);
             let response = await dispatch(getCampaignSumm(FinalId));
+            setLoader(false);
+
             setresponseQuick(response);
             setsummModal(true);
           }
@@ -2209,7 +2248,9 @@ const SmsSend = ({classes , ...props }) => {
     "Credits" : "1",
     "TotalRecipients":selectedGroups.length
    }
+   setLoader(true);
    let r = await dispatch(sendSms(payload))
+   setLoader(false);
    console.log("---->final",r)
     setsummModal(false);
     setfinalSuccessDialog(true)
@@ -2307,8 +2348,10 @@ const SmsSend = ({classes , ...props }) => {
         GroupName: groupNameInput,
         Clients: requestPayload
       }
-  
+      setLoader(true);
       const r = await dispatch(saveManualClients(finalPayload))
+      setmanualTrue(false);
+      setLoader(false);
   
       let tempres = [];
       let temp = [];
@@ -2607,6 +2650,7 @@ const SmsSend = ({classes , ...props }) => {
   };
   const handleDelete = () => {
     if (props && props.match.params.id) {
+
       dispatch(deleteSms(props.match.params.id));
       
       handleClose();
@@ -2992,21 +3036,20 @@ const SmsSend = ({classes , ...props }) => {
       </Snackbar>
 
       <Snackbar
-   open={RecipientsSnackbar}
-   autoHideDuration={2000}
-   onClose={()=>{setRecipientsSnackbar(false);}}
-   style={{ zIndex: "9999", marginTop: "30px",fontWeight: 900, fontSize: 16}}
-  
-   anchorOrigin={{
-    vertical: "top",
-    horizontal: "right",
+      open={RecipientsSnackbar}
+      autoHideDuration={2000}
+      onClose={()=>{setRecipientsSnackbar(false);}}
+      style={{ zIndex: "9999", marginTop: "30px",fontWeight: 900, fontSize: 16}}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "right",
   }}
-  
 >
 <Alert   severity="warning"  className={snacki.customcolor}>
 Please Add No of Days
         </Alert>
         </Snackbar>
+        <Loader isOpen={showLoader} />
     </DefaultScreen >
   );
 };
