@@ -335,7 +335,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       <Grid
         container
         direction={'row'}
-        justify={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
+        justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
             key={icon.key}
@@ -507,7 +507,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           <Box className={classes.inlineGrid}>
             {renderNameCell(row)}
           </Box>
-          <Grid container justify={'space-between'}>
+          <Grid container justifyContent={'space-between'}>
             <Grid item container className={classes.widthUnset}>
               <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
                 {renderRecipientsCell(row.Recipients)}

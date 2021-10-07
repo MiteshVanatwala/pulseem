@@ -373,7 +373,7 @@ const RecipientChart = ({ classes, }) => {
         }
 
         return (
-            <Grid item container justify='space-evenly'>
+            <Grid item container justifyContent='space-evenly'>
                 {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
                     if (report.ReportSection === 2 && !Notifications.FeatureExist ||
                         report.ReportSection === 1 && !Sms.FeatureExist) {
@@ -422,7 +422,7 @@ const RecipientChart = ({ classes, }) => {
             </Grid>
         );
     }
-    
+
     let totalRecipient = recipientsReport && recipientsReport.reduce(function (a, b) {
         return a + b["Total"];
     }, 0);
@@ -440,10 +440,10 @@ const RecipientChart = ({ classes, }) => {
                             style={{ color: '#000' }}
                             title={t('dashboard.chartTooltip')}
                             placement={"top"}>
-                                <IconButton aria-label={t('dashboard.chartTooltip')}>
-                                    <BsInfoCircleFill />
-                                </IconButton>
-                            </BootstrapTooltip>
+                            <IconButton aria-label={t('dashboard.chartTooltip')}>
+                                <BsInfoCircleFill />
+                            </IconButton>
+                        </BootstrapTooltip>
                         }
                     </Box>
 

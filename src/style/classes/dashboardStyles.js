@@ -180,5 +180,8 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         '&:hover': {
             backgroundColor: '#219150'
         }
+    },
+    paymentDialog: {
+        maxWidth: 480
     }
 });

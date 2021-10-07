@@ -96,11 +96,12 @@ const PricePackages = ({ classes,
                                 <Typography className={classes.mt3}>{t('common.smsBulkDescription')}</Typography>
                             </Grid>
                             {
-                                smsBulkData.sort((a, b) => a.Quantity - b.Quantity).map((d) => {
+                                smsBulkData.sort((a, b) => a.Quantity - b.Quantity).map((d, index) => {
                                     return (
-                                        <Package pack={d}
+                                        <Package
+                                            pack={d}
                                             packSize={packPerLine}
-                                            key={d.ID}
+                                            key={`pack_${d.ID}`}
                                             onSelect={selectPackage}
                                             packageType={packageType}
                                             classes={classes} />
@@ -151,7 +152,7 @@ const PricePackages = ({ classes,
         const vat = (pack.Price * israelTax).toFixed(2);
         const totalPrice = pack.Price + parseFloat(vat);
         return (
-            <Grid container spacing={1}>
+            <Grid container spacing={1} className={classes.paymentDialog}>
                 <Grid item xs={12} className={clsx(classes.mb4)}>
                     <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font30)}>{t('common.endPurchase')}</Typography>
                 </Grid>
@@ -190,7 +191,7 @@ const PricePackages = ({ classes,
                     <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.totalPrice')}</Typography>
                 </Grid>
                 <Grid item md={6}>
-                    <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={totalPrice} displayType={'text'} thousandSeparator={true} prefix={'₪'} /></Typography>
+                    <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={totalPrice.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'₪'} /></Typography>
                 </Grid>
 
                 <Grid
@@ -262,9 +263,8 @@ const PricePackages = ({ classes,
         if (length <= 19) {
             setCreditCard({ ...creditInfo, CreditNumber: e.target.value })
         }
-        e.target.value = e.target.value.substring(0, 19);
-        setIsCreditCardValid(validator.isCreditCard(e.target.value))
-        return;
+        const isValidCard = validator.isCreditCard(e.target.value);
+        setIsCreditCardValid(isValidCard);
     }
     const handleCVVChange = (e) => {
         const length = e.target.value.length;
@@ -276,8 +276,8 @@ const PricePackages = ({ classes,
         return;
     }
     const onConfirmPayment = async () => {
-        setLoader(true);
         if (isFormValid()) {
+            setLoader(true);
             const result = await dispatch(buySmsPackage(creditInfo));
             console.log(result.payload);
             setLoader(false);
@@ -293,7 +293,7 @@ const PricePackages = ({ classes,
     const renderPayment = () => {
         return (
             <form className={classes.root} autoComplete="off">
-                <Grid container spacing={1}>
+                <Grid container spacing={1} className={classes.paymentDialog}>
                     <Grid item xs={12} className={clsx(classes.mb4)}>
                         <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font30)}>{t('common.creditCardInfo')}</Typography>
                     </Grid>
@@ -303,11 +303,9 @@ const PricePackages = ({ classes,
                     <Grid item xs={9}>
                         <TextField
                             id="cardNumber"
-                            error={isCreditCardValid}
                             placeholder={t("common.cardNumber")}
                             variant="outlined"
                             onChange={handleCreditCardChange} style={{ width: '100%' }}
-                            type="tel"
                             inputMode="numeric"
                             pattern="[0-9\s]{13,19}"
                             autoComplete="cc-number"
@@ -342,7 +340,6 @@ const PricePackages = ({ classes,
                     <Grid item xs={9}>
                         <TextField
                             id="cvvNumber"
-                            error={isValidCVV}
                             placeholder={t("common.cvv")}
                             variant="outlined"
                             onChange={handleCVVChange} style={{ width: '100%' }}

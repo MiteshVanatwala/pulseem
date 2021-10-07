@@ -59,6 +59,7 @@ const BulkStatus = ({ classes }) => {
     if (isOpenPackageDialog === true) {
       let dialog = {};
       dialog = renderPackagesListDialog();
+      const availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType });
 
       return (
         <Dialog
@@ -67,7 +68,7 @@ const BulkStatus = ({ classes }) => {
           onClose={handleDialogClose}
           onConfirm={handleDialogClose}
           showDefaultButtons={false}
-          style={{ maxWidth: accountAvailablePackages.length < 3 ? 600 : null, margin: accountAvailablePackages.length < 3 ? '0 auto' : null }}
+          style={availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null}
           {...dialog}>
           {dialog.content}
         </Dialog>
@@ -79,12 +80,12 @@ const BulkStatus = ({ classes }) => {
     return {
       showDivider: false,
       icon: (
-        <GoPackage style={{ fontSize: 30 }} />
+        <GoPackage style={{ fontSize: 35, padding: 5 }} />
       ),
       content: (
         <Grid item xs={12} style={{ paddingBottom: 25 }}>
           <PricePackages classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType} />
-        </Grid>
+        </Grid >
       )
     };
   }
@@ -94,15 +95,13 @@ const BulkStatus = ({ classes }) => {
     setIsOpenPackageDialog(true);
   }
 
-  const isAllowEmailPurchase = accountAvailablePackages.filter((pl) => { return pl.CampaignType === 3 }).length > 0;
-
   return (
     <>
       {renderPackagesDialog()}
       <Paper
         className={clsx(classes.dashboardTopPaper, classes.bulkMargin)}
         elevation={3}>
-        <Grid container justify='center'>
+        <Grid container justifyContent='center'>
           <Grid item xs={8} className={classes.bulkStatusTitleSection}>
             <Typography
               align='center'
@@ -115,25 +114,22 @@ const BulkStatus = ({ classes }) => {
             container
             item xs={9}
             className={getBillingTypeText(Sms) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
-            justify='space-between'
+            justifyContent='space-between'
             onMouseEnter={() => showSmsPackage(true)}
             onMouseLeave={() => showSmsPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             {isShowSmsPackage && billingTypeId !== "1" ? (
-              <Button
+              <a
                 onClick={() => showPackageDialogType(1)}
                 className={getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink}
-                startIcon={<CgShoppingCart />}
               >
-                {t('dashboard.purchase')}
-
-
-              </Button>
+                <CgShoppingCart style={{fontSize: 21}} /> {t('dashboard.purchase')}
+              </a>
             )
               :
               (<Typography className={classes.bulkTitle}>
-                {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Sms)}
+                <CgShoppingCart className={classes.shoppingCartIcon} /> {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Sms)}
               </Typography>)
             }
           </Grid>
@@ -142,21 +138,22 @@ const BulkStatus = ({ classes }) => {
             container
             item xs={9}
             className={getBillingTypeText(Newsletters) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
-            justify='space-between'
+            justifyContent='space-between'
             onMouseEnter={() => showEmailPackage(true)}
             onMouseLeave={() => showEmailPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
-            {isShowEmailPackage && billingTypeId !== "1" && accountFeatures.includes('36') ? (
-              <Button
+            {isShowEmailPackage && billingTypeId !== "1" && accountFeatures && accountFeatures.includes('36') ? (
+              <a
                 onClick={() => showPackageDialogType(3)}
                 className={getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink}
-                startIcon={<CgShoppingCart />}>
-                {t('dashboard.purchase')}
-              </Button>
+              >
+                <CgShoppingCart style={{fontSize: 21}} /> {t('dashboard.purchase')}
+              </a>
             )
               :
               (<Typography className={classes.bulkTitle}>
+                {accountFeatures && accountFeatures.includes('36') && <CgShoppingCart className={classes.shoppingCartIcon} />}
                 {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Newsletters)}
               </Typography>)
             }
@@ -165,8 +162,8 @@ const BulkStatus = ({ classes }) => {
           {Mms.Credits > 0 && <Grid
             container
             item xs={9}
-            className={classes.bulkStatusBlue}
-            justify='space-between'>
+            className={getBillingTypeText(Mms) === 0 ? classes.statusOutline : classes.statusBlue}
+            justifyContent='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
             <Typography className={classes.bulkTitle}>
               {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
@@ -176,12 +173,13 @@ const BulkStatus = ({ classes }) => {
           {Notifications.FeatureExist && <Grid
             container
             item xs={9}
-            className={getBillingTypeText(Notifications) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
-            justify='space-between'>
+            className={getBillingTypeText(Notifications) === 0 ? classes.statusOutline : classes.statusBlue}
+            justifyContent='space-between'>
             <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
             <Typography className={classes.bulkTitle}>
               {t('dashboard.freeTrial')}
-            </Typography>          </Grid>}
+            </Typography>
+          </Grid>}
         </Grid>
       </Paper>
     </>

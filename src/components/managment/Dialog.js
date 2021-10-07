@@ -7,8 +7,8 @@ import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { AlertIcon } from '../icons/index'
 
-export const Dialog=({
-  childrenPadding=true,
+export const Dialog = ({
+  childrenPadding = true,
   classes,
   open = false,
   title = '',
@@ -151,7 +151,12 @@ export const Dialog=({
       disableBackdropClick={disableBackdropClick}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
-      onClose={onClose}>
+      onClose={(event, reason) => {
+        if (reason !== 'backdropClick') {
+          onClose();
+        }
+      }
+      }>
       <Paper className={clsx(classes.posRelative, paperStyle)}>
         {renderExitButton()}
         {renderContent()}
