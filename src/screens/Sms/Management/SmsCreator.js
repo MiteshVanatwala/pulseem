@@ -117,7 +117,7 @@ const SmsCreator = ({ classes, ...props }) => {
     commonSettings
   } = useSelector((state) => state.sms);
 
-  const [alignment, setAlignment] = useState("left");
+  const [alignment, setAlignment] = useState(isRTL ? 'right' : 'left');
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [flagemoji, setflagemoji] = useState(false);
   const [checked, setChecked] = React.useState(false);
@@ -160,7 +160,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [Searched, setSearched] = useState("");
   const [modalOpen, setmodalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
-  const [removalNumber, setremovalNumber] = useState("");
+  const [removalNumber, setremovalNumber] = useState(null);
   const [otpVerifyDialog, setOtpVerifyDialog] = useState(false);
   const [storedValue, setstoredValue] = useState("");
   const [keep, setkeep] = useState(true);
@@ -349,12 +349,11 @@ const SmsCreator = ({ classes, ...props }) => {
       getSavedData();
     }
   
-      setcampaignNumber(r.payload.DefaultCellNumber)
-      // let response =  await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber))
-      
-      // setStaticNumber(response.payload.Number);
-      // setremovalNumber(response.payload.RemovalKey);
-    
+    setcampaignNumber(r.payload.DefaultCellNumber)
+    let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
+    setStaticNumber(response.payload.Number);
+    setremovalNumber(response.payload.RemovalKey);
+
     setstoredValue(r.payload.DefaultCellNumber)
     setLoader(false);
   }, [dispatch]);
@@ -402,10 +401,6 @@ const SmsCreator = ({ classes, ...props }) => {
     setmsg(msgs + emojiObject.emoji);
   };
 
-  const handleAlignment = (event, newAlignment) => {
-    setAlignment(newAlignment);
-  };
-
   const toggleChecked = () => {
     setChecked((prev) => !prev);
     setIsTestCampaign(!isTestCampaign)
@@ -414,12 +409,6 @@ const SmsCreator = ({ classes, ...props }) => {
     let toggle = !isLinksStatistics
     setkeep((prev) => !prev);
     setIsLinksStatistics(!isLinksStatistics);
-    // if(toggle)
-    // {
-    //   set
-    // }
-    
-
   };
 
   const getcredits = async (count) =>
@@ -509,7 +498,7 @@ const SmsCreator = ({ classes, ...props }) => {
         if(props && props.match.params.id)
         {
           console.log("inif")
-          const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false , IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
+          const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false , IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData : { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
           TotalRecipients: 1 } }
           let r = await  dispatch(smsQuick(smsQuickSendData));
           
@@ -526,7 +515,7 @@ const SmsCreator = ({ classes, ...props }) => {
           handleSendResult(r.payload.Result)
           // setToastMessage(toastMessages.QUICKSENDSUCCESSS);
         }
-        
+
       
       } else {
         setOpenS(true);
@@ -534,14 +523,14 @@ const SmsCreator = ({ classes, ...props }) => {
     }
   };
   const onLeave = (e) => {
-    if (!modalOpen) {
+    if (!modalOpen && campaignNumber !== storedValue) {
       setalertToggle(true);
       setcounterBool(true);
     } else {
       setcounterBool(false);
     }
   }
-  const handleRestore = async  () =>
+  const handleRestore = async () => 
   {
     setrestoreBool(true);
     setcampaignNumber(StaticNumber);
@@ -581,7 +570,7 @@ const SmsCreator = ({ classes, ...props }) => {
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
             </Typography>
-            <Typography
+            {storedValue !== campaignNumber &&  <Typography
               className={classes.restoreBtn}
               onClick={() => {
                 handleRestore()
@@ -589,6 +578,7 @@ const SmsCreator = ({ classes, ...props }) => {
             >
               {t("mainReport.restore")}
             </Typography>
+            }
           </Box>
 
           <TextField
@@ -609,7 +599,7 @@ const SmsCreator = ({ classes, ...props }) => {
           </Typography>
         </Grid>
         <Grid item xs={windowSize === "xs" ? 12 : 4} >
-          {restoreBool ? (
+          {restoreBool || removalNumber !== null ? (
             <Box className={classes.buttonForm}>
               <Typography className={clsx(classes.buttonHead)}>
                 {t("mainReport.removalReply")}
@@ -680,7 +670,7 @@ if(links)
             a = a+arr[i].length
         }
       }
-      setcharacterCount(a+35)
+      setcharacterCount(a + 35)
     }
     else
     {
@@ -700,9 +690,7 @@ getcredits(e.target.value.length)
     setmsg(newLink);
     let total = splittedMsg;
     total.push("##SmsUnsubscribeURL##")
-    console.log("--->totu",total)
-    if(isLinksStatistics && SplittedLinks !== null)
-    {
+    if(isLinksStatistics && SplittedLinks !== null) {
       let a=0;
       for(let i = 0 ; i<total.length;i++)
       {
@@ -711,7 +699,6 @@ getcredits(e.target.value.length)
           a = a + total[i].length
         }
       }
-      console.log("a",a)
       setcharacterCount(a+35)
       setremovalLinkDisabled(true);
 
@@ -738,14 +725,11 @@ getcredits(e.target.value.length)
     if(isLinksStatistics && SplittedLinks !== null)
     {
       let a=0;
-      for(let i = 0 ; i<total.length;i++)
-      {
-        if(total[i].includes("https://") == false)
-        {
+      for(let i = 0; i<total.length;i++) {
+        if(total[i].includes("https://") == false) {
           a = a + total[i].length
         }
       }
-      console.log("a",a)
       setcharacterCount(a+35)
       setremovalMessageButtonDisabled(true);
     }
@@ -849,7 +833,7 @@ getcredits(e.target.value.length)
                       <FormatAlignRightIcon  onClick={() => {handleToggleClick("right")}}/>
                       </Tooltip>
                       </>
-                  
+
                 )}
                 <Box className={classes.pickerEmoji} onBlur={()=>{setflagemoji(false)}}>
                   {flagemoji ? (
@@ -906,7 +890,7 @@ getcredits(e.target.value.length)
                     arrow
                   >
                 <Typography
-                  className={classes.info2Buttons}
+                  className={classes.infoButtons}
                   onClick={removalLinkDisabled ? null : onRemovalLink}
                 >
                   <Typography className={classes.editorLink}>+</Typography>
@@ -948,7 +932,7 @@ getcredits(e.target.value.length)
                     onClick={() => {
                       seteditmenuClick(!editmenuClick);
                     }}
-                    
+
                   >
                     <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
                     {t("mainReport.add")}
@@ -1057,7 +1041,7 @@ getcredits(e.target.value.length)
     {
       setphone(e.target.value);
     }
-    
+
   };
 
   const renderPhone = () => {
@@ -1148,7 +1132,7 @@ getcredits(e.target.value.length)
                     <span className={classes.rightSend} onClick={handleSend}>
                       {t("mainReport.send")}
                     </span>
-       
+
                   </div>
                 ) : null}
 
@@ -1207,7 +1191,7 @@ getcredits(e.target.value.length)
           </div>
         ) : null}
 
-      
+
       </Box>
     );
   };
@@ -1232,54 +1216,49 @@ getcredits(e.target.value.length)
 
   const onContinueClick = async (isSave) => {
     if (validationCheck()) {
-     
+
       if(props && props.match.params.id)
       {
-        const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : props.match.params.id}
+        const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: campaignName, Text: msg, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: props.match.params.id }
         let r = await dispatch(smsSave(payloadToPush));
-        if(r.payload.Status == 2)
-        {
-          if (isSave) {  
+        if (r.payload.Status == 2) {
+          if (isSave) {
             setToastMessage(toastMessages.SUCCESS);
             setTimeout(() => {
               history.push(`/sms/edit/${props.match.params.id}`);
               setToastMessage(null);
-            }, 1500);  
+            }, 1500);
           } else {
-    
-                history.push(`/sms/edit/${props.match.params.id}`);
-                history.push(`/sms/send/${props.match.params.id}`);
+
+            history.push(`/sms/edit/${props.match.params.id}`);
+            history.push(`/sms/send/${props.match.params.id}`);
           }
         }
-        else if(r.payload.Status == 3)
-        {
+        else if (r.payload.Status == 3) {
           setOtpVerifyDialog(true);
         }
-     
+
       }
-      else
-     {
-      const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : -1}
-       let r = await dispatch(smsSave(payloadToPush));
-       if(r.payload.Status == 2)
-       {
-       
-       if (isSave) {
-        setToastMessage(toastMessages.SUCCESS);
-        setTimeout(() => {
-          history.push(`/sms/edit/${r.payload.Message}`);
-          setToastMessage(null);
-        }, 1500);  
-      } else {
+      else {
+        const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: campaignName, Text: msg, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: -1 }
+        let r = await dispatch(smsSave(payloadToPush));
+        if (r.payload.Status == 2) {
+
+          if (isSave) {
+            setToastMessage(toastMessages.SUCCESS);
+            setTimeout(() => {
+              history.push(`/sms/edit/${r.payload.Message}`);
+              setToastMessage(null);
+            }, 1500);
+          } else {
             history.push(`/sms/edit/${r.payload.Message}`);
-            history.push(`/sms/send/${r.payload.Message}`); 
-      }
-    }
-      else if(r.payload.Status == 3)
-        {
+            history.push(`/sms/send/${r.payload.Message}`);
+          }
+        }
+        else if (r.payload.Status == 3) {
           setOtpVerifyDialog(true);
         }
-     }
+      }
     }
   };
 
@@ -1360,45 +1339,43 @@ getcredits(e.target.value.length)
 
   const handleGroupClose = async () => {
 
-      if (campaignName !== "" && msg !== "") {
-      
-        let temp = [];
-        let tempfull = [];
-        let num = 0;
-        for (let i = 0; i < selectedGroup.length; i++) {
-          if (selectedGroup[i].selected) {
-            temp.push(selectedGroup[i].GroupID);
-            tempfull.push(selectedGroup[i]);
-            ++num;
-          }
-        }
-        settotal(num);
-        settemp(tempfull);
-        const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg , TestGroupsIds : temp }
-        let r = await dispatch(smsSave(payloadToPush));
-        if(r.payload.Status == 2)
-        {
-          let payload2 = {
-            IsTestGroups: true,
-            SMSCampaignID: r.payload.Message,
-            TestGroupsIds: temp,
-          };
-      
-          let r2 = await dispatch(smsSaveGroup(payload2));
-          await dispatch(getCampaignSumm(r.payload.Message));
-          setsummary(true);
-        }
-        else if(r.payload.Status == 3)
-        {
-          setOtpVerifyDialog(true);
+    if (campaignName !== "" && msg !== "") {
+
+      let temp = [];
+      let tempfull = [];
+      let num = 0;
+      for (let i = 0; i < selectedGroup.length; i++) {
+        if (selectedGroup[i].selected) {
+          temp.push(selectedGroup[i].GroupID);
+          tempfull.push(selectedGroup[i]);
+          ++num;
         }
       }
-        setsave(false);
-        sethidden(true);
-        setcontactGroup(false);
-    
-    
-   
+      settotal(num);
+      settemp(tempfull);
+      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg, TestGroupsIds: temp }
+      let r = await dispatch(smsSave(payloadToPush));
+      if (r.payload.Status == 2) {
+        let payload2 = {
+          IsTestGroups: true,
+          SMSCampaignID: r.payload.Message,
+          TestGroupsIds: temp,
+        };
+
+        let r2 = await dispatch(smsSaveGroup(payload2));
+        await dispatch(getCampaignSumm(r.payload.Message));
+        setsummary(true);
+      }
+      else if (r.payload.Status == 3) {
+        setOtpVerifyDialog(true);
+      }
+    }
+    setsave(false);
+    sethidden(true);
+    setcontactGroup(false);
+
+
+
   };
   const renderSendGroup = () => {
     return (
@@ -1413,7 +1390,7 @@ getcredits(e.target.value.length)
           >
             <div className={classes.baseDialogSetup}>
               <span className={classes.groupName}>
-              {t("mainReport.selectGroups")}
+                {t("mainReport.selectGroups")}
               </span>
             </div>
             <div className={classes.modalDiv}>
@@ -1512,9 +1489,9 @@ getcredits(e.target.value.length)
           <Dialog
             classes={classes}
             open={exitClick}
-            onClose={() => {handleExit(false)}}
-            onConfirm={() => {handleExit(true)}}
-            onCancel={() => {setexitClick(false)}}
+            onClose={() => { handleExit(false) }}
+            onConfirm={() => { handleExit(true) }}
+            onCancel={() => { setexitClick(false) }}
             confirmText={t("mainReport.Ok")}
             cancelText={t("mainReport.No")}
             showDefaultButtons={true}
@@ -1564,8 +1541,8 @@ getcredits(e.target.value.length)
             cancelText={t("mainReport.cancelPleaseNoteModal")}
             showDefaultButtons={true}
             icon={<div className={classes.dialogIconContent}>
-            {'\uE11B'}
-          </div>}
+              {'\uE11B'}
+            </div>}
           >
             <Box className={classes.numberChnageModal}>
               <Typography className={classes.groupName}>  {t("mainReport.pleaseNote")}</Typography>
@@ -1581,27 +1558,24 @@ getcredits(e.target.value.length)
     );
   };
   const handleExit = async (saveBeforeExit) => {
-   
-    if(saveBeforeExit){
-      const payloadToPush = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text : msg  }
+
+    if (saveBeforeExit) {
+      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
       let r = await dispatch(smsSave(payloadToPush));
-      if(r)
-      {
-       
+      if (r) {
+
         setexitClick(false);
         history.push("/SMSCampaigns");
       }
     }
-    else if(saveBeforeExit == false)
-    {
-   
+    else if (saveBeforeExit == false) {
+
       setexitClick(false);
       history.push("/SMSCampaigns");
     }
-    
+
   };
-  const handleSummary = () =>
-  {
+  const handleSummary = () => {
     setsummary(false);
   }
 
@@ -1616,7 +1590,7 @@ getcredits(e.target.value.length)
           selectedGroups={selectedGroup}
           open={summary}
           totalRecipients={total}
-          handleCallback={handleSummary} 
+          handleCallback={handleSummary}
           groups={temp}
           summaryPayload={getCampaignSum}
           api={onApiCall}
@@ -1635,150 +1609,147 @@ getcredits(e.target.value.length)
     setwaize(false);
   };
 
-  const renderPreviousLandingDataModal = () =>
-  {
-    return(
-      <>
-      <Dialog
-        classes={classes}
-        open={dialogClickLanding}
-        onClose={handleCloseLanding}
-        showDefaultButtons={false}
-        icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
-      >
-        <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-          <span className={classes.groupName}>{t("mainReport.selectLanding")}</span>
-        </div>
-        <div className={classes.modalDiv}>
-          <Paper component="form" className={btnStyle.root}>
-            <IconButton
-              type="submit"
-              className={btnStyle.iconButton}
-              aria-label="search"
-            >
-              <SearchIcon />
-            </IconButton>
-            <InputBase
-              className={btnStyle.input}
-              placeholder={t("mainReport.searchSms")}
-              inputProps={{ "aria-label": "Search" }}
-              onChange={(e) => {
-                setlandingSearch(e.target.value);
-              }}
-            />
-          </Paper>
-        </div>
-        <div className={classes.listDiv}>
-          {previousLandingData
-            .filter((val) => {
-              if (landingSearch == "") {
-                return val;
-              } else if (
-                val.CampaignName.toLowerCase().includes(
-                  landingSearch.toLowerCase()
-                )
-              ) {
-                return val;
-              }
-            })
-            .map((item, idx) => {
-              return (
-                <div
-                  className={classes.searchCon}
-                  onClick={() => {
-                    handleLink(idx);
-                  }}
-                >
-                  <span
-                    style={{ marginInlineEnd: "8px" }}
-                    className={classes.grDoc}
-                  >
-                    <AiOutlineFile style={{color:"#1771AD",fill:"#1771AD",stroke:"#1771AD"}} color="#1771AD"/>
-                  </span>
-                  <span>{item.CampaignName}</span>
-                </div>
-              );
-            })}
-        </div>
-      </Dialog>
-  </>
-    )
-   
-  }
-  const  renderPreviousCampaignsData = () =>
-  {
+  const renderPreviousLandingDataModal = () => {
     return (
       <>
-      {dialogClickCampaign ? (
-         <Dialog
-           classes={classes}
-           open={dialogClickCampaign}
-           onClose={handleCloseCampaign}
-           showDefaultButtons={false}
-           icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
-         >
-           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-             <span className={classes.groupName}>{t("mainReport.selectCamp")}</span>
-           </div>
-           <div className={classes.modalDiv}>
-             <Paper component="form" className={btnStyle.root}>
-               <IconButton
-                 type="submit"
-                 className={btnStyle.iconButton}
-                 aria-label="search"
-               >
-                 <SearchIcon />
-               </IconButton>
-               <InputBase
-                 className={btnStyle.input}
-                 placeholder={t("mainReport.searchSms")}
-                 inputProps={{ "aria-label": "Search" }}
-                 onChange={(e) => {
-                   setCampaignSearch(e.target.value);
-                 }}
-               />
-             </Paper>
-           </div>
-           <div className={classes.listDiv}>
-             {previousCampaignData
-               .filter((val) => {
-                 if (CampaignSearch == "") {
-                   return val;
-                 } else if (
-                   val.CampaignName.toLowerCase().includes(
-                     CampaignSearch.toLowerCase()
-                   )
-                 ) {
-                   return val;
-                 }
-               })
-               .map((item, idx) => {
-                 return (
-                   <div
-                     className={classes.searchCon}
-                     onClick={() => {
-                       handleCampClick(idx);
-                     }}
-                   >
-                     <span
-                       style={{ marginInlineEnd: "8px" }}
-                       className={classes.grDoc}
-                     >
-                       <AiOutlineFile />
-                     </span>
-                     <span>{item.Name}</span>
-                   </div>
-                 );
-               })}
-           </div>
-         </Dialog>
-       ) : null}</>
+        <Dialog
+          classes={classes}
+          open={dialogClickLanding}
+          onClose={handleCloseLanding}
+          showDefaultButtons={false}
+          icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
+        >
+          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
+            <span className={classes.groupName}>{t("mainReport.selectLanding")}</span>
+          </div>
+          <div className={classes.modalDiv}>
+            <Paper component="form" className={btnStyle.root}>
+              <IconButton
+                type="submit"
+                className={btnStyle.iconButton}
+                aria-label="search"
+              >
+                <SearchIcon />
+              </IconButton>
+              <InputBase
+                className={btnStyle.input}
+                placeholder={t("mainReport.searchSms")}
+                inputProps={{ "aria-label": "Search" }}
+                onChange={(e) => {
+                  setlandingSearch(e.target.value);
+                }}
+              />
+            </Paper>
+          </div>
+          <div className={classes.listDiv}>
+            {previousLandingData
+              .filter((val) => {
+                if (landingSearch == "") {
+                  return val;
+                } else if (
+                  val.CampaignName.toLowerCase().includes(
+                    landingSearch.toLowerCase()
+                  )
+                ) {
+                  return val;
+                }
+              })
+              .map((item, idx) => {
+                return (
+                  <div
+                    className={classes.searchCon}
+                    onClick={() => {
+                      handleLink(idx);
+                    }}
+                  >
+                    <span
+                      style={{ marginInlineEnd: "8px" }}
+                      className={classes.grDoc}
+                    >
+                      <AiOutlineFile style={{ color: "#1771AD", fill: "#1771AD", stroke: "#1771AD" }} color="#1771AD" />
+                    </span>
+                    <span>{item.CampaignName}</span>
+                  </div>
+                );
+              })}
+          </div>
+        </Dialog>
+      </>
     )
-   
+
   }
-  const renderWaizeNavigationModal = () =>
-  {
-    return(<>
+  const renderPreviousCampaignsData = () => {
+    return (
+      <>
+        {dialogClickCampaign ? (
+          <Dialog
+            classes={classes}
+            open={dialogClickCampaign}
+            onClose={handleCloseCampaign}
+            showDefaultButtons={false}
+            icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
+          >
+            <div style={{ height: "60px", borderBottom: "1px solid black" }}>
+              <span className={classes.groupName}>{t("mainReport.selectCamp")}</span>
+            </div>
+            <div className={classes.modalDiv}>
+              <Paper component="form" className={btnStyle.root}>
+                <IconButton
+                  type="submit"
+                  className={btnStyle.iconButton}
+                  aria-label="search"
+                >
+                  <SearchIcon />
+                </IconButton>
+                <InputBase
+                  className={btnStyle.input}
+                  placeholder={t("mainReport.searchSms")}
+                  inputProps={{ "aria-label": "Search" }}
+                  onChange={(e) => {
+                    setCampaignSearch(e.target.value);
+                  }}
+                />
+              </Paper>
+            </div>
+            <div className={classes.listDiv}>
+              {previousCampaignData
+                .filter((val) => {
+                  if (CampaignSearch == "") {
+                    return val;
+                  } else if (
+                    val.CampaignName.toLowerCase().includes(
+                      CampaignSearch.toLowerCase()
+                    )
+                  ) {
+                    return val;
+                  }
+                })
+                .map((item, idx) => {
+                  return (
+                    <div
+                      className={classes.searchCon}
+                      onClick={() => {
+                        handleCampClick(idx);
+                      }}
+                    >
+                      <span
+                        style={{ marginInlineEnd: "8px" }}
+                        className={classes.grDoc}
+                      >
+                        <AiOutlineFile />
+                      </span>
+                      <span>{item.Name}</span>
+                    </div>
+                  );
+                })}
+            </div>
+          </Dialog>
+        ) : null}</>
+    )
+
+  }
+  const renderWaizeNavigationModal = () => {
+    return (<>
       {waize ? (
         <Dialog
           classes={classes}
@@ -1787,8 +1758,8 @@ getcredits(e.target.value.length)
           onClose={handleCloseWaize}
           showDefaultButtons={false}
           icon={<div className={classes.dialogIconContent}>
-          {'\u0056'}
-        </div>}
+            {'\u0056'}
+          </div>}
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
             <span className={classes.groupName}>
@@ -1802,7 +1773,7 @@ getcredits(e.target.value.length)
                 className={btnStyle.iconButton}
                 aria-label={t("mainReport.searchSms")}
               >
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6M0ZFOUE1Q0ExQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6M0ZFOUE1Q0IxQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDozRkU5QTVDODFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDozRkU5QTVDOTFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pu8Ul6cAAAXVSURBVHja1Jd5UJVV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"/>
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6M0ZFOUE1Q0ExQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6M0ZFOUE1Q0IxQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDozRkU5QTVDODFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDozRkU5QTVDOTFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pu8Ul6cAAAXVSURBVHja1Jd5UJVV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" />
               </IconButton>
               <InputBase
                 className={btnStyle.input}
@@ -1824,7 +1795,7 @@ getcredits(e.target.value.length)
           </div>
         </Dialog>
       ) : null}</>)
-  
+
   }
   const renderToast = () => {
     if (toastMessage) {
@@ -1838,10 +1809,9 @@ getcredits(e.target.value.length)
     }
     return null;
   }
-  const renderDeleteModal = () =>
-  {
-   return( <>
-    {deleteModalOpen ? (
+  const renderDeleteModal = () => {
+    return (<>
+      {deleteModalOpen ? (
         <Dialog
           classes={classes}
           open={deleteModalOpen}
@@ -1867,43 +1837,41 @@ getcredits(e.target.value.length)
     </>)
   }
 
-  const renderDefaultButtons = () =>
-  {
-return(
-  <div
-  className={
-    checked ? clsx(classes.buttonDiv) : clsx(classes.buttonDivAct)
+  const renderDefaultButtons = () => {
+    return (
+      <div
+        className={
+          checked ? clsx(classes.buttonDiv) : clsx(classes.buttonDivAct)
+        }
+      >
+        <span className={classes.rightInput3} onClick={onHandleDelete}>
+          <BsTrash style={{ fontSize: "25" }} />
+        </span>
+        <span className={classes.rightInput4} onClick={() => { setexitClick(true) }}>
+          {t("mainReport.exitSms")}
+        </span>
+        <span
+          className={classes.rightInput5}
+          onClick={() => {
+            onContinueClick(true);
+          }}
+        >
+          {t("mainReport.saveSms")}
+        </span>
+        <span
+          className={classes.rightInput6}
+          onClick={() => {
+            onContinueClick(false);
+          }}
+        >
+          {t("mainReport.continue")}
+        </span>
+      </div>
+    )
   }
->
-  <span className={classes.rightInput3} onClick={onHandleDelete}>
-    <BsTrash style={{ fontSize: "25" }} />
-  </span>
-  <span className={classes.rightInput4} onClick={() => {setexitClick(true)}}>
-    {t("mainReport.exitSms")}
-  </span>
-  <span
-    className={classes.rightInput5}
-    onClick={() => {
-      onContinueClick(true);
-    }}
-  >
-    {t("mainReport.saveSms")}
-  </span>
-  <span
-    className={classes.rightInput6}
-    onClick={() => {
-      onContinueClick(false);
-    }}
-  >
-    {t("mainReport.continue")}
-  </span>
-</div>
-)
-  }
-  const renderSaveModal = () =>
-  {
-   return( <>
-    <Dialog
+  const renderSaveModal = () => {
+    return (<>
+      <Dialog
         classes={classes}
         open={save}
         onClose={handleCloseSave}
@@ -1924,7 +1892,7 @@ return(
             </li> : null}
             {msg === null ? <li>{t("mainReport.msgRequire")}</li> : null}
             {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
-            {t("mainReport.campaignFromRequire")}
+              {t("mainReport.campaignFromRequire")}
             </li> : null}
           </ul>
         </div>
@@ -1950,9 +1918,8 @@ return(
       </Dialog></>)
   }
 
-  const renderOtpSuccessDialog = () =>
-  {
-    return(
+  const renderOtpSuccessDialog = () => {
+    return (
       <>
         <Dialog
           classes={classes}
@@ -1962,63 +1929,61 @@ return(
           showDefaultButtons={false}
           exit={true}
 
-          
+
           showDefaultButtons={false}
         >
-          <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
-          <img src={Gif} style={{width:"150px",height:"150px"}}/>
-        
-            <span style={{marginTop:"10px",fontSize:"22px",fontWeight:"700"}}>Verified!</span>
-    
-       
-            <p style={{marginTop:"10px",fontSize:"18px",fontWeight:"600"}}>
-            You can now send campaigns from this number
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+            <img src={Gif} style={{ width: "150px", height: "150px" }} />
+
+            <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>Verified!</span>
+
+
+            <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
+              You can now send campaigns from this number
             </p>
-       
-       
-            <span style={{padding:"12px",backgroundColor:"green",marginTop:"10px",cursor:"pointer",color:"#ffffff",borderRadius:"10px"}} onClick={()=>{setotpSuccess(false)}}>Confirm</span>
-            </div>
-        
+
+
+            <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { setotpSuccess(false) }}>Confirm</span>
+          </div>
+
         </Dialog>
       </>
     )
   }
 
-  const handleVerifyOTP = async () =>
-  {
+  const handleVerifyOTP = async () => {
     let payload = {
       "Cellphone": campaignNumber,
     }
     let r = await dispatch(getSMSRequestOTP(payload))
     setOtpVerifyDialog(false);
     setOtpConfirm(true);
-   
+
   }
 
-  const renderOtpVerificationDialog = () => 
-  {
-    return(
+  const renderOtpVerificationDialog = () => {
+    return (
       <Dialog
-      classes={classes}
-      open={otpVerifyDialog}
-      onCancel={()=>{setOtpVerifyDialog(false)}}
-      showDefaultButtons={false}
-      icon={<div className={classes.dialogIconContent}>
-            {'\uE11B'}
-          </div>}
-      
+        classes={classes}
+        open={otpVerifyDialog}
+        onCancel={() => { setOtpVerifyDialog(false) }}
+        showDefaultButtons={false}
+        icon={<div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>}
+
       >
-         <Box className={classes.verificationBoxSMS}>
-          <Typography className={classes.groupName} style={{textAlign:"center",width:"100%"}}>
-          {t("sms.verificationOtp")}
+        <Box className={classes.verificationBoxSMS}>
+          <Typography className={classes.groupName} style={{ textAlign: "center", width: "100%" }}>
+            {t("sms.verificationOtp")}
           </Typography>
         </Box>
-       <Box  className={classes.verificationBodySMS}>
-         <Typography className={classes.fontSmsRegulations}>
-         {t("sms.OtpRegulations")}
-         </Typography>
-         <Typography className={classes.fontSmsRegulations}>{t("sms.regulationSecondLine")} <strong>{t("sms.oneTime")}</strong> {t("sms.regulationThirdLine")}</Typography>
-         <TextField
+        <Box className={classes.verificationBodySMS}>
+          <Typography className={classes.fontSmsRegulations}>
+            {t("sms.OtpRegulations")}
+          </Typography>
+          <Typography className={classes.fontSmsRegulations}>{t("sms.regulationSecondLine")} <strong>{t("sms.oneTime")}</strong> {t("sms.regulationThirdLine")}</Typography>
+          <TextField
             id="outlined-basic"
             type="text"
             className={classes.OtpPhoneNumberInput}
@@ -2026,37 +1991,34 @@ return(
             disabled
           />
 
-            <Button
+          <Button
             variant='contained'
             size='small'
             className={clsx(
               classes.dialogButton,
               classes.dialogConfirmButton
-            )} style={{width:"250px"}} onClick={() => {handleVerifyOTP()}}>{t("sms.sendVerificationCode")}</Button>
-         <Typography  className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
-         <Typography style={{fontSize:"14px"}}>{t("sms.helplineSMS")}</Typography>
-       </Box>
+            )} style={{ whiteSpace: 'nowrap', width: 'auto' }} onClick={() => { handleVerifyOTP() }}>{t("sms.sendVerificationCode")}</Button>
+          <Typography className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
+          <Typography style={{ fontSize: "14px" }}>{t("sms.helplineSMS")}</Typography>
+        </Box>
       </Dialog>
-    
+
     )
   }
 
-  const submitOtp =  async () =>
-  {
-    let payload = 
+  const submitOtp = async () => {
+    let payload =
     {
       "Cellphone": campaignNumber,
       "Code": otpValue,
     }
-    if(otpValidationscheck())
-    {
-    let r =  await dispatch(getSMSConfirmOTP(payload))
-    handleOtpResult(r.payload.Status)
+    if (otpValidationscheck()) {
+      let r = await dispatch(getSMSConfirmOTP(payload))
+      handleOtpResult(r.payload.Status)
 
     }
   }
-  const handleOtpChnage = (e) =>
-  {
+  const handleOtpChnage = (e) => {
     setotpValue(e.target.value);
     setOtpCounter(false);
     setotpMsgs("Required field")
@@ -2068,55 +2030,54 @@ return(
     }
     return true;
   };
-  const renderOtpNumberDialog = () =>
-  {
-    return(
+  const renderOtpNumberDialog = () => {
+    return (
       <Dialog
-      classes={classes}
-      open={otpConfirm}
-      showDefaultButtons={false}
-      onCancel={()=>{setOtpConfirm(false)}}
-      icon={<div className={classes.dialogIconContent}>
-            {'\uE11B'}
-          </div>}
+        classes={classes}
+        open={otpConfirm}
+        showDefaultButtons={false}
+        onCancel={() => { setOtpConfirm(false) }}
+        icon={<div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>}
       >
-         <Box className={classes.verificationBoxSMS}>
-          <Typography className={classes.groupName} style={{textAlign:"center",width:"100%"}}>
-          {t("sms.weHaveSentOtp")}
+        <Box className={classes.verificationBoxSMS}>
+          <Typography className={classes.groupName} style={{ textAlign: "center", width: "100%" }}>
+            {t("sms.weHaveSentOtp")}
           </Typography>
         </Box>
-       <Box  className={classes.verificationBodySMS}>
-         <Typography className={classes.fontSmsRegulations}>
-         {t("sms.OtpSentSuccessLine1")} <strong>{campaignNumber}</strong> 
-         </Typography>
-         <Typography className={classes.fontSmsRegulations}>{t("sms.OtpSentSuccessLine2")}</Typography>
-         <TextField
+        <Box className={classes.verificationBodySMS}>
+          <Typography className={classes.fontSmsRegulations}>
+            {t("sms.OtpSentSuccessLine1")} <strong>{campaignNumber}</strong>
+          </Typography>
+          <Typography className={classes.fontSmsRegulations}>{t("sms.OtpSentSuccessLine2")}</Typography>
+          <TextField
             id="outlined-basic"
             type="text"
-            className={OtpCounter ?   clsx(classes.OtpPhoneNumberConfirm,classes.error) :  clsx(classes.OtpPhoneNumberConfirmSuccess,classes.success)}
+            className={OtpCounter ? clsx(classes.OtpPhoneNumberConfirm, classes.error) : clsx(classes.OtpPhoneNumberConfirmSuccess, classes.success)}
             placeholder={t("sms.typeOtpPlaceholder")}
-            onChange={(e)=>{handleOtpChnage(e)}}
+            onChange={(e) => { handleOtpChnage(e) }}
             inputProps={otpProps}
           />
-        {OtpCounter ?  <Typography style={{marginBottom:"30px",color:"red"}}>{otpMsgs}</Typography> : null } 
-            <Button
+          {OtpCounter ? <Typography style={{ marginBottom: "30px", color: "red" }}>{otpMsgs}</Typography> : null}
+          <Button
             variant='contained'
             size='small'
             className={clsx(
               classes.dialogButton,
               classes.dialogConfirmBlueButton
-            )} style={{width:"250px"}} onClick={()=>{submitOtp()}}>{t("sms.confirmOtp")}</Button>
-       <Box style={{display:"flex",marginTop:"20px"}}>  <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography ><Typography style={{textDecoration:"underline",marginInlineStart:"4px"}} className={classes.fontSmsRegulations} onClick={()=>{handleVerifyOTP()}}>{t("sms.sendAgainOtp")}</Typography></Box>
-       </Box>
+            )} style={{ width: "250px" }} onClick={() => { submitOtp() }}>{t("sms.confirmOtp")}</Button>
+          <Box style={{ display: "flex", marginTop: "20px" }}>  <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography ><Typography style={{ textDecoration: "underline", marginInlineStart: "4px" }} className={classes.fontSmsRegulations} onClick={() => { handleVerifyOTP() }}>{t("sms.sendAgainOtp")}</Typography></Box>
+        </Box>
       </Dialog>
 
     )
   }
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
-        {renderToast()}
+      {renderToast()}
       <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" ? classes.mobileGrid : classes.smsInit}>
-        {windowSize === "xs" ? <Grid item xs={12} >      
+        {windowSize === "xs" ? <Grid item xs={12} >
           {renderSwitch()}
           {renderHead()}
           {renderFields()}
@@ -2131,7 +2092,7 @@ return(
           <Grid item xs={4}>
             {renderPhone()}
           </Grid> </>}
-          {renderDefaultButtons()}
+        {renderDefaultButtons()}
       </Grid>
       {renderPreviousLandingDataModal()}
       {renderPreviousCampaignsData()}
@@ -2146,7 +2107,7 @@ return(
       {renderSummary()}
       {renderOtpSuccessDialog()}
 
-    
+
     </DefaultScreen>
   );
 };
