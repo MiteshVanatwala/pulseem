@@ -361,7 +361,8 @@ const SmsSend = ({classes , ...props }) => {
     GROUPCREATEDSUCCESS: { severity: 'success', color: 'success', message:"Group successfully created. ", showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
-    OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true}
+    OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true},
+    INVALID_RECIPIENTS : {severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false}
   }
 
   const defaultProps = {
@@ -2484,38 +2485,51 @@ const SmsSend = ({classes , ...props }) => {
       const r = await dispatch(saveManualClients(finalPayload))
       setmanualTrue(false);
       setLoader(false);
-  
-      let tempres = [];
-      let temp = [];
-      for (let i = 0; i < groupList.length; i++) {
-        tempres.push(groupList[i]);
+
+    
+      if(r.payload.Reason == "no_recipients_to_update")
+      {
+        setToastMessage(toastMessages.INVALID_RECIPIENTS)
+        setmanualTrue(false);
+        setareaData("");
+        settypedData([]);
+        setContacts([]);
+        setgroupNameInput("");
+        setnewVal(false);
       }
-      for (let i = 0; i < selectedGroups.length; i++) {
-        temp.push(selectedGroups[i]);
+      else
+      {
+        let tempres = [];
+        let temp = [];
+        for (let i = 0; i < groupList.length; i++) {
+          tempres.push(groupList[i]);
+        }
+        for (let i = 0; i < selectedGroups.length; i++) {
+          temp.push(selectedGroups[i]);
+        }
+    
+        temp.push({
+          Recipients: r.payload.Recipients,
+          GroupName: groupNameInput,
+          GroupID: r.payload.GroupID
+        });
+    
+        tempres.push({
+          Recipients: r.payload.Recipients,
+          GroupName: groupNameInput,
+          GroupID: r.payload.GroupID
+        });
+        setGroupList(tempres);
+        setSelected(temp);
+        setmanualTrue(false);
+        setareaData("");
+        settypedData([]);
+        setContacts([]);
+        setgroupClick(true);
+        setgroupNameInput("");
+        setnewVal(false);
+        setmanualClick(false);
       }
-  
-      temp.push({
-        Recipients: r.payload.Recipients,
-        GroupName: groupNameInput,
-        GroupID: r.payload.GroupID
-      });
-  
-      tempres.push({
-        Recipients: r.payload.Recipients,
-        GroupName: groupNameInput,
-        GroupID: r.payload.GroupID
-      });
-  
-      setGroupList(tempres);
-      setSelected(temp);
-      setmanualTrue(false);
-      setareaData("");
-      settypedData([]);
-      setContacts([]);
-      setgroupClick(true);
-      setgroupNameInput("");
-      setnewVal(false);
-      setmanualClick(false);
       for (let i = 0; i < selectArray.length; i++) {
         selectArray[i].isdisabled = false;
         selectArray[i].idx = -1;
