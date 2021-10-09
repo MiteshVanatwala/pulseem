@@ -235,7 +235,8 @@ const SmsCreator = ({ classes, ...props }) => {
     OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true},
     INVALIDNUMBER : { severity: 'error', color: 'error', message: "Invalid phone number", showAnimtionCheck: false},
     QUICKSENDERROR : { severity: 'error', color: 'error', message: "Error sending message", showAnimtionCheck: false},
-    SENTALREADY : { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true}
+    SENTALREADY : { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true},
+
   }
 
 
@@ -481,6 +482,7 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleCloseSnackbar = (event, reason) => {
+
     if (reason === "clickaway") {
       return;
     }
@@ -499,7 +501,7 @@ const SmsCreator = ({ classes, ...props }) => {
       if (phone !== "") {
         if(props && props.match.params.id)
         {
-          console.log("inif")
+          
           const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false , IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData : { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
           TotalRecipients: 1 } }
           setLoader(true);
@@ -511,7 +513,7 @@ const SmsCreator = ({ classes, ...props }) => {
         }
         else
         {
-          console.log("inelse")
+          
           const smsQuickSendData = {...quickSendPayload , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  -1 , Credits: messageCount, 
           TotalRecipients: 1} }
           setLoader(true);
@@ -523,7 +525,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
       
       } else {
-        setOpenS(true);
+        setToastMessage(toastMessages.INVALIDNUMBER);
       }
     }
   };

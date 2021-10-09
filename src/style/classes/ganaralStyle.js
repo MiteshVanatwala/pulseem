@@ -1202,7 +1202,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   chatBox : 
   {
     display: 'flex',
-    // justifyContent: 'flex-end',
+    justifyContent: 'flex-end',
     wordBreak: 'break-all',
   },
   wrapChatHe:
@@ -2187,7 +2187,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 
     '&:hover':
     {
-      backgroundColor: "#277BFF",
+      backgroundColor: "#6495ED",
       color: "#fff",
       zIndex: "9"
     }
