@@ -18,6 +18,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { parse } from "papaparse";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import IconButton from "@material-ui/core/IconButton";
+import { Loader } from '../../../components/Loader/Loader';
 import { FaCheck } from 'react-icons/fa';
 import CloseIcon from "@material-ui/icons/Close";
 import SortIcon from "@material-ui/icons/Sort";
@@ -59,9 +60,10 @@ import {
   getAccountExtraData,
   sendSms
 } from "../../../redux/reducers/smsSlice";
-import { AiOutlineDelete } from "react-icons/ai";
+import { BsDot } from "react-icons/bs";
 import Summary from "./smsSummary";
 import Autocomplete from '@material-ui/lab/Autocomplete';
+
 
 
 
@@ -94,11 +96,22 @@ const useSnack = makeStyles((theme) => ({
   justifyContent:"center",
   fontWeight: 900
  }
- 
-   
-  
-
 }));
+
+const useSnackRecipients= makeStyles((theme) => ({
+
+  customcolor : 
+  {
+   backgroundColor: "#AFE1AF",
+   color:"black",
+   border:"1px solid #AFE1AF",
+   width:"250px",
+   height:"30px",
+   display:"flex",
+   justifyContent:"center",
+   fontWeight: 900
+  }
+ }));
 
 const useSnackSevere = makeStyles((theme) => ({
 
@@ -189,6 +202,7 @@ const SmsSend = ({classes , ...props }) => {
   const history = useHistory();
   const severe = useSnackSevere();
   const keyboardclass = useStyleKeyboardInput();
+  const recipientSuccess = useSnackRecipients();
 
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
@@ -200,7 +214,7 @@ const SmsSend = ({classes , ...props }) => {
   const [value, setValue] = React.useState(0);
   const [selectedGroups, setSelected] = useState([]);
   const [allGroupsSelected, setAllGroupsSelected] = useState(false);
-  const [sendType, setSendType] = useState("1"); // Immediate
+  const [sendType, setSendType] = useState("1"); 
   const [sendDate, handleFromDate] = useState(null);
   const [sendTime, setsendTime] = useState(null);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
@@ -229,11 +243,13 @@ const SmsSend = ({classes , ...props }) => {
   const [TimeBool, setTimeBool] = useState(false);
   const [totalGroupstoDisplay, settotalGroupstoDisplay] = useState(0);
   const [percentTrue, setpercentTrue] = useState(true);
+  const [columnsMade, setcolumnsMade] = useState([])
   const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
   const [finalSuccessDialog, setfinalSuccessDialog] = useState(false);
   const [campaignSearch, setcampaignSearch] = useState("");
-
+  const [snackbarRecipients, setsnackbarRecipients] = useState(false);
+  const [bsDot, setbsDot] = useState(false);
   // const [smsSettingsModel, setSmsSettingsModel] = useState({
   //   SmsCampaignID: -1,
   //   SendType: 1,
@@ -308,11 +324,13 @@ const SmsSend = ({classes , ...props }) => {
   const [areaData, setareaData] = useState("");
   const [RecipientsBool, setRecipientsBool] = useState(false);
   const [editT, seteditT] = useState(false);
+  const [showLoader, setLoader] = useState(true);
   const [deleteClick, setdeleteClick] = useState(false);
   const [areatyped, setareatyped] = useState("");
   const [totalCampaigns, settotalCampaigns] = useState([])
   const [blank, setblank] = useState(['first Name', 'Last Name', 'Cell Phone']);
   const [typedData, settypedData] = useState([]);
+  const [RangePulseSnackbar, setRangePulseSnackbar] = useState(false);
   const [selectArray, setselectArray] = useState([
     {
       isdisabled: false,
@@ -343,7 +361,8 @@ const SmsSend = ({classes , ...props }) => {
     GROUPCREATEDSUCCESS: { severity: 'success', color: 'success', message:"Group successfully created. ", showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
-    OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true}
+    OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true},
+    INVALID_RECIPIENTS : {severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false}
   }
 
   const defaultProps = {
@@ -360,6 +379,7 @@ const SmsSend = ({classes , ...props }) => {
     settotalCampaigns(tempGroupList);
     if (props && props.match.params.id != null && parseInt(props.match.params.id) > 0) {
       await dispatch(getCampaignSettings(props.match.params.id))
+      setLoader(false)
     }
 
   };
@@ -370,7 +390,9 @@ const SmsSend = ({classes , ...props }) => {
 
   }, [dispatch]);
   const getDataExtra = async () => {
+    
     await dispatch(getAccountExtraData());
+    setLoader(false);
 
   };
 
@@ -383,6 +405,7 @@ const SmsSend = ({classes , ...props }) => {
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
+      setLoader(false)
       if (response) {
          setdataSaved({...dataSaved , campaignName : response.payload.Name , fromNumber : response.payload.FromNumber , msg :response.payload.Text })
        
@@ -392,6 +415,7 @@ const SmsSend = ({classes , ...props }) => {
   }
   const getSubAccountGroups = async () => {
     const list = await dispatch(getGroupsBySubAccountId());
+    setLoader(false);
     const tempGroupList = list.payload;
    
     if (tempGroupList) {
@@ -532,7 +556,7 @@ const SmsSend = ({classes , ...props }) => {
   const handleSelect = (id) => {
     let tempArr = [];
     for (let i = 0; i < filterGroups.length; i++) {
-      if (id === i) {
+      if (id === filterGroups[i].GroupID) {
         if (filterGroups[i].selected) {
           tempArr.push({ ...filterGroups[i], selected: false });
         } else {
@@ -547,7 +571,7 @@ const SmsSend = ({classes , ...props }) => {
   const handleSelectCamp = (id) => {
     let tempArr = [];
     for (let i = 0; i < totalCampaigns.length; i++) {
-      if (id === i) {
+      if (id === totalCampaigns[i].SMSCampaignID) {
         if (totalCampaigns[i].selected) {
           tempArr.push({ ...totalCampaigns[i], selected: false });
         } else {
@@ -597,27 +621,78 @@ const SmsSend = ({classes , ...props }) => {
   };
   const handleRandom = (e) => {
     const re = /^[0-9\b]+$/;
-    if ((e.target.value === '' || re.test(e.target.value)) && e.target.value <= (selectedGroups.reduce(function (a, b) {
-      return a + b['Recipients'];
-    }, 0).toLocaleString())) 
+    
+    if ((e.target.value === '' || re.test(e.target.value))) 
     {
-      setrandom(e.target.value);
-      setboolRandom(false);
+
+      if(percentTrue)
+      {
+        if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
+          return a + b['Recipients'];
+        }, 0).toLocaleString())
+        {
+          setrandom(selectedGroups.reduce(function (a, b) {
+            return a + b['Recipients'];
+          }, 0).toLocaleString())
+          setboolRandom(false);
+        }
+        else
+        {
+          setrandom(e.target.value);
+          setboolRandom(false);
+        }
+      }
+      else
+      {
+        if(Number(e.target.value) > inputF)
+        {
+          setrandom(inputF)
+        }
+        else
+        {
+          setrandom(e.target.value)
+        }
+      }
+     
     }
     
   };
   const handlePulseInput = (e) => {
     const re = /^[0-9\b]+$/;
-    if ((e.target.value === '' || re.test(e.target.value)) && e.target.value <= (selectedGroups.reduce(function (a, b) {
-      return a + b['Recipients'];
-    }, 0).toLocaleString())) 
+    if ((e.target.value === '' || re.test(e.target.value))) 
     {
+      if(percentTrue)
+      {
+    if(Number(e.target.value) > 100)
+    {
+      setinputF("100");
+     }
+     else
+     {
       setinputF(e.target.value);
+     }
+      }
+      else
+      {
+        if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
+          return a + b['Recipients'];
+        }, 0).toLocaleString())
+        {
+          setinputF(selectedGroups.reduce(function (a, b) {
+            return a + b['Recipients'];
+          }, 0).toLocaleString())
+        }
+        else
+        {
+          setinputF(e.target.value);
+        }
+      }
+  
       setpulseBool(false);
     }
    
   };
-
+  
   const onPulseValidations = () => {
     if (togglePulse) {
 
@@ -898,7 +973,8 @@ const SmsSend = ({classes , ...props }) => {
     const file = e.dataTransfer.files[0];
     const reader = new FileReader();
       if (file.name.toLowerCase().indexOf("xls") > -1) {
-        console.log("---->inxls",)
+        setLoader(true);
+       
         reader.onload = function(e) {
           var data = new Uint8Array(e.target.result);
           setTimeout(() => {
@@ -906,7 +982,7 @@ const SmsSend = ({classes , ...props }) => {
             var csv = XLSX.utils.sheet_to_csv(
               workbook.Sheets[workbook.SheetNames[0]]
             ,{header:1});
-           console.log("--->",csv.split(","));
+         
            let temp = csv;
            let a = temp.split("\n");
            let b = [];
@@ -915,6 +991,7 @@ const SmsSend = ({classes , ...props }) => {
            }
            b.pop();
            settypedData(b);
+           
            setareaData(b);
            let dummyArr = [];
             for (let i = 0; i < b[0].length; i++) {
@@ -922,7 +999,12 @@ const SmsSend = ({classes , ...props }) => {
             }
             setinitialheadstate(dummyArr);
             setheaders(dummyArr)
-           
+
+           setLoader(false);
+           if(dummyArr !== 0)
+           {
+             setmanualTrue(true);
+           }
           
           }, 0);
         };
@@ -931,12 +1013,14 @@ const SmsSend = ({classes , ...props }) => {
 
        else if(file.name.toLowerCase().indexOf("csv") > -1)
       {
+      
        Array.from(e.dataTransfer.files)
        .filter((file) => file.type === "text/csv")
        .forEach(async (file) => {
+        setLoader(true);
         const text = await file.text();
         const result = parse(text, { header: true });
-        console.log("-->",result.data)
+    
         setContacts((existing) => [...existing, ...result.data]);
         let res = "";
         for (let i = 0; i < result.data.length; i++) {
@@ -955,14 +1039,34 @@ const SmsSend = ({classes , ...props }) => {
         for (let i in result.data[0]) {
           ddc.push("Adjust Title")
         }
+        // let col = 0; 
+        // let colIndex = 0; 
+        // result.data.forEach((value, index)=>{
+        //   ddc.push("Adjust Title")
+        // })
         setheaders(ddc);
+        // setcolumnsMade(ddc);
+
+        if(res !== "")
+        {
+          setmanualTrue(true);
+        }
+
+      
+        setLoader(false);
       });
+   
+     
+     
+   
+      
   }
   else {
    
     return false;
   }
-
+ 
+  
   }
 
 
@@ -1036,7 +1140,7 @@ const SmsSend = ({classes , ...props }) => {
             <textarea
               placeholder="Drag &amp; drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box"
               spellcheck="false"
-              autocomplete="off"
+              autoComplete="off"
               className={
                 highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
               }
@@ -1055,7 +1159,7 @@ const SmsSend = ({classes , ...props }) => {
               onDrop={(e) => {
                 e.preventDefault();
                 setHighlighted(false);
-                setmanualTrue(true);
+                
                 handleFiles(e)
 
               }}
@@ -1074,6 +1178,7 @@ const SmsSend = ({classes , ...props }) => {
               callbackSelectAll={callbackSelectAll}
               callbackReciFilter={callbackFilter}
               bool={true}
+              bsDot = {bsDot}
             />
           ) : null}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -1210,14 +1315,52 @@ const SmsSend = ({classes , ...props }) => {
   };
   const handleReciConfirm = () => {
 
+    let temparr = [];
+    let tempCampaigns = [];
+    for(let i=0 ; i < filterGroups.length ; i++)
+    {
+      if(filterGroups[i].selected)
+      {
+        temparr.push(filterGroups[i]);
+      }
+    }
+    for(let i=0 ; i < totalCampaigns.length ; i++)
+    {
+      if(totalCampaigns[i].selected)
+      {
+        tempCampaigns.push(totalCampaigns[i]);
+      }
+    }
+    
     if (toggleReci) {
       if (validationCheck()) {
 
-        setreciFilter(false);
+        if(temparr.length !== 0 || inputRecipients !== "" || tempCampaigns.length !== 0)
+        {
+          setbsDot(true);
+          setsnackbarRecipients(true);
+          setreciFilter(false);
+        }
+        else
+         {
+           setbsDot(false);
+          setreciFilter(false);
+         }
       }
     }
     else {
-      setreciFilter(false);
+      if(temparr.length !== 0 || inputRecipients !== "" || tempCampaigns.length !== 0)
+      {
+        setsnackbarRecipients(true);
+        setreciFilter(false);
+        setbsDot(true);
+      }
+      else
+      {
+        setreciFilter(false);
+        setbsDot(false);
+      }
+     
     }
   };
   const handlePasted = () => {
@@ -1369,7 +1512,7 @@ const SmsSend = ({classes , ...props }) => {
                       .map((item, idx) => {
                         return (
                           <div className={classes.searchCon} onClick={() => {
-                            handleSelect(idx);
+                            handleSelect(item.GroupID);
                           }}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
@@ -1449,9 +1592,10 @@ const SmsSend = ({classes , ...props }) => {
                         }
                       })
                       .map((item, idx) => {
+                        
                         return (
                           <div className={classes.searchCon} onClick={() => {
-                            handleSelectCamp(idx);
+                            handleSelectCamp(item.SMSCampaignID);
                           }}>
                             <span
                               style={{ marginInlineEnd: "25px" }}
@@ -1490,7 +1634,7 @@ const SmsSend = ({classes , ...props }) => {
   }
   const handleSelectChange = (e) =>
   {
-    console.log("-->special",e.target.value)
+    
     setSpecialValue(e.target.value)
     {Object.keys(extraData).map((item, i) => {
      if(e.target.value == i+3)
@@ -1570,7 +1714,7 @@ const SmsSend = ({classes , ...props }) => {
                 /> */}
                 <KeyboardDateTimePicker
                 minDate={moment()}
-                classes={keyboardclass.custom}
+                className={keyboardclass.custom}
                 inputVariant="outlined"
                 value={sendType == "2" ? sendDate : null}
                 placeholder={t("notifications.date")}
@@ -1633,7 +1777,7 @@ const SmsSend = ({classes , ...props }) => {
                   }}
                   disabled={sendType === "3" ? false : true}
                   onChange={(e) => {handleSelectChange(e)}}
-                  value={SpecialValue}
+                  value={sendType === "3" ? SpecialValue : "0"}
                 >
                     <option value="0" disabled>Select</option>
                   <option value="1">{t("mainReport.birthday")}</option>
@@ -1660,7 +1804,7 @@ const SmsSend = ({classes , ...props }) => {
                   className={classes.inputDays}
                   placeholder="0"
                   disabled={sendType == "3" ? false : true}
-                  value={daysBeforeAfter}
+                  value={sendType == "3" ? daysBeforeAfter : ""}
                   onChange={(e)=>{handleSpecialDayChange(e)}}
                 />
 
@@ -1712,7 +1856,7 @@ const SmsSend = ({classes , ...props }) => {
                     ok: t("common.confirm"),
                     cancel: t("common.cancel"),
                   }}
-                  ampm={false}
+                  ampm={true}
                   timePickerOpen={timePickerOpen}
                   timeActive={sendType == "3" ? false : true}
                   disabled={sendType == "3" ? false : true}
@@ -1854,7 +1998,9 @@ const SmsSend = ({classes , ...props }) => {
           },
           specialDateOptions: specialgroups
         }
+        setLoader(true);
         await dispatch(saveSmsCampSettings(quickPayload));
+        setLoader(false);
         if(toggle && exit !=="exit")
         {
           setToastMessage(toastMessages.SUCCESS);
@@ -1865,14 +2011,16 @@ const SmsSend = ({classes , ...props }) => {
         }
         else
         {
+          setLoader(true);
           let response = await dispatch(getCampaignSumm(FinalId));
+          setLoader(false);
           setresponseQuick(response);
           setsummModal(true);
           let date = moment();
           let addTime = 0;
     
           if ( percentTrue == false) {
-            console.log("in if")
+           
             addTime =
               ((response.payload.FinalCount -
                 inputF) *
@@ -1883,7 +2031,7 @@ const SmsSend = ({classes , ...props }) => {
           } 
 
           else {
-            console.log("in else")
+           
             let recipientPercents =
               (response.payload.FinalCount *
                 inputF) /
@@ -1999,7 +2147,9 @@ const SmsSend = ({classes , ...props }) => {
             specialDateOptions: specialgroups
   
           }
+         setLoader(true);
           await dispatch(saveSmsCampSettings(quickPayload));
+          setLoader(false);
           if(toggle && exit !=="exit")
           {
             setToastMessage(toastMessages.SUCCESS);
@@ -2010,14 +2160,15 @@ const SmsSend = ({classes , ...props }) => {
           }
           else
           {
-            
+            setLoader(true);
             let response = await dispatch(getCampaignSumm(props.match.params.id));
+            setLoader(false);
             setresponseQuick(response);
             let date = sendDate;
             let addTime = 0;
 
             if ( percentTrue == false) {
-              console.log("in if")
+             
               addTime =
                 ((response.payload.FinalCount -
                   inputF) *
@@ -2028,7 +2179,7 @@ const SmsSend = ({classes , ...props }) => {
             } 
   
             else {
-              console.log("in else")
+            
               let recipientPercents =
                 (response.payload.FinalCount *
                   inputF) /
@@ -2082,7 +2233,7 @@ const SmsSend = ({classes , ...props }) => {
             specialgroups.push({text : item,
             code: i +3})
           })}
-          console.log("--->here",specialgroups)
+         
   
           let exceptionGroups = [];
   
@@ -2142,7 +2293,9 @@ const SmsSend = ({classes , ...props }) => {
              
   
           }
+          setLoader(true);
           await dispatch(saveSmsCampSettings(quickPayload));
+          setLoader(false);
           if(toggle && exit !=="exit")
           {
             setToastMessage(toastMessages.SUCCESS);
@@ -2153,7 +2306,10 @@ const SmsSend = ({classes , ...props }) => {
           }
           else
           {
+            setLoader(true);
             let response = await dispatch(getCampaignSumm(FinalId));
+            setLoader(false);
+
             setresponseQuick(response);
             setsummModal(true);
           }
@@ -2209,16 +2365,22 @@ const SmsSend = ({classes , ...props }) => {
     "Credits" : "1",
     "TotalRecipients":selectedGroups.length
    }
+   setLoader(true);
    let r = await dispatch(sendSms(payload))
-   console.log("---->final",r)
+   setLoader(false);
+   
     setsummModal(false);
     setfinalSuccessDialog(true)
   };
   const handleTrueCaution = () => {
     setcaution(true);
+    setgroupNameInput("");
+    setnewVal(false);
   };
   const handleCautionCancel = () => {
     setcaution(true);
+    setgroupNameInput("");
+    setnewVal(false);
   };
   const handleChangeId = (id) => {
     if (dropIndex == -1) {
@@ -2230,23 +2392,34 @@ const SmsSend = ({classes , ...props }) => {
   const handleSelectFirst = (name, id, idx, e) => {
     // id -  index of select array 
     // idx - header index 
-    // if  (headers[idx] !== "adjust title")
+   
+    // if  (selectArray[id].isdisabled ===true )
     // {
+    //   console.log('isnide if')
     //   selectArray[id].isdisabled = false;
-
     //   let h = headers;
     //   h[idx] = name.value;
+    //   selectArray[id].isdisabled = true;
+    //   selectArray[id].idx = idx;
     //   setheaders(h);
-
+    //   console.log(selectArray)
     // }
     // else
     // {
-
+    //   console.log('isnide else')
+     
       let h = headers;
       h[idx] = name.value;
-      setheaders(h);
+      selectArray.forEach((value, index)=>{
+        if(value.idx === idx){
+          selectArray[index].isdisabled = false
+          selectArray[index].idx = -1
+        }
+      })
       selectArray[id].isdisabled = true;
       selectArray[id].idx = idx;
+      setheaders(h);
+     
 
     // }
 
@@ -2279,7 +2452,7 @@ const SmsSend = ({classes , ...props }) => {
           requestPayload.push({});
           for (let k = 0; k < typedData[j].length; k++) {
             if (headers[k] !== "Adjust Title") {
-              let key = headers[k];
+              let key = headers[k].toLocaleString().replaceAll(" ", "");
               let obj = requestPayload[j];
               obj[key] = typedData[j][k];
             }
@@ -2293,11 +2466,12 @@ const SmsSend = ({classes , ...props }) => {
   
           for (let k in contacts[j]) {
             if (headers[i] !== "Adjust Title") {
-              let key = headers[i];
+              let key = headers[i].toLocaleString().replaceAll(" ", "");
               let obj = requestPayload[j];
               obj[key] = contacts[j][k];
   
             }
+           
             i++;
           }
         }
@@ -2307,38 +2481,55 @@ const SmsSend = ({classes , ...props }) => {
         GroupName: groupNameInput,
         Clients: requestPayload
       }
-  
+      setLoader(true);
       const r = await dispatch(saveManualClients(finalPayload))
-  
-      let tempres = [];
-      let temp = [];
-      for (let i = 0; i < groupList.length; i++) {
-        tempres.push(groupList[i]);
-      }
-      for (let i = 0; i < selectedGroups.length; i++) {
-        temp.push(selectedGroups[i]);
-      }
-  
-      temp.push({
-        Recipients: r.payload.Recipients,
-        GroupName: groupNameInput,
-        GroupID: r.payload.GroupID
-      });
-  
-      tempres.push({
-        Recipients: r.payload.Recipients,
-        GroupName: groupNameInput,
-        GroupID: r.payload.GroupID
-      });
-  
-      setGroupList(tempres);
-      setSelected(temp);
       setmanualTrue(false);
-      setareaData("");
-      settypedData([]);
-      setContacts([]);
-      setgroupClick(true);
-      setmanualClick(false);
+      setLoader(false);
+
+    
+      if(r.payload.Reason == "no_recipients_to_update")
+      {
+        setToastMessage(toastMessages.INVALID_RECIPIENTS)
+        setmanualTrue(false);
+        setareaData("");
+        settypedData([]);
+        setContacts([]);
+        setgroupNameInput("");
+        setnewVal(false);
+      }
+      else
+      {
+        let tempres = [];
+        let temp = [];
+        for (let i = 0; i < groupList.length; i++) {
+          tempres.push(groupList[i]);
+        }
+        for (let i = 0; i < selectedGroups.length; i++) {
+          temp.push(selectedGroups[i]);
+        }
+    
+        temp.push({
+          Recipients: r.payload.Recipients,
+          GroupName: groupNameInput,
+          GroupID: r.payload.GroupID
+        });
+    
+        tempres.push({
+          Recipients: r.payload.Recipients,
+          GroupName: groupNameInput,
+          GroupID: r.payload.GroupID
+        });
+        setGroupList(tempres);
+        setSelected(temp);
+        setmanualTrue(false);
+        setareaData("");
+        settypedData([]);
+        setContacts([]);
+        setgroupClick(true);
+        setgroupNameInput("");
+        setnewVal(false);
+        setmanualClick(false);
+      }
       for (let i = 0; i < selectArray.length; i++) {
         selectArray[i].isdisabled = false;
         selectArray[i].idx = -1;
@@ -2367,7 +2558,13 @@ const SmsSend = ({classes , ...props }) => {
       setnewVal(true);
       return false;
     }
-    return true;
+    let columnHasValue = false;
+    headers.forEach((value)=>{
+      if(value !== "Adjust Title"){
+        columnHasValue = true
+      }
+    })
+    return columnHasValue === false  ? false : true;
   }
 
   const renderDialogManual = () => {
@@ -2429,7 +2626,7 @@ const SmsSend = ({classes , ...props }) => {
               <span className={classes.bodyInfo}>i</span>
             </Tooltip>
           </div>
-          <div style={{ minHeight:"200px"}}>
+          <div style={{ minHeight:"200px",maxWidth:"700px",overflow:"auto"}}>
           <table
             style={{
               borderCollapse: "collapse",
@@ -2457,9 +2654,9 @@ const SmsSend = ({classes , ...props }) => {
                         style={{ textAlign: "center", cursor: "pointer" }}
                       >
                           <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
-                       <Typography style={{fontWeight:"700",cursor:"pointer"}}>{headers[idx]}</Typography> 
+                       <Typography style={{fontWeight:"700",cursor:"pointer",marginInlineEnd:"20px"}}>{headers[idx]}</Typography> 
 
-                      <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} />  
+                   {headers[idx] !== "Adjust Title" ?  <AiOutlineClose  style={{marginInlineEnd:"8px"}} onClick={() => { handleCloseSpan(idx, headers[idx]) }} />   : null}  
                     {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown  style={{marginInlineStart:"4px"}}/> }  </div>
                         {dropIndex == idx ? (
                           <div className={classes.adjustC}>
@@ -2483,7 +2680,7 @@ const SmsSend = ({classes , ...props }) => {
                          {...defaultProps}
                           id="combo-box-demo"
                           onChange={(event , newValue) => {
-                            console.log("--->",newValue)
+                           
                             Header.push(newValue);
                           }}
                          
@@ -2514,8 +2711,8 @@ const SmsSend = ({classes , ...props }) => {
                       style={{ width: "150px", textAlign: "center" }}
                     >
                       <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
-                    <Typography style={{fontWeight:"700",cursor:"pointer"}}>{headers[idx]}</Typography> 
-               <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} style={{marginInlineStart:"5px"}}/> 
+                    <Typography style={{fontWeight:"700",cursor:"pointer",marginInlineEnd:"20px"}}>{headers[idx]}</Typography> 
+                    {headers[idx] !== "Adjust Title" ?   <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} style={{marginInlineEnd:"8px"}}/>  : null}      
                     {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown  style={{marginInlineStart:"4px"}}/> } </div>
                       {dropIndex == idx ? (
                         <div className={classes.adjustC}>
@@ -2585,6 +2782,7 @@ const SmsSend = ({classes , ...props }) => {
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             textAlign: "center",
+                            minWidth:"150px"
                           }}
                         >
                           {data}
@@ -2607,6 +2805,7 @@ const SmsSend = ({classes , ...props }) => {
   };
   const handleDelete = () => {
     if (props && props.match.params.id) {
+
       dispatch(deleteSms(props.match.params.id));
       
       handleClose();
@@ -2740,7 +2939,7 @@ const SmsSend = ({classes , ...props }) => {
   const renderExit = () => {
     return (
       <>
-        {exitClick ? (
+        
           <Dialog
             classes={classes}
             open={exitDialog}
@@ -2763,7 +2962,7 @@ const SmsSend = ({classes , ...props }) => {
               <span>{t("mainReport.leaveCampaign")}</span>
             </div>
           </Dialog>
-        ) : null}
+  
       </>
     );
   };
@@ -2880,11 +3079,11 @@ const SmsSend = ({classes , ...props }) => {
           {renderHead()}
 
           <Grid container style={{marginBottom:"40px"}}>
-            <Grid md={7} xs={12}>
+            <Grid item  md={7} xs={12}>
               {renderBody()}
             </Grid>
-            <Grid md={1} xs={12}></Grid>
-            <Grid md={4} xs={12}>
+            <Grid item md={1} xs={12}></Grid>
+            <Grid item    md={4} xs={12}>
               {renderRight()}
             </Grid>
           </Grid>
@@ -2992,21 +3191,35 @@ const SmsSend = ({classes , ...props }) => {
       </Snackbar>
 
       <Snackbar
-   open={RecipientsSnackbar}
-   autoHideDuration={2000}
-   onClose={()=>{setRecipientsSnackbar(false);}}
-   style={{ zIndex: "9999", marginTop: "30px",fontWeight: 900, fontSize: 16}}
-  
-   anchorOrigin={{
-    vertical: "top",
-    horizontal: "right",
+      open={RecipientsSnackbar}
+      autoHideDuration={2000}
+      onClose={()=>{setRecipientsSnackbar(false);}}
+      style={{ zIndex: "9999", marginTop: "30px",fontWeight: 900, fontSize: 16}}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "right",
   }}
-  
 >
-<Alert   severity="warning"  className={snacki.customcolor}>
-Please Add No of Days
+   <Alert   severity="warning"  className={snacki.customcolor}>
+      Please Add No of Days
         </Alert>
         </Snackbar>
+      
+      <Snackbar
+      open={snackbarRecipients}
+      autoHideDuration={2000}
+      onClose={()=>{setsnackbarRecipients(false);}}
+      style={{ zIndex: "9999", marginTop: "30px",fontWeight: 900, fontSize: 16}}
+      anchorOrigin={{
+        vertical: "top",
+        horizontal: "right",
+          }}
+        >
+        <Alert severity="success"  className={recipientSuccess.customcolor}>
+        Your changes have been saved
+        </Alert>
+        </Snackbar>
+        <Loader isOpen={showLoader} />
     </DefaultScreen >
   );
 };

@@ -28,12 +28,13 @@ import { BsSearch } from 'react-icons/bs';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
 import { MdClear } from 'react-icons/md';
 import './Groups.styles.css';
+import { BsDot } from "react-icons/bs";
 import { 
     BsFilter } from 'react-icons/bs';
 
 
 
-const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, callbackUpdateGroups, callbackSelectAll , callbackReciFilter , bool , boolNotify}) => {
+const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, callbackUpdateGroups, callbackSelectAll , callbackReciFilter , bool , boolNotify , bsDot}) => {
     const { language } = useSelector(state => state.core)
     const { t } = useTranslation();
     //const [selectedGroups, setSelected] = useState([]);
@@ -252,7 +253,8 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                 </FormControl>
                 <Box>
              {selectedList.length > 0 ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{height:"36px",color:"#1D82B3",fontWeight:"600",textTransform:"capitalize"}}>
-                    <BsFilter style={{fontSize:"22px",color:"#1D82B3"}}/>  {t("mainReport.recipientFilter")}
+                    <BsFilter style={{fontSize:"22px",color:"#1D82B3"}}/>  {bsDot ? <BsDot style={{position: "absolute",left: "8px",top: "-6px",fontSize: "28px"}} /> : null} {t("mainReport.recipientFilter")}
+                   
                     </Button> : null }  
                     <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={() => { handleSortDirection() }}>
                         {sortDirection === 'asc' ? <BiSortDown /> : <BiSortUp />}

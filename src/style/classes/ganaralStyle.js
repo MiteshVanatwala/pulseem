@@ -779,7 +779,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   baseButtons: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-evenly",
     height:"100%",
     borderInlineEnd: "1px solid black",
     "@media screen and (max-width: 768px)": {
@@ -791,49 +791,29 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: "20px",
-    fontWeight: "600",
+    borderRadius: 20,
+    fontWeight: 600,
+    fontSize: 14,
     color: "white",
-    fontSize: "12px",
-    padding: "5px 5px 5px 5px",
+    padding: "5px 15px 5px 15px",
     backgroundColor: "#1c82b2",
     cursor: "pointer",
     borderColor: "#1c82b2",
-    marginInlineStart: "5px",
+    marginInlineStart: 5,
     "@media screen and (max-width: 768px)": {
       width: "110px",
       padding: "8px",
-      marginBottom: "5px",
-      fontSize: "11px",
-    },
-  },
-  info2Buttons: {
-    borderRadius: "20px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "12px",
-    color: "white",
-    fontWeight: "600",
-    padding: "5px 5px 5px 5px",
-    backgroundColor: "#1c82b2",
-    cursor: "pointer",
-    borderColor: "#1c82b2",
-    marginInlineStart: "3px",
-    marginInlineEnd: "2px",
-    "@media screen and (max-width: 768px)": {
-      width: "110px",
-      padding: "8px",
-      marginBottom: "5px",
-      fontSize: "11px",
+      marginBottom: 5,
+      fontSize: 11,
     },
   },
   selectMsg: {
-    marginInlineStart: "3px",
     height: "100%",
     borderInlineEnd : "1px solid black",
     display:"flex",
     alignItems:"center",
+    paddingLeft: 20,
+    paddingRight: 20,
     "@media screen and (max-width: 768px)": {
       borderRight: "none",
     },
@@ -1231,8 +1211,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     top: "180px",
     width: "260px",
     maxWidth: "260px",
-    right: "11%",
-    backgroundColor: "#fff",
+    right: 40,
     wordBreak: 'break-all',
     color: "#fff",
     display: 'flex',
@@ -1257,15 +1236,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '1.15rem',
     lineHeight: '1.25',
     maxWidth: '79%',
-
     minHeight: '20px',
-
     padding: '0.5rem .875rem',
     position: 'relative',
     minWidth: "20px",
     wordWrap: 'break-word',
     right: "12px",
-    cursor: "pointer",
     backgroundColor: '#248bf5',
     color: '#fff',
     '&::before':
@@ -1695,6 +1671,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   emojiHe: {
     display: "flex",
     alignItems: "center",
+    justifyContent: 'space-evenly',
     borderInlineEnd: "1px solid black",
     paddingInlineStart: "8px",
     height:"100%",
@@ -1717,7 +1694,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   endButtons: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
     height:"100%",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column-reverse",
@@ -2210,7 +2187,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 
     '&:hover':
     {
-      backgroundColor: "#277BFF",
+      backgroundColor: "#6495ED",
       color: "#fff",
       zIndex: "9"
     }
@@ -2575,8 +2552,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   OtpPhoneNumberInput :
   {
-    border:"1px solid #bbb",borderRadius:"5px",marginTop:"30px",width:"200px",alignContent:"center",marginBottom:"30px",padding:"5px",textAlign:"center"
-  
+    border:"1px solid #bbb",
+    borderRadius:"5px",marginTop:"30px",width:"200px",alignContent:"center",marginBottom:"30px",padding:"5px",
+    '& input': {
+      textAlign: 'center',
+      fontSize: 20  
+    }
   },
   OtpPhoneNumberConfirm :
   {
