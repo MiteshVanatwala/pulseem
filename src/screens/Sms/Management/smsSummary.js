@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
 import Mobile from "../../../assets/images/mobileiphone.png";
+import { useTranslation } from "react-i18next";
 
 const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api , textMsg , activeGroups , ...props}) => {
    console.log("props",props,stepBool)
@@ -13,6 +14,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
   const [detailsHide, setdetailsHide] = useState(true);
   const [subDetailsActive, setsubDetailsActive] = useState(false);
   const [subRecipientsDetails, setsubRecipients] = useState(false);
+  const { t } = useTranslation();
   useEffect(() => {
     setmodal(open);
   }, [open])
@@ -49,19 +51,19 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
           <div className={classes.baseSum}>
             <div className={classes.sumLeft}>
               <div className={classes.sumChild}>
-                <span className={classes.spanSum}>Campaign From :</span>
+                <span className={classes.spanSum}>{t("sms.smsSummaryCampaignFrom")}:</span>
                 <span className={classes.bodySum}>{fromNumber}</span>
               </div>
 
               <div className={classes.sumChild}>
-                <span className={classes.spanSum}>When :</span>
+                <span className={classes.spanSum}>{t("sms.smsDialogWhen")} :</span>
                 <span className={classes.bodySum}>Send Now</span>
               </div>
 
               <div className={classes.sumChild}>
-                <span className={classes.spanSum}>For :</span>
+                <span className={classes.spanSum}>{t("sms.smsDialogFor")} :</span>
                 <span style={{ fontSize: "18px" }}>
-                  Total Number of Recipients :
+                  {t("sms.smsSummaryDialogTotalRecipients")}:
                   <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
                 </span>
                 <span
@@ -252,18 +254,18 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
         icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
       >
         <div style={{ height: "60px", borderBottom: "1px solid #DEE2E7" }}>
-          <span className={classes.groupName}>Campaign Summary '{campaignName}'</span>
+          <span className={classes.groupName}>{t("sms.smsSummaryDialogTitle")} '{campaignName}'</span>
         </div>
         <div style={{ fontSize: "22px", marginTop: "5px" }}>
           <div className={classes.baseSum}>
             <div className={classes.sumLeft}>
               <div className={classes.sumChild}>
-                <span className={classes.spanSum}>Campaign From :</span>
+                <span className={classes.spanSum}>{t("sms.smsSummaryCampaignFrom")}:</span>
                 <span className={classes.bodySum}>{fromNumber}</span>
               </div>
 
               <div className={classes.sumChild}>
-                <span className={classes.spanSum}>When :</span>
+                <span className={classes.spanSum}>{t("sms.smsDialogWhen")}:</span>
                 <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} Days ${props.after ? "After" : "Before"} ${props.specialVal} at ${props.time.format('h:mm a')}  `  : props.sendType == "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : "Send Now"}</span>
               </div>
 
@@ -276,9 +278,9 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               </div>
               : null}     
               <div className={classes.sumChild}>
-                <span className={classes.spanSum}>For :</span>
+                <span className={classes.spanSum}>{t("sms.smsDialogFor")}:</span>
                 <span style={{ fontSize: "18px" }}>
-                  Total Number of Recipients :
+                  {t("sms.smsSummaryDialogTotalRecipients")} :
                   <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
                 </span>
                 <span
@@ -292,7 +294,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   }}
                   onClick={()=>{setdetailsHide(!detailsHide)}}
                 >
-                 {detailsHide ? "Details" : "Close"}
+                 {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
                 </span>
               </div>
             </div>
@@ -333,7 +335,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   }}
                   onClick={()=>{setsubDetailsActive(!subDetailsActive)}}
                 >
-                  Groups ({activeGroups.length})
+                  {t("sms.smsSummaryGroups")} ({activeGroups.length})
                 </li>
               </ul> }  
              
@@ -370,7 +372,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               }}
               onClick={()=>{setsubRecipients(!subRecipientsDetails)}}
             >
-              Recipients Filter ({(activeGroups.reduce(function (a, b) {
+              {t("sms.smsSummaryRecipientsFilter")} ({(activeGroups.reduce(function (a, b) {
                   return a + b['Recipients'];
                 }, 0).toLocaleString() - summaryPayload.FinalCount)})
             </li>
