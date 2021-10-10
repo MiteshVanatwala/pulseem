@@ -32,7 +32,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const {landingPagesData,landingPagesDataError,landingPagesDeletedData}=useSelector(state => state.landingPages)
   const {t}=useTranslation()
   const [landingPageNameSearch,setLandingPageNameSearch]=useState('')
-  const rowsOptions=[6,12,18]
+  const rowsOptions = [6, 10, 20, 50]
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)

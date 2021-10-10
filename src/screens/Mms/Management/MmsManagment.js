@@ -32,7 +32,7 @@ const MmsManagnentScreen = ({ classes }) => {
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
   const [campaineNameSearch, setCampaineNameSearch] = useState('')
-  const rowsOptions = [6, 12, 18]
+  const rowsOptions = [6, 10, 20, 50]
   const [page, setPage] = useState(1)
   const [searchResults, setSearchResults] = useState(null)
   const [isSearching, setSearching] = useState(false)

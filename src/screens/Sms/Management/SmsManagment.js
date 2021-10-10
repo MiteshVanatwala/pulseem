@@ -39,7 +39,7 @@ const SmsManagnentScreen=({classes}) => {
   const [verificationCode,handleVerificationCodeInput]=useState('');
   const [verificationCodeError,handleVerificationCodeError]=useState(false);
   const [campaineNameSearch,setCampaineNameSearch]=useState('')
-  const rowsOptions=[6,12,18]
+  const rowsOptions = [6, 10, 20, 50]
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)
