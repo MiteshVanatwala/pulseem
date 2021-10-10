@@ -69,7 +69,7 @@ const AppBarItem = ({
             currentStyle,
             textStyle,
             { [classes.chosenText]: chosen })}>
-          {showIcon ? item.iconUnicode : item && item.title || ''}
+          {showIcon ? (item.iconUnicode || item.icon) : item && item.title || ''}
         </IconButton>
 
         {(chosen || open) && <ArrowDropUp className={classes.appBarItemArrow} />}
@@ -214,7 +214,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           classes={classes}
           item={route}
           chosen={route.key === currentPage}
-          showIcon={windowSize === 'sm' || windowSize === 'md'}
+          showIcon={windowSize === 'sm' || windowSize === 'md' || route.key === 'homepage'}
           onInnerClick={navigate}
         />
       ))}

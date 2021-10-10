@@ -6,7 +6,7 @@ import {
   CodeMenuIcon,DolarMenuIcon,SettingsMenuIcon,StarMenuIcon,GrafMenuIcon,GroupMenuIcon
 } from '../assets/images/settings/index'
 import SettingsLogo from '../assets/images/settings-white.png';
-
+import { FaHome } from 'react-icons/fa'
 
 export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
   title: <img
@@ -36,6 +36,13 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
     icon: <img
       alt='Dashboard'
       src={DashboardIcon} />
+  },
+  {
+    key: 'homepage',
+    title: t('dashboard.pageTitle'),
+    href: '/react',
+    isShow: true,
+    icon: <FaHome style={{ color: "#fff"}} />
   },
   {
     key: 'gruops',
