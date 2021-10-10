@@ -10,6 +10,7 @@ import smsReducer from './reducers/smsSlice';
 import dashboardReducer from './reducers/dashboardSlice';
 import recipientReportsReducer from './reducers/recipientsReportSlice';
 import shortcutReducer from './reducers/shortcutSlice';
+import paymentReducer from './reducers/paymentSlice';
 
 export default configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export default configureStore({
     sms: smsReducer,
     dashboard: dashboardReducer,
     recipientReports: recipientReportsReducer,
-    shortcuts: shortcutReducer
+    shortcuts: shortcutReducer,
+    payment: paymentReducer
   },
 });

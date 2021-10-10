@@ -2,16 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
-import { Button, Grid, Typography, Divider, TextField, FormControl, Select, MenuItem } from '@material-ui/core';
+import { Button, Grid, Typography, Divider, FormControlLabel, FormControl, FormGroup, Checkbox, Link, Box } from '@material-ui/core';
 import { Loader } from '../../Loader/Loader';
 import NumberFormat from 'react-number-format';
-import DropdownMonthes from '../../Dropdowns/month';
-import DropdownYears from '../../Dropdowns/years';
-import moment from 'moment';
-import validator from 'validator'
 import { buySmsPackage } from '../../../redux/reducers/dashboardSlice';
 import Package from '../PackageBox/Package';
 import PurchaseLogs from '../PurhcaseLogs/Logs';
+import { getTranzillaURL, getAccountCards } from '../../../redux/reducers/paymentSlice';
+import { BiCreditCard } from 'react-icons/bi';
+import { Dialog } from '../../managment/index';
 
 const PricePackages = ({ classes,
     onComplete = () => null,
@@ -20,6 +19,7 @@ const PricePackages = ({ classes,
     const { language } = useSelector(state => state.core);
     const { isRTL } = useSelector(state => state.core);
     const { accountAvailablePackages, purchaseLogs } = useSelector(state => state.dashboard);
+    const { tranzillaUrl, creditCards } = useSelector(state => state.payment);
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [data, setData] = useState(null);
@@ -29,8 +29,7 @@ const PricePackages = ({ classes,
     const [showLoader, setLoader] = useState(true);
     const [packageId, setPackageId] = useState(null);
     const [step, setStep] = useState(1);
-    const [expiredMonth, setExpiredMonth] = useState(0);
-    const [expiredYear, setExpiredYear] = useState(0);
+    const [addNewCard, setAddNewCard] = useState(false);
     const [creditInfo, setCreditCard] = useState({
         CreditNumber: "",
         CVV: "",
@@ -39,32 +38,21 @@ const PricePackages = ({ classes,
         Credits: 1,
         CardType: 0
     });
-    const CardTypeOptions = [{ ID: 0, Type: "Visa" }, { ID: 1, Type: "MasterCard" }, { ID: 2, Type: "AmericanExpress" }];
-    const [isCreditCardValid, setIsCreditCardValid] = useState(null);
-    const [isValidCVV, setIsValidCVV] = useState(null);
     const israelTax = 0.17;
 
-    // const [expiredSet, setExpiredSet] = useState(false);
-
-
-    const initData = () => {
+    const initData = async () => {
         setSmsBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 1 }));
         setNewsletterBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 3 }));
 
         setData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === packageType }));
+        await dispatch(getAccountCards());
+        if (!creditCards) {
+            await dispatch(getTranzillaURL(isRTL ? "he-IL" : "en-US"));
+        }
         setLoader(false);
     }
 
     useEffect(initData, [dispatch]);
-
-    useEffect(() => {
-        if (expiredMonth !== 0 && expiredMonth !== null && expiredYear !== 0 && expiredYear !== null) {
-            const expiredDate = moment();
-            expiredDate.set("month", expiredMonth - 1);
-            expiredDate.set("year", expiredYear);
-            setCreditCard({ ...creditInfo, ExpirtaionDate: moment(expiredDate).format("YYYY/MM") });
-        }
-    }, [expiredMonth, expiredYear]);
 
     const selectPackage = (packageId) => {
         const pack = data.find((p) => { return p.ID === packageId });
@@ -142,8 +130,9 @@ const PricePackages = ({ classes,
                 return packagesDetails();
             case 2:
                 return renderSummary();
-            case 3:
+            case 3: {
                 return renderPayment();
+            }
         }
     }
 
@@ -154,7 +143,8 @@ const PricePackages = ({ classes,
         return (
             <Grid container spacing={1} className={classes.paymentDialog}>
                 <Grid item xs={12} className={clsx(classes.mb4)}>
-                    <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font30)}>{t('common.endPurchase')}</Typography>
+                    <Typography className={classes.dialogTitle} style={{ marginInline: 0 }}>{t('payment.purchaseSummary')}</Typography>
+                    <Divider />
                 </Grid>
                 <Grid item xs={6}>
                     <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.productName')}</Typography>
@@ -227,153 +217,51 @@ const PricePackages = ({ classes,
         )
     }
 
-    const isFormValid = () => {
-        let isValid = true;
-        const dateNow = new Date(Date.now());
-        dateNow.setDate(1);
-        const expirationDate = moment(creditInfo.ExpirtaionDate, "YYYY-MM-DD 23:59:59");
-        const selectedDate = new Date(expirationDate);
-        selectedDate.setHours("23");
-        selectedDate.setMinutes("59");
-        selectedDate.setSeconds("59");
-        document.querySelector("#cvvNumber").classList.remove('error');
-        document.querySelector("#cardNumber").classList.remove('error');
-        document.querySelector("#expiredYear").classList.remove('error');
-        document.querySelector("#expiredMonth").classList.remove('error');
-
-
-        if (creditInfo.CVV !== '' && creditInfo.CVV.length > 3 || creditInfo.CVV.length < 3) {
-            document.querySelector("#cvvNumber").classList.add('error');
-            isValid = false;
-        }
-        if (!validator.isCreditCard(creditInfo.CreditNumber)) {
-            document.querySelector("#cardNumber").classList.add('error');
-            isValid = false;
-        }
-        if ((expirationDate === null || !expirationDate.isValid()) || dateNow > selectedDate) {
-            document.querySelector("#expiredMonth").classList.add('error');
-            document.querySelector("#expiredYear").classList.add('error');
-            isValid = false;
-        }
-        return isValid;
-    }
-    const handleCreditCardChange = (e) => {
-        e.target.classList.remove('error');
-        const length = e.target.value.length;
-        if (length <= 19) {
-            setCreditCard({ ...creditInfo, CreditNumber: e.target.value })
-        }
-        const isValidCard = validator.isCreditCard(e.target.value);
-        setIsCreditCardValid(isValidCard);
-    }
-    const handleCVVChange = (e) => {
-        const length = e.target.value.length;
-        if (length <= 3) {
-            setCreditCard({ ...creditInfo, CVV: e.target.value })
-        }
-        e.target.value = e.target.value.substring(0, 3);
-        setIsValidCVV(e.target.value.length >= 3);
-        return;
-    }
     const onConfirmPayment = async () => {
-        if (isFormValid()) {
-            setLoader(true);
-            const result = await dispatch(buySmsPackage(creditInfo));
-            console.log(result.payload);
-            setLoader(false);
-        }
+        setLoader(true);
+        const result = await dispatch(buySmsPackage(creditInfo));
+        console.log(result.payload);
+        setLoader(false);
     }
-    const onSelectExpMonth = (value) => {
-        setExpiredMonth(value)
-    }
-    const onSelectExpYear = (value) => {
-        setExpiredYear(value);
+
+    const handleTranzilaClose = async () => {
+        await dispatch(getAccountCards());
+        setAddNewCard(false);
+        renderPayment();
     }
 
     const renderPayment = () => {
         return (
-            <form className={classes.root} autoComplete="off">
-                <Grid container spacing={1} className={classes.paymentDialog}>
-                    <Grid item xs={12} className={clsx(classes.mb4)}>
-                        <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font30)}>{t('common.creditCardInfo')}</Typography>
-                    </Grid>
-                    <Grid item xs={3}>
-                        {t("common.cardNumber")}
-                    </Grid>
-                    <Grid item xs={9}>
-                        <TextField
-                            id="cardNumber"
-                            placeholder={t("common.cardNumber")}
-                            variant="outlined"
-                            onChange={handleCreditCardChange} style={{ width: '100%' }}
-                            inputMode="numeric"
-                            pattern="[0-9\s]{13,19}"
-                            autoComplete="cc-number"
-                            maxLength="19"
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={3}>
-                        {t("common.expiration")}
-                    </Grid>
-                    <Grid item xs={5}>
-                        <DropdownMonthes
-                            id="expiredMonth"
-                            classes={classes}
-                            isNumeric={false}
-                            isRTL={isRTL}
-                            style={{ width: "100%" }}
-                            onChange={onSelectExpMonth}
-                            required />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <DropdownYears
-                            id="expiredYear"
-                            classes={classes}
-                            style={{ width: "100%" }}
-                            onChange={onSelectExpYear}
-                            required />
-                    </Grid>
-                    <Grid item xs={3}>
-                        {t("common.cvv")}
-                    </Grid>
-                    <Grid item xs={9}>
-                        <TextField
-                            id="cvvNumber"
-                            placeholder={t("common.cvv")}
-                            variant="outlined"
-                            onChange={handleCVVChange} style={{ width: '100%' }}
-                            type="tel"
-                            inputMode="numeric"
-                            pattern="[0-9\s]{13,19}"
-                            autoComplete="cc-number"
-                            maxLength="3"
-                            required
-                        />
-                    </Grid>
-                    <Grid item xs={3}>
-                        {t("common.cardType")}
-                    </Grid>
-                    <Grid item xs={9}>
-                        <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%' }}>
-                            <Select
-                                id="cardType"
-                                value={creditInfo.CardType}
-                                onChange={(e) => setCreditCard({ ...creditInfo, CardType: e.target.value })}
-                            >
-                                {CardTypeOptions.map((c) => {
-                                    return (
-                                        <MenuItem key={c.ID} value={c.ID}>{c.Type}</MenuItem>
-                                    );
-                                })}
-                            </Select>
-                        </FormControl>
-                    </Grid>
+            <Grid container spacing={1} className={classes.paymentDialog} >
+                {!addNewCard && creditCards.map((c, index) => {
+                    return (
+                        <Grid item md={12} xs={12} key={index}>
+                            <Typography className={classes.dialogTitle} style={{ marginInline: 0 }}>{t('payment.selectMethod')}</Typography>
+                            <Divider />
+                            <Box>
+                                <FormControl sx={{ m: 1 }} component="fieldset" variant="standard">
+                                    <FormGroup>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    key={`chk_${index}`}
+                                                    checked={true}
+                                                    inputProps={{ 'aria-labelledby': c.ExpDate }}
+                                                />
+                                            }
+                                            label={`****${c.LastDigits} - ${c.ExpDate}`}
+                                        />
+                                    </FormGroup>
+                                </FormControl>
+                            </Box>
+                        </Grid>
+                    )
+                })}
+
+                <Grid item md={12} xs={12}>
+                    <Link style={{ cursor: 'pointer' }} onClick={() => setAddNewCard(!addNewCard)}>{!addNewCard ? t("payment.updateCreditCard") : t("common.cancel")}</Link>
                 </Grid>
-                <Grid
-                    container
-                    spacing={4}
-                    className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.mt2)}>
+                {!addNewCard && <Grid container spacing={3} className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)} style={{ display: 'flex', marginTop: 10 }}>
                     <Grid item>
                         <Button
                             variant='contained'
@@ -398,14 +286,52 @@ const PricePackages = ({ classes,
                             {t('common.cancel')}
                         </Button>
                     </Grid>
-                </Grid>
-            </form>
+                </Grid>}
+            </Grid>
         );
     }
 
+    const renderTranzillaFrame = () => {
+        if (addNewCard && tranzillaUrl) {
+            const tranzillaDialog = {
+                title: t('payment.updateCreditCard'),
+                showDivider: true,
+                icon: (
+                    <BiCreditCard style={{ fontSize: 30 }} />
+                ),
+                content: (
+                    <Grid container spacing={1}>
+                        <Grid item xs={12} className={clsx(classes.mb4)}>
+                            <iframe src={`${tranzillaUrl}`} width="400" height="400" />
+                        </Grid>
+                    </Grid>
+                ),
+                renderButtons: () => (
+                    <Button
+                        variant='contained'
+                        size='small'
+                        onClick={handleTranzilaClose}
+                        className={clsx(
+                            classes.confirmButton,
+                            classes.dialogConfirmButton,
+                        )}>
+                        {t('payment.done')}
+                    </Button>
+                )
+            };
+            return (<Dialog
+                classes={classes}
+                open={addNewCard}
+                onClose={handleTranzilaClose}
+                {...tranzillaDialog}>
+                {tranzillaDialog.content}
+            </Dialog>);
+        }
+    }
     return (
         <Grid container spacing={1} style={{ maxWidth: '100%' }}>
             {purchaseWizard()}
+            {renderTranzillaFrame()}
             <Loader isOpen={showLoader} showBackdrop={false} />
         </Grid>
     );

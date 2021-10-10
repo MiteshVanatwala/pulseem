@@ -10,6 +10,7 @@ import notifications from './Notifications.he.json'
 import mainReport from './MainReport.aspx.he.json'
 import dashboard from './Dashboard.he.json'
 import smsReport from './SMSReport.he.json'
+import payment from './payment.he.json'
 
 export const he={
   automations,
@@ -23,5 +24,6 @@ export const he={
   notifications,
   mainReport,
   dashboard,
-  smsReport
+  smsReport,
+  payment
 }
