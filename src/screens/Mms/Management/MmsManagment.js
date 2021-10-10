@@ -25,22 +25,22 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 
-const MmsManagnentScreen=({classes}) => {
-  const {language,windowSize,rowsPerPage}=useSelector(state => state.core)
-  const {mmsData,mmsDataError,mmsDeletedData}=useSelector(state => state.mms)
-  const {t}=useTranslation()
-  const [fromDate,handleFromDate]=useState(null);
-  const [toDate,handleToDate]=useState(null)
-  const [campaineNameSearch,setCampaineNameSearch]=useState('')
-  const rowsOptions=[6,12,18]
-  const [page,setPage]=useState(1)
-  const [searchResults,setSearchResults]=useState(null)
-  const [isSearching,setSearching]=useState(false)
-  const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
-  const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
-  const [dialogType,setDialogType]=useState(null)
-  const [restoreArray,setRestoreArray]=useState([])
-  const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
+const MmsManagnentScreen = ({ classes }) => {
+  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { mmsData, mmsDataError, mmsDeletedData } = useSelector(state => state.mms)
+  const { t } = useTranslation()
+  const [fromDate, handleFromDate] = useState(null);
+  const [toDate, handleToDate] = useState(null)
+  const [campaineNameSearch, setCampaineNameSearch] = useState('')
+  const rowsOptions = [6, 10, 20, 50]
+  const [page, setPage] = useState(1)
+  const [searchResults, setSearchResults] = useState(null)
+  const [isSearching, setSearching] = useState(false)
+  const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
+  const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
+  const [dialogType, setDialogType] = useState(null)
+  const [restoreArray, setRestoreArray] = useState([])
+  const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const [showLoader, setLoader] = useState(true);
   const history=useCtrlHistory()
   const dispatch=useDispatch()

@@ -44,7 +44,7 @@ const NotificationManagement = ({ classes }) => {
   const [copyStatus, setCopyStatus] = useState(false);
   const [scriptPath, setScriptPath] = useState(0);
   const [apiKey, setApiKey] = useState(0);
-  const rowsOptions = [6, 12, 18]
+  const rowsOptions = [6, 10, 20, 50]
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
   const [searchResults, setSearchResults] = useState(null)
