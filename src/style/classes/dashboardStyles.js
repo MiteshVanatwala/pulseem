@@ -11,7 +11,7 @@ const shortcutPaperHeight = {
     sm: '100%',
     md: '100%',
     lg: '100%',
-    xl: '100vh'
+    xl: 'calc(100vh - 47px)'
 }
 
 const shortcutBoxWidth = {
@@ -106,7 +106,7 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         width: '85%',
         background: '#0371AD',
         borderRadius: '20px',
-        marginBottom: windowSize === 'xs' ? 30 : 45,
+        marginBottom: windowSize === 'xs' ? 30 : 40,
         fontSize: '18px',
         position: 'relative',
         textTransform: 'capitalize',
