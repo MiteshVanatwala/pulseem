@@ -456,6 +456,81 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
             </span>}              
           </div> : null}
         </div>
+      {  subRecipientsDetails  ?   <div style={{display:"flex"}}>
+     <div style={{width:"100%",borderBottom:"1px solid #E5E5E5",}}> 
+          <ul style={{listStyleType:"none"}}>
+                <li
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "700",
+                    marginBottom: "2px",
+                    cursor:"pointer",
+                    color:"#3DA6F7",
+                    paddingBottom:"5px",
+                   
+                  }}
+                >
+                 Recipients From Following Groups
+                </li>
+              </ul> 
+            
+              {props.displayGroups.map((item, index , idx) => {
+                    if (item.selected) {
+                      return (<div id={index}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          // justifyContent: "space-between",
+                          padding: "8px 8px 8px 55px",
+                          borderTop: "1px solid #E5E5E5",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {/* <span style={{marginInlineEnd:"5px"}}>{idx}</span> */}
+                        <span> {item.GroupName}</span>
+                      
+                      </div>)
+                    }
+                  })}
+            
+            
+       </div> 
+              <div style={{width:"100%",borderBottom:"1px solid #E5E5E5",}}> 
+          <ul style={{listStyleType:"none"}}>
+                <li
+                  style={{
+                    fontSize: "16px",
+                    fontWeight: "700",
+                    marginBottom: "2px",
+                    cursor:"pointer",
+                    color:"#3DA6F7",
+                    paddingBottom:"5px",
+                    
+                  }}
+                >
+                 Recipients From Following Campaigns
+                </li>
+              </ul> 
+              {props.displayCampaigns.map((item, index) => {
+                    if (item.selected) {
+                      return (<div id={index}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          // justifyContent: "space-between",
+                          padding: "8px 8px 8px 55px",
+                          borderTop: "1px solid #E5E5E5",
+                          fontSize: "16px",
+                        }}
+                      >
+                        {/* <span style={{marginInlineEnd:"5px"}}>{index}</span> */}
+                        <span> {item.Name}</span>
+                      
+                      </div>)
+                    }
+                  })} </div>
+         
+        </div> : null }
       </Dialog> : null}
 
     </div>

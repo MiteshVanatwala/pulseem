@@ -330,6 +330,7 @@ const SmsSend = ({classes , ...props }) => {
   const [totalCampaigns, settotalCampaigns] = useState([])
   const [blank, setblank] = useState(['first Name', 'Last Name', 'Cell Phone']);
   const [typedData, settypedData] = useState([]);
+  const [displayFilter, setdisplayFilter] = useState(false);
   const [RangePulseSnackbar, setRangePulseSnackbar] = useState(false);
   const [selectArray, setselectArray] = useState([
     {
@@ -355,6 +356,7 @@ const SmsSend = ({classes , ...props }) => {
   })
   const [Unique, setUnique] = useState(-1);
   const [initialheadstate, setinitialheadstate] = useState([])
+  const [recipientsDisplayGroups, setrecipientsDisplayGroups] = useState([]);
 
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: "SMS campaign has been saved", showAnimtionCheck: true },
@@ -555,10 +557,14 @@ const SmsSend = ({classes , ...props }) => {
 
   const handleSelect = (id) => {
     let tempArr = [];
+    let arr = recipientsDisplayGroups;
     for (let i = 0; i < filterGroups.length; i++) {
       if (id === filterGroups[i].GroupID) {
+       
+
         if (filterGroups[i].selected) {
           tempArr.push({ ...filterGroups[i], selected: false });
+          // arr.push(filterGroups[i]);
         } else {
           tempArr.push({ ...filterGroups[i], selected: true });
         }
@@ -566,6 +572,7 @@ const SmsSend = ({classes , ...props }) => {
         tempArr.push(filterGroups[i]);
       }
     }
+    // setrecipientsDisplayGroups(arr);
     setfilterGroups(tempArr);
   };
   const handleSelectCamp = (id) => {
@@ -1339,12 +1346,14 @@ const SmsSend = ({classes , ...props }) => {
         {
           setbsDot(true);
           setsnackbarRecipients(true);
+          setdisplayFilter(true);
           setreciFilter(false);
         }
         else
          {
            setbsDot(false);
           setreciFilter(false);
+          setdisplayFilter(false);
          }
       }
     }
@@ -2352,6 +2361,9 @@ const SmsSend = ({classes , ...props }) => {
         toggleRandom={toggleRandom}
         random={random}
         estimationDate={estimationDate}
+        displayGroups={filterGroups}
+        displayCampaigns = {totalCampaigns}
+        // displayFilter={displayFilter}
         
         />
       </>
@@ -2392,22 +2404,6 @@ const SmsSend = ({classes , ...props }) => {
   const handleSelectFirst = (name, id, idx, e) => {
     // id -  index of select array 
     // idx - header index 
-   
-    // if  (selectArray[id].isdisabled ===true )
-    // {
-    //   console.log('isnide if')
-    //   selectArray[id].isdisabled = false;
-    //   let h = headers;
-    //   h[idx] = name.value;
-    //   selectArray[id].isdisabled = true;
-    //   selectArray[id].idx = idx;
-    //   setheaders(h);
-    //   console.log(selectArray)
-    // }
-    // else
-    // {
-    //   console.log('isnide else')
-     
       let h = headers;
       h[idx] = name.value;
       selectArray.forEach((value, index)=>{
@@ -2419,10 +2415,6 @@ const SmsSend = ({classes , ...props }) => {
       selectArray[id].isdisabled = true;
       selectArray[id].idx = idx;
       setheaders(h);
-     
-
-    // }
-
   };
   const handleCloseSpan = (id, name) => {
     let h = headers;
