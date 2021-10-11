@@ -36,30 +36,36 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
      props.handleCallback()
    }
    useEffect(() => {
-     for(let i = 0  ; i < props.displayCampaigns.length ; ++i)
+     if(props.displayCampaigns !== undefined)
      {
-       if(props.displayCampaigns[i].selected)
-       {
-         setglobalCampaigns(true);
-         break;
-       }
-       else
-       {
-         setglobalCampaigns(false);
-       }
-     } 
-     for(let i = 0  ; i < props.displayGroups.length ; ++i)
+      for(let i = 0  ; i < props.displayCampaigns.length ; ++i)
+      {
+        if(props.displayCampaigns[i].selected)
+        {
+          setglobalCampaigns(true);
+          break;
+        }
+        else
+        {
+          setglobalCampaigns(false);
+        }
+      } 
+     }
+     if(props.displayGroups !== undefined)
      {
-       if(props.displayGroups[i].selected)
-       {
-         setglobalGroups(true);
-         break;
-       }
-       else
-       {
-         setglobalGroups(false);
-       }
-     } 
+      for(let i = 0  ; i < props.displayGroups.length ; ++i)
+      {
+        if(props.displayGroups[i].selected)
+        {
+          setglobalGroups(true);
+          break;
+        }
+        else
+        {
+          setglobalGroups(false);
+        }
+      } 
+     }
    }, [stepBool])
   return (
     <div>

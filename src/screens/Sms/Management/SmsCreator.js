@@ -137,7 +137,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [linkCount, setlinkCount] = useState(0);
   const [counterBool, setcounterBool] = useState(false);
   const [messageCount, setmessageCount] = useState(0);
-  const [msg, setmsg] = useState(null);
+  const [msg, setmsg] = useState("");
   const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] = useState(false);
   const [radioBtn, setradioBtn] = useState("top");
   const [landingSearch, setlandingSearch] = useState("");
@@ -238,6 +238,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   }
 
+  console.log("---extraData",extraData);
   const handleSendResult = async (smsSendResult) => {
   
    
@@ -753,7 +754,7 @@ getcredits(e.target.value.length)
   const handleSelectChange =  async (e) => {
     setselectValue(e.target.value);
     let linkMsg = "";
-    linkMsg = msg + e.target.value;
+    linkMsg = msg +  "##" + e.target.value + "##";
     setmsg(linkMsg);
     getcredits(e.target.value.length)
     setcharacterCount(linkMsg.length);
@@ -922,7 +923,7 @@ getcredits(e.target.value.length)
                   >
                     <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
                     {Object.keys(extraData).map((item, i) => {
-                      return <option value={extraData[item]} key={`extrakey_${i}`}>{item}</option>;
+                      return <option value={item} key={`extrakey_${i}`}>{extraData[item]}</option>;
                     })}
                   </select>
                   </Tooltip>
@@ -1906,7 +1907,7 @@ getcredits(e.target.value.length)
             {campaignBool ? <li style={{ marginBottom: "8px" }}>
               {t("mainReport.campaignRequire")}
             </li> : null}
-            {msg === null ? <li>{t("mainReport.msgRequire")}</li> : null}
+            {msg === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
             {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
               {t("mainReport.campaignFromRequire")}
             </li> : null}
