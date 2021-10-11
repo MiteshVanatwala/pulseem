@@ -866,7 +866,6 @@ getcredits(e.target.value.length)
                       <FormatAlignRightIcon  onClick={() => {handleToggleClick("right")}}/>
                       </Tooltip>
                       </>
-
                 )}
                 <Box className={classes.pickerEmoji}>
                   {flagemoji ? (
