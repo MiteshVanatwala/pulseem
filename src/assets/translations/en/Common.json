@@ -492,5 +492,6 @@
   "close": "Close",
   "settings": "Settings",
   "createFirstGroup": "Create your first group!",
-  "addRecipients": "+ Add Recipients"
+  "addRecipients": "+ Add Recipients",
+  "continue": "Continue"
 }

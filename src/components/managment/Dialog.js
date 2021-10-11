@@ -28,7 +28,8 @@ export const Dialog = ({
   cancelText = 'common.Cancel',
   confirmText = 'common.Ok',
   showDefaultButtons = true,
-  style = null
+  style = null,
+  ...props
 }) => {
   const direction = {
     true: 'rtl',
@@ -49,17 +50,19 @@ export const Dialog = ({
 
   const renderExitButton = () => {
     return (
-      <Box
-        onClick={onExit}
-        className={clsx(
-          classes.dialogExitButton,
-          {
-            [classes.dialogExitButtonRTL]: isRTL,
-            [classes.dialogExitButtonLTR]: !isRTL
-          }
-        )}>
-        x
-      </Box>
+      <>
+        {props.exit ? null : <Box
+          onClick={onExit}
+          className={clsx(
+            classes.dialogExitButton,
+            {
+              [classes.dialogExitButtonRTL]: isRTL,
+              [classes.dialogExitButtonLTR]: !isRTL
+            }
+          )}>
+          x
+        </Box>}  </>
+
     )
   }
 

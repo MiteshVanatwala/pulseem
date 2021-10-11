@@ -1,6 +1,9 @@
 {
-    "updateCreditCard": "Update Credit Card",
-    "done": "I have done",
-    "selectMethod": "Select payment method",
-    "purchaseSummary": "Purchase Summary"
-  }
+  "updateCreditCard": "Add Credit Card",
+  "done": "I have done",
+  "selectMethod": "Select payment method",
+  "purchaseSummary": "Purchase Summary",
+  "addCreditCard": "Add New",
+  "noCreditFound": "No credit card found for this account. You can add a new one.",
+  "useExistCard": "Use payment method ending in "
+}

@@ -41,16 +41,6 @@ export const deleteShortcuts = createAsyncThunk(
     }
   });
 
-export const buySmsPackage = createAsyncThunk(
-  'dashboard/BuyPackage', async (data, thunkAPI) => {
-    try {
-      const response = await instence.post(`dashboard/BuyPackage`, data);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
 export const getPurchaseLog = createAsyncThunk(
   'dashboard/GetPurchaseLog', async (_, thunkAPI) => {
     try {

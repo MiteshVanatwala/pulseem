@@ -12,21 +12,32 @@ export const getAccountCards = createAsyncThunk(
   }
 )
 export const getTranzillaURL = createAsyncThunk(
-  'Payment/GetTranzillaURL', async (culture, thunkAPI) => {
+  'Payment/GetTranzillaURL', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`Payment/GetTranzillaURL/${culture}`);
+      const response = await instence.get(`Payment/GetTranzillaURL/`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
 
+  export const buyPackage = createAsyncThunk(
+    'Payment/BuyPackage', async (data, thunkAPI) => {
+      try {
+        const response = await instence.post(`Payment/BuyPackage`, data);
+        return JSON.parse(response.data)
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    });
+
 
 export const paymentSlice = createSlice({
   name: 'payment',
   initialState: {
     tranzillaUrl: null,
-    creditCards: null
+    creditCards: null,
+    paymentConfirmation: null
   },
   extraReducers: builder => {
     builder
@@ -41,6 +52,12 @@ export const paymentSlice = createSlice({
       })
       .addCase(getAccountCards.rejected, (state, action) => {
         state.creditCards = action.error.message
+      })
+      .addCase(buyPackage.fulfilled, (state, { payload }) => {
+        state.paymentConfirmation = payload
+      })
+      .addCase(buyPackage.rejected, (state, action) => {
+        state.paymentConfirmation = action.error.message
       })
   }
 })

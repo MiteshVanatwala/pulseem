@@ -1,6 +1,9 @@
 {
-    "updateCreditCard": "עדכן כרטיס אשראי",
-    "done": "סיימתי",
-    "selectMethod": "בחר שיטת תשלום",
-    "purchaseSummary": "סיכום רכישה"
-  }
+  "updateCreditCard": "הוסף כרטיס אשראי",
+  "done": "סיימתי",
+  "selectMethod": "בחר שיטת תשלום",
+  "purchaseSummary": "סיכום רכישה",
+  "addCreditCard": "הוסף חדש",
+  "noCreditFound": "לא הוגדר כרטיס אשראי לחשבון זה. באפשרותך להוסיף כרטיס אשראי חדש.",
+  "useExistCard": "השתמש באמצעי התשלום המסתיים ב "
+}
