@@ -390,17 +390,9 @@ const SmsCreator = ({ classes, ...props }) => {
   useEffect(() => {
     getSavedData();
   }, [])
-  const onEmojiClick = async (event, emojiObject) => {
-    console.log("--->emoji")
-    let msgs = msg;
-    let count = characterCount;
-    count++;
-    setcharacterCount(count);
-    setChosenEmoji(emojiObject);
-    setflagemoji(false);
-    getcredits(count);
-    setmsg(msgs + emojiObject.emoji);
-  };
+
+
+
 
   const toggleChecked = () => {
     setChecked((prev) => !prev);
@@ -551,6 +543,18 @@ const SmsCreator = ({ classes, ...props }) => {
     setremovalNumber(response.payload.RemovalKey);
 
   }
+  const onEmojiClick = (event, emojiObject) => {
+    console.log("--->emoji",emojiObject.emoji)
+    let msgs = msg;
+    let count = characterCount;
+    count++;
+    setcharacterCount(count);
+    setChosenEmoji(emojiObject);
+    setflagemoji(false);
+    setmsg(msgs + emojiObject.emoji);
+    getcredits(count);
+    
+  };
   const renderFields = () => {
     return (
       <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
@@ -759,6 +763,25 @@ getcredits(e.target.value.length)
     getcredits(e.target.value.length)
     setcharacterCount(linkMsg.length);
   };
+  const handleMsgSelect = () =>
+  {
+    if(msg.includes("To unsubscribe reply 282"))
+    {
+      setremovalMessageButtonDisabled(true);
+    }
+    else
+    {
+      setremovalMessageButtonDisabled(false);
+    }
+    if(msg.includes("##SmsUnsubscribeURL##"))
+    {
+      setremovalLinkDisabled(true);
+    }
+    else
+    {
+      setremovalLinkDisabled(false);
+    }
+  }
 
   const renderMsg = () => {
     return (
@@ -776,6 +799,7 @@ getcredits(e.target.value.length)
               className={clsx(classes.msgArea)}
               style={{ textAlign: alignment == "left" ? "left" : "right" }}
               onChange={onMsgChange}
+              onSelect={handleMsgSelect}
               value={msg}
             ></textarea>
 
@@ -844,15 +868,17 @@ getcredits(e.target.value.length)
                       </>
 
                 )}
-                <Box className={classes.pickerEmoji} onBlur={()=>{setflagemoji(false)}}>
+                <Box className={classes.pickerEmoji}>
                   {flagemoji ? (
                     <Picker
-                      onEmojiClick={() => {onEmojiClick()}}
+                      onEmojiClick={onEmojiClick}
+                     
                       groupVisibility={{
                         flags: false,
                       }}
                     />
                   ) : null}
+              
 
                   <Tooltip
                     disableFocusListener
