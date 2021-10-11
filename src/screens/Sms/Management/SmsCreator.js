@@ -133,7 +133,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [linkCount, setlinkCount] = useState(0);
   const [counterBool, setcounterBool] = useState(false);
   const [messageCount, setmessageCount] = useState(0);
-  const [msg, setmsg] = useState(null);
+  const [msg, setmsg] = useState("");
   const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] = useState(false);
   const [radioBtn, setradioBtn] = useState("top");
   const [landingSearch, setlandingSearch] = useState("");
@@ -234,6 +234,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   }
 
+  console.log("---extraData",extraData);
   const handleSendResult = async (smsSendResult) => {
   
    
@@ -385,17 +386,9 @@ const SmsCreator = ({ classes, ...props }) => {
   useEffect(() => {
     getSavedData();
   }, [])
-  const onEmojiClick = async (event, emojiObject) => {
-    console.log("--->emoji")
-    let msgs = msg;
-    let count = characterCount;
-    count++;
-    setcharacterCount(count);
-    setChosenEmoji(emojiObject);
-    setflagemoji(false);
-    getcredits(count);
-    setmsg(msgs + emojiObject.emoji);
-  };
+
+
+
 
   const toggleChecked = () => {
     setChecked((prev) => !prev);
@@ -545,6 +538,18 @@ const SmsCreator = ({ classes, ...props }) => {
     setremovalNumber(response.payload.RemovalKey);
 
   }
+  const onEmojiClick = (event, emojiObject) => {
+    console.log("--->emoji",emojiObject.emoji)
+    let msgs = msg;
+    let count = characterCount;
+    count++;
+    setcharacterCount(count);
+    setChosenEmoji(emojiObject);
+    setflagemoji(false);
+    setmsg(msgs + emojiObject.emoji);
+    getcredits(count);
+    
+  };
   const renderFields = () => {
     return (
       <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
@@ -748,11 +753,30 @@ getcredits(e.target.value.length)
   const handleSelectChange = async (e) => {
     setselectValue(e.target.value);
     let linkMsg = "";
-    linkMsg = msg + e.target.value;
+    linkMsg = msg +  "##" + e.target.value + "##";
     setmsg(linkMsg);
     getcredits(e.target.value.length)
     setcharacterCount(linkMsg.length);
   };
+  const handleMsgSelect = () =>
+  {
+    if(msg.includes("To unsubscribe reply 282"))
+    {
+      setremovalMessageButtonDisabled(true);
+    }
+    else
+    {
+      setremovalMessageButtonDisabled(false);
+    }
+    if(msg.includes("##SmsUnsubscribeURL##"))
+    {
+      setremovalLinkDisabled(true);
+    }
+    else
+    {
+      setremovalLinkDisabled(false);
+    }
+  }
 
   const renderMsg = () => {
     return (
@@ -770,6 +794,7 @@ getcredits(e.target.value.length)
               className={clsx(classes.msgArea)}
               style={{ textAlign: alignment == "left" ? "left" : "right" }}
               onChange={onMsgChange}
+              onSelect={handleMsgSelect}
               value={msg}
             ></textarea>
 
@@ -838,15 +863,17 @@ getcredits(e.target.value.length)
                   </>
 
                 )}
-                <Box className={classes.pickerEmoji} onBlur={()=>{setflagemoji(false)}}>
+                <Box className={classes.pickerEmoji}>
                   {flagemoji ? (
                     <Picker
-                      onEmojiClick={() => {onEmojiClick()}}
+                      onEmojiClick={onEmojiClick}
+                     
                       groupVisibility={{
                         flags: false,
                       }}
                     />
                   ) : null}
+              
 
                   <Tooltip
                     disableFocusListener
@@ -910,16 +937,16 @@ getcredits(e.target.value.length)
                     placement="top-center"
                     arrow
                   >
-                    <select
-                      className={classes.selectVal}
-                      value={selectValue}
-                      onChange={handleSelectChange}
-                    >
-                      <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
-                      {Object.keys(extraData).map((item, i) => {
-                        return <option value={extraData[item]} key={`extrakey_${i}`}>{item}</option>;
-                      })}
-                    </select>
+                  <select
+                    className={classes.selectVal}
+                    value={selectValue}
+                    onChange={handleSelectChange}
+                  >
+                    <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
+                    {Object.keys(extraData).map((item, i) => {
+                      return <option value={item} key={`extrakey_${i}`}>{extraData[item]}</option>;
+                    })}
+                  </select>
                   </Tooltip>
                 </Box>
                 <Box className={classes.addDiv} tabindex="0" onBlur={() => { seteditmenuClick(false) }}>
@@ -1890,7 +1917,7 @@ getcredits(e.target.value.length)
             {campaignBool ? <li style={{ marginBottom: "8px" }}>
               {t("mainReport.campaignRequire")}
             </li> : null}
-            {msg === null ? <li>{t("mainReport.msgRequire")}</li> : null}
+            {msg === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
             {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
               {t("mainReport.campaignFromRequire")}
             </li> : null}

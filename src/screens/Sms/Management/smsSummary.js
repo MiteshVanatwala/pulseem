@@ -14,6 +14,9 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
   const [detailsHide, setdetailsHide] = useState(true);
   const [subDetailsActive, setsubDetailsActive] = useState(false);
   const [subRecipientsDetails, setsubRecipients] = useState(false);
+  const [globalCampaigns, setglobalCampaigns] = useState(false)
+  const [globalGroups, setglobalGroups] = useState(false);
+
   const { t } = useTranslation();
   useEffect(() => {
     setmodal(open);
@@ -32,6 +35,38 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
      setmodal(false)
      props.handleCallback()
    }
+   useEffect(() => {
+     if(props.displayCampaigns !== undefined)
+     {
+      for(let i = 0  ; i < props.displayCampaigns.length ; ++i)
+      {
+        if(props.displayCampaigns[i].selected)
+        {
+          setglobalCampaigns(true);
+          break;
+        }
+        else
+        {
+          setglobalCampaigns(false);
+        }
+      } 
+     }
+     if(props.displayGroups !== undefined)
+     {
+      for(let i = 0  ; i < props.displayGroups.length ; ++i)
+      {
+        if(props.displayGroups[i].selected)
+        {
+          setglobalGroups(true);
+          break;
+        }
+        else
+        {
+          setglobalGroups(false);
+        }
+      } 
+     }
+   }, [stepBool])
   return (
     <div>
       {modal ? <Dialog
@@ -459,7 +494,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
           </div> : null}
         </div>
       {  subRecipientsDetails  ?   <div style={{display:"flex"}}>
-     <div style={{width:"100%",borderBottom:"1px solid #E5E5E5",}}> 
+  {globalGroups  ?  <div style={{width:"100%",borderBottom:"1px solid #E5E5E5",}}> 
           <ul style={{listStyleType:"none"}}>
                 <li
                   style={{
@@ -494,10 +529,10 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                       </div>)
                     }
                   })}
-            
-            
-       </div> 
-              <div style={{width:"100%",borderBottom:"1px solid #E5E5E5",}}> 
+             </div> 
+             : null}  
+      
+           {globalCampaigns ?  <div style={{width:"100%",borderBottom:"1px solid #E5E5E5",}}> 
           <ul style={{listStyleType:"none"}}>
                 <li
                   style={{
@@ -530,7 +565,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                       
                       </div>)
                     }
-                  })} </div>
+                  })} </div> : null}  
          
         </div> : null }
       </Dialog> : null}

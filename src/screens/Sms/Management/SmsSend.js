@@ -372,22 +372,152 @@ const SmsSend = ({classes , ...props }) => {
     getOptionLabel: (option) => option.value,
   };
 
-
-
   const [headers, setheaders] = useState(initialheadstate);
+
   const getData = async () => {
-    const list = await dispatch(getFinishedCampaigns());
-    const tempGroupList = list.payload;
-    settotalCampaigns(tempGroupList);
-    if (props && props.match.params.id != null && parseInt(props.match.params.id) > 0) {
-      await dispatch(getCampaignSettings(props.match.params.id))
+      setLoader(true);
+      const list = await dispatch(getFinishedCampaigns());
+      const tempGroupList = list.payload;
+      settotalCampaigns(tempGroupList);
+    if (props && props.match.params.id) {
+    let r =  await dispatch(getCampaignSettings(props.match.params.id))
+    const list = await dispatch(getGroupsBySubAccountId());
+    console.log("presaved resp",r)
+     if(r.payload.Groups !== null)
+     {
+      var arr = []; 
+      for(var i=0 ; i<list.payload.length ; ++i) {
+        for(var j=0 ; j<r.payload.Groups.length ; ++j) {
+          if(list.payload[i].GroupID == r.payload.Groups[j]) {
+            arr.push(list.payload[i]);
+          }
+        }
+      }
+      setSelected(arr);
+     }
+     if(r.payload.SendExeptional != null && r.payload.SendExeptional.Groups.length !== 0)
+     {
+       let arr1 = [];
+       for(var i=0 ; i<list.payload.length ; ++i) {
+        for(var j=0 ; j<r.payload.SendExeptional.Groups.length ; ++j) {
+          if(list.payload[i].GroupID == r.payload.SendExeptional.Groups[j]) {
+            arr1.push({ ...list.payload[i], selected: true });
+          }
+          else
+          {
+            arr1.push({ ...list.payload[i], selected: false });
+          }
+        }
+      }
+      setfilterGroups(arr1);
+     }
+     if(r.payload.SendExeptional != null && r.payload.SendExeptional.Campaigns.length !== 0)
+     {
+      const camps = await dispatch(getFinishedCampaigns());
+      let arr2 = [];
+      for(var i=0 ; i<camps.payload.length ; ++i) {
+        for(var j=0 ; j<r.payload.SendExeptional.Campaigns.length ; ++j) {
+          if(camps.payload[i].SMSCampaignID == r.payload.SendExeptional.Campaigns[j]) {
+            arr2.push({ ...camps.payload[i], selected: true });
+          }
+          else
+          {
+            arr2.push({ ...camps.payload[i], selected: false });
+          }
+        }
+      }
+      settotalCampaigns(arr2);
+     }
+     if(r.payload.SendExeptional != null && r.payload.SendExeptional.ExceptionalDays !== -1)
+     {
+      setinputRecipients(`${r.payload.SendExeptional.ExceptionalDays}`)
+      settoggleReci(true);
+      
+     }
+     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.PulseSettingsID !== -1)
+      {
+        settogglePulse(true);
+      }
+    
+      if(r.payload.RandomSettings !=null && r.payload.RandomSettings.RandomAmount !== 0)
+      {
+        setrandom(r.payload.RandomSettings.RandomAmount);
+        settoggleRandom(true);
+      }
+     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.PulseAmount !== 0)
+     {
+       setinputF(`${r.payload.PulseSettings.PulseAmount}`)
+     }
+     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.TimeInterval !== 0)
+     {
+       setinputS(`${r.payload.PulseSettings.TimeInterval}`)
+     }
+     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.PulseType === 2)
+     {
+      setpercentTrue(false);
+      setnoTrue(true);
+      setpulsePer("");
+      setpulseReci("Recipients");
+      
+     }
+     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.PulseType === 1)
+     {
+      setpulsePer("percent");
+      setpercentTrue(true);
+      setnoTrue(false);
+      setpulseReci("");
+    
+     }
+     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.TimeType === 1)
+     {
+      sethoursTrue(false);
+      setminTrue(true);
+      setminName("Mins");
+      sethourName("");
+     }
+     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.TimeType === 2)
+     {
+      sethoursTrue(true);
+      setminTrue(false);
+      setminName("");
+      sethourName("Hours");
+     }
+    if(r.payload.SendTypeID)
+    {
+      setSendType(`${r.payload.SendTypeID}`);
+    }
+    if(r.payload.FutureDateTime !== null && r.payload.SendTypeID === 2)
+    {
+      handleFromDate(moment(r.payload.FutureDateTime));
+    }
+    if(r.payload.SendTypeID === 3)
+    {
+      setdaysBeforeAfter(r.payload.SpecialSettings.Day);
+      setsendTime(moment(r.payload.SpecialSettings.SendHour))
+      setSpecialValue(`${r.payload.SpecialSettings.DateFieldID}`)
+      if(r.payload.SpecialSettings.IntervalTypeID === -1)
+      {
+        settoggleB(true);
+        settoggleA(false);
+        setafterClick(false);
+      }
+      else
+      {
+        settoggleB(false);
+        settoggleA(true);
+        setafterClick(true);
+      }
+    }
+    
       setLoader(false)
     }
-
   };
+
   useEffect(() => {
     getSubAccountGroups();
+    setLoader(true);
     getData();
+    setLoader(false);
     getDataExtra();
 
   }, [dispatch]);
@@ -2268,6 +2398,7 @@ const SmsSend = ({classes , ...props }) => {
           {
             beforeAfter = -1
           }
+        
           let quickPayload = {
             FutureDateTime: null,
             GroupDetails: finalGroups,
@@ -2345,7 +2476,7 @@ const SmsSend = ({classes , ...props }) => {
         activeGroups={selectedGroups}  
         summaryPayload={getCampaignSum} 
         api={onApiCall} sendType={sendType} 
-        days={daysBeforeAfter} 
+        days={daysBeforeAfter}
         after={afterClick} 
         time={sendTime} 
         handleCallback={handleSummary} 
