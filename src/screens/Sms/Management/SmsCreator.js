@@ -222,7 +222,6 @@ const SmsCreator = ({ classes, ...props }) => {
           }
   })
 
-
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
     QUICKSENDSUCCESSS: { severity: 'success', color: 'success', message: t('sms.quickSend'), showAnimtionCheck: true },
@@ -234,8 +233,6 @@ const SmsCreator = ({ classes, ...props }) => {
     SENTALREADY : { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true},
 
   }
-
-
 
   const handleSendResult = async (smsSendResult) => {
   
