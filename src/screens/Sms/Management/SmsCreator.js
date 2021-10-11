@@ -578,7 +578,7 @@ const SmsCreator = ({ classes, ...props }) => {
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
             </Typography>
-            {storedValue !== campaignNumber &&  <Typography
+            <Typography
               className={classes.restoreBtn}
               onClick={() => {
                 handleRestore()
@@ -586,7 +586,7 @@ const SmsCreator = ({ classes, ...props }) => {
             >
               {t("mainReport.restore")}
             </Typography>
-            }
+            
           </Box>
 
           <TextField

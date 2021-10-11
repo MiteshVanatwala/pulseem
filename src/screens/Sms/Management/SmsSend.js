@@ -1147,7 +1147,7 @@ const SmsSend = ({classes , ...props }) => {
             <textarea
               placeholder="Drag &amp; drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box"
               spellcheck="false"
-              autocomplete="off"
+              autoComplete="off"
               className={
                 highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
               }
@@ -1723,7 +1723,7 @@ const SmsSend = ({classes , ...props }) => {
                 /> */}
                 <KeyboardDateTimePicker
                 minDate={moment()}
-                classes={keyboardclass.custom}
+                className={keyboardclass.custom}
                 inputVariant="outlined"
                 value={sendType == "2" ? sendDate : null}
                 placeholder={t("notifications.date")}
@@ -3071,11 +3071,11 @@ const SmsSend = ({classes , ...props }) => {
           {renderHead()}
 
           <Grid container style={{marginBottom:"40px"}}>
-            <Grid md={7} xs={12}>
+            <Grid item  md={7} xs={12}>
               {renderBody()}
             </Grid>
-            <Grid md={1} xs={12}></Grid>
-            <Grid md={4} xs={12}>
+            <Grid item md={1} xs={12}></Grid>
+            <Grid item    md={4} xs={12}>
               {renderRight()}
             </Grid>
           </Grid>
