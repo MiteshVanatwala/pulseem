@@ -63,9 +63,9 @@ const PricePackages = ({ classes,
         setPackageId(packageId);
         setStep(step + 1);
 
-        const packageName = `${pack.CampaignType === 1 ? t('common.smsBulk') : t('common.newsletterBulk')} ${pack.Quantity}`;
+        const packageName = `${pack.CampaignType === 3 ? t('common.smsBulk') : t('common.newsletterBulk')} ${pack.Quantity}`;
 
-        setChargeDetails({ ...chargeDetails, Price: totalPrice, PackageName: packageName, PackageType: pack.CampaignType });
+        setChargeDetails({ ...chargeDetails, Price: totalPrice, PackageName: packageName, PackageType: pack.CampaignType, Quantity: pack.Quantity });
 
     }
 
