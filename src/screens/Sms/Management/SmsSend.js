@@ -228,6 +228,8 @@ const SmsSend = ({classes , ...props }) => {
   const [inputRecipients, setinputRecipients] = useState("");
   const [toggleChecked, settoggleChecked] = useState(false);
   const [cancel, setcancel] = useState(true);
+  const [ areaClick, setareaClick] = useState(false);
+  const [ dropClick, setdropClick] = useState(false);
   const [campaignIdResp, setcampaignIdResp] = useState(-1);
   const [groupNameInput, setgroupNameInput] = useState("");
   const [groupValue, setgroupValue] = useState("");
@@ -1101,11 +1103,17 @@ const SmsSend = ({classes , ...props }) => {
   };
   const areaChange = (e) => {
     setareaData(e.target.value);
+   
+    setareaClick(true);
+    setdropClick(false);
   };
 
   const handleFiles = (e) =>
   {
     e.preventDefault();
+   
+    setareaClick(false);
+    setdropClick(true);
 
     const file = e.dataTransfer.files[0];
     const reader = new FileReader();
@@ -1506,9 +1514,21 @@ const SmsSend = ({classes , ...props }) => {
     let temp = areaData;
     let a = temp.split("\n");
     let b = [];
-    for (let i = 0; i < a.length; i++) {
-      b.push(a[i].split(","));
+    if(temp.indexOf("\t") > -1)
+    {
+      console.log("in if tab")
+      for (let i = 0; i < a.length; i++) {
+        b.push(a[i].split("\t"));
+      }
     }
+    else
+    {
+      console.log("in if ,")
+      for (let i = 0; i < a.length; i++) {
+        b.push(a[i].split(","));
+      }
+    }
+ 
 
     settypedData(b);
 
@@ -2425,7 +2445,7 @@ const SmsSend = ({classes , ...props }) => {
               Type: SpecialValue,
               DateFieldID: SpecialValue,
               Day: daysBeforeAfter,
-              SendHour: sendTime.format('h:mm a'),
+              SendHour: sendTime.format('H:mm'),
               IntervalTypeID: beforeAfter,
             },
             specialDateOptions: specialgroups
@@ -2516,14 +2536,33 @@ const SmsSend = ({classes , ...props }) => {
     setfinalSuccessDialog(true)
   };
   const handleTrueCaution = () => {
-    setcaution(true);
-    setgroupNameInput("");
-    setnewVal(false);
+    if(dropClick === true)
+    {
+      setcaution(true);
+      setgroupNameInput("");
+      setnewVal(false);
+    }
+    else if(areaClick === true)
+    {
+      setmanualTrue(false);
+      setgroupNameInput("");
+      setnewVal(false);
+    }
+   
   };
   const handleCautionCancel = () => {
-    setcaution(true);
-    setgroupNameInput("");
-    setnewVal(false);
+    if(dropClick === true)
+    {
+      setcaution(true);
+      setgroupNameInput("");
+      setnewVal(false);
+    }
+    else if(areaClick === true)
+    {
+      setmanualTrue(false);
+      setgroupNameInput("");
+      setnewVal(false);
+    }
   };
   const handleChangeId = (id) => {
     if (dropIndex == -1) {
@@ -3339,7 +3378,7 @@ const SmsSend = ({classes , ...props }) => {
           }}
         >
         <Alert severity="success"  className={recipientSuccess.customcolor}>
-        Your changes have been saved
+        {t("sms.filtersSave") } 
         </Alert>
         </Snackbar>
         <Loader isOpen={showLoader} />

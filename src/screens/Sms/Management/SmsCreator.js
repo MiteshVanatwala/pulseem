@@ -13,7 +13,6 @@ import Mobile from "../../../assets/images/mobileiphone.png";
 import Radio from "@material-ui/core/Radio";
 import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from "@material-ui/core/RadioGroup";
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import Emoj from "../../../assets/images/smile.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
@@ -46,21 +45,13 @@ import SearchIcon from "@material-ui/icons/Search";
 import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile } from "react-icons/ai";
+import { AiOutlineExclamationCircle,  AiOutlinePlusCircle , AiOutlineFile ,AiOutlineAlignLeft } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
-import Snackbar from "@material-ui/core/Snackbar";
 import { Loader } from '../../../components/Loader/Loader';
 import MuiAlert from "@material-ui/lab/Alert";
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
-import { LinkSharp } from "@material-ui/icons";
-
-
-
-function Alert(props) {
-  return <MuiAlert elevation={0} variant="filled" {...props} />;
-}
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -141,6 +132,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [removalLinkDisabled, setremovalLinkDisabled] = useState(false);
   const [waize, setwaize] = useState(false);
   const [contactGroup, setcontactGroup] = useState(false);
+  const [PhoneNumberCampaignId, setPhoneNumberCampaignId] = useState("");
   const [ContactSearch, setContactSearch] = useState("");
   const [cancel, setcancel] = useState(true);
   const [exitClick, setexitClick] = useState(false);
@@ -166,10 +158,12 @@ const SmsCreator = ({ classes, ...props }) => {
   const [total, settotal] = useState(0);
   const [temp, settemp] = useState([]);
   const [otpValue, setotpValue] = useState("");
+  const [SelectValueDisabled, setsetSelectValueDisabled] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [selectValue, setselectValue] = useState("Personilization");
   const [finalApi, setfinalApi] = useState(false);
   const [isTestCampaign, setIsTestCampaign] = useState(false);
+  const [extraAccountDATA, setextraAccountDATA] = useState([]);
   const [isLinksStatistics, setIsLinksStatistics] = useState(true);
   const [otpMsgs, setotpMsgs] = useState("Required Field")
   const [smsModel, setSmsModel] = useState({
@@ -228,16 +222,13 @@ const SmsCreator = ({ classes, ...props }) => {
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
     OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true},
-    INVALIDNUMBER : { severity: 'error', color: 'error', message: "Invalid phone number", showAnimtionCheck: false},
+    INVALIDNUMBER : { severity: 'error', color: 'error', message:  t("sms.invalidNumber") , showAnimtionCheck: false},
     QUICKSENDERROR : { severity: 'error', color: 'error', message: "Error sending message", showAnimtionCheck: false},
     SENTALREADY : { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true},
 
   }
 
-  console.log("---extraData",extraData);
   const handleSendResult = async (smsSendResult) => {
-  
-   
       switch (smsSendResult) {
         case -2: {// ALREADY_SENT
           setToastMessage(toastMessages.SENTALREADY)
@@ -249,6 +240,7 @@ const SmsCreator = ({ classes, ...props }) => {
         }
         case 0: {// SUCCESS
         setToastMessage(toastMessages.QUICKSENDSUCCESSS)
+        setPhoneNumberCampaignId("");
         }
         case 1: {// PROVISION
           break;
@@ -267,7 +259,6 @@ const SmsCreator = ({ classes, ...props }) => {
         case 5: {// ACCEPTED
           break;
         }
-      
     }
   }
 
@@ -276,7 +267,6 @@ const SmsCreator = ({ classes, ...props }) => {
    
     switch (otpSendResult) {
       case 1: {// Request
-       
         break;
       }
       case 2: {// Success
@@ -285,7 +275,6 @@ const SmsCreator = ({ classes, ...props }) => {
         break;
       }
       case 3: {// Not_Authirized
-     
       }
       case 4: {// Failed
         setOtpCounter(true);
@@ -306,7 +295,6 @@ const SmsCreator = ({ classes, ...props }) => {
       case 7: {// CodeNotProvided
         setOtpCounter(true);
         setotpMsgs("Required field");
-       
         break;
       }
     
@@ -322,8 +310,7 @@ const SmsCreator = ({ classes, ...props }) => {
     for (let i = 0; i < selectedGroup.length; i++) {
       if (selectedGroup[i].selected) {
         temp.push(selectedGroup[i].GroupID);
-        tempfull.push(selectedGroup[i]);
-
+        tempfull.push(selectedGroup[i]);  
       }
     }
     settemp(tempfull);
@@ -339,18 +326,26 @@ const SmsCreator = ({ classes, ...props }) => {
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
     await dispatch(getPreviousCampaignData());
-    await dispatch(getAccountExtraData());
+    let  resp = await dispatch(getAccountExtraData());
+    let arr = Object.keys(resp.payload)
+    let arr2 = arr.map(function(key)
+    {
+      return {[key] : resp.payload[key]};
+    })
+    let tempArr = [];
+      for (let i = 0; i < arr2.length; i++) {
+        tempArr.push({ ...arr2[i], selected: false })
+      }
+      setextraAccountDATA(tempArr)
     await dispatch(getGroupsBySubAccountId());
     let r = await dispatch(getCommonFeatures());
     if (props && props.match.params.id) {
       getSavedData();
     }
-  
     setcampaignNumber(r.payload.DefaultCellNumber)
     let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
     setStaticNumber(response.payload.Number);
     setremovalNumber(response.payload.RemovalKey);
-
     setstoredValue(r.payload.DefaultCellNumber)
     setLoader(false);
   }, [dispatch]);
@@ -367,7 +362,6 @@ const SmsCreator = ({ classes, ...props }) => {
     for (let i = 0; i < accountId.length; i++) {
       temp.push(accountId[i]);
     }
-
     setselectedGroup(temp);
   }, [accountId]);
 
@@ -387,9 +381,6 @@ const SmsCreator = ({ classes, ...props }) => {
     getSavedData();
   }, [])
 
-
-
-
   const toggleChecked = () => {
     setChecked((prev) => !prev);
     setIsTestCampaign(!isTestCampaign)
@@ -405,7 +396,6 @@ const SmsCreator = ({ classes, ...props }) => {
     let response = await dispatch(getCreditsforSMS(count));
     let credits = response.payload.split("#");
     setmessageCount(credits[0]);
-
   }
 
   const renderSwitch = () => {
@@ -453,7 +443,7 @@ const SmsCreator = ({ classes, ...props }) => {
       return false;
     }
 
-    if (msg === null) {
+    if (msg === "") {
       setsave(true);
       return false;
     }
@@ -465,50 +455,41 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     return true;
   };
-
-  const handleCloseSnackbar = (event, reason) => {
-
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpenS(false);
-  };
-  const handleCloseSnackbarApi = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setfinalApi(false);
-  };
   const handleSend = async () => {
     if (validationCheck()) {
       if (phone !== "") {
         if(props && props.match.params.id)
         {
-          
           const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false , IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData : { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
           TotalRecipients: 1 } }
           setLoader(true);
           let r = await  dispatch(smsQuick(smsQuickSendData));
-          setLoader(false);
-          
+          setLoader(false);  
           handleSendResult(r.payload.Result)
-          //  setToastMessage(toastMessages.QUICKSENDSUCCESSS);
         }
         else
         {
-          
-          const smsQuickSendData = {...quickSendPayload , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  -1 , Credits: messageCount, 
-          TotalRecipients: 1} }
-          setLoader(true);
-          let r = await  dispatch(smsQuick(smsQuickSendData));
-          setLoader(false);
-          handleSendResult(r.payload.Result)
-          // setToastMessage(toastMessages.QUICKSENDSUCCESSS);
+          if(PhoneNumberCampaignId !== "")
+          {
+            const smsQuickSendData = {...quickSendPayload , SmsCampaignID : PhoneNumberCampaignId , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID ,  SmsCampaignID : PhoneNumberCampaignId , Credits: messageCount, 
+              TotalRecipients: 1} }
+              setLoader(true);
+              let r = await  dispatch(smsQuick(smsQuickSendData));
+              setPhoneNumberCampaignId(r.payload.SmsCampaignId)
+              setLoader(false);
+              handleSendResult(r.payload.Result)
+          }
+          else
+          {
+            const smsQuickSendData = {...quickSendPayload  , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID ,  SmsCampaignID : -1 , Credits: messageCount, 
+              TotalRecipients: 1} }
+              setLoader(true);
+              let r = await  dispatch(smsQuick(smsQuickSendData));
+              setPhoneNumberCampaignId(r.payload.SmsCampaignId)
+              setLoader(false);
+              handleSendResult(r.payload.Result)
+          }
         }
-
-      
       } else {
         setToastMessage(toastMessages.INVALIDNUMBER);
       }
@@ -536,10 +517,8 @@ const SmsCreator = ({ classes, ...props }) => {
     setcampaignNumber(response.payload.Number);
     setStaticNumber(response.payload.Number);
     setremovalNumber(response.payload.RemovalKey);
-
   }
   const onEmojiClick = (event, emojiObject) => {
-    console.log("--->emoji",emojiObject.emoji)
     let msgs = msg;
     let count = characterCount;
     count++;
@@ -547,8 +526,7 @@ const SmsCreator = ({ classes, ...props }) => {
     setChosenEmoji(emojiObject);
     setflagemoji(false);
     setmsg(msgs + emojiObject.emoji);
-    getcredits(count);
-    
+    getcredits(count);  
   };
   const renderFields = () => {
     return (
@@ -628,7 +606,7 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
   const onMsgChange = async (e) => {
-    if (msg !== null && e.target.value.length < msg.length) {
+    if (msg !== "" && e.target.value.length < msg.length) {
       if(msg.includes("To unsubscribe reply 282"))
       {
         setremovalMessageButtonDisabled(true);
@@ -645,8 +623,14 @@ const SmsCreator = ({ classes, ...props }) => {
       {
         setremovalLinkDisabled(false);
       }
-     
-     
+      if(msg.includes(selectValue))
+      {
+        setsetSelectValueDisabled(true);
+      }
+      else
+      {
+        setsetSelectValueDisabled(false);
+      }
     }
     setmsg(e.target.value);
     setcharacterCount(e.target.value.length);
@@ -664,8 +648,6 @@ for (let i = 0; i < arr.length; i++) {
 const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
 let links = e.target.value.match(linkRegex);
 setSplittedLinks(links);
-
-
 if(links)
 {
     let linkSize = links.length;
@@ -709,7 +691,6 @@ getcredits(e.target.value.length)
       }
       setcharacterCount(a+35)
       setremovalLinkDisabled(true);
-
     }
     else
     {
@@ -718,12 +699,10 @@ getcredits(e.target.value.length)
     }
     getcredits(newLink.length)
     setremovalLinkDisabled(true);
-   
   };
 
   const onRemovalMsg = async () => {
 
-    console.log("------>",msg)
     let newMsg = "";
     newMsg = msg + "To unsubscribe reply 282";
     setmsg(newMsg);
@@ -757,6 +736,16 @@ getcredits(e.target.value.length)
     setmsg(linkMsg);
     getcredits(e.target.value.length)
     setcharacterCount(linkMsg.length);
+    setsetSelectValueDisabled(true);
+    let temparr = [];
+    for(let i = 0 ; i < extraAccountDATA.length ; i++ )
+    {
+      if(e.target.value === Object.keys(extraAccountDATA[i])[0])
+      {
+        temparr.push({ ...extraAccountDATA[i], selected: true })
+      }
+    }
+    setextraAccountDATA(temparr);
   };
   const handleMsgSelect = () =>
   {
@@ -775,6 +764,14 @@ getcredits(e.target.value.length)
     else
     {
       setremovalLinkDisabled(false);
+    }
+    if(msg.includes(selectValue))
+    {
+      setsetSelectValueDisabled(true);
+    }
+    else
+    {
+      setsetSelectValueDisabled(false);
     }
   }
 
@@ -797,7 +794,6 @@ getcredits(e.target.value.length)
               onSelect={handleMsgSelect}
               value={msg}
             ></textarea>
-
             <Box className={classes.smallInfoDiv}>
               <Typography style={{ marginInlineEnd: "18px" }}>
                 {linkCount} {t("mainReport.link")}
@@ -809,59 +805,50 @@ getcredits(e.target.value.length)
             </Box>
             <Box className={classes.funcDiv}>
               <Box
-
                 className={isRTL ? classes.emojiHe : classes.emoji}
               >
                 {isRTL ? (
-                  <>
-                    <Tooltip
-                      disableFocusListener
-                      title={t("mainReport.aligntoRight")}
-                      classes={{ tooltip: styles.customWidth }}
-                      placement="top-start"
-                      arrow
-                    >
-                      <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { handleToggleClick("right") }} />
-                    </Tooltip>
-                    <Tooltip
-                      disableFocusListener
-                      title={t("mainReport.alignToLeft")}
-                      classes={{ tooltip: styles.customWidth }}
-                      placement="top-start"
-                      arrow
-                    >
-                      <FormatAlignLeftIcon onClick={() => { handleToggleClick("left") }} />
-
-                    </Tooltip>
-
-
-
-                  </>
-                ) : (
-
-                  <>
-                    <Tooltip
-                      disableFocusListener
-                      title={t("mainReport.alignToLeft")}
-                      classes={{ tooltip: styles.customWidth }}
-                      placement="top-start"
-                      arrow
-                    >
-                      <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { handleToggleClick("left") }} />
-
-                    </Tooltip>
-
-                    <Tooltip
-                      disableFocusListener
-                      title={t("mainReport.aligntoRight")}
-                      classes={{ tooltip: styles.customWidth }}
-                      placement="top-start"
-                      arrow
-                    >
-                      <FormatAlignRightIcon onClick={() => { handleToggleClick("right") }} />
-                    </Tooltip>
-                  </>
-
+                       <>
+                         <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.aligntoRight")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-start"
+                    arrow
+                  >
+                        <FormatAlignRightIcon style={{marginInlineEnd:"4px"}} onClick={() => {handleToggleClick("right")}}/>
+                        </Tooltip>
+                        <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.alignToLeft")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-start"
+                    arrow
+                  >
+                       <FormatAlignLeftIcon   onClick={() => {handleToggleClick("left")}}/>
+                      </Tooltip>
+                       </>
+                ) : (   
+          <>
+            <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.alignToLeft")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-start"
+                    arrow
+                  >
+                      <FormatAlignLeftIcon  style={{marginInlineEnd:"4px"}} onClick={() => {handleToggleClick("left")}}/>   
+          </Tooltip>          
+          <Tooltip
+                    disableFocusListener
+                    title={t("mainReport.aligntoRight")}
+                    classes={{ tooltip: styles.customWidth }}
+                    placement="top-start"
+                    arrow
+                  >
+                      <FormatAlignRightIcon  onClick={() => {handleToggleClick("right")}}/>
+                      </Tooltip>
+                      </>
                 )}
                 <Box className={classes.pickerEmoji}>
                   {flagemoji ? (
@@ -873,8 +860,6 @@ getcredits(e.target.value.length)
                       }}
                     />
                   ) : null}
-              
-
                   <Tooltip
                     disableFocusListener
                     title={t("mainReport.emoji")}
@@ -943,8 +928,16 @@ getcredits(e.target.value.length)
                     onChange={handleSelectChange}
                   >
                     <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
-                    {Object.keys(extraData).map((item, i) => {
-                      return <option value={item} key={`extrakey_${i}`}>{extraData[item]}</option>;
+                    {extraAccountDATA.map((item, i) => {
+                      if(item.selected)
+                      {
+                        return(<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]]}</option>)
+                      }
+                     else
+                     {
+                      return <option  value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]]}</option>;
+                     }
+                     
                     })}
                   </select>
                   </Tooltip>
@@ -962,7 +955,6 @@ getcredits(e.target.value.length)
                     onClick={() => {
                       seteditmenuClick(!editmenuClick);
                     }}
-
                   >
                     <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
                     {t("mainReport.add")}
@@ -1003,7 +995,6 @@ getcredits(e.target.value.length)
                   ) : null}
                 </Box>
               </Box>
-
             </Box>
           </Grid>
           <Grid item xs={windowSize === "xs" ? 12 : 4}>
@@ -1034,7 +1025,6 @@ getcredits(e.target.value.length)
                 </Typography>
                 <Typography
                   className={classes.descSwitch}
-
                 >
                   {t("mainReport.keepDesc")}
                 </Typography>
@@ -1063,7 +1053,6 @@ getcredits(e.target.value.length)
     {
       setphone(e.target.value);
     }
-
   };
 
   const renderPhone = () => {
@@ -1157,7 +1146,6 @@ getcredits(e.target.value.length)
 
                   </div>
                 ) : null}
-
                 <div>
                   <FormControlLabel
                     value="bottom"
@@ -1206,7 +1194,6 @@ getcredits(e.target.value.length)
                ) : null}
              </div>
            </div>
-
                 ) : null}
               </div>
             </RadioGroup>
@@ -1309,8 +1296,25 @@ getcredits(e.target.value.length)
     setdialogClickLanding(false);
     seteditmenuClick(false);
     setmsg(linkMsg);
-    setcharacterCount(linkMsg.length);
-    getcredits(linkMsg.length)
+    let total = splittedMsg;
+    total.push(previousLandingData[id].PageHref)
+    if(isLinksStatistics && SplittedLinks !== null) {
+      let a=0;
+      for(let i = 0 ; i<total.length;i++)
+      {
+        if(total[i].includes("https://") == false)
+        {
+          a = a + total[i].length
+        }
+      }
+      setcharacterCount(a+35)
+      getcredits(a+35)
+    }
+    else
+    {
+      setcharacterCount(linkMsg.length);  
+      getcredits(linkMsg.length)
+    }
     let lc = linkCount;
     setlinkCount(++lc);
   };
@@ -1321,8 +1325,25 @@ getcredits(e.target.value.length)
     setdialogClickCampaign(false);
     seteditmenuClick(false);
     setmsg(campaignData);
-    setcharacterCount(campaignData.length);
-    getcredits(campaignData.length)
+    let total = splittedMsg;
+    total.push(previousCampaignData[id].EncryptURL)
+    if(isLinksStatistics && SplittedLinks !== null) {
+      let a=0;
+      for(let i = 0 ; i<total.length;i++)
+      {
+        if(total[i].includes("https://") == false)
+        {
+          a = a + total[i].length
+        }
+      }
+      setcharacterCount(a+35)
+      getcredits(a+35)
+    }
+    else
+    {
+      setcharacterCount(campaignData.length);
+      getcredits(campaignData.length)
+    }
     let cc = linkCount;
     setlinkCount(++cc);
   };
@@ -1365,7 +1386,14 @@ getcredits(e.target.value.length)
 
   const handleGroupClose = async () => {
 
-    if (campaignName !== "" && msg !== "") {
+    let boolean = false;
+    for (let i = 0; i < selectedGroup.length; i++) {
+      if (selectedGroup[i].selected) {
+        boolean = true;
+        break;
+      }
+    }
+    if (campaignName !== "" && msg !== "" && boolean === true) {
 
       let temp = [];
       let tempfull = [];
@@ -1387,7 +1415,6 @@ getcredits(e.target.value.length)
           SMSCampaignID: r.payload.Message,
           TestGroupsIds: temp,
         };
-
         let r2 = await dispatch(smsSaveGroup(payload2));
         await dispatch(getCampaignSumm(r.payload.Message));
         setsummary(true);
@@ -1399,9 +1426,6 @@ getcredits(e.target.value.length)
     setsave(false);
     sethidden(true);
     setcontactGroup(false);
-
-
-
   };
   const renderSendGroup = () => {
     return (
@@ -1462,7 +1486,6 @@ getcredits(e.target.value.length)
                         className={
                           item.selected ? classes.greenDoc : classes.blueDoc
                         }
-
                       >
                         {item.selected ? (
                           <FaCheck className={clsx(classes.green)} />
@@ -1472,7 +1495,6 @@ getcredits(e.target.value.length)
                       </span>
                       <div
                         className={classes.selectGroupDiv}
-
                       >
                         <span>{item.GroupName}</span>
                         <span>{item.Recipients} Recipients</span>
@@ -1587,20 +1609,26 @@ getcredits(e.target.value.length)
   const handleExit = async (saveBeforeExit) => {
 
     if (saveBeforeExit) {
-      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
-      let r = await dispatch(smsSave(payloadToPush));
-      if (r) {
-
-        setexitClick(false);
-        history.push("/SMSCampaigns");
+      if(validationCheck())
+      {
+        const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
+        let r = await dispatch(smsSave(payloadToPush));
+        if (r) {
+          setexitClick(false);
+          history.push("/SMSCampaigns");
+        }
       }
+      else
+      {
+        setexitClick(false);
+      }
+  
     }
     else if (saveBeforeExit == false) {
 
       setexitClick(false);
       history.push("/SMSCampaigns");
     }
-
   };
   const handleSummary = () => {
     setsummary(false);
@@ -1703,7 +1731,6 @@ getcredits(e.target.value.length)
         </Dialog>
       </>
     )
-
   }
   const renderPreviousCampaignsData = () => {
     return (
@@ -1773,7 +1800,6 @@ getcredits(e.target.value.length)
           </Dialog>
         ) : null}</>
     )
-
   }
   const renderWaizeNavigationModal = () => {
     return (<>
@@ -1951,28 +1977,19 @@ getcredits(e.target.value.length)
         <Dialog
           classes={classes}
           open={otpSuccess}
-          // onClose={handleNewM}
           renderButtons={false}
           showDefaultButtons={false}
           exit={true}
-
-
           showDefaultButtons={false}
         >
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
             <img src={Gif} style={{ width: "150px", height: "150px" }} />
-
             <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>Verified!</span>
-
-
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
               You can now send campaigns from this number
             </p>
-
-
             <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { setotpSuccess(false) }}>Confirm</span>
           </div>
-
         </Dialog>
       </>
     )
@@ -1985,7 +2002,6 @@ getcredits(e.target.value.length)
     let r = await dispatch(getSMSRequestOTP(payload))
     setOtpVerifyDialog(false);
     setOtpConfirm(true);
-
   }
 
   const renderOtpVerificationDialog = () => {
@@ -1998,7 +2014,6 @@ getcredits(e.target.value.length)
         icon={<div className={classes.dialogIconContent}>
           {'\uE11B'}
         </div>}
-
       >
         <Box className={classes.verificationBoxSMS}>
           <Typography className={classes.groupName} style={{ textAlign: "center", width: "100%" }}>
@@ -2017,7 +2032,6 @@ getcredits(e.target.value.length)
             value={campaignNumber}
             disabled
           />
-
           <Button
             variant='contained'
             size='small'
@@ -2029,7 +2043,6 @@ getcredits(e.target.value.length)
           <Typography style={{ fontSize: "14px" }}>{t("sms.helplineSMS")}</Typography>
         </Box>
       </Dialog>
-
     )
   }
 
@@ -2042,7 +2055,6 @@ getcredits(e.target.value.length)
     if (otpValidationscheck()) {
       let r = await dispatch(getSMSConfirmOTP(payload))
       handleOtpResult(r.payload.Status)
-
     }
   }
   const handleOtpChnage = (e) => {
@@ -2097,7 +2109,6 @@ getcredits(e.target.value.length)
           <Box style={{ display: "flex", marginTop: "20px" }}>  <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography ><Typography style={{ textDecoration: "underline", marginInlineStart: "4px" }} className={classes.fontSmsRegulations} onClick={() => { handleVerifyOTP() }}>{t("sms.sendAgainOtp")}</Typography></Box>
         </Box>
       </Dialog>
-
     )
   }
   return (
@@ -2137,5 +2148,4 @@ getcredits(e.target.value.length)
     </DefaultScreen>
   );
 };
-
 export default SmsCreator;

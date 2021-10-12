@@ -512,7 +512,22 @@
   "typeOtpPlaceholder":"Type OTP here",
   "didntReceivedOtp":"Didn't receive?",
   "sendAgainOtp":"Send again",
-  "confirmOtp":"Confirm"
+  "confirmOtp":"Confirm",
+  "campaignSummary":"Campaign Summary",
+  "sendDialog":"Send",
+  "cancelDialog":"Cancel",
+  "GroupsSummary":"Groups",
+  "RecipientsSummary":"Recipients Filter",
+  "duplicateRecipients":"Duplicate Recipients",
+  "removedRecipients":"Removed",
+  "emptyNumbers":"Empty numbers",
+  "invalidRecipients":"Invalid",
+  "recipientsFromFollowingGroups":"Recipients From Following Groups",
+  "recipientsFromFollowingCampaign":"Recipients From Following Campaigns",
+  "filtersSave":"Your changes have been saved",
+  "invalidNumber":"Invalid phone number"
+  
+
 
   
 }
