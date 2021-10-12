@@ -522,13 +522,16 @@ const SmsCreator = ({ classes, ...props }) => {
     setremovalNumber(response.payload.RemovalKey);
   }
   const onEmojiClick = (event, emojiObject) => {
+   console.log("cursor",document.getElementById("yourMessage").selectionStart,msg)
+   let a  = document.getElementById("yourMessage").selectionStart;
     let msgs = msg;
     let count = characterCount;
     count++;
+    let b = [msgs.slice(0,a), emojiObject.emoji, msgs.slice(a)].join('');
     setcharacterCount(count);
     setChosenEmoji(emojiObject);
     setflagemoji(false);
-    setmsg(msgs + emojiObject.emoji);
+    setmsg(b);
     getcredits(count);  
   };
   const renderFields = () => {

@@ -1405,8 +1405,7 @@ const SmsSend = ({classes , ...props }) => {
               {areaData !== "" ? (
                 <div>
                   <span
-                    className={classes.addManualDiv}
-                    
+                    className={classes.addManualDiv}    
                     onClick={() => {
                       handlePasted();
                     }}
@@ -1419,6 +1418,7 @@ const SmsSend = ({classes , ...props }) => {
                     onClick={() => {
                       setareaData("");
                       setContacts([]);
+                      settypedData([])
                     }}
                   >
                     Clear list
