@@ -32,7 +32,6 @@ import {
   smsQuick,
   getCampaignSumm,
   getCreditsforSMS,
-  getCampaignSettings,
   sendSms,
   getTestGroups,
   getCommonFeatures,
@@ -41,30 +40,20 @@ import {
   getSMSConfirmOTP
 } from "../../../redux/reducers/smsSlice";
 import { Dialog } from "../../../components/managment/index";
-import { FaUndoAlt } from "react-icons/fa";
 import Summary from "./smsSummary";
 import Paper from "@material-ui/core/Paper";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
-import { FaMapSigns, FaLocationArrow, FaMobileAlt } from "react-icons/fa";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle, AiOutlineDelete, AiOutlinePlusCircle , AiOutlineFile ,AiOutlineAlignLeft } from "react-icons/ai";
+import { AiOutlineExclamationCircle,  AiOutlinePlusCircle , AiOutlineFile ,AiOutlineAlignLeft } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
-import Snackbar from "@material-ui/core/Snackbar";
 import { Loader } from '../../../components/Loader/Loader';
 import MuiAlert from "@material-ui/lab/Alert";
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
-import { LinkSharp } from "@material-ui/icons";
-
-
-
-function Alert(props) {
-  return <MuiAlert elevation={0} variant="filled" {...props} />;
-}
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -240,10 +229,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   }
 
-  console.log("---extraData",extraData);
   const handleSendResult = async (smsSendResult) => {
-  
-   
       switch (smsSendResult) {
         case -2: {// ALREADY_SENT
           setToastMessage(toastMessages.SENTALREADY)
@@ -273,7 +259,6 @@ const SmsCreator = ({ classes, ...props }) => {
         case 5: {// ACCEPTED
           break;
         }
-      
     }
   }
 
@@ -282,7 +267,6 @@ const SmsCreator = ({ classes, ...props }) => {
    
     switch (otpSendResult) {
       case 1: {// Request
-       
         break;
       }
       case 2: {// Success
@@ -291,7 +275,6 @@ const SmsCreator = ({ classes, ...props }) => {
         break;
       }
       case 3: {// Not_Authirized
-     
       }
       case 4: {// Failed
         setOtpCounter(true);
@@ -312,7 +295,6 @@ const SmsCreator = ({ classes, ...props }) => {
       case 7: {// CodeNotProvided
         setOtpCounter(true);
         setotpMsgs("Required field");
-       
         break;
       }
     
@@ -328,8 +310,7 @@ const SmsCreator = ({ classes, ...props }) => {
     for (let i = 0; i < selectedGroup.length; i++) {
       if (selectedGroup[i].selected) {
         temp.push(selectedGroup[i].GroupID);
-        tempfull.push(selectedGroup[i]);
-       
+        tempfull.push(selectedGroup[i]);  
       }
     }
     settemp(tempfull);
@@ -405,9 +386,6 @@ const SmsCreator = ({ classes, ...props }) => {
     getSavedData();
   }, [])
 
-
-
-
   const toggleChecked = () => {
     setChecked((prev) => !prev);
     setIsTestCampaign(!isTestCampaign)
@@ -423,7 +401,6 @@ const SmsCreator = ({ classes, ...props }) => {
     let response = await dispatch(getCreditsforSMS(count));
     let credits = response.payload.split("#");
     setmessageCount(credits[0]);
-
   }
 
   const renderSwitch = () => {
@@ -471,7 +448,7 @@ const SmsCreator = ({ classes, ...props }) => {
       return false;
     }
 
-    if (msg === null) {
+    if (msg === "") {
       setsave(true);
       return false;
     }
@@ -484,47 +461,26 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     return true;
   };
-
-  const handleCloseSnackbar = (event, reason) => {
-
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setOpenS(false);
-  };
-  const handleCloseSnackbarApi = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setfinalApi(false);
-  };
   const handleSend = async () => {
     if (validationCheck()) {
       if (phone !== "") {
         if(props && props.match.params.id)
         {
-          
           const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false , IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData : { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
           TotalRecipients: 1 } }
           setLoader(true);
           let r = await  dispatch(smsQuick(smsQuickSendData));
-          setLoader(false);
-          
+          setLoader(false);  
           handleSendResult(r.payload.Result)
-          //  setToastMessage(toastMessages.QUICKSENDSUCCESSS);
         }
         else
         {
-          
           const smsQuickSendData = {...quickSendPayload , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  -1 , Credits: messageCount, 
           TotalRecipients: 1} }
           setLoader(true);
           let r = await  dispatch(smsQuick(smsQuickSendData));
           setLoader(false);
           handleSendResult(r.payload.Result)
-          // setToastMessage(toastMessages.QUICKSENDSUCCESSS);
         }
 
       
@@ -555,10 +511,8 @@ const SmsCreator = ({ classes, ...props }) => {
     setcampaignNumber(response.payload.Number);
     setStaticNumber(response.payload.Number);
     setremovalNumber(response.payload.RemovalKey);
-
   }
   const onEmojiClick = (event, emojiObject) => {
-    console.log("--->emoji",emojiObject.emoji)
     let msgs = msg;
     let count = characterCount;
     count++;
@@ -647,7 +601,7 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
   const onMsgChange = async (e) => {
-    if (msg !== null && e.target.value.length < msg.length) {
+    if (msg !== "" && e.target.value.length < msg.length) {
       if(msg.includes("To unsubscribe reply 282"))
       {
         setremovalMessageButtonDisabled(true);
@@ -672,8 +626,6 @@ const SmsCreator = ({ classes, ...props }) => {
       {
         setsetSelectValueDisabled(false);
       }
-     
-     
     }
     setmsg(e.target.value);
     setcharacterCount(e.target.value.length);
@@ -736,7 +688,6 @@ getcredits(e.target.value.length)
       }
       setcharacterCount(a+35)
       setremovalLinkDisabled(true);
-
     }
     else
     {
@@ -745,7 +696,6 @@ getcredits(e.target.value.length)
     }
     getcredits(newLink.length)
     setremovalLinkDisabled(true);
-   
   };
 
   const onRemovalMsg = async () => {
@@ -785,23 +735,17 @@ getcredits(e.target.value.length)
     setcharacterCount(linkMsg.length);
     setsetSelectValueDisabled(true);
     let temparr = [];
-
-
-
     for(let i = 0 ; i < extraAccountDATA.length ; i++ )
     {
-      // console.log("ggggg",e.target.value === [Object.keys(extraAccountDATA[i])[0]],Object.keys(extraAccountDATA[i])[0])
       if(e.target.value === Object.keys(extraAccountDATA[i])[0])
       {
         temparr.push({ ...extraAccountDATA[i], selected: true })
       }
-  
     }
     setextraAccountDATA(temparr);
   };
   const handleMsgSelect = () =>
   {
-    console.log("select",msg.includes(selectValue))
     if(msg.includes("To unsubscribe reply 282"))
     {
       setremovalMessageButtonDisabled(true);
@@ -847,7 +791,6 @@ getcredits(e.target.value.length)
               onSelect={handleMsgSelect}
               value={msg}
             ></textarea>
-
             <Box className={classes.smallInfoDiv}>
               <Typography style={{ marginInlineEnd: "18px" }}>
                 {linkCount} {t("mainReport.link")}
@@ -859,7 +802,6 @@ getcredits(e.target.value.length)
             </Box>
             <Box className={classes.funcDiv}>
               <Box
-
                 className={isRTL ? classes.emojiHe : classes.emoji}
               >
                 {isRTL ? (
@@ -881,14 +823,9 @@ getcredits(e.target.value.length)
                     arrow
                   >
                        <FormatAlignLeftIcon   onClick={() => {handleToggleClick("left")}}/>
-                    
                       </Tooltip>
-                    
-                     
-                      
                        </>
-                ) : (
-                
+                ) : (   
           <>
             <Tooltip
                     disableFocusListener
@@ -897,10 +834,8 @@ getcredits(e.target.value.length)
                     placement="top-start"
                     arrow
                   >
-                      <FormatAlignLeftIcon  style={{marginInlineEnd:"4px"}} onClick={() => {handleToggleClick("left")}}/>
-                   
-          </Tooltip>
-                   
+                      <FormatAlignLeftIcon  style={{marginInlineEnd:"4px"}} onClick={() => {handleToggleClick("left")}}/>   
+          </Tooltip>          
           <Tooltip
                     disableFocusListener
                     title={t("mainReport.aligntoRight")}
@@ -922,8 +857,6 @@ getcredits(e.target.value.length)
                       }}
                     />
                   ) : null}
-              
-
                   <Tooltip
                     disableFocusListener
                     title={t("mainReport.emoji")}
@@ -1019,7 +952,6 @@ getcredits(e.target.value.length)
                     onClick={() => {
                       seteditmenuClick(!editmenuClick);
                     }}
-
                   >
                     <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
                     {t("mainReport.add")}
@@ -1060,7 +992,6 @@ getcredits(e.target.value.length)
                   ) : null}
                 </Box>
               </Box>
-
             </Box>
           </Grid>
           <Grid item xs={windowSize === "xs" ? 12 : 4}>
@@ -1091,7 +1022,6 @@ getcredits(e.target.value.length)
                 </Typography>
                 <Typography
                   className={classes.descSwitch}
-
                 >
                   {t("mainReport.keepDesc")}
                 </Typography>
@@ -1128,7 +1058,6 @@ getcredits(e.target.value.length)
     {
       setphone(e.target.value);
     }
-
   };
 
   const renderPhone = () => {
@@ -1222,7 +1151,6 @@ getcredits(e.target.value.length)
 
                   </div>
                 ) : null}
-
                 <div>
                   <FormControlLabel
                     value="bottom"
@@ -1271,14 +1199,11 @@ getcredits(e.target.value.length)
                ) : null}
              </div>
            </div>
-
                 ) : null}
               </div>
             </RadioGroup>
           </div>
         ) : null}
-
-
       </Box>
     );
   };
@@ -1396,13 +1321,8 @@ getcredits(e.target.value.length)
       setcharacterCount(linkMsg.length);  
       getcredits(linkMsg.length)
     }
-
-    
-   
     let lc = linkCount;
     setlinkCount(++lc);
-
-    
   };
 
   const handleCampClick = async (id) => {
@@ -1472,7 +1392,14 @@ getcredits(e.target.value.length)
 
   const handleGroupClose = async () => {
 
-    if (campaignName !== "" && msg !== "") {
+    let boolean = false;
+    for (let i = 0; i < selectedGroup.length; i++) {
+      if (selectedGroup[i].selected) {
+        boolean = true;
+        break;
+      }
+    }
+    if (campaignName !== "" && msg !== "" && boolean === true) {
 
       let temp = [];
       let tempfull = [];
@@ -1494,7 +1421,6 @@ getcredits(e.target.value.length)
           SMSCampaignID: r.payload.Message,
           TestGroupsIds: temp,
         };
-
         let r2 = await dispatch(smsSaveGroup(payload2));
         await dispatch(getCampaignSumm(r.payload.Message));
         setsummary(true);
@@ -1506,9 +1432,6 @@ getcredits(e.target.value.length)
     setsave(false);
     sethidden(true);
     setcontactGroup(false);
-
-
-
   };
   const renderSendGroup = () => {
     return (
@@ -1569,7 +1492,6 @@ getcredits(e.target.value.length)
                         className={
                           item.selected ? classes.greenDoc : classes.blueDoc
                         }
-
                       >
                         {item.selected ? (
                           <FaCheck className={clsx(classes.green)} />
@@ -1579,7 +1501,6 @@ getcredits(e.target.value.length)
                       </span>
                       <div
                         className={classes.selectGroupDiv}
-
                       >
                         <span>{item.GroupName}</span>
                         <span>{item.Recipients} Recipients</span>
@@ -1697,7 +1618,6 @@ getcredits(e.target.value.length)
       const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
       let r = await dispatch(smsSave(payloadToPush));
       if (r) {
-
         setexitClick(false);
         history.push("/SMSCampaigns");
       }
@@ -1707,7 +1627,6 @@ getcredits(e.target.value.length)
       setexitClick(false);
       history.push("/SMSCampaigns");
     }
-
   };
   const handleSummary = () => {
     setsummary(false);
@@ -1810,7 +1729,6 @@ getcredits(e.target.value.length)
         </Dialog>
       </>
     )
-
   }
   const renderPreviousCampaignsData = () => {
     return (
@@ -1880,7 +1798,6 @@ getcredits(e.target.value.length)
           </Dialog>
         ) : null}</>
     )
-
   }
   const renderWaizeNavigationModal = () => {
     return (<>
@@ -2058,28 +1975,19 @@ getcredits(e.target.value.length)
         <Dialog
           classes={classes}
           open={otpSuccess}
-          // onClose={handleNewM}
           renderButtons={false}
           showDefaultButtons={false}
           exit={true}
-
-
           showDefaultButtons={false}
         >
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
             <img src={Gif} style={{ width: "150px", height: "150px" }} />
-
             <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>Verified!</span>
-
-
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
               You can now send campaigns from this number
             </p>
-
-
             <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { setotpSuccess(false) }}>Confirm</span>
           </div>
-
         </Dialog>
       </>
     )
@@ -2092,7 +2000,6 @@ getcredits(e.target.value.length)
     let r = await dispatch(getSMSRequestOTP(payload))
     setOtpVerifyDialog(false);
     setOtpConfirm(true);
-
   }
 
   const renderOtpVerificationDialog = () => {
@@ -2105,7 +2012,6 @@ getcredits(e.target.value.length)
         icon={<div className={classes.dialogIconContent}>
           {'\uE11B'}
         </div>}
-
       >
         <Box className={classes.verificationBoxSMS}>
           <Typography className={classes.groupName} style={{ textAlign: "center", width: "100%" }}>
@@ -2124,7 +2030,6 @@ getcredits(e.target.value.length)
             value={campaignNumber}
             disabled
           />
-
           <Button
             variant='contained'
             size='small'
@@ -2136,7 +2041,6 @@ getcredits(e.target.value.length)
           <Typography style={{ fontSize: "14px" }}>{t("sms.helplineSMS")}</Typography>
         </Box>
       </Dialog>
-
     )
   }
 
@@ -2149,7 +2053,6 @@ getcredits(e.target.value.length)
     if (otpValidationscheck()) {
       let r = await dispatch(getSMSConfirmOTP(payload))
       handleOtpResult(r.payload.Status)
-
     }
   }
   const handleOtpChnage = (e) => {
@@ -2204,7 +2107,6 @@ getcredits(e.target.value.length)
           <Box style={{ display: "flex", marginTop: "20px" }}>  <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography ><Typography style={{ textDecoration: "underline", marginInlineStart: "4px" }} className={classes.fontSmsRegulations} onClick={() => { handleVerifyOTP() }}>{t("sms.sendAgainOtp")}</Typography></Box>
         </Box>
       </Dialog>
-
     )
   }
   return (
@@ -2244,5 +2146,4 @@ getcredits(e.target.value.length)
     </DefaultScreen>
   );
 };
-
 export default SmsCreator;
