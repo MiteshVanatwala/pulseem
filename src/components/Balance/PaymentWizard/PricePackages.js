@@ -35,7 +35,7 @@ const PricePackages = ({ classes,
         ExpirtaionDate: "",
         Price: "",
         Credits: 1,
-        PackageType: 1,
+        PackageType: 3,
         PackageName: ""
     });
     const israelTax = 0.17;
@@ -43,8 +43,8 @@ const PricePackages = ({ classes,
     const initData = async () => {
         setAddNewCard(false);
         setShowPaymentResult(null);
-        setSmsBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 1 }));
-        setNewsletterBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 3 }));
+        setSmsBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 3 }));
+        setNewsletterBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 2 }));
 
         setData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === packageType }));
         await dispatch(getAccountCards());

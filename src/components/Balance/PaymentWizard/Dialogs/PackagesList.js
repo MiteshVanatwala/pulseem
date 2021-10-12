@@ -10,7 +10,7 @@ const PackagesList = ({ data, classes, packageType, smsBulkData = null, newslett
         let packPerLine = Math.ceil(12 / packageLength);
         packPerLine = packPerLine < 3 ? 3 : packPerLine;
         switch (packageType) {
-            case 1: {
+            case 3: {
                 return (
                     <>
                         {/* {purchaseLogs && <PurchaseLogs classes={classes} data={purchaseLogs} />} */}
@@ -34,7 +34,7 @@ const PackagesList = ({ data, classes, packageType, smsBulkData = null, newslett
                         }
                     </>);
             }
-            case 3: {
+            case 2: {
                 return (
                     <>
                         <Grid item xs={12}>

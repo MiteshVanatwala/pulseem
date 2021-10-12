@@ -17,7 +17,7 @@ const Package = ({ classes,
         <Grid item xs={12} sm={6} md={4} lg={packSize} >
             <Box className={clsx(classes.alignCenter, classes.whiteBox)}>
                 <Box className={clsx(classes.borderBox, classes.alignCenter, classes.m5)} style={{ width: '100%' }}>
-                    <Typography className={clsx(classes.blue, classes.textCenter, classes.line1, classes.font24)}>{packageType === 1 ? t('common.smsBulk') : t('common.newsletterBulk')}</Typography>
+                    <Typography className={clsx(classes.blue, classes.textCenter, classes.line1, classes.font24)}>{packageType === 3 ? t('common.smsBulk') : t('common.newsletterBulk')}</Typography>
                     <Typography className={clsx(classes.dialogTitle, classes.textCenter)}>
                         <NumberFormat value={pack.Quantity} displayType={'text'} thousandSeparator={true} />
                     </Typography>

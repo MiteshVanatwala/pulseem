@@ -121,7 +121,7 @@ const BulkStatus = ({ classes }) => {
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             {isShowSmsPackage && billingTypeId !== "1" ? (
               <a
-                onClick={() => showPackageDialogType(1)}
+                onClick={() => showPackageDialogType(3)}
                 className={getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink}
               >
                 <CgShoppingCart style={{fontSize: 21}} /> {t('dashboard.purchase')}
@@ -145,7 +145,7 @@ const BulkStatus = ({ classes }) => {
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             {isShowEmailPackage && billingTypeId !== "1" && accountFeatures && accountFeatures.includes('36') ? (
               <a
-                onClick={() => showPackageDialogType(3)}
+                onClick={() => showPackageDialogType(2)}
                 className={getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink}
               >
                 <CgShoppingCart style={{fontSize: 21}} /> {t('dashboard.purchase')}
