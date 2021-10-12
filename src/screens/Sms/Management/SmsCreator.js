@@ -223,7 +223,7 @@ const SmsCreator = ({ classes, ...props }) => {
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
     OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true},
-    INVALIDNUMBER : { severity: 'error', color: 'error', message: "Invalid phone number", showAnimtionCheck: false},
+    INVALIDNUMBER : { severity: 'error', color: 'error', message:  t("sms.invalidNumber") , showAnimtionCheck: false},
     QUICKSENDERROR : { severity: 'error', color: 'error', message: "Error sending message", showAnimtionCheck: false},
     SENTALREADY : { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true},
 

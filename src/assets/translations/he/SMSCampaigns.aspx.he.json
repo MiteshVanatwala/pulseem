@@ -517,6 +517,8 @@
   "emptyNumbers":"לא חוקיים",
   "invalidRecipients":"מספרים ריקים",
   "recipientsFromFollowingGroups":"נמענים מהקבוצות הבאות",
-  "recipientsFromFollowingCampaign":"נמענים מהקמפיינים הבאים"
+  "recipientsFromFollowingCampaign":"נמענים מהקמפיינים הבאים",
+  "filtersSave":"השינויים נשמרו בהצלחה",
+  "invalidNumber":"מספר לא תקין"
 
 }

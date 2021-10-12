@@ -3339,7 +3339,7 @@ const SmsSend = ({classes , ...props }) => {
           }}
         >
         <Alert severity="success"  className={recipientSuccess.customcolor}>
-        Your changes have been saved
+        {t("sms.filtersSave") } 
         </Alert>
         </Snackbar>
         <Loader isOpen={showLoader} />
