@@ -170,10 +170,12 @@ const SmsCreator = ({ classes, ...props }) => {
   const [total, settotal] = useState(0);
   const [temp, settemp] = useState([]);
   const [otpValue, setotpValue] = useState("");
+  const [SelectValueDisabled, setsetSelectValueDisabled] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [selectValue, setselectValue] = useState("Personilization");
   const [finalApi, setfinalApi] = useState(false);
   const [isTestCampaign, setIsTestCampaign] = useState(false);
+  const [extraAccountDATA, setextraAccountDATA] = useState([]);
   const [isLinksStatistics, setIsLinksStatistics] = useState(true);
   const [otpMsgs, setotpMsgs] = useState("Required Field")
   const [smsModel, setSmsModel] = useState({
@@ -343,7 +345,19 @@ const SmsCreator = ({ classes, ...props }) => {
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
     await dispatch(getPreviousCampaignData());
-    await dispatch(getAccountExtraData());
+    let  resp = await dispatch(getAccountExtraData());
+    let arr = Object.keys(resp.payload)
+    let arr2 = arr.map(function(key)
+    {
+      return {[key] : resp.payload[key]};
+    })
+   
+    let tempArr = [];
+      for (let i = 0; i < arr2.length; i++) {
+        tempArr.push({ ...arr2[i], selected: false })
+      }
+      setextraAccountDATA(tempArr)
+
     await dispatch(getGroupsBySubAccountId());
     let r = await dispatch(getCommonFeatures());
     if (props && props.match.params.id) {
@@ -650,6 +664,14 @@ const SmsCreator = ({ classes, ...props }) => {
       {
         setremovalLinkDisabled(false);
       }
+      if(msg.includes(selectValue))
+      {
+        setsetSelectValueDisabled(true);
+      }
+      else
+      {
+        setsetSelectValueDisabled(false);
+      }
      
      
     }
@@ -728,7 +750,6 @@ getcredits(e.target.value.length)
 
   const onRemovalMsg = async () => {
 
-    console.log("------>",msg)
     let newMsg = "";
     newMsg = msg + "To unsubscribe reply 282";
     setmsg(newMsg);
@@ -762,9 +783,25 @@ getcredits(e.target.value.length)
     setmsg(linkMsg);
     getcredits(e.target.value.length)
     setcharacterCount(linkMsg.length);
+    setsetSelectValueDisabled(true);
+    let temparr = [];
+
+
+
+    for(let i = 0 ; i < extraAccountDATA.length ; i++ )
+    {
+      // console.log("ggggg",e.target.value === [Object.keys(extraAccountDATA[i])[0]],Object.keys(extraAccountDATA[i])[0])
+      if(e.target.value === Object.keys(extraAccountDATA[i])[0])
+      {
+        temparr.push({ ...extraAccountDATA[i], selected: true })
+      }
+  
+    }
+    setextraAccountDATA(temparr);
   };
   const handleMsgSelect = () =>
   {
+    console.log("select",msg.includes(selectValue))
     if(msg.includes("To unsubscribe reply 282"))
     {
       setremovalMessageButtonDisabled(true);
@@ -780,6 +817,14 @@ getcredits(e.target.value.length)
     else
     {
       setremovalLinkDisabled(false);
+    }
+    if(msg.includes(selectValue))
+    {
+      setsetSelectValueDisabled(true);
+    }
+    else
+    {
+      setsetSelectValueDisabled(false);
     }
   }
 
@@ -947,8 +992,16 @@ getcredits(e.target.value.length)
                     onChange={handleSelectChange}
                   >
                     <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
-                    {Object.keys(extraData).map((item, i) => {
-                      return <option value={item} key={`extrakey_${i}`}>{extraData[item]}</option>;
+                    {extraAccountDATA.map((item, i) => {
+                      if(item.selected)
+                      {
+                        return(<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]]}</option>)
+                      }
+                     else
+                     {
+                      return <option  value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]]}</option>;
+                     }
+                     
                     })}
                   </select>
                   </Tooltip>
@@ -1324,10 +1377,32 @@ getcredits(e.target.value.length)
     setdialogClickLanding(false);
     seteditmenuClick(false);
     setmsg(linkMsg);
-    setcharacterCount(linkMsg.length);
-    getcredits(linkMsg.length)
+    let total = splittedMsg;
+    total.push(previousLandingData[id].PageHref)
+    if(isLinksStatistics && SplittedLinks !== null) {
+      let a=0;
+      for(let i = 0 ; i<total.length;i++)
+      {
+        if(total[i].includes("https://") == false)
+        {
+          a = a + total[i].length
+        }
+      }
+      setcharacterCount(a+35)
+      getcredits(a+35)
+    }
+    else
+    {
+      setcharacterCount(linkMsg.length);  
+      getcredits(linkMsg.length)
+    }
+
+    
+   
     let lc = linkCount;
     setlinkCount(++lc);
+
+    
   };
 
   const handleCampClick = async (id) => {
@@ -1336,8 +1411,25 @@ getcredits(e.target.value.length)
     setdialogClickCampaign(false);
     seteditmenuClick(false);
     setmsg(campaignData);
-    setcharacterCount(campaignData.length);
-    getcredits(campaignData.length)
+    let total = splittedMsg;
+    total.push(previousCampaignData[id].EncryptURL)
+    if(isLinksStatistics && SplittedLinks !== null) {
+      let a=0;
+      for(let i = 0 ; i<total.length;i++)
+      {
+        if(total[i].includes("https://") == false)
+        {
+          a = a + total[i].length
+        }
+      }
+      setcharacterCount(a+35)
+      getcredits(a+35)
+    }
+    else
+    {
+      setcharacterCount(campaignData.length);
+      getcredits(campaignData.length)
+    }
     let cc = linkCount;
     setlinkCount(++cc);
   };
