@@ -491,14 +491,7 @@ const SmsCreator = ({ classes, ...props }) => {
               setPhoneNumberCampaignId(r.payload.SmsCampaignId)
               setLoader(false);
               handleSendResult(r.payload.Result)
-
           }
-         
-        
-         
-    
-         
-        
         }
       } else {
         setToastMessage(toastMessages.INVALIDNUMBER);
