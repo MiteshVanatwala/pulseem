@@ -5,7 +5,6 @@ import Mobile from "../../../assets/images/mobileiphone.png";
 import { useTranslation } from "react-i18next";
 
 const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api , textMsg , activeGroups , ...props}) => {
-   console.log("props",props,stepBool)
   const [modal, setmodal] = useState(false);
   const [smsCreator, setsmsCreator] = useState(false);
   const [hideGroups, sethideGroups] = useState(false);
@@ -74,13 +73,13 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
         open={modal}
         onClose={() => {handleSmsCreate() }}
         onConfirm={api}
-        confirmText="Send"
-        cancelText="Cancel"
+        confirmText={t("sms.sendDialog")}
+        cancelText={t("sms.cancelDialog")}
         showDefaultButtons={true}
         icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
       >
         <div style={{ height: "60px", borderBottom: "1px solid #DEE2E7" }}>
-          <span className={classes.groupName}>Campaign Summary '{campaignName}'</span>
+          <span className={classes.groupName}>{t("sms.campaignSummary")}'{campaignName}'</span>
         </div>
         <div style={{ fontSize: "22px", marginTop: "5px" }}>
           <div className={classes.baseSum}>
@@ -112,7 +111,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   }}
                   onClick={() => { setdetails(!details) }}
                 >
-                  {details ? "Close" : "Details"}
+                  {details ?  t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}
                 </span>
               </div>
             </div>
@@ -154,7 +153,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   }}
                   onClick={() => { sethideGroups(!hideGroups) }}
                 >
-                  Groups ({totalRecipients})
+                  {t("sms.GroupsSummary")} ({totalRecipients})
                 </li>
               </ul> : null}
               {hideGroups ? <>    {
@@ -191,7 +190,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               }}
               onClick={() => { setrecipientsDetails(!recipientsDetails) }}
             >
-              Recipients Filter ({(groups.reduce(function (a, b) {
+              {t("sms.RecipientsSummary")} ({(groups.reduce(function (a, b) {
                   return a + b['Recipients'];
                 }, 0).toLocaleString() - summaryPayload.FinalCount)})
             </li>
@@ -210,7 +209,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 paddingInlineStart: "40px",
               }}
             >
-              Duplicate Recipients :
+              {t("sms.duplicateRecipients")} :
               <span
                 style={{
                   fontSize: "17px",
@@ -228,7 +227,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 paddingInlineStart: "40px",
               }}
             >
-              Removed :
+               {t("sms.removedRecipients")} :
               <span
                 style={{
                   fontSize: "17px",
@@ -246,7 +245,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 paddingInlineStart: "40px",
               }}
             >
-              Empty numbers :
+             {t("sms.emptyNumbers")} :
               <span
                 style={{
                   fontSize: "17px",
@@ -264,7 +263,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 paddingInlineStart: "40px",
               }}
             >
-              Invalid :
+             {t("sms.invalidRecipients")} :
               <span
                 style={{
                   fontSize: "17px",
@@ -283,8 +282,8 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
         open={smsCreator}
         onClose={() => {handleSmsSettings() }}
         onConfirm={api}
-        confirmText="Send"
-        cancelText="Cancel"
+        confirmText={t("sms.sendDialog")}
+        cancelText={t("sms.cancelDialog")}
         showDefaultButtons={true}
         icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
       >
@@ -426,7 +425,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 paddingInlineStart: "40px",
               }}
             >
-              Duplicate Recipients :
+              {t("sms.duplicateRecipients")} :
               <span
                 style={{
                   fontSize: "17px",
@@ -444,7 +443,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 paddingInlineStart: "40px",
               }}
             >
-              Removed :
+              {t("sms.removedRecipients")} :
               <span
                 style={{
                   fontSize: "17px",
@@ -462,7 +461,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 paddingInlineStart: "40px",
               }}
             >
-              Empty numbers :
+             {t("sms.emptyNumbers")} :
               <span
                 style={{
                   fontSize: "17px",
@@ -480,7 +479,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 paddingInlineStart: "40px",
               }}
             >
-              Invalid:
+              {t("sms.invalidRecipients")} :
               <span
                 style={{
                   fontSize: "17px",

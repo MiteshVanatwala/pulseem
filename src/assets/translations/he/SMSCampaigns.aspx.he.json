@@ -506,5 +506,15 @@
   "typeOtpPlaceholder":"הזינו קוד כאן",
   "didntReceivedOtp":"לא קיבלתם?",
   "sendAgainOtp":"שליחה חוזרת",
-  "confirmOtp":"אישור"
+  "confirmOtp":"אישור",
+  "campaignSummary":"סיכום קמפיין לשליחה",
+  "sendDialog":"שלח",
+  "cancelDialog":"ביטול",
+  "GroupsSummary":"קבוצות",
+  "RecipientsSummary":"סינון",
+  "duplicateRecipients":"נמענים כפולים",
+  "removedRecipients":"מוסרים",
+  "emptyNumbers":"לא חוקיים",
+  "invalidRecipients":"מספרים ריקים"
+
 }

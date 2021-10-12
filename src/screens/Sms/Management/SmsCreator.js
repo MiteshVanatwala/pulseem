@@ -332,24 +332,20 @@ const SmsCreator = ({ classes, ...props }) => {
     {
       return {[key] : resp.payload[key]};
     })
-   
     let tempArr = [];
       for (let i = 0; i < arr2.length; i++) {
         tempArr.push({ ...arr2[i], selected: false })
       }
       setextraAccountDATA(tempArr)
-
     await dispatch(getGroupsBySubAccountId());
     let r = await dispatch(getCommonFeatures());
     if (props && props.match.params.id) {
       getSavedData();
     }
-  
     setcampaignNumber(r.payload.DefaultCellNumber)
     let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
     setStaticNumber(response.payload.Number);
     setremovalNumber(response.payload.RemovalKey);
-
     setstoredValue(r.payload.DefaultCellNumber)
     setLoader(false);
   }, [dispatch]);
@@ -366,7 +362,6 @@ const SmsCreator = ({ classes, ...props }) => {
     for (let i = 0; i < accountId.length; i++) {
       temp.push(accountId[i]);
     }
-
     setselectedGroup(temp);
   }, [accountId]);
 
@@ -482,8 +477,6 @@ const SmsCreator = ({ classes, ...props }) => {
           setLoader(false);
           handleSendResult(r.payload.Result)
         }
-
-      
       } else {
         setToastMessage(toastMessages.INVALIDNUMBER);
       }
@@ -520,8 +513,7 @@ const SmsCreator = ({ classes, ...props }) => {
     setChosenEmoji(emojiObject);
     setflagemoji(false);
     setmsg(msgs + emojiObject.emoji);
-    getcredits(count);
-    
+    getcredits(count);  
   };
   const renderFields = () => {
     return (
@@ -643,8 +635,6 @@ for (let i = 0; i < arr.length; i++) {
 const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
 let links = e.target.value.match(linkRegex);
 setSplittedLinks(links);
-
-
 if(links)
 {
     let linkSize = links.length;
