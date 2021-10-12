@@ -1514,9 +1514,21 @@ const SmsSend = ({classes , ...props }) => {
     let temp = areaData;
     let a = temp.split("\n");
     let b = [];
-    for (let i = 0; i < a.length; i++) {
-      b.push(a[i].split(","));
+    if(temp.indexOf("\t") > -1)
+    {
+      console.log("in if tab")
+      for (let i = 0; i < a.length; i++) {
+        b.push(a[i].split("\t"));
+      }
     }
+    else
+    {
+      console.log("in if ,")
+      for (let i = 0; i < a.length; i++) {
+        b.push(a[i].split(","));
+      }
+    }
+ 
 
     settypedData(b);
 
