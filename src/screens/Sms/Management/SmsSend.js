@@ -228,6 +228,8 @@ const SmsSend = ({classes , ...props }) => {
   const [inputRecipients, setinputRecipients] = useState("");
   const [toggleChecked, settoggleChecked] = useState(false);
   const [cancel, setcancel] = useState(true);
+  const [ areaClick, setareaClick] = useState(false);
+  const [ dropClick, setdropClick] = useState(false);
   const [campaignIdResp, setcampaignIdResp] = useState(-1);
   const [groupNameInput, setgroupNameInput] = useState("");
   const [groupValue, setgroupValue] = useState("");
@@ -1101,11 +1103,17 @@ const SmsSend = ({classes , ...props }) => {
   };
   const areaChange = (e) => {
     setareaData(e.target.value);
+   
+    setareaClick(true);
+    setdropClick(false);
   };
 
   const handleFiles = (e) =>
   {
     e.preventDefault();
+   
+    setareaClick(false);
+    setdropClick(true);
 
     const file = e.dataTransfer.files[0];
     const reader = new FileReader();
@@ -2516,14 +2524,33 @@ const SmsSend = ({classes , ...props }) => {
     setfinalSuccessDialog(true)
   };
   const handleTrueCaution = () => {
-    setcaution(true);
-    setgroupNameInput("");
-    setnewVal(false);
+    if(dropClick === true)
+    {
+      setcaution(true);
+      setgroupNameInput("");
+      setnewVal(false);
+    }
+    else if(areaClick === true)
+    {
+      setmanualTrue(false);
+      setgroupNameInput("");
+      setnewVal(false);
+    }
+   
   };
   const handleCautionCancel = () => {
-    setcaution(true);
-    setgroupNameInput("");
-    setnewVal(false);
+    if(dropClick === true)
+    {
+      setcaution(true);
+      setgroupNameInput("");
+      setnewVal(false);
+    }
+    else if(areaClick === true)
+    {
+      setmanualTrue(false);
+      setgroupNameInput("");
+      setnewVal(false);
+    }
   };
   const handleChangeId = (id) => {
     if (dropIndex == -1) {
