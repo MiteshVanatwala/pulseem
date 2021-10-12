@@ -521,7 +521,10 @@
   "duplicateRecipients":"Duplicate Recipients",
   "removedRecipients":"Removed",
   "emptyNumbers":"Empty numbers",
-  "invalidRecipients":"Invalid"
+  "invalidRecipients":"Invalid",
+  "recipientsFromFollowingGroups":"Recipients From Following Groups",
+  "recipientsFromFollowingCampaign":"Recipients From Following Campaigns"
+  
 
 
   

@@ -506,7 +506,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                    
                   }}
                 >
-                 Recipients From Following Groups
+                {t("sms.recipientsFromFollowingGroups") } 
                 </li>
               </ul> 
             
@@ -544,7 +544,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                     
                   }}
                 >
-                 Recipients From Following Campaigns
+                 {t("sms.recipientsFromFollowingCampaign") } 
                 </li>
               </ul> 
               {props.displayCampaigns.map((item, index) => {
