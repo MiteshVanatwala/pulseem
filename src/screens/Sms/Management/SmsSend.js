@@ -2425,7 +2425,7 @@ const SmsSend = ({classes , ...props }) => {
               Type: SpecialValue,
               DateFieldID: SpecialValue,
               Day: daysBeforeAfter,
-              SendHour: sendTime.format('h:mm a'),
+              SendHour: sendTime.format('H:mm'),
               IntervalTypeID: beforeAfter,
             },
             specialDateOptions: specialgroups

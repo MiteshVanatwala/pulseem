@@ -134,6 +134,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [removalLinkDisabled, setremovalLinkDisabled] = useState(false);
   const [waize, setwaize] = useState(false);
   const [contactGroup, setcontactGroup] = useState(false);
+  const [PhoneNumberCampaignId, setPhoneNumberCampaignId] = useState("");
   const [ContactSearch, setContactSearch] = useState("");
   const [cancel, setcancel] = useState(true);
   const [exitClick, setexitClick] = useState(false);
@@ -241,6 +242,7 @@ const SmsCreator = ({ classes, ...props }) => {
         }
         case 0: {// SUCCESS
         setToastMessage(toastMessages.QUICKSENDSUCCESSS)
+        setPhoneNumberCampaignId("");
         }
         case 1: {// PROVISION
           break;
@@ -470,12 +472,33 @@ const SmsCreator = ({ classes, ...props }) => {
         }
         else
         {
-          const smsQuickSendData = {...quickSendPayload , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  -1 , Credits: messageCount, 
-          TotalRecipients: 1} }
-          setLoader(true);
-          let r = await  dispatch(smsQuick(smsQuickSendData));
-          setLoader(false);
-          handleSendResult(r.payload.Result)
+          if(PhoneNumberCampaignId !== "")
+          {
+            const smsQuickSendData = {...quickSendPayload , SmsCampaignID : PhoneNumberCampaignId , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID ,  SmsCampaignID : PhoneNumberCampaignId , Credits: messageCount, 
+              TotalRecipients: 1} }
+              setLoader(true);
+              let r = await  dispatch(smsQuick(smsQuickSendData));
+              setPhoneNumberCampaignId(r.payload.SmsCampaignId)
+              setLoader(false);
+              handleSendResult(r.payload.Result)
+          }
+          else
+          {
+            const smsQuickSendData = {...quickSendPayload  , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID ,  SmsCampaignID : -1 , Credits: messageCount, 
+              TotalRecipients: 1} }
+              setLoader(true);
+              let r = await  dispatch(smsQuick(smsQuickSendData));
+              setPhoneNumberCampaignId(r.payload.SmsCampaignId)
+              setLoader(false);
+              handleSendResult(r.payload.Result)
+
+          }
+         
+        
+         
+    
+         
+        
         }
       } else {
         setToastMessage(toastMessages.INVALIDNUMBER);
@@ -1605,12 +1628,20 @@ getcredits(e.target.value.length)
   const handleExit = async (saveBeforeExit) => {
 
     if (saveBeforeExit) {
-      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
-      let r = await dispatch(smsSave(payloadToPush));
-      if (r) {
-        setexitClick(false);
-        history.push("/SMSCampaigns");
+      if(validationCheck())
+      {
+        const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
+        let r = await dispatch(smsSave(payloadToPush));
+        if (r) {
+          setexitClick(false);
+          history.push("/SMSCampaigns");
+        }
       }
+      else
+      {
+        setexitClick(false);
+      }
+  
     }
     else if (saveBeforeExit == false) {
 
