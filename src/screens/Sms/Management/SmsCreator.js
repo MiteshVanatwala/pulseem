@@ -639,6 +639,7 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
   const onMsgChange = async (e) => {
+   
     if (msg !== "" && e.target.value.length < msg.length) {
       if(msg.includes("To unsubscribe reply 282"))
       {
@@ -827,6 +828,7 @@ getcredits(e.target.value.length)
               onSelect={handleMsgSelect}
               value={msg}
             ></textarea>
+          
             <Box className={classes.smallInfoDiv}>
               <Typography style={{ marginInlineEnd: "18px" }}>
                 {linkCount} {t("mainReport.link")}
@@ -1105,7 +1107,10 @@ getcredits(e.target.value.length)
           <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
             <div className={isRTL ? classes.chatBoxHe : classes.chatBox}>
             <div className={classes.fromMe}>
-              {msg}
+              {msg.split('\n').map((str) =>
+              {
+                return(<p style={{margin:"0",padding:"0"}}>{str}</p>)
+              })}
             </div>
             </div>
            
