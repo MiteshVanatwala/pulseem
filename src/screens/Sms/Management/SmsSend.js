@@ -1836,7 +1836,7 @@ const SmsSend = ({classes , ...props }) => {
   const handleSpecialDayChange = (e) =>
   {
     const re = /^[0-9\b]+$/;
-    if (e.target.value === '' || re.test(e.target.value)) 
+    if ((e.target.value === '' || re.test(e.target.value)) && Number(e.target.value <=365) ) 
     {
       setdaysBeforeAfter(e.target.value);
     }
@@ -2016,6 +2016,7 @@ const SmsSend = ({classes , ...props }) => {
                   disabled={sendType == "3" ? false : true}
                   value={sendType == "3" ? daysBeforeAfter : ""}
                   onChange={(e)=>{handleSpecialDayChange(e)}}
+                  maxLength="3"
                 />
 
                 <span style={{ marginInlineEnd: "8px", marginBottom: "8px" }}>
