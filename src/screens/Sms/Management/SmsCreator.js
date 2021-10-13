@@ -89,7 +89,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const inputProps = {
-    maxlength:"13"
+    maxlength:"12"
   }
   const otpProps = {
     maxlength:"5"
@@ -406,7 +406,14 @@ const SmsCreator = ({ classes, ...props }) => {
             a = a + total[i].length
           }
         }
-        setcharacterCount(a+35);
+        if(msg.includes("https://"))
+        {
+          setcharacterCount(a+35);
+        }
+        else
+        {
+          setcharacterCount(a);
+        } 
       }
     }
     else
