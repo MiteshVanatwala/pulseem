@@ -205,7 +205,10 @@ const SmsSend = ({classes , ...props }) => {
   const severe = useSnackSevere();
   const keyboardclass = useStyleKeyboardInput();
   const recipientSuccess = useSnackRecipients();
-
+  const direction = {
+    true: 'rtl',
+    false: 'ltr'
+  }
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
@@ -1924,13 +1927,20 @@ const SmsSend = ({classes , ...props }) => {
                 /> */}
                 <KeyboardDateTimePicker
                 minDate={moment()}
-                className={keyboardclass.custom}
                 inputVariant="outlined"
                 value={sendType == "2" ? sendDate : null}
                 placeholder={t("notifications.date")}
                 onChange={handleDatePicker}
                 disabled={sendType=="2" ? false : true}
-                // style={{width:"370px",padding:"5px",height:"40px"}}
+                InputProps={{
+                  style: {
+                      height: 40,
+                      width : 377
+                  }
+              }}
+              popoverprops={{
+                dir: direction[isRTL]
+              }}
                  />
               </Box>
               {/* <Box
