@@ -131,7 +131,10 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 <div className={classes.wrapChatSumm}>
                 <div className={classes.chatBox}>
                   <div className={classes.fromMe}>
-                    {totalmsg}
+                  {totalmsg.split('\n').map((str) =>
+              {
+                return(<p style={{margin:"0",padding:"0"}}>{str}</p>)
+              })}
                   </div>
                   </div>
                 </div>
@@ -348,7 +351,10 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                 <div className={classes.wrapChatSumm}>
                 <div className={classes.chatBox}>
                   <div className={classes.fromMe}>
-                    {textMsg}
+                  {textMsg.split('\n').map((str) =>
+                  {
+                    return(<p style={{margin:"0",padding:"0"}}>{str}</p>)
+                  })}
                   </div>
                   </div>
                 </div>

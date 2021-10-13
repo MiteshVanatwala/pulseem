@@ -14,6 +14,7 @@ import Radio from "@material-ui/core/Radio";
 import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from "@material-ui/core/RadioGroup";
 import Emoj from "../../../assets/images/smile.png";
+import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
@@ -86,7 +87,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const inputProps = {
-    maxlength: "13"
+    maxlength:"12"
   }
   const otpProps = {
     maxlength:"5"
@@ -403,7 +404,14 @@ const SmsCreator = ({ classes, ...props }) => {
             a = a + total[i].length
           }
         }
-        setcharacterCount(a+35);
+        if(msg.includes("https://"))
+        {
+          setcharacterCount(a+35);
+        }
+        else
+        {
+          setcharacterCount(a);
+        } 
       }
     }
     else
@@ -635,6 +643,7 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
   const onMsgChange = async (e) => {
+   
     if (msg !== "" && e.target.value.length < msg.length) {
       if(msg.includes("To unsubscribe reply 282"))
       {
@@ -823,6 +832,7 @@ getcredits(e.target.value.length)
               onSelect={handleMsgSelect}
               value={msg}
             ></textarea>
+          
             <Box className={classes.smallInfoDiv}>
               <Typography style={{ marginInlineEnd: "18px" }}>
                 {linkCount} {t("mainReport.link")}
@@ -1091,10 +1101,13 @@ getcredits(e.target.value.length)
           <img src={Mobile} className={classes.phoneImg} />
           <span className={classes.phoneNumber}>{campaignNumber}</span>
           <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
-            <div className={classes.chatBox}>
-              <div className={classes.fromMe}>
-                {msg}
-              </div>
+            <div className={isRTL ? classes.chatBoxHe : classes.chatBox}>
+            <div className={classes.fromMe}>
+              {msg.split('\n').map((str) =>
+              {
+                return(<p style={{margin:"0",padding:"0"}}>{str}</p>)
+              })}
+            </div>
             </div>
 
           </div>
@@ -1850,13 +1863,7 @@ getcredits(e.target.value.length)
           </div>
           <div className={classes.modalDiv}>
             <Paper component="form" className={btnStyle.root}>
-              <IconButton
-                type="submit"
-                className={btnStyle.iconButton}
-                aria-label={t("mainReport.searchSms")}
-              >
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6M0ZFOUE1Q0ExQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6M0ZFOUE1Q0IxQkM0MTFFNTgyQjlDN0NCMzAzQzk4NjkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDozRkU5QTVDODFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDozRkU5QTVDOTFCQzQxMUU1ODJCOUM3Q0IzMDNDOTg2OSIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pu8Ul6cAAAXVSURBVHja1Jd5UJVV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" />
-              </IconButton>
+                <img src={Waze} style={{pointerEvents:"none"}}/>
               <InputBase
                 className={btnStyle.input}
                 placeholder={t("mainReport.typeAddress")}

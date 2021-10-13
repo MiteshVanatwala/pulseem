@@ -26,6 +26,7 @@
     "jss-rtl": "^0.3.0",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.1",
+    "papaparse": "^5.3.1",
     "react": "^17.0.1",
     "react-chartjs-2": "^3.0.3",
     "react-copy-to-clipboard": "^5.0.3",
