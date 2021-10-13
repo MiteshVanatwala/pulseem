@@ -1205,30 +1205,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: 'flex-end',
     wordBreak: 'break-all',
   },
+  chatBoxHe: 
+  {
+    display: 'flex',
+    // justifyContent: 'flex-end',
+    wordBreak: 'break-all',
+  },
   wrapChatHe:
   {
     position: "absolute",
     top: "180px",
     width: "260px",
-    maxWidth: "260px",
+    height:"230px",
     right: 40,
     wordBreak: 'break-all',
     color: "#fff",
-    display: 'flex',
-    justifyContent: 'flex-start',
     borderRadius: "12px",
-    maxHeight: '230px',
     overflowY: "auto",
-    overflowX: "hidden",
-    minHeight: '40px',
-    '&::-webkit-scrollbar': {
+    "&::-webkit-scrollbar" :  {
+      visibility: "hidden",
       width: "0px",
-      background: "transparent"
-    },
-    '&::-webkit-scrollbar-thumb':
-    {
-      background: "transparent"
-    }
+      }
   },
   fromMe:
   {
@@ -1424,7 +1421,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
-    height: "400px",
+    // height: "400px",
     backgroundColor: "white !important",
     "@media screen and (max-width: 768px)": {
       width: "auto"
@@ -1432,7 +1429,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   greenManual: {
     border: "2px dashed #4BB543",
-    height: "400px",
+    // height: "400px",
     backgroundColor: "#CCFFE5",
     "@media screen and (max-width: 768px)": {
       width: "auto"
@@ -1461,8 +1458,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "calc(100% - 20px)",
     outline: "none",
     border: "none",
+    fontFamily: "Sans-serif",
     resize: "none",
-    height: "230px",
+    height: "330px",
     backgroundColor: "#CCFFE5",
     padding: "10px",
     "&::placeholder": {

@@ -19,6 +19,7 @@ import { parse } from "papaparse";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import IconButton from "@material-ui/core/IconButton";
 import { Loader } from '../../../components/Loader/Loader';
+import Papa from 'papaparse';
 import { FaCheck } from 'react-icons/fa';
 import CloseIcon from "@material-ui/icons/Close";
 import SortIcon from "@material-ui/icons/Sort";
@@ -134,7 +135,8 @@ const useSnackSevere = makeStyles((theme) => ({
   custom : 
   {
   width:"370px",
-  padding:"5px"
+  padding:"5px",
+  height:"40px"
   }
 
  }));
@@ -1117,6 +1119,8 @@ const SmsSend = ({classes , ...props }) => {
 
     const file = e.dataTransfer.files[0];
     const reader = new FileReader();
+    var p = new Promise((resolve, reject) => {
+      try {
       if (file.name.toLowerCase().indexOf("xls") > -1) {
         setLoader(true);
        
@@ -1158,59 +1162,106 @@ const SmsSend = ({classes , ...props }) => {
 
        else if(file.name.toLowerCase().indexOf("csv") > -1)
       {
-      
-       Array.from(e.dataTransfer.files)
-       .filter((file) => file.type === "text/csv")
-       .forEach(async (file) => {
+       
+        const maxLinesPerFile = 1000000;
         setLoader(true);
-        const text = await file.text();
-        const result = parse(text, { header: true });
-    
-        setContacts((existing) => [...existing, ...result.data]);
-        let res = "";
-        for (let i = 0; i < result.data.length; i++) {
-          for (
-            let j = 0;
-            j < Object.values(result.data[i]).length;
-            j++
-          ) {
-            res = res + Object.values(result.data[i])[j];
-          }
-          res = res + "\n";
-        }
-
-        setareaData(res);
-        let ddc = [];
-        for (let i in result.data[0]) {
-          ddc.push("Adjust Title")
-        }
-        // let col = 0; 
-        // let colIndex = 0; 
-        // result.data.forEach((value, index)=>{
-        //   ddc.push("Adjust Title")
-        // })
-        setheaders(ddc);
-        // setcolumnsMade(ddc);
-
-        if(res !== "")
-        {
-          setmanualTrue(true);
-        }
-
-      
-        setLoader(false);
-      });
-   
-     
-     
-   
-      
+        reader.onload = function() {
+          var config = {
+            delimiter: "", // auto-detect
+            newline: "", // auto-detect
+            quoteChar: "",
+            escapeChar: "",
+            header: false,
+            trimHeader: false,
+            dynamicTyping: true,
+            preview: 0,
+            encoding: "utf-8",
+            worker: true,
+            comments: false,
+            step: undefined,
+            complete: undefined,
+            error: undefined,
+            download: false,
+            skipEmptyLines: true,
+            chunk: function(c) {
+              var final = c["data"]
+                .filter(function(el) {
+                  return (
+                    typeof el != "object" ||
+                    Array.isArray(el) ||
+                    Object.keys(el).length > 0
+                  );
+                })
+                .map((finalResult) => {
+                  const fr = [...finalResult];
+                  let fixedItem = [];
+                  fr.forEach((item) => {
+                    if (
+                      item &&
+                      String(item).startsWith("5") &&
+                      String(item).length == 9
+                    ) {
+                      item = "0" + item;
+                    }
+                    if (item && String(item).indexOf("9.72") > -1) {
+                      item = parseFloat(item);
+                    }
+                    fixedItem.push(String(item).trim());
+                  });
+                  return fixedItem;
+                });
+              var conf = {
+                quotes: false,
+                quoteChar: '"',
+                escapeChar: '"',
+                delimiter: ",",
+                newline: "\r\n",
+                skipEmptyLines: true,
+                columns: null,
+                worker: true,
+              };
+              const csvResults = Papa.unparse(final, conf);
+              resolve(csvResults)
+            },
+            fastMode: true,
+            beforeFirstChunk: undefined,
+            withCredentials: undefined,
+          };
+          const lines = reader.result.split("\n");
+       
+            console.log("--parse if")
+            Papa.parse(reader.result, {
+              config , 
+              complete: results => {
+                setContacts(results.data)
+                console.log("---->csv",results.data)
+                const resultCsv = results.data;
+                // setareaData(results.data);
+                setmanualTrue(true);
+                    let ddc = [];
+                for (let i in resultCsv[0]) {
+                  ddc.push("Adjust Title")
+                }
+                setheaders(ddc);
+               
+              },
+           
+            });  
+          setLoader(false);  
+        };
+        reader.readAsText(file, "ISO-8859-8");
   }
   else {
-   
     return false;
   }
  
+}
+  catch (error) {
+    reject(error);
+  }
+});
+    
+
   
   }
 
@@ -1286,6 +1337,7 @@ const SmsSend = ({classes , ...props }) => {
               placeholder="Drag &amp; drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box"
               spellcheck="false"
               autoComplete="off"
+             
               className={
                 highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
               }
@@ -1304,7 +1356,6 @@ const SmsSend = ({classes , ...props }) => {
               onDrop={(e) => {
                 e.preventDefault();
                 setHighlighted(false);
-                
                 handleFiles(e)
 
               }}
@@ -1879,7 +1930,7 @@ const SmsSend = ({classes , ...props }) => {
                 placeholder={t("notifications.date")}
                 onChange={handleDatePicker}
                 disabled={sendType=="2" ? false : true}
-                style={{width:"370px",padding:"5px"}}
+                // style={{width:"370px",padding:"5px",height:"40px"}}
                  />
               </Box>
               {/* <Box
@@ -1930,7 +1981,7 @@ const SmsSend = ({classes , ...props }) => {
                     backgroundColor: "white",
                     padding: "10px",
                     borderRadius: "4px",
-                    width: "370px",
+                    width: "377px",
                     outline: "none",
                     marginBottom: "10px",
                   }}
@@ -2906,7 +2957,7 @@ const SmsSend = ({classes , ...props }) => {
                 if (idx > contacts.length - 6) {
                   return (
                     <tr id={idx}>
-                      {Object.values(item).map((temp, idx) => {
+                      {item.map((temp, idx) => {
                         return (
                           <td
                             id={idx}
