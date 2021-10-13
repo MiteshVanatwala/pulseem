@@ -1236,17 +1236,17 @@ const SmsSend = ({classes , ...props }) => {
                 setContacts(results.data)
                 console.log("---->csv",results.data)
                 const resultCsv = results.data;
-                // setareaData(results.data);
                 setmanualTrue(true);
-                    let ddc = [];
+                let ddc = [];
                 for (let i in resultCsv[0]) {
                   ddc.push("Adjust Title")
                 }
                 setheaders(ddc);
-               
               },
            
             });  
+           
+            setareaData(reader.result.substring(0,1500));
           setLoader(false);  
         };
         reader.readAsText(file, "ISO-8859-8");
