@@ -389,6 +389,32 @@ const SmsCreator = ({ classes, ...props }) => {
     let toggle = !isLinksStatistics
     setkeep((prev) => !prev);
     setIsLinksStatistics(!isLinksStatistics);
+    let total = splittedMsg;
+    console.log("splitted msg",total)
+    let a=0;
+    if(toggle === true)
+    {
+      if(msg !== "")
+      {
+        for(let i = 0 ; i<total.length;i++)
+        {
+          if(total[i].includes("https://") == false)
+          {
+            a = a + total[i].length
+          }
+        }
+        setcharacterCount(a+35);
+      }
+    }
+    else
+    {
+      for(let i = 0 ; i<total.length;i++)
+      {
+
+          a = a + total[i].length
+      }
+      setcharacterCount(a);
+    }
   };
 
   const getcredits = async (count) =>
@@ -519,13 +545,16 @@ const SmsCreator = ({ classes, ...props }) => {
     setremovalNumber(response.payload.RemovalKey);
   }
   const onEmojiClick = (event, emojiObject) => {
+   console.log("cursor",document.getElementById("yourMessage").selectionStart,msg)
+   let a  = document.getElementById("yourMessage").selectionStart;
     let msgs = msg;
     let count = characterCount;
     count++;
+    let b = [msgs.slice(0,a), emojiObject.emoji, msgs.slice(a)].join('');
     setcharacterCount(count);
     setChosenEmoji(emojiObject);
     setflagemoji(false);
-    setmsg(msgs + emojiObject.emoji);
+    setmsg(b);
     getcredits(count);  
   };
   const renderFields = () => {
@@ -1298,7 +1327,7 @@ getcredits(e.target.value.length)
     setmsg(linkMsg);
     let total = splittedMsg;
     total.push(previousLandingData[id].PageHref)
-    if(isLinksStatistics && SplittedLinks !== null) {
+    if(isLinksStatistics && total !== null) {
       let a=0;
       for(let i = 0 ; i<total.length;i++)
       {
@@ -1327,7 +1356,7 @@ getcredits(e.target.value.length)
     setmsg(campaignData);
     let total = splittedMsg;
     total.push(previousCampaignData[id].EncryptURL)
-    if(isLinksStatistics && SplittedLinks !== null) {
+    if(isLinksStatistics && total !== null) {
       let a=0;
       for(let i = 0 ; i<total.length;i++)
       {
