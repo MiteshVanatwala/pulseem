@@ -391,6 +391,32 @@ const SmsCreator = ({ classes, ...props }) => {
     let toggle = !isLinksStatistics
     setkeep((prev) => !prev);
     setIsLinksStatistics(!isLinksStatistics);
+    let total = splittedMsg;
+    console.log("splitted msg",total)
+    let a=0;
+    if(toggle === true)
+    {
+      if(msg !== "")
+      {
+        for(let i = 0 ; i<total.length;i++)
+        {
+          if(total[i].includes("https://") == false)
+          {
+            a = a + total[i].length
+          }
+        }
+        setcharacterCount(a+35);
+      }
+    }
+    else
+    {
+      for(let i = 0 ; i<total.length;i++)
+      {
+
+          a = a + total[i].length
+      }
+      setcharacterCount(a);
+    }
   };
 
   const getcredits = async (count) =>
@@ -1313,7 +1339,7 @@ getcredits(e.target.value.length)
     setmsg(linkMsg);
     let total = splittedMsg;
     total.push(previousLandingData[id].PageHref)
-    if(isLinksStatistics && SplittedLinks !== null) {
+    if(isLinksStatistics && total !== null) {
       let a=0;
       for(let i = 0 ; i<total.length;i++)
       {
@@ -1342,7 +1368,7 @@ getcredits(e.target.value.length)
     setmsg(campaignData);
     let total = splittedMsg;
     total.push(previousCampaignData[id].EncryptURL)
-    if(isLinksStatistics && SplittedLinks !== null) {
+    if(isLinksStatistics && total !== null) {
       let a=0;
       for(let i = 0 ; i<total.length;i++)
       {
