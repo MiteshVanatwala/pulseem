@@ -52,7 +52,7 @@ const DashedInput = withStyles({
     borderRadius: 0,
     "& .MuiOutlinedInput-multiline": {
       padding: 0,
-      height: 40,
+      minHeight: 55,
       paddingTop: 0,
       '& textarea + fieldset': {
         border: '1px dashed #64a1bd',
@@ -966,7 +966,7 @@ const NotificationEditor = ({ props, classes }) => {
                 value={model.Body}
                 className={clsx(classes.transparent, classes.dashed, classes.notificationText)}
                 onChange={handleNotificationText}
-                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', maxHeight: 45 }}
+                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', maxHeight: 55 }}
                 onFocus={handleTextFocus}
                 variant="outlined"
                 id="notificationText"
