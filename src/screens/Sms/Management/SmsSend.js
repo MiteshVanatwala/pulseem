@@ -777,7 +777,7 @@ const SmsSend = ({classes , ...props }) => {
       {
         if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
           return a + b['Recipients'];
-        }, 0).toLocaleString())
+        }, 0))
         {
           setrandom(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
@@ -822,10 +822,12 @@ const SmsSend = ({classes , ...props }) => {
       }
       else
       {
+      
         if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
           return a + b['Recipients'];
-        }, 0).toLocaleString())
+        }, 0))
         {
+         
           setinputF(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
           }, 0).toLocaleString())
@@ -833,6 +835,7 @@ const SmsSend = ({classes , ...props }) => {
         else
         {
           setinputF(e.target.value);
+        
         }
       }
   
