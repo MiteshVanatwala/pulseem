@@ -692,6 +692,8 @@ setSplittedLinks(links);
 if(links)
 {
     let linkSize = links.length;
+    setlinkCount(links.length);
+   count = count - links.length;
     if(isLinksStatistics)
     {
       let a= 0 
@@ -702,12 +704,15 @@ if(links)
         }
       }
       setcharacterCount(a + 35)
+      
     }
     else
     {
            setcharacterCount(tempMsg.length)
     }
 }
+
+
 else
 {
     setlinkCount(0);
@@ -717,7 +722,8 @@ getcredits(e.target.value.length)
 
   const onRemovalLink = async () => {
     let newLink = "";
-    newLink = msg + "##SmsUnsubscribeURL##";
+    let a  = document.getElementById("yourMessage").selectionStart;
+    newLink = [msg.slice(0,a), "##SmsUnsubscribeURL##", msg.slice(a)].join('');
     setmsg(newLink);
     let total = splittedMsg;
     total.push("##SmsUnsubscribeURL##")
@@ -745,7 +751,8 @@ getcredits(e.target.value.length)
   const onRemovalMsg = async () => {
 
     let newMsg = "";
-    newMsg = msg + "To unsubscribe reply 282";
+    let a  = document.getElementById("yourMessage").selectionStart;
+     newMsg = [msg.slice(0,a), "To unsubscribe reply 282", msg.slice(a)].join('');
     setmsg(newMsg);
     let total = splittedMsg;
     total.push("To unsubscribe reply 282")
@@ -773,7 +780,8 @@ getcredits(e.target.value.length)
   const handleSelectChange =  async (e) => {
     setselectValue(e.target.value);
     let linkMsg = "";
-    linkMsg = msg +  "##" + e.target.value + "##";
+    let a  = document.getElementById("yourMessage").selectionStart;
+    linkMsg = [msg.slice(0,a), "##" + e.target.value + "##", msg.slice(a)].join('');
     setmsg(linkMsg);
     getcredits(e.target.value.length)
     setcharacterCount(linkMsg.length);
@@ -1346,7 +1354,8 @@ getcredits(e.target.value.length)
   };
   const handleLink = async (id) => {
     let linkMsg = "";
-    linkMsg = msg + previousLandingData[id].PageHref;
+    let a  = document.getElementById("yourMessage").selectionStart;
+    linkMsg = [msg.slice(0,a), previousLandingData[id].PageHref, msg.slice(a)].join('');
     setdialogClickLanding(false);
     seteditmenuClick(false);
     setmsg(linkMsg);
@@ -1375,7 +1384,8 @@ getcredits(e.target.value.length)
 
   const handleCampClick = async (id) => {
     let campaignData = "";
-    campaignData = msg + previousCampaignData[id].EncryptURL;
+    let a  = document.getElementById("yourMessage").selectionStart;
+    campaignData = [msg.slice(0,a), previousCampaignData[id].EncryptURL, msg.slice(a)].join('');
     setdialogClickCampaign(false);
     seteditmenuClick(false);
     setmsg(campaignData);
@@ -1709,7 +1719,9 @@ getcredits(e.target.value.length)
   };
   const onLocation = async () => {
     let tempmsg = "";
-    tempmsg = msg + "https://waze.to/?q=" + Searched.split(" ").join("%20");
+    let a  = document.getElementById("yourMessage").selectionStart;
+    tempmsg = [msg.slice(0,a), "https://waze.to/?q=" + Searched.split(" ").join("%20"), msg.slice(a)].join('');
+    // tempmsg = msg + "https://waze.to/?q=" + Searched.split(" ").join("%20");
     setmsg(tempmsg);
     let lc = linkCount;
     setlinkCount(++lc);
