@@ -673,7 +673,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 
   },
   buttonContent: {
-    fontSize: "14px",
+    fontSize: "12px",
     marginTop: "8px",
   },
   alertMsg: {
