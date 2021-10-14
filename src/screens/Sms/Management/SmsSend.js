@@ -542,6 +542,8 @@ const SmsSend = ({classes , ...props }) => {
     }
    
   }, [])
+
+
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
@@ -1963,7 +1965,7 @@ const SmsSend = ({classes , ...props }) => {
                     ok: t("common.confirm"),
                     cancel: t("common.cancel"),
                   }}
-                  ampm={false}
+                  ampm={true}
                   timeActive = {sendType == "2" ? false : true}
                   timePickerOpen={timePickerOpen}
                   autoOk
