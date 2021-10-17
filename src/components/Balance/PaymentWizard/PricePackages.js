@@ -226,7 +226,7 @@ const PricePackages = ({ classes,
     }
 
     return (
-        <Grid container spacing={1} style={{ maxWidth: '100%' }}>
+        <Grid container spacing={1} style={{ maxWidth: '100%', pointerEvents: showLoader ? 'none' : 'auto'  }}>
             {purchaseWizard()}
             {renderTranzillaFrame()}
             <Loader isOpen={showLoader} showBackdrop={false} />
