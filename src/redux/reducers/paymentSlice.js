@@ -12,9 +12,9 @@ export const getAccountCards = createAsyncThunk(
   }
 )
 export const getTranzillaURL = createAsyncThunk(
-  'Payment/GetTranzillaURL', async (_, thunkAPI) => {
+  'Payment/GetTranzillaURL', async (culture, thunkAPI) => {
     try {
-      const response = await instence.get(`Payment/GetTranzillaURL/`);
+      const response = await instence.get(`Payment/GetTranzillaURL/${culture}`);
       return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

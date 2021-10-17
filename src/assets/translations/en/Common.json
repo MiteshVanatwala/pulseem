@@ -493,5 +493,7 @@
   "settings": "Settings",
   "createFirstGroup": "Create your first group!",
   "addRecipients": "+ Add Recipients",
-  "continue": "Continue"
+  "continue": "Continue",
+  "errorDetected": "Payment incomplete!",
+  "tryAgain": "Please try again."
 }

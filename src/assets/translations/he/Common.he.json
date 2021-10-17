@@ -488,5 +488,7 @@
   "settings": "הגדרות",
   "createFirstGroup": "צור את הקבוצה הראשונה שלך!",
   "addRecipients": "+ הוסף נמענים",
-  "continue": "המשך"
+  "continue": "המשך",
+  "errorDetected": "תשלום לא עבר!",
+  "tryAgain": "אנא נסה שוב."
 }

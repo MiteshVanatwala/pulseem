@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
-import { Button, Grid } from '@material-ui/core';
+import { Button, Grid, Box, Typography } from '@material-ui/core';
 import { Loader } from '../../Loader/Loader';
 import { getTranzillaURL, getAccountCards, buyPackage } from '../../../redux/reducers/paymentSlice';
 import { BiCreditCard } from 'react-icons/bi';
@@ -10,6 +10,11 @@ import { Dialog } from '../../managment/index';
 import PurchaseSummary from './Dialogs/PurchaseSummary';
 import PackagesList from './Dialogs/PackagesList';
 import Pay from './Dialogs/Pay';
+import { MdNotificationsActive } from 'react-icons/md';
+import {FaExclamationCircle } from 'react-icons/fa';
+import {
+    CheckAnimation
+} from '../../../assets/images/settings/index'
 
 const PricePackages = ({ classes,
     onComplete = () => null,
@@ -48,9 +53,7 @@ const PricePackages = ({ classes,
 
         setData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === packageType }));
         await dispatch(getAccountCards());
-        if (!creditCards) {
-            await dispatch(getTranzillaURL());
-        }
+        await dispatch(getTranzillaURL(isRTL ? 'il' : 'us'));
         setLoader(false);
     }
 
@@ -161,15 +164,25 @@ const PricePackages = ({ classes,
             }
             case "paymentResult": {
                 dialog = {
-                    title: t('payment.updateCreditCard'),
-                    showDivider: true,
+                    // title: t('payment.updateCreditCard'),
+                    showDivider: false,
                     icon: (
-                        <BiCreditCard style={{ fontSize: 30 }} />
+                        <MdNotificationsActive style={{ fontSize: 30 }} />
                     ),
                     content: (
                         <Grid container>
                             <Grid item xs={12} className={clsx(classes.mb4)}>
-                                {paymentConfirmation === false ? "Fail" : "Success"}
+                                {paymentConfirmation === true ? (<Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+                                    <img src={CheckAnimation} />
+                                    <Typography style={{ fontWeight: 'bold' }}>{t("common.ThankYou")}</Typography>
+                                    <Typography>{t("payment.paymentSuceess")}</Typography>
+                                </Box>) : (
+                                    <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+                                        <FaExclamationCircle style={{fontSize: 100}} />
+                                        <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.errorDetected")}</Typography>
+                                        <Typography>{t("common.tryAgain")}</Typography>
+                                    </Box>)
+                                }
                             </Grid>
                         </Grid>
                     ),
