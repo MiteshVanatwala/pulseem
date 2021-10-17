@@ -334,6 +334,7 @@ const SmsSend = ({classes , ...props }) => {
   const [showLoader, setLoader] = useState(true);
   const [deleteClick, setdeleteClick] = useState(false);
   const [areatyped, setareatyped] = useState("");
+  const [dateTime, setdateTime] = useState(null)
   const [totalCampaigns, settotalCampaigns] = useState([])
   const [blank, setblank] = useState(['first Name', 'Last Name', 'Cell Phone']);
   const [typedData, settypedData] = useState([]);
@@ -541,6 +542,8 @@ const SmsSend = ({classes , ...props }) => {
     }
    
   }, [])
+
+
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
@@ -656,6 +659,7 @@ const SmsSend = ({classes , ...props }) => {
     // setTimePickerOpen(!timePickerOpen);
   };
   const handleTimePicker = (value) => {
+      setdateTime(value);
       var date = moment(sendDate);
       var time = moment(value, "HH:mm");
       date.set({
@@ -773,7 +777,7 @@ const SmsSend = ({classes , ...props }) => {
       {
         if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
           return a + b['Recipients'];
-        }, 0).toLocaleString())
+        }, 0))
         {
           setrandom(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
@@ -818,10 +822,12 @@ const SmsSend = ({classes , ...props }) => {
       }
       else
       {
+      
         if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
           return a + b['Recipients'];
-        }, 0).toLocaleString())
+        }, 0))
         {
+         
           setinputF(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
           }, 0).toLocaleString())
@@ -829,6 +835,7 @@ const SmsSend = ({classes , ...props }) => {
         else
         {
           setinputF(e.target.value);
+        
         }
       }
   
@@ -1911,7 +1918,7 @@ const SmsSend = ({classes , ...props }) => {
                   pointerEvents: sendType == "2" ? "auto" : "none",
                 }}
               >
-                {/* <DateField
+                <DateField
                   minDate={moment()}
                   classes={classes}
                   value={sendType == "2" ? sendDate : null}
@@ -1924,8 +1931,8 @@ const SmsSend = ({classes , ...props }) => {
                   }}
                   dateActive={sendType == "2" ? false : true}
                   autoOk
-                /> */}
-                <KeyboardDateTimePicker
+                />
+                {/* <KeyboardDateTimePicker
                 minDate={moment()}
                 inputVariant="outlined"
                 value={sendType == "2" ? sendDate : null}
@@ -1941,9 +1948,9 @@ const SmsSend = ({classes , ...props }) => {
               popoverprops={{
                 dir: direction[isRTL]
               }}
-                 />
+                 /> */}
               </Box>
-              {/* <Box
+              <Box
                 style={{
                   marginTop: 10,
                   paddingRight: isRTL ? 30 : "",
@@ -1953,7 +1960,7 @@ const SmsSend = ({classes , ...props }) => {
               >
                 <DateField
                   classes={classes}
-                  value={sendType == "2" ? sendDate : null}
+                  value={sendType == "2" ? dateTime : null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
@@ -1961,12 +1968,12 @@ const SmsSend = ({classes , ...props }) => {
                     ok: t("common.confirm"),
                     cancel: t("common.cancel"),
                   }}
-                  ampm={false}
+                  ampm={true}
                   timeActive = {sendType == "2" ? false : true}
                   timePickerOpen={timePickerOpen}
                   autoOk
                 />
-              </Box> */}
+              </Box>
               <FormControlLabel
                 value="3"
                 control={<Radio color="primary" className={sendType !=="3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
@@ -2003,7 +2010,11 @@ const SmsSend = ({classes , ...props }) => {
                   <option value="1">{t("mainReport.birthday")}</option>
                   <option value="2">Creation Day</option>
                   {Object.keys(extraData).map((item, i) => {
+                    if(i+3 <=6)
+                    {
                       return <option value={i+3} key={`extrakey_${i}`}>{item}</option>;
+                    }
+                    
                     })}
                 </select>
               </Box>
