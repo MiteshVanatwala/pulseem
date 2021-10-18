@@ -46,7 +46,7 @@ import SearchIcon from "@material-ui/icons/Search";
 import { RiCloseFill } from "react-icons/ri";
 import IconButton from "@material-ui/core/IconButton";
 import { Button, Grid, Box, TextField } from "@material-ui/core";
-import { AiOutlineExclamationCircle,  AiOutlinePlusCircle , AiOutlineFile ,AiOutlineAlignLeft } from "react-icons/ai";
+import { AiOutlineExclamationCircle, AiOutlinePlusCircle, AiOutlineFile, AiOutlineAlignLeft } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 import { Loader } from '../../../components/Loader/Loader';
 import Switch from "react-switch";
@@ -86,14 +86,14 @@ const SmsCreator = ({ classes, ...props }) => {
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const inputProps = {
-    maxlength:"12"
+    maxlength: "12"
   }
   const otpProps = {
-    maxlength:"5"
+    maxlength: "5"
   }
   const history = useHistory();
   const dispatch = useDispatch();
-  const { language, windowSize, isRTL} = useSelector(
+  const { language, windowSize, isRTL } = useSelector(
     (state) => state.core
   );
   const {
@@ -123,7 +123,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [linkCount, setlinkCount] = useState(0);
   const [counterBool, setcounterBool] = useState(false);
   const [messageCount, setmessageCount] = useState(0);
-    const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] = useState(false);
+  const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] = useState(false);
   const [radioBtn, setradioBtn] = useState("top");
   const [landingSearch, setlandingSearch] = useState("");
   const [CampaignSearch, setCampaignSearch] = useState("");
@@ -186,31 +186,31 @@ const SmsCreator = ({ classes, ...props }) => {
     UpdateDate: Date.now(),
   });
   const [quickSendPayload, setquickSendPayload] = useState({
-          SMSCampaignID: -1,
-          SubAccountID: -1,
-          Status: -1,
-          Type: 0,
-          CreditsPerSms: "1",
-          UpdateDate: Date.now(),
-          Name: "",
-          FromNumber: campaignNumber,
-          Text: "",
-          ResponseToEmail: "",
-          IsTestCampaign: false,
-          IsResponse: false,
-          IsLinksStatistics: isLinksStatistics,
-          SendDate: Date.now(),
-          SendingMethod: 0,
-          IsTest: isTestCampaign,
-          PhoneNumber: phone,
-          MessageLength: "1",
-          LogData: {
-            SmsCampaignID: -1, 
-            SubAccountID: "", 
-            AccountID: "", 
-            Credits: "1", 
-            TotalRecipients: 1
-          }
+    SMSCampaignID: -1,
+    SubAccountID: -1,
+    Status: -1,
+    Type: 0,
+    CreditsPerSms: "1",
+    UpdateDate: Date.now(),
+    Name: "",
+    FromNumber: campaignNumber,
+    Text: "",
+    ResponseToEmail: "",
+    IsTestCampaign: false,
+    IsResponse: false,
+    IsLinksStatistics: isLinksStatistics,
+    SendDate: Date.now(),
+    SendingMethod: 0,
+    IsTest: isTestCampaign,
+    PhoneNumber: phone,
+    MessageLength: "1",
+    LogData: {
+      SmsCampaignID: -1,
+      SubAccountID: "",
+      AccountID: "",
+      Credits: "1",
+      TotalRecipients: 1
+    }
   })
 
   const toastMessages = {
@@ -218,56 +218,56 @@ const SmsCreator = ({ classes, ...props }) => {
     QUICKSENDSUCCESSS: { severity: 'success', color: 'success', message: t('sms.quickSend'), showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
-    OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true},
-    INVALIDNUMBER : { severity: 'error', color: 'error', message:  t("sms.invalidNumber") , showAnimtionCheck: false},
-    QUICKSENDERROR : { severity: 'error', color: 'error', message: "Error sending message", showAnimtionCheck: false},
-    SENTALREADY : { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true},
+    OTP: { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true },
+    INVALIDNUMBER: { severity: 'error', color: 'error', message: t("sms.invalidNumber"), showAnimtionCheck: false },
+    QUICKSENDERROR: { severity: 'error', color: 'error', message: "Error sending message", showAnimtionCheck: false },
+    SENTALREADY: { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true },
   }
 
   const handleSendResult = async (smsSendResult) => {
-      switch (smsSendResult) {
-        case -2: {// ALREADY_SENT
-          setToastMessage(toastMessages.SENTALREADY)
-          break;
-        }
-        case -1: {// ERROR
-          setToastMessage(toastMessages.QUICKSENDERROR)
-          break;
-        }
-        case 0: {// SUCCESS
+    switch (smsSendResult) {
+      case -2: {// ALREADY_SENT
+        setToastMessage(toastMessages.SENTALREADY)
+        break;
+      }
+      case -1: {// ERROR
+        setToastMessage(toastMessages.QUICKSENDERROR)
+        break;
+      }
+      case 0: {// SUCCESS
         setToastMessage(toastMessages.QUICKSENDSUCCESSS)
         setPhoneNumberCampaignId("");
-        }
-        case 1: {// PROVISION
-          break;
-        }
-        case 2: {// NO_CREDITS
-          break;
-        }
-        case 3: {// INVALID_NUMBER
-          setToastMessage(toastMessages.INVALIDNUMBER)
-          break;
-        }
-        case 4: {// OTP_NEEDED
-          setOtpVerifyDialog(true);
-          break;
-        }
-        case 5: {// ACCEPTED
-          break;
-        }
+      }
+      case 1: {// PROVISION
+        break;
+      }
+      case 2: {// NO_CREDITS
+        break;
+      }
+      case 3: {// INVALID_NUMBER
+        setToastMessage(toastMessages.INVALIDNUMBER)
+        break;
+      }
+      case 4: {// OTP_NEEDED
+        setOtpVerifyDialog(true);
+        break;
+      }
+      case 5: {// ACCEPTED
+        break;
+      }
     }
   }
 
   const handleOtpResult = async (otpSendResult) => {
-  
-   
+
+
     switch (otpSendResult) {
       case 1: {// Request
         break;
       }
       case 2: {// Success
-      setOtpConfirm(false);
-      setotpSuccess(true);
+        setOtpConfirm(false);
+        setotpSuccess(true);
         break;
       }
       case 3: {// Not_Authirized
@@ -285,7 +285,7 @@ const SmsCreator = ({ classes, ...props }) => {
       case 6: {//  CellphoneNotProvided
         setOtpCounter(true);
         setotpMsgs("Cellphone not correct , please try again later");
-      
+
         break;
       }
       case 7: {// CodeNotProvided
@@ -293,9 +293,9 @@ const SmsCreator = ({ classes, ...props }) => {
         setotpMsgs("Required field");
         break;
       }
-    
+
+    }
   }
-}
   useEffect(async () => {
     await handleSendResult();
   }, [smsSendResult]);
@@ -306,11 +306,11 @@ const SmsCreator = ({ classes, ...props }) => {
     for (let i = 0; i < selectedGroup.length; i++) {
       if (selectedGroup[i].selected) {
         temp.push(selectedGroup[i].GroupID);
-        tempfull.push(selectedGroup[i]);  
+        tempfull.push(selectedGroup[i]);
       }
     }
     settemp(tempfull);
-    const FinalPayloadData = {...smsModel , fromNumber : campaignNumber , Name : smsModel.Name , Text: smsModel.Text , TestGroupsIds : temp ,IsTestCampaign : isTestCampaign , IsTest : true , IsLinksStatistics : isLinksStatistics}
+    const FinalPayloadData = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: temp, IsTestCampaign: isTestCampaign, IsTest: true, IsLinksStatistics: isLinksStatistics }
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
     setsummary(false);
@@ -322,17 +322,16 @@ const SmsCreator = ({ classes, ...props }) => {
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
     await dispatch(getPreviousCampaignData());
-    let  resp = await dispatch(getAccountExtraData());
+    let resp = await dispatch(getAccountExtraData());
     let arr = Object.keys(resp.payload)
-    let arr2 = arr.map(function(key)
-    {
-      return {[key] : resp.payload[key]};
+    let arr2 = arr.map(function (key) {
+      return { [key]: resp.payload[key] };
     })
     let tempArr = [];
-      for (let i = 0; i < arr2.length; i++) {
-        tempArr.push({ ...arr2[i], selected: false })
-      }
-      setextraAccountDATA(tempArr)
+    for (let i = 0; i < arr2.length; i++) {
+      tempArr.push({ ...arr2[i], selected: false })
+    }
+    setextraAccountDATA(tempArr)
     await dispatch(getGroupsBySubAccountId());
     let r = await dispatch(getCommonFeatures());
     if (props && props.match.params.id) {
@@ -385,42 +384,33 @@ const SmsCreator = ({ classes, ...props }) => {
     setkeep((prev) => !prev);
     setIsLinksStatistics(!isLinksStatistics);
     let total = splittedMsg;
-    console.log("splitted msg",total)
-    let a=0;
-    if(toggle === true)
-    {
-      if(smsModel.Text !== "")
-      {
-        for(let i = 0 ; i<total.length;i++)
-        {
-          if(total[i].includes("https://") == false)
-          {
+    console.log("splitted msg", total)
+    let a = 0;
+    if (toggle === true) {
+      if (smsModel.Text !== "") {
+        for (let i = 0; i < total.length; i++) {
+          if (total[i].includes("https://") == false) {
             a = a + total[i].length
           }
         }
-        if(smsModel.Text.includes("https://"))
-        {
-          setcharacterCount(a+35);
+        if (smsModel.Text.includes("https://")) {
+          setcharacterCount(a + 35);
         }
-        else
-        {
+        else {
           setcharacterCount(a);
-        } 
+        }
       }
     }
-    else
-    {
-      for(let i = 0 ; i<total.length;i++)
-      {
+    else {
+      for (let i = 0; i < total.length; i++) {
 
-          a = a + total[i].length
+        a = a + total[i].length
       }
       setcharacterCount(a);
     }
   };
 
-  const getcredits = async (count) =>
-  {
+  const getcredits = async (count) => {
     let response = await dispatch(getCreditsforSMS(count));
     let credits = response.payload.split("#");
     setmessageCount(credits[0]);
@@ -459,9 +449,9 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCampaignNumber = (e) => {
-      setrestoreBool(false);
-      setcampaignNumber(e.target.value);
-      setcampaignNumberValidated(false);
+    setrestoreBool(false);
+    setcampaignNumber(e.target.value);
+    setcampaignNumberValidated(false);
   };
 
   const validationCheck = () => {
@@ -476,8 +466,7 @@ const SmsCreator = ({ classes, ...props }) => {
       return false;
     }
     let english = /^[ A-Za-z0-9]*$/;
-    if(campaignNumber === "" || !english.test(campaignNumber))
-    { 
+    if (campaignNumber === "" || !english.test(campaignNumber)) {
       setcampaignNumberValidated(true);
       setsave(true);
       return false;
@@ -487,36 +476,44 @@ const SmsCreator = ({ classes, ...props }) => {
   const handleSend = async () => {
     if (validationCheck()) {
       if (phone !== "") {
-        if(props && props.match.params.id)
-        {
-          const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : smsModel.Name , Text : smsModel.Text  , IsTest : false , IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData : { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
-          TotalRecipients: 1 } }
+        if (props && props.match.params.id) {
+          const smsQuickSendData = {
+            ...quickSendPayload, SmsCampaignID: props.match.params.id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+              SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: props.match.params.id, Credits: messageCount,
+              TotalRecipients: 1
+            }
+          }
           setLoader(true);
-          let r = await  dispatch(smsQuick(smsQuickSendData));
-          setLoader(false);  
+          let r = await dispatch(smsQuick(smsQuickSendData));
+          setLoader(false);
           handleSendResult(r.payload.Result)
         }
-        else
-        {
-          if(PhoneNumberCampaignId !== "")
-          {
-            const smsQuickSendData = {...quickSendPayload , SmsCampaignID : PhoneNumberCampaignId , FromNumber : campaignNumber , PhoneNumber : phone , Name : smsModel.Name , Text : smsModel.Text  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID ,  SmsCampaignID : PhoneNumberCampaignId , Credits: messageCount, 
-              TotalRecipients: 1} }
-              setLoader(true);
-              let r = await  dispatch(smsQuick(smsQuickSendData));
-              setPhoneNumberCampaignId(r.payload.SmsCampaignId)
-              setLoader(false);
-              handleSendResult(r.payload.Result)
+        else {
+          if (PhoneNumberCampaignId !== "") {
+            const smsQuickSendData = {
+              ...quickSendPayload, SmsCampaignID: PhoneNumberCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+                SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: PhoneNumberCampaignId, Credits: messageCount,
+                TotalRecipients: 1
+              }
+            }
+            setLoader(true);
+            let r = await dispatch(smsQuick(smsQuickSendData));
+            setPhoneNumberCampaignId(r.payload.SmsCampaignId)
+            setLoader(false);
+            handleSendResult(r.payload.Result)
           }
-          else
-          {
-            const smsQuickSendData = {...quickSendPayload  , FromNumber : campaignNumber , PhoneNumber : phone , Name : smsModel.Name , Text : smsModel.Text  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID ,  SmsCampaignID : -1 , Credits: messageCount, 
-              TotalRecipients: 1} }
-              setLoader(true);
-              let r = await  dispatch(smsQuick(smsQuickSendData));
-              setPhoneNumberCampaignId(r.payload.SmsCampaignId)
-              setLoader(false);
-              handleSendResult(r.payload.Result)
+          else {
+            const smsQuickSendData = {
+              ...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+                SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: -1, Credits: messageCount,
+                TotalRecipients: 1
+              }
+            }
+            setLoader(true);
+            let r = await dispatch(smsQuick(smsQuickSendData));
+            setPhoneNumberCampaignId(r.payload.SmsCampaignId)
+            setLoader(false);
+            handleSendResult(r.payload.Result)
           }
         }
       } else {
@@ -532,8 +529,7 @@ const SmsCreator = ({ classes, ...props }) => {
       setcounterBool(false);
     }
   }
-  const handleRestore = async () => 
-  {
+  const handleRestore = async () => {
     setrestoreBool(true);
     setcampaignNumber(StaticNumber);
     setLoader(true);
@@ -541,23 +537,23 @@ const SmsCreator = ({ classes, ...props }) => {
     setLoader(false);
     // setcampaignNumber(r.payload.DefaultCellNumber)
     setLoader(true);
-    let response =  await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
+    let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
     setLoader(false);
     setcampaignNumber(response.payload.Number);
     setStaticNumber(response.payload.Number);
     setremovalNumber(response.payload.RemovalKey);
   }
   const onEmojiClick = (event, emojiObject) => {
-   console.log("cursor",document.getElementById("yourMessage").selectionStart,smsModel.Text)
-   let a  = document.getElementById("yourMessage").selectionStart;
+    console.log("cursor", document.getElementById("yourMessage").selectionStart, smsModel.Text)
+    let a = document.getElementById("yourMessage").selectionStart;
     let count = characterCount;
     count++;
-    let b = [smsModel.Text.slice(0,a), emojiObject.emoji, smsModel.Text.slice(a)].join('');
+    let b = [smsModel.Text.slice(0, a), emojiObject.emoji, smsModel.Text.slice(a)].join('');
     setcharacterCount(count);
     setChosenEmoji(emojiObject);
     setflagemoji(false);
     setSmsModel({ ...smsModel, Text: b });
-    getcredits(count);  
+    getcredits(count);
   };
   const renderFields = () => {
     return (
@@ -595,7 +591,7 @@ const SmsCreator = ({ classes, ...props }) => {
             >
               {t("mainReport.restore")}
             </Typography>
-            
+
           </Box>
 
           <TextField
@@ -604,7 +600,7 @@ const SmsCreator = ({ classes, ...props }) => {
             className={
               campaignNumberValidated
                 ? clsx(classes.buttonField, classes.error)
-                : clsx(classes.buttonField , classes.success)
+                : clsx(classes.buttonField, classes.success)
             }
             onChange={onCampaignNumber}
             inputProps={inputProps}
@@ -637,50 +633,45 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
   const onMsgChange = async (e) => {
-   
+
     if (smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
       handleMsgSelect();
     }
     setSmsModel({ ...smsModel, Text: e.target.value });
     setcharacterCount(e.target.value.length);
-let tempMsg = "";
-tempMsg = e.target.value
-let arr = e.target.value.split("\n");
-setsplittedMsg(arr);
+    let tempMsg = "";
+    tempMsg = e.target.value
+    let arr = e.target.value.split("\n");
+    setsplittedMsg(arr);
 
-let count = 0;
-for (let i = 0; i < arr.length; i++) {
-  if (arr[i] != "") {
-    count++;
-  }
-}
-const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
-let links = e.target.value.match(linkRegex);
-setSplittedLinks(links);
-if(links)
-{
-    let linkSize = links.length;
-    if(isLinksStatistics)
-    {
-      let a= 0 
-      for (let i = 0; i < arr.length; i++) { 
-        if(arr[i].includes("https://") == false)
-        {
-            a = a+arr[i].length
-        }
+    let count = 0;
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i] != "") {
+        count++;
       }
-      setcharacterCount(a + 35)
     }
-    else
-    {
-           setcharacterCount(tempMsg.length)
+    const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
+    let links = e.target.value.match(linkRegex);
+    setSplittedLinks(links);
+    if (links) {
+      let linkSize = links.length;
+      if (isLinksStatistics) {
+        let a = 0
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].includes("https://") == false) {
+            a = a + arr[i].length
+          }
+        }
+        setcharacterCount(a + 35)
+      }
+      else {
+        setcharacterCount(tempMsg.length)
+      }
     }
-}
-else
-{
-    setlinkCount(0);
-}
-getcredits(e.target.value.length)
+    else {
+      setlinkCount(0);
+    }
+    getcredits(e.target.value.length)
   };
 
   const onRemovalLink = async () => {
@@ -689,22 +680,19 @@ getcredits(e.target.value.length)
     setSmsModel({ ...smsModel, Text: newLink });
     let total = splittedMsg;
     total.push("##SmsUnsubscribeURL##")
-    if(isLinksStatistics && SplittedLinks !== null) {
-      let a=0;
-      for(let i = 0 ; i<total.length;i++)
-      {
-        if(total[i].includes("https://") == false)
-        {
+    if (isLinksStatistics && SplittedLinks !== null) {
+      let a = 0;
+      for (let i = 0; i < total.length; i++) {
+        if (total[i].includes("https://") == false) {
           a = a + total[i].length
         }
       }
-      setcharacterCount(a+35)
+      setcharacterCount(a + 35)
       setremovalLinkDisabled(true);
     }
-    else
-    {
-       setcharacterCount(newLink.length);
-       setremovalLinkDisabled(true);
+    else {
+      setcharacterCount(newLink.length);
+      setremovalLinkDisabled(true);
     }
     getcredits(newLink.length)
     setremovalLinkDisabled(true);
@@ -718,19 +706,17 @@ getcredits(e.target.value.length)
     let total = splittedMsg;
     total.push("To unsubscribe reply 282")
 
-    if(isLinksStatistics && SplittedLinks !== null)
-    {
-      let a=0;
-      for(let i = 0; i<total.length;i++) {
-        if(total[i].includes("https://") == false) {
+    if (isLinksStatistics && SplittedLinks !== null) {
+      let a = 0;
+      for (let i = 0; i < total.length; i++) {
+        if (total[i].includes("https://") == false) {
           a = a + total[i].length
         }
       }
-      setcharacterCount(a+35)
+      setcharacterCount(a + 35)
       setremovalMessageButtonDisabled(true);
     }
-    else
-    {
+    else {
       setcharacterCount(newMsg.length);
       setremovalMessageButtonDisabled(true);
     }
@@ -738,48 +724,39 @@ getcredits(e.target.value.length)
     setremovalMessageButtonDisabled(true);
   };
 
-  const handleSelectChange =  async (e) => {
+  const handleSelectChange = async (e) => {
     setselectValue(e.target.value);
     let linkMsg = "";
-    linkMsg = smsModel.Text +  "##" + e.target.value + "##";
+    linkMsg = smsModel.Text + "##" + e.target.value + "##";
     setSmsModel({ ...smsModel, Text: linkMsg });
     getcredits(e.target.value.length)
     setcharacterCount(linkMsg.length);
     setsetSelectValueDisabled(true);
     let temparr = [];
-    for(let i = 0 ; i < extraAccountDATA.length ; i++ )
-    {
-      if(e.target.value === Object.keys(extraAccountDATA[i])[0])
-      {
+    for (let i = 0; i < extraAccountDATA.length; i++) {
+      if (e.target.value === Object.keys(extraAccountDATA[i])[0]) {
         temparr.push({ ...extraAccountDATA[i], selected: true })
       }
     }
     setextraAccountDATA(temparr);
   };
-  const handleMsgSelect = () =>
-  {
-    if(smsModel.Text.includes("To unsubscribe reply 282"))
-    {
+  const handleMsgSelect = () => {
+    if (smsModel.Text.includes("To unsubscribe reply 282")) {
       setremovalMessageButtonDisabled(true);
     }
-    else
-    {
+    else {
       setremovalMessageButtonDisabled(false);
     }
-    if(smsModel.Text.includes("##SmsUnsubscribeURL##"))
-    {
+    if (smsModel.Text.includes("##SmsUnsubscribeURL##")) {
       setremovalLinkDisabled(true);
     }
-    else
-    {
+    else {
       setremovalLinkDisabled(false);
     }
-    if(smsModel.Text.includes(selectValue))
-    {
+    if (smsModel.Text.includes(selectValue)) {
       setsetSelectValueDisabled(true);
     }
-    else
-    {
+    else {
       setsetSelectValueDisabled(false);
     }
   }
@@ -803,7 +780,7 @@ getcredits(e.target.value.length)
               onSelect={handleMsgSelect}
               value={smsModel.Text}
             ></textarea>
-          
+
             <Box className={classes.smallInfoDiv}>
               <Typography style={{ marginInlineEnd: "18px" }}>
                 {linkCount} {t("mainReport.link")}
@@ -818,53 +795,53 @@ getcredits(e.target.value.length)
                 className={isRTL ? classes.emojiHe : classes.emoji}
               >
                 {isRTL ? (
-                       <>
-                         <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.aligntoRight")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-start"
-                    arrow
-                  >
-                        <FormatAlignRightIcon style={{marginInlineEnd:"4px"}} onClick={() => {handleToggleClick("right")}}/>
-                        </Tooltip>
-                        <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.alignToLeft")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-start"
-                    arrow
-                  >
-                       <FormatAlignLeftIcon   onClick={() => {handleToggleClick("left")}}/>
-                      </Tooltip>
-                       </>
-                ) : (   
-          <>
-            <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.alignToLeft")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-start"
-                    arrow
-                  >
-                      <FormatAlignLeftIcon  style={{marginInlineEnd:"4px"}} onClick={() => {handleToggleClick("left")}}/>   
-          </Tooltip>          
-          <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.aligntoRight")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-start"
-                    arrow
-                  >
-                      <FormatAlignRightIcon  onClick={() => {handleToggleClick("right")}}/>
-                      </Tooltip>
-                      </>
+                  <>
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.aligntoRight")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { handleToggleClick("right") }} />
+                    </Tooltip>
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.alignToLeft")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignLeftIcon onClick={() => { handleToggleClick("left") }} />
+                    </Tooltip>
+                  </>
+                ) : (
+                  <>
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.alignToLeft")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { handleToggleClick("left") }} />
+                    </Tooltip>
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.aligntoRight")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <FormatAlignRightIcon onClick={() => { handleToggleClick("right") }} />
+                    </Tooltip>
+                  </>
                 )}
                 <Box className={classes.pickerEmoji}>
                   {flagemoji ? (
                     <Picker
                       onEmojiClick={onEmojiClick}
-                     
+
                       groupVisibility={{
                         flags: false,
                       }}
@@ -892,83 +869,81 @@ getcredits(e.target.value.length)
                 </Box>
               </Box>
               <Box className={classes.baseButtons}>
-              <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.removalMsgTooltip")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-center"
-                    arrow
-                  >
-                <Typography
-                  className={classes.infoButtons}
-                  onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
+                <Tooltip
+                  disableFocusListener
+                  title={t("mainReport.removalMsgTooltip")}
+                  classes={{ tooltip: styles.customWidth }}
+                  placement="top-center"
+                  arrow
                 >
-                  <Typography className={classes.editorLink}>+</Typography>
-                  {t("mainReport.removalMsg")}
-                </Typography>
+                  <Typography
+                    className={classes.infoButtons}
+                    onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
+                  >
+                    <Typography className={classes.editorLink}>+</Typography>
+                    {t("mainReport.removalMsg")}
+                  </Typography>
                 </Tooltip>
                 <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.removalLinkTooltip")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-center"
-                    arrow
-                  >
-                <Typography
-                  className={classes.infoButtons}
-                  onClick={removalLinkDisabled ? null : onRemovalLink}
+                  disableFocusListener
+                  title={t("mainReport.removalLinkTooltip")}
+                  classes={{ tooltip: styles.customWidth }}
+                  placement="top-center"
+                  arrow
                 >
-                  <Typography className={classes.editorLink}>+</Typography>
-                  {t("mainReport.removalLink")}
-                </Typography>
+                  <Typography
+                    className={classes.infoButtons}
+                    onClick={removalLinkDisabled ? null : onRemovalLink}
+                  >
+                    <Typography className={classes.editorLink}>+</Typography>
+                    {t("mainReport.removalLink")}
+                  </Typography>
                 </Tooltip>
               </Box>
               <Box className={classes.endButtons}>
                 <Box className={classes.selectMsg}>
-                <Tooltip
+                  <Tooltip
                     disableFocusListener
                     title={t("mainReport.selectTooltip")}
                     classes={{ tooltip: styles.customWidth }}
                     placement="top-center"
                     arrow
                   >
-                  <select
-                    className={classes.selectVal}
-                    value={selectValue}
-                    onChange={handleSelectChange}
-                  >
-                    <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
-                    {extraAccountDATA.map((item, i) => {
-                      if(item.selected)
-                      {
-                        return(<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]]}</option>)
-                      }
-                     else
-                     {
-                      return <option  value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]]}</option>;
-                     }
-                     
-                    })}
-                  </select>
+                    <select
+                      className={classes.selectVal}
+                      value={selectValue}
+                      onChange={handleSelectChange}
+                    >
+                      <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
+                      {extraAccountDATA.map((item, i) => {
+                        if (item.selected) {
+                          return (<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]]}</option>)
+                        }
+                        else {
+                          return <option value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]]}</option>;
+                        }
+
+                      })}
+                    </select>
                   </Tooltip>
                 </Box>
-                <Box className={classes.addDiv} tabindex="0" onBlur={() => {seteditmenuClick(false)}}>
-                <Tooltip
+                <Box className={classes.addDiv} tabindex="0" onBlur={() => { seteditmenuClick(false) }}>
+                  <Tooltip
                     disableFocusListener
                     title={t("mainReport.addVariantsTooltip")}
                     classes={{ tooltip: styles.customWidth }}
                     placement="top-center"
                     arrow
                   >
-                  <Typography 
-                    className={classes.addButtons}
-                    onClick={() => {
-                      seteditmenuClick(!editmenuClick);
-                    }}
-                  >
-                    <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
-                    {t("mainReport.add")}
-                  </Typography>
+                    <Typography
+                      className={classes.addButtons}
+                      onClick={() => {
+                        seteditmenuClick(!editmenuClick);
+                      }}
+                    >
+                      <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
+                      {t("mainReport.add")}
+                    </Typography>
                   </Tooltip>
                   {editmenuClick ? (
                     <Box className={classes.dropDiv}>
@@ -1046,14 +1021,11 @@ getcredits(e.target.value.length)
     );
   };
 
-  const handleToggleClick = (val) =>
-  {
-    if(val == "left")
-    {
+  const handleToggleClick = (val) => {
+    if (val == "left") {
       setAlignment("left")
     }
-    else
-    {
+    else {
       setAlignment("right")
     }
   }
@@ -1067,8 +1039,7 @@ getcredits(e.target.value.length)
 
   const handleNumberChange = (e) => {
     const re = /^[0-9\b]+$/;
-    if (e.target.value === '' || re.test(e.target.value)) 
-    {
+    if (e.target.value === '' || re.test(e.target.value)) {
       setphone(e.target.value);
     }
   };
@@ -1081,14 +1052,13 @@ getcredits(e.target.value.length)
           <span className={classes.phoneNumber}>{campaignNumber}</span>
           <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
             <div className={isRTL ? classes.chatBoxHe : classes.chatBox}>
-            <div className={classes.fromMe}>
-              {smsModel.Text.split('\n').map((str) =>
-              {
-                return(<p style={{margin:"0",padding:"0"}}>{str}</p>)
-              })}
+              <div className={classes.fromMe}>
+                {smsModel.Text.split('\n').map((str) => {
+                  return (<p style={{ margin: "0", padding: "0" }}>{str}</p>)
+                })}
+              </div>
             </div>
-            </div>
-           
+
           </div>
         </Box>
         <div
@@ -1184,37 +1154,37 @@ getcredits(e.target.value.length)
                   </span>
                 </div>
                 {radioBtn === "bottom" ? (
-             <div className={classes.rightForm}>
-             <div
-               className={classes.contactGroupDiv}
-               onClick={() => {
-                 setcontactGroup(true);
-               }}
-             >
-               <div> {t("mainReport.ChooseLinks")}</div>
-               {hidden ? (
-                 <div className={classes.mappedGroup}>
-                   {selectedGroup.map((item, index) => {
-                     if (item.selected && hidden) {
-                       return (
-                         <div className={classes.selectedGroupsDiv}>
-                           <span className={classes.nameGroup}>
-                             {item.GroupName}
-                           </span>
-                           <RiCloseFill
-                             className={classes.groupCloseicn}
-                             onClick={() => {
-                               handleCross(index);
-                             }}
-                           />
-                         </div>
-                       );
-                     }
-                   })}
-                 </div>
-               ) : null}
-             </div>
-           </div>
+                  <div className={classes.rightForm}>
+                    <div
+                      className={classes.contactGroupDiv}
+                      onClick={() => {
+                        setcontactGroup(true);
+                      }}
+                    >
+                      <div> {t("mainReport.ChooseLinks")}</div>
+                      {hidden ? (
+                        <div className={classes.mappedGroup}>
+                          {selectedGroup.map((item, index) => {
+                            if (item.selected && hidden) {
+                              return (
+                                <div className={classes.selectedGroupsDiv}>
+                                  <span className={classes.nameGroup}>
+                                    {item.GroupName}
+                                  </span>
+                                  <RiCloseFill
+                                    className={classes.groupCloseicn}
+                                    onClick={() => {
+                                      handleCross(index);
+                                    }}
+                                  />
+                                </div>
+                              );
+                            }
+                          })}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
                 ) : null}
               </div>
             </RadioGroup>
@@ -1245,15 +1215,13 @@ getcredits(e.target.value.length)
   const onContinueClick = async (isSave) => {
     if (validationCheck()) {
 
-      if(props && props.match.params.id)
-      {
-        const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : smsModel.Name , Text : smsModel.Text  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : props.match.params.id}
+      if (props && props.match.params.id) {
+        const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: props.match.params.id }
         setLoader(true);
         let r = await dispatch(smsSave(payloadToPush));
         setLoader(false);
-        if(r.payload.Status == 2)
-        {
-          if (isSave) {  
+        if (r.payload.Status == 2) {
+          if (isSave) {
             setToastMessage(toastMessages.SUCCESS);
             setTimeout(() => {
               history.push(`/sms/edit/${props.match.params.id}`);
@@ -1270,22 +1238,20 @@ getcredits(e.target.value.length)
         }
 
       }
-      else
-     {
-      const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : smsModel.Name , Text : smsModel.Text  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : -1}
-      setLoader(true);
-      let r = await dispatch(smsSave(payloadToPush));
-      setLoader(false);
-       if(r.payload.Status == 2)
-       {
-       
-       if (isSave) {
-        setToastMessage(toastMessages.SUCCESS);
-        setTimeout(() => {
-          history.push(`/sms/edit/${r.payload.Message}`);
-          setToastMessage(null);
-        }, 1500);  
-      } else {
+      else {
+        const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: -1 }
+        setLoader(true);
+        let r = await dispatch(smsSave(payloadToPush));
+        setLoader(false);
+        if (r.payload.Status == 2) {
+
+          if (isSave) {
+            setToastMessage(toastMessages.SUCCESS);
+            setTimeout(() => {
+              history.push(`/sms/edit/${r.payload.Message}`);
+              setToastMessage(null);
+            }, 1500);
+          } else {
             history.push(`/sms/edit/${r.payload.Message}`);
             history.push(`/sms/send/${r.payload.Message}`);
           }
@@ -1320,21 +1286,18 @@ getcredits(e.target.value.length)
     setSmsModel({ ...smsModel, Text: linkMsg });
     let total = splittedMsg;
     total.push(previousLandingData[id].PageHref)
-    if(isLinksStatistics && total !== null) {
-      let a=0;
-      for(let i = 0 ; i<total.length;i++)
-      {
-        if(total[i].includes("https://") == false)
-        {
+    if (isLinksStatistics && total !== null) {
+      let a = 0;
+      for (let i = 0; i < total.length; i++) {
+        if (total[i].includes("https://") == false) {
           a = a + total[i].length
         }
       }
-      setcharacterCount(a+35)
-      getcredits(a+35)
+      setcharacterCount(a + 35)
+      getcredits(a + 35)
     }
-    else
-    {
-      setcharacterCount(linkMsg.length);  
+    else {
+      setcharacterCount(linkMsg.length);
       getcredits(linkMsg.length)
     }
     let lc = linkCount;
@@ -1349,20 +1312,17 @@ getcredits(e.target.value.length)
     setSmsModel({ ...smsModel, Text: campaignData });
     let total = splittedMsg;
     total.push(previousCampaignData[id].EncryptURL)
-    if(isLinksStatistics && total !== null) {
-      let a=0;
-      for(let i = 0 ; i<total.length;i++)
-      {
-        if(total[i].includes("https://") == false)
-        {
+    if (isLinksStatistics && total !== null) {
+      let a = 0;
+      for (let i = 0; i < total.length; i++) {
+        if (total[i].includes("https://") == false) {
           a = a + total[i].length
         }
       }
-      setcharacterCount(a+35)
-      getcredits(a+35)
+      setcharacterCount(a + 35)
+      getcredits(a + 35)
     }
-    else
-    {
+    else {
       setcharacterCount(campaignData.length);
       getcredits(campaignData.length)
     }
@@ -1498,7 +1458,7 @@ getcredits(e.target.value.length)
                   }
                 })
                 .map((item, idx) => {
-                 
+
                   return (
                     <div className={classes.searchCon} onClick={() => {
                       handleSelect(item.GroupID);
@@ -1631,8 +1591,7 @@ getcredits(e.target.value.length)
   const handleExit = async (saveBeforeExit) => {
 
     if (saveBeforeExit) {
-      if(validationCheck())
-      {
+      if (validationCheck()) {
         const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
         let r = await dispatch(smsSave(payloadToPush));
         if (r) {
@@ -1640,11 +1599,10 @@ getcredits(e.target.value.length)
           history.push("/SMSCampaigns");
         }
       }
-      else
-      {
+      else {
         setexitClick(false);
       }
-  
+
     }
     else if (saveBeforeExit == false) {
 
@@ -1843,7 +1801,7 @@ getcredits(e.target.value.length)
           </div>
           <div className={classes.modalDiv}>
             <Paper component="form" className={btnStyle.root}>
-                <img src={Waze} style={{pointerEvents:"none"}}/>
+              <img src={Waze} style={{ pointerEvents: "none" }} />
               <InputBase
                 className={btnStyle.input}
                 placeholder={t("mainReport.typeAddress")}
