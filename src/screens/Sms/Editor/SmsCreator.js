@@ -701,10 +701,11 @@ const SmsCreator = ({ classes, ...props }) => {
   const onRemovalMsg = async () => {
 
     let newMsg = "";
-    newMsg = smsModel.Text + "To unsubscribe reply 282";
+    let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
+    newMsg = smsModel.Text + removelReplyText;
     setSmsModel({ ...smsModel, Text: newMsg });
     let total = splittedMsg;
-    total.push("To unsubscribe reply 282")
+    total.push(removelReplyText)
 
     if (isLinksStatistics && SplittedLinks !== null) {
       let a = 0;
@@ -741,7 +742,8 @@ const SmsCreator = ({ classes, ...props }) => {
     setextraAccountDATA(temparr);
   };
   const handleMsgSelect = () => {
-    if (smsModel.Text.includes("To unsubscribe reply 282")) {
+    let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
+    if (smsModel.Text.includes(removelReplyText)) {
       setremovalMessageButtonDisabled(true);
     }
     else {

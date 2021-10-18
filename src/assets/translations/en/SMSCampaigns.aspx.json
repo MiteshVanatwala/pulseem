@@ -525,9 +525,6 @@
   "recipientsFromFollowingGroups":"Recipients From Following Groups",
   "recipientsFromFollowingCampaign":"Recipients From Following Campaigns",
   "filtersSave":"Your changes have been saved",
-  "invalidNumber":"Invalid phone number"
-  
-
-
-  
+  "invalidNumber":"Invalid phone number",
+  "toUnsubscribe": "To unsubscribe reply "  
 }
