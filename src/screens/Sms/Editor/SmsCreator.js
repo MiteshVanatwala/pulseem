@@ -300,6 +300,13 @@ const SmsCreator = ({ classes, ...props }) => {
     await handleSendResult();
   }, [smsSendResult]);
 
+  const handleSmsModelChange = (name, value) => {
+    setSmsModel(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
   const onApiCall = async () => {
     let temp = [];
     let tempfull = [];
@@ -444,7 +451,7 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCamppaignChange = (e) => {
-    setSmsModel({ ...smsModel, Name: e.target.value });
+    handleSmsModelChange("Name", e.target.value);
     setcampaignBool(false);
   };
 
@@ -552,7 +559,7 @@ const SmsCreator = ({ classes, ...props }) => {
     setcharacterCount(count);
     setChosenEmoji(emojiObject);
     setflagemoji(false);
-    setSmsModel({ ...smsModel, Text: b });
+    handleSmsModelChange("Text", b);
     getcredits(count);
   };
   const renderFields = () => {
@@ -633,11 +640,11 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
   const onMsgChange = async (e) => {
+    handleSmsModelChange("Text", e.target.value);
 
-    if (smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
+    if (smsModel.Text && smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
       handleMsgSelect();
     }
-    setSmsModel({ ...smsModel, Text: e.target.value });
     setcharacterCount(e.target.value.length);
     let tempMsg = "";
     tempMsg = e.target.value
@@ -677,7 +684,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const onRemovalLink = async () => {
     let newLink = "";
     newLink = smsModel.Text + "##SmsUnsubscribeURL##";
-    setSmsModel({ ...smsModel, Text: newLink });
+    handleSmsModelChange("Text", newLink);
     let total = splittedMsg;
     total.push("##SmsUnsubscribeURL##")
     if (isLinksStatistics && SplittedLinks !== null) {
@@ -703,7 +710,7 @@ const SmsCreator = ({ classes, ...props }) => {
     let newMsg = "";
     let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
     newMsg = smsModel.Text + removelReplyText;
-    setSmsModel({ ...smsModel, Text: newMsg });
+    handleSmsModelChange("Text", newMsg);
     let total = splittedMsg;
     total.push(removelReplyText)
 
@@ -729,7 +736,7 @@ const SmsCreator = ({ classes, ...props }) => {
     setselectValue(e.target.value);
     let linkMsg = "";
     linkMsg = smsModel.Text + "##" + e.target.value + "##";
-    setSmsModel({ ...smsModel, Text: linkMsg });
+    handleSmsModelChange("Text", linkMsg);
     getcredits(e.target.value.length)
     setcharacterCount(linkMsg.length);
     setsetSelectValueDisabled(true);
@@ -1055,7 +1062,7 @@ const SmsCreator = ({ classes, ...props }) => {
           <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
             <div className={isRTL ? classes.chatBoxHe : classes.chatBox}>
               <div className={classes.fromMe}>
-                {smsModel.Text.split('\n').map((str) => {
+                {smsModel.Text && smsModel.Text.split('\n').map((str) => {
                   return (<p style={{ margin: "0", padding: "0" }}>{str}</p>)
                 })}
               </div>
@@ -1285,7 +1292,7 @@ const SmsCreator = ({ classes, ...props }) => {
     linkMsg = smsModel.Text + previousLandingData[id].PageHref;
     setdialogClickLanding(false);
     seteditmenuClick(false);
-    setSmsModel({ ...smsModel, Text: linkMsg });
+    handleSmsModelChange("Text", linkMsg);
     let total = splittedMsg;
     total.push(previousLandingData[id].PageHref)
     if (isLinksStatistics && total !== null) {
@@ -1311,7 +1318,7 @@ const SmsCreator = ({ classes, ...props }) => {
     campaignData = smsModel.Text + previousCampaignData[id].EncryptURL;
     setdialogClickCampaign(false);
     seteditmenuClick(false);
-    setSmsModel({ ...smsModel, Text: campaignData });
+    handleSmsModelChange("Text", campaignData);
     let total = splittedMsg;
     total.push(previousCampaignData[id].EncryptURL)
     if (isLinksStatistics && total !== null) {
@@ -1548,7 +1555,8 @@ const SmsCreator = ({ classes, ...props }) => {
   const handlecaution = () => {
     setalertToggle(false);
     setcounterBool(false);
-    setmodalOpen(true);
+    setmodalOpen(false);
+    setremovalNumber(null);
   };
 
   const handlecautioncancel = () => {
@@ -1638,7 +1646,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const onLocation = async () => {
     let tempmsg = "";
     tempmsg = smsModel.Text + "https://waze.to/?q=" + Searched.split(" ").join("%20");
-    setSmsModel({ ...smsModel, Text: tempmsg });
+    handleSmsModelChange("Text", tempmsg);
     let lc = linkCount;
     setlinkCount(++lc);
     setcharacterCount(tempmsg.length);
