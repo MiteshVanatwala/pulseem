@@ -1201,7 +1201,7 @@ const SmsSend = ({classes , ...props }) => {
            setareaData(b);
            let dummyArr = [];
             for (let i = 0; i < b[0].length; i++) {
-              dummyArr.push("Adjust Title");
+              dummyArr.push(t("smsReport.adjustTitle"));
             }
             setinitialheadstate(dummyArr);
             setheaders(dummyArr)
@@ -1296,7 +1296,7 @@ const SmsSend = ({classes , ...props }) => {
                 setmanualTrue(true);
                 let ddc = [];
                 for (let i in resultCsv[0]) {
-                  ddc.push("Adjust Title")
+                  ddc.push(t("smsReport.adjustTitle"))
                 }
                 setheaders(ddc);
               },
@@ -1642,7 +1642,7 @@ const SmsSend = ({classes , ...props }) => {
 
     let dummyArr = [];
     for (let i = 0; i < b[0].length; i++) {
-      dummyArr.push("Adjust Title");
+      dummyArr.push(t("smsReport.adjustTitle"));
     }
     setinitialheadstate(dummyArr);
     setheaders(dummyArr)
@@ -2730,7 +2730,7 @@ const SmsSend = ({classes , ...props }) => {
   const handleCloseSpan = (id, name) => {
     let h = headers;
 
-    headers[id] = "Adjust Title";
+    headers[id] = t("smsReport.adjustTitle");
     // h[id] = initialheadstate[id];
 
     setheaders(h);
