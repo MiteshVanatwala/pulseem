@@ -1299,14 +1299,20 @@ const SmsCreator = ({ classes, ...props }) => {
   const handleCloseWaize = () => {
     setwaize(false);
   };
-  const handleLink = async (id) => {
-    let linkMsg = "";
-    linkMsg = smsModel.Text + previousLandingData[id].PageHref;
-    setdialogClickLanding(false);
+  const handleAddLink = async (id, linkType) => {
+    let text = "";
+    if (linkType === 'campaign') {
+      text = previousLandingData[id].PageHref;
+      setdialogClickCampaign(false);
+    }
+    else if (linkType === 'lp') {
+      text = previousCampaignData[id].EncryptURL
+      setdialogClickLanding(false);
+    }
     seteditmenuClick(false);
-    handleSmsModelChange("Text", linkMsg);
+    onAddText(text)
     let total = splittedMsg;
-    total.push(previousLandingData[id].PageHref)
+    total.push(text)
     if (isLinksStatistics && total !== null) {
       let a = 0;
       for (let i = 0; i < total.length; i++) {
@@ -1318,37 +1324,11 @@ const SmsCreator = ({ classes, ...props }) => {
       getcredits(a + 35)
     }
     else {
-      setcharacterCount(linkMsg.length);
-      getcredits(linkMsg.length)
+      setcharacterCount(text.length);
+      getcredits(text.length)
     }
     let lc = linkCount;
     setlinkCount(++lc);
-  };
-
-  const handleCampClick = async (id) => {
-    let campaignData = "";
-    campaignData = smsModel.Text + previousCampaignData[id].EncryptURL;
-    setdialogClickCampaign(false);
-    seteditmenuClick(false);
-    handleSmsModelChange("Text", campaignData);
-    let total = splittedMsg;
-    total.push(previousCampaignData[id].EncryptURL)
-    if (isLinksStatistics && total !== null) {
-      let a = 0;
-      for (let i = 0; i < total.length; i++) {
-        if (total[i].includes("https://") == false) {
-          a = a + total[i].length
-        }
-      }
-      setcharacterCount(a + 35)
-      getcredits(a + 35)
-    }
-    else {
-      setcharacterCount(campaignData.length);
-      getcredits(campaignData.length)
-    }
-    let cc = linkCount;
-    setlinkCount(++cc);
   };
 
   const handleCloseContact = () => {
@@ -1716,7 +1696,7 @@ const SmsCreator = ({ classes, ...props }) => {
                   <div
                     className={classes.searchCon}
                     onClick={() => {
-                      handleLink(idx);
+                      handleAddLink(idx, 'lp');
                     }}
                   >
                     <span
@@ -1785,7 +1765,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     <div
                       className={classes.searchCon}
                       onClick={() => {
-                        handleCampClick(idx);
+                        handleAddLink(idx, 'campaign');
                       }}
                     >
                       <span
