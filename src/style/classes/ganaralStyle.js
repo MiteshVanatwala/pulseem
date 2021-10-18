@@ -696,6 +696,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     padding: "8px",
     width: "20%",
+    color:"black",
     '&::placeholder':
     {
       fontSize: "16px"
@@ -709,6 +710,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&::placeholder':
     {
       fontSize: "16px"
+    },
+    '&:disabled' : 
+    {
+       color:"black"
     }
   },
   success: {
@@ -1396,6 +1401,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tabDiv: {
     display: "grid",
     gridTemplateColumns: "50% 50%",
+  
     "@media screen and (max-width: 768px)": {
       width: "315px",
     },
@@ -1417,7 +1423,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   activeTab: {
     borderBottom: "3px solid #1771AD",
-    color: "#277BFF !important",
+    color: "#007bff!important",
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",

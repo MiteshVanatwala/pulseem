@@ -91,6 +91,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const inputProps = {
     maxlength:"12"
   }
+
   const otpProps = {
     maxlength:"5"
   }
@@ -445,7 +446,7 @@ const SmsCreator = ({ classes, ...props }) => {
           title={t("mainReport.toolTip1")}
           classes={{ tooltip: styles.customWidth }}
         >
-          <Typography className={classes.bodyInfo}>i</Typography>
+          <Typography className={classes.bodyInfo} style={{marginTop:"6px"}}>i</Typography>
         </Tooltip>
       </Box>
     );
@@ -467,12 +468,9 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCampaignNumber = (e) => {
-   
       setrestoreBool(false);
       setcampaignNumber(e.target.value);
       setcampaignNumberValidated(false);
-    
-    
   };
 
   const validationCheck = () => {
@@ -638,7 +636,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 type="text"
                 placeholder="2"
                 disabled
-                className={windowSize === "xs" ? classes.buttonFieldRemovalMobile : classes.buttonFieldRemoval}
+                className={windowSize === "xs" ? classes.buttonFieldRemovalMobile : clsx(classes.buttonFieldRemoval)}
                 value={removalNumber}
                 disabled
               />
@@ -1678,11 +1676,23 @@ getcredits(e.target.value.length)
     if (saveBeforeExit) {
       if(validationCheck())
       {
-        const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
-        let r = await dispatch(smsSave(payloadToPush));
-        if (r) {
-          setexitClick(false);
-          history.push("/SMSCampaigns");
+        if(props && props.match.params.id)
+        {
+          const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg , SmsCampaignID : props.match.params.id }
+          let r = await dispatch(smsSave(payloadToPush));
+          if (r) {
+            setexitClick(false);
+            history.push("/SMSCampaigns");
+          }
+        }
+        else
+        {
+          const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
+          let r = await dispatch(smsSave(payloadToPush));
+          if (r) {
+            setexitClick(false);
+            history.push("/SMSCampaigns");
+          }
         }
       }
       else

@@ -949,8 +949,12 @@ const SmsSend = ({classes , ...props }) => {
         <Dialog
           classes={classes}
           open={pulse}
+          //cross
           onClose={handlePulseClose}
-          showDefaultButtons={false}
+
+          confirmText={t("smsReport.okBtn")}
+          cancelText={t("smsReport.cancelBtn")}
+          showDefaultButtons={true}
           icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }} />}
         >
           <div className={classes.pulseParentDiv}>
@@ -1103,10 +1107,8 @@ const SmsSend = ({classes , ...props }) => {
             </div>
 
             <div
-
               className={classes.randomSendDiv}
             >
-
               <Checkbox
                 checked={toggleRandom}
                 color="primary"
@@ -1139,7 +1141,7 @@ const SmsSend = ({classes , ...props }) => {
               />
             </div>
           </div>
-          <div
+          {/* <div
             className={classes.confirmDiv}
           >
             <Button
@@ -1153,7 +1155,7 @@ const SmsSend = ({classes , ...props }) => {
             >
               {t("smsReport.confirmBtn")}
             </Button>
-          </div>
+          </div> */}
         </Dialog>
       </>
     );
@@ -1389,7 +1391,7 @@ const SmsSend = ({classes , ...props }) => {
             }
           >
             <textarea
-              placeholder="Drag &amp; drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box"
+              placeholder={t("smsReport.manualAreaDesc")}
               spellcheck="false"
               autoComplete="off"
              
@@ -1516,8 +1518,7 @@ const SmsSend = ({classes , ...props }) => {
                       handlePasted();
                     }}
                   >
-
-                    Edit fields and save
+                     {t("smsReport.editAndUpload")}
                   </span>
                   <span
                     className={classes.clearDiv}
@@ -1527,11 +1528,11 @@ const SmsSend = ({classes , ...props }) => {
                       settypedData([])
                     }}
                   >
-                    Clear list
+                    {t("smsReport.clearList")}
                   </span>
                 </div>
               ) : null}
-              <span>Total Records :  {contacts.length !==0 ? contacts.length : typedData.length}</span>
+              <span> {t("smsReport.totalRecords")} :  {contacts.length !==0 ? contacts.length : typedData.length}</span>
             </div>
           ) : null}
         </Box>
@@ -2878,19 +2879,21 @@ const SmsSend = ({classes , ...props }) => {
           onClose={handleTrueCaution}
           onCancel={handleCautionCancel}
           onConfirm={handleDataManual}
+          confirmText={t("smsReport.okBtn")}
+          cancelText={t("smsReport.cancelBtn")}
           showDefaultButtons={true}
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>Column Adjustment</span>
+            <span className={classes.groupName}>{t("smsReport.columnAdjust")}</span>
           </div>
           <div className={classes.manualModal}>
             <span style={{ fontSize: "24px", marginInlineEnd: "10px" }}>
-              Group Name :
+            {t("smsReport.groupNameManual")} :
             </span>
             <div style={{display:"flex",flexDirection:"column",width:"75%"}}>
             <input
               type="text"
-              placeholder="Group Name"
+              placeholder={t("smsReport.groupNameManual")}
               className={newVal ? clsx(classes.inputManual,classes.error) : clsx(classes.inputManual,classes.success)}
               onChange={handleManualDialog}
               value={groupNameInput}
@@ -2909,7 +2912,7 @@ const SmsSend = ({classes , ...props }) => {
             }}
           >
             <span style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
-              Total Recipients :
+            {t("smsReport.totalManualRecipients")} :
             </span>
             <span
               style={{
@@ -2922,7 +2925,7 @@ const SmsSend = ({classes , ...props }) => {
             </span>
             <Tooltip
               disableFocusListener
-              title="Only the cellphone title is mandatory to include, and any column without a title will not be uploaded to our system. For your convenience, only the first 5 recipients in your file will appear here, but all will be uploaded."
+              title= {t("smsReport.manualTotalTooltip")}
               classes={{ tooltip: styles.customWidth }}
             >
               <span className={classes.bodyInfo}>i</span>
