@@ -136,7 +136,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [exitClick, setexitClick] = useState(false);
   const [otpConfirm, setOtpConfirm] = useState(false);
   const [phone, setphone] = useState("");
-  const [OpenS, setOpenS] = useState(false);
   const [alertToggle, setalertToggle] = useState(false);
   const [selectedGroup, setselectedGroup] = useState([]);
   const [StaticNumber, setStaticNumber] = useState("");
