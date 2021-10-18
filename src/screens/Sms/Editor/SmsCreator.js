@@ -107,8 +107,7 @@ const SmsCreator = ({ classes, ...props }) => {
   } = useSelector((state) => state.sms);
 
   const [alignment, setAlignment] = useState(isRTL ? 'right' : 'left');
-  const [chosenEmoji, setChosenEmoji] = useState(null);
-  const [flagemoji, setflagemoji] = useState(false);
+  const [showEmoji, setShowEmoji] = useState(false);
   const [checked, setChecked] = React.useState(false);
   const [dialogClickLanding, setdialogClickLanding] = useState(false);
   const [dialogClickCampaign, setdialogClickCampaign] = useState(false);
@@ -155,7 +154,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [total, settotal] = useState(0);
   const [temp, settemp] = useState([]);
   const [otpValue, setotpValue] = useState("");
-  const [SelectValueDisabled, setsetSelectValueDisabled] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [selectValue, setselectValue] = useState("Personilization");
   const [finalApi, setfinalApi] = useState(false);
@@ -550,17 +548,50 @@ const SmsCreator = ({ classes, ...props }) => {
     setStaticNumber(response.payload.Number);
     setremovalNumber(response.payload.RemovalKey);
   }
+
+  const onAddText = (text) => {
+    text = text.trim();
+    let afterUpdateCharCount =
+      smsModel.Text.length + text.length;
+    if (isLinksStatistics) {
+      afterUpdateCharCount = characterCount + text.length;
+    }
+    if (afterUpdateCharCount < 1000) {
+      var tArea = document.getElementById("yourMessage");
+      // filter:
+      if (0 == text) {
+        return;
+      }
+      if (0 == cursorPos) {
+        return;
+      }
+
+      // get cursor's position:
+      var startPos = tArea.selectionStart,
+        endPos = tArea.selectionEnd,
+        cursorPos = startPos,
+        tmpStr = tArea.value;
+
+      // insert:
+      handleSmsModelChange("Text", tmpStr.substring(0, startPos) +
+        text +
+        tmpStr.substring(endPos, tmpStr.length));
+
+      // move cursor:
+      setTimeout(() => {
+        cursorPos += text.length;
+        tArea.selectionStart = tArea.selectionEnd = cursorPos;
+      }, 10);
+
+      tArea.focus();
+    }
+  }
+
   const onEmojiClick = (event, emojiObject) => {
-    console.log("cursor", document.getElementById("yourMessage").selectionStart, smsModel.Text)
-    let a = document.getElementById("yourMessage").selectionStart;
-    let count = characterCount;
-    count++;
-    let b = [smsModel.Text.slice(0, a), emojiObject.emoji, smsModel.Text.slice(a)].join('');
-    setcharacterCount(count);
-    setChosenEmoji(emojiObject);
-    setflagemoji(false);
-    handleSmsModelChange("Text", b);
-    getcredits(count);
+    setShowEmoji(false);
+    onAddText(emojiObject.emoji);
+    setcharacterCount(smsModel.Text.length);
+    getcredits(smsModel.Text.length);
   };
   const renderFields = () => {
     return (
@@ -682,9 +713,7 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onRemovalLink = async () => {
-    let newLink = "";
-    newLink = smsModel.Text + "##SmsUnsubscribeURL##";
-    handleSmsModelChange("Text", newLink);
+    onAddText("##SmsUnsubscribeURL##");
     let total = splittedMsg;
     total.push("##SmsUnsubscribeURL##")
     if (isLinksStatistics && SplittedLinks !== null) {
@@ -698,10 +727,10 @@ const SmsCreator = ({ classes, ...props }) => {
       setremovalLinkDisabled(true);
     }
     else {
-      setcharacterCount(newLink.length);
+      setcharacterCount(smsModel.Text.length);
       setremovalLinkDisabled(true);
     }
-    getcredits(newLink.length)
+    getcredits(smsModel.Text.length)
     setremovalLinkDisabled(true);
   };
 
@@ -709,8 +738,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
     let newMsg = "";
     let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
-    newMsg = smsModel.Text + removelReplyText;
-    handleSmsModelChange("Text", newMsg);
+    onAddText(removelReplyText);
     let total = splittedMsg;
     total.push(removelReplyText)
 
@@ -734,19 +762,9 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const handleSelectChange = async (e) => {
     setselectValue(e.target.value);
-    let linkMsg = "";
-    linkMsg = smsModel.Text + "##" + e.target.value + "##";
-    handleSmsModelChange("Text", linkMsg);
+    onAddText("##" + e.target.value + "##");
     getcredits(e.target.value.length)
-    setcharacterCount(linkMsg.length);
-    setsetSelectValueDisabled(true);
-    let temparr = [];
-    for (let i = 0; i < extraAccountDATA.length; i++) {
-      if (e.target.value === Object.keys(extraAccountDATA[i])[0]) {
-        temparr.push({ ...extraAccountDATA[i], selected: true })
-      }
-    }
-    setextraAccountDATA(temparr);
+    setcharacterCount(smsModel.Text.length);
   };
   const handleMsgSelect = () => {
     let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
@@ -761,12 +779,6 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     else {
       setremovalLinkDisabled(false);
-    }
-    if (smsModel.Text.includes(selectValue)) {
-      setsetSelectValueDisabled(true);
-    }
-    else {
-      setsetSelectValueDisabled(false);
     }
   }
 
@@ -847,7 +859,7 @@ const SmsCreator = ({ classes, ...props }) => {
                   </>
                 )}
                 <Box className={classes.pickerEmoji}>
-                  {flagemoji ? (
+                  {showEmoji ? (
                     <Picker
                       onEmojiClick={onEmojiClick}
 
@@ -871,7 +883,7 @@ const SmsCreator = ({ classes, ...props }) => {
                         height: "25px",
                       }}
                       onClick={() => {
-                        setflagemoji(!flagemoji);
+                        setShowEmoji(!showEmoji);
                       }}
                     />
                   </Tooltip>
