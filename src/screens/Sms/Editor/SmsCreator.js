@@ -298,6 +298,11 @@ const SmsCreator = ({ classes, ...props }) => {
     await handleSendResult();
   }, [smsSendResult]);
 
+  useEffect(async () => {
+    linkCalculation();
+    getcredits(characterCount);
+  }, [smsModel, isLinksStatistics]);
+
   const handleSmsModelChange = (name, value) => {
     setSmsModel(prevState => ({
       ...prevState,
@@ -388,32 +393,33 @@ const SmsCreator = ({ classes, ...props }) => {
     let toggle = !isLinksStatistics
     setkeep((prev) => !prev);
     setIsLinksStatistics(!isLinksStatistics);
-    let total = splittedMsg;
-    console.log("splitted msg", total)
-    let a = 0;
-    if (toggle === true) {
-      if (smsModel.Text !== "") {
-        for (let i = 0; i < total.length; i++) {
-          if (total[i].includes("https://") == false) {
-            a = a + total[i].length
-          }
-        }
-        if (smsModel.Text.includes("https://")) {
-          setcharacterCount(a + 35);
-        }
-        else {
-          setcharacterCount(a);
-        }
-      }
-    }
-    else {
-      for (let i = 0; i < total.length; i++) {
-
-        a = a + total[i].length
-      }
-      setcharacterCount(a);
-    }
   };
+
+  const linkCalculation = () => {
+    let linksCharsAddition = 0;
+    let t = smsModel.Text.toLowerCase();
+
+    if (t && t.length > 0) {
+      const res = t.replace('\n', ' ');
+      // eslint-disable-next-line
+      const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_#]*)?\??(?:[{}\-\+=&;,%@\.\w_]*)#?(?:[\.\!\/\\\w+]*))?)/g;
+      const links = res.match(regex);
+      if (links && links.length > 0 && isLinksStatistics) {
+        setSplittedLinks(links);
+        setlinkCount(links.length);
+        for (var i = 0; i < links.length; i++) {
+          var linkLength = links[i].length;
+          linksCharsAddition += 35 - linkLength;
+        }
+        setcharacterCount(smsModel.Text.length + linksCharsAddition);
+      }
+      else {
+        setlinkCount(0);
+        setcharacterCount(smsModel.Text.length);
+      }
+
+    }
+  }
 
   const getcredits = async (count) => {
     let response = await dispatch(getCreditsforSMS(count));
@@ -590,8 +596,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const onEmojiClick = (event, emojiObject) => {
     setShowEmoji(false);
     onAddText(emojiObject.emoji);
-    setcharacterCount(smsModel.Text.length);
-    getcredits(smsModel.Text.length);
   };
   const renderFields = () => {
     return (
@@ -676,7 +680,6 @@ const SmsCreator = ({ classes, ...props }) => {
     if (smsModel.Text && smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
       handleMsgSelect();
     }
-    setcharacterCount(e.target.value.length);
     let tempMsg = "";
     tempMsg = e.target.value
     let arr = e.target.value.split("\n");
@@ -688,27 +691,6 @@ const SmsCreator = ({ classes, ...props }) => {
         count++;
       }
     }
-    const linkRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;
-    let links = e.target.value.match(linkRegex);
-    setSplittedLinks(links);
-    if (links) {
-      setlinkCount(links.length);
-      if (isLinksStatistics) {
-        let a = 0
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].includes("https://") == false) {
-            a = a + arr[i].length
-          }
-        }
-        setcharacterCount(a + 35)
-      }
-      else {
-        setcharacterCount(tempMsg.length)
-      }
-    }
-    else {
-      setlinkCount(0);
-    }
     getcredits(e.target.value.length)
   };
 
@@ -717,17 +699,9 @@ const SmsCreator = ({ classes, ...props }) => {
     let total = splittedMsg;
     total.push("##SmsUnsubscribeURL##")
     if (isLinksStatistics && SplittedLinks !== null) {
-      let a = 0;
-      for (let i = 0; i < total.length; i++) {
-        if (total[i].includes("https://") == false) {
-          a = a + total[i].length
-        }
-      }
-      setcharacterCount(a + 35)
       setremovalLinkDisabled(true);
     }
     else {
-      setcharacterCount(smsModel.Text.length);
       setremovalLinkDisabled(true);
     }
     getcredits(smsModel.Text.length)
@@ -735,27 +709,12 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onRemovalMsg = async () => {
-
     let newMsg = "";
     let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
     onAddText(removelReplyText);
     let total = splittedMsg;
     total.push(removelReplyText)
 
-    if (isLinksStatistics && SplittedLinks !== null) {
-      let a = 0;
-      for (let i = 0; i < total.length; i++) {
-        if (total[i].includes("https://") == false) {
-          a = a + total[i].length
-        }
-      }
-      setcharacterCount(a + 35)
-      setremovalMessageButtonDisabled(true);
-    }
-    else {
-      setcharacterCount(newMsg.length);
-      setremovalMessageButtonDisabled(true);
-    }
     getcredits(newMsg.length)
     setremovalMessageButtonDisabled(true);
   };
@@ -763,8 +722,8 @@ const SmsCreator = ({ classes, ...props }) => {
   const handleSelectChange = async (e) => {
     setselectValue(e.target.value);
     onAddText("##" + e.target.value + "##");
-    getcredits(e.target.value.length)
-    setcharacterCount(smsModel.Text.length);
+    // getcredits(e.target.value.length)
+    // setcharacterCount(smsModel.Text.length);
   };
   const handleMsgSelect = () => {
     let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
@@ -1311,22 +1270,6 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     seteditmenuClick(false);
     onAddText(text)
-    let total = splittedMsg;
-    total.push(text)
-    if (isLinksStatistics && total !== null) {
-      let a = 0;
-      for (let i = 0; i < total.length; i++) {
-        if (total[i].includes("https://") == false) {
-          a = a + total[i].length
-        }
-      }
-      setcharacterCount(a + 35)
-      getcredits(a + 35)
-    }
-    else {
-      setcharacterCount(text.length);
-      getcredits(text.length)
-    }
     let lc = linkCount;
     setlinkCount(++lc);
   };
@@ -1641,8 +1584,6 @@ const SmsCreator = ({ classes, ...props }) => {
     handleSmsModelChange("Text", tempmsg);
     let lc = linkCount;
     setlinkCount(++lc);
-    setcharacterCount(tempmsg.length);
-    getcredits(tempmsg.length)
     setwaize(false);
   };
 
