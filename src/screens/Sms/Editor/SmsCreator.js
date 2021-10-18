@@ -654,7 +654,7 @@ const SmsCreator = ({ classes, ...props }) => {
     let links = e.target.value.match(linkRegex);
     setSplittedLinks(links);
     if (links) {
-      let linkSize = links.length;
+      setlinkCount(links.length);
       if (isLinksStatistics) {
         let a = 0
         for (let i = 0; i < arr.length; i++) {
