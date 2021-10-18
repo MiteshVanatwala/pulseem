@@ -33,7 +33,6 @@ import {
   smsQuick,
   getCampaignSumm,
   getCreditsforSMS,
-  sendSms,
   getTestGroups,
   getCommonFeatures,
   getSMSVirtualNumber,
@@ -51,7 +50,6 @@ import { Button, Grid, Box, TextField } from "@material-ui/core";
 import { AiOutlineExclamationCircle,  AiOutlinePlusCircle , AiOutlineFile ,AiOutlineAlignLeft } from "react-icons/ai";
 import { BsTrash } from "react-icons/bs";
 import { Loader } from '../../../components/Loader/Loader';
-import MuiAlert from "@material-ui/lab/Alert";
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
@@ -377,6 +375,7 @@ const SmsCreator = ({ classes, ...props }) => {
         setcampaignNumber(response.payload.FromNumber)
         setmessageCount(response.payload.CreditsPerSms);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
+        setSmsModel(response.payload);
       }
     }
   }
