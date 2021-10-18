@@ -13,7 +13,6 @@ import Mobile from "../../../assets/images/mobileiphone.png";
 import Radio from "@material-ui/core/Radio";
 import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from "@material-ui/core/RadioGroup";
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import Emoj from "../../../assets/images/smile.png";
 import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
@@ -119,14 +118,12 @@ const SmsCreator = ({ classes, ...props }) => {
   const [restoreBool, setrestoreBool] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [save, setsave] = useState(false);
-  const [campaignName, setcampaignName] = useState("");
   const [campaignNumber, setcampaignNumber] = useState("");
   const [characterCount, setcharacterCount] = useState(0);
   const [linkCount, setlinkCount] = useState(0);
   const [counterBool, setcounterBool] = useState(false);
   const [messageCount, setmessageCount] = useState(0);
-  const [msg, setmsg] = useState("");
-  const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] = useState(false);
+    const [removalMessageButtonDisabled, setremovalMessageButtonDisabled] = useState(false);
   const [radioBtn, setradioBtn] = useState("top");
   const [landingSearch, setlandingSearch] = useState("");
   const [CampaignSearch, setCampaignSearch] = useState("");
@@ -179,13 +176,13 @@ const SmsCreator = ({ classes, ...props }) => {
     Credits: "1",
     SmsCampaignID: -1,
     TotalRecipients: 1,
-    Name: campaignName,
+    Name: "",
     ResponseToEmail: "",
     SendDate: Date.now(),
     SendingMethod: 0,
     Status: 1,
     TestGroupsIds: temp,
-    Text: msg,
+    Text: "",
     Type: 0,
     UpdateDate: Date.now(),
   });
@@ -196,9 +193,9 @@ const SmsCreator = ({ classes, ...props }) => {
           Type: 0,
           CreditsPerSms: "1",
           UpdateDate: Date.now(),
-          Name: campaignName,
+          Name: "",
           FromNumber: campaignNumber,
-          Text: msg,
+          Text: "",
           ResponseToEmail: "",
           IsTestCampaign: false,
           IsResponse: false,
@@ -226,7 +223,6 @@ const SmsCreator = ({ classes, ...props }) => {
     INVALIDNUMBER : { severity: 'error', color: 'error', message:  t("sms.invalidNumber") , showAnimtionCheck: false},
     QUICKSENDERROR : { severity: 'error', color: 'error', message: "Error sending message", showAnimtionCheck: false},
     SENTALREADY : { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true},
-
   }
 
   const handleSendResult = async (smsSendResult) => {
@@ -315,7 +311,7 @@ const SmsCreator = ({ classes, ...props }) => {
       }
     }
     settemp(tempfull);
-    const FinalPayloadData = {...smsModel , fromNumber : campaignNumber , Name : campaignName , Text: msg , TestGroupsIds : temp ,IsTestCampaign : isTestCampaign , IsTest : true , IsLinksStatistics : isLinksStatistics}
+    const FinalPayloadData = {...smsModel , fromNumber : campaignNumber , Name : smsModel.Name , Text: smsModel.Text , TestGroupsIds : temp ,IsTestCampaign : isTestCampaign , IsTest : true , IsLinksStatistics : isLinksStatistics}
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
     setsummary(false);
@@ -370,8 +366,6 @@ const SmsCreator = ({ classes, ...props }) => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
       if (response) {
-        setcampaignName(response.payload.Name);
-        setmsg(response.payload.Text)
         setcampaignNumber(response.payload.FromNumber)
         setmessageCount(response.payload.CreditsPerSms);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
@@ -396,7 +390,7 @@ const SmsCreator = ({ classes, ...props }) => {
     let a=0;
     if(toggle === true)
     {
-      if(msg !== "")
+      if(smsModel.Text !== "")
       {
         for(let i = 0 ; i<total.length;i++)
         {
@@ -405,7 +399,7 @@ const SmsCreator = ({ classes, ...props }) => {
             a = a + total[i].length
           }
         }
-        if(msg.includes("https://"))
+        if(smsModel.Text.includes("https://"))
         {
           setcharacterCount(a+35);
         }
@@ -461,7 +455,7 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCamppaignChange = (e) => {
-    setcampaignName(e.target.value);
+    setSmsModel({ ...smsModel, Name: e.target.value });
     setcampaignBool(false);
   };
 
@@ -472,13 +466,13 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const validationCheck = () => {
-    if (campaignName === "") {
+    if (smsModel.Name === "") {
       setcampaignBool(true);
       setsave(true);
       return false;
     }
 
-    if (msg === "") {
+    if (smsModel.Text === "") {
       setsave(true);
       return false;
     }
@@ -496,7 +490,7 @@ const SmsCreator = ({ classes, ...props }) => {
       if (phone !== "") {
         if(props && props.match.params.id)
         {
-          const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false , IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData : { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
+          const smsQuickSendData = {...quickSendPayload , SmsCampaignID : props.match.params.id ,FromNumber : campaignNumber , PhoneNumber : phone , Name : smsModel.Name , Text : smsModel.Text  , IsTest : false , IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount ,  LogData : { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID , SmsCampaignID :  props.match.params.id , Credits: messageCount,
           TotalRecipients: 1 } }
           setLoader(true);
           let r = await  dispatch(smsQuick(smsQuickSendData));
@@ -507,7 +501,7 @@ const SmsCreator = ({ classes, ...props }) => {
         {
           if(PhoneNumberCampaignId !== "")
           {
-            const smsQuickSendData = {...quickSendPayload , SmsCampaignID : PhoneNumberCampaignId , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID ,  SmsCampaignID : PhoneNumberCampaignId , Credits: messageCount, 
+            const smsQuickSendData = {...quickSendPayload , SmsCampaignID : PhoneNumberCampaignId , FromNumber : campaignNumber , PhoneNumber : phone , Name : smsModel.Name , Text : smsModel.Text  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID ,  SmsCampaignID : PhoneNumberCampaignId , Credits: messageCount, 
               TotalRecipients: 1} }
               setLoader(true);
               let r = await  dispatch(smsQuick(smsQuickSendData));
@@ -517,7 +511,7 @@ const SmsCreator = ({ classes, ...props }) => {
           }
           else
           {
-            const smsQuickSendData = {...quickSendPayload  , FromNumber : campaignNumber , PhoneNumber : phone , Name : campaignName , Text : msg  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID ,  SmsCampaignID : -1 , Credits: messageCount, 
+            const smsQuickSendData = {...quickSendPayload  , FromNumber : campaignNumber , PhoneNumber : phone , Name : smsModel.Name , Text : smsModel.Text  , IsTest : false, IsLinksStatistics : isLinksStatistics , CreditsPerSms : messageCount , LogData :  { SubAccountID : commonSettings.SubAccountId , AccountID : commonSettings.AccountID ,  SmsCampaignID : -1 , Credits: messageCount, 
               TotalRecipients: 1} }
               setLoader(true);
               let r = await  dispatch(smsQuick(smsQuickSendData));
@@ -555,16 +549,15 @@ const SmsCreator = ({ classes, ...props }) => {
     setremovalNumber(response.payload.RemovalKey);
   }
   const onEmojiClick = (event, emojiObject) => {
-   console.log("cursor",document.getElementById("yourMessage").selectionStart,msg)
+   console.log("cursor",document.getElementById("yourMessage").selectionStart,smsModel.Text)
    let a  = document.getElementById("yourMessage").selectionStart;
-    let msgs = msg;
     let count = characterCount;
     count++;
-    let b = [msgs.slice(0,a), emojiObject.emoji, msgs.slice(a)].join('');
+    let b = [smsModel.Text.slice(0,a), emojiObject.emoji, smsModel.Text.slice(a)].join('');
     setcharacterCount(count);
     setChosenEmoji(emojiObject);
     setflagemoji(false);
-    setmsg(b);
+    setSmsModel({ ...smsModel, Text: b });
     getcredits(count);  
   };
   const renderFields = () => {
@@ -584,7 +577,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 : clsx(classes.buttonField, classes.success)
             }
             onChange={onCamppaignChange}
-            value={campaignName}
+            value={smsModel.Name}
           />
           <Typography className={classes.buttonContent}>
             {t("mainReport.campDesc")}
@@ -646,33 +639,10 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const onMsgChange = async (e) => {
    
-    if (msg !== "" && e.target.value.length < msg.length) {
-      if(msg.includes("To unsubscribe reply 282"))
-      {
-        setremovalMessageButtonDisabled(true);
-      }
-      else
-      {
-        setremovalMessageButtonDisabled(false);
-      }
-      if(msg.includes("##SmsUnsubscribeURL##"))
-      {
-        setremovalLinkDisabled(true);
-      }
-      else
-      {
-        setremovalLinkDisabled(false);
-      }
-      if(msg.includes(selectValue))
-      {
-        setsetSelectValueDisabled(true);
-      }
-      else
-      {
-        setsetSelectValueDisabled(false);
-      }
+    if (smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
+      handleMsgSelect();
     }
-    setmsg(e.target.value);
+    setSmsModel({ ...smsModel, Text: e.target.value });
     setcharacterCount(e.target.value.length);
 let tempMsg = "";
 tempMsg = e.target.value
@@ -716,8 +686,8 @@ getcredits(e.target.value.length)
 
   const onRemovalLink = async () => {
     let newLink = "";
-    newLink = msg + "##SmsUnsubscribeURL##";
-    setmsg(newLink);
+    newLink = smsModel.Text + "##SmsUnsubscribeURL##";
+    setSmsModel({ ...smsModel, Text: newLink });
     let total = splittedMsg;
     total.push("##SmsUnsubscribeURL##")
     if(isLinksStatistics && SplittedLinks !== null) {
@@ -744,8 +714,8 @@ getcredits(e.target.value.length)
   const onRemovalMsg = async () => {
 
     let newMsg = "";
-    newMsg = msg + "To unsubscribe reply 282";
-    setmsg(newMsg);
+    newMsg = smsModel.Text + "To unsubscribe reply 282";
+    setSmsModel({ ...smsModel, Text: newMsg });
     let total = splittedMsg;
     total.push("To unsubscribe reply 282")
 
@@ -772,8 +742,8 @@ getcredits(e.target.value.length)
   const handleSelectChange =  async (e) => {
     setselectValue(e.target.value);
     let linkMsg = "";
-    linkMsg = msg +  "##" + e.target.value + "##";
-    setmsg(linkMsg);
+    linkMsg = smsModel.Text +  "##" + e.target.value + "##";
+    setSmsModel({ ...smsModel, Text: linkMsg });
     getcredits(e.target.value.length)
     setcharacterCount(linkMsg.length);
     setsetSelectValueDisabled(true);
@@ -789,7 +759,7 @@ getcredits(e.target.value.length)
   };
   const handleMsgSelect = () =>
   {
-    if(msg.includes("To unsubscribe reply 282"))
+    if(smsModel.Text.includes("To unsubscribe reply 282"))
     {
       setremovalMessageButtonDisabled(true);
     }
@@ -797,7 +767,7 @@ getcredits(e.target.value.length)
     {
       setremovalMessageButtonDisabled(false);
     }
-    if(msg.includes("##SmsUnsubscribeURL##"))
+    if(smsModel.Text.includes("##SmsUnsubscribeURL##"))
     {
       setremovalLinkDisabled(true);
     }
@@ -805,7 +775,7 @@ getcredits(e.target.value.length)
     {
       setremovalLinkDisabled(false);
     }
-    if(msg.includes(selectValue))
+    if(smsModel.Text.includes(selectValue))
     {
       setsetSelectValueDisabled(true);
     }
@@ -832,7 +802,7 @@ getcredits(e.target.value.length)
               style={{ textAlign: alignment == "left" ? "left" : "right" }}
               onChange={onMsgChange}
               onSelect={handleMsgSelect}
-              value={msg}
+              value={smsModel.Text}
             ></textarea>
           
             <Box className={classes.smallInfoDiv}>
@@ -1113,7 +1083,7 @@ getcredits(e.target.value.length)
           <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
             <div className={isRTL ? classes.chatBoxHe : classes.chatBox}>
             <div className={classes.fromMe}>
-              {msg.split('\n').map((str) =>
+              {smsModel.Text.split('\n').map((str) =>
               {
                 return(<p style={{margin:"0",padding:"0"}}>{str}</p>)
               })}
@@ -1278,7 +1248,7 @@ getcredits(e.target.value.length)
 
       if(props && props.match.params.id)
       {
-        const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : props.match.params.id}
+        const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : smsModel.Name , Text : smsModel.Text  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : props.match.params.id}
         setLoader(true);
         let r = await dispatch(smsSave(payloadToPush));
         setLoader(false);
@@ -1303,7 +1273,7 @@ getcredits(e.target.value.length)
       }
       else
      {
-      const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : campaignName , Text : msg  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : -1}
+      const payloadToPush = {...smsModel , FromNumber : campaignNumber , Name : smsModel.Name , Text : smsModel.Text  , CreditsPerSms: `${messageCount}` , IsLinksStatistics : isLinksStatistics , IsTest : isTestCampaign , AccountID : commonSettings.AccountID , SubAccountID : commonSettings.SubAccountId , SmsCampaignID  : -1}
       setLoader(true);
       let r = await dispatch(smsSave(payloadToPush));
       setLoader(false);
@@ -1345,10 +1315,10 @@ getcredits(e.target.value.length)
   };
   const handleLink = async (id) => {
     let linkMsg = "";
-    linkMsg = msg + previousLandingData[id].PageHref;
+    linkMsg = smsModel.Text + previousLandingData[id].PageHref;
     setdialogClickLanding(false);
     seteditmenuClick(false);
-    setmsg(linkMsg);
+    setSmsModel({ ...smsModel, Text: linkMsg });
     let total = splittedMsg;
     total.push(previousLandingData[id].PageHref)
     if(isLinksStatistics && total !== null) {
@@ -1374,10 +1344,10 @@ getcredits(e.target.value.length)
 
   const handleCampClick = async (id) => {
     let campaignData = "";
-    campaignData = msg + previousCampaignData[id].EncryptURL;
+    campaignData = smsModel.Text + previousCampaignData[id].EncryptURL;
     setdialogClickCampaign(false);
     seteditmenuClick(false);
-    setmsg(campaignData);
+    setSmsModel({ ...smsModel, Text: campaignData });
     let total = splittedMsg;
     total.push(previousCampaignData[id].EncryptURL)
     if(isLinksStatistics && total !== null) {
@@ -1446,7 +1416,7 @@ getcredits(e.target.value.length)
         break;
       }
     }
-    if (campaignName !== "" && msg !== "" && boolean === true) {
+    if (smsModel.Name !== "" && smsModel.Text !== "" && boolean === true) {
 
       let temp = [];
       let tempfull = [];
@@ -1460,7 +1430,7 @@ getcredits(e.target.value.length)
       }
       settotal(num);
       settemp(tempfull);
-      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg, TestGroupsIds: temp }
+      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: temp }
       let r = await dispatch(smsSave(payloadToPush));
       if (r.payload.Status == 2) {
         let payload2 = {
@@ -1664,7 +1634,7 @@ getcredits(e.target.value.length)
     if (saveBeforeExit) {
       if(validationCheck())
       {
-        const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: campaignName, Text: msg }
+        const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
         let r = await dispatch(smsSave(payloadToPush));
         if (r) {
           setexitClick(false);
@@ -1692,9 +1662,9 @@ getcredits(e.target.value.length)
       <>
         <Summary
           classes={classes}
-          campaignName={campaignName}
+          campaignName={smsModel.Name}
           fromNumber={campaignNumber}
-          totalmsg={msg}
+          totalmsg={smsModel.Text}
           selectedGroups={selectedGroup}
           open={summary}
           totalRecipients={total}
@@ -1708,8 +1678,8 @@ getcredits(e.target.value.length)
   };
   const onLocation = async () => {
     let tempmsg = "";
-    tempmsg = msg + "https://waze.to/?q=" + Searched.split(" ").join("%20");
-    setmsg(tempmsg);
+    tempmsg = smsModel.Text + "https://waze.to/?q=" + Searched.split(" ").join("%20");
+    setSmsModel({ ...smsModel, Text: tempmsg });
     let lc = linkCount;
     setlinkCount(++lc);
     setcharacterCount(tempmsg.length);
@@ -1990,7 +1960,7 @@ getcredits(e.target.value.length)
             {campaignBool ? <li style={{ marginBottom: "8px" }}>
               {t("mainReport.campaignRequire")}
             </li> : null}
-            {msg === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
+            {smsModel.Text === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
             {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
               {t("mainReport.campaignFromRequire")}
             </li> : null}
