@@ -543,6 +543,49 @@ const SmsSend = ({classes , ...props }) => {
    
   }, [])
 
+  // useEffect(() => {
+  //   console.log("--> session")
+ 
+  //   let groupsArr = [];
+
+  //   if(typeof window !== undefined)
+
+  //   {
+  //     console.log("--> session if ")
+  //     groupsArr =  sessionStorage.getItem("groupFilters");
+  //    let final  = JSON.parse(groupsArr)
+  //     if(groupsArr)
+  //     {
+  //       console.log("--> session another if",final)
+
+  //       let tempArr = []
+  //       for(let i=0 ; i < filterGroups.length ; i++)
+  //       {
+  //         for(let j=0 ; j< final.length ; j++)
+  //         {
+  //          if (filterGroups[i].GroupID === final[j].GroupID) {
+  //            if (filterGroups[i].selected) {
+  //              tempArr.push({ ...filterGroups[i], selected: false });
+  //            } else {
+  //              tempArr.push({ ...filterGroups[i], selected: true });
+  //            }
+  //          } else {
+  //            tempArr.push(filterGroups[i]);
+  //          }
+  //         }
+  //       }
+       
+  //       setfilterGroups(tempArr);
+      
+  //    }
+  //   }
+  
+    
+    
+   
+   
+  //  }, [reciFilter])
+
 
   const getSavedData = async () => {
     if (props && props.match.params.id) {
@@ -970,6 +1013,7 @@ const SmsSend = ({classes , ...props }) => {
                         setnoTrue(false);
                         setpulsePer("percent");
                         setpulseReci("");
+                        setinputF("");
                       }}
                     >
                       {t("smsReport.percent")}
@@ -987,6 +1031,7 @@ const SmsSend = ({classes , ...props }) => {
                         setnoTrue(true);
                         setpulsePer("");
                         setpulseReci("Recipients");
+                        setinputF("");
                       }}
                     >
                       {t("smsReport.Reci")}
@@ -1570,6 +1615,7 @@ const SmsSend = ({classes , ...props }) => {
       }
      
     }
+    // sessionStorage.setItem("groupFilters", JSON.stringify(temparr));
   };
   const handlePasted = () => {
     let temp = areaData;
@@ -1624,7 +1670,7 @@ const SmsSend = ({classes , ...props }) => {
     }
 
   };
-  const renderReciFilter = () => {
+  const  renderReciFilter = () => {
     return (
       <>
         {reciFilter ? (
@@ -1846,7 +1892,7 @@ const SmsSend = ({classes , ...props }) => {
   const handleSpecialDayChange = (e) =>
   {
     const re = /^[0-9\b]+$/;
-    if ((e.target.value === '' || re.test(e.target.value)) && Number(e.target.value <=365) ) 
+    if ((e.target.value === '' || re.test(e.target.value)) && Number(e.target.value <=999) ) 
     {
       setdaysBeforeAfter(e.target.value);
     }
@@ -1968,9 +2014,9 @@ const SmsSend = ({classes , ...props }) => {
                     ok: t("common.confirm"),
                     cancel: t("common.cancel"),
                   }}
-                  ampm={true}
+                  ampm={false}
                   timeActive = {sendType == "2" ? false : true}
-                  timePickerOpen={timePickerOpen}
+                  timePickerOpen={timePickerOpen}  
                   autoOk
                 />
               </Box>
@@ -2043,31 +2089,52 @@ const SmsSend = ({classes , ...props }) => {
                 <span style={{ marginInlineEnd: "8px", marginBottom: "8px" }}>
                   {t("mainReport.days")}
                 </span>
-
-                <div style={{ display: "flex", direction: isRTL ? 'ltr' : 'none' }}>
-                  <span
-                    className={
-                      
-                    sendType == "3" ?  toggleB ? classes.beforeActive : classes.before : classes.disabledBefore 
-                    }
-                    onClick={() => {
-                      handlebef();
-                    }}
-                  >
-
-                    {t("mainReport.before")}
-                  </span>
-                  <span
-                    className={
-                      sendType == "3" ?  toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
-                    }
-                    onClick={() => {
-                      handleaf();
-                    }}
-                  >
-                    {t("mainReport.after")}
-                  </span>
-                </div>
+               {isRTL ?    
+                <div style={{ display: "flex"}}>
+                <span
+                  className={
+                  sendType == "3" ?  toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter 
+                  }
+                  onClick={() => {
+                    handlebef();
+                  }}
+                >
+                 {t("mainReport.before")}
+                </span>
+                <span
+                  className={
+                    sendType == "3" ?  toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
+                  }
+                  onClick={() => {
+                    handleaf();
+                  }}
+                >
+                {t("mainReport.after")}
+                </span>
+             
+              </div> :     <div style={{ display: "flex" }}>
+                <span
+                  className={
+                  sendType == "3" ?  toggleB ? classes.beforeActive : classes.before : classes.disabledBefore 
+                  }
+                  onClick={() => {
+                    handlebef();
+                  }}
+                >
+                 {t("mainReport.before")}
+                </span>
+                <span
+                  className={
+                    sendType == "3" ?  toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                  }
+                  onClick={() => {
+                    handleaf();
+                  }}
+                >
+                 {t("mainReport.after")}
+                </span>
+              </div> }
+            
               </Box>
               <Box
                 style={{
@@ -3070,7 +3137,7 @@ const SmsSend = ({classes , ...props }) => {
             onClose={handleClose}
             onCancel={cancel ? null : true}
             onConfirm={handleDelete}
-            confirmText="Confirm"
+            confirmText= {t("smsReport.confirmBtn")}
             showDefaultButtons={true}
             icon={
               <AiOutlineExclamationCircle
