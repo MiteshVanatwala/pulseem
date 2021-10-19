@@ -673,7 +673,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 
   },
   buttonContent: {
-    fontSize: "14px",
+    fontSize: "12px",
     marginTop: "8px",
   },
   alertMsg: {
@@ -696,6 +696,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     padding: "8px",
     width: "20%",
+    color:"black",
     '&::placeholder':
     {
       fontSize: "16px"
@@ -709,6 +710,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&::placeholder':
     {
       fontSize: "16px"
+    },
+    '&:disabled' : 
+    {
+       color:"black"
     }
   },
   success: {
@@ -1396,6 +1401,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   tabDiv: {
     display: "grid",
     gridTemplateColumns: "50% 50%",
+  
     "@media screen and (max-width: 768px)": {
       width: "315px",
     },
@@ -1417,7 +1423,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   activeTab: {
     borderBottom: "3px solid #1771AD",
-    color: "#277BFF !important",
+    color: "#007bff !important"    
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
@@ -1635,7 +1641,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer"
   },
   smsInit: {
-    padding: "40px 80px 15px 90px",
+    padding: "40px 80px 15px 30px",
     justifyContent:"flex-end"
   },
   msgDiv: {
@@ -2117,7 +2123,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "700px",
     flexWrap:"wrap",
     overflowY:"auto",
-    backgroundColor: "#F7F7F7",
+    border: "1px solid #efefef",
   },
   manualModal: {
     display: "flex",
@@ -2452,7 +2458,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   smsStepDiv:
   {
     display: "grid",
-    padding: "40px 80px 15px 90px",
+    padding: "40px 80px 15px 30px",
     "@media screen and (max-width: 768px)": {
       gridTemplateColumns: "auto",
       padding: "0px"

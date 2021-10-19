@@ -24,15 +24,15 @@ import { FaCheck } from 'react-icons/fa';
 import CloseIcon from "@material-ui/icons/Close";
 import SortIcon from "@material-ui/icons/Sort";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import { AiOutlineExclamationCircle ,AiOutlineClose } from "react-icons/ai";
+import { AiOutlineExclamationCircle, AiOutlineClose } from "react-icons/ai";
 import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
 import { useHistory } from "react-router";
-import { BsTrash ,BsChevronDown ,BsChevronUp } from "react-icons/bs";
+import { BsTrash, BsChevronDown, BsChevronUp } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
-import { DateTimePicker , KeyboardDateTimePicker} from "@material-ui/pickers";
+import { DateTimePicker, KeyboardDateTimePicker } from "@material-ui/pickers";
 import {
   Typography,
   Button,
@@ -78,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 200,
     backgroundColor: "black",
     fontSize: "14px",
+    textAlign: 'center'
   },
   noMaxWidth: {
     maxWidth: "none",
@@ -86,60 +87,60 @@ const useStyles = makeStyles((theme) => ({
 
 const useSnack = makeStyles((theme) => ({
 
- customcolor : 
- {
-  backgroundColor: "#EFF6B2",
-  color:"black",
-  border:"3px solid #CCCC00",
-  width:"250px",
-  height:"30px",
-  display:"flex",
-  justifyContent:"center",
-  fontWeight: 900
- }
+  customcolor:
+  {
+    backgroundColor: "#EFF6B2",
+    color: "black",
+    border: "3px solid #CCCC00",
+    width: "250px",
+    height: "30px",
+    display: "flex",
+    justifyContent: "center",
+    fontWeight: 900
+  }
 }));
 
-const useSnackRecipients= makeStyles((theme) => ({
+const useSnackRecipients = makeStyles((theme) => ({
 
-  customcolor : 
+  customcolor:
   {
-   backgroundColor: "#AFE1AF",
-   color:"black",
-   border:"1px solid #AFE1AF",
-   width:"250px",
-   height:"30px",
-   display:"flex",
-   justifyContent:"center",
-   fontWeight: 900
+    backgroundColor: "#AFE1AF",
+    color: "black",
+    border: "1px solid #AFE1AF",
+    width: "250px",
+    height: "30px",
+    display: "flex",
+    justifyContent: "center",
+    fontWeight: 900
   }
- }));
+}));
 
 const useSnackSevere = makeStyles((theme) => ({
 
-  customcolor : 
+  customcolor:
   {
-   backgroundColor: "#F6B2B2",
-   color:"black",
-   border:"3px solid #DC143C",
-   width:"200px",
-   height:"30px",
-   display:"flex",
-   justifyContent:"center",
-   fontWeight: 900
+    backgroundColor: "#F6B2B2",
+    color: "black",
+    border: "3px solid #DC143C",
+    width: "200px",
+    height: "30px",
+    display: "flex",
+    justifyContent: "center",
+    fontWeight: 900
   }
 
- }));
+}));
 
- const useStyleKeyboardInput = makeStyles((theme) => ({
+const useStyleKeyboardInput = makeStyles((theme) => ({
 
-  custom : 
+  custom:
   {
-  width:"370px",
-  padding:"5px",
-  height:"40px"
+    width: "370px",
+    padding: "5px",
+    height: "40px"
   }
 
- }));
+}));
 
 const useStyleNew = makeStyles((theme) => ({
   root: {
@@ -194,7 +195,7 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-const SmsSend = ({classes , ...props }) => {
+const SmsSend = ({ classes, ...props }) => {
   const { t } = useTranslation();
   // document.title = t("sms.pageTitle");
   const styles = useStyles();
@@ -213,13 +214,13 @@ const SmsSend = ({classes , ...props }) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(
     (state) => state.core
   );
-  const { extraData,getCampaignSum,} =
+  const { extraData, getCampaignSum, } =
     useSelector((state) => state.sms);
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
   const [selectedGroups, setSelected] = useState([]);
   const [allGroupsSelected, setAllGroupsSelected] = useState(false);
-  const [sendType, setSendType] = useState("1"); 
+  const [sendType, setSendType] = useState("1");
   const [sendDate, handleFromDate] = useState(null);
   const [sendTime, setsendTime] = useState(null);
   const [timePickerOpen, setTimePickerOpen] = useState(false);
@@ -233,8 +234,8 @@ const SmsSend = ({classes , ...props }) => {
   const [inputRecipients, setinputRecipients] = useState("");
   const [toggleChecked, settoggleChecked] = useState(false);
   const [cancel, setcancel] = useState(true);
-  const [ areaClick, setareaClick] = useState(false);
-  const [ dropClick, setdropClick] = useState(false);
+  const [areaClick, setareaClick] = useState(false);
+  const [dropClick, setdropClick] = useState(false);
   const [campaignIdResp, setcampaignIdResp] = useState(-1);
   const [groupNameInput, setgroupNameInput] = useState("");
   const [groupValue, setgroupValue] = useState("");
@@ -295,7 +296,6 @@ const SmsSend = ({classes , ...props }) => {
     ID: 0
   });
   const [ContactSearch, setContactSearch] = useState("");
-  const [selectedGroup, setselectedGroup] = useState([]);
   const [togglePulse, settogglePulse] = useState(false);
   const [toggleRandom, settoggleRandom] = useState(false);
   const [summModal, setsummModal] = useState(false);
@@ -309,7 +309,6 @@ const SmsSend = ({classes , ...props }) => {
   const [highlighted, setHighlighted] = React.useState(false);
   const [contacts, setContacts] = React.useState([]);
   const [daysBeforeAfter, setdaysBeforeAfter] = useState("");
-  const [Header, setHeader] = useState([]);
   const [pulseReci, setpulseReci] = useState("");
   const [snackBarPulseBoolean, setsnackBarPulseBoolean] = useState(false);
   const [snackbarTimeBoolean, setsnackbarTimeBoolean] = useState(false);
@@ -327,53 +326,48 @@ const SmsSend = ({classes , ...props }) => {
   const [SpecialValue, setSpecialValue] = useState("0");
   const [newVal, setnewVal] = useState(false);
   const [RecipientsSnackbar, setRecipientsSnackbar] = useState(false);
-  const [reciToggle, setreciToggle] = useState(false);
   const [areaData, setareaData] = useState("");
   const [RecipientsBool, setRecipientsBool] = useState(false);
   const [editT, seteditT] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [deleteClick, setdeleteClick] = useState(false);
-  const [areatyped, setareatyped] = useState("");
-  const [totalCampaigns, settotalCampaigns] = useState([])
-  const [blank, setblank] = useState(['first Name', 'Last Name', 'Cell Phone']);
-  const [typedData, settypedData] = useState([]);
+    const [totalCampaigns, settotalCampaigns] = useState([])
+    const [typedData, settypedData] = useState([]);
   const [displayFilter, setdisplayFilter] = useState(false);
-  const [RangePulseSnackbar, setRangePulseSnackbar] = useState(false);
-  const [selectArray, setselectArray] = useState([
+    const [selectArray, setselectArray] = useState([
     {
       isdisabled: false,
       idx: -1,
-      value: "First Name"
+      value: t("common.first_name")
     },
     {
       isdisabled: false,
       idx: -1,
-      value: "Last Name"
+      value: t("common.last_name")
     },
     {
       isdisabled: false,
       idx: -1,
-      value: "Cell Phone"
+      value: t("common.cellphone")
     }
   ]);
   const [dataSaved, setdataSaved] = useState({
-    campaignName : "",
-    fromNumber : "",
-    msg : ""
+    campaignName: "",
+    fromNumber: "",
+    msg: ""
   })
-  const [Unique, setUnique] = useState(-1);
   const [initialheadstate, setinitialheadstate] = useState([])
   const [recipientsDisplayGroups, setrecipientsDisplayGroups] = useState([]);
 
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: "SMS campaign has been saved", showAnimtionCheck: true },
-    GROUPCREATEDSUCCESS: { severity: 'success', color: 'success', message:"Group successfully created. ", showAnimtionCheck: true },
+    GROUPCREATEDSUCCESS: { severity: 'success', color: 'success', message: "Group successfully created. ", showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
-    OTP : { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true},
-    INVALID_RECIPIENTS : {severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false}
+    OTP: { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true },
+    INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false }
   }
-
+console.log(extraData);
   const defaultProps = {
     options: selectArray,
     getOptionLabel: (option) => option.value,
@@ -382,140 +376,121 @@ const SmsSend = ({classes , ...props }) => {
   const [headers, setheaders] = useState(initialheadstate);
 
   const getData = async () => {
-      setLoader(true);
-      const list = await dispatch(getFinishedCampaigns());
-      const tempGroupList = list.payload;
-      settotalCampaigns(tempGroupList);
+    setLoader(true);
+    const list = await dispatch(getFinishedCampaigns());
+    const tempGroupList = list.payload;
+    settotalCampaigns(tempGroupList);
     if (props && props.match.params.id) {
-    let r =  await dispatch(getCampaignSettings(props.match.params.id))
-    const list = await dispatch(getGroupsBySubAccountId());
-    console.log("presaved resp",r)
-     if(r.payload.Groups !== null)
-     {
-      var arr = []; 
-      for(var i=0 ; i<list.payload.length ; ++i) {
-        for(var j=0 ; j<r.payload.Groups.length ; ++j) {
-          if(list.payload[i].GroupID == r.payload.Groups[j]) {
-            arr.push(list.payload[i]);
+      let r = await dispatch(getCampaignSettings(props.match.params.id))
+      const list = await dispatch(getGroupsBySubAccountId());
+      console.log("presaved resp", r)
+      if (r.payload.Groups !== null) {
+        var arr = [];
+        for (var i = 0; i < list.payload.length; ++i) {
+          for (var j = 0; j < r.payload.Groups.length; ++j) {
+            if (list.payload[i].GroupID == r.payload.Groups[j]) {
+              arr.push(list.payload[i]);
+            }
           }
         }
+        setSelected(arr);
       }
-      setSelected(arr);
-     }
-     if(r.payload.SendExeptional != null && r.payload.SendExeptional.Groups.length !== 0)
-     {
-       let arr1 = [];
-       for(var i=0 ; i<list.payload.length ; ++i) {
-        for(var j=0 ; j<r.payload.SendExeptional.Groups.length ; ++j) {
-          if(list.payload[i].GroupID == r.payload.SendExeptional.Groups[j]) {
-            arr1.push({ ...list.payload[i], selected: true });
-          }
-          else
-          {
-            arr1.push({ ...list.payload[i], selected: false });
+      if (r.payload.SendExeptional != null && r.payload.SendExeptional.Groups.length !== 0) {
+        let arr1 = [];
+        for (var i = 0; i < list.payload.length; ++i) {
+          for (var j = 0; j < r.payload.SendExeptional.Groups.length; ++j) {
+            if (list.payload[i].GroupID == r.payload.SendExeptional.Groups[j]) {
+              arr1.push({ ...list.payload[i], selected: true });
+            }
+            else {
+              arr1.push({ ...list.payload[i], selected: false });
+            }
           }
         }
+        setfilterGroups(arr1);
       }
-      setfilterGroups(arr1);
-     }
-     if(r.payload.SendExeptional != null && r.payload.SendExeptional.Campaigns.length !== 0)
-     {
-      const camps = await dispatch(getFinishedCampaigns());
-      let arr2 = [];
-      for(var i=0 ; i<camps.payload.length ; ++i) {
-        for(var j=0 ; j<r.payload.SendExeptional.Campaigns.length ; ++j) {
-          if(camps.payload[i].SMSCampaignID == r.payload.SendExeptional.Campaigns[j]) {
-            arr2.push({ ...camps.payload[i], selected: true });
-          }
-          else
-          {
-            arr2.push({ ...camps.payload[i], selected: false });
+      if (r.payload.SendExeptional != null && r.payload.SendExeptional.Campaigns.length !== 0) {
+        const camps = await dispatch(getFinishedCampaigns());
+        let arr2 = [];
+        for (var i = 0; i < camps.payload.length; ++i) {
+          for (var j = 0; j < r.payload.SendExeptional.Campaigns.length; ++j) {
+            if (camps.payload[i].SMSCampaignID == r.payload.SendExeptional.Campaigns[j]) {
+              arr2.push({ ...camps.payload[i], selected: true });
+            }
+            else {
+              arr2.push({ ...camps.payload[i], selected: false });
+            }
           }
         }
+        settotalCampaigns(arr2);
       }
-      settotalCampaigns(arr2);
-     }
-     if(r.payload.SendExeptional != null && r.payload.SendExeptional.ExceptionalDays !== -1)
-     {
-      setinputRecipients(`${r.payload.SendExeptional.ExceptionalDays}`)
-      settoggleReci(true);
-      
-     }
-     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.PulseSettingsID !== -1)
-      {
+      if (r.payload.SendExeptional != null && r.payload.SendExeptional.ExceptionalDays !== -1) {
+        setinputRecipients(`${r.payload.SendExeptional.ExceptionalDays}`)
+        settoggleReci(true);
+
+      }
+      if (r.payload.PulseSettings != null && r.payload.PulseSettings.PulseSettingsID !== -1) {
         settogglePulse(true);
       }
-    
-      if(r.payload.RandomSettings !=null && r.payload.RandomSettings.RandomAmount !== 0)
-      {
+
+      if (r.payload.RandomSettings != null && r.payload.RandomSettings.RandomAmount !== 0) {
         setrandom(r.payload.RandomSettings.RandomAmount);
         settoggleRandom(true);
       }
-     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.PulseAmount !== 0)
-     {
-       setinputF(`${r.payload.PulseSettings.PulseAmount}`)
-     }
-     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.TimeInterval !== 0)
-     {
-       setinputS(`${r.payload.PulseSettings.TimeInterval}`)
-     }
-     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.PulseType === 2)
-     {
-      setpercentTrue(false);
-      setnoTrue(true);
-      setpulsePer("");
-      setpulseReci("Recipients");
-      
-     }
-     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.PulseType === 1)
-     {
-      setpulsePer("percent");
-      setpercentTrue(true);
-      setnoTrue(false);
-      setpulseReci("");
-    
-     }
-     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.TimeType === 1)
-     {
-      sethoursTrue(false);
-      setminTrue(true);
-      setminName("Mins");
-      sethourName("");
-     }
-     if(r.payload.PulseSettings !=null && r.payload.PulseSettings.TimeType === 2)
-     {
-      sethoursTrue(true);
-      setminTrue(false);
-      setminName("");
-      sethourName("Hours");
-     }
-    if(r.payload.SendTypeID)
-    {
-      setSendType(`${r.payload.SendTypeID}`);
-    }
-    if(r.payload.FutureDateTime !== null && r.payload.SendTypeID === 2)
-    {
-      handleFromDate(moment(r.payload.FutureDateTime));
-    }
-    if(r.payload.SendTypeID === 3)
-    {
-      setdaysBeforeAfter(r.payload.SpecialSettings.Day);
-      setsendTime(moment(r.payload.SpecialSettings.SendHour))
-      setSpecialValue(`${r.payload.SpecialSettings.DateFieldID}`)
-      if(r.payload.SpecialSettings.IntervalTypeID === -1)
-      {
-        settoggleB(true);
-        settoggleA(false);
-        setafterClick(false);
+      if (r.payload.PulseSettings != null && r.payload.PulseSettings.PulseAmount !== 0) {
+        setinputF(`${r.payload.PulseSettings.PulseAmount}`)
       }
-      else
-      {
-        settoggleB(false);
-        settoggleA(true);
-        setafterClick(true);
+      if (r.payload.PulseSettings != null && r.payload.PulseSettings.TimeInterval !== 0) {
+        setinputS(`${r.payload.PulseSettings.TimeInterval}`)
       }
-    }
-    
+      if (r.payload.PulseSettings != null && r.payload.PulseSettings.PulseType === 2) {
+        setpercentTrue(false);
+        setnoTrue(true);
+        setpulsePer("");
+        setpulseReci("Recipients");
+
+      }
+      if (r.payload.PulseSettings != null && r.payload.PulseSettings.PulseType === 1) {
+        setpulsePer("percent");
+        setpercentTrue(true);
+        setnoTrue(false);
+        setpulseReci("");
+
+      }
+      if (r.payload.PulseSettings != null && r.payload.PulseSettings.TimeType === 1) {
+        sethoursTrue(false);
+        setminTrue(true);
+        setminName("Mins");
+        sethourName("");
+      }
+      if (r.payload.PulseSettings != null && r.payload.PulseSettings.TimeType === 2) {
+        sethoursTrue(true);
+        setminTrue(false);
+        setminName("");
+        sethourName("Hours");
+      }
+      if (r.payload.SendTypeID) {
+        setSendType(`${r.payload.SendTypeID}`);
+      }
+      if (r.payload.FutureDateTime !== null && r.payload.SendTypeID === 2) {
+        handleFromDate(moment(r.payload.FutureDateTime));
+      }
+      if (r.payload.SendTypeID === 3) {
+        setdaysBeforeAfter(r.payload.SpecialSettings.Day);
+        setsendTime(moment(r.payload.SpecialSettings.SendHour))
+        setSpecialValue(`${r.payload.SpecialSettings.DateFieldID}`)
+        if (r.payload.SpecialSettings.IntervalTypeID === -1) {
+          settoggleB(true);
+          settoggleA(false);
+          setafterClick(false);
+        }
+        else {
+          settoggleB(false);
+          settoggleA(true);
+          setafterClick(true);
+        }
+      }
+
       setLoader(false)
     }
   };
@@ -529,7 +504,7 @@ const SmsSend = ({classes , ...props }) => {
 
   }, [dispatch]);
   const getDataExtra = async () => {
-    
+
     await dispatch(getAccountExtraData());
     setLoader(false);
 
@@ -539,16 +514,61 @@ const SmsSend = ({classes , ...props }) => {
     if (props && props.match.params.id) {
       getSavedData();
     }
-   
+
   }, [])
+
+  // useEffect(() => {
+  //   console.log("--> session")
+ 
+  //   let groupsArr = [];
+
+  //   if(typeof window !== undefined)
+
+  //   {
+  //     console.log("--> session if ")
+  //     groupsArr =  sessionStorage.getItem("groupFilters");
+  //    let final  = JSON.parse(groupsArr)
+  //     if(groupsArr)
+  //     {
+  //       console.log("--> session another if",final)
+
+  //       let tempArr = []
+  //       for(let i=0 ; i < filterGroups.length ; i++)
+  //       {
+  //         for(let j=0 ; j< final.length ; j++)
+  //         {
+  //          if (filterGroups[i].GroupID === final[j].GroupID) {
+  //            if (filterGroups[i].selected) {
+  //              tempArr.push({ ...filterGroups[i], selected: false });
+  //            } else {
+  //              tempArr.push({ ...filterGroups[i], selected: true });
+  //            }
+  //          } else {
+  //            tempArr.push(filterGroups[i]);
+  //          }
+  //         }
+  //       }
+       
+  //       setfilterGroups(tempArr);
+      
+  //    }
+  //   }
+  
+    
+    
+   
+   
+  //  }, [reciFilter])
+
+
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
       setLoader(false)
       if (response) {
-         setdataSaved({...dataSaved , campaignName : response.payload.Name , fromNumber : response.payload.FromNumber , msg :response.payload.Text })
-       
-        
+        setdataSaved({ ...dataSaved, campaignName: response.payload.Name, fromNumber: response.payload.FromNumber, msg: response.payload.Text })
+
+
       }
     }
   }
@@ -556,12 +576,12 @@ const SmsSend = ({classes , ...props }) => {
     const list = await dispatch(getGroupsBySubAccountId());
     setLoader(false);
     const tempGroupList = list.payload;
-   
+
     if (tempGroupList) {
       tempGroupList.Id = tempGroupList.GroupID;
     }
-  
-    setGroupList(tempGroupList);  
+
+    setGroupList(tempGroupList);
     setfilterGroups(tempGroupList);
   };
 
@@ -586,8 +606,7 @@ const SmsSend = ({classes , ...props }) => {
       setModel({ ...model, SendDate: null });
       handleFromDate(null);
     }
-    else if (event.target.value == "3")
-    {
+    else if (event.target.value == "3") {
       setModel({ ...model, SendDate: null });
       handleFromDate(null);
       setinputS("");
@@ -656,6 +675,7 @@ const SmsSend = ({classes , ...props }) => {
     // setTimePickerOpen(!timePickerOpen);
   };
   const handleTimePicker = (value) => {
+      setdateTime(value);
       var date = moment(sendDate);
       var time = moment(value, "HH:mm");
       date.set({
@@ -666,8 +686,7 @@ const SmsSend = ({classes , ...props }) => {
       setTimePickerOpen(false);
   };
 
-  const handleRadioTime = (value) =>
-  {
+  const handleRadioTime = (value) => {
     setsendTime(value)
   }
 
@@ -697,7 +716,7 @@ const SmsSend = ({classes , ...props }) => {
     let arr = recipientsDisplayGroups;
     for (let i = 0; i < filterGroups.length; i++) {
       if (id === filterGroups[i].GroupID) {
-       
+
 
         if (filterGroups[i].selected) {
           tempArr.push({ ...filterGroups[i], selected: false });
@@ -734,13 +753,11 @@ const SmsSend = ({classes , ...props }) => {
     setgroupValue(e.target.value);
   };
   const handlePulseClose = () => {
-   
-    if(inputF == "" || inputS == "")
-    {
+
+    if (inputF == "" || inputS == "") {
       settogglePulse(false)
     }
-    if(random == "")
-    {
+    if (random == "") {
       settoggleRandom(false)
     }
     setpulse(false);
@@ -756,87 +773,78 @@ const SmsSend = ({classes , ...props }) => {
   }
   const handleTime = (e) => {
     const re = /^[0-9\b]+$/;
-    if (e.target.value === '' || re.test(e.target.value)) 
-    {
+    if (e.target.value === '' || re.test(e.target.value)) {
       setinputS(e.target.value);
       setTimeBool(false);
     }
-   
+
   };
   const handleRandom = (e) => {
     const re = /^[0-9\b]+$/;
-    
-    if ((e.target.value === '' || re.test(e.target.value))) 
-    {
 
-      if(percentTrue)
-      {
-        if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
+    if ((e.target.value === '' || re.test(e.target.value))) {
+
+      if (percentTrue) {
+        if (Number(e.target.value) > selectedGroups.reduce(function (a, b) {
           return a + b['Recipients'];
-        }, 0).toLocaleString())
+        }, 0))
         {
           setrandom(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
-          }, 0).toLocaleString())
+          }, 0))
           setboolRandom(false);
         }
-        else
-        {
+        else {
           setrandom(e.target.value);
           setboolRandom(false);
         }
       }
-      else
-      {
-        if(Number(e.target.value) > inputF)
-        {
+      else {
+        if (Number(e.target.value) > inputF) {
           setrandom(inputF)
         }
-        else
-        {
+        else {
           setrandom(e.target.value)
         }
       }
-     
+
     }
-    
+
   };
   const handlePulseInput = (e) => {
     const re = /^[0-9\b]+$/;
-    if ((e.target.value === '' || re.test(e.target.value))) 
-    {
-      if(percentTrue)
-      {
-    if(Number(e.target.value) > 100)
-    {
-      setinputF("100");
-     }
-     else
-     {
-      setinputF(e.target.value);
-     }
-      }
-      else
-      {
-        if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
-          return a + b['Recipients'];
-        }, 0).toLocaleString())
-        {
-          setinputF(selectedGroups.reduce(function (a, b) {
-            return a + b['Recipients'];
-          }, 0).toLocaleString())
+    if ((e.target.value === '' || re.test(e.target.value))) {
+      if (percentTrue) {
+        if (Number(e.target.value) > 100) {
+          setinputF("100");
         }
-        else
-        {
+        else {
           setinputF(e.target.value);
         }
       }
-  
+      else
+      {
+      
+        if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
+          return a + b['Recipients'];
+        }, 0))
+        {
+         
+          setinputF(selectedGroups.reduce(function (a, b) {
+            return a + b['Recipients'];
+          }, 0))
+        }
+        else {
+          setinputF(e.target.value);
+        
+        }
+      }
+
       setpulseBool(false);
     }
-   
+
   };
-  
+
   const onPulseValidations = () => {
     if (togglePulse) {
 
@@ -864,7 +872,7 @@ const SmsSend = ({classes , ...props }) => {
         if (random === "") {
           setboolRandom(true);
           setsnackbarMainPulse(true);
-          
+
           return false;
         }
         else {
@@ -899,9 +907,12 @@ const SmsSend = ({classes , ...props }) => {
         <Dialog
           classes={classes}
           open={pulse}
+          //cross
           onClose={handlePulseClose}
-          showDefaultButtons={false}
-          icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }} />}
+          onConfirm={handlePulseConfirm}
+          showDefaultButtons={true}
+          icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }}
+           />}
         >
           <div className={classes.pulseParentDiv}>
             <span className={classes.groupName}> {t("smsReport.pulseSending")}</span>
@@ -946,7 +957,7 @@ const SmsSend = ({classes , ...props }) => {
                     }
                     value={inputF}
                     onChange={handlePulseInput}
-                    
+
                   />
 
                   <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'none' }}>
@@ -963,6 +974,7 @@ const SmsSend = ({classes , ...props }) => {
                         setnoTrue(false);
                         setpulsePer("percent");
                         setpulseReci("");
+                        setinputF("");
                       }}
                     >
                       {t("smsReport.percent")}
@@ -980,6 +992,7 @@ const SmsSend = ({classes , ...props }) => {
                         setnoTrue(true);
                         setpulsePer("");
                         setpulseReci("Recipients");
+                        setinputF("");
                       }}
                     >
                       {t("smsReport.Reci")}
@@ -1051,10 +1064,8 @@ const SmsSend = ({classes , ...props }) => {
             </div>
 
             <div
-
               className={classes.randomSendDiv}
             >
-
               <Checkbox
                 checked={toggleRandom}
                 color="primary"
@@ -1087,36 +1098,20 @@ const SmsSend = ({classes , ...props }) => {
               />
             </div>
           </div>
-          <div
-            className={classes.confirmDiv}
-          >
-            <Button
-              variant="contained"
-              size="small"
-              className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmButton
-              )}
-              onClick={handlePulseConfirm}
-            >
-              {t("smsReport.confirmBtn")}
-            </Button>
-          </div>
         </Dialog>
       </>
     );
   };
   const areaChange = (e) => {
     setareaData(e.target.value);
-   
+
     setareaClick(true);
     setdropClick(false);
   };
 
-  const handleFiles = (e) =>
-  {
+  const handleFiles = (e) => {
     e.preventDefault();
-   
+
     setareaClick(false);
     setdropClick(true);
 
@@ -1124,148 +1119,146 @@ const SmsSend = ({classes , ...props }) => {
     const reader = new FileReader();
     var p = new Promise((resolve, reject) => {
       try {
-      if (file.name.toLowerCase().indexOf("xls") > -1) {
-        setLoader(true);
-       
-        reader.onload = function(e) {
-          var data = new Uint8Array(e.target.result);
-          setTimeout(() => {
-            var workbook = XLSX.read(data, { type: "array" });
-            var csv = XLSX.utils.sheet_to_csv(
-              workbook.Sheets[workbook.SheetNames[0]]
-            ,{header:1});
-         
-           let temp = csv;
-           let a = temp.split("\n");
-           let b = [];
-           for (let i = 0; i < a.length; i++) {
-             b.push(a[i].split(","));
-           }
-           b.pop();
-           settypedData(b);
-           
-           setareaData(b);
-           let dummyArr = [];
-            for (let i = 0; i < b[0].length; i++) {
-              dummyArr.push("Adjust Title");
-            }
-            setinitialheadstate(dummyArr);
-            setheaders(dummyArr)
+        if (file.name.toLowerCase().indexOf("xls") > -1) {
+          setLoader(true);
 
-           setLoader(false);
-           if(dummyArr !== 0)
-           {
-             setmanualTrue(true);
-           }
-          
-          }, 0);
-        };
-       reader.readAsArrayBuffer(file,"utf-8")
-      }
+          reader.onload = function (e) {
+            var data = new Uint8Array(e.target.result);
+            setTimeout(() => {
+              var workbook = XLSX.read(data, { type: "array" });
+              var csv = XLSX.utils.sheet_to_csv(
+                workbook.Sheets[workbook.SheetNames[0]]
+                , { header: 1 });
 
-       else if(file.name.toLowerCase().indexOf("csv") > -1)
-      {
-       
-        const maxLinesPerFile = 1000000;
-        setLoader(true);
-        reader.onload = function() {
-          var config = {
-            delimiter: "", // auto-detect
-            newline: "", // auto-detect
-            quoteChar: "",
-            escapeChar: "",
-            header: false,
-            trimHeader: false,
-            dynamicTyping: true,
-            preview: 0,
-            encoding: "utf-8",
-            worker: true,
-            comments: false,
-            step: undefined,
-            complete: undefined,
-            error: undefined,
-            download: false,
-            skipEmptyLines: true,
-            chunk: function(c) {
-              var final = c["data"]
-                .filter(function(el) {
-                  return (
-                    typeof el != "object" ||
-                    Array.isArray(el) ||
-                    Object.keys(el).length > 0
-                  );
-                })
-                .map((finalResult) => {
-                  const fr = [...finalResult];
-                  let fixedItem = [];
-                  fr.forEach((item) => {
-                    if (
-                      item &&
-                      String(item).startsWith("5") &&
-                      String(item).length == 9
-                    ) {
-                      item = "0" + item;
-                    }
-                    if (item && String(item).indexOf("9.72") > -1) {
-                      item = parseFloat(item);
-                    }
-                    fixedItem.push(String(item).trim());
-                  });
-                  return fixedItem;
-                });
-              var conf = {
-                quotes: false,
-                quoteChar: '"',
-                escapeChar: '"',
-                delimiter: ",",
-                newline: "\r\n",
-                skipEmptyLines: true,
-                columns: null,
-                worker: true,
-              };
-              const csvResults = Papa.unparse(final, conf);
-              resolve(csvResults)
-            },
-            fastMode: true,
-            beforeFirstChunk: undefined,
-            withCredentials: undefined,
+              let temp = csv;
+              let a = temp.split("\n");
+              let b = [];
+              for (let i = 0; i < a.length; i++) {
+                b.push(a[i].split(","));
+              }
+              b.pop();
+              settypedData(b);
+
+              setareaData(b);
+              let dummyArr = [];
+              for (let i = 0; i < b[0].length; i++) {
+                dummyArr.push(t("sms.adjustTitle"));
+              }
+              setinitialheadstate(dummyArr);
+              setheaders(dummyArr)
+
+              setLoader(false);
+              if (dummyArr !== 0) {
+                setmanualTrue(true);
+              }
+
+            }, 0);
           };
-          const lines = reader.result.split("\n");
-       
+          reader.readAsArrayBuffer(file, "utf-8")
+        }
+
+        else if (file.name.toLowerCase().indexOf("csv") > -1) {
+
+          const maxLinesPerFile = 1000000;
+          setLoader(true);
+          reader.onload = function () {
+            var config = {
+              delimiter: "", // auto-detect
+              newline: "", // auto-detect
+              quoteChar: "",
+              escapeChar: "",
+              header: false,
+              trimHeader: false,
+              dynamicTyping: true,
+              preview: 0,
+              encoding: "utf-8",
+              worker: true,
+              comments: false,
+              step: undefined,
+              complete: undefined,
+              error: undefined,
+              download: false,
+              skipEmptyLines: true,
+              chunk: function (c) {
+                var final = c["data"]
+                  .filter(function (el) {
+                    return (
+                      typeof el != "object" ||
+                      Array.isArray(el) ||
+                      Object.keys(el).length > 0
+                    );
+                  })
+                  .map((finalResult) => {
+                    const fr = [...finalResult];
+                    let fixedItem = [];
+                    fr.forEach((item) => {
+                      if (
+                        item &&
+                        String(item).startsWith("5") &&
+                        String(item).length == 9
+                      ) {
+                        item = "0" + item;
+                      }
+                      if (item && String(item).indexOf("9.72") > -1) {
+                        item = parseFloat(item);
+                      }
+                      fixedItem.push(String(item).trim());
+                    });
+                    return fixedItem;
+                  });
+                var conf = {
+                  quotes: false,
+                  quoteChar: '"',
+                  escapeChar: '"',
+                  delimiter: ",",
+                  newline: "\r\n",
+                  skipEmptyLines: true,
+                  columns: null,
+                  worker: true,
+                };
+                const csvResults = Papa.unparse(final, conf);
+                resolve(csvResults)
+              },
+              fastMode: true,
+              beforeFirstChunk: undefined,
+              withCredentials: undefined,
+            };
+            const lines = reader.result.split("\n");
+
             console.log("--parse if")
             Papa.parse(reader.result, {
-              config , 
+              config,
               complete: results => {
                 setContacts(results.data)
-                console.log("---->csv",results.data)
+                console.log("---->csv", results.data)
                 const resultCsv = results.data;
                 setmanualTrue(true);
                 let ddc = [];
                 for (let i in resultCsv[0]) {
-                  ddc.push("Adjust Title")
+                  ddc.push(t("sms.adjustTitle"))
                 }
                 setheaders(ddc);
               },
-           
-            });  
-           
-            setareaData(reader.result.substring(0,1500));
-          setLoader(false);  
-        };
-        reader.readAsText(file, "ISO-8859-8");
-  }
-  else {
-    return false;
-  }
- 
-}
-  catch (error) {
-    reject(error);
-  }
-});
-    
 
-  
+            });
+
+            setareaData(reader.result.substring(0, 1500));
+            setLoader(false);
+          };
+          reader.readAsText(file, "ISO-8859-8");
+        }
+        else {
+          return false;
+        }
+
+      }
+      catch (error) {
+        reject(error);
+      }
+    });
+
+
+
   }
 
 
@@ -1337,10 +1330,10 @@ const SmsSend = ({classes , ...props }) => {
             }
           >
             <textarea
-              placeholder="Drag &amp; drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box"
+              placeholder={t("sms.dragXlOrCsv")}
               spellcheck="false"
               autoComplete="off"
-             
+
               className={
                 highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
               }
@@ -1377,7 +1370,7 @@ const SmsSend = ({classes , ...props }) => {
               callbackSelectAll={callbackSelectAll}
               callbackReciFilter={callbackFilter}
               bool={true}
-              bsDot = {bsDot}
+              bsDot={bsDot}
             />
           ) : null}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -1455,17 +1448,16 @@ const SmsSend = ({classes , ...props }) => {
             ) : null}
           </div>
           {manualClick == true ? (
-            <div className={classes.manualChild} style={{justifyContent : areaData === "" ? "flex-end" : "space-between"}}>
+            <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
               {areaData !== "" ? (
                 <div>
                   <span
-                    className={classes.addManualDiv}    
+                    className={classes.addManualDiv}
                     onClick={() => {
                       handlePasted();
                     }}
                   >
-
-                    Edit fields and save
+                    {t("sms.editFields")}
                   </span>
                   <span
                     className={classes.clearDiv}
@@ -1475,11 +1467,11 @@ const SmsSend = ({classes , ...props }) => {
                       settypedData([])
                     }}
                   >
-                    Clear list
+                    {t("sms.clearList")}
                   </span>
                 </div>
               ) : null}
-              <span>Total Records :  {contacts.length !==0 ? contacts.length : typedData.length}</span>
+              <span>{t("sms.totalRecords")}:  {contacts.length !== 0 ? contacts.length : typedData.length}</span>
             </div>
           ) : null}
         </Box>
@@ -1516,79 +1508,70 @@ const SmsSend = ({classes , ...props }) => {
 
     let temparr = [];
     let tempCampaigns = [];
-    for(let i=0 ; i < filterGroups.length ; i++)
-    {
-      if(filterGroups[i].selected)
-      {
+    for (let i = 0; i < filterGroups.length; i++) {
+      if (filterGroups[i].selected) {
         temparr.push(filterGroups[i]);
       }
     }
-    for(let i=0 ; i < totalCampaigns.length ; i++)
-    {
-      if(totalCampaigns[i].selected)
-      {
+    for (let i = 0; i < totalCampaigns.length; i++) {
+      if (totalCampaigns[i].selected) {
         tempCampaigns.push(totalCampaigns[i]);
       }
     }
-    
+
     if (toggleReci) {
       if (validationCheck()) {
 
-        if(temparr.length !== 0 || inputRecipients !== "" || tempCampaigns.length !== 0)
-        {
+        if (temparr.length !== 0 || inputRecipients !== "" || tempCampaigns.length !== 0) {
           setbsDot(true);
           setsnackbarRecipients(true);
           setdisplayFilter(true);
           setreciFilter(false);
         }
-        else
-         {
-           setbsDot(false);
+        else {
+          setbsDot(false);
           setreciFilter(false);
           setdisplayFilter(false);
-         }
+        }
       }
     }
     else {
-      if(temparr.length !== 0 || inputRecipients !== "" || tempCampaigns.length !== 0)
-      {
+      if (temparr.length !== 0 || inputRecipients !== "" || tempCampaigns.length !== 0) {
         setsnackbarRecipients(true);
         setreciFilter(false);
         setbsDot(true);
       }
-      else
-      {
+      else {
         setreciFilter(false);
         setbsDot(false);
       }
-     
+
     }
+    // sessionStorage.setItem("groupFilters", JSON.stringify(temparr));
   };
   const handlePasted = () => {
     let temp = areaData;
     let a = temp.split("\n");
     let b = [];
-    if(temp.indexOf("\t") > -1)
-    {
+    if (temp.indexOf("\t") > -1) {
       console.log("in if tab")
       for (let i = 0; i < a.length; i++) {
         b.push(a[i].split("\t"));
       }
     }
-    else
-    {
+    else {
       console.log("in if ,")
       for (let i = 0; i < a.length; i++) {
         b.push(a[i].split(","));
       }
     }
- 
+
 
     settypedData(b);
 
     let dummyArr = [];
     for (let i = 0; i < b[0].length; i++) {
-      dummyArr.push("Adjust Title");
+      dummyArr.push(t("sms.adjustTitle"));
     }
     setinitialheadstate(dummyArr);
     setheaders(dummyArr)
@@ -1597,13 +1580,12 @@ const SmsSend = ({classes , ...props }) => {
     setmanualTrue(true);
   };
   const handleReciInput = (e) => {
-   
-      const re = /^[0-9\b]+$/;
-      if (e.target.value === '' || re.test(e.target.value)) 
-        {
-          setinputRecipients(e.target.value);
-          setRecipientsBool(false);
-        }
+
+    const re = /^[0-9\b]+$/;
+    if (e.target.value === '' || re.test(e.target.value)) {
+      setinputRecipients(e.target.value);
+      setRecipientsBool(false);
+    }
 
   }
   const validationCheck = () => {
@@ -1617,7 +1599,7 @@ const SmsSend = ({classes , ...props }) => {
     }
 
   };
-  const renderReciFilter = () => {
+  const  renderReciFilter = () => {
     return (
       <>
         {reciFilter ? (
@@ -1626,13 +1608,13 @@ const SmsSend = ({classes , ...props }) => {
             open={true}
             onClose={handleReciClose}
             onConfirm={handleReciConfirm}
-            confirmText={t("smsReport.okBtn")}
+            confirmText={t("common.Ok")}
             cancelText={t("smsReport.cancelBtn")}
             showDefaultButtons={true}
             icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }} />}
           >
             <div className={classes.reciFilterDiv}>
-              <span className={classes.groupName}>{t("smsReport.recipientsFilter")}</span>
+              <span className={classes.groupName}>{t("mainReport.recipientFilter")}</span>
             </div>
             <div>
               <div
@@ -1659,10 +1641,10 @@ const SmsSend = ({classes , ...props }) => {
                     disabled={toggleReci ? false : true}
                     className={
                       toggleReci
-                        ? RecipientsBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive,classes.success)
+                        ? RecipientsBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive, classes.success)
                         : clsx(classes.pulseInsert)
                     }
-                    onChange={(e)=>{handleReciInput(e)}}
+                    onChange={(e) => { handleReciInput(e) }}
                     value={inputRecipients}
                   />
                 </div>
@@ -1688,8 +1670,8 @@ const SmsSend = ({classes , ...props }) => {
                       }}
                     />
                   </Paper>
-          
-                <div className={classes.reciList}> {filterGroups.map((item, index) => {
+
+                  <div className={classes.reciList}> {filterGroups.map((item, index) => {
                     if (item.selected) {
                       return (
                         <div
@@ -1740,7 +1722,7 @@ const SmsSend = ({classes , ...props }) => {
                               <span className={classes.ellipsisText}>
                                 {item.GroupName}
                               </span>
-                              <span>{item.Recipients} Recipients</span>
+                              <span>{item.Recipients.toLocaleString()} {item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients")}</span>
                             </div>
                           </div>
                         );
@@ -1805,7 +1787,7 @@ const SmsSend = ({classes , ...props }) => {
                         }
                       })
                       .map((item, idx) => {
-                        
+
                         return (
                           <div className={classes.searchCon} onClick={() => {
                             handleSelectCamp(item.SMSCampaignID);
@@ -1836,35 +1818,31 @@ const SmsSend = ({classes , ...props }) => {
       </>
     );
   };
-  const handleSpecialDayChange = (e) =>
-  {
+  const handleSpecialDayChange = (e) => {
     const re = /^[0-9\b]+$/;
-    if ((e.target.value === '' || re.test(e.target.value)) && Number(e.target.value <=365) ) 
-    {
+    if ((e.target.value === '' || re.test(e.target.value)) && Number(e.target.value <= 999)) {
       setdaysBeforeAfter(e.target.value);
     }
-     
-  }
-  const handleSelectChange = (e) =>
-  {
-    
-    setSpecialValue(e.target.value)
-    {Object.keys(extraData).map((item, i) => {
-     if(e.target.value == i+3)
-     {
-       setSelectedSpecialValue(item)
-     }
-     else if(e.target.value == 1)
-     {
-      setSelectedSpecialValue("Birthday")
-     }
-     else if (e.target.value == 2)
-     {
-      setSelectedSpecialValue("Creation day")
-     }
-    })}
 
-   
+  }
+  const handleSelectChange = (e) => {
+
+    setSpecialValue(e.target.value)
+    {
+      Object.keys(extraData).map((item, i) => {
+        if (e.target.value == i + 3) {
+          setSelectedSpecialValue(item)
+        }
+        else if (e.target.value == 1) {
+          setSelectedSpecialValue("Birthday")
+        }
+        else if (e.target.value == 2) {
+          setSelectedSpecialValue("Creation day")
+        }
+      })
+    }
+
+
   }
   const renderRight = () => {
     return (
@@ -1885,7 +1863,7 @@ const SmsSend = ({classes , ...props }) => {
             >
               <FormControlLabel
                 value="1"
-                control={<Radio color="primary" className={sendType !=="1" ? classes.radioButtonDisabled : classes.radioButtonActive}/>}
+                control={<Radio color="primary" className={sendType !== "1" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.immediateSend")}
@@ -1897,7 +1875,7 @@ const SmsSend = ({classes , ...props }) => {
               </FormHelperText>
               <FormControlLabel
                 value="2"
-                control={<Radio color="primary"  className={sendType !=="2" ? classes.radioButtonDisabled : classes.radioButtonActive}/>}
+                control={<Radio color="primary" className={sendType !== "2" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
                 label={
                   <span className={classes.radioText}>
                     {t("notifications.futureSend")}
@@ -1911,7 +1889,7 @@ const SmsSend = ({classes , ...props }) => {
                   pointerEvents: sendType == "2" ? "auto" : "none",
                 }}
               >
-                {/* <DateField
+                <DateField
                   minDate={moment()}
                   classes={classes}
                   value={sendType == "2" ? sendDate : null}
@@ -1924,26 +1902,9 @@ const SmsSend = ({classes , ...props }) => {
                   }}
                   dateActive={sendType == "2" ? false : true}
                   autoOk
-                /> */}
-                <KeyboardDateTimePicker
-                minDate={moment()}
-                inputVariant="outlined"
-                value={sendType == "2" ? sendDate : null}
-                placeholder={t("notifications.date")}
-                onChange={handleDatePicker}
-                disabled={sendType=="2" ? false : true}
-                InputProps={{
-                  style: {
-                      height: 40,
-                      width : 377
-                  }
-              }}
-              popoverprops={{
-                dir: direction[isRTL]
-              }}
-                 />
+                />
               </Box>
-              {/* <Box
+              <Box
                 style={{
                   marginTop: 10,
                   paddingRight: isRTL ? 30 : "",
@@ -1953,7 +1914,7 @@ const SmsSend = ({classes , ...props }) => {
               >
                 <DateField
                   classes={classes}
-                  value={sendType == "2" ? sendDate : null}
+                  value={sendType == "2" ? dateTime : null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
@@ -1963,13 +1924,13 @@ const SmsSend = ({classes , ...props }) => {
                   }}
                   ampm={false}
                   timeActive = {sendType == "2" ? false : true}
-                  timePickerOpen={timePickerOpen}
+                  timePickerOpen={timePickerOpen}  
                   autoOk
                 />
-              </Box> */}
+              </Box>
               <FormControlLabel
                 value="3"
-                control={<Radio color="primary" className={sendType !=="3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
+                control={<Radio color="primary" className={sendType !== "3" ? classes.radioButtonDisabled : classes.radioButtonActive} />}
                 label={
                   <span className={classes.radioText}>
                     {t("mainReport.specialDate")}
@@ -1996,15 +1957,15 @@ const SmsSend = ({classes , ...props }) => {
                     marginBottom: "10px",
                   }}
                   disabled={sendType === "3" ? false : true}
-                  onChange={(e) => {handleSelectChange(e)}}
+                  onChange={(e) => { handleSelectChange(e) }}
                   value={sendType === "3" ? SpecialValue : "0"}
                 >
-                    <option value="0" disabled>Select</option>
+                  <option value="0" disabled>Select</option>
                   <option value="1">{t("mainReport.birthday")}</option>
                   <option value="2">Creation Day</option>
                   {Object.keys(extraData).map((item, i) => {
-                      return <option value={i+3} key={`extrakey_${i}`}>{item}</option>;
-                    })}
+                    return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 3} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
+                  })}
                 </select>
               </Box>
 
@@ -2025,7 +1986,7 @@ const SmsSend = ({classes , ...props }) => {
                   placeholder="0"
                   disabled={sendType == "3" ? false : true}
                   value={sendType == "3" ? daysBeforeAfter : ""}
-                  onChange={(e)=>{handleSpecialDayChange(e)}}
+                  onChange={(e) => { handleSpecialDayChange(e) }}
                   maxLength="3"
                 />
 
@@ -2033,30 +1994,51 @@ const SmsSend = ({classes , ...props }) => {
                   {t("mainReport.days")}
                 </span>
 
-                <div style={{ display: "flex", direction: isRTL ? 'ltr' : 'none' }}>
-                  <span
-                    className={
-                      
-                    sendType == "3" ?  toggleB ? classes.beforeActive : classes.before : classes.disabledBefore 
-                    }
-                    onClick={() => {
-                      handlebef();
-                    }}
-                  >
+                {isRTL ?
+                  <div style={{ display: "flex" }}>
+                    <span
+                      className={
+                        sendType == "3" ? toggleB ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                      }
+                      onClick={() => {
+                        handlebef();
+                      }}
+                    >
+                      {t("mainReport.before")}
+                    </span>
+                    <span
+                      className={
+                        sendType == "3" ? toggleA ? classes.beforeActive : classes.before : classes.disabledBefore
+                      }
+                      onClick={() => {
+                        handleaf();
+                      }}
+                    >
+                      {t("mainReport.after")}
+                    </span>
 
-                    {t("mainReport.before")}
-                  </span>
-                  <span
-                    className={
-                      sendType == "3" ?  toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
-                    }
-                    onClick={() => {
-                      handleaf();
-                    }}
-                  >
-                    {t("mainReport.after")}
-                  </span>
-                </div>
+                  </div> : <div style={{ display: "flex" }}>
+                    <span
+                      className={
+                        sendType == "3" ? toggleB ? classes.beforeActive : classes.before : classes.disabledBefore
+                      }
+                      onClick={() => {
+                        handlebef();
+                      }}
+                    >
+                      {t("mainReport.before")}
+                    </span>
+                    <span
+                      className={
+                        sendType == "3" ? toggleA ? clsx(classes.afterActive) : clsx(classes.after) : classes.disabledAfter
+                      }
+                      onClick={() => {
+                        handleaf();
+                      }}
+                    >
+                      {t("mainReport.after")}
+                    </span>
+                  </div>}
               </Box>
               <Box
                 style={{
@@ -2077,7 +2059,7 @@ const SmsSend = ({classes , ...props }) => {
                     ok: t("common.confirm"),
                     cancel: t("common.cancel"),
                   }}
-                  ampm={true}
+                  ampm={false}
                   timePickerOpen={timePickerOpen}
                   timeActive={sendType == "3" ? false : true}
                   disabled={sendType == "3" ? false : true}
@@ -2090,7 +2072,7 @@ const SmsSend = ({classes , ...props }) => {
 
         <div className={classes.pulseDiv}>
           <span
-            className={(selectedGroups.length >= 1 && sendType !== "3")  ?   classes.pulse : classes.pulseDisable}
+            className={(selectedGroups.length >= 1 && sendType !== "3") ? classes.pulse : classes.pulseDisable}
             onClick={() => {
               setpulse(true);
             }}
@@ -2119,24 +2101,24 @@ const SmsSend = ({classes , ...props }) => {
 
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer} {" "}
-              every {inputS} {hourName == "" ? minName : hourName}
+              {t("smsReport.packetSend")} - {inputF} {pulsePer == "" ? t("sms.recipients") : t("common.Percent")} {" "}
+              {t("sms.every")} {inputS} {hourName == "" ? t("common.minutes") : t("common.hours")}
             </span>
           ) : null}
           {toggleRandom ? (
-            <span>Random sending - {random} random recipients</span>
+            <span>{t("smsReport.randomSend")} - {random} {t("smsReport.randomRecipients")}</span>
           ) : null}
         </div>
       </div>
     );
   };
-  const onSummClick = async (toggle,exit) => {
+  const onSummClick = async (toggle, exit) => {
 
     if (sendType === "1") {
       if (selectedGroups.length > 0) {
-       
-        let  FinalId = props.match.params.id
-        
+
+        let FinalId = props.match.params.id
+
 
         let temp = [];
         let finalGroups = [];
@@ -2179,14 +2161,18 @@ const SmsSend = ({classes , ...props }) => {
           text: "Birthday",
           code: 1
         },
-      {
-        text: "Creation Day",
-              code: 2
-      }];
-      {Object.keys(extraData).map((item, i) => {
-        specialgroups.push({text : item,
-        code: i +3})
-      })}
+        {
+          text: "Creation Day",
+          code: 2
+        }];
+        {
+          Object.keys(extraData).map((item, i) => {
+            specialgroups.push({
+              text: item,
+              code: i + 3
+            })
+          })
+        }
         let quickPayload = {
           FutureDateTime: null,
           GroupDetails: finalGroups,
@@ -2222,16 +2208,13 @@ const SmsSend = ({classes , ...props }) => {
         setLoader(true);
         await dispatch(saveSmsCampSettings(quickPayload));
         setLoader(false);
-        if(toggle && exit !=="exit")
-        {
+        if (toggle && exit !== "exit") {
           setToastMessage(toastMessages.SUCCESS);
         }
-        else if(toggle && exit == "exit")
-        {
+        else if (toggle && exit == "exit") {
           history.push("/SMSCampaigns");
         }
-        else
-        {
+        else {
           setLoader(true);
           let response = await dispatch(getCampaignSumm(FinalId));
           setLoader(false);
@@ -2239,20 +2222,20 @@ const SmsSend = ({classes , ...props }) => {
           setsummModal(true);
           let date = moment();
           let addTime = 0;
-    
-          if ( percentTrue == false) {
-           
+
+          if (percentTrue == false) {
+
             addTime =
               ((response.payload.FinalCount -
                 inputF) *
                 inputS) /
               inputF;
-              let final =  moment(date).add(addTime,hoursTrue ? "h":"m").format("DD/MM/YYYY - HH:mm");
-              setestimationDate(final);
-          } 
+            let final = moment(date).add(addTime, hoursTrue ? "h" : "m").format("DD/MM/YYYY - HH:mm");
+            setestimationDate(final);
+          }
 
           else {
-           
+
             let recipientPercents =
               (response.payload.FinalCount *
                 inputF) /
@@ -2261,26 +2244,24 @@ const SmsSend = ({classes , ...props }) => {
               ((response.payload.FinalCount - recipientPercents.toFixed(1)) *
                 inputS) /
               recipientPercents.toFixed(1);
-              let final =  moment(date).add(addTime,hoursTrue ? "h":"m").format("DD/MM/YYYY - HH:mm");
-               setestimationDate(final);
+            let final = moment(date).add(addTime, hoursTrue ? "h" : "m").format("DD/MM/YYYY - HH:mm");
+            setestimationDate(final);
           }
         }
-        }
-      
+      }
+
     }
     else if (sendType === "2") {
       if (selectedGroups.length > 0) {
 
-        if(sendDate == null)
-        {
+        if (sendDate == null) {
           setsendType2Dialog(true);
         }
-        else
-         {
+        else {
           let campId = window.location
           let id = campId.search.split("=");
           let finalId = id[1];
-  
+
           let temp = [];
           let finalGroups = [];
           for (let i = 0; i < selectedGroups.length; i++) {
@@ -2295,7 +2276,7 @@ const SmsSend = ({classes , ...props }) => {
             } else {
               time = 2;
             }
-  
+
             if (percentTrue == true) {
               pulse = 1;
             } else {
@@ -2306,24 +2287,28 @@ const SmsSend = ({classes , ...props }) => {
             text: "Birthday",
             code: 1
           },
-        {
-          text: "Creation Day",
-                code: 2
-        }];
-        {Object.keys(extraData).map((item, i) => {
-          specialgroups.push({text : item,
-          code: i +3})
-        })}
-  
+          {
+            text: "Creation Day",
+            code: 2
+          }];
+          {
+            Object.keys(extraData).map((item, i) => {
+              specialgroups.push({
+                text: item,
+                code: i + 3
+              })
+            })
+          }
+
           let exceptionGroups = [];
-  
+
           for (let i = 0; i < filterGroups.length; i++) {
             if (filterGroups[i].selected) {
               exceptionGroups.push(filterGroups[i].GroupID)
             }
           }
-  
-  
+
+
           let exceptionCampaigns = [];
           for (let i = 0; i < totalCampaigns.length; i++) {
             if (totalCampaigns[i].selected) {
@@ -2334,7 +2319,7 @@ const SmsSend = ({classes , ...props }) => {
           finalDate.set({ h: finalDate.format("HH"), m: finalDate.format("mm") });
           let displayDate = null;
           displayDate = finalDate.format();
-  
+
           let quickPayload = {
             FutureDateTime: displayDate,
             GroupDetails: finalGroups,
@@ -2366,21 +2351,18 @@ const SmsSend = ({classes , ...props }) => {
               SendDate: null
             },
             specialDateOptions: specialgroups
-  
+
           }
-         setLoader(true);
+          setLoader(true);
           await dispatch(saveSmsCampSettings(quickPayload));
           setLoader(false);
-          if(toggle && exit !=="exit")
-          {
+          if (toggle && exit !== "exit") {
             setToastMessage(toastMessages.SUCCESS);
           }
-          else if(toggle && exit == "exit")
-          {
+          else if (toggle && exit == "exit") {
             history.push("/SMSCampaigns");
           }
-          else
-          {
+          else {
             setLoader(true);
             let response = await dispatch(getCampaignSumm(props.match.params.id));
             setLoader(false);
@@ -2388,19 +2370,19 @@ const SmsSend = ({classes , ...props }) => {
             let date = sendDate;
             let addTime = 0;
 
-            if ( percentTrue == false) {
-             
+            if (percentTrue == false) {
+
               addTime =
                 ((response.payload.FinalCount -
                   inputF) *
                   inputS) /
                 inputF;
-                let final =  moment(date).add(addTime,hoursTrue ? "h":"m").format("DD/MM/YYYY - HH:mm");
-                setestimationDate(final);
-            } 
-  
+              let final = moment(date).add(addTime, hoursTrue ? "h" : "m").format("DD/MM/YYYY - HH:mm");
+              setestimationDate(final);
+            }
+
             else {
-            
+
               let recipientPercents =
                 (response.payload.FinalCount *
                   inputF) /
@@ -2409,30 +2391,27 @@ const SmsSend = ({classes , ...props }) => {
                 ((response.payload.FinalCount - recipientPercents.toFixed(1)) *
                   inputS) /
                 recipientPercents.toFixed(1);
-                let final =  moment(date).add(addTime,hoursTrue ? "h":"m").format("DD/MM/YYYY - HH:mm");
-                 setestimationDate(final);
+              let final = moment(date).add(addTime, hoursTrue ? "h" : "m").format("DD/MM/YYYY - HH:mm");
+              setestimationDate(final);
             }
             setsummModal(true);
           }
-         }
+        }
 
-       
-     
+
+
       }
 
     }
-    else if(sendType === "3")
-    {
+    else if (sendType === "3") {
       if (selectedGroups.length > 0) {
 
-        if(sendTime == null || daysBeforeAfter == "" || SpecialValue == "0")
-        {
+        if (sendTime == null || daysBeforeAfter == "" || SpecialValue == "0") {
           setspecialSettingValidation(true);
         }
-        else
-        {
-          let  FinalId = props.match.params.id
-        
+        else {
+          let FinalId = props.match.params.id
+
 
           let temp = [];
           let finalGroups = [];
@@ -2440,31 +2419,35 @@ const SmsSend = ({classes , ...props }) => {
             text: "Birthday",
             code: 1
           },
-        {
-          text: "Creation Day",
-                code: 2
-        }];
+          {
+            text: "Creation Day",
+            code: 2
+          }];
           for (let i = 0; i < selectedGroups.length; i++) {
             temp.push(selectedGroups[i].GroupID);
             finalGroups.push(selectedGroups[i]);
           }
 
 
-          {Object.keys(extraData).map((item, i) => {
-            specialgroups.push({text : item,
-            code: i +3})
-          })}
-         
-  
+          {
+            Object.keys(extraData).map((item, i) => {
+              specialgroups.push({
+                text: item,
+                code: i + 3
+              })
+            })
+          }
+
+
           let exceptionGroups = [];
-  
+
           for (let i = 0; i < filterGroups.length; i++) {
             if (filterGroups[i].selected) {
               exceptionGroups.push(filterGroups[i].GroupID)
             }
           }
-  
-  
+
+
           let exceptionCampaigns = [];
           for (let i = 0; i < totalCampaigns.length; i++) {
             if (totalCampaigns[i].selected) {
@@ -2472,15 +2455,13 @@ const SmsSend = ({classes , ...props }) => {
             }
           }
           let beforeAfter = 0;
-          if(afterClick)
-          {
-             beforeAfter = 1
+          if (afterClick) {
+            beforeAfter = 1
           }
-          else
-          {
+          else {
             beforeAfter = -1
           }
-        
+
           let quickPayload = {
             FutureDateTime: null,
             GroupDetails: finalGroups,
@@ -2511,23 +2492,20 @@ const SmsSend = ({classes , ...props }) => {
               IntervalTypeID: beforeAfter,
             },
             specialDateOptions: specialgroups
-             ,
-             
-  
+            ,
+
+
           }
           setLoader(true);
           await dispatch(saveSmsCampSettings(quickPayload));
           setLoader(false);
-          if(toggle && exit !=="exit")
-          {
+          if (toggle && exit !== "exit") {
             setToastMessage(toastMessages.SUCCESS);
           }
-          else if(toggle && exit == "exit")
-          {
+          else if (toggle && exit == "exit") {
             history.push("/SMSCampaigns");
           }
-          else
-          {
+          else {
             setLoader(true);
             let response = await dispatch(getCampaignSumm(FinalId));
             setLoader(false);
@@ -2536,91 +2514,86 @@ const SmsSend = ({classes , ...props }) => {
             setsummModal(true);
           }
         }
-       
-       
-        }
+
+
+      }
 
     }
   };
-  const handleSummary = () =>
-  {
+  const handleSummary = () => {
     setsummModal(false);
   }
   const renderSummary = () => {
     return (
       <>
-        <Summary 
-        stepBool={summModal} 
-        classes={classes}  
-        campaignName={dataSaved.campaignName} 
-        fromNumber={dataSaved.fromNumber} 
-        textMsg={dataSaved.msg} 
-        activeGroups={selectedGroups}  
-        summaryPayload={getCampaignSum} 
-        api={onApiCall} sendType={sendType} 
-        days={daysBeforeAfter}
-        after={afterClick} 
-        time={sendTime} 
-        handleCallback={handleSummary} 
-        specialVal={SelectedSpecialValue} 
-        sendDateTime={sendDate}
-        pulseTrue={togglePulse}
-        pulseInput1={inputF}
-        pulseInput2={inputS}
-        pulsePer={pulsePer}
-        pulseReci={pulseReci}
-        hourName={hourName}
-        minName={minName}
-        toggleRandom={toggleRandom}
-        random={random}
-        estimationDate={estimationDate}
-        displayGroups={filterGroups}
-        displayCampaigns = {totalCampaigns}
+        <Summary
+          stepBool={summModal}
+          classes={classes}
+          campaignName={dataSaved.campaignName}
+          fromNumber={dataSaved.fromNumber}
+          textMsg={dataSaved.msg}
+          activeGroups={selectedGroups}
+          summaryPayload={getCampaignSum}
+          api={onApiCall} sendType={sendType}
+          days={daysBeforeAfter}
+          after={afterClick}
+          time={sendTime}
+          handleCallback={handleSummary}
+          specialVal={SelectedSpecialValue}
+          sendDateTime={sendDate}
+          pulseTrue={togglePulse}
+          pulseInput1={inputF}
+          pulseInput2={inputS}
+          pulsePer={pulsePer}
+          pulseReci={pulseReci}
+          hourName={hourName}
+          minName={minName}
+          toggleRandom={toggleRandom}
+          random={random}
+          estimationDate={estimationDate}
+          displayGroups={filterGroups}
+          displayCampaigns={totalCampaigns}
         // displayFilter={displayFilter}
-        
+
         />
       </>
     );
   };
   const onApiCall = async () => {
-   let payload = {
-    "SmsCampaignID" : props.match.params.id,
-    "SubAccountID" : "7322",
-    "AccountID" : "7322",
-    "Credits" : "1",
-    "TotalRecipients":selectedGroups.length
-   }
-   setLoader(true);
-   let r = await dispatch(sendSms(payload))
-   setLoader(false);
-   
+    let payload = {
+      "SmsCampaignID": props.match.params.id,
+      "SubAccountID": "7322",
+      "AccountID": "7322",
+      "Credits": "1",
+      "TotalRecipients": selectedGroups.length
+    }
+    setLoader(true);
+    let r = await dispatch(sendSms(payload))
+    setLoader(false);
+
     setsummModal(false);
     setfinalSuccessDialog(true)
   };
   const handleTrueCaution = () => {
-    if(dropClick === true)
-    {
+    if (dropClick === true) {
       setcaution(true);
       setgroupNameInput("");
       setnewVal(false);
     }
-    else if(areaClick === true)
-    {
+    else if (areaClick === true) {
       setmanualTrue(false);
       setgroupNameInput("");
       setnewVal(false);
     }
-   
+
   };
   const handleCautionCancel = () => {
-    if(dropClick === true)
-    {
+    if (dropClick === true) {
       setcaution(true);
       setgroupNameInput("");
       setnewVal(false);
     }
-    else if(areaClick === true)
-    {
+    else if (areaClick === true) {
       setmanualTrue(false);
       setgroupNameInput("");
       setnewVal(false);
@@ -2636,22 +2609,22 @@ const SmsSend = ({classes , ...props }) => {
   const handleSelectFirst = (name, id, idx, e) => {
     // id -  index of select array 
     // idx - header index 
-      let h = headers;
-      h[idx] = name.value;
-      selectArray.forEach((value, index)=>{
-        if(value.idx === idx){
-          selectArray[index].isdisabled = false
-          selectArray[index].idx = -1
-        }
-      })
-      selectArray[id].isdisabled = true;
-      selectArray[id].idx = idx;
-      setheaders(h);
+    let h = headers;
+    h[idx] = name.value;
+    selectArray.forEach((value, index) => {
+      if (value.idx === idx) {
+        selectArray[index].isdisabled = false
+        selectArray[index].idx = -1
+      }
+    })
+    selectArray[id].isdisabled = true;
+    selectArray[id].idx = idx;
+    setheaders(h);
   };
   const handleCloseSpan = (id, name) => {
     let h = headers;
 
-    headers[id] = "Adjust Title";
+    headers[id] = t("sms.adjustTitle");
     // h[id] = initialheadstate[id];
 
     setheaders(h);
@@ -2667,15 +2640,14 @@ const SmsSend = ({classes , ...props }) => {
 
   }
   const handleDataManual = async () => {
-    if(manualUploadValidationscheck())
-    {
+    if (manualUploadValidationscheck()) {
       let requestPayload = [];
 
       if (typedData.length !== 0) {
         for (let j = 0; j < typedData.length; j++) {
           requestPayload.push({});
           for (let k = 0; k < typedData[j].length; k++) {
-            if (headers[k] !== "Adjust Title") {
+            if (headers[k] !== t("sms.adjustTitle")) {
               let key = headers[k].toLocaleString().replaceAll(" ", "");
               let obj = requestPayload[j];
               obj[key] = typedData[j][k];
@@ -2687,20 +2659,20 @@ const SmsSend = ({classes , ...props }) => {
         for (let j = 0; j < contacts.length; j++) {
           requestPayload.push({});
           let i = 0;
-  
+
           for (let k in contacts[j]) {
-            if (headers[i] !== "Adjust Title") {
+            if (headers[i] !== t("sms.adjustTitle")) {
               let key = headers[i].toLocaleString().replaceAll(" ", "");
               let obj = requestPayload[j];
               obj[key] = contacts[j][k];
-  
+
             }
-           
+
             i++;
           }
         }
       }
-  
+
       let finalPayload = {
         GroupName: groupNameInput,
         Clients: requestPayload
@@ -2710,9 +2682,8 @@ const SmsSend = ({classes , ...props }) => {
       setmanualTrue(false);
       setLoader(false);
 
-    
-      if(r.payload.Reason == "no_recipients_to_update")
-      {
+
+      if (r.payload.Reason == "no_recipients_to_update") {
         setToastMessage(toastMessages.INVALID_RECIPIENTS)
         setmanualTrue(false);
         setareaData("");
@@ -2721,8 +2692,7 @@ const SmsSend = ({classes , ...props }) => {
         setgroupNameInput("");
         setnewVal(false);
       }
-      else
-      {
+      else {
         let tempres = [];
         let temp = [];
         for (let i = 0; i < groupList.length; i++) {
@@ -2731,13 +2701,13 @@ const SmsSend = ({classes , ...props }) => {
         for (let i = 0; i < selectedGroups.length; i++) {
           temp.push(selectedGroups[i]);
         }
-    
+
         temp.push({
           Recipients: r.payload.Recipients,
           GroupName: groupNameInput,
           GroupID: r.payload.GroupID
         });
-    
+
         tempres.push({
           Recipients: r.payload.Recipients,
           GroupName: groupNameInput,
@@ -2759,36 +2729,33 @@ const SmsSend = ({classes , ...props }) => {
         selectArray[i].idx = -1;
       }
     }
-   
+
   }
 
   const handleManualDialog = (e) => {
-    
-        setgroupNameInput(e.target.value);
-        setnewVal(false);
+
+    setgroupNameInput(e.target.value);
+    setnewVal(false);
   }
 
-  const manualUploadValidationscheck = () =>
-  {
+  const manualUploadValidationscheck = () => {
     let temp = []
-    for(let i = 0 ; i < groupList.length ; i++)
-    {
+    for (let i = 0; i < groupList.length; i++) {
       temp.push(groupList[i].GroupName)
     }
 
-   
-    if(groupNameInput === "" || temp.includes(groupNameInput))
-    {
+
+    if (groupNameInput === "" || temp.includes(groupNameInput)) {
       setnewVal(true);
       return false;
     }
     let columnHasValue = false;
-    headers.forEach((value)=>{
-      if(value !== "Adjust Title"){
+    headers.forEach((value) => {
+      if (value !== t("sms.adjustTitle")) {
         columnHasValue = true
       }
     })
-    return columnHasValue === false  ? false : true;
+    return columnHasValue === false ? false : true;
   }
 
   const renderDialogManual = () => {
@@ -2800,29 +2767,31 @@ const SmsSend = ({classes , ...props }) => {
           onClose={handleTrueCaution}
           onCancel={handleCautionCancel}
           onConfirm={handleDataManual}
+          confirmText={t("smsReport.okBtn")}
+          cancelText={t("smsReport.cancelBtn")}
           showDefaultButtons={true}
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>Column Adjustment</span>
+            <span className={classes.groupName}>{t("sms.columnAdjustment")}</span>
           </div>
           <div className={classes.manualModal}>
             <span style={{ fontSize: "24px", marginInlineEnd: "10px" }}>
-              Group Name :
+              {t("common.GroupName")}:
             </span>
-            <div style={{display:"flex",flexDirection:"column",width:"75%"}}>
-            <input
-              type="text"
-              placeholder="Group Name"
-              className={newVal ? clsx(classes.inputManual,classes.error) : clsx(classes.inputManual,classes.success)}
-              onChange={handleManualDialog}
-              value={groupNameInput}
-            />
-             {newVal ? <span style={{marginTop:"8px",color:"red",fontSize:"12px"}}>Group name is either blank or already exists</span> : null  }  
+            <div style={{ display: "flex", flexDirection: "column", width: "75%" }}>
+              <input
+                type="text"
+                placeholder={t("common.GroupName")}
+                className={newVal ? clsx(classes.inputManual, classes.error) : clsx(classes.inputManual, classes.success)}
+                onChange={handleManualDialog}
+                value={groupNameInput}
+              />
+              {newVal ? <span style={{ marginTop: "8px", color: "red", fontSize: "12px" }}>{t("sms.groupNameExists").replace("#groupName#", groupNameInput)}</span> : null}
             </div>
-          
-         
+
+
           </div>
-         
+
           <div
             style={{
               display: "flex",
@@ -2831,7 +2800,7 @@ const SmsSend = ({classes , ...props }) => {
             }}
           >
             <span style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
-              Total Recipients :
+              {t("sms.totalRecipients")}:
             </span>
             <span
               style={{
@@ -2840,34 +2809,80 @@ const SmsSend = ({classes , ...props }) => {
                 fontWeight: "600",
               }}
             >
-              {contacts.length !==0 ? contacts.length : typedData.length}
+              {contacts.length !== 0 ? contacts.length : typedData.length}
             </span>
             <Tooltip
               disableFocusListener
-              title="Only the cellphone title is mandatory to include, and any column without a title will not be uploaded to our system. For your convenience, only the first 5 recipients in your file will appear here, but all will be uploaded."
+              title= {t("smsReport.manualTotalTooltip")}
               classes={{ tooltip: styles.customWidth }}
             >
               <span className={classes.bodyInfo}>i</span>
             </Tooltip>
           </div>
-          <div style={{ minHeight:"200px",maxWidth:"700px",overflow:"auto"}}>
-          <table
-            style={{
-              borderCollapse: "collapse",
-              overflowX: "auto",
-              minWidth: "100px",
-            }}
-          >
-            <tr>
-              {typedData.length !== 0
-                ? typedData[0].map((item, idx) => {
+          <div style={{ minHeight: "200px", maxWidth: "700px", overflow: "auto" }}>
+            <table
+              style={{
+                borderCollapse: "collapse",
+                overflowX: "auto",
+                minWidth: "100px",
+              }}
+            >
+              <tr>
+                {typedData.length !== 0
+                  ? typedData[0].map((item, idx) => {
+                    return (
+                      <th
+                        style={{
+                          border: "1px solid #ddd",
+                          padding: "10px",
+                          width: "160px",
+                          maxWidth: "280px",
+                        }}
+                      >
+                        <div
+                          onClick={() => {
+                            handleChangeId(idx);
+                          }}
+                          className={classes.adjustP}
+                          style={{ textAlign: "center", cursor: "pointer" }}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }}>{headers[idx]}</Typography>
+
+                            {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
+                            {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
+                          {dropIndex == idx ? (
+                            <div className={classes.adjustC}>
+                              {selectArray.map((item, id) => {
+
+                                return (
+                                  <span
+                                    className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
+                                    onClick={() => {
+                                      handleSelectFirst(item, id, idx);
+                                    }}
+                                  >
+                                    {item.value}
+                                  </span>
+                                )
+                              })}
+                            </div>
+                          ) : null}
+                        </div>
+                      </th>
+                    );
+                  })
+                  : null}
+                {contacts.length !== 0 ? headers.map((item, idx) => {
+
                   return (
+
+
                     <th
                       style={{
                         border: "1px solid #ddd",
                         padding: "10px",
-                        width:"160px",
-                        maxWidth: "280px",
+                        width: "180px",
                       }}
                     >
                       <div
@@ -2875,17 +2890,16 @@ const SmsSend = ({classes , ...props }) => {
                           handleChangeId(idx);
                         }}
                         className={classes.adjustP}
-                        style={{ textAlign: "center", cursor: "pointer" }}
+                        style={{ width: "150px", textAlign: "center" }}
                       >
-                          <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
-                       <Typography style={{fontWeight:"700",cursor:"pointer",marginInlineEnd:"20px"}}>{headers[idx]}</Typography> 
-
-                   {headers[idx] !== "Adjust Title" ?  <AiOutlineClose  style={{marginInlineEnd:"8px"}} onClick={() => { handleCloseSpan(idx, headers[idx]) }} />   : null}  
-                    {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown  style={{marginInlineStart:"4px"}}/> }  </div>
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }}>{headers[idx]}</Typography>
+                          {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} style={{ marginInlineEnd: "8px" }} /> : null}
+                          {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />} </div>
                         {dropIndex == idx ? (
                           <div className={classes.adjustC}>
                             {selectArray.map((item, id) => {
-                            
+
                               return (
                                 <span
                                   className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
@@ -2900,124 +2914,68 @@ const SmsSend = ({classes , ...props }) => {
                           </div>
                         ) : null}
                       </div>
-                        {/* <Autocomplete
-                         {...defaultProps}
-                          id="combo-box-demo"
-                          onChange={(event , newValue) => {
-                           
-                            Header.push(newValue);
-                          }}
-                         
-                          sx={{ width: 400 }}
-                          renderInput={(params) => <TextField {...params} label="Adjust Title" />}
-                        /> */}
                     </th>
-                  );
-                })
-                : null}
-              {contacts.length !== 0 ? headers.map((item, idx) => {
-
-                return (
+                  )
 
 
-                  <th
-                    style={{
-                      border: "1px solid #ddd",
-                      padding: "10px",
-                      width: "180px",
-                    }}
-                  >
-                    <div
-                      onClick={() => {
-                        handleChangeId(idx);
-                      }}
-                      className={classes.adjustP}
-                      style={{ width: "150px", textAlign: "center" }}
-                    >
-                      <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
-                    <Typography style={{fontWeight:"700",cursor:"pointer",marginInlineEnd:"20px"}}>{headers[idx]}</Typography> 
-                    {headers[idx] !== "Adjust Title" ?   <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} style={{marginInlineEnd:"8px"}}/>  : null}      
-                    {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown  style={{marginInlineStart:"4px"}}/> } </div>
-                      {dropIndex == idx ? (
-                        <div className={classes.adjustC}>
-                          {selectArray.map((item, id) => {
+                }) : null}
+              </tr>
+              {contacts.length !== 0
+                ? contacts.map((item, idx) => {
 
-                            return (
-                              <span
-                                className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
-                                onClick={() => {
-                                  handleSelectFirst(item, id, idx);
-                                }}
-                              >
-                                {item.value}
-                              </span>
-                            )
-                          })}
-                        </div>
-                      ) : null}
-                    </div>
-                  </th>
-                )
-
-
-              }) : null}
-            </tr>
-            {contacts.length !== 0
-              ? contacts.map((item, idx) => {
-
-                if (idx > contacts.length - 6) {
-                  return (
-                    <tr id={idx}>
-                      {item.map((temp, idx) => {
-                        return (
-                          <td
-                            id={idx}
-                            style={{
-                              border: "1px solid #ddd",
-                              padding: "10px",
-                              maxWidth: "280px",
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              textAlign: "center",
-                            }}
-                          >
-                            {temp}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                }
-              })
-              : typedData.map((item, id) => {
-                if (id > typedData.length - 6) {
-                return (
-                 
-                  <tr>
-                    {item.map((data, idx) => {
-                      return (
-                        <td
-                          style={{
-                            border: "1px solid #ddd",
-                            padding: "10px",
-                            maxWidth: "280px",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            textAlign: "center",
-                            minWidth:"150px"
-                          }}
-                        >
-                          {data}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
+                  if (idx > contacts.length - 6) {
+                    return (
+                      <tr id={idx}>
+                        {item.map((temp, idx) => {
+                          return (
+                            <td
+                              id={idx}
+                              style={{
+                                border: "1px solid #ddd",
+                                padding: "10px",
+                                maxWidth: "280px",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                textAlign: "center",
+                              }}
+                            >
+                              {temp}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
                   }
-              })}
-          </table>
+                })
+                : typedData.map((item, id) => {
+                  if (id > typedData.length - 6) {
+                    return (
+
+                      <tr>
+                        {item.map((data, idx) => {
+                          return (
+                            <td
+                              style={{
+                                border: "1px solid #ddd",
+                                padding: "10px",
+                                maxWidth: "280px",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                textAlign: "center",
+                                minWidth: "150px"
+                              }}
+                            >
+                              {data}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  }
+                })}
+            </table>
           </div>
         </Dialog>
       </>
@@ -3031,7 +2989,7 @@ const SmsSend = ({classes , ...props }) => {
     if (props && props.match.params.id) {
 
       dispatch(deleteSms(props.match.params.id));
-      
+
       handleClose();
       history.push("/SMSCampaigns");
     }
@@ -3059,7 +3017,7 @@ const SmsSend = ({classes , ...props }) => {
             onClose={handleClose}
             onCancel={cancel ? null : true}
             onConfirm={handleDelete}
-            confirmText="Confirm"
+            confirmText={t("smsReport.confirmBtn")}
             showDefaultButtons={true}
             icon={
               <AiOutlineExclamationCircle
@@ -3098,9 +3056,8 @@ const SmsSend = ({classes , ...props }) => {
     setmanualTrue(false);
   };
 
-  const renderSuccessDialog = () =>
-  {
-    return(
+  const renderSuccessDialog = () => {
+    return (
       <>
         <Dialog
           classes={classes}
@@ -3110,23 +3067,23 @@ const SmsSend = ({classes , ...props }) => {
           showDefaultButtons={false}
           exit={true}
 
-          
+
           showDefaultButtons={false}
         >
-          <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center"}}>
-          <img src={Gif} style={{width:"150px",height:"150px"}}/>
-        
-            <span style={{marginTop:"10px",fontSize:"22px",fontWeight:"700"}}>Sent!</span>
-    
-       
-            <p style={{marginTop:"10px",fontSize:"18px",fontWeight:"600"}}>
-            Your camapign is on its way
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+            <img src={Gif} style={{ width: "150px", height: "150px" }} />
+
+            <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>Sent!</span>
+
+
+            <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
+              Your camapign is on its way
             </p>
-       
-       
-            <span style={{padding:"12px",backgroundColor:"green",marginTop:"10px",cursor:"pointer",color:"#ffffff",borderRadius:"10px"}} onClick={()=>{history.push("/SMSCampaigns")}}>Confirm</span>
-            </div>
-        
+
+
+            <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { history.push("/SMSCampaigns") }}>Confirm</span>
+          </div>
+
         </Dialog>
       </>
     )
@@ -3135,6 +3092,14 @@ const SmsSend = ({classes , ...props }) => {
   const handlePreviousPage = () =>
   {
     window.location = `/react/sms/edit/${props.match.params.id}`;
+  }
+  const renderHtml = (html) => {
+    function createMarkup() {
+      return { __html: html };
+    }
+    return (
+      <label dangerouslySetInnerHTML={createMarkup()}></label>
+    );
   }
   const renderCaution = () => {
     return (
@@ -3148,12 +3113,11 @@ const SmsSend = ({classes , ...props }) => {
           showDefaultButtons={true}
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>Notice!</span>
+            <span className={classes.groupName}>{t("common.Notice")}</span>
           </div>
           <div>
             <p>
-              Are you sure you want to cancel? Clicking "yes" will delete the
-              recipients you have entered to the Manual Upload box.
+              {renderHtml(t("sms.reset_manual_upload_notice"))}
             </p>
           </div>
         </Dialog>
@@ -3163,86 +3127,39 @@ const SmsSend = ({classes , ...props }) => {
   const renderExit = () => {
     return (
       <>
-        
-          <Dialog
-            classes={classes}
-            open={exitDialog}
-            onClose={() => {setexitDialog(false);history.push("/SMSCampaigns");}}
-            onConfirm={() => {onSummClick(true,"exit")}}
-            onCancel={() => {setexitDialog(false)}}
-            confirmText={t("mainReport.Ok")}
-            cancelText={t("mainReport.No")}
-            showDefaultButtons={true}
-            icon={
-              <AiOutlineExclamationCircle
-                style={{ fontSize: 30, color: "#fff" }}
-              />
-            }
-          >
-            <div className={classes.baseDialogSetup}>
-              <span className={classes.groupName}>{t("mainReport.handleExitTitle")}</span>
-            </div>
-            <div className={classes.bodyTextDialog}>
-              <span>{t("mainReport.leaveCampaign")}</span>
-            </div>
-          </Dialog>
-  
-      </>
-    );
-  };
-  const renderSendType2validation = () =>
-  {
-    return( <>
-      <Dialog
+
+        <Dialog
           classes={classes}
-          open={sendType2Dialog}
-          onClose={()=>{setsendType2Dialog(false)}}
-          showDefaultButtons={false}
+          open={exitDialog}
+          onClose={() => { setexitDialog(false); history.push("/SMSCampaigns"); }}
+          onConfirm={() => { onSummClick(true, "exit") }}
+          onCancel={() => { setexitDialog(false) }}
+          confirmText={t("mainReport.Ok")}
+          cancelText={t("mainReport.No")}
+          showDefaultButtons={true}
           icon={
-            <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
+            <AiOutlineExclamationCircle
+              style={{ fontSize: 30, color: "#fff" }}
+            />
           }
         >
           <div className={classes.baseDialogSetup}>
-            <span className={classes.groupName}>
-              {t("mainReport.fieldInvalid")}:
-            </span>
+            <span className={classes.groupName}>{t("mainReport.handleExitTitle")}</span>
           </div>
-          <div>
-            <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
-           
-           <li>Must select Sending Type - Required field</li>
-            
-            </ul>
+          <div className={classes.bodyTextDialog}>
+            <span>{t("mainReport.leaveCampaign")}</span>
           </div>
-          <div
-            style={{
-              height: "50px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() => {
-                setsendType2Dialog(false);
-              }}
-              className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
-            >
-              {t("mainReport.confirmSms")}
-            </Button>
-          </div>
-        </Dialog></>)
-  }
+        </Dialog>
 
-  const renderSpecialModal = () =>
-  {
-   return( <>
-    <Dialog
+      </>
+    );
+  };
+  const renderSendType2validation = () => {
+    return (<>
+      <Dialog
         classes={classes}
-        open={specialSettingValidation}
-        onClose={()=>{setspecialSettingValidation(false)}}
+        open={sendType2Dialog}
+        onClose={() => { setsendType2Dialog(false) }}
         showDefaultButtons={false}
         icon={
           <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
@@ -3255,10 +3172,55 @@ const SmsSend = ({classes , ...props }) => {
         </div>
         <div>
           <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
-           {SpecialValue == "0" ? <li>Must select Special Date Type</li> : null} 
-          {daysBeforeAfter == "" ? <li>Must insert Number of Days</li> :null}  
-         {sendTime == null ? <li>Must select Sending Time</li> : null}   
-          
+
+            <li>Must select Sending Type - Required field</li>
+
+          </ul>
+        </div>
+        <div
+          style={{
+            height: "50px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Button
+            variant="contained"
+            size="small"
+            onClick={() => {
+              setsendType2Dialog(false);
+            }}
+            className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
+          >
+            {t("mainReport.confirmSms")}
+          </Button>
+        </div>
+      </Dialog></>)
+  }
+
+  const renderSpecialModal = () => {
+    return (<>
+      <Dialog
+        classes={classes}
+        open={specialSettingValidation}
+        onClose={() => { setspecialSettingValidation(false) }}
+        showDefaultButtons={false}
+        icon={
+          <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
+        }
+      >
+        <div className={classes.baseDialogSetup}>
+          <span className={classes.groupName}>
+            {t("mainReport.fieldInvalid")}:
+          </span>
+        </div>
+        <div>
+          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
+            {SpecialValue == "0" ? <li>Must select Special Date Type</li> : null}
+            {daysBeforeAfter == "" ? <li>Must insert Number of Days</li> : null}
+            {sendTime == null ? <li>Must select Sending Time</li> : null}
+
           </ul>
         </div>
         <div
@@ -3282,14 +3244,11 @@ const SmsSend = ({classes , ...props }) => {
         </div>
       </Dialog></>)
   }
-  const handleMainWarningPulse = () =>
-  {
-    if(snackbarTimeBoolean == false || snackBarPulseBoolean == false)
-    {
+  const handleMainWarningPulse = () => {
+    if (snackbarTimeBoolean == false || snackBarPulseBoolean == false) {
       return false;
     }
-    else if(snackbarMainPulse == false)
-    {
+    else if (snackbarMainPulse == false) {
       return false;
     }
   }
@@ -3302,50 +3261,50 @@ const SmsSend = ({classes , ...props }) => {
           {renderSwitch()}
           {renderHead()}
 
-          <Grid container style={{marginBottom:"40px"}}>
-            <Grid item  md={7} xs={12}>
+          <Grid container style={{ marginBottom: "40px" }}>
+            <Grid item md={7} xs={12}>
               {renderBody()}
             </Grid>
             <Grid item md={1} xs={12}></Grid>
-            <Grid item    md={4} xs={12}>
+            <Grid item md={4} xs={12}>
               {renderRight()}
             </Grid>
           </Grid>
         </div>
-   <div className={classes.creatorButtons}>
-        <div className={classes.back} onClick={() => {handlePreviousPage()}}>
+        <div className={classes.creatorButtons}>
+          <div className={classes.back} onClick={() => { handlePreviousPage() }}>
 
-          <span className={classes.rightInput4}>
-            <span style={{ marginInlineEnd: "5px" }}>{"<"}</span>
-            {t("smsReport.back")}
-          </span>
-        </div>
-        <div className={classes.rightMostContainer}>
-          <span className={classes.rightInput3} onClick={onHandleDelete}>
-            <BsTrash style={{ fontSize: "25" }} />         </span>
-          <span className={classes.rightInput4} onClick={()=> {setexitDialog(true)}}>
+            <span className={classes.rightInput4}>
+              <span style={{ marginInlineEnd: "5px" }}>{"<"}</span>
+              {t("smsReport.back")}
+            </span>
+          </div>
+          <div className={classes.rightMostContainer}>
+            <span className={classes.rightInput3} onClick={onHandleDelete}>
+              <BsTrash style={{ fontSize: "25" }} />         </span>
+            <span className={classes.rightInput4} onClick={() => { setexitDialog(true) }}>
 
-            {t("mainReport.exitSms")}
-          </span>
-          <span className={classes.rightInput5} onClick={() => {onSummClick(true)}}>
+              {t("mainReport.exitSms")}
+            </span>
+            <span className={classes.rightInput5} onClick={() => { onSummClick(true) }}>
 
-            {t("mainReport.saveSms")}
-          </span>
-          <span
-            className={classes.summaryBtn}
-            onClick={() => {onSummClick(false)}}
-            style={{
-              pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
-              backgroundColor:
-                selectedGroups.length > 0 ? "#5cb85c" : "#91C78D",
-            }}
-          >
-            {t("mainReport.summary")}
-          </span>
+              {t("mainReport.saveSms")}
+            </span>
+            <span
+              className={classes.summaryBtn}
+              onClick={() => { onSummClick(false) }}
+              style={{
+                pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
+                backgroundColor:
+                  selectedGroups.length > 0 ? "#5cb85c" : "#91C78D",
+              }}
+            >
+              {t("mainReport.summary")}
+            </span>
+          </div>
         </div>
       </div>
-      </div>
-   
+
 
       {renderPulse()}
       {renderReciFilter()}
@@ -3360,21 +3319,21 @@ const SmsSend = ({classes , ...props }) => {
       <Snackbar
         open={snackbarTimeBoolean || snackBarPulseBoolean || snackbarMainPulse}
         autoHideDuration={5000}
-        onClose={() => {handleMainWarningPulse()}}
+        onClose={() => { handleMainWarningPulse() }}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
         }}
         style={{ zIndex: "9999" }}
       >
-        <Alert severity="warning"  className={snacki.customcolor}>
+        <Alert severity="warning" className={snacki.customcolor}>
           {t("smsReport.NoPulse")}
         </Alert>
       </Snackbar>
       <Snackbar
         open={snackBarPulseBoolean}
         autoHideDuration={3000}
-        onClose={()=>{setsnackBarPulseBoolean(false)}}
+        onClose={() => { setsnackBarPulseBoolean(false) }}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
@@ -3388,7 +3347,7 @@ const SmsSend = ({classes , ...props }) => {
       <Snackbar
         open={snackbarTimeBoolean}
         autoHideDuration={3000}
-        onClose={()=>{setsnackbarTimeBoolean(false)}}
+        onClose={() => { setsnackbarTimeBoolean(false) }}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
@@ -3402,48 +3361,48 @@ const SmsSend = ({classes , ...props }) => {
       <Snackbar
         open={snackbarMainPulse}
         autoHideDuration={3000}
-        onClose={()=>{setsnackbarMainPulse(false)}}
+        onClose={() => { setsnackbarMainPulse(false) }}
         anchorOrigin={{
           vertical: "top",
           horizontal: "right",
         }}
         style={{ zIndex: "9999", marginTop: "60px" }}
       >
-       <Alert severity="error" className={severe.customcolor}>
+        <Alert severity="error" className={severe.customcolor}>
           Enter Random Amount
         </Alert>
       </Snackbar>
 
       <Snackbar
-      open={RecipientsSnackbar}
-      autoHideDuration={2000}
-      onClose={()=>{setRecipientsSnackbar(false);}}
-      style={{ zIndex: "9999", marginTop: "30px",fontWeight: 900, fontSize: 16}}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-  }}
->
-   <Alert   severity="warning"  className={snacki.customcolor}>
-      Please Add No of Days
+        open={RecipientsSnackbar}
+        autoHideDuration={2000}
+        onClose={() => { setRecipientsSnackbar(false); }}
+        style={{ zIndex: "9999", marginTop: "30px", fontWeight: 900, fontSize: 16 }}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <Alert severity="warning" className={snacki.customcolor}>
+          Please Add No of Days
         </Alert>
-        </Snackbar>
-      
+      </Snackbar>
+
       <Snackbar
-      open={snackbarRecipients}
-      autoHideDuration={2000}
-      onClose={()=>{setsnackbarRecipients(false);}}
-      style={{ zIndex: "9999", marginTop: "30px",fontWeight: 900, fontSize: 16}}
-      anchorOrigin={{
-        vertical: "top",
-        horizontal: "right",
-          }}
-        >
-        <Alert severity="success"  className={recipientSuccess.customcolor}>
-        {t("sms.filtersSave") } 
+        open={snackbarRecipients}
+        autoHideDuration={2000}
+        onClose={() => { setsnackbarRecipients(false); }}
+        style={{ zIndex: "9999", marginTop: "30px", fontWeight: 900, fontSize: 16 }}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <Alert severity="success" className={recipientSuccess.customcolor}>
+          {t("sms.filtersSave")}
         </Alert>
-        </Snackbar>
-        <Loader isOpen={showLoader} />
+      </Snackbar>
+      <Loader isOpen={showLoader} />
     </DefaultScreen >
   );
 };

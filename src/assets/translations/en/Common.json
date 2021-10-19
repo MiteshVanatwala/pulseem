@@ -489,5 +489,20 @@
   "close": "Close",
   "settings": "Settings",
   "createFirstGroup": "Create your first group!",
-  "addRecipients": "+ Add Recipients"
+  "addRecipients": "+ Add Recipients",
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "email": "Email",
+  "cellphone": "Cellphone",
+  "telephone": "Telephone",
+  "address": "Address",
+  "city": "City",
+  "company": "Company",
+  "birth_date": "Birth Date",
+  "reminder_date": "Reminder Date",
+  "country": "Country",
+  "state": "State",
+  "zip": "Zip Code",
+  "minutes": "Minutes",
+  "hours": "Hours"
 }
