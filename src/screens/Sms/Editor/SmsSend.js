@@ -331,10 +331,10 @@ const SmsSend = ({ classes, ...props }) => {
   const [editT, seteditT] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [deleteClick, setdeleteClick] = useState(false);
-    const [totalCampaigns, settotalCampaigns] = useState([])
-    const [typedData, settypedData] = useState([]);
+  const [totalCampaigns, settotalCampaigns] = useState([])
+  const [typedData, settypedData] = useState([]);
   const [displayFilter, setdisplayFilter] = useState(false);
-    const [selectArray, setselectArray] = useState([
+  const [selectArray, setselectArray] = useState([
     {
       isdisabled: false,
       idx: -1,
@@ -366,9 +366,9 @@ const SmsSend = ({ classes, ...props }) => {
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
     OTP: { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true },
     INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false },
-    NO_GROUPS:{severity: 'error', color: 'error', message: t('smsReport.NoGroups'), showAnimtionCheck:false}
+    NO_GROUPS: { severity: 'error', color: 'error', message: t('smsReport.NoGroups'), showAnimtionCheck: false }
   }
-console.log(extraData);
+  console.log(extraData);
   const defaultProps = {
     options: selectArray,
     getOptionLabel: (option) => option.value,
@@ -520,7 +520,7 @@ console.log(extraData);
 
   // useEffect(() => {
   //   console.log("--> session")
- 
+
   //   let groupsArr = [];
 
   //   if(typeof window !== undefined)
@@ -549,16 +549,16 @@ console.log(extraData);
   //          }
   //         }
   //       }
-       
+
   //       setfilterGroups(tempArr);
-      
+
   //    }
   //   }
-  
-    
-    
-   
-   
+
+
+
+
+
   //  }, [reciFilter])
 
 
@@ -676,15 +676,15 @@ console.log(extraData);
     // setTimePickerOpen(!timePickerOpen);
   };
   const handleTimePicker = (value) => {
-      // setdateTime(value);
-      var date = moment(sendDate);
-      var time = moment(value, "HH:mm");
-      date.set({
-        hour: time.get("hour"),
-        minute: time.get("minute"),
-      });
-      handleFromDate(date);
-      setTimePickerOpen(false);
+    // setdateTime(value);
+    var date = moment(sendDate);
+    var time = moment(value, "HH:mm");
+    date.set({
+      hour: time.get("hour"),
+      minute: time.get("minute"),
+    });
+    handleFromDate(date);
+    setTimePickerOpen(false);
   };
 
   const handleRadioTime = (value) => {
@@ -788,8 +788,7 @@ console.log(extraData);
       if (percentTrue) {
         if (Number(e.target.value) > selectedGroups.reduce(function (a, b) {
           return a + b['Recipients'];
-        }, 0))
-        {
+        }, 0)) {
           setrandom(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
           }, 0))
@@ -821,12 +820,10 @@ console.log(extraData);
           setinputF(e.target.value);
         }
       }
-      else
-      {
-        if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
+      else {
+        if (Number(e.target.value) > selectedGroups.reduce(function (a, b) {
           return a + b['Recipients'];
-        }, 0))
-        {
+        }, 0)) {
           setinputF(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
           }, 0))
@@ -901,7 +898,7 @@ console.log(extraData);
           onConfirm={handlePulseConfirm}
           showDefaultButtons={true}
           icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }}
-           />}
+          />}
         >
           <div className={classes.pulseParentDiv}>
             <span className={classes.groupName}> {t("smsReport.pulseSending")}</span>
@@ -1588,7 +1585,7 @@ console.log(extraData);
     }
 
   };
-  const  renderReciFilter = () => {
+  const renderReciFilter = () => {
     return (
       <>
         {reciFilter ? (
@@ -1815,27 +1812,25 @@ console.log(extraData);
 
   }
   const handleSelectChange = (e) => {
-   if(e.target.value  === "0")
-   {
-     setSpecialValue("0");
-   }
-   else
-   {
-    setSpecialValue(e.target.value)
-    {
-      Object.keys(extraData).map((item, i) => {
-        if (e.target.value == i + 3) {
-          setSelectedSpecialValue(item)
-        }
-        else if (e.target.value == 1) {
-          setSelectedSpecialValue("Birthday")
-        }
-        else if (e.target.value == 2) {
-          setSelectedSpecialValue("Creation day")
-        }
-      })
+    if (e.target.value === "0") {
+      setSpecialValue("0");
     }
-   }
+    else {
+      setSpecialValue(e.target.value)
+      {
+        Object.keys(extraData).map((item, i) => {
+          if (e.target.value == i + 3) {
+            setSelectedSpecialValue(item)
+          }
+          else if (e.target.value == 1) {
+            setSelectedSpecialValue("Birthday")
+          }
+          else if (e.target.value == 2) {
+            setSelectedSpecialValue("Creation day")
+          }
+        })
+      }
+    }
 
 
 
@@ -1920,8 +1915,8 @@ console.log(extraData);
                     cancel: t("common.cancel"),
                   }}
                   ampm={false}
-                  timeActive = {sendType == "2" ? false : true}
-                  timePickerOpen={timePickerOpen}  
+                  timeActive={sendType == "2" ? false : true}
+                  timePickerOpen={timePickerOpen}
                   autoOk
                 />
               </Box>
@@ -2246,8 +2241,7 @@ console.log(extraData);
           }
         }
       }
-      else
-      {
+      else {
         setToastMessage(toastMessages.NO_GROUPS)
       }
 
@@ -2402,8 +2396,7 @@ console.log(extraData);
 
 
       }
-      else
-      {
+      else {
         setToastMessage(toastMessages.NO_GROUPS)
       }
 
@@ -2522,8 +2515,7 @@ console.log(extraData);
 
 
       }
-      else
-      {
+      else {
         setToastMessage(toastMessages.NO_GROUPS)
       }
 
@@ -2822,7 +2814,7 @@ console.log(extraData);
             </span>
             <Tooltip
               disableFocusListener
-              title= {t("smsReport.manualTotalTooltip")}
+              title={t("smsReport.manualTotalTooltip")}
               classes={{ tooltip: styles.customWidth }}
             >
               <span className={classes.bodyInfo}>i</span>
@@ -3260,6 +3252,90 @@ console.log(extraData);
       return false;
     }
   }
+  const WizardButtons = () => {
+    return (
+      <div className={classes.creatorButtons}>
+        <div className={classes.back} onClick={() => { handlePreviousPage() }}>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonLightBlue,
+              classes.backButton
+            )}
+            color="primary"
+            style={{ margin: '8px' }}
+            onClick={() => { handlePreviousPage() }}>
+            <span style={{ marginInlineEnd: "5px" }}>{"<"}</span>
+            {t("smsReport.back")}
+          </Button>
+        </div>
+        <div className={classes.rightMostContainer}>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonRed
+            )}
+            style={{ margin: '8px', padding: '9px 0' }}
+            onClick={onHandleDelete}
+          >
+            <BsTrash style={{ fontSize: "25" }} />
+          </Button>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonLightBlue,
+              classes.backButton
+            )}
+            color="primary"
+            style={{ margin: '8px' }}
+            onClick={() => { setexitDialog(true) }}>
+            {t('mainReport.exitSms')}
+          </Button>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonLightBlue,
+              classes.backButton
+            )}
+            color="primary"
+            style={{ margin: '8px' }}
+            onClick={() => {
+              onSummClick(true);
+            }}>
+            {t('mainReport.saveSms')}
+          </Button>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonLightGreen,
+              classes.backButton
+            )}
+            color="primary"
+            style={{
+              margin: '8px',
+              pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
+              backgroundColor:
+                selectedGroups.length > 0 ? "#5cb85c" : "#91C78D"
+            }}
+            onClick={() => {
+              onSummClick(false)
+            }}>
+            {t("mainReport.summary")}
+          </Button>
+        </div>
+      </div>
+    );
+  }
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
       {renderToast()}
@@ -3279,41 +3355,8 @@ console.log(extraData);
             </Grid>
           </Grid>
         </div>
-        <div className={classes.creatorButtons}>
-          <div className={classes.back} onClick={() => { handlePreviousPage() }}>
-
-            <span className={classes.rightInput4}>
-              <span style={{ marginInlineEnd: "5px" }}>{"<"}</span>
-              {t("smsReport.back")}
-            </span>
-          </div>
-          <div className={classes.rightMostContainer}>
-            <span className={classes.rightInput3} onClick={onHandleDelete}>
-              <BsTrash style={{ fontSize: "25" }} />         </span>
-            <span className={classes.rightInput4} onClick={() => { setexitDialog(true) }}>
-
-              {t("mainReport.exitSms")}
-            </span>
-            <span className={classes.rightInput5} onClick={() => { onSummClick(true) }}>
-
-              {t("mainReport.saveSms")}
-            </span>
-            <span
-              className={classes.summaryBtn}
-              onClick={() => { onSummClick(false) }}
-              style={{
-                pointerEvents: selectedGroups.length > 0 ? "auto" : "none",
-                backgroundColor:
-                  selectedGroups.length > 0 ? "#5cb85c" : "#91C78D",
-              }}
-            >
-              {t("mainReport.summary")}
-            </span>
-          </div>
-        </div>
+        <WizardButtons />
       </div>
-
-
       {renderPulse()}
       {renderReciFilter()}
       {renderSummary()}
