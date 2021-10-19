@@ -808,9 +808,7 @@ console.log(extraData);
           setrandom(e.target.value)
         }
       }
-
     }
-
   };
   const handlePulseInput = (e) => {
     const re = /^[0-9\b]+$/;
@@ -825,25 +823,20 @@ console.log(extraData);
       }
       else
       {
-      
         if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
           return a + b['Recipients'];
         }, 0))
         {
-         
           setinputF(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
           }, 0))
         }
         else {
           setinputF(e.target.value);
-        
         }
       }
-
       setpulseBool(false);
     }
-
   };
 
   const onPulseValidations = () => {
@@ -857,7 +850,6 @@ console.log(extraData);
           setTimeBool(true);
           return false;
         }
-
       }
       else if (inputS === "") {
         setsnackbarTimeBoolean(true);
@@ -867,7 +859,6 @@ console.log(extraData);
           setsnackBarPulseBoolean(true);
           return false;
         }
-
       }
       else if (toggleRandom) {
         if (random === "") {
@@ -895,13 +886,10 @@ console.log(extraData);
         return true;
       }
     }
-
     else {
       return true;
     }
-
   }
-
   const renderPulse = () => {
     return (
       <>
@@ -1827,7 +1815,12 @@ console.log(extraData);
 
   }
   const handleSelectChange = (e) => {
-
+   if(e.target.value  === "0")
+   {
+     setSpecialValue("0");
+   }
+   else
+   {
     setSpecialValue(e.target.value)
     {
       Object.keys(extraData).map((item, i) => {
@@ -1842,6 +1835,9 @@ console.log(extraData);
         }
       })
     }
+   }
+
+
 
 
   }
@@ -1961,7 +1957,7 @@ console.log(extraData);
                   onChange={(e) => { handleSelectChange(e) }}
                   value={sendType === "3" ? SpecialValue : "0"}
                 >
-                  <option value="0" disabled>Select</option>
+                  <option value="0" >Select</option>
                   <option value="1">{t("mainReport.birthday")}</option>
                   <option value="2">Creation Day</option>
                   {Object.keys(extraData).map((item, i) => {
