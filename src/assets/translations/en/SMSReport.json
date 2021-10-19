@@ -40,7 +40,10 @@
   "totalManualRecipients":"Total Recipients",
   "manualTotalTooltip":"Only the cellphone title is mandatory to include, and any column without a title will not be uploaded to our system. For your convenience, only the first 5 recipients in your file will appear here, but all will be uploaded.",
   "adjustTitle":"Adjust Title",
-  "firstName":"שם פרטי",
-  "lastName":"שם משפחה",
-  "cellPhone":"סלולרי"
+  "firstName":"First Name",
+  "lastName":"Last Name",
+  "cellPhone":"Cell Phone",
+  "estimatedEndDate":"Estimated End Date",
+   "packetsSending" : "Packets sending",
+   "NoGroups":"No groups selected"
 }

@@ -540,5 +540,6 @@
   "every": "Every",
   "percent": "Percent",
   "estimatedDelivery": "Estimated End Date",
-  "dragXlOrCsv": "Drag & drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box"
+  "dragXlOrCsv": "Drag & drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box",
+  "saveAndExit": "Save and Exit"
 }
