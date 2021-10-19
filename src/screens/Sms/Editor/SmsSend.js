@@ -675,7 +675,7 @@ console.log(extraData);
     // setTimePickerOpen(!timePickerOpen);
   };
   const handleTimePicker = (value) => {
-      setdateTime(value);
+      //setdateTime(value);
       var date = moment(sendDate);
       var time = moment(value, "HH:mm");
       date.set({
@@ -1914,7 +1914,7 @@ console.log(extraData);
               >
                 <DateField
                   classes={classes}
-                  value={sendType == "2" ? dateTime : null}
+                  value={sendType == "2" ? sendDate : null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}

@@ -18,6 +18,7 @@ import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
+import queryString from 'query-string';
 
 import { useHistory } from "react-router";
 import {
@@ -163,6 +164,8 @@ const SmsCreator = ({ classes, ...props }) => {
   const [extraAccountDATA, setextraAccountDATA] = useState([]);
   const [isLinksStatistics, setIsLinksStatistics] = useState(true);
   const [otpMsgs, setotpMsgs] = useState("Required Field")
+  const [isFromAutomation, setIsFromAutomation] = useState(false);
+  const [automationUrl, setAutomationUrl] = useState("");
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -212,6 +215,8 @@ const SmsCreator = ({ classes, ...props }) => {
       TotalRecipients: 1
     }
   })
+
+  const qs = queryString.parse(props.location.search);
 
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
@@ -363,6 +368,10 @@ const SmsCreator = ({ classes, ...props }) => {
     if (props && props.match.params.id) {
       getSavedData();
     }
+    if (qs && qs.FromAutomation && qs.FromAutomation > 0) {
+      setIsFromAutomation(true);
+    }
+
     setcampaignNumber(r.payload.DefaultCellNumber)
     let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
     setStaticNumber(response.payload.Number);
@@ -386,6 +395,10 @@ const SmsCreator = ({ classes, ...props }) => {
     setselectedGroup(temp);
   }, [accountId]);
 
+  const getAutomationReturnUrl = (campaignId) => {
+    const nodeToEdit = qs.NodeToEdit ?? null;
+    return `/pulseem/CreateAutomations.aspx?AutomationID=${qs.FromAutomation}&NodeToEdit=${nodeToEdit}&SMSCampaignID=${campaignId}`;
+  }
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
@@ -455,7 +468,7 @@ const SmsCreator = ({ classes, ...props }) => {
           classes={{ tooltip: styles.customWidth }}
           sx={{ justifyContent: 'center' }}
         >
-          <Typography className={classes.bodyInfo} style={{marginTop:"6px"}}>i</Typography>
+          <Typography className={classes.bodyInfo} style={{ marginTop: "6px" }}>i</Typography>
         </Tooltip>
       </Box>
     );
@@ -778,7 +791,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
             <Box className={classes.smallInfoDiv}>
               <Typography style={{ marginInlineEnd: "18px" }}>
-                {linkCount} { linkCount === 1 ? t("mainReport.link") : t("mainReport.links")}
+                {linkCount} {linkCount === 1 ? t("mainReport.link") : t("mainReport.links")}
               </Typography>
               <Typography style={{ marginInlineEnd: "18px" }}>
                 {messageCount} {t("mainReport.message")}
@@ -1207,54 +1220,32 @@ const SmsCreator = ({ classes, ...props }) => {
     setDeleteModalOpen(true);
   };
 
-  const onContinueClick = async (isSave) => {
+  const onContinueClick = async (isSave, returnToAutomation = false) => {
     if (validationCheck()) {
-
-      if (props && props.match.params.id) {
-        const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: props.match.params.id }
-        setLoader(true);
+      let smsCampaignId = props && props.match.params.id ? props.match.params.id : -1;
+      const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: smsCampaignId }
+      setLoader(true);
         let r = await dispatch(smsSave(payloadToPush));
+        smsCampaignId = r.payload.Message;
         setLoader(false);
         if (r.payload.Status == 2) {
           if (isSave) {
             setToastMessage(toastMessages.SUCCESS);
             setTimeout(() => {
-              history.push(`/sms/edit/${props.match.params.id}`);
+              history.push(`/sms/edit/${smsCampaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
               setToastMessage(null);
             }, 1500);
+          } else if (returnToAutomation) {
+            window.location = getAutomationReturnUrl(smsCampaignId);
           } else {
 
-            history.push(`/sms/edit/${props.match.params.id}`);
-            history.push(`/sms/send/${props.match.params.id}`);
+            history.push(`/sms/edit/${smsCampaignId}`);
+            history.push(`/sms/send/${smsCampaignId}`);
           }
         }
         else if (r.payload.Status == 3) {
           setOtpVerifyDialog(true);
         }
-
-      }
-      else {
-        const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: -1 }
-        setLoader(true);
-        let r = await dispatch(smsSave(payloadToPush));
-        setLoader(false);
-        if (r.payload.Status == 2) {
-
-          if (isSave) {
-            setToastMessage(toastMessages.SUCCESS);
-            setTimeout(() => {
-              history.push(`/sms/edit/${r.payload.Message}`);
-              setToastMessage(null);
-            }, 1500);
-          } else {
-            history.push(`/sms/edit/${r.payload.Message}`);
-            history.push(`/sms/send/${r.payload.Message}`);
-          }
-        }
-        else if (r.payload.Status == 3) {
-          setOtpVerifyDialog(true);
-        }
-      }
     }
   };
 
@@ -1438,7 +1429,7 @@ const SmsCreator = ({ classes, ...props }) => {
                         className={classes.selectGroupDiv}
                       >
                         <span>{item.GroupName}</span>
-                        <span>{item.Recipients} { item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients") }</span>
+                        <span>{item.Recipients} {item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients")}</span>
                       </div>
                     </div>
                   );
@@ -1838,7 +1829,7 @@ const SmsCreator = ({ classes, ...props }) => {
         <span
           className={classes.rightInput5}
           onClick={() => {
-            onContinueClick(true);
+            onContinueClick(true, isFromAutomation);
           }}
         >
           {t("mainReport.saveSms")}
@@ -1846,10 +1837,10 @@ const SmsCreator = ({ classes, ...props }) => {
         <span
           className={classes.rightInput6}
           onClick={() => {
-            onContinueClick(false);
+            onContinueClick(false, isFromAutomation);
           }}
         >
-          {t("mainReport.continue")}
+          {!isFromAutomation ? t("mainReport.continue") : t("sms.saveAndExit")}
         </span>
       </div>
     )
