@@ -2477,7 +2477,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom:"40px",
-    marginTop: "20px",
     position: "relative",
     bottom: "10px",
     "@media screen and (max-width: 768px)": {

@@ -307,8 +307,11 @@ const SmsCreator = ({ classes, ...props }) => {
 
   useEffect(async () => {
     linkCalculation();
-    getcredits(characterCount);
   }, [smsModel, isLinksStatistics]);
+
+  useEffect(async () => {
+    getcredits(characterCount);
+  }, [characterCount])
 
   const handleSmsModelChange = (name, value) => {
     setSmsModel(prevState => ({
@@ -433,14 +436,20 @@ const SmsCreator = ({ classes, ...props }) => {
       // eslint-disable-next-line
       const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_#]*)?\??(?:[{}\-\+=&;,%@\.\w_]*)#?(?:[\.\!\/\\\w+]*))?)/g;
       const links = res.match(regex);
-      if (links && links.length > 0 && isLinksStatistics) {
-        setSplittedLinks(links);
+
+      if (links && links.length > 0) {
         setlinkCount(links.length);
-        for (var i = 0; i < links.length; i++) {
-          var linkLength = links[i].length;
-          linksCharsAddition += 35 - linkLength;
+        if (isLinksStatistics) {
+          setSplittedLinks(links);
+          for (var i = 0; i < links.length; i++) {
+            var linkLength = links[i].length;
+            linksCharsAddition += 35 - linkLength;
+          }
+          setcharacterCount(smsModel.Text.length + linksCharsAddition);
         }
-        setcharacterCount(smsModel.Text.length + linksCharsAddition);
+        else {
+          setcharacterCount(smsModel.Text.length);
+        }
       }
       else {
         setlinkCount(0);
@@ -721,7 +730,7 @@ const SmsCreator = ({ classes, ...props }) => {
         count++;
       }
     }
-    getcredits(e.target.value.length)
+    //getcredits(e.target.value.length)
   };
 
   const onRemovalLink = async () => {
@@ -734,7 +743,7 @@ const SmsCreator = ({ classes, ...props }) => {
     else {
       setremovalLinkDisabled(true);
     }
-    getcredits(smsModel.Text.length)
+    //getcredits(smsModel.Text.length)
     setremovalLinkDisabled(true);
   };
 
@@ -745,7 +754,7 @@ const SmsCreator = ({ classes, ...props }) => {
     let total = splittedMsg;
     total.push(removelReplyText)
 
-    getcredits(newMsg.length)
+    //getcredits(newMsg.length)
     setremovalMessageButtonDisabled(true);
   };
 
@@ -1220,27 +1229,27 @@ const SmsCreator = ({ classes, ...props }) => {
       let smsCampaignId = props && props.match.params.id ? props.match.params.id : -1;
       const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: smsCampaignId }
       setLoader(true);
-        let r = await dispatch(smsSave(payloadToPush));
-        smsCampaignId = r.payload.Message;
-        setLoader(false);
-        if (r.payload.Status == 2) {
-          if (isSave) {
-            setToastMessage(toastMessages.SUCCESS);
-            setTimeout(() => {
-              history.push(`/sms/edit/${smsCampaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
-              setToastMessage(null);
-            }, 1500);
-          } else if (returnToAutomation) {
-            window.location = getAutomationReturnUrl(smsCampaignId);
-          } else {
+      let r = await dispatch(smsSave(payloadToPush));
+      smsCampaignId = r.payload.Message;
+      setLoader(false);
+      if (r.payload.Status == 2) {
+        if (isSave) {
+          setToastMessage(toastMessages.SUCCESS);
+          setTimeout(() => {
+            history.push(`/sms/edit/${smsCampaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
+            setToastMessage(null);
+          }, 1500);
+        } else if (returnToAutomation) {
+          window.location = getAutomationReturnUrl(smsCampaignId);
+        } else {
 
-            history.push(`/sms/edit/${smsCampaignId}`);
-            history.push(`/sms/send/${smsCampaignId}`);
-          }
+          history.push(`/sms/edit/${smsCampaignId}`);
+          history.push(`/sms/send/${smsCampaignId}`);
         }
-        else if (r.payload.Status == 3) {
-          setOtpVerifyDialog(true);
-        }
+      }
+      else if (r.payload.Status == 3) {
+        setOtpVerifyDialog(true);
+      }
     }
   };
 
@@ -1808,38 +1817,68 @@ const SmsCreator = ({ classes, ...props }) => {
     </>)
   }
 
-  const renderDefaultButtons = () => {
+  const renderButtons = () => {
     return (
-      <div
-        className={
-          checked ? clsx(classes.buttonDiv) : clsx(classes.buttonDivAct)
-        }
-      >
-        <span className={classes.rightInput3} onClick={onHandleDelete}>
+      <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonRed
+          )}
+          style={{ margin: '8px', padding: '9px 0' }}
+          onClick={onHandleDelete}
+        >
           <BsTrash style={{ fontSize: "25" }} />
-        </span>
-        <span className={classes.rightInput4} onClick={() => { setexitClick(true) }}>
-          {t("mainReport.exitSms")}
-        </span>
-        <span
-          className={classes.rightInput5}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
+          onClick={() => { setexitClick(true) }}>
+          {t('mainReport.exitSms')}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
           onClick={() => {
             onContinueClick(true, isFromAutomation);
-          }}
-        >
-          {t("mainReport.saveSms")}
-        </span>
-        <span
-          className={classes.rightInput6}
+          }}>
+          {t('mainReport.saveSms')}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightGreen,
+            classes.backButton
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
           onClick={() => {
             onContinueClick(false, isFromAutomation);
-          }}
-        >
+          }}>
           {!isFromAutomation ? t("mainReport.continue") : t("sms.saveAndExit")}
-        </span>
-      </div>
-    )
+        </Button>
+      </Box>
+    );
   }
+
   const renderSaveModal = () => {
     return (<>
       <Dialog
@@ -2048,7 +2087,7 @@ const SmsCreator = ({ classes, ...props }) => {
           <Grid item xs={4}>
             {renderPhone()}
           </Grid> </>}
-        {renderDefaultButtons()}
+        {renderButtons()}
       </Grid>
       {renderPreviousLandingDataModal()}
       {renderPreviousCampaignsData()}
