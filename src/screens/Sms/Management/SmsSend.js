@@ -344,17 +344,17 @@ const SmsSend = ({classes , ...props }) => {
     {
       isdisabled: false,
       idx: -1,
-      value: "First Name"
+      value: t("smsReport.firstName")
     },
     {
       isdisabled: false,
       idx: -1,
-      value: "Last Name"
+      value: t("smsReport.lastName")
     },
     {
       isdisabled: false,
       idx: -1,
-      value: "Cell Phone"
+      value: t("smsReport.cellPhone")
     }
   ]);
   const [dataSaved, setdataSaved] = useState({
@@ -824,7 +824,7 @@ const SmsSend = ({classes , ...props }) => {
         {
           setrandom(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
-          }, 0).toLocaleString())
+          }, 0))
           setboolRandom(false);
         }
         else
@@ -873,7 +873,7 @@ const SmsSend = ({classes , ...props }) => {
          
           setinputF(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
-          }, 0).toLocaleString())
+          }, 0))
         }
         else
         {
@@ -2961,7 +2961,7 @@ const SmsSend = ({classes , ...props }) => {
                           <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
                        <Typography style={{fontWeight:"700",cursor:"pointer",marginInlineEnd:"20px"}}>{headers[idx]}</Typography> 
 
-                   {headers[idx] !== "Adjust Title" ?  <AiOutlineClose  style={{marginInlineEnd:"8px"}} onClick={() => { handleCloseSpan(idx, headers[idx]) }} />   : null}  
+                   {headers[idx] !== t("smsReport.adjustTitle") ?  <AiOutlineClose  style={{marginInlineEnd:"8px"}} onClick={() => { handleCloseSpan(idx, headers[idx]) }} />   : null}  
                     {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown  style={{marginInlineStart:"4px"}}/> }  </div>
                         {dropIndex == idx ? (
                           <div className={classes.adjustC}>
