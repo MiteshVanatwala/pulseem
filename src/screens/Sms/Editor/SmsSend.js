@@ -365,7 +365,8 @@ const SmsSend = ({ classes, ...props }) => {
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
     OTP: { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true },
-    INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false }
+    INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false },
+    NO_GROUPS:{severity: 'error', color: 'error', message: t('smsReport.NoGroups'), showAnimtionCheck:false}
   }
 console.log(extraData);
   const defaultProps = {
@@ -675,7 +676,7 @@ console.log(extraData);
     // setTimePickerOpen(!timePickerOpen);
   };
   const handleTimePicker = (value) => {
-      setdateTime(value);
+      // setdateTime(value);
       var date = moment(sendDate);
       var time = moment(value, "HH:mm");
       date.set({
@@ -1914,7 +1915,7 @@ console.log(extraData);
               >
                 <DateField
                   classes={classes}
-                  value={sendType == "2" ? dateTime : null}
+                  value={sendType == "2" ? sendDate : null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
@@ -2249,6 +2250,10 @@ console.log(extraData);
           }
         }
       }
+      else
+      {
+        setToastMessage(toastMessages.NO_GROUPS)
+      }
 
     }
     else if (sendType === "2") {
@@ -2401,6 +2406,10 @@ console.log(extraData);
 
 
       }
+      else
+      {
+        setToastMessage(toastMessages.NO_GROUPS)
+      }
 
     }
     else if (sendType === "3") {
@@ -2516,6 +2525,10 @@ console.log(extraData);
         }
 
 
+      }
+      else
+      {
+        setToastMessage(toastMessages.NO_GROUPS)
       }
 
     }
@@ -2999,7 +3012,7 @@ console.log(extraData);
 
       setTimeout(() => {
         setToastMessage(null);
-      }, 2000);
+      }, 4000);
       return (
         <Toast data={toastMessage} />
       );

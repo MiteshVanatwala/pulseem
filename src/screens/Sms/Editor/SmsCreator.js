@@ -778,7 +778,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
             <Box className={classes.smallInfoDiv}>
               <Typography style={{ marginInlineEnd: "18px" }}>
-                {linkCount} { linkCount === 1 ? t("mainReport.link") : t("mainReport.links")}
+                {linkCount} { linkCount === 1 ? t("mainReport.link") : t("mainReport.link")}
               </Typography>
               <Typography style={{ marginInlineEnd: "18px" }}>
                 {messageCount} {t("mainReport.message")}
@@ -1787,7 +1787,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
       setTimeout(() => {
         setToastMessage(null);
-      }, 2000);
+      }, 4000);
       return (
         <Toast data={toastMessage} />
       );

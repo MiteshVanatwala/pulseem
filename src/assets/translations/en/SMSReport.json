@@ -44,5 +44,6 @@
   "lastName":"Last Name",
   "cellPhone":"Cell Phone",
   "estimatedEndDate":"Estimated End Date",
-   "packetsSending" : "Packets sending"
+   "packetsSending" : "Packets sending",
+   "NoGroups":"No groups selected"
 }
