@@ -2198,12 +2198,12 @@ const SmsSend = ({classes , ...props }) => {
 
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer} {" "}
+             {t("smsReport.packetsSending")} - {inputF} {pulsePer == "" ? pulseReci : pulsePer} {" "}
               every {inputS} {hourName == "" ? minName : hourName}
             </span>
           ) : null}
           {toggleRandom ? (
-            <span>Random sending - {random} random recipients</span>
+            <span>{t("smsReport.randomSend")} - {random} random recipients</span>
           ) : null}
         </div>
       </div>

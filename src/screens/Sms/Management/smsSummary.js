@@ -307,11 +307,11 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
               </div>
 
               {props.pulseTrue || props.toggleRandom ?     <div className={classes.sumChild}>
-               <span className={classes.spanSum}>Pulse Sending</span>
-              {props.pulseTrue ?  <span style={{ fontSize: "18px" }}> Packets sending - {props.pulseInput1} {props.pulsePer == "" ? props.pulseReci : props.pulsePer} {" "}
+               <span className={classes.spanSum}>{t("smsReport.pulseSending")}</span>
+              {props.pulseTrue ?  <span style={{ fontSize: "18px" }}>{t("smsReport.packetsSending")} - {props.pulseInput1} {props.pulsePer == "" ? props.pulseReci : props.pulsePer} {" "}
               every {props.pulseInput2} {props.hourName == "" ? props.minName : props.hourName}</span> : null}  
-              {props.toggleRandom ?  <span style={{ fontSize: "18px" }}>Random sending - {props.random} random recipients</span> : null} 
-               {props.pulseTrue ? <span style={{ fontSize: "18px" }}>Estimated End Date : <span style={{color:"#1D82B3"}}>{props.estimationDate}</span></span> : null} 
+              {props.toggleRandom ?  <span style={{ fontSize: "18px" }}>{t("smsReport.randomSend")} - {props.random} random recipients</span> : null} 
+               {props.pulseTrue ? <span style={{ fontSize: "18px" }}>{t("smsReport.estimatedEndDate")} : <span style={{color:"#1D82B3"}}>{props.estimationDate}</span></span> : null} 
               </div>
               : null}     
               <div className={classes.sumChild}>

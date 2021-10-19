@@ -43,6 +43,8 @@
   "adjustTitle":"התאם כותרת",
   "firstName":"שם פרטי",
   "lastName":"שם משפחה",
-  "cellPhone":"סלולרי"
+  "cellPhone":"סלולרי",
+  "estimatedEndDate":"תאריך סיום משוער",
+  "packetsSending":"שליחה במנות"
 
 }
