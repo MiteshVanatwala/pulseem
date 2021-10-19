@@ -365,7 +365,8 @@ const SmsSend = ({ classes, ...props }) => {
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
     OTP: { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true },
-    INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false }
+    INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false },
+    NO_GROUPS:{severity: 'error', color: 'error', message: t('smsReport.NoGroups'), showAnimtionCheck:false}
   }
 console.log(extraData);
   const defaultProps = {
@@ -675,7 +676,7 @@ console.log(extraData);
     // setTimePickerOpen(!timePickerOpen);
   };
   const handleTimePicker = (value) => {
-      //setdateTime(value);
+      // setdateTime(value);
       var date = moment(sendDate);
       var time = moment(value, "HH:mm");
       date.set({
@@ -807,9 +808,7 @@ console.log(extraData);
           setrandom(e.target.value)
         }
       }
-
     }
-
   };
   const handlePulseInput = (e) => {
     const re = /^[0-9\b]+$/;
@@ -824,25 +823,20 @@ console.log(extraData);
       }
       else
       {
-      
         if(Number(e.target.value) > selectedGroups.reduce(function (a, b) {
           return a + b['Recipients'];
         }, 0))
         {
-         
           setinputF(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
           }, 0))
         }
         else {
           setinputF(e.target.value);
-        
         }
       }
-
       setpulseBool(false);
     }
-
   };
 
   const onPulseValidations = () => {
@@ -856,7 +850,6 @@ console.log(extraData);
           setTimeBool(true);
           return false;
         }
-
       }
       else if (inputS === "") {
         setsnackbarTimeBoolean(true);
@@ -866,7 +859,6 @@ console.log(extraData);
           setsnackBarPulseBoolean(true);
           return false;
         }
-
       }
       else if (toggleRandom) {
         if (random === "") {
@@ -894,13 +886,10 @@ console.log(extraData);
         return true;
       }
     }
-
     else {
       return true;
     }
-
   }
-
   const renderPulse = () => {
     return (
       <>
@@ -1826,7 +1815,12 @@ console.log(extraData);
 
   }
   const handleSelectChange = (e) => {
-
+   if(e.target.value  === "0")
+   {
+     setSpecialValue("0");
+   }
+   else
+   {
     setSpecialValue(e.target.value)
     {
       Object.keys(extraData).map((item, i) => {
@@ -1841,6 +1835,9 @@ console.log(extraData);
         }
       })
     }
+   }
+
+
 
 
   }
@@ -1960,7 +1957,7 @@ console.log(extraData);
                   onChange={(e) => { handleSelectChange(e) }}
                   value={sendType === "3" ? SpecialValue : "0"}
                 >
-                  <option value="0" disabled>Select</option>
+                  <option value="0" >Select</option>
                   <option value="1">{t("mainReport.birthday")}</option>
                   <option value="2">Creation Day</option>
                   {Object.keys(extraData).map((item, i) => {
@@ -2249,6 +2246,10 @@ console.log(extraData);
           }
         }
       }
+      else
+      {
+        setToastMessage(toastMessages.NO_GROUPS)
+      }
 
     }
     else if (sendType === "2") {
@@ -2401,6 +2402,10 @@ console.log(extraData);
 
 
       }
+      else
+      {
+        setToastMessage(toastMessages.NO_GROUPS)
+      }
 
     }
     else if (sendType === "3") {
@@ -2516,6 +2521,10 @@ console.log(extraData);
         }
 
 
+      }
+      else
+      {
+        setToastMessage(toastMessages.NO_GROUPS)
       }
 
     }
@@ -2999,7 +3008,7 @@ console.log(extraData);
 
       setTimeout(() => {
         setToastMessage(null);
-      }, 2000);
+      }, 4000);
       return (
         <Toast data={toastMessage} />
       );

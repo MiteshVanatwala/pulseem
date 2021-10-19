@@ -1778,7 +1778,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
       setTimeout(() => {
         setToastMessage(null);
-      }, 2000);
+      }, 4000);
       return (
         <Toast data={toastMessage} />
       );
