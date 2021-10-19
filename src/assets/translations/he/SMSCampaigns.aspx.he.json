@@ -520,5 +520,19 @@
   "recipientsFromFollowingCampaign":"נמענים מהקמפיינים הבאים",
   "filtersSave":"השינויים נשמרו בהצלחה",
   "invalidNumber":"מספר לא תקין",
-  "toUnsubscribe": "להסרה השב/י "  
+  "toUnsubscribe": "להסרה השב/י ",
+  "recipients": "נמענים",
+  "recipient": "נמען" ,
+  "editFields": "ערוך שדות ושמור",
+  "clearList": "נקה רשימה",
+  "totalRecords": "סה\"כ רשומות",
+  "columnAdjustment":"התאמת עמודות",
+  "totalRecipients": "סה\"כ נמענים",
+  "adjustTitle": "התאם כותרת",
+  "reset_manual_upload_notice":"לחיצה על \"אישור\" תמחק את רשימת הנמענים שהזנת לתיבת הנמענים.<br/><b>האם אתה בטוח?</b>",
+  "groupNameExists": "קבוצה עם השם '#groupName#' כבר קיימת.",
+  "every": "כל",
+  "percent": "אחוז",
+  "estimatedDelivery": "תאריך סיום משוער",
+  "dragXlOrCsv": "ניתן לגרור קובץ XLS/CSV  או להעתיק את המידע ישירות לתוך התיבה. ניתן להעלות מאות אלפי נמענים לתוך התיבה. ביכולתכם גם להקליד ידנית, ולהפריד את הנתונים על ידי פסיקים. המידע שניתן להעלות הוא – טלפון סלולרי, שם פרטי, שם משפחה"
 }

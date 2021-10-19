@@ -58,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 200,
     backgroundColor: "black",
     fontSize: "14px",
+    textAlign: 'center'
   },
   noMaxWidth: {
     maxWidth: "none",
@@ -337,7 +338,21 @@ const SmsCreator = ({ classes, ...props }) => {
     let arr2 = arr.map(function (key) {
       return { [key]: resp.payload[key] };
     })
-    let tempArr = [];
+    let tempArr = [
+      { "FirstName": "common.first_name" },
+      { "LastName": "common.last_name" },
+      { "Email": "common.email" },
+      { "Telephone": "common.telephone" },
+      { "Cellphone": "common.cellphone" },
+      { "Address": "common.address" },
+      { "City": "common.city" },
+      { "Company": "common.company" },
+      { "BirthDate": "common.birth_date" },
+      { "ReminderDate": "common.reminder_date" },
+      { "Country": "common.country" },
+      { "State": "common.state" },
+      { "Zip": "common.zip" }
+    ];
     for (let i = 0; i < arr2.length; i++) {
       tempArr.push({ ...arr2[i], selected: false })
     }
@@ -437,6 +452,7 @@ const SmsCreator = ({ classes, ...props }) => {
           disableFocusListener
           title={t("mainReport.toolTip1")}
           classes={{ tooltip: styles.customWidth }}
+          sx={{ justifyContent: 'center' }}
         >
           <Typography className={classes.bodyInfo}>i</Typography>
         </Tooltip>
@@ -763,7 +779,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
             <Box className={classes.smallInfoDiv}>
               <Typography style={{ marginInlineEnd: "18px" }}>
-                {linkCount} {t("mainReport.link")}
+                {linkCount} { linkCount === 1 ? t("mainReport.link") : t("mainReport.links")}
               </Typography>
               <Typography style={{ marginInlineEnd: "18px" }}>
                 {messageCount} {t("mainReport.message")}
@@ -897,10 +913,10 @@ const SmsCreator = ({ classes, ...props }) => {
                       <option disabled value="Personilization">{t("mainReport.personalisationSelect")}</option>
                       {extraAccountDATA.map((item, i) => {
                         if (item.selected) {
-                          return (<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]]}</option>)
+                          return (<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</option>)
                         }
                         else {
-                          return <option value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]]}</option>;
+                          return <option value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</option>;
                         }
 
                       })}
@@ -1423,7 +1439,7 @@ const SmsCreator = ({ classes, ...props }) => {
                         className={classes.selectGroupDiv}
                       >
                         <span>{item.GroupName}</span>
-                        <span>{item.Recipients} Recipients</span>
+                        <span>{item.Recipients} { item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients") }</span>
                       </div>
                     </div>
                   );

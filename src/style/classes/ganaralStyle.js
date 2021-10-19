@@ -2117,7 +2117,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "700px",
     flexWrap:"wrap",
     overflowY:"auto",
-    backgroundColor: "#F7F7F7",
+    border: "1px solid #efefef",
   },
   manualModal: {
     display: "flex",

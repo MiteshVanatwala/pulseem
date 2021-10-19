@@ -78,6 +78,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 200,
     backgroundColor: "black",
     fontSize: "14px",
+    textAlign: 'center'
   },
   noMaxWidth: {
     maxWidth: "none",
@@ -1147,7 +1148,7 @@ const SmsSend = ({classes , ...props }) => {
            setareaData(b);
            let dummyArr = [];
             for (let i = 0; i < b[0].length; i++) {
-              dummyArr.push("Adjust Title");
+              dummyArr.push(t("sms.adjustTitle"));
             }
             setinitialheadstate(dummyArr);
             setheaders(dummyArr)
@@ -1242,7 +1243,7 @@ const SmsSend = ({classes , ...props }) => {
                 setmanualTrue(true);
                 let ddc = [];
                 for (let i in resultCsv[0]) {
-                  ddc.push("Adjust Title")
+                  ddc.push(t("sms.adjustTitle"))
                 }
                 setheaders(ddc);
               },
@@ -1337,7 +1338,7 @@ const SmsSend = ({classes , ...props }) => {
             }
           >
             <textarea
-              placeholder="Drag &amp; drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box"
+              placeholder={t("sms.dragXlOrCsv")}
               spellcheck="false"
               autoComplete="off"
              
@@ -1464,8 +1465,7 @@ const SmsSend = ({classes , ...props }) => {
                       handlePasted();
                     }}
                   >
-
-                    Edit fields and save
+                    {t("sms.editFields")}
                   </span>
                   <span
                     className={classes.clearDiv}
@@ -1475,11 +1475,11 @@ const SmsSend = ({classes , ...props }) => {
                       settypedData([])
                     }}
                   >
-                    Clear list
+                    {t("sms.clearList")}
                   </span>
                 </div>
               ) : null}
-              <span>Total Records :  {contacts.length !==0 ? contacts.length : typedData.length}</span>
+              <span>{t("sms.totalRecords")}:  {contacts.length !==0 ? contacts.length : typedData.length}</span>
             </div>
           ) : null}
         </Box>
@@ -1588,7 +1588,7 @@ const SmsSend = ({classes , ...props }) => {
 
     let dummyArr = [];
     for (let i = 0; i < b[0].length; i++) {
-      dummyArr.push("Adjust Title");
+      dummyArr.push(t("sms.adjustTitle"));
     }
     setinitialheadstate(dummyArr);
     setheaders(dummyArr)
@@ -1626,13 +1626,13 @@ const SmsSend = ({classes , ...props }) => {
             open={true}
             onClose={handleReciClose}
             onConfirm={handleReciConfirm}
-            confirmText={t("smsReport.okBtn")}
+            confirmText={t("common.Ok")}
             cancelText={t("smsReport.cancelBtn")}
             showDefaultButtons={true}
             icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }} />}
           >
             <div className={classes.reciFilterDiv}>
-              <span className={classes.groupName}>{t("smsReport.recipientsFilter")}</span>
+              <span className={classes.groupName}>{t("mainReport.recipientFilter")}</span>
             </div>
             <div>
               <div
@@ -1740,7 +1740,7 @@ const SmsSend = ({classes , ...props }) => {
                               <span className={classes.ellipsisText}>
                                 {item.GroupName}
                               </span>
-                              <span>{item.Recipients} Recipients</span>
+                              <span>{item.Recipients.toLocaleString()} { item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients") }</span>
                             </div>
                           </div>
                         );
@@ -2119,12 +2119,12 @@ const SmsSend = ({classes , ...props }) => {
 
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-              Packets sending - {inputF} {pulsePer == "" ? pulseReci : pulsePer} {" "}
-              every {inputS} {hourName == "" ? minName : hourName}
+              {t("smsReport.packetSend")} - {inputF} {pulsePer == "" ? t("sms.recipients") : t("common.Percent")} {" "}
+              {t("sms.every")} {inputS} {hourName == "" ? t("common.minutes") : t("common.hours")}
             </span>
           ) : null}
           {toggleRandom ? (
-            <span>Random sending - {random} random recipients</span>
+            <span>{t("smsReport.randomSend")} - {random} {t("smsReport.randomRecipients")}</span>
           ) : null}
         </div>
       </div>
@@ -2651,7 +2651,7 @@ const SmsSend = ({classes , ...props }) => {
   const handleCloseSpan = (id, name) => {
     let h = headers;
 
-    headers[id] = "Adjust Title";
+    headers[id] = t("sms.adjustTitle");
     // h[id] = initialheadstate[id];
 
     setheaders(h);
@@ -2675,7 +2675,7 @@ const SmsSend = ({classes , ...props }) => {
         for (let j = 0; j < typedData.length; j++) {
           requestPayload.push({});
           for (let k = 0; k < typedData[j].length; k++) {
-            if (headers[k] !== "Adjust Title") {
+            if (headers[k] !== t("sms.adjustTitle")) {
               let key = headers[k].toLocaleString().replaceAll(" ", "");
               let obj = requestPayload[j];
               obj[key] = typedData[j][k];
@@ -2689,7 +2689,7 @@ const SmsSend = ({classes , ...props }) => {
           let i = 0;
   
           for (let k in contacts[j]) {
-            if (headers[i] !== "Adjust Title") {
+            if (headers[i] !== t("sms.adjustTitle")) {
               let key = headers[i].toLocaleString().replaceAll(" ", "");
               let obj = requestPayload[j];
               obj[key] = contacts[j][k];
@@ -2784,7 +2784,7 @@ const SmsSend = ({classes , ...props }) => {
     }
     let columnHasValue = false;
     headers.forEach((value)=>{
-      if(value !== "Adjust Title"){
+      if(value !== t("sms.adjustTitle")){
         columnHasValue = true
       }
     })
@@ -2803,21 +2803,21 @@ const SmsSend = ({classes , ...props }) => {
           showDefaultButtons={true}
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>Column Adjustment</span>
+            <span className={classes.groupName}>{t("sms.columnAdjustment")}</span>
           </div>
           <div className={classes.manualModal}>
             <span style={{ fontSize: "24px", marginInlineEnd: "10px" }}>
-              Group Name :
+              {t("common.GroupName")}:
             </span>
             <div style={{display:"flex",flexDirection:"column",width:"75%"}}>
             <input
               type="text"
-              placeholder="Group Name"
+              placeholder={t("common.GroupName")}
               className={newVal ? clsx(classes.inputManual,classes.error) : clsx(classes.inputManual,classes.success)}
               onChange={handleManualDialog}
               value={groupNameInput}
             />
-             {newVal ? <span style={{marginTop:"8px",color:"red",fontSize:"12px"}}>Group name is either blank or already exists</span> : null  }  
+             {newVal ? <span style={{marginTop:"8px",color:"red",fontSize:"12px"}}>{t("sms.groupNameExists").replace("#groupName#", groupNameInput)}</span> : null  }  
             </div>
           
          
@@ -2831,7 +2831,7 @@ const SmsSend = ({classes , ...props }) => {
             }}
           >
             <span style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
-              Total Recipients :
+              {t("sms.totalRecipients")}:
             </span>
             <span
               style={{
@@ -2880,7 +2880,7 @@ const SmsSend = ({classes , ...props }) => {
                           <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
                        <Typography style={{fontWeight:"700",cursor:"pointer",marginInlineEnd:"20px"}}>{headers[idx]}</Typography> 
 
-                   {headers[idx] !== "Adjust Title" ?  <AiOutlineClose  style={{marginInlineEnd:"8px"}} onClick={() => { handleCloseSpan(idx, headers[idx]) }} />   : null}  
+                   {headers[idx] !== t("sms.adjustTitle") ?  <AiOutlineClose  style={{marginInlineEnd:"8px"}} onClick={() => { handleCloseSpan(idx, headers[idx]) }} />   : null}  
                     {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown  style={{marginInlineStart:"4px"}}/> }  </div>
                         {dropIndex == idx ? (
                           <div className={classes.adjustC}>
@@ -2900,17 +2900,6 @@ const SmsSend = ({classes , ...props }) => {
                           </div>
                         ) : null}
                       </div>
-                        {/* <Autocomplete
-                         {...defaultProps}
-                          id="combo-box-demo"
-                          onChange={(event , newValue) => {
-                           
-                            Header.push(newValue);
-                          }}
-                         
-                          sx={{ width: 400 }}
-                          renderInput={(params) => <TextField {...params} label="Adjust Title" />}
-                        /> */}
                     </th>
                   );
                 })
@@ -2936,7 +2925,7 @@ const SmsSend = ({classes , ...props }) => {
                     >
                       <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
                     <Typography style={{fontWeight:"700",cursor:"pointer",marginInlineEnd:"20px"}}>{headers[idx]}</Typography> 
-                    {headers[idx] !== "Adjust Title" ?   <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} style={{marginInlineEnd:"8px"}}/>  : null}      
+                    {headers[idx] !== t("sms.adjustTitle") ?   <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} style={{marginInlineEnd:"8px"}}/>  : null}      
                     {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown  style={{marginInlineStart:"4px"}}/> } </div>
                       {dropIndex == idx ? (
                         <div className={classes.adjustC}>
@@ -3136,6 +3125,14 @@ const SmsSend = ({classes , ...props }) => {
   {
     window.location = `/sms/edit/${props.match.params.id}`;
   }
+  const renderHtml = (html) => {
+    function createMarkup() {
+        return { __html: html };
+    }
+    return (
+        <label dangerouslySetInnerHTML={createMarkup()}></label>
+    );
+}
   const renderCaution = () => {
     return (
       <>
@@ -3148,12 +3145,11 @@ const SmsSend = ({classes , ...props }) => {
           showDefaultButtons={true}
         >
           <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>Notice!</span>
+            <span className={classes.groupName}>{t("common.Notice")}</span>
           </div>
           <div>
             <p>
-              Are you sure you want to cancel? Clicking "yes" will delete the
-              recipients you have entered to the Manual Upload box.
+             {renderHtml(t("sms.reset_manual_upload_notice"))}
             </p>
           </div>
         </Dialog>

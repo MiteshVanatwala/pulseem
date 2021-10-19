@@ -18,6 +18,7 @@
   "min":"Mins",
   "randomSend":"Random Sending",
   "noOfReci":"Number of random recipients",
+  "randomRecipients": "Random Recipients",
   "confirmBtn":"Confirm",
   "insert":"Insert",
   "NoPulse":"No Pulse Settings are Applied",

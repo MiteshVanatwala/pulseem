@@ -460,7 +460,7 @@
   "pulseSend" : "Pulse Sending",
   "days"  :"Days",
   "birthday"  :"Birthday",
-  "recipientFilter" : "Recipients filter",
+  "recipientFilter" : "filter",
   "createContent":"Create Content",
   "campName":"Campaign Name",
   "campFrom":"Campaign From",
