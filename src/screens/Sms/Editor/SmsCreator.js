@@ -454,7 +454,7 @@ const SmsCreator = ({ classes, ...props }) => {
           classes={{ tooltip: styles.customWidth }}
           sx={{ justifyContent: 'center' }}
         >
-          <Typography className={classes.bodyInfo}>i</Typography>
+          <Typography className={classes.bodyInfo} style={{marginTop:"6px"}}>i</Typography>
         </Tooltip>
       </Box>
     );

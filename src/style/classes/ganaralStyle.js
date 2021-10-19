@@ -1417,7 +1417,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   activeTab: {
     borderBottom: "3px solid #1771AD",
-    color: "#277BFF !important",
+    color: "#007bff !important"    
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
@@ -1635,7 +1635,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer"
   },
   smsInit: {
-    padding: "40px 80px 15px 90px",
+    padding: "40px 80px 15px 30px",
     justifyContent:"flex-end"
   },
   msgDiv: {
@@ -2452,7 +2452,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   smsStepDiv:
   {
     display: "grid",
-    padding: "40px 80px 15px 90px",
+    padding: "40px 80px 15px 30px",
     "@media screen and (max-width: 768px)": {
       gridTemplateColumns: "auto",
       padding: "0px"
