@@ -91,7 +91,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
 
               <div className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("sms.smsDialogWhen")} :</span>
-                <span className={classes.bodySum}>Send Now</span>
+                <span className={classes.bodySum}>{t("sms.SendNow")}</span>
               </div>
 
               <div className={classes.sumChild}>
@@ -303,15 +303,15 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
 
               <div className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("sms.smsDialogWhen")}:</span>
-                <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} Days ${props.after ? "After" : "Before"} ${props.specialVal} at ${props.time.format('h:mm a')}  `  : props.sendType == "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : "Send Now"}</span>
+                <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} ${t("mainReport.days")} ${props.after ?  t("mainReport.after") : t("mainReport.before")} ${props.specialVal} at ${props.time.format('h:mm a')}  `  : props.sendType == "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : t("sms.SendNow")}</span>
               </div>
 
               {props.pulseTrue || props.toggleRandom ?     <div className={classes.sumChild}>
-               <span className={classes.spanSum}>Pulse Sending</span>
-              {props.pulseTrue ?  <span style={{ fontSize: "18px" }}> Packets sending - {props.pulseInput1} {props.pulsePer == "" ? props.pulseReci : props.pulsePer} {" "}
-              every {props.pulseInput2} {props.hourName == "" ? props.minName : props.hourName}</span> : null}  
-              {props.toggleRandom ?  <span style={{ fontSize: "18px" }}>Random sending - {props.random} random recipients</span> : null} 
-               {props.pulseTrue ? <span style={{ fontSize: "18px" }}>Estimated End Date : <span style={{color:"#1D82B3"}}>{props.estimationDate}</span></span> : null} 
+               <span className={classes.spanSum}>{t("mainReport.pulseSend")}</span>
+              {props.pulseTrue ?  <span style={{ fontSize: "18px" }}>  {t("smsReport.packetSend")} - {props.pulseInput1} {props.pulsePer == "" ? t("sms.recipients") : t("common.Percent")} {" "}
+              {t("sms.every")} {props.pulseInput2} {props.hourName == "" ? t("common.minutes") : t("common.hours")}</span> : null}  
+              {props.toggleRandom ?  <span style={{ fontSize: "18px" }}>{t("smsReport.randomSend")} - {props.random} {t("smsReport.randomRecipients")}</span> : null} 
+               {props.pulseTrue ? <span style={{ fontSize: "18px" }}>{t("sms.estimatedDelivery")}: <span style={{color:"#1D82B3"}}>{props.estimationDate}</span></span> : null} 
               </div>
               : null}     
               <div className={classes.sumChild}>

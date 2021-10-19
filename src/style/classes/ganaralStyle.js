@@ -1423,7 +1423,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   activeTab: {
     borderBottom: "3px solid #1771AD",
-    color: "#007bff!important",
+    color: "#007bff !important"    
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
@@ -2123,7 +2123,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "700px",
     flexWrap:"wrap",
     overflowY:"auto",
-    backgroundColor: "#F7F7F7",
+    border: "1px solid #efefef",
   },
   manualModal: {
     display: "flex",

@@ -484,5 +484,20 @@
   "close": "סגור",
   "settings": "הגדרות",
   "createFirstGroup": "צור את הקבוצה הראשונה שלך!",
-  "addRecipients": "+ הוסף נמענים"
+  "addRecipients": "+ הוסף נמענים",
+  "first_name": "שם פרטי",
+  "last_name": "שם משפחה",
+  "email": "דואר אלקטרוני",
+  "cellphone": "סלולרי",
+  "telephone": "טלפון",
+  "address": "כתובת",
+  "city": "עיר",
+  "company": "חברה",
+  "birth_date": "תאריך לידה",
+  "reminder_date": "תאריך תזכורת",
+  "country": "ארץ",
+  "state": "מחוז",
+  "zip": "מיקוד",
+  "minutes": "דקות",
+  "hours": "שעות"
 }

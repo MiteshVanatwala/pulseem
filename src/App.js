@@ -28,8 +28,8 @@ import NewslettersReport from './screens/Reports/NewslettersReport'
 import { useMediaQuery } from '@material-ui/core';
 import DashboardScreen from './screens/Dashboard/Dashboard';
 import SmsReport from './screens/Reports/SmsReport';
-import SmsCreator from './screens/Sms/Management/SmsCreator';
-import SmsSend from './screens/Sms/Management/SmsSend';
+import SmsCreator from './screens/Sms/Editor/SmsCreator';
+import SmsSend from './screens/Sms/Editor/SmsSend';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
