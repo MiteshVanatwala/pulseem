@@ -825,6 +825,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingRight: 20,
     "@media screen and (max-width: 768px)": {
       borderRight: "none",
+      borderLeft:"none"
     },
   },
   selectGroupDiv:
@@ -1759,6 +1760,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   phoneDiv: {
     position: "relative",
     // marginInlineStart: "5px",
+    "@media screen and (max-width: 960px)": {
+      marginTop: "90px",
+    },
     "@media screen and (max-width: 768px)": {
       marginTop: "170px",
       display: "flex",
