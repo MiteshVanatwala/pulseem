@@ -499,9 +499,13 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCampaignNumber = (e) => {
-    setrestoreBool(false);
-    setcampaignNumber(e.target.value);
-    setcampaignNumberValidated(false);
+    const re = /^[0-9\b]+$/;
+    if(re.test(Number(e.target.value)))
+    {
+      setrestoreBool(false);
+      setcampaignNumber(e.target.value);
+      setcampaignNumberValidated(false);
+    }  
   };
 
   const validationCheck = () => {
