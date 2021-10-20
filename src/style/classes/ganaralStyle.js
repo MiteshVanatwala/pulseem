@@ -792,7 +792,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height:"100%",
     borderInlineEnd: "1px solid black",
     "@media screen and (max-width: 768px)": {
-      flexDirection: "column",
+      flexDirection: "row-reverse",
       paddingInlineEnd: "8px",
     },
   },
@@ -2646,10 +2646,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     marginTop: 'auto',
     "@media screen and (max-width: 768px)": {
-      flexDirection : "column",
+      flexDirection : "column-reverse",
       justifyContent: "center",
       paddingBottom : "45px",
       marginTop  : "auto",
+      marginBottom:"40px",
       width: '100% !important',
     },
   },
