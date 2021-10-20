@@ -1276,11 +1276,11 @@ const SmsCreator = ({ classes, ...props }) => {
   const handleAddLink = async (id, linkType) => {
     let text = "";
     if (linkType === 'campaign') {
-      text = previousCampaignData[id].PageHref;
+      text = previousCampaignData[id].EncryptURL;
       setdialogClickCampaign(false);
     }
     else if (linkType === 'lp') {
-      text = previousLandingData[id].EncryptURL
+      text = previousLandingData[id].PageHref
       setdialogClickLanding(false);
     }
     seteditmenuClick(false);
