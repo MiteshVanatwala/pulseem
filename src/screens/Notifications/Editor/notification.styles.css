@@ -34,6 +34,26 @@
         width : 100%;
         margin: 0 !important;
     }
+    .baseButtonsContainer
+    {
+        flex-direction : column;
+        justify-content: center;
+        align-items    : center;
+        align-content  : center;
+        width          : 100% !important;
+        padding-bottom : 45px;
+        margin-top     : auto;
+    }
+
+    .baseButtonsContainer * 
+    {
+        width : 100%;
+        margin: 0 !important;
+    }
+    .baseButtonsContainer button {
+        margin-top: 8px !important;
+    }
+
 
     .wizardButtonContainer button {
         margin-top: 8px !important;

@@ -658,10 +658,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   fieldDiv: {
     height: "100px",
     marginTop: "20px",
-    // "@media screen and (max-width: 768px)": {
-    //   width: "100%",
-    //   gridTemplateColumns: "auto",
-    // },
+    "@media screen and (max-width: 960px)": {
+
+      height:"0"
+    
+    },
   },
   buttonForm: {
     display: "flex",
@@ -700,7 +701,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&::placeholder':
     {
       fontSize: "16px"
-    }
+    },
+    "@media screen and  (max-width: 960)": {
+      width:"100%"
+     },
   },
   buttonFieldRemovalMobile: {
     borderRadius: "5px",
@@ -788,7 +792,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height:"100%",
     borderInlineEnd: "1px solid black",
     "@media screen and (max-width: 768px)": {
-      flexDirection: "column",
+      flexDirection: "row-reverse",
       paddingInlineEnd: "8px",
     },
   },
@@ -821,6 +825,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingRight: 20,
     "@media screen and (max-width: 768px)": {
       borderRight: "none",
+      borderLeft:"none"
     },
   },
   selectGroupDiv:
@@ -1185,7 +1190,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "&::-webkit-scrollbar" :  {
       visibility: "hidden",
       width: "0px",
-      }
+      },
+      "@media screen and (max-width: 600px)": {
+        left: "25%",
+      },
+      "@media screen and (max-width: 490px)": {
+        left: "20%",
+      },
+      "@media screen and (max-width: 399px)": {
+        left: "10.5%",
+      },
+      "@media screen and (max-width: 350px)": {
+        left: "9%",
+      },
   },
   wrapChatSumm:
   {
@@ -1230,7 +1247,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "&::-webkit-scrollbar" :  {
       visibility: "hidden",
       width: "0px",
-      }
+      },
+      "@media screen and (max-width: 600px)": {
+        right: 150,
+      },
+      "@media screen and (max-width: 490px)": {
+        right: 80,
+      },
+      "@media screen and (max-width: 399px)": {
+        right: 60,
+      },
+      "@media screen and (max-width: 350px)": {
+        right: 50,
+      },
   },
   fromMe:
   {
@@ -1402,12 +1431,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "grid",
     gridTemplateColumns: "50% 50%",
   
-    "@media screen and (max-width: 768px)": {
-      width: "315px",
-    },
-    "@media screen and (device-width: 411px)": {
-      width: "355px",
-    },
+    // "@media screen and (max-width: 768px)": {
+    //   width: "315px",
+    // },
+    // "@media screen and (device-width: 411px)": {
+    //   width: "355px",
+    // },
   },
   tab1: {
     padding: "10px",
@@ -1417,8 +1446,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: "24px",
     color: "#777777",
     "@media screen and (max-width: 768px)": {
-      fontSize: "14px",
-
+      fontSize: "14px"
     },
   },
   activeTab: {
@@ -1648,9 +1676,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 
     marginTop: "80px",
     height: "400px",
+    "@media screen and (max-width: 960px)": {
+      marginTop: "385px",
+    },
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
-      marginTop: "250px !important",
+      marginTop: "330px !important",
     },
   },
   boxDiv: {
@@ -1658,6 +1689,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 768px)": {
       width: "100%",
       marginBottom: "10px"
+    },
+    "@media screen and (max-width: 960px)": {
+      width: "100%",
+      marginBottom: "10px",
+      // marginTop:"120px"
     },
   },
   emoji: {
@@ -1724,6 +1760,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   phoneDiv: {
     position: "relative",
     // marginInlineStart: "5px",
+    "@media screen and (max-width: 960px)": {
+      marginTop: "90px",
+    },
     "@media screen and (max-width: 768px)": {
       marginTop: "170px",
       display: "flex",
@@ -2342,7 +2381,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   phoneImg:
   {
-    width: "375px",
+    width: "100%",
     height: "415px",
     marginTop: "50px",
     borderBottom: "1px solid black"
@@ -2581,5 +2620,38 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   otpContactUs : 
   {
     marginTop:"30px",fontSize:"14px"
-  }
+  },
+  tabsSwitcher : 
+  {
+    width:"100%",
+    "@media screen and (max-width: 768px)": {
+      width:"320px"
+    },
+  },
+  createGroupContainer : 
+  {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    "@media screen and (max-width: 768px)": {
+      display:"none"
+    },
+  },
+  baseButtonsContainer : 
+  {
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingTop: '15px',
+    width: '100%',
+    display: 'flex',
+    marginTop: 'auto',
+    "@media screen and (max-width: 768px)": {
+      flexDirection : "column-reverse",
+      justifyContent: "center",
+      paddingBottom : "45px",
+      marginTop  : "auto",
+      marginBottom:"40px",
+      width: '100% !important',
+    },
+  },
 });

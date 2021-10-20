@@ -1205,9 +1205,14 @@ const SmsSend = ({ classes, ...props }) => {
 
   const renderBody = () => {
     return (
-      <div>
-        <div className={classes.infoDiv}>
-          <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
+      <Grid container
+      direction="row"
+      justify="flex-start"
+     
+      className={classes.wizardFlex}
+    >
+        <Grid item md={12} xs={12} className={classes.infoDiv}>
+        <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
           <Tooltip
             disableFocusListener
             title={t("smsReport.whomtoSendTip")}
@@ -1215,11 +1220,9 @@ const SmsSend = ({ classes, ...props }) => {
           >
             <span className={classes.bodyInfo}>i</span>
           </Tooltip>
-
-
-        </div>
-        <div className={classes.tabDiv}>
-          <div
+</Grid> 
+    <Grid item md={12} xs={12} className={classes.tabDiv}>
+          <Grid item md={12} xs={12}
             className={
               groupClick
                 ? clsx(classes.tab1, classes.activeTab)
@@ -1235,8 +1238,8 @@ const SmsSend = ({ classes, ...props }) => {
             >
               {t("mainReport.groups")}
             </span>
-          </div>
-          <div
+          </Grid>
+          <Grid item md={12} xs={12}
             className={
               manualClick
                 ? clsx(classes.tab1, classes.activeTab)
@@ -1259,17 +1262,17 @@ const SmsSend = ({ classes, ...props }) => {
             >
               <span className={classes.bodyInfo}>i</span>
             </Tooltip>
-          </div>
+          </Grid>
 
-        </div>
+        </Grid>
         {manualClick ? (
-          <div
-            className={
-              highlighted
-                ? clsx(classes.greenManual)
-                : clsx(classes.areaManual)
-            }
-          >
+          <Grid item md={12} xs={12}    className={
+            highlighted
+              ? clsx(classes.greenManual)
+              : clsx(classes.areaManual)
+          }>
+          
+        
             <textarea
               placeholder={t("sms.dragXlOrCsv")}
               spellcheck="false"
@@ -1297,11 +1300,11 @@ const SmsSend = ({ classes, ...props }) => {
 
               }}
             />
-          </div>
+          </Grid>
         ) : null}
-        <Box>
+        
+         <Grid item md={12} xs={12}>
           {groupClick ? (
-
             <Groups
               classes={classes}
               groupList={groupList}
@@ -1314,7 +1317,7 @@ const SmsSend = ({ classes, ...props }) => {
               bsDot={bsDot}
             />
           ) : null}
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div
               style={{
                 display: "flex",
@@ -1323,11 +1326,7 @@ const SmsSend = ({ classes, ...props }) => {
             >
               {manualClick === false ? (
                 <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
+                  className={classes.createGroupContainer}
                 >
 
                   <Checkbox
@@ -1387,7 +1386,7 @@ const SmsSend = ({ classes, ...props }) => {
                 </Tooltip>
               </div>
             ) : null}
-          </div>
+          </div> */}
           {manualClick == true ? (
             <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
               {areaData !== "" ? (
@@ -1415,8 +1414,8 @@ const SmsSend = ({ classes, ...props }) => {
               <span>{t("sms.totalRecords")}:  {contacts.length !== 0 ? contacts.length : typedData.length}</span>
             </div>
           ) : null}
-        </Box>
-      </div>
+        </Grid>
+        </Grid>
     );
   };
   const handleCross = (id) => {
