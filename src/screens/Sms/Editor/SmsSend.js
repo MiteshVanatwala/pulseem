@@ -354,7 +354,8 @@ const SmsSend = ({ classes, ...props }) => {
   const [dataSaved, setdataSaved] = useState({
     campaignName: "",
     fromNumber: "",
-    msg: ""
+    msg: "",
+    CreditPerSms: 0
   })
   const [initialheadstate, setinitialheadstate] = useState([])
   const [recipientsDisplayGroups, setrecipientsDisplayGroups] = useState([]);
@@ -516,60 +517,14 @@ const SmsSend = ({ classes, ...props }) => {
       getSavedData();
     }
 
-  }, [])
-
-  // useEffect(() => {
-  //   console.log("--> session")
-
-  //   let groupsArr = [];
-
-  //   if(typeof window !== undefined)
-
-  //   {
-  //     console.log("--> session if ")
-  //     groupsArr =  sessionStorage.getItem("groupFilters");
-  //    let final  = JSON.parse(groupsArr)
-  //     if(groupsArr)
-  //     {
-  //       console.log("--> session another if",final)
-
-  //       let tempArr = []
-  //       for(let i=0 ; i < filterGroups.length ; i++)
-  //       {
-  //         for(let j=0 ; j< final.length ; j++)
-  //         {
-  //          if (filterGroups[i].GroupID === final[j].GroupID) {
-  //            if (filterGroups[i].selected) {
-  //              tempArr.push({ ...filterGroups[i], selected: false });
-  //            } else {
-  //              tempArr.push({ ...filterGroups[i], selected: true });
-  //            }
-  //          } else {
-  //            tempArr.push(filterGroups[i]);
-  //          }
-  //         }
-  //       }
-
-  //       setfilterGroups(tempArr);
-
-  //    }
-  //   }
-
-
-
-
-
-  //  }, [reciFilter])
-
+  }, []);
 
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
       setLoader(false)
       if (response) {
-        setdataSaved({ ...dataSaved, campaignName: response.payload.Name, fromNumber: response.payload.FromNumber, msg: response.payload.Text })
-
-
+        setdataSaved({ ...dataSaved, campaignName: response.payload.Name, fromNumber: response.payload.FromNumber, msg: response.payload.Text, CreditPerSms: response.payload.CreditsPerSms })
       }
     }
   }
@@ -2562,10 +2517,10 @@ const SmsSend = ({ classes, ...props }) => {
   const onApiCall = async () => {
     let payload = {
       "SmsCampaignID": props.match.params.id,
-      "SubAccountID": "7322",
-      "AccountID": "7322",
-      "Credits": "1",
-      "TotalRecipients": selectedGroups.length
+      "SubAccountID": -1,
+      "AccountID": -1,
+      "Credits": dataSaved.CreditPerSms,
+      "TotalRecipients": getCampaignSum.FinalCount
     }
     setLoader(true);
     let r = await dispatch(sendSms(payload))
@@ -3062,28 +3017,19 @@ const SmsSend = ({ classes, ...props }) => {
         <Dialog
           classes={classes}
           open={finalSuccessDialog}
-          // onClose={handleNewM}
           renderButtons={false}
           showDefaultButtons={false}
           exit={true}
-
-
           showDefaultButtons={false}
         >
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
             <img src={Gif} style={{ width: "150px", height: "150px" }} />
-
-            <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>Sent!</span>
-
-
+            <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>{t("sms.sent")}</span>
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
-              Your camapign is on its way
+              {t("sms.campaignIsOnItsWay")}
             </p>
-
-
-            <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { history.push("/SMSCampaigns") }}>Confirm</span>
+            <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { history.push("/SMSCampaigns") }}>{t("common.confirm")}</span>
           </div>
-
         </Dialog>
       </>
     )
