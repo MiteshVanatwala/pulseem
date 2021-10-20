@@ -51,7 +51,7 @@ export const paymentSlice = createSlice({
         state.creditCards = payload
       })
       .addCase(getAccountCards.rejected, (state, action) => {
-        state.creditCards = action.error.message
+        state.creditCards = null
       })
       .addCase(buyPackage.fulfilled, (state, { payload }) => {
         state.paymentConfirmation = payload
