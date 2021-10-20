@@ -638,8 +638,8 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const renderFields = () => {
     return (
-      <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
-        <Grid item xs={windowSize === "xs" ? 12 : 4} className={classes.buttonForm}>
+      <Grid container spacing={windowSize === "xs"? 0 : 2} className={classes.fieldDiv}>
+        <Grid item xs={12} md={4} sm={12} className={classes.buttonForm}>
           <Typography className={classes.buttonHead}>
             {t("mainReport.campName")}
           </Typography>
@@ -659,7 +659,7 @@ const SmsCreator = ({ classes, ...props }) => {
             {t("mainReport.campDesc")}
           </Typography>
         </Grid>
-        <Grid item xs={windowSize === "xs" ? 12 : 4} className={classes.buttonForm}>
+        <Grid item xs={12} md={4} sm={12} className={classes.buttonForm}>
           <Box className={classes.inputCampDiv}>
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
@@ -692,7 +692,7 @@ const SmsCreator = ({ classes, ...props }) => {
             {t("mainReport.campRemovalDesc")}
           </Typography>
         </Grid>
-        <Grid item xs={windowSize === "xs" ? 12 : 4} >
+        <Grid item xs={12} md={4} sm={12} >
           {restoreBool || removalNumber !== null ? (
             <Box className={classes.buttonForm}>
               <Typography className={clsx(classes.buttonHead)}>
@@ -780,9 +780,9 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const renderMsg = () => {
     return (
-      <Grid container className={classes.msgDiv}>
+      <Grid container  className={clsx(classes.msgDiv)}>
         <Grid container>
-          <Grid item xs={windowSize === "xs" ? 12 : 8} className={classes.boxDiv}>
+          <Grid item xs={12} md={8} className={classes.boxDiv}>
             <Typography className={classes.msgHead}>
               {t("mainReport.yourMessage")}
             </Typography>
@@ -999,7 +999,7 @@ const SmsCreator = ({ classes, ...props }) => {
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={windowSize === "xs" ? 12 : 4}>
+          <Grid item xs={12} md={4} sm={12}>
             <Box className={classes.switchDiv}>
               <FormGroup>
                 <Switch
@@ -1824,7 +1824,8 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const renderButtons = () => {
     return (
-      <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
+      <div style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" , paddingBottom: 40}} className={clsx(classes.baseButtonsContainer, "baseButtonsContainer")}>
+        <Box>
         <Button
           variant='contained'
           size='medium'
@@ -1832,11 +1833,12 @@ const SmsCreator = ({ classes, ...props }) => {
             classes.actionButton,
             classes.actionButtonRed
           )}
-          style={{ margin: '8px', padding: '9px 0' }}
+          style={{ margin: '8px', padding: '9px 0'}}
           onClick={onHandleDelete}
         >
           <BsTrash style={{ fontSize: "25" }} />
         </Button>
+        </Box>
         <Button
           variant='contained'
           size='medium'
@@ -1880,7 +1882,7 @@ const SmsCreator = ({ classes, ...props }) => {
           }}>
           {!isFromAutomation ? t("mainReport.continue") : t("sms.saveAndExit")}
         </Button>
-      </Box>
+      </div>
     );
   }
 
@@ -2076,22 +2078,14 @@ const SmsCreator = ({ classes, ...props }) => {
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
       {renderToast()}
-      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" ? classes.mobileGrid : classes.smsInit}>
-        {windowSize === "xs" ? <Grid item xs={12} >
-          {renderSwitch()}
-          {renderHead()}
-          {renderFields()}
-          {renderMsg()}
-          {renderPhone()}
-        </Grid> : <> <Grid item xs={8}>
+      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || "sm"? classes.mobileGrid : classes.smsInit}>
+      <Grid item xs={12} sm={12} md={8}>
           {renderSwitch()}
           {renderHead()}
           {renderFields()}
           {renderMsg()}
         </Grid>
-          <Grid item xs={4}>
-            {renderPhone()}
-          </Grid> </>}
+        <Grid item={windowSize === "xs" ? 12 : 4}>{renderPhone()}</Grid>
         {renderButtons()}
       </Grid>
       {renderPreviousLandingDataModal()}
