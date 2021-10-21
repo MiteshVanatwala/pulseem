@@ -696,7 +696,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid #bbb",
     outline: "none",
     padding: "8px",
-    width: "20%",
+    width: 100,
     color:"black",
     '&::placeholder':
     {
@@ -791,8 +791,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "space-evenly",
     height:"100%",
     borderInlineEnd: "1px solid black",
-    "@media screen and (max-width: 768px)": {
-      flexDirection: "row-reverse",
+    "@media screen and (max-width: 540px)": {
+      flexDirection: "column-reverse",
       paddingInlineEnd: "8px",
     },
   },
@@ -1717,6 +1717,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height:"100%",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
+      paddingInlineStart: 0,
       // borderRight: "1px solid black",
     },
   },

@@ -109,7 +109,8 @@ const SmsCreator = ({ classes, ...props }) => {
     commonSettings
   } = useSelector((state) => state.sms);
 
-  const [alignment, setAlignment] = useState(isRTL ? 'right' : 'left');
+
+  const [alignment, setAlignment] = useState('right');
   const [showEmoji, setShowEmoji] = useState(false);
   const [checked, setChecked] = React.useState(false);
   const [dialogClickLanding, setdialogClickLanding] = useState(false);
@@ -166,6 +167,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [otpMsgs, setotpMsgs] = useState("Required Field")
   const [isFromAutomation, setIsFromAutomation] = useState(false);
   const [automationUrl, setAutomationUrl] = useState("");
+  const [isNewVersion, setIsNewVersion] = useState(true);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -215,6 +217,10 @@ const SmsCreator = ({ classes, ...props }) => {
       TotalRecipients: 1
     }
   })
+
+  useEffect(() => {
+    setAlignment(isRTL ? "right" : "left");
+  }, [isRTL])
 
   const qs = queryString.parse(props.location.search);
 
@@ -479,7 +485,7 @@ const SmsCreator = ({ classes, ...props }) => {
         >
           <Typography className={classes.bodyInfo} style={{ marginTop: "6px" }}>i</Typography>
         </Tooltip>
-      </Box>
+      </Box >
     );
   };
   const renderHead = () => {
@@ -500,12 +506,11 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const onCampaignNumber = (e) => {
     const re = /^[0-9\b]+$/;
-    if(re.test(Number(e.target.value)))
-    {
+    if (re.test(Number(e.target.value))) {
       setrestoreBool(false);
       setcampaignNumber(e.target.value);
       setcampaignNumberValidated(false);
-    }  
+    }
   };
 
   const validationCheck = () => {
@@ -642,7 +647,7 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const renderFields = () => {
     return (
-      <Grid container spacing={windowSize === "xs"? 0 : 2} className={classes.fieldDiv}>
+      <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
         <Grid item xs={12} md={4} sm={12} className={classes.buttonForm}>
           <Typography className={classes.buttonHead}>
             {t("mainReport.campName")}
@@ -734,7 +739,6 @@ const SmsCreator = ({ classes, ...props }) => {
         count++;
       }
     }
-    //getcredits(e.target.value.length)
   };
 
   const onRemovalLink = async () => {
@@ -747,18 +751,14 @@ const SmsCreator = ({ classes, ...props }) => {
     else {
       setremovalLinkDisabled(true);
     }
-    //getcredits(smsModel.Text.length)
     setremovalLinkDisabled(true);
   };
 
   const onRemovalMsg = async () => {
-    let newMsg = "";
     let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
     onAddText(removelReplyText);
     let total = splittedMsg;
     total.push(removelReplyText)
-
-    //getcredits(newMsg.length)
     setremovalMessageButtonDisabled(true);
   };
 
@@ -784,7 +784,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const renderMsg = () => {
     return (
-      <Grid container  className={clsx(classes.msgDiv)}>
+      <Grid container className={clsx(classes.msgDiv)}>
         <Grid container>
           <Grid item xs={12} md={8} className={classes.boxDiv}>
             <Typography className={classes.msgHead}>
@@ -796,7 +796,7 @@ const SmsCreator = ({ classes, ...props }) => {
               outlined=""
               id="yourMessage"
               className={clsx(classes.msgArea)}
-              style={{ textAlign: alignment == "left" ? "left" : "right" }}
+              style={{ textAlign: alignment }}
               onChange={onMsgChange}
               onSelect={handleMsgSelect}
               value={smsModel.Text}
@@ -824,7 +824,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placement="top-start"
                       arrow
                     >
-                      <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { handleToggleClick("right") }} />
+                      <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('right') }} />
                     </Tooltip>
                     <Tooltip
                       disableFocusListener
@@ -833,7 +833,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placement="top-start"
                       arrow
                     >
-                      <FormatAlignLeftIcon onClick={() => { handleToggleClick("left") }} />
+                      <FormatAlignLeftIcon onClick={() => {  setAlignment('left') }} />
                     </Tooltip>
                   </>
                 ) : (
@@ -845,7 +845,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placement="top-start"
                       arrow
                     >
-                      <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { handleToggleClick("left") }} />
+                      <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => {  setAlignment('left') }} />
                     </Tooltip>
                     <Tooltip
                       disableFocusListener
@@ -854,7 +854,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placement="top-start"
                       arrow
                     >
-                      <FormatAlignRightIcon onClick={() => { handleToggleClick("right") }} />
+                      <FormatAlignRightIcon onClick={() => {  setAlignment('right') }} />
                     </Tooltip>
                   </>
                 )}
@@ -1042,14 +1042,9 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
 
-  const handleToggleClick = (val) => {
-    if (val == "left") {
-      setAlignment("left")
-    }
-    else {
-      setAlignment("right")
-    }
-  }
+  // const handleToggleClick = (val) => {
+  //   setAlignment(val)
+  // }
 
   const onRadiochange = (e) => {
     setradioBtn(e.target.value);
@@ -1828,20 +1823,20 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const renderButtons = () => {
     return (
-      <div style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" , paddingBottom: 40}} className={clsx(classes.baseButtonsContainer, "baseButtonsContainer")}>
+      <div style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto", paddingBottom: 40 }} className={clsx(classes.baseButtonsContainer, "baseButtonsContainer")}>
         <Box>
-        <Button
-          variant='contained'
-          size='medium'
-          className={clsx(
-            classes.actionButton,
-            classes.actionButtonRed
-          )}
-          style={{ margin: '8px', padding: '9px 0'}}
-          onClick={onHandleDelete}
-        >
-          <BsTrash style={{ fontSize: "25" }} />
-        </Button>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonRed
+            )}
+            style={{ margin: '8px', padding: '9px 0' }}
+            onClick={onHandleDelete}
+          >
+            <BsTrash style={{ fontSize: "25" }} />
+          </Button>
         </Box>
         <Button
           variant='contained'
@@ -2037,6 +2032,17 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     return true;
   };
+  const switchToOldVersion = () => {
+    setIsNewVersion(false);
+    setTimeout(() => {
+      if (smsModel.SMSCampaignID && smsModel.SMSCampaignID > 0) {
+        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&SMSCampaignID=${smsModel.SMSCampaignID}${isFromAutomation ? "&FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`;
+      }
+      else {
+        window.location = "/Pulseem/SMSCampaignEdit.aspx?OldVersion=true";
+      }
+    }, 500)
+  }
   const renderOtpNumberDialog = () => {
     return (
       <Dialog
@@ -2079,11 +2085,35 @@ const SmsCreator = ({ classes, ...props }) => {
       </Dialog>
     )
   }
+
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
       {renderToast()}
-      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || "sm"? classes.mobileGrid : classes.smsInit}>
-      <Grid item xs={12} sm={12} md={8}>
+      <Grid container>
+        <Grid item xs={12} style={{ paddingTop: 20 }}>
+          <Switch
+            className={
+              isRTL
+                ? clsx(classes.reactSwitchHe, "react-switch")
+                : clsx(classes.reactSwitch, "react-switch")
+            }
+            checked={isNewVersion}
+            onChange={switchToOldVersion}
+            onColor="#28a745"
+            checkedIcon={false}
+            uncheckedIcon={false}
+            handleDiameter={30}
+            height={20}
+            width={48}
+            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+            id="material-switch"
+          />
+          <Typography className={clsx(classes.dInlineBlock, classes.buttonHead)}>{t("sms.switchToOldeVersion")}</Typography>
+        </Grid>
+      </Grid>
+      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || "sm" ? classes.mobileGrid : classes.smsInit}>
+        <Grid item xs={12} sm={12} md={8}>
           {renderSwitch()}
           {renderHead()}
           {renderFields()}
