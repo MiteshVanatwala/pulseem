@@ -369,7 +369,7 @@ const SmsSend = ({ classes, ...props }) => {
     INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false },
     NO_GROUPS: { severity: 'error', color: 'error', message: t('smsReport.NoGroups'), showAnimtionCheck: false }
   }
-  console.log(extraData);
+  
   const defaultProps = {
     options: selectArray,
     getOptionLabel: (option) => option.value,
@@ -2602,7 +2602,7 @@ const SmsSend = ({ classes, ...props }) => {
         for (let j = 0; j < typedData.length; j++) {
           requestPayload.push({});
           for (let k = 0; k < typedData[j].length; k++) {
-            if (headers[k] !== t("sms.adjustTitle")) {
+            if (headers[k] && headers[k] !== t("sms.adjustTitle")) {
               let key = headers[k].toLocaleString().replaceAll(" ", "");
               let obj = requestPayload[j];
               obj[key] = typedData[j][k];
@@ -2616,7 +2616,7 @@ const SmsSend = ({ classes, ...props }) => {
           let i = 0;
 
           for (let k in contacts[j]) {
-            if (headers[i] !== t("sms.adjustTitle")) {
+            if (headers[i] && headers[i] !== t("sms.adjustTitle")) {
               let key = headers[i].toLocaleString().replaceAll(" ", "");
               let obj = requestPayload[j];
               obj[key] = contacts[j][k];
@@ -2641,7 +2641,7 @@ const SmsSend = ({ classes, ...props }) => {
       if (r.payload.Reason == "no_recipients_to_update") {
         setToastMessage(toastMessages.INVALID_RECIPIENTS)
         setmanualTrue(false);
-        setareaData("");
+        //setareaData("");
         settypedData([]);
         setContacts([]);
         setgroupNameInput("");
@@ -2722,7 +2722,7 @@ const SmsSend = ({ classes, ...props }) => {
           onClose={handleTrueCaution}
           onCancel={handleCautionCancel}
           onConfirm={handleDataManual}
-          confirmText={t("smsReport.okBtn")}
+          confirmText={t("common.confirm")}
           cancelText={t("smsReport.cancelBtn")}
           showDefaultButtons={true}
         >

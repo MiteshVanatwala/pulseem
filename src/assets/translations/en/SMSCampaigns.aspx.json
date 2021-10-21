@@ -544,5 +544,7 @@
   "saveAndExit": "Save and Exit",
   "campaignIsOnItsWay": "Your camapign is on its way",
   "sent": "Sent!",
-  "switchToOldeVersion": "Switch back to the old version"
+  "switchToOldeVersion": "Switch back to the old version",
+  "message":"Message",
+  "messages":"Messages"
 }

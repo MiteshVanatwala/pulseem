@@ -461,7 +461,11 @@ const SmsCreator = ({ classes, ...props }) => {
         setlinkCount(0);
         setcharacterCount(smsModel.Text.length);
       }
-
+    }
+    else {
+      setlinkCount(0);
+      setcharacterCount(0);
+      setmessageCount(0);
     }
   }
 
@@ -807,7 +811,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 {linkCount} {linkCount === 1 ? t("mainReport.link") : t("mainReport.links")}
               </Typography>
               <Typography style={{ marginInlineEnd: "18px" }}>
-                {messageCount} {t("mainReport.message")}
+                {messageCount} {messageCount === 1 ? t("sms.message") : t("sms.messages")}
               </Typography>
               <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
             </Box>
@@ -833,7 +837,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placement="top-start"
                       arrow
                     >
-                      <FormatAlignLeftIcon onClick={() => {  setAlignment('left') }} />
+                      <FormatAlignLeftIcon onClick={() => { setAlignment('left') }} />
                     </Tooltip>
                   </>
                 ) : (
@@ -845,7 +849,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placement="top-start"
                       arrow
                     >
-                      <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => {  setAlignment('left') }} />
+                      <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('left') }} />
                     </Tooltip>
                     <Tooltip
                       disableFocusListener
@@ -854,7 +858,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placement="top-start"
                       arrow
                     >
-                      <FormatAlignRightIcon onClick={() => {  setAlignment('right') }} />
+                      <FormatAlignRightIcon onClick={() => { setAlignment('right') }} />
                     </Tooltip>
                   </>
                 )}

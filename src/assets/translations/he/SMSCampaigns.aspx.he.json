@@ -477,7 +477,7 @@
   "smsSummaryCampaignFrom" : "קמפיין מאת",
   "smsDialogWhen":"מתי",
   "smsDialogFor":"עבור",
-  "smsSummaryDialogTotalRecipients" : "סך כל הנמענים",
+  "smsSummaryDialogTotalRecipients" : "סך הכל נמענים",
   "smsSummaryDetails" : "פרטים",
   "smsSummaryClose" : "סגור",
   "smsSummaryGroups" : "קבוצות",
@@ -538,5 +538,7 @@
   "saveAndExit": "שמור וצא",
   "campaignIsOnItsWay": "הקמפיין נשלח בהצלחה",
   "sent": "נשלח!",
-  "switchToOldeVersion": "החלף חזרה לגרסא הישנה"
+  "switchToOldeVersion": "החלף חזרה לגרסא הישנה",
+  "message":"הודעה",
+  "messages":"הודעות"
 }
