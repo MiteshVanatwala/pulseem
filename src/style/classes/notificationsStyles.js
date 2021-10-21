@@ -78,8 +78,8 @@ const sidePaddingSizes = {
     xs: 15,
     sm: 25,
     md: 95,
-    lg: 95,
-    xl: 95
+    lg: '5rem',
+    xl: '5rem'
 }
 const summaryTitleMargin = {
     xs: 0,

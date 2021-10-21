@@ -1058,9 +1058,9 @@ const SmsCreator = ({ classes, ...props }) => {
           <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
             <div className={isRTL ? classes.chatBoxHe : classes.chatBox}>
               <div className={classes.fromMe}>
-                {smsModel.Text && smsModel.Text.split('\n').map((str) => {
+                {smsModel.Text !== '' ? smsModel.Text.split('\n').map((str) => {
                   return (<p style={{ margin: "0", padding: "0" }}>{str}</p>)
-                })}
+                }) : t("mainReport.typeText")}
               </div>
             </div>
 
@@ -1929,7 +1929,7 @@ const SmsCreator = ({ classes, ...props }) => {
         </div>
       ),
       content: (
-        <Box className={classes.flexColCenter} style={{paddingBottom: 10}}>
+        <Box className={classes.flexColCenter} style={{ paddingBottom: 10 }}>
           <img src={Gif} style={{ width: "150px", height: "150px" }} />
           <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
             {t("sms.otpNumberValidatedDescription")}
@@ -2017,7 +2017,11 @@ const SmsCreator = ({ classes, ...props }) => {
           {renderFields()}
           {renderMsg()}
         </Grid>
-        <Grid item={windowSize === "xs" || windowSize === "sm" ? 12 : 4}>{renderPhone()}</Grid>
+        <Grid xs={12} sm={12} md={12} lg={4}>
+          <Box style={{maxWidth: 420}}>
+            {renderPhone()}
+          </Box>
+        </Grid>
         {renderButtons()}
       </Grid>
       {renderDialog()}

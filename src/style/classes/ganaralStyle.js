@@ -678,8 +678,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 
   },
   buttonContent: {
-    fontSize: "12px",
-    marginTop: "8px",
+    fontSize: 14
   },
   alertMsg: {
     color: "#ca332f",
@@ -743,14 +742,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: "16px",
     fontFamily: "Sans-serif",
     overflow: "hidden",
-    marginTop: "20px",
+    marginTop: 5,
     width: "100%",
-    border: "none",
-    borderTop: "1px solid rgb(170, 170, 170)",
-    borderInlineStart: "1px solid rgb(170, 170, 170)",
-    borderInlineEnd: "1px solid rgb(170, 170, 170)",
+    border: "1px solid #ced4da",
+    borderBottom: 'none',
     outline: "none",
     padding: "10px",
+    borderTopLeftRadius: '.25rem',
+    borderTopRightRadius: '.25rem',
     "&::placeholder": {
       color: "rgb(170, 170, 170)",
       fontSize: "16px",
@@ -767,23 +766,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#1c82b2",
     fontSize: "12px",
     padding: "10px",
-    border: "none",
-    borderBottom: "1px solid rgb(170, 170, 170)",
-    borderLeft: "1px solid rgb(170, 170, 170)",
-    borderRight: "1px solid rgb(170, 170, 170)",
-
+    border: "1px solid #ced4da",
+    borderTop: 'none'
   },
   funcDiv: {
     width: "100%",
-    height: "70px",
+    height: "60px",
     boxSizing: "border-box",
     display: "grid",
     gridTemplateColumns: "auto auto auto auto",
     position: "relative",
     top: "-4px",
-    padding: "10px",
-    border: "1px solid rgb(170, 170, 170)",
+    padding: 5,
+    border: "1px solid #ced4da",
+    borderTop: 'none',
     alignItems: "center",
+    borderBottomLeftRadius: '.25rem',
+    borderBottomRightRadius: '.25rem',
     "@media screen and (max-width: 768px)": {
       height: "110px"
     },
@@ -794,7 +793,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     justifyContent: "space-evenly",
     height: "100%",
-    borderInlineEnd: "1px solid black",
+    borderInlineEnd: "1px solid grey",
     "@media screen and (max-width: 540px)": {
       flexDirection: "column-reverse",
       paddingInlineEnd: "8px",
@@ -822,7 +821,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   selectMsg: {
     height: "100%",
-    borderInlineEnd: "1px solid black",
+    borderInlineEnd: "1px solid grey",
     display: "flex",
     alignItems: "center",
     paddingLeft: 20,
@@ -846,7 +845,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "100%",
     marginInlineEnd: "5px",
     borderRadius: "5px",
-    borderColor: "#1c82b2",
+    border: "1px solid #ced4da",
     backgroundColor: '#fff',
     "@media screen and (max-width: 768px)": {
       width: "100%",
@@ -1070,13 +1069,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   phoneNumber: {
     position: "absolute",
+    left: 0,
+    right: 0,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontWeight: "700",
-    top: "142px",
-    marginInlineStart: "145px",
-    fontSize: "15px",
+    fontWeight: 700,
+    top: 95,
+    fontSize: 12,
     "@media screen and (max-width: 768px)": {
       marginInlineStart: "10px",
     },
@@ -1241,10 +1241,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   wrapChatHe:
   {
     position: "absolute",
-    top: "180px",
+    top: "140px",
     width: "260px",
     height: "230px",
-    right: 40,
+    right: 50,
     wordBreak: 'break-all',
     color: "#fff",
     borderRadius: "12px",
@@ -1260,18 +1260,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: '1.15rem',
     lineHeight: '1.25',
     maxWidth: '79%',
-    minHeight: '20px',
+    minHeight: '53px',
     padding: '0.5rem .875rem',
     position: 'relative',
-    minWidth: "20px",
+    minWidth: "220px",
     wordWrap: 'break-word',
     right: "12px",
-    backgroundColor: '#248bf5',
+    backgroundColor: '#3da6f6',
     color: '#fff',
     '&::before':
     {
       borderBottomLeftRadius: '0.8rem 0.7rem',
-      borderRight: '1rem solid #248bf5',
+      borderRight: '1rem solid #3da6f6',
       right: '-0.35rem',
       transform: 'translate(0, -0.1rem)',
       bottom: '-0.1rem',
@@ -1666,7 +1666,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   // },
   msgDiv: {
 
-    marginTop: "80px",
+    marginTop: 50,
     height: "400px",
     "@media screen and (max-width: 960px)": {
       marginTop: "385px",
@@ -1704,7 +1704,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: 'space-evenly',
-    borderInlineEnd: "1px solid black",
+    borderInlineEnd: "1px solid grey",
     paddingInlineStart: "8px",
     height: "100%",
     "@media screen and (max-width: 768px)": {
@@ -1751,6 +1751,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   phoneDiv: {
+    maxWidth: 420,
     position: "relative",
     // marginInlineStart: "5px",
     "@media screen and (max-width: 960px)": {
@@ -2375,9 +2376,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   phoneImg:
   {
     width: "100%",
-    height: "415px",
-    marginTop: "50px",
-    borderBottom: "1px solid black"
+    height: windowSize !== 'xs' ? "415px" : 'auto',
+    borderBottom: "1px solid #ccc"
   },
   groupsFilterList:
   {
