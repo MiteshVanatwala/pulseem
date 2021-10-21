@@ -340,7 +340,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     )
   }
 
-  const renderAppBar = windowSize === 'xs' ? renderPhoneAppBar : renderRegularAppBar
+  const renderAppBar = windowSize === 'xs' || windowSize === 'sm' ? renderPhoneAppBar : renderRegularAppBar
 
   const question = <SvgIcon style={{ marginBottom: 5, marginInlineEnd: 5 }}>
     <QuestionIcon />

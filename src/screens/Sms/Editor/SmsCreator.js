@@ -109,17 +109,14 @@ const SmsCreator = ({ classes, ...props }) => {
     commonSettings
   } = useSelector((state) => state.sms);
 
-  const [alignment, setAlignment] = useState(isRTL ? 'right' : 'left');
+  const [dialogType, setDialogType] = useState(null)
+  const [alignment, setAlignment] = useState('right');
   const [showEmoji, setShowEmoji] = useState(false);
   const [checked, setChecked] = React.useState(false);
-  const [dialogClickLanding, setdialogClickLanding] = useState(false);
-  const [dialogClickCampaign, setdialogClickCampaign] = useState(false);
   const [editmenuClick, seteditmenuClick] = useState(false);
   const [campaignBool, setcampaignBool] = useState(false);
   const [OtpCounter, setOtpCounter] = useState(false);
   const [restoreBool, setrestoreBool] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [save, setsave] = useState(false);
   const [campaignNumber, setcampaignNumber] = useState("");
   const [characterCount, setcharacterCount] = useState(0);
   const [linkCount, setlinkCount] = useState(0);
@@ -131,7 +128,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [CampaignSearch, setCampaignSearch] = useState("");
   const [removalLinkDisabled, setremovalLinkDisabled] = useState(false);
   const [waize, setwaize] = useState(false);
-  const [contactGroup, setcontactGroup] = useState(false);
   const [PhoneNumberCampaignId, setPhoneNumberCampaignId] = useState("");
   const [ContactSearch, setContactSearch] = useState("");
   const [cancel, setcancel] = useState(true);
@@ -166,6 +162,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [otpMsgs, setotpMsgs] = useState("Required Field")
   const [isFromAutomation, setIsFromAutomation] = useState(false);
   const [automationUrl, setAutomationUrl] = useState("");
+  const [isNewVersion, setIsNewVersion] = useState(true);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -215,6 +212,10 @@ const SmsCreator = ({ classes, ...props }) => {
       TotalRecipients: 1
     }
   })
+
+  useEffect(() => {
+    setAlignment(isRTL ? "right" : "left");
+  }, [isRTL])
 
   const qs = queryString.parse(props.location.search);
 
@@ -455,7 +456,11 @@ const SmsCreator = ({ classes, ...props }) => {
         setlinkCount(0);
         setcharacterCount(smsModel.Text.length);
       }
-
+    }
+    else {
+      setlinkCount(0);
+      setcharacterCount(0);
+      setmessageCount(0);
     }
   }
 
@@ -467,7 +472,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const renderSwitch = () => {
     return (
-      <Box className={classes.infoDiv}>
+      <Box className={classes.infoDiv} style={{ height: 'auto' }}>
         <Typography className={classes.headInfo}>
           {t("mainReport.smsCampaign")}
         </Typography>
@@ -479,7 +484,7 @@ const SmsCreator = ({ classes, ...props }) => {
         >
           <Typography className={classes.bodyInfo} style={{ marginTop: "6px" }}>i</Typography>
         </Tooltip>
-      </Box>
+      </Box >
     );
   };
   const renderHead = () => {
@@ -500,29 +505,28 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const onCampaignNumber = (e) => {
     const re = /^[0-9\b]+$/;
-    if(re.test(Number(e.target.value)))
-    {
+    if (re.test(Number(e.target.value))) {
       setrestoreBool(false);
       setcampaignNumber(e.target.value);
       setcampaignNumberValidated(false);
-    }  
+    }
   };
 
   const validationCheck = () => {
     if (smsModel.Name === "") {
       setcampaignBool(true);
-      setsave(true);
+      setDialogType({ type: "valiateError" })
       return false;
     }
 
     if (smsModel.Text === "") {
-      setsave(true);
+      setDialogType({ type: "valiateError" })
       return false;
     }
     let english = /^[ A-Za-z0-9]*$/;
     if (campaignNumber === "" || !english.test(campaignNumber)) {
       setcampaignNumberValidated(true);
-      setsave(true);
+      setDialogType({ type: "valiateError" })
       return false;
     }
     return true;
@@ -577,7 +581,8 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const onLeave = (e) => {
     if (!modalOpen && campaignNumber !== storedValue) {
-      setalertToggle(true);
+      setDialogType({ type: 'alert' });
+      // setalertToggle(true);
       setcounterBool(true);
     } else {
       setcounterBool(false);
@@ -642,7 +647,7 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const renderFields = () => {
     return (
-      <Grid container spacing={windowSize === "xs"? 0 : 2} className={classes.fieldDiv}>
+      <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
         <Grid item xs={12} md={4} sm={12} className={classes.buttonForm}>
           <Typography className={classes.buttonHead}>
             {t("mainReport.campName")}
@@ -734,7 +739,6 @@ const SmsCreator = ({ classes, ...props }) => {
         count++;
       }
     }
-    //getcredits(e.target.value.length)
   };
 
   const onRemovalLink = async () => {
@@ -747,18 +751,14 @@ const SmsCreator = ({ classes, ...props }) => {
     else {
       setremovalLinkDisabled(true);
     }
-    //getcredits(smsModel.Text.length)
     setremovalLinkDisabled(true);
   };
 
   const onRemovalMsg = async () => {
-    let newMsg = "";
     let removelReplyText = t("sms.toUnsubscribe") + removalNumber;
     onAddText(removelReplyText);
     let total = splittedMsg;
     total.push(removelReplyText)
-
-    //getcredits(newMsg.length)
     setremovalMessageButtonDisabled(true);
   };
 
@@ -784,7 +784,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const renderMsg = () => {
     return (
-      <Grid container  className={clsx(classes.msgDiv)}>
+      <Grid container className={clsx(classes.msgDiv)}>
         <Grid container>
           <Grid item xs={12} md={8} className={classes.boxDiv}>
             <Typography className={classes.msgHead}>
@@ -796,7 +796,7 @@ const SmsCreator = ({ classes, ...props }) => {
               outlined=""
               id="yourMessage"
               className={clsx(classes.msgArea)}
-              style={{ textAlign: alignment == "left" ? "left" : "right" }}
+              style={{ textAlign: alignment }}
               onChange={onMsgChange}
               onSelect={handleMsgSelect}
               value={smsModel.Text}
@@ -807,7 +807,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 {linkCount} {linkCount === 1 ? t("mainReport.link") : t("mainReport.links")}
               </Typography>
               <Typography style={{ marginInlineEnd: "18px" }}>
-                {messageCount} {t("mainReport.message")}
+                {messageCount} {messageCount === 1 ? t("sms.message") : t("sms.messages")}
               </Typography>
               <Typography>{characterCount}/1000 {t("mainReport.char")}</Typography>
             </Box>
@@ -824,7 +824,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placement="top-start"
                       arrow
                     >
-                      <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { handleToggleClick("right") }} />
+                      <FormatAlignRightIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('right') }} />
                     </Tooltip>
                     <Tooltip
                       disableFocusListener
@@ -833,7 +833,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placement="top-start"
                       arrow
                     >
-                      <FormatAlignLeftIcon onClick={() => { handleToggleClick("left") }} />
+                      <FormatAlignLeftIcon onClick={() => { setAlignment('left') }} />
                     </Tooltip>
                   </>
                 ) : (
@@ -845,7 +845,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placement="top-start"
                       arrow
                     >
-                      <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { handleToggleClick("left") }} />
+                      <FormatAlignLeftIcon style={{ marginInlineEnd: "4px" }} onClick={() => { setAlignment('left') }} />
                     </Tooltip>
                     <Tooltip
                       disableFocusListener
@@ -854,7 +854,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       placement="top-start"
                       arrow
                     >
-                      <FormatAlignRightIcon onClick={() => { handleToggleClick("right") }} />
+                      <FormatAlignRightIcon onClick={() => { setAlignment('right') }} />
                     </Tooltip>
                   </>
                 )}
@@ -971,7 +971,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       <Typography
                         className={classes.dropCon}
                         onClick={() => {
-                          setdialogClickLanding(true);
+                          setDialogType({ type: 'latestLP' });
                           seteditmenuClick(false);
                         }}
                       >
@@ -981,7 +981,7 @@ const SmsCreator = ({ classes, ...props }) => {
                         <Typography
                           className={classes.dropCon}
                           onClick={() => {
-                            setdialogClickCampaign(true);
+                            setDialogType({ type: 'latestCampaigns' });
                             seteditmenuClick(false);
                           }}
                         >
@@ -991,7 +991,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       <Typography
                         className={classes.dropCon}
                         onClick={() => {
-                          setwaize(true);
+                          setDialogType({ type: 'waze' })
                           seteditmenuClick(false);
                         }}
                       >
@@ -1042,14 +1042,10 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
 
-  const handleToggleClick = (val) => {
-    setAlignment(val);
-  }
-
   const onRadiochange = (e) => {
     setradioBtn(e.target.value);
     if (e.target.value === "bottom") {
-      setcontactGroup(true);
+      setDialogType({ type: "groups" })
     }
   };
 
@@ -1174,7 +1170,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     <div
                       className={classes.contactGroupDiv}
                       onClick={() => {
-                        setcontactGroup(true);
+                        setDialogType({ type: "groups" });
                       }}
                     >
                       <div> {t("mainReport.ChooseLinks")}</div>
@@ -1221,12 +1217,6 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     setselectedGroup(temp);
   };
-  const clickExit = () => {
-    setexitClick(true);
-  };
-  const onHandleDelete = () => {
-    setDeleteModalOpen(true);
-  };
 
   const onContinueClick = async (isSave, returnToAutomation = false) => {
     if (validationCheck()) {
@@ -1258,38 +1248,21 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleClose = () => {
-    setDeleteModalOpen(false);
-  };
-  const handleCloseSave = () => {
-    setsave(false);
-  };
-  const handleCloseLanding = () => {
-    setdialogClickLanding(false);
-  };
-  const handleCloseCampaign = () => {
-    setdialogClickCampaign(false);
-  };
-  const handleCloseWaize = () => {
-    setwaize(false);
+    setDialogType(null);
   };
   const handleAddLink = async (id, linkType) => {
     let text = "";
     if (linkType === 'campaign') {
       text = previousCampaignData[id].EncryptURL;
-      setdialogClickCampaign(false);
     }
     else if (linkType === 'lp') {
       text = previousLandingData[id].PageHref
-      setdialogClickLanding(false);
     }
     seteditmenuClick(false);
     onAddText(text)
     let lc = linkCount;
     setlinkCount(++lc);
-  };
-
-  const handleCloseContact = () => {
-    setcontactGroup(false);
+    setDialogType(null);
   };
 
   const handleSelect = (id) => {
@@ -1363,216 +1336,40 @@ const SmsCreator = ({ classes, ...props }) => {
         setOtpVerifyDialog(true);
       }
     }
-    setsave(false);
+    setDialogType(null);
     sethidden(true);
-    setcontactGroup(false);
-  };
-  const renderSendGroup = () => {
-    return (
-      <>
-        {contactGroup ? (
-          <Dialog
-            classes={classes}
-            open={contactGroup}
-            onClose={handleCloseContact}
-            showDefaultButtons={false}
-            icon={<HiOutlineUserGroup className={classes.icn} />}
-          >
-            <div className={classes.baseDialogSetup}>
-              <span className={classes.groupName}>
-                {t("mainReport.selectGroups")}
-              </span>
-            </div>
-            <div className={classes.modalDiv}>
-              <Paper component="form" className={btnStyle.root}>
-                <IconButton
-                  type="submit"
-                  className={btnStyle.iconButton}
-                  aria-label="search"
-                >
-                  <SearchIcon />
-                </IconButton>
-                <InputBase
-                  className={btnStyle.input}
-                  placeholder={t("mainReport.searchSms")}
-                  inputProps={{ "aria-label": "Search" }}
-                  onChange={(e) => {
-                    setContactSearch(e.target.value);
-                  }}
-                />
-              </Paper>
-            </div>
-            <div className={classes.listDiv}>
-              {selectedGroup
-                .filter((val) => {
-                  if (ContactSearch == "") {
-                    return val;
-                  } else if (
-                    val.GroupName.toLowerCase().includes(
-                      ContactSearch.toLowerCase()
-                    )
-                  ) {
-                    return val;
-                  }
-                })
-                .map((item, idx) => {
-
-                  return (
-                    <div className={classes.searchCon} onClick={() => {
-                      handleSelect(item.GroupID);
-                    }}>
-                      <span
-                        style={{ marginInlineEnd: "25px" }}
-                        className={
-                          item.selected ? classes.greenDoc : classes.blueDoc
-                        }
-                      >
-                        {item.selected ? (
-                          <FaCheck className={clsx(classes.green)} />
-                        ) : (
-                          <HiOutlineUserGroup />
-                        )}
-                      </span>
-                      <div
-                        className={classes.selectGroupDiv}
-                      >
-                        <span>{item.GroupName}</span>
-                        <span>{item.Recipients} {item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients")}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-            <div
-              style={{
-                height: "50px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Button
-                variant="contained"
-                size="small"
-                onClick={() => {
-                  handleGroupClose();
-                }}
-                className={clsx(
-                  classes.dialogButton,
-                  classes.dialogConfirmButton
-                )}
-              >
-                {t("mainReport.confirmSms")}
-              </Button>
-            </div>
-          </Dialog>
-        ) : null}
-      </>
-    );
   };
 
-  const renderExit = () => {
-    return (
-      <>
-        {exitClick ? (
-          <Dialog
-            classes={classes}
-            open={exitClick}
-            onClose={() => { handleExit(false) }}
-            onConfirm={() => { handleExit(true) }}
-            onCancel={() => { setexitClick(false) }}
-            confirmText={t("mainReport.Ok")}
-            cancelText={t("mainReport.No")}
-            showDefaultButtons={true}
-            icon={
-              <AiOutlineExclamationCircle
-                style={{ fontSize: 30, color: "#fff" }}
-              />
-            }
-          >
-            <div className={classes.baseDialogSetup}>
-              <span className={classes.groupName}>{t("mainReport.handleExitTitle")}</span>
-            </div>
-            <div className={classes.bodyTextDialog}>
-              <span>{t("mainReport.leaveCampaign")}</span>
-            </div>
-          </Dialog>
-        ) : null}
-      </>
-    );
-  };
   const handlecaution = () => {
     setalertToggle(false);
     setcounterBool(false);
     setmodalOpen(false);
     setremovalNumber(null);
+    setDialogType(null);
   };
-
-  const handlecautioncancel = () => {
-    setcampaignNumber(storedValue);
-    setalertToggle(false);
-  };
-
   const handleAlertoff = () => {
     setcampaignNumber(storedValue);
     setalertToggle(false);
-  };
-  const renderAlert = () => {
-    return (
-      <>
-        {alertToggle ? (
-          <Dialog
-            classes={classes}
-            open={alertToggle}
-            onClose={handleAlertoff}
-            onConfirm={handlecaution}
-            confirmText={t("mainReport.confirmSms")}
-            onCancel={handlecautioncancel}
-            cancelText={t("mainReport.cancelPleaseNoteModal")}
-            showDefaultButtons={true}
-            icon={<div className={classes.dialogIconContent}>
-              {'\uE11B'}
-            </div>}
-          >
-            <Box className={classes.numberChnageModal}>
-              <Typography className={classes.groupName}>  {t("mainReport.pleaseNote")}</Typography>
-            </Box>
-            <Box >
-              <Typography className={classes.modalText}>
-                {t("mainReport.pleaseNoteDsec")}
-              </Typography>
-            </Box>
-          </Dialog>
-        ) : null}
-      </>
-    );
+    setDialogType(null);
   };
   const handleExit = async (saveBeforeExit) => {
-
     if (saveBeforeExit) {
       if (validationCheck()) {
         const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
         let r = await dispatch(smsSave(payloadToPush));
         if (r) {
-          setexitClick(false);
           history.push("/SMSCampaigns");
         }
       }
-      else {
-        setexitClick(false);
-      }
-
     }
     else if (saveBeforeExit == false) {
-
-      setexitClick(false);
       history.push("/SMSCampaigns");
     }
+    setDialogType(null);
   };
   const handleSummary = () => {
     setsummary(false);
   }
-
   const renderSummary = () => {
     return (
       <>
@@ -1599,188 +1396,9 @@ const SmsCreator = ({ classes, ...props }) => {
     let lc = linkCount;
     setlinkCount(++lc);
     setwaize(false);
+    setDialogType(null);
   };
 
-  const renderPreviousLandingDataModal = () => {
-    return (
-      <>
-        <Dialog
-          classes={classes}
-          open={dialogClickLanding}
-          onClose={handleCloseLanding}
-          showDefaultButtons={false}
-          icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
-        >
-          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>{t("mainReport.selectLanding")}</span>
-          </div>
-          <div className={classes.modalDiv}>
-            <Paper component="form" className={btnStyle.root}>
-              <IconButton
-                type="submit"
-                className={btnStyle.iconButton}
-                aria-label="search"
-              >
-                <SearchIcon />
-              </IconButton>
-              <InputBase
-                className={btnStyle.input}
-                placeholder={t("mainReport.searchSms")}
-                inputProps={{ "aria-label": "Search" }}
-                onChange={(e) => {
-                  setlandingSearch(e.target.value);
-                }}
-              />
-            </Paper>
-          </div>
-          <div className={classes.listDiv}>
-            {previousLandingData
-              .filter((val) => {
-                if (landingSearch == "") {
-                  return val;
-                } else if (
-                  val.CampaignName.toLowerCase().includes(
-                    landingSearch.toLowerCase()
-                  )
-                ) {
-                  return val;
-                }
-              })
-              .map((item, idx) => {
-                return (
-                  <div
-                    className={classes.searchCon}
-                    onClick={() => {
-                      handleAddLink(idx, 'lp');
-                    }}
-                  >
-                    <span
-                      style={{ marginInlineEnd: "8px" }}
-                      className={classes.grDoc}
-                    >
-                      <AiOutlineFile style={{ color: "#1771AD", fill: "#1771AD", stroke: "#1771AD" }} color="#1771AD" />
-                    </span>
-                    <span>{item.CampaignName}</span>
-                  </div>
-                );
-              })}
-          </div>
-        </Dialog>
-      </>
-    )
-  }
-  const renderPreviousCampaignsData = () => {
-    return (
-      <>
-        {dialogClickCampaign ? (
-          <Dialog
-            classes={classes}
-            open={dialogClickCampaign}
-            onClose={handleCloseCampaign}
-            showDefaultButtons={false}
-            icon={<BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />}
-          >
-            <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-              <span className={classes.groupName}>{t("mainReport.selectCamp")}</span>
-            </div>
-            <div className={classes.modalDiv}>
-              <Paper component="form" className={btnStyle.root}>
-                <IconButton
-                  type="submit"
-                  className={btnStyle.iconButton}
-                  aria-label="search"
-                >
-                  <SearchIcon />
-                </IconButton>
-                <InputBase
-                  className={btnStyle.input}
-                  placeholder={t("mainReport.searchSms")}
-                  inputProps={{ "aria-label": "Search" }}
-                  onChange={(e) => {
-                    setCampaignSearch(e.target.value);
-                  }}
-                />
-              </Paper>
-            </div>
-            <div className={classes.listDiv}>
-              {previousCampaignData
-                .filter((val) => {
-                  if (CampaignSearch == "") {
-                    return val;
-                  } else if (
-                    val.CampaignName.toLowerCase().includes(
-                      CampaignSearch.toLowerCase()
-                    )
-                  ) {
-                    return val;
-                  }
-                })
-                .map((item, idx) => {
-                  return (
-                    <div
-                      className={classes.searchCon}
-                      onClick={() => {
-                        handleAddLink(idx, 'campaign');
-                      }}
-                    >
-                      <span
-                        style={{ marginInlineEnd: "8px" }}
-                        className={classes.grDoc}
-                      >
-                        <AiOutlineFile />
-                      </span>
-                      <span>{item.Name}</span>
-                    </div>
-                  );
-                })}
-            </div>
-          </Dialog>
-        ) : null}</>
-    )
-  }
-  const renderWaizeNavigationModal = () => {
-    return (<>
-      {waize ? (
-        <Dialog
-          classes={classes}
-          style={{ width: "400px" }}
-          open={waize}
-          onClose={handleCloseWaize}
-          showDefaultButtons={false}
-          icon={<div className={classes.dialogIconContent}>
-            {'\u0056'}
-          </div>}
-        >
-          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>
-              {t("mainReport.waizeTitle")}
-            </span>
-          </div>
-          <div className={classes.modalDiv}>
-            <Paper component="form" className={btnStyle.root}>
-              <img src={Waze} style={{ pointerEvents: "none" }} />
-              <InputBase
-                className={btnStyle.input}
-                placeholder={t("mainReport.typeAddress")}
-                inputProps={{ "aria-label": "Search" }}
-                onChange={(e) => {
-                  setSearched(e.target.value);
-                }}
-              />
-            </Paper>
-            <span
-              className={classes.confirmButton}
-              onClick={() => {
-                onLocation();
-              }}
-            >
-              {t("mainReport.confirmSms")}
-            </span>
-          </div>
-        </Dialog>
-      ) : null}</>)
-
-  }
   const renderToast = () => {
     if (toastMessage) {
 
@@ -1793,50 +1411,23 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     return null;
   }
-  const renderDeleteModal = () => {
-    return (<>
-      {deleteModalOpen ? (
-        <Dialog
-          classes={classes}
-          open={deleteModalOpen}
-          onClose={handleClose}
-          onCancel={cancel ? null : true}
-          onConfirm={handleDelete}
-          confirmText={t("mainReport.confirmSms")}
-          showDefaultButtons={true}
-          icon={
-            <AiOutlineExclamationCircle
-              style={{ fontSize: 30, color: "#fff" }}
-            />
-          }
-        >
-          <div className={classes.baseDialogSetup}>
-            <span className={classes.groupName}>{t("mainReport.deleteSms")}</span>
-          </div>
-          <div className={classes.bodyTextDialog}>
-            <span>{t("mainReport.confirmSure")}</span>
-          </div>
-        </Dialog>
-      ) : null}
-    </>)
-  }
 
   const renderButtons = () => {
     return (
-      <div style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" , paddingBottom: 40}} className={clsx(classes.baseButtonsContainer, "baseButtonsContainer")}>
+      <div style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto", paddingBottom: 40 }} className={clsx(classes.baseButtonsContainer, "baseButtonsContainer")}>
         <Box>
-        <Button
-          variant='contained'
-          size='medium'
-          className={clsx(
-            classes.actionButton,
-            classes.actionButtonRed
-          )}
-          style={{ margin: '8px', padding: '9px 0'}}
-          onClick={onHandleDelete}
-        >
-          <BsTrash style={{ fontSize: "25" }} />
-        </Button>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonRed
+            )}
+            style={{ margin: '8px', padding: '9px 0' }}
+            onClick={() => { setDialogType({ type: 'deleteSms' }) }}
+          >
+            <BsTrash style={{ fontSize: "25" }} />
+          </Button>
         </Box>
         <Button
           variant='contained'
@@ -1848,7 +1439,7 @@ const SmsCreator = ({ classes, ...props }) => {
           )}
           color="primary"
           style={{ margin: '8px' }}
-          onClick={() => { setexitClick(true) }}>
+          onClick={() => { setDialogType({ type: 'exit' }) }}>
           {t('mainReport.exitSms')}
         </Button>
         <Button
@@ -1884,56 +1475,6 @@ const SmsCreator = ({ classes, ...props }) => {
       </div>
     );
   }
-
-  const renderSaveModal = () => {
-    return (<>
-      <Dialog
-        classes={classes}
-        open={save}
-        onClose={handleCloseSave}
-        showDefaultButtons={false}
-        icon={
-          <AiOutlineExclamationCircle style={{ fontSize: 30, color: "#fff" }} />
-        }
-      >
-        <div className={classes.baseDialogSetup}>
-          <span className={classes.groupName}>
-            {t("mainReport.fieldInvalid")}:
-          </span>
-        </div>
-        <div>
-          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
-            {campaignBool ? <li style={{ marginBottom: "8px" }}>
-              {t("mainReport.campaignRequire")}
-            </li> : null}
-            {smsModel.Text === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
-            {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
-              {t("mainReport.campaignFromRequire")}
-            </li> : null}
-          </ul>
-        </div>
-        <div
-          style={{
-            height: "50px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Button
-            variant="contained"
-            size="small"
-            onClick={() => {
-              setsave(false);
-            }}
-            className={clsx(classes.dialogButton, classes.dialogConfirmButton)}
-          >
-            {t("mainReport.confirmSms")}
-          </Button>
-        </div>
-      </Dialog></>)
-  }
-
   const renderOtpSuccessDialog = () => {
     return (
       <>
@@ -2032,6 +1573,17 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     return true;
   };
+  const switchToOldVersion = () => {
+    setIsNewVersion(false);
+    setTimeout(() => {
+      if (smsModel.SMSCampaignID && smsModel.SMSCampaignID > 0) {
+        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&SMSCampaignID=${smsModel.SMSCampaignID}${isFromAutomation ? "&FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`;
+      }
+      else {
+        window.location = "/Pulseem/SMSCampaignEdit.aspx?OldVersion=true";
+      }
+    }, 500)
+  }
   const renderOtpNumberDialog = () => {
     return (
       <Dialog
@@ -2074,27 +1626,396 @@ const SmsCreator = ({ classes, ...props }) => {
       </Dialog>
     )
   }
+
+  //#region Dialogs
+  const lpDialog = () => {
+    return {
+      title: t('mainReport.selectLanding'),
+      showDivider: true,
+      icon: (
+        <BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <Paper component="form" className={btnStyle.root}>
+            <IconButton
+              type="submit"
+              className={btnStyle.iconButton}
+              aria-label="search"
+            >
+              <SearchIcon />
+            </IconButton>
+            <InputBase
+              className={btnStyle.input}
+              placeholder={t("mainReport.searchSms")}
+              inputProps={{ "aria-label": "Search" }}
+              onChange={(e) => {
+                setCampaignSearch(e.target.value);
+              }}
+            />
+          </Paper>
+          {previousCampaignData
+            .filter((val) => {
+              if (CampaignSearch == "") {
+                return val;
+              } else if (
+                val.CampaignName.toLowerCase().includes(
+                  CampaignSearch.toLowerCase()
+                )
+              ) {
+                return val;
+              }
+            })
+            .map((item, idx) => {
+              return (
+                <div
+                  className={classes.searchCon}
+                  onClick={() => {
+                    handleAddLink(idx, 'campaign');
+                  }}
+                >
+                  <span
+                    style={{ marginInlineEnd: "8px" }}
+                    className={classes.grDoc}
+                  >
+                    <AiOutlineFile />
+                  </span>
+                  <span className={classes.ellipsisText}>{item.Name}</span>
+                </div>
+              );
+            })}
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) }
+    }
+  }
+  const campaignsDialog = () => {
+    return {
+      title: t('mainReport.selectCamp'),
+      showDivider: true,
+      icon: (
+        <BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <Paper component="form" className={btnStyle.root}>
+            <IconButton
+              type="submit"
+              className={btnStyle.iconButton}
+              aria-label="search"
+            >
+              <SearchIcon />
+            </IconButton>
+            <InputBase
+              className={btnStyle.input}
+              placeholder={t("mainReport.searchSms")}
+              inputProps={{ "aria-label": "Search" }}
+              onChange={(e) => {
+                setlandingSearch(e.target.value);
+              }}
+            />
+          </Paper>
+          <Box style={{ marginTop: 20 }}>
+            {previousLandingData
+              .filter((val) => {
+                if (landingSearch == "") {
+                  return val;
+                } else if (
+                  val.CampaignName.toLowerCase().includes(
+                    landingSearch.toLowerCase()
+                  )
+                ) {
+                  return val;
+                }
+              })
+              .map((item, idx) => {
+                return (
+                  <div
+                    className={classes.searchCon}
+                    onClick={() => {
+                      handleAddLink(idx, 'lp');
+                    }}
+                  >
+                    <span
+                      style={{ marginInlineEnd: "8px" }}
+                      className={classes.grDoc}
+                    >
+                      <AiOutlineFile style={{ color: "#1771AD", fill: "#1771AD", stroke: "#1771AD" }} color="#1771AD" />
+                    </span>
+                    <span className={classes.ellipsisText}>{item.CampaignName}</span>
+                  </div>
+                );
+              })}
+          </Box>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) }
+
+    }
+  }
+  const wazeDialog = () => {
+    return {
+      title: t('mainReport.waizeTitle'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\u0056'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <Paper component="form" className={btnStyle.root}>
+            <img src={Waze} style={{ pointerEvents: "none" }} />
+            <InputBase
+              className={btnStyle.input}
+              placeholder={t("mainReport.typeAddress")}
+              inputProps={{ "aria-label": "Search" }}
+              onChange={(e) => {
+                setSearched(e.target.value);
+              }}
+            />
+          </Paper>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { onLocation() }
+    }
+  }
+  const deleteDialog = () => {
+    return {
+      title: t('mainReport.deleteSms'),
+      showDivider: true,
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box>
+          <div className={classes.bodyTextDialog}>
+            <Typography>
+              {t("mainReport.confirmSure")}
+            </Typography>
+          </div>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { handleDelete() }
+    }
+  }
+  const validationDialog = () => {
+    return {
+      title: t('mainReport.fieldInvalid'),
+      showDivider: true,
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box>
+          <div>
+            <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
+              {campaignBool ? <li style={{ marginBottom: "8px" }}>
+                {t("mainReport.campaignRequire")}
+              </li> : null}
+              {smsModel.Text === "" ? <li>{t("mainReport.msgRequire")}</li> : null}
+              {campaignNumberValidated ? <li style={{ marginBottom: "8px" }}>
+                {t("mainReport.campaignFromRequire")}
+              </li> : null}
+            </ul>
+          </div>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
+  }
+  const groupDialog = () => {
+    return {
+      title: t('mainReport.selectGroups'),
+      showDivider: true,
+      icon: (
+        <HiOutlineUserGroup
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box>
+          <Paper component="form" className={btnStyle.root}>
+            <IconButton
+              type="submit"
+              className={btnStyle.iconButton}
+              aria-label="search"
+            >
+              <SearchIcon />
+            </IconButton>
+            <InputBase
+              className={btnStyle.input}
+              placeholder={t("mainReport.searchSms")}
+              inputProps={{ "aria-label": "Search" }}
+              onChange={(e) => {
+                setContactSearch(e.target.value);
+              }}
+            />
+          </Paper>
+          <div className={classes.listDiv}>
+            {selectedGroup
+              .filter((val) => {
+                if (ContactSearch == "") {
+                  return val;
+                } else if (
+                  val.GroupName.toLowerCase().includes(
+                    ContactSearch.toLowerCase()
+                  )
+                ) {
+                  return val;
+                }
+              })
+              .map((item, idx) => {
+
+                return (
+                  <div className={classes.searchCon} onClick={() => {
+                    handleSelect(item.GroupID);
+                  }}>
+                    <span
+                      style={{ marginInlineEnd: "25px" }}
+                      className={
+                        item.selected ? classes.greenDoc : classes.blueDoc
+                      }
+                    >
+                      {item.selected ? (
+                        <FaCheck className={clsx(classes.green)} />
+                      ) : (
+                        <HiOutlineUserGroup />
+                      )}
+                    </span>
+                    <div
+                      className={classes.selectGroupDiv}
+                    >
+                      <span>{item.GroupName}</span>
+                      <span>{item.Recipients} {item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients")}</span>
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { handleGroupClose() }
+    }
+  }
+  const exitDialog = () => {
+    return {
+      title: t('mainReport.handleExitTitle'),
+      showDivider: true,
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box>
+          <Typography className={classes.f18}>{t("mainReport.leaveCampaign")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      cancelText: t("common.No"),
+      onClose: () => { handleExit(false) },
+      onConfirm: () => { handleExit(true) }
+    }
+  }
+  const alertDialog = () => {
+    return {
+      title: t('mainReport.pleaseNote'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>
+      ),
+      content: (
+        <Box style={{maxWidth: 400}}>
+          <Typography className={classes.f18}>{t("mainReport.pleaseNoteDsec")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { handleAlertoff() },
+      onConfirm: () => { handlecaution() }
+    }
+  }
+  const renderDialog = () => {
+    const { type } = dialogType || {}
+
+    const dialogContent = {
+      latestLP: lpDialog(),
+      latestCampaigns: campaignsDialog(),
+      waze: wazeDialog(),
+      deleteSms: deleteDialog(),
+      valiateError: validationDialog(),
+      groups: groupDialog(),
+      exit: exitDialog(),
+      alert: alertDialog()
+    }
+
+    const currentDialog = dialogContent[type] || {}
+    return (
+      dialogType && <Dialog
+        classes={classes}
+        open={dialogType}
+        onClose={handleClose}
+        {...currentDialog}>
+        {currentDialog.content}
+      </Dialog>
+    )
+  }
+
+  //#endregion
+
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
       {renderToast()}
-      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || "sm"? classes.mobileGrid : classes.smsInit}>
-      <Grid item xs={12} sm={12} md={8}>
+      <Grid container>
+        <Grid item xs={12} style={{ paddingTop: 20 }}>
+          <Switch
+            className={
+              isRTL
+                ? clsx(classes.reactSwitchHe, "react-switch")
+                : clsx(classes.reactSwitch, "react-switch")
+            }
+            checked={isNewVersion}
+            onChange={switchToOldVersion}
+            onColor="#28a745"
+            checkedIcon={false}
+            uncheckedIcon={false}
+            handleDiameter={30}
+            height={20}
+            width={48}
+            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+            id="material-switch"
+          />
+          <Typography className={clsx(classes.dInlineBlock, classes.buttonHead)}>{t("sms.switchToOldeVersion")}</Typography>
+        </Grid>
+      </Grid>
+      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || "sm" ? classes.mobileGrid : classes.smsInit}>
+        <Grid item xs={12} sm={12} lg={8}>
           {renderSwitch()}
           {renderHead()}
           {renderFields()}
           {renderMsg()}
         </Grid>
-        <Grid item={windowSize === "xs" ? 12 : 4}>{renderPhone()}</Grid>
+        <Grid item={windowSize === "xs" || windowSize === "sm" ? 12 : 4}>{renderPhone()}</Grid>
         {renderButtons()}
       </Grid>
-      {renderPreviousLandingDataModal()}
-      {renderPreviousCampaignsData()}
-      {renderWaizeNavigationModal()}
-      {renderDeleteModal()}
-      {renderSaveModal()}
-      {renderSendGroup()}
-      {renderExit()}
-      {renderAlert()}
+      {renderDialog()}
       {renderOtpVerificationDialog()}
       {renderOtpNumberDialog()}
       {renderSummary()}

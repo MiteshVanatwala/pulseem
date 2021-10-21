@@ -369,7 +369,7 @@ const SmsSend = ({ classes, ...props }) => {
     INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false },
     NO_GROUPS: { severity: 'error', color: 'error', message: t('smsReport.NoGroups'), showAnimtionCheck: false }
   }
-  console.log(extraData);
+
   const defaultProps = {
     options: selectArray,
     getOptionLabel: (option) => option.value,
@@ -737,13 +737,14 @@ const SmsSend = ({ classes, ...props }) => {
   };
   const handleRandom = (e) => {
     const re = /^[0-9\b]+$/;
+    const totalRecipients = selectedGroups.reduce(function (a, b) {
+      return a + b['Recipients'];
+    }, 0);
 
     if ((e.target.value === '' || re.test(e.target.value))) {
 
       if (percentTrue) {
-        if (Number(e.target.value) > selectedGroups.reduce(function (a, b) {
-          return a + b['Recipients'];
-        }, 0)) {
+        if (Number(e.target.value) > totalRecipients) {
           setrandom(selectedGroups.reduce(function (a, b) {
             return a + b['Recipients'];
           }, 0))
@@ -755,8 +756,8 @@ const SmsSend = ({ classes, ...props }) => {
         }
       }
       else {
-        if (Number(e.target.value) > inputF) {
-          setrandom(inputF)
+        if (Number(e.target.value) > totalRecipients) {
+          setrandom(totalRecipients)
         }
         else {
           setrandom(e.target.value)
@@ -1206,13 +1207,13 @@ const SmsSend = ({ classes, ...props }) => {
   const renderBody = () => {
     return (
       <Grid container
-      direction="row"
-      justify="flex-start"
-     
-      className={classes.wizardFlex}
-    >
+        direction="row"
+        justify="flex-start"
+
+        className={classes.wizardFlex}
+      >
         <Grid item md={12} xs={12} className={classes.infoDiv}>
-        <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
+          <span className={classes.conInfo}>{t("mainReport.whomTosend")}</span>
           <Tooltip
             disableFocusListener
             title={t("smsReport.whomtoSendTip")}
@@ -1220,8 +1221,8 @@ const SmsSend = ({ classes, ...props }) => {
           >
             <span className={classes.bodyInfo}>i</span>
           </Tooltip>
-</Grid> 
-    <Grid item md={12} xs={12} className={classes.tabDiv}>
+        </Grid>
+        <Grid item md={12} xs={12} className={classes.tabDiv}>
           <Grid item md={12} xs={12}
             className={
               groupClick
@@ -1266,13 +1267,13 @@ const SmsSend = ({ classes, ...props }) => {
 
         </Grid>
         {manualClick ? (
-          <Grid item md={12} xs={12}    className={
+          <Grid item md={12} xs={12} className={
             highlighted
               ? clsx(classes.greenManual)
               : clsx(classes.areaManual)
           }>
-          
-        
+
+
             <textarea
               placeholder={t("sms.dragXlOrCsv")}
               spellcheck="false"
@@ -1302,8 +1303,8 @@ const SmsSend = ({ classes, ...props }) => {
             />
           </Grid>
         ) : null}
-        
-         <Grid item md={12} xs={12}>
+
+        <Grid item md={12} xs={12}>
           {groupClick ? (
             <Groups
               classes={classes}
@@ -1317,7 +1318,7 @@ const SmsSend = ({ classes, ...props }) => {
               bsDot={bsDot}
             />
           ) : null}
-          {/* <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
             <div
               style={{
                 display: "flex",
@@ -1386,7 +1387,7 @@ const SmsSend = ({ classes, ...props }) => {
                 </Tooltip>
               </div>
             ) : null}
-          </div> */}
+          </div>
           {manualClick == true ? (
             <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
               {areaData !== "" ? (
@@ -1415,7 +1416,7 @@ const SmsSend = ({ classes, ...props }) => {
             </div>
           ) : null}
         </Grid>
-        </Grid>
+      </Grid>
     );
   };
   const handleCross = (id) => {
@@ -2602,7 +2603,7 @@ const SmsSend = ({ classes, ...props }) => {
         for (let j = 0; j < typedData.length; j++) {
           requestPayload.push({});
           for (let k = 0; k < typedData[j].length; k++) {
-            if (headers[k] !== t("sms.adjustTitle")) {
+            if (headers[k] && headers[k] !== t("sms.adjustTitle")) {
               let key = headers[k].toLocaleString().replaceAll(" ", "");
               let obj = requestPayload[j];
               obj[key] = typedData[j][k];
@@ -2616,7 +2617,7 @@ const SmsSend = ({ classes, ...props }) => {
           let i = 0;
 
           for (let k in contacts[j]) {
-            if (headers[i] !== t("sms.adjustTitle")) {
+            if (headers[i] && headers[i] !== t("sms.adjustTitle")) {
               let key = headers[i].toLocaleString().replaceAll(" ", "");
               let obj = requestPayload[j];
               obj[key] = contacts[j][k];
@@ -2641,7 +2642,7 @@ const SmsSend = ({ classes, ...props }) => {
       if (r.payload.Reason == "no_recipients_to_update") {
         setToastMessage(toastMessages.INVALID_RECIPIENTS)
         setmanualTrue(false);
-        setareaData("");
+        //setareaData("");
         settypedData([]);
         setContacts([]);
         setgroupNameInput("");
@@ -2722,7 +2723,7 @@ const SmsSend = ({ classes, ...props }) => {
           onClose={handleTrueCaution}
           onCancel={handleCautionCancel}
           onConfirm={handleDataManual}
-          confirmText={t("smsReport.okBtn")}
+          confirmText={t("common.confirm")}
           cancelText={t("smsReport.cancelBtn")}
           showDefaultButtons={true}
         >
