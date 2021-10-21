@@ -2113,13 +2113,13 @@ const SmsCreator = ({ classes, ...props }) => {
         </Grid>
       </Grid>
       <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || "sm" ? classes.mobileGrid : classes.smsInit}>
-        <Grid item xs={12} sm={12} md={8}>
+        <Grid item xs={12} sm={12} lg={8}>
           {renderSwitch()}
           {renderHead()}
           {renderFields()}
           {renderMsg()}
         </Grid>
-        <Grid item={windowSize === "xs" ? 12 : 4}>{renderPhone()}</Grid>
+        <Grid item={windowSize === "xs" || windowSize === "sm" ? 12 : 4}>{renderPhone()}</Grid>
         {renderButtons()}
       </Grid>
       {renderPreviousLandingDataModal()}
