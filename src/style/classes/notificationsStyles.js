@@ -532,6 +532,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         border: '1px solid #1c82b2',
         borderRadius: '.2rem',
         padding: 3,
+        height: 28,
         '& .MuiSelect-selectMenu': {
             color: '#1c82b2 !important',
             '&:focus': {
@@ -544,7 +545,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     groupFilterRow: {
         borderBottom: '1px solid #ccc',
-        justifyContent: 'space-between'
+        justifyContent: 'space-around'
     },
     flexSpaceBetween: {
         width: '100%',
@@ -561,7 +562,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     controlField: {
         marginRight: 5,
         marginLeft: 5,
-        height: 40,
+        height: 36,
         fontSize: 24,
         '& .MuiButton-label': {
             color: '#1c82b2'

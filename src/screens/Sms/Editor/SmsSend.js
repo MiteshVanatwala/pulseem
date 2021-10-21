@@ -1797,7 +1797,7 @@ const SmsSend = ({ classes, ...props }) => {
         <Grid item md={10} xs={12}>
           <h2
             className={classes.sectionTitle}
-            style={{ marginTop: windowSize == "xs" ? "0" : null }}
+            style={{ marginTop: windowSize === "xs" ? "0" : null }}
           >
             {t("notifications.whenToSend")}
           </h2>
@@ -3036,8 +3036,7 @@ const SmsSend = ({ classes, ...props }) => {
     )
   }
 
-  const handlePreviousPage = () =>
-  {
+  const handlePreviousPage = () => {
     window.location = `/react/sms/edit/${props.match.params.id}`;
   }
   const renderHtml = (html) => {
@@ -3202,14 +3201,15 @@ const SmsSend = ({ classes, ...props }) => {
   const WizardButtons = () => {
     return (
       <div className={classes.creatorButtons}>
-        <div className={classes.back} onClick={() => { handlePreviousPage() }}>
+        <div className={classes.rightMostContainer}>
           <Button
             variant='contained'
             size='medium'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightBlue,
-              classes.backButton
+              classes.backButton,
+              isRTL && windowSize !== 'xs' ? classes.marginLeftAuto :  windowSize !== 'xs' ? classes.marginRightAuto : null
             )}
             color="primary"
             style={{ margin: '8px' }}
@@ -3217,8 +3217,6 @@ const SmsSend = ({ classes, ...props }) => {
             <span style={{ marginInlineEnd: "5px" }}>{"<"}</span>
             {t("smsReport.back")}
           </Button>
-        </div>
-        <div className={classes.rightMostContainer}>
           <Button
             variant='contained'
             size='medium'
@@ -3286,7 +3284,7 @@ const SmsSend = ({ classes, ...props }) => {
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
       {renderToast()}
-      <div className={classes.smsStepDiv}>
+      <div className={classes.sidePadding}>
 
         <div>
           {renderSwitch()}

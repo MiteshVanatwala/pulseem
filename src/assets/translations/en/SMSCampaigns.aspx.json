@@ -546,5 +546,7 @@
   "sent": "Sent!",
   "switchToOldeVersion": "Switch back to the old version",
   "message":"Message",
-  "messages":"Messages"
+  "messages":"Messages",
+  "otpNumberValidatedTitle": "The number validated successfully",
+  "otpNumberValidatedDescription": "You can now send through this number without the need for re-verification"
 }

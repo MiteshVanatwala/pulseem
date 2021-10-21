@@ -36,7 +36,7 @@ import {
 
 
 const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, callbackUpdateGroups, callbackSelectAll, callbackReciFilter, bool, isNotifications, bsDot }) => {
-    const { language } = useSelector(state => state.core)
+    const { language, windowSize } = useSelector(state => state.core)
     const { t } = useTranslation();
     //const [selectedGroups, setSelected] = useState([]);
     const { isRTL } = useSelector(state => state.core)
@@ -263,8 +263,30 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
 
     return (
         <Box className={classes.groupsContainer}>
+            {
+                windowSize === 'xs' && <Grid item xs={12}>
+                    <FormControl className={classes.margin, classes.searchInput}>
+                        <Input
+                            onChange={handleSearch}
+                            placeholder={t('notifications.buttons.search')}
+                            id="searchGroup"
+                            startAdornment={
+                                <InputAdornment position="start">
+                                    <BsSearch />
+                                </InputAdornment>
+                            }
+                            endAdornment={clearInput &&
+                                <InputAdornment position="start" onClick={resetSearch}>
+                                    <MdClear style={{ cursor: 'pointer' }} />
+                                </InputAdornment>
+                            }
+
+                        />
+                    </FormControl>
+                </Grid>
+            }
             <Grid item xs={12} className={clsx(classes.flex, classes.groupFilterRow)}>
-                <FormControl className={classes.margin, classes.searchInput}>
+                {windowSize !== 'xs' && <FormControl className={classes.margin, classes.searchInput}>
                     <Input
                         onChange={handleSearch}
                         placeholder={t('notifications.buttons.search')}
@@ -281,7 +303,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                         }
 
                     />
-                </FormControl>
+                </FormControl>}
                 <Box>
                     {selectedList.length > 0 ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", color: "#1D82B3", fontWeight: "600", textTransform: "capitalize" }}>
                         <BsFilter style={{ fontSize: "22px", color: "#1D82B3" }} />  {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}

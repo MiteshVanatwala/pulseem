@@ -462,6 +462,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   txtCenter: {
     textAlign: "center",
+    '& input': {
+
+      textAlign: 'center'
+    }
   },
   bold: {
     fontWeight: "bold",
@@ -843,6 +847,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineEnd: "5px",
     borderRadius: "5px",
     borderColor: "#1c82b2",
+    backgroundColor: '#fff',
     "@media screen and (max-width: 768px)": {
       width: "100%",
       marginTop: "8px",
@@ -1656,10 +1661,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "#ffffff",
     cursor: "pointer"
   },
-  smsInit: {
-    padding: "40px 80px 15px 30px",
-    justifyContent: "flex-end"
-  },
+  // smsGrid: {
+  //   padding: "40px 80px 15px 80px"
+  // },
   msgDiv: {
 
     marginTop: "80px",
@@ -2483,16 +2487,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     fontSize: "22px", marginTop: "5px"
   },
-  smsStepDiv:
-  {
-    display: "grid",
-    padding: "40px 80px 15px 30px",
-    "@media screen and (max-width: 768px)": {
-      gridTemplateColumns: "auto",
-      padding: "0px"
-    },
+  // smsStepDiv:
+  // {
+  //   display: "grid",
+  //   padding: "40px 80px 15px 30px",
+  //   "@media screen and (max-width: 768px)": {
+  //     gridTemplateColumns: "auto",
+  //     padding: "0px"
+  //   },
 
-  },
+  // },
   numberChnageModal:
   {
     height: "60px",
@@ -2508,16 +2512,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     position: "relative",
     bottom: "10px",
     "@media screen and (max-width: 768px)": {
-
-      marginTop: "150px",
       display: "block"
     },
   },
   rightMostContainer:
   {
     display: "flex",
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    width: '100%',
     "@media screen and (max-width: 768px)": {
-      display: "block"
+      flexDirection: 'column-reverse',
     }
   },
   mobileGrid:
@@ -2643,4 +2648,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       width: '100% !important',
     },
   },
+  flexColCenter: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center'
+  },
+  marginLeftAuto: {
+    marginLeft: 'auto !important'
+  },
+  marginRightAuto: {
+    marginRight: 'auto !important'
+  }
 });

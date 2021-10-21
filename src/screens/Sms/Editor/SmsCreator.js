@@ -130,9 +130,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [waize, setwaize] = useState(false);
   const [PhoneNumberCampaignId, setPhoneNumberCampaignId] = useState("");
   const [ContactSearch, setContactSearch] = useState("");
-  const [cancel, setcancel] = useState(true);
-  const [exitClick, setexitClick] = useState(false);
-  const [otpConfirm, setOtpConfirm] = useState(false);
   const [phone, setphone] = useState("");
   const [alertToggle, setalertToggle] = useState(false);
   const [selectedGroup, setselectedGroup] = useState([]);
@@ -140,12 +137,10 @@ const SmsCreator = ({ classes, ...props }) => {
   const [hidden, sethidden] = useState(false);
   const [splittedMsg, setsplittedMsg] = useState([])
   const [SplittedLinks, setSplittedLinks] = useState(null);
-  const [otpSuccess, setotpSuccess] = useState(false);
   const [Searched, setSearched] = useState("");
   const [modalOpen, setmodalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
   const [removalNumber, setremovalNumber] = useState(null);
-  const [otpVerifyDialog, setOtpVerifyDialog] = useState(false);
   const [storedValue, setstoredValue] = useState("");
   const [keep, setkeep] = useState(true);
   const [summary, setsummary] = useState(false);
@@ -161,7 +156,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [isLinksStatistics, setIsLinksStatistics] = useState(true);
   const [otpMsgs, setotpMsgs] = useState("Required Field")
   const [isFromAutomation, setIsFromAutomation] = useState(false);
-  const [automationUrl, setAutomationUrl] = useState("");
   const [isNewVersion, setIsNewVersion] = useState(true);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
@@ -255,7 +249,7 @@ const SmsCreator = ({ classes, ...props }) => {
         break;
       }
       case 4: {// OTP_NEEDED
-        setOtpVerifyDialog(true);
+        setDialogType({ type: 'otpVerification' });
         break;
       }
       case 5: {// ACCEPTED
@@ -272,8 +266,7 @@ const SmsCreator = ({ classes, ...props }) => {
         break;
       }
       case 2: {// Success
-        setOtpConfirm(false);
-        setotpSuccess(true);
+        setDialogType({ type: 'otpSuccess' });
         break;
       }
       case 3: {// Not_Authirized
@@ -1242,7 +1235,7 @@ const SmsCreator = ({ classes, ...props }) => {
         }
       }
       else if (r.payload.Status == 3) {
-        setOtpVerifyDialog(true);
+        setDialogType({ type: 'otpVerification' });
       }
     }
   };
@@ -1333,7 +1326,7 @@ const SmsCreator = ({ classes, ...props }) => {
         setsummary(true);
       }
       else if (r.payload.Status == 3) {
-        setOtpVerifyDialog(true);
+        setDialogType({ type: 'otpVerification' });
       }
     }
     setDialogType(null);
@@ -1475,79 +1468,16 @@ const SmsCreator = ({ classes, ...props }) => {
       </div>
     );
   }
-  const renderOtpSuccessDialog = () => {
-    return (
-      <>
-        <Dialog
-          classes={classes}
-          open={otpSuccess}
-          renderButtons={false}
-          showDefaultButtons={false}
-          exit={true}
-          showDefaultButtons={false}
-        >
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-            <img src={Gif} style={{ width: "150px", height: "150px" }} />
-            <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>Verified!</span>
-            <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
-              You can now send campaigns from this number
-            </p>
-            <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { setotpSuccess(false) }}>Confirm</span>
-          </div>
-        </Dialog>
-      </>
-    )
-  }
-
   const handleVerifyOTP = async () => {
+    setLoader(true);
+    setDialogType(null);
+
     let payload = {
       "Cellphone": campaignNumber,
     }
     let r = await dispatch(getSMSRequestOTP(payload))
-    setOtpVerifyDialog(false);
-    setOtpConfirm(true);
-  }
-
-  const renderOtpVerificationDialog = () => {
-    return (
-      <Dialog
-        classes={classes}
-        open={otpVerifyDialog}
-        onCancel={() => { setOtpVerifyDialog(false) }}
-        showDefaultButtons={false}
-        icon={<div className={classes.dialogIconContent}>
-          {'\uE11B'}
-        </div>}
-      >
-        <Box className={classes.verificationBoxSMS}>
-          <Typography className={classes.groupName} style={{ textAlign: "center", width: "100%" }}>
-            {t("sms.verificationOtp")}
-          </Typography>
-        </Box>
-        <Box className={classes.verificationBodySMS}>
-          <Typography className={classes.fontSmsRegulations}>
-            {t("sms.OtpRegulations")}
-          </Typography>
-          <Typography className={classes.fontSmsRegulations}>{t("sms.regulationSecondLine")} <strong>{t("sms.oneTime")}</strong> {t("sms.regulationThirdLine")}</Typography>
-          <TextField
-            id="outlined-basic"
-            type="text"
-            className={classes.OtpPhoneNumberInput}
-            value={campaignNumber}
-            disabled
-          />
-          <Button
-            variant='contained'
-            size='small'
-            className={clsx(
-              classes.dialogButton,
-              classes.dialogConfirmButton
-            )} style={{ whiteSpace: 'nowrap', width: 'auto' }} onClick={() => { handleVerifyOTP() }}>{t("sms.sendVerificationCode")}</Button>
-          <Typography className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
-          <Typography style={{ fontSize: "14px" }}>{t("sms.helplineSMS")}</Typography>
-        </Box>
-      </Dialog>
-    )
+    setLoader(false);
+    setDialogType({ type: 'otpCode' });
   }
 
   const submitOtp = async () => {
@@ -1584,49 +1514,6 @@ const SmsCreator = ({ classes, ...props }) => {
       }
     }, 500)
   }
-  const renderOtpNumberDialog = () => {
-    return (
-      <Dialog
-        classes={classes}
-        open={otpConfirm}
-        showDefaultButtons={false}
-        onCancel={() => { setOtpConfirm(false) }}
-        icon={<div className={classes.dialogIconContent}>
-          {'\uE11B'}
-        </div>}
-      >
-        <Box className={classes.verificationBoxSMS}>
-          <Typography className={classes.groupName} style={{ textAlign: "center", width: "100%" }}>
-            {t("sms.weHaveSentOtp")}
-          </Typography>
-        </Box>
-        <Box className={classes.verificationBodySMS}>
-          <Typography className={classes.fontSmsRegulations}>
-            {t("sms.OtpSentSuccessLine1")} <strong>{campaignNumber}</strong>
-          </Typography>
-          <Typography className={classes.fontSmsRegulations}>{t("sms.OtpSentSuccessLine2")}</Typography>
-          <TextField
-            id="outlined-basic"
-            type="text"
-            className={OtpCounter ? clsx(classes.OtpPhoneNumberConfirm, classes.error) : clsx(classes.OtpPhoneNumberConfirmSuccess, classes.success)}
-            placeholder={t("sms.typeOtpPlaceholder")}
-            onChange={(e) => { handleOtpChnage(e) }}
-            inputProps={otpProps}
-          />
-          {OtpCounter ? <Typography style={{ marginBottom: "30px", color: "red" }}>{otpMsgs}</Typography> : null}
-          <Button
-            variant='contained'
-            size='small'
-            className={clsx(
-              classes.dialogButton,
-              classes.dialogConfirmBlueButton
-            )} style={{ width: "250px" }} onClick={() => { submitOtp() }}>{t("sms.confirmOtp")}</Button>
-          <Box style={{ display: "flex", marginTop: "20px" }}>  <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography ><Typography style={{ textDecoration: "underline", marginInlineStart: "4px" }} className={classes.fontSmsRegulations} onClick={() => { handleVerifyOTP() }}>{t("sms.sendAgainOtp")}</Typography></Box>
-        </Box>
-      </Dialog>
-    )
-  }
-
   //#region Dialogs
   const lpDialog = () => {
     return {
@@ -1942,13 +1829,126 @@ const SmsCreator = ({ classes, ...props }) => {
         </div>
       ),
       content: (
-        <Box style={{maxWidth: 400}}>
+        <Box style={{ maxWidth: 400 }}>
           <Typography className={classes.f18}>{t("mainReport.pleaseNoteDsec")}</Typography>
         </Box>
       ),
       showDefaultButtons: true,
       onClose: () => { handleAlertoff() },
       onConfirm: () => { handlecaution() }
+    }
+  }
+  const OTPVerificationDialog = () => {
+    return {
+      title: t('sms.verificationOtp'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.flexColCenter}>
+          <Typography className={classes.fontSmsRegulations}>
+            {t("sms.OtpRegulations")}
+          </Typography>
+          <Typography className={classes.fontSmsRegulations}>{t("sms.regulationSecondLine")} <strong>{t("sms.oneTime")}</strong> {t("sms.regulationThirdLine")}</Typography>
+          <TextField
+            id="outlined-basic"
+            type="text"
+            className={classes.OtpPhoneNumberInput}
+            value={campaignNumber}
+            disabled
+          />
+          <Button
+            variant='contained'
+            size='small'
+            className={clsx(
+              classes.dialogButton,
+              classes.dialogConfirmButton
+            )} style={{ whiteSpace: 'nowrap', width: 'auto' }} onClick={() => { handleVerifyOTP() }}>{t("sms.sendVerificationCode")}</Button>
+          <Typography className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
+          <Typography style={{ fontSize: "14px" }}>{t("sms.helplineSMS")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) }
+    }
+  }
+  const OTPCodeDialog = () => {
+    return {
+      title: t('sms.weHaveSentOtp'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.flexColCenter}>
+          <Box className={clsx(classes.verificationBodySMS, classes.txtCenter)}>
+            <Typography className={classes.fontSmsRegulations}>
+              {t("sms.OtpSentSuccessLine1")} <strong>{campaignNumber}</strong>
+            </Typography>
+            <Typography className={classes.fontSmsRegulations}>{t("sms.OtpSentSuccessLine2")}</Typography>
+            <TextField
+              id="outlined-basic"
+              type="text"
+              className={OtpCounter ? clsx(classes.OtpPhoneNumberConfirm, classes.error) : clsx(classes.OtpPhoneNumberConfirmSuccess, classes.success)}
+              placeholder={t("sms.typeOtpPlaceholder")}
+              onChange={(e) => { handleOtpChnage(e) }}
+              inputProps={otpProps}
+            />
+            {OtpCounter ? <Typography style={{ marginBottom: "30px", color: "red" }}>{otpMsgs}</Typography> : null}
+            <Button
+              variant='contained'
+              size='small'
+              className={clsx(
+                classes.dialogButton,
+                classes.dialogConfirmBlueButton
+              )} style={{ width: "250px" }} onClick={() => { submitOtp() }}>{t("sms.confirmOtp")}</Button>
+            <Box style={{ display: "flex", marginTop: "20px" }}>
+              <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography>
+              <Typography style={{ textDecoration: "underline", marginInlineStart: "4px" }} className={classes.fontSmsRegulations} onClick={() => { handleVerifyOTP() }}>{t("sms.sendAgainOtp")}</Typography>
+            </Box>
+          </Box>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { handleVerifyOTP() }
+    }
+  }
+  const OTPSuccess = () => {
+    return {
+      title: t('sms.otpNumberValidatedTitle'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.flexColCenter} style={{paddingBottom: 10}}>
+          <img src={Gif} style={{ width: "150px", height: "150px" }} />
+          <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
+            {t("sms.otpNumberValidatedDescription")}
+          </p>
+          <Button
+            variant='contained'
+            size='large'
+            className={clsx(
+              classes.dialogButton,
+              classes.dialogConfirmButton
+            )}
+            onClick={() => { setDialogType(null) }}>
+            {t('common.Ok')}
+          </Button>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
     }
   }
   const renderDialog = () => {
@@ -1962,7 +1962,10 @@ const SmsCreator = ({ classes, ...props }) => {
       valiateError: validationDialog(),
       groups: groupDialog(),
       exit: exitDialog(),
-      alert: alertDialog()
+      alert: alertDialog(),
+      otpVerification: OTPVerificationDialog(),
+      otpCode: OTPCodeDialog(),
+      otpSuccess: OTPSuccess()
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -1978,34 +1981,36 @@ const SmsCreator = ({ classes, ...props }) => {
   }
 
   //#endregion
-
+  const SwitchOldVersion = () => {
+    return (<Grid item xs={12} style={{ paddingTop: 20 }}>
+      <Switch
+        className={
+          isRTL
+            ? clsx(classes.reactSwitchHe, "react-switch")
+            : clsx(classes.reactSwitch, "react-switch")
+        }
+        checked={isNewVersion}
+        onChange={switchToOldVersion}
+        onColor="#28a745"
+        checkedIcon={false}
+        uncheckedIcon={false}
+        handleDiameter={30}
+        height={20}
+        width={48}
+        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
+        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
+        id="material-switch"
+      />
+      <Typography className={clsx(classes.dInlineBlock, classes.buttonHead)}>{t("sms.switchToOldeVersion")}</Typography>
+    </Grid>);
+  }
   return (
     <DefaultScreen currentPage="sms" classes={classes}>
       {renderToast()}
-      <Grid container>
-        <Grid item xs={12} style={{ paddingTop: 20 }}>
-          <Switch
-            className={
-              isRTL
-                ? clsx(classes.reactSwitchHe, "react-switch")
-                : clsx(classes.reactSwitch, "react-switch")
-            }
-            checked={isNewVersion}
-            onChange={switchToOldVersion}
-            onColor="#28a745"
-            checkedIcon={false}
-            uncheckedIcon={false}
-            handleDiameter={30}
-            height={20}
-            width={48}
-            boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-            activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-            id="material-switch"
-          />
-          <Typography className={clsx(classes.dInlineBlock, classes.buttonHead)}>{t("sms.switchToOldeVersion")}</Typography>
-        </Grid>
+      <Grid container className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : classes.sidePadding}>
+        <SwitchOldVersion />
       </Grid>
-      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || "sm" ? classes.mobileGrid : classes.smsInit}>
+      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : classes.sidePadding}>
         <Grid item xs={12} sm={12} lg={8}>
           {renderSwitch()}
           {renderHead()}
@@ -2016,10 +2021,7 @@ const SmsCreator = ({ classes, ...props }) => {
         {renderButtons()}
       </Grid>
       {renderDialog()}
-      {renderOtpVerificationDialog()}
-      {renderOtpNumberDialog()}
       {renderSummary()}
-      {renderOtpSuccessDialog()}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );
