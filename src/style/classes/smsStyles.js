@@ -14,14 +14,8 @@ const mobileHeight = {
 const phoneTopPosition = {
     sm: 51,
     md: 51,
-    lg: 370,
-    xl: 370
-}
-const phoneLeftPosition = {
-    sm: 68,
-    md: 68,
-    lg: 370,
-    xl: 370
+    lg: 90,
+    xl: 90
 }
 
 export const getSmsStyle = (windowSize, isRTL, theme) => ({
@@ -32,11 +26,11 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         borderBottom: "1px solid #efefef",
     },
     phoneNumberSum: {
-        top: phoneTopPosition[windowSize],
-        left: phoneLeftPosition[windowSize],
-        top: 90,
+        display: 'flex',
         position: 'absolute',
-        left: '40%',
+        justifyContent: 'center',
+        top: phoneTopPosition[windowSize],
+        left: 0,
         right: 0,
         fontSize: 14,
         fontWeight: 'bold'

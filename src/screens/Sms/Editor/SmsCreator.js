@@ -476,11 +476,20 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCampaignNumber = (e) => {
-    const re = /^[0-9\b]+$/;
-    if (re.test(Number(e.target.value))) {
+    var english = /^[A-Za-z0-9]*$/;
+    var reg = "/[^\x00-\xFF]/g";
+    if (!english.test(e.target.value)) {
+      e.target.value = e.target.value.replaceAll(
+        reg,
+        ""
+      );
+    }
+    else{
       setrestoreBool(false);
       setcampaignNumber(e.target.value);
       setcampaignNumberValidated(false);
+      e.preventDefault();
+      e.stopPropagation();
     }
   };
 

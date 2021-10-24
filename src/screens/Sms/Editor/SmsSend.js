@@ -1856,7 +1856,7 @@ const SmsSend = ({ classes, ...props }) => {
                   <option value="0" >Select</option>
                   <option value="1">{t("mainReport.birthday")}</option>
                   <option value="2">{t("mainReport.creationDay")}</option>
-                  {Object.keys(extraData).map((item, i) => {
+                  {extraData && Object.keys(extraData).map((item, i) => {
                     return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 3} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
                   })}
                 </select>
