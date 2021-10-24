@@ -7,9 +7,9 @@ import {
     ListItem,
     ListItemText,
     ListItemSecondaryAction,
-    Card, List, TextField,
+    List,
+    TextField,
     FormControl,
-    InputLabel,
     Input,
     InputAdornment,
     Box,
@@ -18,7 +18,7 @@ import {
     Button
 } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import 'moment/locale/he'
 import clsx from 'clsx';
@@ -36,14 +36,11 @@ import {
 
 
 const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, callbackUpdateGroups, callbackSelectAll, callbackReciFilter, bool, isNotifications, bsDot }) => {
-    const { language, windowSize } = useSelector(state => state.core)
+    const { language, isRTL, windowSize } = useSelector(state => state.core)
     const { t } = useTranslation();
-    //const [selectedGroups, setSelected] = useState([]);
-    const { isRTL } = useSelector(state => state.core)
     const [groupNameSearch, setGroupNameSearch] = useState('');
     const [clearInput, setClearInput] = useState(false);
     const [groupHover, setIsHover] = useState(null);
-    const [newSelected, setnewSelected] = useState([]);
 
     const handleSearch = (event) => {
         setClearInput(event.target.value != '');
@@ -68,14 +65,16 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
     };
 
     const renderGroups = () => {
+        const groupIdKey = isNotifications ? "Id" : "GroupID";
+        const groupRecipientsKey = isNotifications ? "Members" : "Recipients";
         return groupList.filter((g) => {
             return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
         }).map((group) => {
-            const isExist = selectedList.map((group) => { return group.Id }).includes(group.Id);
-            return (<ListItem id={group.Id} key={group.Id} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setIsHover(group.Id)}
+            const isExist = selectedList.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
+            return (<ListItem id={group[groupIdKey]} key={group[groupIdKey]} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setIsHover(group[groupIdKey])}
                 onMouseLeave={() => setIsHover(null)}
-                className={groupHover === group.Id ? classes.hoverListItem : null}
+                className={groupHover === group[groupIdKey] ? classes.hoverListItem : null}
             >
                 <ListItemAvatar>
                     <Avatar
@@ -91,36 +90,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     primary={group.GroupName}
                 />
                 <ListItemSecondaryAction className={'groupText'}>
-                    {group.Members.toLocaleString()} {group.Members != 1 ? t("notifications.recipients") : t("notifications.recipient")}
-                </ListItemSecondaryAction>
-            </ListItem>)
-        })
-    }
-    const renderSmsgroups = () => {
-        return groupList.filter((g) => {
-            return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
-        }).map((group) => {
-            const isExist = selectedList.map((group) => { return group.GroupID }).includes(group.GroupID);
-            return (<ListItem id={group.GroupID} key={group.GroupID} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setIsHover(group.GroupID)}
-                onMouseLeave={() => setIsHover(null)}
-                className={groupHover === group.GroupID ? classes.hoverListItem : null}
-            >
-                <ListItemAvatar>
-                    <Avatar
-                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
-                        {isExist ?
-                            (<FaCheck className={clsx(classes.green)} />)
-                            :
-                            (<HiUserGroup className={clsx(classes.blue)} />)
-                        }
-                    </Avatar>
-                </ListItemAvatar>
-                <ListItemText className={'groupText'} title={group.GroupName}
-                    primary={group.GroupName}
-                />
-                <ListItemSecondaryAction className={'groupText'}>
-                    {group.Recipients.toLocaleString()} {group.Recipients != 1 ? t("notifications.recipients") : t("notifications.recipient")}
+                    {group[groupRecipientsKey].toLocaleString()} {group[groupRecipientsKey] != 1 ? t("notifications.recipients") : t("notifications.recipient")}
                 </ListItemSecondaryAction>
             </ListItem>)
         })
@@ -336,7 +306,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                 popupIcon={false}
                 onChange={onTagChange}
                 renderInput={(params) => selectedList.length > 0 ? (
-                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected)} style={{ maxHeight: 45 }}></TextField>
+                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected)}></TextField>
                 ) : (
                     <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{t('notifications.noGroupsSelected')}</Typography>
                 )
@@ -346,8 +316,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
             <div className={classes.demo} style={{ minHeight: 280, maxHeight: 280, overflow: 'auto' }}>
                 <List>
                     {renderSelectAll()}
-                    {isNotifications ? renderGroups() : null}
-                    {bool ? renderSmsgroups() : null}
+                    {renderGroups()}
                 </List>
             </div>
         </Box>

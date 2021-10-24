@@ -33,6 +33,8 @@ import { BsTrash, BsChevronDown, BsChevronUp } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
 import { DateTimePicker, KeyboardDateTimePicker } from "@material-ui/pickers";
+import Title from '../../../components/Wizard/Title'
+
 import {
   Typography,
   Button,
@@ -258,40 +260,6 @@ const SmsSend = ({ classes, ...props }) => {
   const [campaignSearch, setcampaignSearch] = useState("");
   const [snackbarRecipients, setsnackbarRecipients] = useState(false);
   const [bsDot, setbsDot] = useState(false);
-  // const [smsSettingsModel, setSmsSettingsModel] = useState({
-  //   SmsCampaignID: -1,
-  //   SendType: 1,
-  //   RandomSettings: {
-  //     ID: -1,
-  //     RandomAmount: 0
-  //   },
-  //   PulseSettings: {
-  //     PulseSettingsID: -1,
-  //     PulseType: 1,  //Percentage = 1, Recipients = 2
-  //     TimeType: 1, //Minutes = 1, Hours = 2
-  //     PulseAmount: 0,
-  //     TimeInterval: 0
-  //   },
-  //   SpecialSettings: {
-  //      Day: 0,
-  //      DateFields: -1, // Null = -1, Birthday = 1, CreatedDate = 2, ExtraDate1 = 3, ExtraDate2 = 4, ExtraDate3 = 5, ExtraDate4 = 6
-  //      SendHour: null,
-  //      SendDate: null,
-  //      IntervalTypeID: -1
-  //   },
-  //   SendExeptional: {
-  //     ExceptionalID: -1,
-  //     ExceptionalDays: 0,
-  //     IsExceptionalGroups: false,
-  //     IsExceptionSmsCampaigns: false,
-  //     Groups: null, // List of groups ids
-  //     Campaigns: null, // List of campaign ids
-  //   },
-  //   Groups: [], // List of groups to send
-  //   FutureDateTime: null,
-  //   SourceTimeZone: null
-  // });
-
   const [model, setModel] = useState({
     ID: 0
   });
@@ -385,7 +353,6 @@ const SmsSend = ({ classes, ...props }) => {
     if (props && props.match.params.id) {
       let r = await dispatch(getCampaignSettings(props.match.params.id))
       const list = await dispatch(getGroupsBySubAccountId());
-      console.log("presaved resp", r)
       if (r.payload.Groups !== null) {
         var arr = [];
         for (var i = 0; i < list.payload.length; ++i) {
@@ -603,24 +570,6 @@ const SmsSend = ({ classes, ...props }) => {
     setafterClick(true);
     settoggleA(true);
     settoggleB(false);
-  };
-  const renderSwitch = () => {
-    return (
-      <div className={classes.infoDiv}>
-        <span className={classes.headInfo}> {t("mainReport.smsCampaign")}</span>
-      </div>
-    );
-  };
-  const renderHead = () => {
-    return (
-      <div className={classes.headDiv}>
-        <span className={classes.headNo}>2</span>
-        <span className={classes.contentHead}>
-
-          {t("mainReport.sendSetting")}
-        </span>
-      </div>
-    );
   };
   const callbackFilter = () => {
     setreciFilter(true);
@@ -1830,9 +1779,8 @@ const SmsSend = ({ classes, ...props }) => {
                 }
               />
               <Box
+                className={classes.dateBox}
                 style={{
-                  paddingRight: isRTL ? 30 : "",
-                  paddingLeft: isRTL ? "" : 30,
                   pointerEvents: sendType == "2" ? "auto" : "none",
                 }}
               >
@@ -1852,10 +1800,9 @@ const SmsSend = ({ classes, ...props }) => {
                 />
               </Box>
               <Box
+                className={classes.dateBox}
                 style={{
                   marginTop: 10,
-                  paddingRight: isRTL ? 30 : "",
-                  paddingLeft: isRTL ? "" : 30,
                   pointerEvents: sendType == "2" ? "auto" : "none",
                 }}
               >
@@ -1885,10 +1832,9 @@ const SmsSend = ({ classes, ...props }) => {
                 }
               />
               <Box
+                className={classes.dateBox}
                 style={{
                   marginTop: 10,
-                  paddingRight: isRTL ? 30 : "",
-                  paddingLeft: isRTL ? "" : 30,
                   pointerEvents: sendType == "3" ? "auto" : "none",
                 }}
               >
@@ -1899,7 +1845,7 @@ const SmsSend = ({ classes, ...props }) => {
                     backgroundColor: "white",
                     padding: "10px",
                     borderRadius: "4px",
-                    width: "377px",
+                    width: 300,
                     outline: "none",
                     marginBottom: "10px",
                   }}
@@ -1909,7 +1855,7 @@ const SmsSend = ({ classes, ...props }) => {
                 >
                   <option value="0" >Select</option>
                   <option value="1">{t("mainReport.birthday")}</option>
-                  <option value="2">Creation Day</option>
+                  <option value="2">{t("mainReport.creationDay")}</option>
                   {Object.keys(extraData).map((item, i) => {
                     return item.toLowerCase().indexOf('extradate') > -1 && <option value={i + 3} key={`extrakey_${i}`}>{Object.values(extraData[item])}</option>;
                   })}
@@ -1917,13 +1863,12 @@ const SmsSend = ({ classes, ...props }) => {
               </Box>
 
               <Box
+                className={classes.dateBox}
                 style={{
                   marginTop: 10,
                   display: "flex",
                   alignItems: "center",
                   width: "370px",
-                  paddingRight: isRTL ? 30 : "",
-                  paddingLeft: isRTL ? "" : 30,
                   pointerEvents: sendType === "3" ? "auto" : "none",
                 }}
               >
@@ -1937,7 +1882,7 @@ const SmsSend = ({ classes, ...props }) => {
                   maxLength="3"
                 />
 
-                <span style={{ marginInlineEnd: "8px", marginBottom: "8px" }}>
+                <span style={{ marginInlineEnd: "8px", marginBottom: "8px", fontSize: 14 }}>
                   {t("mainReport.days")}
                 </span>
 
@@ -1988,11 +1933,11 @@ const SmsSend = ({ classes, ...props }) => {
                   </div>}
               </Box>
               <Box
+                className={classes.dateBox}
                 style={{
                   marginTop: 10,
-                  paddingRight: isRTL ? 30 : "",
-                  paddingLeft: isRTL ? "" : 30,
                   pointerEvents: sendType == "3" ? "auto" : "none",
+                  marginBottom: '1rem'
                 }}
               >
                 <DateField
@@ -2016,7 +1961,7 @@ const SmsSend = ({ classes, ...props }) => {
             </RadioGroup>
           </FormControl>
         </Grid>
-
+        <Divider style={{ marginTop: '1rem', marginBottom: '1rem' }} />
         <div className={classes.pulseDiv}>
           <span
             className={(selectedGroups.length >= 1 && sendType !== "3") ? classes.pulse : classes.pulseDisable}
@@ -2024,7 +1969,7 @@ const SmsSend = ({ classes, ...props }) => {
               setpulse(true);
             }}
           >
-            <FaRegCalendarAlt />
+            <FaRegCalendarAlt style={{ fontSize: '125%' }} />
             {t("mainReport.pulseSend")}
           </span>
           <Tooltip
@@ -3209,7 +3154,7 @@ const SmsSend = ({ classes, ...props }) => {
               classes.actionButton,
               classes.actionButtonLightBlue,
               classes.backButton,
-              isRTL && windowSize !== 'xs' ? classes.marginLeftAuto :  windowSize !== 'xs' ? classes.marginRightAuto : null
+              isRTL && windowSize !== 'xs' ? classes.marginLeftAuto : windowSize !== 'xs' ? classes.marginRightAuto : null
             )}
             color="primary"
             style={{ margin: '8px' }}
@@ -3282,14 +3227,16 @@ const SmsSend = ({ classes, ...props }) => {
     );
   }
   return (
-    <DefaultScreen currentPage="sms" classes={classes}>
+    <DefaultScreen currentPage="sms" classes={classes} customPadding={true}>
       {renderToast()}
-      <div className={classes.sidePadding}>
+      <div>
 
         <div>
-          {renderSwitch()}
-          {renderHead()}
-
+          <Title title={t("mainReport.smsCampaign")}
+            classes={classes}
+            stepNumber={2}
+            subTitle={t("mainReport.sendSetting")}
+          />
           <Grid container style={{ marginBottom: "40px" }}>
             <Grid item md={7} xs={12}>
               {renderBody()}
@@ -3399,7 +3346,7 @@ const SmsSend = ({ classes, ...props }) => {
         </Alert>
       </Snackbar>
       <Loader isOpen={showLoader} />
-    </DefaultScreen >
+    </DefaultScreen>
   );
 };
 
