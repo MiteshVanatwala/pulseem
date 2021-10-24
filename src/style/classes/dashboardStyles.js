@@ -93,7 +93,6 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
             borderRadius: '5px'
         },
         scrollbarWidth: 'none',
-        overflow: 'auto',
         '-ms-overflow-style': 'none' /* IE 11 */
     },
     shortcutBtnBox: {

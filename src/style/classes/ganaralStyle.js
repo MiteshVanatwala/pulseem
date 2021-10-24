@@ -2615,9 +2615,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: '100%',
     width: '100%'
   },
-  spaceEvenly: {
-    justifyContent: 'space-evenly'
-  },
   verificationBoxSMS:
   {
     borderBottom: "1px solid #dee2e6", padding: "4px"
