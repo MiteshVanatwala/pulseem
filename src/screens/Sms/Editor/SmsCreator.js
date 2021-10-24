@@ -89,7 +89,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const inputProps = {
-    maxlength: "12"
+    maxlength: "13"
   }
 
   const otpProps = {
@@ -475,6 +475,7 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCampaignNumber = (e) => {
+    var isNumber = /^[0-9]*$/;
     var english = /^[A-Za-z0-9]*$/;
     var reg = "/[^\x00-\xFF]/g";
     if (!english.test(e.target.value)) {
@@ -483,13 +484,14 @@ const SmsCreator = ({ classes, ...props }) => {
         ""
       );
     }
-    else{
-      setrestoreBool(false);
-      setcampaignNumber(e.target.value);
-      setcampaignNumberValidated(false);
-      e.preventDefault();
-      e.stopPropagation();
+    else if(!isNumber.test(e.target.value) && e.target.value.length >= 10){
+      e.target.value = e.target.value.substring(0, 10);
     }
+    setrestoreBool(false);
+    setcampaignNumber(e.target.value);
+    setcampaignNumberValidated(false);
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   const validationCheck = () => {
