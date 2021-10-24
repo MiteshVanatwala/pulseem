@@ -301,7 +301,8 @@ const SmsSend = ({ classes, ...props }) => {
   const [editT, seteditT] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [deleteClick, setdeleteClick] = useState(false);
-  const [totalCampaigns, settotalCampaigns] = useState([])
+  const [totalCampaigns, settotalCampaigns] = useState([]);
+  const [selectedCampaigns, setSelectedCampaigns] = useState([]);
   const [typedData, settypedData] = useState([]);
   const [displayFilter, setdisplayFilter] = useState(false);
   const [selectArray, setselectArray] = useState([]);
@@ -646,6 +647,9 @@ const SmsSend = ({ classes, ...props }) => {
     setfilterGroups(tempArr);
   };
   const handleSelectCamp = (id) => {
+    // TODO: Fix the selection
+    // const existCampaign =  totalCampaigns.filter((c) => { return c.SMSCampaignID === id});
+    // setSelectedCampaigns([...selectedCampaigns, existCampaign])
     let tempArr = [];
     for (let i = 0; i < totalCampaigns.length; i++) {
       if (id === totalCampaigns[i].SMSCampaignID) {
@@ -1530,7 +1534,7 @@ const SmsSend = ({ classes, ...props }) => {
                       setinputRecipients("");
                     }}
                   />
-                  <span>
+                  <span style={{ display: 'inline-block', marginTop: 2}} className={classes.font13}>
                     {t("smsReport.filterInputText")}
                   </span>
                 </div>
@@ -1549,7 +1553,7 @@ const SmsSend = ({ classes, ...props }) => {
                 </div>
               </div>
               <div>
-                <span> {t("smsReport.inputTextFilter")}:</span>
+                <span className={classes.font13}> {t("smsReport.inputTextFilter")}:</span>
                 <div>
 
                   <Paper component="form" className={classes.reciMain}>
@@ -1557,6 +1561,7 @@ const SmsSend = ({ classes, ...props }) => {
                       type="submit"
                       className={btnStyle.iconButton}
                       aria-label="search"
+                      style={{padding: '8px !important'}}
                     >
                       <SearchIcon />
                     </IconButton>
@@ -1627,13 +1632,14 @@ const SmsSend = ({ classes, ...props }) => {
                 </div>
               </div>
               <div className={classes.camapignsDiv}>
-                <span>
+                <span className={classes.font13}>
                   {t("smsReport.campaignInfo")}:
                 </span>
                 <div>
 
                   <Paper component="form" className={classes.reciMain}>
                     <IconButton
+                      style={{padding: '8px !important'}}
                       type="submit"
                       className={btnStyle.iconButton}
                       aria-label="search"

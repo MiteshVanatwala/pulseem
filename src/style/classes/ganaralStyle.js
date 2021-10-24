@@ -582,6 +582,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   m5: {
     margin: ".5rem",
   },
+  font13: {
+    fontSize: 13
+  },
   font15: {
     fontSize: 15,
   },
@@ -1419,9 +1422,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   listDivFilter:
   {
-    height: "300px",
-    maxHeight: "200px",
-    width: "700px",
+    height: 130,
+    width: "100%",
     overflowY: "auto",
     borderBottom: "1px solid #efefef",
     borderLeft: "1px solid #efefef",
@@ -1429,7 +1431,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginTop: "0",
   },
   searchCon: {
-    padding: "12px",
+    padding: 5,
     display: "flex",
     alignItems: "center",
     cursor: "pointer",
@@ -1960,13 +1962,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   blueDoc:
   {
-    border: "2px solid #3DA6F7",
+    border: "1px solid #3DA6F7",
     borderRadius: "50%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: "8px",
-    color: "#3DA6F7"
+    color: "#3DA6F7",
+    width: 30,
+    height: 30
   },
   greenDoc:
   {
@@ -2038,23 +2041,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pulseInsert:
   {
-    padding: "8px",
     width: "50px",
     border: "2px solid #efefef",
-    height: "25px",
-    marginInlineEnd: "8px",
-    borderRadius: "6px",
-    marginBottom: "8px",
+    height: 35,
+    borderRadius: 5
   },
   pulseActive:
   {
-    padding: "8px",
     width: "50px",
-    border: "2px solid #efefef",
-    height: "25px",
-    marginInlineEnd: "8px",
-    borderRadius: "6px",
-    marginBottom: "8px",
+    border: "2px solid #e9ecef",
+    height: 35,
+    borderRadius: 5,
     outline: "none",
   },
   percent: {
@@ -2180,10 +2177,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   reciMain:
   {
+    height: 40,
     marginTop: "10px",
     border: "1px solid #efefef",
     boxShadow: "none",
-    borderRadius: "none !important"
+    borderRadius: "none !important",
+    overflow: 'hidden'
 
   },
   reciList:
@@ -2315,18 +2314,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   reciFilterDiv:
   {
-    height: "60px",
+    height: 50,
     borderBottom: "1px solid black"
   },
   reciCheckoxContainer:
   {
-    fontSize: "16px",
-    fontWeight: "700",
+    fontSize: 13,
     marginTop: "10px",
-    marginBottom: "10px",
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "cneter",
+    alignItems: "center",
+
   },
   bubbleReciDiv:
   {
@@ -2701,7 +2699,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   marginRightAuto: {
     marginRight: 'auto !important'
   },
-  deleteIcon:{
+  deleteIcon: {
     color: '#fff',
     backgroundColor: 'transparent',
     cursor: 'pointer',
