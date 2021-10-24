@@ -415,6 +415,8 @@ const App = ({ screenSize }) => {
   const theme = getTheme(language)
   const history = useHistory()
 
+  document.body.classList.add(classes.sidebar);
+
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 

@@ -129,7 +129,7 @@ export const Dialog=({
   const renderChildren = () => {
     return (
       <Box
-        className={clsx(classes.dialogChildren, childrenStyle)}
+        className={clsx(classes.dialogChildren, classes.sidebar, childrenStyle)}
         style={{ maxHeight: 'calc(65vh)' }}>
         {children}
       </Box>)

@@ -34,6 +34,8 @@ import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
 import { DateTimePicker, KeyboardDateTimePicker } from "@material-ui/pickers";
 import Title from '../../../components/Wizard/Title'
+import { DeleteIcon } from '../../../assets/images/managment/index'
+import { TiDelete } from 'react-icons/ti';
 
 import {
   Typography,
@@ -1568,26 +1570,23 @@ const SmsSend = ({ classes, ...props }) => {
                     />
                   </Paper>
 
-                  <div className={classes.reciList}> {filterGroups.map((item, index) => {
+                  <div className={clsx(classes.reciList, classes.sidebar)}> {filterGroups.map((item, index) => {
                     if (item.selected) {
                       return (
                         <div
                           className={classes.bubbleReciDiv}
                         >
                           {item.GroupName}
-                          <span
+                          <TiDelete className={classes.deleteIcon}
                             onClick={() => {
                               handleCross(index);
-                            }}
-                          >
-                            X
-                          </span>
+                            }} />
                         </div>
                       );
                     }
                   })}</div>
                   <div
-                    className={classes.listDivFilter}
+                    className={clsx(classes.listDivFilter, classes.sidebar)}
                   >
                     {filterGroups
                       .filter((val) => {
@@ -1650,26 +1649,23 @@ const SmsSend = ({ classes, ...props }) => {
                       }}
                     />
                   </Paper>
-                  <div className={classes.reciList}> {totalCampaigns.map((item, index) => {
+                  <div className={clsx(classes.reciList, classes.sidebar)}> {totalCampaigns.map((item, index) => {
                     if (item.selected) {
                       return (
                         <div
                           className={classes.bubbleReciDiv}
                         >
                           {item.Name}
-                          <span
+                          <TiDelete className={classes.deleteIcon}
                             onClick={() => {
                               handleCrossCamp(index);
-                            }}
-                          >
-                            X
-                          </span>
+                            }} />
                         </div>
                       );
                     }
                   })}</div>
                   <div
-                    className={classes.listDivFilter}
+                    className={clsx(classes.listDivFilter, classes.sidebar)}
                   >
                     {totalCampaigns
                       .filter((val) => {

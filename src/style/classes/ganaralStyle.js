@@ -63,33 +63,28 @@ const graphTextWidth = {
 }
 
 export const getGeneralStyle = (windowSize, isRTL, theme) => ({
-  // 'html': {
-  //   '-moz-scrollbar-width': '0px !important',
-  //   'scrollbar-width': 'none'
-  // },
-  // '*': {
-  //   'scrollbar-color': 'transparent',
-  //   'scrollbar-width': 0,
-  // },
-  // '::-webkit-scrollbar': {
-  //   display: 'none',
-  //   '-ms-overflow-style': '-ms-autohiding-scrollbar'
-  // },
-  // '::-webkit-scrollbar': {
-  //   display: 'block !important',
-  //   height: '6px !important'
-  // },
-  // '::-webkit-scrollbar-track': {
-  //   '-webkit-box-shadow': 'inset 0 0 1px rgba(0, 0, 0, 0.3)',
-  //   '-webkit-border-radius': 10,
-  //   borderRadius: 10
-  // },
-  // '::-webkit-scrollbar-thumb': {
-  //   '-webkit-border-radius': 10,
-  //   borderRadius: 10,
-  //   background: '#606060',
-  //   '-webkit-box-shadow': 'inset 0 0 1px rgba(0, 0, 0, 0.5)'
-  // },
+  sidebar: {
+    '&::-webkit-scrollbar': {
+      display: 'block !important',
+      width: 8
+    },
+    /* Track */
+    '&::-webkit-scrollbar-track': {
+      boxShadow: 'inset 0 0 0px',
+      borderRadius: 7,
+      backgroundColor: '#fff !important',
+    },
+    /* Handle */
+    '&::-webkit-scrollbar-thumb': {
+      background: '#ccc',
+      borderRadius: 5
+    },
+    /* Handle on hover */
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#999'
+    }
+  },
+
   dialogContainer: {
     "& .MuiPaper-root": {
       overflowX: "hidden",
@@ -870,6 +865,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     padding: "10px",
     width: "100%",
+    minWidth: 150,
     marginInlineEnd: "5px",
     borderRadius: "5px",
     border: "1px solid #ced4da",
@@ -1272,21 +1268,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     position: "absolute",
     top: "115px",
-    width: "260px",
+    width: 302,
     height: "230px",
-    right: 40,
+    right: 45,
     wordBreak: 'break-all',
     color: "#fff",
     borderRadius: "12px",
     overflowY: "auto",
-    padding: 15,
-    "&::-webkit-scrollbar": {
-      visibility: "hidden",
-      width: "0px",
-    },
-    "@media screen and (max-width: 600px)": {
-      right: 20,
-    },
+    padding: 15
   },
   fromMe:
   {
@@ -2199,13 +2188,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   reciList:
   {
     display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
     height: "40px",
-    width: "700px",
+    width: "100%",
+    maxWidth: 700,
     flexWrap: "wrap",
     overflowY: "auto",
-    border: "1px solid #efefef",
+    border: "1px solid #efefef"
   },
   manualModal: {
     display: "flex",
@@ -2341,14 +2329,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   bubbleReciDiv:
   {
-    padding: "6px",
-    borderRadius: "20px",
-    backgroundColor: "#1771ad",
-    marginInlineEnd: "4px",
-    marginBottom: "4px",
-    color: "white",
-    display: "flex",
-    alignItems: "center"
+    color: 'white',
+    display: 'flex',
+    padding: 6,
+    alignItems: 'center',
+    borderRadius: 25,
+    marginTop: 4,
+    backgroundColor: '#1771ad',
+    marginInlineStart: 4,
+    justifyContent: 'center',
+    height: 20,
+    fontSize: 14,
+    paddingRight: isRTL ? 10 : 0,
+    paddingLeft: !isRTL ? 10 : 0
   },
   nameGroup:
   {
@@ -2709,5 +2702,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   marginRightAuto: {
     marginRight: 'auto !important'
+  },
+  deleteIcon:{
+    color: '#fff',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    fontSize: 28
   }
 });

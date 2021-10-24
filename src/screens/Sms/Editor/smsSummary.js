@@ -4,6 +4,7 @@ import { FaMobileAlt } from "react-icons/fa";
 import Mobile from "../../../assets/images/mobileiphone.png";
 import { useTranslation } from "react-i18next";
 import { Link } from "@material-ui/core";
+import clsx from "clsx";
 
 const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api, textMsg, activeGroups, ...props }) => {
   const [modal, setmodal] = useState(false);
@@ -110,7 +111,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   className={classes.mobilePreviewSummary}
                 />
                 <span className={classes.phoneNumberSum}>{fromNumber}</span>
-                <div className={classes.wrapChatSumm}>
+                <div className={clsx(classes.wrapChatSumm, classes.sidebar)}>
                   <div className={classes.chatBox}>
                     <div className={classes.fromMe}>
                       {totalmsg.split('\n').map((str) => {
@@ -320,7 +321,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   className={classes.mobilePreviewSummary}
                 />
                 <span className={classes.phoneNumberSum}>{fromNumber}</span>
-                <div className={classes.wrapChatSumm}>
+                <div className={clsx(classes.wrapChatSumm, classes.sidebar)}>
                   <div className={classes.chatBox}>
                     <div className={classes.fromMe}>
                       {textMsg.split('\n').map((str) => {

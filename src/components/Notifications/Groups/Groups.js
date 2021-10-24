@@ -306,14 +306,14 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                 popupIcon={false}
                 onChange={onTagChange}
                 renderInput={(params) => selectedList.length > 0 ? (
-                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected)}></TextField>
+                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{maxHeight: 45}}></TextField>
                 ) : (
                     <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{t('notifications.noGroupsSelected')}</Typography>
                 )
                 }
             />
 
-            <div className={classes.demo} style={{ minHeight: 280, maxHeight: 280, overflow: 'auto' }}>
+            <div className={clsx(classes.demo,classes.sidebar)} style={{ minHeight: 280, maxHeight: 280, overflow: 'auto' }}>
                 <List>
                     {renderSelectAll()}
                     {renderGroups()}

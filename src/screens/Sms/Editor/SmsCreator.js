@@ -54,7 +54,6 @@ import { Loader } from '../../../components/Loader/Loader';
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
-import { GpsFixed } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -776,7 +775,7 @@ const SmsCreator = ({ classes, ...props }) => {
               maxlength="1000"
               outlined=""
               id="yourMessage"
-              className={clsx(classes.msgArea)}
+              className={clsx(classes.msgArea, classes.sidebar)}
               style={{ textAlign: alignment }}
               onChange={onMsgChange}
               onSelect={handleMsgSelect}
@@ -922,7 +921,7 @@ const SmsCreator = ({ classes, ...props }) => {
                           return (<option disabled value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</option>)
                         }
                         else {
-                          return <option value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{t(item[Object.keys(item)[0]])}</option>;
+                          return <option value={[Object.keys(item)[0]]} key={`extrakey_${i}`}>{item[Object.keys(item)[0]] ? t(item[Object.keys(item)[0]]) : Object.keys(item)[0]}</option>;
                         }
 
                       })}
@@ -1043,7 +1042,7 @@ const SmsCreator = ({ classes, ...props }) => {
         <Box className={classes.phoneDiv}>
           <img src={Mobile} className={classes.phoneImg} />
           <span className={classes.phoneNumber}>{campaignNumber}</span>
-          <div className={classes.wrapChat}>
+          <div className={clsx(classes.wrapChat, classes.sidebar)}>
             <div className={classes.chatBoxHe}>
               <div className={classes.fromMe}>
                 {smsModel.Text !== '' ? smsModel.Text.split('\n').map((str) => {
