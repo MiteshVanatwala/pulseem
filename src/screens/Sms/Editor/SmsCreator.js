@@ -19,6 +19,7 @@ import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import queryString from 'query-string';
+import Title from '../../../components/Wizard/Title'
 
 import { useHistory } from "react-router";
 import {
@@ -53,6 +54,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
+import { GpsFixed } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -106,7 +108,8 @@ const SmsCreator = ({ classes, ...props }) => {
     accountId,
     getCampaignSum,
     smsSendResult,
-    commonSettings
+    commonSettings,
+    testGroups
   } = useSelector((state) => state.sms);
 
   const [dialogType, setDialogType] = useState(null)
@@ -174,7 +177,7 @@ const SmsCreator = ({ classes, ...props }) => {
     SendDate: Date.now(),
     SendingMethod: 0,
     Status: 1,
-    TestGroupsIds: temp,
+    TestGroupsIds: [],
     Text: "",
     Type: 0,
     UpdateDate: Date.now(),
@@ -315,16 +318,8 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onApiCall = async () => {
-    let temp = [];
-    let tempfull = [];
-    for (let i = 0; i < selectedGroup.length; i++) {
-      if (selectedGroup[i].selected) {
-        temp.push(selectedGroup[i].GroupID);
-        tempfull.push(selectedGroup[i]);
-      }
-    }
-    settemp(tempfull);
-    const FinalPayloadData = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: temp, IsTestCampaign: isTestCampaign, IsTest: true, IsLinksStatistics: isLinksStatistics }
+    const groupIds = selectedGroup.map((g) => { return g.GroupID });
+    const FinalPayloadData = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, IsTestCampaign: isTestCampaign, IsTest: true, IsLinksStatistics: isLinksStatistics }
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
     setsummary(false);
@@ -379,18 +374,18 @@ const SmsCreator = ({ classes, ...props }) => {
 
   useEffect(() => { }, [removalMessageButtonDisabled]);
 
-  useEffect(() => { }, [selectedGroup]);
+  useEffect(() => { }, [testGroups]);
   useEffect(() => {
     document.title = t("mainReport.smsTitle");
   }, []);
 
-  useEffect(() => {
-    let temp = [];
-    for (let i = 0; i < accountId.length; i++) {
-      temp.push(accountId[i]);
-    }
-    setselectedGroup(temp);
-  }, [accountId]);
+  // useEffect(() => {
+  //   let temp = [];
+  //   for (let i = 0; i < accountId.length; i++) {
+  //     temp.push(accountId[i]);
+  //   }
+  //   setselectedGroup(temp);
+  // }, [accountId]);
 
   const getAutomationReturnUrl = (campaignId) => {
     const nodeToEdit = qs.NodeToEdit ?? null;
@@ -457,29 +452,13 @@ const SmsCreator = ({ classes, ...props }) => {
     }
   }
 
-  const getcredits = async (count) => {
-    let response = await dispatch(getCreditsforSMS(count));
-    let credits = response.payload.split("#");
-    setmessageCount(credits[0]);
+  const getcredits = (count) => {
+    dispatch(getCreditsforSMS(count)).then((res) => {
+      let credits = res.payload.split("#");
+      setmessageCount(credits[0]);
+    });
   }
 
-  const renderSwitch = () => {
-    return (
-      <Box className={classes.infoDiv} style={{ height: 'auto' }}>
-        <Typography className={classes.headInfo}>
-          {t("mainReport.smsCampaign")}
-        </Typography>
-        <Tooltip
-          disableFocusListener
-          title={t("mainReport.toolTip1")}
-          classes={{ tooltip: styles.customWidth }}
-          sx={{ justifyContent: 'center' }}
-        >
-          <Typography className={classes.bodyInfo} style={{ marginTop: "6px" }}>i</Typography>
-        </Tooltip>
-      </Box >
-    );
-  };
   const renderHead = () => {
     return (
       <Box className={classes.headDiv}>
@@ -1055,8 +1034,8 @@ const SmsCreator = ({ classes, ...props }) => {
         <Box className={classes.phoneDiv}>
           <img src={Mobile} className={classes.phoneImg} />
           <span className={classes.phoneNumber}>{campaignNumber}</span>
-          <div className={isRTL ? classes.wrapChatHe : classes.wrapChat}>
-            <div className={isRTL ? classes.chatBoxHe : classes.chatBox}>
+          <div className={classes.wrapChat}>
+            <div className={classes.chatBoxHe}>
               <div className={classes.fromMe}>
                 {smsModel.Text !== '' ? smsModel.Text.split('\n').map((str) => {
                   return (<p style={{ margin: "0", padding: "0" }}>{str}</p>)
@@ -1112,7 +1091,7 @@ const SmsCreator = ({ classes, ...props }) => {
               value={radioBtn}
               onChange={onRadiochange}
             >
-              <div className={{ display: "flex", flexDirection: "column" }}>
+              <div style={{ display: "flex", flexDirection: "column", width: '100%' }}>
                 <div>
                   <FormControlLabel
                     value="top"
@@ -1166,25 +1145,23 @@ const SmsCreator = ({ classes, ...props }) => {
                         setDialogType({ type: "groups" });
                       }}
                     >
-                      <div> {t("mainReport.ChooseLinks")}</div>
-                      {hidden ? (
+                      {selectedGroup.length <= 0 && <div> {t("mainReport.ChooseLinks")}</div>}
+                      {selectedGroup.length > 0 ? (
                         <div className={classes.mappedGroup}>
                           {selectedGroup.map((item, index) => {
-                            if (item.selected && hidden) {
-                              return (
-                                <div className={classes.selectedGroupsDiv}>
-                                  <span className={classes.nameGroup}>
-                                    {item.GroupName}
-                                  </span>
-                                  <RiCloseFill
-                                    className={classes.groupCloseicn}
-                                    onClick={() => {
-                                      handleCross(index);
-                                    }}
-                                  />
-                                </div>
-                              );
-                            }
+                            return (
+                              <div className={classes.selectedGroupsDiv}>
+                                <span className={classes.nameGroup}>
+                                  {item.GroupName}
+                                </span>
+                                <RiCloseFill
+                                  className={classes.groupCloseicn}
+                                  onClick={(event) => {
+                                    handleCross(event, item.GroupID);
+                                  }}
+                                />
+                              </div>
+                            );
                           })}
                         </div>
                       ) : null}
@@ -1199,16 +1176,12 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
 
-  const handleCross = (id) => {
-    let temp = [];
-    for (let i = 0; i < selectedGroup.length; i++) {
-      if (i == id) {
-        temp.push({ ...selectedGroup[i], selected: false });
-      } else {
-        temp.push(selectedGroup[i]);
-      }
-    }
-    setselectedGroup(temp);
+  const handleCross = (e, id) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const newSelection = selectedGroup.filter((g) => { return g.GroupID !== id });
+    setselectedGroup(newSelection);
+    sethidden(newSelection.length === 0);
   };
 
   const onContinueClick = async (isSave, returnToAutomation = false) => {
@@ -1260,18 +1233,15 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const handleSelect = (id) => {
     let tempArr = [];
-    for (let i = 0; i < selectedGroup.length; i++) {
-      if (id === selectedGroup[i].GroupID) {
-        if (selectedGroup[i].selected) {
-          tempArr.push({ ...selectedGroup[i], selected: false });
-        } else {
-          tempArr.push({ ...selectedGroup[i], selected: true });
-        }
-      } else {
-        tempArr.push(selectedGroup[i]);
-      }
+    const isExist = selectedGroup.filter((g) => { return g.GroupID === id }).length > 0;
+    if (isExist) {
+      tempArr = selectedGroup.filter((g) => { return g.GroupID !== id });
+      setselectedGroup(tempArr);
     }
-    setselectedGroup(tempArr);
+    else {
+      const newItem = testGroups.filter((g) => { return g.GroupID === id })[0];
+      setselectedGroup([...selectedGroup, newItem]);
+    }
   };
 
   const handleDelete = async () => {
@@ -1291,45 +1261,31 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleGroupClose = async () => {
-
-    let boolean = false;
-    for (let i = 0; i < selectedGroup.length; i++) {
-      if (selectedGroup[i].selected) {
-        boolean = true;
-        break;
-      }
-    }
-    if (smsModel.Name !== "" && smsModel.Text !== "" && boolean === true) {
-
-      let temp = [];
-      let tempfull = [];
-      let num = 0;
-      for (let i = 0; i < selectedGroup.length; i++) {
-        if (selectedGroup[i].selected) {
-          temp.push(selectedGroup[i].GroupID);
-          tempfull.push(selectedGroup[i]);
-          ++num;
+    if (selectedGroup.length > 0) {
+      const groupIds = selectedGroup.map((g) => { return g.GroupID });
+      settotal(selectedGroup.length);
+      if (validationCheck()) {
+        const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds }
+        let r = await dispatch(smsSave(payloadToPush));
+        if (r.payload.Status == 2) {
+          let payload2 = {
+            IsTestGroups: true,
+            SMSCampaignID: r.payload.Message,
+            TestGroupsIds: groupIds,
+          };
+          handleSmsModelChange("SMSCampaignID", r.payload.Message);
+          let r2 = await dispatch(smsSaveGroup(payload2));
+          await dispatch(getCampaignSumm(r.payload.Message));
+          setsummary(true);
+        }
+        else if (r.payload.Status == 3) {
+          setDialogType({ type: 'otpVerification' });
+        }
+        else {
+          setDialogType(null);
         }
       }
-      settotal(num);
-      settemp(tempfull);
-      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: temp }
-      let r = await dispatch(smsSave(payloadToPush));
-      if (r.payload.Status == 2) {
-        let payload2 = {
-          IsTestGroups: true,
-          SMSCampaignID: r.payload.Message,
-          TestGroupsIds: temp,
-        };
-        let r2 = await dispatch(smsSaveGroup(payload2));
-        await dispatch(getCampaignSumm(r.payload.Message));
-        setsummary(true);
-      }
-      else if (r.payload.Status == 3) {
-        setDialogType({ type: 'otpVerification' });
-      }
     }
-    setDialogType(null);
     sethidden(true);
   };
 
@@ -1718,7 +1674,20 @@ const SmsCreator = ({ classes, ...props }) => {
           </div>
         </Box>
       ),
-      showDefaultButtons: true,
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          style={{ maxWidth: 100 }}
+          onClick={() => { setDialogType(null) }}
+          className={clsx(
+            classes.gruopsDialogButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.Ok')}
+        </Button>
+      ),
+      showDefaultButtons: false,
       onClose: () => { setDialogType(null) },
       onConfirm: () => { setDialogType(null) }
     }
@@ -1752,7 +1721,7 @@ const SmsCreator = ({ classes, ...props }) => {
             />
           </Paper>
           <div className={classes.listDiv}>
-            {selectedGroup
+            {testGroups
               .filter((val) => {
                 if (ContactSearch == "") {
                   return val;
@@ -1765,7 +1734,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 }
               })
               .map((item, idx) => {
-
+                const itemChecked = selectedGroup.filter((g) => { return g.GroupID === item.GroupID }).length > 0
                 return (
                   <div className={classes.searchCon} onClick={() => {
                     handleSelect(item.GroupID);
@@ -1773,10 +1742,10 @@ const SmsCreator = ({ classes, ...props }) => {
                     <span
                       style={{ marginInlineEnd: "25px" }}
                       className={
-                        item.selected ? classes.greenDoc : classes.blueDoc
+                        itemChecked ? classes.greenDoc : classes.blueDoc
                       }
                     >
-                      {item.selected ? (
+                      {itemChecked ? (
                         <FaCheck className={clsx(classes.green)} />
                       ) : (
                         <HiOutlineUserGroup />
@@ -2005,20 +1974,24 @@ const SmsCreator = ({ classes, ...props }) => {
     </Grid>);
   }
   return (
-    <DefaultScreen currentPage="sms" classes={classes}>
+    <DefaultScreen currentPage="sms" classes={classes} customPadding={true}>
       {renderToast()}
-      <Grid container className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : classes.sidePadding}>
+      <Grid container className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}>
         <SwitchOldVersion />
       </Grid>
-      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : classes.sidePadding}>
+      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}>
         <Grid item xs={12} sm={12} lg={8}>
-          {renderSwitch()}
-          {renderHead()}
+          <Title title={t("mainReport.smsCampaign")}
+            classes={classes}
+            tooltip={t("mainReport.toolTip1")}
+            stepNumber={1}
+            subTitle={t("mainReport.createContent")}
+          />
           {renderFields()}
           {renderMsg()}
         </Grid>
         <Grid xs={12} sm={12} md={12} lg={4}>
-          <Box style={{maxWidth: 420}}>
+          <Box style={{ maxWidth: 420 }}>
             {renderPhone()}
           </Box>
         </Grid>

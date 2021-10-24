@@ -424,10 +424,10 @@ export const smsSlice = createSlice({
       state.smsCampaignSettings = action.error
     })
 
-    builder.addCase(duplicteSms.fulfilled, () => console.log('api duplicteSms success'))
-    builder.addCase(deleteSms.fulfilled, () => console.log('api deleteSms success'))
-    builder.addCase(restoreSms.fulfilled, () => console.log('api restoreSms success'))
-    builder.addCase(getCreditsforSMS.fulfilled, () => console.log('api getCreditsforSMS success'))
+    // builder.addCase(duplicteSms.fulfilled, () => console.log('api duplicteSms success'))
+    // builder.addCase(deleteSms.fulfilled, () => console.log('api deleteSms success'))
+    // builder.addCase(restoreSms.fulfilled, () => console.log('api restoreSms success'))
+    // builder.addCase(getCreditsforSMS.fulfilled, () => console.log('api getCreditsforSMS success'))
 
     builder.addCase(duplicteSms.rejected, (_, action) => console.log('Error - api duplicteSms: ' + action.error))
     builder.addCase(deleteSms.rejected, (_, action) => console.log('Error - api deleteSms: ' + action.error))

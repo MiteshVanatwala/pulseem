@@ -464,6 +464,7 @@
   "pulseSend" : "שליחה בפולסים",
   "days"  :"ימים",
   "birthday"  :"יום הולדת",
+  "creationDay": "תאריך יצירה",
   "recipientFilter" : "סינון",
   "createContent":"יצירת תוכן",
   "campName":"שם הקמפיין",
