@@ -302,23 +302,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [totalCampaigns, settotalCampaigns] = useState([])
   const [typedData, settypedData] = useState([]);
   const [displayFilter, setdisplayFilter] = useState(false);
-  const [selectArray, setselectArray] = useState([
-    {
-      isdisabled: false,
-      idx: -1,
-      value: t("common.first_name")
-    },
-    {
-      isdisabled: false,
-      idx: -1,
-      value: t("common.last_name")
-    },
-    {
-      isdisabled: false,
-      idx: -1,
-      value: t("common.cellphone")
-    }
-  ]);
+  const [selectArray, setselectArray] = useState([]);
   const [dataSaved, setdataSaved] = useState({
     campaignName: "",
     fromNumber: "",
@@ -327,6 +311,29 @@ const SmsSend = ({ classes, ...props }) => {
   })
   const [initialheadstate, setinitialheadstate] = useState([])
   const [recipientsDisplayGroups, setrecipientsDisplayGroups] = useState([]);
+
+  useEffect(() => {
+    setselectArray([
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "FirstName",
+        label: t("common.first_name")
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "LastName",
+        label: t("common.last_name")
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "Cellphone",
+        label: t("common.cellphone")
+      }
+    ]);
+  }, [!showLoader]);
 
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: "SMS campaign has been saved", showAnimtionCheck: true },
@@ -2540,6 +2547,18 @@ const SmsSend = ({ classes, ...props }) => {
     }
 
   }
+  const translateHebrewColumns = (key) => {
+    if (key === 'שםפרטי') {
+      return "FirstName";
+    }
+    if (key === 'שםמשפחה') {
+      return "LastName";
+    }
+    if (key === 'סלולרי') {
+      return "Cellphone";
+    }
+    return key;
+  }
   const handleDataManual = async () => {
     if (manualUploadValidationscheck()) {
       let requestPayload = [];
@@ -2549,9 +2568,9 @@ const SmsSend = ({ classes, ...props }) => {
           requestPayload.push({});
           for (let k = 0; k < typedData[j].length; k++) {
             if (headers[k] && headers[k] !== t("sms.adjustTitle")) {
-              let key = headers[k].toLocaleString().replaceAll(" ", "");
+              let key = translateHebrewColumns(headers[k].toLocaleString().replaceAll(" ", ""));
               let obj = requestPayload[j];
-              obj[key] = typedData[j][k];
+              obj[key] = typedData[j][k].trim();
             }
           }
         }
@@ -2563,12 +2582,10 @@ const SmsSend = ({ classes, ...props }) => {
 
           for (let k in contacts[j]) {
             if (headers[i] && headers[i] !== t("sms.adjustTitle")) {
-              let key = headers[i].toLocaleString().replaceAll(" ", "");
+              let key = translateHebrewColumns(headers[i].toLocaleString().replaceAll(" ", ""));
               let obj = requestPayload[j];
-              obj[key] = contacts[j][k];
-
+              obj[key] = contacts[j][k].trim();
             }
-
             i++;
           }
         }
@@ -2763,7 +2780,7 @@ const SmsSend = ({ classes, ...props }) => {
                                       handleSelectFirst(item, id, idx);
                                     }}
                                   >
-                                    {item.value}
+                                    {item.label}
                                   </span>
                                 )
                               })}
@@ -2808,7 +2825,7 @@ const SmsSend = ({ classes, ...props }) => {
                                     handleSelectFirst(item, id, idx);
                                   }}
                                 >
-                                  {item.value}
+                                  {item.label}
                                 </span>
                               )
                             })}
