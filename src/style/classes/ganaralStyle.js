@@ -1591,14 +1591,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
 
   pulseDisable:
   {
-    border: "1px solid  #808080",
-    padding: "8px",
-    marginInlineEnd: "8px",
-    borderRadius: "4px",
-    cursor: "pointer",
+    padding: 8,
+    fontSize: 14,
+    borderRadius: 4,
+    display: 'flex',
     color: "#808080",
-    pointerEvents: "none"
-
+    marginInlineEnd: 8,
+    alignItems: 'center',
+    pointerEvents: "none",
+    cursor: "not-allowed",
+    border: "1px solid  #808080",
+    justifyContent: 'space-between'
   },
   toggleDiv: {
     display: "flex",
@@ -1611,7 +1614,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "70px",
     marginInlineEnd: "5px",
     marginBottom: "8px",
-    textAlign:'center',
+    textAlign: 'center',
     paddingRight: 0,
     paddingLeft: 0,
     borderRadius: 5,
