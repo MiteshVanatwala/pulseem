@@ -11,16 +11,16 @@ export const getSmsData = createAsyncThunk(
     }
   })
 
-  export const getSMSVirtualNumber = createAsyncThunk(
-    'smsCampaign/GetAccountVirtualNumber', async (number, thunkAPI) => {
-      try {
-        const response = await instence.get(`smsCampaign/GetAccountVirtualNumber/${number}`);
-        return JSON.parse(response.data)
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
-    })
- 
+export const getSMSVirtualNumber = createAsyncThunk(
+  'smsCampaign/GetAccountVirtualNumber', async (number, thunkAPI) => {
+    try {
+      const response = await instence.get(`smsCampaign/GetAccountVirtualNumber/${number}`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 
 export const getCommonFeatures = createAsyncThunk(
   'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
@@ -106,24 +106,24 @@ export const getSMSDirectReport = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-  export const getSMSRequestOTP = createAsyncThunk(
-    'RequestOTP', async (data, thunkAPI) => {
-      try {
-        const response = await instence.post(`RequestOTP`, data);
-        return JSON.parse(response.data)
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
-    })
-    export const getSMSConfirmOTP = createAsyncThunk(
-      'ConfirmOTP', async (data, thunkAPI) => {
-        try {
-          const response = await instence.post(`ConfirmOTP`, data);
-          return JSON.parse(response.data)
-        } catch (error) {
-          return thunkAPI.rejectWithValue({ error: error.message });
-        }
-      })
+export const getSMSRequestOTP = createAsyncThunk(
+  'RequestOTP', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`RequestOTP`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const getSMSConfirmOTP = createAsyncThunk(
+  'ConfirmOTP', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`ConfirmOTP`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 export const saveManualClients = createAsyncThunk(
   'smsCampaign/SaveManualClients', async (data, thunkAPI) => {
     try {
@@ -321,15 +321,25 @@ export const getCampaignSettings = createAsyncThunk(
     }
   });
 
-  export const sendSms = createAsyncThunk(
-    'smsCampaign/Send', async (sendData, thunkAPI) => {
-      try {
-        const response = await instence.post(`smsCampaign/Send`, sendData);
-        return JSON.parse(response.data)
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
-    });
+export const sendSms = createAsyncThunk(
+  'smsCampaign/Send', async (sendData, thunkAPI) => {
+    try {
+      const response = await instence.post(`smsCampaign/Send`, sendData);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+export const IsOTPPassed = createAsyncThunk(
+  'smsCampaign/IsOTPPassed', async (fromNumber, thunkAPI) => {
+    try {
+      const response = await instence.get(`smsCampaign/IsOTPPassed/${fromNumber}`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 // export const SaveSms=createAsyncThunk(
 //   'smsCampaign/Save/',async (data,thunkAPI) => {
@@ -361,11 +371,15 @@ export const smsSlice = createSlice({
     directSmsReportError: '',
     credits: [],
     smsCampaignSettings: [],
-    smsSendResult: -1
+    smsSendResult: -1,
+    OTPPassed: null
   },
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(sendSms.fulfilled, (state, {payload}) => {
+    builder.addCase(IsOTPPassed.fulfilled, (state, { payload }) => {
+      state.OTPPassed = payload;
+    })
+    builder.addCase(sendSms.fulfilled, (state, { payload }) => {
       state.smsSendResult = payload;
     })
     builder.addCase(getSmsData.fulfilled, (state, { payload }) => {

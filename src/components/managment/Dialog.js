@@ -7,8 +7,8 @@ import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { AlertIcon } from '../icons/index'
 
-export const Dialog=({
-  childrenPadding=true,
+export const Dialog = ({
+  childrenPadding = true,
   classes,
   open = false,
   title = '',
@@ -50,18 +50,18 @@ export const Dialog=({
   const renderExitButton = () => {
     return (
       <>
-       {props.exit ? null :  <Box
-    onClick={onExit}
-    className={clsx(
-      classes.dialogExitButton,
-      {
-        [classes.dialogExitButtonRTL]: isRTL,
-        [classes.dialogExitButtonLTR]: !isRTL
-      }
-    )}>
-    x
-  </Box> }  </>
-  
+        {props.exit ? null : <Box
+          onClick={onExit}
+          className={clsx(
+            classes.dialogExitButton,
+            {
+              [classes.dialogExitButtonRTL]: isRTL,
+              [classes.dialogExitButtonLTR]: !isRTL
+            }
+          )}>
+          x
+        </Box>}  </>
+
     )
   }
 

@@ -26,6 +26,7 @@ const Groups = ({ classes,
     isSms,
     selectedList,
     maxHeight = 415,
+    innerHeight = null,
     isNotifications,
     noSelectionText,
     minHeight = null,
@@ -343,7 +344,7 @@ const Groups = ({ classes,
                     }
                 />)
             }
-            <div className={clsx(classes.demo, classes.sidebar)} style={{ minHeight: 280, maxHeight: 280, overflow: 'auto' }}>
+            <div className={clsx(classes.demo, classes.sidebar)} style={{ maxHeight: innerHeight, minHeight: innerHeight, overflow: 'auto' }}>
                 <List key={uniqueKey}>
                     {showSelectAll && renderSelectAll()}
                     {isCampaign ? renderCampaigns() : renderGroups()}

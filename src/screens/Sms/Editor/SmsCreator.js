@@ -378,14 +378,6 @@ const SmsCreator = ({ classes, ...props }) => {
     document.title = t("mainReport.smsTitle");
   }, []);
 
-  // useEffect(() => {
-  //   let temp = [];
-  //   for (let i = 0; i < accountId.length; i++) {
-  //     temp.push(accountId[i]);
-  //   }
-  //   setselectedGroup(temp);
-  // }, [accountId]);
-
   const getAutomationReturnUrl = (campaignId) => {
     const nodeToEdit = qs.NodeToEdit ?? null;
     return `/pulseem/CreateAutomations.aspx?AutomationID=${qs.FromAutomation}&NodeToEdit=${nodeToEdit}&SMSCampaignID=${campaignId}`;
@@ -463,10 +455,10 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCampaignNumber = (e) => {
-    var isNumber =/^[0-9]*$/; 
+    var isNumber = /^[0-9]*$/;
     var english = /^[A-Za-z0-9]*$/;
     var reg = "/[^\x00-\xFF]/g";
-    if(!isNumber.test(e.target.value) && e.target.value.length >= 10){
+    if (!isNumber.test(e.target.value) && e.target.value.length >= 10) {
       e.target.value = e.target.value.substring(0, 10);
     }
     if (!english.test(e.target.value)) {
@@ -475,7 +467,7 @@ const SmsCreator = ({ classes, ...props }) => {
         ""
       );
     }
-    else{
+    else {
       setrestoreBool(false);
       setcampaignNumber(e.target.value);
       setcampaignNumberValidated(false);
@@ -1038,7 +1030,7 @@ const SmsCreator = ({ classes, ...props }) => {
             <div className={classes.chatBoxHe}>
               <div className={classes.fromMe}>
                 {smsModel.Text !== '' ? smsModel.Text.split('\n').map((str) => {
-                  return (<p style={{ margin: "0", padding: "0" }}>{str}</p>)
+                  return (<p key={Math.floor(Math.random() * 100)} style={{ margin: "0", padding: "0" }}>{str}</p>)
                 }) : t("mainReport.typeText")}
               </div>
             </div>
@@ -1150,7 +1142,7 @@ const SmsCreator = ({ classes, ...props }) => {
                         <div className={classes.mappedGroup}>
                           {selectedGroup.map((item, index) => {
                             return (
-                              <div className={classes.selectedGroupsDiv}>
+                              <div key={index} className={classes.selectedGroupsDiv}>
                                 <span className={classes.nameGroup}>
                                   {item.GroupName}
                                 </span>
@@ -1305,13 +1297,25 @@ const SmsCreator = ({ classes, ...props }) => {
     if (saveBeforeExit) {
       if (validationCheck()) {
         const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
-        let r = await dispatch(smsSave(payloadToPush));
-        if (r) {
-          history.push("/SMSCampaigns");
+        let saveResponse = await dispatch(smsSave(payloadToPush));
+        if (saveResponse) {
+          if (saveResponse.payload.Status === 3) {
+            setDialogType({ type: 'otpVerification' });
+            return;
+          }
+          else if (saveResponse.payload.Status === 2) {
+            history.push("/SMSCampaigns");
+          }
+          else {
+            setToastMessage(toastMessages.ERROR);
+          }
+        }
+        else {
+          setToastMessage(toastMessages.ERROR);
         }
       }
     }
-    else if (saveBeforeExit == false) {
+    else if (saveBeforeExit === false) {
       history.push("/SMSCampaigns");
     }
     setDialogType(null);
@@ -1512,6 +1516,7 @@ const SmsCreator = ({ classes, ...props }) => {
             .map((item, idx) => {
               return (
                 <div
+                  key={idx}
                   className={classes.searchCon}
                   onClick={() => {
                     handleAddLink(idx, 'campaign');
@@ -1575,6 +1580,7 @@ const SmsCreator = ({ classes, ...props }) => {
               .map((item, idx) => {
                 return (
                   <div
+                    key={idx}
                     className={classes.searchCon}
                     onClick={() => {
                       handleAddLink(idx, 'lp');
@@ -1736,7 +1742,7 @@ const SmsCreator = ({ classes, ...props }) => {
               .map((item, idx) => {
                 const itemChecked = selectedGroup.filter((g) => { return g.GroupID === item.GroupID }).length > 0
                 return (
-                  <div className={classes.searchCon} onClick={() => {
+                  <div key={idx} className={classes.searchCon} onClick={() => {
                     handleSelect(item.GroupID);
                   }}>
                     <span
@@ -1784,7 +1790,8 @@ const SmsCreator = ({ classes, ...props }) => {
       ),
       showDefaultButtons: true,
       cancelText: t("common.No"),
-      onClose: () => { handleExit(false) },
+      onClose: () => { setDialogType(null) },
+      onCancel: () => { handleExit(false) },
       onConfirm: () => { handleExit(true) }
     }
   }

@@ -34,19 +34,24 @@ import {
   Radio,
   FormHelperText,
   Divider,
+  TextField
 } from "@material-ui/core";
 import {
-  getGroupsBySubAccountId,
-  smsCombinedGroup,
-  saveSmsCampSettings,
+  sendSms,
   deleteSms,
-  getCampaignSumm,
   getSmsByID,
+  IsOTPPassed,
+  getCampaignSumm,
+  getSMSRequestOTP,
+  getSMSConfirmOTP,
+  smsCombinedGroup,
+  getCommonFeatures,
   saveManualClients,
-  getFinishedCampaigns,
-  getCampaignSettings,
   getAccountExtraData,
-  sendSms
+  saveSmsCampSettings,
+  getCampaignSettings,
+  getFinishedCampaigns,
+  getGroupsBySubAccountId,
 } from "../../../redux/reducers/smsSlice";
 import Summary from "./smsSummary";
 import clsx from "clsx";
@@ -138,6 +143,7 @@ const useStyleNew = makeStyles((theme) => ({
   },
 }));
 //#endregion
+//#region Tabs
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -176,6 +182,7 @@ const useStyle = makeStyles((theme) => ({
     backgroundColor: "#ffffff",
   },
 }));
+//#endregion
 
 const SmsSend = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -184,6 +191,7 @@ const SmsSend = ({ classes, ...props }) => {
   const history = useHistory();
   const severe = useSnackSevere();
   const recipientSuccess = useSnackRecipients();
+  const { OTPPassed } = useSelector((state) => state.sms);
 
   const dispatch = useDispatch();
   const { windowSize, isRTL } = useSelector(
@@ -275,6 +283,11 @@ const SmsSend = ({ classes, ...props }) => {
   const [selectedFilterGroups, setFilterGroups] = useState([]);
   const [timeType, setTimeType] = useState(-1);
   const [pulseType, setPulseType] = useState(-1);
+  const [otpRequired, setOtpRequired] = useState(false);
+  const [OtpCounter, setOtpCounter] = useState(false);
+  const [otpMsgs, setotpMsgs] = useState("Required Field");
+  const [otpValue, setotpValue] = useState(null);
+
   // const [smsCampaignSettings, setSmsCampaignSettings] = useState({
   //   FutureDateTime: null,
   //   Groups: null,
@@ -341,6 +354,11 @@ const SmsSend = ({ classes, ...props }) => {
 
   const [headers, setheaders] = useState(initialheadstate);
 
+  const isOtpRequired = async () => {
+    if (dataSaved.fromNumber !== null && dataSaved.fromNumber !== '') {
+      await dispatch(IsOTPPassed(dataSaved.fromNumber));
+    }
+  }
   const getData = async () => {
     setLoader(true);
     if (props && props.match.params.id) {
@@ -387,7 +405,6 @@ const SmsSend = ({ classes, ...props }) => {
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseSettingsID !== -1) {
         settogglePulse(true);
       }
-
       if (campaignSettings.payload.RandomSettings != null && campaignSettings.payload.RandomSettings.RandomAmount !== 0) {
         setrandom(campaignSettings.payload.RandomSettings.RandomAmount);
         settoggleRandom(true);
@@ -396,13 +413,11 @@ const SmsSend = ({ classes, ...props }) => {
         setnoTrue(true);
         setpulsePer("");
         setpulseReci("Recipients");
-
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseType === 1) {
         setpulsePer("percent");
         setnoTrue(false);
         setpulseReci("");
-
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 1) {
         setminName("Mins");
@@ -436,16 +451,26 @@ const SmsSend = ({ classes, ...props }) => {
         }
       }
 
-      setLoader(false)
+      setLoader(false);
     }
   };
+
+  useEffect(async () => {
+    await isOtpRequired();
+  }, [dataSaved]);
+
+  useEffect(() => {
+    setOtpRequired(!OTPPassed);
+    if(!OTPPassed){
+      setDialogType({ type: "otpVerification" });
+    }
+  }, [OTPPassed])
 
   useEffect(() => {
     setLoader(true);
     getData();
     setLoader(false);
     getDataExtra();
-
   }, [dispatch]);
   const getDataExtra = async () => {
 
@@ -458,7 +483,6 @@ const SmsSend = ({ classes, ...props }) => {
     if (props && props.match.params.id) {
       getSavedData();
     }
-
   }, []);
 
   const getSavedData = async () => {
@@ -470,6 +494,217 @@ const SmsSend = ({ classes, ...props }) => {
       }
     }
   }
+
+  //#region OTP
+  const otpProps = {
+    maxlength: "5"
+  }
+  const handleVerifyOTP = async () => {
+    setLoader(true);
+    setDialogType(null);
+
+    let payload = {
+      "Cellphone": dataSaved.fromNumber,
+    }
+    let r = await dispatch(getSMSRequestOTP(payload))
+    setLoader(false);
+    setDialogType({ type: 'otpCode' });
+  }
+  const submitOtp = async () => {
+    let payload =
+    {
+      "Cellphone": dataSaved.fromNumber,
+      "Code": otpValue,
+    }
+    if (otpValidationscheck()) {
+      let r = await dispatch(getSMSConfirmOTP(payload))
+      handleOtpResult(r.payload.Status)
+    }
+  }
+  const handleOtpChnage = (e) => {
+    setotpValue(e.target.value);
+    setOtpCounter(false);
+    setotpMsgs("Required field")
+  }
+  const otpValidationscheck = () => {
+    if (otpValue === "") {
+      setOtpCounter(true);
+      return false;
+    }
+    return true;
+  };
+  const OTPVerificationDialog = () => {
+    return {
+      title: t('sms.verificationOtp'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.flexColCenter}>
+          <Typography className={classes.fontSmsRegulations}>
+            {t("sms.OtpRegulations")}
+          </Typography>
+          <Typography className={classes.fontSmsRegulations}>{t("sms.regulationSecondLine")} <strong>{t("sms.oneTime")}</strong> {t("sms.regulationThirdLine")}</Typography>
+          <TextField
+            id="outlined-basic"
+            type="text"
+            className={classes.OtpPhoneNumberInput}
+            value={dataSaved.fromNumber}
+            disabled
+          />
+          <Button
+            variant='contained'
+            size='small'
+            className={clsx(
+              classes.dialogButton,
+              classes.dialogConfirmButton
+            )} style={{ whiteSpace: 'nowrap', width: 'auto' }} onClick={() => { handleVerifyOTP() }}>{t("sms.sendVerificationCode")}</Button>
+          <Typography className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
+          <Typography style={{ fontSize: "14px" }}>{t("sms.helplineSMS")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) }
+    }
+  }
+  const OTPCodeDialog = () => {
+    return {
+      title: t('sms.weHaveSentOtp'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.flexColCenter}>
+          <Box className={clsx(classes.verificationBodySMS, classes.txtCenter)}>
+            <Typography className={classes.fontSmsRegulations}>
+              {t("sms.OtpSentSuccessLine1")} <strong>{dataSaved.fromNumber}</strong>
+            </Typography>
+            <Typography className={classes.fontSmsRegulations}>{t("sms.OtpSentSuccessLine2")}</Typography>
+            <TextField
+              id="outlined-basic"
+              type="text"
+              className={OtpCounter ? clsx(classes.OtpPhoneNumberConfirm, classes.error) : clsx(classes.OtpPhoneNumberConfirmSuccess, classes.success)}
+              placeholder={t("sms.typeOtpPlaceholder")}
+              onChange={(e) => { handleOtpChnage(e) }}
+              inputProps={otpProps}
+            />
+            {OtpCounter ? <Typography style={{ marginBottom: "30px", color: "red" }}>{otpMsgs}</Typography> : null}
+            <Button
+              variant='contained'
+              size='small'
+              className={clsx(
+                classes.dialogButton,
+                classes.dialogConfirmBlueButton
+              )} style={{ width: "250px" }} onClick={() => { submitOtp() }}>{t("sms.confirmOtp")}</Button>
+            <Box style={{ display: "flex", marginTop: "20px" }}>
+              <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography>
+              <Typography style={{ textDecoration: "underline", marginInlineStart: "4px" }} className={classes.fontSmsRegulations} onClick={() => { handleVerifyOTP() }}>{t("sms.sendAgainOtp")}</Typography>
+            </Box>
+          </Box>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { handleVerifyOTP() }
+    }
+  }
+  const OTPSuccess = () => {
+    return {
+      title: t('sms.otpNumberValidatedTitle'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.flexColCenter} style={{ paddingBottom: 10 }}>
+          <img src={Gif} style={{ width: "150px", height: "150px" }} />
+          <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
+            {t("sms.otpNumberValidatedDescription")}
+          </p>
+          <Button
+            variant='contained'
+            size='large'
+            className={clsx(
+              classes.dialogButton,
+              classes.dialogConfirmButton
+            )}
+            onClick={() => { setOtpRequired(false); setDialogType(null) }}>
+            {t('common.Ok')}
+          </Button>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setOtpRequired(false); setDialogType(null) },
+      onConfirm: () => { setOtpRequired(false); setDialogType(null) }
+    }
+  }
+  const handleOtpResult = async (otpSendResult) => {
+    switch (otpSendResult) {
+      case 1: {// Request
+        break;
+      }
+      case 2: {// Success
+        setDialogType({ type: 'otpSuccess' });
+        break;
+      }
+      case 3: {// Not_Authirized
+      }
+      case 4: {// Failed
+        setOtpCounter(true);
+        setotpMsgs("Session Expired , please send again");
+        break;
+      }
+      case 5: {// NotMatch
+        setOtpCounter(true);
+        setotpMsgs("Incorrect code, try again or click on Send again");
+        break;
+      }
+      case 6: {//  CellphoneNotProvided
+        setOtpCounter(true);
+        setotpMsgs("Cellphone not correct , please try again later");
+
+        break;
+      }
+      case 7: {// CodeNotProvided
+        setOtpCounter(true);
+        setotpMsgs("Required field");
+        break;
+      }
+
+    }
+  }
+  const alertDialog = () => {
+    return {
+      title: t('mainReport.pleaseNote'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\uE11B'}
+        </div>
+      ),
+      content: (
+        <Box style={{ maxWidth: 400 }}>
+          <Typography className={classes.f18}>{t("mainReport.pleaseNoteDsec")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { handleAlertoff() },
+      onConfirm: () => { handleAlertoff() }
+    }
+  }
+
+  const handleAlertoff = () => {
+    setDialogType(null);
+  }
+  //#endregion
 
   const callbackSelectAll = () => {
     if (!allGroupsSelected) {
@@ -1626,6 +1861,10 @@ const SmsSend = ({ classes, ...props }) => {
   }
 
   const onSaveSettings = async (toggle, exit) => {
+    if (otpRequired) {
+      setDialogType({ type: "otpVerification" });
+      return;
+    }
     if (selectedGroups.length <= 0) {
       setToastMessage(toastMessages.NO_GROUPS);
       return;
@@ -2580,6 +2819,7 @@ const SmsSend = ({ classes, ...props }) => {
                   noSelectionText={t("sms.NoFilteredGroups")}
                   minHeight={250}
                   maxHeight={250}
+                  innerHeight={160}
                   uniqueKey={'groups_2'}
                 />
               </div>
@@ -2604,6 +2844,7 @@ const SmsSend = ({ classes, ...props }) => {
                   noSelectionText={t("sms.NoFilteredCampaigns")}
                   minHeight={250}
                   maxHeight={250}
+                  innerHeight={160}
                   uniqueKey={'campaigns'}
                 />
               </div>
@@ -2651,7 +2892,11 @@ const SmsSend = ({ classes, ...props }) => {
     const { type } = dialogType || {}
 
     const dialogContent = {
-      filterRecipients: filterRecipientsDialog()
+      filterRecipients: filterRecipientsDialog(),
+      alert: alertDialog(),
+      otpVerification: OTPVerificationDialog(),
+      otpCode: OTPCodeDialog(),
+      otpSuccess: OTPSuccess(),
     }
 
     const currentDialog = dialogContent[type] || {}
