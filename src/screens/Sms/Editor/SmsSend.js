@@ -368,10 +368,12 @@ const SmsSend = ({ classes, ...props }) => {
       const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id))
       settotalCampaigns(finishedCampaigns.payload);
       setGroupList(subAccountGroups.payload);
-      setTimeType(campaignSettings.payload.PulseSettings.TimeType);
-      setPulseType(campaignSettings.payload.PulseSettings.PulseType);
-      setPulseAmount(`${campaignSettings.payload.PulseSettings.PulseAmount}`)
-      setTimeInterval(`${campaignSettings.payload.PulseSettings.TimeInterval}`)
+      if(campaignSettings.payload && campaignSettings.payload.PulseSettings){
+        setTimeType(campaignSettings.payload.PulseSettings.TimeType);
+        setPulseType(campaignSettings.payload.PulseSettings.PulseType);
+        setPulseAmount(`${campaignSettings.payload.PulseSettings.PulseAmount}`)
+        setTimeInterval(`${campaignSettings.payload.PulseSettings.TimeInterval}`)
+      }
 
       if (campaignSettings.payload.Groups !== null) {
         const selectedGroupsForSend = [];
