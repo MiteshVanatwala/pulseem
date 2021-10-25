@@ -287,6 +287,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [OtpCounter, setOtpCounter] = useState(false);
   const [otpMsgs, setotpMsgs] = useState("Required Field");
   const [otpValue, setotpValue] = useState(null);
+  const [groupNameExist, setGroupNameExist] = useState(false);
 
   // const [smsCampaignSettings, setSmsCampaignSettings] = useState({
   //   FutureDateTime: null,
@@ -461,7 +462,7 @@ const SmsSend = ({ classes, ...props }) => {
 
   useEffect(() => {
     setOtpRequired(!OTPPassed);
-    if(!OTPPassed){
+    if (!OTPPassed) {
       setDialogType({ type: "otpVerification" });
     }
   }, [OTPPassed])
@@ -776,10 +777,17 @@ const SmsSend = ({ classes, ...props }) => {
     setsendTime(value)
   }
   const handleCombined = async () => {
+    const nameExist = groupList.filter((g) => { return g.GroupName === groupValue });
+    if (nameExist.length > 0){
+      setGroupNameExist(true);
+      return;
+    }
+
     let temp = [];
     for (let i = 0; i < selectedGroups.length; i++) {
       temp.push(selectedGroups[i].GroupID);
     }
+    
     let payload = {
       SubAccountID: 1,
       GroupName: groupValue,
@@ -799,6 +807,7 @@ const SmsSend = ({ classes, ...props }) => {
     setdeleteClick(true);
   };
   const inputGroup = (e) => {
+    setGroupNameExist(false);
     setgroupValue(e.target.value);
   };
   const handlePulseClose = () => {
@@ -1428,6 +1437,7 @@ const SmsSend = ({ classes, ...props }) => {
                   <span className={classes.saveBtn} onClick={handleCombined}>
                     {t("mainReport.save")}
                   </span>
+                  {groupNameExist ? <span style={{ marginTop: "8px", color: "red", fontSize: "12px", display: 'block' }}>{t("sms.groupNameExists").replace("#groupName#", groupValue)}</span> : null}
                 </div>
               ) : null}
             </div>
