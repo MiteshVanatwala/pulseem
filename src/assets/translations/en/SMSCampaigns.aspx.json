@@ -548,5 +548,7 @@
   "message":"Message",
   "messages":"Messages",
   "otpNumberValidatedTitle": "The number validated successfully",
-  "otpNumberValidatedDescription": "You can now send through this number without the need for re-verification"
+  "otpNumberValidatedDescription": "You can now send through this number without the need for re-verification",
+  "NoFilteredGroups": "No group selected",
+  "NoFilteredCampaigns": "No campaign selected"
 }

@@ -1,21 +1,6 @@
 import React, { useState } from 'react';
 import {
-    Typography,
-    ListItemAvatar,
-    Avatar,
-    Grid,
-    ListItem,
-    ListItemText,
-    ListItemSecondaryAction,
-    List,
-    TextField,
-    FormControl,
-    Input,
-    InputAdornment,
-    Box,
-    Select,
-    MenuItem,
-    Button
+    Typography, ListItemAvatar, Avatar, Grid, ListItem, ListItemText, ListItemSecondaryAction, List, TextField, FormControl, Input, InputAdornment, Box, Select, MenuItem, Button
 } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useSelector } from 'react-redux'
@@ -35,13 +20,30 @@ import {
 
 
 
-const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, callbackUpdateGroups, callbackSelectAll, callbackReciFilter, bool, isNotifications, bsDot }) => {
+const Groups = ({ classes,
+    list,
+    bsDot,
+    isSms,
+    selectedList,
+    maxHeight = 415,
+    isNotifications,
+    noSelectionText,
+    minHeight = null,
+    showSortBy = true,
+    showFilter = true,
+    isCampaign = false,
+    showSelectAll = true,
+    callbackSelectedGroups = () => null,
+    callbackUpdateGroups = () => null,
+    callbackSelectAll = () => null,
+    callbackReciFilter = () => null,
+    uniqueKey = null
+}) => {
     const { language, isRTL, windowSize } = useSelector(state => state.core)
     const { t } = useTranslation();
     const [groupNameSearch, setGroupNameSearch] = useState('');
     const [clearInput, setClearInput] = useState(false);
     const [groupHover, setIsHover] = useState(null);
-
     const handleSearch = (event) => {
         setClearInput(event.target.value != '');
         setGroupNameSearch(event.target.value);
@@ -67,7 +69,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
     const renderGroups = () => {
         const groupIdKey = isNotifications ? "Id" : "GroupID";
         const groupRecipientsKey = isNotifications ? "Members" : "Recipients";
-        return groupList.filter((g) => {
+        return list.filter((g) => {
             return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
         }).map((group) => {
             const isExist = selectedList.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
@@ -96,8 +98,35 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
         })
     }
 
+    const renderCampaigns = () => {
+        return list.filter((c) => {
+            return c.Name.toLowerCase().includes(groupNameSearch.toLowerCase());
+        }).map((campaign) => {
+            const isExist = selectedList.map((c) => { return c.SMSCampaignID }).includes(campaign.SMSCampaignID);
+            return (<ListItem id={campaign.SMSCampaignID} key={campaign.SMSCampaignID} onClick={() => onSelectGroup(campaign)} style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setIsHover(campaign.SMSCampaignID)}
+                onMouseLeave={() => setIsHover(null)}
+                className={groupHover === campaign.SMSCampaignID ? classes.hoverListItem : null}
+            >
+                <ListItemAvatar>
+                    <Avatar
+                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
+                        {isExist ?
+                            (<FaCheck className={clsx(classes.green)} />)
+                            :
+                            (<HiUserGroup className={clsx(classes.blue)} />)
+                        }
+                    </Avatar>
+                </ListItemAvatar>
+                <ListItemText className={'groupText'} title={campaign.Name}
+                    primary={campaign.Name}
+                />
+            </ListItem>)
+        })
+    }
+
     const renderSelectAll = () => {
-        const allSelected = groupList.length === selectedList.length;
+        const allSelected = list.length === selectedList.length;
 
         return (<ListItem id="liSelectAll" key="liSelectAll" onClick={() => onSelectAllGroup()} style={{ cursor: 'pointer' }}>
             <ListItemAvatar>
@@ -153,62 +182,45 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
     }
 
     const sortBy = (sortBy, direction) => {
-        if (groupList) {
+        if (list) {
             if (sortBy === "Group Name") {
                 direction === 'asc'
-                    ? groupList.sort((a, b) =>
+                    ? list.sort((a, b) =>
                         a.GroupName.toUpperCase() < b.GroupName.toUpperCase()
                             ? -1
                             : Number(
                                 a.GroupName.toUpperCase() > b.GroupName.toUpperCase()
                             )
                     )
-                    : groupList.sort((a, b) =>
+                    : list.sort((a, b) =>
                         b.GroupName.toUpperCase() < a.GroupName.toUpperCase()
                             ? -1
                             : Number(
                                 b.GroupName.toUpperCase() > a.GroupName.toUpperCase()
                             )
                     );
-            } else if (sortBy === "Update Date" && groupList[0] && groupList[0].UpdateDate) {
-
-                if (bool) {
-                    direction === 'asc'
-                        ? groupList.sort((a, b) =>
-                            a.UpdateDate !== null && b.UpdateDate !== null
-                                ? Date.parse(a.UpdateDate) - Date.parse(b.UpdateDate)
-                                : -1
-                        )
-                        : groupList.sort((a, b) =>
-                            a.UpdateDate !== null && b.UpdateDate !== null
-                                ? Date.parse(b.UpdateDate) - Date.parse(a.UpdateDate)
-                                : -1
-                        );
-                }
-                else {
-                    direction === 'asc'
-                        ? groupList.sort((a, b) =>
-                            a.UpdateDate !== null && b.UpdateDate !== null
-                                ? Date.parse(a.UpdateDate) - Date.parse(b.UpdateDate)
-                                : -1
-                        )
-                        : groupList.sort((a, b) =>
-                            a.UpdateDate !== null && b.UpdateDate !== null
-                                ? Date.parse(b.UpdateDate) - Date.parse(a.UpdateDate)
-                                : -1
-                        );
-                }
+            } else if (sortBy === "Update Date" && list[0] && list[0].UpdateDate) {
+                direction === 'asc'
+                    ? list.sort((a, b) =>
+                        a.UpdateDate !== null && b.UpdateDate !== null
+                            ? Date.parse(a.UpdateDate) - Date.parse(b.UpdateDate)
+                            : -1
+                    )
+                    : list.sort((a, b) =>
+                        a.UpdateDate !== null && b.UpdateDate !== null
+                            ? Date.parse(b.UpdateDate) - Date.parse(a.UpdateDate)
+                            : -1
+                    );
             }
             else if (sortBy === "Creation Date") {
-
-                if (bool) {
+                if (isSms) {
                     direction === 'asc'
-                        ? groupList.sort((a, b) =>
+                        ? list.sort((a, b) =>
                             a.CreationDate !== null && b.CreationDate !== null
                                 ? Date.parse(a.CreationDate) - Date.parse(b.CreationDate)
                                 : -1
                         )
-                        : groupList.sort((a, b) =>
+                        : list.sort((a, b) =>
                             a.CreationDate !== null && b.CreationDate !== null
                                 ? Date.parse(b.CreationDate) - Date.parse(a.CreationDate)
                                 : -1
@@ -216,12 +228,12 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                 }
                 else {
                     direction === 'asc'
-                        ? groupList.sort((a, b) =>
+                        ? list.sort((a, b) =>
                             a.CreatedDate !== null && b.CreatedDate !== null
                                 ? Date.parse(a.CreatedDate) - Date.parse(b.CreatedDate)
                                 : -1
                         )
-                        : groupList.sort((a, b) =>
+                        : list.sort((a, b) =>
                             a.CreatedDate !== null && b.CreatedDate !== null
                                 ? Date.parse(b.CreatedDate) - Date.parse(a.CreatedDate)
                                 : -1
@@ -232,7 +244,7 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
     }
 
     return (
-        <Box className={classes.groupsContainer}>
+        <Box className={classes.groupsContainer} style={{ maxHeight: maxHeight, minHeight: minHeight }} key={uniqueKey}>
             {
                 windowSize === 'xs' && <Grid item xs={12}>
                     <FormControl className={classes.margin, classes.searchInput}>
@@ -274,8 +286,8 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
 
                     />
                 </FormControl>}
-                <Box>
-                    {selectedList.length > 0 ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", color: "#1D82B3", fontWeight: "600", textTransform: "capitalize" }}>
+                {showSortBy && <Box>
+                    {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", color: "#1D82B3", fontWeight: "600", textTransform: "capitalize" }}>
                         <BsFilter style={{ fontSize: "22px", color: "#1D82B3" }} />  {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}
 
                     </Button> : null}
@@ -292,31 +304,49 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                         </Select>
                     </FormControl>
                 </Box>
-
+                }
             </Grid>
-            <Autocomplete
+            {isCampaign ? (<Autocomplete
                 {...defaultProps}
                 multiple
                 id="multiple-limit-tags"
                 value={selectedList}
-                getOptionSelected={(option, value) => option.GroupName === value.GroupName}
-                getOptionLabel={(group) => group.GroupName}
+                getOptionSelected={(option, value) => option.Name === value.Name}
+                getOptionLabel={(campaign) => campaign.Name}
                 defaultValue={[]}
                 open={false}
                 popupIcon={false}
                 onChange={onTagChange}
                 renderInput={(params) => selectedList.length > 0 ? (
-                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{maxHeight: 45}}></TextField>
+                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
                 ) : (
-                    <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{t('notifications.noGroupsSelected')}</Typography>
+                    <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{noSelectionText != '' ? noSelectionText : t('notifications.noGroupsSelected')}</Typography>
                 )
                 }
-            />
-
-            <div className={clsx(classes.demo,classes.sidebar)} style={{ minHeight: 280, maxHeight: 280, overflow: 'auto' }}>
-                <List>
-                    {renderSelectAll()}
-                    {renderGroups()}
+            />) :
+                (<Autocomplete
+                    {...defaultProps}
+                    multiple
+                    id="multiple-limit-tags"
+                    value={selectedList}
+                    getOptionSelected={(option, value) => option.GroupName === value.GroupName}
+                    getOptionLabel={(group) => group.GroupName}
+                    defaultValue={[]}
+                    open={false}
+                    popupIcon={false}
+                    onChange={onTagChange}
+                    renderInput={(params) => selectedList.length > 0 ? (
+                        <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
+                    ) : (
+                        <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{noSelectionText != '' ? noSelectionText : t('notifications.noGroupsSelected')}</Typography>
+                    )
+                    }
+                />)
+            }
+            <div className={clsx(classes.demo, classes.sidebar)} style={{ minHeight: 280, maxHeight: 280, overflow: 'auto' }}>
+                <List key={uniqueKey}>
+                    {showSelectAll && renderSelectAll()}
+                    {isCampaign ? renderCampaigns() : renderGroups()}
                 </List>
             </div>
         </Box>

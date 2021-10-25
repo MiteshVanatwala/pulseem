@@ -998,12 +998,15 @@ const NotificationEditor = ({ props, classes }) => {
         <Grid item md={7} xs={12}>
           <h2 className={classes.sectionTitle}>{t('notifications.toWhomToSend')}</h2>
           <Groups classes={classes}
-            groupList={groupList}
+            list={groupList}
             selectedList={selectedGroups}
             callbackSelectedGroups={callbackSelectedGroups}
             callbackUpdateGroups={callbackUpdateGroups}
             callbackSelectAll={callbackSelectAll}
             isNotifications={true}
+            showFilter={false}
+            isSms={false}
+            noSelectionText={t("notifications.noGroupsSelected")}
           />
           <Box>
             <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>

@@ -457,18 +457,6 @@ const SmsCreator = ({ classes, ...props }) => {
       setmessageCount(credits[0]);
     });
   }
-
-  const renderHead = () => {
-    return (
-      <Box className={classes.headDiv}>
-        <Typography className={classes.headNo}>1</Typography>
-        <Typography className={classes.contentHead}>
-          {t("mainReport.createContent")}
-        </Typography>
-      </Box>
-    );
-  };
-
   const onCamppaignChange = (e) => {
     handleSmsModelChange("Name", e.target.value);
     setcampaignBool(false);

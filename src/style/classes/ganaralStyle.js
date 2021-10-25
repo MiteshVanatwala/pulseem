@@ -1978,8 +1978,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: "8px",
-    color: "#3DA6F7"
+    color: "#3DA6F7",
+    width: 30,
+    height: 30
   },
   reactSwitch: {
     verticalAlign: 'middle',
@@ -2182,7 +2183,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid #efefef",
     boxShadow: "none",
     borderRadius: "none !important",
-    overflow: 'hidden'
+    overflow: 'hidden',
+    width: '100%'
 
   },
   reciList:
@@ -2320,7 +2322,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   reciCheckoxContainer:
   {
     fontSize: 13,
-    marginTop: "10px",
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
