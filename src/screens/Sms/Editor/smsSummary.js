@@ -1,17 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
-import Mobile from "../../../assets/images/mobileiphone.png";
 import { useTranslation } from "react-i18next";
 import { Link } from "@material-ui/core";
-import clsx from "clsx";
+import { Box } from "@material-ui/core";
+import MobilePreview from '../../../components/MobilePreive/Mobile'
 
-const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, totalmsg, stepBool, totalRecipients, groups, summaryPayload, api, textMsg, activeGroups, ...props }) => {
-  const [modal, setmodal] = useState(false);
-  const [smsCreator, setsmsCreator] = useState(false);
-  const [hideGroups, sethideGroups] = useState(false);
-  const [recipientsDetails, setrecipientsDetails] = useState(false);
-  const [details, setdetails] = useState(false);
+const SmsSummary = ({ classes,
+  open,
+  campaignName,
+  fromNumber,
+  summaryPayload,
+  onConfirm = () => null,
+  textMsg,
+  groups,
+  ...props }) => {
   const [detailsHide, setdetailsHide] = useState(true);
   const [subDetailsActive, setsubDetailsActive] = useState(false);
   const [subRecipientsDetails, setsubRecipients] = useState(false);
@@ -19,21 +22,11 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
   const [globalGroups, setglobalGroups] = useState(false);
 
   const { t } = useTranslation();
-  useEffect(() => {
-    setmodal(open);
-  }, [open])
-  useEffect(() => {
-    setsmsCreator(stepBool);
-  }, [stepBool])
 
   const handleSmsSettings = () => {
-    setsmsCreator(false)
     props.handleCallback()
   }
-  const handleSmsCreate = () => {
-    setmodal(false)
-    props.handleCallback()
-  }
+
   useEffect(() => {
     if (props.displayCampaigns !== undefined) {
       for (let i = 0; i < props.displayCampaigns.length; ++i) {
@@ -57,249 +50,47 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
         }
       }
     }
-  }, [stepBool])
+  }, [open])
   return (
-    <div>
-      {modal ? <Dialog
+    <Box>
+      {open && <Dialog
+        style={{ paddingBottom: 20 }}
+        title={`${t("sms.smsSummaryDialogTitle")} '${campaignName}'`}
+        showDivider={true}
         classes={classes}
-        open={modal}
-        onClose={() => { handleSmsCreate() }}
-        onConfirm={api}
-        confirmText={t("sms.sendDialog")}
-        cancelText={t("sms.cancelDialog")}
-        showDefaultButtons={true}
-        icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
-      >
-        <div style={{ height: "60px", borderBottom: "1px solid #DEE2E7" }}>
-          <span className={classes.groupName}>{t("sms.campaignSummary")}'{campaignName}'</span>
-        </div>
-        <div style={{ fontSize: "22px", marginTop: "5px" }}>
-          <div className={classes.baseSum}>
-            <div className={classes.sumLeft}>
-              <div className={classes.sumChild}>
-                <span className={classes.spanSum}>{t("sms.smsSummaryCampaignFrom")}:</span>
-                <span className={classes.bodySum}>{fromNumber}</span>
-              </div>
-
-              <div className={classes.sumChild}>
-                <span className={classes.spanSum}>{t("sms.smsDialogWhen")} :</span>
-                <span className={classes.bodySum}>{t("sms.SendNow")}</span>
-              </div>
-
-              <div className={classes.sumChild}>
-                <span className={classes.spanSum}>{t("sms.smsDialogFor")} :</span>
-                <span style={{ fontSize: "18px" }}>
-                  {t("sms.smsSummaryDialogTotalRecipients")}:
-                  <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
-                </span>
-                <Link onClick={() => { setdetails(!details) }}
-                  style={{
-                    textDecoration: 'underline',
-                    marginTop: "6px",
-                    fontSize: "16px",
-                    color: "gray",
-                    width: "50px",
-                    cursor: "pointer",
-                  }}>  {details ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}</Link>
-              </div>
-            </div>
-            <div className={classes.sumRight}>
-              <div style={{ position: "relative" }}>
-
-                <img
-                  src={Mobile}
-                  className={classes.mobilePreviewSummary}
-                />
-                <span className={classes.phoneNumberSum}>{fromNumber}</span>
-                <div className={clsx(classes.wrapChatSumm, classes.sidebar)}>
-                  <div className={classes.chatBox}>
-                    <div className={classes.fromMe}>
-                      {totalmsg.split('\n').map((str) => {
-                        return (<p style={{ margin: "0", padding: "0" }}>{str}</p>)
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div>
-
-              {details ? <ul>
-                <li
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "700",
-                    marginBottom: "2px",
-                    cursor: "pointer"
-
-                  }}
-                  onClick={() => { sethideGroups(!hideGroups) }}
-                >
-                  {t("sms.GroupsSummary")} ({totalRecipients})
-                </li>
-              </ul> : null}
-              {hideGroups ? <>    {
-
-                groups.map((item, idx) => {
-                  return (<div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "8px 8px 8px 55px",
-                      borderTop: "1px solid grey",
-                      fontSize: "16px",
-                    }}
-                  >
-                    <span> {item.GroupName}</span>
-                    <span>{item.Recipients}</span>
-                  </div>)
-                })
-              }   </> : null}
-
-
-            </div>
-          </div>
-        </div>
-        <div>
-          {details ? <ul>
-            <li
-              style={{
-                fontSize: "18px",
-                fontWeight: "700",
-                marginBottom: "2px",
-                cursor: "pointer"
-              }}
-              onClick={() => { setrecipientsDetails(!recipientsDetails) }}
-            >
-              {t("sms.RecipientsSummary")} ({(groups.reduce(function (a, b) {
-                return a + b['Recipients'];
-              }, 0).toLocaleString() - summaryPayload.FinalCount)})
-            </li>
-          </ul> : null}
-          {recipientsDetails ? <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
-            <span
-              style={{
-                fontSize: "17px",
-                color: "#1771ad",
-                paddingInlineStart: "40px",
-              }}
-            >
-              {t("sms.duplicateRecipients")} :
-              <span
-                style={{
-                  fontSize: "17px",
-                  fontWeight: "700",
-                  color: "black",
-                }}
-              >
-                {summaryPayload.DuplicateCellphoneSharedWithClienCount}
-              </span>
-            </span>
-            <span
-              style={{
-                fontSize: "17px",
-                color: "#1771ad",
-                paddingInlineStart: "40px",
-              }}
-            >
-              {t("sms.removedRecipients")} :
-              <span
-                style={{
-                  fontSize: "17px",
-                  fontWeight: "700",
-                  color: "black",
-                }}
-              >
-                {summaryPayload.Removed}
-              </span>
-            </span>
-            <span
-              style={{
-                fontSize: "17px",
-                color: "#1771ad",
-                paddingInlineStart: "40px",
-              }}
-            >
-              {t("sms.emptyNumbers")} :
-              <span
-                style={{
-                  fontSize: "17px",
-                  fontWeight: "700",
-                  color: "black",
-                }}
-              >
-                {summaryPayload.EmptyCellphoneCount}
-              </span>
-            </span>
-            <span
-              style={{
-                fontSize: "17px",
-                color: "#1771ad",
-                paddingInlineStart: "40px",
-              }}
-            >
-              {t("sms.invalidRecipients")} :
-              <span
-                style={{
-                  fontSize: "17px",
-                  fontWeight: "700",
-                  color: "black",
-                }}
-              >
-                {summaryPayload.Invalid}
-              </span>
-            </span>
-          </div> : null}
-        </div>
-      </Dialog> : null}
-      {smsCreator ? <Dialog
-        classes={classes}
-        open={smsCreator}
+        open={open}
         onClose={() => { handleSmsSettings() }}
-        onConfirm={api}
+        onConfirm={onConfirm}
         confirmText={t("sms.sendDialog")}
         cancelText={t("sms.cancelDialog")}
         showDefaultButtons={true}
         icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
       >
-        <div style={{ height: "60px", borderBottom: "1px solid #DEE2E7" }}>
-          <span className={classes.groupName}>{t("sms.smsSummaryDialogTitle")} '{campaignName}'</span>
-        </div>
-        <div style={{ fontSize: "22px", marginTop: "5px" }}>
-          <div className={classes.baseSum}>
-            <div className={classes.sumLeft}>
-              <div className={classes.sumChild}>
+        <Box style={{ fontSize: "22px", marginTop: "5px" }}>
+          <Box className={classes.baseSum}>
+            <Box className={classes.sumLeft}>
+              <Box className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("sms.smsSummaryCampaignFrom")}:</span>
                 <span className={classes.bodySum}>{fromNumber}</span>
-              </div>
+              </Box>
 
-              <div className={classes.sumChild}>
+              <Box className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("sms.smsDialogWhen")}:</span>
                 <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} ${t("mainReport.days")} ${props.after ? t("mainReport.after") : t("mainReport.before")} ${props.specialVal} at ${props.time.format('h:mm a')}  ` : props.sendType == "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : t("sms.SendNow")}</span>
-              </div>
+              </Box>
 
-              {props.pulseTrue || props.toggleRandom ? <div className={classes.sumChild}>
+              {props.pulseTrue || props.toggleRandom ? <Box className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("mainReport.pulseSend")}</span>
-                {props.pulseTrue ? <span style={{ fontSize: "18px" }}>  {t("smsReport.packetSend")} - {props.pulseInput1} {props.pulsePer == "" ? t("sms.recipients") : t("common.Percent")} {" "}
+                {props.pulseTrue ? <span className={classes.smsSummaryText}>  {t("smsReport.packetSend")} - {props.pulseInput1} {props.pulsePer == "" ? t("sms.recipients") : t("common.Percent")} {" "}
                   {t("sms.every")} {props.pulseInput2} {props.hourName == "" ? t("common.minutes") : t("common.hours")}</span> : null}
-                {props.toggleRandom ? <span style={{ fontSize: "18px" }}>{t("smsReport.randomSend")} - {props.random} {t("smsReport.randomRecipients")}</span> : null}
-                {props.pulseTrue ? <span style={{ fontSize: "18px" }}>{t("sms.estimatedDelivery")}: <span style={{ color: "#1D82B3" }}>{props.estimationDate}</span></span> : null}
-              </div>
+                {props.toggleRandom ? <span className={classes.smsSummaryText}>{t("smsReport.randomSend")} - {props.random} {t("smsReport.randomRecipients")}</span> : null}
+                {props.pulseTrue ? <span className={classes.smsSummaryText}>{t("sms.estimatedDelivery")}: <span style={{ color: "#1D82B3" }}>{props.estimationDate}</span></span> : null}
+              </Box>
                 : null}
-              <div className={classes.sumChild}>
+              <Box className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("sms.smsDialogFor")}:</span>
-                <span style={{ fontSize: "18px" }}>
-                  {t("sms.smsSummaryDialogTotalRecipients")} :
+                <span className={classes.bodySum}>
+                  {t("sms.smsSummaryDialogTotalRecipients")}:
                   <span className={classes.bodySum}>{summaryPayload.FinalCount}</span>
                 </span>
                 <Link onClick={() => { setdetailsHide(!detailsHide) }}
@@ -311,166 +102,94 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                     width: "50px",
                     cursor: "pointer",
                   }}>  {detailsHide ? t("sms.smsSummaryDetails") : t("sms.smsSummaryClose")}</Link>
-              </div>
-            </div>
-            <div className={classes.sumRight}>
-              <div style={{ position: "relative" }}>
+              </Box>
+            </Box>
+            <Box className={classes.sumRight}>
+              <MobilePreview classes={classes} campaignNumber={fromNumber} text={textMsg} key="summaryPreview" />
+            </Box>
+          </Box>
 
-                <img
-                  src={Mobile}
-                  className={classes.mobilePreviewSummary}
-                />
-                <span className={classes.phoneNumberSum}>{fromNumber}</span>
-                <div className={clsx(classes.wrapChatSumm, classes.sidebar)}>
-                  <div className={classes.chatBox}>
-                    <div className={classes.fromMe}>
-                      {textMsg.split('\n').map((str) => {
-                        return (<p style={{ margin: "0", padding: "0" }}>{str}</p>)
-                      })}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <Box>
+            <Box>
 
-          <div>
-            <div>
-
-              {detailsHide ? null : <ul>
+              {detailsHide ? null : <ul className={classes.sumList}>
                 <li
-                  style={{
-                    fontSize: "18px",
-                    fontWeight: "700",
-                    marginBottom: "2px",
-                    cursor: "pointer"
-                  }}
                   onClick={() => { setsubDetailsActive(!subDetailsActive) }}
                 >
-                  {t("sms.smsSummaryGroups")} ({activeGroups.length})
+                  {t("sms.smsSummaryGroups")} ({groups.length})
                 </li>
               </ul>}
 
 
-              {subDetailsActive ? <>    {
+              {subDetailsActive ? <Box style={{ borderTop: '1px solid #ccc' }}> {
 
-                activeGroups.map((item, idx) => {
-                  return (<div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      padding: "8px 8px 8px 55px",
-                      borderTop: "1px solid grey",
-                      fontSize: "16px",
-                    }}
+                groups.map((item, idx) => {
+                  return (<Box className={classes.summaryListItem}
                   >
                     <span> {item.GroupName}</span>
                     <span>{item.Recipients}</span>
-                  </div>)
+                  </Box>)
                 })
-              }   </> : null}
-            </div>
-          </div>
-        </div>
-        <div>
-          {detailsHide ? null : <ul>
+              }   </Box> : null}
+            </Box>
+          </Box>
+        </Box>
+        <Box>
+          {detailsHide ? null : <ul className={classes.sumList}>
             <li
-              style={{
-                fontSize: "18px",
-                fontWeight: "700",
-                marginBottom: "2px",
-                cursor: "pointer"
-              }}
               onClick={() => { setsubRecipients(!subRecipientsDetails) }}
             >
-              {t("sms.smsSummaryRecipientsFilter")} ({(activeGroups.reduce(function (a, b) {
+              {t("sms.smsSummaryRecipientsFilter")} ({(groups.reduce(function (a, b) {
                 return a + b['Recipients'];
               }, 0).toLocaleString() - summaryPayload.FinalCount)})
             </li>
           </ul>}
-          {subRecipientsDetails ? <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-            }}
-          >
+          {subRecipientsDetails ? <Box style={{
+            borderTop: '1px solid #ccc',
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}>
             {summaryPayload.DuplicateCellphoneSharedWithClienCount == 0 ? null : <span
-              style={{
-                fontSize: "17px",
-                color: "#1771ad",
-                paddingInlineStart: "40px",
-              }}
+              className={classes.summaryDetailsSpan}
             >
               {t("sms.duplicateRecipients")} :
-              <span
-                style={{
-                  fontSize: "17px",
-                  fontWeight: "700",
-                  color: "black",
-                }}
+              <span className={classes.summaryDetailsSpanBold}
               >
                 {summaryPayload.DuplicateCellphoneSharedWithClienCount}
-              </span>  </span>}
+              </span>
+            </span>}
 
             {summaryPayload.Removed == 0 ? null : <span
-              style={{
-                fontSize: "17px",
-                color: "#1771ad",
-                paddingInlineStart: "40px",
-              }}
+              className={classes.summaryDetailsSpan}
             >
               {t("sms.removedRecipients")} :
-              <span
-                style={{
-                  fontSize: "17px",
-                  fontWeight: "700",
-                  color: "black",
-                }}
+              <span className={classes.summaryDetailsSpanBold}
               >
                 {summaryPayload.Removed}
               </span>
             </span>}
             {summaryPayload.EmptyCellphoneCount == 0 ? null : <span
-              style={{
-                fontSize: "17px",
-                color: "#1771ad",
-                paddingInlineStart: "40px",
-              }}
+              className={classes.summaryDetailsSpan}
             >
               {t("sms.emptyNumbers")} :
-              <span
-                style={{
-                  fontSize: "17px",
-                  fontWeight: "700",
-                  color: "black",
-                }}
+              <span className={classes.summaryDetailsSpanBold}
               >
                 {summaryPayload.EmptyCellphoneCount}
               </span>
             </span>}
             {summaryPayload.Invalid == 0 ? null : <span
-              style={{
-                fontSize: "17px",
-                color: "#1771ad",
-                paddingInlineStart: "40px",
-              }}
+              className={classes.summaryDetailsSpan}
             >
               {t("sms.invalidRecipients")} :
-              <span
-                style={{
-                  fontSize: "17px",
-                  fontWeight: "700",
-                  color: "black",
-                }}
+              <span className={classes.summaryDetailsSpanBold}
               >
                 {summaryPayload.Invalid}
               </span>
             </span>}
-          </div> : null}
-        </div>
-        {subRecipientsDetails ? <div style={{ display: "flex" }}>
+          </Box> : null}
+        </Box>
+        {subRecipientsDetails ? <Box style={{ display: "flex" }}>
           {globalGroups ? <div style={{ width: "100%", borderBottom: "1px solid #E5E5E5", }}>
             <ul style={{ listStyleType: "none" }}>
               <li
@@ -490,7 +209,7 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
 
             {props.displayGroups.map((item, index, idx) => {
               if (item.selected) {
-                return (<div id={index}
+                return (<Box id={index}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -503,13 +222,13 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   {/* <span style={{marginInlineEnd:"5px"}}>{idx}</span> */}
                   <span> {item.GroupName}</span>
 
-                </div>)
+                </Box>)
               }
             })}
           </div>
             : null}
 
-          {globalCampaigns ? <div style={{ width: "100%", borderBottom: "1px solid #E5E5E5", }}>
+          {globalCampaigns ? <Box style={{ width: "100%", borderBottom: "1px solid #E5E5E5", }}>
             <ul style={{ listStyleType: "none" }}>
               <li
                 style={{
@@ -527,11 +246,10 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
             </ul>
             {props.displayCampaigns.map((item, index) => {
               if (item.selected) {
-                return (<div id={index}
+                return (<Box id={index}
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    // justifyContent: "space-between",
                     padding: "8px 8px 8px 55px",
                     borderTop: "1px solid #E5E5E5",
                     fontSize: "16px",
@@ -540,14 +258,13 @@ const SmsSummary = ({ classes, selectedGroups, open, campaignName, fromNumber, t
                   {/* <span style={{marginInlineEnd:"5px"}}>{index}</span> */}
                   <span> {item.Name}</span>
 
-                </div>)
+                </Box>)
               }
-            })} </div> : null}
+            })} </Box> : null}
 
-        </div> : null}
-      </Dialog> : null}
-
-    </div>
+        </Box> : null}
+      </Dialog>}
+    </Box>
   )
 }
 

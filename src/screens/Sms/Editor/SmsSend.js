@@ -377,7 +377,10 @@ const SmsSend = ({ classes, ...props }) => {
         const selectedGroupsForSend = [];
         const seGroups = campaignSettings.payload.Groups;
         for (var i = 0; i < seGroups.length; i++) {
-          selectedGroupsForSend.push(subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[i] })[0]);
+          const g = subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[i] });
+          if(g){
+            selectedGroupsForSend.push(g[0]);
+          }
         }
         setSelected(selectedGroupsForSend);
       }
@@ -1800,14 +1803,13 @@ const SmsSend = ({ classes, ...props }) => {
     return (
       <>
         <Summary
-          stepBool={summModal}
           classes={classes}
           campaignName={dataSaved.campaignName}
           fromNumber={dataSaved.fromNumber}
           textMsg={dataSaved.msg}
-          activeGroups={selectedGroups}
+          groups={selectedGroups}
           summaryPayload={getCampaignSum}
-          api={onApiCall} sendType={sendType}
+          onConfirm={onApiCall} sendType={sendType}
           days={daysBeforeAfter}
           after={afterClick}
           time={sendTime}
@@ -1826,6 +1828,7 @@ const SmsSend = ({ classes, ...props }) => {
           estimationDate={estimationDate}
           displayGroups={filterGroups}
           displayCampaigns={totalCampaigns}
+          open={summModal}
         />
       </>
     );
@@ -2071,8 +2074,6 @@ const SmsSend = ({ classes, ...props }) => {
     }
     setDialogType(null);
     settypedData([]);
-    setContacts([]);
-    setContacts([]);
   };
   const renderSuccessDialog = () => {
     return (
