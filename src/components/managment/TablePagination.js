@@ -120,7 +120,7 @@ export const TablePagination=({
   return (
     <Grid
       container
-      justify='space-between'
+      justifyContent='space-between'
       className={classes.tablePadingtonGridContainer} >
       {renderRowNumbers()}
       {renderPageNumbers()}

@@ -395,7 +395,7 @@ const NewsletterManagnentScreen=({classes}) => {
       <Grid
         container
         direction={windowSize==='sm'? 'column':'row'}
-        justify={windowSize==='xs'? 'flex-start':'flex-end'}>
+        justifyContent={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map((map,index) => (
           <Grid
             key={index}

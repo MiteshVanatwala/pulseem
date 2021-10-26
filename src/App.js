@@ -352,10 +352,12 @@ const renderRoutes = (classes, history) => {
 const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize } = useSelector(state => state.core)
-
-  dispatch(setWindowSize(screenSize))
+  useEffect(() => {
+    dispatch(setWindowSize(screenSize))
+  }, [windowSize]);
 
   useEffect(() => {
+
     const initFeatures = async () => {
       const response = await dispatch(isClalAccount());
       dispatch(setIsClal(response.payload));

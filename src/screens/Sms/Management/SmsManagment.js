@@ -383,7 +383,7 @@ const SmsManagnentScreen=({classes}) => {
       <Grid
         container
         direction='row'
-        justify={windowSize==='xs'? 'flex-start':'flex-end'}>
+        justifyContent={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
             className={icon.disable&&classes.disabledCursor}
@@ -974,7 +974,7 @@ const SmsManagnentScreen=({classes}) => {
         <Grid
           container
           style={{marginTop: 20}}
-          justify='center'>
+          justifyContent='center'>
           <Grid item>
             <Typography >
               {t('sms.didNotReceived')}

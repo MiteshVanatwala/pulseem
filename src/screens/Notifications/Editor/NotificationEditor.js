@@ -754,7 +754,7 @@ const NotificationEditor = ({ props, classes }) => {
         <Grid
           container
           direction="row"
-          justify="flex-start"
+          justifyContent="flex-start"
           alignItems="center"
           spacing={2}
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
@@ -823,7 +823,7 @@ const NotificationEditor = ({ props, classes }) => {
         <Grid
           container
           direction="row"
-          justify="flex-start"
+          justifyContent="flex-start"
           alignItems="flex-start"
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
           <Grid item md={4} xs={12}>
@@ -991,7 +991,7 @@ const NotificationEditor = ({ props, classes }) => {
     return (
       <Grid container
         direction="row"
-        justify="flex-start"
+        justifyContent="flex-start"
         spacing={4}
         className={classes.wizardFlex}
       >
@@ -1007,6 +1007,7 @@ const NotificationEditor = ({ props, classes }) => {
             showFilter={false}
             isSms={false}
             noSelectionText={t("notifications.noGroupsSelected")}
+            innerHeight={325}
           />
           <Box>
             <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>

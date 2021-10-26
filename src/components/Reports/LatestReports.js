@@ -191,7 +191,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
 
     return (
       <TabPanel value={tabValue} index={tabType === 'newsletter' ? 0 : 1} key={`newsletterTabPanel_${tabType}`}>
-        <Grid container justify={'space-between'} className={!showGraphs ? classes.tabPanel : null}>
+        <Grid container justifyContent={'space-between'} className={!showGraphs ? classes.tabPanel : null}>
           <Grid item lg={showGraphs ? 4 : 12} xs={12} className={tabType !== "newsletter" ? classes.flexSpaceBetweenVertical : null}>
             {
               showGraphs ? (innerData.map((c, index) => {
@@ -251,7 +251,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
       <Grid container>
         <Grid
           container
-          justify='space-between'
+          justifyContent='space-between'
           alignItems='center'
           item xs={12}
           className={classes.lastReportTitleSection}>
