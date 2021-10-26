@@ -1007,6 +1007,7 @@ const NotificationEditor = ({ props, classes }) => {
             showFilter={false}
             isSms={false}
             noSelectionText={t("notifications.noGroupsSelected")}
+            innerHeight={325}
           />
           <Box>
             <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>
