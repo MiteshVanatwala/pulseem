@@ -26,7 +26,7 @@ const Title = ({ classes, title, tooltip = null, stepNumber, subTitle }) => {
                 classes={{ tooltip: styles.customWidth }}
                 sx={{ justifyContent: 'center' }}
             >
-                <Typography className={classes.bodyInfo} style={{ marginTop: "6px" }}>i</Typography>
+                <Typography className={classes.bodyInfo} style={{ marginTop: "22px",marginInlineStart:"5px" }}>i</Typography>
             </Tooltip>}
         </Box>
         <Box className={classes.headDiv}>
