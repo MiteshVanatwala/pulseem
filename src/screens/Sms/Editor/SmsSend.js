@@ -1851,7 +1851,7 @@ const SmsSend = ({ classes, ...props }) => {
       setDialogType({ type: "caution" })
       setgroupNameInput("");
       setnewVal(false);
-      setcolumnValidate(false);
+     
     }
   };
   const handleChangeId = (id) => {
@@ -2014,12 +2014,12 @@ const SmsSend = ({ classes, ...props }) => {
     })
     if(columnHasValue < 3)
     {
-         setcolumnValidate(true);
+        
          return false;
     }
     else if(columnHasValue === 3)
     {
-      setcolumnValidate(false);
+     
       return true;
     }
     
