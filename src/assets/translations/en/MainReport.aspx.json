@@ -461,7 +461,7 @@
   "days"  :"Days",
   "birthday"  :"Birthday",
   "creationDay":"Creation Day",
-  "recipientFilter" : "filter",
+  "recipientFilter" : "Recipients Filter",
   "createContent":"Create Content",
   "campName":"Campaign Name",
   "campFrom":"Campaign From",

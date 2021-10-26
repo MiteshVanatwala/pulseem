@@ -2368,6 +2368,7 @@ const SmsSend = ({ classes, ...props }) => {
                 }
                 onChange={(e) => { handleReciInput(e) }}
                 value={exceptionalDays}
+                maxLength="3"
               />
             </div>
           </div>
