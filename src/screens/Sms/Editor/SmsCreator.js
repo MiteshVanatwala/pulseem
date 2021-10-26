@@ -1027,11 +1027,11 @@ const SmsCreator = ({ classes, ...props }) => {
           <img src={Mobile} className={classes.phoneImg} />
           <span className={classes.phoneNumber}>{campaignNumber}</span>
           <div className={clsx(classes.wrapChat, classes.sidebar)}>
-            <div className={classes.chatBoxHe}>
+            <div className={isRTL ?  classes.chatBoxHe : classes.chatBox}>
               <div className={classes.fromMe}>
-                {smsModel.Text !== '' ? smsModel.Text.split('\n').map((str) => {
+                {smsModel.Text.split('\n').map((str) => {
                   return (<p key={Math.floor(Math.random() * 100)} style={{ margin: "0", padding: "0" }}>{str}</p>)
-                }) : t("mainReport.typeText")}
+                }) }
               </div>
             </div>
 
