@@ -17,6 +17,12 @@ const phoneTopPosition = {
     lg: 90,
     xl: 90
 }
+const pulseDialogWidth = {
+    sm: '100%',
+    md: 450,
+    lg: 550,
+    xl: 650
+}
 
 export const getSmsStyle = (windowSize, isRTL, theme) => ({
     mobilePreviewSummary: {
@@ -65,5 +71,30 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         paddingRight: isRTL ? 30 : "",
         paddingLeft: isRTL ? "" : 30,
         maxWidth: 300
+    },
+    inputLabel: {
+        fontSize: 20,
+        marginInlineEnd: 10,
+        whiteSpace: 'nowrap'
+    },
+    textInput: {
+        border: '1px solid #ddd',
+        outline: 'none',
+        paddingRight: 10,
+        borderRadius: 4,
+        paddingLeft: 10
+    },
+    tableColumn: {
+        border: "1px solid #ddd",
+        padding: 10,
+        maxWidth: 280,
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        textAlign: "center",
+        minWidth: 150
+    },
+    pulseDialog: {
+        width: pulseDialogWidth[windowSize]
     }
 });

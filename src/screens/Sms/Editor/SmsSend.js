@@ -34,7 +34,8 @@ import {
   Radio,
   FormHelperText,
   Divider,
-  TextField
+  TextField,
+  Paper
 } from "@material-ui/core";
 import {
   sendSms,
@@ -217,8 +218,6 @@ const SmsSend = ({ classes, ...props }) => {
   const [dropClick, setdropClick] = useState(false);
   const [groupNameInput, setgroupNameInput] = useState("");
   const [groupValue, setgroupValue] = useState("");
-  const [manualTrue, setmanualTrue] = useState(false);
-  const [pulse, setpulse] = useState(false);
   const [afterClick, setafterClick] = useState(false);
   const [exitDialog, setexitDialog] = useState(false);
   const [specialSettingValidation, setspecialSettingValidation] = useState(false);
@@ -251,11 +250,10 @@ const SmsSend = ({ classes, ...props }) => {
   const [snackBarPulseBoolean, setsnackBarPulseBoolean] = useState(false);
   const [snackbarTimeBoolean, setsnackbarTimeBoolean] = useState(false);
   const [snackbarMainPulse, setsnackbarMainPulse] = useState(false);
-  const [caution, setcaution] = useState(false);
   const [pulsePer, setpulsePer] = useState("percent");
   const [pulseAmount, setPulseAmount] = useState("");
-  const [random, setrandom] = useState("");
   const [timeInterval, setTimeInterval] = useState("");
+  const [random, setrandom] = useState("");
   const [estimationDate, setestimationDate] = useState(null);
   const [minName, setminName] = useState("");
   const [hourName, sethourName] = useState("Hours");
@@ -283,7 +281,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [selectedFilterGroups, setFilterGroups] = useState([]);
   const [timeType, setTimeType] = useState(-1);
   const [pulseType, setPulseType] = useState(-1);
-  const [otpRequired, setOtpRequired] = useState(false);
+  const [otpPassed, setOtpPassed] = useState(false);
   const [OtpCounter, setOtpCounter] = useState(false);
   const [otpMsgs, setotpMsgs] = useState("Required Field");
   const [otpValue, setotpValue] = useState(null);
@@ -355,7 +353,7 @@ const SmsSend = ({ classes, ...props }) => {
 
   const [headers, setheaders] = useState(initialheadstate);
 
-  const isOtpRequired = async () => {
+  const isOtpPassed = async () => {
     if (dataSaved.fromNumber !== null && dataSaved.fromNumber !== '') {
       await dispatch(IsOTPPassed(dataSaved.fromNumber));
     }
@@ -459,11 +457,11 @@ const SmsSend = ({ classes, ...props }) => {
   };
 
   useEffect(async () => {
-    await isOtpRequired();
+    await isOtpPassed();
   }, [dataSaved]);
 
   useEffect(() => {
-    setOtpRequired(OTPPassed);
+    setOtpPassed(OTPPassed);
     if (OTPPassed === false) {
       setDialogType({ type: "otpVerification" });
     }
@@ -639,14 +637,14 @@ const SmsSend = ({ classes, ...props }) => {
               classes.dialogButton,
               classes.dialogConfirmButton
             )}
-            onClick={() => { setOtpRequired(false); setDialogType(null) }}>
+            onClick={() => { setOtpPassed(true); setDialogType(null) }}>
             {t('common.Ok')}
           </Button>
         </Box>
       ),
       showDefaultButtons: false,
-      onClose: () => { setOtpRequired(false); setDialogType(null) },
-      onConfirm: () => { setOtpRequired(false); setDialogType(null) }
+      onClose: () => { setOtpPassed(true); setDialogType(null) },
+      onConfirm: () => { setOtpPassed(true); setDialogType(null) }
     }
   }
   const handleOtpResult = async (otpSendResult) => {
@@ -820,11 +818,12 @@ const SmsSend = ({ classes, ...props }) => {
     if (random == "") {
       settoggleRandom(false)
     }
-    setpulse(false);
+    //setpulse(false);
+    setDialogType(null);
   };
   const handlePulseConfirm = () => {
     if (onPulseValidations()) {
-      setpulse(false);
+      setDialogType(null);
     }
   }
   const handleTime = (e) => {
@@ -939,202 +938,6 @@ const SmsSend = ({ classes, ...props }) => {
       return true;
     }
   }
-  const renderPulse = () => {
-    return (
-      <>
-        <Dialog
-          classes={classes}
-          open={pulse}
-          //cross
-          onClose={handlePulseClose}
-          onConfirm={handlePulseConfirm}
-          showDefaultButtons={true}
-          icon={<MdAutorenew style={{ fontSize: 30, color: "#fff" }}
-          />}
-        >
-          <div className={classes.pulseParentDiv}>
-            <span className={classes.groupName}> {t("smsReport.pulseSending")}</span>
-          </div>
-          <div>
-            <div
-              className={classes.pulseChildDiv}
-            >
-              <Checkbox
-                checked={togglePulse}
-                color="primary"
-                inputProps={{ "aria-label": "secondary checkbox" }}
-                onClick={() => {
-                  settogglePulse(!togglePulse);
-                  setPulseAmount("");
-                  setTimeInterval("");
-                }}
-              />
-              <span>{t("smsReport.packetSend")}</span>
-            </div>
-            <div
-              className={classes.topPulseDiv}
-            >
-              <div>
-                <span
-                  className={classes.noOfReci}
-                >
-                  {t("smsReport.noOfReciPulse")}
-                </span>
-                <div
-                  className={classes.inputFieldDiv}
-                >
-                  <input
-                    type="text"
-                    placeholder={t("smsReport.insert")}
-                    disabled={togglePulse ? false : true}
-                    className={
-                      togglePulse
-                        ? pulseBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
-                        : clsx(classes.pulseInsert)
-                    }
-                    value={pulseAmount}
-                    onChange={handlePulseInput}
-                  />
-                  <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'none' }}>
-                    <span
-                      className={
-                        togglePulse
-                          ? pulseType === 1
-                            ? clsx(classes.percentTrue)
-                            : clsx(classes.percentActive)
-                          : clsx(classes.percent)
-                      }
-                      onClick={() => {
-                        setPulseType(1);
-                        setnoTrue(false);
-                        setpulsePer("percent");
-                        setpulseReci("");
-                        setPulseAmount("");
-                      }}
-                    >
-                      {t("smsReport.percent")}
-                    </span>
-                    <span
-                      className={
-                        togglePulse
-                          ? noTrue
-                            ? clsx(classes.reciTrue)
-                            : clsx(classes.reciActive)
-                          : clsx(classes.reci)
-                      }
-                      onClick={() => {
-                        setPulseType(2);
-                        setnoTrue(true);
-                        setpulsePer("");
-                        setpulseReci("Recipients");
-                        setPulseAmount("");
-                      }}
-                    >
-                      {t("smsReport.Reci")}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <span
-                  className={classes.noOfReci}
-                >
-                  {t("smsReport.timeSend")}
-                </span>
-                <div
-                  className={classes.inputFieldDiv}
-                >
-                  <input
-                    type="text"
-                    placeholder={t("smsReport.insert")}
-                    disabled={togglePulse ? false : true}
-                    className={
-                      togglePulse
-                        ? TimeBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
-                        : clsx(classes.pulseInsert)
-                    }
-                    onChange={handleTime}
-                    value={timeInterval}
-                    maxLength="3"
-                  />
-
-                  <div className={classes.commonFieldPulse} style={{ direction: isRTL ? 'ltr' : 'none' }}>
-                    <span
-                      className={
-                        togglePulse
-                          ? pulseType === 2
-                            ? clsx(classes.percentTrue)
-                            : clsx(classes.percentActive)
-                          : clsx(classes.percent)
-                      }
-                      onClick={() => {
-                        setPulseType(2);
-                        setminName("");
-                        sethourName("hours");
-                      }}
-                    >
-                      {t("smsReport.Hours")}
-                    </span>
-                    <span
-                      className={
-                        togglePulse
-                          ? pulseType === 1
-                            ? clsx(classes.reciTrue)
-                            : clsx(classes.reciActive)
-                          : clsx(classes.reci)
-                      }
-                      onClick={() => {
-                        setPulseType(1);
-                        // sethoursTrue(false);
-                        // setminTrue(true);
-                        setminName("mins");
-                        sethourName("");
-                      }}
-                    >
-                      {t("smsReport.min")}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div
-              className={classes.randomSendDiv}
-            >
-              <Checkbox
-                checked={toggleRandom}
-                color="primary"
-                inputProps={{ "aria-label": "secondary checkbox" }}
-                onClick={() => {
-                  settoggleRandom(!toggleRandom);
-                  setrandom("");
-                }}
-              />
-              <span>{t("smsReport.randomSend")}</span>
-            </div>
-            <div>
-              <span
-                className={classes.randomReciSpan}
-              >
-                {t("smsReport.noOfReci")}
-              </span>
-              <input
-                type="text"
-                placeholder={t("smsReport.insert")}
-                disabled={toggleRandom ? false : true}
-                className={
-                  toggleRandom
-                    ? boolRandom ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
-                    : clsx(classes.pulseInsert)
-                }
-                onChange={handleRandom}
-                value={random}
-              />
-            </div>
-          </div>
-        </Dialog>
-      </>
-    );
-  };
   const areaChange = (e) => {
     setareaData(e.target.value);
     setareaClick(true);
@@ -1178,7 +981,7 @@ const SmsSend = ({ classes, ...props }) => {
 
               setLoader(false);
               if (dummyArr !== 0) {
-                setmanualTrue(true);
+                setDialogType({ type: "manualUpload" });
               }
 
             }, 0);
@@ -1261,7 +1064,7 @@ const SmsSend = ({ classes, ...props }) => {
                 setContacts(results.data)
                 console.log("---->csv", results.data)
                 const resultCsv = results.data;
-                setmanualTrue(true);
+                setDialogType({ type: "manualUpload" });
                 let ddc = [];
                 for (let i in resultCsv[0]) {
                   ddc.push(t("sms.adjustTitle"))
@@ -1289,7 +1092,7 @@ const SmsSend = ({ classes, ...props }) => {
     return (
       <Grid container
         direction="row"
-        justify="flex-start"
+        justifyContent="flex-start"
         className={classes.wizardFlex}
       >
         <Grid item md={12} xs={12} className={classes.infoDiv}>
@@ -1354,7 +1157,7 @@ const SmsSend = ({ classes, ...props }) => {
           }>
             <textarea
               placeholder={t("sms.dragXlOrCsv")}
-              spellcheck="false"
+              spellCheck="false"
               autoComplete="off"
 
               className={
@@ -1534,29 +1337,37 @@ const SmsSend = ({ classes, ...props }) => {
     let temp = areaData;
     let a = temp.split("\n");
     let b = [];
+    let cols = 0;
     if (temp.indexOf("\t") > -1) {
       console.log("in if tab")
       for (let i = 0; i < a.length; i++) {
-        b.push(a[i].split("\t"));
+        let splitted = a[i].split("\t");
+        b.push(splitted);
+        if (splitted.length > cols) {
+          cols = splitted.length;
+        }
       }
     }
     else {
-      console.log("in if ,")
       for (let i = 0; i < a.length; i++) {
-        b.push(a[i].split(","));
+        let splitted = a[i].split(",");
+        b.push(splitted);
+        if (splitted.length > cols) {
+          cols = splitted.length;
+        }
       }
     }
     settypedData(b);
 
     let dummyArr = [];
-    for (let i = 0; i < b[0].length; i++) {
+    for (let i = 0; i < cols; i++) {
       dummyArr.push(t("sms.adjustTitle"));
     }
     setinitialheadstate(dummyArr);
     setheaders(dummyArr)
 
     seteditT(true);
-    setmanualTrue(true);
+    setDialogType({ type: "manualUpload" });
   };
   const handleReciInput = (e) => {
     const re = /^[0-9\b]+$/;
@@ -1834,7 +1645,8 @@ const SmsSend = ({ classes, ...props }) => {
           <span
             className={(selectedGroups.length >= 1 && sendType !== "3") ? classes.pulse : classes.pulseDisable}
             onClick={() => {
-              setpulse(true);
+              setDialogType({ type: "pulses" });
+              // setpulse(true);
             }}
           >
             <FaRegCalendarAlt style={{ fontSize: '125%' }} />
@@ -1874,7 +1686,7 @@ const SmsSend = ({ classes, ...props }) => {
   }
 
   const onSaveSettings = async (toggle, exit) => {
-    if (otpRequired) {
+    if (otpPassed === false) {
       setDialogType({ type: "otpVerification" });
       return;
     }
@@ -2033,27 +1845,9 @@ const SmsSend = ({ classes, ...props }) => {
     setsummModal(false);
     setfinalSuccessDialog(true)
   };
-  const handleTrueCaution = () => {
-    if (dropClick === true) {
-      setcaution(true);
-      setgroupNameInput("");
-      setnewVal(false);
-    }
-    else if (areaClick === true) {
-      setmanualTrue(false);
-      setgroupNameInput("");
-      setnewVal(false);
-    }
-
-  };
   const handleCautionCancel = () => {
-    if (dropClick === true) {
-      setcaution(true);
-      setgroupNameInput("");
-      setnewVal(false);
-    }
-    else if (areaClick === true) {
-      setmanualTrue(false);
+    if (dropClick === true || areaClick === true) {
+      setDialogType({ type: "caution" })
       setgroupNameInput("");
       setnewVal(false);
     }
@@ -2069,7 +1863,7 @@ const SmsSend = ({ classes, ...props }) => {
     // id -  index of select array 
     // idx - header index 
     let h = headers;
-    h[idx] = name.value;
+    h[idx] = name.label;
     selectArray.forEach((value, index) => {
       if (value.idx === idx) {
         selectArray[index].isdisabled = false
@@ -2146,16 +1940,14 @@ const SmsSend = ({ classes, ...props }) => {
         GroupName: groupNameInput,
         Clients: requestPayload
       }
+      setDialogType(null);
       setLoader(true);
       const r = await dispatch(saveManualClients(finalPayload))
-      setmanualTrue(false);
       setLoader(false);
 
 
       if (r.payload.Reason == "no_recipients_to_update") {
         setToastMessage(toastMessages.INVALID_RECIPIENTS)
-        setmanualTrue(false);
-        //setareaData("");
         settypedData([]);
         setContacts([]);
         setgroupNameInput("");
@@ -2184,7 +1976,6 @@ const SmsSend = ({ classes, ...props }) => {
         });
         setGroupList(tempres);
         setSelected(temp);
-        setmanualTrue(false);
         setareaData("");
         settypedData([]);
         setContacts([]);
@@ -2221,220 +2012,6 @@ const SmsSend = ({ classes, ...props }) => {
     })
     return columnHasValue === false ? false : true;
   }
-  const renderDialogManual = () => {
-    return (
-      <>
-        <Dialog
-          classes={classes}
-          open={manualTrue}
-          onClose={handleTrueCaution}
-          onCancel={handleCautionCancel}
-          onConfirm={handleDataManual}
-          confirmText={t("common.confirm")}
-          cancelText={t("smsReport.cancelBtn")}
-          showDefaultButtons={true}
-        >
-          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>{t("sms.columnAdjustment")}</span>
-          </div>
-          <div className={classes.manualModal}>
-            <span style={{ fontSize: "24px", marginInlineEnd: "10px" }}>
-              {t("common.GroupName")}:
-            </span>
-            <div style={{ display: "flex", flexDirection: "column", width: "75%" }}>
-              <input
-                type="text"
-                placeholder={t("common.GroupName")}
-                className={newVal ? clsx(classes.inputManual, classes.error) : clsx(classes.inputManual, classes.success)}
-                onChange={handleManualDialog}
-                value={groupNameInput}
-              />
-              {newVal ? <span style={{ marginTop: "8px", color: "red", fontSize: "12px" }}>{t("sms.groupNameExists").replace("#groupName#", groupNameInput)}</span> : null}
-            </div>
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "15px",
-            }}
-          >
-            <span style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
-              {t("sms.totalRecipients")}:
-            </span>
-            <span
-              style={{
-                fontSize: "20px",
-                marginInlineEnd: "10px",
-                fontWeight: "600",
-              }}
-            >
-              {contacts.length !== 0 ? contacts.length : typedData.length}
-            </span>
-            <Tooltip
-              disableFocusListener
-              title={t("smsReport.manualTotalTooltip")}
-              classes={{ tooltip: styles.customWidth }}
-            >
-              <span className={classes.bodyInfo}>i</span>
-            </Tooltip>
-          </div>
-          <div style={{ minHeight: "200px", maxWidth: "700px", overflow: "auto" }}>
-            <table
-              style={{
-                borderCollapse: "collapse",
-                overflowX: "auto",
-                minWidth: "100px",
-              }}
-            >
-              <tr>
-                {typedData.length !== 0
-                  ? typedData[0].map((item, idx) => {
-                    return (
-                      <th
-                        style={{
-                          border: "1px solid #ddd",
-                          padding: "10px",
-                          width: "160px",
-                          maxWidth: "280px",
-                        }}
-                      >
-                        <div
-                          onClick={() => {
-                            handleChangeId(idx);
-                          }}
-                          className={classes.adjustP}
-                          style={{ textAlign: "center", cursor: "pointer" }}
-                        >
-                          <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }}>{headers[idx]}</Typography>
-
-                            {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
-                            {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
-                          {dropIndex == idx ? (
-                            <div className={classes.adjustC}>
-                              {selectArray.map((item, id) => {
-
-                                return (
-                                  <span
-                                    className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
-                                    onClick={() => {
-                                      handleSelectFirst(item, id, idx);
-                                    }}
-                                  >
-                                    {item.label}
-                                  </span>
-                                )
-                              })}
-                            </div>
-                          ) : null}
-                        </div>
-                      </th>
-                    );
-                  })
-                  : null}
-                {contacts.length !== 0 ? headers.map((item, idx) => {
-                  return (
-                    <th
-                      style={{
-                        border: "1px solid #ddd",
-                        padding: "10px",
-                        width: "180px",
-                      }}
-                    >
-                      <div
-                        onClick={() => {
-                          handleChangeId(idx);
-                        }}
-                        className={classes.adjustP}
-                        style={{ width: "150px", textAlign: "center" }}
-                      >
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }}>{headers[idx]}</Typography>
-                          {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose onClick={() => { handleCloseSpan(idx, headers[idx]) }} style={{ marginInlineEnd: "8px" }} /> : null}
-                          {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />} </div>
-                        {dropIndex == idx ? (
-                          <div className={classes.adjustC}>
-                            {selectArray.map((item, id) => {
-
-                              return (
-                                <span
-                                  className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
-                                  onClick={() => {
-                                    handleSelectFirst(item, id, idx);
-                                  }}
-                                >
-                                  {item.label}
-                                </span>
-                              )
-                            })}
-                          </div>
-                        ) : null}
-                      </div>
-                    </th>
-                  )
-                }) : null}
-              </tr>
-              {contacts.length !== 0
-                ? contacts.map((item, idx) => {
-                  if (idx > contacts.length - 6) {
-                    return (
-                      <tr id={idx}>
-                        {item.map((temp, idx) => {
-                          return (
-                            <td
-                              id={idx}
-                              style={{
-                                border: "1px solid #ddd",
-                                padding: "10px",
-                                maxWidth: "280px",
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                textAlign: "center",
-                              }}
-                            >
-                              {temp}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  }
-                })
-                : typedData.map((item, id) => {
-                  if (id > typedData.length - 6) {
-                    return (
-
-                      <tr>
-                        {item.map((data, idx) => {
-                          return (
-                            <td
-                              style={{
-                                border: "1px solid #ddd",
-                                padding: "10px",
-                                maxWidth: "280px",
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                textAlign: "center",
-                                minWidth: "150px"
-                              }}
-                            >
-                              {data}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  }
-                })}
-            </table>
-          </div>
-        </Dialog>
-      </>
-    );
-  };
   const handleClose = () => {
     setdeleteClick(false);
   };
@@ -2485,12 +2062,6 @@ const SmsSend = ({ classes, ...props }) => {
     )
 
   }
-  const handleNewM = () => {
-    setcaution(false);
-  };
-  const handleNewC = () => {
-    setcaution(false);
-  };
   const handleConfirmC = () => {
     setContacts([]);
     setareaData("");
@@ -2498,11 +2069,10 @@ const SmsSend = ({ classes, ...props }) => {
       selectArray[i].isdisabled = false;
       selectArray[i].idx = -1;
     }
+    setDialogType(null);
     settypedData([]);
     setContacts([]);
     setContacts([]);
-    setcaution(false);
-    setmanualTrue(false);
   };
   const renderSuccessDialog = () => {
     return (
@@ -2538,29 +2108,6 @@ const SmsSend = ({ classes, ...props }) => {
       <label dangerouslySetInnerHTML={createMarkup()}></label>
     );
   }
-  const renderCaution = () => {
-    return (
-      <>
-        <Dialog
-          classes={classes}
-          open={caution}
-          onClose={handleNewM}
-          onCancel={handleNewC}
-          onConfirm={handleConfirmC}
-          showDefaultButtons={true}
-        >
-          <div style={{ height: "60px", borderBottom: "1px solid black" }}>
-            <span className={classes.groupName}>{t("common.Notice")}</span>
-          </div>
-          <div>
-            <p>
-              {renderHtml(t("sms.reset_manual_upload_notice"))}
-            </p>
-          </div>
-        </Dialog>
-      </>
-    );
-  };
   const renderExit = () => {
     return (
       <>
@@ -2897,15 +2444,385 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }
   //#endregion
+  //#region Dialogs
+  const manualUploadDialog = () => {
+    return {
+      title: t('sms.columnAdjustment'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\u0056'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <div className={classes.manualModal}>
+            <Typography className={classes.inputLabel}>
+              {t("common.GroupName")}:
+            </Typography>
+            <div className={clsx(classes.buttonForm, classes.fullWidth)}>
+              <TextField
+                type="text"
+                placeholder={t("common.GroupName")}
+                className={newVal ? clsx(classes.textInput, classes.error) : clsx(classes.textInput, classes.success)}
+                onChange={handleManualDialog}
+                value={groupNameInput}
+              ></TextField>
+              {newVal ? <span className={classes.errorLabel}>{t("sms.groupNameExists").replace("#groupName#", groupNameInput)}</span> : null}
+            </div>
+          </div>
+          <Box
+            className={clsx(classes.commonFieldPulse, classes.mb3)}>
+            <Typography style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
+              {t("sms.totalRecipients")}:
+            </Typography>
+            <Typography
+              style={{
+                fontSize: "20px",
+                marginInlineEnd: "10px",
+                fontWeight: "600",
+              }}
+            >
+              {contacts.length !== 0 ? contacts.length : typedData.length}
+            </Typography>
+            <Tooltip
+              disableFocusListener
+              title={t("smsReport.manualTotalTooltip")}
+              classes={{ tooltip: styles.customWidth }}
+            >
+              <Typography className={classes.bodyInfo}>i</Typography>
+            </Tooltip>
+          </Box>
+          <Box style={{ minHeight: "200px", maxWidth: "700px", overflow: "auto" }} key="columnAdjustment">
+            <table
+              style={{
+                borderCollapse: "collapse",
+                overflowX: "auto",
+                minWidth: "100px",
+              }}
+            >
+              {typedData.length !== 0 || contacts.length !== 0
+                ? headers.map((item, idx) => {
+                  return (
+                    <th
+                      key={idx}
+                      style={{
+                        border: "1px solid #ddd",
+                        padding: "10px",
+                        width: "160px",
+                        maxWidth: "280px",
+                      }}
+                    >
+                      <div
+                        onClick={() => {
+                          handleChangeId(idx);
+                        }}
+                        className={classes.adjustP}
+                        style={{ textAlign: "center", cursor: "pointer" }}
+                      >
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                          <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }}>{headers[idx]}</Typography>
+
+                          {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
+                          {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
+                        {dropIndex == idx ? (
+                          <div className={classes.adjustC}>
+                            {selectArray.map((item, id) => {
+
+                              return (
+                                <span
+                                  className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
+                                  onClick={() => {
+                                    handleSelectFirst(item, id, idx);
+                                  }}
+                                >
+                                  {item.label}
+                                </span>
+                              )
+                            })}
+                          </div>
+                        ) : null}
+                      </div>
+                    </th>
+
+                  );
+                })
+                : null}
+              {contacts.length !== 0
+                ? contacts.map((item, idx) => {
+                  if (idx > contacts.length - 6) {
+                    return (
+                      <tbody>
+                        <tr id={idx} key={idx}>
+                          {item.map((temp, idx) => {
+                            return (
+                              <td
+                                id={idx}
+                                className={classes.tableColumn}
+                              >
+                                {temp}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      </tbody>
+                    );
+                  }
+                })
+                : typedData.map((item, id) => {
+                  if (id > typedData.length - 6) {
+                    return (
+                      <tbody>
+                        <tr key={id}>
+                          {headers.map((data, idx) => {
+                            return (
+                              <td key={idx} className={classes.tableColumn}
+                              >
+                                {item[idx]}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      </tbody>
+                    );
+                  }
+                })}
+            </table>
+          </Box>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { handleCautionCancel() },
+      onCancel: () => { handleCautionCancel() },
+      onConfirm: () => { handleDataManual() }
+    }
+  }
+  const cautionDialog = () => {
+    return {
+      title: t('common.Notice'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\u0056'}
+        </div>
+      ),
+      content: (
+        <Box className={classes.dialogBox}>
+          <Typography>{renderHtml(t("sms.reset_manual_upload_notice"))}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType({ type: "manualUpload" }); },
+      onCancel: () => { setDialogType({ type: "manualUpload" }); },
+      onConfirm: () => { handleConfirmC() }
+    }
+  }
+  const pulseDialog = () => {
+    return {
+      title: t('smsReport.pulseSending'),
+      showDivider: true,
+      icon: (
+        <div className={classes.dialogIconContent}>
+          {'\u0056'}
+        </div>
+      ),
+      content: (
+        <Box className={clsx(classes.pulseDialog, classes.mb25)}>
+          <Box className={classes.mb15}
+          >
+            <Checkbox
+              style={{ marginRight: -15, marginLeft: -15 }}
+              checked={togglePulse}
+              color="primary"
+              inputProps={{ "aria-label": "secondary checkbox" }}
+              onClick={() => {
+                settogglePulse(!togglePulse);
+                setPulseAmount("");
+                setTimeInterval("");
+              }}
+            />
+            <Typography className={clsx(classes.ps15, classes.pe15, classes.bold, classes.dInlineBlock)}>{t("smsReport.packetSend")}</Typography>
+          </Box>
+          <Box
+            className={classes.topPulseDiv}
+          >
+            <Box>
+              <span
+                className={classes.noOfReci}
+              >
+                {t("smsReport.noOfReciPulse")}
+              </span>
+              <div
+                className={classes.inputFieldDiv}
+              >
+                <input
+                  type="text"
+                  placeholder={t("smsReport.insert")}
+                  disabled={togglePulse ? false : true}
+                  className={
+                    togglePulse
+                      ? pulseBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
+                      : clsx(classes.pulseInsert)
+                  }
+                  value={pulseAmount}
+                  onChange={handlePulseInput}
+                />
+                <div className={clsx(classes.commonFieldPulse, classes.mr5, classes.ml5)} style={{ direction: isRTL ? 'ltr' : 'none' }}>
+                  <span
+                    className={
+                      togglePulse
+                        ? pulseType === 1
+                          ? clsx(classes.percentTrue)
+                          : clsx(classes.toggleActive)
+                        : clsx(classes.toggleEnd)
+                    }
+                    onClick={() => {
+                      setPulseType(1);
+                      setnoTrue(false);
+                      setpulsePer("percent");
+                      setpulseReci("");
+                      setPulseAmount("");
+                    }}
+                  >
+                    {t("smsReport.percent")}
+                  </span>
+                  <span
+                    className={
+                      togglePulse
+                        ? noTrue
+                          ? clsx(classes.reciTrue)
+                          : clsx(classes.reciActive)
+                        : clsx(classes.toggleStart)
+                    }
+                    onClick={() => {
+                      setPulseType(2);
+                      setnoTrue(true);
+                      setpulsePer("");
+                      setpulseReci("Recipients");
+                      setPulseAmount("");
+                    }}
+                  >
+                    {t("smsReport.Reci")}
+                  </span>
+                </div>
+              </div>
+            </Box>
+            <Box>
+              <span
+                className={classes.noOfReci}
+              >
+                {t("smsReport.timeSend")}
+              </span>
+              <Box
+                className={classes.inputFieldDiv}
+              >
+                <input
+                  type="text"
+                  placeholder={t("smsReport.insert")}
+                  disabled={togglePulse ? false : true}
+                  className={
+                    togglePulse
+                      ? TimeBool ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive)
+                      : clsx(classes.pulseInsert)
+                  }
+                  onChange={handleTime}
+                  value={timeInterval}
+                  maxLength="3"
+                />
+
+                <Box className={clsx(classes.commonFieldPulse, classes.mr5, classes.ml5)} style={{ direction: isRTL ? 'ltr' : 'none' }}>
+                  <span
+                    className={
+                      togglePulse
+                        ? timeType === 2
+                          ? clsx(classes.percentTrue)
+                          : clsx(classes.toggleActive)
+                        : clsx(classes.toggleEnd)
+                    }
+                    onClick={() => {
+                      setTimeType(2);
+                      setminName("");
+                      sethourName("hours");
+                    }}
+                  >
+                    {t("smsReport.Hours")}
+                  </span>
+                  <span
+                    className={
+                      togglePulse
+                        ? timeType === 1
+                          ? clsx(classes.reciTrue)
+                          : clsx(classes.reciActive)
+                        : clsx(classes.toggleStart)
+                    }
+                    onClick={() => {
+                      setTimeType(1);
+                      setminName("mins");
+                      sethourName("");
+                    }}
+                  >
+                    {t("smsReport.min")}
+                  </span>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+          <Box
+            className={classes.randomSendDiv}
+          >
+            <Checkbox
+              style={{ marginRight: -15, marginLeft: -15 }}
+              checked={toggleRandom}
+              color="primary"
+              inputProps={{ "aria-label": "secondary checkbox" }}
+              onClick={() => {
+                settoggleRandom(!toggleRandom);
+                setrandom("");
+              }}
+            />
+            <Typography className={clsx(classes.ps15, classes.pe15, classes.bold, classes.dInlineBlock)}>{t("smsReport.randomSend")}</Typography>
+          </Box>
+          <Box>
+            <span
+              className={classes.randomReciSpan}
+            >
+              {t("smsReport.noOfReci")}
+            </span>
+            <input
+              type="text"
+              placeholder={t("smsReport.insert")}
+              disabled={toggleRandom ? false : true}
+              className={
+                toggleRandom
+                  ? boolRandom ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive, classes.ml5, classes.mr5)
+                  : clsx(classes.pulseInsert, classes.ml5, classes.mr5)
+              }
+              value={random}
+              onChange={handleRandom}
+            />
+          </Box>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { handlePulseClose() },
+      onCancel: () => { handlePulseClose() },
+      onConfirm: () => { handlePulseConfirm() }
+    }
+  }
+
+  //#endregion
   const renderDialog = () => {
     const { type } = dialogType || {}
 
     const dialogContent = {
+      manualUpload: manualUploadDialog(),
       filterRecipients: filterRecipientsDialog(),
       alert: alertDialog(),
       otpVerification: OTPVerificationDialog(),
       otpCode: OTPCodeDialog(),
       otpSuccess: OTPSuccess(),
+      caution: cautionDialog(),
+      pulses: pulseDialog()
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -2946,11 +2863,8 @@ const SmsSend = ({ classes, ...props }) => {
         </div>
         <WizardButtons />
       </div>
-      {renderPulse()}
       {renderDialog()}
       {renderSummary()}
-      {renderDialogManual()}
-      {renderCaution()}
       {renderDelete()}
       {renderExit()}
       {renderSuccessDialog()}

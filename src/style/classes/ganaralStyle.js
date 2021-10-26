@@ -352,6 +352,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   ps15: {
     paddingInlineStart: 8,
   },
+  pe15: {
+    paddingInlineEnd: 8,
+  },
   ps25: {
     paddingInlineStart: 25,
   },
@@ -384,6 +387,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mb10: {
     marginBottom: 10
+  },
+  mb15: {
+    marginBottom: 15
   },
   mb20: {
     marginBottom: 20
@@ -581,6 +587,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   m5: {
     margin: ".5rem",
+  },
+  mr5: {
+    marginRight: 5
+  },
+  ml5: {
+    marginLeft: 5
   },
   font13: {
     fontSize: 13
@@ -2042,20 +2054,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pulseInsert:
   {
-    width: "50px",
+    width: 70,
     border: "2px solid #efefef",
-    height: 35,
-    borderRadius: 5
+    height: 36,
+    borderRadius: 5,
+    textAlign: 'center'
   },
   pulseActive:
   {
-    width: "50px",
+    width: 70,
     border: "2px solid #e9ecef",
-    height: 35,
+    height: 36,
     borderRadius: 5,
     outline: "none",
+    textAlign: 'center'
   },
-  percent: {
+  toggleEnd: {
     display: "flex",
     width: "72px",
     alignItems: "center",
@@ -2063,28 +2077,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomLeftRadius: "4px",
     borderTopLeftRadius: "4px",
     border: "1px solid #efefef",
-    padding: "8px",
-    marginBottom: "8px",
-    height: "25px",
+    height: 40,
     color: "#A7A7A7",
     cursor: "pointer",
+    paddingRight: 10,
+    paddingLeft: 10
   },
-  reci: {
+  toggleStart: {
     display: "flex",
     width: "72px",
     alignItems: "center",
     justifyContent: "center",
     borderBottomRightRadius: "4px",
     borderTopRightRadius: "4px",
-    borderLeft: "none",
     border: "1px solid #efefef",
-    padding: "8px",
-    marginBottom: "8px",
-    height: "25px",
+    height: 40,
     color: "#A7A7A7",
     cursor: "pointer",
+    paddingRight: 10,
+    paddingLeft: 10
   },
-  percentActive: {
+  toggleActive: {
     display: "flex",
     width: "72px",
     alignItems: "center",
@@ -2092,11 +2105,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomLeftRadius: "4px",
     borderTopLeftRadius: "4px",
     border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height: "25px",
+    height: 40,
     color: "#277BFF",
     cursor: "pointer",
+    paddingRight: 10,
+    paddingLeft: 10
   },
   percentTrue: {
     display: "flex",
@@ -2106,12 +2119,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomLeftRadius: "4px",
     borderTopLeftRadius: "4px",
     border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height: "25px",
+    height: 40,
     color: "#ffffff",
     backgroundColor: " #277BFF",
     cursor: "pointer",
+    paddingRight: 10,
+    paddingLeft: 10
   },
   reciActive: {
     display: "flex",
@@ -2122,11 +2135,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderTopRightRadius: "4px",
     borderLeft: "none",
     border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height: "25px",
+    height: 40,
     color: "#277BFF",
     cursor: "pointer",
+    paddingRight: 10,
+    paddingLeft: 10
   },
   percentActivetrue: {
     display: "flex",
@@ -2136,9 +2149,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderBottomLeftRadius: "4px",
     borderTopLeftRadius: "4px",
     border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height: "25px",
+    height: 40,
     color: "#ffffff",
     backgroundColor: "#277BFF"
   },
@@ -2151,12 +2162,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderTopRightRadius: "4px",
     borderLeft: "none",
     border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height: "25px",
+    height: 40,
     color: "#ffffff",
     backgroundColor: " #277BFF",
     cursor: "pointer",
+    paddingRight: 10,
+    paddingLeft: 10
   },
   reciActivetrue: {
     display: "flex",
@@ -2167,14 +2178,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderTopRightRadius: "4px",
     borderLeft: "none",
     border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height: "25px",
+    height: 40,
     color: "#ffffff",
-    backgroundColor: "#277BFF"
-  },
-  inputreci:
-  {
+    backgroundColor: "#277BFF",
+    paddingRight: 10,
+    paddingLeft: 10
   },
   reciMain:
   {
@@ -2205,14 +2213,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginBottom: "20px",
     width: "100%",
 
-  },
-  inputManual:
-  {
-    padding: "10px",
-    width: "72%",
-    outline: "none",
-    borderRadius: "4px",
-    border: "1px solid #ddd"
   },
   adjustP:
   {
@@ -2482,19 +2482,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     justifyContent: "space-between",
     alignItems: "center",
     borderBottom: "2px solid #efefef",
-    paddingBottom: "15px",
+    paddingBottom: "30px",
   },
   noOfReci:
   {
-    fontSize: "18px",
-    fontWeight: "500",
-    marginTop: "10px",
-    marginBottom: "10px",
+    fontSize: 18,
+    fontWeight: 400,
+    marginTop: 15,
+    marginBottom: 15,
   },
   inputFieldDiv:
   {
     display: "flex",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginTop: "10px",
   },
   commonFieldPulse:
@@ -2510,10 +2510,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   randomReciSpan:
   {
-    fontSize: "18px",
-    fontWeight: "500",
-    marginTop: "10px",
-    marginBottom: "10px",
+    fontSize: 18,
+    fontWeight: 400,
+    marginTop: 10,
+    marginBottom: 10,
   },
   confirmDiv:
   {
@@ -2528,18 +2528,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   subDeleteDiv:
   {
-    fontSize: "22px", marginTop: "5px"
+    fontSize: "22px",
+    marginTop: "5px"
   },
-  // smsStepDiv:
-  // {
-  //   display: "grid",
-  //   padding: "40px 80px 15px 30px",
-  //   "@media screen and (max-width: 768px)": {
-  //     gridTemplateColumns: "auto",
-  //     padding: "0px"
-  //   },
-
-  // },
   numberChnageModal:
   {
     height: "60px",
@@ -2705,5 +2696,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: 'transparent',
     cursor: 'pointer',
     fontSize: 28
+  },
+  fullWidth: {
+    width: '100%'
+  },
+  errorLabel: {
+    marginTop: 8,
+    color: "red",
+    fontSize: 12
   }
 });
