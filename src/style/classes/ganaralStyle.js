@@ -1278,7 +1278,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     position: "absolute",
     top: "115px",
-    width: 310,
+    width: 300,
     height: 240,
     right: !isRTL ? 45 : 'auto',
     left: isRTL ? 45 : 'auto',
@@ -1287,9 +1287,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "12px",
     overflowY: "auto",
     padding: 10,
-    "@media screen and (max-width: 768px)": {
-      width: 300,
-    },
     "@media screen and (max-width: 768px)": {
       right: 45,
       width: 340,
