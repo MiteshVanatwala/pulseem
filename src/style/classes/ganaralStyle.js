@@ -2001,5 +2001,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginTop: 8,
     color: "red",
     fontSize: 12
+  },
+  columnError : 
+  {
+    borderBottom : "3px solid red",
+    padding:"4px"
   }
 });
