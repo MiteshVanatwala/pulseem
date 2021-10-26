@@ -368,7 +368,7 @@ const SmsSend = ({ classes, ...props }) => {
       const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id))
       settotalCampaigns(finishedCampaigns.payload);
       setGroupList(subAccountGroups.payload);
-      if(campaignSettings.payload && campaignSettings.payload.PulseSettings){
+      if (campaignSettings.payload && campaignSettings.payload.PulseSettings) {
         setTimeType(campaignSettings.payload.PulseSettings.TimeType);
         setPulseType(campaignSettings.payload.PulseSettings.PulseType);
         setPulseAmount(`${campaignSettings.payload.PulseSettings.PulseAmount}`)
@@ -463,8 +463,8 @@ const SmsSend = ({ classes, ...props }) => {
   }, [dataSaved]);
 
   useEffect(() => {
-    setOtpRequired(!OTPPassed);
-    if (!OTPPassed) {
+    setOtpRequired(OTPPassed);
+    if (OTPPassed === false) {
       setDialogType({ type: "otpVerification" });
     }
   }, [OTPPassed])
@@ -780,7 +780,7 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const handleCombined = async () => {
     const nameExist = groupList.filter((g) => { return g.GroupName === groupValue });
-    if (nameExist.length > 0){
+    if (nameExist.length > 0) {
       setGroupNameExist(true);
       return;
     }
@@ -789,7 +789,7 @@ const SmsSend = ({ classes, ...props }) => {
     for (let i = 0; i < selectedGroups.length; i++) {
       temp.push(selectedGroups[i].GroupID);
     }
-    
+
     let payload = {
       SubAccountID: 1,
       GroupName: groupValue,
@@ -1393,6 +1393,7 @@ const SmsSend = ({ classes, ...props }) => {
               isSms={true}
               bsDot={bsDot}
               uniqueKey={'groups_1'}
+              innerHeight={325}
             />
           ) : null}
           <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -2829,8 +2830,6 @@ const SmsSend = ({ classes, ...props }) => {
                   callbackUpdateGroups={callbackUpdateGroupFilterd}
                   callbackSelectedGroups={callbackFilteredGroups}
                   noSelectionText={t("sms.NoFilteredGroups")}
-                  minHeight={250}
-                  maxHeight={250}
                   innerHeight={160}
                   uniqueKey={'groups_2'}
                 />
@@ -2854,8 +2853,6 @@ const SmsSend = ({ classes, ...props }) => {
                   callbackUpdateGroups={callbackUpdateCampaignFilter}
                   callbackSelectedGroups={callbackFiltertedCampaigns}
                   noSelectionText={t("sms.NoFilteredCampaigns")}
-                  minHeight={250}
-                  maxHeight={250}
                   innerHeight={160}
                   uniqueKey={'campaigns'}
                 />

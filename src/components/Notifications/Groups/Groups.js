@@ -25,11 +25,9 @@ const Groups = ({ classes,
     bsDot,
     isSms,
     selectedList,
-    maxHeight = 415,
     innerHeight = null,
     isNotifications,
     noSelectionText,
-    minHeight = null,
     showSortBy = true,
     showFilter = true,
     isCampaign = false,
@@ -245,7 +243,7 @@ const Groups = ({ classes,
     }
 
     return (
-        <Box className={classes.groupsContainer} style={{ maxHeight: maxHeight, minHeight: minHeight }} key={uniqueKey}>
+        <Box className={classes.groupsContainer} key={uniqueKey}>
             {
                 windowSize === 'xs' && <Grid item xs={12}>
                     <FormControl className={classes.margin, classes.searchInput}>
