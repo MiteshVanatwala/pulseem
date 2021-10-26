@@ -2705,5 +2705,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: 'transparent',
     cursor: 'pointer',
     fontSize: 28
+  },
+  columnError : 
+  {
+    borderBottom : "3px solid red",
+    padding:"4px"
   }
 });

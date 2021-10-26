@@ -218,6 +218,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [groupNameInput, setgroupNameInput] = useState("");
   const [groupValue, setgroupValue] = useState("");
   const [manualTrue, setmanualTrue] = useState(false);
+  const [columnValidate, setcolumnValidate] = useState(false);
   const [pulse, setpulse] = useState(false);
   const [afterClick, setafterClick] = useState(false);
   const [exitDialog, setexitDialog] = useState(false);
@@ -2050,11 +2051,13 @@ const SmsSend = ({ classes, ...props }) => {
       setcaution(true);
       setgroupNameInput("");
       setnewVal(false);
+     
     }
     else if (areaClick === true) {
       setmanualTrue(false);
       setgroupNameInput("");
       setnewVal(false);
+      setcolumnValidate(false);
     }
   };
   const handleChangeId = (id) => {
@@ -2212,13 +2215,23 @@ const SmsSend = ({ classes, ...props }) => {
       setnewVal(true);
       return false;
     }
-    let columnHasValue = false;
+    let columnHasValue = 0;
     headers.forEach((value) => {
       if (value !== t("sms.adjustTitle")) {
-        columnHasValue = true
+        columnHasValue = columnHasValue + 1
       }
     })
-    return columnHasValue === false ? false : true;
+    if(columnHasValue < 3)
+    {
+         setcolumnValidate(true);
+         return false;
+    }
+    else if(columnHasValue === 3)
+    {
+      setcolumnValidate(false);
+      return true;
+    }
+    
   }
   const renderDialogManual = () => {
     return (
@@ -2306,7 +2319,7 @@ const SmsSend = ({ classes, ...props }) => {
                           style={{ textAlign: "center", cursor: "pointer" }}
                         >
                           <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }}>{headers[idx]}</Typography>
+                            <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true  && headers[idx] === t("sms.adjustTitle")? classes.columnError : null}>{headers[idx]}</Typography>
 
                             {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
                             {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
