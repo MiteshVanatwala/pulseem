@@ -849,7 +849,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: "#1c82b2",
     cursor: "pointer",
     borderColor: "#1c82b2",
-    marginInlineStart: 5,
+    "&:first-child": {
+      marginInlineStart: 5,
+      marginInlineEnd: 5,
+    },
+    "&:nth-child(2)": {
+      marginInlineStart: 0,
+      marginInlineEnd: 5,
+    },
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 11
+    },
     "@media screen and (max-width: 768px)": {
       width: "110px",
       padding: "8px",
@@ -864,6 +874,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     paddingLeft: 20,
     paddingRight: 20,
+    "@media screen and (max-width: 1366px)": {
+      paddingLeft: 5,
+      paddingRight: 0,
+    },
     "@media screen and (max-width: 768px)": {
       borderRight: "none",
       borderLeft: "none"
@@ -886,6 +900,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "5px",
     border: "1px solid #ced4da",
     backgroundColor: '#fff',
+    "@media screen and (max-width: 1366px)": {
+      minWidth: 130,
+    },
     "@media screen and (max-width: 768px)": {
       width: "100%",
       marginTop: "8px",
@@ -2002,9 +2019,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: "red",
     fontSize: 12
   },
-  columnError : 
+  columnError:
   {
-    borderBottom : "3px solid red",
-    padding:"4px"
+    borderBottom: "3px solid red",
+    padding: "4px"
   }
 });

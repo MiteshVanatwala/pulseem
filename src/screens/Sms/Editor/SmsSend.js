@@ -220,7 +220,6 @@ const SmsSend = ({ classes, ...props }) => {
   const [groupValue, setgroupValue] = useState("");
   const [columnValidate, setcolumnValidate] = useState(false);
   const [afterClick, setafterClick] = useState(false);
-  const [exitDialog, setexitDialog] = useState(false);
   const [specialSettingValidation, setspecialSettingValidation] = useState(false);
   const [reciFilter, setreciFilter] = useState(false);
   const [responseQuick, setresponseQuick] = useState(null);
@@ -228,8 +227,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [TimeBool, setTimeBool] = useState(false);
   const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
-  const [finalSuccessDialog, setfinalSuccessDialog] = useState(false);
-  const [snackbarRecipients, setsnackbarRecipients] = useState(false);
+    const [snackbarRecipients, setsnackbarRecipients] = useState(false);
   const [bsDot, setbsDot] = useState(false);
   const [model, setModel] = useState({
     ID: 0
@@ -265,7 +263,6 @@ const SmsSend = ({ classes, ...props }) => {
   const [RecipientsBool, setRecipientsBool] = useState(false);
   const [editT, seteditT] = useState(false);
   const [showLoader, setLoader] = useState(true);
-  const [deleteClick, setdeleteClick] = useState(false);
   const [totalCampaigns, settotalCampaigns] = useState([]);
   const [typedData, settypedData] = useState([]);
   const [displayFilter, setdisplayFilter] = useState(false);
@@ -379,7 +376,7 @@ const SmsSend = ({ classes, ...props }) => {
         const seGroups = campaignSettings.payload.Groups;
         for (var i = 0; i < seGroups.length; i++) {
           const g = subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[i] });
-          if(g){
+          if (g) {
             selectedGroupsForSend.push(g[0]);
           }
         }
@@ -808,7 +805,7 @@ const SmsSend = ({ classes, ...props }) => {
     setToastMessage(toastMessages.GROUPCREATEDSUCCESS);
   };
   const onHandleDelete = () => {
-    setdeleteClick(true);
+    setDialogType({ type: "delete" });
   };
   const inputGroup = (e) => {
     setGroupNameExist(false);
@@ -1798,6 +1795,7 @@ const SmsSend = ({ classes, ...props }) => {
     }
   };
   const handleSummary = () => {
+    setDialogType(null);
     setsummModal(false);
   }
   const renderSummary = () => {
@@ -1847,7 +1845,7 @@ const SmsSend = ({ classes, ...props }) => {
     setLoader(false);
 
     setsummModal(false);
-    setfinalSuccessDialog(true)
+    setDialogType({ type: "sendSuccess" });
   };
   const handleCautionCancel = () => {
     if (dropClick === true || areaClick === true) {
@@ -2015,25 +2013,21 @@ const SmsSend = ({ classes, ...props }) => {
         columnHasValue = columnHasValue + 1
       }
     })
-    if(columnHasValue < 3)
-    {
-         setcolumnValidate(true);
-         return false;
+    if (columnHasValue < 3) {
+      setcolumnValidate(true);
+      return false;
     }
-    else if(columnHasValue === 3)
-    {
+    else if (columnHasValue === 3) {
       setcolumnValidate(false);
       return true;
     }
-    
+
   }
-  const handleClose = () => {
-    setdeleteClick(false);
-  };
+
   const handleDelete = () => {
     if (props && props.match.params.id) {
       dispatch(deleteSms(props.match.params.id));
-      handleClose();
+      setDialogType(null);
       history.push("/SMSCampaigns");
     }
   };
@@ -2048,35 +2042,6 @@ const SmsSend = ({ classes, ...props }) => {
     }
     return null;
   }
-  const renderDelete = () => {
-    return (
-      <>
-        {deleteClick ? (
-          <Dialog
-            classes={classes}
-            open={deleteClick}
-            onClose={handleClose}
-            onCancel={cancel ? null : true}
-            onConfirm={handleDelete}
-            confirmText={t("smsReport.confirmBtn")}
-            showDefaultButtons={true}
-            icon={
-              <AiOutlineExclamationCircle
-                style={{ fontSize: 30, color: "#fff" }}
-              />
-            }
-          >
-            <div className={classes.deleteModalDiv}>
-              <span className={classes.groupName}>{t("mainReport.deleteCamp")}</span>
-            </div>
-            <div className={classes.subDeleteDiv}>
-              <span>{t("mainReport.confirmSure")}</span>
-            </div>
-          </Dialog>
-        ) : null}</>
-    )
-
-  }
   const handleConfirmC = () => {
     setContacts([]);
     setareaData("");
@@ -2087,29 +2052,6 @@ const SmsSend = ({ classes, ...props }) => {
     setDialogType(null);
     settypedData([]);
   };
-  const renderSuccessDialog = () => {
-    return (
-      <>
-        <Dialog
-          classes={classes}
-          open={finalSuccessDialog}
-          renderButtons={false}
-          showDefaultButtons={false}
-          exit={true}
-          showDefaultButtons={false}
-        >
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-            <img src={Gif} style={{ width: "150px", height: "150px" }} />
-            <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>{t("sms.sent")}</span>
-            <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
-              {t("sms.campaignIsOnItsWay")}
-            </p>
-            <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { history.push("/SMSCampaigns") }}>{t("common.confirm")}</span>
-          </div>
-        </Dialog>
-      </>
-    )
-  }
   const handlePreviousPage = () => {
     window.location = `/react/sms/edit/${props.match.params.id}`;
   }
@@ -2121,36 +2063,6 @@ const SmsSend = ({ classes, ...props }) => {
       <label dangerouslySetInnerHTML={createMarkup()}></label>
     );
   }
-  const renderExit = () => {
-    return (
-      <>
-
-        <Dialog
-          classes={classes}
-          open={exitDialog}
-          onClose={() => { setexitDialog(false); history.push("/SMSCampaigns"); }}
-          onConfirm={() => { onSaveSettings(true, "exit") }}
-          onCancel={() => { setexitDialog(false) }}
-          confirmText={t("mainReport.Ok")}
-          cancelText={t("mainReport.No")}
-          showDefaultButtons={true}
-          icon={
-            <AiOutlineExclamationCircle
-              style={{ fontSize: 30, color: "#fff" }}
-            />
-          }
-        >
-          <div className={classes.baseDialogSetup}>
-            <span className={classes.groupName}>{t("mainReport.handleExitTitle")}</span>
-          </div>
-          <div className={classes.bodyTextDialog}>
-            <span>{t("mainReport.leaveCampaign")}</span>
-          </div>
-        </Dialog>
-
-      </>
-    );
-  };
   const renderSendType2validation = () => {
     return (<>
       <Dialog
@@ -2287,7 +2199,7 @@ const SmsSend = ({ classes, ...props }) => {
             )}
             color="primary"
             style={{ margin: '8px' }}
-            onClick={() => { setexitDialog(true) }}>
+            onClick={() => { setDialogType({ type: "exit" }) }}>
             {t('mainReport.exitSms')}
           </Button>
           <Button
@@ -2534,7 +2446,7 @@ const SmsSend = ({ classes, ...props }) => {
                         style={{ textAlign: "center", cursor: "pointer" }}
                       >
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true  && headers[idx] === t("sms.adjustTitle")? classes.columnError : null}>{headers[idx]}</Typography>
+                          <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{headers[idx]}</Typography>
 
                           {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
                           {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
@@ -2822,7 +2734,73 @@ const SmsSend = ({ classes, ...props }) => {
       onConfirm: () => { handlePulseConfirm() }
     }
   }
-
+  const deleteDialog = () => {
+    return {
+      title: t('mainReport.deleteCamp'),
+      showDivider: true,
+      confirmText: t("common.Yes"),
+      disableBackdropClick: true,
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box className={classes.bodyTextDialog}>
+          <Typography>
+            {t("mainReport.confirmSure")}
+          </Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null); },
+      onCancel: () => { setDialogType(null); },
+      onConfirm: () => { handleDelete() }
+    }
+  }
+  const exitDialog = () => {
+    return {
+      title: t('mainReport.handleExitTitle'),
+      showDivider: true,
+      disableBackdropClick: true,
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box>
+          <Typography className={classes.f18}>{t("mainReport.leaveCampaign")}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      cancelText: t("common.No"),
+      onClose: () => { history.push("/SMSCampaigns"); },
+      onCancel: () => { setDialogType(null) },
+      onConfirm: () => { onSaveSettings(true, "exit") }
+    }
+  }
+  const sendSuccessDialog = () => {
+    return {
+      showDivider: false,
+      disableBackdropClick: true,
+      content: (
+        <Box>
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+            <img src={Gif} style={{ width: "150px", height: "150px" }} />
+            <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>{t("sms.sent")}</span>
+            <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
+              {t("sms.campaignIsOnItsWay")}
+            </p>
+            <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { history.push("/SMSCampaigns") }}>{t("common.confirm")}</span>
+          </div>
+        </Box>
+      ),
+      renderButtons: false,
+      showDefaultButtons: false,
+      exit: true
+    }
+  }
   //#endregion
   const renderDialog = () => {
     const { type } = dialogType || {}
@@ -2835,7 +2813,10 @@ const SmsSend = ({ classes, ...props }) => {
       otpCode: OTPCodeDialog(),
       otpSuccess: OTPSuccess(),
       caution: cautionDialog(),
-      pulses: pulseDialog()
+      pulses: pulseDialog(),
+      delete: deleteDialog(),
+      exit: exitDialog(),
+      sendSuccess: sendSuccessDialog()
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -2845,7 +2826,7 @@ const SmsSend = ({ classes, ...props }) => {
         dialogType && <Dialog
           classes={classes}
           open={dialogType}
-          onClose={handleClose}
+          onClose={() => { setDialogType(null) }}
           {...currentDialog}>
           {currentDialog.content}
         </Dialog>
@@ -2878,9 +2859,6 @@ const SmsSend = ({ classes, ...props }) => {
       </div>
       {renderDialog()}
       {renderSummary()}
-      {renderDelete()}
-      {renderExit()}
-      {renderSuccessDialog()}
       {renderSpecialModal()}
       {renderSendType2validation()}
       <Snackbar

@@ -894,7 +894,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     arrow
                   >
                     <select
-                      className={classes.selectVal}
+                      className={clsx(classes.selectVal, classes.sidebar)}
                       value={selectValue}
                       onChange={handleSelectChange}
                     >
@@ -1621,6 +1621,7 @@ const SmsCreator = ({ classes, ...props }) => {
     return {
       title: t('mainReport.deleteSms'),
       showDivider: true,
+      disableBackdropClick: true,
       icon: (
         <AiOutlineExclamationCircle
           style={{ fontSize: 30, color: "#fff" }}
@@ -1762,6 +1763,7 @@ const SmsCreator = ({ classes, ...props }) => {
     return {
       title: t('mainReport.handleExitTitle'),
       showDivider: true,
+      disableBackdropClick: true,
       icon: (
         <AiOutlineExclamationCircle
           style={{ fontSize: 30, color: "#fff" }}
