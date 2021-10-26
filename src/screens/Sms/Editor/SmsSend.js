@@ -234,6 +234,7 @@ const SmsSend = ({ classes, ...props }) => {
     ID: 0
   });
   const [togglePulse, settogglePulse] = useState(false);
+  const [ManualColumnValidate, setManualColumnValidate] = useState(false);
   const [toggleRandom, settoggleRandom] = useState(false);
   const [summModal, setsummModal] = useState(false);
   const [toggleB, settoggleB] = useState(true);
@@ -2014,12 +2015,12 @@ const SmsSend = ({ classes, ...props }) => {
     })
     if(columnHasValue < 3)
     {
-        
+        setManualColumnValidate(true);
          return false;
     }
     else if(columnHasValue === 3)
     {
-     
+      setManualColumnValidate(false);
       return true;
     }
     
@@ -2533,7 +2534,7 @@ const SmsSend = ({ classes, ...props }) => {
                         style={{ textAlign: "center", cursor: "pointer" }}
                       >
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                          <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }}>{headers[idx]}</Typography>
+                          <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={ManualColumnValidate &&  headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{headers[idx]}</Typography>
 
                           {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
                           {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>

@@ -2207,7 +2207,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   manualModal: {
     display: "flex",
-    alignItems: "center",
+    // alignItems: "center",
     height: "40px",
     marginTop: "15px",
     marginBottom: "20px",
