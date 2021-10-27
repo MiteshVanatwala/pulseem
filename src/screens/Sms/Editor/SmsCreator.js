@@ -1474,7 +1474,7 @@ const SmsCreator = ({ classes, ...props }) => {
         <BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />
       ),
       content: (
-        <Box className={classes.dialogBox}>
+        <Box className={classes.dialogBox} style={{width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null}}>
           <Paper component="form" className={btnStyle.root}>
             <IconButton
               type="submit"
@@ -1539,7 +1539,7 @@ const SmsCreator = ({ classes, ...props }) => {
         <BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />
       ),
       content: (
-        <Box className={classes.dialogBox}>
+        <Box className={classes.dialogBox} style={{width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null}}>
           <Paper component="form" className={btnStyle.root}>
             <IconButton
               type="submit"
@@ -1702,7 +1702,7 @@ const SmsCreator = ({ classes, ...props }) => {
         />
       ),
       content: (
-        <Box className={classes.dialogBox}>
+        <Box className={classes.dialogBox} style={{width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null}}>
           <Paper component="form" className={btnStyle.root}>
             <IconButton
               type="submit"
