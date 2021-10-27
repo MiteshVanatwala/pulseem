@@ -16,7 +16,7 @@ const MobilePreivew = ({ classes, campaignNumber, text, key }) => {
                     <div className={classes.fromMe}>
                         {text !== '' ? text.split('\n').map((str) => {
                             return (<p key={key} style={{ margin: "0", padding: "0" }}>{str}</p>)
-                        }) : t("mainReport.typeText")}
+                        }) : null}
                     </div>
                 </div>
 
