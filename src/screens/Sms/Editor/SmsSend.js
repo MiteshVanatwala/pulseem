@@ -474,7 +474,7 @@ const SmsSend = ({ classes, ...props }) => {
 
   //#region OTP
   const otpProps = {
-    maxlength: "5"
+    maxLength: "5"
   }
   const handleVerifyOTP = async () => {
     setLoader(true);

@@ -89,11 +89,11 @@ const SmsCreator = ({ classes, ...props }) => {
   const styles = useStyles();
   const btnStyle = useStyleNew();
   const inputProps = {
-    maxlength: "13"
+    maxLength: "13"
   }
 
   const otpProps = {
-    maxlength: "5"
+    maxLength: "5"
   }
   const history = useHistory();
   const dispatch = useDispatch();
@@ -617,7 +617,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const renderFields = () => {
     return (
       <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
-        <Grid item xs={12} md={4} sm={12} className={classes.buttonForm}>
+        <Grid item={true} xs={12} md={4} sm={12} className={classes.buttonForm}>
           <Typography className={classes.buttonHead}>
             {t("mainReport.campName")}
           </Typography>
@@ -637,7 +637,7 @@ const SmsCreator = ({ classes, ...props }) => {
             {t("mainReport.campDesc")}
           </Typography>
         </Grid>
-        <Grid item xs={12} md={4} sm={12} className={classes.buttonForm}>
+        <Grid item={true} xs={12} md={4} sm={12} className={classes.buttonForm}>
           <Box className={classes.inputCampDiv}>
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
@@ -670,7 +670,7 @@ const SmsCreator = ({ classes, ...props }) => {
             {t("mainReport.campRemovalDesc")}
           </Typography>
         </Grid>
-        <Grid item xs={12} md={4} sm={12} >
+        <Grid item={true} xs={12} md={4} sm={12} >
           {restoreBool && removalNumber !== null ? (
             <Box className={classes.buttonForm}>
               <Typography className={clsx(classes.buttonHead)}>
@@ -756,13 +756,13 @@ const SmsCreator = ({ classes, ...props }) => {
     return (
       <Grid container className={clsx(classes.msgDiv)}>
         <Grid container>
-          <Grid item xs={12} md={8} className={classes.boxDiv}>
+          <Grid item={true} xs={12} md={8} className={classes.boxDiv}>
             <Typography className={classes.msgHead}>
               {t("mainReport.yourMessage")}
             </Typography>
             <textarea
               placeholder={t("mainReport.typeText")}
-              maxlength="1000"
+              maxLength="1000"
               outlined=""
               id="yourMessage"
               className={clsx(classes.msgArea, classes.sidebar)}
@@ -864,7 +864,7 @@ const SmsCreator = ({ classes, ...props }) => {
                   disableFocusListener
                   title={t("mainReport.removalMsgTooltip")}
                   classes={{ tooltip: styles.customWidth }}
-                  placement="top-center"
+                  placement="top"
                   arrow
                 >
                   <Typography
@@ -879,7 +879,7 @@ const SmsCreator = ({ classes, ...props }) => {
                   disableFocusListener
                   title={t("mainReport.removalLinkTooltip")}
                   classes={{ tooltip: styles.customWidth }}
-                  placement="top-center"
+                  placement="top"
                   arrow
                 >
                   <Typography
@@ -897,7 +897,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     disableFocusListener
                     title={t("mainReport.selectTooltip")}
                     classes={{ tooltip: styles.customWidth }}
-                    placement="top-center"
+                    placement="top"
                     arrow
                   >
                     <select
@@ -918,12 +918,12 @@ const SmsCreator = ({ classes, ...props }) => {
                     </select>
                   </Tooltip>
                 </Box>
-                <Box className={classes.addDiv} tabindex="0" onBlur={() => { seteditmenuClick(false) }}>
+                <Box className={classes.addDiv} tabIndex="0" onBlur={() => { seteditmenuClick(false) }}>
                   <Tooltip
                     disableFocusListener
                     title={t("mainReport.addVariantsTooltip")}
                     classes={{ tooltip: styles.customWidth }}
-                    placement="top-center"
+                    placement="top"
                     arrow
                   >
                     <Typography
@@ -973,7 +973,7 @@ const SmsCreator = ({ classes, ...props }) => {
               </Box>
             </Box>
           </Grid>
-          <Grid item xs={12} md={4} sm={12}>
+          <Grid item={true} xs={12} md={4} sm={12}>
             <Box className={classes.switchDiv}>
               <FormGroup>
                 <Switch
@@ -1498,7 +1498,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 if (CampaignSearch == "") {
                   return val;
                 } else if (
-                  val.CampaignName.toLowerCase().includes(
+                  val.Name.toLowerCase().includes(
                     CampaignSearch.toLowerCase()
                   )
                 ) {
@@ -1954,7 +1954,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   //#endregion
   const SwitchOldVersion = () => {
-    return (<Grid item xs={12} style={{ paddingTop: 20 }}>
+    return (<Grid item={true} xs={12} style={{ paddingTop: 20 }}>
       <Switch
         className={
           isRTL
@@ -1983,7 +1983,7 @@ const SmsCreator = ({ classes, ...props }) => {
         <SwitchOldVersion />
       </Grid>
       <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}>
-        <Grid item xs={12} sm={12} lg={8}>
+        <Grid item sm={12} md={8} lg={8}>
           <Title title={t("mainReport.smsCampaign")}
             classes={classes}
             tooltip={t("mainReport.toolTip1")}
@@ -1993,7 +1993,7 @@ const SmsCreator = ({ classes, ...props }) => {
           {renderFields()}
           {renderMsg()}
         </Grid>
-        <Grid xs={12} sm={12} md={12} lg={4}>
+        <Grid item xs={12} sm={12} md={12} lg={4}>
           <Box style={{ maxWidth: 420 }}>
             {renderPhone()}
           </Box>

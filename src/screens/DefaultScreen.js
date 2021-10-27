@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import { TopAppBar,/*Drawer*/ } from '../components/core'
 import { Container } from '@material-ui/core'
-import { Helmet } from 'react-helmet';
+// import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { getRoutes } from '../helpers/routes';
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
@@ -64,7 +65,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   },[])
 
   return (
-    <div>
+    <HelmetProvider>
       <Helmet>
         <title>{title}</title>
       </Helmet>
@@ -79,7 +80,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
       >
         {children}
       </Container>
-    </div>
+    </HelmetProvider>
   )
 }
 

@@ -35,6 +35,7 @@
     "react-dropzone": "^11.3.4",
     "react-ellipsis-pjs": "^2.1.2",
     "react-helmet": "^6.1.0",
+    "react-helmet-async": "^1.1.2",
     "react-i18next": "^11.8.10",
     "react-icons": "^4.2.0",
     "react-number-format": "^4.6.3",
