@@ -28,7 +28,7 @@
   "whomtoSendTip":"First choose who receives your campaign, then choose when.",
   "pulseSendTip":"Choose a group and when to send to organize your Pulse Sending.",
   "manualTip":"Add recipient information. New! You can now add up to 600,000 recipients",
-  "finalReciTip":"Please note this value is not the final number of recipients who will receive this campaign. After selecting your sending preferences, you will see the correct value in the Summary page.",
+  "finalReciTip":"This value is not final. Select your sending preferences, and you will see the correct value in the Summary page.",
   "groupName":"Group Name",
   "back":"Back",
   "manualAreaDesc":"Drag &amp; drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box",
@@ -45,5 +45,6 @@
   "cellPhone":"Cell Phone",
   "estimatedEndDate":"Estimated End Date",
    "packetsSending" : "Packets sending",
-   "NoGroups":"No groups selected"
+   "NoGroups":"No groups selected",
+   "pastDateSelected": "The hour you selected already passed, please try again"
 }

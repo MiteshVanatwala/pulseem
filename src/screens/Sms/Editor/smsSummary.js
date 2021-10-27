@@ -5,6 +5,9 @@ import { useTranslation } from "react-i18next";
 import { Link } from "@material-ui/core";
 import { Box } from "@material-ui/core";
 import MobilePreview from '../../../components/MobilePreive/Mobile'
+import { FaChevronDown } from 'react-icons/fa';
+import { FaChevronUp } from 'react-icons/fa';
+import clsx from "clsx";
 
 const SmsSummary = ({ classes,
   open,
@@ -113,10 +116,11 @@ const SmsSummary = ({ classes,
             <Box>
 
               {detailsHide ? null : <ul className={classes.sumList}>
-                <li
-                  onClick={() => { setsubDetailsActive(!subDetailsActive) }}
-                >
-                  {t("sms.smsSummaryGroups")} ({groups.length})
+                <li>
+                  <Link onClick={() => { setsubDetailsActive(!subDetailsActive) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
+                    {t("sms.smsSummaryGroups")} ({groups.length})
+                    {subDetailsActive ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
+                  </Link>
                 </li>
               </ul>}
 
@@ -139,9 +143,12 @@ const SmsSummary = ({ classes,
             <li
               onClick={() => { setsubRecipients(!subRecipientsDetails) }}
             >
-              {t("sms.smsSummaryRecipientsFilter")} ({(groups.reduce(function (a, b) {
-                return a + b['Recipients'];
-              }, 0).toLocaleString() - summaryPayload.FinalCount)})
+              <Link onClick={() => { setsubRecipients(!subRecipientsDetails) }} className={classes.alignCenter} style={{ cursor: 'pointer' }}>
+                {t("sms.smsSummaryRecipientsFilter")} ({(groups.reduce(function (a, b) {
+                  return a + b['Recipients'];
+                }, 0).toLocaleString() - summaryPayload.FinalCount)})
+                {subRecipientsDetails ? <FaChevronUp style={{ margin: '0 10', paddingTop: 4 }} /> : <FaChevronDown style={{ margin: '0 10', paddingTop: 4 }} />}
+              </Link>
             </li>
           </ul>}
           {subRecipientsDetails ? <Box style={{
@@ -213,15 +220,12 @@ const SmsSummary = ({ classes,
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    // justifyContent: "space-between",
                     padding: "8px 8px 8px 55px",
                     borderTop: "1px solid #E5E5E5",
                     fontSize: "16px",
                   }}
                 >
-                  {/* <span style={{marginInlineEnd:"5px"}}>{idx}</span> */}
                   <span> {item.GroupName}</span>
-
                 </Box>)
               }
             })}
@@ -255,13 +259,10 @@ const SmsSummary = ({ classes,
                     fontSize: "16px",
                   }}
                 >
-                  {/* <span style={{marginInlineEnd:"5px"}}>{index}</span> */}
                   <span> {item.Name}</span>
-
                 </Box>)
               }
             })} </Box> : null}
-
         </Box> : null}
       </Dialog>}
     </Box>

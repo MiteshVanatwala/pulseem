@@ -321,7 +321,8 @@ const SmsSend = ({ classes, ...props }) => {
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
     OTP: { severity: 'success', color: 'success', message: t('sms.otpVerifiedSuccess'), showAnimtionCheck: true },
     INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: t("sms.noRecipientToUpdate"), showAnimtionCheck: false },
-    NO_GROUPS: { severity: 'error', color: 'error', message: t('smsReport.NoGroups'), showAnimtionCheck: false }
+    NO_GROUPS: { severity: 'error', color: 'error', message: t('smsReport.NoGroups'), showAnimtionCheck: false },
+    DATE_PASS: { severity: 'error', color: 'error', message: t('smsReport.pastDateSelected'), showAnimtionCheck: false }
   }
 
   const [headers, setheaders] = useState(initialheadstate);
@@ -742,10 +743,17 @@ const SmsSend = ({ classes, ...props }) => {
   const handleTimePicker = (value) => {
     var date = moment(sendDate);
     var time = moment(value, "HH:mm");
+    
     date.set({
       hour: time.get("hour"),
       minute: time.get("minute"),
     });
+
+    if(date < moment()){
+      date = moment();
+      setToastMessage(toastMessages.DATE_PASS);
+    }
+
     handleFromDate(date);
     setTimePickerOpen(false);
   };
@@ -1235,6 +1243,7 @@ const SmsSend = ({ classes, ...props }) => {
                   return a + b['Recipients'];
                 }, 0).toLocaleString()}</span>
                 <Tooltip
+                  placement={'bottom'}
                   disableFocusListener
                   title={t("smsReport.finalReciTip")}
                   classes={{ tooltip: styles.customWidth }}
@@ -1443,13 +1452,8 @@ const SmsSend = ({ classes, ...props }) => {
                   value={sendType == "2" ? sendDate : null}
                   onChange={handleDatePicker}
                   placeholder={t("notifications.date")}
-                  buttons={{
-                    ok: t("common.confirm"),
-                    cancel: t("common.cancel"),
-
-                  }}
+                  timePickerOpen={true}
                   dateActive={sendType == "2" ? false : true}
-                  autoOk
                 />
               </Box>
               <Box
@@ -1460,19 +1464,15 @@ const SmsSend = ({ classes, ...props }) => {
                 }}
               >
                 <DateField
+                  minDate={moment()}
                   classes={classes}
                   value={sendType == "2" ? sendDate : null}
                   onTimeChange={handleTimePicker}
                   placeholder={t("notifications.hour")}
                   isTimePicker={true}
-                  buttons={{
-                    ok: t("common.confirm"),
-                    cancel: t("common.cancel"),
-                  }}
                   ampm={false}
                   timeActive={sendType == "2" ? false : true}
                   timePickerOpen={timePickerOpen}
-                  autoOk
                 />
               </Box>
               <FormControlLabel
@@ -2230,19 +2230,19 @@ const SmsSend = ({ classes, ...props }) => {
           <div
             className={classes.reciCheckoxContainer}
           >
-              <Checkbox
-                checked={toggleReci}
-                color="primary"
-                inputProps={{ "aria-label": "secondary checkbox" }}
-                onClick={() => {
-                  settoggleReci(!toggleReci);
-                  setExceptionalDays("");
-                }}
-              />
-              <span style={{ display: 'inline-block', marginTop: 2 }} className={classes.font13}>
-                {t("smsReport.filterInputText")}
-              </span>
-            <div style={{ marginRight: isRTL ? 'auto': null, marginLeft: !isRTL ? 'auto' : null }}>
+            <Checkbox
+              checked={toggleReci}
+              color="primary"
+              inputProps={{ "aria-label": "secondary checkbox" }}
+              onClick={() => {
+                settoggleReci(!toggleReci);
+                setExceptionalDays("");
+              }}
+            />
+            <span style={{ display: 'inline-block', marginTop: 2 }} className={classes.font13}>
+              {t("smsReport.filterInputText")}
+            </span>
+            <div style={{ marginRight: isRTL ? 'auto' : null, marginLeft: !isRTL ? 'auto' : null }}>
               <input
                 type="text"
                 disabled={toggleReci ? false : true}

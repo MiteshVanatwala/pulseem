@@ -47,5 +47,6 @@
   "cellPhone":"סלולרי",
   "estimatedEndDate":"תאריך סיום משוער",
   "packetsSending":"שליחה במנות",
-  "NoGroups":"לא נבחרו קבוצות לשליחה"
+  "NoGroups":"לא נבחרו קבוצות לשליחה",
+  "pastDateSelected": "השעה שבחרת כבר עברה. נסה שוב"
 }

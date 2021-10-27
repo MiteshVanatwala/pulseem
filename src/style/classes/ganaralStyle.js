@@ -94,6 +94,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       minWidth: minDialogWidth[windowSize],
       maxWidth: maxDialogWidth[windowSize],
     },
+    "& .MuiDialog-paperScrollPaper": {
+      height: 'calc(100% - 40px)'
+    }
   },
   noPadding: {
     padding: "0px !important",
@@ -523,11 +526,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   alignCenter: {
     display: 'flex',
-    alignCenter: 'center'
-  },
-  justifyCenter: {
-    display: 'flex',
-    alignCenter: 'center'
+    alignContent: 'center'
   },
   justifyCenterOfCenter: {
     display: 'flex',
