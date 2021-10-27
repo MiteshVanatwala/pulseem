@@ -1110,6 +1110,7 @@ const SmsSend = ({ classes, ...props }) => {
               style={{ marginInlineEnd: "7px", cursor: "pointer" }}
               onClick={() => {
                 setgroupClick(false);
+                settoggleChecked(false)
                 setmanualClick(true);
               }}
             >

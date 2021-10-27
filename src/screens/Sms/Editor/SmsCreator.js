@@ -368,6 +368,10 @@ const SmsCreator = ({ classes, ...props }) => {
     setremovalNumber(response.payload.RemovalKey);
     setstoredValue(r.payload.DefaultCellNumber)
     setLoader(false);
+    if(campaignNumber !== response.payload.Number){
+      setrestoreBool(false);
+      setremovalMessageButtonDisabled(true);
+    }
   }, [dispatch]);
 
   useEffect(() => { }, [removalMessageButtonDisabled]);
@@ -468,6 +472,7 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     else {
       setrestoreBool(false);
+      setremovalMessageButtonDisabled(false);
       setcampaignNumber(e.target.value);
       setcampaignNumberValidated(false);
       e.preventDefault();
@@ -564,6 +569,7 @@ const SmsCreator = ({ classes, ...props }) => {
     setcampaignNumber(response.payload.Number);
     setStaticNumber(response.payload.Number);
     setremovalNumber(response.payload.RemovalKey);
+    setremovalMessageButtonDisabled(false);
   }
 
   const onAddText = (text) => {
@@ -665,7 +671,7 @@ const SmsCreator = ({ classes, ...props }) => {
           </Typography>
         </Grid>
         <Grid item xs={12} md={4} sm={12} >
-          {restoreBool || removalNumber !== null ? (
+          {restoreBool && removalNumber !== null ? (
             <Box className={classes.buttonForm}>
               <Typography className={clsx(classes.buttonHead)}>
                 {t("mainReport.removalReply")}
@@ -735,7 +741,8 @@ const SmsCreator = ({ classes, ...props }) => {
       setremovalMessageButtonDisabled(true);
     }
     else {
-      setremovalMessageButtonDisabled(false);
+      if(restoreBool)
+        setremovalMessageButtonDisabled(false);
     }
     if (smsModel.Text.includes("##SmsUnsubscribeURL##")) {
       setremovalLinkDisabled(true);

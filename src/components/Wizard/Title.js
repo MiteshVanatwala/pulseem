@@ -21,13 +21,15 @@ const Title = ({ classes, title, tooltip = null, stepNumber, subTitle }) => {
                 {title}
             </Typography>
             {tooltip && <Tooltip
+                style={{ marginTop: 25, marginRight: 10, marginLeft: 10 }}
                 disableFocusListener
                 title={tooltip}
                 classes={{ tooltip: styles.customWidth }}
                 sx={{ justifyContent: 'center' }}
             >
-                <Typography className={classes.bodyInfo} style={{ marginTop: "6px" }}>i</Typography>
-            </Tooltip>}
+                <Typography className={classes.bodyInfo}>i</Typography>
+            </Tooltip>
+            }
         </Box>
         <Box className={classes.headDiv}>
             <Typography className={classes.headNo}>{stepNumber}</Typography>
