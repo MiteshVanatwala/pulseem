@@ -134,19 +134,19 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         alignItems: "center",
         justifyContent: "center",
         color: "#3DA6F7",
-        width: 30,
-        height: 30
+        minWidth: 30,
+        minHeight: 30
     },
     greenDoc:
     {
-        border: "2px solid #018901",
+        border: "1px solid #018901",
         borderRadius: "50%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         color: "#3DA6F7",
-        width: 30,
-        height: 30
+        minWidth: 30,
+        minHeight: 30
     },
     reactSwitch: {
         verticalAlign: 'middle',

@@ -368,7 +368,7 @@ const SmsCreator = ({ classes, ...props }) => {
     setremovalNumber(response.payload.RemovalKey);
     setstoredValue(r.payload.DefaultCellNumber)
     setLoader(false);
-    if(campaignNumber !== response.payload.Number){
+    if (campaignNumber !== response.payload.Number) {
       setrestoreBool(false);
       setremovalMessageButtonDisabled(true);
     }
@@ -741,7 +741,7 @@ const SmsCreator = ({ classes, ...props }) => {
       setremovalMessageButtonDisabled(true);
     }
     else {
-      if(restoreBool)
+      if (restoreBool)
         setremovalMessageButtonDisabled(false);
     }
     if (smsModel.Text.includes("##SmsUnsubscribeURL##")) {
@@ -1029,7 +1029,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const renderPhone = () => {
     return (
       <Box className={classes.mobilePreviewContainer}>
-        <MobilePreview classes={classes} campaignNumber={campaignNumber} text={smsModel.Text}  keyItem="edtiorPreview" />
+        <MobilePreview classes={classes} campaignNumber={campaignNumber} text={smsModel.Text} keyItem="edtiorPreview" />
         <div
           className={classes.testDiv}
         >
@@ -1492,37 +1492,39 @@ const SmsCreator = ({ classes, ...props }) => {
               }}
             />
           </Paper>
-          {previousCampaignData
-            .filter((val) => {
-              if (CampaignSearch == "") {
-                return val;
-              } else if (
-                val.CampaignName.toLowerCase().includes(
-                  CampaignSearch.toLowerCase()
-                )
-              ) {
-                return val;
-              }
-            })
-            .map((item, idx) => {
-              return (
-                <div
-                  key={idx}
-                  className={classes.searchCon}
-                  onClick={() => {
-                    handleAddLink(idx, 'campaign');
-                  }}
-                >
-                  <span
-                    style={{ marginInlineEnd: "8px" }}
-                    className={classes.grDoc}
+          <Box style={{ marginTop: 20 }}>
+            {previousCampaignData
+              .filter((val) => {
+                if (CampaignSearch == "") {
+                  return val;
+                } else if (
+                  val.CampaignName.toLowerCase().includes(
+                    CampaignSearch.toLowerCase()
+                  )
+                ) {
+                  return val;
+                }
+              })
+              .map((item, idx) => {
+                return (
+                  <div
+                    key={idx}
+                    className={classes.searchCon}
+                    onClick={() => {
+                      handleAddLink(idx, 'campaign');
+                    }}
                   >
-                    <AiOutlineFile />
-                  </span>
-                  <span className={classes.ellipsisText}>{item.Name}</span>
-                </div>
-              );
-            })}
+                    <span
+                      style={{ marginInlineEnd: "8px" }}
+                      className={classes.grDoc}
+                    >
+                      <AiOutlineFile />
+                    </span>
+                    <span className={classes.ellipsisText}>{item.Name}</span>
+                  </div>
+                );
+              })}
+          </Box>
         </Box>
       ),
       showDefaultButtons: false,
@@ -1753,7 +1755,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       className={classes.selectGroupDiv}
                     >
                       <span className={classes.ellipsisText}>{item.GroupName}</span>
-                      <span style={{ whiteSpace: 'nowrap'}}>{item.Recipients} {item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients")}</span>
+                      <span style={{ whiteSpace: 'nowrap' }}>{item.Recipients} {item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients")}</span>
                     </div>
                   </div>
                 );
