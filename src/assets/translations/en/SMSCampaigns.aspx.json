@@ -550,5 +550,11 @@
   "otpNumberValidatedTitle": "The number validated successfully",
   "otpNumberValidatedDescription": "You can now send through this number without the need for re-verification",
   "NoFilteredGroups": "No group selected",
-  "NoFilteredCampaigns": "No campaign selected"
+  "NoFilteredCampaigns": "No campaign selected",
+  "groupSaved": "Group successfully created",
+  "otpVerifiedSuccess": "OTP process confirmed & succeeded",
+  "noRecipientToUpdate": "No recipients to update",
+  "errorQuickSend": "Error sending message",
+  "recipientBlocked": "Recipient cellphone is blocked for SMS messages",
+  "noCredits": "Account has no credits"
 }

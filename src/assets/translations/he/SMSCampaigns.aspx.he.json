@@ -544,5 +544,11 @@
   "otpNumberValidatedTitle": "המספר אומת בהצלחה",
   "otpNumberValidatedDescription": "מעתה תוכלו לשלוח דרך מספר זה ללא צורך באימות חוזר",
   "NoFilteredGroups": "לא נבחרו קבוצות לסינון",
-  "NoFilteredCampaigns": "לא נבחרו קמפיינים לסינון"
+  "NoFilteredCampaigns": "לא נבחרו קמפיינים לסינון",
+  "groupSaved": "קבוצה נוצרה בהצלחה",
+  "otpVerifiedSuccess": "תהליך שינוי המספר עבר בהצלחה",
+  "noRecipientToUpdate": "אין לקוחות לעדכון",
+  "errorQuickSend": "אירעה שגיאה בשליחה",
+  "recipientBlocked": "מספר הלקוח חסום להודעות sms",
+  "noCredits": "אין מספיק קרדיטים לשליחה"
 }

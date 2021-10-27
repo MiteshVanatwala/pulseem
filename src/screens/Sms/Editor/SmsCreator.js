@@ -216,37 +216,42 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const toastMessages = {
     SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
-    QUICKSENDSUCCESSS: { severity: 'success', color: 'success', message: t('sms.quickSend'), showAnimtionCheck: true },
+    QUICK_SEND_SUCCESSS: { severity: 'success', color: 'success', message: t('sms.quickSend'), showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
-    OTP: { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true },
-    INVALIDNUMBER: { severity: 'error', color: 'error', message: t("sms.invalidNumber"), showAnimtionCheck: false },
-    QUICKSENDERROR: { severity: 'error', color: 'error', message: "Error sending message", showAnimtionCheck: false },
-    SENTALREADY: { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true },
+    OTP: { severity: 'success', color: 'success', message: t('sms.otpVerifiedSuccess'), showAnimtionCheck: true },
+    INVALID_NUMBER: { severity: 'error', color: 'error', message: t("sms.invalidNumber"), showAnimtionCheck: false },
+    QUICK_SEND_ERROR: { severity: 'error', color: 'error', message: t("sms.errorQuickSend"), showAnimtionCheck: false },
+    SENT_ALREADY: { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true },
+    PROVISION: { severity: 'error', color: 'error', message: t("sms.recipientBlocked"), showAnimtionCheck: false },
+    NO_CREDITS: { severity: 'error', color: 'error', message: t("sms.noCredits"), showAnimtionCheck: false },
+    
   }
 
   const handleSendResult = async (smsSendResult) => {
     switch (smsSendResult) {
       case -2: {// ALREADY_SENT
-        setToastMessage(toastMessages.SENTALREADY)
+        setToastMessage(toastMessages.SENT_ALREADY)
         break;
       }
       case -1: {// ERROR
-        setToastMessage(toastMessages.QUICKSENDERROR)
+        setToastMessage(toastMessages.QUICK_SEND_ERROR)
         break;
       }
       case 0: {// SUCCESS
-        setToastMessage(toastMessages.QUICKSENDSUCCESSS)
+        setToastMessage(toastMessages.QUICK_SEND_SUCCESSS)
         setPhoneNumberCampaignId("");
       }
       case 1: {// PROVISION
+        setToastMessage(toastMessages.PROVISION)
         break;
       }
       case 2: {// NO_CREDITS
+        setToastMessage(toastMessages.NO_CREDITS)
         break;
       }
       case 3: {// INVALID_NUMBER
-        setToastMessage(toastMessages.INVALIDNUMBER)
+        setToastMessage(toastMessages.INVALID_NUMBER)
         break;
       }
       case 4: {// OTP_NEEDED
@@ -321,7 +326,7 @@ const SmsCreator = ({ classes, ...props }) => {
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
     setsummary(false);
-    setToastMessage(toastMessages.QUICKSENDSUCCESSS);
+    setToastMessage(toastMessages.QUICK_SEND_SUCCESSS);
   };
 
   useEffect(async () => {
@@ -543,7 +548,7 @@ const SmsCreator = ({ classes, ...props }) => {
           }
         }
       } else {
-        setToastMessage(toastMessages.INVALIDNUMBER);
+        setToastMessage(toastMessages.INVALID_NUMBER);
       }
     }
   };

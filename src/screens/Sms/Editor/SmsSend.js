@@ -315,12 +315,12 @@ const SmsSend = ({ classes, ...props }) => {
   }, [!showLoader]);
 
   const toastMessages = {
-    SUCCESS: { severity: 'success', color: 'success', message: "SMS campaign has been saved", showAnimtionCheck: true },
-    GROUPCREATEDSUCCESS: { severity: 'success', color: 'success', message: "Group successfully created. ", showAnimtionCheck: true },
+    SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
+    GROUP_CREATED_SUCCESS: { severity: 'success', color: 'success', message: t("sms.groupSaved"), showAnimtionCheck: true },
     SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
     ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
-    OTP: { severity: 'success', color: 'success', message: "OTP verified successfully", showAnimtionCheck: true },
-    INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "No recipients to update", showAnimtionCheck: false },
+    OTP: { severity: 'success', color: 'success', message: t('sms.otpVerifiedSuccess'), showAnimtionCheck: true },
+    INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: t("sms.noRecipientToUpdate"), showAnimtionCheck: false },
     NO_GROUPS: { severity: 'error', color: 'error', message: t('smsReport.NoGroups'), showAnimtionCheck: false }
   }
 
@@ -777,7 +777,7 @@ const SmsSend = ({ classes, ...props }) => {
     tempres.push(r.payload);
     setGroupList(tempres);
     settoggleChecked(false);
-    setToastMessage(toastMessages.GROUPCREATEDSUCCESS);
+    setToastMessage(toastMessages.GROUP_CREATED_SUCCESS);
   };
   const onHandleDelete = () => {
     setDialogType({ type: "delete" });
