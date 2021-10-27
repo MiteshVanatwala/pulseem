@@ -218,10 +218,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [dropClick, setdropClick] = useState(false);
   const [groupNameInput, setgroupNameInput] = useState("");
   const [groupValue, setgroupValue] = useState("");
-<<<<<<< HEAD
-=======
   const [columnValidate, setcolumnValidate] = useState(false);
->>>>>>> 95dabc2afac2611edbdedd9ce01bcd182a26b5e7
   const [afterClick, setafterClick] = useState(false);
   const [specialSettingValidation, setspecialSettingValidation] = useState(false);
   const [reciFilter, setreciFilter] = useState(false);
