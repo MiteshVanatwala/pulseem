@@ -285,6 +285,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [otpMsgs, setotpMsgs] = useState("Required Field");
   const [otpValue, setotpValue] = useState(null);
   const [groupNameExist, setGroupNameExist] = useState(false);
+  const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
 
   // const [smsCampaignSettings, setSmsCampaignSettings] = useState({
   //   FutureDateTime: null,
@@ -1850,11 +1851,14 @@ const SmsSend = ({ classes, ...props }) => {
     setDialogType({ type: "sendSuccess" });
   };
   const handleCautionCancel = () => {
-    if (dropClick === true || areaClick === true) {
+    if (dropClick === true) {
       setDialogType({ type: "caution" })
       setgroupNameInput("");
       setnewVal(false);
-     
+    }
+    else
+    {
+      setDialogType(null);
     }
   };
   const handleChangeId = (id) => {
@@ -2001,28 +2005,41 @@ const SmsSend = ({ classes, ...props }) => {
     setnewVal(false);
   }
   const manualUploadValidationscheck = () => {
-    let temp = []
-    for (let i = 0; i < groupList.length; i++) {
-      temp.push(groupList[i].GroupName)
-    }
-    if (groupNameInput === "" || temp.includes(groupNameInput)) {
+ 
+    const groupNameExist = groupList.filter((gl) => { return gl.GroupName === groupNameInput });
+
+    if (groupNameInput === "")  {
+      setGroupNameValidationMessage(t("sms.manualGroupRequiredField"))
       setnewVal(true);
       return false;
     }
-    let columnHasValue = 0;
-    headers.forEach((value) => {
-      if (value !== t("sms.adjustTitle")) {
-        columnHasValue = columnHasValue + 1
+    else
+    {
+    if(groupNameExist.length > 0)
+    {
+    setGroupNameValidationMessage(t("sms.groupNameExists").replace("#groupName#", groupNameInput))
+    setnewVal(true);
+    return false;
+    }
+    else
+    {
+      let columnHasValue = 0;
+      headers.forEach((value) => {
+        if (value !== t("sms.adjustTitle")) {
+          columnHasValue = columnHasValue + 1
+        }
+      })
+      if (columnHasValue < 3) {
+        setcolumnValidate(true);
+        return false;
       }
-    })
-    if (columnHasValue < 3) {
-      setcolumnValidate(true);
-      return false;
+      else if (columnHasValue === 3) {
+        setcolumnValidate(false);
+        return true;
+      }
     }
-    else if (columnHasValue === 3) {
-      setcolumnValidate(false);
-      return true;
     }
+   
 
   }
 
@@ -2396,7 +2413,7 @@ const SmsSend = ({ classes, ...props }) => {
                 onChange={handleManualDialog}
                 value={groupNameInput}
               ></TextField>
-              {newVal ? <span className={classes.errorLabel}>{t("sms.groupNameExists").replace("#groupName#", groupNameInput)}</span> : null}
+              {newVal ? <span className={classes.errorLabel}>{GroupNameValidationMessage}</span> : null}
             </div>
           </div>
           <Box

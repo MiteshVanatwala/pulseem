@@ -544,5 +544,6 @@
   "otpNumberValidatedTitle": "המספר אומת בהצלחה",
   "otpNumberValidatedDescription": "מעתה תוכלו לשלוח דרך מספר זה ללא צורך באימות חוזר",
   "NoFilteredGroups": "לא נבחרו קבוצות לסינון",
-  "NoFilteredCampaigns": "לא נבחרו קמפיינים לסינון"
+  "NoFilteredCampaigns": "לא נבחרו קמפיינים לסינון",
+  "manualGroupRequiredField":"שדה נדרש"
 }

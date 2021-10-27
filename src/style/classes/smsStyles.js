@@ -391,7 +391,6 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     },
     manualModal: {
         display: "flex",
-        alignItems: "center",
         height: "40px",
         marginTop: "15px",
         marginBottom: "20px",
