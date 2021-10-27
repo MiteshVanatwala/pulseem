@@ -1764,7 +1764,8 @@ const SmsCreator = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: true,
-      onClose: () => { setDialogType(null) },
+      onCancel: () => { setselectedGroup([]); setDialogType(null) },
+      onClose: () => { setselectedGroup([]); setDialogType(null) },
       onConfirm: () => { handleGroupClose() }
     }
   }
