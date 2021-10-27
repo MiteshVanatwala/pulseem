@@ -1249,6 +1249,7 @@ const SmsCreator = ({ classes, ...props }) => {
           let r2 = await dispatch(smsSaveGroup(payload2));
           await dispatch(getCampaignSumm(r.payload.Message));
           setsummary(true);
+          setDialogType(null);
         }
         else if (r.payload.Status == 3) {
           setDialogType({ type: 'otpVerification' });
@@ -1284,21 +1285,25 @@ const SmsCreator = ({ classes, ...props }) => {
             return;
           }
           else if (saveResponse.payload.Status === 2) {
+            setDialogType(null);
             history.push("/SMSCampaigns");
+            
           }
           else {
+            setDialogType(null);
             setToastMessage(toastMessages.ERROR);
           }
         }
         else {
+          setDialogType(null);
           setToastMessage(toastMessages.ERROR);
         }
       }
     }
     else if (saveBeforeExit === false) {
       history.push("/SMSCampaigns");
-    }
-    setDialogType(null);
+      setDialogType(null);
+    } 
   };
   const handleSummary = () => {
     setsummary(false);
@@ -1477,10 +1482,11 @@ const SmsCreator = ({ classes, ...props }) => {
               onChange={(e) => {
                 setCampaignSearch(e.target.value);
               }}
+              value = {CampaignSearch}
             />
           </Paper>
           <Box style={{ marginTop: 20 }}>
-            {previousCampaignData
+            {previousLandingData
               .filter((val) => {
                 if (CampaignSearch == "") {
                   return val;
@@ -1498,7 +1504,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     key={idx}
                     className={classes.searchCon}
                     onClick={() => {
-                      handleAddLink(idx, 'campaign');
+                      handleAddLink(idx, 'lp');
                     }}
                   >
                     <span
@@ -1507,7 +1513,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     >
                       <AiOutlineFile />
                     </span>
-                    <span className={classes.ellipsisText}>{item.Name}</span>
+                    <span className={classes.ellipsisText}>{item.CampaignName}</span>
                   </div>
                 );
               })}
@@ -1515,7 +1521,7 @@ const SmsCreator = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: false,
-      onClose: () => { setDialogType(null) }
+      onClose: () => { setDialogType(null) ; setCampaignSearch("") }
     }
   }
   const campaignsDialog = () => {
@@ -1563,7 +1569,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     key={idx}
                     className={classes.searchCon}
                     onClick={() => {
-                      handleAddLink(idx, 'lp');
+                      handleAddLink(idx, 'campaign');
                     }}
                   >
                     <span
@@ -1572,7 +1578,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     >
                       <AiOutlineFile  color="#1771AD" />
                     </span>
-                    <span className={classes.ellipsisText}>{item.CampaignName}</span>
+                    <span className={classes.ellipsisText}>{item.Name}</span>
                   </div>
                 );
               })}
@@ -1705,6 +1711,7 @@ const SmsCreator = ({ classes, ...props }) => {
               onChange={(e) => {
                 setContactSearch(e.target.value);
               }}
+              value={ContactSearch}
             />
           </Paper>
           <Box style={{ marginTop: 20 }}>
@@ -1751,8 +1758,8 @@ const SmsCreator = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: true,
-      onCancel: () => { setselectedGroup([]); setDialogType(null) },
-      onClose: () => { setselectedGroup([]); setDialogType(null) },
+      onCancel: () => { setselectedGroup([]); setDialogType(null); setContactSearch("") },
+      onClose: () => { setselectedGroup([]); setDialogType(null); setContactSearch("") },
       onConfirm: () => { handleGroupClose() }
     }
   }
