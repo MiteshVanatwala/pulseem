@@ -9,7 +9,6 @@ import FormatAlignRightIcon from "@material-ui/icons/FormatAlignRight";
 import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Picker from "emoji-picker-react";
-import Mobile from "../../../assets/images/mobileiphone.png";
 import Radio from "@material-ui/core/Radio";
 import Toast from '../../../components/Toast/Toast.component';
 import RadioGroup from "@material-ui/core/RadioGroup";
@@ -54,6 +53,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
+import MobilePreview from '../../../components/MobilePreive/Mobile'
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -148,7 +148,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [summary, setsummary] = useState(false);
   const [campaignNumberValidated, setcampaignNumberValidated] = useState(false);
   const [total, settotal] = useState(0);
-  const [temp, settemp] = useState([]);
   const [otpValue, setotpValue] = useState("");
   const [showLoader, setLoader] = useState(true);
   const [selectValue, setselectValue] = useState("Personilization");
@@ -895,7 +894,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     arrow
                   >
                     <select
-                      className={classes.selectVal}
+                      className={clsx(classes.selectVal, classes.sidebar)}
                       value={selectValue}
                       onChange={handleSelectChange}
                     >
@@ -1023,20 +1022,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const renderPhone = () => {
     return (
       <Box>
-        <Box className={classes.phoneDiv}>
-          <img src={Mobile} className={classes.phoneImg} />
-          <span className={classes.phoneNumber}>{campaignNumber}</span>
-          <div className={clsx(classes.wrapChat, classes.sidebar)}>
-            <div className={isRTL ?  classes.chatBoxHe : classes.chatBox}>
-              <div className={classes.fromMe}>
-                {smsModel.Text.split('\n').map((str) => {
-                  return (<p key={Math.floor(Math.random() * 100)} style={{ margin: "0", padding: "0" }}>{str}</p>)
-                }) }
-              </div>
-            </div>
-
-          </div>
-        </Box>
+        <MobilePreview classes={classes} campaignNumber={campaignNumber} text={smsModel.Text}  key="edtiorPreview" />
         <div
           className={classes.testDiv}
         >
@@ -1330,14 +1316,12 @@ const SmsCreator = ({ classes, ...props }) => {
           classes={classes}
           campaignName={smsModel.Name}
           fromNumber={campaignNumber}
-          totalmsg={smsModel.Text}
-          selectedGroups={selectedGroup}
+          textMsg={smsModel.Text}
+          groups={selectedGroup}
           open={summary}
-          totalRecipients={total}
           handleCallback={handleSummary}
-          groups={temp}
           summaryPayload={getCampaignSum}
-          api={onApiCall}
+          onConfirm={onApiCall}
         />
       </>
     );
@@ -1637,6 +1621,7 @@ const SmsCreator = ({ classes, ...props }) => {
     return {
       title: t('mainReport.deleteSms'),
       showDivider: true,
+      disableBackdropClick: true,
       icon: (
         <AiOutlineExclamationCircle
           style={{ fontSize: 30, color: "#fff" }}
@@ -1778,6 +1763,7 @@ const SmsCreator = ({ classes, ...props }) => {
     return {
       title: t('mainReport.handleExitTitle'),
       showDivider: true,
+      disableBackdropClick: true,
       icon: (
         <AiOutlineExclamationCircle
           style={{ fontSize: 30, color: "#fff" }}
@@ -1790,8 +1776,8 @@ const SmsCreator = ({ classes, ...props }) => {
       ),
       showDefaultButtons: true,
       cancelText: t("common.No"),
-      onClose: () => { setDialogType(null) },
-      onCancel: () => { handleExit(false) },
+      onClose: () => { handleExit(false) },
+      onCancel: () => { setDialogType(null) },
       onConfirm: () => { handleExit(true) }
     }
   }

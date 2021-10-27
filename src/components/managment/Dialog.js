@@ -36,7 +36,7 @@ export const Dialog = ({
   }
 
   const { t } = useTranslation()
-  const { isRTL } = useSelector(state => state.core)
+  const { isRTL, windowSize } = useSelector(state => state.core)
 
   const onExit = () => {
     if (onCancel !== null) {
@@ -68,7 +68,7 @@ export const Dialog = ({
   const renderTitleDefault = () => {
     return (
       <>
-        <Typography className={classes.dialogTitle}>
+        <Typography className={clsx(classes.dialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)}>
           {title}
         </Typography>
         {showDivider && <Divider />}
@@ -130,7 +130,7 @@ export const Dialog = ({
     return (
       <Box
         className={clsx(classes.dialogChildren, classes.sidebar, childrenStyle)}
-        style={{ maxHeight: 'calc(65vh)', minWidth: 330 }}>
+        style={{ maxHeight: 'calc(65vh)', minWidth: windowSize !== 'xs' && windowSize !== 'sm' ? 330 : null }}>
         {children}
       </Box>)
   }
