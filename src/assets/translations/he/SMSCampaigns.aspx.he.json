@@ -550,5 +550,6 @@
   "noRecipientToUpdate": "אין לקוחות לעדכון",
   "errorQuickSend": "אירעה שגיאה בשליחה",
   "recipientBlocked": "מספר הלקוח חסום להודעות sms",
-  "noCredits": "אין מספיק קרדיטים לשליחה"
+  "noCredits": "אין מספיק קרדיטים לשליחה",
+  "fillRandomAmount": "יש למלא ערך בכמות נמענים אקראית"
 }

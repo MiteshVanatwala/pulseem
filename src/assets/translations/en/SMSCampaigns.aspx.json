@@ -556,5 +556,6 @@
   "noRecipientToUpdate": "No recipients to update",
   "errorQuickSend": "Error sending message",
   "recipientBlocked": "Recipient cellphone is blocked for SMS messages",
-  "noCredits": "Account has no credits"
+  "noCredits": "Account has no credits",
+  "fillRandomAmount": "Please fill Random Amount"
 }

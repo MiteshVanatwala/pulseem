@@ -46,33 +46,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const useSnack = makeStyles((theme) => ({
-
-  customcolor:
-  {
-    backgroundColor: "#EFF6B2",
-    color: "black",
-    border: "3px solid #CCCC00",
-    width: "250px",
-    height: "30px",
-    display: "flex",
-    justifyContent: "center",
-    fontWeight: 900
-  }
-}));
-
 const useSnackRecipients = makeStyles((theme) => ({
 
   customcolor:
   {
     backgroundColor: "#AFE1AF",
     color: "black",
-    border: "1px solid #AFE1AF",
-    width: "250px",
+    minWidth: "200px",
     height: "30px",
     display: "flex",
-    justifyContent: "center",
-    fontWeight: 900
+    justifyContent: "flex-start",
+    alignItems: "center",
+    fontWeight: 700
   }
 }));
 
@@ -82,41 +67,17 @@ const useSnackSevere = makeStyles((theme) => ({
   {
     backgroundColor: "#F6B2B2",
     color: "black",
-    border: "3px solid #DC143C",
-    width: "200px",
+    minWidth: "200px",
     height: "30px",
     display: "flex",
-    justifyContent: "center",
-    fontWeight: 900
+    justifyContent: "flex-start",
+    alignItems: 'center',
+    fontWeight: 700,
+    boxShadow: '1px ​1px 10px 2px black'
   }
 
 }));
 
-const useStyleKeyboardInput = makeStyles((theme) => ({
-
-  custom:
-  {
-    width: "370px",
-    padding: "5px",
-    height: "40px"
-  }
-
-}));
-
-const useStyleNew = makeStyles((theme) => ({
-  root: {
-    padding: "2px 4px",
-    display: "flex",
-    alignItems: "center",
-    width: 400,
-  },
-  input: {
-    flex: 1,
-  },
-  iconButton: {
-    padding: 10,
-  },
-}));
 //#endregion
 //#region Tabs
 function TabPanel(props) {
@@ -163,7 +124,6 @@ const SmsSend = ({ classes, ...props }) => {
   //#region initialized states
   const { t } = useTranslation();
   const styles = useStyles();
-  const snacki = useSnack();
   const history = useHistory();
   const severe = useSnackSevere();
   const recipientSuccess = useSnackRecipients();
@@ -743,13 +703,13 @@ const SmsSend = ({ classes, ...props }) => {
   const handleTimePicker = (value) => {
     var date = moment(sendDate);
     var time = moment(value, "HH:mm");
-    
+
     date.set({
       hour: time.get("hour"),
       minute: time.get("minute"),
     });
 
-    if(date < moment()){
+    if (date < moment()) {
       date = moment();
       setToastMessage(toastMessages.DATE_PASS);
     }
@@ -873,54 +833,26 @@ const SmsSend = ({ classes, ...props }) => {
     }
   };
   const onPulseValidations = () => {
+    let isValid = true;
     if (togglePulse) {
-
       if (pulseAmount === "") {
         setpulseBool(true);
         setsnackBarPulseBoolean(true);
-        if (timeInterval === "") {
-          setsnackbarTimeBoolean(true);
-          setTimeBool(true);
-          return false;
-        }
       }
-      else if (timeInterval === "") {
+      if (timeInterval === "") {
         setsnackbarTimeBoolean(true);
         setTimeBool(true);
-        if (pulseAmount === "") {
-          setpulseBool(true);
-          setsnackBarPulseBoolean(true);
-          return false;
-        }
-      }
-      else if (toggleRandom) {
-        if (random === "") {
-          setboolRandom(true);
-          setsnackbarMainPulse(true);
-
-          return false;
-        }
-        else {
-          return true;
-        }
-      }
-      else {
-        return true;
+        isValid = false;
       }
     }
-    else if (toggleRandom) {
+    if (toggleRandom) {
       if (random === "") {
         setboolRandom(true);
         setsnackbarMainPulse(true);
-        return false;
-      }
-      else {
-        return true;
+        isValid = false;
       }
     }
-    else {
-      return true;
-    }
+    return isValid;
   }
   const areaChange = (e) => {
     setareaData(e.target.value);
@@ -2692,7 +2624,7 @@ const SmsSend = ({ classes, ...props }) => {
               disabled={toggleRandom ? false : true}
               className={
                 toggleRandom
-                  ? boolRandom ? clsx(classes.pulseActive, classes.error) : clsx(classes.pulseActive, classes.ml5, classes.mr5)
+                  ? boolRandom ? clsx(classes.ml5, classes.mr5, classes.pulseActive, classes.error) : clsx(classes.pulseActive, classes.ml5, classes.mr5)
                   : clsx(classes.pulseInsert, classes.ml5, classes.mr5)
               }
               value={random}
@@ -2844,7 +2776,7 @@ const SmsSend = ({ classes, ...props }) => {
         }}
         style={{ zIndex: "9999" }}
       >
-        <Alert severity="warning" className={snacki.customcolor}>
+        <Alert severity="warning" className={severe.customcolor}>
           {t("smsReport.NoPulse")}
         </Alert>
       </Snackbar>
@@ -2887,7 +2819,7 @@ const SmsSend = ({ classes, ...props }) => {
         style={{ zIndex: "9999", marginTop: "60px" }}
       >
         <Alert severity="error" className={severe.customcolor}>
-          Enter Random Amount
+          {t("sms.fillRandomAmount")}
         </Alert>
       </Snackbar>
 
@@ -2901,7 +2833,7 @@ const SmsSend = ({ classes, ...props }) => {
           horizontal: "right",
         }}
       >
-        <Alert severity="warning" className={snacki.customcolor}>
+        <Alert severity="warning" className={severe.customcolor}>
           Please Add No of Days
         </Alert>
       </Snackbar>
