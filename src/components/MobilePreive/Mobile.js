@@ -4,7 +4,7 @@ import Mobile from "../../assets/images/mobileiphone.png";
 import { Box } from "@material-ui/core";
 import clsx from "clsx";
 
-const MobilePreivew = ({ classes, campaignNumber, text, key }) => {
+const MobilePreivew = ({ classes, campaignNumber, text, keyItem }) => {
     const { t } = useTranslation();
 
     return (
@@ -15,7 +15,7 @@ const MobilePreivew = ({ classes, campaignNumber, text, key }) => {
                 <div className={classes.chatBoxHe}>
                     <div className={classes.fromMe}>
                         {text !== '' ? text.split('\n').map((str) => {
-                            return (<p key={key} style={{ margin: "0", padding: "0" }}>{str}</p>)
+                            return (<p key={keyItem} style={{ margin: "0", padding: "0" }}>{str}</p>)
                         }) : null}
                     </div>
                 </div>

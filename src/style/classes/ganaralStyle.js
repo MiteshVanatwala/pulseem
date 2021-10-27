@@ -66,18 +66,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   sidebar: {
     '&::-webkit-scrollbar': {
       display: 'block !important',
-      width: 8
+      width: 6,
+      height: 6
     },
     /* Track */
     '&::-webkit-scrollbar-track': {
       boxShadow: 'inset 0 0 0px',
-      borderRadius: 7,
+      borderRadius: 10,
       backgroundColor: '#fff !important',
     },
     /* Handle */
     '&::-webkit-scrollbar-thumb': {
       background: '#ccc',
-      borderRadius: 5
+      borderRadius: 10
     },
     /* Handle on hover */
     '&::-webkit-scrollbar-thumb:hover': {
@@ -155,7 +156,19 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       },
     },
     '& $dialogChildren': {
-      maxHeight: windowSize === 'xs' || windowSize === 'sm' ? '100vh' : 'calc(65vh)'
+      maxHeight: windowSize === 'xs' || windowSize === 'sm' ? '100vh' : 'calc(65vh)',
+      "@media screen and (max-width: 375px)": {
+        '& $phoneNumber': {
+          top: 58,
+          fontSize: 12
+        },
+        '& $wrapChat': {
+          top: 75,
+          right: 26,
+          width: 180,
+          height: 145
+        }
+      }
     },
     '& $mobileBG': {
       '& $iconWrapper': {
@@ -182,25 +195,26 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dialogCancelButton: {
     background: "#c9302c",
     backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
-    // backgroundRepeat: "repeat-x",
     border: "1px solid darkred",
     borderTop: "0px solid darkred",
     boxShadow: "0px 3px 3px darkred",
     maxWidth: 150,
   },
   dialogConfirmBlueButton: {
-    // background: "rgba(212,137,33,1)",
     backgroundImage: "linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)",
-    // backgroundRepeat: "repeat-x",
-    // border: "1px solid darkred",
-    // borderTop: "0px solid darkred",
-    // boxShadow: "0px 3px 3px darkred",
     maxWidth: 150,
   },
   dialogButtonsContainer: {
     flex: 1,
     alignContent: "center",
     justifyContent: "center",
+    "@media screen and (max-width: 375px)": {
+      '& .MuiGrid-item': {
+        padding: '5px !important',
+        marginTop: 15,
+        marginBottom: 15
+      }
+    }
   },
   wizardFlex: {
     flex: 1,
@@ -642,8 +656,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: "100px",
     display: "flex",
     alignItems: "center",
-    "@media screen and (max-width: 768px)": {
+    "@media screen and (max-width: 540px)": {
       width: "100%",
+      height: "auto",
+      marginTop: 10
     },
   },
   headInfo: {
@@ -698,13 +714,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   fieldDiv: {
-    height: "100px",
+    // height: "100px",
     marginTop: "20px",
-    "@media screen and (max-width: 960px)": {
+    // "@media screen and (max-width: 960px)": {
 
-      height: "0"
+    //   height: "0"
 
-    },
+    // },
   },
   buttonForm: {
     display: "flex",
@@ -866,6 +882,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginBottom: 5,
       fontSize: 11,
     },
+    "@media screen and (max-width: 530px)": {
+      "&:first-child": {
+        marginInlineStart: 0,
+        marginInlineEnd: 0,
+      },
+      "&:nth-child(2)": {
+        marginInlineStart: 0,
+        marginInlineEnd: 0,
+      },
+    },
+    "@media screen and (max-width: 375px)": {
+      "&:first-child": {
+        marginInlineStart: 5,
+        marginInlineEnd: 0,
+      },
+      "&:nth-child(2)": {
+        marginInlineStart: 5,
+        marginInlineEnd: 0,
+      },
+    }
+
   },
   selectMsg: {
     height: "100%",
@@ -887,9 +924,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     cursor: "pointer",
     display: "flex",
-
     justifyContent: "space-between",
-    width: "100%"
+    width: "100%",
+    "@media screen and (max-width: 450px)": {
+      width: 'calc(100% - 50px)'
+    },
   },
   selectVal: {
     outline: "none",
@@ -897,6 +936,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: "100%",
     minWidth: 150,
     marginInlineEnd: "5px",
+    marginInlineStart: "5px",
     borderRadius: "5px",
     border: "1px solid #ced4da",
     backgroundColor: '#fff',
@@ -1140,11 +1180,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: 16
     },
     "@media screen and (max-width: 414px)": {
-      top: 62,
+      top: 78
     },
     "@media screen and (max-width: 360px)": {
-      top: 58,
-    },
+      top: 76
+    }
   },
   testDiv:
   {
@@ -1292,16 +1332,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       height: 230
     },
     "@media screen and (max-width: 414px)": {
-      top: 80,
-      right: 28,
-      width: 195,
-      height: 145
+      top: 105,
+      right: 38,
+      width: 250,
+      height: 205
     },
     "@media screen and (max-width: 360px)": {
-      top: 80,
-      right: 25,
-      width: 180,
-      height: 145
+      top: 105,
+      right: 38,
+      width: 250,
+      height: 205
     },
   },
   fromMe:
@@ -1445,7 +1485,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   listDiv: {
     height: "300px",
     maxHeight: "200px",
-    width: "700px",
+    width: "100%",
     overflowX: "hidden",
     marginTop: "20px",
     overflow: "auto"
@@ -1732,15 +1772,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   //   padding: "40px 80px 15px 80px"
   // },
   msgDiv: {
-
     marginTop: 50,
     height: "400px",
     "@media screen and (max-width: 960px)": {
-      marginTop: "385px",
+      marginTop: 0,
+      height: "auto",
     },
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
-      marginTop: "330px !important",
     },
   },
   boxDiv: {
@@ -1752,7 +1791,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 960px)": {
       width: "100%",
       marginBottom: "10px",
-      // marginTop:"120px"
     },
   },
   emoji: {
@@ -1818,9 +1856,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   phoneDiv: {
-    //maxWidth: 420,
     position: "relative",
-    // marginInlineStart: "5px",
     "@media screen and (max-width: 960px)": {
       marginTop: 0,
     },
@@ -2022,5 +2058,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     borderBottom: "3px solid red",
     padding: "4px"
+  },
+  modalInputForm: {
+    "@media screen and (max-width: 375px)": {
+      maxWidth: 'calc(100% - 20px)'
+    }
   }
 });

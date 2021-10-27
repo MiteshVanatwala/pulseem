@@ -31,6 +31,12 @@ const summaryWidth = {
 }
 
 export const getSmsStyle = (windowSize, isRTL, theme) => ({
+    sectionTitle: {
+        marginTop: 45,
+        fontWeight: '500',
+        color: '#555',
+        fontSize: '22px'
+    },
     mobilePreviewSummary: {
         width: mobileWidth[windowSize],
         height: mobileHeight[windowSize],
@@ -128,19 +134,19 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         alignItems: "center",
         justifyContent: "center",
         color: "#3DA6F7",
-        width: 30,
-        height: 30
+        minWidth: 30,
+        minHeight: 30
     },
     greenDoc:
     {
-        border: "2px solid #018901",
+        border: "1px solid #018901",
         borderRadius: "50%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         color: "#3DA6F7",
-        width: 30,
-        height: 30
+        minWidth: 30,
+        minHeight: 30
     },
     reactSwitch: {
         verticalAlign: 'middle',
@@ -265,7 +271,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         color: "#A7A7A7",
         cursor: "pointer",
         paddingRight: 10,
-        paddingLeft: 10
+        paddingLeft: 10,
+        "@media screen and (max-width: 375px)": {
+            width: 42,
+        }
     },
     toggleStart: {
         display: "flex",
@@ -279,7 +288,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         color: "#A7A7A7",
         cursor: "pointer",
         paddingRight: 10,
-        paddingLeft: 10
+        paddingLeft: 10,
+        "@media screen and (max-width: 375px)": {
+            width: 42,
+        }
     },
     toggleActive: {
         display: "flex",
@@ -293,7 +305,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         color: "#277BFF",
         cursor: "pointer",
         paddingRight: 10,
-        paddingLeft: 10
+        paddingLeft: 10,
+        "@media screen and (max-width: 375px)": {
+            width: 42,
+        }
     },
     percentTrue: {
         display: "flex",
@@ -308,7 +323,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         backgroundColor: " #277BFF",
         cursor: "pointer",
         paddingRight: 10,
-        paddingLeft: 10
+        paddingLeft: 10,
+        "@media screen and (max-width: 375px)": {
+            width: 42,
+        }
     },
     reciActive: {
         display: "flex",
@@ -323,7 +341,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         color: "#277BFF",
         cursor: "pointer",
         paddingRight: 10,
-        paddingLeft: 10
+        paddingLeft: 10,
+        "@media screen and (max-width: 375px)": {
+            width: 42,
+        }
     },
     percentActivetrue: {
         display: "flex",
@@ -351,7 +372,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         backgroundColor: " #277BFF",
         cursor: "pointer",
         paddingRight: 10,
-        paddingLeft: 10
+        paddingLeft: 10,
+        "@media screen and (max-width: 375px)": {
+            width: 42,
+        }
     },
     reciActivetrue: {
         display: "flex",
@@ -366,7 +390,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         color: "#ffffff",
         backgroundColor: "#277BFF",
         paddingRight: 10,
-        paddingLeft: 10
+        paddingLeft: 10,
+        "@media screen and (max-width: 375px)": {
+            width: 42,
+        }
     },
     reciMain:
     {
@@ -508,7 +535,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-
+        "@media screen and (max-width: 375px)": {
+            marginBottom: 20
+        }
     },
     bubbleReciDiv:
     {
@@ -666,6 +695,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         alignItems: "center",
         borderBottom: "2px solid #efefef",
         paddingBottom: "30px",
+        "@media screen and (max-width: 375px)": {
+            flexDirection: 'column'
+        }
     },
     noOfReci:
     {
@@ -690,6 +722,14 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         fontWeight: "700",
         marginTop: "10px",
         marginBottom: "10px",
+    },
+    randomRows: {
+        "@media screen and (max-width: 375px)": {
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            whiteSpace: 'nowrap'
+        }
     },
     randomReciSpan:
     {
@@ -869,6 +909,11 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     },
     quickSendContainer : 
     {
-        display: "flex", flexDirection: "column", width: '100%'
+        display: "flex", flexDirection: "column", width: '100%',
+    mobilePreviewContainer: {
+        "@media screen and (max-width: 768px)": {
+            marginTop: 25
+        }
     }
+}
 });
