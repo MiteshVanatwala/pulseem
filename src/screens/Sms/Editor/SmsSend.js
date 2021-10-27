@@ -1399,7 +1399,7 @@ const SmsSend = ({ classes, ...props }) => {
         <Grid item md={10} xs={12}>
           <h2
             className={classes.sectionTitle}
-            style={{ marginTop: windowSize === "xs" ? "0" : null }}
+            style={{ marginTop: windowSize === "xs" ? 15 : null }}
           >
             {t("notifications.whenToSend")}
           </h2>
@@ -2230,8 +2230,6 @@ const SmsSend = ({ classes, ...props }) => {
           <div
             className={classes.reciCheckoxContainer}
           >
-            <div>
-
               <Checkbox
                 checked={toggleReci}
                 color="primary"
@@ -2244,8 +2242,7 @@ const SmsSend = ({ classes, ...props }) => {
               <span style={{ display: 'inline-block', marginTop: 2 }} className={classes.font13}>
                 {t("smsReport.filterInputText")}
               </span>
-            </div>
-            <div>
+            <div style={{ marginRight: isRTL ? 'auto': null, marginLeft: !isRTL ? 'auto' : null }}>
               <input
                 type="text"
                 disabled={toggleReci ? false : true}
@@ -2394,7 +2391,7 @@ const SmsSend = ({ classes, ...props }) => {
               <Typography className={classes.bodyInfo}>i</Typography>
             </Tooltip>
           </Box>
-          <Box style={{ minHeight: "200px", maxWidth: "700px", overflow: "auto" }} key="columnAdjustment">
+          <Box className={classes.sidebar} style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
             <table
               style={{
                 borderCollapse: "collapse",
@@ -2532,7 +2529,7 @@ const SmsSend = ({ classes, ...props }) => {
           <Box className={classes.mb15}
           >
             <Checkbox
-              style={{ marginRight: -15, marginLeft: -15 }}
+              style={{ marginRight: windowSize !== 'xs' ? -15 : -10, marginLeft: windowSize !== 'xs' ? -15 : -10 }}
               checked={togglePulse}
               color="primary"
               inputProps={{ "aria-label": "secondary checkbox" }}
@@ -2672,7 +2669,7 @@ const SmsSend = ({ classes, ...props }) => {
             className={classes.randomSendDiv}
           >
             <Checkbox
-              style={{ marginRight: -15, marginLeft: -15 }}
+              style={{ marginRight: windowSize !== 'xs' ? -15 : -10, marginLeft: windowSize !== 'xs' ? -15 : -10 }}
               checked={toggleRandom}
               color="primary"
               inputProps={{ "aria-label": "secondary checkbox" }}
@@ -2683,7 +2680,7 @@ const SmsSend = ({ classes, ...props }) => {
             />
             <Typography className={clsx(classes.ps15, classes.pe15, classes.bold, classes.dInlineBlock)}>{t("smsReport.randomSend")}</Typography>
           </Box>
-          <Box>
+          <Box className={classes.randomRows}>
             <span
               className={classes.randomReciSpan}
             >

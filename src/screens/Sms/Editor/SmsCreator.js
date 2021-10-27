@@ -1028,8 +1028,8 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const renderPhone = () => {
     return (
-      <Box>
-        <MobilePreview classes={classes} campaignNumber={campaignNumber} text={smsModel.Text}  key="edtiorPreview" />
+      <Box className={classes.mobilePreviewContainer}>
+        <MobilePreview classes={classes} campaignNumber={campaignNumber} text={smsModel.Text}  keyItem="edtiorPreview" />
         <div
           className={classes.testDiv}
         >
@@ -1700,7 +1700,7 @@ const SmsCreator = ({ classes, ...props }) => {
         />
       ),
       content: (
-        <Box>
+        <Box className={classes.dialogBox}>
           <Paper component="form" className={btnStyle.root}>
             <IconButton
               type="submit"
@@ -1718,7 +1718,7 @@ const SmsCreator = ({ classes, ...props }) => {
               }}
             />
           </Paper>
-          <div className={classes.listDiv}>
+          <Box style={{ marginTop: 20 }}>
             {testGroups
               .filter((val) => {
                 if (ContactSearch == "") {
@@ -1738,7 +1738,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     handleSelect(item.GroupID);
                   }}>
                     <span
-                      style={{ marginInlineEnd: "25px" }}
+                      style={{ marginInlineEnd: windowSize !== "xs" ? "25px" : "10px" }}
                       className={
                         itemChecked ? classes.greenDoc : classes.blueDoc
                       }
@@ -1752,13 +1752,13 @@ const SmsCreator = ({ classes, ...props }) => {
                     <div
                       className={classes.selectGroupDiv}
                     >
-                      <span>{item.GroupName}</span>
-                      <span>{item.Recipients} {item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients")}</span>
+                      <span className={classes.ellipsisText}>{item.GroupName}</span>
+                      <span style={{ whiteSpace: 'nowrap'}}>{item.Recipients} {item.Recipients === 1 ? t("sms.recipient") : t("sms.recipients")}</span>
                     </div>
                   </div>
                 );
               })}
-          </div>
+          </Box>
         </Box>
       ),
       showDefaultButtons: true,
