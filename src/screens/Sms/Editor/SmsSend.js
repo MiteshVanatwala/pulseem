@@ -22,40 +22,14 @@ import { BsTrash, BsChevronDown, BsChevronUp } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
 import Title from '../../../components/Wizard/Title'
-
+import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
-  Typography,
-  Button,
-  Grid,
-  Box,
-  FormControlLabel,
-  FormControl,
-  RadioGroup,
-  Radio,
-  FormHelperText,
-  Divider,
-  TextField,
-  Paper
-} from "@material-ui/core";
-import {
-  sendSms,
-  deleteSms,
-  getSmsByID,
-  IsOTPPassed,
-  getCampaignSumm,
-  getSMSRequestOTP,
-  getSMSConfirmOTP,
-  smsCombinedGroup,
-  getCommonFeatures,
-  saveManualClients,
-  getAccountExtraData,
-  saveSmsCampSettings,
-  getCampaignSettings,
-  getFinishedCampaigns,
-  getGroupsBySubAccountId,
+  sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, getSMSRequestOTP, getSMSConfirmOTP, smsCombinedGroup, saveManualClients,
+  getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getGroupsBySubAccountId
 } from "../../../redux/reducers/smsSlice";
 import Summary from "./smsSummary";
 import clsx from "clsx";
+
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
 }
@@ -186,6 +160,7 @@ const useStyle = makeStyles((theme) => ({
 //#endregion
 
 const SmsSend = ({ classes, ...props }) => {
+  //#region initialized states
   const { t } = useTranslation();
   const styles = useStyles();
   const snacki = useSnack();
@@ -227,7 +202,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [TimeBool, setTimeBool] = useState(false);
   const [dropIndex, setdropIndex] = useState(-1);
   const [noTrue, setnoTrue] = useState(false);
-    const [snackbarRecipients, setsnackbarRecipients] = useState(false);
+  const [snackbarRecipients, setsnackbarRecipients] = useState(false);
   const [bsDot, setbsDot] = useState(false);
   const [model, setModel] = useState({
     ID: 0
@@ -284,7 +259,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [otpMsgs, setotpMsgs] = useState("Required Field");
   const [otpValue, setotpValue] = useState(null);
   const [groupNameExist, setGroupNameExist] = useState(false);
-
+  //#endregion
   // const [smsCampaignSettings, setSmsCampaignSettings] = useState({
   //   FutureDateTime: null,
   //   Groups: null,
@@ -376,7 +351,7 @@ const SmsSend = ({ classes, ...props }) => {
         const seGroups = campaignSettings.payload.Groups;
         for (var i = 0; i < seGroups.length; i++) {
           const g = subAccountGroups.payload.filter((c) => { return c.GroupID === seGroups[i] });
-          if (g) {
+          if (g.length > 0) {
             selectedGroupsForSend.push(g[0]);
           }
         }
