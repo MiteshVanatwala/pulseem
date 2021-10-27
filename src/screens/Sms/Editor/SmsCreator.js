@@ -919,23 +919,15 @@ const SmsCreator = ({ classes, ...props }) => {
                   </Tooltip>
                 </Box>
                 <Box className={classes.addDiv} tabindex="0" onBlur={() => { seteditmenuClick(false) }}>
-                  <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.addVariantsTooltip")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-center"
-                    arrow
-                  >
                     <Typography
                       className={classes.addButtons}
                       onClick={() => {
                         seteditmenuClick(!editmenuClick);
                       }}
                     >
-                      <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
+                      <AiOutlinePlusCircle  className={classes.addOptionsIcon}/>
                       {t("mainReport.add")}
                     </Typography>
-                  </Tooltip>
                   {editmenuClick ? (
                     <Box className={classes.dropDiv}>
                       <Typography
@@ -1052,16 +1044,11 @@ const SmsCreator = ({ classes, ...props }) => {
             />
           </FormGroup>
           <div
-            style={{ display: "flex", flexDirection: "column", width: "250px" }}
+            className={classes.testSendContaier}
           >
             <span style={{ fontSize: "18px" }}>{t("mainReport.testSend")}</span>
             <span
-              style={{
-                width: "200px",
-                fontSize: "15px",
-                marginTop: "5px",
-                color: "#B5B5B5",
-              }}
+              className={classes.testSendDescriptionLabel}
             >
               {t("mainReport.testDesc")}
             </span>
@@ -1076,7 +1063,7 @@ const SmsCreator = ({ classes, ...props }) => {
               value={radioBtn}
               onChange={onRadiochange}
             >
-              <div style={{ display: "flex", flexDirection: "column", width: '100%' }}>
+              <div  className={classes.quickSendContainer}>
                 <div>
                   <FormControlLabel
                     value="top"
@@ -1581,7 +1568,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       style={{ marginInlineEnd: "8px" }}
                       className={classes.grDoc}
                     >
-                      <AiOutlineFile style={{ color: "#1771AD", fill: "#1771AD", stroke: "#1771AD" }} color="#1771AD" />
+                      <AiOutlineFile  color="#1771AD" />
                     </span>
                     <span className={classes.ellipsisText}>{item.CampaignName}</span>
                   </div>

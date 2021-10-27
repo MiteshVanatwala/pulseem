@@ -185,6 +185,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [boolRandom, setboolRandom] = useState(false);
   const [sendType2Dialog, setsendType2Dialog] = useState(false);
   const [groupList, setGroupList] = useState([]);
+  const [totalRecords, settotalRecords] = useState(0);
   const [filterGroups, setfilterGroups] = useState([]);
   const [exceptionalDays, setExceptionalDays] = useState("");
   const [toggleChecked, settoggleChecked] = useState(false);
@@ -918,6 +919,9 @@ const SmsSend = ({ classes, ...props }) => {
     }
   }
   const areaChange = (e) => {
+    let enteredValue = e.target.value.split("\n")
+    const records = enteredValue.filter((r) => { return r !== "" });
+    settotalRecords(records.length)
     setareaData(e.target.value);
     setareaClick(true);
     setdropClick(false);
@@ -949,6 +953,7 @@ const SmsSend = ({ classes, ...props }) => {
               }
               b.pop();
               settypedData(b);
+              settotalRecords(b.length)
 
               setareaData(b);
               let dummyArr = [];
@@ -1041,6 +1046,7 @@ const SmsSend = ({ classes, ...props }) => {
               config,
               complete: results => {
                 setContacts(results.data)
+                settotalRecords(results.data.length)
                 console.log("---->csv", results.data)
                 const resultCsv = results.data;
                 setDialogType({ type: "manualUpload" });
@@ -1265,14 +1271,15 @@ const SmsSend = ({ classes, ...props }) => {
                     onClick={() => {
                       setareaData("");
                       setContacts([]);
-                      settypedData([])
+                      settypedData([]);
+                      settotalRecords(0)
                     }}
                   >
                     {t("sms.clearList")}
                   </span>
                 </div>
               ) : null}
-              <span>{t("sms.totalRecords")}:  {contacts.length !== 0 ? contacts.length : typedData.length}</span>
+              <span>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
           ) : null}
         </Grid>
@@ -1329,7 +1336,8 @@ const SmsSend = ({ classes, ...props }) => {
       }
     }
     else {
-      for (let i = 0; i < a.length; i++) {
+      const records = a.filter((r) => { return r !== "" });
+      for (let i = 0; i < records.length; i++) {
         let splitted = a[i].split(",");
         b.push(splitted);
         if (splitted.length > cols) {
@@ -2039,6 +2047,7 @@ const SmsSend = ({ classes, ...props }) => {
     return null;
   }
   const handleConfirmC = () => {
+    settotalRecords(0)
     setContacts([]);
     setareaData("");
     for (let i = 0; i < selectArray.length; i++) {
