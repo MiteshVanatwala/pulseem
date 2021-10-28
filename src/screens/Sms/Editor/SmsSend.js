@@ -146,10 +146,8 @@ const SmsSend = ({ classes, ...props }) => {
   const [sendType2Dialog, setsendType2Dialog] = useState(false);
   const [groupList, setGroupList] = useState([]);
   const [totalRecords, settotalRecords] = useState(0);
-  const [filterGroups, setfilterGroups] = useState([]);
   const [exceptionalDays, setExceptionalDays] = useState("");
   const [toggleChecked, settoggleChecked] = useState(false);
-  const [cancel, setcancel] = useState(true);
   const [areaClick, setareaClick] = useState(false);
   const [dropClick, setdropClick] = useState(false);
   const [groupNameInput, setgroupNameInput] = useState("");
@@ -169,7 +167,6 @@ const SmsSend = ({ classes, ...props }) => {
     ID: 0
   });
   const [togglePulse, settogglePulse] = useState(false);
-  const [ManualColumnValidate, setManualColumnValidate] = useState(false);
   const [toggleRandom, settoggleRandom] = useState(false);
   const [summModal, setsummModal] = useState(false);
   const [toggleB, settoggleB] = useState(true);
@@ -222,37 +219,6 @@ const SmsSend = ({ classes, ...props }) => {
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
 
   //#endregion
-  // const [smsCampaignSettings, setSmsCampaignSettings] = useState({
-  //   FutureDateTime: null,
-  //   Groups: null,
-  //   PulseSettings: {
-  //     PulseType: null,
-  //     TimeType: null,
-  //     PulseAmount: -1,
-  //     TimeInterval: null
-  //   },
-  //   RandomSettings: {
-  //     RandomAmount: null
-  //   },
-  //   SendExeptional:
-  //   {
-  //     Groups: null,
-  //     Campaigns: null,
-  //     ExceptionalDays: null
-  //   },
-  //   SendTypeID: 1,
-  //   SmsCampaignID: -1,
-  //   SourceTimeZone: "Asia/Calcutta",
-  //   SpecialSettings: {
-  //     Type: "",
-  //     DateFieldID: -1,
-  //     Day: 0,
-  //     SendHour: "",
-  //     IntervalTypeID: -1,
-  //     SendDate: null
-  //   }
-  // })
-
   useEffect(() => {
     setselectArray([
       {
@@ -364,8 +330,6 @@ const SmsSend = ({ classes, ...props }) => {
         sethourName("");
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 2) {
-        // sethoursTrue(true);
-        // setminTrue(false);
         setminName("");
         sethourName("Hours");
       }
@@ -413,10 +377,8 @@ const SmsSend = ({ classes, ...props }) => {
     getDataExtra();
   }, [dispatch]);
   const getDataExtra = async () => {
-
     await dispatch(getAccountExtraData());
     setLoader(false);
-
   };
 
   useEffect(() => {
@@ -434,33 +396,6 @@ const SmsSend = ({ classes, ...props }) => {
       }
     }
   }
-
-  //#region OTP
-  const alertDialog = () => {
-    return {
-      title: t('mainReport.pleaseNote'),
-      showDivider: true,
-      icon: (
-        <div className={classes.dialogIconContent}>
-          {'\uE11B'}
-        </div>
-      ),
-      content: (
-        <Box style={{ maxWidth: 400 }}>
-          <Typography className={classes.f18}>{t("mainReport.pleaseNoteDsec")}</Typography>
-        </Box>
-      ),
-      showDefaultButtons: true,
-      onClose: () => { handleAlertoff() },
-      onConfirm: () => { handleAlertoff() }
-    }
-  }
-
-  const handleAlertoff = () => {
-    setDialogType(null);
-  }
-  //#endregion
-
   const callbackSelectAll = () => {
     if (!allGroupsSelected) {
       setSelected(groupList);
@@ -1556,8 +1491,9 @@ const SmsSend = ({ classes, ...props }) => {
           toggleRandom={toggleRandom}
           random={random}
           estimationDate={estimationDate}
-          displayGroups={filterGroups}
-          displayCampaigns={totalCampaigns}
+          filteredGroups={selectedFilterGroups}
+          filteredCampaigns={selectedFilterCampaigns}
+          // displayCampaigns={totalCampaigns}
           open={summModal}
         />
       </>
@@ -2553,7 +2489,6 @@ const SmsSend = ({ classes, ...props }) => {
     const dialogContent = {
       manualUpload: manualUploadDialog(),
       filterRecipients: filterRecipientsDialog(),
-      alert: alertDialog(),
       caution: cautionDialog(),
       pulses: pulseDialog(),
       delete: deleteDialog(),

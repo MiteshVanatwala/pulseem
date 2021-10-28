@@ -17,43 +17,19 @@ const SmsSummary = ({ classes,
   onConfirm = () => null,
   textMsg,
   groups,
+  filteredGroups = null,
+  filteredCampaigns = null,
   ...props }) => {
   const [detailsHide, setdetailsHide] = useState(true);
   const [subDetailsActive, setsubDetailsActive] = useState(false);
   const [subRecipientsDetails, setsubRecipients] = useState(false);
-  const [globalCampaigns, setglobalCampaigns] = useState(false)
-  const [globalGroups, setglobalGroups] = useState(false);
-
+  
   const { t } = useTranslation();
 
   const handleSmsSettings = () => {
     props.handleCallback()
   }
 
-  useEffect(() => {
-    if (props.displayCampaigns !== undefined) {
-      for (let i = 0; i < props.displayCampaigns.length; ++i) {
-        if (props.displayCampaigns[i].selected) {
-          setglobalCampaigns(true);
-          break;
-        }
-        else {
-          setglobalCampaigns(false);
-        }
-      }
-    }
-    if (props.displayGroups !== undefined) {
-      for (let i = 0; i < props.displayGroups.length; ++i) {
-        if (props.displayGroups[i].selected) {
-          setglobalGroups(true);
-          break;
-        }
-        else {
-          setglobalGroups(false);
-        }
-      }
-    }
-  }, [open])
   return (
     <Box>
       {open && <Dialog
@@ -197,15 +173,15 @@ const SmsSummary = ({ classes,
           </Box> : null}
         </Box>
         {subRecipientsDetails ? <Box style={{ display: "flex" }}>
-          {globalGroups ? <div style={{ width: "100%", borderBottom: "1px solid #E5E5E5", }}>
-            <ul style={{ listStyleType: "none" }}>
+          {filteredGroups ? <div style={{ width: "100%", borderBottom: "1px solid #E5E5E5", }}>
+            <ul style={{ listStyleType: "none", paddingRight: 15, paddingLeft: 15 }}>
               <li
                 style={{
                   fontSize: "16px",
                   fontWeight: "700",
                   marginBottom: "2px",
                   cursor: "pointer",
-                  color: "#3DA6F7",
+                  color: "#0371ad",
                   paddingBottom: "5px",
 
                 }}
@@ -214,33 +190,31 @@ const SmsSummary = ({ classes,
               </li>
             </ul>
 
-            {props.displayGroups.map((item, index, idx) => {
-              if (item.selected) {
-                return (<Box id={index}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "8px 8px 8px 55px",
-                    borderTop: "1px solid #E5E5E5",
-                    fontSize: "16px",
-                  }}
-                >
-                  <span> {item.GroupName}</span>
-                </Box>)
-              }
+            {filteredGroups.map((item, index, idx) => {
+              return (<Box id={index}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "8px 8px 8px 55px",
+                  borderTop: "1px solid #E5E5E5",
+                  fontSize: "16px",
+                }}
+              >
+                <span> {item.GroupName}</span>
+              </Box>)
             })}
           </div>
             : null}
 
-          {globalCampaigns ? <Box style={{ width: "100%", borderBottom: "1px solid #E5E5E5", }}>
-            <ul style={{ listStyleType: "none" }}>
+          {filteredCampaigns ? <Box style={{ width: "100%", borderBottom: "1px solid #E5E5E5", }}>
+            <ul style={{ listStyleType: "none", paddingRight: 15, paddingLeft: 15 }}>
               <li
                 style={{
                   fontSize: "16px",
                   fontWeight: "700",
                   marginBottom: "2px",
                   cursor: "pointer",
-                  color: "#3DA6F7",
+                  color: "#0371ad",
                   paddingBottom: "5px",
 
                 }}
@@ -248,20 +222,18 @@ const SmsSummary = ({ classes,
                 {t("sms.recipientsFromFollowingCampaign")}
               </li>
             </ul>
-            {props.displayCampaigns.map((item, index) => {
-              if (item.selected) {
-                return (<Box id={index}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    padding: "8px 8px 8px 55px",
-                    borderTop: "1px solid #E5E5E5",
-                    fontSize: "16px",
-                  }}
-                >
-                  <span> {item.Name}</span>
-                </Box>)
-              }
+            {filteredCampaigns.map((item, index) => {
+              return (<Box id={index}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  padding: "8px 8px 8px 55px",
+                  borderTop: "1px solid #E5E5E5",
+                  fontSize: "16px",
+                }}
+              >
+                <span> {item.Name}</span>
+              </Box>)
             })} </Box> : null}
         </Box> : null}
       </Dialog>}

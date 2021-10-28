@@ -267,7 +267,6 @@ const SmsCreator = ({ classes, ...props }) => {
       }
       case 4: {// OTP_NEEDED
         setOTPOpen(true);
-        //setOTPType('otpVerification');
         break;
       }
       case 5: {// ACCEPTED
@@ -1154,7 +1153,6 @@ const SmsCreator = ({ classes, ...props }) => {
       }
       else if (r.payload.Status == 3) {
         setOTPOpen(true);
-        //setOTPType('otpVerification');
       }
     }
   };
@@ -1227,7 +1225,6 @@ const SmsCreator = ({ classes, ...props }) => {
         }
         else if (r.payload.Status == 3) {
           setOTPOpen(true);
-          //setOTPType('otpVerification');
         }
         else {
           setDialogType(null);
@@ -1257,7 +1254,6 @@ const SmsCreator = ({ classes, ...props }) => {
         if (saveResponse) {
           if (saveResponse.payload.Status === 3) {
             setOTPOpen(true);
-            //setOTPType('otpVerification');
             return;
           }
           else if (saveResponse.payload.Status === 2) {
@@ -1636,7 +1632,7 @@ const SmsCreator = ({ classes, ...props }) => {
         />
       ),
       content: (
-        <Box className={classes.dialogBox} style={{ width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null }}>
+        <Box className={clsx(classes.dialogBox, classes.dialogCustomSize)}>
           <Paper component="form" className={btnStyle.root}>
             <IconButton
               type="submit"
