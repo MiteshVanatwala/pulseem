@@ -2533,6 +2533,7 @@ const SmsSend = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: true,
+      confirmText: t("common.Yes"),
       cancelText: t("common.No"),
       onClose: () => { history.push("/SMSCampaigns"); },
       onCancel: () => { setDialogType(null) },
