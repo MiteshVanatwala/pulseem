@@ -1416,7 +1416,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 if (CampaignSearch == "") {
                   return val;
                 } else if (
-                  val.Name.toLowerCase().includes(
+                  val.CampaignName.toLowerCase().includes(
                     CampaignSearch.toLowerCase()
                   )
                 ) {
@@ -1473,6 +1473,7 @@ const SmsCreator = ({ classes, ...props }) => {
               onChange={(e) => {
                 setlandingSearch(e.target.value);
               }}
+              value={landingSearch}
             />
           </Paper>
           <Box style={{ marginTop: 20 }}>
@@ -1511,7 +1512,7 @@ const SmsCreator = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: false,
-      onClose: () => { setDialogType(null) }
+      onClose: () => { setDialogType(null); setlandingSearch(""); }
     }
   }
   const wazeDialog = () => {
