@@ -20,6 +20,7 @@ import Gif from "../../../assets/images/managment/check-circle.gif";
 import queryString from 'query-string';
 import Title from '../../../components/Wizard/Title'
 import OTP from './OTP';
+import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
 
 import { useHistory } from "react-router";
 import {
@@ -879,15 +880,15 @@ const SmsCreator = ({ classes, ...props }) => {
                   </Tooltip>
                 </Box>
                 <Box className={classes.addDiv} tabindex="0" onBlur={() => { seteditmenuClick(false) }}>
-                    <Typography
-                      className={classes.addButtons}
-                      onClick={() => {
-                        seteditmenuClick(!editmenuClick);
-                      }}
-                    >
-                      <AiOutlinePlusCircle  className={classes.addOptionsIcon}/>
-                      {t("mainReport.add")}
-                    </Typography>
+                  <Typography
+                    className={classes.addButtons}
+                    onClick={() => {
+                      seteditmenuClick(!editmenuClick);
+                    }}
+                  >
+                    <AiOutlinePlusCircle className={classes.addOptionsIcon} />
+                    {t("mainReport.add")}
+                  </Typography>
                   {editmenuClick ? (
                     <Box className={classes.dropDiv}>
                       <Typography
@@ -1023,7 +1024,7 @@ const SmsCreator = ({ classes, ...props }) => {
               value={radioBtn}
               onChange={onRadiochange}
             >
-              <div  className={classes.quickSendContainer}>
+              <div className={classes.quickSendContainer}>
                 <div>
                   <FormControlLabel
                     value="top"
@@ -1247,7 +1248,7 @@ const SmsCreator = ({ classes, ...props }) => {
           else if (saveResponse.payload.Status === 2) {
             setDialogType(null);
             history.push("/SMSCampaigns");
-            
+
           }
           else {
             setDialogType(null);
@@ -1263,7 +1264,7 @@ const SmsCreator = ({ classes, ...props }) => {
     else if (saveBeforeExit === false) {
       history.push("/SMSCampaigns");
       setDialogType(null);
-    } 
+    }
   };
   const handleSummary = () => {
     setsummary(false);
@@ -1407,7 +1408,7 @@ const SmsCreator = ({ classes, ...props }) => {
               onChange={(e) => {
                 setCampaignSearch(e.target.value);
               }}
-              value = {CampaignSearch}
+              value={CampaignSearch}
             />
           </Paper>
           <Box style={{ marginTop: 20 }}>
@@ -1446,7 +1447,7 @@ const SmsCreator = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: false,
-      onClose: () => { setDialogType(null) ; setCampaignSearch("") }
+      onClose: () => { setDialogType(null); setCampaignSearch("") }
     }
   }
   const campaignsDialog = () => {
@@ -1501,7 +1502,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       style={{ marginInlineEnd: "8px" }}
                       className={classes.grDoc}
                     >
-                      <AiOutlineFile  color="#1771AD" />
+                      <AiOutlineFile color="#1771AD" />
                     </span>
                     <span className={classes.ellipsisText}>{item.Name}</span>
                   </div>
@@ -1703,6 +1704,7 @@ const SmsCreator = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: true,
+      confirmText: t("common.Yes"),
       cancelText: t("common.No"),
       onClose: () => { handleExit(false) },
       onCancel: () => { setDialogType(null) },
@@ -1757,23 +1759,15 @@ const SmsCreator = ({ classes, ...props }) => {
   //#endregion
   const SwitchOldVersion = () => {
     return (<Grid item={true} xs={12} style={{ paddingTop: 20 }}>
-      <Switch
-        className={
-          isRTL
-            ? clsx(classes.reactSwitchHe, "react-switch")
-            : clsx(classes.reactSwitch, "react-switch")
-        }
+      <PulseemSwitch
+        switchType={'ios'}
         checked={isNewVersion}
         onChange={switchToOldVersion}
-        onColor="#28a745"
-        checkedIcon={false}
-        uncheckedIcon={false}
+        name="checkedB"
         handleDiameter={30}
         height={20}
         width={48}
-        boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
-        activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-        id="material-switch"
+        id="ios-switch"
       />
       <Typography className={clsx(classes.dInlineBlock, classes.buttonHead)}>{t("sms.switchToOldeVersion")}</Typography>
     </Grid>);

@@ -2060,8 +2060,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   columnError:
   {
-    borderBottom: "3px solid red",
-    padding: "4px"
+    borderBottom: "2px solid red",
+    // padding: "4px"
   },
   modalInputForm: {
     "@media screen and (max-width: 375px)": {
