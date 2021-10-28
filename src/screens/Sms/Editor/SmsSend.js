@@ -271,7 +271,7 @@ const SmsSend = ({ classes, ...props }) => {
       {
         isdisabled: false,
         idx: -1,
-        value: "Cellphone",
+        value: "CellPhone",
         label: t("common.cellphone")
       }
     ]);
@@ -1585,10 +1585,13 @@ const SmsSend = ({ classes, ...props }) => {
       setDialogType({ type: "caution" })
       setgroupNameInput("");
       setnewVal(false);
+   
     }
     else
     {
       setDialogType(null);
+      setgroupNameInput("");
+      setcolumnValidate(false);
     }
   };
   const handleChangeId = (id) => {
@@ -1753,17 +1756,20 @@ const SmsSend = ({ classes, ...props }) => {
     }
     else
     {
-      let columnHasValue = 0;
+      let columnHasValue = false;
       headers.forEach((value) => {
-        if (value !== t("sms.adjustTitle")) {
-          columnHasValue = columnHasValue + 1
+        console.log("value",value)
+        if (value == t("common.cellphone")) {
+          columnHasValue = true
+          console.log("value",value)
         }
       })
-      if (columnHasValue < 3) {
+      console.log("column",columnHasValue)
+      if (columnHasValue === false) {
         setcolumnValidate(true);
         return false;
       }
-      else if (columnHasValue === 3) {
+      else if (columnHasValue === true) {
         setcolumnValidate(false);
         return true;
       }
@@ -1795,6 +1801,8 @@ const SmsSend = ({ classes, ...props }) => {
     settotalRecords(0)
     setContacts([]);
     setareaData("");
+    setcolumnValidate(false);
+    setgroupNameInput("");
     for (let i = 0; i < selectArray.length; i++) {
       selectArray[i].isdisabled = false;
       selectArray[i].idx = -1;
