@@ -800,6 +800,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontFamily: "Sans-serif",
     overflow: "hidden",
     marginTop: 5,
+    overflowY:"auto",
     width: "100%",
     border: "1px solid #ced4da",
     borderBottom: 'none',

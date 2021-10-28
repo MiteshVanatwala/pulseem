@@ -194,7 +194,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [minName, setminName] = useState("");
   const [hourName, sethourName] = useState("Hours");
   const [spectialDateFieldID, setDateFieldID] = useState("0");
-  const [newVal, setnewVal] = useState(false);
+  const [groupTextError, setGroupTextError] = useState(false);
   const [RecipientsSnackbar, setRecipientsSnackbar] = useState(false);
   const [areaData, setareaData] = useState("");
   const [RecipientsBool, setRecipientsBool] = useState(false);
@@ -270,7 +270,7 @@ const SmsSend = ({ classes, ...props }) => {
       {
         isdisabled: false,
         idx: -1,
-        value: "Cellphone",
+        value: "CellPhone",
         label: t("common.cellphone")
       }
     ]);
@@ -794,13 +794,13 @@ const SmsSend = ({ classes, ...props }) => {
             };
             const lines = reader.result.split("\n");
 
-            console.log("--parse if")
+
             Papa.parse(reader.result, {
               config,
               complete: results => {
                 setContacts(results.data)
                 settotalRecords(results.data.length)
-                console.log("---->csv", results.data)
+
                 const resultCsv = results.data;
                 setDialogType({ type: "manualUpload" });
                 let ddc = [];
@@ -1080,7 +1080,6 @@ const SmsSend = ({ classes, ...props }) => {
     let b = [];
     let cols = 0;
     if (temp.indexOf("\t") > -1) {
-      console.log("in if tab")
       for (let i = 0; i < a.length; i++) {
         let splitted = a[i].split("\t");
         b.push(splitted);
@@ -1583,10 +1582,13 @@ const SmsSend = ({ classes, ...props }) => {
     if (dropClick === true) {
       setDialogType({ type: "caution" })
       setgroupNameInput("");
-      setnewVal(false);
+      setGroupTextError(false);
+
     }
     else {
       setDialogType(null);
+      setgroupNameInput("");
+      setcolumnValidate(false);
     }
   };
   const handleChangeId = (id) => {
@@ -1688,7 +1690,7 @@ const SmsSend = ({ classes, ...props }) => {
         settypedData([]);
         setContacts([]);
         setgroupNameInput("");
-        setnewVal(false);
+        setGroupTextError(false);
       }
       else {
         let tempres = [];
@@ -1718,7 +1720,7 @@ const SmsSend = ({ classes, ...props }) => {
         setContacts([]);
         setgroupClick(true);
         setgroupNameInput("");
-        setnewVal(false);
+        setGroupTextError(false);
         setmanualClick(false);
       }
       for (let i = 0; i < selectArray.length; i++) {
@@ -1730,41 +1732,38 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const handleManualDialog = (e) => {
     setgroupNameInput(e.target.value);
-    setnewVal(false);
+    setGroupTextError(false);
   }
   const manualUploadValidationscheck = () => {
+    let isValid = true;
+    setGroupNameValidationMessage("");
+    setGroupTextError(false);
+    setcolumnValidate(false);
 
     const groupNameExist = groupList.filter((gl) => { return gl.GroupName === groupNameInput });
+    let columnHasValue = false;
+    headers.forEach((value) => {
+      if (value == t("common.cellphone")) {
+        columnHasValue = true
+      }
+    })
 
     if (groupNameInput === "") {
-      setGroupNameValidationMessage(t("common.requiredField"))
-      setnewVal(true);
-      return false;
+      isValid = false;
+      setGroupNameValidationMessage(t("common.requiredField"));
+      setGroupTextError(true);
     }
-    else {
-      if (groupNameExist.length > 0) {
-        setGroupNameValidationMessage(t("sms.groupNameExists").replace("#groupName#", groupNameInput))
-        setnewVal(true);
-        return false;
-      }
-      else {
-        let columnHasValue = 0;
-        headers.forEach((value) => {
-          if (value !== t("sms.adjustTitle")) {
-            columnHasValue = columnHasValue + 1
-          }
-        })
-        if (columnHasValue < 3) {
-          setcolumnValidate(true);
-          return false;
-        }
-        else if (columnHasValue === 3) {
-          setcolumnValidate(false);
-          return true;
-        }
-      }
+    else if (groupNameExist.length > 0) {
+      isValid = false;
+      setGroupNameValidationMessage(t("sms.groupNameExists").replace("#groupName#", groupNameInput))
+      setGroupTextError(true);
+    }
+    if (columnHasValue === false) {
+      isValid = false;
+      setcolumnValidate(true);
     }
 
+    return isValid;
 
   }
 
@@ -1790,6 +1789,8 @@ const SmsSend = ({ classes, ...props }) => {
     settotalRecords(0)
     setContacts([]);
     setareaData("");
+    setcolumnValidate(false);
+    setgroupNameInput("");
     for (let i = 0; i < selectArray.length; i++) {
       selectArray[i].isdisabled = false;
       selectArray[i].idx = -1;
@@ -2132,11 +2133,11 @@ const SmsSend = ({ classes, ...props }) => {
               <TextField
                 type="text"
                 placeholder={t("common.GroupName")}
-                className={newVal ? clsx(classes.textInput, classes.error) : clsx(classes.textInput, classes.success)}
+                className={groupTextError ? clsx(classes.textInput, classes.error) : clsx(classes.textInput, classes.success)}
                 onChange={handleManualDialog}
                 value={groupNameInput}
               ></TextField>
-              {newVal ? <span className={classes.errorLabel}>{GroupNameValidationMessage}</span> : null}
+              {groupTextError ? <span className={classes.errorLabel}>{GroupNameValidationMessage}</span> : null}
             </div>
           </div>
           <Box

@@ -434,7 +434,7 @@ const SmsCreator = ({ classes, ...props }) => {
     var isNumber = /^[0-9]*$/;
     var english = /^[A-Za-z0-9]*$/;
     var reg = "/[^\x00-\xFF]/g";
-    if (!isNumber.test(e.target.value) && e.target.value.length >= 10) {
+    if (!isNumber.test(e.target.value) && e.target.value.length >= 13) {
       e.target.value = e.target.value.substring(0, 10);
     }
     if (!english.test(e.target.value)) {
@@ -1489,6 +1489,7 @@ const SmsCreator = ({ classes, ...props }) => {
               onChange={(e) => {
                 setlandingSearch(e.target.value);
               }}
+              value={landingSearch}
             />
           </Paper>
           <Box style={{ marginTop: 20 }}>
@@ -1527,7 +1528,7 @@ const SmsCreator = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: false,
-      onClose: () => { setDialogType(null) }
+      onClose: () => { setDialogType(null); setlandingSearch(""); }
     }
   }
   const wazeDialog = () => {
