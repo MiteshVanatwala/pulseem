@@ -418,7 +418,6 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     },
     manualModal: {
         display: "flex",
-        alignItems: "center",
         height: "40px",
         marginTop: "15px",
         marginBottom: "20px",
@@ -893,9 +892,28 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             display: "none"
         },
     },
+    addOptionsIcon : 
+    {
+        fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px"
+    },
+    testSendContaier : 
+    {
+        display: "flex", flexDirection: "column", width: "250px"
+    },
+    testSendDescriptionLabel : 
+    {
+        width: "200px",
+        fontSize: "15px",
+        marginTop: "5px",
+        color: "#B5B5B5",
+    },
+    quickSendContainer : 
+    {
+        display: "flex", flexDirection: "column", width: '100%',
     mobilePreviewContainer: {
         "@media screen and (max-width: 768px)": {
             marginTop: 25
         }
     }
+}
 });

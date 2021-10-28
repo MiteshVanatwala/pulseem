@@ -146,6 +146,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [boolRandom, setboolRandom] = useState(false);
   const [sendType2Dialog, setsendType2Dialog] = useState(false);
   const [groupList, setGroupList] = useState([]);
+  const [totalRecords, settotalRecords] = useState(0);
   const [filterGroups, setfilterGroups] = useState([]);
   const [exceptionalDays, setExceptionalDays] = useState("");
   const [toggleChecked, settoggleChecked] = useState(false);
@@ -169,6 +170,7 @@ const SmsSend = ({ classes, ...props }) => {
     ID: 0
   });
   const [togglePulse, settogglePulse] = useState(false);
+  const [ManualColumnValidate, setManualColumnValidate] = useState(false);
   const [toggleRandom, settoggleRandom] = useState(false);
   const [summModal, setsummModal] = useState(false);
   const [toggleB, settoggleB] = useState(true);
@@ -218,6 +220,8 @@ const SmsSend = ({ classes, ...props }) => {
   const [otpPassed, setOtpPassed] = useState(false);
   const [groupNameExist, setGroupNameExist] = useState(false);
   const [otpType, setOTPType] = useState(null);
+  const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
+
   //#endregion
   // const [smsCampaignSettings, setSmsCampaignSettings] = useState({
   //   FutureDateTime: null,
@@ -669,6 +673,9 @@ const SmsSend = ({ classes, ...props }) => {
     return isValid;
   }
   const areaChange = (e) => {
+    let enteredValue = e.target.value.split("\n")
+    const records = enteredValue.filter((r) => { return r !== "" });
+    settotalRecords(records.length)
     setareaData(e.target.value);
     setareaClick(true);
     setdropClick(false);
@@ -700,6 +707,7 @@ const SmsSend = ({ classes, ...props }) => {
               }
               b.pop();
               settypedData(b);
+              settotalRecords(b.length)
 
               setareaData(b);
               let dummyArr = [];
@@ -792,6 +800,7 @@ const SmsSend = ({ classes, ...props }) => {
               config,
               complete: results => {
                 setContacts(results.data)
+                settotalRecords(results.data.length)
                 console.log("---->csv", results.data)
                 const resultCsv = results.data;
                 setDialogType({ type: "manualUpload" });
@@ -1017,14 +1026,15 @@ const SmsSend = ({ classes, ...props }) => {
                     onClick={() => {
                       setareaData("");
                       setContacts([]);
-                      settypedData([])
+                      settypedData([]);
+                      settotalRecords(0)
                     }}
                   >
                     {t("sms.clearList")}
                   </span>
                 </div>
               ) : null}
-              <span>{t("sms.totalRecords")}:  {contacts.length !== 0 ? contacts.length : typedData.length}</span>
+              <span>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
           ) : null}
         </Grid>
@@ -1081,7 +1091,8 @@ const SmsSend = ({ classes, ...props }) => {
       }
     }
     else {
-      for (let i = 0; i < a.length; i++) {
+      const records = a.filter((r) => { return r !== "" });
+      for (let i = 0; i < records.length; i++) {
         let splitted = a[i].split(",");
         b.push(splitted);
         if (splitted.length > cols) {
@@ -1570,11 +1581,14 @@ const SmsSend = ({ classes, ...props }) => {
     setDialogType({ type: "sendSuccess" });
   };
   const handleCautionCancel = () => {
-    if (dropClick === true || areaClick === true) {
+    if (dropClick === true) {
       setDialogType({ type: "caution" })
       setgroupNameInput("");
       setnewVal(false);
-      setcolumnValidate(false);
+    }
+    else
+    {
+      setDialogType(null);
     }
   };
   const handleChangeId = (id) => {
@@ -1721,28 +1735,41 @@ const SmsSend = ({ classes, ...props }) => {
     setnewVal(false);
   }
   const manualUploadValidationscheck = () => {
-    let temp = []
-    for (let i = 0; i < groupList.length; i++) {
-      temp.push(groupList[i].GroupName)
-    }
-    if (groupNameInput === "" || temp.includes(groupNameInput)) {
+ 
+    const groupNameExist = groupList.filter((gl) => { return gl.GroupName === groupNameInput });
+
+    if (groupNameInput === "")  {
+      setGroupNameValidationMessage(t("common.requiredField"))
       setnewVal(true);
       return false;
     }
-    let columnHasValue = 0;
-    headers.forEach((value) => {
-      if (value !== t("sms.adjustTitle")) {
-        columnHasValue = columnHasValue + 1
+    else
+    {
+    if(groupNameExist.length > 0)
+    {
+    setGroupNameValidationMessage(t("sms.groupNameExists").replace("#groupName#", groupNameInput))
+    setnewVal(true);
+    return false;
+    }
+    else
+    {
+      let columnHasValue = 0;
+      headers.forEach((value) => {
+        if (value !== t("sms.adjustTitle")) {
+          columnHasValue = columnHasValue + 1
+        }
+      })
+      if (columnHasValue < 3) {
+        setcolumnValidate(true);
+        return false;
       }
-    })
-    if (columnHasValue < 3) {
-      setcolumnValidate(true);
-      return false;
+      else if (columnHasValue === 3) {
+        setcolumnValidate(false);
+        return true;
+      }
     }
-    else if (columnHasValue === 3) {
-      setcolumnValidate(false);
-      return true;
     }
+   
 
   }
 
@@ -1765,6 +1792,7 @@ const SmsSend = ({ classes, ...props }) => {
     return null;
   }
   const handleConfirmC = () => {
+    settotalRecords(0)
     setContacts([]);
     setareaData("");
     for (let i = 0; i < selectArray.length; i++) {
@@ -1999,6 +2027,7 @@ const SmsSend = ({ classes, ...props }) => {
                 }
                 onChange={(e) => { handleReciInput(e) }}
                 value={exceptionalDays}
+                maxLength="3"
               />
             </div>
           </div>
@@ -2112,7 +2141,7 @@ const SmsSend = ({ classes, ...props }) => {
                 onChange={handleManualDialog}
                 value={groupNameInput}
               ></TextField>
-              {newVal ? <span className={classes.errorLabel}>{t("sms.groupNameExists").replace("#groupName#", groupNameInput)}</span> : null}
+              {newVal ? <span className={classes.errorLabel}>{GroupNameValidationMessage}</span> : null}
             </div>
           </div>
           <Box

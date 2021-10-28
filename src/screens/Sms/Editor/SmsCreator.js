@@ -878,24 +878,16 @@ const SmsCreator = ({ classes, ...props }) => {
                     </select>
                   </Tooltip>
                 </Box>
-                <Box className={classes.addDiv} tabIndex="0" onBlur={() => { seteditmenuClick(false) }}>
-                  <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.addVariantsTooltip")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top"
-                    arrow
-                  >
+                <Box className={classes.addDiv} tabindex="0" onBlur={() => { seteditmenuClick(false) }}>
                     <Typography
                       className={classes.addButtons}
                       onClick={() => {
                         seteditmenuClick(!editmenuClick);
                       }}
                     >
-                      <AiOutlinePlusCircle style={{ fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px" }} />
+                      <AiOutlinePlusCircle  className={classes.addOptionsIcon}/>
                       {t("mainReport.add")}
                     </Typography>
-                  </Tooltip>
                   {editmenuClick ? (
                     <Box className={classes.dropDiv}>
                       <Typography
@@ -1012,16 +1004,11 @@ const SmsCreator = ({ classes, ...props }) => {
             />
           </FormGroup>
           <div
-            style={{ display: "flex", flexDirection: "column", width: "250px" }}
+            className={classes.testSendContaier}
           >
             <span style={{ fontSize: "18px" }}>{t("mainReport.testSend")}</span>
             <span
-              style={{
-                width: "200px",
-                fontSize: "15px",
-                marginTop: "5px",
-                color: "#B5B5B5",
-              }}
+              className={classes.testSendDescriptionLabel}
             >
               {t("mainReport.testDesc")}
             </span>
@@ -1036,7 +1023,7 @@ const SmsCreator = ({ classes, ...props }) => {
               value={radioBtn}
               onChange={onRadiochange}
             >
-              <div style={{ display: "flex", flexDirection: "column", width: '100%' }}>
+              <div  className={classes.quickSendContainer}>
                 <div>
                   <FormControlLabel
                     value="top"
@@ -1222,6 +1209,7 @@ const SmsCreator = ({ classes, ...props }) => {
           let r2 = await dispatch(smsSaveGroup(payload2));
           await dispatch(getCampaignSumm(r.payload.Message));
           setsummary(true);
+          setDialogType(null);
         }
         else if (r.payload.Status == 3) {
           setOTPType('otpVerification');
@@ -1257,21 +1245,25 @@ const SmsCreator = ({ classes, ...props }) => {
             return;
           }
           else if (saveResponse.payload.Status === 2) {
+            setDialogType(null);
             history.push("/SMSCampaigns");
+            
           }
           else {
+            setDialogType(null);
             setToastMessage(toastMessages.ERROR);
           }
         }
         else {
+          setDialogType(null);
           setToastMessage(toastMessages.ERROR);
         }
       }
     }
     else if (saveBeforeExit === false) {
       history.push("/SMSCampaigns");
-    }
-    setDialogType(null);
+      setDialogType(null);
+    } 
   };
   const handleSummary = () => {
     setsummary(false);
@@ -1415,10 +1407,11 @@ const SmsCreator = ({ classes, ...props }) => {
               onChange={(e) => {
                 setCampaignSearch(e.target.value);
               }}
+              value = {CampaignSearch}
             />
           </Paper>
           <Box style={{ marginTop: 20 }}>
-            {previousCampaignData
+            {previousLandingData
               .filter((val) => {
                 if (CampaignSearch == "") {
                   return val;
@@ -1436,7 +1429,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     key={idx}
                     className={classes.searchCon}
                     onClick={() => {
-                      handleAddLink(idx, 'campaign');
+                      handleAddLink(idx, 'lp');
                     }}
                   >
                     <span
@@ -1445,7 +1438,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     >
                       <AiOutlineFile />
                     </span>
-                    <span className={classes.ellipsisText}>{item.Name}</span>
+                    <span className={classes.ellipsisText}>{item.CampaignName}</span>
                   </div>
                 );
               })}
@@ -1453,7 +1446,7 @@ const SmsCreator = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: false,
-      onClose: () => { setDialogType(null) }
+      onClose: () => { setDialogType(null) ; setCampaignSearch("") }
     }
   }
   const campaignsDialog = () => {
@@ -1483,7 +1476,7 @@ const SmsCreator = ({ classes, ...props }) => {
             />
           </Paper>
           <Box style={{ marginTop: 20 }}>
-            {previousLandingData
+            {previousCampaignData
               .filter((val) => {
                 if (landingSearch == "") {
                   return val;
@@ -1501,16 +1494,16 @@ const SmsCreator = ({ classes, ...props }) => {
                     key={idx}
                     className={classes.searchCon}
                     onClick={() => {
-                      handleAddLink(idx, 'lp');
+                      handleAddLink(idx, 'campaign');
                     }}
                   >
                     <span
                       style={{ marginInlineEnd: "8px" }}
                       className={classes.grDoc}
                     >
-                      <AiOutlineFile style={{ color: "#1771AD", fill: "#1771AD", stroke: "#1771AD" }} color="#1771AD" />
+                      <AiOutlineFile  color="#1771AD" />
                     </span>
-                    <span className={classes.ellipsisText}>{item.CampaignName}</span>
+                    <span className={classes.ellipsisText}>{item.Name}</span>
                   </div>
                 );
               })}
@@ -1519,7 +1512,6 @@ const SmsCreator = ({ classes, ...props }) => {
       ),
       showDefaultButtons: false,
       onClose: () => { setDialogType(null) }
-
     }
   }
   const wazeDialog = () => {
@@ -1643,6 +1635,7 @@ const SmsCreator = ({ classes, ...props }) => {
               onChange={(e) => {
                 setContactSearch(e.target.value);
               }}
+              value={ContactSearch}
             />
           </Paper>
           <Box style={{ marginTop: 20 }}>
@@ -1689,8 +1682,8 @@ const SmsCreator = ({ classes, ...props }) => {
         </Box>
       ),
       showDefaultButtons: true,
-      onCancel: () => { setselectedGroup([]); setDialogType(null) },
-      onClose: () => { setselectedGroup([]); setDialogType(null) },
+      onCancel: () => { setselectedGroup([]); setDialogType(null); setContactSearch("") },
+      onClose: () => { setselectedGroup([]); setDialogType(null); setContactSearch("") },
       onConfirm: () => { handleGroupClose() }
     }
   }

@@ -1310,7 +1310,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   chatBoxHe:
   {
     display: 'flex',
-    // justifyContent: 'flex-end',
     wordBreak: 'break-all',
   },
   wrapChat:
