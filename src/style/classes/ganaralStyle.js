@@ -87,6 +87,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
 
   dialogContainer: {
+    zIndex: '9999 !important',
     "& .MuiPaper-root": {
       overflowX: "hidden",
     },
@@ -94,9 +95,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       minWidth: minDialogWidth[windowSize],
       maxWidth: maxDialogWidth[windowSize],
     },
-    // "& .MuiDialog-paperScrollPaper": {
-    //   height: 'calc(100% - 40px)'
-    // }
+    "& .MuiDialog-paperScrollPaper": {
+      maxHeight: '100%'
+    }
   },
   noPadding: {
     padding: "0px !important",
@@ -2067,5 +2068,5 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 375px)": {
       maxWidth: 'calc(100% - 20px)'
     }
-  }
+  },
 });

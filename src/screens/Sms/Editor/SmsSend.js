@@ -1585,8 +1585,7 @@ const SmsSend = ({ classes, ...props }) => {
       setgroupNameInput("");
       setnewVal(false);
     }
-    else
-    {
+    else {
       setDialogType(null);
     }
   };
@@ -1734,41 +1733,38 @@ const SmsSend = ({ classes, ...props }) => {
     setnewVal(false);
   }
   const manualUploadValidationscheck = () => {
- 
+
     const groupNameExist = groupList.filter((gl) => { return gl.GroupName === groupNameInput });
 
-    if (groupNameInput === "")  {
+    if (groupNameInput === "") {
       setGroupNameValidationMessage(t("common.requiredField"))
       setnewVal(true);
       return false;
     }
-    else
-    {
-    if(groupNameExist.length > 0)
-    {
-    setGroupNameValidationMessage(t("sms.groupNameExists").replace("#groupName#", groupNameInput))
-    setnewVal(true);
-    return false;
-    }
-    else
-    {
-      let columnHasValue = 0;
-      headers.forEach((value) => {
-        if (value !== t("sms.adjustTitle")) {
-          columnHasValue = columnHasValue + 1
-        }
-      })
-      if (columnHasValue < 3) {
-        setcolumnValidate(true);
+    else {
+      if (groupNameExist.length > 0) {
+        setGroupNameValidationMessage(t("sms.groupNameExists").replace("#groupName#", groupNameInput))
+        setnewVal(true);
         return false;
       }
-      else if (columnHasValue === 3) {
-        setcolumnValidate(false);
-        return true;
+      else {
+        let columnHasValue = 0;
+        headers.forEach((value) => {
+          if (value !== t("sms.adjustTitle")) {
+            columnHasValue = columnHasValue + 1
+          }
+        })
+        if (columnHasValue < 3) {
+          setcolumnValidate(true);
+          return false;
+        }
+        else if (columnHasValue === 3) {
+          setcolumnValidate(false);
+          return true;
+        }
       }
     }
-    }
-   
+
 
   }
 
@@ -1999,7 +1995,7 @@ const SmsSend = ({ classes, ...props }) => {
         <FaFilter style={{ fontSize: 30, color: "#fff" }} />
       ),
       content: (
-        <Box>
+        <Box style={{ width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null }}>
           <div
             className={classes.reciCheckoxContainer}
           >
