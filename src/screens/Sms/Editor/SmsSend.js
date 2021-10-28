@@ -795,13 +795,13 @@ const SmsSend = ({ classes, ...props }) => {
             };
             const lines = reader.result.split("\n");
 
-            console.log("--parse if")
+           
             Papa.parse(reader.result, {
               config,
               complete: results => {
                 setContacts(results.data)
                 settotalRecords(results.data.length)
-                console.log("---->csv", results.data)
+               
                 const resultCsv = results.data;
                 setDialogType({ type: "manualUpload" });
                 let ddc = [];
@@ -1081,7 +1081,6 @@ const SmsSend = ({ classes, ...props }) => {
     let b = [];
     let cols = 0;
     if (temp.indexOf("\t") > -1) {
-      console.log("in if tab")
       for (let i = 0; i < a.length; i++) {
         let splitted = a[i].split("\t");
         b.push(splitted);
@@ -1740,43 +1739,47 @@ const SmsSend = ({ classes, ...props }) => {
   const manualUploadValidationscheck = () => {
  
     const groupNameExist = groupList.filter((gl) => { return gl.GroupName === groupNameInput });
-
-    if (groupNameInput === "")  {
+    let columnHasValue = false;
+    headers.forEach((value) => {
+      if (value == t("common.cellphone")) {
+        columnHasValue = true
+      }
+    })
+    if (groupNameInput === "" && columnHasValue === false)  {
+      setGroupNameValidationMessage(t("common.requiredField"))
+      setnewVal(true);
+      setcolumnValidate(true);
+      return false;
+    }
+    else if(groupNameExist.length > 0 && columnHasValue === false)
+    {
+    setGroupNameValidationMessage(t("sms.groupNameExists").replace("#groupName#", groupNameInput))
+    setcolumnValidate(true);
+    setnewVal(true);
+    return false;
+    }
+    else if (columnHasValue === FaGalacticSenate)
+    {
+      setcolumnValidate(true);
+      return false;
+    }
+    else if (groupNameInput === "")
+    {
       setGroupNameValidationMessage(t("common.requiredField"))
       setnewVal(true);
       return false;
     }
-    else
+    else if (groupNameExist.length > 0)
     {
-    if(groupNameExist.length > 0)
+      setGroupNameValidationMessage(t("sms.groupNameExists").replace("#groupName#", groupNameInput))
+      setnewVal(true);
+      return false;
+    }
+    else if (columnHasValue === true)
     {
-    setGroupNameValidationMessage(t("sms.groupNameExists").replace("#groupName#", groupNameInput))
-    setnewVal(true);
-    return false;
+      setcolumnValidate(false);
+      return true;
     }
-    else
-    {
-      let columnHasValue = false;
-      headers.forEach((value) => {
-        console.log("value",value)
-        if (value == t("common.cellphone")) {
-          columnHasValue = true
-          console.log("value",value)
-        }
-      })
-      console.log("column",columnHasValue)
-      if (columnHasValue === false) {
-        setcolumnValidate(true);
-        return false;
-      }
-      else if (columnHasValue === true) {
-        setcolumnValidate(false);
-        return true;
-      }
-    }
-    }
-   
-
   }
 
   const handleDelete = () => {
