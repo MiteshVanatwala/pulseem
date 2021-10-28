@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import moment from "moment";
 import { MdAutorenew } from "react-icons/md";
-import { FaRegCalendarAlt } from "react-icons/fa";
+import {FaGalacticSenate ,  FaRegCalendarAlt } from "react-icons/fa";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import PropTypes from "prop-types";
