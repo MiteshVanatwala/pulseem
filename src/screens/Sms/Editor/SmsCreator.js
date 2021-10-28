@@ -83,6 +83,22 @@ const useStyleNew = makeStyles((theme) => ({
   },
 }));
 
+const defaultAccountExtraData = [
+  { "FirstName": "common.first_name" },
+  { "LastName": "common.last_name" },
+  { "Email": "common.email" },
+  { "Telephone": "common.telephone" },
+  { "Cellphone": "common.cellphone" },
+  { "Address": "common.address" },
+  { "City": "common.city" },
+  { "Company": "common.company" },
+  { "BirthDate": "common.birth_date" },
+  { "ReminderDate": "common.reminder_date" },
+  { "Country": "common.country" },
+  { "State": "common.state" },
+  { "Zip": "common.zip" }
+];
+
 const SmsCreator = ({ classes, ...props }) => {
   const { t } = useTranslation();
   document.title = t("sms.pageTitle");
@@ -118,7 +134,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [editmenuClick, seteditmenuClick] = useState(false);
   const [campaignBool, setcampaignBool] = useState(false);
   const [OtpCounter, setOtpCounter] = useState(false);
-  const [restoreBool, setrestoreBool] = useState(false);
+  const [restoreBool, setrestoreBool] = useState(true);
   const [campaignNumber, setcampaignNumber] = useState("");
   const [characterCount, setcharacterCount] = useState(0);
   const [linkCount, setlinkCount] = useState(0);
@@ -225,7 +241,7 @@ const SmsCreator = ({ classes, ...props }) => {
     SENT_ALREADY: { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true },
     PROVISION: { severity: 'error', color: 'error', message: t("sms.recipientBlocked"), showAnimtionCheck: false },
     NO_CREDITS: { severity: 'error', color: 'error', message: t("sms.noCredits"), showAnimtionCheck: false },
-    
+
   }
 
   const handleSendResult = async (smsSendResult) => {
@@ -336,55 +352,39 @@ const SmsCreator = ({ classes, ...props }) => {
     await dispatch(getPreviousCampaignData());
     let resp = await dispatch(getAccountExtraData());
     let arr = Object.keys(resp.payload)
-    let arr2 = arr.map(function (key) {
+    let additionalExtraData = arr.map(function (key) {
       return { [key]: resp.payload[key] };
     })
-    let tempArr = [
-      { "FirstName": "common.first_name" },
-      { "LastName": "common.last_name" },
-      { "Email": "common.email" },
-      { "Telephone": "common.telephone" },
-      { "Cellphone": "common.cellphone" },
-      { "Address": "common.address" },
-      { "City": "common.city" },
-      { "Company": "common.company" },
-      { "BirthDate": "common.birth_date" },
-      { "ReminderDate": "common.reminder_date" },
-      { "Country": "common.country" },
-      { "State": "common.state" },
-      { "Zip": "common.zip" }
-    ];
-    for (let i = 0; i < arr2.length; i++) {
-      tempArr.push({ ...arr2[i], selected: false })
+
+    for (let i = 0; i < additionalExtraData.length; i++) {
+      defaultAccountExtraData.push({ ...additionalExtraData[i], selected: false })
     }
-    setextraAccountDATA(tempArr)
+    setextraAccountDATA(defaultAccountExtraData)
     await dispatch(getGroupsBySubAccountId());
-    let r = await dispatch(getCommonFeatures());
-    if (props && props.match.params.id) {
-      getSavedData();
-    }
     if (qs && qs.FromAutomation && qs.FromAutomation > 0) {
       setIsFromAutomation(true);
     }
+    await initFromNumber();
 
-    setcampaignNumber(r.payload.DefaultCellNumber)
-    let response = await dispatch(getSMSVirtualNumber(r.payload.DefaultCellNumber));
-    setStaticNumber(response.payload.Number);
-    setremovalNumber(response.payload.RemovalKey);
-    setstoredValue(r.payload.DefaultCellNumber)
-    setLoader(false);
-    if (campaignNumber !== response.payload.Number) {
+  }, [dispatch]);
+
+  const initFromNumber = async () => {
+    const smsCampaign = await getSavedData();
+    const commonFeatures = await dispatch(getCommonFeatures());
+    const fromNumber = smsCampaign && smsCampaign.FromNumber ? smsCampaign.FromNumber : commonFeatures.payload.DefaultCellNumber;
+    
+    setcampaignNumber(fromNumber);
+    
+    const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
+    setStaticNumber(virtualNumber.payload.Number);
+    setremovalNumber(virtualNumber.payload.RemovalKey);
+    setstoredValue(commonFeatures.payload.DefaultCellNumber);
+    if (fromNumber !== virtualNumber.payload.Number) {
       setrestoreBool(false);
       setremovalMessageButtonDisabled(true);
     }
-  }, [dispatch]);
-
-  useEffect(() => { }, [removalMessageButtonDisabled]);
-
-  useEffect(() => { }, [testGroups]);
-  useEffect(() => {
-    document.title = t("mainReport.smsTitle");
-  }, []);
+    setLoader(false);
+  }
 
   const getAutomationReturnUrl = (campaignId) => {
     const nodeToEdit = qs.NodeToEdit ?? null;
@@ -394,16 +394,14 @@ const SmsCreator = ({ classes, ...props }) => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
       if (response) {
-        setcampaignNumber(response.payload.FromNumber)
+        setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
         setSmsModel(response.payload);
+        return response.payload;
       }
     }
   }
-  useEffect(() => {
-    getSavedData();
-  }, [])
 
   const toggleChecked = () => {
     setChecked((prev) => !prev);
@@ -1479,7 +1477,7 @@ const SmsCreator = ({ classes, ...props }) => {
         <BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />
       ),
       content: (
-        <Box className={classes.dialogBox} style={{width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null}}>
+        <Box className={classes.dialogBox} style={{ width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null }}>
           <Paper component="form" className={btnStyle.root}>
             <IconButton
               type="submit"
@@ -1544,7 +1542,7 @@ const SmsCreator = ({ classes, ...props }) => {
         <BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />
       ),
       content: (
-        <Box className={classes.dialogBox} style={{width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null}}>
+        <Box className={classes.dialogBox} style={{ width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null }}>
           <Paper component="form" className={btnStyle.root}>
             <IconButton
               type="submit"
@@ -1707,7 +1705,7 @@ const SmsCreator = ({ classes, ...props }) => {
         />
       ),
       content: (
-        <Box className={classes.dialogBox} style={{width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null}}>
+        <Box className={classes.dialogBox} style={{ width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null }}>
           <Paper component="form" className={btnStyle.root}>
             <IconButton
               type="submit"
