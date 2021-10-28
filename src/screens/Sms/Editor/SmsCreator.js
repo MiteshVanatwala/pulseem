@@ -168,7 +168,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [isLinksStatistics, setIsLinksStatistics] = useState(true);
   const [isFromAutomation, setIsFromAutomation] = useState(false);
   const [isNewVersion, setIsNewVersion] = useState(true);
-  const [otpType, setOTPType] = useState(null);
+  const [otpOpen, setOTPOpen] = useState(null);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -266,7 +266,8 @@ const SmsCreator = ({ classes, ...props }) => {
         break;
       }
       case 4: {// OTP_NEEDED
-        setOTPType('otpVerification');
+        setOTPOpen(true);
+        //setOTPType('otpVerification');
         break;
       }
       case 5: {// ACCEPTED
@@ -1152,7 +1153,8 @@ const SmsCreator = ({ classes, ...props }) => {
         }
       }
       else if (r.payload.Status == 3) {
-        setOTPType('otpVerification');
+        setOTPOpen(true);
+        //setOTPType('otpVerification');
       }
     }
   };
@@ -1224,7 +1226,8 @@ const SmsCreator = ({ classes, ...props }) => {
           setDialogType(null);
         }
         else if (r.payload.Status == 3) {
-          setOTPType('otpVerification');
+          setOTPOpen(true);
+          //setOTPType('otpVerification');
         }
         else {
           setDialogType(null);
@@ -1253,7 +1256,8 @@ const SmsCreator = ({ classes, ...props }) => {
         let saveResponse = await dispatch(smsSave(payloadToPush));
         if (saveResponse) {
           if (saveResponse.payload.Status === 3) {
-            setOTPType('otpVerification');
+            setOTPOpen(true);
+            //setOTPType('otpVerification');
             return;
           }
           else if (saveResponse.payload.Status === 2) {
@@ -1403,7 +1407,7 @@ const SmsCreator = ({ classes, ...props }) => {
         <BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />
       ),
       content: (
-        <Box className={classes.dialogBox} style={{ width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null }}>
+        <Box className={clsx(classes.dialogBox, classes.dialogCustomSize)}>
           <Paper component="form" className={btnStyle.root}>
             <IconButton
               type="submit"
@@ -1428,7 +1432,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 if (CampaignSearch == "") {
                   return val;
                 } else if (
-                  val.Name.toLowerCase().includes(
+                  val.CampaignName.toLowerCase().includes(
                     CampaignSearch.toLowerCase()
                   )
                 ) {
@@ -1469,7 +1473,7 @@ const SmsCreator = ({ classes, ...props }) => {
         <BsArrowClockwise style={{ fontSize: 30, color: "#fff" }} />
       ),
       content: (
-        <Box className={classes.dialogBox} style={{ width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null }}>
+        <Box className={clsx(classes.dialogBox, classes.dialogCustomSize)}>
           <Paper component="form" className={btnStyle.root}>
             <IconButton
               type="submit"
@@ -1493,7 +1497,7 @@ const SmsCreator = ({ classes, ...props }) => {
                 if (landingSearch == "") {
                   return val;
                 } else if (
-                  val.CampaignName.toLowerCase().includes(
+                  val.Name.toLowerCase().includes(
                     landingSearch.toLowerCase()
                   )
                 ) {
@@ -1809,7 +1813,7 @@ const SmsCreator = ({ classes, ...props }) => {
       </Grid>
       {renderDialog()}
       {renderSummary()}
-      {otpType && <OTP classes={classes} campaignNumber={campaignNumber} otpType={otpType} />}
+      {otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );

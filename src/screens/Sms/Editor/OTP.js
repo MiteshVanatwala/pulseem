@@ -12,7 +12,7 @@ import {
     getSMSConfirmOTP
 } from "../../../redux/reducers/smsSlice";
 
-const OTP = ({ classes, campaignNumber, otpType = null }) => {
+const OTP = ({ classes, campaignNumber, isOpen = false, onClose = () => null }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [otpValue, setotpValue] = useState(null);
@@ -26,8 +26,14 @@ const OTP = ({ classes, campaignNumber, otpType = null }) => {
     }
 
     useEffect(() => {
-        setDialogType({ type: otpType });
-    }, [otpType]);
+        setDialogType({ type: "otpVerification" });
+    }, [isOpen]);
+
+    const onCloseDialog = () => {
+        setLoader(false);
+        setDialogType(null);
+        onClose();
+    }
 
 
     const handleVerifyOTP = async () => {
@@ -98,7 +104,7 @@ const OTP = ({ classes, campaignNumber, otpType = null }) => {
                 </Box>
             ),
             showDefaultButtons: false,
-            onClose: () => { setDialogType(null) }
+            onClose: () => { onCloseDialog() }
         }
     }
     const OTPCodeDialog = () => {

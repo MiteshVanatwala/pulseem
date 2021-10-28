@@ -218,7 +218,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [pulseType, setPulseType] = useState(-1);
   const [otpPassed, setOtpPassed] = useState(false);
   const [groupNameExist, setGroupNameExist] = useState(false);
-  const [otpType, setOTPType] = useState(null);
+  const [otpOpen, setOTPOpen] = useState(null);
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
 
   //#endregion
@@ -402,7 +402,7 @@ const SmsSend = ({ classes, ...props }) => {
   useEffect(() => {
     setOtpPassed(OTPPassed);
     if (OTPPassed === false) {
-      setOTPType('otpVerification');
+      setOTPOpen(true);
     }
   }, [OTPPassed])
 
@@ -1420,7 +1420,7 @@ const SmsSend = ({ classes, ...props }) => {
 
   const onSaveSettings = async (toggle, exit) => {
     if (otpPassed === false) {
-      setOTPType('otpVerification');
+      setOTPOpen(true);
       return;
     }
     if (selectedGroups.length <= 0) {
@@ -2688,7 +2688,7 @@ const SmsSend = ({ classes, ...props }) => {
           {t("sms.filtersSave")}
         </Alert>
       </Snackbar>
-      {otpType && <OTP classes={classes} campaignNumber={dataSaved.fromNumber} otpType={otpType} />}
+      {otpOpen && <OTP classes={classes} campaignNumber={dataSaved.fromNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );

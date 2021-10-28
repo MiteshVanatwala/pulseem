@@ -85,7 +85,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       background: '#999'
     }
   },
-
+  dialogCustomSize: {
+    height: '40vh',
+    width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null
+  },
   dialogContainer: {
     zIndex: '9999 !important',
     "& .MuiPaper-root": {
