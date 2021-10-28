@@ -201,7 +201,6 @@
   "UnsubscribeRequsetPostParamsDesc": "הגדר את הפרמטרים המתאימים לבקשת ה post כפי שיתקבלו בשרת שלך",
   "UnsubscribeRequsetUrlDesc": "רשום את כתובת הבקשה אצלך בשרת אליה יועברו המוסרים ",
   "AddNewStaticParameter": "הוסף פרמטרים קבועים",
-  "Choose": "בחר",
   "LandingPagesRequestsUrlLeadsHistory": "השידורים האחרונים שלך",
   "LandingPagesRequestsUrlLeadsHistoryTitle": "הוסף/ערוך מערכת חיצונית להעברת המידע",
   "RequestUrl": "כתובת השידור",
@@ -499,5 +498,6 @@
   "state": "מחוז",
   "zip": "מיקוד",
   "minutes": "דקות",
-  "hours": "שעות"
+  "hours": "שעות",
+  "requiredField": "שדה חובה"
 }

@@ -478,7 +478,7 @@
   "smsDialogWhen": "מתי",
   "smsDialogFor": "עבור",
   "smsSummaryDialogTotalRecipients": "סך הכל נמענים",
-  "smsSummaryDetails": "פרטים",
+  "smsSummaryDetails": "פירוט",
   "smsSummaryClose": "סגור",
   "smsSummaryGroups": "קבוצות",
   "smsSummaryRecipientsFilter": "סינון נמענים",
@@ -505,7 +505,6 @@
   "OtpSentSuccessLine2": "שימו לב, הוא תקף ל-10 הדקות הקרובות בלבד",
   "typeOtpPlaceholder": "הזינו קוד כאן",
   "didntReceivedOtp": "לא קיבלתם?",
-  "sendAgainOtp": "שליחה חוזרת",
   "confirmOtp": "אישור",
   "campaignSummary": "סיכום קמפיין לשליחה",
   "sendDialog": "שלח",
@@ -551,5 +550,15 @@
   "errorQuickSend": "אירעה שגיאה בשליחה",
   "recipientBlocked": "מספר הלקוח חסום להודעות sms",
   "noCredits": "אין מספיק קרדיטים לשליחה",
-  "fillRandomAmount": "יש למלא ערך בכמות נמענים אקראית"
+  "fillRandomAmount": "יש למלא ערך בכמות נמענים אקראית",
+  "otpNotMatch": "הקוד שגוי, נסו שוב או בחרו בשליחה חוזרת",
+  "otpFailed": "וידוא נכשל!",
+  "codeNotProvided": "יש למלא קוד בעל 4 ספרות",
+  "otpNotAuthirized": "מזוהה",
+  "phoneNotProvided": "מספר נייד לא סופק",
+  "selectSendingType": "יש לבחור תאריך שליחה",
+  "selectSendingTime": "יש לבחור שעת שליחה",
+  "selectIntervalType": "יש לבחור אם הקמפיין יישלח לפני/אחרי",
+  "selectSpecialField": "יש לבחור תאריך מיוחד מהרשימה",
+  "typeDays": "יש להזין מספר ימים לפני/אחרי"
 }

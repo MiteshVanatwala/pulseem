@@ -557,5 +557,15 @@
   "errorQuickSend": "Error sending message",
   "recipientBlocked": "Recipient cellphone is blocked for SMS messages",
   "noCredits": "Account has no credits",
-  "fillRandomAmount": "Please fill Random Amount"
+  "fillRandomAmount": "Please fill Random Amount",
+  "otpNotMatch": "Incorrect code, try again or click on Send again",
+  "otpFailed": "Validation failed!",
+  "codeNotProvided": "Please fill PIN Code (4 digits)",
+  "otpNotAuthirized": "UnAuthorized!",
+  "phoneNotProvided": "Phone has not provided",
+  "selectSendingType": "Must select Sending Type",
+  "selectSendingTime": "Must select Sending Time",
+  "selectIntervalType": "Must select if campaign sends before/after event",
+  "selectSpecialField": "Must select Special Date Type",
+  "typeDays": "Must insert Number of Days"
 }

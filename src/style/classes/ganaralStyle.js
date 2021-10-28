@@ -1406,10 +1406,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   fieldsRequire:
   {
-    fontSize: "20px", color: "red", fontWeight: "600",
-
+    fontSize: "18px", color: "red", fontWeight: "400",
+    "& li": {
+      marginTop: 5
+    },
     "@media screen and (max-width: 768px)": {
-
       fontSize: "12px !important",
       marginBottom: "4px"
     },

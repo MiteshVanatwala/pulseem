@@ -24,11 +24,12 @@ import * as XLSX from 'xlsx';
 import Title from '../../../components/Wizard/Title'
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
-  sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, getSMSRequestOTP, getSMSConfirmOTP, smsCombinedGroup, saveManualClients,
+  sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, smsCombinedGroup, saveManualClients,
   getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getGroupsBySubAccountId
 } from "../../../redux/reducers/smsSlice";
 import Summary from "./smsSummary";
 import clsx from "clsx";
+import OTP from './OTP';
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -215,10 +216,8 @@ const SmsSend = ({ classes, ...props }) => {
   const [timeType, setTimeType] = useState(-1);
   const [pulseType, setPulseType] = useState(-1);
   const [otpPassed, setOtpPassed] = useState(false);
-  const [OtpCounter, setOtpCounter] = useState(false);
-  const [otpMsgs, setotpMsgs] = useState("Required Field");
-  const [otpValue, setotpValue] = useState(null);
   const [groupNameExist, setGroupNameExist] = useState(false);
+  const [otpType, setOTPType] = useState(null);
   //#endregion
   // const [smsCampaignSettings, setSmsCampaignSettings] = useState({
   //   FutureDateTime: null,
@@ -400,7 +399,7 @@ const SmsSend = ({ classes, ...props }) => {
   useEffect(() => {
     setOtpPassed(OTPPassed);
     if (OTPPassed === false) {
-      setDialogType({ type: "otpVerification" });
+      setOTPType('otpVerification');
     }
   }, [OTPPassed])
 
@@ -434,191 +433,6 @@ const SmsSend = ({ classes, ...props }) => {
   }
 
   //#region OTP
-  const otpProps = {
-    maxLength: "5"
-  }
-  const handleVerifyOTP = async () => {
-    setLoader(true);
-    setDialogType(null);
-
-    let payload = {
-      "Cellphone": dataSaved.fromNumber,
-    }
-    let r = await dispatch(getSMSRequestOTP(payload))
-    setLoader(false);
-    setDialogType({ type: 'otpCode' });
-  }
-  const submitOtp = async () => {
-    let payload =
-    {
-      "Cellphone": dataSaved.fromNumber,
-      "Code": otpValue,
-    }
-    if (otpValidationscheck()) {
-      let r = await dispatch(getSMSConfirmOTP(payload))
-      handleOtpResult(r.payload.Status)
-    }
-  }
-  const handleOtpChnage = (e) => {
-    setotpValue(e.target.value);
-    setOtpCounter(false);
-    setotpMsgs("Required field")
-  }
-  const otpValidationscheck = () => {
-    if (otpValue === "") {
-      setOtpCounter(true);
-      return false;
-    }
-    return true;
-  };
-  const OTPVerificationDialog = () => {
-    return {
-      title: t('sms.verificationOtp'),
-      showDivider: true,
-      icon: (
-        <div className={classes.dialogIconContent}>
-          {'\uE11B'}
-        </div>
-      ),
-      content: (
-        <Box className={classes.flexColCenter}>
-          <Typography className={classes.fontSmsRegulations}>
-            {t("sms.OtpRegulations")}
-          </Typography>
-          <Typography className={classes.fontSmsRegulations}>{t("sms.regulationSecondLine")} <strong>{t("sms.oneTime")}</strong> {t("sms.regulationThirdLine")}</Typography>
-          <TextField
-            id="outlined-basic"
-            type="text"
-            className={classes.OtpPhoneNumberInput}
-            value={dataSaved.fromNumber}
-            disabled
-          />
-          <Button
-            variant='contained'
-            size='small'
-            className={clsx(
-              classes.dialogButton,
-              classes.dialogConfirmButton
-            )} style={{ whiteSpace: 'nowrap', width: 'auto' }} onClick={() => { handleVerifyOTP() }}>{t("sms.sendVerificationCode")}</Button>
-          <Typography className={classes.otpContactUs}>{t("sms.otpContactUs")}</Typography>
-          <Typography style={{ fontSize: "14px" }}>{t("sms.helplineSMS")}</Typography>
-        </Box>
-      ),
-      showDefaultButtons: false,
-      onClose: () => { setDialogType(null) }
-    }
-  }
-  const OTPCodeDialog = () => {
-    return {
-      title: t('sms.weHaveSentOtp'),
-      showDivider: true,
-      icon: (
-        <div className={classes.dialogIconContent}>
-          {'\uE11B'}
-        </div>
-      ),
-      content: (
-        <Box className={classes.flexColCenter}>
-          <Box className={clsx(classes.verificationBodySMS, classes.txtCenter)}>
-            <Typography className={classes.fontSmsRegulations}>
-              {t("sms.OtpSentSuccessLine1")} <strong>{dataSaved.fromNumber}</strong>
-            </Typography>
-            <Typography className={classes.fontSmsRegulations}>{t("sms.OtpSentSuccessLine2")}</Typography>
-            <TextField
-              id="outlined-basic"
-              type="text"
-              className={OtpCounter ? clsx(classes.OtpPhoneNumberConfirm, classes.error) : clsx(classes.OtpPhoneNumberConfirmSuccess, classes.success)}
-              placeholder={t("sms.typeOtpPlaceholder")}
-              onChange={(e) => { handleOtpChnage(e) }}
-              inputProps={otpProps}
-            />
-            {OtpCounter ? <Typography style={{ marginBottom: "30px", color: "red" }}>{otpMsgs}</Typography> : null}
-            <Button
-              variant='contained'
-              size='small'
-              className={clsx(
-                classes.dialogButton,
-                classes.dialogConfirmBlueButton
-              )} style={{ width: "250px" }} onClick={() => { submitOtp() }}>{t("sms.confirmOtp")}</Button>
-            <Box style={{ display: "flex", marginTop: "20px" }}>
-              <Typography className={classes.fontSmsRegulations}>{t("sms.didntReceivedOtp")} </Typography>
-              <Typography style={{ textDecoration: "underline", marginInlineStart: "4px" }} className={classes.fontSmsRegulations} onClick={() => { handleVerifyOTP() }}>{t("sms.sendAgainOtp")}</Typography>
-            </Box>
-          </Box>
-        </Box>
-      ),
-      showDefaultButtons: false,
-      onClose: () => { setDialogType(null) },
-      onConfirm: () => { handleVerifyOTP() }
-    }
-  }
-  const OTPSuccess = () => {
-    return {
-      title: t('sms.otpNumberValidatedTitle'),
-      showDivider: true,
-      icon: (
-        <div className={classes.dialogIconContent}>
-          {'\uE11B'}
-        </div>
-      ),
-      content: (
-        <Box className={classes.flexColCenter} style={{ paddingBottom: 10 }}>
-          <img src={Gif} style={{ width: "150px", height: "150px" }} />
-          <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
-            {t("sms.otpNumberValidatedDescription")}
-          </p>
-          <Button
-            variant='contained'
-            size='large'
-            className={clsx(
-              classes.dialogButton,
-              classes.dialogConfirmButton
-            )}
-            onClick={() => { setOtpPassed(true); setDialogType(null) }}>
-            {t('common.Ok')}
-          </Button>
-        </Box>
-      ),
-      showDefaultButtons: false,
-      onClose: () => { setOtpPassed(true); setDialogType(null) },
-      onConfirm: () => { setOtpPassed(true); setDialogType(null) }
-    }
-  }
-  const handleOtpResult = async (otpSendResult) => {
-    switch (otpSendResult) {
-      case 1: {// Request
-        break;
-      }
-      case 2: {// Success
-        setDialogType({ type: 'otpSuccess' });
-        break;
-      }
-      case 3: {// Not_Authirized
-      }
-      case 4: {// Failed
-        setOtpCounter(true);
-        setotpMsgs("Session Expired , please send again");
-        break;
-      }
-      case 5: {// NotMatch
-        setOtpCounter(true);
-        setotpMsgs("Incorrect code, try again or click on Send again");
-        break;
-      }
-      case 6: {//  CellphoneNotProvided
-        setOtpCounter(true);
-        setotpMsgs("Cellphone not correct , please try again later");
-
-        break;
-      }
-      case 7: {// CodeNotProvided
-        setOtpCounter(true);
-        setotpMsgs("Required field");
-        break;
-      }
-
-    }
-  }
   const alertDialog = () => {
     return {
       title: t('mainReport.pleaseNote'),
@@ -1424,7 +1238,7 @@ const SmsSend = ({ classes, ...props }) => {
                 }}
               >
                 <select
-                  placeholder="Select"
+                  placeholder={t("common.select")}
                   style={{
                     border: "1px solid #818181",
                     backgroundColor: "white",
@@ -1438,7 +1252,7 @@ const SmsSend = ({ classes, ...props }) => {
                   onChange={(e) => { handleSelectChange(e) }}
                   value={sendType === "3" ? spectialDateFieldID : "0"}
                 >
-                  <option value="0" >Select</option>
+                  <option value="0">{t("common.select")}</option>
                   <option value="1">{t("mainReport.birthday")}</option>
                   <option value="2">{t("mainReport.creationDay")}</option>
                   {extraData && Object.keys(extraData).map((item, i) => {
@@ -1596,7 +1410,7 @@ const SmsSend = ({ classes, ...props }) => {
 
   const onSaveSettings = async (toggle, exit) => {
     if (otpPassed === false) {
-      setDialogType({ type: "otpVerification" });
+      setOTPType('otpVerification');
       return;
     }
     if (selectedGroups.length <= 0) {
@@ -1988,8 +1802,8 @@ const SmsSend = ({ classes, ...props }) => {
           </span>
         </div>
         <div>
-          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
-            <li>Must select Sending Type - Required field</li>
+          <ul className={classes.fieldsRequire}>
+            <li>{t("sms.selectSendingType")} - {t("common.requiredField")}</li>
           </ul>
         </div>
         <div
@@ -2030,10 +1844,10 @@ const SmsSend = ({ classes, ...props }) => {
           </span>
         </div>
         <div>
-          <ul style={{ fontSize: "20px", color: "red", fontWeight: "600" }} className={classes.fieldsRequire}>
-            {spectialDateFieldID == "0" ? <li>Must select Special Date Type</li> : null}
-            {daysBeforeAfter == "" ? <li>Must insert Number of Days</li> : null}
-            {sendTime == null ? <li>Must select Sending Time</li> : null}
+          <ul className={classes.fieldsRequire}>
+            {spectialDateFieldID == "0" ? <li>{t("sms.selectSpecialField")}</li> : null}
+            {daysBeforeAfter == "" ? <li>{t("sms.typeDays")}</li> : null}
+            {sendTime == null ? <li>{t("sms.selectSendingTime")}</li> : null}
 
           </ul>
         </div>
@@ -2714,9 +2528,6 @@ const SmsSend = ({ classes, ...props }) => {
       manualUpload: manualUploadDialog(),
       filterRecipients: filterRecipientsDialog(),
       alert: alertDialog(),
-      otpVerification: OTPVerificationDialog(),
-      otpCode: OTPCodeDialog(),
-      otpSuccess: OTPSuccess(),
       caution: cautionDialog(),
       pulses: pulseDialog(),
       delete: deleteDialog(),
@@ -2852,6 +2663,7 @@ const SmsSend = ({ classes, ...props }) => {
           {t("sms.filtersSave")}
         </Alert>
       </Snackbar>
+      {otpType && <OTP classes={classes} campaignNumber={dataSaved.fromNumber} otpType={otpType} />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );

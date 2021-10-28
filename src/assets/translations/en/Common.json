@@ -202,7 +202,6 @@
   "UnsubscribeRequsetPostParamsDesc": "define post parameters as retrieved in you server side",
   "UnsubscribeRequsetUrlDesc": "write ",
   "AddNewStaticParameter": "Add new static parameter",
-  "Choose": "Select",
   "LandingPagesRequestsUrlLeadsHistory": "history of crm urls you have used in other landing pages",
   "LandingPagesRequestsUrlLeadsHistoryTitle": "Add or edit remote systems for data transfer",
   "RequestUrl": "Request Url",
@@ -504,5 +503,6 @@
   "state": "State",
   "zip": "Zip Code",
   "minutes": "Minutes",
-  "hours": "Hours"
+  "hours": "Hours",
+  "requiredField": "Required Field"
 }
