@@ -248,11 +248,12 @@ const Groups = ({ classes,
                 windowSize === 'xs' && <Grid item xs={12}>
                     <FormControl className={classes.margin, classes.searchInput}>
                         <Input
+                            autoComplete='off'
                             onChange={handleSearch}
                             placeholder={t('notifications.buttons.search')}
                             id="searchGroup"
                             startAdornment={
-                                <InputAdornment position="start">
+                                <InputAdornment position="start" autocomplete="off">
                                     <BsSearch />
                                 </InputAdornment>
                             }
@@ -269,11 +270,12 @@ const Groups = ({ classes,
             <Grid item xs={12} className={clsx(classes.flex, classes.groupFilterRow)}>
                 {windowSize !== 'xs' && <FormControl className={classes.margin, classes.searchInput}>
                     <Input
+                        autoComplete='off'
                         onChange={handleSearch}
                         placeholder={t('notifications.buttons.search')}
                         id="searchGroup"
                         startAdornment={
-                            <InputAdornment position="start">
+                            <InputAdornment position="start" >
                                 <BsSearch />
                             </InputAdornment>
                         }

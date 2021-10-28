@@ -558,6 +558,7 @@
   "recipientBlocked": "Recipient cellphone is blocked for SMS messages",
   "noCredits": "Account has no credits",
   "fillRandomAmount": "Please fill Random Amount",
+  "FillDay": "Please fill number of days",
   "otpNotMatch": "Incorrect code, try again or click on Send again",
   "otpFailed": "Validation failed!",
   "codeNotProvided": "Please fill PIN Code (4 digits)",

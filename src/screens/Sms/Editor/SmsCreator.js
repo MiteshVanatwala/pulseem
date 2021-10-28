@@ -329,11 +329,22 @@ const SmsCreator = ({ classes, ...props }) => {
   const initFromNumber = async () => {
     const smsCampaign = await getSavedData();
     const commonFeatures = await dispatch(getCommonFeatures());
-    const fromNumber = smsCampaign && smsCampaign.FromNumber ? smsCampaign.FromNumber : commonFeatures.payload.DefaultCellNumber;
+    let fromNumber = -1;
 
-    setcampaignNumber(fromNumber);
+    if (smsCampaign && smsCampaign.FromNumber) {
+      fromNumber = smsCampaign.FromNumber;
+    }
+    else if (commonFeatures.payload.DefaultCellNumber !== "") {
+      fromNumber = commonFeatures.payload.DefaultCellNumber;
+    }
 
     const virtualNumber = await dispatch(getSMSVirtualNumber(fromNumber));
+
+    if (fromNumber === -1) {
+      fromNumber = virtualNumber.payload.Number;
+    }
+
+    setcampaignNumber(fromNumber);
     setStaticNumber(virtualNumber.payload.Number);
     setremovalNumber(virtualNumber.payload.RemovalKey);
     setstoredValue(commonFeatures.payload.DefaultCellNumber);
@@ -879,7 +890,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     </select>
                   </Tooltip>
                 </Box>
-                <Box className={classes.addDiv} tabindex="0" onBlur={() => { seteditmenuClick(false) }}>
+                <Box className={classes.addDiv} tabIndex="0" onBlur={() => { seteditmenuClick(false) }}>
                   <Typography
                     className={classes.addButtons}
                     onClick={() => {

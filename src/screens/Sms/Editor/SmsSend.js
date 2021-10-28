@@ -5,8 +5,7 @@ import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import moment from "moment";
-import { MdAutorenew } from "react-icons/md";
-import { FaRegCalendarAlt } from "react-icons/fa";
+import { FaRegCalendarAlt, FaFilter } from "react-icons/fa";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import PropTypes from "prop-types";
@@ -1997,7 +1996,7 @@ const SmsSend = ({ classes, ...props }) => {
       title: t('mainReport.recipientFilter'),
       showDivider: true,
       icon: (
-        <MdAutorenew style={{ fontSize: 30, color: "#fff" }} />
+        <FaFilter style={{ fontSize: 30, color: "#fff" }} />
       ),
       content: (
         <Box>
@@ -2675,7 +2674,7 @@ const SmsSend = ({ classes, ...props }) => {
         }}
       >
         <Alert severity="warning" className={severe.customcolor}>
-          Please Add No of Days
+          {t("sms.FillDay")}
         </Alert>
       </Snackbar>
 

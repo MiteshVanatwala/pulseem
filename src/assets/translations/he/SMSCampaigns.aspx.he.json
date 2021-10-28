@@ -551,6 +551,7 @@
   "recipientBlocked": "מספר הלקוח חסום להודעות sms",
   "noCredits": "אין מספיק קרדיטים לשליחה",
   "fillRandomAmount": "יש למלא ערך בכמות נמענים אקראית",
+  "FillDay": "יש למלא שדה יום",
   "otpNotMatch": "הקוד שגוי, נסו שוב או בחרו בשליחה חוזרת",
   "otpFailed": "וידוא נכשל!",
   "codeNotProvided": "יש למלא קוד בעל 4 ספרות",
