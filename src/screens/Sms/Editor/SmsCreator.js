@@ -422,7 +422,7 @@ const SmsCreator = ({ classes, ...props }) => {
     var isNumber = /^[0-9]*$/;
     var english = /^[A-Za-z0-9]*$/;
     var reg = "/[^\x00-\xFF]/g";
-    if (!isNumber.test(e.target.value) && e.target.value.length >= 10) {
+    if (!isNumber.test(e.target.value) && e.target.value.length >= 13) {
       e.target.value = e.target.value.substring(0, 10);
     }
     if (!english.test(e.target.value)) {
