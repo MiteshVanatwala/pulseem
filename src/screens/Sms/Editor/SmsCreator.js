@@ -294,12 +294,14 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onApiCall = async () => {
+    setLoader(true);
+    setsummary(false);
     const groupIds = selectedGroup.map((g) => { return g.GroupID });
     const FinalPayloadData = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, IsTestCampaign: isTestCampaign, IsTest: true, IsLinksStatistics: isLinksStatistics }
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
-    setsummary(false);
     setToastMessage(toastMessages.QUICK_SEND_SUCCESSS);
+    setLoader(false);
   };
 
   useEffect(async () => {
