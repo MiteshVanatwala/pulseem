@@ -108,124 +108,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   noMargin: {
     margin: 0
   },
-  dialogIconContainer: {
-    paddingTop: 60,
-    paddingBottom: 15,
-    textAlign: "center",
-    color: "#fff",
-    borderRadius: 200,
-    backgroundColor: "#0371ad",
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    top: -50,
-  },
-  dialogIconContainerRTL: {
-    right: -50,
-    paddingInlineEnd: 60,
-    paddingInlineStart: 15,
-  },
-  dialogIconContainerLTR: {
-    left: -50,
-    paddingInlineEnd: 15,
-    paddingInlineStart: 60,
-  },
-  dialogExitButton: {
-    width: 25,
-    height: 25,
-    textAlign: "center",
-    color: "#fff",
-    borderRadius: 25,
-    fontWeight: "700",
-    backgroundColor: "#0371ad",
-    position: "absolute",
-    top: "0.5rem",
-    cursor: "pointer",
-  },
-  dialogExitButtonRTL: {
-    left: "0.5rem",
-  },
-  dialogExitButtonLTR: {
-    right: "0.5rem",
-  },
-  dialogContent: {
-    display: "flex",
-    flexDirection: "column",
-    border: "3px solid #0371ad",
-    borderRadius: 5,
-    margin: "1rem",
-    padding: "1rem",
-    minWidth: dialogWidth[windowSize],
-    "& $notification": {
-      "& $iconWrapper": {
-        margin: iconWrapperMargin[windowSize],
-        minWidth: iconWrapperMinWidth[windowSize],
-      },
-      "& b, & textarea": {
-        fontSize: notificationTitleFontSize[windowSize],
-      },
-    },
-    '& $dialogChildren': {
-      maxHeight: windowSize === 'xs' || windowSize === 'sm' ? '100vh' : 'calc(65vh)',
-      "@media screen and (max-width: 375px)": {
-        '& $phoneNumber': {
-          top: 58,
-          fontSize: 12
-        },
-        '& $wrapChat': {
-          top: 75,
-          right: 26,
-          width: 180,
-          height: 145
-        }
-      }
-    },
-    '& $mobileBG': {
-      '& $iconWrapper': {
-        minWidth: windowSize === 'xs' ? 0 : 100
-      }
-    }
-  },
-  dialogButton: {
-    fontFamily: "OpenSansHebrew",
-    color: "#fff",
-    textTransform: "capitalize",
-    width: 120,
-    fontSize: 18,
-    borderRadius: 50,
-  },
-  dialogConfirmButton: {
-    backgroundImage: "linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)",
-    backgroundRepeat: "repeat-x",
-    border: "1px solid #345233",
-    borderTop: "0px solid #345233",
-    boxShadow: "0px 3px 3px #345233",
-    maxWidth: 250,
-  },
-  dialogCancelButton: {
-    background: "#c9302c",
-    backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
-    border: "1px solid darkred",
-    borderTop: "0px solid darkred",
-    boxShadow: "0px 3px 3px darkred",
-    maxWidth: 150,
-  },
-  dialogConfirmBlueButton: {
-    backgroundImage: "linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)",
-    maxWidth: 150,
-  },
-  dialogButtonsContainer: {
-    flex: 1,
-    alignContent: "center",
-    justifyContent: "center",
-    "@media screen and (max-width: 375px)": {
-      '& .MuiGrid-item': {
-        padding: '5px !important',
-        marginTop: 15,
-        marginBottom: 15
-      }
-    }
-  },
   wizardFlex: {
     flex: 1,
     alignContent: "flex-end",
@@ -1188,6 +1070,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       margin: '0 auto',
       fontSize: 16
     },
+    "@media screen and (max-width: 560px)": {
+      top: 100,
+      fontSize: 14
+    },
+    "@media screen and (max-width: 414px)": {
+      top: 90,
+      fontSize: 14
+    },
+    "@media screen and (max-width: 375px)": {
+      top: 80,
+      fontSize: 12
+    },
     "@media screen and (max-width: 360px)": {
       top: 78,
       fontSize: 12
@@ -1326,25 +1220,32 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     top: "115px",
     width: 290,
     height: 240,
-    right: 'auto',
-    left: 45,
+    left: 'auto',
+    right: 45,
     wordBreak: 'break-all',
     color: "#fff",
     borderRadius: "12px",
     overflowY: "auto",
     padding: 10,
+    "@media screen and (max-width: 1430px)": {
+      right: 50,
+    },
     "@media screen and (max-width: 1366px)": {
-      // left: 45,
       width: 270
     },
+    "@media screen and (max-width: 1260px)": {
+      top: 125,
+      right: 50,
+    },
     "@media screen and (max-width: 768px)": {
-      // right: 45,
+      right: 45,
       width: 250,
       height: 230
     },
+
     "@media screen and (max-width: 414px)": {
-      top: 125,
-      right: 38,
+      top: 120,
+      right: 42,
       width: 260,
       height: 205
     },
@@ -2086,4 +1987,146 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       maxWidth: 'calc(100% - 20px)'
     }
   },
+  //#region Dialog
+  dialogIconContainer: {
+    paddingTop: 60,
+    paddingBottom: 15,
+    textAlign: "center",
+    color: "#fff",
+    borderRadius: 200,
+    backgroundColor: "#0371ad",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    top: -50,
+  },
+  dialogIconContainerRTL: {
+    right: -50,
+    paddingInlineEnd: 60,
+    paddingInlineStart: 15,
+  },
+  dialogIconContainerLTR: {
+    left: -50,
+    paddingInlineEnd: 15,
+    paddingInlineStart: 60,
+  },
+  dialogExitButton: {
+    width: 25,
+    height: 25,
+    textAlign: "center",
+    color: "#fff",
+    borderRadius: 25,
+    fontWeight: "700",
+    backgroundColor: "#0371ad",
+    position: "absolute",
+    top: "0.5rem",
+    cursor: "pointer",
+  },
+  dialogExitButtonRTL: {
+    left: "0.5rem",
+  },
+  dialogExitButtonLTR: {
+    right: "0.5rem",
+  },
+  dialogContent: {
+    display: "flex",
+    flexDirection: "column",
+    border: "3px solid #0371ad",
+    borderRadius: 5,
+    margin: "1rem",
+    padding: "1rem",
+    minWidth: dialogWidth[windowSize],
+    "& $notification": {
+      "& $iconWrapper": {
+        margin: iconWrapperMargin[windowSize],
+        minWidth: iconWrapperMinWidth[windowSize],
+      },
+      "& b, & textarea": {
+        fontSize: notificationTitleFontSize[windowSize],
+      },
+    },
+    '& $dialogChildren': {
+      maxHeight: windowSize === 'xs' || windowSize === 'sm' ? '100vh' : 'calc(65vh)',
+      "& $phoneNumber": {
+        "@media screen and (max-width: 560px)": {
+          top: '70px !important',
+          fontSize: 14
+        },
+        "@media screen and (max-width: 414px)": {
+          top: '65px !important',
+          fontSize: 12,
+        },
+        "@media screen and (max-width: 375px)": {
+          '& $phoneNumber': {
+            top: 58,
+            fontSize: 12,
+          }
+        }
+      },
+      '& $wrapChat': {
+        "@media screen and (max-width: 560px)": {
+          top: 110
+        },
+        "@media screen and (max-width: 414px)": {
+          top: '90px !important',
+          right: 30,
+          width: 190,
+          height: 135
+        },
+        "@media screen and (max-width: 375px)": {
+          top: 75,
+          right: 26,
+          width: 180,
+          height: 145
+
+        },
+      }
+    },
+    '& $mobileBG': {
+      '& $iconWrapper': {
+        minWidth: windowSize === 'xs' ? 0 : 100
+      }
+    }
+  },
+  dialogButton: {
+    fontFamily: "OpenSansHebrew",
+    color: "#fff",
+    textTransform: "capitalize",
+    width: 120,
+    fontSize: 18,
+    borderRadius: 50,
+  },
+  dialogConfirmButton: {
+    backgroundImage: "linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)",
+    backgroundRepeat: "repeat-x",
+    border: "1px solid #345233",
+    borderTop: "0px solid #345233",
+    boxShadow: "0px 3px 3px #345233",
+    maxWidth: 250,
+  },
+  dialogCancelButton: {
+    background: "#c9302c",
+    backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
+    border: "1px solid darkred",
+    borderTop: "0px solid darkred",
+    boxShadow: "0px 3px 3px darkred",
+    maxWidth: 150,
+  },
+  dialogConfirmBlueButton: {
+    backgroundImage: "linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)",
+    maxWidth: 150,
+  },
+  dialogButtonsContainer: {
+    flex: 1,
+    alignContent: "center",
+    justifyContent: "center",
+    "@media screen and (max-width: 375px)": {
+      '& .MuiGrid-item': {
+        padding: '5px !important',
+        marginTop: 15,
+        marginBottom: 15
+      }
+    }
+  },
+  //#endregion
 });

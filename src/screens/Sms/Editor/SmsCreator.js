@@ -1791,7 +1791,7 @@ const SmsCreator = ({ classes, ...props }) => {
         <SwitchOldVersion />
       </Grid>
       <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}>
-        <Grid item sm={12} md={8} lg={8}>
+        <Grid item sm={12} md={12} lg={8}>
           <Title title={t("mainReport.smsCampaign")}
             classes={classes}
             tooltip={t("mainReport.toolTip1")}

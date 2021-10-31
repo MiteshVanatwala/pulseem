@@ -1862,7 +1862,7 @@ const SmsSend = ({ classes, ...props }) => {
               classes.actionButton,
               classes.actionButtonLightBlue,
               classes.backButton,
-              isRTL && windowSize !== 'xs' ? classes.marginLeftAuto : windowSize !== 'xs' ? classes.marginRightAuto : null
+              isRTL && windowSize !== 'xs' && windowSize !== 'sm' ? classes.marginLeftAuto : windowSize !== 'xs' && windowSize !== 'sm' ? classes.marginRightAuto : null
             )}
             color="primary"
             style={{ margin: '8px' }}
