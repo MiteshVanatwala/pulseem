@@ -335,11 +335,11 @@
   "logPageHeaderResource1": {
     "Text": "Newsletters Management"
   },
-  "Page": {
-    "Title": "Campaigns Management"
-  },
   "PageResource1": {
     "Title": "Campaigns Management | Pulseem System"
+  },
+  "Page": {
+    "Title": "Campaigns Management"
   },
   "txtCampaignNameResource1": {
     "Text": "",

@@ -1,26 +1,47 @@
 import React, { useEffect } from 'react'
 import { TopAppBar,/*Drawer*/ } from '../components/core'
 import { Container } from '@material-ui/core'
-import clsx from 'clsx';
-import { Helmet } from 'react-helmet';
+// import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { getRoutes } from '../helpers/routes';
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import clsx from 'clsx';
 
 const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false }) => {
-  const {t}=useTranslation();
+  const { t } = useTranslation();
   let route, title;
 
   if (subPage) {
-    route = getRoutes(t).filter(route=>route.key===currentPage);
-    route = route[0].options.filter(opt=>opt.key===subPage);
-    title = route&&route[0].title || '';
+    route = getRoutes(t).filter(route => route.key === currentPage);
+    route = route[0].options.filter(opt => opt.key === subPage);
+    title = route && route[0].title || '';
   } else {
-    route = getRoutes(t).filter(route=>route.key===currentPage);
-    title = route&&route[0]&&route[0].pageTitle || route&&route[0]&&route[0].title || '';
-    
+    route = getRoutes(t).filter(route => route.key === currentPage);
+    title = route && route[0] && route[0].pageTitle || route&&route[0]&&route[0].title || '';
   }
 
-  title = title? `${title} | ${t('master.pulseemSystem')}`: t('master.pulseemSystem');
+  title = title ? `${title} | ${t('master.pulseemSystem')}` : t('master.pulseemSystem');
+
+  useEffect(() => {
+    const liveChat = document.createElement("script");
+    liveChat.type = 'text/javascript';
+    liveChat.async = true;
+    liveChat.innerHTML = `
+        var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
+        (function () {
+            var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/59c8caaa4854b82732ff1f7d/default';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();`;
+    document.body.append(liveChat)
+
+    return () => {
+      document.body.removeChild(liveChat);
+    }
+  }, [])
 
   useEffect(()=>{
       const liveChat = document.createElement("script");
@@ -44,7 +65,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
   },[])
 
   return (
-    <div>
+    <HelmetProvider>
       <Helmet>
         <title>{title}</title>
       </Helmet>
@@ -52,13 +73,14 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
         classes={classes}
         currentPage={currentPage}
       />
+      {/*<Drawer classes={classes} />*/}
       <Container
         maxWidth='xl'
         className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null)}
       >
         {children}
       </Container>
-    </div>
+    </HelmetProvider>
   )
 }
 

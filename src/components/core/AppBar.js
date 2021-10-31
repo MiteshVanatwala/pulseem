@@ -69,7 +69,7 @@ const AppBarItem = ({
             currentStyle,
             textStyle,
             { [classes.chosenText]: chosen })}>
-          {showIcon ? item.iconUnicode : item && item.title || ''}
+          {showIcon ? (item.iconUnicode || item.icon) : item && item.title || ''}
         </IconButton>
 
         {(chosen || open) && <ArrowDropUp className={classes.appBarItemArrow} />}
@@ -214,17 +214,17 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           classes={classes}
           item={route}
           chosen={route.key === currentPage}
-          showIcon={windowSize === 'sm' || windowSize === 'md'}
+          showIcon={windowSize === 'sm' || windowSize === 'md' || route.key === 'homepage'}
           onInnerClick={navigate}
         />
       ))}
-      {windowSize === 'xl' && <>
+      {windowSize==='xl'|| windowSize === 'lg' ? <>
         <Box className={classes.appBerSpace} />
         <Typography
           className={classes.appBarUsername}>
           {companyName}
         </Typography>
-      </>}
+      </> : null}
       <Box className={classes.appBarAfterTollbarContainer}>
         <AppBarItem
           classes={classes}
@@ -340,7 +340,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     )
   }
 
-  const renderAppBar = windowSize === 'xs' ? renderPhoneAppBar : renderRegularAppBar
+  const renderAppBar = windowSize === 'xs' || windowSize === 'sm' ? renderPhoneAppBar : renderRegularAppBar
 
   const question = <SvgIcon style={{ marginBottom: 5, marginInlineEnd: 5 }}>
     <QuestionIcon />

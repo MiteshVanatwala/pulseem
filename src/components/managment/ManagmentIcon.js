@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React,{useRef} from 'react';
 import clsx from 'clsx';
 import {Typography,Button,Box} from '@material-ui/core'
 import {CopyToClipboard} from 'react-copy-to-clipboard';
@@ -6,8 +6,10 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 export const ManagmentIcon=({
   classes,
   icon,
+  uIcon,
   lable='',
   rootClass='',
+  iconClass='',
   textClass='',
   disable=false,
   hide=false,
@@ -16,7 +18,7 @@ export const ManagmentIcon=({
   type='',
   text='',
   onClick=() => null}) => {
-  const buttonRef = useRef();
+  const buttonRef=useRef();
 
   if(remove)
     return null
@@ -27,7 +29,7 @@ export const ManagmentIcon=({
         ref={buttonRef}
         disabled={!!disable||!!hide}
         size='small'
-        onClick={()=>onClick(buttonRef)}
+        onClick={() => onClick(buttonRef)}
         className={clsx({
           [classes.managmentIconHide]: hide
         })}>
@@ -38,16 +40,19 @@ export const ManagmentIcon=({
             classes.managmentIconContainer,
             rootClass
           )}>
-          <img
-            src={icon}
-            alt='Icon'
-            className={clsx(
-              classes.managmentIcon,{
-              [classes.managmentIconDisable]: disable
-            })} />
+          {!!uIcon?
+            uIcon
+            :<img
+              src={icon}
+              alt='Icon'
+              className={clsx(
+                iconClass,
+                classes.managmentIcon,{
+                [classes.managmentIconDisable]: disable
+              })} />}
           <Typography className={clsx(
             classes.managmentIconText,
-            textClass, disable&&classes.colorGray
+            textClass,disable&&classes.colorGray
           )}>
             {lable}
           </Typography>

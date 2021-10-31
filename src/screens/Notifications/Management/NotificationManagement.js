@@ -3,8 +3,7 @@ import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
-  Grid, Button, TextField, InputAdornment, Box, FormControlLabel, Checkbox,
-  RadioGroup, Radio, FormControl, Tooltip
+  Grid, Button, TextField, InputAdornment, Box, FormControlLabel, Checkbox, RadioGroup, Radio, FormControl, Tooltip
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
@@ -45,7 +44,7 @@ const NotificationManagement = ({ classes }) => {
   const [copyStatus, setCopyStatus] = useState(false);
   const [scriptPath, setScriptPath] = useState(0);
   const [apiKey, setApiKey] = useState(0);
-  const rowsOptions = [6, 12, 18]
+  const rowsOptions = [6, 10, 20, 50]
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
   const [searchResults, setSearchResults] = useState(null)
@@ -183,16 +182,11 @@ const NotificationManagement = ({ classes }) => {
     setShowScriptDialog(false)
   }
 
-  useEffect(async () => {
-    if (hideScriptDialog === false) {
-      await dispatch(getNotificationPublicKey());
-    }
-  }, [hideScriptDialog])
-
   const renderImplementDialog = () => {
     if (hideScriptDialog) {
       return;
     }
+
     const dialog = renderImplement();
     return (
       <Dialog
@@ -522,7 +516,7 @@ const NotificationManagement = ({ classes }) => {
       <Grid
         container
         direction='row'
-        justify={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
+        justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
             className={icon.disable && classes.disabledCursor}
@@ -1076,7 +1070,7 @@ const NotificationManagement = ({ classes }) => {
     (function(d, t) {
         var g = d.createElement(t),
         s = d.getElementsByTagName(t)[0];
-        g.src="#scriptSource#scripts/application.js?d=" + Math.floor(Date.now() / 1000);
+        g.src="#scriptSource#?d=" + Math.floor(Date.now() / 1000);
         g.setAttribute("key", #key#);
         #scriptpath#
         s.parentNode.insertBefore(g, s);

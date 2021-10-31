@@ -8,11 +8,9 @@ import {
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
-import {
-  getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups,
-  getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups
-}
-  from '../../../redux/reducers/notificationSlice';
+import { getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups, 
+         getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } 
+from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
@@ -221,14 +219,14 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const callbackSelectAll = () => {
-    if (!allGroupsSelected || selectedGroups.length < groupList.length) {
+    if (!allGroupsSelected) {
       setSelected(groupList);
-      setAllGroupsSelected(true);
     }
     else {
       setSelected([]);
-      setAllGroupsSelected(false);
     }
+    setAllGroupsSelected(!allGroupsSelected);
+
   }
   const callbackUpdateGroups = (groups) => {
     setSelected(groups);
@@ -238,7 +236,7 @@ const NotificationEditor = ({ props, classes }) => {
     setTimePickerOpen(!timePickerOpen);
   }
   const handleTimePicker = (value) => {
-    var date = moment(!moment(sendDate).isValid() ? value : sendDate);
+    var date = moment(sendDate);
     var time = moment(value, 'HH:mm');
     date.set({
       hour: time.get('hour'),
@@ -248,7 +246,7 @@ const NotificationEditor = ({ props, classes }) => {
     handleFromDate(date);
     setTimePickerOpen(false);
   }
-
+  
   /* #endregion */
   /* #region  Data Handlers */
   const handlePublicKey = async () => {
@@ -342,9 +340,6 @@ const NotificationEditor = ({ props, classes }) => {
         setToastMessage(toastMessages.ERROR);
       }
     }
-    else {
-      return false;
-    }
 
   }
   const insertNotificationForSend = async (e) => {
@@ -393,25 +388,21 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const getSummary = async (event) => {
     event.preventDefault();
-    saveSettings(true, true).then(async (res) => {
-      if (res !== false) {
-        const totalResonse = await dispatch(getUniqueClientsByGroups(selectedGroups.map((g) => { return g.Id; })));
-        const currentTotalRecipients = selectedGroups.reduce(function (a, b) {
-          return a + b['Members'];
-        }, 0);
-        setTotalRecipients(totalResonse.payload);
-        setDuplicatedRecipients(currentTotalRecipients - totalResonse.payload);
-        if (sendDate) {
-          const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
-          m.lang(isRTL ? "he" : "en");
-          setSummary({ groups: selectedGroups, sendType: sendType, sendDate: m.format("MMMM Do YYYY, hh:mm a") });
+    const totalResonse = await dispatch(getUniqueClientsByGroups(selectedGroups.map((g) => { return g.Id; })));
+    const currentTotalRecipients = selectedGroups.reduce(function (a, b) {
+      return a + b['Members'];
+    }, 0);
+    setTotalRecipients(totalResonse.payload);
+    setDuplicatedRecipients(currentTotalRecipients - totalResonse.payload);
+    if (sendDate) {
+      const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+      m.lang(isRTL ? "he" : "en");
+      setSummary({ groups: selectedGroups, sendType: sendType, sendDate: m.format("MMMM Do YYYY, hh:mm a") });
 
-        }
-        else {
-          setSummary({ groups: selectedGroups, sendType: sendType, sendDate: null });
-        }
-      }
-    });
+    }
+    else {
+      setSummary({ groups: selectedGroups, sendType: sendType, sendDate: null });
+    }
   }
   const handleSendConfirm = () => {
     window.location.href = "/react/Notifications";
@@ -763,7 +754,7 @@ const NotificationEditor = ({ props, classes }) => {
         <Grid
           container
           direction="row"
-          justify="flex-start"
+          justifyContent="flex-start"
           alignItems="center"
           spacing={2}
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
@@ -832,7 +823,7 @@ const NotificationEditor = ({ props, classes }) => {
         <Grid
           container
           direction="row"
-          justify="flex-start"
+          justifyContent="flex-start"
           alignItems="flex-start"
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
           <Grid item md={4} xs={12}>
@@ -899,7 +890,7 @@ const NotificationEditor = ({ props, classes }) => {
                     disableSearchBar={true}
                     disableSkinTonePicker={true}
                     pickerStyle={{ backgroundColor: '#fff', zIndex: '99999', textAlign: 'left' }}
-                    groupVisibility={{ recently_used: false, flags: false }} />}
+                    groupVisibility={{ recently_used: false }} />}
                 </div>
               </ClickAwayListener>
             </FormControl>
@@ -1000,18 +991,23 @@ const NotificationEditor = ({ props, classes }) => {
     return (
       <Grid container
         direction="row"
-        justify="flex-start"
+        justifyContent="flex-start"
         spacing={4}
         className={classes.wizardFlex}
       >
         <Grid item md={7} xs={12}>
           <h2 className={classes.sectionTitle}>{t('notifications.toWhomToSend')}</h2>
           <Groups classes={classes}
-            groupList={groupList}
+            list={groupList}
             selectedList={selectedGroups}
             callbackSelectedGroups={callbackSelectedGroups}
             callbackUpdateGroups={callbackUpdateGroups}
             callbackSelectAll={callbackSelectAll}
+            isNotifications={true}
+            showFilter={false}
+            isSms={false}
+            noSelectionText={t("notifications.noGroupsSelected")}
+            innerHeight={325}
           />
           <Box>
             <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>
@@ -1034,7 +1030,6 @@ const NotificationEditor = ({ props, classes }) => {
             <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
               <DateField
                 minDate={moment()}
-                disablePast={true}
                 classes={classes}
                 value={sendDate}
                 onChange={handleDatePicker}

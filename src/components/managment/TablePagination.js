@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {Typography,Grid,TextField,IconButton} from '@material-ui/core'
+import {Typography,Grid,TextField,IconButton, FormControl,Select,InputLabel} from '@material-ui/core'
 import {PageArrowIcon} from '../../assets/images/managment/index'
 
 import {useTranslation} from 'react-i18next'
@@ -13,8 +13,10 @@ export const TablePagination=({
   rowsPerPageOptions=[],
   rowsPerPage,
   onRowsPerPageChange=() => null,
-  onPageChange=() => null
+  onPageChange=() => null,
+  returnPageOne=true
 }) => {
+  console.log(`rowsperpage`, rowsPerPage)
   const {t}=useTranslation()
   const pages=Math.ceil(rows/rowsPerPage)
   const [innerPage,setPage]=useState('');
@@ -34,7 +36,9 @@ export const TablePagination=({
     const value=parseInt(event.target.value)
     if(value!==rowsPerPage) {
       onRowsPerPageChange(value)
-      onPageChange(1)
+      if (returnPageOne) {
+        onPageChange(1)
+      }
     }
   }
 
@@ -46,7 +50,7 @@ export const TablePagination=({
         </Typography>
         <TextField
           select
-          className={classes.tablePadingtonSelect}
+          className={classes.tablePaginationSelect}
           variant='standard'
           SelectProps={{
             native: true,
@@ -91,6 +95,7 @@ export const TablePagination=({
           value={isTyping? pageNum:page.toString()}
           onBlur={()=>setTyping(false)}
           onChange={handelPageChange}
+          onBlur={()=>setTyping(false)}
           variant='outlined'
           margin='none'
           size='small'
@@ -115,7 +120,7 @@ export const TablePagination=({
   return (
     <Grid
       container
-      justify='space-between'
+      justifyContent='space-between'
       className={classes.tablePadingtonGridContainer} >
       {renderRowNumbers()}
       {renderPageNumbers()}

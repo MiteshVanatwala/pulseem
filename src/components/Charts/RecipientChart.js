@@ -373,7 +373,7 @@ const RecipientChart = ({ classes, }) => {
         }
 
         return (
-            <Grid item container justify='space-evenly'>
+            <Grid item container justifyContent='space-evenly'>
                 {recipientsReport && totalRecipientsReport > 0 ? recipientsReport.map((report, index) => {
                     if (report.ReportSection === 2 && !Notifications.FeatureExist ||
                         report.ReportSection === 1 && !Sms.FeatureExist) {

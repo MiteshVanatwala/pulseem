@@ -7,7 +7,11 @@ import mms from './MmsCampaigns.aspx.json'
 import sms from './SMSCampaigns.aspx.json'
 import master from './Pulseem.master.json'
 import appBar from './AppBar.json'
+import report from './Reports.json'
+import mainReport from './MainReport.aspx.json'
 import dashboard from './Dashboard.json'
+import smsReport from './SMSReport.json'
+import emoji from './Emoji.json'
 
 export const en={
   automations,
@@ -19,5 +23,9 @@ export const en={
   sms,
   appBar,
   master,
-  dashboard
+  report,
+  mainReport,
+  dashboard,
+  smsReport,
+  emoji
 }
