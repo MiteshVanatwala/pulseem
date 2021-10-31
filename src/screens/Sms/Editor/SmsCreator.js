@@ -251,6 +251,7 @@ const SmsCreator = ({ classes, ...props }) => {
       case 0: {// SUCCESS
         setToastMessage(toastMessages.QUICK_SEND_SUCCESSS)
         setPhoneNumberCampaignId("");
+        break;
       }
       case 1: {// PROVISION
         setToastMessage(toastMessages.PROVISION)

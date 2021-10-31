@@ -536,7 +536,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         '& .MuiSelect-selectMenu': {
             color: '#1c82b2 !important',
             '&:focus': {
-                backgroundColor: '#fff'
+                // backgroundColor: '#fff'
             }
         },
         '& .MuiSelect-icon': {

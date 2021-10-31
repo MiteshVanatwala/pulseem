@@ -111,7 +111,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   wizardFlex: {
     flex: 1,
     alignContent: "flex-end",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   dialogTitle: {
     fontSize: "1.8rem",
@@ -2139,9 +2139,4 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   //#endregion
-  // ".MuiSelect-selectMenu": {
-  //   "&:focus": {
-  //     backgroundColor: 'unset'
-  //   }
-  // }
 });

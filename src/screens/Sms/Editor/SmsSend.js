@@ -1395,6 +1395,7 @@ const SmsSend = ({ classes, ...props }) => {
     if (sendType === "2") {
       if (sendDate === null) {
         setsendType2Dialog(true);
+        setLoader(false);
         return;
       }
       else {
