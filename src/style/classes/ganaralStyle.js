@@ -1218,7 +1218,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     position: "absolute",
     top: "115px",
-    width: 290,
+    width: 310,
     height: 240,
     left: 'auto',
     right: 45,
@@ -1748,6 +1748,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 768px)": {
       marginTop: "4px",
     },
+    //#region emoji
+    "& .emoji-group": {
+      "&::before": {
+        direction: 'ltr'
+      }
+    },
+    "& .emoji-search": {
+      direction: 'ltr'
+    }
+    //#endregion
   },
   endButtons: {
     display: "flex",

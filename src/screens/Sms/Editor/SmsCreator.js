@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Tooltip, Typography } from "@material-ui/core";
+import { Tooltip, Typography, ClickAwayListener } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +16,6 @@ import Emoj from "../../../assets/images/smile.png";
 import Waze from "../../../assets/images/waze.png";
 import { FaCheck } from "react-icons/fa";
 import { BsArrowClockwise } from "react-icons/bs";
-import Gif from "../../../assets/images/managment/check-circle.gif";
 import queryString from 'query-string';
 import Title from '../../../components/Wizard/Title'
 import OTP from './OTP';
@@ -723,6 +722,9 @@ const SmsCreator = ({ classes, ...props }) => {
       setremovalLinkDisabled(false);
     }
   }
+  const handleClickOutsideEmoji = () => {
+    setShowEmoji(false);
+  }
 
   const renderMsg = () => {
     return (
@@ -800,36 +802,48 @@ const SmsCreator = ({ classes, ...props }) => {
                     </Tooltip>
                   </>
                 )}
-                <Box className={classes.pickerEmoji}>
-                  {showEmoji ? (
-                    <Picker
-                      onEmojiClick={onEmojiClick}
-
-                      groupVisibility={{
-                        flags: false,
-                      }}
-                    />
-                  ) : null}
-                  <Tooltip
-                    disableFocusListener
-                    title={t("mainReport.emoji")}
-                    classes={{ tooltip: styles.customWidth }}
-                    placement="top-start"
-                    arrow
-                  >
-                    <img
-                      src={Emoj}
-                      style={{
-                        marginInlineEnd: "8px",
-                        widht: "25px",
-                        height: "25px",
-                      }}
-                      onClick={() => {
-                        setShowEmoji(!showEmoji);
-                      }}
-                    />
-                  </Tooltip>
-                </Box>
+                <ClickAwayListener onClickAway={handleClickOutsideEmoji}>
+                  <Box className={classes.pickerEmoji}>
+                    {showEmoji ? (
+                      <Picker
+                        onEmojiClick={onEmojiClick}
+                        groupNames={{
+                          smileys_people: t("emoji.smiles"),
+                          animals_nature: t("emoji.nature"),
+                          food_drink: t("emoji.foodAndDrinks"),
+                          travel_places: t("emoji.places"),
+                          activities: t("emoji.activities"),
+                          objects: t("emoji.objects"),
+                          symbols: t("emoji.symbols"),
+                          recently_used: t("emoji.recently"),
+                        }}
+                        groupVisibility={{
+                          flags: false,
+                          recently_used: false
+                        }}
+                      />
+                    ) : null}
+                    <Tooltip
+                      disableFocusListener
+                      title={t("mainReport.emoji")}
+                      classes={{ tooltip: styles.customWidth }}
+                      placement="top-start"
+                      arrow
+                    >
+                      <img
+                        src={Emoj}
+                        style={{
+                          marginInlineEnd: "8px",
+                          widht: "25px",
+                          height: "25px",
+                        }}
+                        onClick={() => {
+                          setShowEmoji(!showEmoji);
+                        }}
+                      />
+                    </Tooltip>
+                  </Box>
+                </ClickAwayListener>
               </Box>
               <Box className={classes.baseButtons}>
                 <Tooltip
