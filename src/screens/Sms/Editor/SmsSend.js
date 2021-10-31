@@ -1429,37 +1429,48 @@ const SmsSend = ({ classes, ...props }) => {
       else {
         let response = await dispatch(getCampaignSumm(requestPayload.SmsCampaignID));
         setresponseQuick(response);
+        const estimated = estimatedEndDate(response.payload);
+        setestimationDate(estimated);
         setsummModal(true);
-        let date = moment();
-        let addTime = 0;
-
-        if (pulseType === 2) {
-
-          addTime =
-            ((response.payload.FinalCount -
-              pulseAmount) *
-              timeInterval) /
-            pulseAmount;
-          let final = moment(date).add(addTime, pulseType === 2 ? "h" : "m").format("DD/MM/YYYY - HH:mm");
-          setestimationDate(final);
-        }
-
-        else {
-
-          let recipientPercents =
-            (response.payload.FinalCount *
-              pulseAmount) /
-            100;
-          addTime =
-            ((response.payload.FinalCount - recipientPercents.toFixed(1)) *
-              timeInterval) /
-            recipientPercents.toFixed(1);
-          let final = moment(date).add(addTime, pulseType === 2 ? "h" : "m").format("DD/MM/YYYY - HH:mm");
-          setestimationDate(final);
-        }
       }
     }
   };
+  const estimatedEndDate = (summary) => {
+    let date = moment();
+    let addTime = 0;
+
+    // Future
+    if (sendType === "2") {
+      date = sendDate;
+    }
+    if (
+      pulseType === 2
+    ) {
+      addTime =
+        ((summary.FinalCount -
+          pulseAmount) *
+          timeInterval) /
+        pulseAmount;
+    } else {
+      let recipientPercents =
+        (summary.FinalCount *
+          pulseAmount) /
+        100;
+      addTime =
+        ((summary.FinalCount - recipientPercents.toFixed(1)) *
+          timeInterval) /
+        recipientPercents.toFixed(1);
+    }
+
+    return moment(date)
+      .add(
+        addTime,
+        pulseType == 2
+          ? "m"
+          : "h"
+      )
+      .format("DD/MM/YYYY - HH:mm");
+  }
   const handleSummary = () => {
     setDialogType(null);
     setsummModal(false);
