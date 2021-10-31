@@ -1406,10 +1406,11 @@ const SmsSend = ({ classes, ...props }) => {
     else if (sendType === "3") {
       if (sendTime === null || daysBeforeAfter === "" || spectialDateFieldID === "0") {
         setspecialSettingValidation(true);
+        setLoader(false);
         return;
       }
       else {
-        requestPayload.SpecialSettings.IntervalTypeID = afterClick ? 1 : 0;
+        requestPayload.SpecialSettings.IntervalTypeID = afterClick ? 1 : -1;
         requestPayload.SpecialSettings.DateFieldID = spectialDateFieldID;
         requestPayload.SpecialSettings.Day = daysBeforeAfter;
         requestPayload.SpecialSettings.SendHour = moment(sendTime).format("HH:mm");;

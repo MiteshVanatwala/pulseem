@@ -2139,4 +2139,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   //#endregion
+  // ".MuiSelect-selectMenu": {
+  //   "&:focus": {
+  //     backgroundColor: 'unset'
+  //   }
+  // }
 });
