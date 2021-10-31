@@ -1570,7 +1570,7 @@ const SmsSend = ({ classes, ...props }) => {
 
     for (let i = 0; i < selectArray.length; i++) {
 
-      if (selectArray[i].value === name) {
+      if (selectArray[i].label === name) {
         selectArray[i].isdisabled = false;
         selectArray[i].idx = -1;
         break;
@@ -2122,12 +2122,7 @@ const SmsSend = ({ classes, ...props }) => {
                   return (
                     <th
                       key={idx}
-                      style={{
-                        border: "1px solid #ddd",
-                        padding: "10px",
-                        width: "160px",
-                        maxWidth: "280px",
-                      }}
+                      className={classes.manualHeader}
                     >
                       <div
                         onClick={() => {

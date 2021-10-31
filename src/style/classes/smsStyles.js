@@ -236,7 +236,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         padding: "8px 15px 8px 15px",
         borderTop: "1px solid #E5E5E5",
         fontSize: 16,
-        "&:last-child":{
+        "&:last-child": {
             borderBottom: "1px solid #e5e5e5"
         }
     },
@@ -935,5 +935,11 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
                 marginTop: 25
             }
         }
+    },
+    manualHeader: {
+        border: "1px solid #ddd",
+        padding: "10px",
+        width: "160px",
+        maxWidth: "280px",
     }
 });
