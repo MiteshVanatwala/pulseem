@@ -12,7 +12,7 @@ import { StylesProvider, jssPreset, MuiThemeProvider, useTheme } from '@material
 import i18n from './i18n'
 import { BrowserRouter, useParams, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures } from './redux/reducers/coreSlice'
+import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures, setSmsOldVersion } from './redux/reducers/coreSlice'
 import { isClalAccount, getAccountFeatures } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
@@ -363,6 +363,8 @@ const App = ({ screenSize }) => {
       dispatch(setIsClal(response.payload));
       const features = await dispatch(getAccountFeatures());
       dispatch(setAccountFeatures(features.payload));
+      const smsOldVersion = getCookie('OldVersion')
+      dispatch(setSmsOldVersion(smsOldVersion))
     }
 
     const updateToken = () => {

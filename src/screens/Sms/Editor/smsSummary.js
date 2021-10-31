@@ -3,11 +3,13 @@ import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { Link } from "@material-ui/core";
-import { Box } from "@material-ui/core";
+import { Box, Grid, Button } from "@material-ui/core";
 import MobilePreview from '../../../components/MobilePreive/Mobile'
 import { FaChevronDown } from 'react-icons/fa';
 import { FaChevronUp } from 'react-icons/fa';
+import { useSelector } from 'react-redux'
 import clsx from "clsx";
+
 
 const SmsSummary = ({ classes,
   open,
@@ -23,6 +25,7 @@ const SmsSummary = ({ classes,
   const [detailsHide, setdetailsHide] = useState(true);
   const [subDetailsActive, setsubDetailsActive] = useState(false);
   const [subRecipientsDetails, setsubRecipients] = useState(false);
+  const { isRTL } = useSelector(state => state.core)
 
   const { t } = useTranslation();
 
@@ -39,10 +42,7 @@ const SmsSummary = ({ classes,
         classes={classes}
         open={open}
         onClose={() => { handleSmsSettings() }}
-        onConfirm={onConfirm}
-        confirmText={t("sms.sendDialog")}
-        cancelText={t("sms.cancelDialog")}
-        showDefaultButtons={true}
+        showDefaultButtons={false}
         icon={<FaMobileAlt style={{ fontSize: 30, color: "#fff" }} />}
       >
         <Box style={{ fontSize: "22px", marginTop: "5px" }}>
@@ -202,6 +202,36 @@ const SmsSummary = ({ classes,
               </Box>)
             })} </Box> : null}
         </Box> : null}
+        <Grid
+          container
+          spacing={4}
+          className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null, classes.mt15, classes.mb15)}>
+          <Grid item>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={onConfirm}
+              className={clsx(
+                classes.dialogButton,
+                classes.dialogConfirmButton,
+                summaryPayload.FinalCount <= 0 ? classes.disabled : null
+              )}>
+              {t("sms.sendDialog")}
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => { handleSmsSettings() }}
+              className={clsx(
+                classes.dialogButton,
+                classes.dialogCancelButton
+              )}>
+              {t("sms.cancelDialog")}
+            </Button>
+          </Grid>
+        </Grid>
       </Dialog>}
     </Box>
   )

@@ -20,6 +20,7 @@ import queryString from 'query-string';
 import Title from '../../../components/Wizard/Title'
 import OTP from './OTP';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
+import { setCookie } from '../../../helpers/cookies'
 
 import { useHistory } from "react-router";
 import {
@@ -297,7 +298,18 @@ const SmsCreator = ({ classes, ...props }) => {
     setLoader(true);
     setsummary(false);
     const groupIds = selectedGroup.map((g) => { return g.GroupID });
-    const FinalPayloadData = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, IsTestCampaign: isTestCampaign, IsTest: true, IsLinksStatistics: isLinksStatistics }
+    const logData = { Credits: messageCount, TotalRecipients: getCampaignSum.FinalCount };
+    const FinalPayloadData = {
+      ...smsModel,
+      fromNumber: campaignNumber,
+      Name: smsModel.Name,
+      Text: smsModel.Text,
+      TestGroupsIds: groupIds,
+      IsTestCampaign: isTestCampaign,
+      IsTest: true,
+      IsLinksStatistics: isLinksStatistics,
+      LogData: logData
+    }
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
     setToastMessage(toastMessages.QUICK_SEND_SUCCESSS);
@@ -1400,6 +1412,7 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   }
   const switchToOldVersion = () => {
+    setCookie("OldVersion", true);
     setIsNewVersion(false);
     setTimeout(() => {
       if (smsModel.SMSCampaignID && smsModel.SMSCampaignID > 0) {
