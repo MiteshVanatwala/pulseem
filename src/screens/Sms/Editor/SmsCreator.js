@@ -297,7 +297,18 @@ const SmsCreator = ({ classes, ...props }) => {
     setLoader(true);
     setsummary(false);
     const groupIds = selectedGroup.map((g) => { return g.GroupID });
-    const FinalPayloadData = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, IsTestCampaign: isTestCampaign, IsTest: true, IsLinksStatistics: isLinksStatistics }
+    const logData = { Credits: messageCount, TotalRecipients: getCampaignSum.FinalCount };
+    const FinalPayloadData = {
+      ...smsModel,
+      fromNumber: campaignNumber,
+      Name: smsModel.Name,
+      Text: smsModel.Text,
+      TestGroupsIds: groupIds,
+      IsTestCampaign: isTestCampaign,
+      IsTest: true,
+      IsLinksStatistics: isLinksStatistics,
+      LogData: logData
+    }
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
     setToastMessage(toastMessages.QUICK_SEND_SUCCESSS);
