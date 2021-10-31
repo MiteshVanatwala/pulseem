@@ -20,6 +20,7 @@ import queryString from 'query-string';
 import Title from '../../../components/Wizard/Title'
 import OTP from './OTP';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
+import { setCookie } from '../../../helpers/cookies'
 
 import { useHistory } from "react-router";
 import {
@@ -1411,6 +1412,7 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   }
   const switchToOldVersion = () => {
+    setCookie("OldVersion", true);
     setIsNewVersion(false);
     setTimeout(() => {
       if (smsModel.SMSCampaignID && smsModel.SMSCampaignID > 0) {
