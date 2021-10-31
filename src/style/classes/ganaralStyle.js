@@ -1253,7 +1253,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       top: 105,
       right: 38,
       width: 230,
-      height: 205
+      height: 190
     },
     "@media screen and (max-width: 320px)": {
       top: 90,
@@ -2077,7 +2077,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
           top: 75,
           right: 26,
           width: 180,
-          height: 145
+          height: 135
 
         },
       }
