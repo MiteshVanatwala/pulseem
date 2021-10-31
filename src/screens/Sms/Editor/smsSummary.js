@@ -23,7 +23,7 @@ const SmsSummary = ({ classes,
   const [detailsHide, setdetailsHide] = useState(true);
   const [subDetailsActive, setsubDetailsActive] = useState(false);
   const [subRecipientsDetails, setsubRecipients] = useState(false);
-  
+
   const { t } = useTranslation();
 
   const handleSmsSettings = () => {
@@ -136,7 +136,7 @@ const SmsSummary = ({ classes,
             {summaryPayload.DuplicateCellphoneSharedWithClienCount == 0 ? null : <span
               className={classes.summaryDetailsSpan}
             >
-              {t("sms.duplicateRecipients")} :
+              {t("sms.duplicateRecipients")}:
               <span className={classes.summaryDetailsSpanBold}
               >
                 {summaryPayload.DuplicateCellphoneSharedWithClienCount}
@@ -173,66 +173,32 @@ const SmsSummary = ({ classes,
           </Box> : null}
         </Box>
         {subRecipientsDetails ? <Box style={{ display: "flex" }}>
-          {filteredGroups ? <div style={{ width: "100%", borderBottom: "1px solid #E5E5E5", }}>
+          {filteredGroups && filteredGroups.length > 0 ? <div style={{ width: "100%" }}>
             <ul style={{ listStyleType: "none", paddingRight: 15, paddingLeft: 15 }}>
-              <li
-                style={{
-                  fontSize: "16px",
-                  fontWeight: "700",
-                  marginBottom: "2px",
-                  cursor: "pointer",
-                  color: "#0371ad",
-                  paddingBottom: "5px",
-
-                }}
+              <li className={classes.listTitle}
               >
                 {t("sms.recipientsFromFollowingGroups")}
               </li>
             </ul>
 
             {filteredGroups.map((item, index, idx) => {
-              return (<Box id={index}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "8px 8px 8px 55px",
-                  borderTop: "1px solid #E5E5E5",
-                  fontSize: "16px",
-                }}
-              >
-                <span> {item.GroupName}</span>
+              return (<Box id={index} className={classes.summaryFilterItem}>
+                <span>{item.GroupName}</span>
               </Box>)
             })}
           </div>
             : null}
 
-          {filteredCampaigns ? <Box style={{ width: "100%", borderBottom: "1px solid #E5E5E5", }}>
+          {filteredCampaigns && filteredCampaigns.length > 0 ? <Box style={{ width: "100%" }}>
             <ul style={{ listStyleType: "none", paddingRight: 15, paddingLeft: 15 }}>
-              <li
-                style={{
-                  fontSize: "16px",
-                  fontWeight: "700",
-                  marginBottom: "2px",
-                  cursor: "pointer",
-                  color: "#0371ad",
-                  paddingBottom: "5px",
-
-                }}
+              <li className={classes.listTitle}
               >
                 {t("sms.recipientsFromFollowingCampaign")}
               </li>
             </ul>
             {filteredCampaigns.map((item, index) => {
-              return (<Box id={index}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  padding: "8px 8px 8px 55px",
-                  borderTop: "1px solid #E5E5E5",
-                  fontSize: "16px",
-                }}
-              >
-                <span> {item.Name}</span>
+              return (<Box id={index} className={classes.summaryFilterItem}>
+                <span>{item.Name}</span>
               </Box>)
             })} </Box> : null}
         </Box> : null}

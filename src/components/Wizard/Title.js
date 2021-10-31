@@ -1,5 +1,6 @@
 import { Box, Tooltip, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import clsx from 'clsx';
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -13,15 +14,15 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const Title = ({ classes, title, tooltip = null, stepNumber, subTitle }) => {
+const Title = ({ classes, title, tooltip = null, stepNumber, subTitle, topZero = false }) => {
     const styles = useStyles();
     return (<Box>
         <Box className={classes.infoDiv} style={{ height: 'auto' }}>
-            <Typography className={classes.managementTitle}>
+            <Typography className={clsx(classes.managementTitle, topZero ? classes.noPadding : null, topZero ? classes.noMargin : null)}>
                 {title}
             </Typography>
             {tooltip && <Tooltip
-                style={{ marginTop: 25, marginRight: 10, marginLeft: 10 }}
+                style={{ marginTop: 5, marginRight: 10, marginLeft: 10 }}
                 disableFocusListener
                 title={tooltip}
                 classes={{ tooltip: styles.customWidth }}

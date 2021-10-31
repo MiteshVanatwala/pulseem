@@ -105,6 +105,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   noPadding: {
     padding: "0px !important",
   },
+  noMargin: {
+    margin: 0
+  },
   dialogIconContainer: {
     paddingTop: 60,
     paddingBottom: 15,
@@ -732,7 +735,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   buttonHead: {
     fontSize: "20px",
     marginBottom: "10px",
-
+    // "@media screen and (max-width: 414px)": {
+    //   fontSize: 16
+    // }
   },
   buttonContent: {
     fontSize: 14
@@ -800,7 +805,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontFamily: "Sans-serif",
     overflow: "hidden",
     marginTop: 5,
-    overflowY:"auto",
+    overflowY: "auto",
     width: "100%",
     border: "1px solid #ced4da",
     borderBottom: 'none',
@@ -1183,11 +1188,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       margin: '0 auto',
       fontSize: 16
     },
-    "@media screen and (max-width: 414px)": {
-      top: 78
-    },
     "@media screen and (max-width: 360px)": {
-      top: 76
+      top: 78,
+      fontSize: 12
     }
   },
   testDiv:
@@ -1309,7 +1312,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   chatBox:
   {
     display: 'flex',
-    justifyContent: 'flex-end',
+    justifyContent: isRTL ? 'flex-start' : 'flex-end',
     wordBreak: 'break-all',
   },
   chatBoxHe:
@@ -1323,26 +1326,26 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     top: "115px",
     width: 290,
     height: 240,
-    right: !isRTL ? 45 : 'auto',
-    left: isRTL ? 45 : 'auto',
+    right: 'auto',
+    left: 45,
     wordBreak: 'break-all',
     color: "#fff",
     borderRadius: "12px",
     overflowY: "auto",
     padding: 10,
     "@media screen and (max-width: 1366px)": {
-      left: 45,
+      // left: 45,
       width: 270
     },
     "@media screen and (max-width: 768px)": {
-      right: 45,
-      width: 340,
+      // right: 45,
+      width: 250,
       height: 230
     },
     "@media screen and (max-width: 414px)": {
-      top: 105,
+      top: 125,
       right: 38,
-      width: 250,
+      width: 260,
       height: 205
     },
     "@media screen and (max-width: 360px)": {
@@ -1351,6 +1354,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       width: 230,
       height: 205
     },
+    "@media screen and (max-width: 320px)": {
+      top: 90,
+      right: 38,
+      left: 'auto',
+      width: 200,
+      height: 165
+    }
   },
   fromMe:
   {
@@ -1573,7 +1583,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: "16px",
     fontFamily: "Sans-serif",
     resize: "none",
-    height: "330px",
+    height: 396,
     backgroundColor: "white !important",
     padding: "10px",
     "&::placeholder": {
@@ -1874,6 +1884,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+    },
+    "@media screen and (max-width: 566px)": {
+      marginTop: 25
     },
   },
   groupsMan:

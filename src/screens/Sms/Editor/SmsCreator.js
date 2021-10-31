@@ -1797,6 +1797,7 @@ const SmsCreator = ({ classes, ...props }) => {
             tooltip={t("mainReport.toolTip1")}
             stepNumber={1}
             subTitle={t("mainReport.createContent")}
+            topZero={true}
           />
           {renderFields()}
           {renderMsg()}

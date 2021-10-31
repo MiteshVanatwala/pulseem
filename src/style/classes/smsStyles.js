@@ -222,6 +222,24 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         fontSize: '1rem',
         fontWeight: 700
     },
+    listTitle: {
+        fontSize: "16px",
+        fontWeight: "700",
+        marginBottom: "2px",
+        cursor: "pointer",
+        color: "#0371ad",
+        paddingBottom: "5px",
+    },
+    summaryFilterItem: {
+        display: "flex",
+        alignItems: "center",
+        padding: "8px 15px 8px 15px",
+        borderTop: "1px solid #E5E5E5",
+        fontSize: 16,
+        "&:last-child":{
+            borderBottom: "1px solid #e5e5e5"
+        }
+    },
     summaryListItem: {
         display: "flex",
         alignItems: "center",
@@ -239,6 +257,8 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         color: "#1c82b2"
     },
     summaryDetailsSpanBold: {
+        marginLeft: 5,
+        marginRight: 5,
         fontWeight: 700,
         color: '#000'
     },
@@ -892,28 +912,28 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             display: "none"
         },
     },
-    addOptionsIcon : 
+    addOptionsIcon:
     {
         fontSize: "28px", color: "#1AA2B8", marginInlineEnd: "5px"
     },
-    testSendContaier : 
+    testSendContaier:
     {
         display: "flex", flexDirection: "column", width: "250px"
     },
-    testSendDescriptionLabel : 
+    testSendDescriptionLabel:
     {
         width: "200px",
         fontSize: "15px",
         marginTop: "5px",
         color: "#B5B5B5",
     },
-    quickSendContainer : 
+    quickSendContainer:
     {
         display: "flex", flexDirection: "column", width: '100%',
-    mobilePreviewContainer: {
-        "@media screen and (max-width: 768px)": {
-            marginTop: 25
+        mobilePreviewContainer: {
+            "@media screen and (max-width: 768px)": {
+                marginTop: 25
+            }
         }
     }
-}
 });
