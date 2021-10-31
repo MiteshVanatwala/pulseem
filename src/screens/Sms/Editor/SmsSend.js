@@ -211,12 +211,13 @@ const SmsSend = ({ classes, ...props }) => {
   const [dialogType, setDialogType] = useState({ type: null });
   const [selectedFilterCampaigns, setFilterCampaigns] = useState([]);
   const [selectedFilterGroups, setFilterGroups] = useState([]);
-  const [timeType, setTimeType] = useState(-1);
-  const [pulseType, setPulseType] = useState(-1);
+  const [timeType, setTimeType] = useState(1);
+  const [pulseType, setPulseType] = useState(2);
   const [otpPassed, setOtpPassed] = useState(false);
   const [groupNameExist, setGroupNameExist] = useState(false);
   const [otpOpen, setOTPOpen] = useState(null);
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
+  const [sourcePulses, setSourcePulses] = useState({});
 
   //#endregion
   useEffect(() => {
@@ -506,15 +507,22 @@ const SmsSend = ({ classes, ...props }) => {
     setGroupNameExist(false);
     setgroupValue(e.target.value);
   };
+  //TODO: Move this properties into managed object 
   const handlePulseClose = () => {
+    settogglePulse(true);
+    settoggleRandom(true);
+    setTimeType(sourcePulses.timeType);
+    setrandom(sourcePulses.randomAmount);
+    setPulseType(sourcePulses.pulseType);
+    setPulseAmount(sourcePulses.pulseAmount);
+    setTimeInterval(sourcePulses.timeInterval);
 
-    if (pulseAmount == "" || timeInterval == "") {
+    if (sourcePulses.pulseAmount == "" || sourcePulses.timeInterval == "") {
       settogglePulse(false)
     }
-    if (random == "") {
+    if (sourcePulses.randomAmount == "") {
       settoggleRandom(false)
     }
-    //setpulse(false);
     setDialogType(null);
   };
   const handlePulseConfirm = () => {
@@ -1092,6 +1100,10 @@ const SmsSend = ({ classes, ...props }) => {
       }
     }
   }
+  const handlePulseDialog = () => {
+    setSourcePulses({ timeType: timeType, pulseType: pulseType, pulseAmount: pulseAmount, timeInterval, timeInterval, randomAmount: random });
+    setDialogType({ type: "pulses" });
+  }
   const renderRight = () => {
     return (
       <div>
@@ -1312,8 +1324,7 @@ const SmsSend = ({ classes, ...props }) => {
           <span
             className={(selectedGroups.length >= 1 && sendType !== "3") ? classes.pulse : classes.pulseDisable}
             onClick={() => {
-              setDialogType({ type: "pulses" });
-              // setpulse(true);
+              handlePulseDialog();
             }}
           >
             <FaRegCalendarAlt style={{ fontSize: '125%' }} />
@@ -2293,8 +2304,6 @@ const SmsSend = ({ classes, ...props }) => {
                       setPulseType(1);
                       setnoTrue(false);
                       setpulsePer("percent");
-                      setpulseReci("");
-                      setPulseAmount("");
                     }}
                   >
                     {t("smsReport.percent")}
@@ -2302,7 +2311,7 @@ const SmsSend = ({ classes, ...props }) => {
                   <span
                     className={
                       togglePulse
-                        ? noTrue
+                        ? pulseType === 2
                           ? clsx(classes.reciTrue)
                           : clsx(classes.reciActive)
                         : clsx(classes.toggleStart)
@@ -2310,9 +2319,7 @@ const SmsSend = ({ classes, ...props }) => {
                     onClick={() => {
                       setPulseType(2);
                       setnoTrue(true);
-                      setpulsePer("");
                       setpulseReci("Recipients");
-                      setPulseAmount("");
                     }}
                   >
                     {t("smsReport.Reci")}
