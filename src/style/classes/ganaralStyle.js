@@ -644,10 +644,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     padding: "8px",
     width: 100,
-    color: "black",
+    backgroundColor: '#e9ecef',
     '&::placeholder':
     {
       fontSize: "16px"
+    },
+    '& .Mui-disabled': {
+      color: '#000'
     },
     "@media screen and  (max-width: 960)": {
       width: "100%"
