@@ -292,9 +292,6 @@ const Groups = ({ classes,
                         <BsFilter style={{ fontSize: "22px", color: "#1D82B3" }} />  {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}
 
                     </Button> : null}
-                    <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={() => { handleSortDirection() }}>
-                        {sortDirection === 'asc' ? <BiSortDown /> : <BiSortUp />}
-                    </Button>
                     <FormControl className={clsx(classes.formControl, classes.dropDown)}>
                         <Select
                             id="groupOrder"
@@ -304,6 +301,9 @@ const Groups = ({ classes,
                             {renderSortItems()}
                         </Select>
                     </FormControl>
+                    <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={() => { handleSortDirection() }}>
+                        {sortDirection === 'asc' ? <BiSortDown /> : <BiSortUp />}
+                    </Button>
                 </Box>
                 }
             </Grid>
