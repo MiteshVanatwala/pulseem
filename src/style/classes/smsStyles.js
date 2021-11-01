@@ -715,7 +715,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         alignItems: "center",
         borderBottom: "2px solid #efefef",
         paddingBottom: "30px",
-        "@media screen and (max-width: 375px)": {
+        "@media screen and (max-width: 414px)": {
             flexDirection: 'column'
         }
     },
