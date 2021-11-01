@@ -21,7 +21,7 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import { useHistory } from "react-router-dom";
 import moment from 'moment'
-import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
+//import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
 import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
 import NewslettersReport from './screens/Reports/NewslettersReport'
@@ -264,6 +264,10 @@ const renderRoutes = (classes, history) => {
       <Route
         path={`/Reports/DirectSendReport`}
         render={props => <DirectSendReport {...props} classes={classes} />}
+      />
+      <Route
+        path={'Reports/DirectSendReport'}
+        component={transferUrl('/Pulseem/DirectSmsReport.aspx')}
       />
       <Route
         path={`/EmailCampaignStatistics`}
