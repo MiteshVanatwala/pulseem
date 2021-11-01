@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import PricePackages from './PricePackages';
+import PricePackages from './PaymentWizard/PricePackages';
 import { GoPackage } from 'react-icons/go/index';
 import { Dialog } from '../managment/index';
-import { Grid, Paper, Typography } from '@material-ui/core';
-import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
+import { Grid, Paper, Typography, Button } from '@material-ui/core';
+import { getPackagesDetails, getPurchaseLog } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
+import { CgShoppingCart } from 'react-icons/cg'
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
+  const { accountFeatures } = useSelector(state => state.core)
   const { username } = useSelector(state => state.user);
   const [isShowSmsPackage, showSmsPackage] = useState(false);
+  const [isShowEmailPackage, showEmailPackage] = useState(false);
   const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
+  const [selectedPackageType, setPackageType] = useState(1);
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
-  const availablePackages = accountAvailablePackages || [];
 
   const getBillingTypeText = (product) => {
     switch (product.eBillingType) {
@@ -43,8 +46,9 @@ const BulkStatus = ({ classes }) => {
     }
   }
 
-  useEffect(() => {
-    dispatch(getPackagesDetails());
+  useEffect(async () => {
+    await dispatch(getPackagesDetails());
+    await dispatch(getPurchaseLog());
   }, []);
 
   const handleDialogClose = () => {
@@ -55,6 +59,7 @@ const BulkStatus = ({ classes }) => {
     if (isOpenPackageDialog === true) {
       let dialog = {};
       dialog = renderPackagesListDialog();
+      const availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType });
 
       return (
         <Dialog
@@ -63,6 +68,7 @@ const BulkStatus = ({ classes }) => {
           onClose={handleDialogClose}
           onConfirm={handleDialogClose}
           showDefaultButtons={false}
+          style={availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null}
           {...dialog}>
           {dialog.content}
         </Dialog>
@@ -74,14 +80,19 @@ const BulkStatus = ({ classes }) => {
     return {
       showDivider: false,
       icon: (
-        <GoPackage style={{ fontSize: 30 }} />
+        <GoPackage style={{ fontSize: 35, padding: 5 }} />
       ),
       content: (
         <Grid item xs={12} style={{ paddingBottom: 25 }}>
-          <PricePackages classes={classes} onComplete={handleDialogClose} />
-        </Grid>
+          <PricePackages classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType} />
+        </Grid >
       )
     };
+  }
+
+  const showPackageDialogType = (packageType) => {
+    setPackageType(packageType);
+    setIsOpenPackageDialog(true);
   }
 
   return (
@@ -104,64 +115,70 @@ const BulkStatus = ({ classes }) => {
             item xs={9}
             className={getBillingTypeText(Sms) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
             justifyContent='space-between'
-          // onMouseEnter={() => showSmsPackage(true)}
-          // onMouseLeave={() => showSmsPackage(false)}
+            onMouseEnter={() => showSmsPackage(true)}
+            onMouseLeave={() => showSmsPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
-            <Typography className={classes.bulkTitle}>
-              {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Sms)}
-            </Typography>
-            {/* {isShowSmsPackage ? (
-              <Button onClick={() => setIsOpenPackageDialog(true)} className={classes.whiteLink}>
-                {t('dashboard.purchase')}
-              </Button>
+            {isShowSmsPackage && billingTypeId !== "1" ? (
+              <a
+                onClick={() => showPackageDialogType(3)}
+                className={getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink}
+              >
+                <CgShoppingCart style={{fontSize: 21}} /> {t('dashboard.purchase')}
+              </a>
             )
               :
               (<Typography className={classes.bulkTitle}>
-                {!Sms.IsPrepaid ? t('dashboard.perRecipients') : Sms.Credits}
+                <CgShoppingCart className={classes.shoppingCartIcon} /> {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Sms)}
               </Typography>)
-            } */}
+            }
           </Grid>
           }
           {<Grid
             container
             item xs={9}
             className={getBillingTypeText(Newsletters) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
-            justifyContent='space-between'>
+            justifyContent='space-between'
+            onMouseEnter={() => showEmailPackage(true)}
+            onMouseLeave={() => showEmailPackage(false)}
+          >
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
-            <Typography className={classes.bulkTitle}>
-              {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Newsletters)}
-            </Typography>
+            {isShowEmailPackage && billingTypeId !== "1" && accountFeatures && accountFeatures.includes('36') ? (
+              <a
+                onClick={() => showPackageDialogType(2)}
+                className={getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink}
+              >
+                <CgShoppingCart style={{fontSize: 21}} /> {t('dashboard.purchase')}
+              </a>
+            )
+              :
+              (<Typography className={classes.bulkTitle}>
+                {accountFeatures && accountFeatures.includes('36') && <CgShoppingCart className={classes.shoppingCartIcon} />}
+                {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Newsletters)}
+              </Typography>)
+            }
           </Grid>
           }
           {Mms.Credits > 0 && <Grid
             container
             item xs={9}
-            className={classes.bulkStatusBlue}
+            className={getBillingTypeText(Mms) === 0 ? classes.statusOutline : classes.statusBlue}
             justifyContent='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
             <Typography className={classes.bulkTitle}>
               {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Mms)}
             </Typography>
-            {/* {availablePackages.length > 0 && <a href='#' className={classes.bulkContent}>
-                {t('dashboard.purchase')}
-              </a> */}
           </Grid>
           }
           {Notifications.FeatureExist && <Grid
             container
             item xs={9}
-            className={getBillingTypeText(Notifications) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
+            className={getBillingTypeText(Notifications) === 0 ? classes.statusOutline : classes.statusBlue}
             justifyContent='space-between'>
             <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
             <Typography className={classes.bulkTitle}>
               {t('dashboard.freeTrial')}
             </Typography>
-            {/* {availablePackages.length > 0 &&
-              <a href='#' className={classes.bulkContent}>
-                {t('dashboard.purchase')}
-              </a>
-            } */}
           </Grid>}
         </Grid>
       </Paper>

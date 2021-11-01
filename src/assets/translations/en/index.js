@@ -12,6 +12,7 @@ import mainReport from './MainReport.aspx.json'
 import dashboard from './Dashboard.json'
 import smsReport from './SMSReport.json'
 import emoji from './Emoji.json'
+import payment from './payment.json'
 
 export const en={
   automations,
@@ -27,5 +28,6 @@ export const en={
   mainReport,
   dashboard,
   smsReport,
-  emoji
+  emoji,
+  payment
 }

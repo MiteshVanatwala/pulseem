@@ -536,6 +536,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   blackDivider: {
     height: 2,
     backgroundColor: "rgb(0, 0, 0, 0.5)",
+    textDecoration: 'none',
+    color: '#fff',
+    textTransform: 'capitalize',
+    lineHeight: 1,
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
+  },
+  blueLink: {
+    textDecoration: 'none',
+    color: '#0371ad',
+    textTransform: 'capitalize',
+    lineHeight: 1,
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
   },
   noWrap: {
     flexWrap: "nowrap",
@@ -2142,4 +2158,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   //#endregion
+  textCenter: {
+    textAlign: 'center'
+  }
 });

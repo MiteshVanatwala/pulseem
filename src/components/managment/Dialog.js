@@ -28,6 +28,7 @@ export const Dialog = ({
   cancelText = 'common.Cancel',
   confirmText = 'common.Ok',
   showDefaultButtons = true,
+  style = null,
   ...props
 }) => {
   const direction = {
@@ -149,10 +150,16 @@ export const Dialog = ({
 
   return (
     <BaseDialog
+      style={style}
       disableBackdropClick={disableBackdropClick}
       open={!!open}
       className={clsx(classes.dialogContainer, customContainerStyle)}
-      onClose={onClose}>
+      onClose={(event, reason) => {
+        if (reason !== 'backdropClick') {
+          onClose();
+        }
+      }
+      }>
       <Paper className={clsx(classes.posRelative, paperStyle)}>
         {renderExitButton()}
         {renderContent()}

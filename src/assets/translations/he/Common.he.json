@@ -442,7 +442,10 @@
   "maxImageSize": "הקובץ גדול מדי, נסו שנית",
   "smsBulkTitle": "חבילות SMS",
   "smsBulk": "חבילת SMS",
+  "newsletterBulkTitle": "חבילות דיוור",
+  "newsletterBulk": "חבילת דיוור",
   "smsBulkDescription": "רכישת חבילת SMS אונליין. אנא ביחרו את החבילה הנדרשת.",
+  "newsletterBulkDescription": "רכישת חבילת דיוור אונליין. אנא ביחרו את החבילה הנדרשת",
   "select": "בחר",
   "endPurchase": "סיום רכישה",
   "Errors": "שגיאות",
@@ -499,5 +502,8 @@
   "zip": "מיקוד",
   "minutes": "דקות",
   "hours": "שעות",
-  "requiredField": "שדה חובה"
+  "requiredField": "שדה חובה",
+  "continue": "המשך",
+  "errorDetected": "תשלום לא עבר!",
+  "tryAgain": "אנא נסה שוב."
 }
