@@ -1019,7 +1019,7 @@ const SmsSend = ({ classes, ...props }) => {
   };
   const handlePasted = () => {
     let temp = areaData;
-    let a = temp.split("\n");
+    let a = temp.split("\n").filter(empty => empty);
     let b = [];
     let cols = 0;
     if (temp.indexOf("\t") > -1) {
@@ -2118,6 +2118,7 @@ const SmsSend = ({ classes, ...props }) => {
               disableFocusListener
               title={t("smsReport.manualTotalTooltip")}
               classes={{ tooltip: styles.customWidth }}
+              sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
             >
               <Typography className={classes.bodyInfo}>i</Typography>
             </Tooltip>
