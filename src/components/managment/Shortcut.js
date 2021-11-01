@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { ExpandLess, ExpandMore } from '@material-ui/icons';
-import { getShortcuts, setShortcuts } from '../../redux/reducers/shortcutSlice';
+import { getShortcuts, setShortcuts,deleteShortcuts } from '../../redux/reducers/shortcutSlice';
 
 const Shortcut = ({ classes }) => {
   const { windowSize } = useSelector(state => state.core);
@@ -85,7 +85,7 @@ const Shortcut = ({ classes }) => {
       pages: [
         {
           title: 'common.CreateSMS',
-          link: '/Pulseem/SMSCampaignEdit.aspx'
+          link: '/react/sms/create'
         },
         {
           title: 'dashboard.smsManagement',

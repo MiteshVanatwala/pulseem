@@ -2,8 +2,8 @@ const iconWidth = {
   xs: 20,
   sm: 20,
   md: 25,
-  lg: 30,
-  xl: 35
+  lg: 25,
+  xl: 25
 }
 
 const flex12 = {
@@ -30,6 +30,14 @@ const barHeight = {
   xl: '230px!important'
 }
 
+const tipsFontSize = {
+  xs: 18,
+  sm: 16,
+  md: 14,
+  lg: 14,
+  xl: 18
+}
+
 const shortcutFontSize = {
   category: {
     xs: 16,
@@ -45,32 +53,13 @@ const shortcutFontSize = {
     lg: 18,
     xl: 18
   }
-}
-const tipsFontSize = {
-  xs: 18,
-  sm: 16,
-  md: 14,
-  lg: 14,
-  xl: 18
-}
 
-// const paperTopHeight = {
-//   xs: 'auto',
-//   sm: 'auto',
-//   md: '350px',
-//   lg: '350px',
-//   xl: '350px'
-// }
-
-// const paperBottomHeight = {
-//   xs: 'auto',
-//   sm: 'auto',
-//   md: '350px',
-//   lg: '350px',
-//   xl: '350px'
-// }
+}
 
 export const getManagmentStyle = (windowSize, isRTL, theme) => ({
+  management: {
+    maxWidth: 1500
+  },
   managementTitle: {
     fontSize: windowSize === 'xs' ? '25px' : '36px',
     color: '#333333',
@@ -227,14 +216,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   managmentIcon: {
     width: iconWidth[windowSize],
-    margin: 'auto',
-    marginTop: -10
-  },
-  managmentUicon: {
-    fontSize: 30,
-    fontFamily: 'pulseemicons',
-    marginBottom: -15,
-    marginTop: -15
+    margin: 'auto'
   },
   managmentUicon: {
     fontSize: 30,
@@ -1322,5 +1304,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       borderRight: '7.5px solid transparent',
       borderBottom: '7.5px solid transparent',
     }
+  },
+  modalText:
+  {
+    fontSize: "22px", marginTop: "5px"
   }
 })

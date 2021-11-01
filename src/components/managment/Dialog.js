@@ -7,8 +7,8 @@ import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { AlertIcon } from '../icons/index'
 
-export const Dialog=({
-  childrenPadding=true,
+export const Dialog = ({
+  childrenPadding = true,
   classes,
   open = false,
   title = '',
@@ -27,7 +27,8 @@ export const Dialog=({
   contentStyle = null,
   cancelText = 'common.Cancel',
   confirmText = 'common.Ok',
-  showDefaultButtons = true
+  showDefaultButtons = true,
+  ...props
 }) => {
   const direction = {
     true: 'rtl',
@@ -35,7 +36,7 @@ export const Dialog=({
   }
 
   const { t } = useTranslation()
-  const { isRTL } = useSelector(state => state.core)
+  const { isRTL, windowSize } = useSelector(state => state.core)
 
   const onExit = () => {
     if (onCancel !== null) {
@@ -48,24 +49,26 @@ export const Dialog=({
 
   const renderExitButton = () => {
     return (
-      <Box
-        onClick={onExit}
-        className={clsx(
-          classes.dialogExitButton,
-          {
-            [classes.dialogExitButtonRTL]: isRTL,
-            [classes.dialogExitButtonLTR]: !isRTL
-          }
-        )}>
-        x
-      </Box>
+      <>
+        {props.exit ? null : <Box
+          onClick={onExit}
+          className={clsx(
+            classes.dialogExitButton,
+            {
+              [classes.dialogExitButtonRTL]: isRTL,
+              [classes.dialogExitButtonLTR]: !isRTL
+            }
+          )}>
+          x
+        </Box>}  </>
+
     )
   }
 
   const renderTitleDefault = () => {
     return (
       <>
-        <Typography className={classes.dialogTitle}>
+        <Typography className={clsx(classes.dialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)}>
           {title}
         </Typography>
         {showDivider && <Divider />}
@@ -126,8 +129,8 @@ export const Dialog=({
   const renderChildren = () => {
     return (
       <Box
-        className={clsx(classes.dialogChildren, childrenStyle)}
-        style={{ maxHeight: 'calc(65vh)' }}>
+        className={clsx(classes.dialogChildren, classes.sidebar, childrenStyle)}
+        style={{ maxHeight: windowSize !== 'xs' && windowSize !== 'sm' ? 'calc(65vh)' : 'calc(45vh)', minWidth: windowSize !== 'xs' && windowSize !== 'sm' ? 330 : null }}>
         {children}
       </Box>)
   }

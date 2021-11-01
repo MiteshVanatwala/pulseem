@@ -37,3 +37,7 @@
     transform: translateY(0px)
   }
 }
+.MuiSwitch-track
+{
+  height: 94% !important;
+}

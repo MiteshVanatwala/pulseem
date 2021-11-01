@@ -258,7 +258,7 @@ export const Preview = (
   return (
     <>
       {showID && <Typography className={classes.previewID}><b>{t('common.campaignID')}</b>:&nbsp;{campaignID}</Typography>}
-      <Grid className={mobileFullsize && classes.justifyCenter}>
+      <Grid className={mobileFullsize && classes.alignCenter}>
         {showTitle && <h3 className={clsx(classes.blue, classes.previewTitle, "previewTitle")}>{t("notifications.preview")}</h3>}
         {showDevices && !mobileFullsize && <AppBar position="static" color="default" className={classes.deviceSelectorPanel}>
           <Tabs

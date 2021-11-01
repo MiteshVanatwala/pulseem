@@ -89,7 +89,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
       pages: [
         {
           title: 'common.CreateSMS',
-          link: '/Pulseem/SMSCampaignEdit.aspx'
+          link: '/react/sms/create'
         },
         {
           title: 'dashboard.smsManagement',
@@ -283,15 +283,15 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
       setPageOpen(false);
     }
 
-    let placementPopper = 'left-start';
-    if (windowSize === 'xs') {
-      placementPopper = 'bottom-start'
-    }
-    else {
-      if (!index && num > 2 || index > 2) {
-        placementPopper = isRTL ? 'right-end' : 'left-end';
-      }
-    }
+    // let placementPopper = 'left-start';
+    // if (windowSize === 'xs') {
+    //   placementPopper = 'bottom-start'
+    // }
+    // else {
+    //   if (!index && num > 2 || index > 2) {
+    //     placementPopper = isRTL ? 'right-end' : 'left-end';
+    //   }
+    // }
 
 
     return (
@@ -302,7 +302,7 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
           key={`shortcutMenu${index}`}
           open={open}
           anchorEl={anchorEl[num]}
-          placement={placementPopper}
+          placement={isRTL ? 'right-start' : 'left-start'}
           // disablePortal={false}
           style={{ zIndex: 2 }}>
 

@@ -34,7 +34,7 @@ const NewsletterManagnentScreen=({classes}) => {
   const [fromDate,handleFromDate]=useState(null);
   const [toDate,handleToDate]=useState(null)
   const [campaineNameSearch,setCampaineNameSearch]=useState('')
-  const rowsOptions=[6,12,18]
+  const rowsOptions = [6, 10, 20, 50]
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false);
   const [searchResults,setSearchResults]=useState(null);
@@ -395,7 +395,7 @@ const NewsletterManagnentScreen=({classes}) => {
       <Grid
         container
         direction={windowSize==='sm'? 'column':'row'}
-        justify={windowSize==='xs'? 'flex-start':'flex-end'}>
+        justifyContent={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map((map,index) => (
           <Grid
             key={index}
@@ -745,7 +745,8 @@ const NewsletterManagnentScreen=({classes}) => {
   return (
     <DefaultScreen
       currentPage='newsletter'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}

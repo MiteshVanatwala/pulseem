@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react'
 import { TopAppBar,/*Drawer*/ } from '../components/core'
 import { Container } from '@material-ui/core'
-import { Helmet } from 'react-helmet';
+// import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { getRoutes } from '../helpers/routes';
 import { useTranslation } from "react-i18next";
 import clsx from 'clsx';
 
-const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', customStyle = '' }) => {
+const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', containerClass, customPadding = false }) => {
   const { t } = useTranslation();
   let route, title;
 
@@ -15,18 +16,17 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cust
     route = route[0].options.filter(opt => opt.key === subPage);
     title = route && route[0].title || '';
   } else {
-    route = getRoutes(t).filter(route=>route.key===currentPage);
-    title = route&&route[0]&&route[0].pageTitle || route&&route[0]&&route[0].title || '';
-    
+    route = getRoutes(t).filter(route => route.key === currentPage);
+    title = route && route[0] && route[0].pageTitle || route&&route[0]&&route[0].title || '';
   }
 
   title = title ? `${title} | ${t('master.pulseemSystem')}` : t('master.pulseemSystem');
 
-  useEffect(()=>{
+  useEffect(() => {
     const liveChat = document.createElement("script");
-    liveChat.type='text/javascript';
-    liveChat.async=true;
-    liveChat.innerHTML=`
+    liveChat.type = 'text/javascript';
+    liveChat.async = true;
+    liveChat.innerHTML = `
         var Tawk_API = Tawk_API || {}, Tawk_LoadStart = new Date();
         (function () {
             var s1 = document.createElement("script"), s0 = document.getElementsByTagName("script")[0];
@@ -41,7 +41,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cust
     return () => {
       document.body.removeChild(liveChat);
     }
-  },[])
+  }, [])
 
   useEffect(()=>{
       const liveChat = document.createElement("script");
@@ -65,7 +65,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cust
   },[])
 
   return (
-    <div>
+    <HelmetProvider>
       <Helmet>
         <title>{title}</title>
       </Helmet>
@@ -76,10 +76,11 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cust
       {/*<Drawer classes={classes} />*/}
       <Container
         maxWidth='xl'
-        className={clsx(customStyle ? customStyle : classes.defaultScreen)}>
+        className={clsx(customPadding ? classes.sidePadding : null, containerClass ?? null)}
+      >
         {children}
       </Container>
-    </div>
+    </HelmetProvider>
   )
 }
 

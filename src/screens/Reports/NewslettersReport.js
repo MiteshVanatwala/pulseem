@@ -849,7 +849,8 @@ const NewslettersReport=({classes}) => {
   return (
     <DefaultScreen
       currentPage='reports'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchSection()}
       {renderManagmentLine()}

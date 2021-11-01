@@ -122,7 +122,7 @@ const DirectSendReport=({classes}) => {
         <TabContext value={tabValue}>
           <Grid 
             container 
-            justify='space-between' 
+            justifyContent='space-between' 
             alignItems='center'
             item xs={12} 
             className={classes.borderBottom1}>
@@ -191,7 +191,8 @@ const DirectSendReport=({classes}) => {
   return (
     <DefaultScreen
       currentPage='reports'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderTabs()}
     </DefaultScreen>

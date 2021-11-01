@@ -34,7 +34,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
   const [campaineNameSearch, setCampaineNameSearch] = useState('')
-  const rowsOptions = [6, 12, 18]
+  const rowsOptions = [6, 10, 20, 50]
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
   const [searchResults, setSearchResults] = useState(null)
@@ -80,11 +80,6 @@ const AutomationsManagnentScreen = ({ classes }) => {
   }
 
   const renderSearchLine = () => {
-    const handleKeyDown = (event) => {
-      if (event.keyCode === 13) {
-        handleSearch();
-      }
-    }
     const handleSearch = () => {
       const searchArray = [{
         type: 'name',
@@ -129,6 +124,12 @@ const AutomationsManagnentScreen = ({ classes }) => {
       setPage(1);
     }
 
+    const handleKeyPress=(e) => {
+      if (e.charCode === 13) {
+        handleSearch()
+      }
+    }
+
     const handleFromDateChange = (value) => {
       if (value > toDate) {
         handleToDate(null);
@@ -147,7 +148,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
           onClick={handleSearch}
-          onKeyPress={handleSearch}
+          onKeyPress={handleKeyPress}
           placeholder={t('automations.labelAutomationName')}
         />
       )
@@ -160,7 +161,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
-            onKeyDown={handleKeyDown}
+            onKeyPress={handleKeyPress}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('automations.labelAutomationName')}
@@ -335,7 +336,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       <Grid
         container
         direction={'row'}
-        justify={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
+        justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
             key={icon.key}
@@ -507,7 +508,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
           <Box className={classes.inlineGrid}>
             {renderNameCell(row)}
           </Box>
-          <Grid container justify={'space-between'}>
+          <Grid container justifyContent={'space-between'}>
             <Grid item container className={classes.widthUnset}>
               <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
                 {renderRecipientsCell(row.Recipients)}
@@ -806,7 +807,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
   return (
     <DefaultScreen
       currentPage='automations'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}

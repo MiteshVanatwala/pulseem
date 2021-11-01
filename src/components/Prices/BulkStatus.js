@@ -72,7 +72,7 @@ const BulkStatus = ({ classes }) => {
       <Paper
         className={clsx(classes.dashboardTopPaper, classes.bulkMargin)}
         elevation={3}>
-        <Grid container justify='center'>
+        <Grid container justifyContent='center'>
           <Grid item xs={8} className={classes.bulkStatusTitleSection}>
             <Typography
               align='center'
@@ -85,7 +85,7 @@ const BulkStatus = ({ classes }) => {
             container
             item xs={9}
             className={classes.bulkStatusBlue}
-            justify='space-between'
+            justifyContent='space-between'
             onMouseEnter={() => showSmsPackage(true)}
             onMouseLeave={() => showSmsPackage(false)}>
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
@@ -103,20 +103,20 @@ const BulkStatus = ({ classes }) => {
               </Typography>)
             } */}
           </Grid>
-          <Grid container item xs={9} className={classes.bulkStatusBlue} justify='space-between'>
+          <Grid container item xs={9} className={classes.bulkStatusBlue} justifyContent='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             <Typography className={classes.bulkTitle}>
               {isNewsletterPrepaid ? t('dashboard.perRecipients') : Newsletters.Credits}
             </Typography>
           </Grid>
-          <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
+          <Grid container item xs={9} className={classes.bulkOutline} justifyContent='space-between'>
             <Typography className={classes.bulkTitle}>{t('appBar.mms.title')}</Typography>
             {isMMSPrepaid?t('dashboard.perRecipients'):Mms.Credits}
             {/* {availablePackages.length > 0 && <a href='#' className={classes.bulkContent}>
               {t('dashboard.purchase')}
             </a> */}
           </Grid>
-          <Grid container item xs={9} className={classes.bulkOutline} justify='space-between'>
+          <Grid container item xs={9} className={classes.bulkOutline} justifyContent='space-between'>
             <Typography className={classes.bulkTitle}>{t('master.notifications')}</Typography>
             {isNotificationsPrepaid?t('dashboard.perRecipients'):Notifications.Credits}
             {/* {availablePackages.length > 0 &&

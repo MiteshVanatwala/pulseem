@@ -6,7 +6,7 @@ import {
   CodeMenuIcon,DolarMenuIcon,SettingsMenuIcon,StarMenuIcon,GrafMenuIcon,GroupMenuIcon
 } from '../assets/images/settings/index'
 import SettingsLogo from '../assets/images/settings-white.png';
-
+import { FaHome } from 'react-icons/fa'
 
 export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
   title: <img
@@ -26,7 +26,7 @@ export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
 })
 
 
-export const getRoutes=(t=() => null, isClalAccount = false, features = null, windowSize = null) => [
+export const getRoutes=(t=() => null, isClalAccount = false, features = null, windowSize = null, smsOldVersion) => [
   {
     key: 'dashboard',
     title: t('dashboard.pageTitle'),
@@ -36,6 +36,13 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
     icon: <img
       alt='Dashboard'
       src={DashboardIcon} />
+  },
+  {
+    key: 'homepage',
+    title: t('dashboard.pageTitle'),
+    href: '/react',
+    isShow: true,
+    icon: <FaHome style={{ color: "#fff"}} />
   },
   {
     key: 'gruops',
@@ -85,7 +92,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
       alt='Sms'
       src={SmsIcon} />,
     options: [
-      {title: t('master.RadMenuItemResource101.Text'),href: '/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create&fromreact=true', isShow: true},
+      {title: t('master.RadMenuItemResource101.Text'),href: smsOldVersion === 'true' ? '/Pulseem/SMSCampaignEdit.aspx' : '/react/sms/create', isShow: true},
       {title: t('master.RadMenuItemResource102.Text'),href: '/react/SMSCampaigns', isShow: true},
       {title: t('master.chatbotSMS'),href: '/Pulseem/SMSSmartResponses.aspx?fromreact=true', isShow: true},
       {title: t('master.linkSMSResponsesReport.Text'),href: '/Pulseem/ResponsesReport.aspx?fromreact=true', isShow: true},

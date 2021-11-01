@@ -12,7 +12,7 @@ import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL } = useSelector(state => state.core);
+  const { windowSize, isRTL } = useSelector(state => state.core); 
   const { t } = useTranslation();
 
   return (
