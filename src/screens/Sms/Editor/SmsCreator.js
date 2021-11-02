@@ -1814,7 +1814,7 @@ const SmsCreator = ({ classes, ...props }) => {
     </Grid>);
   }
   return (
-    <DefaultScreen currentPage="sms" classes={classes} customPadding={true}>
+    <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true}>
       {renderToast()}
       <Grid container className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}>
         <SwitchOldVersion />

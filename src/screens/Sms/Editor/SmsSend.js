@@ -2531,7 +2531,7 @@ const SmsSend = ({ classes, ...props }) => {
     return <></>
   }
   return (
-    <DefaultScreen currentPage="sms" classes={classes} customPadding={true}>
+    <DefaultScreen subPage={"create"}  currentPage="sms" classes={classes} customPadding={true}>
       {renderToast()}
       <div>
 
