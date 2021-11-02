@@ -408,6 +408,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   disabled: {
     opacity: ".65",
     pointerEvents: "none !important",
+    cursor: 'not-allowed !important'
   },
   imageInfo: {
     backgroundColor: "rgba(255,255,255,.5)",
@@ -759,6 +760,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: "#1c82b2",
     cursor: "pointer",
     borderColor: "#1c82b2",
+    textTransform: 'none',
+    '&$disabled': {
+      cursor: 'not-allowed !important'
+    },
+    '&:hover':{
+      backgroundColor: "#1c82b2",
+    },
     "&:first-child": {
       marginInlineStart: 5,
       marginInlineEnd: 5,

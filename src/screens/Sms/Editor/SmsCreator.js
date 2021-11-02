@@ -867,13 +867,13 @@ const SmsCreator = ({ classes, ...props }) => {
                   placement="top"
                   arrow
                 >
-                  <Typography
-                    className={classes.infoButtons}
+                  <Button
+                    className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null )}
                     onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                   >
                     <Typography className={classes.editorLink}>+</Typography>
                     {t("mainReport.removalMsg")}
-                  </Typography>
+                  </Button>
                 </Tooltip>
                 <Tooltip
                   disableFocusListener
@@ -882,13 +882,13 @@ const SmsCreator = ({ classes, ...props }) => {
                   placement="top"
                   arrow
                 >
-                  <Typography
+                  <Button
                     className={classes.infoButtons}
                     onClick={removalLinkDisabled ? null : onRemovalLink}
                   >
                     <Typography className={classes.editorLink}>+</Typography>
                     {t("mainReport.removalLink")}
-                  </Typography>
+                  </Button>
                 </Tooltip>
               </Box>
               <Box className={classes.endButtons}>
