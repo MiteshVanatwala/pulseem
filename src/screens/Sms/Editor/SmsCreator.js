@@ -466,23 +466,24 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const validationCheck = () => {
+    let isValid = true;
     if (smsModel.Name === "") {
       setcampaignBool(true);
-      setDialogType({ type: "valiateError" })
-      return false;
+      isValid = false;
     }
 
     if (smsModel.Text === "") {
-      setDialogType({ type: "valiateError" })
-      return false;
+      isValid = false
     }
     let english = /^[ A-Za-z0-9]*$/;
     if (campaignNumber === "" || !english.test(campaignNumber)) {
       setcampaignNumberValidated(true);
-      setDialogType({ type: "valiateError" })
-      return false;
+      isValid = false;
     }
-    return true;
+    if (!isValid) {
+      setDialogType({ type: "valiateError" })
+    }
+    return isValid;
   };
   const handleSend = async () => {
     if (validationCheck()) {
@@ -868,7 +869,7 @@ const SmsCreator = ({ classes, ...props }) => {
                   arrow
                 >
                   <Button
-                    className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null )}
+                    className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null)}
                     onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                   >
                     <Typography className={classes.editorLink}>+</Typography>
