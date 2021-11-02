@@ -172,6 +172,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         gridTemplateColumns: "50% 50%",
         width: summaryWidth[windowSize],
         marginTop: "15px",
+        "& $wrapChat": {
+            width: 290,
+            right: 40
+        },
         "@media screen and (max-width: 1366px)": {
             display: 'flex',
             justifyContent: 'space-between',
