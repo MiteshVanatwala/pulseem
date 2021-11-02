@@ -75,7 +75,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
 
   const renderSearchLine=() => {
     const handleKeyDown = (event) => {
-      if (event.keyCode === 13 || event.key === 'Enter') {
+      if (event.keyCode === 13 || event.code === 'Enter') {
         handleSearch();
       }
     }
