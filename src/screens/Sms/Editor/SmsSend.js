@@ -183,7 +183,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [snackBarPulseBoolean, setsnackBarPulseBoolean] = useState(false);
   const [snackbarTimeBoolean, setsnackbarTimeBoolean] = useState(false);
   const [snackbarMainPulse, setsnackbarMainPulse] = useState(false);
-  const [pulsePer, setpulsePer] = useState("percent");
+  const [pulsePer, setpulsePer] = useState("recipients");
   const [pulseAmount, setPulseAmount] = useState("");
   const [timeInterval, setTimeInterval] = useState("");
   const [random, setrandom] = useState("");
