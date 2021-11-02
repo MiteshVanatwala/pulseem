@@ -1351,7 +1351,7 @@ const SmsSend = ({ classes, ...props }) => {
 
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-              {t("smsReport.packetSend")} - {pulseAmount} {pulsePer == "" ? t("sms.recipients") : t("common.Percent")} {" "}
+              {t("smsReport.packetSend")} - {pulseAmount} {pulsePer == "" || pulsePer == "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
               {t("sms.every")} {timeInterval} {hourName == "" ? t("common.minutes") : t("common.hours")}
             </span>
           ) : null}
