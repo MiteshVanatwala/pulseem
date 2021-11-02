@@ -188,7 +188,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [timeInterval, setTimeInterval] = useState("");
   const [random, setrandom] = useState("");
   const [estimationDate, setestimationDate] = useState(null);
-  const [minName, setminName] = useState("");
+  const [minName, setminName] = useState("mins");
   const [hourName, sethourName] = useState("Hours");
   const [spectialDateFieldID, setDateFieldID] = useState("0");
   const [groupTextError, setGroupTextError] = useState(false);
@@ -329,6 +329,7 @@ const SmsSend = ({ classes, ...props }) => {
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 1) {
         setminName("Mins");
         sethourName("");
+        
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 2) {
         setminName("");
@@ -1352,7 +1353,7 @@ const SmsSend = ({ classes, ...props }) => {
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
               {t("smsReport.packetSend")} - {pulseAmount} {pulsePer == "" || pulsePer == "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
-              {t("sms.every")} {timeInterval} {hourName == "" ? t("common.minutes") : t("common.hours")}
+              {t("sms.every")} {timeInterval} {hourName == "" || minName == "mins" ? t("common.minutes") : t("common.hours")}
             </span>
           ) : null}
           {toggleRandom ? (
