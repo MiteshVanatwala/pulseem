@@ -194,7 +194,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     setOpen(!open)
   }
   const { t } = useTranslation();
-  const routes = getRoutes(t, isClal, accountFeatures, windowSize, smsOldVersion)
+  const routes = getRoutes(t, isClal, accountFeatures, windowSize, smsOldVersion, isRTL)
   const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin.toLowerCase() === 'superadmin')))
 
   const navigate = ({ uri }) => {

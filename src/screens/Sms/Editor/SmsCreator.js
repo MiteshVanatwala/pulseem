@@ -1416,10 +1416,10 @@ const SmsCreator = ({ classes, ...props }) => {
     setIsNewVersion(false);
     setTimeout(() => {
       if (smsModel.SMSCampaignID && smsModel.SMSCampaignID > 0) {
-        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&SMSCampaignID=${smsModel.SMSCampaignID}${isFromAutomation ? "&FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`;
+        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}&SMSCampaignID=${smsModel.SMSCampaignID}${isFromAutomation ? "&FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`;
       }
       else {
-        window.location = "/Pulseem/SMSCampaignEdit.aspx?OldVersion=true";
+        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
       }
     }, 500)
   }
