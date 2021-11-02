@@ -457,7 +457,7 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     else {
       setrestoreBool(false);
-      setremovalMessageButtonDisabled(false);
+      setremovalMessageButtonDisabled(true);
       setcampaignNumber(e.target.value);
       setcampaignNumberValidated(false);
       e.preventDefault();

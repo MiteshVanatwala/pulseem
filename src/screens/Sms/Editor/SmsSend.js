@@ -539,6 +539,7 @@ const SmsSend = ({ classes, ...props }) => {
     }
   };
   const handleRandom = (e) => {
+    setboolRandom(false);
     const re = /^[0-9\b]+$/;
     const totalRecipients = selectedGroups.reduce(function (a, b) {
       return a + b['Recipients'];
