@@ -1221,7 +1221,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     position: "absolute",
     top: "115px",
-    width: 310,
+    width: 300,
     height: 240,
     left: 'auto',
     right: 45,

@@ -318,7 +318,7 @@ const SmsSend = ({ classes, ...props }) => {
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseType === 2) {
         setnoTrue(true);
-        setpulsePer("");
+        setpulsePer("recipients");
         setpulseReci("Recipients");
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseType === 1) {
@@ -2320,6 +2320,7 @@ const SmsSend = ({ classes, ...props }) => {
                     onClick={() => {
                       setPulseType(2);
                       setnoTrue(true);
+                      setpulsePer("recipients");
                       setpulseReci("Recipients");
                     }}
                   >
