@@ -206,7 +206,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
   }
 
   const returnToAdmin = () => {
-    window.location = '/Pulseem/Backoffice/AccountsManage.aspx';
+    window.location = '/Pulseem/ReactRedirect.aspx';
   }
 
   const renderRegularAppBar = () => (
