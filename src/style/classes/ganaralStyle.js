@@ -90,7 +90,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null
   },
   dialogContainer: {
-    zIndex: '9999 !important',
+    zIndex: '1500 !important',
     "& .MuiPaper-root": {
       overflowX: "hidden",
     },
@@ -1237,7 +1237,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   {
     position: "absolute",
     top: "115px",
-    width: 310,
+    width: 300,
     height: 240,
     left: 'auto',
     right: 45,
