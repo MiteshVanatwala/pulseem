@@ -457,7 +457,7 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     else {
       setrestoreBool(false);
-      setremovalMessageButtonDisabled(false);
+      setremovalMessageButtonDisabled(true);
       setcampaignNumber(e.target.value);
       setcampaignNumberValidated(false);
       e.preventDefault();
@@ -466,23 +466,24 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const validationCheck = () => {
+    let isValid = true;
     if (smsModel.Name === "") {
       setcampaignBool(true);
-      setDialogType({ type: "valiateError" })
-      return false;
+      isValid = false;
     }
 
     if (smsModel.Text === "") {
-      setDialogType({ type: "valiateError" })
-      return false;
+      isValid = false
     }
     let english = /^[ A-Za-z0-9]*$/;
     if (campaignNumber === "" || !english.test(campaignNumber)) {
       setcampaignNumberValidated(true);
-      setDialogType({ type: "valiateError" })
-      return false;
+      isValid = false;
     }
-    return true;
+    if (!isValid) {
+      setDialogType({ type: "valiateError" })
+    }
+    return isValid;
   };
   const handleSend = async () => {
     if (validationCheck()) {
@@ -867,13 +868,13 @@ const SmsCreator = ({ classes, ...props }) => {
                   placement="top"
                   arrow
                 >
-                  <Typography
-                    className={classes.infoButtons}
+                  <Button
+                    className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null)}
                     onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                   >
                     <Typography className={classes.editorLink}>+</Typography>
                     {t("mainReport.removalMsg")}
-                  </Typography>
+                  </Button>
                 </Tooltip>
                 <Tooltip
                   disableFocusListener
@@ -882,13 +883,13 @@ const SmsCreator = ({ classes, ...props }) => {
                   placement="top"
                   arrow
                 >
-                  <Typography
+                  <Button
                     className={classes.infoButtons}
                     onClick={removalLinkDisabled ? null : onRemovalLink}
                   >
                     <Typography className={classes.editorLink}>+</Typography>
                     {t("mainReport.removalLink")}
-                  </Typography>
+                  </Button>
                 </Tooltip>
               </Box>
               <Box className={classes.endButtons}>
@@ -1416,10 +1417,10 @@ const SmsCreator = ({ classes, ...props }) => {
     setIsNewVersion(false);
     setTimeout(() => {
       if (smsModel.SMSCampaignID && smsModel.SMSCampaignID > 0) {
-        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&SMSCampaignID=${smsModel.SMSCampaignID}${isFromAutomation ? "&FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`;
+        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}&SMSCampaignID=${smsModel.SMSCampaignID}${isFromAutomation ? "&FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`;
       }
       else {
-        window.location = "/Pulseem/SMSCampaignEdit.aspx?OldVersion=true";
+        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
       }
     }, 500)
   }
@@ -1814,7 +1815,7 @@ const SmsCreator = ({ classes, ...props }) => {
     </Grid>);
   }
   return (
-    <DefaultScreen currentPage="sms" classes={classes} customPadding={true}>
+    <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true}>
       {renderToast()}
       <Grid container className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}>
         <SwitchOldVersion />

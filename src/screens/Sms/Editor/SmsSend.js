@@ -183,12 +183,12 @@ const SmsSend = ({ classes, ...props }) => {
   const [snackBarPulseBoolean, setsnackBarPulseBoolean] = useState(false);
   const [snackbarTimeBoolean, setsnackbarTimeBoolean] = useState(false);
   const [snackbarMainPulse, setsnackbarMainPulse] = useState(false);
-  const [pulsePer, setpulsePer] = useState("percent");
+  const [pulsePer, setpulsePer] = useState("recipients");
   const [pulseAmount, setPulseAmount] = useState("");
   const [timeInterval, setTimeInterval] = useState("");
   const [random, setrandom] = useState("");
   const [estimationDate, setestimationDate] = useState(null);
-  const [minName, setminName] = useState("");
+  const [minName, setminName] = useState("mins");
   const [hourName, sethourName] = useState("Hours");
   const [spectialDateFieldID, setDateFieldID] = useState("0");
   const [groupTextError, setGroupTextError] = useState(false);
@@ -318,7 +318,7 @@ const SmsSend = ({ classes, ...props }) => {
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseType === 2) {
         setnoTrue(true);
-        setpulsePer("");
+        setpulsePer("recipients");
         setpulseReci("Recipients");
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.PulseType === 1) {
@@ -329,6 +329,7 @@ const SmsSend = ({ classes, ...props }) => {
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 1) {
         setminName("Mins");
         sethourName("");
+        
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 2) {
         setminName("");
@@ -538,6 +539,7 @@ const SmsSend = ({ classes, ...props }) => {
     }
   };
   const handleRandom = (e) => {
+    setboolRandom(false);
     const re = /^[0-9\b]+$/;
     const totalRecipients = selectedGroups.reduce(function (a, b) {
       return a + b['Recipients'];
@@ -1351,8 +1353,8 @@ const SmsSend = ({ classes, ...props }) => {
 
           {togglePulse ? (
             <span style={{ marginBottom: "5px", marginTop: "5px" }}>
-              {t("smsReport.packetSend")} - {pulseAmount} {pulsePer == "" ? t("sms.recipients") : t("common.Percent")} {" "}
-              {t("sms.every")} {timeInterval} {hourName == "" ? t("common.minutes") : t("common.hours")}
+              {t("smsReport.packetSend")} - {pulseAmount} {pulsePer == "" || pulsePer == "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
+              {t("sms.every")} {timeInterval} {hourName == "" || minName == "mins" ? t("common.minutes") : t("common.hours")}
             </span>
           ) : null}
           {toggleRandom ? (
@@ -2320,6 +2322,7 @@ const SmsSend = ({ classes, ...props }) => {
                     onClick={() => {
                       setPulseType(2);
                       setnoTrue(true);
+                      setpulsePer("recipients");
                       setpulseReci("Recipients");
                     }}
                   >
@@ -2528,7 +2531,7 @@ const SmsSend = ({ classes, ...props }) => {
     return <></>
   }
   return (
-    <DefaultScreen currentPage="sms" classes={classes} customPadding={true}>
+    <DefaultScreen subPage={"create"}  currentPage="sms" classes={classes} customPadding={true}>
       {renderToast()}
       <div>
 
