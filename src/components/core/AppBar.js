@@ -235,7 +235,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           item={settings}
         />
         <LanguageSelector classes={classes} />
-        {isAdmin !== '' && <AppBarItem
+        {!cameFromSubAccount && isAdmin !== '' && <AppBarItem
           classes={classes}
           item={{ title: t('appBar.admin') }}
           onMainClick={() => {
