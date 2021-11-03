@@ -443,26 +443,27 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCampaignNumber = (e) => {
+    const text = e.target.value;
+    var lastChar = text.substring(text.length, text.length - 1);
     var isNumber = /^[0-9]*$/;
-    var english = /^[A-Za-z0-9]*$/;
-    var reg = "/[^\x00-\xFF]/g";
-    if (!isNumber.test(e.target.value) && e.target.value.length >= 13) {
-      e.target.value = e.target.value.substring(0, 10);
+    var english = /^[A-Za-z0-9 ]*$/;
+    // var reg = "/[^\x00-\xFF]/g";
+    if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
+      e.target.value = text.substring(0, 10);
     }
-    if (!english.test(e.target.value)) {
-      e.target.value = e.target.value.replaceAll(
-        reg,
-        ""
-      );
+    if (text.match(isNumber) && text.length >= 13) {
+      e.target.value = text.substring(0, 13);
     }
-    else {
-      setrestoreBool(false);
-      setremovalMessageButtonDisabled(true);
-      setcampaignNumber(e.target.value);
-      setcampaignNumberValidated(false);
-      e.preventDefault();
-      e.stopPropagation();
+    if (!text.match(english)) {
+      e.target.value = e.target.value.replace(lastChar, '');   
     }
+
+    setrestoreBool(false);
+    setremovalMessageButtonDisabled(true);
+    setcampaignNumber(e.target.value);
+    setcampaignNumberValidated(false);
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   const validationCheck = () => {
