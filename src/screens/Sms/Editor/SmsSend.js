@@ -883,7 +883,7 @@ const SmsSend = ({ classes, ...props }) => {
               innerHeight={325}
             />
           ) : null}
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div className={classes.groupsFooter}>
             <div
               style={{
                 display: "flex",

@@ -30,6 +30,14 @@ const summaryWidth = {
     xl: 800
 }
 
+const flexDirection = {
+    xs: 'column-reverse',
+    sm: 'column-reverse',
+    md: 'row',
+    lg: 'row',
+    xl: 'row',
+}
+
 export const getSmsStyle = (windowSize, isRTL, theme) => ({
     sectionTitle: {
         marginTop: 45,
@@ -922,13 +930,22 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             width: "320px"
         },
     },
+    groupsFooter: {
+        display: "flex",
+        justifyContent: "space-between",
+        flexDirection: flexDirection[windowSize]
+
+    },
     createGroupContainer:
     {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        "@media screen and (max-width: 768px)": {
-            display: "none"
+        "@media screen and (max-width: 414px)": {
+            "& $bodyInfo": {
+                width: 23
+            }
+            // display: "none"
         },
     },
     addOptionsIcon:
