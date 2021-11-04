@@ -329,7 +329,7 @@ const SmsSend = ({ classes, ...props }) => {
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 1) {
         setminName("Mins");
         sethourName("");
-        
+
       }
       if (campaignSettings.payload.PulseSettings != null && campaignSettings.payload.PulseSettings.TimeType === 2) {
         setminName("");
@@ -883,7 +883,7 @@ const SmsSend = ({ classes, ...props }) => {
               innerHeight={325}
             />
           ) : null}
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <div className={classes.groupsFooter}>
             <div
               style={{
                 display: "flex",
@@ -1479,8 +1479,8 @@ const SmsSend = ({ classes, ...props }) => {
 
     return moment(date)
       .add(
-        addTime,
-        pulseType == 2
+        Math.round(addTime),
+        timeType == 1
           ? "m"
           : "h"
       )
@@ -2531,7 +2531,7 @@ const SmsSend = ({ classes, ...props }) => {
     return <></>
   }
   return (
-    <DefaultScreen currentPage="sms" classes={classes} customPadding={true}>
+    <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true}>
       {renderToast()}
       <div>
 

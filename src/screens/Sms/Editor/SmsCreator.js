@@ -443,46 +443,48 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const onCampaignNumber = (e) => {
+    const text = e.target.value;
+    var lastChar = text.substring(text.length, text.length - 1);
     var isNumber = /^[0-9]*$/;
-    var english = /^[A-Za-z0-9]*$/;
-    var reg = "/[^\x00-\xFF]/g";
-    if (!isNumber.test(e.target.value) && e.target.value.length >= 13) {
-      e.target.value = e.target.value.substring(0, 10);
+    var english = /^[A-Za-z0-9 ]*$/;
+    // var reg = "/[^\x00-\xFF]/g";
+    if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
+      e.target.value = text.substring(0, 10);
     }
-    if (!english.test(e.target.value)) {
-      e.target.value = e.target.value.replaceAll(
-        reg,
-        ""
-      );
+    if (text.match(isNumber) && text.length >= 13) {
+      e.target.value = text.substring(0, 13);
     }
-    else {
-      setrestoreBool(false);
-      setremovalMessageButtonDisabled(true);
-      setcampaignNumber(e.target.value);
-      setcampaignNumberValidated(false);
-      e.preventDefault();
-      e.stopPropagation();
+    if (!text.match(english)) {
+      e.target.value = e.target.value.replace(lastChar, '');   
     }
+
+    setrestoreBool(false);
+    setremovalMessageButtonDisabled(true);
+    setcampaignNumber(e.target.value);
+    setcampaignNumberValidated(false);
+    e.preventDefault();
+    e.stopPropagation();
   };
 
   const validationCheck = () => {
+    let isValid = true;
     if (smsModel.Name === "") {
       setcampaignBool(true);
-      setDialogType({ type: "valiateError" })
-      return false;
+      isValid = false;
     }
 
     if (smsModel.Text === "") {
-      setDialogType({ type: "valiateError" })
-      return false;
+      isValid = false
     }
     let english = /^[ A-Za-z0-9]*$/;
     if (campaignNumber === "" || !english.test(campaignNumber)) {
       setcampaignNumberValidated(true);
-      setDialogType({ type: "valiateError" })
-      return false;
+      isValid = false;
     }
-    return true;
+    if (!isValid) {
+      setDialogType({ type: "valiateError" })
+    }
+    return isValid;
   };
   const handleSend = async () => {
     if (validationCheck()) {
@@ -867,13 +869,13 @@ const SmsCreator = ({ classes, ...props }) => {
                   placement="top"
                   arrow
                 >
-                  <Typography
-                    className={classes.infoButtons}
+                  <Button
+                    className={clsx(classes.infoButtons, removalMessageButtonDisabled ? classes.disabled : null)}
                     onClick={removalMessageButtonDisabled ? null : onRemovalMsg}
                   >
                     <Typography className={classes.editorLink}>+</Typography>
                     {t("mainReport.removalMsg")}
-                  </Typography>
+                  </Button>
                 </Tooltip>
                 <Tooltip
                   disableFocusListener
@@ -882,13 +884,13 @@ const SmsCreator = ({ classes, ...props }) => {
                   placement="top"
                   arrow
                 >
-                  <Typography
+                  <Button
                     className={classes.infoButtons}
                     onClick={removalLinkDisabled ? null : onRemovalLink}
                   >
                     <Typography className={classes.editorLink}>+</Typography>
                     {t("mainReport.removalLink")}
-                  </Typography>
+                  </Button>
                 </Tooltip>
               </Box>
               <Box className={classes.endButtons}>
@@ -1416,10 +1418,10 @@ const SmsCreator = ({ classes, ...props }) => {
     setIsNewVersion(false);
     setTimeout(() => {
       if (smsModel.SMSCampaignID && smsModel.SMSCampaignID > 0) {
-        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&SMSCampaignID=${smsModel.SMSCampaignID}${isFromAutomation ? "&FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`;
+        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}&SMSCampaignID=${smsModel.SMSCampaignID}${isFromAutomation ? "&FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`;
       }
       else {
-        window.location = "/Pulseem/SMSCampaignEdit.aspx?OldVersion=true";
+        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
       }
     }, 500)
   }
@@ -1814,7 +1816,7 @@ const SmsCreator = ({ classes, ...props }) => {
     </Grid>);
   }
   return (
-    <DefaultScreen currentPage="sms" classes={classes} customPadding={true}>
+    <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true}>
       {renderToast()}
       <Grid container className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}>
         <SwitchOldVersion />

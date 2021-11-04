@@ -28,7 +28,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 
 const SmsManagnentScreen=({classes}) => {
-  const {language,windowSize,email,phone,rowsPerPage,smsOldVersion}=useSelector(state => state.core)
+  const {language,windowSize,email,phone,rowsPerPage,smsOldVersion,isRTL}=useSelector(state => state.core)
   const {smsData,smsDataError,smsDeletedData,authorizationData}=useSelector(state => state.sms)
   const {username}=useSelector(state => state.user)
   const {t}=useTranslation()
@@ -234,7 +234,7 @@ const SmsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            href={smsOldVersion === "true" ? "/Pulseem/SMSCampaignEdit.aspx?OldVersion=true" : "/react/sms/create"}
+            href={smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : "/react/sms/create"}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -303,7 +303,7 @@ const SmsManagnentScreen=({classes}) => {
         remove: Status!==1 || (AutomationID!==0 &&  AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: smsOldVersion === "true"  ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}` : `/react/sms/send/${Id}`
+        href: smsOldVersion === "true"  ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he' : 'en'}` : `/react/sms/send/${Id}`
       },
       {
         key: 'preview',
@@ -324,7 +324,7 @@ const SmsManagnentScreen=({classes}) => {
         icon: EditIcon,
         disable: Status!==1 || AutomationID!==0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        href: smsOldVersion === "true"  ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}` : `/react/sms/edit/${Id}`,
+        href: smsOldVersion === "true"  ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/edit/${Id}`,
         rootClass: classes.paddingIcon
       },
       {

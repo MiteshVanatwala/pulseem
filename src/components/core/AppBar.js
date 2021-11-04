@@ -194,8 +194,8 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     setOpen(!open)
   }
   const { t } = useTranslation();
-  const routes = getRoutes(t, isClal, accountFeatures, windowSize, smsOldVersion)
-  const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin.toLowerCase() === 'superadmin')))
+  const routes = getRoutes(t, isClal, accountFeatures, windowSize, smsOldVersion, isRTL)
+  const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
 
   const navigate = ({ uri }) => {
     if (!!uri) {
@@ -203,6 +203,10 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
       dispatch(setScriptDialog(false));
       window.location.href = uri
     }
+  }
+
+  const returnToAdmin = () => {
+    window.location = '/Pulseem/ReactRedirect.aspx';
   }
 
   const renderRegularAppBar = () => (
@@ -218,7 +222,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           onInnerClick={navigate}
         />
       ))}
-      {windowSize==='xl'|| windowSize === 'lg' ? <>
+      {windowSize === 'xl' || windowSize === 'lg' ? <>
         <Box className={classes.appBerSpace} />
         <Typography
           className={classes.appBarUsername}>
@@ -231,6 +235,13 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           item={settings}
         />
         <LanguageSelector classes={classes} />
+        {!cameFromSubAccount && isAdmin !== '' && <AppBarItem
+          classes={classes}
+          item={{ title: t('appBar.admin') }}
+          onMainClick={() => {
+            returnToAdmin();
+          }}
+        />}
         {cameFromSubAccount && <AppBarItem
           classes={classes}
           item={{ title: t('appBar.returnToMainAccount') }}

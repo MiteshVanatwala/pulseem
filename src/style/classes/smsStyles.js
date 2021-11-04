@@ -30,6 +30,14 @@ const summaryWidth = {
     xl: 800
 }
 
+const flexDirection = {
+    xs: 'column-reverse',
+    sm: 'column-reverse',
+    md: 'row',
+    lg: 'row',
+    xl: 'row',
+}
+
 export const getSmsStyle = (windowSize, isRTL, theme) => ({
     sectionTitle: {
         marginTop: 45,
@@ -172,6 +180,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         gridTemplateColumns: "50% 50%",
         width: summaryWidth[windowSize],
         marginTop: "15px",
+        "& $wrapChat": {
+            width: 290,
+            right: 40
+        },
         "@media screen and (max-width: 1366px)": {
             display: 'flex',
             justifyContent: 'space-between',
@@ -268,7 +280,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         border: "2px solid #efefef",
         height: 36,
         borderRadius: 5,
-        textAlign: 'center'
+        textAlign: 'center',
+        "@media screen and (max-width: 560px)": {
+            width: 50
+        }
     },
     pulseActive:
     {
@@ -292,6 +307,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         cursor: "pointer",
         paddingRight: 10,
         paddingLeft: 10,
+        "@media screen and (max-width: 560px)": {
+            fontSize: 12
+        },
         "@media screen and (max-width: 375px)": {
             width: 42,
         }
@@ -309,6 +327,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         cursor: "pointer",
         paddingRight: 10,
         paddingLeft: 10,
+        "@media screen and (max-width: 560px)": {
+            fontSize: 12
+        },
         "@media screen and (max-width: 375px)": {
             width: 42,
         }
@@ -715,7 +736,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         alignItems: "center",
         borderBottom: "2px solid #efefef",
         paddingBottom: "30px",
-        "@media screen and (max-width: 414px)": {
+        "@media screen and (max-width: 800px)": {
             flexDirection: 'column'
         }
     },
@@ -725,6 +746,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         fontWeight: 400,
         marginTop: 15,
         marginBottom: 15,
+        "@media screen and (max-width: 560px)": {
+            fontSize: 14,
+        }
     },
     inputFieldDiv:
     {
@@ -757,6 +781,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         fontWeight: 400,
         marginTop: 10,
         marginBottom: 10,
+        "@media screen and (max-width: 560px)": {
+            fontSize: 14,
+        }
     },
     confirmDiv:
     {
@@ -903,13 +930,22 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             width: "320px"
         },
     },
+    groupsFooter: {
+        display: "flex",
+        justifyContent: "space-between",
+        flexDirection: flexDirection[windowSize]
+
+    },
     createGroupContainer:
     {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        "@media screen and (max-width: 768px)": {
-            display: "none"
+        "@media screen and (max-width: 414px)": {
+            "& $bodyInfo": {
+                width: 23
+            }
+            // display: "none"
         },
     },
     addOptionsIcon:
