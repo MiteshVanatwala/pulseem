@@ -143,7 +143,7 @@ const BulkStatus = ({ classes }) => {
             onMouseLeave={() => showEmailPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
-            {isShowEmailPackage && billingTypeId !== "1" && accountFeatures && accountFeatures.includes('36') ? (
+            {isShowEmailPackage && billingTypeId !== "1" && accountFeatures && accountFeatures.includes('37') ? (
               <a
                 onClick={() => showPackageDialogType(2)}
                 className={getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink}
@@ -153,7 +153,7 @@ const BulkStatus = ({ classes }) => {
             )
               :
               (<Typography className={classes.bulkTitle}>
-                {accountFeatures && accountFeatures.includes('36') && <CgShoppingCart className={classes.shoppingCartIcon} />}
+                {accountFeatures && accountFeatures.includes('37') && <CgShoppingCart className={classes.shoppingCartIcon} />}
                 {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Newsletters)}
               </Typography>)
             }
