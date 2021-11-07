@@ -11,7 +11,8 @@ import PurchaseSummary from './Dialogs/PurchaseSummary';
 import PackagesList from './Dialogs/PackagesList';
 import Pay from './Dialogs/Pay';
 import { MdNotificationsActive } from 'react-icons/md';
-import {FaExclamationCircle } from 'react-icons/fa';
+import { FaExclamationCircle } from 'react-icons/fa';
+import { getPackagesDetails } from '../../../redux/reducers/dashboardSlice';
 import {
     CheckAnimation
 } from '../../../assets/images/settings/index'
@@ -113,6 +114,9 @@ const PricePackages = ({ classes,
         console.log(result.payload);
         setShowPaymentResult(true);
         setLoader(false);
+        if (result.payload === true) {
+            await dispatch(getPackagesDetails());
+        }
     }
 
     const handleTranzilaClose = async () => {
@@ -178,7 +182,7 @@ const PricePackages = ({ classes,
                                     <Typography>{t("payment.paymentSuceess")}</Typography>
                                 </Box>) : (
                                     <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-                                        <FaExclamationCircle style={{fontSize: 100}} />
+                                        <FaExclamationCircle style={{ fontSize: 100 }} />
                                         <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.errorDetected")}</Typography>
                                         <Typography>{t("common.tryAgain")}</Typography>
                                     </Box>)
@@ -226,7 +230,7 @@ const PricePackages = ({ classes,
     }
 
     return (
-        <Grid container spacing={1} style={{ maxWidth: '100%', pointerEvents: showLoader ? 'none' : 'auto'  }}>
+        <Grid container spacing={1} style={{ maxWidth: '100%', pointerEvents: showLoader ? 'none' : 'auto' }}>
             {purchaseWizard()}
             {renderTranzillaFrame()}
             <Loader isOpen={showLoader} showBackdrop={false} />
