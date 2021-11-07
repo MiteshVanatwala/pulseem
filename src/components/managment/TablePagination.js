@@ -16,7 +16,7 @@ export const TablePagination=({
   onPageChange=() => null,
   returnPageOne=true
 }) => {
-  console.log(`rowsperpage`, rowsPerPage)
+  
   const {t}=useTranslation()
   const pages=Math.ceil(rows/rowsPerPage)
   const [innerPage,setPage]=useState('');
