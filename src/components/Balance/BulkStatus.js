@@ -102,7 +102,8 @@ const BulkStatus = ({ classes }) => {
         className={clsx(classes.dashboardTopPaper, classes.bulkMargin)}
         elevation={3}>
         <Grid container justifyContent='center'>
-          <Grid item xs={8} className={classes.bulkStatusTitleSection}>
+          <Grid item xs={9} className={classes.bulkStatusTitleSection}>
+            <span className={classes.newIcn}>{t("mainReport.newFeature")}</span>
             <Typography
               align='center'
               className={classes.dashboardUsername}>
@@ -124,7 +125,7 @@ const BulkStatus = ({ classes }) => {
                 onClick={() => showPackageDialogType(3)}
                 className={getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink}
               >
-                <CgShoppingCart style={{fontSize: 21}} /> {t('dashboard.purchase')}
+                <CgShoppingCart style={{ fontSize: 21 }} /> {t('dashboard.purchase')}
               </a>
             )
               :
@@ -148,7 +149,7 @@ const BulkStatus = ({ classes }) => {
                 onClick={() => showPackageDialogType(2)}
                 className={getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink}
               >
-                <CgShoppingCart style={{fontSize: 21}} /> {t('dashboard.purchase')}
+                <CgShoppingCart style={{ fontSize: 21 }} /> {t('dashboard.purchase')}
               </a>
             )
               :
