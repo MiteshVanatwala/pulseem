@@ -8,7 +8,7 @@ import 'moment/locale/he'
 import { FiClock } from 'react-icons/fi'
 
 export const DateField = ({
-  minDate = null,
+  minDate,
   classes,
   value,
   onChange = () => null,
