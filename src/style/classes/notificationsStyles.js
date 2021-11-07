@@ -2,10 +2,10 @@ import mobileBg from '../../assets/images/mobile.png';
 import mobileFullBg from '../../assets/images/mobile_prev.png';
 
 const galleryWidth = {
-    xs: 250,
-    sm: 360,
-    md: 650,
-    lg: 750,
+    xs: 360,
+    sm: 390,
+    md: 780,
+    lg: 950,
     xl: 950
 }
 
@@ -117,9 +117,35 @@ const notificationIconHeight = {
     lg: 90,
     xl: 90,
 }
+const folderSize = {
+    sm: 70,
+    md: 180,
+    lg: 400,
+    xl: 400
+}
+const galleryHeight = {
+    xs: 250,
+    sm: 400,
+    md: 400,
+    lg: 400,
+    xl: 400
+}
 
 
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
+    galleryGrid: {
+        width: galleryWidth[windowSize],
+        minHeight: windowSize !== 'sm' && windowSize !== 'xs' ? 400 : null
+    },
+    gallery: {
+        maxHeight: galleryHeight[windowSize],
+        overflowY: 'auto',
+        overflowX: 'hidden'
+    },
+    folders: {
+        maxHeight: folderSize[windowSize],
+        overflowX: 'hidden'
+    },
     roundedCircle: {
         borderRadius: '100%',
         paddingRight: '.5em',
@@ -583,10 +609,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         marginTop: 15,
         display: 'block',
         maxWidth: windowSize !== 'xs' ? '60%' : '100%'
-    },
-    galleryGrid: {
-        minWidth: galleryWidth[windowSize],
-        minHeight: 400
     },
     dialogWidth: {
         minWidth: galleryWidth[windowSize],

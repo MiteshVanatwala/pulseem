@@ -1233,6 +1233,7 @@ const NotificationEditor = ({ props, classes }) => {
 
       return (
         <Dialog
+          maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
           showDivider={false}

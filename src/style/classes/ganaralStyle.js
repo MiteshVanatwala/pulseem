@@ -780,7 +780,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&$disabled': {
       cursor: 'not-allowed !important'
     },
-    '&:hover':{
+    '&:hover': {
       backgroundColor: "#1c82b2",
     },
     "&:first-child": {

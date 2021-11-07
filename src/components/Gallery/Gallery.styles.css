@@ -49,12 +49,6 @@
     background-color: rgba(0, 0, 0, 0.1) !important;
 }
 
-.scroll {
-    overflow-y: auto;
-    max-height: 400px;
-    overflow-x: hidden;
-}
-
 .drag-here {
     border: 2px dashed #8a8383;
     cursor: pointer;
