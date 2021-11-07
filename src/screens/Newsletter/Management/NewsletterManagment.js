@@ -5,6 +5,7 @@ import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
   Grid,Button,TextField,Box, Tooltip
 } from '@material-ui/core'
+import { withStyles, makeStyles } from '@material-ui/core/styles';
 import {
   AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
   GroupsIcon,PreviewIcon,ReportsIcon,CopyIcon
@@ -463,6 +464,12 @@ const NewsletterManagnentScreen=({classes}) => {
     )
   }
 
+  const HtmlTooltip = withStyles((theme) => ({
+    tooltip: {
+      maxWidth: 220
+    },
+  }))(Tooltip);
+
   const renderNameCell=(row) => {
     let date=null
     let text=''
@@ -478,18 +485,22 @@ const NewsletterManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Tooltip
-          arrow 
-          title={row.Name} 
+       <HtmlTooltip
+          interactive={true}
+          arrow
           placement={'top'} 
           classes={{
-            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-            arrow: classes.black}}
-          >
-          <Typography noWrap={false} className={classes.nameEllipsis}>
-            {row.Name}
-          </Typography>
-        </Tooltip>
+              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
+              arrow: classes.black}}
+          title={
+            <React.Fragment>
+              <Typography noWrap={false}>{row.Name}</Typography>
+              <Typography color="inherit">{`${t("mainReport.CampaignID")} ${row.CampaignID}`}</Typography>
+            </React.Fragment>
+          }
+      >
+        <Typography noWrap={false} className={classes.nameEllipsis}>{row.Name}</Typography>
+      </HtmlTooltip>
         <Typography
           className={classes.grayTextCell}>
           {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
