@@ -8,9 +8,11 @@ import {
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
-import { getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups, 
-         getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } 
-from '../../../redux/reducers/notificationSlice';
+import {
+  getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups,
+  getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups
+}
+  from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
@@ -246,7 +248,7 @@ const NotificationEditor = ({ props, classes }) => {
     handleFromDate(date);
     setTimePickerOpen(false);
   }
-  
+
   /* #endregion */
   /* #region  Data Handlers */
   const handlePublicKey = async () => {
@@ -328,12 +330,14 @@ const NotificationEditor = ({ props, classes }) => {
       const data = { NotificationId: parseInt(props.match.params.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
       const result = await dispatch(saveNotificationSettings(data));
       if (result.payload == true) {
-        if (!isExit) {
+        if (!isExit && isSummary === false) {
           setToastMessage(toastMessages.SAVE_SETTINGS);
         }
         else {
           if (isSummary === false)
             window.location.href = "/react/Notifications";
+          else
+            getSummary(null);
         }
       }
       else {
@@ -386,8 +390,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
     setSelected(selectedList);
   }
-  const getSummary = async (event) => {
-    event.preventDefault();
+  const getSummary = async () => {
     const totalResonse = await dispatch(getUniqueClientsByGroups(selectedGroups.map((g) => { return g.Id; })));
     const currentTotalRecipients = selectedGroups.reduce(function (a, b) {
       return a + b['Members'];
@@ -1430,7 +1433,7 @@ const NotificationEditor = ({ props, classes }) => {
           )}
           color="primary"
           style={{ margin: '8px' }}
-          onClick={event => activeStep == 0 ? saveNotification(false, true) : getSummary(event)}>
+          onClick={event => activeStep == 0 ? saveNotification(false, true) : saveSettings(false, true)}>
           {activeStep == 0 ? t('notifications.saveAndContinue') : t('notifications.summary')}
         </Button>
       </Box>
