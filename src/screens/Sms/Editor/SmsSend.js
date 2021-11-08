@@ -1684,6 +1684,7 @@ const SmsSend = ({ classes, ...props }) => {
         setgroupNameInput("");
         setGroupTextError(false);
         setmanualClick(false);
+        setToastMessage(toastMessages.GROUP_CREATED_SUCCESS);
       }
       for (let i = 0; i < selectArray.length; i++) {
         selectArray[i].isdisabled = false;
