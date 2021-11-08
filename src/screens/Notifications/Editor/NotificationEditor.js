@@ -1034,7 +1034,7 @@ const NotificationEditor = ({ props, classes }) => {
                 value={sendDate}
                 onChange={handleDatePicker}
                 placeholder={t('notifications.date')}
-                buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
+                // buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
                 autoOk
               />
             </Box>
@@ -1045,7 +1045,7 @@ const NotificationEditor = ({ props, classes }) => {
                 onTimeChange={handleTimePicker}
                 placeholder={t('notifications.hour')}
                 isTimePicker={true}
-                buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
+                // buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
                 ampm={false}
                 timePickerOpen={timePickerOpen}
                 autoOk
