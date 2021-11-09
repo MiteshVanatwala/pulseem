@@ -303,7 +303,7 @@ const SmsManagnentScreen=({classes}) => {
         remove: Status!==1 || (AutomationID!==0 &&  AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: smsOldVersion === "true"  ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he' : 'en'}` : `/react/sms/send/${Id}`
+        href: smsOldVersion === "true"  ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/send/${Id}`
       },
       {
         key: 'preview',
