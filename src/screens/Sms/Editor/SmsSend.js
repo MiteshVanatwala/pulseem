@@ -127,7 +127,7 @@ const SmsSend = ({ classes, ...props }) => {
   const history = useHistory();
   const severe = useSnackSevere();
   const recipientSuccess = useSnackRecipients();
-  const { OTPPassed } = useSelector((state) => state.sms);
+  const { OTPPassed, ToastMessages } = useSelector((state) => state.sms);
 
   const dispatch = useDispatch();
   const { windowSize, isRTL } = useSelector(
@@ -243,15 +243,42 @@ const SmsSend = ({ classes, ...props }) => {
     ]);
   }, [!showLoader]);
 
-  const toastMessages = {
-    SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
-    GROUP_CREATED_SUCCESS: { severity: 'success', color: 'success', message: t("sms.groupSaved"), showAnimtionCheck: true },
-    SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
-    ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
-    OTP: { severity: 'success', color: 'success', message: t('sms.otpVerifiedSuccess'), showAnimtionCheck: true },
-    INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: t("sms.noRecipientToUpdate"), showAnimtionCheck: false },
-    NO_GROUPS: { severity: 'error', color: 'error', message: t('smsReport.NoGroups'), showAnimtionCheck: false },
-    DATE_PASS: { severity: 'error', color: 'error', message: t('smsReport.pastDateSelected'), showAnimtionCheck: false }
+
+  const handleSendResult = async (smsSendResult) => {
+    switch (smsSendResult) {
+      case -2: {// ALREADY_SENT
+        setToastMessage(ToastMessages.SENT_ALREADY)
+        break;
+      }
+      case -1: {// ERROR
+        setToastMessage(ToastMessages.QUICK_SEND_ERROR)
+        break;
+      }
+      case 0: {// SUCCESS
+        setDialogType({ type: "sendSuccess" });
+        // setToastMessage(toastMessages.QUICK_SEND_SUCCESSS)
+        break;
+      }
+      case 1: {// PROVISION
+        setToastMessage(ToastMessages.PROVISION)
+        break;
+      }
+      case 2: {// NO_CREDITS
+        setToastMessage(ToastMessages.NO_CREDITS)
+        break;
+      }
+      case 3: {// INVALID_NUMBER
+        setToastMessage(ToastMessages.INVALID_NUMBER)
+        break;
+      }
+      case 4: {// OTP_NEEDED
+        setOTPOpen(true);
+        break;
+      }
+      case 5: {// ACCEPTED
+        break;
+      }
+    }
   }
 
   const [headers, setheaders] = useState(initialheadstate);
@@ -465,7 +492,7 @@ const SmsSend = ({ classes, ...props }) => {
 
     if (date < moment()) {
       date = moment();
-      setToastMessage(toastMessages.DATE_PASS);
+      setToastMessage(ToastMessages.DATE_PASS);
     }
 
     handleFromDate(date);
@@ -499,7 +526,7 @@ const SmsSend = ({ classes, ...props }) => {
     tempres.push(r.payload);
     setGroupList(tempres);
     settoggleChecked(false);
-    setToastMessage(toastMessages.GROUP_CREATED_SUCCESS);
+    setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
   };
   const onHandleDelete = () => {
     setDialogType({ type: "delete" });
@@ -1371,7 +1398,7 @@ const SmsSend = ({ classes, ...props }) => {
       return;
     }
     if (selectedGroups.length <= 0) {
-      setToastMessage(toastMessages.NO_GROUPS);
+      setToastMessage(ToastMessages.NO_GROUPS);
       return;
     }
     setLoader(true);
@@ -1436,7 +1463,7 @@ const SmsSend = ({ classes, ...props }) => {
     setLoader(false);
     if (settingsSaved.payload === true) {
       if (toggle && exit !== "exit") {
-        setToastMessage(toastMessages.SUCCESS);
+        setToastMessage(ToastMessages.SUCCESS);
       }
       else if (toggle && exit == "exit") {
         history.push("/SMSCampaigns");
@@ -1525,6 +1552,7 @@ const SmsSend = ({ classes, ...props }) => {
       </>
     );
   };
+
   const onApiCall = async () => {
     let payload = {
       "SmsCampaignID": props.match.params.id,
@@ -1538,7 +1566,7 @@ const SmsSend = ({ classes, ...props }) => {
     setLoader(false);
 
     setsummModal(false);
-    setDialogType({ type: "sendSuccess" });
+    handleSendResult(r.payload);
   };
   const handleCautionCancel = () => {
     if (dropClick === true) {
@@ -1648,7 +1676,7 @@ const SmsSend = ({ classes, ...props }) => {
 
 
       if (r.payload.Reason == "no_recipients_to_update") {
-        setToastMessage(toastMessages.INVALID_RECIPIENTS)
+        setToastMessage(ToastMessages.INVALID_RECIPIENTS)
         settypedData([]);
         setContacts([]);
         setgroupNameInput("");
@@ -1684,7 +1712,7 @@ const SmsSend = ({ classes, ...props }) => {
         setgroupNameInput("");
         setGroupTextError(false);
         setmanualClick(false);
-        setToastMessage(toastMessages.GROUP_CREATED_SUCCESS);
+        setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
       }
       for (let i = 0; i < selectArray.length; i++) {
         selectArray[i].isdisabled = false;
