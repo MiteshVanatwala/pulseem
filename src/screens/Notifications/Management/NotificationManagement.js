@@ -430,7 +430,7 @@ const NotificationManagement = ({ classes }) => {
             title={t('notifications.arrivedTootltip')}
             arrow
             placement={'top'}
-            classes={{ tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.black }}>
+            classes={{ tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.fBlack }}>
             <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>
               {t("notifications.arrived")}
             </TableCell>
@@ -613,7 +613,7 @@ const NotificationManagement = ({ classes }) => {
           placement={'top'}
           classes={{
             tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-            arrow: classes.black
+            arrow: classes.fBlack
           }}
         >
           <Typography noWrap={false} className={classes.nameEllipsis}>

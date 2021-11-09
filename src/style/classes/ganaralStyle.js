@@ -337,6 +337,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt15: {
     marginTop: 15
   },
+  f12: {
+    fontSize: 12,
+  },
   f14: {
     fontSize: 14,
   },

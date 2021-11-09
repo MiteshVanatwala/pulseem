@@ -433,7 +433,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           placement={'top'}
           classes={{
             tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-            arrow: classes.black
+            arrow: classes.fBlack
           }}
         >
           <Typography noWrap={false} className={classes.nameEllipsis}>
