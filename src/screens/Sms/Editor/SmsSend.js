@@ -254,9 +254,9 @@ const SmsSend = ({ classes, ...props }) => {
         setToastMessage(ToastMessages.QUICK_SEND_ERROR)
         break;
       }
-      case 0: {// SUCCESS
+      case 0:   // SUCCESS
+      case 5: { // ACCEPTED
         setDialogType({ type: "sendSuccess" });
-        // setToastMessage(toastMessages.QUICK_SEND_SUCCESSS)
         break;
       }
       case 1: {// PROVISION
@@ -273,9 +273,6 @@ const SmsSend = ({ classes, ...props }) => {
       }
       case 4: {// OTP_NEEDED
         setOTPOpen(true);
-        break;
-      }
-      case 5: {// ACCEPTED
         break;
       }
     }
