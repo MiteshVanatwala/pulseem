@@ -532,10 +532,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: "column",
   },
   whiteLink: {
-    textDecoration: "underline",
+    cursor: 'pointer',
     color: "#fff",
     textTransform: "capitalize",
     lineHeight: 1,
+    display: 'flex',
+    alignItems: 'center'
   },
   blackDivider: {
     height: 2,

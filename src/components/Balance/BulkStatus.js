@@ -103,7 +103,7 @@ const BulkStatus = ({ classes }) => {
         elevation={3}>
         <Grid container justifyContent='center'>
           <Grid item xs={9} className={classes.bulkStatusTitleSection}>
-            <span className={classes.newIcn}>{t("mainReport.newFeature")}</span>
+            <span className={classes.newIcn} style={{position: 'absolute'}}>{t("mainReport.newFeature")}</span>
             <Typography
               align='center'
               className={classes.dashboardUsername}>
@@ -123,9 +123,9 @@ const BulkStatus = ({ classes }) => {
             {isShowSmsPackage && billingTypeId !== "1" ? (
               <a
                 onClick={() => showPackageDialogType(3)}
-                className={getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink}
+                className={clsx(getBillingTypeText(Sms) === 0 ? classes.whiteLink : classes.blueLink, classes.dinline)}
               >
-                <CgShoppingCart style={{ fontSize: 21 }} /> {t('dashboard.purchase')}
+                {t('dashboard.purchase')}
               </a>
             )
               :
@@ -147,9 +147,9 @@ const BulkStatus = ({ classes }) => {
             {isShowEmailPackage && billingTypeId !== "1" && accountFeatures && accountFeatures.includes('37') ? (
               <a
                 onClick={() => showPackageDialogType(2)}
-                className={getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink}
+                className={getBillingTypeText(Newsletters) === 0 ? classes.whiteLink : classes.blueLink}
               >
-                <CgShoppingCart style={{ fontSize: 21 }} /> {t('dashboard.purchase')}
+                {t('dashboard.purchase')}
               </a>
             )
               :
