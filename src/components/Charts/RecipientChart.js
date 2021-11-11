@@ -41,9 +41,7 @@ const RecipientChart = ({ classes, }) => {
 
 
     const initData = async () => {
-        if (recipientsReport === null) {
-            dispatch(getRecipientsReport());
-        }
+        dispatch(getRecipientsReport());
     }
 
     useEffect(initData, [dispatch]);
@@ -461,6 +459,4 @@ const RecipientChart = ({ classes, }) => {
     );
 }
 
-const MemoRecipientChart = React.memo(RecipientChart);
-
-export default MemoRecipientChart;
+export default React.memo(RecipientChart);
