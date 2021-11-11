@@ -7,13 +7,13 @@ import { Grid, Paper, Typography, Button } from '@material-ui/core';
 import { getPackagesDetails, getPurchaseLog } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { CgShoppingCart } from 'react-icons/cg'
+import { CgShoppingCart } from 'react-icons/cg';
+import CustomTooltip from '../Tooltip/CustomTooltip';
 
 const BulkStatus = ({ classes }) => {
-  const { billingTypeId } = useSelector(state => state.core)
+  const { billingTypeId, accountFeatures, isRTL } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
-  const { accountFeatures } = useSelector(state => state.core)
-  const { username } = useSelector(state => state.user);
+    const { username } = useSelector(state => state.user);
   const [isShowSmsPackage, showSmsPackage] = useState(false);
   const [isShowEmailPackage, showEmailPackage] = useState(false);
   const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
@@ -103,7 +103,16 @@ const BulkStatus = ({ classes }) => {
         elevation={3}>
         <Grid container justifyContent='center'>
           <Grid item xs={9} className={classes.bulkStatusTitleSection}>
-            <span className={classes.newIcn} style={{position: 'absolute'}}>{t("mainReport.newFeature")}</span>
+            <CustomTooltip
+              isSimpleTooltip={true}
+              classes={classes}
+              interactive={true}
+              arrow={true}
+              style={{ position: 'absolute' }}
+              placement={'top'}
+              icon={<span className={classes.newIcn} style={{ position: 'absolute', right: isRTL ? 0 : 'auto', left: !isRTL ? 0 : 'auto' }}>{t("mainReport.newFeature")}</span>}
+              text={t("dashboard.tooltipPurchaseNewFeature")}
+            />
             <Typography
               align='center'
               className={classes.dashboardUsername}>

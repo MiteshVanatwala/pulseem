@@ -487,6 +487,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
     return (
       <>
         <CustomTooltip
+          isSimpleTooltip={false}
           classes={classes}
           interactive={true}
           arrow={true}
