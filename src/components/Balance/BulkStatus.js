@@ -13,7 +13,7 @@ import CustomTooltip from '../Tooltip/CustomTooltip';
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, accountFeatures, isRTL } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
-    const { username } = useSelector(state => state.user);
+  const { username } = useSelector(state => state.user);
   const [isShowSmsPackage, showSmsPackage] = useState(false);
   const [isShowEmailPackage, showEmailPackage] = useState(false);
   const [isOpenPackageDialog, setIsOpenPackageDialog] = useState(false);
@@ -101,18 +101,18 @@ const BulkStatus = ({ classes }) => {
       <Paper
         className={clsx(classes.dashboardTopPaper, classes.bulkMargin)}
         elevation={3}>
+        <CustomTooltip
+          isSimpleTooltip={true}
+          classes={classes}
+          interactive={true}
+          arrow={true}
+          style={{ position: 'absolute' }}
+          placement={'top'}
+          icon={<span className={classes.newIcn}>{t("mainReport.newFeature")}</span>}
+          text={t("dashboard.tooltipPurchaseNewFeature")}
+        />
         <Grid container justifyContent='center'>
           <Grid item xs={9} className={classes.bulkStatusTitleSection}>
-            <CustomTooltip
-              isSimpleTooltip={true}
-              classes={classes}
-              interactive={true}
-              arrow={true}
-              style={{ position: 'absolute' }}
-              placement={'top'}
-              icon={<span className={classes.newIcn} style={{ position: 'absolute', right: isRTL ? 0 : 'auto', left: !isRTL ? 0 : 'auto' }}>{t("mainReport.newFeature")}</span>}
-              text={t("dashboard.tooltipPurchaseNewFeature")}
-            />
             <Typography
               align='center'
               className={classes.dashboardUsername}>
