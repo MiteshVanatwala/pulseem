@@ -461,4 +461,6 @@ const RecipientChart = ({ classes, }) => {
     );
 }
 
-export default React.memo(RecipientChart);
+const MemoRecipientChart = React.memo(RecipientChart);
+
+export default MemoRecipientChart;
