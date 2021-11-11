@@ -1179,17 +1179,26 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const handleAddLink = async (id, linkType) => {
     let text = "";
+    let campaign = {};
     if (linkType === 'campaign') {
-      text = previousCampaignData[id].EncryptURL;
+      campaign = previousCampaignData.filter((campaign) => { return campaign.CampaignID === id });
+      if(campaign && campaign.length > 0){
+        text = campaign[0].EncryptURL;
+      }
     }
     else if (linkType === 'lp') {
-      text = previousLandingData[id].PageHref
+      campaign = previousLandingData.filter((campaign) => { return campaign.CampaignID === id });
+      if(campaign && campaign.length > 0){
+        text = campaign[0].PageHref;
+      }
     }
     seteditmenuClick(false);
     onAddText(text)
     let lc = linkCount;
     setlinkCount(++lc);
     setDialogType(null);
+    setCampaignSearch('');
+    setlandingSearch('');
   };
 
   const handleSelect = (id) => {
@@ -1459,7 +1468,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     key={idx}
                     className={classes.searchCon}
                     onClick={() => {
-                      handleAddLink(idx, 'lp');
+                      handleAddLink(item.CampaignID, 'lp');
                     }}
                   >
                     <span
@@ -1525,7 +1534,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     key={idx}
                     className={classes.searchCon}
                     onClick={() => {
-                      handleAddLink(idx, 'campaign');
+                      handleAddLink(item.CampaignID, 'campaign');
                     }}
                   >
                     <span
