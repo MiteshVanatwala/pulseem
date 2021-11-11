@@ -2138,6 +2138,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 18,
     borderRadius: 50,
   },
+  dialogButtonCenter: {
+    margin: '0 auto',
+    height: 40,
+    fontSize: 18,
+    fontWeight: 400
+  },
   dialogConfirmButton: {
     backgroundImage: "linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)",
     backgroundRepeat: "repeat-x",

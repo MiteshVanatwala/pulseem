@@ -159,6 +159,7 @@ const PricePackages = ({ classes,
                             className={clsx(
                                 classes.confirmButton,
                                 classes.dialogConfirmButton,
+                                classes.dialogButtonCenter
                             )}>
                             {t('payment.done')}
                         </Button>
