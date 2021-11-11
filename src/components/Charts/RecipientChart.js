@@ -41,7 +41,9 @@ const RecipientChart = ({ classes, }) => {
 
 
     const initData = async () => {
-        dispatch(getRecipientsReport());
+        if (recipientsReport === null) {
+            dispatch(getRecipientsReport());
+        }
     }
 
     useEffect(initData, [dispatch]);
