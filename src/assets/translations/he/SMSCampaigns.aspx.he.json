@@ -561,5 +561,6 @@
   "selectSendingTime": "יש לבחור שעת שליחה",
   "selectIntervalType": "יש לבחור אם הקמפיין יישלח לפני/אחרי",
   "selectSpecialField": "יש לבחור תאריך מיוחד מהרשימה",
-  "typeDays": "יש להזין מספר ימים לפני/אחרי"
+  "typeDays": "יש להזין מספר ימים לפני/אחרי",
+  "alreadySent": "קמפיין כבר נשלח"
 }

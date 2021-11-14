@@ -292,7 +292,10 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         height: 36,
         borderRadius: 5,
         outline: "none",
-        textAlign: 'center'
+        textAlign: 'center',
+        "@media screen and (max-width: 414px)": {
+            width: 50
+        },
     },
     toggleEnd: {
         display: "flex",
@@ -739,6 +742,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         paddingBottom: "30px",
         "@media screen and (max-width: 800px)": {
             flexDirection: 'column'
+        },
+        "@media screen and (max-width: 414px)": {
+            alignItems: 'flex-start'
         }
     },
     noOfReci:
@@ -759,7 +765,11 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     },
     commonFieldPulse:
     {
-        display: "flex", alignItems: "center"
+        display: "flex",
+        alignItems: "center",
+        "@media screen and (max-width: 414px)": {
+            fontSize: 12
+        }
     },
     randomSendDiv:
     {

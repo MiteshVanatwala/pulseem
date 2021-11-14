@@ -568,5 +568,6 @@
   "selectSendingTime": "Must select Sending Time",
   "selectIntervalType": "Must select if campaign sends before/after event",
   "selectSpecialField": "Must select Special Date Type",
-  "typeDays": "Must insert Number of Days"
+  "typeDays": "Must insert Number of Days",
+  "alreadySent": "Campaign already sent"
 }

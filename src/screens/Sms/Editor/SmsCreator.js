@@ -121,7 +121,8 @@ const SmsCreator = ({ classes, ...props }) => {
     getCampaignSum,
     smsSendResult,
     commonSettings,
-    testGroups
+    testGroups,
+    ToastMessages
   } = useSelector((state) => state.sms);
 
   const [dialogType, setDialogType] = useState(null)
@@ -225,44 +226,30 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const qs = queryString.parse(props.location.search);
 
-  const toastMessages = {
-    SUCCESS: { severity: 'success', color: 'success', message: t('sms.saved'), showAnimtionCheck: true },
-    QUICK_SEND_SUCCESSS: { severity: 'success', color: 'success', message: t('sms.quickSend'), showAnimtionCheck: true },
-    SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('sms.settings_saved'), showAnimtionCheck: true },
-    ERROR: { severity: 'error', color: 'error', message: t('sms.error'), showAnimtionCheck: true },
-    OTP: { severity: 'success', color: 'success', message: t('sms.otpVerifiedSuccess'), showAnimtionCheck: true },
-    INVALID_NUMBER: { severity: 'error', color: 'error', message: t("sms.invalidNumber"), showAnimtionCheck: false },
-    QUICK_SEND_ERROR: { severity: 'error', color: 'error', message: t("sms.errorQuickSend"), showAnimtionCheck: false },
-    SENT_ALREADY: { severity: 'success', color: 'success', message: "Already Sent Message", showAnimtionCheck: true },
-    PROVISION: { severity: 'error', color: 'error', message: t("sms.recipientBlocked"), showAnimtionCheck: false },
-    NO_CREDITS: { severity: 'error', color: 'error', message: t("sms.noCredits"), showAnimtionCheck: false },
-
-  }
-
   const handleSendResult = async (smsSendResult) => {
     switch (smsSendResult) {
       case -2: {// ALREADY_SENT
-        setToastMessage(toastMessages.SENT_ALREADY)
+        setToastMessage(ToastMessages.SENT_ALREADY)
         break;
       }
       case -1: {// ERROR
-        setToastMessage(toastMessages.QUICK_SEND_ERROR)
+        setToastMessage(ToastMessages.QUICK_SEND_ERROR)
         break;
       }
       case 0: {// SUCCESS
-        setToastMessage(toastMessages.QUICK_SEND_SUCCESSS)
+        setToastMessage(ToastMessages.QUICK_SEND_SUCCESSS)
         break;
       }
       case 1: {// PROVISION
-        setToastMessage(toastMessages.PROVISION)
+        setToastMessage(ToastMessages.PROVISION)
         break;
       }
       case 2: {// NO_CREDITS
-        setToastMessage(toastMessages.NO_CREDITS)
+        setToastMessage(ToastMessages.NO_CREDITS)
         break;
       }
       case 3: {// INVALID_NUMBER
-        setToastMessage(toastMessages.INVALID_NUMBER)
+        setToastMessage(ToastMessages.INVALID_NUMBER)
         break;
       }
       case 4: {// OTP_NEEDED
@@ -312,7 +299,7 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
-    setToastMessage(toastMessages.QUICK_SEND_SUCCESSS);
+    setToastMessage(ToastMessages.QUICK_SEND_SUCCESSS);
     setLoader(false);
   };
 
@@ -455,7 +442,7 @@ const SmsCreator = ({ classes, ...props }) => {
       e.target.value = text.substring(0, 13);
     }
     if (!text.match(english)) {
-      e.target.value = e.target.value.replace(lastChar, '');   
+      e.target.value = e.target.value.replace(lastChar, '');
     }
 
     setrestoreBool(false);
@@ -530,7 +517,7 @@ const SmsCreator = ({ classes, ...props }) => {
           }
         }
       } else {
-        setToastMessage(toastMessages.INVALID_NUMBER);
+        setToastMessage(ToastMessages.INVALID_NUMBER);
       }
     }
   };
@@ -1168,7 +1155,7 @@ const SmsCreator = ({ classes, ...props }) => {
       setLoader(false);
       if (r.payload.Status == 2) {
         if (isSave) {
-          setToastMessage(toastMessages.SUCCESS);
+          setToastMessage(ToastMessages.SUCCESS);
           setTimeout(() => {
             history.push(`/sms/edit/${smsCampaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
             setToastMessage(null);
@@ -1192,17 +1179,26 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const handleAddLink = async (id, linkType) => {
     let text = "";
+    let campaign = {};
     if (linkType === 'campaign') {
-      text = previousCampaignData[id].EncryptURL;
+      campaign = previousCampaignData.filter((campaign) => { return campaign.CampaignID === id });
+      if(campaign && campaign.length > 0){
+        text = campaign[0].EncryptURL;
+      }
     }
     else if (linkType === 'lp') {
-      text = previousLandingData[id].PageHref
+      campaign = previousLandingData.filter((campaign) => { return campaign.CampaignID === id });
+      if(campaign && campaign.length > 0){
+        text = campaign[0].PageHref;
+      }
     }
     seteditmenuClick(false);
     onAddText(text)
     let lc = linkCount;
     setlinkCount(++lc);
     setDialogType(null);
+    setCampaignSearch('');
+    setlandingSearch('');
   };
 
   const handleSelect = (id) => {
@@ -1293,12 +1289,12 @@ const SmsCreator = ({ classes, ...props }) => {
           }
           else {
             setDialogType(null);
-            setToastMessage(toastMessages.ERROR);
+            setToastMessage(ToastMessages.ERROR);
           }
         }
         else {
           setDialogType(null);
-          setToastMessage(toastMessages.ERROR);
+          setToastMessage(ToastMessages.ERROR);
         }
       }
     }
@@ -1472,7 +1468,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     key={idx}
                     className={classes.searchCon}
                     onClick={() => {
-                      handleAddLink(idx, 'lp');
+                      handleAddLink(item.CampaignID, 'lp');
                     }}
                   >
                     <span
@@ -1538,7 +1534,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     key={idx}
                     className={classes.searchCon}
                     onClick={() => {
-                      handleAddLink(idx, 'campaign');
+                      handleAddLink(item.CampaignID, 'campaign');
                     }}
                   >
                     <span
