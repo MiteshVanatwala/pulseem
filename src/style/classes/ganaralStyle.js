@@ -537,7 +537,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textTransform: "capitalize",
     lineHeight: 1,
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    textDecoration: 'underline'
   },
   blackDivider: {
     height: 2,

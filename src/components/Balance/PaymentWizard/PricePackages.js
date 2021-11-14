@@ -147,7 +147,7 @@ const PricePackages = ({ classes,
                     content: (
                         <Grid container>
                             <Grid item xs={12} className={clsx(classes.mb4)}>
-                                <iframe src={`${tranzillaUrl}`} width="400" height="400" border="no" frameBorder="0" style={{ border: "none !important" }} />
+                                <iframe src={`${tranzillaUrl}`} width="400" height="420" border="no" frameBorder="0" style={{ border: "none !important" }} />
                             </Grid>
                         </Grid>
                     ),
