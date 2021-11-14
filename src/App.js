@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
+import NewsletterEditor from './screens/Newsletter/Editor/NewsletterEditor';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
 import MmsManagment from './screens/Mms/Management/MmsManagment';
@@ -116,8 +117,13 @@ const renderRoutes = (classes, history) => {
       />
       {/* Newsletter */}
       <Route
+        exact
         path="/Campaigns"
         render={props => <NewsletterManagment {...props} classes={classes} />}
+      />
+      <Route
+        path="/Campaigns/editor"
+        render={props => <NewsletterEditor {...props} classes={classes} />}
       />
 
       <Route

@@ -11309,6 +11309,11 @@ react-ellipsis-pjs@^2.1.2:
   dependencies:
     "@juggle/resize-observer" "^3.0.2"
 
+react-email-editor@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/react-email-editor/-/react-email-editor-1.4.0.tgz#5c8bf6eca72533dec64032418688358a83562cff"
+  integrity sha512-nXVBeJPYHtqw21NoPXmgL7VBPezR7Ob/GLwZ6EHd6m5pFqmQ+Za4/vbCtuqFk4lzHOByzHx57e74ucdRqGruqw==
+
 react-error-overlay@^6.0.9:
   version "6.0.9"
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.9.tgz#3c743010c9359608c375ecd6bc76f35d93995b0a"
