@@ -7,12 +7,12 @@ import { Grid, Paper, Typography, Button } from '@material-ui/core';
 import { getPackagesDetails, getPurchaseLog } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { CgShoppingCart } from 'react-icons/cg'
+import { CgShoppingCart } from 'react-icons/cg';
+import CustomTooltip from '../Tooltip/CustomTooltip';
 
 const BulkStatus = ({ classes }) => {
-  const { billingTypeId } = useSelector(state => state.core)
+  const { billingTypeId, accountFeatures, isRTL } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
-  const { accountFeatures } = useSelector(state => state.core)
   const { username } = useSelector(state => state.user);
   const [isShowSmsPackage, showSmsPackage] = useState(false);
   const [isShowEmailPackage, showEmailPackage] = useState(false);
@@ -101,8 +101,18 @@ const BulkStatus = ({ classes }) => {
       <Paper
         className={clsx(classes.dashboardTopPaper, classes.bulkMargin)}
         elevation={3}>
+        <CustomTooltip
+          isSimpleTooltip={true}
+          classes={classes}
+          interactive={true}
+          arrow={true}
+          style={{ position: 'absolute' }}
+          placement={'top'}
+          icon={<span className={classes.newIcn}>{t("mainReport.newFeature")}</span>}
+          text={t("dashboard.tooltipPurchaseNewFeature")}
+        />
         <Grid container justifyContent='center'>
-          <Grid item xs={8} className={classes.bulkStatusTitleSection}>
+          <Grid item xs={9} className={classes.bulkStatusTitleSection}>
             <Typography
               align='center'
               className={classes.dashboardUsername}>
@@ -122,9 +132,9 @@ const BulkStatus = ({ classes }) => {
             {isShowSmsPackage && billingTypeId !== "1" ? (
               <a
                 onClick={() => showPackageDialogType(3)}
-                className={getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink}
+                className={clsx(getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
               >
-                <CgShoppingCart style={{fontSize: 21}} /> {t('dashboard.purchase')}
+                {t('dashboard.purchase')}
               </a>
             )
               :
@@ -143,12 +153,12 @@ const BulkStatus = ({ classes }) => {
             onMouseLeave={() => showEmailPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
-            {isShowEmailPackage && billingTypeId !== "1" && accountFeatures && accountFeatures.includes('37') ? (
+            {isShowEmailPackage && accountFeatures && accountFeatures.includes('37') && billingTypeId !== "1" ? (
               <a
                 onClick={() => showPackageDialogType(2)}
-                className={getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink}
+                className={clsx(getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
               >
-                <CgShoppingCart style={{fontSize: 21}} /> {t('dashboard.purchase')}
+                {t('dashboard.purchase')}
               </a>
             )
               :

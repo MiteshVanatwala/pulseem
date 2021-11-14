@@ -550,6 +550,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: '#0371ad',
     textTransform: 'capitalize',
     lineHeight: 1,
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    textDecoration: 'underline',
     '&:hover': {
       backgroundColor: 'transparent'
     }
@@ -780,7 +784,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&$disabled': {
       cursor: 'not-allowed !important'
     },
-    '&:hover':{
+    '&:hover': {
       backgroundColor: "#1c82b2",
     },
     "&:first-child": {
@@ -2132,6 +2136,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: 120,
     fontSize: 18,
     borderRadius: 50,
+  },
+  dialogButtonCenter: {
+    margin: '0 auto',
+    height: 40,
+    fontSize: 18,
+    fontWeight: 400
   },
   dialogConfirmButton: {
     backgroundImage: "linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)",
