@@ -505,5 +505,6 @@
   "requiredField": "שדה חובה",
   "continue": "המשך",
   "errorDetected": "תשלום לא עבר!",
-  "tryAgain": "אנא נסה שוב."
+  "tryAgain": "אנא נסה שוב.",
+  "contactSupportForBilling": "כדי להמשיך, יש ליצור קשר<br/> עם המכירות בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או במייל<br/> <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
 }

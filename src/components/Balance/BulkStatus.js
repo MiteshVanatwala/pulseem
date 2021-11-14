@@ -13,6 +13,7 @@ import CustomTooltip from '../Tooltip/CustomTooltip';
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, accountFeatures, isRTL } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
+  const { subAccountSettings } = useSelector(state => state.common);
   const { username } = useSelector(state => state.user);
   const [isShowSmsPackage, showSmsPackage] = useState(false);
   const [isShowEmailPackage, showEmailPackage] = useState(false);
@@ -55,11 +56,27 @@ const BulkStatus = ({ classes }) => {
     setIsOpenPackageDialog(false);
   }
 
+  const renderHtml = (html) => {
+    function createMarkup() {
+      return { __html: html };
+    }
+    return (
+      <label dangerouslySetInnerHTML={createMarkup()}></label>
+    );
+  }
+
   const renderPackagesDialog = () => {
     if (isOpenPackageDialog === true) {
       let dialog = {};
-      dialog = renderPackagesListDialog();
-      const availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType });
+      let availablePack = null;
+
+      if (subAccountSettings.Account.IsBillingAccount === false) {
+        dialog = renderBillingSupportDialog();
+      }
+      else {
+        dialog = renderPackagesListDialog();
+        availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType });
+      }
 
       return (
         <Dialog
@@ -68,12 +85,30 @@ const BulkStatus = ({ classes }) => {
           onClose={handleDialogClose}
           onConfirm={handleDialogClose}
           showDefaultButtons={false}
-          style={availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null}
+          style={availablePack && availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null}
           {...dialog}>
           {dialog.content}
         </Dialog>
       );
     }
+  }
+
+  const renderBillingSupportDialog = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <GoPackage style={{ fontSize: 35, padding: 5 }} />
+      ),
+      content: (
+        <Grid item xs={12} style={{ paddingBottom: 25 }}>
+          <Typography className={classes.f20}>
+            {renderHtml(t("common.contactSupportForBilling"))}
+          </Typography>
+        </Grid >
+      ),
+      showDefaultButtons: true,
+      onConfirm: () => handleDialogClose()
+    };
   }
 
   const renderPackagesListDialog = () => {
