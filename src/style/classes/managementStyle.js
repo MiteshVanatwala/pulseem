@@ -1052,6 +1052,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     background: 'transparent',
     color: '#0371AD'
   },
+  // bulkOutlineStatic: {
+  //   marginBottom: '1rem',
+  //   padding: '3px 15px',
+  //   borderRadius: '.9rem',
+  //   border: '1px solid #0371AD',
+  //   background: 'transparent',
+  //   color: '#0371AD',
+  //   transition: 'all ease-in-out 0.2s'
+  // },
   bulkOutline: {
     marginBottom: '1rem',
     padding: '3px 15px',
@@ -1059,12 +1068,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     border: '1px solid #0371AD',
     background: 'transparent',
     color: '#0371AD',
-    transition: 'all ease-in-out 0.2s',
-    '&:hover': {
-      border: '1px solid #0371AD',
-      background: '#0371AD',
-      color: '#fff',
-    }
+    transition: 'all ease-in-out 0.2s'
+    // '&:hover': {
+    //   border: '1px solid #0371AD',
+    //   background: '#0371AD',
+    //   color: '#fff',
+    // }
   },
   bulkTitle: {
     fontWeight: 700,

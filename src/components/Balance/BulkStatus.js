@@ -132,7 +132,7 @@ const BulkStatus = ({ classes }) => {
             {isShowSmsPackage && billingTypeId !== "1" ? (
               <a
                 onClick={() => showPackageDialogType(3)}
-                className={clsx(getBillingTypeText(Sms) === 0 ? classes.whiteLink : classes.blueLink, classes.dinline)}
+                className={clsx(getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
               >
                 {t('dashboard.purchase')}
               </a>
@@ -153,10 +153,10 @@ const BulkStatus = ({ classes }) => {
             onMouseLeave={() => showEmailPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
-            {isShowEmailPackage && billingTypeId !== "1" && accountFeatures && accountFeatures.includes('37') ? (
+            {isShowEmailPackage && accountFeatures.includes('37') && billingTypeId !== "1" && accountFeatures ? (
               <a
                 onClick={() => showPackageDialogType(2)}
-                className={getBillingTypeText(Newsletters) === 0 ? classes.whiteLink : classes.blueLink}
+                className={clsx(getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
               >
                 {t('dashboard.purchase')}
               </a>

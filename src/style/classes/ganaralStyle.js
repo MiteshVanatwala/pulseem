@@ -555,6 +555,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     color: '#0371ad',
     textTransform: 'capitalize',
     lineHeight: 1,
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    textDecoration: 'underline',
     '&:hover': {
       backgroundColor: 'transparent'
     }
