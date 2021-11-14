@@ -29,6 +29,7 @@ import {
 import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
+import { FaExclamationCircle } from 'react-icons/fa'
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -264,7 +265,8 @@ const SmsSend = ({ classes, ...props }) => {
         break;
       }
       case 2: {// NO_CREDITS
-        setToastMessage(ToastMessages.NO_CREDITS)
+        setDialogType({ type: "noCredit" });
+        //setToastMessage(ToastMessages.NO_CREDITS)
         break;
       }
       case 3: {// INVALID_NUMBER
@@ -2102,6 +2104,39 @@ const SmsSend = ({ classes, ...props }) => {
   }
   //#endregion
   //#region Dialogs
+  const noCreditDialog = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+          <FaExclamationCircle style={{ fontSize: 100 }} />
+          <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+          <Box style={{ marginTop: 25 }}>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => setDialogType(null)}
+              className={clsx(
+                classes.dialogButton,
+                classes.dialogConfirmButton
+              )}>
+              {t("common.Ok")}
+            </Button>
+          </Box>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
+  }
   const manualUploadDialog = () => {
     return {
       title: t('sms.columnAdjustment'),
@@ -2538,7 +2573,8 @@ const SmsSend = ({ classes, ...props }) => {
       pulses: pulseDialog(),
       delete: deleteDialog(),
       exit: exitDialog(),
-      sendSuccess: sendSuccessDialog()
+      sendSuccess: sendSuccessDialog(),
+      noCredit: noCreditDialog()
     }
 
     const currentDialog = dialogContent[type] || {}

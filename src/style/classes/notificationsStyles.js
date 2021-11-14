@@ -2,6 +2,8 @@ import mobileBg from '../../assets/images/mobile.png';
 import mobileFullBg from '../../assets/images/mobile_prev.png';
 
 const galleryWidth = {
+    // xs: 360,
+    // sm: 390,
     md: 780,
     lg: 950,
     xl: 950
@@ -115,6 +117,20 @@ const notificationIconHeight = {
     lg: 90,
     xl: 90,
 }
+const folderSize = {
+    sm: 70,
+    md: 180,
+    lg: 400,
+    xl: 400
+}
+const galleryHeight = {
+    xs: 250,
+    sm: 400,
+    md: 400,
+    lg: 400,
+    xl: 400
+}
+
 const folderSize = {
     sm: 70,
     md: 180,

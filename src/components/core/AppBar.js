@@ -29,12 +29,12 @@ const AppBarItem = ({
   textStyle = '',
   showIcon = false,
   classes,
+  menuWidth = 290
 }) => {
   const [open, setOpen] = useState(false)
 
   const [buttonWidth, setButtonWidth] = useState(0)
   const buttonRef = useRef(null)
-  const menuWidth = 290
 
   useEffect(() => {
     setButtonWidth(buttonRef.current.clientWidth)
@@ -159,6 +159,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
       textStyle={windowSize === 'xs' && classes.textCapitalize}
       classes={classes}
       item={item}
+      menuWidth={230}
       onInnerClick={changeLanguage} />
   )
 }
