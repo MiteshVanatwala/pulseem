@@ -29,6 +29,7 @@ import {
 import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
+import { FaExclamationCircle } from 'react-icons/fa'
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
