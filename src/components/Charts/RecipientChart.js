@@ -422,7 +422,7 @@ const RecipientChart = ({ classes, }) => {
             </Grid>
         );
     }
-    
+
     let totalRecipient = recipientsReport && recipientsReport.reduce(function (a, b) {
         return a + b["Total"];
     }, 0);
@@ -436,22 +436,22 @@ const RecipientChart = ({ classes, }) => {
                             className={clsx(classes.dInlineBlock, classes.dashboardTitle)}>
                             {t('dashboard.yourRecipients')}
                         </Typography>
-                        {totalRecipient > 0 && <BootstrapTooltip
+                        {totalRecipient > 0 && <Tooltip
+                            arrow
                             style={{ color: '#000' }}
                             title={t('dashboard.chartTooltip')}
+                            classes={{
+                                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                                arrow: classes.black
+                            }}
+                            enterTouchDelay={50}
                             placement={"top"}>
-                                <IconButton aria-label={t('dashboard.chartTooltip')}>
-                                    <BsInfoCircleFill />
-                                </IconButton>
-                            </BootstrapTooltip>
+                            <IconButton aria-label={t('dashboard.chartTooltip')}>
+                                <BsInfoCircleFill />
+                            </IconButton>
+                        </Tooltip>
                         }
                     </Box>
-
-                    {/* <Typography
-                        className={clsx(classes.dInlineBlock, classes.mr10, classes.ml10)}
-                    >
-                        ({t('dashboard.chartTooltip')})
-                    </Typography> */}
                 </Grid>
                 {windowSize === 'xs' || windowSize === 'sm' ? renderChartsCarousel() : renderCharts()}
             </Grid>
