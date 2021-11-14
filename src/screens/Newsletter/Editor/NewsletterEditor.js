@@ -1,8 +1,9 @@
 import { Button } from '@material-ui/core'
 import { useRef } from 'react'
 import EmailEditor from 'react-email-editor'
+import DefaultScreen from '../../DefaultScreen'
 
-const NewsletterEditor = () => {
+const NewsletterEditor = ({ classes }) => {
     const editor = useRef(null);
 
     const exportHtml = () => {
@@ -18,12 +19,14 @@ const NewsletterEditor = () => {
         })
     }
     return (
-        <div>
-            <EmailEditor ref={editor} minHeight="calc(100vh - 70px)" />
+        <DefaultScreen
+            currentPage='newsletterEditor'
+            classes={classes}
+            >
+            <EmailEditor ref={editor} minHeight="calc(100vh - 100px)" />
             <Button onClick={exportHtml}>Export HTML</Button>
             <Button onClick={saveDesign}>Save Design</Button>
-
-        </div>
+        </DefaultScreen>
     )
 }
 
