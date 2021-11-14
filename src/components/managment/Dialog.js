@@ -130,7 +130,7 @@ export const Dialog = ({
     return (
       <Box
         className={clsx(classes.dialogChildren, classes.sidebar, childrenStyle)}
-        style={{ maxHeight: windowSize !== 'xs' && windowSize !== 'sm' ? 'calc(65vh)' : 'calc(45vh)', minWidth: windowSize !== 'xs' && windowSize !== 'sm' ? 330 : null }}>
+        style={{ maxHeight: props.maxHeight ? props.maxHeight : windowSize !== 'sm' && windowSize !== 'xs' ? 'calc(65vh)' : 'calc(45vh)', minWidth: windowSize !== 'xs' && windowSize !== 'sm' ? 330 : null }}>
         {children}
       </Box>)
   }
