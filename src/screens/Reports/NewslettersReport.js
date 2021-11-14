@@ -670,7 +670,7 @@ const NewslettersReport=({classes}) => {
           <ManagmentIcon
             classes={classes}
             textClass={classes.lineHeight1point2}
-            uIcon={<div className={clsx(classes.managmentUicon, classes.f25)}>
+            uIcon={<div className={clsx(classes.managmentUicon, classes.f25, !RemovedClients || RemovedClients === 0 ? classes.disabled : null)}>
               {'\uE15D'}
             </div>}
             lable={hrefs.RemoveReasons.title}
@@ -678,6 +678,7 @@ const NewslettersReport=({classes}) => {
             onClick={()=> {
               setCookie('newsletterReportlastPage', page)
             }}
+            disable={!RemovedClients || RemovedClients === 0}
           />
         </TableCell>
         <TableCell
