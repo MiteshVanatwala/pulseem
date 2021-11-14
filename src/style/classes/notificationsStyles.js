@@ -2,8 +2,8 @@ import mobileBg from '../../assets/images/mobile.png';
 import mobileFullBg from '../../assets/images/mobile_prev.png';
 
 const galleryWidth = {
-    xs: 250,
-    sm: 360,
+    // xs: 250,
+    // sm: 360,
     md: 650,
     lg: 750,
     xl: 950
