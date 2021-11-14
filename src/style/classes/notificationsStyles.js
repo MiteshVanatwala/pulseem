@@ -131,21 +131,6 @@ const galleryHeight = {
     xl: 400
 }
 
-const folderSize = {
-    sm: 70,
-    md: 180,
-    lg: 400,
-    xl: 400
-}
-const galleryHeight = {
-    xs: 250,
-    sm: 400,
-    md: 400,
-    lg: 400,
-    xl: 400
-}
-
-
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     galleryGrid: {
         width: galleryWidth[windowSize],
