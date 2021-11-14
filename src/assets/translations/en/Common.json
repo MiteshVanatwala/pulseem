@@ -510,5 +510,6 @@
   "requiredField": "Required Field",
   "continue": "Continue",
   "errorDetected": "Payment incomplete!",
-  "tryAgain": "Please try again."
+  "tryAgain": "Please try again.",
+  "contactSupportForBilling": "To continue, please be in touch with<br/> our sales at <a href='tel:03-524-0290'>03-524-0290</a> or at<br/> <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
 }

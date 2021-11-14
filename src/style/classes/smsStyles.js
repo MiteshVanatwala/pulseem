@@ -650,12 +650,12 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     newIcn:
     {
         backgroundColor: "#dc3545",
+        padding: 5,
+        fontSize: 16,
         color: "#fff",
-        borderRadius: "5px",
-        padding: "5px",
-        marginInlineStart: "3px",
-        fontWeight: "400",
-        fontSize: 16
+        fontWeight: 400,
+        borderRadius: 5,
+        marginInlineStart: "3px"
     },
     mappedGroup:
     {

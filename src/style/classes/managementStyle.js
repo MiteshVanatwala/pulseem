@@ -1068,7 +1068,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     border: '1px solid #0371AD',
     background: 'transparent',
     color: '#0371AD',
-    transition: 'all ease-in-out 0.2s'
+    transition: 'all ease-in-out 0.2s',
     // '&:hover': {
     //   border: '1px solid #0371AD',
     //   background: '#0371AD',
