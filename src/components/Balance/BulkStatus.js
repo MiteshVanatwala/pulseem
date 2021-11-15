@@ -66,7 +66,7 @@ const BulkStatus = ({ classes }) => {
   }
 
   const renderPackagesDialog = () => {
-    if (isOpenPackageDialog === true) {
+    if (isOpenPackageDialog === true && subAccountSettings !== null) {
       let dialog = {};
       let availablePack = null;
 
