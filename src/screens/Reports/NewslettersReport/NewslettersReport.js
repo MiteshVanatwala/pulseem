@@ -1,5 +1,5 @@
 import React,{useState,useEffect,useRef} from 'react';
-import DefaultScreen from '../DefaultScreen';
+import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,Link,
@@ -8,22 +8,22 @@ import {
 import Switch from "react-switch";
 import {
   SendGreenIcon,SearchIcon,ExportIcon,ReportsIcon
-} from '../../assets/images/managment/index'
+} from '../../../assets/images/managment/index'
 import {
   TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,SearchField
-} from '../../components/managment/index'
-import useCtrlHistory from '../../helpers/useCtrlHistory';
+} from '../../../components/managment/index'
+import useCtrlHistory from '../../../helpers/useCtrlHistory';
 import {useSelector,useDispatch} from 'react-redux';
 import {useTranslation} from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import {apiURL} from '../../config/index'
+import {apiURL} from '../../../config/index'
 import {CSVLink} from 'react-csv'
-import {getNewsletterReports,downloadNewsletterReport} from '../../redux/reducers/newsletterSlice';
-import { setRowsPerPage } from '../../redux/reducers/coreSlice';
-import { getCookie, setCookie } from '../../helpers/cookies';
-import { exportFile } from '../../helpers/exportFromJson';
+import {getNewsletterReports,downloadNewsletterReport} from '../../../redux/reducers/newsletterSlice';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { getCookie, setCookie } from '../../../helpers/cookies';
+import { exportFile } from '../../../helpers/exportFromJson';
 
 const NewslettersReport=({classes}) => {
   const {language,windowSize,isRTL,rowsPerPage}=useSelector(state => state.core)
@@ -428,7 +428,7 @@ const NewslettersReport=({classes}) => {
           textClass={classes.lineHeight1point2}
           icon={ReportsIcon}
           lable={t('mainReport.locGraph.HeaderText')}
-          href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`}
+          href={`/react/CampaignStatistics/${CampaignID}`}
         />
       </Box>
     )
@@ -525,7 +525,7 @@ const NewslettersReport=({classes}) => {
     )
   }
 
-  const renderDataTooltip=(value,type,data={},tooltip) => {
+  const renderDataTooltip=(value,type,data={},tooltip,CampaignID) => {
     const {title=t("notifications.tblBody.total"),href=''}=data
     return (
       <Tooltip 
@@ -539,7 +539,7 @@ const NewslettersReport=({classes}) => {
         <Box style={{display: 'flex',flexDirection: 'column'}} >
           <Typography 
             component='a' 
-            href={href} 
+            href={`/CampaignStatistics/${CampaignID}`}
             className={clsx(classes.middleText,colorTextStyle[type]||'')}>
             {value&&value.toLocaleString()||'0'}
           </Typography>
@@ -551,12 +551,12 @@ const NewslettersReport=({classes}) => {
     );
   }
 
-  const renderIntData=(value,type,data={},clickable=true) => {
+  const renderIntData=(value,type,data={},clickable=true,id) => {
     const {title=t("notifications.tblBody.total"),href=''}=data
-    const innerHref=clickable?href:'';
+    const innerHref=clickable?`/CampaignStatistics/${id}`:'';
     return (
       <Box style={{display: 'flex',flexDirection: 'column'}} >
-        <Typography component={innerHref? 'a':'p'} href={clickable?innerHref:''} className={clsx(classes.middleTxt,colorTextStyle[type]||'')}>
+        <Typography component={innerHref? 'a':'p'} href={clickable?`/CampaignStatistics/${id}`:''} className={clsx(classes.middleTxt,colorTextStyle[type]||'')}>
           {value&&value.toLocaleString()||'0'}
         </Typography>
         <Typography className={clsx(classes.middleWrapText,colorTextStyle[type])}>
@@ -608,25 +608,25 @@ const NewslettersReport=({classes}) => {
           classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(TotalSendCompleted,'',hrefs.TotalSendCompleted)}
+          {renderIntData(TotalSendCompleted,'',hrefs.TotalSendCompleted,row.CampaignID)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderDataTooltip(OpenCount,'green',hrefs.OpenCount,'mainReport.OpensTotalTooltip.Text')}
+          {renderDataTooltip(OpenCount,'green',hrefs.OpenCount,'mainReport.OpensTotalTooltip.Text',row.CampaignID)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderDataTooltip(OpenCountUnique,'green',hrefs.OpenCountUnique, 'mainReport.OpensUniqueTooltip.Text')}
+          {renderDataTooltip(OpenCountUnique,'green',hrefs.OpenCountUnique, 'mainReport.OpensUniqueTooltip.Text',row.CampaignID)}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderPercetangeData(PercentageOpens,'green',hrefs.PercentageOpens)}
+          {renderPercetangeData(PercentageOpens,'green',hrefs.PercentageOpens,row.CampaignID)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
@@ -657,12 +657,12 @@ const NewslettersReport=({classes}) => {
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(RemovedClients,'red',hrefs.RemovedClients)}
+          {renderIntData(RemovedClients,'red',hrefs.RemovedClients,row.CampaignID)}
         </TableCell>
         <TableCell classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(NotOpened,'red',hrefs.NotOpened)}
+          {renderIntData(NotOpened,'red',hrefs.NotOpened,row.CampaignID)}
         </TableCell>
         <TableCell classes={borderCellStyle}
           align='center'

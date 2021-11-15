@@ -24,9 +24,10 @@ import moment from 'moment'
 import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
 import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
-import NewslettersReport from './screens/Reports/NewslettersReport'
+import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersReport'
 import { useMediaQuery } from '@material-ui/core';
 import DashboardScreen from './screens/Dashboard/Dashboard';
+import GraphicReport from './screens/Reports/NewslettersReport/GraphicReport';
 import SmsReport from './screens/Reports/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
@@ -87,7 +88,8 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         path={`/CampaignStatistics/:campaignID`}
-        component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
+        // component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
+        render={props => <GraphicReport props={props} classes={classes} />}
       />
       <Route
         path={`/homepage`}
