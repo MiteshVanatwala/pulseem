@@ -20,5 +20,14 @@
   "Attachments": "Attachments",
   "ToName": "To Name",
   "FromName": "From Name",
-  "None": "None"
+  "None": "None",
+  "Opened": "Opened",
+  "locUniqueOpens": "Unique Opened",
+  "notOpened": "Not Opened",
+  "error": "Error",
+  "clicks": "Clicks",
+  "removals": "Removals",
+  "subjectLine": "The Subject Line",
+  "date": "Date",
+  "distributeOfUse": "Distribution of Use"
 }

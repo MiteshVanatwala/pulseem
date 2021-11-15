@@ -1347,5 +1347,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   modalText:
   {
     fontSize: "22px", marginTop: "5px"
+  },
+  cellText: {
+    display: 'flex', 
+    flexDirection: 'column', 
+    '& a, & p': {
+      lineHeight: '1.1'
+    }
   }
 })
