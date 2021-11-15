@@ -448,6 +448,16 @@
   "percetangeRemovedClients": "אחוז הלקוחות שהוסרו",
   "attachments": "קבצים מצורפים",
   "totalBytes": "סה”כ בתים",
+  "opensAndClicks": "פתיחות והקלקות",
+  "geographicalReport": "דו\"ח גאוגרפיים",
+  "systemsReport": "דו\"ח מערכת",
+  "backToNewsletterReports": "חזור לדוח\"ות ניוזלטר",
+  "subjectLine": "שורת הנושא",
+  "fromEmail": "מייל השולח",
+  "fromName": "שם השולח",
+  "attachedFiles": "קבצים מצורפים",
+  "campaignQuality": "איכות הקמפיין",
+  "campaignQualitySummary": "נקבע על פי נתוני הפתיחות וההקלקות ורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אלית גולר מונפרר סוברט לורם שבצק יהול, לכנוץ בעריר גק ליץ, ושבעגט ליבם סולגק",
   "smsCampaign" : "יצירת קמפיין SMS",
   "sendSetting" : "הגדרות שליחה",
   "whomTosend" : "למי שולחים?",
@@ -528,7 +538,6 @@
   "handleExitTitle":"צא מעריכת קמפיין",
   "leaveCampaign":"האם תרצה לשמור את השינויים לפני היציאה?",
   "No":"לא",
-  "Ok":"כן"
-
-
+  "Ok":"כן",
+  "summaryModalTitle": "סיכום קמפיין"
 }

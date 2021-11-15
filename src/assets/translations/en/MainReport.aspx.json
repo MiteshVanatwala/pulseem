@@ -451,6 +451,7 @@
   "fromName": "From Name",
   "attachedFiles": "Attached Files",
   "campaignQuality": "The Quality of the Campaign",
+  "campaignQualitySummary": "Determined according to the data of the openings and clicks, Ram Ipsom Dolor Sit Emt, Editing Consumer Elit Goller Montferrer Sobert Lorem Shevetz Yahul",
   "billingCredits": "Billing Credits",
   "postCredits": "Credits for the Post",
   "smsCampaign" : "Create New SMS Campaign",
@@ -533,8 +534,6 @@
   "handleExitTitle" : "Leave Campaign Creation",
   "leaveCampaign":"Would you like to save your changes before exiting?",
   "Ok":"Yes",
-  "No":"No"
-  
-  
-
+  "No":"No",
+  "summaryModalTitle": "Campaign Summary"
 }

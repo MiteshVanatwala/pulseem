@@ -181,11 +181,9 @@ const GraphicReport=({props, classes}) => {
         <Box style={{display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '100%'}}>
           <Paper className={clsx(classes.doughnutPaper)}>
             <Grid container direction='row' alignItems={'center'}>
-              <Grid item style={{maxWidth: 'calc(100% - 150px)', marginInlineEnd: 20}}>
+              <Grid item style={{maxWidth: 'calc(100% - 150px)', marginInlineEnd: 20, padding: '0.7rem 2.3rem'}}>
                 <Typography className={clsx(classes.bold, classes.f20)}>{t('mainReport.campaignQuality')}</Typography>
-                <Typography>Determined according to the data of the openings and clicks, Ram Ipsom Dolor Sit Emt, 
-                  Editing Consumer Elit Goller Montferrer Sobert Lorem Shevetz Yahul
-                </Typography>
+                <Typography>{t("mainReport.campaignQualitySummary")}</Typography>
               </Grid>
               <Grid item>
                 <Box className={clsx(classes.doughnutGreenBox, classes.size150)}>
@@ -243,8 +241,8 @@ const GraphicReport=({props, classes}) => {
     ]
     
     return (
-      <Paper elevation={0} className={classes.campaignSummary}>
-        <Grid container>
+      <Paper elevation={0} className={classes.campaignSummary} style={{backgroundColor: "#E3E9F0"}}>
+        <Grid container style={{paddingTop: 15 }}>
           <Grid item md={'3'}>
             <Box style={{height: 'calc(100vh - 300px)', width: '100%',overflow: 'auto'}}>
               <img src={'https://dmytroborodin.github.io/Pulseem_o1/imgs/pages/page_3/page_3.svg'} width={'100%'}/>
@@ -267,7 +265,7 @@ const GraphicReport=({props, classes}) => {
               ))}
             </List>
           </Grid>
-          <Grid item md={'4'}>
+          <Grid item md={'4'} style={{paddingLeft: 15, paddingRight: 15 }}>
             {renderSectionRight()}
           </Grid>
 
@@ -468,7 +466,7 @@ const GraphicReport=({props, classes}) => {
         <TabList 
           onChange={handleChange}
           indicatorColor="primary">
-          <Tab label={t('notifications.summaryModalTitle')} classes={{wrapper: classes.tabWrapper}}/>
+          <Tab label={t('mainReport.summaryModalTitle')} classes={{wrapper: classes.tabWrapper}}/>
           <Tab label={t('common.Recipients')}classes={{wrapper: classes.tabWrapper}} />
           <Tab label={t('mainReport.opensAndClicks')} classes={{wrapper: classes.tabWrapper}}/>
           <Tab label={t('mainReport.geographicalReport')} classes={{wrapper: classes.tabWrapper}}/>
