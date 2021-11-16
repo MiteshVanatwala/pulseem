@@ -366,7 +366,7 @@ const NewslettersReport = ({ classes }) => {
             href='/Pulseem/CampaignComparison.aspx?fromreact=true'
             className={clsx(
               classes.actionButton,
-              classes.actionButtonDarkBlue
+              classes.actionButtonLightBlue
             )}>
             {t('mainReport.compareCampaigns')}
           </Button>

@@ -165,7 +165,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center'
   },
   tableRowReportHead: {
-    backgroundColor: '#D7D7D7',
+    // backgroundColor: '#D7D7D7',
+    backgroundColor: '#E3E9F0',
     borderColor: 'transparent',
   },
   middleText: {
@@ -316,10 +317,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     color: '#3498DB'
   },
   actionButtonLightBlue: {
-    backgroundColor: '#E74C3C',
+    backgroundColor: '#3498DB',
     marginInlineEnd : '10px',
     '&:hover': {
-      backgroundColor: '#E74C3C'
+      backgroundColor: '#3498DB'
     }
   },
   actionButtonDarkBlue: {

@@ -28,7 +28,7 @@ import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersRe
 import { useMediaQuery } from '@material-ui/core';
 import DashboardScreen from './screens/Dashboard/Dashboard';
 import GraphicReport from './screens/Reports/NewslettersReport/GraphicReport';
-import SmsReport from './screens/Reports/SmsReport';
+import SmsReport from './screens/Reports/SmsReport/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 
