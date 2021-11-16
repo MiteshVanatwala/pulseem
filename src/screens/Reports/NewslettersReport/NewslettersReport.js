@@ -53,48 +53,58 @@ const NewslettersReport = ({ classes }) => {
 
   const getHrefs = (id) => ({
     TotalSendCompleted: {
-      href: `/CampaignStatistics/${id}`
+      href: `/Pulseem/ClientSearchResult.aspx?SentToCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}`
     },
     OpenCount: {
       title: t('mainReport.GridButtonColumnResource1.HeaderText'),
-      href: `/CampaignStatistics/${id}?tab=2`
+      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     OpenCountUnique: {
       title: t('common.Unique'),
-      href: `/CampaignStatistics/${id}?tab=2`
+      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCount: {
       title: t('common.Clicks'),
-      href: `/CampaignStatistics/${id}?tab=2`
+      href: `/Pulseem/LinksClicksReport.aspx?OpenedCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: `/CampaignStatistics/${id}?tab=2`
+      href: `/Pulseem/LinksClicksReport.aspx?OpenedCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemovedClients: {
       title: t('mainReport.removed'),
-      href: `/CampaignStatistics/${id}?tab=2`
-      //href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`
+      href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     SendError: {
       title: t('mainReport.GridButtonColumnResource4.HeaderText'),
-      href: `/CampaignStatistics/${id}?tab=2`
+      href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercetangeRemovedClients: {
       title: t('mainReport.removedPercents'),
       href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercentageOpens: {
-      title: t('mainReport.locUniqueOpensPercents.HeaderText'),
-      href: `/CampaignStatistics/${id}?tab=2`
+      title: t('mainReport.GridButtonColumnResource1.HeaderText'),
+      href: `/Pulseem/ClientSearchResult.aspx?CampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercetangeClicks: {
-      title: t('mainReport.locUniqueClicksPercents.HeaderText'),
-      href: `/CampaignStatistics/${id}?tab=2`
+      title: t('common.Clicks'),
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     NotOpened: {
       title: t("mainReport.GridButtonColumnResource3.HeaderText"),
-      href: `/CampaignStatistics/${id}?tab=2`
+      href: `/Pulseem/ClientSearchResult.aspx?NotOpenedCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemoveReasons: {
       title: t("mainReport.locRemovedReason.HeaderText"),
@@ -356,7 +366,7 @@ const NewslettersReport = ({ classes }) => {
             href='/Pulseem/CampaignComparison.aspx?fromreact=true'
             className={clsx(
               classes.actionButton,
-              classes.actionButtonLightBlue
+              classes.actionButtonDarkBlue
             )}>
             {t('mainReport.compareCampaigns')}
           </Button>
@@ -407,11 +417,15 @@ const NewslettersReport = ({ classes }) => {
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' />
 
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.GridButtonColumnResource4.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
+          {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.GridButtonColumnResource4.HeaderText")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.removals")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("mainReport.GridButtonColumnResource3.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("mainReport.GridButtonColumnResource3.HeaderText")}</TableCell> */}
 
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("mainReport.reasons")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
+          {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.reasons")}</TableCell> */}
           <TableCell classes={cellStyle} className={classes.flex1} ></TableCell>
         </TableRow>
       </TableHead>
@@ -539,15 +553,15 @@ const NewslettersReport = ({ classes }) => {
           tooltip: classes.tooltipBlack,
           arrow: classes.fBlack
         }}>
-       <Box className={classes.cellText}>
+        <Box className={classes.cellText}>
           <Typography
             component='a'
             href={href}
             className={clsx(classes.middleText, colorTextStyle[type] || '')}>
             {value && value.toLocaleString() || '0'}
-            <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
-              {title}
-            </Typography>
+          </Typography>
+          <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
+            {title}
           </Typography>
         </Box>
       </Tooltip>
@@ -561,9 +575,9 @@ const NewslettersReport = ({ classes }) => {
       <Box className={classes.cellText}>
         <Typography component={href !== '' ? 'a' : 'p'} href={href ? href : ''} className={clsx(classes.middleTxt, colorTextStyle[type] || '')}>
           {value && value.toLocaleString() || '0'}
-          <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
-            {title}
-          </Typography>
+        </Typography>
+        <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
+          {title}
         </Typography>
       </Box>
     )
