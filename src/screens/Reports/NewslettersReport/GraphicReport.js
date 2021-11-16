@@ -45,9 +45,7 @@ const GraphicReport = ({ props, classes }) => {
         <Grid container alignItems={"flex-end"} justifyContent={"space-between"}>
           <Grid item>
             <Typography className={classes.managementTitle}>
-              {tabValue === 1
-                ? "Gluten Free Mailing"
-                : t("mainReport.logPageHeaderResource1.Text")}
+              {campaignData.Name}
             </Typography>
           </Grid>
           <Grid item className={classes.mb4}>
@@ -151,7 +149,7 @@ const GraphicReport = ({ props, classes }) => {
         "value": campaignData.NotOpened
       }, {
         "title": t("report.Opened"),
-        "value": campaignData.NotOpened
+        "value": campaignData.OpenCount
       }];
 
       charts.pieChart.rtl = true;
@@ -187,7 +185,7 @@ const GraphicReport = ({ props, classes }) => {
               }}
             />
           </ListItem>
-          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={-1}>
+          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={0}>
             <ListItemText
               primary={t('report.date')}
               secondary={campaignData.SendDate}
@@ -197,7 +195,7 @@ const GraphicReport = ({ props, classes }) => {
               }}
             />
           </ListItem>
-          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={-1}>
+          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={1}>
             <ListItemText
               primary={t('report.FromEmail')}
               secondary={campaignData.FromEmail}
@@ -207,7 +205,7 @@ const GraphicReport = ({ props, classes }) => {
               }}
             />
           </ListItem>
-          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={-1}>
+          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={2}>
             <ListItemText
               primary={t('report.FromName')}
               secondary={campaignData.FromName}
@@ -217,7 +215,7 @@ const GraphicReport = ({ props, classes }) => {
               }}
             />
           </ListItem>
-          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={-1}>
+          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={3}>
             <ListItemText
               primary={t('report.Attachments')}
               secondary={campaignData.Attachments === '' ? t('report.None') : campaignData.Attachments}
@@ -227,7 +225,7 @@ const GraphicReport = ({ props, classes }) => {
               }}
             />
           </ListItem>
-          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={-1}>
+          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={4}>
             <ListItemText
               primary={t('report.TotalSent')}
               secondary={campaignData.TotalSendPlan}
@@ -237,7 +235,7 @@ const GraphicReport = ({ props, classes }) => {
               }}
             />
           </ListItem>
-          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={-1}>
+          <ListItem classes={{ root: clsx(classes.pt0, classes.pb0) }} key={5}>
             <ListItemText
               primary={t('report.removals')}
               secondary={campaignData.RemovedClients}
@@ -500,7 +498,7 @@ const GraphicReport = ({ props, classes }) => {
     };
 
     return (
-      <TabContext
+      campaignData && <TabContext
         value={tabValue}
         onChange={handleChange}
         indicatorColor="primary"
@@ -516,7 +514,7 @@ const GraphicReport = ({ props, classes }) => {
         </TabList>
         <Divider />
         <TabPanel value={0} index={0} className={classes.p0}>
-          {campaignData && <RenderCampaignSummary chartData={campaignData} />}
+          {<RenderCampaignSummary chartData={campaignData} />}
         </TabPanel>
         <TabPanel value={1} index={1} className={classes.p0}>
           <RecipientsTab classes={classes} />
@@ -536,8 +534,12 @@ const GraphicReport = ({ props, classes }) => {
 
   return (
     <DefaultScreen currentPage="reports" classes={classes}>
-      {renderHeader()}
-      {renderManagementLine()}
+      {
+        campaignData && <>
+          {renderHeader()}
+          {renderManagementLine()}
+        </>
+      }
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>
   );
