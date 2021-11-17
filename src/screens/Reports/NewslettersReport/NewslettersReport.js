@@ -173,37 +173,24 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async () => {
-    let fileArray = toFileArray
-    if (!toFileArray.length) {
-      fileArray = newslettersReports.map(a => a.CampaignID);
-    }
-
-    const result = await dispatch(downloadNewsletterReport(fileArray))
-    if (!result.error) {
-      let res = [];
-      JSON.parse(result.payload).map(item => {
-        let dataItem = {};
-        Object.keys(item).map(key => {
-          const headerTitle = columnHead[key];
-          dataItem[headerTitle] = item[key]
-        })
-        res.push(dataItem);
-      })
-
+    if (toFileArray.length > 0) {
+      const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
       exportFile({
-        data: res,
+        data: fileArray,
         fileName: 'emailReport',
         exportType: 'xls'
       });
     }
+    else {
+      exportFile({
+        data: searchResults || newslettersReports,
+        fileName: 'emailReport',
+        exportType: 'xls'
+      });
+    }
+
     setToFileArray([]);
 
-    //if(payload.error) {
-    //  return
-    //}
-    //console.log("csv data",payload)
-    //setCsvData(payload)
-    //csvLinkRef.current.link.click()
   }
 
   const renderSearchSection = () => {
