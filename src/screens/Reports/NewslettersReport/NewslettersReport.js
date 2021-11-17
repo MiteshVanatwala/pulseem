@@ -68,12 +68,12 @@ const NewslettersReport = ({ classes }) => {
     },
     ClickCount: {
       title: t('common.Clicks'),
-      href: `/Pulseem/LinksClicksReport.aspx?OpenedCampaignID=${id}&fromreact=true`
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: `/Pulseem/LinksClicksReport.aspx?OpenedCampaignID=${id}&fromreact=true`
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemovedClients: {
@@ -93,7 +93,7 @@ const NewslettersReport = ({ classes }) => {
     },
     PercentageOpens: {
       title: t('mainReport.GridButtonColumnResource1.HeaderText'),
-      href: `/Pulseem/ClientSearchResult.aspx?CampaignID=${id}&fromreact=true`
+      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercetangeClicks: {
