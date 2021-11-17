@@ -529,14 +529,36 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: "column",
   },
   whiteLink: {
-    textDecoration: "underline",
+    cursor: 'pointer',
     color: "#fff",
     textTransform: "capitalize",
     lineHeight: 1,
+    display: 'flex',
+    alignItems: 'center'
   },
   blackDivider: {
     height: 2,
     backgroundColor: "rgb(0, 0, 0, 0.5)",
+    textDecoration: 'none',
+    color: '#fff',
+    textTransform: 'capitalize',
+    lineHeight: 1,
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
+  },
+  blueLink: {
+    textDecoration: 'none',
+    color: '#0371ad',
+    textTransform: 'capitalize',
+    lineHeight: 1,
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
   },
   noWrap: {
     flexWrap: "nowrap",
@@ -764,7 +786,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&$disabled': {
       cursor: 'not-allowed !important'
     },
-    '&:hover':{
+    '&:hover': {
       backgroundColor: "#1c82b2",
     },
     "&:first-child": {
@@ -2117,6 +2139,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 18,
     borderRadius: 50,
   },
+  dialogButtonCenter: {
+    margin: '0 auto',
+    height: 40,
+    fontSize: 18,
+    fontWeight: 400
+  },
   dialogConfirmButton: {
     backgroundImage: "linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)",
     backgroundRepeat: "repeat-x",
@@ -2150,4 +2178,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   //#endregion
+  textCenter: {
+    textAlign: 'center'
+  }
 });

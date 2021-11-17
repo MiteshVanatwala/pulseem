@@ -83,7 +83,7 @@ const SmsManagnentScreen=({classes}) => {
 
   const renderSearchLine=() => {
     const handleKeyDown = (event) => {
-      if (event.keyCode === 13 || event.key === 'Enter') {
+      if (event.keyCode === 13 || event.code === 'Enter') {
         handleSearch();
       }
     }
@@ -130,7 +130,7 @@ const SmsManagnentScreen=({classes}) => {
     }
 
     const handleKeyPress=(e) => {
-      if (e.charCode === 13) {
+      if (e.charCode === 13 || e.code === "Enter") {
         handleSearch()
       }
     }

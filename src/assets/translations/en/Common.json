@@ -450,7 +450,10 @@
   "SelectPage": "Select Page",
   "smsBulkTitle": "SMS Bulk",
   "smsBulk": "SMS Bulk",
+  "newsletterBulkTitle": "Newsletter Bulk",
+  "newsletterBulk": "Newsletter Bulk",
   "smsBulkDescription": "Purchase an SMS package online. Please select the desired quantity",
+  "newsletterBulkDescription": "Purchase an Newsletter package online. Please select the desired quantity",
   "select": "Select",
   "endPurchase": "Complete Purchase",
   "productName": "Product Name",
@@ -504,5 +507,9 @@
   "zip": "Zip Code",
   "minutes": "Minutes",
   "hours": "Hours",
-  "requiredField": "Required Field"
+  "requiredField": "Required Field",
+  "continue": "Continue",
+  "errorDetected": "Payment incomplete!",
+  "tryAgain": "Please try again.",
+  "contactSupportForBilling": "To continue, please be in touch with<br/> our sales at <a href='tel:03-524-0290'>03-524-0290</a> or at<br/> <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
 }

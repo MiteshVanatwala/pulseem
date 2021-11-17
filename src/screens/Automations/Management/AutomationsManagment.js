@@ -125,7 +125,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
     }
 
     const handleKeyPress=(e) => {
-      if (e.charCode === 13) {
+      if (e.keyCode === 13 || e.code === "Enter") {
         handleSearch()
       }
     }

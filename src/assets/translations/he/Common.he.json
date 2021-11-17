@@ -268,7 +268,7 @@
   "Removed": "מוסרים",
   "RemoveFromAccount": "הסרה מחשבון",
   "RemoveFromGroup": "הסרה מקבוצה",
-  "UpdatedOn": "עדכון אחרון",
+  "UpdatedOn": "עודכן בתאריך",
   "Campaign": "קמפיין",
   "Groups": "קבוצות",
   "ActivityLevel": "רמת אקטיביות",
@@ -442,7 +442,10 @@
   "maxImageSize": "הקובץ גדול מדי, נסו שנית",
   "smsBulkTitle": "חבילות SMS",
   "smsBulk": "חבילת SMS",
+  "newsletterBulkTitle": "חבילות דיוור",
+  "newsletterBulk": "חבילת דיוור",
   "smsBulkDescription": "רכישת חבילת SMS אונליין. אנא ביחרו את החבילה הנדרשת.",
+  "newsletterBulkDescription": "רכישת חבילת דיוור אונליין. אנא ביחרו את החבילה הנדרשת",
   "select": "בחר",
   "endPurchase": "סיום רכישה",
   "Errors": "שגיאות",
@@ -499,5 +502,9 @@
   "zip": "מיקוד",
   "minutes": "דקות",
   "hours": "שעות",
-  "requiredField": "שדה חובה"
+  "requiredField": "שדה חובה",
+  "continue": "המשך",
+  "errorDetected": "תשלום לא עבר!",
+  "tryAgain": "אנא נסה שוב.",
+  "contactSupportForBilling": "כדי להמשיך, יש ליצור קשר<br/> עם המכירות בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או במייל<br/> <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
 }

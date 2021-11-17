@@ -179,5 +179,15 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         '&:hover': {
             backgroundColor: '#219150'
         }
+    },
+    paymentDialog: {
+        maxWidth: 480,
+        '& .MuiIconButton-colorSecondary': {
+            color: '#0371ad'
+        }
+    },
+    shoppingCartIcon: {
+        fontSize: 24,
+        marginBottom: -6
     }
 });

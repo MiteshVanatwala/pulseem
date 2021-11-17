@@ -37,7 +37,7 @@
   "AutomatoionInActiveStatusText": "לא פעיל",
   "HeaderActivateAutomationProcess": "הפעל אוטומציה",
   "HeaderDeactivateAutomationProcess": "עצור אוטומציה",
-  "TextActivateAutomationProcess": ".לחיצה על אישור תפעיל מחדש את תהליך האוטומציה",
+  "TextActivateAutomationProcess": "לחיצה על אישור תפעיל מחדש את תהליך האוטומציה.",
   "TextDeactivateAutomationProcess": "לחיצה על אישור תעצור את תהליך האוטומציה. ניתן להפעיל אותו מחדש ממסך ניהול האוטומציות",
   "Report": "להגיש תלונה",
   "labelAutomationName": "שם האוטומציה",

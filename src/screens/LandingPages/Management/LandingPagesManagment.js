@@ -75,7 +75,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
 
   const renderSearchLine=() => {
     const handleKeyDown = (event) => {
-      if (event.keyCode === 13 || event.key === 'Enter') {
+      if (event.keyCode === 13 || event.code === 'Enter') {
         handleSearch();
       }
     }
@@ -332,6 +332,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         rootClass: classes.minWidth95,
         disable: !PageLink,
         text: (copyData&&copyData.copy)||'',
+        disable: !PageLink,
         type: 'copy',
         onClick: (e) => {
           setCopyRef(e.current)
