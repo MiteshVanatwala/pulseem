@@ -17,10 +17,9 @@ const RecipientChart = ({ classes, }) => {
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
-    const { language, windowSize, isRTL } = useSelector(state => state.core);
+    const { windowSize, isRTL } = useSelector(state => state.core);
     const { packagesDetails } = useSelector(state => state.dashboard);
     const { Notifications = {}, Newsletter = {}, Sms = {} } = packagesDetails || {};
-    const [showTooltip, setShowTooltip] = useState(false);
 
     const useStylesBootstrap = makeStyles((theme) => ({
         arrow: {
@@ -31,15 +30,7 @@ const RecipientChart = ({ classes, }) => {
         },
     }));
 
-    function BootstrapTooltip(props) {
-        const classes = useStylesBootstrap();
-
-        return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
-    }
-
     const dispatch = useDispatch();
-
-
     const initData = async () => {
         dispatch(getRecipientsReport());
     }
@@ -84,26 +75,26 @@ const RecipientChart = ({ classes, }) => {
         });
     }
 
-    const renderCircleAdd = (innerTitle) => {
-        return (
-            <Grid item xs={12} sm={4} className={classes.doughnutGrid} key={`circleAdd${Math.round(Math.random() * 999999999)}`}>
-                <Typography align='center' className={classes.f20}>{t(innerTitle.mainTitle)}</Typography>
-                <Box className={classes.doughnutBox}>
-                    <Avatar className={classes.emptyDoughnut}>
-                        <Typography className={classes.noRecipients}>{t(innerTitle.centerTitle)}</Typography>
-                        <Button>
-                            <Box className={classes.dInlineBlock}>
-                                <div className={classes.addRecipientsIcon}>
-                                    {'\uE14F'}
-                                </div>
-                                <Typography className={classes.addRecipientsBtn}>{t('dashboard.add')}</Typography>
-                            </Box>
-                        </Button>
-                    </Avatar>
-                </Box>
-            </Grid>
-        )
-    };
+    // const renderCircleAdd = (innerTitle) => {
+    //     return (
+    //         <Grid item xs={12} sm={4} className={classes.doughnutGrid} key={`circleAdd${Math.round(Math.random() * 999999999)}`}>
+    //             <Typography align='center' className={classes.f20}>{t(innerTitle.mainTitle)}</Typography>
+    //             <Box className={classes.doughnutBox}>
+    //                 <Avatar className={classes.emptyDoughnut}>
+    //                     <Typography className={classes.noRecipients}>{t(innerTitle.centerTitle)}</Typography>
+    //                     <Button>
+    //                         <Box className={classes.dInlineBlock}>
+    //                             <div className={classes.addRecipientsIcon}>
+    //                                 {'\uE14F'}
+    //                             </div>
+    //                             <Typography className={classes.addRecipientsBtn}>{t('dashboard.add')}</Typography>
+    //                         </Box>
+    //                     </Button>
+    //                 </Avatar>
+    //             </Box>
+    //         </Grid>
+    //     )
+    // };
 
     const renderDoughnut = (report, index) => {
 
@@ -442,7 +433,7 @@ const RecipientChart = ({ classes, }) => {
                             title={t('dashboard.chartTooltip')}
                             classes={{
                                 tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                                arrow: classes.black
+                                arrow: classes.fBlack
                             }}
                             enterTouchDelay={50}
                             placement={"top"}>

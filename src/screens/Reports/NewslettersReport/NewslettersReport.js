@@ -1,99 +1,110 @@
-import React,{useState,useEffect,useRef} from 'react';
-import DefaultScreen from '../DefaultScreen';
+import React, { useState, useEffect, useRef } from 'react';
+import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,Link,
-  Grid,Button,TextField,InputAdornment,Input,Box,FormControlLabel,Checkbox,Select,MenuItem,CardMedia,Card,CardContent,RadioGroup,Radio,FormGroup,FormControl, Tooltip
+  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
+  Grid, Button, TextField, InputAdornment, Input, Box, FormControlLabel, Checkbox, Select, MenuItem, CardMedia, Card, CardContent, RadioGroup, Radio, FormGroup, FormControl, Tooltip
 } from '@material-ui/core'
 import Switch from "react-switch";
 import {
-  SendGreenIcon,SearchIcon,ExportIcon,ReportsIcon
-} from '../../assets/images/managment/index'
+  SendGreenIcon, SearchIcon, ExportIcon, ReportsIcon
+} from '../../../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,DateField,Dialog,RestorDialogContent,SearchField
-} from '../../components/managment/index'
-import useCtrlHistory from '../../helpers/useCtrlHistory';
-import {useSelector,useDispatch} from 'react-redux';
-import {useTranslation} from 'react-i18next';
+  TablePagination, ManagmentIcon, DateField, Dialog, RestorDialogContent, SearchField
+} from '../../../components/managment/index'
+import useCtrlHistory from '../../../helpers/useCtrlHistory';
+import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import {apiURL} from '../../config/index'
-import {CSVLink} from 'react-csv'
-import {getNewsletterReports,downloadNewsletterReport} from '../../redux/reducers/newsletterSlice';
-import { setRowsPerPage } from '../../redux/reducers/coreSlice';
-import { getCookie, setCookie } from '../../helpers/cookies';
-import { exportFile } from '../../helpers/exportFromJson';
+import { apiURL } from '../../../config/index'
+import { CSVLink } from 'react-csv'
+import { getNewsletterReports, downloadNewsletterReport } from '../../../redux/reducers/newsletterSlice';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { getCookie, setCookie } from '../../../helpers/cookies';
+import { exportFile } from '../../../helpers/exportFromJson';
 
-const NewslettersReport=({classes}) => {
-  const {language,windowSize,isRTL,rowsPerPage}=useSelector(state => state.core)
-  const {newslettersReports}=useSelector(state => state.newsletter)
-  const {t}=useTranslation()
-  const [fromDate,handleFromDate]=useState(null);
-  const [toDate,handleToDate]=useState(null);
-  const [notificationNameSearch,setNotificationNameSearch]=useState('');
-  const rowsOptions=[6,12,18]
-  const [page,setPage]=useState(1)
-  const [isSearching,setSearching]=useState(false)
-  const [searchResults,setSearchResults]=useState(null)
-  const [toFileArray,setToFileArray]=useState([])
-  const [isDemoSend,setIsDemoSend]=useState(false)
-  const [csvData,setCsvData]=useState('')
-  const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
-  const dispatch=useDispatch()
-  const rowStyle={head: classes.tableRowReportHead,root: clsx(classes.tableRowRoot)}
-  const cellStyle={head: classes.tableCellHead,root: clsx(classes.tableCellRoot,classes.paddingHead)}
-  const cell50wStyle={head: clsx(classes.tableCellHead),root: clsx(classes.tableCellRoot,classes.paddingHead,classes.minWidth50)}
-  const cellBodyStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot)}
-  const noBorderCellStyle={body: classes.tableCellBodyNoBorder,root: clsx(classes.tableCellRoot,classes.minWidth50)}
-  const borderCellStyle={body: clsx(classes.tableCellBody),root: clsx(classes.tableCellRoot,classes.minWidth50)}
-  const csvLinkRef=useRef(null)
+const NewslettersReport = ({ classes }) => {
+  const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+  const { newslettersReports } = useSelector(state => state.newsletter)
+  const { t } = useTranslation()
+  const [fromDate, handleFromDate] = useState(null);
+  const [toDate, handleToDate] = useState(null);
+  const [notificationNameSearch, setNotificationNameSearch] = useState('');
+  const rowsOptions = [6, 10, 20, 50]
+  const [page, setPage] = useState(1)
+  const [isSearching, setSearching] = useState(false)
+  const [searchResults, setSearchResults] = useState(null)
+  const [toFileArray, setToFileArray] = useState([])
+  const [isDemoSend, setIsDemoSend] = useState(false)
+  const [csvData, setCsvData] = useState('')
+  const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
+  const dispatch = useDispatch()
+  const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
+  const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
+  const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
+  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
+  const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
+  const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
+  const csvLinkRef = useRef(null)
 
   moment.locale(language)
 
-  const getHrefs=(id) => ({
+  const getHrefs = (id) => ({
     TotalSendCompleted: {
       href: `/Pulseem/ClientSearchResult.aspx?SentToCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}`
     },
     OpenCount: {
       title: t('mainReport.GridButtonColumnResource1.HeaderText'),
       href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     OpenCountUnique: {
       title: t('common.Unique'),
       href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCount: {
       title: t('common.Clicks'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      href: `/Pulseem/LinksClicksReport.aspx?OpenedCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      href: `/Pulseem/LinksClicksReport.aspx?OpenedCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemovedClients: {
       title: t('mainReport.removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     SendError: {
       title: t('mainReport.GridButtonColumnResource4.HeaderText'),
       href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercetangeRemovedClients: {
       title: t('mainReport.removedPercents'),
       href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercentageOpens: {
-      title: t('mainReport.locUniqueOpensPercents.HeaderText'),
-      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
+      title: t('mainReport.GridButtonColumnResource1.HeaderText'),
+      href: `/Pulseem/ClientSearchResult.aspx?CampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercetangeClicks: {
-      title: t('mainReport.locUniqueClicksPercents.HeaderText'),
+      title: t('common.Clicks'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     NotOpened: {
       title: t("mainReport.GridButtonColumnResource3.HeaderText"),
       href: `/Pulseem/ClientSearchResult.aspx?NotOpenedCampaignID=${id}&fromreact=true`
+      //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemoveReasons: {
       title: t("mainReport.locRemovedReason.HeaderText"),
@@ -102,7 +113,7 @@ const NewslettersReport=({classes}) => {
     }
   })
 
-  const columnHead={
+  const columnHead = {
     CampaignID: t('mainReport.CampaignID'),
     Name: t('master.lblContactNameResource1.Text'),
     Names: t('mainReport.names'),
@@ -128,21 +139,21 @@ const NewslettersReport=({classes}) => {
     TotalBytes: t('mainReport.totalBytes')
   }
 
-  const getData=() => {
+  const getData = () => {
     dispatch(getNewsletterReports(isDemoSend));
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     getData();
 
     const lastPage = getCookie('newsletterReportlastPage') || 1;
     setPage(parseInt(lastPage))
     setCookie('newsletterReportlastPage', '', { maxAge: -1 })
 
-  },[dispatch,isDemoSend]);
+  }, [dispatch, isDemoSend]);
 
 
-  const renderHeader=() => {
+  const renderHeader = () => {
     return (
       <>
         <Typography className={classes.managementTitle}>
@@ -153,7 +164,7 @@ const NewslettersReport=({classes}) => {
     )
   }
 
-  const clearSearch=() => {
+  const clearSearch = () => {
     setNotificationNameSearch('')
     handleFromDate(null)
     handleToDate(null)
@@ -161,7 +172,7 @@ const NewslettersReport=({classes}) => {
     setSearching(false)
   }
 
-  const handleDownloadCsv=async () => {
+  const handleDownloadCsv = async () => {
     let fileArray = toFileArray
     if (!toFileArray.length) {
       fileArray = newslettersReports.map(a => a.CampaignID);
@@ -169,24 +180,24 @@ const NewslettersReport=({classes}) => {
 
     const result = await dispatch(downloadNewsletterReport(fileArray))
     if (!result.error) {
-      let res =[];
-      JSON.parse(result.payload).map(item=>{
-        let dataItem={};
-        Object.keys(item).map(key=>{
-          const headerTitle=columnHead[key];
-          dataItem[headerTitle]=item[key]
+      let res = [];
+      JSON.parse(result.payload).map(item => {
+        let dataItem = {};
+        Object.keys(item).map(key => {
+          const headerTitle = columnHead[key];
+          dataItem[headerTitle] = item[key]
         })
         res.push(dataItem);
       })
-  
-      exportFile({ 
-        data: res, 
-        fileName: 'emailReport', 
+
+      exportFile({
+        data: res,
+        fileName: 'emailReport',
         exportType: 'xls'
       });
     }
     setToFileArray([]);
-    
+
     //if(payload.error) {
     //  return
     //}
@@ -195,62 +206,62 @@ const NewslettersReport=({classes}) => {
     //csvLinkRef.current.link.click()
   }
 
-  const renderSearchSection=() => {
-    const handleSearch=() => {
-      const searchArray=[{
+  const renderSearchSection = () => {
+    const handleSearch = () => {
+      const searchArray = [{
         type: 'name',
         notificationName: notificationNameSearch
-      },{
+      }, {
         type: 'date',
         fromDate,
         toDate
       }];
 
-      const filtersObject={
-        name: (row,values) => {
+      const filtersObject = {
+        name: (row, values) => {
           return String(row.Name.toLowerCase()).includes(values.notificationName.toLowerCase());
         },
-        date: (row,values) => {
-          const {UpdatedDate,SendDate}=row
-          const lastUpdate=SendDate?
-            moment(SendDate,dateFormat).valueOf()
-            :moment(UpdatedDate,dateFormat).valueOf()
-          const startFromDate=values.fromDate&&values.fromDate.hour(0).minute(0).valueOf()||null
-          const endToDate=values.toDate&&values.toDate.hour(23).minute(59).valueOf()||null
+        date: (row, values) => {
+          const { UpdatedDate, SendDate } = row
+          const lastUpdate = SendDate ?
+            moment(SendDate, dateFormat).valueOf()
+            : moment(UpdatedDate, dateFormat).valueOf()
+          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
+          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
 
-          if(!values)
+          if (!values)
             return true
-          if(fromDate&&toDate&&startFromDate&&endToDate)
-            return ((lastUpdate>=startFromDate)&&(lastUpdate<=endToDate))
-          if(fromDate&&startFromDate)
-            return (lastUpdate>=startFromDate)
-          if(toDate&&endToDate)
-            return (lastUpdate<=endToDate)
+          if (fromDate && toDate && startFromDate && endToDate)
+            return ((lastUpdate >= startFromDate) && (lastUpdate <= endToDate))
+          if (fromDate && startFromDate)
+            return (lastUpdate >= startFromDate)
+          if (toDate && endToDate)
+            return (lastUpdate <= endToDate)
           return true
         }
       }
 
-      let sortData=newslettersReports;
+      let sortData = newslettersReports;
       searchArray.forEach(values => {
-        sortData=sortData.filter(row => filtersObject[values.type](row,values))
+        sortData = sortData.filter(row => filtersObject[values.type](row, values))
       });
       setSearchResults(sortData);
       setSearching(true);
       setPage(1);
     }
 
-    const handleFromDateChange=(value) => {
-      if(value>toDate) {
+    const handleFromDateChange = (value) => {
+      if (value > toDate) {
         handleToDate(null);
       }
       handleFromDate(value);
     }
 
-    const handleNotificationNameChange=event => {
+    const handleNotificationNameChange = event => {
       setNotificationNameSearch(event.target.value)
     }
 
-    if(windowSize==='xs') {
+    if (windowSize === 'xs') {
       return (
         <SearchField
           classes={classes}
@@ -273,12 +284,12 @@ const NewslettersReport=({classes}) => {
             size='small'
             value={notificationNameSearch}
             onChange={handleNotificationNameChange}
-            className={clsx(classes.textField,classes.minWidth252)}
+            className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('common.CampaignName')}
           />
         </Grid>
 
-        {windowSize!=='xs'?
+        {windowSize !== 'xs' ?
           <Grid item>
             <DateField
               classes={classes}
@@ -287,21 +298,21 @@ const NewslettersReport=({classes}) => {
               placeholder={t('mms.locFromDateResource1.Text')}
             />
           </Grid>
-          :null}
+          : null}
 
-        {windowSize!=='xs'?
+        {windowSize !== 'xs' ?
           <Grid item>
             <DateField
               classes={classes}
               value={toDate}
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
-              minDate={fromDate? fromDate:undefined}
+              minDate={fromDate ? fromDate : undefined}
             />
           </Grid>
-          :null}
+          : null}
 
-        <Grid item style={{display: 'flex',flexDirection: 'row',alignItems: 'center'}}>
+        <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Switch
             checked={isDemoSend}
             onColor="#0371ad"
@@ -313,10 +324,10 @@ const NewslettersReport=({classes}) => {
             activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
             height={15}
             width={40}
-            className={clsx({[classes.rtlSwitch]: isRTL})}
+            className={clsx({ [classes.rtlSwitch]: isRTL })}
             onChange={() => setIsDemoSend(!isDemoSend)}
           />
-          <Typography style={{marginInlineStart: 8}}>
+          <Typography style={{ marginInlineStart: 8 }}>
             {t('mainReport.locShowTestCampaigns.Text')}
           </Typography>
         </Grid>
@@ -330,7 +341,7 @@ const NewslettersReport=({classes}) => {
             {t('notifications.buttons.search')}
           </Button>
         </Grid>
-        {isSearching&&<Grid item>
+        {isSearching && <Grid item>
           <Button
             size='large'
             variant='contained'
@@ -344,11 +355,11 @@ const NewslettersReport=({classes}) => {
     )
   }
 
-  const renderManagmentLine=() => {
-    const dataLength=isSearching? searchResults.length:newslettersReports.length;
+  const renderManagmentLine = () => {
+    const dataLength = isSearching ? searchResults.length : newslettersReports.length;
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize!=='xs'&&<Grid item>
+        {windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -360,7 +371,7 @@ const NewslettersReport=({classes}) => {
             {t('mainReport.compareCampaigns')}
           </Button>
         </Grid>}
-        {windowSize!=='xs'&&<Grid item>
+        {windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -389,7 +400,7 @@ const NewslettersReport=({classes}) => {
     )
   }
 
-  const renderTableHead=() => {
+  const renderTableHead = () => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
@@ -406,52 +417,57 @@ const NewslettersReport=({classes}) => {
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' />
 
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.GridButtonColumnResource4.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
+          {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.GridButtonColumnResource4.HeaderText")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.removals")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("mainReport.GridButtonColumnResource3.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("mainReport.GridButtonColumnResource3.HeaderText")}</TableCell> */}
 
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("mainReport.reasons")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
+          {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.reasons")}</TableCell> */}
           <TableCell classes={cellStyle} className={classes.flex1} ></TableCell>
         </TableRow>
       </TableHead>
     )
   }
 
-  const renderCellIcons=(row) => {
-    const {CampaignID}=row
+  const renderCellIcons = (row) => {
+    const { CampaignID } = row
 
     return (
-      <Box style={{display: 'flex',flex: 1,alignItems: 'center',alignSelf: 'center',justifyContent: 'center'}}>
+      <Box style={{ display: 'flex', flex: 1, alignItems: 'center', alignSelf: 'center', justifyContent: 'center' }}>
         <ManagmentIcon
           classes={classes}
           iconClass={classes.w25}
           textClass={classes.lineHeight1point2}
           icon={ReportsIcon}
           lable={t('mainReport.locGraph.HeaderText')}
-          href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`}
+          href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`}
         />
       </Box>
     )
   }
 
-  const renderNameCell=(row) => {
-    const {CampaignID,Name,SendDate,isChecked=false}=row
+  const renderNameCell = (row) => {
+    const { CampaignID, Name, SendDate, isChecked = false } = row
 
-    const date=SendDate? moment(SendDate):''
-    const showDate=SendDate? date.format('DD/MM/YYYY'):''
-    const showTime=SendDate? date.format('LT'):''
+    const date = SendDate ? moment(SendDate) : ''
+    const showDate = SendDate ? date.format('DD/MM/YYYY') : ''
+    const showTime = SendDate ? date.format('LT') : ''
 
-    if (windowSize==='xs') {
+    if (windowSize === 'xs') {
       return (
         <>
-          <Tooltip 
-            arrow 
-            title={Name} 
-            placement={'top'} 
+          <Tooltip
+            arrow
+            title={Name}
+            placement={'top'}
             classes={{
-              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-              arrow: classes.fBlack}}
-            >
+              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+              arrow: classes.fBlack
+            }}
+          >
             <Typography noWrap={false} className={classes.nameEllipsis}>
               {Name}
             </Typography>
@@ -464,59 +480,60 @@ const NewslettersReport=({classes}) => {
     }
     return (
       <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-        <Grid item className={clsx(windowSize!=='xs'&&classes.w20)}>
-          {isChecked&&<Checkbox
+        <Grid item className={clsx(windowSize !== 'xs' && classes.w20)}>
+          {isChecked && <Checkbox
             color='primary'
             checked={toFileArray.includes(CampaignID)}
             onChange={() => {
-              if(toFileArray.includes(CampaignID)) {
-                setToFileArray(toFileArray.filter(item => item!==CampaignID))
+              if (toFileArray.includes(CampaignID)) {
+                setToFileArray(toFileArray.filter(item => item !== CampaignID))
               } else {
-                setToFileArray([...toFileArray,CampaignID])
+                setToFileArray([...toFileArray, CampaignID])
               }
             }}
           />}
         </Grid>
-        <Grid item className={clsx(windowSize!=='xs'&&classes.w80)}>
-          <Tooltip 
-            arrow 
-            title={row.Name} 
-            placement={'top'} 
+        <Grid item className={clsx(windowSize !== 'xs' && classes.w80)}>
+          <Tooltip
+            arrow
+            title={row.Name}
+            placement={'top'}
             classes={{
-              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-              arrow: classes.fBlack}}
-            >
+              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+              arrow: classes.fBlack
+            }}
+          >
             <Typography noWrap={false} className={classes.nameEllipsis}>
               {row.Name}
             </Typography>
           </Tooltip>
-            <Typography className={classes.grayTextCell}>
-              {`${showDate} ${showTime}`}
-            </Typography>
+          <Typography className={classes.grayTextCell}>
+            {`${showDate} ${showTime}`}
+          </Typography>
         </Grid>
       </Grid>
     )
   }
 
-  const colorTextStyle={
+  const colorTextStyle = {
     red: classes.textColorRed,
     blue: classes.textColorBlue,
     green: classes.sendIconText
   }
-  const renderPercetangeData=(percentage=0,type,data={},clickable=true) => {
-    const {title='',href='',icon=''}=data;
-    const innerHref=clickable?href:'';
+  const renderPercetangeData = (percentage = 0, type, data = {}, clickable = true) => {
+    const { title = '', href = '', icon = '' } = data;
+    const innerHref = clickable ? href : '';
     return (
-      <Box style={{display: 'flex',flexDirection: 'column',flexWrap: 'wrap'}} >
-        <Typography component={innerHref? 'a':'p'} href={innerHref} className={clsx(
+      <Box style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap' }} >
+        <Typography component={innerHref ? 'a' : 'p'} href={innerHref} className={clsx(
           classes.middleTxt,
-          colorTextStyle[type]||'',
-          {[classes.iconsFont]: !!icon})}>
-          {icon? icon:`${percentage||'0'}%`}
+          colorTextStyle[type] || '',
+          { [classes.iconsFont]: !!icon })}>
+          {icon ? icon : `${percentage || '0'}%`}
         </Typography>
         <Typography className={clsx(
-          classes.middleWrapText,classes.lineHeight1point2,
-          colorTextStyle[type]||'',
+          classes.middleWrapText, classes.lineHeight1point2,
+          colorTextStyle[type] || '',
           //{[classes.f15]: !!icon}
         )}>
           {title}
@@ -525,25 +542,25 @@ const NewslettersReport=({classes}) => {
     )
   }
 
-  const renderDataTooltip=(value,type,data={},tooltip) => {
-    const {title=t("notifications.tblBody.total"),href=''}=data
+  const renderDataTooltip = (value, type, data = {}, tooltip) => {
+    const { title = t("notifications.tblBody.total"), href = '' } = data
     return (
-      <Tooltip 
-        title={`${t(tooltip)}`} 
-        arrow 
-        placement={isRTL?'left-end':'right-end'}
+      <Tooltip
+        title={`${t(tooltip)}`}
+        arrow
+        placement={isRTL ? 'left-end' : 'right-end'}
         classes={{
-          tooltip: classes.tooltipBlack, 
+          tooltip: classes.tooltipBlack,
           arrow: classes.fBlack
         }}>
-        <Box style={{display: 'flex',flexDirection: 'column'}} >
-          <Typography 
-            component='a' 
-            href={href} 
-            className={clsx(classes.middleText,colorTextStyle[type]||'')}>
-            {value&&value.toLocaleString()||'0'}
+        <Box className={classes.cellText}>
+          <Typography
+            component='a'
+            href={href}
+            className={clsx(classes.middleText, colorTextStyle[type] || '')}>
+            {value && value.toLocaleString() || '0'}
           </Typography>
-          <Typography className={clsx(classes.middleWrapText,colorTextStyle[type])}>
+          <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
             {title}
           </Typography>
         </Box>
@@ -551,15 +568,15 @@ const NewslettersReport=({classes}) => {
     );
   }
 
-  const renderIntData=(value,type,data={},clickable=true) => {
-    const {title=t("notifications.tblBody.total"),href=''}=data
-    const innerHref=clickable?href:'';
+  const renderIntData = (value, type, data = {}) => {
+    const { title = t("notifications.tblBody.total"), href = '' } = data
+    //const innerHref=clickable?`/CampaignStatistics/${id}`:'';
     return (
-      <Box style={{display: 'flex',flexDirection: 'column'}} >
-        <Typography component={innerHref? 'a':'p'} href={clickable?innerHref:''} className={clsx(classes.middleTxt,colorTextStyle[type]||'')}>
-          {value&&value.toLocaleString()||'0'}
+      <Box className={classes.cellText}>
+        <Typography component={href !== '' ? 'a' : 'p'} href={href ? href : ''} className={clsx(classes.middleTxt, colorTextStyle[type] || '')}>
+          {value && value.toLocaleString() || '0'}
         </Typography>
-        <Typography className={clsx(classes.middleWrapText,colorTextStyle[type])}>
+        <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
           {title}
         </Typography>
       </Box>
@@ -567,7 +584,7 @@ const NewslettersReport=({classes}) => {
 
   }
 
-  const renderRow=(row) => {
+  const renderRow = (row) => {
     const {
       CampaignID,
       Name,
@@ -584,85 +601,85 @@ const NewslettersReport=({classes}) => {
       PercentageOpens,
       PercetangeClicks,
       NotOpened
-    }=row
-    const hrefs=getHrefs(CampaignID)
+    } = row
+    const hrefs = getHrefs(CampaignID)
     return (
       <TableRow
         key={CampaignID}
         classes={rowStyle}
         className={classes.maxHeight87}
-        >
+      >
         <TableCell
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex3)}>
-          {renderNameCell({CampaignID,Name,SendDate,isChecked: true})}
+          {renderNameCell({ CampaignID, Name, SendDate, isChecked: true })}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(TotalSendPlan,'')}
+          {renderIntData(TotalSendPlan, '')}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(TotalSendCompleted,'',hrefs.TotalSendCompleted)}
+          {renderIntData(TotalSendCompleted, '', hrefs.TotalSendCompleted)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderDataTooltip(OpenCount,'green',hrefs.OpenCount,'mainReport.OpensTotalTooltip.Text')}
+          {renderDataTooltip(OpenCount, 'green', hrefs.OpenCount, 'mainReport.OpensTotalTooltip.Text', row.CampaignID)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderDataTooltip(OpenCountUnique,'green',hrefs.OpenCountUnique, 'mainReport.OpensUniqueTooltip.Text')}
+          {renderDataTooltip(OpenCountUnique, 'green', hrefs.OpenCountUnique, 'mainReport.OpensUniqueTooltip.Text', row.CampaignID)}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderPercetangeData(PercentageOpens,'green',hrefs.PercentageOpens)}
+          {renderPercetangeData(PercentageOpens, 'green', hrefs.PercentageOpens, row.CampaignID)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderDataTooltip(ClickCount,'blue',hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
+          {renderDataTooltip(ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderDataTooltip(ClickCountUnique,'blue',hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
+          {renderDataTooltip(ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderPercetangeData(PercetangeClicks,'blue',hrefs.PercetangeClicks)}
+          {renderPercetangeData(PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(SendError,'red',hrefs.SendError)}
+          {renderIntData(SendError, 'red', hrefs.SendError)}
         </TableCell>
 
         <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(RemovedClients,'red',hrefs.RemovedClients)}
+          {renderIntData(RemovedClients, 'red', hrefs.RemovedClients)}
         </TableCell>
         <TableCell classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(NotOpened,'red',hrefs.NotOpened)}
+          {renderIntData(NotOpened, 'red', hrefs.NotOpened)}
         </TableCell>
         <TableCell classes={borderCellStyle}
           align='center'
@@ -670,20 +687,21 @@ const NewslettersReport=({classes}) => {
           <ManagmentIcon
             classes={classes}
             textClass={classes.lineHeight1point2}
-            uIcon={<div className={clsx(classes.managmentUicon, classes.f25)}>
+            uIcon={<div className={clsx(classes.managmentUicon, classes.f25, !RemovedClients || RemovedClients === 0 ? classes.disabled : null)}>
               {'\uE15D'}
             </div>}
             lable={hrefs.RemoveReasons.title}
             href={hrefs.RemoveReasons.href}
-            onClick={()=> {
+            onClick={() => {
               setCookie('newsletterReportlastPage', page)
             }}
+            disable={!RemovedClients || RemovedClients === 0}
           />
         </TableCell>
         <TableCell
           component="th"
           scope="row"
-          classes={{root: clsx(classes.tableCellRoot,classes.paddingRightLeft10)}}
+          classes={{ root: clsx(classes.tableCellRoot, classes.paddingRightLeft10) }}
           className={classes.flex1}>
           {renderCellIcons(row)}
         </TableCell>
@@ -691,7 +709,7 @@ const NewslettersReport=({classes}) => {
     )
   }
 
-  const renderPhoneRow=(row) => {
+  const renderPhoneRow = (row) => {
     const {
       CampaignID,
       Name,
@@ -708,35 +726,35 @@ const NewslettersReport=({classes}) => {
       PercentageOpens,
       PercetangeClicks,
       NotOpened
-    }=row
-    const hrefs=getHrefs(CampaignID)
+    } = row
+    const hrefs = getHrefs(CampaignID)
     return (
       <TableRow
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell classes={{root: clsx(classes.tableCellRoot,classes.flex1,classes.tabelCellPadding)}}>
+        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
           <Box className={classes.justifyBetween}>
             <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
             </Box>
             <Box className={classes.w110}>
-              <Typography 
-                component='a' 
+              <Typography
+                component='a'
                 href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`}
                 className={classes.linkNoDesign}>
                 {t('mainReport.locGraph.HeaderText')}
               </Typography>
             </Box>
           </Box>
-          <Grid container spacing={2} style={{paddingInlineStart: 10}} >
+          <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
             <Grid item>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("mainReport.locTotalSendPlan.HeaderText")}
               </Typography>
               <Grid container spacing={2}>
                 <Grid item>
-                  {renderIntData(TotalSendPlan,'')}
+                  {renderIntData(TotalSendPlan, '')}
                 </Grid>
               </Grid>
             </Grid>
@@ -746,7 +764,7 @@ const NewslettersReport=({classes}) => {
               </Typography>
               <Grid container spacing={2}>
                 <Grid item>
-                  {renderIntData(TotalSendPlan,'')}
+                  {renderIntData(TotalSendPlan, '')}
                 </Grid>
               </Grid>
             </Grid>
@@ -757,10 +775,10 @@ const NewslettersReport=({classes}) => {
             </Typography>
             <Grid container spacing={2}>
               <Grid item>
-                {renderIntData(OpenCount,'green',hrefs.OpenCount, false)}
+                {renderIntData(OpenCount, 'green', hrefs.OpenCount, false)}
               </Grid>
               <Grid item>
-                {renderIntData(OpenCountUnique,'green',hrefs.OpenCountUnique, false)}
+                {renderIntData(OpenCountUnique, 'green', hrefs.OpenCountUnique, false)}
               </Grid>
             </Grid>
             <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
@@ -768,31 +786,31 @@ const NewslettersReport=({classes}) => {
             </Typography>
             <Grid container spacing={2}>
               <Grid item>
-                {renderIntData(ClickCount,'blue',hrefs.ClickCount, false)}
+                {renderIntData(ClickCount, 'blue', hrefs.ClickCount, false)}
               </Grid>
               <Grid item>
-                {renderIntData(ClickCountUnique,'blue',hrefs.ClickCountUnique, false)}
+                {renderIntData(ClickCountUnique, 'blue', hrefs.ClickCountUnique, false)}
               </Grid>
             </Grid>
           </Box>
-          <Grid container spacing={2} style={{paddingInlineStart: 10}} >
+          <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
             <Grid item>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("mainReport.GridButtonColumnResource4.HeaderText")}
               </Typography>
-              {renderIntData(SendError,'red',hrefs.SendError, false)}
+              {renderIntData(SendError, 'red', hrefs.SendError, false)}
             </Grid>
             <Grid item>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("mainReport.removals")}
               </Typography>
-              {renderIntData(RemovedClients,'red',hrefs.RemovedClients, false)}
+              {renderIntData(RemovedClients, 'red', hrefs.RemovedClients, false)}
             </Grid>
             <Grid item>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("mainReport.GridButtonColumnResource3.HeaderText")}
               </Typography>
-                {renderIntData(NotOpened,'red',hrefs.NotOpened, false)}
+              {renderIntData(NotOpened, 'red', hrefs.NotOpened, false)}
             </Grid>
           </Grid>
         </TableCell>
@@ -800,42 +818,42 @@ const NewslettersReport=({classes}) => {
     )
   }
 
-  const renderTableBody=() => {
-    let rowData=searchResults||newslettersReports;
-    let rpp=parseInt(rowsPerPage)
-    rowData=rowData.slice((page-1)*rpp,(page-1)*rpp+rpp)
+  const renderTableBody = () => {
+    let rowData = searchResults || newslettersReports;
+    let rpp = parseInt(rowsPerPage)
+    rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
       <TableBody>
         {rowData
-          .map(windowSize==='xs'? renderPhoneRow:renderRow)}
+          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
       </TableBody>
     )
   }
 
-  const renderTable=() => {
+  const renderTable = () => {
     return (
       <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
-          {windowSize!=='xs'&&renderTableHead()}
+          {windowSize !== 'xs' && renderTableHead()}
           {renderTableBody()}
         </Table>
       </TableContainer>
     )
   }
 
-  const renderTablePagination=() => {
-    const handleRowsPerPageChange=(val) => {
+  const renderTablePagination = () => {
+    const handleRowsPerPageChange = (val) => {
       dispatch(setRowsPerPage(val))
       setCookie('rpp', val, { maxAge: 2147483647 })
     }
-    const handlePageChange=(val) => {
+    const handlePageChange = (val) => {
       setPage(val);
     }
 
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching? searchResults.length:newslettersReports.length}
+        rows={isSearching ? searchResults.length : newslettersReports.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}

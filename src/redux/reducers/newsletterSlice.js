@@ -13,39 +13,50 @@ export const getNewslatterData = createAsyncThunk(
   }
 )
 
-  export const getNewsletterReports = createAsyncThunk(
-    'reports/EmailReports/', async (demo = false, thunkAPI) => {
-      try {
-        const response = await instence.get(`reports/EmailReports?includeTestCampaign=${demo}`)
-        return JSON.parse(response.data)
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
+export const getNewsletterReports = createAsyncThunk(
+  'reports/EmailReports/', async (demo = false, thunkAPI) => {
+    try {
+      const response = await instence.get(`reports/EmailReports?includeTestCampaign=${demo}`)
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
-  )
-  
-  export const getNewsletterDirectReport=createAsyncThunk(
-    'report/GetEmailDirectReport',async (data,thunkAPI) => {
-      try {
-        const response=await instence.post(`report/GetEmailDirectReport`, data);
-        return JSON.parse(response.data)
-      } catch(error) {
-        return thunkAPI.rejectWithValue({error: error.message});
-      }
+  }
+)
+
+export const getNewsletterDirectReport = createAsyncThunk(
+  'report/GetEmailDirectReport', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`report/GetEmailDirectReport`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
-  )
-  
-  export const exportNewsletterDirectReport=createAsyncThunk(
-    'report/ExportEmailDirectReport',async (_,thunkAPI) => {
-      try {
-        const response=await instence.post(`report/ExportEmailDirectReport`);
-        return JSON.parse(response.data)
-      } catch(error) {
-        return thunkAPI.rejectWithValue({error: error.message});
-      }
+  }
+)
+
+export const exportNewsletterDirectReport = createAsyncThunk(
+  'report/ExportEmailDirectReport', async (_, thunkAPI) => {
+    try {
+      const response = await instence.post(`report/ExportEmailDirectReport`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
     }
-  )
-  
+  }
+)
+
+export const getNewsletterReportsByIds = createAsyncThunk(
+  'email/EmailReportsByIds', async (id, thunkAPI) => {
+    try {
+      const response = await instence.post(`email/EmailReportsByIds`, [{ ID: id }])
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
+
 export const restoreCampaigns = createAsyncThunk(
   'email/restoreEmailCampaigns', async (deletedCampaigns, thunkAPI) => {
     try {
