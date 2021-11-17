@@ -614,6 +614,7 @@ const NewslettersReport = ({ classes }) => {
           align='center'
           className={clsx(classes.flex3)}>
           {renderNameCell({ CampaignID, Name, SendDate, isChecked: true })}
+          {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
