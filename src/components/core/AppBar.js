@@ -205,7 +205,6 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
       window.location.href = uri
     }
   }
-
   const returnToAdmin = () => {
     window.location = '/Pulseem/ReactRedirect.aspx';
   }

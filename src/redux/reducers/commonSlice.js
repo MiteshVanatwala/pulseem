@@ -44,16 +44,6 @@ export const deleteGalleryFile = createAsyncThunk(
     }
   });
 
-export const getPackagesList = createAsyncThunk(
-  '/GetPackagesList', async (_, thunkAPI) => {
-    try {
-      const response = await instence.get(`/GetPackagesList`);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
 export const isClalAccount = createAsyncThunk(
   '/IsClalAccount', async (_, thunkAPI) => {
     try {
@@ -73,23 +63,29 @@ export const getAccountFeatures = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
+export const getCommonFeatures = createAsyncThunk(
+  'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
-    Folders: []
+    Folders: [],
+    subAccountSettings: null
   },
-  reducers: {},
-  // extraReducers: builder => {
-  //   builder.addCase(getNotificationData.fulfilled, (state, { payload }) => {
-  //     state.notificationData = payload.filter(row => !row.IsDeleted)
-  //     state.notificationDeletedData = payload.filter(row => row.IsDeleted)
-  //   })
-  //   builder.addCase(getNotificationData.rejected, (state, action) => {
-  //     state.notificationDataError = action.error.message
-  //   })
-  // }
+  extraReducers: builder => {
+    builder
+      .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
+        state.subAccountSettings = payload
+      })
+  }
 })
 
 
