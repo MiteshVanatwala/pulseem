@@ -141,7 +141,7 @@ const BulkStatus = ({ classes }) => {
           classes={classes}
           interactive={true}
           arrow={true}
-          style={{ position: 'absolute' }}
+          style={{ position: 'absolute', fontSize: 14 }}
           placement={'top'}
           icon={<span className={classes.newIcn}>{t("mainReport.newFeature")}</span>}
           text={t("dashboard.tooltipPurchaseNewFeature")}
