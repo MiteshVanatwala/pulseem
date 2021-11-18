@@ -58,22 +58,26 @@ const NewslettersReport = ({ classes }) => {
     },
     OpenCount: {
       title: t('mainReport.GridButtonColumnResource1.HeaderText'),
-      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
+      href: ``,
+      clickable: false
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     OpenCountUnique: {
       title: t('common.Unique'),
-      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
+      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
+      clickable: true
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCount: {
       title: t('common.Clicks'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
+      clickable: false
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
+      clickable: true
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemovedClients: {
@@ -530,7 +534,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderDataTooltip = (value, type, data = {}, tooltip) => {
-    const { title = t("notifications.tblBody.total"), href = '' } = data
+    const { title = t("notifications.tblBody.total"), href = '', clickable = false } = data
     return (
       <Tooltip
         title={`${t(tooltip)}`}
@@ -542,7 +546,7 @@ const NewslettersReport = ({ classes }) => {
         }}>
         <Box className={classes.cellText}>
           <Typography
-            component='a'
+            component={clickable ? 'a' : 'p'}
             href={href}
             className={clsx(classes.middleText, colorTextStyle[type] || '')}>
             {value && value.toLocaleString() || '0'}
