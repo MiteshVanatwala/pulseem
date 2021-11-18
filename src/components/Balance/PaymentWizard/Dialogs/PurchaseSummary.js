@@ -63,6 +63,7 @@ const PurchaseSummary = ({
 
             <Grid
                 container
+                spacing={4}
                 className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
                 <Grid item>
                     <Button
