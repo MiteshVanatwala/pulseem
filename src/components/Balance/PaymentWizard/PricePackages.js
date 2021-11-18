@@ -21,7 +21,7 @@ const PricePackages = ({ classes,
     onComplete = () => null,
     packageType
 }) => {
-    const { isRTL } = useSelector(state => state.core);
+    const { isRTL, windowSize } = useSelector(state => state.core);
     const { accountAvailablePackages } = useSelector(state => state.dashboard);
     const { tranzillaUrl, creditCards, paymentConfirmation } = useSelector(state => state.payment);
     const { t } = useTranslation();
@@ -147,7 +147,7 @@ const PricePackages = ({ classes,
                     content: (
                         <Grid container>
                             <Grid item xs={12} className={clsx(classes.mb4)}>
-                                <iframe src={`${tranzillaUrl}`} width="400" height="420" border="no" frameBorder="0" style={{ border: "none !important" }} />
+                                <iframe src={`${tranzillaUrl}`} width={ windowSize !== 'xs' ? 400 : 250} height="420" border="no" frameBorder="0" style={{ border: "none !important" }} />
                             </Grid>
                         </Grid>
                     ),
@@ -231,7 +231,7 @@ const PricePackages = ({ classes,
     }
 
     return (
-        <Grid container spacing={1} style={{ maxWidth: '100%', pointerEvents: showLoader ? 'none' : 'auto' }}>
+        <Grid container spacing={1} style={{ pointerEvents: showLoader ? 'none' : 'auto' }}>
             {purchaseWizard()}
             {renderTranzillaFrame()}
             <Loader isOpen={showLoader} showBackdrop={false} />
