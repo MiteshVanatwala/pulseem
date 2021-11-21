@@ -442,7 +442,7 @@ const RecipientChart = ({ classes, }) => {
                             title={t('dashboard.chartTooltip')}
                             classes={{
                                 tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                                arrow: classes.black
+                                arrow: classes.fBlack
                             }}
                             enterTouchDelay={50}
                             placement={"top"}>
