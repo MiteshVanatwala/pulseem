@@ -95,12 +95,12 @@ const NewslettersReport = ({ classes }) => {
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercentageOpens: {
-      title: t('mainReport.GridButtonColumnResource1.HeaderText'),
+      title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
       href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercetangeClicks: {
-      title: t('common.Clicks'),
+      title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
