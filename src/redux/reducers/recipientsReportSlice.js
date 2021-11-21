@@ -20,7 +20,8 @@ export const recipientsReportSlice = createSlice({
     extraReducers: builder => {
         builder
             .addCase(getRecipientsReport.fulfilled, (state, { payload }) => {
-                state.recipientsReport = payload
+                if (JSON.stringify(state.recipientsReport) !== JSON.stringify(payload))
+                    state.recipientsReport = payload
             })
             .addCase(getRecipientsReport.rejected, (state, action) => {
                 state.recipientsReportError = action.error.message
