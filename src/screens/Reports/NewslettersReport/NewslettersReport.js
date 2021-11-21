@@ -499,6 +499,9 @@ const NewslettersReport = ({ classes }) => {
             </Typography>
           </Tooltip>
           <Typography className={classes.grayTextCell}>
+            {t("report.SendDate")}
+          </Typography>
+          <Typography className={classes.grayTextCell}>
             {`${showDate} ${showTime}`}
           </Typography>
         </>
@@ -533,6 +536,9 @@ const NewslettersReport = ({ classes }) => {
               {row.Name}
             </Typography>
           </Tooltip>
+          <Typography className={classes.grayTextCell}>
+            {t("report.SendDate")}
+          </Typography>
           <Typography className={classes.grayTextCell}>
             {`${showDate} ${showTime}`}
           </Typography>
