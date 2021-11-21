@@ -10,9 +10,8 @@ import {
   SendGreenIcon, SearchIcon, ExportIcon, ReportsIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination, ManagmentIcon, DateField, Dialog, RestorDialogContent, SearchField
+  TablePagination, ManagmentIcon, DateField, SearchField
 } from '../../../components/managment/index'
-import useCtrlHistory from '../../../helpers/useCtrlHistory';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -20,7 +19,7 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { apiURL } from '../../../config/index'
 import { CSVLink } from 'react-csv'
-import { getNewsletterReports, downloadNewsletterReport } from '../../../redux/reducers/newsletterSlice';
+import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/cookies';
 import { exportFile } from '../../../helpers/exportFromJson';
@@ -117,30 +116,48 @@ const NewslettersReport = ({ classes }) => {
     }
   })
 
-  const columnHead = {
-    CampaignID: t('mainReport.CampaignID'),
-    Name: t('master.lblContactNameResource1.Text'),
-    Names: t('mainReport.names'),
-    SendDate: t('mainReport.GridBoundColumnResource3.HeaderText'),
-    FixedSendingDate: t('mainReport.fixedSendingDate'),
-    TotalSendCompleted: t('mainReport.totalSendCompleted'),
-    TotalSendPlan: t('mainReport.totalSendPlan'),
-    OpenCount: t('mainReport.openCount'),
-    OpenCountUnique: t('mainReport.openCountUnique'),
-    ClickCount: t('mainReport.clickCount'),
-    ClickCountUnique: t('mainReport.clickCountUnique'),
-    NotOpened: t('mainReport.notOpened'),
-    SendError: t('mainReport.sendError'),
-    RemovedClients: t('mainReport.removedClients'),
-    GroupsNames: t('mainReport.groupsNames'),
-    Status: t('common.Status'),
-    Files: t('mainReport.files'),
-    FileNames: t('mainReport.fileNames'),
-    PercentageOpens: t('mainReport.percentageOpens'),
-    PercetangeClicks: t('mainReport.percetangeClicks'),
-    PercetangeRemovedClients: t('mainReport.percetangeRemovedClients'),
-    Attachments: t('mainReport.attachments'),
-    TotalBytes: t('mainReport.totalBytes')
+  // const columnHead = {
+  //   CampaignID: t('mainReport.CampaignID'),
+  //   Name: t('master.lblContactNameResource1.Text'),
+  //   Names: t('mainReport.names'),
+  //   SendDate: t('mainReport.GridBoundColumnResource3.HeaderText'),
+  //   FixedSendingDate: t('mainReport.fixedSendingDate'),
+  //   TotalSendCompleted: t('mainReport.totalSendCompleted'),
+  //   TotalSendPlan: t('mainReport.totalSendPlan'),
+  //   OpenCount: t('mainReport.openCount'),
+  //   OpenCountUnique: t('mainReport.openCountUnique'),
+  //   ClickCount: t('mainReport.clickCount'),
+  //   ClickCountUnique: t('mainReport.clickCountUnique'),
+  //   NotOpened: t('mainReport.notOpened'),
+  //   SendError: t('mainReport.sendError'),
+  //   RemovedClients: t('mainReport.removedClients'),
+  //   GroupsNames: t('mainReport.groupsNames'),
+  //   Status: t('common.Status'),
+  //   Files: t('mainReport.files'),
+  //   FileNames: t('mainReport.fileNames'),
+  //   PercentageOpens: t('mainReport.percentageOpens'),
+  //   PercetangeClicks: t('mainReport.percetangeClicks'),
+  //   PercetangeRemovedClients: t('mainReport.percetangeRemovedClients'),
+  //   Attachments: t('mainReport.attachments'),
+  //   TotalBytes: t('mainReport.totalBytes')
+  // }
+  const exportColumnHeader = {
+    "Name": t('master.lblContactNameResource1.Text'),
+    "SendDate": t('mainReport.GridBoundColumnResource3.HeaderText'),
+    "TotalSendPlan": t('mainReport.totalSendPlan'),
+    "TotalSendCompleted": t('mainReport.totalSendCompleted'),
+    "OpenCount": t('mainReport.openCount'),
+    "OpenCountUnique": t('mainReport.openCountUnique'),
+    "PercentageOpens": t('mainReport.percentageOpens'),
+    "ClickCount": t('mainReport.clickCount'),
+    "ClickCountUnique": t('mainReport.clickCountUnique'),
+    "PercetangeClicks": t('mainReport.percetangeClicks'),
+    "NotOpened": t('mainReport.notOpened'),
+    "SendError": t('mainReport.sendError'),
+    "RemovedClients": t('mainReport.removedClients'),
+    "FileNames": t('mainReport.fileNames'),
+    "Attachments": t('mainReport.attachments'),
+    "Status": t('common.Status')
   }
 
   const getData = () => {
@@ -177,25 +194,43 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async () => {
+    let orderList = [];
+    function preferredOrder(obj, order) {
+      const arr = [];
+      for (var i = 0; i < obj.length; i++) {
+        var newObject = {};
+        order.map((o) => {
+          newObject[o] = obj[i][o];
+        });
+        arr.push(newObject);
+      }
+      return arr;
+    }
+
     if (toFileArray.length > 0) {
       const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
+      orderList = preferredOrder(fileArray, Object.keys(exportColumnHeader));
       exportFile({
-        data: fileArray,
+        data: orderList,
         fileName: 'emailReport',
-        exportType: 'xls'
+        exportType: 'xls',
+        fields: exportColumnHeader
       });
     }
     else {
+      orderList = preferredOrder(searchResults || newslettersReports, Object.keys(exportColumnHeader));
       exportFile({
-        data: searchResults || newslettersReports,
+        data: orderList,
         fileName: 'emailReport',
-        exportType: 'xls'
+        exportType: 'xls',
+        fields: exportColumnHeader
       });
     }
 
     setToFileArray([]);
 
   }
+
 
   const renderSearchSection = () => {
     const handleSearch = () => {
@@ -349,8 +384,8 @@ const NewslettersReport = ({ classes }) => {
   const renderManagmentLine = () => {
     const dataLength = isSearching ? searchResults.length : newslettersReports.length;
     return (
-      <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize !== 'xs' && <Grid item>
+      <Grid container spacing={2} className={classes.linePadding}>
+        {/* {windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -361,7 +396,7 @@ const NewslettersReport = ({ classes }) => {
             )}>
             {t('mainReport.compareCampaigns')}
           </Button>
-        </Grid>}
+        </Grid>} */}
         {windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
