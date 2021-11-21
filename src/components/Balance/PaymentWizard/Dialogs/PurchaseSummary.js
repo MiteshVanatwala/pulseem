@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
 import { Button, Grid, Typography, Divider } from '@material-ui/core';
 import NumberFormat from 'react-number-format';
+import { useSelector } from 'react-redux'
 
 const PurchaseSummary = ({
     data,
@@ -15,10 +16,11 @@ const PurchaseSummary = ({
     const pack = data.find((p) => { return p.ID === packageId });
     const vat = (pack.Price * israelTax).toFixed(2);
     const totalPrice = pack.Price + parseFloat(vat);
+    const { windowSize } = useSelector(state => state.core);
     return (
         <Grid container spacing={1} className={classes.paymentDialog}>
             <Grid item xs={12} className={clsx(classes.mb4)}>
-                <Typography className={classes.dialogTitle} style={{ marginInline: 0 }}>{t('payment.purchaseSummary')}</Typography>
+                <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{t('payment.purchaseSummary')}</Typography>
                 <Divider />
             </Grid>
             <Grid item xs={6}>

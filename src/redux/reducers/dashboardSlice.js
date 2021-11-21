@@ -77,8 +77,17 @@ export const dashboardSlice = createSlice({
         state.lastCampaignReportError = action.error.message
       })
       .addCase(getPackagesDetails.fulfilled, (state, { payload }) => {
-        state.packagesDetails = payload.PackageDetails;
-        state.accountAvailablePackages = payload.AccountAvailablePackages;
+        try {
+          if (JSON.stringify(state.packagesDetails) !== JSON.stringify(payload.PackageDetails)) {
+            state.packagesDetails = payload.PackageDetails;
+          }
+          if (JSON.stringify(state.accountAvailablePackages) !== JSON.stringify(payload.AccountAvailablePackages)) {
+            state.accountAvailablePackages = payload.AccountAvailablePackages;
+          }
+        } catch (error) {
+          state.packagesDetails = payload.PackageDetails;
+          state.accountAvailablePackages = payload.AccountAvailablePackages;
+        }
       })
       .addCase(getPackagesDetails.rejected, (state, action) => {
         state.packagesDetailsError = action.error.message
