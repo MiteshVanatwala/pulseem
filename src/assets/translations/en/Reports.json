@@ -37,5 +37,14 @@
   "invalidFromNumber": "Invalid From Number",
   "toNumberLonger": "To Number Longer then 16",
   "blockedSync": "Blocked Due To Sync Feature",
-  "blockedRemoval": "Blocked Due To Removal"
+  "blockedRemoval": "Blocked Due To Removal",
+  "Opened": "Opened",
+  "locUniqueOpens": "Unique Opened",
+  "notOpened": "Not Opened",
+  "error": "Error",
+  "clicks": "Clicks",
+  "removals": "Removals",
+  "subjectLine": "The Subject Line",
+  "date": "Date",
+  "distributeOfUse": "Distribution of Use"
 }

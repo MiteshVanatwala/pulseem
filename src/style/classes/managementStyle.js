@@ -165,7 +165,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center'
   },
   tableRowReportHead: {
-    backgroundColor: '#D7D7D7',
+    // backgroundColor: '#D7D7D7',
+    backgroundColor: '#E3E9F0',
     borderColor: 'transparent',
   },
   middleText: {
@@ -308,6 +309,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   actionButtonLightGreen: {
     backgroundColor: '#27AE60',
+    marginInlineEnd : '10px',
     '&:hover': {
       backgroundColor: '#219150'
     }
@@ -317,8 +319,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   actionButtonLightBlue: {
     backgroundColor: '#3498DB',
+    marginInlineEnd : '10px',
     '&:hover': {
-      backgroundColor: '#2283c3'
+      backgroundColor: '#3498DB'
     }
   },
   actionButtonDarkBlue: {
@@ -1355,5 +1358,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   modalText:
   {
     fontSize: "22px", marginTop: "5px"
+  },
+  cellText: {
+    display: 'flex', 
+    flexDirection: 'column', 
+    '& a, & p': {
+      lineHeight: '1.1'
+    }
   }
 })

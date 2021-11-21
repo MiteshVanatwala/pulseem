@@ -430,7 +430,7 @@ const NotificationManagement = ({ classes }) => {
             title={t('notifications.arrivedTootltip')}
             arrow
             placement={'top'}
-            classes={{ tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.fBlack }}>
+            classes={{ tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.black }}>
             <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>
               {t("notifications.arrived")}
             </TableCell>

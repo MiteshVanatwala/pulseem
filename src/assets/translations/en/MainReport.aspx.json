@@ -226,6 +226,7 @@
     "GroupByExpression": "",
     "HeaderImageUrl": "",
     "HeaderText": "Opens",
+    "UniquePercentage": "Unique Percentage",
     "ImageUrl": "",
     "SortExpression": "",
     "Text": ""
@@ -442,8 +443,17 @@
   "percetangeRemovedClients": "Percentage Removed Clients",
   "attachments": "Attachments",
   "totalBytes": "Total Bytes",
-  "billingCredits": "Billing Credits",
-  "postCredits": "Credits for the Post",
+  "opensAndClicks": "Opens and Clicks",
+  "geographicalReport": "Geographical Report",
+  "systemsReport": "Systems Report",
+  "backToNewsletterReports": "Back to Newsletter Reports",
+  "fromEmail": "From Email",
+  "fromName": "From Name",
+  "attachedFiles": "Attached Files",
+  "campaignQuality": "The Quality of the Campaign",
+  "campaignQualitySummary": "Determined according to the data of the openings and clicks, Ram Ipsom Dolor Sit Emt, Editing Consumer Elit Goller Montferrer Sobert Lorem Shevetz Yahul",
+  "billingCredits": "total credits sent",
+  "postCredits": "Credit per sms",
   "smsCampaign" : "Create New SMS Campaign",
   "sendSetting" : "Send Settings",
   "whomTosend" : "To whom to send?",
@@ -524,8 +534,6 @@
   "handleExitTitle" : "Leave Campaign Creation",
   "leaveCampaign":"Would you like to save your changes before exiting?",
   "Ok":"Yes",
-  "No":"No"
-  
-  
-
+  "No":"No",
+  "summaryModalTitle": "Campaign Summary"
 }
