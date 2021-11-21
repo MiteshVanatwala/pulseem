@@ -8,10 +8,12 @@ import master from './Pulseem.master.he.json'
 import appBar from './AppBar.he.json'
 import notifications from './Notifications.he.json'
 import mainReport from './MainReport.aspx.he.json'
-import dashboard from './Dashboard.json'
+import dashboard from './Dashboard.he.json'
 import smsReport from './SMSReport.he.json'
 import report from './Reports.he.json'
 import emailStatus from './EmailStatus.he.json'
+import emoji from './Emoji.he.json'
+import payment from './payment.he.json'
 
 export const he={
   automations,
@@ -27,5 +29,7 @@ export const he={
   dashboard,
   smsReport,
   report,
-  emailStatus
+  emailStatus,
+  emoji,
+  payment
 }

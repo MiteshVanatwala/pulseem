@@ -1,4 +1,5 @@
 {
+  "admin": "מערכת ניהול",
   "dashboard": "לוח בקרה",
   "groups": {
     "title": "קבוצות",
@@ -31,5 +32,6 @@
   "notifications": {
     "title": "נוטיפיקציות"
   },
-  "logout": "יציאה"
+  "logout": "יציאה",
+  "returnToMainAccount": "חשבון ראשי"
 }

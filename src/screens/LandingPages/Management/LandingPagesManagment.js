@@ -32,7 +32,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const {landingPagesData,landingPagesDataError,landingPagesDeletedData}=useSelector(state => state.landingPages)
   const {t}=useTranslation()
   const [landingPageNameSearch,setLandingPageNameSearch]=useState('')
-  const rowsOptions=[6,12,18]
+  const rowsOptions = [6, 10, 20, 50]
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)
@@ -74,6 +74,11 @@ const LandingPagesesManagmentScreen=({classes}) => {
   }
 
   const renderSearchLine=() => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13 || event.code === 'Enter') {
+        handleSearch();
+      }
+    }
     const handleSearch=() => {
       const searchArray=[{
         type: 'name',
@@ -113,6 +118,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           classes={classes}
           value={landingPageNameSearch}
           onChange={handleCampainNameChange}
+          onKeyPress={handleSearch}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
           placeholder={placeholder}
@@ -126,6 +132,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={landingPageNameSearch}
+            onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={placeholder}
@@ -276,8 +283,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
         lable: IsPayment?
           t('landingPages.PurchaseExportTitle')
           :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (windowSize==='xs'||(!IsPayment&&!IsSurvey)),
-        rootClass: classes.paddingIcon,
+        remove: (windowSize==='xs'||(!IsPayment&& (!IsSurvey || SurveyCount === 0))),
+        rootClass: clsx(classes.paddingIcon, classes.minWidth95),
         onClick: async () => {
           if(IsPayment) {
             dispatch(downloadReport(row))
@@ -291,8 +298,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
+        remove: windowSize==='xs',
         disable: !PageLink,
-        remove: !PageLink||windowSize==='xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
           openInNewTab(PageLink)
@@ -323,7 +330,9 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: (copyData&&copyData.icon)||null,
         lable: (copyData&&copyData.lable)||'',
         rootClass: classes.minWidth95,
+        disable: !PageLink,
         text: (copyData&&copyData.copy)||'',
+        disable: !PageLink,
         type: 'copy',
         onClick: (e) => {
           setCopyRef(e.current)
@@ -350,7 +359,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
     return (
       <Grid
         container
-        justify={windowSize==='xs'? 'flex-start':'flex-end'}>
+        justifyContent={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
             key={icon.key}
@@ -408,24 +417,33 @@ const LandingPagesesManagmentScreen=({classes}) => {
     );
   }
 
-  const renderNameCell=(row) => {
+  const seperateGroupNames = (groups) => {
+    const splittedGroups = groups.split('##', -1);
+    if (splittedGroups.length === 1) {
+      return splittedGroups.join().replace('#', '');
+    }
+    return splittedGroups.join(', ').replace('#', '');
+  }
+
+  const renderNameCell = (row) => {
     return (
       <>
-        <Tooltip 
-          arrow 
-          title={row.Name} 
-          placement={'top'} 
+        <Tooltip
+          arrow
+          title={row.Name}
+          placement={'top'}
           classes={{
-            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), 
-            arrow: classes.fBlack}}
-          >
+            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+            arrow: classes.fBlack
+          }}
+        >
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {row.Name}
           </Typography>
         </Tooltip>
         <Typography
           className={classes.grayTextCell}>
-          {row.GroupNames&&row.GroupNames.length>0&&<span>{renderGroupNames()}<b>{row.GroupNames.join(', ').replace('#','')}</b></span>}
+          {row.GroupNames && row.GroupNames.length > 0 && <span>{renderGroupNames()}<b>{seperateGroupNames(row.GroupNames)}</b></span>}
         </Typography>
       </>
 
@@ -501,7 +519,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           <Box className={classes.inlineGrid}>
             {renderNameCell(row)}
           </Box>
-          <Grid container justify={'space-between'}>
+          <Grid container justifyContent={'space-between'}>
             <Grid item container className={classes.widthUnset}>
               <Grid item className={clsx(classes.flexColumn2,classes.txtCenter,classes.pt14)}>
                 {renderViewsCell(row.Views)}
@@ -634,7 +652,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
       setPage(1)
       setLoader(true);
       const result = await dispatch(duplicteLandingPage(data))
-      const { payload={} } = result || {};
+      //const { payload={} } = result || {};
       await getData()
       setLoader(false);
       // setDialogType({
@@ -704,7 +722,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
   return (
     <DefaultScreen
       currentPage='landingPages'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}

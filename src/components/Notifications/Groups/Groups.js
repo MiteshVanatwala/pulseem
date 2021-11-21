@@ -1,24 +1,9 @@
 import React, { useState } from 'react';
 import {
-    Typography,
-    ListItemAvatar,
-    Avatar,
-    Grid,
-    ListItem,
-    ListItemText,
-    ListItemSecondaryAction,
-    Card, List, TextField,
-    FormControl,
-    InputLabel,
-    Input,
-    InputAdornment,
-    Box,
-    Select,
-    MenuItem,
-    Button
+    Typography, ListItemAvatar, Avatar, Grid, ListItem, ListItemText, ListItemSecondaryAction, List, TextField, FormControl, Input, InputAdornment, Box, Select, MenuItem, Button
 } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import 'moment/locale/he'
 import clsx from 'clsx';
@@ -28,22 +13,36 @@ import { BsSearch } from 'react-icons/bs';
 import { BiSortDown, BiSortUp } from 'react-icons/bi';
 import { MdClear } from 'react-icons/md';
 import './Groups.styles.css';
-import { 
-    BsFilter } from 'react-icons/bs';
+import { BsDot } from "react-icons/bs";
+import {
+    BsFilter
+} from 'react-icons/bs';
 
 
 
-const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, callbackUpdateGroups, callbackSelectAll , callbackReciFilter , bool , boolNotify}) => {
-    const { language } = useSelector(state => state.core)
+const Groups = ({ classes,
+    list,
+    bsDot,
+    isSms,
+    selectedList,
+    innerHeight = null,
+    isNotifications,
+    noSelectionText,
+    showSortBy = true,
+    showFilter = true,
+    isCampaign = false,
+    showSelectAll = true,
+    callbackSelectedGroups = () => null,
+    callbackUpdateGroups = () => null,
+    callbackSelectAll = () => null,
+    callbackReciFilter = () => null,
+    uniqueKey = null
+}) => {
+    const { language, isRTL, windowSize } = useSelector(state => state.core)
     const { t } = useTranslation();
-    //const [selectedGroups, setSelected] = useState([]);
-    const { isRTL } = useSelector(state => state.core)
     const [groupNameSearch, setGroupNameSearch] = useState('');
     const [clearInput, setClearInput] = useState(false);
     const [groupHover, setIsHover] = useState(null);
-    const [newSelected, setnewSelected] = useState([]);
-
-
     const handleSearch = (event) => {
         setClearInput(event.target.value != '');
         setGroupNameSearch(event.target.value);
@@ -67,14 +66,16 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
     };
 
     const renderGroups = () => {
-        return groupList.filter((g) => {
+        const groupIdKey = isNotifications ? "Id" : "GroupID";
+        const groupRecipientsKey = isNotifications ? "Members" : "Recipients";
+        return list.filter((g) => {
             return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
         }).map((group) => {
-            const isExist = selectedList.map((group) => { return group.Id }).includes(group.Id);
-            return (<ListItem id={group.Id} key={group.Id} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setIsHover(group.Id)}
+            const isExist = selectedList.map((group) => { return group[groupIdKey] }).includes(group[groupIdKey]);
+            return (<ListItem id={group[groupIdKey]} key={group[groupIdKey]} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setIsHover(group[groupIdKey])}
                 onMouseLeave={() => setIsHover(null)}
-                className={groupHover === group.Id ? classes.hoverListItem : null}
+                className={groupHover === group[groupIdKey] ? classes.hoverListItem : null}
             >
                 <ListItemAvatar>
                     <Avatar
@@ -90,43 +91,41 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                     primary={group.GroupName}
                 />
                 <ListItemSecondaryAction className={'groupText'}>
-                    {group.Members} {group.Members != 1 ? t("notifications.recipients") : t("notifications.recipient")}
-                </ListItemSecondaryAction>
-            </ListItem>)
-        })
-    }
-    const renderSmsgroups = () => {
-        return groupList.filter((g) => {
-            return g.GroupName.toLowerCase().includes(groupNameSearch.toLowerCase());
-        }).map((group) => {
-            const isExist = selectedList.map((group) => { return group.GroupID }).includes(group.GroupID);
-            return (<ListItem id={group.GroupID} key={group.GroupID} onClick={() => onSelectGroup(group)} style={{ cursor: 'pointer' }}
-                onMouseEnter={() => setIsHover(group.GroupID)}
-                onMouseLeave={() => setIsHover(null)}
-                className={groupHover === group.GroupID? classes.hoverListItem : null}
-            >
-                <ListItemAvatar>
-                    <Avatar
-                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
-                      {isExist ?
-                             (<FaCheck className={clsx(classes.green)} />)
-                            :
-                            (<HiUserGroup className={clsx(classes.blue)} />)
-                        } 
-                    </Avatar>
-                </ListItemAvatar>
-                <ListItemText className={'groupText'} title={group.GroupName}
-                    primary={group.GroupName}
-                />
-                <ListItemSecondaryAction className={'groupText'}>
-                    {group.Recipients} {group.Recipients != 1 ? t("notifications.recipients") : t("notifications.recipient")}
+                    {group[groupRecipientsKey].toLocaleString()} {group[groupRecipientsKey] != 1 ? t("notifications.recipients") : t("notifications.recipient")}
                 </ListItemSecondaryAction>
             </ListItem>)
         })
     }
 
+    const renderCampaigns = () => {
+        return list.filter((c) => {
+            return c.Name.toLowerCase().includes(groupNameSearch.toLowerCase());
+        }).map((campaign) => {
+            const isExist = selectedList.map((c) => { return c.SMSCampaignID }).includes(campaign.SMSCampaignID);
+            return (<ListItem id={campaign.SMSCampaignID} key={campaign.SMSCampaignID} onClick={() => onSelectGroup(campaign)} style={{ cursor: 'pointer' }}
+                onMouseEnter={() => setIsHover(campaign.SMSCampaignID)}
+                onMouseLeave={() => setIsHover(null)}
+                className={groupHover === campaign.SMSCampaignID ? classes.hoverListItem : null}
+            >
+                <ListItemAvatar>
+                    <Avatar
+                        className={clsx(classes.listIcon, classes.transparentBg, isExist ? classes.green : classes.blue, isExist ? classes.borderGreen : classes.borderBlue)}>
+                        {isExist ?
+                            (<FaCheck className={clsx(classes.green)} />)
+                            :
+                            (<HiUserGroup className={clsx(classes.blue)} />)
+                        }
+                    </Avatar>
+                </ListItemAvatar>
+                <ListItemText className={'groupText'} title={campaign.Name}
+                    primary={campaign.Name}
+                />
+            </ListItem>)
+        })
+    }
+
     const renderSelectAll = () => {
-        const allSelected = groupList.length === selectedList.length;
+        const allSelected = list.length === selectedList.length;
 
         return (<ListItem id="liSelectAll" key="liSelectAll" onClick={() => onSelectAllGroup()} style={{ cursor: 'pointer' }}>
             <ListItemAvatar>
@@ -155,8 +154,12 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
             text: t("notifications.sort_by_group"),
         },
         {
-            value: "Update Date",
+            value: "Creation Date",
             text: t("notifications.sort_by_creation"),
+        },
+        {
+            value: "Update Date",
+            text: t("notifications.sort_by_updated"),
         },
     ];
 
@@ -178,67 +181,117 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
     }
 
     const sortBy = (sortBy, direction) => {
-        if (groupList) {
+        if (list) {
             if (sortBy === "Group Name") {
                 direction === 'asc'
-                    ? groupList.sort((a, b) =>
+                    ? list.sort((a, b) =>
                         a.GroupName.toUpperCase() < b.GroupName.toUpperCase()
                             ? -1
                             : Number(
                                 a.GroupName.toUpperCase() > b.GroupName.toUpperCase()
                             )
                     )
-                    : groupList.sort((a, b) =>
+                    : list.sort((a, b) =>
                         b.GroupName.toUpperCase() < a.GroupName.toUpperCase()
                             ? -1
                             : Number(
                                 b.GroupName.toUpperCase() > a.GroupName.toUpperCase()
                             )
                     );
-            } else if (sortBy === "Update Date") {
+            } else if (sortBy === "Update Date" && list[0] && list[0].UpdateDate) {
                 direction === 'asc'
-                    ? groupList.sort((a, b) =>
-                        a.CreatedDate !== null && b.CreatedDate !== null
-                            ? Date.parse(a.CreatedDate) - Date.parse(b.CreatedDate)
+                    ? list.sort((a, b) =>
+                        a.UpdateDate !== null && b.UpdateDate !== null
+                            ? Date.parse(a.UpdateDate) - Date.parse(b.UpdateDate)
                             : -1
                     )
-                    : groupList.sort((a, b) =>
-                        a.CreatedDate !== null && b.CreatedDate !== null
-                            ? Date.parse(b.CreatedDate) - Date.parse(a.CreatedDate)
+                    : list.sort((a, b) =>
+                        a.UpdateDate !== null && b.UpdateDate !== null
+                            ? Date.parse(b.UpdateDate) - Date.parse(a.UpdateDate)
                             : -1
                     );
+            }
+            else if (sortBy === "Creation Date") {
+                if (isSms) {
+                    direction === 'asc'
+                        ? list.sort((a, b) =>
+                            a.CreationDate !== null && b.CreationDate !== null
+                                ? Date.parse(a.CreationDate) - Date.parse(b.CreationDate)
+                                : -1
+                        )
+                        : list.sort((a, b) =>
+                            a.CreationDate !== null && b.CreationDate !== null
+                                ? Date.parse(b.CreationDate) - Date.parse(a.CreationDate)
+                                : -1
+                        );
+                }
+                else {
+                    direction === 'asc'
+                        ? list.sort((a, b) =>
+                            a.CreatedDate !== null && b.CreatedDate !== null
+                                ? Date.parse(a.CreatedDate) - Date.parse(b.CreatedDate)
+                                : -1
+                        )
+                        : list.sort((a, b) =>
+                            a.CreatedDate !== null && b.CreatedDate !== null
+                                ? Date.parse(b.CreatedDate) - Date.parse(a.CreatedDate)
+                                : -1
+                        );
+                }
             }
         }
     }
 
     return (
-        <Box className={classes.groupsContainer}>
+        <Box className={classes.groupsContainer} key={uniqueKey}>
+            {
+                windowSize === 'xs' && <Grid item xs={12}>
+                    <FormControl className={classes.margin, classes.searchInput}>
+                        <Input
+                            autoComplete='off'
+                            onChange={handleSearch}
+                            placeholder={t('notifications.buttons.search')}
+                            id="searchGroup"
+                            startAdornment={
+                                <InputAdornment position="start" autocomplete="off">
+                                    <BsSearch />
+                                </InputAdornment>
+                            }
+                            endAdornment={clearInput &&
+                                <InputAdornment position="start" onClick={resetSearch}>
+                                    <MdClear style={{ cursor: 'pointer' }} />
+                                </InputAdornment>
+                            }
+
+                        />
+                    </FormControl>
+                </Grid>
+            }
             <Grid item xs={12} className={clsx(classes.flex, classes.groupFilterRow)}>
-                <FormControl className={classes.margin, classes.searchInput}>
+                {windowSize !== 'xs' && <FormControl className={classes.margin, classes.searchInput}>
                     <Input
+                        autoComplete='off'
                         onChange={handleSearch}
                         placeholder={t('notifications.buttons.search')}
                         id="searchGroup"
                         startAdornment={
-                            <InputAdornment position="start">
+                            <InputAdornment position="start" >
                                 <BsSearch />
                             </InputAdornment>
                         }
                         endAdornment={clearInput &&
                             <InputAdornment position="start" onClick={resetSearch}>
-                                <MdClear style={{cursor: 'pointer'}} />
+                                <MdClear style={{ cursor: 'pointer' }} />
                             </InputAdornment>
                         }
 
                     />
-                </FormControl>
-                <Box>
-                <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{height:"36px",color:"#1D82B3",fontWeight:"600"}}>
-                    <BsFilter style={{fontSize:"22px",color:"#1D82B3"}}/>  {t("mainReport.recipientFilter")}
-                    </Button>
-                    <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={() => { handleSortDirection() }}>
-                        {sortDirection === 'asc' ? <BiSortDown /> : <BiSortUp />}
-                    </Button>
+                </FormControl>}
+                {showSortBy && <Box>
+                    {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", color: "#1D82B3", fontWeight: "600", textTransform: "capitalize" }}>
+                        <BsFilter style={{ fontSize: "22px", color: "#1D82B3" }} />  {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}
+
+                    </Button> : null}
                     <FormControl className={clsx(classes.formControl, classes.dropDown)}>
                         <Select
                             id="groupOrder"
@@ -248,33 +301,53 @@ const Groups = ({ classes, groupList, selectedList, callbackSelectedGroups, call
                             {renderSortItems()}
                         </Select>
                     </FormControl>
+                    <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)} onClick={() => { handleSortDirection() }}>
+                        {sortDirection === 'asc' ? <BiSortDown /> : <BiSortUp />}
+                    </Button>
                 </Box>
-
+                }
             </Grid>
-            <Autocomplete
+            {isCampaign ? (<Autocomplete
                 {...defaultProps}
                 multiple
                 id="multiple-limit-tags"
                 value={selectedList}
-                getOptionSelected={(option, value) => option.GroupName === value.GroupName}
-                getOptionLabel={(group) => group.GroupName}
+                getOptionSelected={(option, value) => option.Name === value.Name}
+                getOptionLabel={(campaign) => campaign.Name}
                 defaultValue={[]}
                 open={false}
                 popupIcon={false}
                 onChange={onTagChange}
                 renderInput={(params) => selectedList.length > 0 ? (
-                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected)}></TextField>
+                    <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
                 ) : (
-                    <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{t('notifications.noGroupsSelected')}</Typography>
+                    <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{noSelectionText != '' ? noSelectionText : t('notifications.noGroupsSelected')}</Typography>
                 )
                 }
-            />
-
-            <div className={classes.demo} style={{ minHeight: 280, maxHeight: 280, overflow: 'auto' }}>
-                <List>
-                    {renderSelectAll()}
-                 {boolNotify ? renderGroups() : null }   
-                    {bool ? renderSmsgroups() : null}
+            />) :
+                (<Autocomplete
+                    {...defaultProps}
+                    multiple
+                    id="multiple-limit-tags"
+                    value={selectedList}
+                    getOptionSelected={(option, value) => option.GroupName === value.GroupName}
+                    getOptionLabel={(group) => group.GroupName}
+                    defaultValue={[]}
+                    open={false}
+                    popupIcon={false}
+                    onChange={onTagChange}
+                    renderInput={(params) => selectedList.length > 0 ? (
+                        <TextField {...params} className={clsx(classes.bottomShadow, classes.tagSelected, classes.sidebar)} style={{ maxHeight: 45 }}></TextField>
+                    ) : (
+                        <Typography className={clsx(classes.bottomShadow, classes.noSelection)}>{noSelectionText != '' ? noSelectionText : t('notifications.noGroupsSelected')}</Typography>
+                    )
+                    }
+                />)
+            }
+            <div className={clsx(classes.demo, classes.sidebar)} style={{ maxHeight: innerHeight, minHeight: innerHeight, overflow: 'auto' }}>
+                <List key={uniqueKey}>
+                    {showSelectAll && renderSelectAll()}
+                    {isCampaign ? renderCampaigns() : renderGroups()}
                 </List>
             </div>
         </Box>

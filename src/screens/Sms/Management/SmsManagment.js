@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction, Link, Tooltip
+  Grid,Button,TextField,Box,List,ListItem,ListItemAvatar,Avatar,ListItemText,ListItemSecondaryAction, Tooltip
 } from '@material-ui/core'
 import {
   AutomationIcon,DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,
@@ -28,7 +28,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 
 const SmsManagnentScreen=({classes}) => {
-  const {language,windowSize,email,phone,rowsPerPage}=useSelector(state => state.core)
+  const {language,windowSize,email,phone,rowsPerPage,smsOldVersion,isRTL}=useSelector(state => state.core)
   const {smsData,smsDataError,smsDeletedData,authorizationData}=useSelector(state => state.sms)
   const {username}=useSelector(state => state.user)
   const {t}=useTranslation()
@@ -39,7 +39,7 @@ const SmsManagnentScreen=({classes}) => {
   const [verificationCode,handleVerificationCodeInput]=useState('');
   const [verificationCodeError,handleVerificationCodeError]=useState(false);
   const [campaineNameSearch,setCampaineNameSearch]=useState('')
-  const rowsOptions=[6,12,18]
+  const rowsOptions = [6, 10, 20, 50]
   const [page,setPage]=useState(1)
   const [isSearching,setSearching]=useState(false)
   const [searchResults,setSearchResults]=useState(null)
@@ -82,6 +82,11 @@ const SmsManagnentScreen=({classes}) => {
   }
 
   const renderSearchLine=() => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13 || event.code === 'Enter') {
+        handleSearch();
+      }
+    }
     const handleSearch=() => {
       const searchArray=[{
         type: 'name',
@@ -125,7 +130,7 @@ const SmsManagnentScreen=({classes}) => {
     }
 
     const handleKeyPress=(e) => {
-      if (e.charCode === 13) {
+      if (e.charCode === 13 || e.code === "Enter") {
         handleSearch()
       }
     }
@@ -161,6 +166,7 @@ const SmsManagnentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
+            onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('sms.GridBoundColumnResource2.HeaderText')}
@@ -228,7 +234,7 @@ const SmsManagnentScreen=({classes}) => {
           <Button
             variant='contained'
             size='medium'
-            href={"/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create&fromreact=true"}
+            href={smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : "/react/sms/create"}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -297,7 +303,7 @@ const SmsManagnentScreen=({classes}) => {
         remove: Status!==1 || (AutomationID!==0 &&  AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&fromreact=true`
+        href: smsOldVersion === "true"  ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/send/${Id}`
       },
       {
         key: 'preview',
@@ -318,7 +324,7 @@ const SmsManagnentScreen=({classes}) => {
         icon: EditIcon,
         disable: Status!==1 || AutomationID!==0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        href: `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&fromreact=true`,
+        href: smsOldVersion === "true"  ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/edit/${Id}`,
         rootClass: classes.paddingIcon
       },
       {
@@ -377,7 +383,7 @@ const SmsManagnentScreen=({classes}) => {
       <Grid
         container
         direction='row'
-        justify={windowSize==='xs'? 'flex-start':'flex-end'}>
+        justifyContent={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
             className={icon.disable&&classes.disabledCursor}
@@ -770,7 +776,7 @@ const SmsManagnentScreen=({classes}) => {
           <Preview classes={classes}
             mobileFullsize={true}
             model={data}
-            ShowRedirectButton={data.RedirectButtonText&&data.RedirectButtonText!=''}
+            ShowRedirectButton={data.RedirectButtonText&&data.RedirectButtonText!==''}
             showTitle={false}
             showID={true}
             isSMS={true}
@@ -968,7 +974,7 @@ const SmsManagnentScreen=({classes}) => {
         <Grid
           container
           style={{marginTop: 20}}
-          justify='center'>
+          justifyContent='center'>
           <Grid item>
             <Typography >
               {t('sms.didNotReceived')}
@@ -1042,7 +1048,8 @@ const SmsManagnentScreen=({classes}) => {
   return (
     <DefaultScreen
       currentPage='sms'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}

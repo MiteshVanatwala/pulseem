@@ -10,6 +10,36 @@ export const getSmsData = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+
+export const getSMSVirtualNumber = createAsyncThunk(
+  'smsCampaign/GetAccountVirtualNumber', async (number, thunkAPI) => {
+    try {
+      const response = await instence.get(`smsCampaign/GetAccountVirtualNumber/${number}`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+
+export const getCommonFeatures = createAsyncThunk(
+  'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const getTestGroups = createAsyncThunk(
+  'smsCampaign/GetTestGroups', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`smsCampaign/GetTestGroups`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 export const getPreviousLandingData = createAsyncThunk(
   'smsCampaign/GetLastLandingPages', async (_, thunkAPI) => {
     try {
@@ -37,11 +67,21 @@ export const getAccountExtraData = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-export const getAccountId = createAsyncThunk(
+export const getGroupsBySubAccountId = createAsyncThunk(
   'smsCampaign/GetGroupsBySubAccountId', async (_, thunkAPI) => {
     try {
       const response = await instence.get(`smsCampaign/GetGroupsBySubAccountId`);
       return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+export const getCreditsforSMS = createAsyncThunk(
+  'smsCampaign/GetCreditsForSms', async (count, thunkAPI) => {
+    try {
+      const response = await instence.get(`smsCampaign/GetCreditsForSms/${count}`);
+      return response.data
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -66,7 +106,25 @@ export const getSMSDirectReport = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-export const getManual = createAsyncThunk(
+export const getSMSRequestOTP = createAsyncThunk(
+  'RequestOTP', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`RequestOTP`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const getSMSConfirmOTP = createAsyncThunk(
+  'ConfirmOTP', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`ConfirmOTP`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const saveManualClients = createAsyncThunk(
   'smsCampaign/SaveManualClients', async (data, thunkAPI) => {
     try {
       const response = await instence.post(`smsCampaign/SaveManualClients`, data);
@@ -206,7 +264,7 @@ export const smsSaveGroup = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-export const smsCampSettings = createAsyncThunk(
+export const saveSmsCampSettings = createAsyncThunk(
   'smsCampaign/SaveCampaignSettings', async (data, thunkAPI) => {
     try {
       const response = await instence.post(`smsCampaign/SaveCampaignSettings`, data);
@@ -236,7 +294,7 @@ export const smsQuick = createAsyncThunk(
 
 
 export const exportSmsReport = createAsyncThunk(
-  'report/ExportSmsDirectReport', async (demo = false, thunkAPI) => {
+  'report/ExportSmsReport', async (demo = false, thunkAPI) => {
     try {
       const response = await instence.post(`report/ExportSmsReport/${demo}`);
       return JSON.parse(response.data)
@@ -244,6 +302,45 @@ export const exportSmsReport = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+export const getFinishedCampaigns = createAsyncThunk(
+  'smsCampaign/GetFinishedSmsCampaigns', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`smsCampaign/GetFinishedSmsCampaigns`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const getCampaignSettings = createAsyncThunk(
+  'smsCampaign/GetCampaignSettings', async (campaignId, thunkAPI) => {
+    try {
+      const response = await instence.get(`smsCampaign/GetCampaignSettings/${campaignId}`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+export const sendSms = createAsyncThunk(
+  'smsCampaign/Send', async (sendData, thunkAPI) => {
+    try {
+      const response = await instence.post(`smsCampaign/Send`, sendData);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
+export const IsOTPPassed = createAsyncThunk(
+  'smsCampaign/IsOTPPassed', async (fromNumber, thunkAPI) => {
+    try {
+      const response = await instence.get(`smsCampaign/IsOTPPassed/${fromNumber}`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 // export const SaveSms=createAsyncThunk(
 //   'smsCampaign/Save/',async (data,thunkAPI) => {
 //     try {
@@ -262,17 +359,45 @@ export const smsSlice = createSlice({
     smsDataError: '',
     authorizationData: [],
     smsReport: [],
-    previousLandingData : [],
-    previousCampaignData : [],
-    extraData : [],
-    accountId : [],
-    getCampaignSum : [],
-
+    previousLandingData: [],
+    previousCampaignData: [],
+    extraData: [],
+    accountId: [],
+    getCampaignSum: [],
+    finishedCampaigns: [],
+    testGroups: [],
+    commonSettings: {},
     directSmsReport: {},
     directSmsReportError: '',
+    credits: [],
+    smsCampaignSettings: [],
+    smsSendResult: -1,
+    OTPPassed: null,
+    ToastMessages: {
+      SUCCESS: { severity: 'success', color: 'success', message: 'sms.saved', showAnimtionCheck: true },
+      QUICK_SEND_SUCCESSS: { severity: 'success', color: 'success', message: 'sms.quickSend', showAnimtionCheck: true },
+      SAVE_SETTINGS: { severity: 'success', color: 'success', message: 'sms.settings_saved', showAnimtionCheck: true },
+      ERROR: { severity: 'error', color: 'error', message: 'sms.error', showAnimtionCheck: true },
+      OTP: { severity: 'success', color: 'success', message: 'sms.otpVerifiedSuccess', showAnimtionCheck: true },
+      INVALID_NUMBER: { severity: 'error', color: 'error', message: "sms.invalidNumber", showAnimtionCheck: false },
+      QUICK_SEND_ERROR: { severity: 'error', color: 'error', message: "sms.errorQuickSend", showAnimtionCheck: false },
+      SENT_ALREADY: { severity: 'success', color: 'success', message: "sms.alreadySent", showAnimtionCheck: false },
+      PROVISION: { severity: 'error', color: 'error', message: "sms.recipientBlocked", showAnimtionCheck: false },
+      NO_CREDITS: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
+      GROUP_CREATED_SUCCESS: { severity: 'success', color: 'success', message: "sms.groupSaved", showAnimtionCheck: true },
+      INVALID_RECIPIENTS: { severity: 'error', color: 'error', message: "sms.noRecipientToUpdate", showAnimtionCheck: false },
+      NO_GROUPS: { severity: 'error', color: 'error', message: 'smsReport.NoGroups', showAnimtionCheck: false },
+      DATE_PASS: { severity: 'error', color: 'error', message: 'smsReport.pastDateSelected', showAnimtionCheck: false }
+    }
   },
   reducers: {},
   extraReducers: builder => {
+    builder.addCase(IsOTPPassed.fulfilled, (state, { payload }) => {
+      state.OTPPassed = payload;
+    })
+    builder.addCase(sendSms.fulfilled, (state, { payload }) => {
+      state.smsSendResult = payload;
+    })
     builder.addCase(getSmsData.fulfilled, (state, { payload }) => {
       state.smsData = payload.filter(row => !row.IsDeleted)
       state.smsDeletedData = payload.filter(row => row.IsDeleted)
@@ -286,39 +411,59 @@ export const smsSlice = createSlice({
     builder.addCase(getCampaignSumm.fulfilled, (state, { payload }) => {
       state.getCampaignSum = payload
     })
+
     builder.addCase(getSmsReport.fulfilled, (state, { payload }) => {
       state.smsReport = payload
     })
     builder.addCase(getSMSDirectReport.fulfilled, (state, { payload }) => {
       state.directSmsReport = payload
     })
-    builder.addCase(getPreviousLandingData.fulfilled,(state,{payload}) => {
-      state.previousLandingData=payload
+    builder.addCase(getPreviousLandingData.fulfilled, (state, { payload }) => {
+      state.previousLandingData = payload
     })
-    builder.addCase(getPreviousCampaignData.fulfilled,(state,{payload}) => {
-      state.previousCampaignData=payload
+    builder.addCase(getTestGroups.fulfilled, (state, { payload }) => {
+      state.testGroups = payload
     })
-    builder.addCase(getAccountExtraData.fulfilled,(state,{payload}) => {
-      state.extraData=payload
+    builder.addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
+      state.commonSettings = payload
     })
-    builder.addCase(getAccountId.fulfilled,(state,{payload}) => {
+    builder.addCase(getFinishedCampaigns.fulfilled, (state, { payload }) => {
+      state.finishedCampaigns = payload
+    })
+
+    builder.addCase(getPreviousCampaignData.fulfilled, (state, { payload }) => {
+      state.previousCampaignData = payload
+    })
+    builder.addCase(getAccountExtraData.fulfilled, (state, { payload }) => {
+      state.extraData = payload
+    })
+    builder.addCase(getCampaignSettings.fulfilled, (state, { payload }) => {
+      state.smsCampaignSettings = payload
+    })
+    builder.addCase(getGroupsBySubAccountId.fulfilled, (state, { payload }) => {
       let tempArr = [];
-      for(let i = 0 ; i< payload.length ; i++)
-      {
-        tempArr.push({...payload[i],selected:false})
+      for (let i = 0; i < payload.length; i++) {
+        tempArr.push({ ...payload[i], selected: false })
       }
-         state.accountId=tempArr
+      state.accountId = tempArr
     })
     builder.addCase(getSMSDirectReport.rejected, (state, action) => {
       state.directSmsReportError = action.error
     })
-    builder.addCase(duplicteSms.fulfilled, () => console.log('api duplicteSms success'))
-    builder.addCase(deleteSms.fulfilled, () => console.log('api deleteSms success'))
-    builder.addCase(restoreSms.fulfilled, () => console.log('api restoreSms success'))
+    builder.addCase(getCampaignSettings.rejected, (state, action) => {
+      state.smsCampaignSettings = action.error
+    })
+
+    // builder.addCase(duplicteSms.fulfilled, () => console.log('api duplicteSms success'))
+    // builder.addCase(deleteSms.fulfilled, () => console.log('api deleteSms success'))
+    // builder.addCase(restoreSms.fulfilled, () => console.log('api restoreSms success'))
+    // builder.addCase(getCreditsforSMS.fulfilled, () => console.log('api getCreditsforSMS success'))
 
     builder.addCase(duplicteSms.rejected, (_, action) => console.log('Error - api duplicteSms: ' + action.error))
     builder.addCase(deleteSms.rejected, (_, action) => console.log('Error - api deleteSms: ' + action.error))
     builder.addCase(restoreSms.rejected, (_, action) => console.log('Error - api restoreSms: ' + action.error))
+    builder.addCase(getCreditsforSMS.rejected, (_, action) => console.log('Error - api getCreditsforSMS: ' + action.error))
+    builder.addCase(sendSms.rejected, (_, action) => console.log('error - api send sms' + action.error))
   }
 })
 

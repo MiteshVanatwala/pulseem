@@ -18,7 +18,9 @@ export const coreSlice=createSlice({
     accountFeatures: null,
     cameFromSubAccount: null,
     isAdmin: null,
-    isAllowSwitchAccount: null
+    isAllowSwitchAccount: null,
+    billingTypeId: null,
+    smsOldVersion: false
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -47,10 +49,14 @@ export const coreSlice=createSlice({
       state.cameFromSubAccount=payload.cameFromSubAccount
       state.isAdmin=payload.isAdmin
       state.isAllowSwitchAccount=payload.isAllowSwitchAccount
+      state.billingTypeId=payload.billingTypeId
+    },
+    setSmsOldVersion: (state, action) => {
+      state.smsOldVersion = action.payload
     }
   }
 })
 
-export const {setLanguage,setWindowSize,setCoreData,setRowsPerPage,setIsClal,setAccountFeatures}=coreSlice.actions
+export const {setLanguage,setWindowSize,setCoreData,setRowsPerPage,setIsClal,setAccountFeatures,setSmsOldVersion}=coreSlice.actions
 
 export default coreSlice.reducer

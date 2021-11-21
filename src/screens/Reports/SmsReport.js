@@ -723,7 +723,8 @@ const SmsReport=({classes}) => {
 
   return (
     <DefaultScreen
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchSection()}
       {renderManagmentLine()}

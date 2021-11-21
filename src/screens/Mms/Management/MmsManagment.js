@@ -2,8 +2,8 @@ import React,{useState,useEffect} from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box, Tooltip
+  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box, Tooltip
 } from '@material-ui/core'
 import {
   DeleteIcon,DuplicateIcon,EditIcon,SendGreenIcon,SearchIcon,GroupsIcon,PreviewIcon
@@ -25,22 +25,22 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 
-const MmsManagnentScreen=({classes}) => {
-  const {language,windowSize,rowsPerPage}=useSelector(state => state.core)
-  const {mmsData,mmsDataError,mmsDeletedData}=useSelector(state => state.mms)
-  const {t}=useTranslation()
-  const [fromDate,handleFromDate]=useState(null);
-  const [toDate,handleToDate]=useState(null)
-  const [campaineNameSearch,setCampaineNameSearch]=useState('')
-  const rowsOptions=[6,12,18]
-  const [page,setPage]=useState(1)
-  const [searchResults,setSearchResults]=useState(null)
-  const [isSearching,setSearching]=useState(false)
-  const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
-  const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
-  const [dialogType,setDialogType]=useState(null)
-  const [restoreArray,setRestoreArray]=useState([])
-  const dateFormat='YYYY-MM-DD HH:mm:ss.FFF'
+const MmsManagnentScreen = ({ classes }) => {
+  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { mmsData, mmsDataError, mmsDeletedData } = useSelector(state => state.mms)
+  const { t } = useTranslation()
+  const [fromDate, handleFromDate] = useState(null);
+  const [toDate, handleToDate] = useState(null)
+  const [campaineNameSearch, setCampaineNameSearch] = useState('')
+  const rowsOptions = [6, 10, 20, 50]
+  const [page, setPage] = useState(1)
+  const [searchResults, setSearchResults] = useState(null)
+  const [isSearching, setSearching] = useState(false)
+  const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
+  const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
+  const [dialogType, setDialogType] = useState(null)
+  const [restoreArray, setRestoreArray] = useState([])
+  const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const [showLoader, setLoader] = useState(true);
   const history=useCtrlHistory()
   const dispatch=useDispatch()
@@ -75,9 +75,14 @@ const MmsManagnentScreen=({classes}) => {
     setSearching(false)
   }
 
-  const renderSearchLine=() => {
-    const handleSearch=() => {
-      const searchArray=[{
+  const renderSearchLine = () => {
+    const handleKeyDown = (event) => {
+      if (event.keyCode === 13 || event.key === 'Enter') {
+        handleSearch();
+      }
+    }
+    const handleSearch = () => {
+      const searchArray = [{
         type: 'name',
         campaineName: campaineNameSearch
       },{
@@ -119,14 +124,14 @@ const MmsManagnentScreen=({classes}) => {
       setPage(1);
     }
 
-    const handleKeyPress=(e) => {
+    const handleKeyPress = (e) => {
       if (e.charCode === 13) {
         handleSearch()
       }
     }
 
-    const handleFromDateChange=(value) => {
-      if(value>toDate) {
+    const handleFromDateChange = (value) => {
+      if (value > toDate) {
         handleToDate(null);
       }
       handleFromDate(value);
@@ -156,6 +161,7 @@ const MmsManagnentScreen=({classes}) => {
             variant='outlined'
             size='small'
             value={campaineNameSearch}
+            onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
             className={clsx(classes.textField,classes.minWidth252)}
             placeholder={t('mms.GridBoundColumnResource2.HeaderText')}
@@ -342,7 +348,7 @@ const MmsManagnentScreen=({classes}) => {
       <Grid
         container
         direction={'row'}
-        justify={windowSize==='xs'? 'flex-start':'flex-end'}>
+        justifyContent={windowSize==='xs'? 'flex-start':'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
             className={icon.disable&&classes.disabledCursor}
@@ -416,7 +422,7 @@ const MmsManagnentScreen=({classes}) => {
 
     return (
       <>
-        <Tooltip 
+        <Tooltip
           arrow 
           title={row.Name} 
           placement={'top'} 
@@ -514,8 +520,8 @@ const MmsManagnentScreen=({classes}) => {
   const renderTableBody=() => {
 
     let sortData = isSearching ? searchResults : mmsData;
-    let rpp=parseInt(rowsPerPage)
-    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
+    let rpp = parseInt(rowsPerPage)
+    sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
       <TableBody>
         {sortData
@@ -714,24 +720,24 @@ const MmsManagnentScreen=({classes}) => {
 
     let currentDialog = null;
 
-    switch(type){
-      case 'restore':{
+    switch (type) {
+      case 'restore': {
         currentDialog = getRestoreDialog(data);
         break;
       }
-      case 'groups':{
+      case 'groups': {
         currentDialog = getGroupsDialog(data);
         break;
       }
-      case 'delete':{
+      case 'delete': {
         currentDialog = getDeleteDialog(data);
         break;
       }
-      case 'duplicate':{
+      case 'duplicate': {
         currentDialog = getDuplicateDialog(data);
         break;
       }
-      case 'preview':{
+      case 'preview': {
         currentDialog = getPreviewDialog(data);
         break;
       }
@@ -750,7 +756,8 @@ const MmsManagnentScreen=({classes}) => {
   return (
     <DefaultScreen
       currentPage='mms'
-      classes={classes}>
+      classes={classes}
+      containerClass={classes.management}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}

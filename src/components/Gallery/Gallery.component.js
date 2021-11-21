@@ -23,20 +23,18 @@ import { GalleryImages } from './GalleryImages'
 
 
 const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
-    const dispatch = useDispatch();
-    const { windowSize } = useSelector(state => state.core)
-    const { language } = useSelector(state => state.core)
     const { t } = useTranslation();
-    const { isRTL } = useSelector(state => state.core);
+    const dispatch = useDispatch();
     const [folders, setFolders] = useState(null);
-    const [selectedFolder, setSelectedFolder] = useState('main');
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [selectedFileURL, setSelectedFileURL] = useState(null);
-    const [selectedNode, setSelectedNode] = useState('k_0');
-    const [folderCreationState, setShowFolderCreation] = useState(false);
     const [folderName, setFolderName] = useState('');
-    const [toastMessage, setToastMessage] = useState(null);
     const [scrollIndex, setScrollIndex] = useState(0);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [toastMessage, setToastMessage] = useState(null);
+    const [selectedNode, setSelectedNode] = useState('k_0');
+    const [selectedFileURL, setSelectedFileURL] = useState(null);
+    const [selectedFolder, setSelectedFolder] = useState('main');
+    const [folderCreationState, setShowFolderCreation] = useState(false);
+    const { windowSize, language, isRTL } = useSelector(state => state.core)
 
     const renderToast = () => {
         if (toastMessage) {
@@ -257,8 +255,8 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             if (!folderExists) {
                 await dispatch(createFolder(folderName));
                 initGallery();
-                setFolderName('');
                 handleCreateFolderRow();
+                setFolderName('');
             }
             else {
                 setToastMessage({ severity: 'error', color: 'error', message: t('common.folderAlreadyExists'), showAnimtionCheck: false });
@@ -335,10 +333,10 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
         }}>
             <Divider style={{ margin: '15px 0' }} />
             <Grid container className={classes.galleryGrid}>
-                <Grid item md={2} xs={12} className="scroll">
+                <Grid item md={3} xs={12} className={clsx(classes.sidebar, classes.folders)}>
                     {renderFolders()}
                 </Grid>
-                <Grid item md={10} xs={12} className="scroll"
+                <Grid item md={9} xs={12} className={clsx(classes.sidebar, classes.gallery)}
                     onScroll={handleScroll} ref={paneDidMount}>
                     {folders && <GalleryImages
                         classes={classes}
@@ -356,10 +354,10 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             </Grid>
             <Divider style={{ margin: '15px 0' }} />
             <Grid container>
-                <Grid item md={8} xs={12}>
+                <Grid item md={6} xs={12}>
                     {renderCreateFolder()}
                 </Grid>
-                <Grid item md={4} xs={12} style={{ paddingTop: windowSize === "xs" ? 10 : null, paddingBottom: windowSize === "xs" ? 10 : null }}>
+                <Grid item md={6} xs={12} style={{ paddingTop: windowSize === "xs" ? 10 : null, paddingBottom: windowSize === "xs" ? 10 : null, display: 'flex', justifyContent: 'flex-end' }}>
                     {renderUploadNotice()}
                 </Grid>
             </Grid>

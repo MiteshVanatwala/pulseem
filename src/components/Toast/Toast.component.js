@@ -7,6 +7,7 @@ import { Alert } from '@material-ui/lab';
 import { makeStyles } from '@material-ui/core/styles';
 import './Toast.styles.css'
 import clsx from 'clsx';
+import { useTranslation } from "react-i18next";
 
 
 
@@ -29,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Toast = ({ data, onClose }) => {
+    const { t } = useTranslation();
     const { language } = useSelector(state => state.core)
     const { isRTL } = useSelector(state => state.core);
     const classes = useStyles();
@@ -39,7 +41,7 @@ const Toast = ({ data, onClose }) => {
     // data.color: 
     const renderHtml = () => {
         function createMarkup() {
-            return { __html: data.message };
+            return { __html: t(data.message) };
         }
         return (
             <label dangerouslySetInnerHTML={createMarkup()}></label>
@@ -48,7 +50,7 @@ const Toast = ({ data, onClose }) => {
     return (
         <div className={clsx(classes.root, "alert")}>
             <Alert severity={data.severity} color={data.color} className={classes.center} style={{ fontWeight: 900, fontSize: 16 }}>
-                {data.message}
+                {t(data.message)}
             </Alert>
             {data.showAnimtionCheck && <div className={"notification-pop"}>
                 <svg

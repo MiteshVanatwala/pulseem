@@ -74,12 +74,12 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   },
   appBerSpace: {
     display: 'flex',
-    flex: 2
+    flex: 1
   },
   appBarUsername: {
     display: 'flex',
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: 'flex-end',
     fontSize: 16,
     fontFamily: 'OpenSansHebrew-Bold'
   },

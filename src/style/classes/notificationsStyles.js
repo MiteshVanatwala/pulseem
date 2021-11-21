@@ -2,10 +2,10 @@ import mobileBg from '../../assets/images/mobile.png';
 import mobileFullBg from '../../assets/images/mobile_prev.png';
 
 const galleryWidth = {
-    xs: 250,
-    sm: 360,
-    md: 650,
-    lg: 750,
+    // xs: 360,
+    // sm: 390,
+    md: 780,
+    lg: 950,
     xl: 950
 }
 
@@ -78,8 +78,8 @@ const sidePaddingSizes = {
     xs: 15,
     sm: 25,
     md: 95,
-    lg: 95,
-    xl: 95
+    lg: '5rem',
+    xl: '5rem'
 }
 const summaryTitleMargin = {
     xs: 0,
@@ -88,11 +88,11 @@ const summaryTitleMargin = {
     lg: 10,
     xl: 15
 }
-const notificationSize = {
-    md: 350,
-    lg: 400,
-    xl: 400
-}
+// const notificationSize = {
+//     md: 350,
+//     lg: 400,
+//     xl: 400
+// }
 
 const mobileNotificationSize = {
     // xs: null,
@@ -103,13 +103,48 @@ const mobileNotificationSize = {
 }
 
 const notificationIconWidth = {
-    xs: 40,
+    xs: 100,
     sm: 100,
     md: 100,
     lg: 90,
     xl: 90,
 }
+
+const notificationIconHeight = {
+    xs: 90,
+    sm: 98,
+    md: 100,
+    lg: 90,
+    xl: 90,
+}
+const folderSize = {
+    sm: 70,
+    md: 180,
+    lg: 400,
+    xl: 400
+}
+const galleryHeight = {
+    xs: 250,
+    sm: 400,
+    md: 400,
+    lg: 400,
+    xl: 400
+}
+
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
+    galleryGrid: {
+        width: galleryWidth[windowSize],
+        minHeight: windowSize !== 'sm' && windowSize !== 'xs' ? 400 : null
+    },
+    gallery: {
+        maxHeight: galleryHeight[windowSize],
+        overflowY: 'auto',
+        overflowX: 'hidden'
+    },
+    folders: {
+        maxHeight: folderSize[windowSize],
+        overflowX: 'hidden'
+    },
     roundedCircle: {
         borderRadius: '100%',
         paddingRight: '.5em',
@@ -222,7 +257,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         display: 'flex',
         flexDirection: 'row',
         width: '100%',
-        minHeight: windowSize !== 'xs'? '100px' : null,
+        minHeight: windowSize !== 'xs' ? '100px' : null,
         backgroundColor: 'transparent',
         justifyContent: 'space-between',
         boxSizing: 'border-box',
@@ -239,7 +274,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         position: 'relative',
         backgroundSize: 'cover',
         width: notificationIconWidth[windowSize],
-        height: notificationIconWidth[windowSize],
+        height: notificationIconHeight[windowSize],
         // backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
         cursor: 'pointer',
@@ -330,7 +365,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         height: '100%',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
-        minHeight: '400px',
+        minHeight: windowSize !== 'xs' ? 415 : 305,
         position: 'relative',
         maxWidth: 450,
         width: 450
@@ -394,13 +429,13 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     mobileNotification: {
         width: '100%',
-        maxWidth: (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 300,
+        maxWidth: (windowSize !== 'xs' && windowSize !== 'sm') ? 350 : 220,
         boxShadow: '0 5px 5px 1px rgb(0 0 0 / 50%)',
         fontFamily: 'Assistant',
         top: 50,
         borderRadius: '5px',
         position: 'absolute',
-        right: (windowSize !== 'xs' && windowSize !== 'sm') ? 50 : 40,
+        right: (windowSize !== 'xs' && windowSize !== 'sm') ? 50 : 35,
         maxHeight: windowSize !== 'xs' ? 'calc(100% - 75px)' : 'calc(100% - 35px)',
         paddingTop: 10,
         overflow: 'hidden'
@@ -522,10 +557,11 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         border: '1px solid #1c82b2',
         borderRadius: '.2rem',
         padding: 3,
+        height: 28,
         '& .MuiSelect-selectMenu': {
             color: '#1c82b2 !important',
             '&:focus': {
-                backgroundColor: '#fff'
+                // backgroundColor: '#fff'
             }
         },
         '& .MuiSelect-icon': {
@@ -534,7 +570,7 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     groupFilterRow: {
         borderBottom: '1px solid #ccc',
-        justifyContent: 'space-between'
+        justifyContent: 'space-around'
     },
     flexSpaceBetween: {
         width: '100%',
@@ -543,10 +579,15 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         alignItems: 'center',
         alignContent: 'center'
     },
+    flexSpaceBetweenVertical: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between'
+    },
     controlField: {
         marginRight: 5,
         marginLeft: 5,
-        height: 40,
+        height: 36,
         fontSize: 24,
         '& .MuiButton-label': {
             color: '#1c82b2'
@@ -567,10 +608,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         marginTop: 15,
         display: 'block',
         maxWidth: windowSize !== 'xs' ? '60%' : '100%'
-    },
-    galleryGrid: {
-        minWidth: galleryWidth[windowSize],
-        minHeight: 400
     },
     dialogWidth: {
         minWidth: galleryWidth[windowSize],
@@ -628,8 +665,17 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         }
     },
     previewPaper: {
-        width: windowSize==='xs'?250:450,
-        height: windowSize==='xs'?330:730
+        width: windowSize === 'xs' ? 250 : 450,
+        height: windowSize === 'xs' ? 330 : 730
+    },
+    notificationMobileButtons: {
+        justifyContent: 'space-evenly',
+        minHeight: 50,
+        '& .MuiBox-root': {
+            flex: '100px 0 0',
+            color: '#0371ad',
+            textAlign: 'center'
+        }
     }
 
 })

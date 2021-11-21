@@ -19,7 +19,9 @@ export const DateField = ({
   ampm = true,
   maximumDate = undefined,
   timePickerOpen = false,
-  rootStyle = null
+  rootStyle = null,
+  timeActive = null,
+  dateActive = null
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -59,14 +61,17 @@ export const DateField = ({
       okLabel={buttons && buttons.ok}
       ampm={ampm}
       id="timePicker"
-      onClick={() => setIsTimePickerOpen(true)}
+      disabled={timeActive}
       onClose={() => setIsTimePickerOpen(false)}
       open={isTimePickerOpen || timePickerOpen}
+      onClick={() => setIsTimePickerOpen(true)}
+      InputProps={{ readOnly: true }}
+      autoOk={true}
     />
   ) :
 
     (<KeyboardDatePicker
-      classes={{root: rootStyle}}
+      classes={{ root: rootStyle }}
       disableToolbar
       inputVariant="outlined"
       className={clsx(
@@ -96,9 +101,12 @@ export const DateField = ({
       okLabel={buttons && buttons.ok}
       id="datePicker"
       maxDate={maximumDate}
-      onClick={() => setIsDatePickerOpen(true)}
+      disabled={dateActive}
       onClose={() => setIsDatePickerOpen(false)}
       open={isDatePickerOpen}
+      onClick={() => setIsDatePickerOpen(true)}
+      InputProps={{ readOnly: true }}
+      autoOk={true}
     />
     )
 

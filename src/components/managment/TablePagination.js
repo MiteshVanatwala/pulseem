@@ -16,6 +16,7 @@ export const TablePagination=({
   onPageChange=() => null,
   returnPageOne=true
 }) => {
+  
   const {t}=useTranslation()
   const pages=Math.ceil(rows/rowsPerPage)
   const [innerPage,setPage]=useState('');
@@ -119,7 +120,7 @@ export const TablePagination=({
   return (
     <Grid
       container
-      justify='space-between'
+      justifyContent='space-between'
       className={classes.tablePadingtonGridContainer} >
       {renderRowNumbers()}
       {renderPageNumbers()}

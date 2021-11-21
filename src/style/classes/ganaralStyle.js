@@ -1,20 +1,17 @@
-import { height, width } from "@amcharts/amcharts4/.internal/core/utils/Utils";
-import { Block } from "@material-ui/icons";
-
 const dialogWidth = {
-  xs: 200,
-  sm: 350,
-  md: 350,
-  lg: 350,
-};
+  xs: '200px',
+  sm: '350px',
+  md: '350px',
+  lg: '460px'
+}
 
-const paperMinWidthSm = {
-  xs: 350,
-  sm: 500,
-  md: 500,
-  lg: 500,
-  xl: 500,
-};
+// const paperMinWidthSm = {
+//   xs: 350,
+//   sm: 500,
+//   md: 500,
+//   lg: 500,
+//   xl: 500
+// }
 const minDialogWidth = {
   xs: 330,
   sm: 330,
@@ -41,24 +38,59 @@ const iconWrapperMargin = {
   sm: 10,
   md: 15,
   lg: 15,
-  xl: 15,
-};
+  xl: 15
+}
 const iconWrapperMinWidth = {
   xs: 50,
   sm: 100,
-  md: 100,
-};
-const summaryNotificationMinWidth = {
-  xs: "240px",
-};
+  md: 100
+}
+// const summaryNotificationMinWidth = {
+//   xs: "240px",
+// }
 const notificationTitleFontSize = {
   xs: 12,
   sm: 12,
   md: "1rem",
 };
 
+const graphTextWidth = {
+  sm: 250,
+  md: 250,
+  lg: 110,
+  xl: 250
+
+}
+
 export const getGeneralStyle = (windowSize, isRTL, theme) => ({
+  sidebar: {
+    '&::-webkit-scrollbar': {
+      display: 'block !important',
+      width: 6,
+      height: 6
+    },
+    /* Track */
+    '&::-webkit-scrollbar-track': {
+      boxShadow: 'inset 0 0 0px',
+      borderRadius: 10,
+      backgroundColor: '#fff !important',
+    },
+    /* Handle */
+    '&::-webkit-scrollbar-thumb': {
+      background: '#ccc',
+      borderRadius: 10
+    },
+    /* Handle on hover */
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#999'
+    }
+  },
+  dialogCustomSize: {
+    height: '40vh',
+    width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null
+  },
   dialogContainer: {
+    zIndex: '1500 !important',
     "& .MuiPaper-root": {
       overflowX: "hidden",
     },
@@ -66,117 +98,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       minWidth: minDialogWidth[windowSize],
       maxWidth: maxDialogWidth[windowSize],
     },
+    "& .MuiDialog-paperScrollPaper": {
+      maxHeight: '100%'
+    }
   },
   noPadding: {
     padding: "0px !important",
   },
-  dialogIconContainer: {
-    paddingTop: 60,
-    paddingBottom: 15,
-    textAlign: "center",
-    color: "#fff",
-    borderRadius: 200,
-    backgroundColor: "#0371ad",
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    top: -50,
-  },
-  dialogIconContainerRTL: {
-    right: -50,
-    paddingInlineEnd: 60,
-    paddingInlineStart: 15,
-  },
-  dialogIconContainerLTR: {
-    left: -50,
-    paddingInlineEnd: 15,
-    paddingInlineStart: 60,
-  },
-  dialogExitButton: {
-    width: 25,
-    height: 25,
-    textAlign: "center",
-    color: "#fff",
-    borderRadius: 25,
-    fontWeight: "700",
-    backgroundColor: "#0371ad",
-    position: "absolute",
-    top: "0.5rem",
-    cursor: "pointer",
-  },
-  dialogExitButtonRTL: {
-    left: "0.5rem",
-  },
-  dialogExitButtonLTR: {
-    right: "0.5rem",
-  },
-  dialogContent: {
-    display: "flex",
-    flexDirection: "column",
-    border: "3px solid #0371ad",
-    borderRadius: 5,
-    margin: "1rem",
-    padding: "1rem",
-    minWidth: dialogWidth[windowSize],
-    "& $notification": {
-      "& $iconWrapper": {
-        margin: iconWrapperMargin[windowSize],
-        minWidth: iconWrapperMinWidth[windowSize],
-      },
-      "& b, & textarea": {
-        fontSize: notificationTitleFontSize[windowSize],
-      },
-    },
-    "& $dialogChildren": {
-      maxHeight:
-        windowSize === "xs" || windowSize === "sm" ? "100vh" : "calc(65vh)",
-    },
-    "& $mobileBG": {
-      "& $iconWrapper": {
-        minWidth: windowSize === "xs" ? 0 : 100,
-      },
-    },
-  },
-  dialogButton: {
-    fontFamily: "OpenSansHebrew",
-    color: "#fff",
-    textTransform: "capitalize",
-    width: 120,
-    fontSize: 18,
-    borderRadius: 50,
-  },
-  dialogConfirmButton: {
-    backgroundImage: "linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)",
-    backgroundRepeat: "repeat-x",
-    border: "1px solid #345233",
-    borderTop: "0px solid #345233",
-    boxShadow: "0px 3px 3px #345233",
-    maxWidth: 150,
-  },
-  dialogCancelButton: {
-    background: "rgba(212,137,33,1)",
-    backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
-    backgroundRepeat: "repeat-x",
-    border: "1px solid darkred",
-    borderTop: "0px solid darkred",
-    boxShadow: "0px 3px 3px darkred",
-    maxWidth: 150,
-  },
-  dialogButtonsContainer: {
-    flex: 1,
-    alignContent: "center",
-    justifyContent: "center",
+  noMargin: {
+    margin: 0
   },
   wizardFlex: {
     flex: 1,
     alignContent: "flex-end",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   dialogTitle: {
     fontSize: "1.8rem",
     fontWeight: "700",
     color: "#0a74a9",
     marginInline: 25,
+    whiteSpace: "pre-line"
   },
   dialogChildren: {
     // marginInline: 25,
@@ -238,19 +180,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflow: "auto",
   },
   defaultScreen: {
-    maxHeight: "calc(100vh - 53px)",
+    'overflow': 'visible'
+    //maxHeight: 'calc(100vh - 53px)'
   },
   pulseemIcon: {
     fontFamily: "pulseemicons",
   },
-  borderAround: {
-    border: '1px solid #000'
-  },
   borderBottom1: {
     borderBottom: '1px solid #ccc'
-  },
-  dBlock: {
-    display: 'block'
   },
   dFlex: {
     display: 'flex'
@@ -258,11 +195,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   rtlSwitch: {
     transform: 'rotateY(180deg)'
   },
+  dBlock: {
+    display: 'block'
+  },
+  borderAround: {
+    border: '1px solid #000'
+  },
   alignItemsCenter: {
     alignItems: 'center'
-  },
-  w80: {
-    width: '80%'
   },
   w110: {
     width: 110,
@@ -300,9 +240,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   flex2: {
     flex: 2
   },
-  dFlex: {
-    display: "flex",
-  },
   dInline: {
     display: "inline",
   },
@@ -329,6 +266,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   ps15: {
     paddingInlineStart: 8,
+  },
+  pe15: {
+    paddingInlineEnd: 8,
   },
   ps25: {
     paddingInlineStart: 25,
@@ -363,20 +303,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mb10: {
     marginBottom: 10
   },
+  mb15: {
+    marginBottom: 15
+  },
   mb20: {
     marginBottom: 20
-  },
-  mbNeg10: {
-    marginBottom:-10
-  },
-  ml10: {
-    marginInlineStart: 10
   },
   ml25: {
     marginInlineStart: 25
   },
   mtNeg15: {
     marginTop: -15
+  },
+  mbNeg10: {
+    marginBottom: -10
   },
   mt5: {
     marginTop: 5,
@@ -396,11 +336,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt0: {
     marginTop: 0,
   },
+  ml15: {
+    marginInlineStart: 15
+  },
   mt10: {
     marginTop: 10,
   },
   mt15: {
     marginTop: 15
+  },
+  f12: {
+    fontSize: 12,
   },
   f14: {
     fontSize: 14,
@@ -429,14 +375,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   line1: {
     lineHeight: 1,
   },
-  black: {
-    color: "black",
-  },
   bgBrown: {
-    backgroundColor: "#636363",
+    backgroundColor: '#636363',
   },
   colorWhite: {
-    color: "#fff",
+    color: '#fff'
   },
   colorGray: {
     color: "rgba(0,0,0,0.40)",
@@ -465,6 +408,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   txtCenter: {
     textAlign: "center",
+    '& input': {
+
+      textAlign: 'center'
+    }
   },
   bold: {
     fontWeight: "bold",
@@ -472,6 +419,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   disabled: {
     opacity: ".65",
     pointerEvents: "none !important",
+    cursor: 'not-allowed !important'
   },
   imageInfo: {
     backgroundColor: "rgba(255,255,255,.5)",
@@ -479,15 +427,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   alignCenter: {
     display: 'flex',
-    alignCenter: 'center'
+    alignContent: 'center'
   },
-  justifyCenter: {
-    display: "flex",
-    justifyContent: "center",
-  },
-  alignCenter: {
-    alignContent: "center",
-    alignItems: "center",
+  justifyCenterOfCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center'
   },
   spaceEvenly: {
     display: "flex",
@@ -512,9 +459,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontFamily: "pulseemicons",
     fontSize: 22,
   },
-  rtlSwitch: {
-    transform: "rotateY(180deg)",
-  },
   pageSubTitle: {
     marginTop: 5,
     fontSize: 28,
@@ -526,18 +470,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   blue: {
     color: "#0a74a9",
-  },
-  bgBlack: {
-    backgroundColor: "black",
-  },
-  fBlack: {
-    color: "black",
-  },
-  black: {
-    color: "#626262",
-  },
-  white: {
-    color: "white",
   },
   whiteBox: {
     backgroundColor: "#fff",
@@ -571,6 +503,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   m5: {
     margin: ".5rem",
   },
+  mr5: {
+    marginRight: 5
+  },
+  ml5: {
+    marginLeft: 5
+  },
+  font13: {
+    fontSize: 13
+  },
   font15: {
     fontSize: 15,
   },
@@ -599,14 +540,37 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     flexDirection: "column",
   },
   whiteLink: {
-    textDecoration: "underline",
+    cursor: 'pointer',
     color: "#fff",
     textTransform: "capitalize",
     lineHeight: 1,
+    display: 'flex',
+    alignItems: 'center',
+    textDecoration: 'underline'
   },
   blackDivider: {
     height: 2,
     backgroundColor: "rgb(0, 0, 0, 0.5)",
+    textDecoration: 'none',
+    color: '#fff',
+    textTransform: 'capitalize',
+    lineHeight: 1,
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
+  },
+  blueLink: {
+    textDecoration: 'none',
+    color: '#0371ad',
+    textTransform: 'capitalize',
+    lineHeight: 1,
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer',
+    textDecoration: 'underline',
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
   },
   noWrap: {
     flexWrap: "nowrap",
@@ -615,8 +579,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: "100px",
     display: "flex",
     alignItems: "center",
-    "@media screen and (max-width: 768px)": {
+    "@media screen and (max-width: 540px)": {
       width: "100%",
+      height: "auto",
+      marginTop: 10
     },
   },
   headInfo: {
@@ -671,16 +637,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   fieldDiv: {
-    width: "100%",
-    display: "grid",
-    gridTemplateColumns: "31% 31% 20%",
-    gridGap: "20px",
-    height: "100px",
+    // height: "100px",
     marginTop: "20px",
-    "@media screen and (max-width: 768px)": {
-      width: "100%",
-      gridTemplateColumns: "auto",
-    },
+    // "@media screen and (max-width: 960px)": {
+
+    //   height: "0"
+
+    // },
   },
   buttonForm: {
     display: "flex",
@@ -689,10 +652,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   buttonHead: {
     fontSize: "20px",
     marginBottom: "10px",
+    // "@media screen and (max-width: 414px)": {
+    //   fontSize: 16
+    // }
   },
   buttonContent: {
-    fontSize: "14px",
-    marginTop: "8px",
+    fontSize: 14
   },
   alertMsg: {
     color: "#ca332f",
@@ -701,163 +666,219 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     borderRadius: "5px",
     border: "1px solid #bbb",
     outline: "none",
-    padding: "12px 12px 12px 4px",
-    fontSize:"16px",
+    padding: "8px 12px 8px 4px",
+    fontSize: "16px",
     '&::placeholder':
     {
-      fontSize:"16px"
+      fontSize: "16px"
+    }
+  },
+  buttonFieldRemoval: {
+    borderRadius: "5px",
+    border: "1px solid #bbb",
+    outline: "none",
+    padding: "8px",
+    width: 100,
+    backgroundColor: '#e9ecef',
+    '&::placeholder':
+    {
+      fontSize: "16px"
+    },
+    '& .Mui-disabled': {
+      color: '#000'
+    },
+    "@media screen and  (max-width: 960)": {
+      width: "100%"
+    },
+  },
+  buttonFieldRemovalMobile: {
+    borderRadius: "5px",
+    border: "1px solid #bbb",
+    outline: "none",
+    padding: "8px",
+    '&::placeholder':
+    {
+      fontSize: "16px"
+    },
+    '&:disabled':
+    {
+      color: "black"
     }
   },
   success: {
     borderBottom: "2px solid green",
   },
   error: {
-    borderBottom: "2px solid red",
+    borderBottom: "2px solid red !important",
   },
   msgHead: {
     fontSize: "20px",
+    "@media screen and (max-width: 768px)": {
+      marginTop: "40px",
+    },
   },
   msgArea: {
     resize: "none",
     height: "240px",
+    boxSizing: "border-box",
     fontSize: "16px",
-    fontFamily:"Sans-serif",
+    fontFamily: "Sans-serif",
     overflow: "hidden",
-    textAlign: "left",
-    marginTop: "20px",
+    marginTop: 5,
+    overflowY: "auto",
     width: "100%",
-    border: "none",
-    borderTop: "1px solid rgb(170, 170, 170)",
-    borderInlineStart: "1px solid rgb(170, 170, 170)",
-    borderInlineEnd: "1px solid rgb(170, 170, 170)",
+    border: "1px solid #ced4da",
+    borderBottom: 'none',
     outline: "none",
     padding: "10px",
+    borderTopLeftRadius: '.25rem',
+    borderTopRightRadius: '.25rem',
     "&::placeholder": {
       color: "rgb(170, 170, 170)",
       fontSize: "16px",
-    },
-    "@media screen and (max-width: 768px)": {
-      width: "92%",
-    },
-  },
-  msgArea1: {
-    resize: "none",
-    height: "240px",
-    overflow: "hidden",
-    textAlign: "right",
-    marginTop: "20px",
-    width: "100%",
-    border: "none",
-    borderTop: "1px solid rgb(170, 170, 170)",
-    borderInlineStart: "1px solid rgb(170, 170, 170)",
-    borderInlineEnd: "1px solid rgb(170, 170, 170)",
-    outline: "none",
-    padding: "10px",
-    fontSize: "16px",
-    fontFamily:"Sans-serif",
-    "&::placeholder": {
-      color: "rgb(170, 170, 170)",
-      fontSize: "16px",
-    },
-    "@media screen and (max-width: 768px)": {
-      width: "92%",
     },
   },
   smallInfoDiv: {
     display: "flex",
     width: "100%",
-    position:"relative",
-    top:"-3px",
+    boxSizing: "border-box",
+    position: "relative",
+    top: "-4px",
     justifyContent: "flex-end",
     alignItems: "center",
     color: "#1c82b2",
     fontSize: "12px",
-    // backgroundColor:"red",
     padding: "10px",
-    border: "none",
-    borderBottom: "1px solid rgb(170, 170, 170)",
-    borderLeft: "1px solid rgb(170, 170, 170)",
-    borderRight: "1px solid rgb(170, 170, 170)",
-    "@media screen and (max-width: 768px)": {
-      width: "92%",
-    },
+    border: "1px solid #ced4da",
+    borderTop: 'none'
   },
   funcDiv: {
     width: "100%",
-    height: "40px",
-    position:"relative",
-    top:"-3px",
-    // backgroundColor : "black",
-    padding: "10px",
-    border: "1px solid rgb(170, 170, 170)",
-    display: "flex",
+    height: "60px",
+    boxSizing: "border-box",
+    display: "grid",
+    gridTemplateColumns: "auto auto auto auto",
+    position: "relative",
+    top: "-4px",
+    padding: 5,
+    border: "1px solid #ced4da",
+    borderTop: 'none',
     alignItems: "center",
+    borderBottomLeftRadius: '.25rem',
+    borderBottomRightRadius: '.25rem',
     "@media screen and (max-width: 768px)": {
-      height: "60px",
-      width: "92%",
+      height: "110px"
     },
+
   },
   baseButtons: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
-    borderRight: "1px solid black",
-    "@media screen and (max-width: 768px)": {
-      flexDirection: "column",
+    justifyContent: "space-evenly",
+    height: "100%",
+    borderInlineEnd: "1px solid grey",
+    "@media screen and (max-width: 540px)": {
+      flexDirection: "column-reverse",
       paddingInlineEnd: "8px",
     },
   },
   infoButtons: {
-    borderRadius: "20px",
-    width: "106px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+    fontWeight: 600,
+    fontSize: 14,
     color: "white",
-    fontSize:"11px",
-    backgroundColor: "red",
-    padding: "10px",
+    padding: "5px 15px 5px 15px",
     backgroundColor: "#1c82b2",
-    cursor:"pointer",
+    cursor: "pointer",
     borderColor: "#1c82b2",
-    marginInlineStart: "5px",
-    "@media screen and (max-width: 768px)": {
-      width: "80px",
-      padding: "8px",
-      marginBottom: "5px",
-      fontSize: "7px",
+    textTransform: 'none',
+    '&$disabled': {
+      cursor: 'not-allowed !important'
     },
-  },
-  info2Buttons: {
-    borderRadius: "20px",
-    width: "111px",
-    fontSize:"11px",
-    color: "white",
-    backgroundColor: "red",
-    padding: "10px",
-    backgroundColor: "#1c82b2",
-    cursor:"pointer",
-    borderColor: "#1c82b2",
-    marginInlineStart: "3px",
-    marginInlineEnd: "5px",
-    "@media screen and (max-width: 768px)": {
-      width: "80px",
-      padding: "8px",
-      marginBottom: "5px",
-      fontSize: "10px",
+    '&:hover': {
+      backgroundColor: "#1c82b2",
     },
+    "&:first-child": {
+      marginInlineStart: 5,
+      marginInlineEnd: 5,
+    },
+    "&:nth-child(2)": {
+      marginInlineStart: 0,
+      marginInlineEnd: 5,
+    },
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 11
+    },
+    "@media screen and (max-width: 768px)": {
+      width: "110px",
+      padding: "8px",
+      marginBottom: 5,
+      fontSize: 11,
+    },
+    "@media screen and (max-width: 530px)": {
+      "&:first-child": {
+        marginInlineStart: 0,
+        marginInlineEnd: 0,
+      },
+      "&:nth-child(2)": {
+        marginInlineStart: 0,
+        marginInlineEnd: 0,
+      },
+    },
+    "@media screen and (max-width: 375px)": {
+      "&:first-child": {
+        marginInlineStart: 5,
+        marginInlineEnd: 0,
+      },
+      "&:nth-child(2)": {
+        marginInlineStart: 5,
+        marginInlineEnd: 0,
+      },
+    }
+
   },
   selectMsg: {
-    marginInlineStart: "5px",
-    borderInlineEnd: "1px solid black",
+    height: "100%",
+    borderInlineEnd: "1px solid grey",
+    display: "flex",
+    alignItems: "center",
+    paddingLeft: 20,
+    paddingRight: 20,
+    "@media screen and (max-width: 1366px)": {
+      paddingLeft: 5,
+      paddingRight: 0,
+    },
     "@media screen and (max-width: 768px)": {
       borderRight: "none",
+      borderLeft: "none"
+    },
+  },
+  selectGroupDiv:
+  {
+    cursor: "pointer",
+    display: "flex",
+    justifyContent: "space-between",
+    width: "100%",
+    "@media screen and (max-width: 450px)": {
+      width: 'calc(100% - 50px)'
     },
   },
   selectVal: {
     outline: "none",
-    padding: "5px",
-    width: "65px",
+    padding: "10px",
+    width: "100%",
+    minWidth: 150,
+    marginInlineEnd: "5px",
+    marginInlineStart: "5px",
     borderRadius: "5px",
-    borderColor: "#1c82b2",
-    marginInlineEnd: "4px",
+    border: "1px solid #ced4da",
+    backgroundColor: '#fff',
+    "@media screen and (max-width: 1366px)": {
+      minWidth: 130,
+    },
     "@media screen and (max-width: 768px)": {
       width: "100%",
       marginTop: "8px",
@@ -868,16 +889,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
-    cursor:"pointer",
+    cursor: "pointer",
 
-    width: "62px",
+    width: "80px",
   },
   addButtons: {
     padding: "10px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize:"14px",
+    fontSize: "18px",
+    fontWeight: "600",
     "@media screen and (max-width: 768px)": {
       padding: "5px",
     },
@@ -889,19 +911,33 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   rightInput: {
     outline: "none",
     padding: "10px",
-    width:"200px",
+    width: "220px",
+    height: "23px",
     border: "1px solid #BBBBBB",
-    borderRadius:"4px",
+    borderRadius: "4px",
     marginInlineEnd: "5px",
     "@media screen and (max-width: 768px)": {
       width: "100%",
     },
+  },
+  descSwitch:
+  {
+    width: "200px",
+    fontSize: "15px",
+    marginTop: "5px",
+    color: "#C2C2C2",
+    fontWeight: "600",
+    "@media screen and (max-width: 768px)": {
+      width: "100%",
+    },
+
   },
   rightSend: {
     display: "flex",
     width: "70px",
     border: "1px solid green",
     color: "green",
+    height: "25px",
     padding: "9px",
     alignItems: "center",
     justifyContent: "center",
@@ -912,7 +948,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     padding: "10px",
     border: "1px solid #efefef",
-    marginInlineEnd: "5px",
     width: "240px",
     marginInlineEnd: "5px",
     "@media screen and (max-width: 768px)": {
@@ -923,25 +958,24 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   buttonDiv: {
     display: "flex",
     alignItems: "center",
-    marginTop: "20px",
-    marginBottom: "50px",
-    position:"fixed",
-    bottom:"10px",
+    position: "relative",
+    bottom: "10px",
+    marginBottom: "40px",
     "@media screen and (max-width: 768px)": {
-      flexDirection: "column",
+      flexDirection: "column-reverse",
     },
-  
+
 
   },
   buttonDivAct: {
-    position:"fixed",
-    bottom:"10px",
+    position: "relative",
+    bottom: "10px",
     display: "flex",
     alignItems: "center",
-    marginTop: "150px",
-    marginBottom: "50px",
+
+    marginBottom: "40px",
     "@media screen and (max-width: 768px)": {
-      flexDirection: "column",
+      flexDirection: "column-reverse",
     },
   },
   rightInput3: {
@@ -949,8 +983,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "10px",
     marginInlineEnd: "15px",
     borderRadius: "30px",
-    width:"50px",
-    cursor:"pointer",
+    width: "50px",
+    cursor: "pointer",
     height: "40px",
     boxShadow: "0 1px 2px #a5a2a2",
     border: "0",
@@ -973,7 +1007,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: "10px",
     marginInlineEnd: "15px",
     borderRadius: "30px",
-    cursor:"pointer",
+    cursor: "pointer",
     height: "40px",
     boxShadow: "0 1px 2px #a5a2a2",
     border: "0",
@@ -1000,7 +1034,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: "40px",
     boxShadow: "0 1px 2px #a5a2a2",
     border: "0",
-    cursor:"pointer",
+    cursor: "pointer",
     width: "80px",
     borderColor: "#5b9bcd",
     background: "linear-gradient(180deg,#5b9bcd 0,#4678a3)",
@@ -1020,7 +1054,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     outline: "none",
     padding: "10px",
     marginInlineEnd: "12px",
-    cursor:"pointer",
+    cursor: "pointer",
     borderRadius: "30px",
     height: "40px",
     boxShadow: "0 1px 2px #a5a2a2",
@@ -1040,26 +1074,109 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       marginBottom: "8px",
     },
   },
+  summaryBtn:
+  {
+    outline: "none",
+    padding: "10px",
+    marginInlineEnd: "12px",
+    cursor: "pointer",
+    borderRadius: "30px",
+    height: "40px",
+    boxShadow: "0 1px 2px #a5a2a2",
+    border: "0",
+    width: "100px",
+    borderColor: "#449d44",
+    // backgroundImage: "linear-gradient(180deg,#5cb85c 0,#449d44)",
+    color: "white",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: "700",
+    "@media screen and (max-width: 768px)": {
+      marginInlineEnd: "0px",
+      height: "30px",
+      width: "90%",
+      marginBottom: "8px",
+    },
+  },
   phoneNumber: {
     position: "absolute",
-    left: "28%",
-    top: "31%",
-    fontWeight: "700",
+    left: 0,
+    right: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: 700,
+    top: 95,
+    fontSize: 12,
+    "@media screen and (max-width: 768px)": {
+      top: 90,
+      right: 0,
+      margin: '0 auto',
+      fontSize: 16
+    },
+    "@media screen and (max-width: 560px)": {
+      top: 100,
+      fontSize: 14
+    },
+    "@media screen and (max-width: 414px)": {
+      top: 90,
+      fontSize: 14
+    },
+    "@media screen and (max-width: 375px)": {
+      top: 80,
+      fontSize: 12
+    },
+    "@media screen and (max-width: 360px)": {
+      top: 78,
+      fontSize: 12
+    }
   },
+  testDiv:
+  {
+    marginInlineStart: "35px",
+    display: "flex",
+    marginTop: "20px",
+    "@media screen and (max-width: 768px)": {
+      marginInlineStart: "0px",
+    },
+  },
+  testRadios:
+  {
+    marginTop: "10px", marginInlineStart: "35px",
+    "@media screen and (max-width: 768px)": {
+      marginInlineStart: "0px",
+    },
+  },
+  phoneNumberSumm: {
+    position: "absolute",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontWeight: "700",
+    top: "92px",
+    marginInlineStart: "133px",
+    fontSize: "15px"
+  },
+  // phoneNumberSum: {
+  //   top: "24%",
+  //   left: "38%",
+  //   position: "absolute",
+  //   fontWeight: "700",
+  //   fontSize: "15px",
+  // },
   chat: {
-   
-    
     backgroundColor: "#3da6f6",
-    color:"#fff",
-     maxWidth:"260px",
+    color: "#fff",
+    maxWidth: "260px",
     backgroundAttachment: 'fixed',
-    minWidth:"100px",
+    minWidth: "100px",
     padding: '8px',
     minHeight: '30px',
     wordBreak: 'break-all',
     borderRadius: "12px",
-    fontWeight:"500",
-    maxHeight:"200px",
+    fontWeight: "500",
+    maxHeight: "200px",
     "@media screen and (max-width: 768px)": {
       top: "180px",
       bottom: "0",
@@ -1114,68 +1231,163 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       borderBottomLeftRadius: "10px",
     },
   },
-  wrapChat : 
+  wrapChatSumm:
   {
     position: "absolute",
-    top: "180px",
-    left: "10%",
+    top: "130px",
+    left: "13%",
     backgroundColor: "#fff",
-    color:"#fff",
-    display: 'flex',
-    justifyContent: 'flex-end',
+    color: "#fff",
     borderRadius: "12px",
- 
-    backgroundAttachment: 'fixed',
+    height: "200px",
+    overflowY: "auto",
     width: '260px',
-    maxHeight: '200px',
-    // overflowY:"auto",
-    minHeight: '40px',
     wordBreak: 'break-all',
-    
-    
-      
+    "&::-webkit-scrollbar": {
+      visibility: "hidden",
+      width: "0px",
+    }
   },
-  fromMe  :
+  chatBox:
+  {
+    display: 'flex',
+    justifyContent: isRTL ? 'flex-start' : 'flex-end',
+    wordBreak: 'break-all',
+  },
+  chatBoxHe:
+  {
+    display: 'flex',
+    wordBreak: 'break-all',
+  },
+  wrapChat:
+  {
+    position: "absolute",
+    top: "115px",
+    width: 310,
+    height: 240,
+    left: 'auto',
+    right: 45,
+    wordBreak: 'break-all',
+    color: "#fff",
+    borderRadius: "12px",
+    overflowY: "auto",
+    padding: 10,
+    "@media screen and (max-width: 1430px)": {
+      right: 50,
+    },
+    "@media screen and (max-width: 1366px)": {
+      width: 270
+    },
+    "@media screen and (max-width: 1260px)": {
+      top: 125,
+      right: 50,
+    },
+    "@media screen and (max-width: 768px)": {
+      right: 45,
+      width: 250,
+      height: 230
+    },
+
+    "@media screen and (max-width: 414px)": {
+      top: 120,
+      right: 42,
+      width: 260,
+      height: 205
+    },
+    "@media screen and (max-width: 360px)": {
+      top: 105,
+      right: 38,
+      width: 230,
+      height: 190
+    },
+    "@media screen and (max-width: 320px)": {
+      top: 90,
+      right: 38,
+      left: 'auto',
+      width: 200,
+      height: 165
+    }
+  },
+  fromMe:
   {
     alignSelf: 'flex-end',
     borderRadius: '1.15rem',
     lineHeight: '1.25',
-    maxWidth: '75%',
+    // maxWidth: '79%',
+    minHeight: '53px',
     padding: '0.5rem .875rem',
     position: 'relative',
+    minWidth: 200,
     wordWrap: 'break-word',
-    backgroundColor: '#248bf5',
+    backgroundColor: '#3da6f6',
     color: '#fff',
-    '&::before' : 
+    fontSize: 16,
+    '&::before':
     {
       borderBottomLeftRadius: '0.8rem 0.7rem',
-      borderRight: '1rem solid #248bf5',
+      borderRight: '1rem solid #3da6f6',
       right: '-0.35rem',
       transform: 'translate(0, -0.1rem)',
       bottom: '-0.1rem',
       content: `''`,
       height: '1rem',
       position: 'absolute',
-    
+
     },
-    '&::after' : 
+    '&::after':
     {
       backgroundColor: '#fff',
       borderBottomLeftRadius: '0.5rem',
       right: '-40px',
-      transform:'translate(-30px, -2px)',
+      transform: 'translate(-30px, -2px)',
       width: '10px',
       bottom: '-0.1rem',
       content: `''`,
       height: '1rem',
       position: 'absolute',
-    }
+    },
+    "@media screen and (max-width: 414px)": {
+      minWidth: 150
+    },
+    "@media screen and (max-width: 360px)": {
+      minWidth: 140
+    },
   },
   groupName: {
     display: "block",
     fontSize: "32px",
     color: "#006996",
     width: "700px",
+    "@media screen and (max-width: 768px)": {
+      width: "100%",
+      fontSize: "22px",
+    },
+
+  },
+  fieldsRequire:
+  {
+    fontSize: "18px", color: "red", fontWeight: "400",
+    "& li": {
+      marginTop: 5
+    },
+    "@media screen and (max-width: 768px)": {
+      fontSize: "12px !important",
+      marginBottom: "4px"
+    },
+  },
+  baseDialogSetup:
+  {
+    height: "60px", borderBottom: "1px solid #DEE2E7",
+    "@media screen and (max-width: 768px)": {
+      height: "auto"
+    },
+  },
+  bodyTextDialog:
+  {
+    fontSize: "22px", marginTop: "5px",
+    "@media screen and (max-width: 768px)": {
+      fontSize: "16px"
+    },
   },
   modalDiv: {
     display: "flex",
@@ -1238,14 +1450,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   listDiv: {
     height: "300px",
     maxHeight: "200px",
-    width: "700px",
+    width: "100%",
+    overflowX: "hidden",
     marginTop: "20px",
+    overflow: "auto"
+  },
+  listDivFilter:
+  {
+    height: 130,
+    width: "100%",
+    overflowY: "auto",
+    borderBottom: "1px solid #efefef",
+    borderLeft: "1px solid #efefef",
+    borderRight: "1px solid #efefef",
+    marginTop: "0",
   },
   searchCon: {
-    padding: "12px",
-    display:"flex",
-    alignItems:"center",
-    
+    padding: 5,
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
+
     "&:hover": {
       backgroundColor: "#efefef",
     },
@@ -1256,50 +1481,55 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInlineEnd: "5px",
   },
   tabDiv: {
-    width: "700px",
     display: "grid",
     gridTemplateColumns: "50% 50%",
-    "@media screen and (max-width: 768px)": {
-      width: "315px",
-    },
-    "@media screen and (device-width: 411px)": {
-      width: "355px",
-    },
+
+    // "@media screen and (max-width: 768px)": {
+    //   width: "315px",
+    // },
+    // "@media screen and (device-width: 411px)": {
+    //   width: "355px",
+    // },
   },
   tab1: {
     padding: "10px",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    fontSize: "24px",
+    fontSize: "19px",
     color: "#777777",
     "@media screen and (max-width: 768px)": {
-     fontSize:"14px",
-
+      fontSize: "14px"
     },
   },
   activeTab: {
-    borderBottom: "3px solid #1771AD",
-    color: "#277BFF !important",
+    borderBottom: "4px solid #168ee3",
+    color: "#007bff !important"
   },
   areaManual: {
     border: "2px dashed rgba(0,0,0,.2)",
-    width: "700px",
-    height: "250px",
+    // height: "400px",
     backgroundColor: "white !important",
+    "@media screen and (max-width: 768px)": {
+      width: "auto"
+    },
   },
   greenManual: {
     border: "2px dashed #4BB543",
-    width: "700px",
-    height: "250px",
+    // height: "400px",
     backgroundColor: "#CCFFE5",
+    "@media screen and (max-width: 768px)": {
+      width: "auto"
+    },
   },
   areaCon: {
-    width: "680px",
+    width: "calc(100% - 20px)",
     outline: "none",
     border: "none",
+    fontSize: "16px",
+    fontFamily: "Sans-serif",
     resize: "none",
-    height: "230px",
+    height: 396,
     backgroundColor: "white !important",
     padding: "10px",
     "&::placeholder": {
@@ -1307,13 +1537,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: "16px",
       fontFamily: "inherit",
     },
+    "@media screen and (max-width: 768px)": {
+      width: "90%"
+    },
   },
   greenCon: {
-    width: "680px",
+    width: "calc(100% - 20px)",
     outline: "none",
     border: "none",
+    fontFamily: "Sans-serif",
     resize: "none",
-    height: "230px",
+    height: "330px",
     backgroundColor: "#CCFFE5",
     padding: "10px",
     "&::placeholder": {
@@ -1322,7 +1556,30 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontFamily: "inherit",
     },
   },
-
+  addManualDiv:
+  {
+    padding: "8px",
+    backgroundColor: "#51AA51",
+    color: "#fff",
+    marginInlineEnd: "6px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    "@media screen and (max-width: 768px)": {
+      fontSize: "10px"
+    },
+  },
+  clearDiv:
+  {
+    padding: "8px",
+    color: "#277BFF",
+    marginInlineEnd: "6px",
+    borderRadius: "6px",
+    cursor: "pointer",
+    border: "1px solid #277BFF",
+    "@media screen and (max-width: 768px)": {
+      fontSize: "10px"
+    },
+  },
   backBtn: {
     marginTop: "30px",
     boxShadow: "0 1px 2px #a5a2a2",
@@ -1342,21 +1599,36 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     alignItems: "center",
   },
   pulse: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    fontSize: 14,
     border: "1px solid #277bff",
-    color: "blue",
-    width: "120px",
     padding: "8px",
     marginInlineEnd: "8px",
     borderRadius: "4px",
     cursor: "pointer",
-    color:"#277bff",
-    '&:hover' : 
+    color: "#277bff",
+    '&:hover':
     {
-      color:"#ffffff",
-      backgroundColor:"#277bff",
+      color: "#ffffff",
+      backgroundColor: "#277bff",
     }
+  },
 
-
+  pulseDisable:
+  {
+    padding: 8,
+    fontSize: 14,
+    borderRadius: 4,
+    display: 'flex',
+    color: "#808080",
+    marginInlineEnd: 8,
+    alignItems: 'center',
+    pointerEvents: "none",
+    cursor: "not-allowed",
+    border: "1px solid  #808080",
+    justifyContent: 'space-between'
   },
   toggleDiv: {
     display: "flex",
@@ -1366,9 +1638,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   inputDays: {
     padding: "10px",
     outline: "none",
-    width: "30px",
+    width: "70px",
     marginInlineEnd: "5px",
     marginBottom: "8px",
+    textAlign: 'center',
+    paddingRight: 0,
+    paddingLeft: 0,
+    borderRadius: 5,
+    border: '1px solid #bbb'
   },
   before: {
     display: "flex",
@@ -1380,8 +1657,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid #277BFF",
     padding: "10px",
     marginBottom: "8px",
-    color:"#277BFF",
-    cursor:"pointer"
+    color: "#277BFF",
+    cursor: "pointer"
+  },
+  disabledBefore:
+  {
+    display: "flex",
+    width: "72px",
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomLeftRadius: "4px",
+    borderTopLeftRadius: "4px",
+    border: "1px solid #D3D3D3",
+    padding: "10px",
+    marginBottom: "8px",
+    color: "#D3D3D3",
+    cursor: "pointer"
   },
   after: {
     display: "flex",
@@ -1394,8 +1685,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid #277BFF",
     padding: "10px",
     marginBottom: "8px",
-    color:"#277BFF",
-    cursor:"pointer"
+    color: "#277BFF",
+    cursor: "pointer"
+  },
+  disabledAfter:
+  {
+    display: "flex",
+    width: "72px",
+    alignItems: "center",
+    justifyContent: "center",
+    borderBottomRightRadius: "4px",
+    borderTopRightRadius: "4px",
+    borderLeft: "none",
+    border: "1px solid #D3D3D3",
+    padding: "10px",
+    marginBottom: "8px",
+    color: "#D3D3D3",
+    cursor: "pointer"
   },
   beforeActive: {
     display: "flex",
@@ -1407,9 +1713,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid #277BFF",
     padding: "10px",
     marginBottom: "8px",
-    backgroundColor:"#277BFF",
-    color:"#ffffff",
-    cursor:"pointer"
+    backgroundColor: "#277BFF",
+    color: "#ffffff",
+    cursor: "pointer"
 
   },
   afterActive: {
@@ -1423,39 +1729,41 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "1px solid #277BFF",
     padding: "10px",
     marginBottom: "8px",
-    backgroundColor:"#277BFF",
-    color:"#ffffff",
-    cursor:"pointer"
+    backgroundColor: "#277BFF",
+    color: "#ffffff",
+    cursor: "pointer"
   },
-  smsInit: {
-    display: "grid",
-    gridTemplateColumns: "67% auto",
-    padding: "40px 80px 15px 90px",
-
-    "@media screen and (max-width: 768px)": {
-      gridTemplateColumns: "100%",
-      padding:"0"
-    },
-  },
+  // smsGrid: {
+  //   padding: "40px 80px 15px 80px"
+  // },
   msgDiv: {
-    display: "flex",
-    marginTop: "50px",
+    marginTop: 50,
     height: "400px",
+    "@media screen and (max-width: 960px)": {
+      marginTop: 0,
+      height: "auto",
+    },
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
-      marginTop: "250px !important",
     },
   },
   boxDiv: {
-    width: "450px",
+    width: "100%",
     "@media screen and (max-width: 768px)": {
       width: "100%",
+      marginBottom: "10px"
+    },
+    "@media screen and (max-width: 960px)": {
+      width: "100%",
+      marginBottom: "10px",
     },
   },
   emoji: {
     display: "flex",
     alignItems: "center",
-    borderRight: "1px solid black",
+    justifyContent: "center",
+    height: "100%",
+    borderInlineEnd: "1px solid black",
     paddingInlineEnd: "0",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
@@ -1465,65 +1773,83 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   emojiHe: {
     display: "flex",
     alignItems: "center",
-    // borderRight: "1px solid black",
+    justifyContent: 'space-evenly',
+    borderInlineEnd: "1px solid grey",
     paddingInlineStart: "8px",
+    height: "100%",
     "@media screen and (max-width: 768px)": {
       flexDirection: "column",
+      paddingInlineStart: 0,
       // borderRight: "1px solid black",
     },
   },
   pickerEmoji: {
     position: "relative",
     height: "100%",
+    zIndex: "99",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     "@media screen and (max-width: 768px)": {
       marginTop: "4px",
     },
+    //#region emoji
+    "& .emoji-group": {
+      "&::before": {
+        direction: 'ltr'
+      }
+    },
+    "& .emoji-search": {
+      direction: 'ltr'
+    }
+    //#endregion
   },
   endButtons: {
     display: "flex",
-    alignItems:"center",
-    // borderRight: "1px solid black",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: "100%",
     "@media screen and (max-width: 768px)": {
-      flexDirection: "column",
+      flexDirection: "column-reverse",
       // borderRight: "1px solid black",
     },
   },
   radio: {
     display: "flex",
     flexDirection: "column",
-    width: "220px",
     "@media screen and (max-width: 768px)": {
       width: "100%",
     },
   },
   switchDiv: {
-    marginInlineStart: "35px",
     display: "flex",
 
     "@media screen and (max-width: 768px)": {
-      // marginInlineStart: "0px",
-      width: "80%",
+      width: "100%",
       marginInlineStart: "0px",
+      // marginBottom:"30px"
     },
   },
   phoneDiv: {
     position: "relative",
-    marginInlineStart:"5px",
+    "@media screen and (max-width: 960px)": {
+      marginTop: 0,
+    },
     "@media screen and (max-width: 768px)": {
-      marginTop: "100px",
+      marginTop: 0,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
     },
+    "@media screen and (max-width: 566px)": {
+      marginTop: 25
+    },
   },
-  groupsMan : 
+  groupsMan:
   {
-    width:"700px",
-    border:"1px solid #efefef",
-    padding:"4px",
+    width: "700px",
+    border: "1px solid #efefef",
+    padding: "4px",
     "@media screen and (max-width: 768px)": {
       width: "315px",
     },
@@ -1531,431 +1857,340 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       width: "355px",
     },
   },
-  groupsMan1 : 
+  groupsMan1:
   {
-    width:"700px",
-   display:"flex",
-       "@media screen and (max-width: 768px)": {
+    width: "700px",
+    display: "flex",
+    "@media screen and (max-width: 768px)": {
       width: "315px",
-      flexWrap:"wrap",
+      flexWrap: "wrap",
 
 
     },
     "@media screen and (device-width: 411px)": {
       width: "355px",
-      flexWrap:"wrap"
+      flexWrap: "wrap"
     },
   },
-  reciFilter : 
+  reciFilter:
   {
-    display:"flex",
-    alignItems:"center",
-    justifyContent:"center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     color: '#007bff',
     border: '1px solid #007bff',
-    padding :"8px",
-    borderRadius : '4px',
+    padding: "8px",
+    borderRadius: '4px',
     "&:hover": {
       backgroundColor: "#007bff",
-      color:"#ffffff"
+      color: "#ffffff"
     },
     "@media screen and (max-width: 768px)": {
       width: "30%",
-      fontSize:"14px"
-      
+      fontSize: "14px"
+
     },
   },
-  selectSort :
+  selectSort:
   {
-    display:"flex",
-    alignItems:"center",
-    justifyContent:"center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     color: '#007bff',
     border: '1px solid #007bff',
-    padding :"7px",
-    borderRadius : '4px',
+    padding: "7px",
+    borderRadius: '4px',
     // width:"150px",
-    outline:"none",
-    height:"40px",
-    fontSize:"17px",
+    outline: "none",
+    height: "40px",
+    fontSize: "17px",
     "&:hover": {
       backgroundColor: "#007bff",
-      color:"#ffffff"
+      color: "#ffffff"
     },
     "@media screen and (max-width: 768px)": {
       width: "100%",
-      fontSize:"14px"
-      
+      fontSize: "14px"
+
     },
   },
-  arrowSort :
+  arrowSort:
   {
-    display:"flex",
-    alignItems:"center",
-    justifyContent:"center",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     color: '#007bff',
     border: '1px solid #007bff',
-    padding :"7px",
-    borderRadius : '4px',
-    height:"25px",
-    fontSize:"17px",
+    padding: "7px",
+    borderRadius: '4px',
+    height: "25px",
+    fontSize: "17px",
     "&:hover": {
       backgroundColor: "#007bff",
-      color:"#ffffff"
+      color: "#ffffff"
     },
   },
-  selectedContact : 
+  selectedContact:
   {
-    width:"700px",
-    maxWidth:"700px",
-    height:"50px",
-    backgroundColor:"#efefef",
-    maxHeight:"50px",
-    display:"flex",
-    flexWrap:"wrap",
-    overflowY:"auto" ,
+    width: "700px",
+    maxWidth: "700px",
+    height: "50px",
+    backgroundColor: "#efefef",
+    maxHeight: "50px",
+    display: "flex",
+    flexWrap: "wrap",
+    overflowY: "auto",
     "@media screen and (max-width: 768px)": {
       width: "315px",
-      fontSize:"14px"
-      
+      fontSize: "14px"
+
     },
     "@media screen and (device-width: 411px)": {
       width: "355px",
-      fontSize:"14px"
+      fontSize: "14px"
     },
   },
-  bubble :
+  bubble:
   {
-    
-    display:"flex",
-    alignItems:"center",
-    justifyContent:"center",
+
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#007bff",
-    height:"24px",
-    color:"#ffffff",
-    width:"70px",
-    borderRadius:"20px",
-    fontSize:"16px",
-    margin:"6px"
+    height: "24px",
+    color: "#ffffff",
+    width: "70px",
+    borderRadius: "20px",
+    fontSize: "16px",
+    margin: "6px"
   },
-  listGroup :
+  row:
   {
-    height :"250px",
-    maxHeight:"250px",
-    overflowY :"auto",
-    padding:"8px"
-  },
-
-  row :
-  {
-    display :"flex",
-    alignItems:"center",
-    justifyContent:"space-between",
-    height:"20px",
-    padding:"12px",
-    "&:hover" : {
-       backgroundColor:"#efefef"
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    height: "20px",
+    padding: "12px",
+    "&:hover": {
+      backgroundColor: "#efefef"
     }
   },
-  icnList : 
-  {
-    marginInlineEnd : "18px",
+  graphCampaignName: {
+    fontWeight: 'bold',
+    maxWidth: graphTextWidth[windowSize]
   },
-  groupInput : 
+  mb25: {
+    marginBottom: 25
+  },
+  mt25: {
+    marginTop: 25
+  },
+  fullSize: {
+    height: '100%',
+    width: '100%'
+  },
+  baseButtonsContainer:
   {
-    padding:"10px",
-    outline : "none",
-    border : "1px solid #efefef",
-    marginInlineStart :"10px"
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    paddingTop: '15px',
+    width: '100%',
+    display: 'flex',
+    marginTop: 'auto',
+    "@media screen and (max-width: 768px)": {
+      flexDirection: "column-reverse",
+      justifyContent: "center",
+      paddingBottom: "45px",
+      marginTop: "auto",
+      marginBottom: "40px",
+      width: '100% !important',
+    },
+  },
+  flexColCenter: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center'
+  },
+  marginLeftAuto: {
+    marginLeft: 'auto !important'
+  },
+  marginRightAuto: {
+    marginRight: 'auto !important'
+  },
+  deleteIcon: {
+    color: '#fff',
+    backgroundColor: 'transparent',
+    cursor: 'pointer',
+    fontSize: 28
+  },
+  fullWidth: {
+    width: '100%'
+  },
+  errorLabel: {
+    marginTop: 8,
+    color: "red",
+    fontSize: 12
+  },
+  columnError:
+  {
+    borderBottom: "2px solid red",
+    // padding: "4px"
+  },
+  modalInputForm: {
+    "@media screen and (max-width: 375px)": {
+      maxWidth: 'calc(100% - 20px)'
+    }
+  },
+  //#region Dialog
+  dialogIconContainer: {
+    paddingTop: 60,
+    paddingBottom: 15,
+    textAlign: "center",
+    color: "#fff",
+    borderRadius: 200,
+    backgroundColor: "#0371ad",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    top: -50,
+  },
+  dialogIconContainerRTL: {
+    right: -50,
+    paddingInlineEnd: 60,
+    paddingInlineStart: 15,
+  },
+  dialogIconContainerLTR: {
+    left: -50,
+    paddingInlineEnd: 15,
+    paddingInlineStart: 60,
+  },
+  dialogExitButton: {
+    width: 25,
+    height: 25,
+    textAlign: "center",
+    color: "#fff",
+    borderRadius: 25,
+    fontWeight: "700",
+    backgroundColor: "#0371ad",
+    position: "absolute",
+    top: "0.5rem",
+    cursor: "pointer",
+  },
+  dialogExitButtonRTL: {
+    left: "0.5rem",
+  },
+  dialogExitButtonLTR: {
+    right: "0.5rem",
+  },
+  dialogContent: {
+    display: "flex",
+    flexDirection: "column",
+    border: "3px solid #0371ad",
+    borderRadius: 5,
+    margin: "1rem",
+    padding: "1rem",
+    minWidth: dialogWidth[windowSize],
+    "& $notification": {
+      "& $iconWrapper": {
+        margin: iconWrapperMargin[windowSize],
+        minWidth: iconWrapperMinWidth[windowSize],
+      },
+      "& b, & textarea": {
+        fontSize: notificationTitleFontSize[windowSize],
+      },
+    },
+    '& $dialogChildren': {
+      maxHeight: windowSize === 'xs' || windowSize === 'sm' ? '100vh' : 'calc(65vh)',
+      "& $phoneNumber": {
+        "@media screen and (max-width: 560px)": {
+          top: '70px !important',
+          fontSize: 14
+        },
+        "@media screen and (max-width: 414px)": {
+          top: '65px !important',
+          fontSize: 12,
+        },
+        "@media screen and (max-width: 375px)": {
+          '& $phoneNumber': {
+            top: 58,
+            fontSize: 12,
+          }
+        }
+      },
+      '& $wrapChat': {
+        "@media screen and (max-width: 560px)": {
+          top: 110
+        },
+        "@media screen and (max-width: 414px)": {
+          top: '90px !important',
+          right: 30,
+          width: 190,
+          height: 135
+        },
+        "@media screen and (max-width: 375px)": {
+          top: 75,
+          right: 26,
+          width: 180,
+          height: 135
 
-  },
-  saveBtn :
-  {
-    marginInlineStart:"5px",
-    color: '#007bff',
-    border: '1px solid #007bff',
-    padding:"8px",
-    borderRadius:"5px"
-  },
-  grDoc :
-  {
-    border : "2px solid #3DA6F7",
-    borderRadius:"50%",
-    display:"flex",
-    alignItems:"center",
-    justifyContent:"center",
-    padding:"8px",
-    color : "#3DA6F7"
-  },
-  reactSwitch :{
-    verticalAlign: 'middle',
-    marginInlineEnd: '8px'
-  },
-  reactSwitchHe :{
-    verticalAlign: 'middle',
-    marginInlineEnd: '8px',
-    transform: 'rotateY(180deg)'
-  },
-  icn : 
-  {
-    fontSize:"30px",
-    color:"#fff",
-      'path' :
-      {
-        stroke:"#fff"
+        },
       }
-  },
-  baseSum :
-  {
-    display : "grid",
-    gridTemplateColumns :"50% 50%",
-    width:"700px",
-    height:"400px",
-    marginTop:"15px"
-
-
-  },
-  sumLeft  : 
-  {
-marginTop:"10px"
-  },
-  sumRight : 
-  {
-
-  },
-  sumChild :
-  {
-    display:"flex",
-    flexDirection:"column",
-    justifyContent:"center",
-    marginBottom:"25px"
-  },
-  spanSum :
-  {
-    fontSize:"22px",
-    color:"#1771ad",
-    marginBottom:"7px"
-  },
-  bodySum :
-  {
-    fontWeight:"700",
-    fontSize:"18px"
-  },
-  pulseInsert : 
-  {
-    padding:"8px",
-    width:"50px",
-    border:"2px solid #efefef",
-    height:"25px",
-    marginInlineEnd:"8px",
-    borderRadius:"6px",
-    marginBottom: "8px",
-  },
-  pulseActive : 
-  {
-    padding:"8px",
-    width:"50px",
-    border:"2px solid #efefef",
-    height:"25px",
-    marginInlineEnd:"8px",
-    borderRadius:"6px",
-    marginBottom: "8px",
-    outline:"none",
-  },
-  percent: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomLeftRadius: "4px",
-    borderTopLeftRadius: "4px",
-    border: "1px solid #efefef",
-    padding: "8px",
-    marginBottom: "8px",
-    height:"25px",
-    color:"#A7A7A7",
-    cursor:"pointer",
-  },
-  reci: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomRightRadius: "4px",
-    borderTopRightRadius: "4px",
-    borderLeft: "none",
-    border: "1px solid #efefef",
-    padding: "8px",
-    marginBottom: "8px",
-    height:"25px",
-    color:"#A7A7A7",
-    cursor:"pointer",
-  },
-  percentActive: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomLeftRadius: "4px",
-    borderTopLeftRadius: "4px",
-    border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height:"25px",
-    color:"#277BFF",
-    cursor:"pointer",
-  },
-  percentTrue: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomLeftRadius: "4px",
-    borderTopLeftRadius: "4px",
-    border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height:"25px",
-    color:"#ffffff",
-    backgroundColor:" #277BFF",
-    cursor:"pointer",
-  },
-  reciActive: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomRightRadius: "4px",
-    borderTopRightRadius: "4px",
-    borderLeft: "none",
-    border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height:"25px",
-    color:"#277BFF",
-    cursor:"pointer",
-  },
-  percentActivetrue: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomLeftRadius: "4px",
-    borderTopLeftRadius: "4px",
-    border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height:"25px",
-    color:"#ffffff",
-    backgroundColor:"#277BFF"
-  },
-  reciTrue: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomRightRadius: "4px",
-    borderTopRightRadius: "4px",
-    borderLeft: "none",
-    border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height:"25px",
-    color:"#ffffff",
-    backgroundColor:" #277BFF",
-    cursor:"pointer",
-  },
-  reciActivetrue: {
-    display: "flex",
-    width: "72px",
-    alignItems: "center",
-    justifyContent: "center",
-    borderBottomRightRadius: "4px",
-    borderTopRightRadius: "4px",
-    borderLeft: "none",
-    border: "1px solid #277BFF",
-    padding: "8px",
-    marginBottom: "8px",
-    height:"25px",
-    color:"#ffffff",
-    backgroundColor:"#277BFF"
-  },
-  inputreci : 
-  {
-  },
-  reciMain :
-  {
-    marginTop:"10px",
-    border:"1px solid #efefef",
-    boxShadow:"none",
-    borderRadius:"none !important"
-
-  },
-  reciList : 
-  {
-    display:"flex",
-    alignItems:"center",
-    justifyContent:"center",
-    height:"40px",
-    width:"100%",
-    backgroundColor:"#F7F7F7",
-  },
-  manualModal : 
-  {
-    display : "flex",
-    padding : "5px",
-    marginTop:"15px",
-    marginBottom:"15px",
-    width:"100%",
-    alignItems:"center"
-  },
-  inputManual : 
-  {
-    padding:"10px",
-    width:"700px",
-    outline:"none",
-    borderRadius : "4px"
-  },
-  adjustP : 
-  {
-    position:"relative"
-  },
-  adjustC : 
-  {
-    position:"absolute",
-    // height:"80px",
-   
-    width:"150px",
-    display:"flex",
-    flexDirection:"column",
-    borderLeft:"1px solid gray",
-    borderRight:"1px solid gray",
-    borderBottom:"1px solid gray",
-    zIndex:"99",
-    backgroundColor:"#fff"
-
-
-  },
-  grouping : 
-  {
-    padding:"10px",
-    textAlign:"center",
-    borderBottom:"1px solid gray",
-    zIndex:"9",
-    cursor:"pointer",
-
-    '&:hover' : 
-    {
-      backgroundColor:"#3C88BB",
-      color:"#fff",
-      zIndex:"9"
+    },
+    '& $mobileBG': {
+      '& $iconWrapper': {
+        minWidth: windowSize === 'xs' ? 0 : 100
+      }
     }
   },
-  manualChild : 
-  {
-    display : "flex",
-    justifyContent:"space-between",
-    alignItems:"center",
-    marginTop:"15px"
+  dialogButton: {
+    fontFamily: "OpenSansHebrew",
+    color: "#fff",
+    textTransform: "capitalize",
+    width: 120,
+    fontSize: 18,
+    borderRadius: 50,
+  },
+  dialogButtonCenter: {
+    margin: '0 auto',
+    height: 40,
+    fontSize: 18,
+    fontWeight: 400
+  },
+  dialogConfirmButton: {
+    backgroundImage: "linear-gradient(to bottom, #5cb85c 0%, #449d44 100%)",
+    backgroundRepeat: "repeat-x",
+    border: "1px solid #345233",
+    borderTop: "0px solid #345233",
+    boxShadow: "0px 3px 3px #345233",
+    maxWidth: 250,
+  },
+  dialogCancelButton: {
+    background: "#c9302c",
+    backgroundImage: "linear-gradient(to bottom, #d9534f 0%, #c9302c 100%)",
+    border: "1px solid darkred",
+    borderTop: "0px solid darkred",
+    boxShadow: "0px 3px 3px darkred",
+    maxWidth: 150,
+  },
+  dialogConfirmBlueButton: {
+    backgroundImage: "linear-gradient(180deg,#5b9bcd 0%,#4678a3 100%)",
+    maxWidth: 150,
+  },
+  dialogButtonsContainer: {
+    flex: 1,
+    alignContent: "center",
+    justifyContent: "center",
+    "@media screen and (max-width: 375px)": {
+      '& .MuiGrid-item': {
+        padding: '5px !important',
+        marginTop: 15,
+        marginBottom: 15
+      }
+    }
+  },
+  //#endregion
+  textCenter: {
+    textAlign: 'center'
   }
 });

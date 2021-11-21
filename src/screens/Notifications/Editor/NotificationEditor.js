@@ -8,9 +8,11 @@ import {
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
-import { getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups, 
-         getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } 
-from '../../../redux/reducers/notificationSlice';
+import {
+  getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups,
+  getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups
+}
+  from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
@@ -52,7 +54,7 @@ const DashedInput = withStyles({
     borderRadius: 0,
     "& .MuiOutlinedInput-multiline": {
       padding: 0,
-      height: 40,
+      minHeight: 55,
       paddingTop: 0,
       '& textarea + fieldset': {
         border: '1px dashed #64a1bd',
@@ -246,7 +248,7 @@ const NotificationEditor = ({ props, classes }) => {
     handleFromDate(date);
     setTimePickerOpen(false);
   }
-  
+
   /* #endregion */
   /* #region  Data Handlers */
   const handlePublicKey = async () => {
@@ -258,24 +260,28 @@ const NotificationEditor = ({ props, classes }) => {
       setPublicKey('');
     }
   }
-  const saveNotification = (isExit, isContinue) => {
-    // Show loader
-    // event.preventDefault();
+
+  useEffect(() => {
+    if (!ShowRedirectButton) {
+      setModel({ ...model, RedirectURL: '', RedirectButtonText: '' });
+    }
+  }, [ShowRedirectButton])
+
+  const saveNotification = async (isExit, isContinue) => {
     setSourceModel(model);
+
+    const modelToSave = { ...model };
+
     if (isValidNotification()) {
-      if (!ShowRedirectButton) {
-        model.RedirectButtonText = '';
-        model.RedirectURL = '';
-      }
-      if (model && model.ID > 0) {
-        dispatch(updateNotification(model));
+      if (modelToSave && modelToSave.ID > 0) {
+        await dispatch(updateNotification(modelToSave));
         setToastMessage(toastMessages.SUCCESS);
         if (isContinue) {
-          redirectAfterSave(model.ID);
+          redirectAfterSave(modelToSave.ID);
         }
       }
       else {
-        dispatch(save(model)).then((response) => {
+        dispatch(save(modelToSave)).then((response) => {
           if (props.match.params.create || props.match.url.toLowerCase().indexOf('create') > -1) {
             if (isExit) {
               window.location.href = "/react/Notifications";
@@ -309,8 +315,7 @@ const NotificationEditor = ({ props, classes }) => {
       }
     }
   }
-  const saveSettings = async (isExit) => {
-    // event.preventDefault();
+  const saveSettings = async (isExit, isSummary = false) => {
     setSourceModel(model);
     if (isValidSettings()) {
       if (sendType === "2") {
@@ -325,11 +330,14 @@ const NotificationEditor = ({ props, classes }) => {
       const data = { NotificationId: parseInt(props.match.params.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
       const result = await dispatch(saveNotificationSettings(data));
       if (result.payload == true) {
-        if (!isExit) {
+        if (!isExit && isSummary === false) {
           setToastMessage(toastMessages.SAVE_SETTINGS);
         }
         else {
+          if (isSummary === false)
             window.location.href = "/react/Notifications";
+          else
+            getSummary(null);
         }
       }
       else {
@@ -382,8 +390,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
     setSelected(selectedList);
   }
-  const getSummary = async (event) => {
-    event.preventDefault();
+  const getSummary = async () => {
     const totalResonse = await dispatch(getUniqueClientsByGroups(selectedGroups.map((g) => { return g.Id; })));
     const currentTotalRecipients = selectedGroups.reduce(function (a, b) {
       return a + b['Members'];
@@ -532,6 +539,10 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const handleRedirectVisibillity = (event) => {
     setRedirectButtonVisibillity(event.target.checked);
+    if (event.target.checked === false) {
+      setModel({ ...model, RedirectURL: '' });
+      setModel({ ...model, RedirectButtonText: '' });
+    }
   }
   const handleNotificationTitle = (event) => {
     if (event.target.value.length <= 50) {
@@ -650,6 +661,10 @@ const NotificationEditor = ({ props, classes }) => {
           document.querySelector("#notificationRedirectUrl").classList.add("error");
         }
       }
+      if (model.RedirectButtonText.length <= 0) {
+        errorList.push({ message: t('notifications.validation.redirectButtonText') });
+        document.querySelector("#notificationButton").classList.add("error");
+      }
     }
     if (model.Title === '') {
       errorList.push({ message: t('notifications.validation.title') });
@@ -742,7 +757,7 @@ const NotificationEditor = ({ props, classes }) => {
         <Grid
           container
           direction="row"
-          justify="flex-start"
+          justifyContent="flex-start"
           alignItems="center"
           spacing={2}
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
@@ -795,7 +810,7 @@ const NotificationEditor = ({ props, classes }) => {
           }
           {ShowRedirectButton &&
             <Grid item md={3} xs={12}>
-              <label>{t('notifications.redirectUrlButton')}</label>
+              <label>* {t('notifications.redirectUrlButton')}</label>
               <TextField
                 placeholder={t('notifications.redirectUrlButton')}
                 id="notificationButton"
@@ -811,7 +826,7 @@ const NotificationEditor = ({ props, classes }) => {
         <Grid
           container
           direction="row"
-          justify="flex-start"
+          justifyContent="flex-start"
           alignItems="flex-start"
           className={clsx(classes.dialogButtonsContainer, classes.flexStart)}>
           <Grid item md={4} xs={12}>
@@ -954,7 +969,7 @@ const NotificationEditor = ({ props, classes }) => {
                 value={model.Body}
                 className={clsx(classes.transparent, classes.dashed, classes.notificationText)}
                 onChange={handleNotificationText}
-                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', maxHeight: 45 }}
+                style={{ direction: model.Direction == 2 ? 'rtl' : 'ltr', textAlign: model.Direction == 2 ? 'right' : 'left', maxHeight: 55 }}
                 onFocus={handleTextFocus}
                 variant="outlined"
                 id="notificationText"
@@ -979,19 +994,23 @@ const NotificationEditor = ({ props, classes }) => {
     return (
       <Grid container
         direction="row"
-        justify="flex-start"
+        justifyContent="flex-start"
         spacing={4}
         className={classes.wizardFlex}
       >
         <Grid item md={7} xs={12}>
           <h2 className={classes.sectionTitle}>{t('notifications.toWhomToSend')}</h2>
           <Groups classes={classes}
-            groupList={groupList}
+            list={groupList}
             selectedList={selectedGroups}
             callbackSelectedGroups={callbackSelectedGroups}
             callbackUpdateGroups={callbackUpdateGroups}
             callbackSelectAll={callbackSelectAll}
-            bootNotify = {true}
+            isNotifications={true}
+            showFilter={false}
+            isSms={false}
+            noSelectionText={t("notifications.noGroupsSelected")}
+            innerHeight={325}
           />
           <Box>
             <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>
@@ -1018,7 +1037,7 @@ const NotificationEditor = ({ props, classes }) => {
                 value={sendDate}
                 onChange={handleDatePicker}
                 placeholder={t('notifications.date')}
-                buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
+                // buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
                 autoOk
               />
             </Box>
@@ -1029,7 +1048,7 @@ const NotificationEditor = ({ props, classes }) => {
                 onTimeChange={handleTimePicker}
                 placeholder={t('notifications.hour')}
                 isTimePicker={true}
-                buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
+                // buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
                 ampm={false}
                 timePickerOpen={timePickerOpen}
                 autoOk
@@ -1217,6 +1236,7 @@ const NotificationEditor = ({ props, classes }) => {
 
       return (
         <Dialog
+          maxHeight="calc(70vh)"
           disableBackdropClick={true}
           style={{ minHeight: 400 }}
           showDivider={false}
@@ -1328,7 +1348,7 @@ const NotificationEditor = ({ props, classes }) => {
     )
   }
   const WizardButtons = () => {
-    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")}>
+    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")} style={{ paddingBottom: 40 }}>
       {activeStep == 0 &&
         <Box>
           <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"} >
@@ -1413,7 +1433,7 @@ const NotificationEditor = ({ props, classes }) => {
           )}
           color="primary"
           style={{ margin: '8px' }}
-          onClick={event => activeStep == 0 ? saveNotification(false, true) : getSummary(event)}>
+          onClick={event => activeStep == 0 ? saveNotification(false, true) : saveSettings(false, true)}>
           {activeStep == 0 ? t('notifications.saveAndContinue') : t('notifications.summary')}
         </Button>
       </Box>
@@ -1436,8 +1456,9 @@ const NotificationEditor = ({ props, classes }) => {
       currentPage='notifications'
       subPage='create'
       customPadding={true}
-      classes={classes}>
-      <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column' }}>
+      classes={classes}
+      containerClass={classes.editor}>
+      <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column', paddingBottom: 40 }}>
         {renderToast()}
         {renderHeader()}
         {renderNotification()}
