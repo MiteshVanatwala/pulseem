@@ -14,7 +14,6 @@ import report from './Reports.he.json'
 import emailStatus from './EmailStatus.he.json'
 import emoji from './Emoji.he.json'
 import payment from './payment.he.json'
-import report from './reports.he.json'
 
 export const he = {
   automations,
