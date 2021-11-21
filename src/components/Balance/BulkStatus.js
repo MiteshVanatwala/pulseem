@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PricePackages from './PaymentWizard/PricePackages';
 import { GoPackage } from 'react-icons/go/index';
 import { Dialog } from '../managment/index';
-import { Grid, Paper, Typography, Button } from '@material-ui/core';
+import { Grid, Paper, Typography } from '@material-ui/core';
 import { getPackagesDetails, getPurchaseLog } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
@@ -11,7 +11,7 @@ import { CgShoppingCart } from 'react-icons/cg';
 import CustomTooltip from '../Tooltip/CustomTooltip';
 
 const BulkStatus = ({ classes }) => {
-  const { billingTypeId, accountFeatures, isRTL } = useSelector(state => state.core)
+  const { billingTypeId, accountFeatures } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
   const { subAccountSettings } = useSelector(state => state.common);
   const { username } = useSelector(state => state.user);
@@ -47,13 +47,18 @@ const BulkStatus = ({ classes }) => {
     }
   }
 
-  useEffect(async () => {
-    await dispatch(getPackagesDetails());
-    await dispatch(getPurchaseLog());
+  useEffect(() => {
+    const initPackages = async () => {
+      await dispatch(getPackagesDetails());
+      await dispatch(getPurchaseLog());
+    }
+
+    initPackages();
   }, []);
 
   const handleDialogClose = () => {
     setIsOpenPackageDialog(false);
+    dispatch(getPackagesDetails());
   }
 
   const renderHtml = (html) => {
