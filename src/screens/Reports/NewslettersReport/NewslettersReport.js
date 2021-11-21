@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
-  Grid, Button, TextField, InputAdornment, Input, Box, FormControlLabel, Checkbox, Select, MenuItem, CardMedia, Card, CardContent, RadioGroup, Radio, FormGroup, FormControl, Tooltip
+  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, 
+  Grid, Button, TextField, Box, Checkbox, Tooltip
 } from '@material-ui/core'
 import Switch from "react-switch";
 import {
-  SendGreenIcon, SearchIcon, ExportIcon, ReportsIcon
+  SearchIcon, ExportIcon, ReportsIcon
 } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, SearchField
@@ -17,7 +17,6 @@ import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import { apiURL } from '../../../config/index'
 import { CSVLink } from 'react-csv'
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
@@ -629,7 +628,6 @@ const NewslettersReport = ({ classes }) => {
       ClickCountUnique,
       RemovedClients,
       SendError,
-      PercetangeRemovedClients,
       PercentageOpens,
       PercetangeClicks,
       NotOpened
