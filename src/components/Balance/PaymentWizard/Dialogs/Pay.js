@@ -23,7 +23,7 @@ const Pay = ({
             </Grid>
             {!addNewCard && creditCards && creditCards.map((c, index) => {
                 return (
-                    <Box>
+                    <Box key={`credit_${index}`}>
                         <FormControl sx={{ m: 1 }} component="fieldset">
                             <FormGroup>
                                 <FormControlLabel
