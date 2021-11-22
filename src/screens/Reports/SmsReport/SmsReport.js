@@ -314,7 +314,7 @@ const SmsReport = ({ classes }) => {
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.ToalSent")}</TableCell>
 
           {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center' /> */}
-          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("common.Clicks")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("common.Clicks")}</TableCell>
           {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center' /> */}
 
           {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("common.failedStatus")}</TableCell>
@@ -322,7 +322,7 @@ const SmsReport = ({ classes }) => {
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
 
-          <TableCell classes={cellStyle} className={classes.flex4} align='center'>{t("smsReport.credits")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("smsReport.credits")}</TableCell>
 
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.DLR")}</TableCell>
         </TableRow>
@@ -455,7 +455,7 @@ const SmsReport = ({ classes }) => {
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex4}>
+          className={classes.flex2}>
           <Grid container direction={'row'} className={classes.justifyBetween}>
             <Grid item className={classes.plr10}>
               {renderIntData(ClicksCount, 'blue', hrefs.ClickCount)}
@@ -463,9 +463,9 @@ const SmsReport = ({ classes }) => {
             <Grid item className={classes.plr10}>
               {renderIntData(UniqueClicksCount, 'blue', hrefs.ClickCountUnique)}
             </Grid>
-            <Grid item className={clsx(classes.plr10)}>
+            {/* <Grid item className={clsx(classes.plr10)}>
               {renderPercetangeData(ClicksPercentage, 'blue', hrefs.PercetangeClicks, false)}
-            </Grid>
+            </Grid> */}
           </Grid>
         </TableCell>
 
@@ -486,7 +486,7 @@ const SmsReport = ({ classes }) => {
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex4}>
+          className={classes.flex3}>
           <Grid container direction={'row'} className={classes.justifyBetween}>
             <Grid item className={classes.plr10}>
               {renderIntData(CreditsPerSms, '', { title: t("mainReport.postCredits") })}
