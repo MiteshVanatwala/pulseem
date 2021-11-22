@@ -252,7 +252,7 @@ const RecipientChart = ({ classes, }) => {
                 <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
                 <Box className={classes.doughnutBox}>
                     <Link
-                        href="javascript:void(0)"
+                        href="#!"
                         className={classes.chartLabel}
                         onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link>
                     <Doughnut data={innerData} options={options} style={{ cursor: 'pointer' }} />
@@ -442,7 +442,7 @@ const RecipientChart = ({ classes, }) => {
                             title={t('dashboard.chartTooltip')}
                             classes={{
                                 tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                                arrow: classes.black
+                                arrow: classes.fBlack
                             }}
                             enterTouchDelay={50}
                             placement={"top"}>

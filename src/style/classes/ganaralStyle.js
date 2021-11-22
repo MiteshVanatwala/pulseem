@@ -2,7 +2,7 @@ const dialogWidth = {
   xs: '200px',
   sm: '350px',
   md: '350px',
-  lg: '500px'
+  lg: '460px'
 }
 
 // const paperMinWidthSm = {
