@@ -60,31 +60,31 @@ const SmsReport = ({ classes }) => {
 
   const getHrefs = (id) => ({
     TotalSendTo: {
-      href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}`
+      href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     ClickCount: {
       title: t('common.Clicks'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     PercetangeClicks: {
       title: t('mainReport.locUniqueClicksPercents.HeaderText'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Failed: {
       title: t("common.failedStatus"),
-      href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}`
+      href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Removed: {
       title: t('mainReport.removed'),
-      href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}`
+      href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     DLR: {
       title: t('common.DLR'),
-      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}`
+      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     }
   })
 
