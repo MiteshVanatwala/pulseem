@@ -696,7 +696,7 @@ const SmsReport = ({ classes }) => {
       <>
         <Box style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
           <img src={arrowDown} width={50} height={50} className={classes.pl25} />
-          <Typography className={clsx(classes.f28, classes.bold)} align='center'>{t('smsReport.amountOfEmails')}</Typography>
+          <Typography className={clsx(classes.f28, classes.bold)} align='center'>{t('smsReport.amountSent')}</Typography>
           <img src={arrowDown} width={50} height={50} className={classes.pr25} />
         </Box>
         <Paper elevation={3} className={classes.smsGraph}>
