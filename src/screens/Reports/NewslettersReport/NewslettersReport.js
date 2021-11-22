@@ -430,7 +430,7 @@ const NewslettersReport = ({ classes }) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t('campaigns.camapignName')}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex4} align='center'>{t('campaigns.camapignName')}</TableCell>
 
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.locTotalSendPlan.HeaderText")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.ToalSent")}</TableCell>
@@ -476,7 +476,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderNameCell = (row) => {
-    const { CampaignID, Name, SendDate, isChecked = false } = row
+    const { CampaignID, Name, SendDate, isChecked = false, Status } = row
 
     const date = SendDate ? moment(SendDate) : ''
     const showDate = SendDate ? date.format('DD/MM/YYYY') : ''
@@ -499,10 +499,8 @@ const NewslettersReport = ({ classes }) => {
             </Typography>
           </Tooltip>
           <Typography className={classes.grayTextCell}>
-            {t("report.SendDate")}
-          </Typography>
-          <Typography className={classes.grayTextCell}>
-            {`${showDate} ${showTime}`}
+            {t("report.SendDate")} {`${showDate} ${showTime}`}
+            {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           </Typography>
         </>
       )
@@ -537,10 +535,8 @@ const NewslettersReport = ({ classes }) => {
             </Typography>
           </Tooltip>
           <Typography className={classes.grayTextCell}>
-            {t("report.SendDate")}
-          </Typography>
-          <Typography className={classes.grayTextCell}>
-            {`${showDate} ${showTime}`}
+            {t("report.SendDate")} {`${showDate} ${showTime}`}
+            {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           </Typography>
         </Grid>
       </Grid>
@@ -629,6 +625,7 @@ const NewslettersReport = ({ classes }) => {
       ClickCountUnique,
       RemovedClients,
       SendError,
+      Status,
       PercetangeRemovedClients,
       PercentageOpens,
       PercetangeClicks,
@@ -644,9 +641,8 @@ const NewslettersReport = ({ classes }) => {
         <TableCell
           classes={cellBodyStyle}
           align='center'
-          className={clsx(classes.flex3)}>
-          {renderNameCell({ CampaignID, Name, SendDate, isChecked: true })}
-          {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
+          className={clsx(classes.flex4)}>
+          {renderNameCell({ CampaignID, Name, SendDate, isChecked: true, Status })}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}

@@ -308,7 +308,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   actionButtonLightGreen: {
     backgroundColor: '#27AE60',
-    marginInlineEnd : '10px',
+    marginInlineEnd: '10px',
     '&:hover': {
       backgroundColor: '#219150'
     }
@@ -318,7 +318,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   actionButtonLightBlue: {
     backgroundColor: '#3498DB',
-    marginInlineEnd : '10px',
+    marginInlineEnd: '10px',
     '&:hover': {
       backgroundColor: '#3498DB'
     }
@@ -401,6 +401,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   flex3: {
     flex: 3
+  },
+  flex4: {
+    flex: 4
   },
   flex15: {
     flex: 1
@@ -1350,8 +1353,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: "22px", marginTop: "5px"
   },
   cellText: {
-    display: 'flex', 
-    flexDirection: 'column', 
+    display: 'flex',
+    flexDirection: 'column',
     '& a, & p': {
       lineHeight: '1.1'
     }
