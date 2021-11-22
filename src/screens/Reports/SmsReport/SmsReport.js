@@ -64,11 +64,13 @@ const SmsReport = ({ classes }) => {
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: ``
+      //href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     ClickCount: {
       title: t('common.Clicks'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: ``
+      //href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     PercetangeClicks: {
       title: t('mainReport.locUniqueClicksPercents.HeaderText'),
@@ -432,26 +434,6 @@ const SmsReport = ({ classes }) => {
           className={classes.flex1}>
           {renderIntData(totalSent, '')}
         </TableCell>
-        {/* <TableCell
-          classes={noBorderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderIntData(ClicksCount, 'blue', hrefs.ClickCount)}
-        </TableCell>
-        <TableCell
-          classes={noBorderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderIntData(UniqueClicksCount, 'blue', hrefs.ClickCountUnique)}
-        </TableCell>
-        <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderPercetangeData(ClicksPercentage, 'blue', hrefs.PercetangeClicks, false)}
-        </TableCell> */}
-
-
         <TableCell
           classes={borderCellStyle}
           align='center'
@@ -463,9 +445,6 @@ const SmsReport = ({ classes }) => {
             <Grid item className={classes.plr10}>
               {renderIntData(UniqueClicksCount, 'blue', hrefs.ClickCountUnique)}
             </Grid>
-            {/* <Grid item className={clsx(classes.plr10)}>
-              {renderPercetangeData(ClicksPercentage, 'blue', hrefs.PercetangeClicks, false)}
-            </Grid> */}
           </Grid>
         </TableCell>
 
