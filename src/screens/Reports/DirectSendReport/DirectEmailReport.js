@@ -13,6 +13,7 @@ import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import moment from 'moment';
 import { getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
+import { Loader } from '../../../components/Loader/Loader';
 
 const RenderRow = ({
   classes,
@@ -209,6 +210,7 @@ const DirectEmailReportTab = ({
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
   const { t } = useTranslation();
+  const [showLoader, setLoader] = useState(false)
 
   const handleSearch = async () => {
     const { email = {} } = searchData || {};
@@ -231,9 +233,11 @@ const DirectEmailReportTab = ({
       }
     })
 
+    setLoader(true)
     dispatch(getNewsletterDirectReport(searchObjects))
     handleSearching('email', true);
     handlePageChange(1);
+    setLoader(false)
   }
 
   const handlePageSearching = (val) => {
@@ -566,6 +570,7 @@ const DirectEmailReportTab = ({
       {renderTotalSection()}
       {renderTable()}
       {renderTablePagination()}
+      <Loader isOpen={showLoader} />
     </>
   );
 }
