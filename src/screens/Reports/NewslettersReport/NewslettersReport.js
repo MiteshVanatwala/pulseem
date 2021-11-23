@@ -275,8 +275,10 @@ const NewslettersReport = ({ classes }) => {
         sortData = sortData.filter(row => filtersObject[values.type](row, values))
       });
       setSearchResults(sortData);
-      setSearching(true);
-      setPage(1);
+      if (newslettersReports.length !== sortData.length) {
+        setSearching(true);
+        setPage(1);
+      }
     }
 
     const handleFromDateChange = (value) => {
