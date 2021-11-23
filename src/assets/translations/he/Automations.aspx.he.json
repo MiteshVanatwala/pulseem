@@ -44,7 +44,7 @@
   "labelAutomationSubHeader": "הזן שם לאוטומציה",
   "TextConfirmLeaveWithoutSave": "נותרו לך זרימת עבודה שלא נשמרו, האם ברצונך לסגור בלי לשמור?",
   "DayActive": "יום פעיל",
-  "Recipient": "נמענים",
+  "Recipient": "נמען",
   "days": "ימים",
   "errorTitle": "שגיאה!",
   "errorContent": "יש שגיאות אוטומציה. אנא תקן אותם תחילה כדי להפעיל את האוטומציה.",
