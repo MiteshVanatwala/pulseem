@@ -2,13 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Link,
-  Grid, Button, TextField, InputAdornment, Input, Box, FormControlLabel, Checkbox, Select, MenuItem, CardMedia, Card, CardContent, RadioGroup, Radio, FormGroup, FormControl, Tooltip
+  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box, Checkbox, Tooltip
 } from '@material-ui/core'
 import Switch from "react-switch";
-import {
-  SendGreenIcon, SearchIcon, ExportIcon, ReportsIcon
-} from '../../../assets/images/managment/index'
+import { SearchIcon, ExportIcon, ReportsIcon } from '../../../assets/images/managment/index'
 import {
   TablePagination, ManagmentIcon, DateField, SearchField
 } from '../../../components/managment/index'
@@ -17,7 +15,6 @@ import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import { apiURL } from '../../../config/index'
 import { CSVLink } from 'react-csv'
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
@@ -43,7 +40,7 @@ const NewslettersReport = ({ classes }) => {
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
   const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
   const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
-  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
+  const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.tableCellRootResponsive) }
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const csvLinkRef = useRef(null)
@@ -431,27 +428,12 @@ const NewslettersReport = ({ classes }) => {
       <TableHead>
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex4} align='center'>{t('campaigns.camapignName')}</TableCell>
-
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.locTotalSendPlan.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.ToalSent")}</TableCell>
-
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' />
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' />
-
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' />
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' />
-
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
-          {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.GridButtonColumnResource4.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.removals")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("mainReport.GridButtonColumnResource3.HeaderText")}</TableCell> */}
-
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
-          {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.reasons")}</TableCell> */}
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.locTotalSendPlan.HeaderText")}</span></TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.ToalSent")}</span> </TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'></TableCell>
+          <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen)} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} ></TableCell>
         </TableRow>
       </TableHead>
@@ -562,7 +544,6 @@ const NewslettersReport = ({ classes }) => {
         <Typography className={clsx(
           classes.middleWrapText, classes.lineHeight1point2,
           colorTextStyle[type] || '',
-          //{[classes.f15]: !!icon}
         )}>
           {title}
         </Typography>
@@ -596,16 +577,15 @@ const NewslettersReport = ({ classes }) => {
     );
   }
 
-  const renderIntData = (value, type, data = {}) => {
+  const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
     const { title = t("notifications.tblBody.total"), href = '' } = data
-    //const innerHref=clickable?`/CampaignStatistics/${id}`:'';
     return (
       <Box className={classes.cellText}>
-        <Typography component={href !== '' ? 'a' : 'p'} href={href ? href : ''} className={clsx(classes.middleTxt, colorTextStyle[type] || '')}>
+        <Typography component={href !== '' && clickable ? 'a' : 'p'} href={href ? href : ''} className={clsx(classes.middleTxt, colorTextStyle[type] || '')}>
           {value && value.toLocaleString() || '0'}
         </Typography>
         <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
-          {title}
+          {title} {innerTitle !== '' ? <span className={classes.showTitleInline}>{innerTitle}</span> : null}
         </Typography>
       </Box>
     )
@@ -626,7 +606,6 @@ const NewslettersReport = ({ classes }) => {
       RemovedClients,
       SendError,
       Status,
-      PercetangeRemovedClients,
       PercentageOpens,
       PercetangeClicks,
       NotOpened
@@ -636,7 +615,7 @@ const NewslettersReport = ({ classes }) => {
       <TableRow
         key={CampaignID}
         classes={rowStyle}
-        className={classes.maxHeight87}
+        className={clsx(classes.maxHeight87, classes.maxHeightReponsive)}
       >
         <TableCell
           classes={cellBodyStyle}
@@ -644,75 +623,75 @@ const NewslettersReport = ({ classes }) => {
           className={clsx(classes.flex4)}>
           {renderNameCell({ CampaignID, Name, SendDate, isChecked: true, Status })}
         </TableCell>
+
+
         <TableCell
-          classes={noBorderCellStyle}
+          classes={borderCellStyle}
           align='center'
-          className={classes.flex1}>
-          {renderIntData(TotalSendPlan, '')}
+          className={classes.flex2}>
+          <Grid container className={clsx(classes.justifyBetween, classes.responsiveFlex)}>
+            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+              {renderIntData(TotalSendPlan, '', row, windowSize !== 'xs', t("mainReport.totalSendPlan"))}
+            </Grid>
+            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+              {renderIntData(TotalSendCompleted, '', hrefs.TotalSendCompleted, windowSize !== 'xs', t("mainReport.ToalSent"))}
+            </Grid>
+          </Grid>
         </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex1}>
-          {renderIntData(TotalSendCompleted, '', hrefs.TotalSendCompleted)}
+          className={classes.flex4}>
+          <Grid container className={clsx(classes.justifyBetween, classes.responsiveFlex)}>
+            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+              {renderDataTooltip(OpenCount, 'green', hrefs.OpenCount, 'mainReport.OpensTotalTooltip.Text', row.CampaignID)}
+            </Grid>
+            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+              {renderDataTooltip(OpenCountUnique, 'green', hrefs.OpenCountUnique, 'mainReport.OpensUniqueTooltip.Text', row.CampaignID)}
+            </Grid>
+            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+              {renderPercetangeData(PercentageOpens, 'green', hrefs.PercentageOpens, row.CampaignID)}
+            </Grid>
+          </Grid>
         </TableCell>
-        <TableCell
-          classes={noBorderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderDataTooltip(OpenCount, 'green', hrefs.OpenCount, 'mainReport.OpensTotalTooltip.Text', row.CampaignID)}
-        </TableCell>
-        <TableCell
-          classes={noBorderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderDataTooltip(OpenCountUnique, 'green', hrefs.OpenCountUnique, 'mainReport.OpensUniqueTooltip.Text', row.CampaignID)}
-        </TableCell>
-        <TableCell
-          classes={borderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderPercetangeData(PercentageOpens, 'green', hrefs.PercentageOpens, row.CampaignID)}
-        </TableCell>
-        <TableCell
-          classes={noBorderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderDataTooltip(ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
-        </TableCell>
-        <TableCell
-          classes={noBorderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderDataTooltip(ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
-        </TableCell>
+
+
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex1}>
-          {renderPercetangeData(PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
-        </TableCell>
-        <TableCell
-          classes={noBorderCellStyle}
-          align='center'
-          className={classes.flex1}>
-          {renderIntData(SendError, 'red', hrefs.SendError)}
+          className={classes.flex4}>
+          <Grid container className={clsx(classes.justifyBetween, classes.responsiveFlex)}>
+            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+              {renderDataTooltip(ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
+            </Grid>
+            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+              {renderDataTooltip(ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
+            </Grid>
+            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+              {renderPercetangeData(PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
+            </Grid>
+          </Grid>
         </TableCell>
 
         <TableCell
-          classes={noBorderCellStyle}
+          classes={borderCellStyle}
           align='center'
-          className={classes.flex1}>
-          {renderIntData(RemovedClients, 'red', hrefs.RemovedClients)}
+          className={classes.flex4}>
+          <Grid container className={clsx(classes.justifyBetween, classes.responsiveFlex)}>
+            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+              {renderIntData(SendError, 'red', hrefs.SendError, true)}
+            </Grid>
+            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+              {renderIntData(RemovedClients, 'red', hrefs.RemovedClients, true)}
+            </Grid>
+            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
+              {renderIntData(NotOpened, 'red', hrefs.NotOpened, true)}
+            </Grid>
+          </Grid>
         </TableCell>
         <TableCell classes={borderCellStyle}
           align='center'
-          className={classes.flex1}>
-          {renderIntData(NotOpened, 'red', hrefs.NotOpened)}
-        </TableCell>
-        <TableCell classes={borderCellStyle}
-          align='center'
-          className={classes.flex1}>
+          className={clsx(classes.flex1, classes.hideOnSmallScreen)}>
           <ManagmentIcon
             classes={classes}
             textClass={classes.lineHeight1point2}
@@ -741,19 +720,13 @@ const NewslettersReport = ({ classes }) => {
   const renderPhoneRow = (row) => {
     const {
       CampaignID,
-      Name,
-      SendDate,
       TotalSendPlan,
-      TotalSendCompleted,
       OpenCount,
       OpenCountUnique,
       ClickCount,
       ClickCountUnique,
       RemovedClients,
       SendError,
-      PercetangeRemovedClients,
-      PercentageOpens,
-      PercetangeClicks,
       NotOpened
     } = row
     const hrefs = getHrefs(CampaignID)
@@ -767,13 +740,15 @@ const NewslettersReport = ({ classes }) => {
             <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
             </Box>
-            <Box className={classes.w110}>
-              <Typography
-                component='a'
-                href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`}
-                className={classes.linkNoDesign}>
-                {t('mainReport.locGraph.HeaderText')}
-              </Typography>
+            <Box>
+              <ManagmentIcon
+                classes={classes}
+                iconClass={classes.w25}
+                textClass={classes.lineHeight1point2}
+                icon={ReportsIcon}
+                lable={t('mainReport.locGraph.HeaderText')}
+                href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`}
+              />
             </Box>
           </Box>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >

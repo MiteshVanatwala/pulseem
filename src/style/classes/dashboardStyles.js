@@ -26,8 +26,8 @@ const shortcutBoxWidth = {
 export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     mobileReportHead: {
         fontWeight: 'bold',
-        marginTop: 15,
-        marginInlineStart: 10
+        marginTop: 10,
+        // marginInlineStart: 10
     },
     tabelCellPadding: {
         paddingBlock: 15

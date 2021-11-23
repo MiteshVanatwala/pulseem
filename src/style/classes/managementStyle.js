@@ -123,7 +123,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     flexDirection: 'column',
     minWidth: 50,
-    padding: '0 10px'
+    padding: '0 10px',
+    "@media screen and (max-width: 1240px)": {
+      padding: '0px 5px'
+    },
+    "@media screen and (max-width: 1110px)": {
+      padding: '0px 5px'
+    },
   },
   tableRowRoot: {
     display: 'flex',
@@ -174,19 +180,29 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
-    color: '#333'
+    color: '#333',
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 16
+    },
   },
   middleTxt: {
     fontSize: 18,
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
-    color: '#333'
+    color: '#333',
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 16
+    },
+
   },
   middleWrapText: {
     fontSize: 18,
     overflow: "hidden",
-    color: '#333'
+    color: '#333',
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 16
+    },
   },
   wrapText: {
     fontSize: 16,
@@ -213,7 +229,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     textDecoration: 'none',
     width: '100%',
     padding: iconPadding[windowSize],
-    color: '#333'
+    color: '#333',
+    "@media screen and (max-width: 768px)": {
+      padding: 0
+    },
+
   },
   managmentIcon: {
     width: iconWidth[windowSize],
@@ -562,6 +582,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     zIndex: 0
   },
   phoneSearchBarIcon: {
+    marginRight: isRTL ? 0 : -8,
+    marginLeft: isRTL ? -8 : 0,
     backgroundColor: '#E3E9F0',
     padding: 10,
     '&:hover': {
@@ -630,7 +652,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   grayTextCell: {
     'WebkitLineClamp': 1,
-    color: '#7F7F7F'
+    color: '#7F7F7F',
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 14
+    },
   },
   fontBold: {
     fontWeight: 700
@@ -729,7 +754,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '100%',
-    maxWidth: 250
+    maxWidth: 250,
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 16
+    },
   },
   p10: {
     padding: 10
@@ -1357,6 +1385,50 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     flexDirection: 'column',
     '& a, & p': {
       lineHeight: '1.1'
+    }
+  },
+  tableCellRootResponsive: {
+    "@media screen and (max-width: 1460px)": {
+      padding: "0 5",
+    },
+  },
+  responsiveFlex: {
+    alignItems: 'center',
+    "@media screen and (max-width: 1460px)": {
+      flexWrap: 'nowrap',
+    },
+    "@media screen and (max-width: 1170px)": {
+      flexDirection: 'column',
+    }
+  },
+  maxHeightReponsive: {
+    "@media screen and (max-width: 1170px)": {
+      maxHeight: '150px !important',
+      textAlign: isRTL ? "right" : "left"
+    }
+  },
+  noPonSmallScreen: {
+    "@media screen and (max-width: 1170px)": {
+      padding: '0px !important'
+    }
+  },
+  hideOnSmallScreen: {
+    "@media screen and (max-width: 1170px)": {
+      display: 'none',
+      minWidth: 0,
+      padding: 0
+    }
+  },
+  showTitleInline: {
+    display: 'none',
+    "@media screen and (max-width: 1170px)": {
+      display: 'inline-block',
+      fontSize: 16
+    }
+  },
+  reponsivePB5: {
+    "@media screen and (max-width: 1170px)": {
+      paddingBottom: '10px !important'
     }
   }
 })
