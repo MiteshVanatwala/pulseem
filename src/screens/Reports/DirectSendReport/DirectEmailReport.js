@@ -20,7 +20,8 @@ const RenderRow = ({
   noborderCell,
   rowStyle,
   row,
-  t = () => null
+  t = () => null,
+  windowSize
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -160,24 +161,28 @@ const RenderRow = ({
           className={classes.flex1}>
           {renderCell(row.ToEmail)}
         </TableCell>
-        <TableCell
-          classes={cellStyle}
-          align='center'
-          className={classes.flexHalf}>
-          {renderCell(row.Status, 'status')}
-        </TableCell>
-        <TableCell
-          classes={cellStyle}
-          align='center'
-          className={classes.flex2}>
-          {renderCell(row.Subject)}
-        </TableCell>
-        <TableCell
-          classes={noborderCell}
-          align='center'
-          className={classes.flexHalf}>
-          {renderCell(row.OpenCount)}
-        </TableCell>
+        {windowSize !== 'xs' && (
+          <>
+            <TableCell
+              classes={cellStyle}
+              align='center'
+              className={classes.flexHalf}>
+              {renderCell(row.Status, 'status')}
+            </TableCell>
+            <TableCell
+              classes={cellStyle}
+              align='center'
+              className={classes.flex2}>
+              {renderCell(row.Subject)}
+            </TableCell>
+            <TableCell
+              classes={noborderCell}
+              align='center'
+              className={classes.flexHalf}>
+              {renderCell(row.OpenCount)}
+            </TableCell>
+            </>
+        )}
       </TableRow>
       {renderCollapsibleRow(row)}
     </>
@@ -516,6 +521,7 @@ const DirectEmailReportTab = ({
       <TableBody className={classes.tableDirectRow}>
         {sortData.map(row =>
           <RenderRow
+            windowSize={windowSize}
             classes={classes}
             row={row}
             noborderCell={noborderCell}
