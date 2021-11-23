@@ -733,6 +733,8 @@ const NewslettersReport = ({ classes }) => {
       ClickCountUnique,
       RemovedClients,
       SendError,
+      PercentageOpens,
+      PercetangeClicks,
       NotOpened
     } = row
     const hrefs = getHrefs(CampaignID)
@@ -746,7 +748,7 @@ const NewslettersReport = ({ classes }) => {
             <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
             </Box>
-            <Box>
+            {/* <Box>
               <ManagmentIcon
                 classes={classes}
                 iconClass={classes.w25}
@@ -755,7 +757,7 @@ const NewslettersReport = ({ classes }) => {
                 lable={t('mainReport.locGraph.HeaderText')}
                 href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`}
               />
-            </Box>
+            </Box> */}
           </Box>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
             <Grid item>
@@ -790,6 +792,9 @@ const NewslettersReport = ({ classes }) => {
               <Grid item>
                 {renderIntData(OpenCountUnique, 'green', hrefs.OpenCountUnique, false)}
               </Grid>
+              <Grid item>
+                {renderPercetangeData(PercentageOpens, 'green', hrefs.PercentageOpens, false)}
+              </Grid>
             </Grid>
             <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
               {t("mainReport.GridButtonColumnResource2.HeaderText")}
@@ -800,6 +805,9 @@ const NewslettersReport = ({ classes }) => {
               </Grid>
               <Grid item>
                 {renderIntData(ClickCountUnique, 'blue', hrefs.ClickCountUnique, false)}
+              </Grid>
+              <Grid item>
+                {renderPercetangeData(PercetangeClicks, 'blue', hrefs.PercetangeClicks, false)}
               </Grid>
             </Grid>
           </Box>
