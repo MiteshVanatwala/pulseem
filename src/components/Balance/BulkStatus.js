@@ -25,6 +25,7 @@ const BulkStatus = ({ classes }) => {
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
 
   const getBillingTypeText = (product) => {
+    console.log(product);
     switch (product.eBillingType) {
       case 2: {
         return t('dashboard.perRecipients');
@@ -169,7 +170,7 @@ const BulkStatus = ({ classes }) => {
             onMouseLeave={() => showSmsPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
-            {isShowSmsPackage && billingTypeId !== "1" ? (
+            {isShowSmsPackage && billingTypeId !== "1" && Sms.eBillingType === 0  ? (
               <a
                 onClick={() => showPackageDialogType(3)}
                 className={clsx(getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
@@ -179,7 +180,7 @@ const BulkStatus = ({ classes }) => {
             )
               :
               (<Typography className={classes.bulkTitle}>
-                <CgShoppingCart className={classes.shoppingCartIcon} /> {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Sms)}
+                {Sms.eBillingType === 0 && <CgShoppingCart className={classes.shoppingCartIcon} />} {getBillingTypeText(Sms)}
               </Typography>)
             }
           </Grid>
@@ -193,7 +194,7 @@ const BulkStatus = ({ classes }) => {
             onMouseLeave={() => showEmailPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
-            {isShowEmailPackage && accountFeatures && accountFeatures.includes('37') && billingTypeId !== "1" ? (
+            {isShowEmailPackage && accountFeatures && accountFeatures.includes('37') && billingTypeId !== "1" && Newsletters.eBillingType === 0 ? (
               <a
                 onClick={() => showPackageDialogType(2)}
                 className={clsx(getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
@@ -203,8 +204,8 @@ const BulkStatus = ({ classes }) => {
             )
               :
               (<Typography className={classes.bulkTitle}>
-                {accountFeatures && accountFeatures.includes('37') && <CgShoppingCart className={classes.shoppingCartIcon} />}
-                {billingTypeId === "1" ? t('dashboard.perUsage') : getBillingTypeText(Newsletters)}
+                {accountFeatures && accountFeatures.includes('37') && Newsletters.eBillingType === 0 && <CgShoppingCart className={classes.shoppingCartIcon} />}
+                {getBillingTypeText(Newsletters)}
               </Typography>)
             }
           </Grid>
