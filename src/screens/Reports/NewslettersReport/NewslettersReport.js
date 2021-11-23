@@ -54,26 +54,26 @@ const NewslettersReport = ({ classes }) => {
     },
     OpenCount: {
       title: t('mainReport.GridButtonColumnResource1.HeaderText'),
-      href: ``,
-      clickable: false
+      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
+      clickable: true
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     OpenCountUnique: {
       title: t('common.Unique'),
-      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
-      clickable: true
+      href: ``,
+      clickable: false
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCount: {
       title: t('common.Clicks'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
-      clickable: false
+      clickable: true
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
-      clickable: true
+      href: ``,
+      clickable: false
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemovedClients: {
@@ -88,17 +88,23 @@ const NewslettersReport = ({ classes }) => {
     },
     PercetangeRemovedClients: {
       title: t('mainReport.removedPercents'),
-      href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`
+      href: ``,
+      //href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`,
+      clickable: false,
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercentageOpens: {
       title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
-      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`
+      href: ``,
+      //href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
+      clickable: false,
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercetangeClicks: {
       title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      href: ``,
+      //href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      clickable: false
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     NotOpened: {
