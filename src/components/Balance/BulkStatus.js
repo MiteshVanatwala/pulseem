@@ -25,7 +25,6 @@ const BulkStatus = ({ classes }) => {
   const { Mms = {}, Newsletters = {}, Notifications = {}, Sms = {} } = packagesDetails || {};
 
   const getBillingTypeText = (product) => {
-    console.log(product);
     switch (product.eBillingType) {
       case 2: {
         return t('dashboard.perRecipients');
@@ -131,6 +130,13 @@ const BulkStatus = ({ classes }) => {
     };
   }
 
+  const isAllowSms = () => {
+    return billingTypeId !== "1" && Sms.eBillingType === 0 && accountAvailablePackages.length > 0;
+  }
+  const isAllowNewsletter = () => {
+    return accountFeatures && accountFeatures.includes('37') && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0;
+  }
+
   const showPackageDialogType = (packageType) => {
     setPackageType(packageType);
     setIsOpenPackageDialog(true);
@@ -170,7 +176,7 @@ const BulkStatus = ({ classes }) => {
             onMouseLeave={() => showSmsPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
-            {isShowSmsPackage && billingTypeId !== "1" && Sms.eBillingType === 0  ? (
+            {isShowSmsPackage && isAllowSms() ? (
               <a
                 onClick={() => showPackageDialogType(3)}
                 className={clsx(getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
@@ -180,7 +186,7 @@ const BulkStatus = ({ classes }) => {
             )
               :
               (<Typography className={classes.bulkTitle}>
-                {Sms.eBillingType === 0 && <CgShoppingCart className={classes.shoppingCartIcon} />} {getBillingTypeText(Sms)}
+                {Sms.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />} {getBillingTypeText(Sms)}
               </Typography>)
             }
           </Grid>
@@ -194,7 +200,7 @@ const BulkStatus = ({ classes }) => {
             onMouseLeave={() => showEmailPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
-            {isShowEmailPackage && accountFeatures && accountFeatures.includes('37') && billingTypeId !== "1" && Newsletters.eBillingType === 0 ? (
+            {isShowEmailPackage && isAllowNewsletter() ? (
               <a
                 onClick={() => showPackageDialogType(2)}
                 className={clsx(getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
@@ -204,7 +210,7 @@ const BulkStatus = ({ classes }) => {
             )
               :
               (<Typography className={classes.bulkTitle}>
-                {accountFeatures && accountFeatures.includes('37') && Newsletters.eBillingType === 0 && <CgShoppingCart className={classes.shoppingCartIcon} />}
+                {accountFeatures && accountFeatures.includes('37') && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />}
                 {getBillingTypeText(Newsletters)}
               </Typography>)
             }
