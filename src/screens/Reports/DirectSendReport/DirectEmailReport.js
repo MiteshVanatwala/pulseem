@@ -404,18 +404,18 @@ const DirectEmailReportTab = ({
           <Grid item container className={classes.widthUnset}>
             <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
               <Typography className={clsx(classes.bold, classes.colorBlue)}>
-                {t('report.TotalCredits')}
-              </Typography>
-              <Typography align='center' className={clsx(classes.colorBlue)}>
-                {TotalRecords.toLocaleString() || 0}
-              </Typography>
-            </Grid>
-            <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
-              <Typography className={clsx(classes.bold, classes.colorBlue)}>
                 {t('report.TotalSent')}
               </Typography>
               <Typography align='center' className={clsx(classes.colorBlue)}>
                 {TotalSent.toLocaleString()}
+              </Typography>
+            </Grid>
+            <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+              <Typography className={clsx(classes.bold, classes.colorBlue)}>
+                {t('report.TotalCredits')}
+              </Typography>
+              <Typography align='center' className={clsx(classes.colorBlue)}>
+                {TotalRecords.toLocaleString() || 0}
               </Typography>
             </Grid>
 
