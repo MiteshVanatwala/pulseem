@@ -84,6 +84,10 @@ const SmsReport = ({ classes }) => {
       title: t('mainReport.removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
+    Replies: {
+      title: t('common.Total'),
+      href: `/Pulseem/SmsReplies.aspx?ReplyCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+    },
     DLR: {
       title: t('common.DLR'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
@@ -317,6 +321,7 @@ const SmsReport = ({ classes }) => {
 
           {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center' /> */}
           <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("common.Clicks")}</TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.feedback")}</TableCell>
           {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center' /> */}
 
           {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("common.failedStatus")}</TableCell>
@@ -403,6 +408,7 @@ const SmsReport = ({ classes }) => {
       UniqueClicksCount,
       ClicksPercentage = 0,
       removed,
+      replies,
       CreditsPerSms,
       failure,
       IsResponse,
@@ -447,9 +453,12 @@ const SmsReport = ({ classes }) => {
             </Grid>
           </Grid>
         </TableCell>
-
-
-
+        <TableCell
+          classes={borderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          {renderIntData(replies, 'blue', hrefs.Replies)}
+        </TableCell>
         <TableCell
           classes={noBorderCellStyle}
           align='center'

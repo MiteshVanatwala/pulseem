@@ -535,5 +535,6 @@
   "leaveCampaign":"Would you like to save your changes before exiting?",
   "Ok":"Yes",
   "No":"No",
-  "summaryModalTitle": "Campaign Summary"
+  "summaryModalTitle": "Campaign Summary",
+  "feedback": "Feedback"
 }

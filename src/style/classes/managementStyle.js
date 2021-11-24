@@ -421,7 +421,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     flex: 2
   },
   flex3: {
-    flex: 3
+    flex: 3,
+    flexBasis: '1%'
   },
   flex4: {
     flex: 4
