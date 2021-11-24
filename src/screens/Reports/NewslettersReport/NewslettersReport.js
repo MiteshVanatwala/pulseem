@@ -499,7 +499,7 @@ const NewslettersReport = ({ classes }) => {
             </Typography>
           </Tooltip>
           <Typography className={classes.grayTextCell}>
-            {t("report.SendDate")} {`${showDate} ${showTime}`}
+            {t("report.SentOn")} {`${showDate} ${showTime}`}
             {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           </Typography>
         </>
@@ -535,7 +535,7 @@ const NewslettersReport = ({ classes }) => {
             </Typography>
           </Tooltip>
           <Typography className={classes.grayTextCell}>
-            {t("report.SendDate")} {`${showDate} ${showTime}`}
+            {t("common.SentOn")} {`${showDate} ${showTime}`}
             {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           </Typography>
         </Grid>
