@@ -119,31 +119,6 @@ const NewslettersReport = ({ classes }) => {
     }
   })
 
-  // const columnHead = {
-  //   CampaignID: t('mainReport.CampaignID'),
-  //   Name: t('master.lblContactNameResource1.Text'),
-  //   Names: t('mainReport.names'),
-  //   SendDate: t('mainReport.GridBoundColumnResource3.HeaderText'),
-  //   FixedSendingDate: t('mainReport.fixedSendingDate'),
-  //   TotalSendCompleted: t('mainReport.totalSendCompleted'),
-  //   TotalSendPlan: t('mainReport.totalSendPlan'),
-  //   OpenCount: t('mainReport.openCount'),
-  //   OpenCountUnique: t('mainReport.openCountUnique'),
-  //   ClickCount: t('mainReport.clickCount'),
-  //   ClickCountUnique: t('mainReport.clickCountUnique'),
-  //   NotOpened: t('mainReport.notOpened'),
-  //   SendError: t('mainReport.sendError'),
-  //   RemovedClients: t('mainReport.removedClients'),
-  //   GroupsNames: t('mainReport.groupsNames'),
-  //   Status: t('common.Status'),
-  //   Files: t('mainReport.files'),
-  //   FileNames: t('mainReport.fileNames'),
-  //   PercentageOpens: t('mainReport.percentageOpens'),
-  //   PercetangeClicks: t('mainReport.percetangeClicks'),
-  //   PercetangeRemovedClients: t('mainReport.percetangeRemovedClients'),
-  //   Attachments: t('mainReport.attachments'),
-  //   TotalBytes: t('mainReport.totalBytes')
-  // }
   const exportColumnHeader = {
     "Name": t('master.lblContactNameResource1.Text'),
     "SendDate": t('mainReport.GridBoundColumnResource3.HeaderText'),
@@ -163,19 +138,21 @@ const NewslettersReport = ({ classes }) => {
     "Status": t('common.Status')
   }
 
-  const getData = () => {
-    dispatch(getNewsletterReports(isDemoSend));
+  const getData = async () => {
+    await dispatch(getNewsletterReports(isDemoSend));
   }
 
   useEffect(() => {
     getData();
-
     const lastPage = getCookie('newsletterReportlastPage') || 1;
     setPage(parseInt(lastPage))
     setCookie('newsletterReportlastPage', '', { maxAge: -1 })
-
   }, [dispatch, isDemoSend]);
 
+
+  useEffect(() => {
+    handleSearch();
+  }, [newslettersReports])
 
   const renderHeader = () => {
     return (
@@ -235,69 +212,69 @@ const NewslettersReport = ({ classes }) => {
   }
 
 
-  const renderSearchSection = () => {
-    const handleSearch = () => {
-      const searchArray = [{
-        type: 'name',
-        notificationName: notificationNameSearch
-      }, {
-        type: 'date',
-        fromDate,
-        toDate
-      }];
+  const handleSearch = () => {
+    const searchArray = [{
+      type: 'name',
+      notificationName: notificationNameSearch
+    }, {
+      type: 'date',
+      fromDate,
+      toDate
+    }];
 
-      const filtersObject = {
-        name: (row, values) => {
-          return String(row.Name.toLowerCase()).includes(values.notificationName.toLowerCase());
-        },
-        date: (row, values) => {
-          const { UpdatedDate, SendDate } = row
-          const lastUpdate = SendDate ?
-            moment(SendDate, dateFormat).valueOf()
-            : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+    const filtersObject = {
+      name: (row, values) => {
+        return String(row.Name.toLowerCase()).includes(values.notificationName.toLowerCase());
+      },
+      date: (row, values) => {
+        const { UpdatedDate, SendDate } = row
+        const lastUpdate = SendDate ?
+          moment(SendDate, dateFormat).valueOf()
+          : moment(UpdatedDate, dateFormat).valueOf()
+        const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
+        const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
 
-          if (!values)
-            return true
-          if (fromDate && toDate && startFromDate && endToDate)
-            return ((lastUpdate >= startFromDate) && (lastUpdate <= endToDate))
-          if (fromDate && startFromDate)
-            return (lastUpdate >= startFromDate)
-          if (toDate && endToDate)
-            return (lastUpdate <= endToDate)
+        if (!values)
           return true
-        }
-      }
-
-      let sortData = newslettersReports;
-      searchArray.forEach(values => {
-        sortData = sortData.filter(row => filtersObject[values.type](row, values))
-      });
-      setSearchResults(sortData);
-      if (newslettersReports.length !== sortData.length) {
-        setSearching(true);
-        setPage(1);
+        if (fromDate && toDate && startFromDate && endToDate)
+          return ((lastUpdate >= startFromDate) && (lastUpdate <= endToDate))
+        if (fromDate && startFromDate)
+          return (lastUpdate >= startFromDate)
+        if (toDate && endToDate)
+          return (lastUpdate <= endToDate)
+        return true
       }
     }
 
-    const handleFromDateChange = (value) => {
-      if (value > toDate) {
-        handleToDate(null);
-      }
-      handleFromDate(value);
+    let sortData = newslettersReports;
+    searchArray.forEach(values => {
+      sortData = sortData.filter(row => filtersObject[values.type](row, values))
+    });
+    setSearchResults(sortData);
+    if (newslettersReports.length !== sortData.length) {
+      setSearching(true);
+      setPage(1);
     }
+  }
 
-    const handleNotificationNameChange = event => {
-      setNotificationNameSearch(event.target.value)
+  const handleFromDateChange = (value) => {
+    if (value > toDate) {
+      handleToDate(null);
     }
+    handleFromDate(value);
+  }
 
-    const handleSearchKeyPress = event => {
-      if(event.key === "Enter"){
-        event.preventDefault();
-        handleSearch();
-      }
+  const handleNotificationNameChange = event => {
+    setNotificationNameSearch(event.target.value)
+  }
+
+  const handleSearchKeyPress = event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleSearch();
     }
+  }
+  const renderSearchSection = () => {
 
 
     if (windowSize === 'xs') {
@@ -849,6 +826,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderTableBody = () => {
+
     let rowData = searchResults || newslettersReports;
     let rpp = parseInt(rowsPerPage)
     rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
