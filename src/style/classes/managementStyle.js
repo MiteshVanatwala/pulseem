@@ -191,7 +191,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     color: '#333',
-    lineHeight:1,
+    lineHeight: 1,
     "@media screen and (max-width: 1366px)": {
       fontSize: 16,
     },
@@ -425,6 +425,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   flex4: {
     flex: 4
+  },
+  flex6: {
+    flex: 6
   },
   flex15: {
     flex: 1
@@ -1413,6 +1416,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       padding: '0px !important'
     }
   },
+  hideInMiddleScreen: {
+    "@media screen and (max-width: 1170px) and (min-width: 768px)": {
+      display: 'none',
+      minWidth: 0,
+      padding: 0
+    }
+  },
   hideOnSmallScreen: {
     "@media screen and (max-width: 1170px)": {
       display: 'none',
@@ -1428,6 +1438,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   reponsivePB5: {
+    '& $middleWrapText': {
+      display: 'flex',
+      flexFlow: 'column wrap',
+    },
+    padding: '0 !important',
     "@media screen and (max-width: 1170px)": {
       paddingBottom: '10px !important'
     }

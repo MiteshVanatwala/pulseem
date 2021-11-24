@@ -102,7 +102,7 @@ export const TablePagination=({
           className={classes.tablePadingtonTextFeild}
         />
         <Typography>
-          {t('common.outOf')} {pages}
+          {t('common.outOf')} {pages === 0 ? 1 : pages}
         </Typography>
         {page<pages&&
           <IconButton

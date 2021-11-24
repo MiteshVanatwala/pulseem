@@ -593,7 +593,7 @@ const NewslettersReport = ({ classes }) => {
           {value && value.toLocaleString() || '0'}
         </Typography>
         <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
-          {title} {innerTitle !== '' ? <span className={classes.showTitleInline}>{innerTitle}</span> : null}
+          <span className={classes.hideInMiddleScreen}>{title}</span> {innerTitle !== '' ? <span className={classes.showTitleInline}>{innerTitle}</span> : null}
         </Typography>
       </Box>
     )
