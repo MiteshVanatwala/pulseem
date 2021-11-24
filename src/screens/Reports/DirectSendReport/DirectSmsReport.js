@@ -344,12 +344,12 @@ const DirectSMSReportTab=({
         <Typography 
           className={clsx(classes.bold)} 
           display='inline'>
-          {t('report.TotalCredits')}{` : `}{TotalCredits.toLocaleString()}
+          {t('report.TotalSent')}{` : `}{TotalSent.toLocaleString()}
         </Typography>
         <Typography 
           className={clsx(classes.mt10, classes.ml10, classes.bold)} 
           display='inline'>
-          {t('report.TotalSent')}{` : `}{TotalSent.toLocaleString()}
+          {t('report.TotalCredits')}{` : `}{TotalCredits.toLocaleString()}
         </Typography>
       </Box>
     );
