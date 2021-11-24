@@ -292,11 +292,20 @@ const NewslettersReport = ({ classes }) => {
       setNotificationNameSearch(event.target.value)
     }
 
+    const handleSearchKeyPress = event => {
+      if(event.key === "Enter"){
+        event.preventDefault();
+        handleSearch();
+      }
+    }
+
+
     if (windowSize === 'xs') {
       return (
         <SearchField
           classes={classes}
           value={notificationNameSearch}
+          onKeyPress={handleSearchKeyPress}
           onChange={handleNotificationNameChange}
           onClick={handleSearch}
           placeholder={t('common.CampaignName')}
@@ -314,6 +323,7 @@ const NewslettersReport = ({ classes }) => {
             variant='outlined'
             size='small'
             value={notificationNameSearch}
+            onKeyPress={handleSearchKeyPress}
             onChange={handleNotificationNameChange}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('common.CampaignName')}
