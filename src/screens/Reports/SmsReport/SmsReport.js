@@ -81,7 +81,7 @@ const SmsReport = ({ classes }) => {
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Removed: {
-      title: t('mainReport.removed'),
+      title: t('mainReport.removedClients'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Replies: {

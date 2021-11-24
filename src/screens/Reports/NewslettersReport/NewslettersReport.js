@@ -77,7 +77,7 @@ const NewslettersReport = ({ classes }) => {
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemovedClients: {
-      title: t('mainReport.removed'),
+      title: t('mainReport.removedClients'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
