@@ -34,7 +34,7 @@ const SmsReport = ({ classes }) => {
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null);
   const [campaignName, setCampaignNameSearch] = useState('');
-  const rowsOptions = [6, 12, 18]
+  const rowsOptions = [6, 10, 20, 50]
   const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)

@@ -456,7 +456,7 @@ const NewslettersReport = ({ classes }) => {
     const { CampaignID, Name, SendDate, isChecked = false, Status } = row
 
     const date = SendDate ? moment(SendDate) : ''
-    const showDate = SendDate ? date.format('DD/MM/YYYY') : ''
+    const showDate = SendDate ? date.format('L') : ''
     const showTime = SendDate ? date.format('LT') : ''
 
     if (windowSize === 'xs') {
