@@ -37,9 +37,9 @@ const DirectSMSReportTab=({
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot};
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot};
   const noborderCell={body: clsx(classes.tableCellBody,classes.noborder),root: classes.tableCellRoot};
-  const {t}=useTranslation();
+  const { t } = useTranslation();
 
-  const handleSearch= async() => {
+  const handleSearch = async () => {
     const { sms = {} } = searchData || {};
     const { FromNumber='', ToNumber='', ExternalRef='', Status='', FromDate=null, ToDate=null  } = sms || {};
     const param= { 
@@ -430,25 +430,29 @@ const DirectSMSReportTab=({
           className={classes.flex1}>
           {renderCell(row.Date, 'date')}
         </TableCell>
-        <TableCell
-          classes={noborderCell}
-          align='center'
-          className={classes.flex1}>
-          {renderCell(row.FromNumber)}
-        </TableCell>
-        <TableCell
-          classes={noborderCell}
-          align='center'
-          className={classes.flex1}>
-          {renderCell(row.ToNumber)}
-        </TableCell>
+        {windowSize !== 'xs' && (
+          <>
+            <TableCell
+              classes={noborderCell}
+              align='center'
+              className={classes.flex1}>
+              {renderCell(row.FromNumber)}
+            </TableCell>
+            <TableCell
+              classes={noborderCell}
+              align='center'
+              className={classes.flex1}>
+              {renderCell(row.ToNumber)}
+            </TableCell>
+          </>
+        )}
         <TableCell
           classes={cellStyle}
           align='center'
           className={classes.flexHalf}>
           {renderCell(row.Status, 'status')}
         </TableCell>
-        {showContent&&<TableCell
+        { windowSize !== 'xs' && showContent && <TableCell
           classes={cellStyle}
           align='center'
           className={classes.flex3}>
@@ -460,18 +464,22 @@ const DirectSMSReportTab=({
           className={classes.flexHalf}>
           {renderCell(row.ErrorType)}
         </TableCell>
-        <TableCell
-          classes={noborderCell}
-          align='center'
-          className={classes.flexHalf}>
-          {renderCell(row.SMSCampaignID)}
-        </TableCell>
-        <TableCell
-          classes={noborderCell}
-          align='center'
-          className={classes.flexHalf}>
-          {renderCell(row.CharCount)}
-        </TableCell>
+        {windowSize !== 'xs' && (
+          <>
+            <TableCell
+              classes={noborderCell}
+              align='center'
+              className={classes.flexHalf}>
+              {renderCell(row.SMSCampaignID)}
+            </TableCell>
+            <TableCell
+              classes={noborderCell}
+              align='center'
+              className={classes.flexHalf}>
+              {renderCell(row.CharCount)}
+            </TableCell>  
+          </>
+        )}
         <TableCell
           classes={noborderCell}
           align='center'
@@ -554,7 +562,7 @@ const DirectSMSReportTab=({
   return (
     <>
       {renderSearchLine()}
-      {renderToggleContent()}
+      { windowSize !== 'xs' && renderToggleContent()}
       {renderTotalSection()}
       {renderTable()}
       {renderTablePagination()}
