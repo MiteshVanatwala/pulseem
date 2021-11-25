@@ -46,5 +46,9 @@
   "removals": "Removals",
   "subjectLine": "The Subject Line",
   "date": "Date",
-  "distributeOfUse": "Distribution of Use"
+  "distributeOfUse": "Distribution of Use",
+  "errorCode": "Error Code",
+  "totalResponses": "Total Responses",
+  "clientStatus": "Client Status",
+  "StatusDescription": "Status Description"
 }

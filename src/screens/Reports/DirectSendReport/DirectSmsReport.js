@@ -31,15 +31,17 @@ const DirectSMSReportTab=({
   isSearching,
   directSmsReport,
   showContent,
-  advanceSearch
+  advanceSearch,
+  setLoader=()=> null
 }) => {
-  const rowsOptions=[6,12,18];
+  const rowsOptions=[6, 10,20,50];
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot};
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot};
   const noborderCell={body: clsx(classes.tableCellBody,classes.noborder),root: classes.tableCellRoot};
   const {t}=useTranslation();
 
   const handleSearch= async() => {
+    setLoader(true);
     const { sms = {} } = searchData || {};
     const { FromNumber='', ToNumber='', ExternalRef='', Status='', FromDate=null, ToDate=null  } = sms || {};
     const param= { 
@@ -59,12 +61,14 @@ const DirectSMSReportTab=({
       }
     })
 
-    dispatch(getSMSDirectReport(searchObjects))
+    await dispatch(getSMSDirectReport(searchObjects))
     handleSearching('sms', true);
     handlePageChange(1);
+    setLoader(false);
   }
 
-  const handlePageSearching=(val)=>{
+  const handlePageSearching= async (val)=>{
+    setLoader(true);
     let { sms = {} } = searchData || {};
     let params={
       PageSize:rowsPerPage,
@@ -72,18 +76,21 @@ const DirectSMSReportTab=({
       ...sms
     };
     handlePageChange(val);
-    dispatch(getSMSDirectReport(params));
+    await dispatch(getSMSDirectReport(params));
+    setLoader(false);
   }
 
   const handleRowsPerPageSearching=async(val)=>{
+    setLoader(true);
     let { sms = {} } = searchData || {};
     let params={
       PageSize:val,
       PageIndex:page,
       ...sms
     }
-    dispatch(getSMSDirectReport(params));
+    await dispatch(getSMSDirectReport(params));
     handleRowsPerPage(val)
+    setLoader(false);
   }
 
   const renderCell=(data, dataType)=>{
@@ -516,6 +523,9 @@ const DirectSMSReportTab=({
     if (!sortData) {
       return;
     }
+
+    // let rpp = parseInt(rowsPerPage)
+    // sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
 
     return (
       <TableBody>

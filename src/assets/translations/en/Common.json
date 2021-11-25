@@ -405,7 +405,7 @@
   "floatdir": "left",
   "copyFooter": "<span>** Not running under ssl protocol</span>",
   "DeliveryApproval": "Delivery Approval",
-  "SendTo2": "Send To",
+  "SendTo2": "To",
   "SentTo": "Sent",
   "Succeeded": "Succeeded",
   "BestOptCampaign": "Send the campaign at the optimal time for each customer",
@@ -511,5 +511,6 @@
   "continue": "Continue",
   "errorDetected": "Payment incomplete!",
   "tryAgain": "Please try again.",
-  "contactSupportForBilling": "To continue, please be in touch with<br/> our sales at <a href='tel:03-524-0290'>03-524-0290</a> or at<br/> <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+  "contactSupportForBilling": "To continue, please be in touch with<br/> our sales at <a href='tel:03-524-0290'>03-524-0290</a> or at<br/> <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+  "NoDataTryFilter": "No Data, Try another filter combination."
 }

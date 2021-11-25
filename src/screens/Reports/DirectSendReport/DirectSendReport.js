@@ -1,8 +1,8 @@
-import { Box, Button, Divider, Grid, Tab,Typography} from '@material-ui/core';
-import React,{useState,useEffect} from 'react';
+import { Box, Button, Divider, Grid, Tab, Typography } from '@material-ui/core';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
-import {useTranslation} from 'react-i18next';
-import {useSelector,useDispatch} from 'react-redux';
+import { useTranslation } from 'react-i18next';
+import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import moment from 'moment';
 import DirectSMSReportTab from './DirectSmsReport';
@@ -11,27 +11,31 @@ import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
-import { exportSMSDirectReport, getSMSDirectReport, getSMSReport } from '../../../redux/reducers/smsSlice';
+import { exportSMSDirectReport, getSMSDirectReport } from '../../../redux/reducers/smsSlice';
+import { preferredOrder } from '../../../helpers/functions';
+import { exportFile } from '../../../helpers/exportFromJson';
+import { Loader } from '../../../components/Loader/Loader';
 
-const DirectSendReport=({classes}) => {
-  const {windowSize, isRTL}=useSelector(state => state.core);
-  const {directNewsletterReport }=useSelector(state => state.newsletter);
-  const {directSmsReport }=useSelector(state => state.sms);
-  const [searchData, setSearchData]=useState({});
-  const [isSearching,setSearching]=useState({});
-  const [searchParam,setSearchParam]=useState({});
-  const [tabValue, setTabValue]=useState(0);
-  const rowsOptions=[6,12,18];
-  const [rowsPerPageEmail,setRowsPerPageEmail]=useState(rowsOptions[0]);
-  const [rowsPerPageSms,setRowsPerPageSms]=useState(rowsOptions[0]);
-  const [pageEmail,setPageEmail]=useState(1);
-  const [pageSms,setPageSms]=useState(1);
-  const [advanceSearch,setAdvanceSearch]=useState(false);
-  const [showContent,setShowContent]=useState(false);
-  const {t}=useTranslation();
-  const dispatch=useDispatch();
+const DirectSendReport = ({ classes }) => {
+  const { windowSize, isRTL } = useSelector(state => state.core);
+  const { directNewsletterReport } = useSelector(state => state.newsletter);
+  const { directSmsReport } = useSelector(state => state.sms);
+  const [searchData, setSearchData] = useState({});
+  const [isSearching, setSearching] = useState({});
+  const [searchParam, setSearchParam] = useState({});
+  const [tabValue, setTabValue] = useState(0);
+  const rowsOptions = [6, 10, 20, 50];
+  const [rowsPerPageEmail, setRowsPerPageEmail] = useState(rowsOptions[0]);
+  const [rowsPerPageSms, setRowsPerPageSms] = useState(rowsOptions[0]);
+  const [pageEmail, setPageEmail] = useState(1);
+  const [pageSms, setPageSms] = useState(1);
+  const [advanceSearch, setAdvanceSearch] = useState(false);
+  const [showContent, setShowContent] = useState(false);
+  const [showLoader, setLoader] = useState(true);
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
 
-  const initData=()=>{
+  const initData = () => {
     getEmailReportData();
     getSMSReportData();
     setSearchData({
@@ -44,58 +48,57 @@ const DirectSendReport=({classes}) => {
     })
   }
 
-  const getEmailReportData=() => {
-    const startDate = moment(new Date()).startOf('month').format('L');
-    const endDate = moment(new Date()).endOf('month').format('L');
-    dispatch(getNewsletterDirectReport({FROMDATE: startDate, TODATE: endDate}));
+  const getEmailReportData = () => {
+    dispatch(getNewsletterDirectReport({  }));
   }
-  const getSMSReportData=() => {
-    dispatch(getSMSDirectReport({PageSize:6, PageIndex: 1}));
+  const getSMSReportData = async () => {
+    await dispatch(getSMSDirectReport({ PageSize: 6, PageIndex: 1 }));
+    setLoader(false);
   }
 
-  useEffect(initData,[dispatch])
+  useEffect(initData, [dispatch])
 
-  const clearSearch=(key) => {
+  const clearSearch = (key) => {
     let isSearchingData = isSearching;
-    let search=searchData;
-    let params=searchParam;
-    search[key]={};
-    params[key]={};
-    isSearchingData[key]=false;
+    let search = searchData;
+    let params = searchParam;
+    search[key] = {};
+    params[key] = {};
+    isSearchingData[key] = false;
 
-    setSearching({...isSearching});
+    setSearching({ ...isSearching });
     setSearchData(search);
 
-    if (key==='sms') {
+    if (key === 'sms') {
       getSMSReportData()
     }
 
-    if (key==='email') {
+    if (key === 'email') {
       getEmailReportData()
     }
 
   }
 
-  const handleSearchInput=(value,key,type)=>{
+  const handleSearchInput = (value, key, type) => {
     let { sms = {}, email = {} } = searchData || {};
-    if (type==='sms') {
-      sms[key]=value;
+    if (type === 'sms') {
+      sms[key] = value;
     }
-    if (type==='email') {
-      email[key]=value;
+    if (type === 'email') {
+      email[key] = value;
     }
 
-    setSearchData({email, sms});
+    setSearchData({ email, sms });
   }
 
-  const handleSearching=(key,value)=> {
+  const handleSearching = (key, value) => {
     let isSearchingData = isSearching;
-    isSearchingData[key]=value;
+    isSearchingData[key] = value;
 
-    setSearching({...isSearching})
+    setSearching({ ...isSearching })
   }
 
-  const renderHeader=() => {
+  const renderHeader = () => {
     return (
       <>
         <Typography className={classes.managementTitle}>
@@ -106,32 +109,83 @@ const DirectSendReport=({classes}) => {
     )
   }
 
-  const renderTabs=()=>{
-    const handleExportFile=()=> {
-      if (tabValue===0) {
-        dispatch(exportNewsletterDirectReport())
+  const excelHeaders = {
+    EMAIL: {
+      "DATE": t('master.lblContactNameResource1.Text'),
+      "STATUS": t('mainReport.openCountUnique'),
+      "TO": t('mainReport.totalSendCompleted'),
+      "TONAME": t('mainReport.totalSendCompleted'),
+      "FROM": t('mainReport.totalSendPlan'),
+      "FROMNAME": t('mainReport.totalSendPlan'),
+      "SUBJECT": t('mainReport.GridBoundColumnResource3.HeaderText'),
+      "SENDDATE": t('mainReport.openCount'),
+      "EXTERNALREF": t('mainReport.percentageOpens'),
+      "OPENS": t('mainReport.clickCount'),
+      "CLICKS": t('mainReport.clickCountUnique'),
+      "ClientStatus": t('mainReport.notOpened'),
+      "StatusDescription": t('mainReport.sendError')
+    },
+    SMS: {
+      "SMSCampaignID": t('common.campaignID'),
+      "Date": t('master.lblContactNameResource1.Text'),
+      "Text": t('common.MessageContent'),
+      "FromNumber": t('common.SentFromNumber'),
+      "ToNumber": t('common.SendTo2'),
+      "Reference": t('report.id'),
+      "Status": t('common.Status'),
+      "ErrorType": t('report.errorCode'),
+      "TotalResponses": t('report.totalResponses'),
+      "CharCount": t('report.Characters'),
+      "Credits": t('report.Credits'),
+      "ClientStatus": t('report.clientStatus'),
+      "StatusDescription": t('report.StatusDescription')
+    }
+  };
+
+  const renderTabs = () => {
+    const handleExportFile = async () => {
+      setLoader(true);
+      let payload, finalData, headers, fileName = null;
+
+      if (tabValue === 0) {
+        payload = await dispatch(exportNewsletterDirectReport(searchData.email))
+        finalData = preferredOrder(payload.payload, Object.keys(excelHeaders.EMAIL));
+        headers = excelHeaders.EMAIL;
+        fileName = "Email_DirectReports";
       }
 
-      if (tabValue===1) {
-        dispatch(exportSMSDirectReport())
+      if (tabValue === 1) {
+
+        payload = await dispatch(exportSMSDirectReport(searchData.sms));
+        finalData = preferredOrder(payload.payload, Object.keys(excelHeaders.SMS));
+        headers = excelHeaders.SMS;
+        fileName = "Sms_DirectReports";
       }
+
+      exportFile({
+        data: finalData,
+        fileName: fileName,
+        exportType: 'xls',
+        fields: headers
+      });
+      setLoader(false);
     }
 
     return (
       <Grid container>
         <TabContext value={tabValue}>
-          <Grid 
-            container 
-            justifyContent='space-between' 
+          <Grid
+            container
+            justifyContent='space-between'
             alignItems='center'
-            item xs={12} 
+            item xs={12}
             className={classes.borderBottom1}>
             <TabList
               onChange={(e, value) => setTabValue(value)}
               indicatorColor="primary"
-              >
-              <Tab label={t('master.lblUserMailResource1.Text')} classes={{root: classes.minWidth100}} value={0}/>
-              <Tab label={t('appBar.sms.title')} classes={{root: classes.minWidth100}} value={1}/>
+            >
+              <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={0} />
+              <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={1} />
             </TabList>
             <Button className={clsx(classes.actionButtonGreen, classes.exportButton)} onClick={handleExportFile}>
               {t('campaigns.exportFile')}
@@ -179,6 +233,7 @@ const DirectSendReport=({classes}) => {
                 directSmsReport={directSmsReport}
                 showContent={showContent}
                 advanceSearch={advanceSearch}
+                setLoader={setLoader}
               />
             </TabPanel>
           </Grid>
@@ -195,6 +250,7 @@ const DirectSendReport=({classes}) => {
       containerClass={classes.management}>
       {renderHeader()}
       {renderTabs()}
+      <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>
   );
 }

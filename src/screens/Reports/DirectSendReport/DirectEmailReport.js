@@ -25,6 +25,7 @@ const RenderRow = ({
   windowSize
 }) => {
   const [open, setOpen] = useState(false);
+  const [noDataToPresnt, setNoDataToPresent] = useState(true);
 
   const renderCell = (data, dataType) => {
     let text = data;
@@ -182,7 +183,7 @@ const RenderRow = ({
               className={classes.flexHalf}>
               {renderCell(row.OpenCount)}
             </TableCell>
-            </>
+          </>
         )}
       </TableRow>
       {renderCollapsibleRow(row)}
@@ -205,7 +206,7 @@ const DirectEmailReportTab = ({
   isSearching,
   directEmailReport,
 }) => {
-  const rowsOptions = [6, 12, 18];
+  const rowsOptions = [6, 10, 20, 50];
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
@@ -516,23 +517,24 @@ const DirectEmailReportTab = ({
   const renderTableBody = () => {
     let sortData = directEmailReport && directEmailReport.DirectReport;
 
-    if (!sortData) {
-      return;
-    }
-
     //sortData = sortData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
     return (
       <TableBody className={classes.tableDirectRow}>
-        {sortData.map(row =>
-          <RenderRow
-            windowSize={windowSize}
-            classes={classes}
-            row={row}
-            noborderCell={noborderCell}
-            cellStyle={cellStyle}
-            rowStyle={rowStyle}
-            t={t} />
-        )}
+        {!sortData ?
+          <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{height: 50}}>
+              <Typography>{t("common.NoDataTryFilter")}</Typography>
+          </Box> :
+          sortData.map(row =>
+            <RenderRow
+              windowSize={windowSize}
+              classes={classes}
+              row={row}
+              noborderCell={noborderCell}
+              cellStyle={cellStyle}
+              rowStyle={rowStyle}
+              t={t} />
+          )
+        }
       </TableBody>
     )
   }

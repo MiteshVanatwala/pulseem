@@ -37,5 +37,9 @@
   "invalidFromNumber": "מספר מאת לא תקין",
   "toNumberLonger": "מספר נמען גדול 16",
   "blockedSync": "Blocked Due To Sync Feature",
-  "blockedRemoval": "נחסם מסיבת הסרה"
+  "blockedRemoval": "נחסם מסיבת הסרה",
+  "errorCode": "קוד שגיאה",
+  "totalResponses": "סך תגובות",
+  "clientStatus": "סטאטוס לקוח",
+  "StatusDescription": "תיאור סטאטוס"
 }
