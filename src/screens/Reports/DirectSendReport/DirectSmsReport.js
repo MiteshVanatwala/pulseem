@@ -394,7 +394,7 @@ const DirectSMSReportTab=({
             classes={cellStyle}
             align='center'
             className={classes.flexHalf}>
-            {t('common.ErrorTitle')}
+            {t('report.failure')}
           </TableCell>
           <TableCell
             classes={cellStyle}

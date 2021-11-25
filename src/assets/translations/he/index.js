@@ -31,6 +31,5 @@ export const he = {
   report,
   emailStatus,
   emoji,
-  payment,
-  report
+  payment
 }
