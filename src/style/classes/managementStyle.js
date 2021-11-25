@@ -309,7 +309,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   actionButtonLightGreen: {
     backgroundColor: '#27AE60',
-    marginInlineEnd : '10px',
+    marginInlineEnd: '10px',
     '&:hover': {
       backgroundColor: '#219150'
     }
@@ -319,7 +319,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   actionButtonLightBlue: {
     backgroundColor: '#3498DB',
-    marginInlineEnd : '10px',
+    marginInlineEnd: '10px',
     '&:hover': {
       backgroundColor: '#3498DB'
     }
@@ -826,6 +826,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   minWidth252: {
     minWidth: '150px!important'
+  },
+  minWidth192: {
+    minWidth: '192px!important'
+  },
+  dropDownItem: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxHeight: 40,
   },
   verifyButton: {
     background: 'green',
@@ -1360,8 +1368,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontSize: "22px", marginTop: "5px"
   },
   cellText: {
-    display: 'flex', 
-    flexDirection: 'column', 
+    display: 'flex',
+    flexDirection: 'column',
     '& a, & p': {
       lineHeight: '1.1'
     }

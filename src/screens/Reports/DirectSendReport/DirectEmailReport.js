@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer, Link,
-  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse
+  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, InputLabel, Select, MenuItem
 } from '@material-ui/core';
 import { TablePagination, DateField } from '../../../components/managment/index';
 import { SearchIcon } from '../../../assets/images/managment';
@@ -14,6 +14,7 @@ import VisibilityIcon from '@material-ui/icons/Visibility';
 import moment from 'moment';
 import { getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { Loader } from '../../../components/Loader/Loader';
+import { useSelector } from 'react-redux';
 
 const RenderRow = ({
   classes,
@@ -210,6 +211,7 @@ const DirectEmailReportTab = ({
   directEmailReport,
   rowsOptions
 }) => {
+  const { isRTL } = useSelector(state => state.core);
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
@@ -310,6 +312,21 @@ const DirectEmailReportTab = ({
   const renderAdvanceSearch = () => {
     const { email = {} } = searchData || {};
     const { FromEmail = '', ToEmail = '', Recipient = '', ExternalRef = '', Status = '', ToName = '' } = email || {};
+    const statusOptions = [
+      { id: 0, value: t('emailStatus.noStatus') },
+      { id: 1, value: t('emailStatus.pending') },
+      { id: 2, value: t('emailStatus.sending') },
+      { id: 3, value: t('emailStatus.succeeded') },
+      { id: 4, value: t('emailStatus.error') },
+      { id: 5, value: t('emailStatus.retry') },
+      { id: 6, value: t('emailStatus.paused') },
+      { id: 7, value: t('emailStatus.cancelled') },
+      { id: 8, value: t('emailStatus.badError') },
+      { id: 9, value: t('emailStatus.mediumError') },
+      { id: 10, value: t('emailStatus.spam') },
+      { id: 11, value: t('emailStatus.removed') },
+      { id: 12, value: t('emailStatus.removedBySystem') }
+    ]
     return (
       <>
         <Grid item>
@@ -356,14 +373,21 @@ const DirectEmailReportTab = ({
           />
         </Grid>
         <Grid item>
-          <TextField
-            variant='outlined'
-            size='small'
-            value={Status}
-            onChange={(e) => handleSearchInput(e.target.value, 'Status', 'email')}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('common.Status')}
-          />
+          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+            <Select
+              autoWidth
+              displayEmpty
+              className={clsx(classes.textField, classes.minWidth192)}
+              value={Status}
+              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
+              onChange={(e) => handleSearchInput(e.target.value, 'Status', 'email')}
+            >
+              <MenuItem key={-1} value="" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
+              {statusOptions.map(so => {
+                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{so.value}</MenuItem>
+              })}
+            </Select>
+          </FormControl>
         </Grid>
       </>
     )
@@ -401,7 +425,7 @@ const DirectEmailReportTab = ({
   }
 
   const renderTotalSection = () => {
-    const { TotalSent = 0, TotalRecords = 0, TotalMessages = 0 } = directEmailReport || {};
+    const { TotalCredits = 0, TotalRecords = 0, TotalMessages = 0 } = directEmailReport || {};
     return (
       <>
         <Box className={clsx(classes.mt25, classes.paddingSides25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)}>
@@ -411,7 +435,7 @@ const DirectEmailReportTab = ({
                 {t('report.TotalSent')}
               </Typography>
               <Typography align='center' className={clsx(classes.colorBlue)}>
-                {TotalSent.toLocaleString()}
+                {TotalRecords.toLocaleString()}
               </Typography>
             </Grid>
             <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
@@ -419,7 +443,7 @@ const DirectEmailReportTab = ({
                 {t('report.TotalCredits')}
               </Typography>
               <Typography align='center' className={clsx(classes.colorBlue)}>
-                {TotalRecords.toLocaleString() || 0}
+                {TotalCredits.toLocaleString() || 0}
               </Typography>
             </Grid>
 
@@ -524,8 +548,8 @@ const DirectEmailReportTab = ({
     return (
       <TableBody className={classes.tableDirectRow}>
         {!sortData ?
-          <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{height: 50}}>
-              <Typography>{t("common.NoDataTryFilter")}</Typography>
+          <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+            <Typography>{t("common.NoDataTryFilter")}</Typography>
           </Box> :
           sortData.map(row =>
             <RenderRow
