@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {useTranslation} from 'react-i18next';
 import clsx from 'clsx';
 import { Box, Button, Grid, Table, TableContainer, 
@@ -12,6 +12,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import Switch from "react-switch";
 import moment from 'moment';
 import { getSMSDirectReport } from '../../../redux/reducers/smsSlice';
+import { Loader } from '../../../components/Loader/Loader';
 
 const DirectSMSReportTab=({
   classes,
@@ -38,8 +39,10 @@ const DirectSMSReportTab=({
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot};
   const noborderCell={body: clsx(classes.tableCellBody,classes.noborder),root: classes.tableCellRoot};
   const { t } = useTranslation();
+  const [showLoader, setLoader] = useState(false)
 
   const handleSearch = async () => {
+    setLoader(true)
     const { sms = {} } = searchData || {};
     const { FromNumber='', ToNumber='', ExternalRef='', Status='', FromDate=null, ToDate=null  } = sms || {};
     const param= { 
@@ -62,6 +65,7 @@ const DirectSMSReportTab=({
     dispatch(getSMSDirectReport(searchObjects))
     handleSearching('sms', true);
     handlePageChange(1);
+    setLoader(false)
   }
 
   const handlePageSearching=(val)=>{
@@ -566,6 +570,7 @@ const DirectSMSReportTab=({
       {renderTotalSection()}
       {renderTable()}
       {renderTablePagination()}
+      <Loader isOpen={showLoader} />
     </>
   );
 }
