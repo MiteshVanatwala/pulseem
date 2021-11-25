@@ -21,7 +21,7 @@ const DirectSendReport=({classes}) => {
   const [isSearching,setSearching]=useState({});
   const [searchParam,setSearchParam]=useState({});
   const [tabValue, setTabValue]=useState(0);
-  const rowsOptions=[6,12,18];
+  const rowsOptions=[6,10,20,50];
   const [rowsPerPageEmail,setRowsPerPageEmail]=useState(rowsOptions[0]);
   const [rowsPerPageSms,setRowsPerPageSms]=useState(rowsOptions[0]);
   const [pageEmail,setPageEmail]=useState(1);
@@ -157,6 +157,7 @@ const DirectSendReport=({classes}) => {
                 searchData={searchData}
                 isSearching={isSearching}
                 directEmailReport={directNewsletterReport}
+                rowsOptions={rowsOptions}
               />
             </TabPanel>
             <TabPanel value={1} index={1} className={classes.p0}>
@@ -179,6 +180,7 @@ const DirectSendReport=({classes}) => {
                 directSmsReport={directSmsReport}
                 showContent={showContent}
                 advanceSearch={advanceSearch}
+                rowsOptions={rowsOptions}
               />
             </TabPanel>
           </Grid>

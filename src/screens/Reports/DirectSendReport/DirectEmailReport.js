@@ -204,8 +204,8 @@ const DirectEmailReportTab = ({
   searchData,
   isSearching,
   directEmailReport,
+  rowsOptions
 }) => {
-  const rowsOptions = [6, 12, 18];
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
