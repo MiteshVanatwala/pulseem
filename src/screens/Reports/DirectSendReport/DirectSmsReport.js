@@ -342,20 +342,33 @@ const DirectSMSReportTab=({
   }
 
   const renderTotalSection=()=>{
-    const { TotalCredits=0, TotalSent=0 }=directSmsReport||{};
+    const { TotalCredits = 0, TotalSent = 0, TotalRecords } = directSmsReport || {};
     return (
-      <Box className={classes.mt10}>
-        <Typography 
-          className={clsx(classes.bold)} 
-          display='inline'>
-          {t('report.TotalSent')}{` : `}{TotalSent.toLocaleString()}
+      <>
+        <Box className={clsx(classes.mt25, classes.paddingSides25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)}>
+          <Grid item container className={classes.widthUnset}>
+            <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+              <Typography className={clsx(classes.bold, classes.colorBlue)}>
+                {t('report.TotalSent')}
+              </Typography>
+              <Typography align='center' className={clsx(classes.colorBlue)}>
+                {TotalSent.toLocaleString()}
+              </Typography>
+            </Grid>
+            <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+              <Typography className={clsx(classes.bold, classes.colorBlue)}>
+                {t('report.TotalCredits')}
+              </Typography>
+              <Typography align='center' className={clsx(classes.colorBlue)}>
+                {TotalCredits.toLocaleString() || 0}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
+        <Typography className={clsx(classes.colorGray, classes.mb5)}>
+          {t('common.Total')} {TotalSent.toLocaleString()} {t('report.Messages')}
         </Typography>
-        <Typography 
-          className={clsx(classes.mt10, classes.ml10, classes.bold)} 
-          display='inline'>
-          {t('report.TotalCredits')}{` : `}{TotalCredits.toLocaleString()}
-        </Typography>
-      </Box>
+      </>
     );
   }
 
