@@ -211,6 +211,7 @@ const DirectSendReport = ({ classes }) => {
                 searchData={searchData}
                 isSearching={isSearching}
                 directEmailReport={directNewsletterReport}
+                rowsOptions={rowsOptions}
               />
             </TabPanel>
             <TabPanel value={1} index={1} className={classes.p0}>
@@ -234,6 +235,7 @@ const DirectSendReport = ({ classes }) => {
                 showContent={showContent}
                 advanceSearch={advanceSearch}
                 setLoader={setLoader}
+                rowsOptions={rowsOptions}
               />
             </TabPanel>
           </Grid>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {useTranslation} from 'react-i18next';
 import clsx from 'clsx';
 import { Box, Button, Grid, Table, TableContainer, 
@@ -12,6 +12,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import Switch from "react-switch";
 import moment from 'moment';
 import { getSMSDirectReport } from '../../../redux/reducers/smsSlice';
+import { Loader } from '../../../components/Loader/Loader';
 
 const DirectSMSReportTab=({
   classes,
@@ -32,13 +33,13 @@ const DirectSMSReportTab=({
   directSmsReport,
   showContent,
   advanceSearch,
-  setLoader=()=> null
+  rowsOptions
 }) => {
-  const rowsOptions=[6, 10,20,50];
   const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot};
   const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot};
   const noborderCell={body: clsx(classes.tableCellBody,classes.noborder),root: classes.tableCellRoot};
-  const {t}=useTranslation();
+  const { t } = useTranslation();
+  const [showLoader, setLoader] = useState(false)
 
   const handleSearch= async() => {
     setLoader(true);
@@ -345,20 +346,33 @@ const DirectSMSReportTab=({
   }
 
   const renderTotalSection=()=>{
-    const { TotalCredits=0, TotalSent=0 }=directSmsReport||{};
+    const { TotalCredits = 0, TotalSent = 0, TotalRecords } = directSmsReport || {};
     return (
-      <Box className={classes.mt10}>
-        <Typography 
-          className={clsx(classes.bold)} 
-          display='inline'>
-          {t('report.TotalSent')}{` : `}{TotalSent.toLocaleString()}
+      <>
+        <Box className={clsx(classes.mt25, classes.paddingSides25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)}>
+          <Grid item container className={classes.widthUnset}>
+            <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+              <Typography className={clsx(classes.bold, classes.colorBlue)}>
+                {t('report.TotalSent')}
+              </Typography>
+              <Typography align='center' className={clsx(classes.colorBlue)}>
+                {TotalSent.toLocaleString()}
+              </Typography>
+            </Grid>
+            <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+              <Typography className={clsx(classes.bold, classes.colorBlue)}>
+                {t('report.TotalCredits')}
+              </Typography>
+              <Typography align='center' className={clsx(classes.colorBlue)}>
+                {TotalCredits.toLocaleString() || 0}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Box>
+        <Typography className={clsx(classes.colorGray, classes.mb5)}>
+          {t('common.Total')} {TotalSent.toLocaleString()} {t('report.Messages')}
         </Typography>
-        <Typography 
-          className={clsx(classes.mt10, classes.ml10, classes.bold)} 
-          display='inline'>
-          {t('report.TotalCredits')}{` : `}{TotalCredits.toLocaleString()}
-        </Typography>
-      </Box>
+      </>
     );
   }
 
@@ -437,25 +451,29 @@ const DirectSMSReportTab=({
           className={classes.flex1}>
           {renderCell(row.Date, 'date')}
         </TableCell>
-        <TableCell
-          classes={noborderCell}
-          align='center'
-          className={classes.flex1}>
-          {renderCell(row.FromNumber)}
-        </TableCell>
-        <TableCell
-          classes={noborderCell}
-          align='center'
-          className={classes.flex1}>
-          {renderCell(row.ToNumber)}
-        </TableCell>
+        {windowSize !== 'xs' && (
+          <>
+            <TableCell
+              classes={noborderCell}
+              align='center'
+              className={classes.flex1}>
+              {renderCell(row.FromNumber)}
+            </TableCell>
+            <TableCell
+              classes={noborderCell}
+              align='center'
+              className={classes.flex1}>
+              {renderCell(row.ToNumber)}
+            </TableCell>
+          </>
+        )}
         <TableCell
           classes={cellStyle}
           align='center'
           className={classes.flexHalf}>
           {renderCell(row.Status, 'status')}
         </TableCell>
-        {showContent&&<TableCell
+        { windowSize !== 'xs' && showContent && <TableCell
           classes={cellStyle}
           align='center'
           className={classes.flex3}>
@@ -467,18 +485,22 @@ const DirectSMSReportTab=({
           className={classes.flexHalf}>
           {renderCell(row.ErrorType)}
         </TableCell>
-        <TableCell
-          classes={noborderCell}
-          align='center'
-          className={classes.flexHalf}>
-          {renderCell(row.SMSCampaignID)}
-        </TableCell>
-        <TableCell
-          classes={noborderCell}
-          align='center'
-          className={classes.flexHalf}>
-          {renderCell(row.CharCount)}
-        </TableCell>
+        {windowSize !== 'xs' && (
+          <>
+            <TableCell
+              classes={noborderCell}
+              align='center'
+              className={classes.flexHalf}>
+              {renderCell(row.SMSCampaignID)}
+            </TableCell>
+            <TableCell
+              classes={noborderCell}
+              align='center'
+              className={classes.flexHalf}>
+              {renderCell(row.CharCount)}
+            </TableCell>  
+          </>
+        )}
         <TableCell
           classes={noborderCell}
           align='center'
@@ -564,10 +586,11 @@ const DirectSMSReportTab=({
   return (
     <>
       {renderSearchLine()}
-      {renderToggleContent()}
+      { windowSize !== 'xs' && renderToggleContent()}
       {renderTotalSection()}
       {renderTable()}
       {renderTablePagination()}
+      <Loader isOpen={showLoader} />
     </>
   );
 }
