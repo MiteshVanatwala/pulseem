@@ -80,6 +80,9 @@ const RenderRow = ({
       case '12': {
         return t('emailStatus.removedBySystem');
       }
+      default: {
+        return t('emailStatus.noStatus');
+      }
     }
   }
 
@@ -168,7 +171,7 @@ const RenderRow = ({
             <TableCell
               classes={cellStyle}
               align='center'
-              className={classes.flexHalf}>
+              className={classes.flex1}>
               {renderCell(row.Status, 'status')}
             </TableCell>
             <TableCell
@@ -441,7 +444,7 @@ const DirectEmailReportTab = ({
         <TableRow
           classes={rowStyle}>
           <TableCell scope="row"
-            style={{ padding: '16px 0px', minWidth: 30 }}
+            style={{ padding: '16px 0px', minWidth: 20 }}
             align='center'>
           </TableCell>
           <TableCell
@@ -465,7 +468,7 @@ const DirectEmailReportTab = ({
           <TableCell
             classes={cellStyle}
             align='center'
-            className={classes.flexHalf}>
+            className={classes.flex1}>
             {t('common.Status')}
           </TableCell>
           <TableCell

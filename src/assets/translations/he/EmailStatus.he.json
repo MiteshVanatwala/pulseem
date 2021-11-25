@@ -10,5 +10,6 @@
   "mediumError": "שגיאה בינונית",
   "spam": "ספאם",
   "removed": "הסיר עצמו",
-  "removedBySystem": "הוסר על ידי המערכת"
+  "removedBySystem": "הוסר על ידי המערכת",
+  "noStatus": "אין סטאטוס"
 }

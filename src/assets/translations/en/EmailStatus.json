@@ -10,5 +10,6 @@
   "mediumError": "Direct Medium",
   "spam": "Spam",
   "removed": "Removed",
-  "removedBySystem": "Removed By System"
+  "removedBySystem": "Removed By System",
+  "noStatus": "No Status"
 }
