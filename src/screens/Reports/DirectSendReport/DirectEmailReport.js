@@ -311,7 +311,7 @@ const DirectEmailReportTab = ({
 
   const renderAdvanceSearch = () => {
     const { email = {} } = searchData || {};
-    const { FromEmail = '', ToEmail = '', Recipient = '', ExternalRef = '', Status = '', ToName = '' } = email || {};
+    const { FromEmail = '', ToEmail = '', Recipient = '', ExternalRef = '', Status = '', ToName = '', FromName = '', Subject = '' } = email || {};
     const statusOptions = [
       { id: 0, value: t('emailStatus.noStatus') },
       { id: 1, value: t('emailStatus.pending') },
@@ -362,6 +362,26 @@ const DirectEmailReportTab = ({
           />
         </Grid>
         {renderDateFields()}
+        <Grid item>
+          <TextField
+            variant='outlined'
+            size='small'
+            value={FromName}
+            onChange={(e) => handleSearchInput(e.target.value, 'FromName', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('report.FromName')}
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            variant='outlined'
+            size='small'
+            value={Subject}
+            onChange={(e) => handleSearchInput(e.target.value, 'Subject', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('report.Subject')}
+          />
+        </Grid>
         <Grid item>
           <TextField
             variant='outlined'
