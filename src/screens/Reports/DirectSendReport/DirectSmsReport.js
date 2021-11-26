@@ -3,7 +3,7 @@ import {useTranslation} from 'react-i18next';
 import clsx from 'clsx';
 import { Box, Button, Grid, Table, TableContainer, 
   TableCell,Link,
-  TableHead, TableRow, TextField, Typography, TableBody } from '@material-ui/core';
+  TableHead, TableRow, TextField, Typography, TableBody, FormControl, Select, MenuItem } from '@material-ui/core';
 import {
   TablePagination,DateField
 } from '../../../components/managment/index';
@@ -226,7 +226,16 @@ const DirectSMSReportTab=({
 
   const renderAdvanceSearch=()=>{
     const { sms = {} } = searchData || {};
-    const { FromNumber='', ToNumber='', Recipient='', ExternalRef='', Status='' } = sms || {};
+    const { FromNumber = '', ToNumber = '', Recipient = '', ExternalRef = '', Status = '' } = sms || {};
+    const statusOptions = [
+      { id: 0, value: t('emailStatus.noStatus') },
+      { id: 1, value: t('emailStatus.pending') },
+      { id: 2, value: t('emailStatus.sending') },
+      { id: 3, value: t('emailStatus.succeeded') },
+      { id: 4, value: t('emailStatus.error') },
+      { id: 11, value: t('emailStatus.removed') }
+    ]
+
     return (
       <>
         <Grid item>
@@ -273,14 +282,21 @@ const DirectSMSReportTab=({
           />
         </Grid>
         <Grid item>
-          <TextField
-            variant='outlined'
-            size='small'
-            value={Status}
-            onChange={(e)=>handleSearchInput(e.target.value,'Status', 'sms')}
-            className={clsx(classes.textField,classes.minWidth252)}
-            placeholder={t('common.Status')}
-          />
+          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+            <Select
+              autoWidth
+              displayEmpty
+              className={clsx(classes.textField, classes.minWidth192)}
+              value={Status}
+              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
+              onChange={(e) => handleSearchInput(e.target.value, 'Status', 'sms')}
+            >
+              <MenuItem key={-1} value="" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
+              {statusOptions.map(so => {
+                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{so.value}</MenuItem>
+              })}
+            </Select>
+          </FormControl>
         </Grid>
       </>
     )
