@@ -57,7 +57,7 @@ const DirectSMSReportTab = ({
       ToNumber,
       Reference: ExternalRef,
       ResponseType: ResponseType,
-      PageIndex: 1,
+      PageIndex: 0,
       PageSize: rowsPerPage
     }
     let searchObjects = {};
@@ -393,7 +393,6 @@ const DirectSMSReportTab = ({
   const renderRow = (row) => {
     return (
       <TableRow
-        key={row.SMSCampaignID}
         classes={rowStyle}>
         {/* <TableCell
           classes={noborderCell}
@@ -405,7 +404,7 @@ const DirectSMSReportTab = ({
           classes={cellStyle}
           align='center'
           className={classes.flex1}>
-          {renderCell(row.Date, 'date')}
+          {renderCell(row.DATE, 'date')}
         </TableCell>
         {windowSize !== 'xs' && (
           <>
@@ -413,13 +412,13 @@ const DirectSMSReportTab = ({
               classes={noborderCell}
               align='center'
               className={classes.flex1}>
-              {renderCell(row.FromNumber)}
+              {renderCell(row.FROM)}
             </TableCell>
             <TableCell
               classes={noborderCell}
               align='center'
               className={classes.flex1}>
-              {renderCell(row.ToNumber)}
+              {renderCell(row.TO)}
             </TableCell>
           </>
         )}
@@ -427,19 +426,19 @@ const DirectSMSReportTab = ({
           classes={cellStyle}
           align='center'
           className={classes.flexHalf}>
-          {renderCell(row.Status, 'status')}
+          {renderCell(row.STATUS, 'status')}
         </TableCell>
         {windowSize !== 'xs' && showContent && <TableCell
           classes={cellStyle}
           align='center'
           className={classes.flex3}>
-          {renderCell(row.Text)}
+          {renderCell(row.MESSAGE)}
         </TableCell>}
         <TableCell
           classes={noborderCell}
           align='center'
           className={classes.flexHalf}>
-          {renderCell(row.ErrorType)}
+          {renderCell(row.ERRORCODE)}
         </TableCell>
         {windowSize !== 'xs' && (
           <>
@@ -447,13 +446,13 @@ const DirectSMSReportTab = ({
               classes={noborderCell}
               align='center'
               className={classes.flexHalf}>
-              {renderCell(row.Reference)}
+              {renderCell(row.REFERENCE)}
             </TableCell>
             <TableCell
               classes={noborderCell}
               align='center'
               className={classes.flexHalf}>
-              {renderCell(row.CharCount)}
+              {renderCell(row.CHARSCOUNT)}
             </TableCell>
           </>
         )}

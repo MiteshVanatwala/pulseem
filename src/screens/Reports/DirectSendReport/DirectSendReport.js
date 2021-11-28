@@ -53,7 +53,7 @@ const DirectSendReport = ({ classes }) => {
     dispatch(getNewsletterDirectReport({  }));
   }
   const getSMSReportData = async () => {
-    await dispatch(getSMSDirectReport({ PageSize: 6, PageIndex: 1 }));
+    await dispatch(getSMSDirectReport({ PageSize: 6, PageIndex: 0 }));
     setLoader(false);
   }
 
@@ -127,16 +127,16 @@ const DirectSendReport = ({ classes }) => {
       "StatusDescription": t('report.StatusDescription')
     },
     SMS: {
-      "SMSCampaignID": t('common.campaignID'),
-      "Date": t('common.CreationDate'),
-      "Text": t('common.MessageContent'),
-      "FromNumber": t('common.SentFromNumber'),
-      "ToNumber": t('common.SendTo2'),
-      "Reference": t('report.id'),
-      "Status": t('common.Status'),
-      "ErrorType": t('report.errorCode'),
-      "TotalResponses": t('report.totalResponses'),
-      "CharCount": t('report.Characters'),
+      "PID": t('common.campaignID'),
+      "DATE": t('common.CreationDate'),
+      "MESSAGE": t('common.MessageContent'),
+      "FROM": t('common.SentFromNumber'),
+      "TO": t('common.SendTo2'),
+      "REFERENCE": t('report.id'),
+      "STATUS": t('common.Status'),
+      "ERRORCODE": t('report.errorCode'),
+      "TOTALRESPONSES": t('report.totalResponses'),
+      "CHARSCOUNT": t('report.Characters'),
       "Credits": t('report.Credits'),
       "ClientStatus": t('report.clientStatus'),
       "StatusDescription": t('report.StatusDescription')
