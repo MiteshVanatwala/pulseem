@@ -12,9 +12,10 @@ import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport } from '../../../redux/reducers/smsSlice';
-import { preferredOrder } from '../../../helpers/functions';
+import { preferredOrder, switchStatusDescription } from '../../../helpers/functions';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { Loader } from '../../../components/Loader/Loader';
+import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
 
 const DirectSendReport = ({ classes }) => {
   const { windowSize, isRTL } = useSelector(state => state.core);
@@ -111,23 +112,23 @@ const DirectSendReport = ({ classes }) => {
 
   const excelHeaders = {
     EMAIL: {
-      "DATE": t('master.lblContactNameResource1.Text'),
-      "STATUS": t('mainReport.openCountUnique'),
-      "TO": t('mainReport.totalSendCompleted'),
-      "TONAME": t('mainReport.totalSendCompleted'),
-      "FROM": t('mainReport.totalSendPlan'),
-      "FROMNAME": t('mainReport.totalSendPlan'),
-      "SUBJECT": t('mainReport.GridBoundColumnResource3.HeaderText'),
-      "SENDDATE": t('mainReport.openCount'),
-      "EXTERNALREF": t('mainReport.percentageOpens'),
-      "OPENS": t('mainReport.clickCount'),
-      "CLICKS": t('mainReport.clickCountUnique'),
-      "ClientStatus": t('mainReport.notOpened'),
-      "StatusDescription": t('mainReport.sendError')
+      "CreatedDate": t('common.CreationDate'),
+      "Status": t('common.Status'),
+      "ToEmail": t('report.ToEmail'),
+      "ToName": t('report.ToName'),
+      "FromEmail": t('report.FromEmail'),
+      "FromName": t('report.FromName'),
+      "Subject": t('report.Subject'),
+      "SendDate": t('report.SendDate'),
+      "ExternalRef": t('report.ExternalRef'),
+      "OpenCount": t('mainReport.openCount'),
+      "ClickCount": t('mainReport.clickCount'),
+      "ClientStatus": t('report.clientStatus'),
+      "StatusDescription": t('report.StatusDescription')
     },
     SMS: {
       "SMSCampaignID": t('common.campaignID'),
-      "Date": t('master.lblContactNameResource1.Text'),
+      "Date": t('common.CreationDate'),
       "Text": t('common.MessageContent'),
       "FromNumber": t('common.SentFromNumber'),
       "ToNumber": t('common.SendTo2'),
@@ -145,19 +146,20 @@ const DirectSendReport = ({ classes }) => {
   const renderTabs = () => {
     const handleExportFile = async () => {
       setLoader(true);
-      let payload, finalData, headers, fileName = null;
+      let response, finalData, headers, fileName = null;
 
       if (tabValue === 0) {
-        payload = await dispatch(exportNewsletterDirectReport(searchData.email))
-        finalData = preferredOrder(payload.payload, Object.keys(excelHeaders.EMAIL));
+        response = await dispatch(exportNewsletterDirectReport(searchData.email))
+        finalData = preferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
+        finalData = switchStatusDescription(finalData, EmailStatus);
         headers = excelHeaders.EMAIL;
         fileName = "Email_DirectReports";
       }
 
       if (tabValue === 1) {
-
-        payload = await dispatch(exportSMSDirectReport(searchData.sms));
-        finalData = preferredOrder(payload.payload, Object.keys(excelHeaders.SMS));
+        response = await dispatch(exportSMSDirectReport(searchData.sms));
+        finalData = preferredOrder(response.payload, Object.keys(excelHeaders.SMS));
+        finalData = switchStatusDescription(finalData, SmsStatus);
         headers = excelHeaders.SMS;
         fileName = "Sms_DirectReports";
       }

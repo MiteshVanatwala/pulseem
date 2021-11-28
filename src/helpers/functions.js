@@ -1,4 +1,6 @@
 import { actionURL } from '../config/index';
+import i18n from 'i18next';
+
 
 export const openInNewTab = (url) => {
   const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
@@ -20,4 +22,113 @@ export const preferredOrder = (obj, order) => {
     arr.push(newObject);
   }
   return arr;
+}
+
+export const switchStatusDescription = (obj, statuses) => {
+  obj.map((o) => {
+    if (o.Status) {
+      o.StatusDescription = i18n.t(statuses[o.Status] ? statuses[o.Status].value : null);
+    }
+  });
+  return obj;
+}
+
+export const emailStatusToString = (statusId) => {
+  switch (statusId.toString()) {
+    case '1': {
+      return 'emailStatus.pending';
+    }
+    case '2': {
+      return 'emailStatus.sending';
+    }
+    case '3': {
+      return 'emailStatus.succeeded';
+    }
+    case '4': {
+      return 'emailStatus.error';
+    }
+    case '5': {
+      return 'emailStatus.retry';
+    }
+    case '6': {
+      return 'emailStatus.paused';
+    }
+    case '7': {
+      return 'emailStatus.cancelled';
+    }
+    case '8': {
+      return 'emailStatus.badError';
+    }
+    case '9': {
+      return 'emailStatus.mediumError';
+    }
+    case '10': {
+      return 'emailStatus.spam';
+    }
+    case '11': {
+      return 'emailStatus.removed';
+    }
+    case '12': {
+      return 'emailStatus.removedBySystem';
+    }
+    default: {
+      return 'emailStatus.noStatus';
+    }
+  }
+}
+
+export const smsStatusToString = (status) => {
+  switch (status.toString()) {
+    case "-1": {
+      return "report.takenBySender";
+    }
+    case "0": {
+      return 0;
+    }
+    case "1": {
+      return "report.pending";
+    }
+    case "2": {
+      return "report.sent";
+    }
+    case "3": {
+      return "report.success";
+    }
+    case "4": {
+      return "report.failure";
+    }
+    case "5": {
+      return "report.removed";
+    }
+    case "6": {
+      return "report.stopped";
+    }
+    case "7": {
+      return "report.canceled";
+    }
+    case "8": {
+      return "report.deleted";
+    }
+    case "9": {
+      return "report.suspended";
+    }
+    case "10": {
+      return "report.requireAproval";
+    }
+    case "12": {
+      return "report.invalidFromNumber";
+    }
+    case "13": {
+      return "report.toNumberLonger";
+    }
+    case "20": {
+      return "report.blockedSync";
+    }
+    case "21": {
+      return "report.blockedRemoval";
+    }
+    default: {
+      return null;
+    }
+  }
 }

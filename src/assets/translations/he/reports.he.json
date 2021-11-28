@@ -41,5 +41,23 @@
   "errorCode": "קוד שגיאה",
   "totalResponses": "סך תגובות",
   "clientStatus": "סטאטוס לקוח",
-  "StatusDescription": "תיאור סטאטוס"
+  "StatusDescription": "תיאור סטאטוס",
+  "responses": "משובים",
+  "directReport": {
+    "statuses": {
+      "all": "הכל",
+      "pending": "ממתין לשליחה",
+      "sending": "נשלח",
+      "sentSuccessfuly": "נשלח בהצלחה",
+      "error": "שגיאה",
+      "removed": "הסיר עצמו"
+    },
+    "responseType": {
+      "all": "הכל",
+      "notActive":"ללא אפשרות למשובים",
+      "activeAll": "עם אפשרות למשובים - הכל",
+      "activeHasResponse": "עם אפשרות למשובים - ויש משובים",
+      "activeNoResponse":"עם אפשרות למשובים - ואין משובים"
+    }
+  }
 }

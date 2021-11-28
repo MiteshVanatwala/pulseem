@@ -50,5 +50,23 @@
   "errorCode": "Error Code",
   "totalResponses": "Total Responses",
   "clientStatus": "Client Status",
-  "StatusDescription": "Status Description"
+  "StatusDescription": "Status Description",
+  "responses": "Responses",
+  "directReport": {
+    "statuses": {
+      "all": "All",
+      "pending": "Pending",
+      "sending": "Sending",
+      "sentSuccessfuly": "Sent Successfuly",
+      "error": "Error",
+      "removed": "Removed"
+    },
+    "responseType": {
+      "all": "All",
+      "notActive": "responses not active",
+      "activeAll": "responses active - all",
+      "activeHasResponse": "responses active - has responses",
+      "activeNoResponse": "responses active - no responses"
+    }
+  }
 }

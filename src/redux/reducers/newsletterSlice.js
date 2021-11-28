@@ -36,9 +36,9 @@ export const getNewsletterDirectReport = createAsyncThunk(
 )
 
 export const exportNewsletterDirectReport = createAsyncThunk(
-  'report/ExportEmailDirectReport', async (_, thunkAPI) => {
+  'report/ExportEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`report/ExportEmailDirectReport`);
+      const response = await instence.post(`report/ExportEmailDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

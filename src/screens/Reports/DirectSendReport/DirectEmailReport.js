@@ -15,6 +15,8 @@ import moment from 'moment';
 import { getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
+import { EmailStatus } from '../../../helpers/PulseemArrays';
+import { emailStatusToString } from '../../../helpers/functions';
 
 const RenderRow = ({
   classes,
@@ -35,56 +37,12 @@ const RenderRow = ({
       text = `${text.format('DD/MM/YYYY')} ${text.format('LT')}`
     }
     if (dataType === 'status') {
-      text = statusText(text)
+      text = t(emailStatusToString(data))
     }
 
     return (
       <Typography className={dataType !== 'date' ? classes.wordBreak : {}}>{text}</Typography>
     );
-  }
-
-  const statusText = (statusId) => {
-    switch (statusId.toString()) {
-      case '1': {
-        return t('emailStatus.pending');
-      }
-      case '2': {
-        return t('emailStatus.sending');
-      }
-      case '3': {
-        return t('emailStatus.succeeded');
-      }
-      case '4': {
-        return t('emailStatus.error');
-      }
-      case '5': {
-        return t('emailStatus.retry');
-      }
-      case '6': {
-        return t('emailStatus.paused');
-      }
-      case '7': {
-        return t('emailStatus.cancelled');
-      }
-      case '8': {
-        return t('emailStatus.badError');
-      }
-      case '9': {
-        return t('emailStatus.mediumError');
-      }
-      case '10': {
-        return t('emailStatus.spam');
-      }
-      case '11': {
-        return t('emailStatus.removed');
-      }
-      case '12': {
-        return t('emailStatus.removedBySystem');
-      }
-      default: {
-        return t('emailStatus.noStatus');
-      }
-    }
   }
 
   const renderCollapsibleRow = (row) => {
@@ -312,21 +270,7 @@ const DirectEmailReportTab = ({
   const renderAdvanceSearch = () => {
     const { email = {} } = searchData || {};
     const { FromEmail = '', ToEmail = '', Recipient = '', ExternalRef = '', Status = '', ToName = '', FromName = '', Subject = '' } = email || {};
-    const statusOptions = [
-      { id: 0, value: t('emailStatus.noStatus') },
-      { id: 1, value: t('emailStatus.pending') },
-      { id: 2, value: t('emailStatus.sending') },
-      { id: 3, value: t('emailStatus.succeeded') },
-      { id: 4, value: t('emailStatus.error') },
-      { id: 5, value: t('emailStatus.retry') },
-      { id: 6, value: t('emailStatus.paused') },
-      { id: 7, value: t('emailStatus.cancelled') },
-      { id: 8, value: t('emailStatus.badError') },
-      { id: 9, value: t('emailStatus.mediumError') },
-      { id: 10, value: t('emailStatus.spam') },
-      { id: 11, value: t('emailStatus.removed') },
-      { id: 12, value: t('emailStatus.removedBySystem') }
-    ]
+
     return (
       <>
         <Grid item>
@@ -403,8 +347,8 @@ const DirectEmailReportTab = ({
               onChange={(e) => handleSearchInput(e.target.value, 'Status', 'email')}
             >
               <MenuItem key={-1} value="" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
-              {statusOptions.map(so => {
-                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{so.value}</MenuItem>
+              {EmailStatus.map(so => {
+                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
               })}
             </Select>
           </FormControl>
