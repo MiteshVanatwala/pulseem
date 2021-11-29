@@ -1,0 +1,17 @@
+{
+    "title": "Site Tracking",
+    "setUp": "Set-up Site Tracking",
+    "yourDomain": "Your Domain",
+    "siteToTrack": "Which site would you like to track?",
+    "eventToTrack": "Which events would you like to track?",
+    "addDomain": "Add your domain here",
+    "addPageUrl": "Add Page URL",
+    "pageUrl": "Page URL",
+    "conditions": {
+        "none": "None",
+        "contains": "Contains",
+        "exact": "Exact",
+        "notContain": "Not Contain"
+    },
+    "selectGroups": "Select Groups"
+}

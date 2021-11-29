@@ -1,0 +1,17 @@
+{
+    "title": "מעקב אתרים",
+    "setUp": "הגדר מעקב אתרים",
+    "yourDomain": "הדומיין שלך",
+    "siteToTrack": "מהי כתובת האתר שברצונך להגדיר מעקב?",
+    "eventToTrack":"אחרי אילו אירועים ברצונך לעקוב?",
+    "addDomain": "הוסף את הדומיין שלך כאן",
+    "addPageUrl": "הוסף קישור לדף",
+    "pageUrl": "קישור לדף",
+    "conditions": {
+        "none": "ללא",
+        "contains": "כולל",
+        "exact": "בדיוק",
+        "notContain": "לא כולל"
+    },
+    "selectGroups": "בחר קבוצות"
+}

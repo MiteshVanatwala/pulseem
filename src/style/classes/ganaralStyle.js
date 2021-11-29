@@ -298,6 +298,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mb15: {
     marginBottom: 15
   },
+  mt20: {
+    marginTop: 20
+  },
   mb20: {
     marginBottom: 20
   },
@@ -2184,5 +2187,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   //#endregion
   textCenter: {
     textAlign: 'center'
+  },
+  marginBlock10: {
+    marginBlock: 10
+  },
+  marginBlock20: {
+    marginBlock: 20
   }
 });

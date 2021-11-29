@@ -12,6 +12,7 @@ import dashboard from './Dashboard.he.json'
 import smsReport from './SMSReport.he.json'
 import emoji from './Emoji.he.json'
 import payment from './payment.he.json'
+import siteTracking from './SiteTracking.he.json'
 
 export const he={
   automations,
@@ -27,5 +28,6 @@ export const he={
   dashboard,
   smsReport,
   emoji,
-  payment
+  payment,
+  siteTracking
 }
