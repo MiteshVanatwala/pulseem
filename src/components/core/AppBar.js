@@ -98,10 +98,14 @@ const AppBarItem = ({
                         classes={{ root: classes.appBarItemMenuRoot }}
                         className={classes.appBarItemMenuItem}
                       >
-                        <img
-                          src={option.iconSrc || DoubleArrowIcon}
-                          alt='Double Arrow Icon'
-                          className={classes.appBarItemDoubleArrowIcon} />
+                        {option.isFaIcon ?
+                          <option.iconSrc style={{padding: '0 5px'}} />
+                          :
+                          <img
+                            src={option.iconSrc || DoubleArrowIcon}
+                            alt='Double Arrow Icon'
+                            className={classes.appBarItemDoubleArrowIcon} />
+                        }
                         {option.title}
                       </MenuItem>
                     </Box>

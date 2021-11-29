@@ -30,6 +30,7 @@ import DashboardScreen from './screens/Dashboard/Dashboard';
 import SmsReport from './screens/Reports/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
+import SiteTrackingEditor from './screens/SiteTracking/Editor';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -344,6 +345,11 @@ const renderRoutes = (classes, history) => {
           window.open("https://www.pulseem.co.il/Pages/Home.aspx?action=support", "_blank")
           return null
         }}
+      />
+      <Route
+        exact
+        path={`/SiteTracking`}
+        render={props => <SiteTrackingEditor props={props} classes={classes} />}
       />
     </>
   )
