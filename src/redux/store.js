@@ -12,6 +12,7 @@ import recipientReportsReducer from './reducers/recipientsReportSlice';
 import shortcutReducer from './reducers/shortcutSlice';
 import paymentReducer from './reducers/paymentSlice';
 import commonReducer from './reducers/commonSlice';
+import siteTrackingReducer from './reducers/siteTrackingSlice'
 
 export default configureStore({
   reducer: {
@@ -27,6 +28,7 @@ export default configureStore({
     recipientReports: recipientReportsReducer,
     shortcuts: shortcutReducer,
     payment: paymentReducer,
-    common: commonReducer
+    common: commonReducer,
+    siteTracking: siteTrackingReducer
   },
 });

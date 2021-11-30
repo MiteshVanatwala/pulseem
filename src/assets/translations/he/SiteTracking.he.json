@@ -3,7 +3,7 @@
     "setUp": "הגדר מעקב אתרים",
     "yourDomain": "הדומיין שלך",
     "siteToTrack": "מהי כתובת האתר שברצונך להגדיר מעקב?",
-    "eventToTrack":"אחרי אילו אירועים ברצונך לעקוב?",
+    "eventToTrack": "אחרי אילו אירועים ברצונך לעקוב?",
     "addDomain": "הוסף את הדומיין שלך כאן",
     "addPageUrl": "הוסף קישור לדף",
     "pageUrl": "קישור לדף",
@@ -13,5 +13,9 @@
         "exact": "בדיוק",
         "notContain": "לא כולל"
     },
-    "selectGroups": "בחר קבוצות"
+    "selectGroups": "בחר קבוצות",
+    "events": {
+        "pageLoad": "טעינת עמוד",
+        "pageView": "צפייה בעמוד"
+    }
 }

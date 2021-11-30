@@ -13,5 +13,9 @@
         "exact": "Exact",
         "notContain": "Not Contain"
     },
-    "selectGroups": "Select Groups"
+    "selectGroups": "Select Groups",
+    "events": {
+        "pageLoad": "Page Load",
+        "pageView": "Page View"
+    }
 }

@@ -30,7 +30,7 @@ import DashboardScreen from './screens/Dashboard/Dashboard';
 import SmsReport from './screens/Reports/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
-import SiteTrackingEditor from './screens/SiteTracking/Editor';
+import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {

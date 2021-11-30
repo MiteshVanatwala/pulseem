@@ -363,6 +363,7 @@ export const smsSlice = createSlice({
     previousCampaignData: [],
     extraData: [],
     accountId: [],
+    subAccountGroups: [],
     getCampaignSum: [],
     finishedCampaigns: [],
     testGroups: [],
@@ -445,7 +446,8 @@ export const smsSlice = createSlice({
       for (let i = 0; i < payload.length; i++) {
         tempArr.push({ ...payload[i], selected: false })
       }
-      state.accountId = tempArr
+      state.accountId = tempArr;
+      state.subAccountGroups = tempArr;
     })
     builder.addCase(getSMSDirectReport.rejected, (state, action) => {
       state.directSmsReportError = action.error

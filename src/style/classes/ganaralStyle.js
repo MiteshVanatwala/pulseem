@@ -1974,6 +1974,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 'bold',
     maxWidth: graphTextWidth[windowSize]
   },
+  mt24: {
+    marginTop: 24
+  },
   mb25: {
     marginBottom: 25
   },
