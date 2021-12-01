@@ -10,6 +10,7 @@ import SettingsLogo from '../assets/images/settings-white.png';
 import { FaHome } from 'react-icons/fa'
 
 export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
+  key: 'settings',
   title: <img
     alt='settings'
     src={SettingsLogo}
@@ -23,7 +24,7 @@ export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
     {title: t('master.RadMenuItemResource4.Text'),href: '/Pulseem/AccountUsersReport.aspx?fromreact=true',iconSrc: GrafMenuIcon, isShow: isAllowSwitchAccount},
     {title: t('master.RadMenuItemResource23.Text'),href: '/Pulseem/ExtraFieldsDefinition.aspx?fromreact=true',iconSrc: StarMenuIcon, isShow: true},
     {title: t('master.linkApiSettingsResource1.Text'),href: '/Pulseem/ApiSettings.aspx?fromreact=true',iconSrc: CodeMenuIcon, isShow: true},
-    {title: t('master.siteTracking'),href: '/react/SiteTracking',iconSrc: FaBinoculars, isFaIcon: true, isShow: true},
+    {key: 'SiteTracking', title: t('master.siteTracking'),href: '/react/SiteTracking',iconSrc: FaBinoculars, isFaIcon: true, isShow: true},
   ]
 })
 

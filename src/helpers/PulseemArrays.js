@@ -36,12 +36,12 @@ export const ReponseType = [
 ]
 
 export const eventsOptions = [
-    { key: 1, value: 'siteTracking.events.pageLoad' },
-    { key: 2, value: 'siteTracking.events.pageView' }
+    { key: 'PageLoad', value: 'siteTracking.events.pageLoad' },
+    { key: 'PageView', value: 'siteTracking.events.pageView' }
 ];
 
 export const eventConditions = [
-    { key: 1, value: "siteTracking.conditions.contains" },
-    { key: 2, value: "siteTracking.conditions.exact" },
-    { key: 3, value: "siteTracking.conditions.notContain" }
+    { key: 'Contains', value: "siteTracking.conditions.contains" },
+    { key: 'Exact', value: "siteTracking.conditions.exact" },
+    { key: 'NotContain', value: "siteTracking.conditions.notcontain" }
 ];

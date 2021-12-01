@@ -7,15 +7,27 @@
     "addDomain": "Add your domain here",
     "addPageUrl": "Add Page URL",
     "pageUrl": "Page URL",
+    "saved": "Event saved succesfuly",
     "conditions": {
         "none": "None",
         "contains": "Contains",
         "exact": "Exact",
-        "notContain": "Not Contain"
+        "notcontain": "Not Contain"
     },
     "selectGroups": "Select Groups",
+    "addToGroups": "Add to groups",
     "events": {
         "pageLoad": "Page Load",
         "pageView": "Page View"
+    },
+    "validation": {
+        "domainRequired": "Domain - Required field",
+        "domainNotValid": "Domain - Address not valid",
+        "groupsRequired": "Must add group for event"
+    },
+    "serverResponse": {
+        "notAuthorized": "Permission warnning. Please contact support.",
+        "missingMandatoryAction": "One of the parameter is missing. Please try again",
+        "serverNotAble": "Server Error. Please contact support."
     }
 }

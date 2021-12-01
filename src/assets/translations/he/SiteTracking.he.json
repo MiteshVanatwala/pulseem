@@ -7,15 +7,27 @@
     "addDomain": "הוסף את הדומיין שלך כאן",
     "addPageUrl": "הוסף קישור לדף",
     "pageUrl": "קישור לדף",
+    "saved": "מעקב אתרים נשמר בהצלחה",
     "conditions": {
         "none": "ללא",
         "contains": "כולל",
         "exact": "בדיוק",
-        "notContain": "לא כולל"
+        "notcontain": "לא כולל"
     },
     "selectGroups": "בחר קבוצות",
+    "addToGroups": "הוסף לקבוצות",
     "events": {
         "pageLoad": "טעינת עמוד",
         "pageView": "צפייה בעמוד"
+    },
+    "validation": {
+        "domainRequired": "דומיין - שדה חובה",
+        "domainNotValid": "דומיין - כתובת לא חוקית",
+        "groupsRequired": "חובה להוסיף קבוצה לאירוע הנבחר"
+    },
+    "serverResponse": {
+        "notAuthorized": "תקלת הרשאה - אנא פנה לתמיכה",
+        "missingMandatoryAction": "אחד הפרמטרים חסרים. אנא נסה שוב.",
+        "serverNotAble": "תקלה כללית בשרת. אנא פנה לתמיכה."
     }
 }

@@ -6,7 +6,7 @@ export const ACTION_TYPES = {
 export class SiteTrackingModel {
     constructor(eventName, pageURL, actionType, metadata) {
         this.eventName = eventName || "PageView";
-        this.pageURL = pageURL;
+        this.pageURL = pageURL || '';
         this.actionType = actionType || ACTION_TYPES.ADD_CLIENTS_TO_GROUP;
         this.metadata = {
             OperatorKey: metadata && metadata.OperatorKey || '',
