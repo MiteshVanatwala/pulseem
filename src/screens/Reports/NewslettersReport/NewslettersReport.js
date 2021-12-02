@@ -133,7 +133,7 @@ const NewslettersReport = ({ classes }) => {
     "NotOpened": t('mainReport.notOpened'),
     "SendError": t('mainReport.sendError'),
     "RemovedClients": t('mainReport.removedClients'),
-    "FileNames": t('mainReport.fileNames'),
+    "GroupsNames": t('mainReport.groupsNames'),
     "Attachments": t('mainReport.attachments'),
     "Status": t('common.Status')
   }
