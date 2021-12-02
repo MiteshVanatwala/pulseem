@@ -26,6 +26,8 @@ import arrowDown from "../../../assets/images/down-arrow-splash.png"
 import * as am4plugins_annotation from "@amcharts/amcharts4/plugins/annotation";
 import { Loader } from '../../../components/Loader/Loader';
 import { exportFile } from '../../../helpers/exportFromJson';
+import { SmsStatus } from '../../../helpers/PulseemArrays';
+import { preferredOrder, statusNumberToString } from '../../../helpers/functions';
 
 const SmsReport = ({ classes }) => {
   const { language, windowSize, isRTL } = useSelector(state => state.core)
@@ -81,7 +83,7 @@ const SmsReport = ({ classes }) => {
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Removed: {
-      title: t('mainReport.removedClients'),
+      title: t('mainReport.removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Replies: {
@@ -105,6 +107,26 @@ const SmsReport = ({ classes }) => {
   }, [dispatch, isDemoSend]);
 
 
+  const exportColumnHeader = {
+    "SMSCampaignID": t('common.campaignID'),
+    "Status": t('common.Status'),
+    "Name": t('common.CampaignName'),
+    "Type": t('common.campaignType'),
+    "UpdateDate": t('common.UpdateDate'),
+    "SendDate": t('common.SendDate'),
+    "ClicksCount": t('mainReport.clickCount'),
+    "UniqueClicksCount": t('common.ClicksUnique'),
+    "TotalSendPlan": t('mainReport.locTotalSendPlan.HeaderText'),
+    "CreditsPerSms": t('mainReport.postCredits'),
+    "IsResponse": t('mainReport.notOpened'), // todo
+    "totalSent": t('report.TotalSent'),
+    "success": t('report.success'),
+    "failure": t('report.failure'),
+    "removed": t('common.Removed'),
+    "replies": t('common.Comments'),
+    "futureSends": t('campaigns.FutureSend')
+  }
+
   const renderHeader = () => {
     return (
       <>
@@ -125,10 +147,13 @@ const SmsReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async () => {
+    let orderList = preferredOrder(searchResults || smsReport, Object.keys(exportColumnHeader));
+    orderList = await statusNumberToString(t, orderList, SmsStatus);
     exportFile({
-      data: smsReport,
+      data: orderList,
       fileName: 'smsReport',
-      exportType: 'xls'
+      exportType: 'xls',
+      fields: exportColumnHeader
     });
   }
 
@@ -482,7 +507,7 @@ const SmsReport = ({ classes }) => {
               {renderIntData(CreditsPerSms, '', { title: t("mainReport.postCredits") })}
             </Grid>
             <Grid item className={clsx(classes.plr10)}>
-              {renderIntData((totalSent * CreditsPerSms), '', { title: t("mainReport.billingCredits") })}
+              {renderIntData((totalSent * CreditsPerSms), '', { title: t("report.TotalCredits") })}
             </Grid>
           </Grid>
         </TableCell>
