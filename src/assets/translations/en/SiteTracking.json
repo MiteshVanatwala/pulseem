@@ -14,6 +14,7 @@
         "exact": "Exact",
         "notcontain": "Not Contain"
     },
+    "typeGroupName": "Type group name",
     "selectGroups": "Select Groups",
     "addToGroups": "Add to groups",
     "events": {

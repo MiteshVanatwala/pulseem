@@ -14,6 +14,7 @@
         "exact": "בדיוק",
         "notcontain": "לא כולל"
     },
+    "typeGroupName": "הקלד שם קבוצה",
     "selectGroups": "בחר קבוצות",
     "addToGroups": "הוסף לקבוצות",
     "events": {

@@ -1,12 +1,13 @@
 import {
     FormControl, Typography, TextField, Box, Input, Select, MenuItem, Checkbox, ListItemText
 } from '@material-ui/core'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux'
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { eventConditions } from '../../helpers/PulseemArrays'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
+import CheckboxGroups from '../../components/Groups/CheckboxGroups';
 
 const PageItem = ({
     classes,
@@ -16,33 +17,26 @@ const PageItem = ({
     const { t } = useTranslation();
     const { subAccountGroups } = useSelector((state) => state.sms);
     const { isRTL } = useSelector((state) => state.core);
-    const [groupNameSearch, setGroupNameSearch] = useState('');
-    const [groupList, setGroupList] = useState([...subAccountGroups]);
+    const [selectedGroups, setSelectedGroups] = useState([]);
 
     const updateOperationData = (key, value) => {
         siteEvent.metadata[key] = value;
         onUpdate(['metadata', key], value);
     }
 
-    const handleSelectedGroups = (event, selected) => {
-        const groupId = parseInt(selected.key.split('$')[1]);
-        const val = selected.props.value;
-        if (siteEvent.metadata.GroupIds) {
-            if (siteEvent.metadata.GroupIds.find((sg) => { return sg.toString() === groupId.toString() }) !== undefined) {
-                siteEvent.metadata.GroupIds = siteEvent.metadata.GroupIds.filter((sg) => { return sg.toString() !== groupId.toString() })
-            }
-            else {
-                siteEvent.metadata.GroupIds.push(groupId.toString());
-            }
+    useEffect(() => {
+        setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.GroupIds.includes(g.GroupID.toString()) }));
+    }, [siteEvent]);
+
+    const handleSelectedGroups = (group, exists) => {
+        if (exists) {
+            siteEvent.metadata.GroupIds = siteEvent.metadata.GroupIds.filter((sg) => { return sg.toString() !== group.GroupID.toString() })
+        }
+        else {
+            siteEvent.metadata.GroupIds.push(group.GroupID.toString());
         }
         onUpdate(['metadata', 'GroupIds'], siteEvent.metadata.GroupIds);
-    }
-
-    const handleSearch = (event) => {
-        event.stopPropagation();
-        event.preventDefault();
-        const list = [...subAccountGroups].filter((g) => { return g.GroupName.toLowerCase().includes(event.target.value.toLowerCase()) })
-        setGroupList(list);
+        setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.GroupIds.includes(g.GroupID.toString()) }));
     }
 
     return <Box className={classes.marginBlock20}>
@@ -94,42 +88,13 @@ const PageItem = ({
             </Box>
             <Box>
                 <Typography>{t("siteTracking.addToGroups")}</Typography>
-                <FormControl className={classes.formControl} variant="outlined" style={{ minWidth: 120, maxWidth: 300 }}>
-                    <Select
-                        className={classes.groupSelect}
-                        labelId="demo-mutiple-checkbox-label"
-                        id="demo-mutiple-checkbox"
-                        multiple
-                        value={siteEvent.metadata.GroupIds}
-                        onChange={(event, selected) => handleSelectedGroups(event, selected)}
-                        renderValue={(selected) => selected.map((s) => {
-                            const g = subAccountGroups.find((gr) => { return gr.GroupID.toString() === s.toString() });
-                            return g && g.GroupName;
-                        }).join(', ')
-                        }
-                    >
-                        <Input
-                            autoComplete='off'
-                            onChange={handleSearch}
-                            placeholder={t('notifications.buttons.search')}
-                            id="searchGroup"
-                        />
-
-                        {
-                            groupList.map((g) => (
-                                <MenuItem key={g.GroupID.toString()} value={g.GroupName} className={classes.groupList}>
-                                    <Checkbox
-                                        checked={siteEvent.metadata.GroupIds.filter((sg) => { return sg.toString() === g.GroupID.toString() }).length > 0}
-                                        color="primary"
-                                    />
-                                    <ListItemText
-                                        primary={g.GroupName}
-                                    />
-                                </MenuItem>
-                            ))
-                        }
-                    </Select>
-                </FormControl>
+                <CheckboxGroups
+                    classes={classes}
+                    groups={subAccountGroups}
+                    selectedGroups={selectedGroups}
+                    onSelect={handleSelectedGroups}
+                    labelText={t('siteTracking.typeGroupName')}
+                />
             </Box>
         </Box>
     </Box >

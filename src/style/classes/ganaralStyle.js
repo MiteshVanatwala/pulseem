@@ -2196,5 +2196,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   marginBlock20: {
     marginBlock: 20
+  },
+
+  MuiChipRoot: {
+    backgroundColor: '#1c82b2 !important',
+    '& span': {
+      color: '#fff'
+    },
+    '& .MuiChip-deleteIcon': {
+      color: '#fff',
+      fill: 'currentColor'
+    }
   }
 });

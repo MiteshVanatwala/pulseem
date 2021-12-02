@@ -86,13 +86,16 @@ const SiteTrackingEditor = ({ classes, ...props }) => {
         return isValid;
     }
 
-    const onSaveDomain = async () => {
+    const onSave = async () => {
         setShowLoader(true);
         if (validateForm()) {
             const request = { ...model };
             request.pageURL = protocol + request.pageURL;
             const response = await dispatch(post(request));
             onSaveReponse(response.payload);
+        }
+        else{
+            setDialogType({ type: "validationError" });
         }
         setShowLoader(false);
     }
@@ -121,7 +124,6 @@ const SiteTrackingEditor = ({ classes, ...props }) => {
 
     const renderDialog = () => {
         const { type } = dialogType || {}
-
         const dialogContent = {
             notAutorized: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.notAuthorized')),
             missingMandatoryAction: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.missingMandatoryAction')),
@@ -191,7 +193,7 @@ const SiteTrackingEditor = ({ classes, ...props }) => {
                 <Button
                     variant='contained'
                     size='large'
-                    onClick={() => setValidationError([])}
+                    onClick={() => { setDialogType(null); setValidationError([]);}}
                     className={clsx(
                         classes.confirmButton,
                         classes.dialogConfirmButton,
@@ -298,7 +300,7 @@ const SiteTrackingEditor = ({ classes, ...props }) => {
                         className={clsx(
                             classes.actionButton,
                             classes.actionButtonLightGreen)}
-                        onClick={() => onSaveDomain()}
+                        onClick={() => onSave()}
                         style={{ height: '100%', minWidth: 100 }}
                     >{t('common.Save')}</Button>
                 </Grid>
