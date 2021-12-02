@@ -189,7 +189,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
       //{title: t('master.DirectSmsReport.Text'),href: '/Pulseem/DirectSmsReport.aspx?fromreact=true', isShow: true },
       //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
       //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
-      {title: t('report.DirectSendReport'),href: '/react/Reports/DirectSendReport', isShow: true },
+      {key:'directSendReport',title: t('report.DirectSendReport'),href: '/react/Reports/DirectSendReport', isShow: true },
       {title: t('master.OpenedClickedReport'),href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true', isShow: true },
     ]
   }

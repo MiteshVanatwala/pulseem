@@ -249,6 +249,7 @@ const DirectSendReport = ({ classes }) => {
 
   return (
     <DefaultScreen
+      subPage='directSendReport'
       currentPage='reports'
       classes={classes}
       containerClass={classes.management}>
