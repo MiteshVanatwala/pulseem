@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
@@ -20,6 +20,8 @@ import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/cookies';
 import { exportFile } from '../../../helpers/exportFromJson';
+import { EmailStatus } from '../../../helpers/PulseemArrays';
+import { preferredOrder, statusNumberToString } from '../../../helpers/functions';
 
 const NewslettersReport = ({ classes }) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
@@ -175,21 +177,11 @@ const NewslettersReport = ({ classes }) => {
 
   const handleDownloadCsv = async () => {
     let orderList = [];
-    function preferredOrder(obj, order) {
-      const arr = [];
-      for (var i = 0; i < obj.length; i++) {
-        var newObject = {};
-        order.map((o) => {
-          newObject[o] = obj[i][o];
-        });
-        arr.push(newObject);
-      }
-      return arr;
-    }
 
     if (toFileArray.length > 0) {
       const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
       orderList = preferredOrder(fileArray, Object.keys(exportColumnHeader));
+      orderList = await statusNumberToString(t, orderList, EmailStatus);
       exportFile({
         data: orderList,
         fileName: 'emailReport',
@@ -199,6 +191,8 @@ const NewslettersReport = ({ classes }) => {
     }
     else {
       orderList = preferredOrder(searchResults || newslettersReports, Object.keys(exportColumnHeader));
+      //orderList = await statusNumberToString(t, orderList, EmailStatus);
+      orderList = await statusNumberToString(t, orderList, EmailStatus);
       exportFile({
         data: orderList,
         fileName: 'emailReport',

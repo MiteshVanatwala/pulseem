@@ -13,12 +13,13 @@
     "Characters": "תווים",
     "Credits": "קרדיטים",
     "AdvanceSearch": "חיפוש מתקדם",
+    "closeAdvanceSearch": "סגור חיפוש מתקדם",
     "ShowContent": "הצג תוכן",
     "TotalCredits": "סה\"כ קרדיטים",
     "TotalSent": "סה\"כ נשלחו",
     "Messages": "הודעות",
     "Attachments": "קבצים מצורפים",
-    "ToName": "To Name",
+    "ToName": "שם נמען",
     "FromName": "שם השולח",
     "None": "ללא",
     "Opened": "נפתחו",
@@ -31,5 +32,43 @@
     "subjectLine": "שורת הנושא",
     "Sent": "נשלחו",
     "date": "תאריך",
-    "distributeOfUse": "התפלגות שימוש"
-}
+    "distributeOfUse": "התפלגות שימוש",
+    "id": "מזהה (reference)",
+    "takenBySender": "Taken by sender",
+    "pending": "בהמתנה",
+    "sent": "נשלח",
+    "success": "נשלח בהצלחה",
+    "failure": "שגיאה",
+    "removed": "הוסר",
+    "stopped": "עצר",
+    "canceled": "בוטל",
+    "deleted": "נמחק",
+    "suspended": "הושהה",
+    "requireAproval": "אימות נדרש",
+    "invalidFromNumber": "מספר מאת לא תקין",
+    "toNumberLonger": "מספר נמען גדול 16",
+    "blockedSync": "Blocked Due To Sync Feature",
+    "blockedRemoval": "נחסם מסיבת הסרה",
+    "errorCode": "קוד שגיאה",
+    "totalResponses": "סך תגובות",
+    "clientStatus": "סטאטוס לקוח",
+    "StatusDescription": "תיאור סטאטוס",
+    "responses": "משובים",
+    "directReport": {
+      "statuses": {
+        "all": "הכל",
+        "pending": "ממתין לשליחה",
+        "sending": "נשלח",
+        "sentSuccessfuly": "נשלח בהצלחה",
+        "error": "שגיאה",
+        "removed": "הסיר עצמו"
+      },
+      "responseType": {
+        "all": "הכל",
+        "notActive":"ללא אפשרות למשובים",
+        "activeAll": "עם אפשרות למשובים - הכל",
+        "activeHasResponse": "עם אפשרות למשובים - ויש משובים",
+        "activeNoResponse":"עם אפשרות למשובים - ואין משובים"
+      }
+    }
+  }
