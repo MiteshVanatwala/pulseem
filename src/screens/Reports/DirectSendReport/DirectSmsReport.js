@@ -369,14 +369,12 @@ const DirectSMSReportTab = ({
           </TableCell>
           <TableCell
             classes={cellStyle}
-            align='center'
-            className={classes.flexHalf}>
+            align='center'>
             {t('report.id')}
           </TableCell>
           <TableCell
             classes={cellStyle}
-            align='center'
-            className={classes.flexHalf}>
+            align='center'>
             {t('report.Characters')}
           </TableCell>
           <TableCell
