@@ -415,13 +415,13 @@ const App = ({ screenSize }) => {
     })
     updateToken()
     initFeatures()
-    document.body.classList.add(classes.sidebar);
   }, [dispatch])
 
 
   const classes = useClasses(windowSize, isRTL)()
   const theme = getTheme(language)
   const history = useHistory()
+  document.body.classList.add(classes.sidebar);
 
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');

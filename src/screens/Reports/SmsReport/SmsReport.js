@@ -173,10 +173,10 @@ const SmsReport = ({ classes }) => {
           return String(row.Name.toLowerCase()).includes(values.campaignName.toLowerCase());
         },
         date: (row, values) => {
-          const { UpdatedDate, SendDate } = row
+          const { UpdateDate, SendDate } = row
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
-            : moment(UpdatedDate, dateFormat).valueOf()
+            : moment(UpdateDate, dateFormat).valueOf()
           const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
           const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
 
@@ -203,12 +203,20 @@ const SmsReport = ({ classes }) => {
       }
     }
 
+    const handleKeyPress = (event) => {
+      if (event.keyCode === 13 || event.code === 'Enter') {
+        handleSearch();
+      }
+    }
+
     const handleFromDateChange = (value) => {
       if (value > toDate) {
         handleToDate(null);
       }
       handleFromDate(value);
     }
+
+    
 
     if (windowSize === 'xs') {
       return (
@@ -232,6 +240,7 @@ const SmsReport = ({ classes }) => {
             variant='outlined'
             size='small'
             value={campaignName}
+            onKeyPress={handleKeyPress}
             onChange={(e) => setCampaignNameSearch(e.target.value)}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('common.CampaignName')}
@@ -395,7 +404,8 @@ const SmsReport = ({ classes }) => {
         <Typography component={innerRef ? 'a' : 'p'} href={innerRef} className={clsx(
           classes.middleText,
           colorTextStyle[type] || '',
-          { [classes.iconsFont]: !!icon })}>
+          { [classes.iconsFont]: !!icon })}
+          target="_blank">
           {icon ? icon : `${percentage || '0'}%`}
         </Typography>
         <Typography className={clsx(
@@ -413,7 +423,10 @@ const SmsReport = ({ classes }) => {
     const innerRef = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        <Typography component={innerRef ? 'a' : 'p'} href={innerRef} className={clsx(classes.middleText, colorTextStyle[type] || '')}>
+        <Typography component={innerRef ? 'a' : 'p'}
+          href={innerRef}
+          className={clsx(classes.middleText, colorTextStyle[type] || '')}
+          target="_blank">
           {value && value.toLocaleString() || '0'}
         </Typography>
         <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>

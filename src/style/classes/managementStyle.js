@@ -202,13 +202,28 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     overflow: "hidden",
     color: '#333',
     "@media screen and (max-width: 1366px)": {
-      fontSize: 16
+      fontSize: 15
+    },
+    "@media screen and (min-width: 600px) and (max-width: 1240px)": {
+      fontSize: 13
+    },
+    "@media screen and (min-width: 600px) and (max-width: 1100px)": {
+      fontSize: 11
     },
   },
   wrapText: {
     fontSize: 16,
     flexWrap: "wrap",
     textOverflow: "ellipsis",
+    "@media screen and (min-width: 600px) and (max-width: 1366px)": {
+      fontSize: 15
+    },
+    "@media screen and (min-width: 600px) and (max-width: 1240px)": {
+      fontSize: 13
+    },
+    "@media screen and (min-width: 600px) and (max-width: 1100px)": {
+      fontSize: 11
+    },
   },
   errorText: {
     color: 'red'
@@ -1434,8 +1449,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   showTitleInline: {
     display: 'none',
     "@media screen and (max-width: 1170px)": {
-      display: 'inline-block',
-      fontSize: 16
+      display: 'inline-block'
     }
   },
   reponsivePB5: {

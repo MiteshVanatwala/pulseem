@@ -527,7 +527,8 @@ const NewslettersReport = ({ classes }) => {
         <Typography component={innerHref ? 'a' : 'p'} href={innerHref} className={clsx(
           classes.middleTxt,
           colorTextStyle[type] || '',
-          { [classes.iconsFont]: !!icon })}>
+          { [classes.iconsFont]: !!icon })}
+          target="_blank">
           {icon ? icon : `${percentage || '0'}%`}
         </Typography>
         <Typography className={clsx(
@@ -555,7 +556,8 @@ const NewslettersReport = ({ classes }) => {
           <Typography
             component={clickable ? 'a' : 'p'}
             href={href}
-            className={clsx(classes.middleText, colorTextStyle[type] || '')}>
+            className={clsx(classes.middleText, colorTextStyle[type] || '')}
+            target="_blank">
             {value && value.toLocaleString() || '0'}
           </Typography>
           <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
@@ -570,7 +572,10 @@ const NewslettersReport = ({ classes }) => {
     const { title = t("notifications.tblBody.total"), href = '' } = data
     return (
       <Box className={classes.cellText}>
-        <Typography component={href !== '' && clickable ? 'a' : 'p'} href={href ? href : ''} className={clsx(classes.middleTxt, colorTextStyle[type] || '')}>
+        <Typography component={href !== '' && clickable ? 'a' : 'p'}
+          href={href ? href : ''}
+          className={clsx(classes.middleTxt, colorTextStyle[type] || '')}
+          target="_blank">
           {value && value.toLocaleString() || '0'}
         </Typography>
         <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
@@ -668,13 +673,13 @@ const NewslettersReport = ({ classes }) => {
           className={classes.flex4}>
           <Grid container className={clsx(classes.justifyBetween, classes.responsiveFlex)}>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderIntData(SendError, 'red', hrefs.SendError, true)}
+              {renderIntData(SendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'))}
             </Grid>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderIntData(RemovedClients, 'red', hrefs.RemovedClients, true)}
+              {renderIntData(RemovedClients, 'red', hrefs.RemovedClients, true, t('mainReport.removedClients'))}
             </Grid>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderIntData(NotOpened, 'red', hrefs.NotOpened, true)}
+              {renderIntData(NotOpened, 'red', hrefs.NotOpened, true, t("mainReport.GridButtonColumnResource3.HeaderText"))}
             </Grid>
           </Grid>
         </TableCell>
