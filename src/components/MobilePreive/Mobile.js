@@ -14,7 +14,7 @@ const MobilePreivew = ({ classes, campaignNumber, text, keyItem }) => {
             <div className={clsx(classes.wrapChat, classes.sidebar)}>
                 <div className={classes.chatBox}>
                     <div className={classes.fromMe}>
-                        {text !== '' ? text.split('\n').map((str,idx) => {
+                        {text && text !== '' ? text.split('\n').map((str,idx) => {
                             return (<p key={`${keyItem}_${idx}`} style={{ margin: "0", padding: "0" }}>{str}</p>)
                         }) : null}
                     </div>

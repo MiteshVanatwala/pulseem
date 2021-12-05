@@ -277,6 +277,9 @@ const SmsSend = ({ classes, ...props }) => {
         setOTPOpen(true);
         break;
       }
+      default: {
+        break;
+      }
     }
   }
 
@@ -292,7 +295,12 @@ const SmsSend = ({ classes, ...props }) => {
     if (props && props.match.params.id) {
       const finishedCampaigns = await dispatch(getFinishedCampaigns());
       const subAccountGroups = await dispatch(getGroupsBySubAccountId());
-      const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id))
+      const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id));
+
+      if(campaignSettings.payload.error){
+        window.location = "/react/SMSCampaigns";
+      }
+
       settotalCampaigns(finishedCampaigns.payload);
       setGroupList(subAccountGroups.payload);
       if (campaignSettings.payload && campaignSettings.payload.PulseSettings) {
