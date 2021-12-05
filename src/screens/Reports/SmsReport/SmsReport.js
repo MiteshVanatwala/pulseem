@@ -739,7 +739,9 @@ const SmsReport = ({ classes }) => {
   return (
     <DefaultScreen
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={classes.management}
+      currentPage="reports"
+      subPage="SmsReport">
       {renderHeader()}
       {renderSearchSection()}
       {renderManagmentLine()}
