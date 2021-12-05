@@ -216,7 +216,7 @@ const SmsReport = ({ classes }) => {
       handleFromDate(value);
     }
 
-    
+
 
     if (windowSize === 'xs') {
       return (
@@ -374,18 +374,20 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderNameCell = (row) => {
-    const { CampaignID, Name, SendDate, isChecked = false } = row
+    const { CampaignID, Name, SendDate } = row
 
     const date = SendDate ? moment(SendDate) : ''
     const showDate = SendDate ? date.format('L') : ''
     const showTime = SendDate ? date.format('LT') : ''
+    const isSchedule = moment(SendDate) > moment();
+
     return (
       <>
         <Typography className={classes.nameEllipsis}>
           {Name}
         </Typography>
         <Typography className={classes.grayTextCell}>
-          {`${showDate} ${showTime}`}
+          {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${showDate} ${showTime}`}
         </Typography>
       </>
     )
