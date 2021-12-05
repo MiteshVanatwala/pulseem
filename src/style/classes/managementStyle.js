@@ -191,7 +191,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     color: '#333',
-    lineHeight: 1,
+    lineHeight: 1.1,
     "@media screen and (max-width: 1366px)": {
       fontSize: 16,
     },
