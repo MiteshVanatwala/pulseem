@@ -374,12 +374,15 @@ const SmsCreator = ({ classes, ...props }) => {
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
-      if (response) {
+      if (response && !response.error) {
         setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
         setSmsModel(response.payload);
         return response.payload;
+      }
+      else {
+        window.location = '/react/SMSCampaigns';
       }
     }
   }
