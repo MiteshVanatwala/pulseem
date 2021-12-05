@@ -166,8 +166,12 @@ const LanguageSelector = ({ windowSize, classes }) => {
 
 
 export const TopAppBar = ({ classes, currentPage = '' }) => {
-  const cookieFeature = getCookie("accountFeatures");
+  let cookieFeature = getCookie("accountFeatures");
   const cookieIsClal = getCookie("isClal");
+
+  if (cookieFeature.constructor.name !== 'Array') {
+    cookieFeature = null;
+  }
 
   const { companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, smsOldVersion } = useSelector(state => state.core)
   const phoneMenuButtonRef = useRef(null)
