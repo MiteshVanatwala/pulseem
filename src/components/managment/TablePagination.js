@@ -23,6 +23,13 @@ export const TablePagination = ({
   const [isTyping, setTyping] = useState(false);
   const { isRTL } = useSelector(state => state.core)
 
+  const handleKeyPress = event => {
+    if (event.key === 'e' || event.key === '.') {
+      event.preventDefault();
+      event.stopPropagation();
+      return false;
+    }
+  }
   const handelPageChange = event => {
     let currentPage = parseInt(event.target.value)
     if (currentPage > pages) {
@@ -97,6 +104,7 @@ export const TablePagination = ({
           type="number"
           value={isTyping ? pageNum : page.toString()}
           onBlur={() => setTyping(false)}
+          onKeyPress={handleKeyPress}
           onChange={handelPageChange}
           variant='outlined'
           margin='none'
