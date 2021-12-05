@@ -387,7 +387,7 @@ const SmsReport = ({ classes }) => {
           {Name}
         </Typography>
         <Typography className={classes.grayTextCell}>
-          {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${showDate} ${showTime}`}
+          {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
         </Typography>
       </>
     )
