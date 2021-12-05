@@ -97,13 +97,13 @@ const SmsReport = ({ classes }) => {
   })
 
   const getData = async () => {
+    setLoader(true);
     await dispatch(getSmsReport(smsQuery));
     setLoader(false);
   }
 
   useEffect(() => {
     getData();
-    // initChart();
   }, [dispatch, isDemoSend]);
 
 
@@ -283,7 +283,7 @@ const SmsReport = ({ classes }) => {
             height={15}
             width={40}
             className={clsx({ [classes.rtlSwitch]: isRTL })}
-            onChange={() => setIsDemoSend(!isDemoSend)}
+            onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !isDemoSend }); setIsDemoSend(!isDemoSend) }}
           />
           <Typography style={{ marginInlineStart: 8 }}>
             {t('mainReport.locShowTestCampaigns.Text')}
