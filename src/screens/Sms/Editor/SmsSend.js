@@ -30,6 +30,7 @@ import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
+import { logout } from '../../../helpers/api'
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -298,7 +299,7 @@ const SmsSend = ({ classes, ...props }) => {
       const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id));
 
       if (campaignSettings.payload.error) {
-        window.location = "/react/SMSCampaigns";
+        logout();
       }
       settotalCampaigns(finishedCampaigns.payload);
       setGroupList(subAccountGroups.payload);

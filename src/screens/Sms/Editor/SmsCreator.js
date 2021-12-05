@@ -55,6 +55,7 @@ import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
 import MobilePreview from '../../../components/MobilePreive/Mobile'
+import { logout } from '../../../helpers/api'
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -382,7 +383,7 @@ const SmsCreator = ({ classes, ...props }) => {
         return response.payload;
       }
       else {
-        window.location = '/react/SMSCampaigns';
+        logout();
       }
     }
   }
