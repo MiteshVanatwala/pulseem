@@ -1,0 +1,16 @@
+{
+    "pending": "ממתין לשליחה",
+    "sending": "נשלח",
+    "succeeded": "נשלח בהצלחה",
+    "error": "שגיאה",
+    "retry": "ממתין לשליחה חוזרת",
+    "paused": "בעצירה",
+    "cancelled": "בוטל",
+    "badError": "שגיאה חמורה",
+    "mediumError": "שגיאה בינונית",
+    "spam": "ספאם",
+    "removed": "הסיר עצמו",
+    "removedBySystem": "הוסר על ידי המערכת",
+    "noStatus": "אין סטאטוס",
+    "noAttachments": "אין מצורפים"
+  }

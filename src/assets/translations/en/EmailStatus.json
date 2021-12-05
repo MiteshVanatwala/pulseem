@@ -1,0 +1,16 @@
+{
+    "pending": "Pending",
+    "sending": "Sending",
+    "succeeded": "Sent Successfully",
+    "error": "Error",
+    "retry": "Retry",
+    "paused": "Paused",
+    "cancelled": "cancelled",
+    "badError": "Direct Hard",
+    "mediumError": "Direct Medium",
+    "spam": "Spam",
+    "removed": "Removed",
+    "removedBySystem": "Removed By System",
+    "noStatus": "No Status",
+    "noAttachments": "No Attachments"
+  }
