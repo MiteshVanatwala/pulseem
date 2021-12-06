@@ -216,6 +216,7 @@ const DirectEmailReportTab = ({
   }
 
   const handleRowsPerPageSearching = async (val) => {
+    setLoader(true);
     let { email = {} } = searchData || {};
     let params = {
       PageSize: val,
@@ -224,6 +225,7 @@ const DirectEmailReportTab = ({
     }
     await dispatch(getNewsletterDirectReport(params));
     handleRowsPerPage(val)
+    setLoader(false);
   }
 
 
@@ -552,7 +554,7 @@ const DirectEmailReportTab = ({
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={handlePageSearching}
-        returnPageOne={false}
+        returnPageOne={true}
       />
     )
   }

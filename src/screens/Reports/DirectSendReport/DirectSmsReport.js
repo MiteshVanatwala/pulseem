@@ -531,7 +531,7 @@ const DirectSMSReportTab = ({
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={handlePageSearching}
-        returnPageOne={false}
+        returnPageOne={true}
       />
     )
   }

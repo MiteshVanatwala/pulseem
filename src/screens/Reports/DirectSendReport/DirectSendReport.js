@@ -16,9 +16,11 @@ import { preferredOrder, switchStatusDescription } from '../../../helpers/functi
 import { exportFile } from '../../../helpers/exportFromJson';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
+import { setCookie } from '../../../helpers/cookies';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 
 const DirectSendReport = ({ classes }) => {
-  const { windowSize, isRTL } = useSelector(state => state.core);
+  const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
   const { directSmsReport } = useSelector(state => state.sms);
   const [searchData, setSearchData] = useState({});
@@ -26,8 +28,6 @@ const DirectSendReport = ({ classes }) => {
   const [searchParam, setSearchParam] = useState({});
   const [tabValue, setTabValue] = useState(0);
   const rowsOptions = [6, 10, 20, 50];
-  const [rowsPerPageEmail, setRowsPerPageEmail] = useState(rowsOptions[0]);
-  const [rowsPerPageSms, setRowsPerPageSms] = useState(rowsOptions[0]);
   const [pageEmail, setPageEmail] = useState(1);
   const [pageSms, setPageSms] = useState(1);
   const [advanceSearch, setAdvanceSearch] = useState(false);
@@ -50,7 +50,7 @@ const DirectSendReport = ({ classes }) => {
   }
 
   const getEmailReportData = () => {
-    dispatch(getNewsletterDirectReport({  }));
+    dispatch(getNewsletterDirectReport({}));
   }
   const getSMSReportData = async () => {
     await dispatch(getSMSDirectReport({ PageSize: 6, PageIndex: 0 }));
@@ -172,6 +172,10 @@ const DirectSendReport = ({ classes }) => {
       });
       setLoader(false);
     }
+    const handleRowsPerPage = (val) => {
+      dispatch(setRowsPerPage(val))
+      setCookie('rpp', val, { maxAge: 2147483647 });
+    }
 
     return (
       <Grid container>
@@ -206,10 +210,10 @@ const DirectSendReport = ({ classes }) => {
                 handleSearchInput={handleSearchInput}
                 handleSearching={handleSearching}
                 handlePageChange={setPageEmail}
-                handleRowsPerPage={setRowsPerPageEmail}
+                handleRowsPerPage={handleRowsPerPage}
                 clearSearch={clearSearch}
                 page={pageEmail}
-                rowsPerPage={rowsPerPageEmail}
+                rowsPerPage={rowsPerPage}
                 searchData={searchData}
                 isSearching={isSearching}
                 directEmailReport={directNewsletterReport}
@@ -225,12 +229,12 @@ const DirectSendReport = ({ classes }) => {
                 handleSearchInput={handleSearchInput}
                 handleSearching={handleSearching}
                 handlePageChange={setPageSms}
-                handleRowsPerPage={setRowsPerPageSms}
+                handleRowsPerPage={handleRowsPerPage}
                 handleAdvanceSearch={setAdvanceSearch}
                 handleShowContent={setShowContent}
                 clearSearch={clearSearch}
                 page={pageSms}
-                rowsPerPage={rowsPerPageSms}
+                rowsPerPage={rowsPerPage}
                 searchData={searchData}
                 isSearching={isSearching}
                 directSmsReport={directSmsReport}
