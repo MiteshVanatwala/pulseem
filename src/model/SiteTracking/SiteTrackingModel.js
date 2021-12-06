@@ -3,10 +3,15 @@ export const ACTION_TYPES = {
     REMOVE_CLIENTS_FROM_GROUP: "REMOVE_CLIENTS_FROM_GROUP"
 }
 
+export const EventRequestModel = {
+    PageView: {
+        eventName: "PageView"
+    }
+};
 export class SiteTrackingModel {
-    constructor(eventName, pageURL, actionType, metadata) {
-        this.eventName = eventName || "PageView";
-        this.pageURL = pageURL || '';
+    constructor(eventName, domain, actionType, metadata) {
+        this.eventName = eventName || EventRequestModel.PageView.eventName;
+        this.domain = domain || '';
         this.actionType = actionType || ACTION_TYPES.ADD_CLIENTS_TO_GROUP;
         this.metadata = {
             OperatorKey: metadata && metadata.OperatorKey || '',
@@ -16,8 +21,4 @@ export class SiteTrackingModel {
     }
 };
 
-export const EventRequestModel = {
-    PageView: {
-        eventName: "PageView"
-    }
-};
+

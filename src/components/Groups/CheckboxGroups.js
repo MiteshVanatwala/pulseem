@@ -50,7 +50,6 @@ const CheckboxGroups = ({
                 return (
                     <TextField
                         color="primary"
-                        classes={classes}
                         {...params}
                         variant="outlined"
                         placeholder={props.labelText}

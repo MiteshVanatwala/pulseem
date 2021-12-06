@@ -19,7 +19,7 @@ import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
 import Toast from '../../components/Toast/Toast.component';
 
-const SiteTrackingEditor = ({ classes, ...props }) => {
+const SiteTrackingEditor = ({ classes }) => {
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [model, setModel] = useState(new SiteTrackingModel());
@@ -69,9 +69,9 @@ const SiteTrackingEditor = ({ classes, ...props }) => {
         let isValid = true;
         const isValidDomain = () => {
             const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/
-            return model.pageURL.match(domainRegex);
+            return model.domain.match(domainRegex);
         }
-        if (model.pageURL === '') {
+        if (model.domain === '') {
             setValidationError([...validationError, t('siteTracking.validation.domainRequired')])
             isValid = false;
         }
@@ -90,7 +90,7 @@ const SiteTrackingEditor = ({ classes, ...props }) => {
         setShowLoader(true);
         if (validateForm()) {
             const request = { ...model };
-            request.pageURL = protocol + request.pageURL;
+            request.domain = protocol + request.domain;
             const response = await dispatch(post(request));
             onSaveReponse(response.payload);
         }
@@ -266,8 +266,8 @@ const SiteTrackingEditor = ({ classes, ...props }) => {
                             required
                             fullWidth
                             variant="outlined"
-                            onChange={e => { handleModelChange("pageURL", e.target.value) }}
-                            value={model.pageURL}
+                            onChange={e => { handleModelChange("domain", e.target.value) }}
+                            value={model.domain}
                         />
                     </Grid>
                     <Grid item xs={12}>
