@@ -375,21 +375,34 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderNameCell = (row) => {
-    const { CampaignID, Name, SendDate } = row
+    const { CampaignID, Name, SendDate, UpdateDate } = row
 
     const date = SendDate ? moment(SendDate) : ''
+    const udate = UpdateDate ? moment(UpdateDate) : '';
     const showDate = SendDate ? date.format('L') : ''
     const showTime = SendDate ? date.format('LT') : ''
     const isSchedule = moment(SendDate) > moment();
+    const showUpdateDate = UpdateDate ? udate.format('L') : '';
+    const showTimeUpdate = UpdateDate ? udate.format('LT') : '';
 
     return (
       <>
         <Typography className={classes.nameEllipsis}>
           {Name}
         </Typography>
-        <Typography className={classes.grayTextCell}>
-          {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
-        </Typography>
+        {SendDate !== null ?
+          (
+            <Typography className={classes.grayTextCell}>
+              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
+            </Typography>
+          ) :
+          (
+            <Typography className={classes.grayTextCell}>
+               {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+            </Typography>
+          )
+        }
+
       </>
     )
   }
@@ -445,6 +458,7 @@ const SmsReport = ({ classes }) => {
       SMSCampaignID,
       Name,
       SendDate,
+      UpdateDate,
       FutureSends,
       success,
       ClicksCount,
@@ -469,7 +483,7 @@ const SmsReport = ({ classes }) => {
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex3)}>
-          {renderNameCell({ SMSCampaignID, Name, SendDate })}
+          {renderNameCell({ SMSCampaignID, Name, SendDate, UpdateDate })}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
@@ -542,6 +556,7 @@ const SmsReport = ({ classes }) => {
       SMSCampaignID,
       Name,
       SendDate,
+      UpdateDate,
       FutureSends,
       Success,
       ClicksCount,
@@ -565,7 +580,7 @@ const SmsReport = ({ classes }) => {
         <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
           <Box className={classes.justifyBetween}>
             <Box className={classes.inlineGrid}>
-              {renderNameCell({ SMSCampaignID, Name, SendDate })}
+              {renderNameCell({ SMSCampaignID, Name, SendDate, UpdateDate })}
             </Box>
           </Box>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
