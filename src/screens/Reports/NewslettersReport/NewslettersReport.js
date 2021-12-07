@@ -389,7 +389,8 @@ const NewslettersReport = ({ classes }) => {
             size='medium'
             className={clsx(
               classes.actionButton,
-              classes.actionButtonGreen
+              classes.actionButtonGreen,
+              newslettersReports.length > 0 ? null : classes.disabled
             )}
             onClick={handleDownloadCsv}
             startIcon={<ExportIcon />}>

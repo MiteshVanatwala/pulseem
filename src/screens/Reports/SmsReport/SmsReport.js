@@ -323,7 +323,8 @@ const SmsReport = ({ classes }) => {
             size='medium'
             className={clsx(
               classes.actionButton,
-              classes.actionButtonGreen
+              classes.actionButtonGreen,
+              smsReport.length > 0 ? null : classes.disabled
             )}
             onClick={handleDownloadCsv}
             startIcon={<ExportIcon />}>
