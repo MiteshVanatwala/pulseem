@@ -33,6 +33,7 @@ const DirectSendReport = ({ classes }) => {
   const [advanceSearch, setAdvanceSearch] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const [showLoader, setLoader] = useState(true);
+  const [exportEnable, setExportEnable] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
@@ -57,7 +58,17 @@ const DirectSendReport = ({ classes }) => {
     setLoader(false);
   }
 
+  const handleExportEnable = () => {
+    if (tabValue === 0) {
+      setExportEnable(Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.TotalRecords > 0 ? true : false)
+    } else {
+      setExportEnable(Object.keys(directSmsReport).length > 0  && directSmsReport.TotalSent > 0 ? true : false)
+    }
+  }
+
   useEffect(initData, [dispatch])
+  
+  useEffect(handleExportEnable,[isSearching])
 
   const clearSearch = (key) => {
     let isSearchingData = isSearching;
@@ -193,7 +204,7 @@ const DirectSendReport = ({ classes }) => {
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={0} />
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={1} />
             </TabList>
-            <Button className={clsx(classes.actionButtonGreen, classes.exportButton)} onClick={handleExportFile}>
+            <Button  className={clsx(classes.actionButtonGreen, classes.exportButton, exportEnable === false ? classes.disabled : '')} onClick={handleExportFile}>
               {t('campaigns.exportFile')}
               <Box className={clsx(classes.pulseemIcon, classes.f20)}>
                 {'\uE17B'}
