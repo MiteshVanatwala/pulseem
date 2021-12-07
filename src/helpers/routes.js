@@ -26,7 +26,7 @@ export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
 })
 
 
-export const getRoutes=(t=() => null, isClalAccount = false, features = null, windowSize = null, smsOldVersion, isRTL) => [
+export const getRoutes=(t=() => null, isClalAccount = false, features = null, subAccountSettings = null, windowSize = null, smsOldVersion, isRTL) => [
   {
     key: 'dashboard',
     title: t('dashboard.pageTitle'),
@@ -189,7 +189,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
       //{title: t('master.DirectSmsReport.Text'),href: '/Pulseem/DirectSmsReport.aspx?fromreact=true', isShow: true },
       //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
       //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
-      {key:'directSendReport',title: t('report.DirectSendReport'),href: '/react/Reports/DirectSendReport', isShow: true },
+      {key:'directSendReport',title: t('report.DirectSendReport'),href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
       {title: t('master.OpenedClickedReport'),href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true', isShow: true },
     ]
   }
