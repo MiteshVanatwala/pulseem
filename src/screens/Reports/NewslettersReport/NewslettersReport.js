@@ -221,10 +221,10 @@ const NewslettersReport = ({ classes }) => {
         return String(row.Name.toLowerCase()).includes(values.notificationName.toLowerCase());
       },
       date: (row, values) => {
-        const { UpdatedDate, SendDate } = row
+        const { LastEditDate, SendDate } = row
         const lastUpdate = SendDate ?
           moment(SendDate, dateFormat).valueOf()
-          : moment(UpdatedDate, dateFormat).valueOf()
+          : moment(LastEditDate, dateFormat).valueOf()
         const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
         const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
 
@@ -448,11 +448,14 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderNameCell = (row) => {
-    const { CampaignID, Name, SendDate, isChecked = false, Status } = row
+    const { CampaignID, Name, SendDate, isChecked = false, Status, LastEditDate } = row
 
     const date = SendDate ? moment(SendDate) : ''
     const showDate = SendDate ? date.format('L') : ''
     const showTime = SendDate ? date.format('LT') : ''
+    const udate = LastEditDate ? moment(LastEditDate) : '';
+    const showUpdateDate = LastEditDate ? udate.format('L') : '';
+    const showTimeUpdate = LastEditDate ? udate.format('LT') : '';
 
     if (windowSize === 'xs') {
       return (
@@ -470,10 +473,19 @@ const NewslettersReport = ({ classes }) => {
               {Name}
             </Typography>
           </Tooltip>
-          <Typography className={classes.grayTextCell}>
-            {t("report.SentOn")} {`${showDate} ${showTime}`}
-            {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
-          </Typography>
+          {SendDate !== null && SendDate !== '' ?
+            (
+              <Typography className={classes.grayTextCell}>
+                {t("report.SentOn")} {`${showDate} ${showTime}`}
+                {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
+              </Typography>
+            ) :
+            (
+              <Typography className={classes.grayTextCell}>
+                {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+              </Typography>
+            )
+          }
         </>
       )
     }
@@ -506,10 +518,18 @@ const NewslettersReport = ({ classes }) => {
               {row.Name}
             </Typography>
           </Tooltip>
-          <Typography className={classes.grayTextCell}>
-            {t("common.SentOn")} {`${showDate} ${showTime}`}
-            {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
-          </Typography>
+          {SendDate !== null && SendDate !== '' ?
+            (
+              <Typography className={classes.grayTextCell}>
+                {t("common.SentOn")} {`${showDate} ${showTime}`}
+                {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
+              </Typography>
+            ) :
+            (
+              <Typography className={classes.grayTextCell}>
+                {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+              </Typography>
+            )}
         </Grid>
       </Grid>
     )
@@ -592,6 +612,7 @@ const NewslettersReport = ({ classes }) => {
       CampaignID,
       Name,
       SendDate,
+      LastEditDate,
       TotalSendPlan,
       TotalSendCompleted,
       OpenCount,
@@ -616,7 +637,7 @@ const NewslettersReport = ({ classes }) => {
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex4)}>
-          {renderNameCell({ CampaignID, Name, SendDate, isChecked: true, Status })}
+          {renderNameCell({ CampaignID, Name, SendDate, isChecked: true, Status, LastEditDate })}
         </TableCell>
 
 
