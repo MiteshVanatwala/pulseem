@@ -24,7 +24,8 @@ export const TablePagination = ({
   const { isRTL } = useSelector(state => state.core)
 
   const handleKeyPress = event => {
-    if (event.key === 'e' || event.key === '.') {
+    var isNumber = /^[0-9]*$/;
+    if (!event.key.match(isNumber) || event.key === 'e' || event.key === '.') {
       event.preventDefault();
       event.stopPropagation();
       return false;
