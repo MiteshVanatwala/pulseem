@@ -18,6 +18,8 @@ import { EventRequestModel, SiteTrackingModel } from '../../model/SiteTracking/S
 import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
 import Toast from '../../components/Toast/Toast.component';
+import { eventsControllerCreate, CreateEventDefinitionInputDto } from '../../services/test';
+
 
 const SiteTrackingEditor = ({ classes }) => {
     const [showLoader, setShowLoader] = useState(true);
@@ -94,7 +96,7 @@ const SiteTrackingEditor = ({ classes }) => {
             const response = await dispatch(post(request));
             onSaveReponse(response.payload);
         }
-        else{
+        else {
             setDialogType({ type: "validationError" });
         }
         setShowLoader(false);
@@ -193,7 +195,7 @@ const SiteTrackingEditor = ({ classes }) => {
                 <Button
                     variant='contained'
                     size='large'
-                    onClick={() => { setDialogType(null); setValidationError([]);}}
+                    onClick={() => { setDialogType(null); setValidationError([]); }}
                     className={clsx(
                         classes.confirmButton,
                         classes.dialogConfirmButton,
@@ -222,79 +224,83 @@ const SiteTrackingEditor = ({ classes }) => {
         subPage='SiteTracking'
         classes={classes}
         containerClass={classes.management}>
-        <Title title={t("siteTracking.title")}
-            classes={classes}
-            subTitle={t("siteTracking.setUp")}
-            topZero={false}
-        />
-        {renderToast()}
-        {renderDialog()}
-        <Box>
-            <form className={classes.root} noValidate autoComplete="off">
-                <Grid container alignItems="center">
-                    <Grid item xs={12}>
-                        <Typography className={clsx(classes.marginBlock20)}>{t("siteTracking.siteToTrack")}</Typography>
-                        <Typography className={clsx(classes.mt10)}>{t("siteTracking.yourDomain")}</Typography>
-                    </Grid>
-                    <Grid item xs={6} className={clsx(classes.flex)} style={{ height: 55, direction: 'ltr' }}>
-                        <FormControl variant="outlined"
-                            className={clsx(
-                                classes.formControl,
-                                isRTL ? classes.endElementNoRadius : classes.startElementNoRadius)
-                            }
-                            style={{ minWidth: 120 }}>
-                            <Select
-                                id="drpSelectDomainProtocol"
-                                name="drpSelectDomainProtocol"
-                                value={protocol}
-                                onChange={(e) => handleDomainProtocol(e)}
-                                style={{ direction: 'ltr' }}
-                            >
-                                {domainProtocol.map((protocol) => {
-                                    return <MenuItem key={protocol.key} value={protocol.name}>
-                                        {protocol.name}
-                                    </MenuItem>
-                                })}
-                            </Select>
-                        </FormControl>
-                        <TextField
-                            placeholder={t('siteTracking.addDomain')}
-                            inputProps={{
-                                shrink: false
-                            }}
-                            className={clsx(classes.textField, classes.fullWidth, isRTL ? classes.startElementNoRadius : classes.endElementNoRadius)}
-                            required
-                            fullWidth
-                            variant="outlined"
-                            onChange={e => { handleModelChange("domain", e.target.value) }}
-                            value={model.domain}
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <Typography className={clsx(classes.marginBlock20)}>{t("siteTracking.eventToTrack")}</Typography>
-                        <Box>
-                            <FormControl component="fieldset">
-                                <RadioGroup aria-label="eventName" name="eventName" value={model.eventName}>
-                                    {
-                                        eventsOptions.map((eo, idx) => {
-                                            return <FormControlLabel
-                                                key={idx}
-                                                value={eo.key}
-                                                labelPlacement="end"
-                                                onChange={() => handleModelChange("eventName", eo.key)}
-                                                control={<Radio color="primary" />}
-                                                label={t(eo.value)} />
-                                        })
-                                    }
-                                </RadioGroup>
+        <Box style={{ height: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column' }}>
+            <Title title={t("siteTracking.title")}
+                classes={classes}
+                subTitle={t("siteTracking.setUp")}
+                topZero={false}
+            />
+            {renderToast()}
+            {renderDialog()}
+            <Box style={{ marginBottom: 'auto' }}>
+                <form className={classes.root} noValidate autoComplete="off">
+                    <Grid container alignItems="center">
+                        <Grid item xs={12}>
+                            <Typography className={clsx(classes.marginBlock20)}>{t("siteTracking.siteToTrack")}</Typography>
+                            <Typography className={clsx(classes.mt10)}>{t("siteTracking.yourDomain")}</Typography>
+                        </Grid>
+                        <Grid item xs={6} className={clsx(classes.flex)} style={{ height: 55, direction: 'ltr' }}>
+                            <FormControl variant="outlined"
+                                className={clsx(
+                                    classes.formControl,
+                                    isRTL ? classes.endElementNoRadius : classes.startElementNoRadius)
+                                }
+                                style={{ minWidth: 120 }}>
+                                <Select
+                                    id="drpSelectDomainProtocol"
+                                    name="drpSelectDomainProtocol"
+                                    value={protocol}
+                                    onChange={(e) => handleDomainProtocol(e)}
+                                    style={{ direction: 'ltr' }}
+                                >
+                                    {domainProtocol.map((protocol) => {
+                                        return <MenuItem key={protocol.key} value={protocol.name}>
+                                            {protocol.name}
+                                        </MenuItem>
+                                    })}
+                                </Select>
                             </FormControl>
-                        </Box>
-                        {
-                            model && <PageItem siteEvent={model} onUpdate={deepUpdate} classes={classes} />
-                        }
+                            <TextField
+                                placeholder={t('siteTracking.addDomain')}
+                                inputProps={{
+                                    shrink: false
+                                }}
+                                className={clsx(classes.textField, classes.fullWidth, isRTL ? classes.startElementNoRadius : classes.endElementNoRadius)}
+                                required
+                                fullWidth
+                                variant="outlined"
+                                onChange={e => { handleModelChange("domain", e.target.value) }}
+                                value={model.domain}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Typography className={clsx(classes.marginBlock20)}>{t("siteTracking.eventToTrack")}</Typography>
+                            <Box>
+                                <FormControl component="fieldset">
+                                    <RadioGroup aria-label="eventName" name="eventName" value={model.eventName}>
+                                        {
+                                            eventsOptions.map((eo, idx) => {
+                                                return <FormControlLabel
+                                                    key={idx}
+                                                    value={eo.key}
+                                                    labelPlacement="end"
+                                                    onChange={() => handleModelChange("eventName", eo.key)}
+                                                    control={<Radio color="primary" />}
+                                                    label={t(eo.value)} />
+                                            })
+                                        }
+                                    </RadioGroup>
+                                </FormControl>
+                            </Box>
+                            {
+                                model && <PageItem siteEvent={model} onUpdate={deepUpdate} classes={classes} />
+                            }
+                        </Grid>
                     </Grid>
-                </Grid>
-                <Grid item xs={12}>
+                </form>
+            </Box>
+            <Box>
+                <Grid item xs={12} style={{ marginTop: 'auto' }}>
                     <Button
                         variant='contained'
                         className={clsx(
@@ -304,7 +310,7 @@ const SiteTrackingEditor = ({ classes }) => {
                         style={{ height: '100%', minWidth: 100 }}
                     >{t('common.Save')}</Button>
                 </Grid>
-            </form>
+            </Box>
         </Box>
         <Loader isOpen={showLoader} />
     </DefaultScreen>

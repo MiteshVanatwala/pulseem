@@ -21,4 +21,10 @@ export class SiteTrackingModel {
     }
 };
 
+export class ScriptModel {
+    constructor(source) {
+        this.source = source
+    }
+}
+
 
