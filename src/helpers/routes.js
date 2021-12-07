@@ -182,7 +182,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
       {title: t('master.MmsMainReport.Text'),href: '/Pulseem/MmsMainReport.aspx?fromreact=true', isShow: true },
       {title: t('master.AbTestsReport.Text'),href: '/Pulseem/AbTestsReport.aspx?fromreact=true', isShow: true },
       {title: t('master.RadMenuItemResource15.Text'),href: '/Pulseem/AccountReport.aspx?fromreact=true', isShow: true },
-      {title: t('master.RadMenuItemResource16.Text'),href: '/Pulseem/CampaignComparison.aspx?fromreact=true', isShow: true },
+      {title: t('master.RadMenuItemResource16.Text'),href: '/Pulseem/CampaignComparison.aspx?fromreact=true', isShow: false },
       {title: t('master.RadMenuItemResource18.Text'),href: '/Pulseem/ClientReport.aspx?fromreact=true', isShow: true },
       {title: t('master.RadMenuItemResource30.Text'),href: '/Pulseem/EmailAutoReports.aspx?fromreact=true', isShow: true },
       {title: t('master.locRemovedReason.Text'),href: '/Pulseem/RemovedStats.aspx?fromreact=true', isShow: true },

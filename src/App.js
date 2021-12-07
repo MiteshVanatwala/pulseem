@@ -243,10 +243,10 @@ const renderRoutes = (classes, history) => {
         path={`/AccountReport`}
         component={transferUrl('/Pulseem/AccountReport.aspx')}
       />
-      <Route
+      {/* <Route
         path={`/CampaignComparison`}
         component={transferUrl('/Pulseem/CampaignComparison.aspx')}
-      />
+      /> */}
       <Route
         path={`/ClientReport`}
         component={transferUrl('/Pulseem/ClientReport.aspx')}
