@@ -169,7 +169,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
   let cookieFeature = getCookie("accountFeatures");
   const cookieIsClal = getCookie("isClal");
 
-  if (cookieFeature.constructor.name !== 'Array') {
+  if (cookieFeature && cookieFeature.constructor.name !== 'Array') {
     cookieFeature = null;
   }
 
