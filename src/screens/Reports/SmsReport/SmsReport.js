@@ -501,7 +501,7 @@ const SmsReport = ({ classes }) => {
           classes={borderCellStyle}
           align='center'
           className={classes.flex2}>
-          <Grid container direction={'row'} className={classes.justifyBetween}>
+          <Grid container direction={'row'} className={classes.justifyEvenly}>
             <Grid item className={classes.plr10}>
               {renderIntData(ClicksCount, 'blue', hrefs.ClickCount)}
             </Grid>
@@ -532,7 +532,7 @@ const SmsReport = ({ classes }) => {
           classes={borderCellStyle}
           align='center'
           className={classes.flex3}>
-          <Grid container direction={'row'} className={classes.justifyBetween}>
+          <Grid container direction={'row'} className={classes.justifyEvenly}>
             <Grid item className={classes.plr10}>
               {renderIntData(CreditsPerSms, '', { title: t("mainReport.postCredits") })}
             </Grid>
@@ -578,7 +578,7 @@ const SmsReport = ({ classes }) => {
         component='div'
         classes={rowStyle}>
         <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
-          <Box className={classes.justifyBetween}>
+          <Box className={classes.justifyEvenly}>
             <Box className={classes.inlineGrid}>
               {renderNameCell({ SMSCampaignID, Name, SendDate, UpdateDate })}
             </Box>

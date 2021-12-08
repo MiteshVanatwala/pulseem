@@ -413,6 +413,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     display: "flex",
     justifyContent: "space-between",
   },
+  justifyEvenly: {
+    display: "flex",
+    justifyContent: "space-evenly",
+  },
   flexColumn2: {
     display: "flex",
     flexDirection: "column",

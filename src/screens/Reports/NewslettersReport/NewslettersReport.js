@@ -56,26 +56,26 @@ const NewslettersReport = ({ classes }) => {
     },
     OpenCount: {
       title: t('mainReport.GridButtonColumnResource1.HeaderText'),
-      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
-      clickable: true
+      href: ``,
+      clickable: false
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     OpenCountUnique: {
       title: t('common.Unique'),
-      href: ``,
-      clickable: false
+      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
+      clickable: true
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCount: {
       title: t('common.Clicks'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
-      clickable: true
+      href: ``,
+      clickable: false
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: ``,
-      clickable: false
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
+      clickable: true
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemovedClients: {
@@ -476,7 +476,7 @@ const NewslettersReport = ({ classes }) => {
           {SendDate !== null && SendDate !== '' ?
             (
               <Typography className={classes.grayTextCell}>
-                {t("report.SentOn")} {`${showDate} ${showTime}`}
+                {t("common.SentOn")} {`${showDate} ${showTime}`}
                 {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
               </Typography>
             ) :
@@ -639,26 +639,23 @@ const NewslettersReport = ({ classes }) => {
           className={clsx(classes.flex4)}>
           {renderNameCell({ CampaignID, Name, SendDate, isChecked: true, Status, LastEditDate })}
         </TableCell>
-
-
+        <TableCell
+          align='center'
+          classes={noBorderCellStyle}
+          className={classes.flex1}>
+          {renderIntData(TotalSendPlan, '', row, windowSize !== 'xs', t("mainReport.totalSendPlan"))}
+        </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex2}>
-          <Grid container className={clsx(classes.justifyBetween, classes.responsiveFlex)}>
-            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderIntData(TotalSendPlan, '', row, windowSize !== 'xs', t("mainReport.totalSendPlan"))}
-            </Grid>
-            <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderIntData(TotalSendCompleted, '', hrefs.TotalSendCompleted, windowSize !== 'xs', t("mainReport.ToalSent"))}
-            </Grid>
-          </Grid>
+          className={classes.flex1}>
+          {renderIntData(TotalSendCompleted, '', hrefs.TotalSendCompleted, windowSize !== 'xs', t("mainReport.ToalSent"))}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
           className={classes.flex4}>
-          <Grid container className={clsx(classes.justifyBetween, classes.responsiveFlex)}>
+          <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
               {renderDataTooltip(OpenCount, 'green', hrefs.OpenCount, 'mainReport.OpensTotalTooltip.Text', row.CampaignID)}
             </Grid>
@@ -676,7 +673,7 @@ const NewslettersReport = ({ classes }) => {
           classes={borderCellStyle}
           align='center'
           className={classes.flex4}>
-          <Grid container className={clsx(classes.justifyBetween, classes.responsiveFlex)}>
+          <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
               {renderDataTooltip(ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
             </Grid>
@@ -693,7 +690,7 @@ const NewslettersReport = ({ classes }) => {
           classes={borderCellStyle}
           align='center'
           className={classes.flex4}>
-          <Grid container className={clsx(classes.justifyBetween, classes.responsiveFlex)}>
+          <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
               {renderIntData(SendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'))}
             </Grid>
@@ -754,7 +751,7 @@ const NewslettersReport = ({ classes }) => {
         component='div'
         classes={rowStyle}>
         <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
-          <Box className={classes.justifyBetween}>
+          <Box className={classes.justifyEvenly}>
             <Box className={classes.inlineGrid}>
               {renderNameCell(row)}
             </Box>
