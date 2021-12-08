@@ -37,7 +37,7 @@ export const statusNumberToString = (t, obj, statuses) => {
     if (o.Status) {
       o.Status = t(statuses[o.Status] ? statuses[o.Status].value : null);
     }
-    if (o.Attachments && o.Attachments === 'No_Attachments') {
+    if (o.Attachments && o.Attachments === 'No_Attachments' || o.Attachments === '') {
       o.Attachments = t('emailStatus.noAttachments');
     }
   });

@@ -122,7 +122,7 @@ const NewslettersReport = ({ classes }) => {
   })
 
   const exportColumnHeader = {
-    "Name": t('master.lblContactNameResource1.Text'),
+    "Name": t('common.CampaignName'),
     "SendDate": t('mainReport.GridBoundColumnResource3.HeaderText'),
     "TotalSendPlan": t('mainReport.totalSendPlan'),
     "TotalSendCompleted": t('mainReport.totalSendCompleted'),
@@ -180,7 +180,7 @@ const NewslettersReport = ({ classes }) => {
 
     if (toFileArray.length > 0) {
       const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
-      orderList = preferredOrder(fileArray, Object.keys(exportColumnHeader));
+      orderList = await preferredOrder(fileArray, Object.keys(exportColumnHeader));
       orderList = await statusNumberToString(t, orderList, EmailStatus);
       exportFile({
         data: orderList,
@@ -190,8 +190,8 @@ const NewslettersReport = ({ classes }) => {
       });
     }
     else {
-      orderList = preferredOrder(searchResults || newslettersReports, Object.keys(exportColumnHeader));
-      //orderList = await statusNumberToString(t, orderList, EmailStatus);
+      const list = searchResults || newslettersReports;
+      orderList = await preferredOrder(list, Object.keys(exportColumnHeader));
       orderList = await statusNumberToString(t, orderList, EmailStatus);
       exportFile({
         data: orderList,
