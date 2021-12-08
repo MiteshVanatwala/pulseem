@@ -740,8 +740,6 @@ const NewslettersReport = ({ classes }) => {
       ClickCountUnique,
       RemovedClients,
       SendError,
-      PercentageOpens,
-      PercetangeClicks,
       NotOpened
     } = row
     const hrefs = getHrefs(CampaignID)
@@ -751,43 +749,9 @@ const NewslettersReport = ({ classes }) => {
         component='div'
         classes={rowStyle}>
         <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
-          <Box className={classes.justifyEvenly}>
-            <Box className={classes.inlineGrid}>
-              {renderNameCell(row)}
-            </Box>
-            {/* <Box>
-              <ManagmentIcon
-                classes={classes}
-                iconClass={classes.w25}
-                textClass={classes.lineHeight1point2}
-                icon={ReportsIcon}
-                lable={t('mainReport.locGraph.HeaderText')}
-                href={`/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}`}
-              />
-            </Box> */}
+          <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
+            {renderNameCell(row)}
           </Box>
-          <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
-            <Grid item>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {t("mainReport.locTotalSendPlan.HeaderText")}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item>
-                  {renderIntData(TotalSendPlan, '')}
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid item>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {t("common.Sent")}
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item>
-                  {renderIntData(TotalSendPlan, '')}
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
           <Box className={classes.ml10}>
             <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
               {t("mainReport.GridButtonColumnResource1.HeaderText")}
@@ -798,9 +762,6 @@ const NewslettersReport = ({ classes }) => {
               </Grid>
               <Grid item>
                 {renderIntData(OpenCountUnique, 'green', hrefs.OpenCountUnique, false)}
-              </Grid>
-              <Grid item>
-                {renderPercetangeData(PercentageOpens, 'green', hrefs.PercentageOpens, false)}
               </Grid>
             </Grid>
             <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
@@ -813,12 +774,19 @@ const NewslettersReport = ({ classes }) => {
               <Grid item>
                 {renderIntData(ClickCountUnique, 'blue', hrefs.ClickCountUnique, false)}
               </Grid>
-              <Grid item>
-                {renderPercetangeData(PercetangeClicks, 'blue', hrefs.PercetangeClicks, false)}
-              </Grid>
             </Grid>
           </Box>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
+            <Grid item>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("common.Sent")}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {renderIntData(TotalSendPlan, '')}
+                </Grid>
+              </Grid>
+            </Grid>
             <Grid item>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("mainReport.GridButtonColumnResource4.HeaderText")}

@@ -398,7 +398,7 @@ const SmsReport = ({ classes }) => {
           ) :
           (
             <Typography className={classes.grayTextCell}>
-               {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+              {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
             </Typography>
           )
         }
@@ -459,20 +459,15 @@ const SmsReport = ({ classes }) => {
       Name,
       SendDate,
       UpdateDate,
-      FutureSends,
       success,
       ClicksCount,
       UniqueClicksCount,
-      ClicksPercentage = 0,
       removed,
       replies,
       CreditsPerSms,
       failure,
-      IsResponse,
       TotalSendPlan,
-      totalSent,
-      Type,
-      PostCredits = 0
+      totalSent
     } = row
     const hrefs = getHrefs(SMSCampaignID)
     return (
@@ -557,19 +552,11 @@ const SmsReport = ({ classes }) => {
       Name,
       SendDate,
       UpdateDate,
-      FutureSends,
-      Success,
       ClicksCount,
       UniqueClicksCount,
-      ClicksPercentage = 0,
       removed,
-      CreditsPerSms,
       failure,
-      IsResponse,
-      TotalSendPlan,
       totalSent,
-      Type,
-      PostCredits = 0
     } = row
     const hrefs = getHrefs(SMSCampaignID)
     return (
@@ -578,22 +565,25 @@ const SmsReport = ({ classes }) => {
         component='div'
         classes={rowStyle}>
         <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
-          <Box className={classes.justifyEvenly}>
-            <Box className={classes.inlineGrid}>
-              {renderNameCell({ SMSCampaignID, Name, SendDate, UpdateDate })}
-            </Box>
+          <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
+            {renderNameCell({ SMSCampaignID, Name, SendDate, UpdateDate })}
           </Box>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
             <Grid item>
-              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {t("mainReport.locTotalSendPlan.HeaderText")}
+              <Typography className={classes.mobileReportHead}>
+                {t("mainReport.GridButtonColumnResource2.HeaderText")}
               </Typography>
-              <Grid container spacing={2}>
-                <Grid item>
-                  {renderIntData(TotalSendPlan, '', hrefs.TotalSendTo, false)}
-                </Grid>
-              </Grid>
             </Grid>
+          </Grid>
+          <Grid container spacing={2} style={{ paddingInlineStart: 10 }}>
+            <Grid item>
+              {renderIntData(ClicksCount, 'blue', hrefs.ClickCount, false)}
+            </Grid>
+            <Grid item>
+              {renderIntData(UniqueClicksCount, 'blue', hrefs.ClickCountUnique, false)}
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
             <Grid item>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("common.Sent")}
@@ -604,22 +594,6 @@ const SmsReport = ({ classes }) => {
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          <Typography className={classes.mobileReportHead}>
-            {t("mainReport.GridButtonColumnResource2.HeaderText")}
-          </Typography>
-          <Grid container spacing={2} style={{ paddingInlineStart: 10 }}>
-            <Grid item>
-              {renderIntData(ClicksCount, 'blue', hrefs.ClickCount, false)}
-            </Grid>
-            <Grid item>
-              {renderIntData(UniqueClicksCount, 'blue', hrefs.ClickCountUnique, false)}
-            </Grid>
-            <Grid item>
-              {renderPercetangeData(ClicksPercentage, 'blue', hrefs.PercetangeClicks, false)}
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
             <Grid item>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("common.failedStatus")}
