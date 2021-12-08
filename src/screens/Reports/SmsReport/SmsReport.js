@@ -18,7 +18,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
 import { CSVLink } from 'react-csv'
-import { exportSmsReport, getSmsReport } from '../../../redux/reducers/smsSlice';
+import { getSmsReport } from '../../../redux/reducers/smsSlice';
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
@@ -27,7 +27,7 @@ import * as am4plugins_annotation from "@amcharts/amcharts4/plugins/annotation";
 import { Loader } from '../../../components/Loader/Loader';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { SmsStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString } from '../../../helpers/functions';
+import { preferredOrder, statusNumberToString, formatDateTime } from '../../../helpers/functions';
 
 const SmsReport = ({ classes }) => {
   const { language, windowSize, isRTL } = useSelector(state => state.core)
@@ -116,15 +116,16 @@ const SmsReport = ({ classes }) => {
     "SendDate": t('common.SendDate'),
     "ClicksCount": t('mainReport.clickCount'),
     "UniqueClicksCount": t('common.ClicksUnique'),
-    "TotalSendPlan": t('mainReport.locTotalSendPlan.HeaderText'),
+    "TotalSendPlan": t('mainReport.totalSendPlan'),
     "CreditsPerSms": t('mainReport.postCredits'),
-    "IsResponse": t('mainReport.notOpened'), // todo
+    "IsResponse": t('mainReport.isResponse'),
     "totalSent": t('report.TotalSent'),
     "success": t('report.success'),
     "failure": t('report.failure'),
     "removed": t('common.Removed'),
     "replies": t('common.Comments'),
-    "futureSends": t('campaigns.FutureSend')
+    "futureSends": t('campaigns.FutureSend'),
+    "StatusName": t('mainReport.statusName'),
   }
 
   const renderHeader = () => {
@@ -149,6 +150,7 @@ const SmsReport = ({ classes }) => {
   const handleDownloadCsv = async () => {
     let orderList = preferredOrder(searchResults || smsReport, Object.keys(exportColumnHeader));
     orderList = await statusNumberToString(t, orderList, SmsStatus);
+    orderList = await formatDateTime(orderList);
     exportFile({
       data: orderList,
       fileName: 'smsReport',

@@ -430,8 +430,8 @@
   "totalSendPlan": "Total Send Plan",
   "openCount": "Open Count", 
   "openCountUnique": "Open Count Unique",
-  "clickCount": "Click Count",
-  "clickCountUnique": "Click Count Unique",
+  "clickCount": "Clicks Count",
+  "clickCountUnique": "Clicks Count Unique",
   "notOpened": "Not Opened",
   "sendError": "Send Error",
   "removedClients": "Removed Clients",
@@ -536,5 +536,7 @@
   "Ok":"Yes",
   "No":"No",
   "summaryModalTitle": "Campaign Summary",
-  "feedback": "Feedback"
+  "feedback": "Feedback",
+  "isResponse": "Is Response",
+  "statusName": "Status Name"
 }

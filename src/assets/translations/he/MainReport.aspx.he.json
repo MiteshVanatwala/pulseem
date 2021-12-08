@@ -542,5 +542,7 @@
   "No":"לא",
   "Ok":"כן",
   "summaryModalTitle": "סיכום קמפיין",
-  "feedback": "משובים"
+  "feedback": "משובים",
+  "isResponse": "משוב",
+  "statusName": "הסבר סטאטוס"
 }
