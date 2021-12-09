@@ -21,7 +21,7 @@ import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { smsReportStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
+import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 
 const SmsReport = ({ classes }) => {
@@ -145,6 +145,7 @@ const SmsReport = ({ classes }) => {
     orderList = await statusNumberToString(t, orderList, smsReportStatus);
     orderList = await formatDateTime(orderList);
     orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
+    orderList = await deletePropertyFromArrayObject(orderList, "Status");
     exportFile({
       data: orderList,
       fileName: 'smsReport',

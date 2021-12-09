@@ -59,3 +59,11 @@ export const formatDateTime = (arr) => {
 
     return newArr;
 }
+
+export const deletePropertyFromArrayObject = (arr, property) => {
+    const newArr = [...arr];
+    newArr.forEach((obj) => {
+        delete obj[property];
+    });
+    return newArr;
+}
