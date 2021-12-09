@@ -22,6 +22,7 @@ import { getCookie, setCookie } from '../../../helpers/cookies';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime } from '../../../helpers/exportHelper';
+import { Loader } from '../../../components/Loader/Loader';
 
 const NewslettersReport = ({ classes }) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
@@ -45,7 +46,8 @@ const NewslettersReport = ({ classes }) => {
   const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.tableCellRootResponsive) }
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
-  const csvLinkRef = useRef(null)
+  const csvLinkRef = useRef(null);
+  const [showLoader, setLoader] = useState(true);
 
   moment.locale(language)
 
@@ -141,7 +143,9 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const getData = async () => {
+    setLoader(true);
     await dispatch(getNewsletterReports(isDemoSend));
+    setLoader(false);
   }
 
   useEffect(() => {
@@ -870,6 +874,7 @@ const NewslettersReport = ({ classes }) => {
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
+      <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>
   )
 }
