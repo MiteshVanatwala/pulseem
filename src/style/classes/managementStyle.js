@@ -1456,6 +1456,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     '& $middleWrapText': {
       display: 'flex',
       flexFlow: 'column wrap',
+      fontSize: 16
     },
     padding: '0 !important',
     "@media screen and (max-width: 1170px)": {
