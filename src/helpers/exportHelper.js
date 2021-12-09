@@ -27,13 +27,13 @@ export const statusNumberToString = (t, obj, statuses) => {
     return obj;
 }
 
-export const booleanToNumber = (obj, column) => {
+export const booleanToNumber = (obj, column, isBoolean = false, t) => {
     obj.forEach((o) => {
         if (!o[column]) {
-            o[column] = 0;
+            o[column] = isBoolean ? t('common.No') : 0;
         }
         else {
-            o[column] = 1;
+            o[column] = isBoolean ? t('common.Yes') : 1;
         }
     });
 
