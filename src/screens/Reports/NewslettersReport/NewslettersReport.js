@@ -139,7 +139,8 @@ const NewslettersReport = ({ classes }) => {
     "RemovedClients": t('mainReport.removedClients'),
     "GroupsNames": t('mainReport.groupsNames'),
     "Attachments": t('mainReport.attachments'),
-    "Status": t('common.Status')
+    "Status": t('common.Status'),
+    "StatusName": t('mainReport.statusName'),
   }
 
   const getData = async () => {
