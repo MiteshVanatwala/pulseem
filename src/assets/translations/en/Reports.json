@@ -52,6 +52,20 @@
   "clientStatus": "Client Status",
   "StatusDescription": "Status Description",
   "responses": "Responses",
+  "smsReports": {
+    "statuses": {
+      "other": "Other",
+      "all": "All",
+      "pending": "Pending",
+      "sending": "Sending",
+      "sentSuccessfuly": "Sent",
+      "error": "Error",
+      "removed": "Removed",
+      "cancelled": "Cancelled",
+      "inProcess": "In Process",
+      "draft": "Draft"
+    }
+  },
   "directReport": {
     "statuses": {
       "all": "All",
@@ -59,7 +73,8 @@
       "sending": "Sending",
       "sentSuccessfuly": "Sent Successfuly",
       "error": "Error",
-      "removed": "Removed"
+      "removed": "Removed",
+      "cancelled": "Cancelled"
     },
     "responseType": {
       "all": "All",

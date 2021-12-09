@@ -21,7 +21,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/cookies';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString } from '../../../helpers/functions';
+import { preferredOrder, statusNumberToString, formatDateTime } from '../../../helpers/exportHelper';
 
 const NewslettersReport = ({ classes }) => {
   const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
@@ -182,6 +182,7 @@ const NewslettersReport = ({ classes }) => {
       const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
       orderList = await preferredOrder(fileArray, Object.keys(exportColumnHeader));
       orderList = await statusNumberToString(t, orderList, EmailStatus);
+      orderList = await formatDateTime(orderList);
       exportFile({
         data: orderList,
         fileName: 'emailReport',
@@ -193,6 +194,7 @@ const NewslettersReport = ({ classes }) => {
       const list = searchResults || newslettersReports;
       orderList = await preferredOrder(list, Object.keys(exportColumnHeader));
       orderList = await statusNumberToString(t, orderList, EmailStatus);
+      orderList = await formatDateTime(orderList);
       exportFile({
         data: orderList,
         fileName: 'emailReport',

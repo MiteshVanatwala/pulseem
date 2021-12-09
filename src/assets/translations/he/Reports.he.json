@@ -54,6 +54,20 @@
   "clientStatus": "סטאטוס לקוח",
   "StatusDescription": "תיאור סטאטוס",
   "responses": "משובים",
+  "smsReport": {
+    "statuses": {
+      "other": "אחר",
+      "all": "הכל",
+      "pending": "ממתין לשליחה",
+      "sending": "בשליחה",
+      "sent": "נשלח",
+      "error": "שגיאה",
+      "removed": "הסיר עצמו",
+      "cancelled": "מבוטל",
+      "inProcess": "בתהליך",
+      "draft": "טיוטה"
+    }
+  },
   "directReport": {
     "statuses": {
       "all": "הכל",
@@ -61,14 +75,15 @@
       "sending": "נשלח",
       "sentSuccessfuly": "נשלח בהצלחה",
       "error": "שגיאה",
-      "removed": "הסיר עצמו"
+      "removed": "הסיר עצמו",
+      "cancelled": "מבוטל"
     },
     "responseType": {
       "all": "הכל",
-      "notActive":"ללא אפשרות למשובים",
+      "notActive": "ללא אפשרות למשובים",
       "activeAll": "עם אפשרות למשובים - הכל",
       "activeHasResponse": "עם אפשרות למשובים - ויש משובים",
-      "activeNoResponse":"עם אפשרות למשובים - ואין משובים"
+      "activeNoResponse": "עם אפשרות למשובים - ואין משובים"
     }
   }
 }
