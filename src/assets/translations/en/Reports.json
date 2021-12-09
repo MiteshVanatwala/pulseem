@@ -58,11 +58,11 @@
       "all": "All",
       "pending": "Pending",
       "sending": "Sending",
-      "sentSuccessfuly": "Sent",
+      "sent": "Sent",
       "error": "Error",
       "removed": "Removed",
       "cancelled": "Cancelled",
-      "inProcess": "In Process",
+      "inProcess": "In Progress",
       "draft": "Draft"
     }
   },
