@@ -4,9 +4,10 @@ import { Typography, Tooltip, IconButton } from '@material-ui/core'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { BsInfoCircleFill } from 'react-icons/bs';
 
-const HtmlTooltip = withStyles((theme) => ({
+const HtmlTooltip = withStyles(({ style }) => ({
   tooltip: {
-    maxWidth: 220
+    maxWidth: 220,
+    ...style
   },
 }))(Tooltip);
 
@@ -16,10 +17,11 @@ const useStylesBootstrap = makeStyles((theme) => ({
   },
   tooltip: {
     backgroundColor: theme.palette.common.black,
+    fontSize: props => props.style.fontSize
   },
 }));
 function BootstrapTooltip(props) {
-  const classes = useStylesBootstrap();
+  const classes = useStylesBootstrap(props);
 
   return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
 }
@@ -39,6 +41,7 @@ const CustomTooltip = ({ classes, text, title, placement = 'top', arrow = true, 
       interactive={interactive}
       arrow={arrow}
       placement={placement}
+      style={{...style}}
       classes={{
         tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
         arrow: classes.fBlack

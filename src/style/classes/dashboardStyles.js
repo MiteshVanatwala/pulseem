@@ -184,6 +184,9 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         maxWidth: 480,
         '& .MuiIconButton-colorSecondary': {
             color: '#0371ad'
+        },
+        '& .MuiFormControlLabel-root': {
+            marginRight: 0
         }
     },
     shoppingCartIcon: {
