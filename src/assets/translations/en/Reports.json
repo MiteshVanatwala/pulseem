@@ -52,7 +52,7 @@
   "clientStatus": "Client Status",
   "StatusDescription": "Status Description",
   "responses": "Responses",
-  "smsReports": {
+  "smsReport": {
     "statuses": {
       "other": "Other",
       "all": "All",
