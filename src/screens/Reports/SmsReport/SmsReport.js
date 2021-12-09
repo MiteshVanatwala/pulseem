@@ -533,6 +533,7 @@ const SmsReport = ({ classes }) => {
       removed,
       failure,
       totalSent,
+      success
     } = row
     const hrefs = getHrefs(SMSCampaignID)
     return (
@@ -587,6 +588,16 @@ const SmsReport = ({ classes }) => {
               <Grid container spacing={2}>
                 <Grid item>
                   {renderIntData(removed, 'red', hrefs.Removed, false)}
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("common.DLR")}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {renderIntData(success, '', hrefs.DLR)}
                 </Grid>
               </Grid>
             </Grid>

@@ -27,8 +27,8 @@ const GraphReport = ({ classes, reportData, showLoader }) => {
     var series = chart.series.push(new am4charts.ColumnSeries3D());
     series.dataFields.valueY = "amount";
     series.dataFields.categoryX = "month";
-    series.dataFields.color = "color";
-    series.tooltipText = "{valueY}";
+    series.dataFields.color = "color";  
+    series.tooltipText = "{categoryX}\n{valueY}";
     series.tooltip.getFillFromObject = false;
     series.tooltip.background.strokeWidth = 2;
     series.tooltip.background.cornerRadius = 0
