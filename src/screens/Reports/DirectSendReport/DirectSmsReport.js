@@ -201,6 +201,17 @@ const DirectSMSReportTab = ({
               value={Status}
               style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
               onChange={(e) => handleSearchInput(e.target.value, 'Status', 'sms')}
+              MenuProps={{
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left"
+                },
+                transformOrigin: {
+                  vertical: "top",
+                  horizontal: "left"
+                },
+                getContentAnchorEl: null
+              }}
             >
               <MenuItem key={-1} value="" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
               {SmsStatus.map(so => {
