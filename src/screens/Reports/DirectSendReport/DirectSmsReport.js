@@ -218,6 +218,17 @@ const DirectSMSReportTab = ({
               value={ResponseType}
               style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
               onChange={(e) => handleSearchInput(e.target.value, 'ResponseType', 'sms')}
+              MenuProps={{
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left"
+                },
+                transformOrigin: {
+                  vertical: "top",
+                  horizontal: "left"
+                },
+                getContentAnchorEl: null
+              }}
             >
               <MenuItem key={-1} value="" className={clsx(classes.dropDownItem)}>{t('report.responses')}</MenuItem>
               {ReponseType.map(so => {
