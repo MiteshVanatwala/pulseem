@@ -425,7 +425,6 @@ export const smsSlice = createSlice({
 
     builder.addCase(getSmsReport.fulfilled, (state, { payload }) => {
       state.smsReport = payload
-      //state.smsGraph =  payload.Graph
     })
     builder.addCase(getSmsGraph.fulfilled, (state, { payload }) => {
       state.smsGraph = payload
