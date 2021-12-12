@@ -1,4 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
+import { setCookie, getCookie } from '../../helpers/cookies'
 const rtlLanguages=['he','ar']
 
 export const coreSlice=createSlice({
@@ -25,9 +26,11 @@ export const coreSlice=createSlice({
   reducers: {
     setIsClal: (state, action) => {
       state.isClal = action.payload;
+      setCookie("isClal", action.payload);
     },
     setAccountFeatures: (state, action) => {
       state.accountFeatures = action.payload;
+      setCookie("accountFeatures", action.payload);
     },
     setLanguage: (state,action) => {
       state.language=action.payload

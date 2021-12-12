@@ -30,6 +30,7 @@ import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
+import { logout } from '../../../helpers/api'
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -277,6 +278,9 @@ const SmsSend = ({ classes, ...props }) => {
         setOTPOpen(true);
         break;
       }
+      default: {
+        break;
+      }
     }
   }
 
@@ -292,7 +296,11 @@ const SmsSend = ({ classes, ...props }) => {
     if (props && props.match.params.id) {
       const finishedCampaigns = await dispatch(getFinishedCampaigns());
       const subAccountGroups = await dispatch(getGroupsBySubAccountId());
-      const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id))
+      const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id));
+
+      if (campaignSettings.payload.error) {
+        logout();
+      }
       settotalCampaigns(finishedCampaigns.payload);
       setGroupList(subAccountGroups.payload);
       if (campaignSettings.payload && campaignSettings.payload.PulseSettings) {

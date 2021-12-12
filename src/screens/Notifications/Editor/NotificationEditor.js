@@ -8,9 +8,11 @@ import {
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
-import { getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups, 
-         getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } 
-from '../../../redux/reducers/notificationSlice';
+import {
+  getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups,
+  getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups
+}
+  from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
 import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
@@ -246,7 +248,7 @@ const NotificationEditor = ({ props, classes }) => {
     handleFromDate(date);
     setTimePickerOpen(false);
   }
-  
+
   /* #endregion */
   /* #region  Data Handlers */
   const handlePublicKey = async () => {

@@ -166,7 +166,14 @@ const LanguageSelector = ({ windowSize, classes }) => {
 
 
 export const TopAppBar = ({ classes, currentPage = '' }) => {
-  const { companyName, windowSize, isRTL, imageURL, isClal, accountFeatures, cameFromSubAccount, isAdmin, isAllowSwitchAccount, smsOldVersion } = useSelector(state => state.core)
+  let cookieFeature = getCookie("accountFeatures");
+  const cookieIsClal = getCookie("isClal");
+
+  if (cookieFeature && cookieFeature.constructor.name !== 'Array') {
+    cookieFeature = null;
+  }
+
+  const { companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, smsOldVersion } = useSelector(state => state.core)
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -195,7 +202,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     setOpen(!open)
   }
   const { t } = useTranslation();
-  const routes = getRoutes(t, isClal, accountFeatures, windowSize, smsOldVersion, isRTL)
+  const routes = getRoutes(t, cookieIsClal, cookieFeature, windowSize, smsOldVersion, isRTL)
   const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
 
   const navigate = ({ uri }) => {

@@ -206,7 +206,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: 25,
   },
   maxHeight87: {
-    maxHeight: 87,
+    maxHeight: 'auto',
+    "@media screen and (min-width: 600px)": {
+      maxHeight: 87,
+    }
   },
   w20: {
     width: "20%",
@@ -247,6 +250,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   p10: {
     padding: 10,
   },
+  p20: {
+    padding: 20
+  },
   p0: {
     padding: 0,
   },
@@ -271,6 +277,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pt2rem: {
     paddingTop: "2rem",
   },
+  pt0: {
+    paddingTop: 0
+  },
   pt10: {
     paddingTop: 10,
   },
@@ -279,6 +288,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pt2: {
     paddingTop: 1.4,
+  },
+  pb0: {
+    paddingBottom: 0
   },
   pb0: {
     paddingBottom: 0
@@ -313,6 +325,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt5: {
     marginTop: 5,
   },
+  mt25: {
+    marginTop: 25
+  },
   ml0: {
     marginInlineStart: 0,
   },
@@ -337,6 +352,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt15: {
     marginTop: 15
   },
+  f12: {
+    fontSize: 12,
+  },
+  mt20: {
+    marginTop: 20
+  },
   f14: {
     fontSize: 14,
   },
@@ -360,6 +381,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   f28: {
     fontSize: 28,
+  },
+  f30: {
+    fontSize: 30
   },
   line1: {
     lineHeight: 1,
@@ -388,6 +412,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   justifyBetween: {
     display: "flex",
     justifyContent: "space-between",
+  },
+  justifyEvenly: {
+    display: "flex",
+    justifyContent: "space-evenly",
   },
   flexColumn2: {
     display: "flex",
@@ -425,6 +453,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: '100%',
     alignItems: 'center'
   },
+  spaceBetween: {
+    display: 'flex',
+    justifyContent: 'space-between'
+  },
   spaceEvenly: {
     display: "flex",
     justifyContent: "space-evenly",
@@ -458,7 +490,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 30,
   },
   blue: {
-    color: "#0a74a9",
+    color: "#0a74a9"
+  },
+  bgLightBlue: {
+    backgroundColor: '#E3E9F0'
+  },
+  bgBlack: {
+    backgroundColor: 'black'
+  },
+  fBlack: {
+    color: 'black'
+  },
+  black: {
+    color: '#626262'
+  },
+  white: {
+    color: 'white'
   },
   whiteBox: {
     backgroundColor: "#fff",
@@ -559,6 +606,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&:hover': {
       backgroundColor: 'transparent'
     }
+  },
+  floatRight: {
+    float: 'right'
+  },
+  size150: {
+    width: 127,
+    height: 127
+  },
+  size130: {
+    width: 110,
+    height: 110,
   },
   noWrap: {
     flexWrap: "nowrap",

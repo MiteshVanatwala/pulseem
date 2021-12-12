@@ -225,9 +225,19 @@ export const verifyCode = createAsyncThunk(
   })
 
 export const getSmsReport = createAsyncThunk(
-  'reports/SmsReport', async (demo = false, thunkAPI) => {
+  'reports/SmsReport', async (query, thunkAPI) => {
     try {
-      const response = await instence.get(`reports/SmsReport?includeTestCampaign=${demo}`);
+      const response = await instence.post(`reports/SmsReport`, query);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+export const getSmsGraph = createAsyncThunk(
+  'reports/SmsReportGraph', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`reports/SmsReportGraph`);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -359,6 +369,7 @@ export const smsSlice = createSlice({
     smsDataError: '',
     authorizationData: [],
     smsReport: [],
+    smsGraph: [],
     previousLandingData: [],
     previousCampaignData: [],
     extraData: [],
@@ -414,6 +425,9 @@ export const smsSlice = createSlice({
 
     builder.addCase(getSmsReport.fulfilled, (state, { payload }) => {
       state.smsReport = payload
+    })
+    builder.addCase(getSmsGraph.fulfilled, (state, { payload }) => {
+      state.smsGraph = payload
     })
     builder.addCase(getSMSDirectReport.fulfilled, (state, { payload }) => {
       state.directSmsReport = payload

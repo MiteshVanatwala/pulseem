@@ -117,7 +117,6 @@ const notificationIconHeight = {
     lg: 90,
     xl: 90,
 }
-
 const folderSize = {
     sm: 70,
     md: 180,
@@ -131,7 +130,6 @@ const galleryHeight = {
     lg: 400,
     xl: 400
 }
-
 
 export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     galleryGrid: {
