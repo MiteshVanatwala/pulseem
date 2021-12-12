@@ -384,7 +384,6 @@ export const smsSlice = createSlice({
     smsCampaignSettings: [],
     smsSendResult: -1,
     OTPPassed: null,
-    smsGraph: [],
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'sms.saved', showAnimtionCheck: true },
       QUICK_SEND_SUCCESSS: { severity: 'success', color: 'success', message: 'sms.quickSend', showAnimtionCheck: true },
