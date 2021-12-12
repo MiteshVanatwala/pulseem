@@ -81,7 +81,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tableCellBody: {
     borderInlineEnd: '1px solid #797979',
-    marginBlock: 20,
+    marginBlock: 10,
     borderBottom: 0,
     display: 'flex',
     justifyContent: 'center',

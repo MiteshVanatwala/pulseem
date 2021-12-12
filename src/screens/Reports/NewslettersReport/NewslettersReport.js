@@ -585,7 +585,7 @@ const NewslettersReport = ({ classes }) => {
         }}>
         <Box className={classes.cellText}>
           <Typography
-            component={clickable ? 'a' : 'p'}
+            component={clickable && value > 0 ? 'a' : 'p'}
             href={href}
             className={clsx(classes.middleText, colorTextStyle[type] || '')}
             target="_blank">
@@ -603,7 +603,7 @@ const NewslettersReport = ({ classes }) => {
     const { title = t("notifications.tblBody.total"), href = '' } = data
     return (
       <Box className={classes.cellText}>
-        <Typography component={href !== '' && clickable ? 'a' : 'p'}
+        <Typography component={href !== '' && clickable && value > 0 ? 'a' : 'p'}
           href={href ? href : ''}
           className={clsx(classes.middleTxt, colorTextStyle[type] || '')}
           target="_blank">

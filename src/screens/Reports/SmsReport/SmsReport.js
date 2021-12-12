@@ -58,7 +58,7 @@ const SmsReport = ({ classes }) => {
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: ``
+      href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
       //href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     ClickCount: {
@@ -372,7 +372,7 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderNameCell = (row) => {
-    const { CampaignID, Name, SendDate, UpdateDate } = row
+    const { CampaignID, Name, SendDate, UpdateDate, Status } = row
 
     const date = SendDate ? moment(SendDate) : ''
     const udate = UpdateDate ? moment(UpdateDate) : '';
@@ -387,6 +387,7 @@ const SmsReport = ({ classes }) => {
         <Typography className={classes.nameEllipsis}>
           {Name}
         </Typography>
+        {Status === 5 ? <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
         {SendDate !== null ?
           (
             <Typography className={classes.grayTextCell}>
@@ -415,7 +416,7 @@ const SmsReport = ({ classes }) => {
     const innerRef = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        <Typography component={innerRef ? 'a' : 'p'}
+        <Typography component={innerRef && value > 0 ? 'a' : 'p'}
           href={innerRef}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           target="_blank">
@@ -443,7 +444,8 @@ const SmsReport = ({ classes }) => {
       CreditsPerSms,
       failure,
       TotalSendPlan,
-      totalSent
+      totalSent,
+      Status
     } = row
     const hrefs = getHrefs(SMSCampaignID)
     return (
@@ -454,7 +456,7 @@ const SmsReport = ({ classes }) => {
           classes={cellBodyStyle}
           align='center'
           className={clsx(classes.flex3)}>
-          {renderNameCell({ SMSCampaignID, Name, SendDate, UpdateDate })}
+          {renderNameCell(row)}
         </TableCell>
         <TableCell
           classes={noBorderCellStyle}
