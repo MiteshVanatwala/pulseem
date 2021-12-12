@@ -344,7 +344,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   actionButtonLightGreen: {
     backgroundColor: '#27AE60',
-    marginInlineEnd: '10px',
+    // marginInlineEnd: '10px',
     '&:hover': {
       backgroundColor: '#219150'
     }
@@ -354,7 +354,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   actionButtonLightBlue: {
     backgroundColor: '#3498DB',
-    marginInlineEnd: '10px',
+    // marginInlineEnd: '10px',
     '&:hover': {
       backgroundColor: '#3498DB'
     }
