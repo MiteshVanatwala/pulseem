@@ -55,6 +55,7 @@ import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
 import MobilePreview from '../../../components/MobilePreive/Mobile'
+import { logout } from '../../../helpers/api'
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -374,12 +375,15 @@ const SmsCreator = ({ classes, ...props }) => {
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
-      if (response) {
+      if (response && !response.error) {
         setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
         setSmsModel(response.payload);
         return response.payload;
+      }
+      else {
+        logout();
       }
     }
   }

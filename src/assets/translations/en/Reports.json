@@ -13,6 +13,7 @@
   "Characters": "Characters",
   "Credits": "Credits",
   "AdvanceSearch": "Advance Search",
+  "closeAdvanceSearch": "Close Advance Search",
   "ShowContent": "Show Content",
   "TotalCredits": "Total Credits",
   "TotalSent": "Total Sent",
@@ -20,5 +21,67 @@
   "Attachments": "Attachments",
   "ToName": "To Name",
   "FromName": "From Name",
-  "None": "None"
+  "None": "None",
+  "id": "Reference ID",
+  "takenBySender": "Taken by sender",
+  "pending": "Pending",
+  "sent": "Sent",
+  "success": "Success",
+  "failure": "Failure",
+  "removed": "Removed",
+  "stopped": "Stopped",
+  "canceled": "Canceled",
+  "deleted": "Deleted",
+  "suspended": "Suspended",
+  "requireAproval": "Require Aproval",
+  "invalidFromNumber": "Invalid From Number",
+  "toNumberLonger": "To Number Longer then 16",
+  "blockedSync": "Blocked Due To Sync Feature",
+  "blockedRemoval": "Blocked Due To Removal",
+  "Opened": "Opened",
+  "locUniqueOpens": "Unique Opened",
+  "notOpened": "Not Opened",
+  "error": "Error",
+  "clicks": "Clicks",
+  "removals": "Removals",
+  "subjectLine": "The Subject Line",
+  "date": "Date",
+  "distributeOfUse": "Distribution of Use",
+  "errorCode": "Error Code",
+  "totalResponses": "Total Responses",
+  "clientStatus": "Client Status",
+  "StatusDescription": "Status Description",
+  "responses": "Responses",
+  "smsReport": {
+    "statuses": {
+      "other": "Other",
+      "all": "All",
+      "pending": "Pending",
+      "sending": "Sending",
+      "sent": "Sent",
+      "error": "Error",
+      "removed": "Removed",
+      "cancelled": "Cancelled",
+      "inProcess": "In Progress",
+      "draft": "Draft"
+    }
+  },
+  "directReport": {
+    "statuses": {
+      "all": "All",
+      "pending": "Pending",
+      "sending": "Sending",
+      "sentSuccessfuly": "Sent Successfuly",
+      "error": "Error",
+      "removed": "Removed",
+      "cancelled": "Cancelled"
+    },
+    "responseType": {
+      "all": "All",
+      "notActive": "responses not active",
+      "activeAll": "responses active - all",
+      "activeHasResponse": "responses active - has responses",
+      "activeNoResponse": "responses active - no responses"
+    }
+  }
 }

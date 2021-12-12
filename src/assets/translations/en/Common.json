@@ -21,7 +21,7 @@
   "Partners": "Partners Program",
   "PulseemKosher": "System keeps the Sabbath and Jewish holidays",
   "PulseemKosherMesage": "Your account configured as the Sabbath and Jewish holidays keeper, it is impossible to work in system at those days",
-  "SendDate": "Send Date:",
+  "SendDate": "Send Date",
   "SendOptions": "Send Settings",
   "SendTime": "Send Time:",
   "SendTo": "Send To:",
@@ -511,5 +511,6 @@
   "continue": "Continue",
   "errorDetected": "Payment incomplete!",
   "tryAgain": "Please try again.",
-  "contactSupportForBilling": "To continue, please be in touch with<br/> our sales at <a href='tel:03-524-0290'>03-524-0290</a> or at<br/> <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+  "contactSupportForBilling": "To continue, please be in touch with<br/> our sales at <a href='tel:03-524-0290'>03-524-0290</a> or at<br/> <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+  "campaignType": "Type"
 }

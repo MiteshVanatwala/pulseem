@@ -542,7 +542,7 @@
   "estimatedDelivery": "Estimated End Date",
   "dragXlOrCsv": "Drag & drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box",
   "saveAndExit": "Save and Exit",
-  "campaignIsOnItsWay": "Your camapign is on its way",
+  "campaignIsOnItsWay": "Your Campaign is on its way",
   "sent": "Sent!",
   "switchToOldeVersion": "Switch back to the old version",
   "message":"Message",

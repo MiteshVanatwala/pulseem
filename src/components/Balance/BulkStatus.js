@@ -161,8 +161,9 @@ const BulkStatus = ({ classes }) => {
         <Grid container justifyContent='center'>
           <Grid item xs={9} className={classes.bulkStatusTitleSection}>
             <Typography
+              title={username}
               align='center'
-              className={classes.dashboardUsername}>
+              className={clsx(classes.dashboardUsername, classes.ellipsisText)}>
               {t('dashboard.hi')} {username},
             </Typography>
             <Typography align='center' className={classes.f20}>{t('dashboard.yourBulkStatus')}</Typography>
