@@ -482,12 +482,12 @@ const NewslettersReport = ({ classes }) => {
             <Typography noWrap={false} className={classes.nameEllipsis}>
               {Name}
             </Typography>
+            {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           </Tooltip>
           {SendDate !== null && SendDate !== '' ?
             (
               <Typography className={classes.grayTextCell}>
                 {t("common.SentOn")} {`${showDate} ${showTime}`}
-                {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
               </Typography>
             ) :
             (
@@ -526,13 +526,13 @@ const NewslettersReport = ({ classes }) => {
           >
             <Typography noWrap={false} className={classes.nameEllipsis}>
               {row.Name}
+              {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
             </Typography>
           </Tooltip>
           {SendDate !== null && SendDate !== '' ?
             (
               <Typography className={classes.grayTextCell}>
                 {t("common.SentOn")} {`${showDate} ${showTime}`}
-                {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
               </Typography>
             ) :
             (
