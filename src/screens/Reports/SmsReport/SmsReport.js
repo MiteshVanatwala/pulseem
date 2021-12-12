@@ -80,7 +80,7 @@ const SmsReport = ({ classes }) => {
     },
     Replies: {
       title: t('common.Total'),
-      href: `/Pulseem/SmsReplies.aspx?ReplyCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/react/reports/SmsReplies/${id}`
     },
     DLR: {
       title: t('common.DLR'),

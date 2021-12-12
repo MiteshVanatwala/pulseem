@@ -35,3 +35,20 @@ export const ReponseType = [
     { id: 3, value: 'report.directReport.responseType.activeHasResponse' },
     { id: 4, value: 'report.directReport.responseType.activeNoResponse' }
 ]
+
+export const ClientStatus = {
+    Sms: [
+        { id: -1, value: 'common.noSms' },
+        { id: 0, value: 'common.statusActive' },
+        { id: 1, value: 'common.Unsubscribed' },
+        { id: 4, value: 'common.invalid' }
+    ],
+    Email: [
+        { id: -1, value: 'common.noEmail' },
+        { id: 1, value: 'common.statusActive' },
+        { id: 2, value: 'common.Unsubscribed' },
+        { id: 3, value: 'common.restricted' },
+        { id: 4, value: 'common.invalid' },
+        { id: 5, value: 'common.Pending' }
+    ]
+};

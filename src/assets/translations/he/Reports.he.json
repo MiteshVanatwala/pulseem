@@ -54,6 +54,8 @@
   "clientStatus": "סטאטוס לקוח",
   "StatusDescription": "תיאור סטאטוס",
   "responses": "משובים",
+  "SMSReplies":"משובי SMS",
+  "SMSRepliesSubTitle": "להלן תוצאות החיפוש שבוצע. מכאן ניתן ליצור קבוצה או לייצא את רשימת הלקוחות שנמצאו.",
   "smsReport": {
     "statuses": {
       "other": "אחר",
