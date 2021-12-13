@@ -31,6 +31,8 @@ import GraphicReport from './screens/Reports/NewslettersReport/GraphicReport';
 import SmsReport from './screens/Reports/SmsReport/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
+import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
+
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -230,6 +232,11 @@ const renderRoutes = (classes, history) => {
       <Route
         path={`/Reports/SMSMainReport`}
         render={props => <SmsReport {...props} classes={classes} />}
+      />
+      <Route
+        exact
+        path={"/Reports/SmsReplies/:id"}
+        render={props => <SmsReplies props={props} classes={classes} />}
       />
       <Route
         path={`/MmsMainReport`}

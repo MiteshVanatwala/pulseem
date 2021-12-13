@@ -55,9 +55,38 @@ export const formatDateTime = (arr) => {
         if (a.UpdateDate) {
             a.UpdateDate = moment(a.UpdateDate).format("DD/MM/YYYY HH:mm");
         }
+        if (a.CreationDate) {
+            a.CreationDate = moment(a.CreationDate).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.ReplyDate) {
+            a.ReplyDate = moment(a.ReplyDate).format("DD/MM/YYYY HH:mm");
+        }
     });
 
     return newArr;
+}
+
+export const emailStatusNumberToString = (t, obj, statuses) => {
+    obj.forEach((o) => {
+        if (o.Status || o.Status === 0) {
+            const translatedStatus = statuses.find((x) => { return x.id === o.Status });
+            if (translatedStatus) {
+                o.Status = t(translatedStatus.value);
+            }
+        }
+    });
+    return obj;
+}
+export const smsStatusNumberToString = (t, obj, statuses) => {
+    obj.forEach((o) => {
+        if (o.SmsStatus || o.SmsStatus === 0) {
+            const translatedStatus = statuses.find((x) => { return x.id === o.SmsStatus });
+            if (translatedStatus) {
+                o.SmsStatus = t(translatedStatus.value);
+            }
+        }
+    });
+    return obj;
 }
 
 export const deletePropertyFromArrayObject = (arr, property) => {
