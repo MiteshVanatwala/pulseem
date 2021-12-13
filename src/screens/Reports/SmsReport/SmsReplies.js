@@ -13,26 +13,31 @@ import 'moment/locale/he';
 import { getSmsReplies } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { exportFile } from '../../../helpers/exportFromJson';
-import { ClientStatus, EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
+import { ClientStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../helpers/exportHelper';
 import { EditIcon } from '../../../assets/images/managment/index'
-import { AiOutlineUserDelete, AiOutlineUsergroupDelete } from 'react-icons/ai';
+import { AiOutlineUserDelete, AiOutlineUsergroupDelete, AiOutlineExclamationCircle } from 'react-icons/ai';
 import { FiPhoneOff } from 'react-icons/fi';
+import { actionURL } from '../../../config';
+import { Dialog } from "../../../components/managment/index";
+import { deleteFromGroups, removeEmailClient, removeSmsClient } from '../../../redux/reducers/clientSlice';
 
 const SmsReplies = ({ classes, ...other }) => {
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
+    const [page, setPage] = useState(1)
+    const rowsOptions = [6, 10, 20, 50]
+    const dateFormat = 'YYYY-MM-DD HH:mm:ss:FFF';
+    const [dialogType, setDialogType] = useState(null)
     const [showLoader, setShowLoader] = useState(true);
-    const { windowSize } = useSelector(state => state.core)
+    const [selectedClient, setSelectedClient] = useState(null);
     const { smsReplies } = useSelector(state => state.sms)
+    const { windowSize } = useSelector(state => state.core)
+    const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
+    const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
     const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
-    const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
-    const dateFormat = 'YYYY-MM-DD HH:mm:ss:FFF';
-    const rowsOptions = [6, 10, 20, 50]
-    const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
-    const [page, setPage] = useState(1)
-    const { t } = useTranslation();
-    const dispatch = useDispatch();
 
     const getData = async () => {
         if (other.props.match.params.id) {
@@ -254,8 +259,6 @@ const SmsReplies = ({ classes, ...other }) => {
     }
 
     const renderCellIcons = (row) => {
-        // const { Status, Groups, AutomationID } = row
-
         const iconsMap = [
             {
                 key: 'edit',
@@ -263,7 +266,8 @@ const SmsReplies = ({ classes, ...other }) => {
                 lable: t('campaigns.Image2Resource1.ToolTip'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    console.log('edit client')
+                    setSelectedClient(row.ClientID);
+                    setDialogType({ type: "editClient" })
                 }
             },
             {
@@ -272,7 +276,8 @@ const SmsReplies = ({ classes, ...other }) => {
                 lable: t('common.deleteFromAllGroups'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    console.log('remove From Groups')
+                    setSelectedClient(row.ClientID);
+                    setDialogType({ type: "removeFromGroups" })
                 }
             },
             {
@@ -281,7 +286,8 @@ const SmsReplies = ({ classes, ...other }) => {
                 lable: t('common.removeFromAccount'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    console.log('remove From Account')
+                    setSelectedClient(row.ClientID);
+                    setDialogType({ type: "removeFromAccount" })
                 }
             },
             {
@@ -289,7 +295,8 @@ const SmsReplies = ({ classes, ...other }) => {
                 uIcon: <FiPhoneOff style={{ fontSize: 25, alignSelf: 'center' }} />,
                 lable: t('common.removeSmsClient'),
                 onClick: () => {
-                    console.log('removeSmsClient')
+                    setSelectedClient(row.ClientID);
+                    setDialogType({ type: "removeSmsClient" })
                 },
                 rootClass: classes.paddingIcon,
             }
@@ -329,6 +336,126 @@ const SmsReplies = ({ classes, ...other }) => {
         )
     }
 
+    //#region Dialogs
+    const editClientDialog = () => {
+        return {
+            title: t('common.UpdateClientInfo'),
+            showDivider: true,
+            disableBackdropClick: false,
+            icon: (
+                <AiOutlineExclamationCircle
+                    style={{ fontSize: 30, color: "#fff" }}
+                />
+            ),
+            style: { minWidth: 300 },
+            content: (
+                <Box>
+                    <iframe
+                        width="100%"
+                        style={{ minHeight: 400 }}
+                        src={`${actionURL}AddSingleClient.aspx?ClientID=${selectedClient}&Culture=he-IL`} />
+                </Box>
+            ),
+            showDefaultButtons: false,
+            onClose: () => { setDialogType(null) }
+        }
+    }
+    const removeFromGroupsDialog = () => {
+        const handleRemoveFromGroup = async () => {
+            setDialogType(null);
+            setShowLoader(true);
+            const result = await dispatch(deleteFromGroups(selectedClient));
+            console.log(result);
+            setShowLoader(false);
+        }
+        return {
+            title: t('client.removeClientFromGroupTitle'),
+            showDivider: true,
+            icon: (
+                <AiOutlineUsergroupDelete style={{ fontSize: 30, alignSelf: 'center' }} />
+            ),
+            content: (
+                <Box style={{ maxWidth: 400 }}>
+                    <Typography className={classes.f18}>{t("client.removeClientFromGroupDescription")}</Typography>
+                </Box>
+            ),
+            showDefaultButtons: true,
+            onClose: () => { setDialogType(null) },
+            onConfirm: () => { handleRemoveFromGroup() }
+        }
+    }
+    const removeFromAccountDialog = () => {
+        const handleRemoveFromAccount = async () => {
+            setDialogType(null);
+            setShowLoader(true);
+            await dispatch(removeEmailClient(selectedClient));
+            setShowLoader(false);
+        }
+        return {
+            title: t('client.removeClientFromAccountTitle'),
+            showDivider: true,
+            icon: (
+                <AiOutlineUserDelete style={{ fontSize: 30, alignSelf: 'center' }} />
+            ),
+            content: (
+                <Box style={{ maxWidth: 400 }}>
+                    <Typography className={classes.f18}>{t("client.removeClientFromAccountDescription")}</Typography>
+                </Box>
+            ),
+            showDefaultButtons: true,
+            onClose: () => { setDialogType(null) },
+            onConfirm: () => { handleRemoveFromAccount() }
+        }
+    }
+    const removeSmsClientDialog = () => {
+        const handleRemoveFromSms = async () => {
+            setDialogType(null);
+            setShowLoader(true);
+            await dispatch(removeSmsClient(selectedClient));
+            setShowLoader(false);
+        }
+        return {
+            title: t('client.removeClientFromSmsTitle'),
+            showDivider: true,
+            icon: (
+                <FiPhoneOff style={{ fontSize: 30, alignSelf: 'center' }} />
+            ),
+            content: (
+                <Box style={{ maxWidth: 400 }}>
+                    <Typography className={classes.f18}>{t("client.removeClientFromSmsDescription")}</Typography>
+                </Box>
+            ),
+            showDefaultButtons: true,
+            onClose: () => { setDialogType(null) },
+            onConfirm: () => { handleRemoveFromSms() }
+        }
+    }
+    const renderDialog = () => {
+        const { type } = dialogType || {}
+
+        const dialogContent = {
+            editClient: editClientDialog(),
+            removeFromGroups: removeFromGroupsDialog(),
+            removeFromAccount: removeFromAccountDialog(),
+            removeSmsClient: removeSmsClientDialog()
+        }
+
+        const currentDialog = dialogContent[type] || {}
+        return (
+            dialogType && <Dialog
+                classes={classes}
+                open={dialogType}
+                onClose={handleClose}
+                {...currentDialog}>
+                {currentDialog.content}
+            </Dialog>
+        )
+    }
+    const handleClose = () => {
+        setDialogType(null);
+    };
+    //#endregion
+
 
     return (
         <DefaultScreen
@@ -339,6 +466,7 @@ const SmsReplies = ({ classes, ...other }) => {
             {renderHeader()}
             {renderTable()}
             {renderTablePagination()}
+            {renderDialog()}
             <Loader isOpen={showLoader} showBackdrop={true} />
         </DefaultScreen>
     )
