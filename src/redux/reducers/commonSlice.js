@@ -1,5 +1,7 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { instence } from '../../helpers/api'
+import { setCookie } from '../../helpers/cookies'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
 
 export const getFileGallery = createAsyncThunk(
   '/GetFileGallery', async (_, thunkAPI) => {
@@ -84,6 +86,7 @@ export const commonSlice = createSlice({
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
         state.subAccountSettings = payload
+        setCookie("subAccountSettings", payload.SubAccountSettings);
       })
   }
 })

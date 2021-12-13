@@ -1,8 +1,6 @@
 {
-  "draft": "Draft",
   "pending": "Pending",
   "sending": "Sending",
-  "sent": "Sent",
   "succeeded": "Sent Successfully",
   "error": "Error",
   "retry": "Retry",
@@ -13,9 +11,5 @@
   "spam": "Spam",
   "removed": "Removed",
   "removedBySystem": "Removed By System",
-  "noStatus": "No Status",
-  "noAttachments": "No Attachments",
-  "optIn": "OptIn",
-  "approve": "Approve Pending",
-  "other": "Other"
+  "noStatus": "No Status"
 }

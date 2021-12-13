@@ -880,6 +880,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   minWidth252: {
     minWidth: '150px!important'
   },
+  minWidth192: {
+    minWidth: '192px!important'
+  },
+  dropDownItem: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxHeight: 40,
+  },
   verifyButton: {
     background: 'green',
     textTransform: 'capitalize',

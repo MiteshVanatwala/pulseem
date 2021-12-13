@@ -408,7 +408,7 @@
   "floatdir": "left",
   "copyFooter": "<span>** Not running under ssl protocol</span>",
   "DeliveryApproval": "Delivery Approval",
-  "SendTo2": "Send To",
+  "SendTo2": "To",
   "SentTo": "Sent",
   "Succeeded": "Succeeded",
   "BestOptCampaign": "Send the campaign at the optimal time for each customer",
@@ -540,5 +540,6 @@
   "removeFromAccount": "Remove from account",
   "removeSmsClient": "Remove receipient",
   "AddedDate": "Creation Date",
-  "Clients": "Clients"
+  "Clients": "Clients",
+  "NoDataTryFilter": "No Data, Try another filter combination."
 }

@@ -653,8 +653,8 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         padding: 5,
         fontSize: 16,
         color: "#fff",
-        fontWeight: 400,
         borderRadius: 5,
+        fontWeight: 400,
         marginInlineStart: "3px"
     },
     mappedGroup:

@@ -334,7 +334,7 @@
   "ErrorOccured": "אירעה שגיאה",
   "Pending": "ממתין",
   "RecipientsName": "שם הנמען",
-  "SentFromNumber": "נשלח למספר",
+  "SentFromNumber": "מאת",
   "SuccessfullyCompleted": "הסתיים בהצלחה",
   "SystemUpload": "העלאת מערכת",
   "UnderExamination": "בתהליך בדיקה",
@@ -409,13 +409,13 @@
   "floatdir": "right",
   "copyFooter": "<span>** לא רץ תחת פרוטוקול SSL</span>",
   "DeliveryApproval": "אישור מסירה",
-  "SendTo2": "לשליחה",
+  "SendTo2": "נשלח למספר",
   "SentTo": "נשלחו",
   "Succeeded": "הצליחו",
   "BestOptCampaign": "שלח את הקמפיין בשעה האופטימלית עבור כל לקוח",
   "ErrorSms": "שגיאה",
   "AutomationStatusSuccess": "מצב האוטומציה עודכן בהצלחה",
-  "Click": "לחץ",
+  "Click": "הקלקות",
   "EditAutomation": "כדי לערוך את האוטומציה",
   "here": "כאן",
   "SuccessTitle": "הצלחה",
@@ -535,5 +535,6 @@
   "removeFromAccount": "הסרה מחשבון",
   "removeSmsClient": "הסר לקוח סמס",
   "AddedDate": "תאריך הוספה למערכת",
-  "Clients": "לקוחות"
+  "Clients": "לקוחות",
+  "NoDataTryFilter": "אין נתונים להצגה, נסה את אפשרויות הסינון."
 }
