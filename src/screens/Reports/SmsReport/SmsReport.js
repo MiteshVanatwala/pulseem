@@ -612,7 +612,7 @@ const SmsReport = ({ classes }) => {
         </TableBody>
       )
     }
-    return <Typography className={classes.flexCenter}>No data presented</Typography>
+    return <Typography className={classes.flexCenter}>{t("common.NoData")}</Typography>
   }
 
   const renderTable = () => {
