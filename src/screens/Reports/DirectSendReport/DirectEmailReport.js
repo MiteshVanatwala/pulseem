@@ -17,6 +17,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { emailStatusToString } from '../../../helpers/functions';
+import { actionURL } from '../../../config/index'
 
 const RenderRow = ({
   classes,
@@ -82,7 +83,9 @@ const RenderRow = ({
                 </TableBody>
               </Table>
               <Box className={classes.w20}>
-                <Box className={clsx(classes.floatRight, classes.txtCenter)}>
+                <Box className={clsx(classes.floatRight, classes.txtCenter)} onClick={() => {
+                  window.open(`${actionURL}DirectEmailPreview.aspx?id=${row.SendID}`, '_blank')
+                }}>
                   <IconButton>
                     <VisibilityIcon className={classes.black} />
                   </IconButton>
