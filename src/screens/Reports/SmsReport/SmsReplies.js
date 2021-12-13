@@ -13,7 +13,7 @@ import 'moment/locale/he';
 import { getSmsReplies } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { exportFile } from '../../../helpers/exportFromJson';
-import { ClientStatus } from '../../../helpers/PulseemArrays';
+import { ClientStatus, EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../helpers/exportHelper';
 import { EditIcon } from '../../../assets/images/managment/index'
 import { AiOutlineUserDelete, AiOutlineUsergroupDelete } from 'react-icons/ai';
@@ -23,11 +23,11 @@ const SmsReplies = ({ classes, ...other }) => {
     const [showLoader, setShowLoader] = useState(true);
     const { windowSize } = useSelector(state => state.core)
     const { smsReplies } = useSelector(state => state.sms)
-    const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
+    const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
     const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
     const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
-    const dateFormat = 'YYYY-MM-DD HH:mm';
+    const dateFormat = 'YYYY-MM-DD HH:mm:ss:FFF';
     const rowsOptions = [6, 10, 20, 50]
     const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
     const [page, setPage] = useState(1)
@@ -70,6 +70,11 @@ const SmsReplies = ({ classes, ...other }) => {
                             {t('campaigns.exportFile')}
                         </Button>
                     </Grid>}
+                    <Grid item className={classes.groupsLableContainer} >
+                        <Typography className={classes.groupsLable}>
+                            {`${smsReplies.length} ${t('common.Clients')}`}
+                        </Typography>
+                    </Grid>
                 </Grid>
             </>
         )
@@ -130,13 +135,12 @@ const SmsReplies = ({ classes, ...other }) => {
         return (
             <TableHead>
                 <TableRow classes={rowStyle}>
-                    <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t('smsReport.firstName')}</TableCell>
-                    <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("smsReport.lastName")}</TableCell>
-                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.Email")}</TableCell>
-                    <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.cellphone")}</TableCell>
-                    <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("common.CreationDate")}</TableCell>
+                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t('report.clientName')}</TableCell>
+                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.Mail")}</TableCell>
+                    <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.cellphone")}</TableCell>
+                    <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("common.AddedDate")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.smsStatus")}</TableCell>
-                    <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.Status")}</TableCell>
+                    <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("common.emailStatus")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex2} align='center'>{t("common.ReplyDate")}</TableCell>
                     <TableCell classes={cellStyle} className={classes.flex1} align='center' >{t("common.MessageContent")}</TableCell>
                     <TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex6} ></TableCell>
@@ -146,13 +150,23 @@ const SmsReplies = ({ classes, ...other }) => {
     }
     const renderTableBody = () => {
         let rowData = smsReplies;
-        rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
+        rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage);
         return (
             <TableBody>
                 {rowData
                     .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
             </TableBody>
         )
+    }
+    const statusToText = (status, type) => {
+        let translatedStatus = status;
+        if (type === 'email') {
+            translatedStatus = ClientStatus.Email.find((x) => { return x.id === status });
+        }
+        else {
+            translatedStatus = ClientStatus.Sms.find((x) => { return x.id === status });
+        }
+        return t(translatedStatus.value);
     }
 
     const renderRow = (row) => {
@@ -178,14 +192,8 @@ const SmsReplies = ({ classes, ...other }) => {
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
-                    className={clsx(classes.flex1)}>
-                    {FirstName}
-                </TableCell>
-                <TableCell
-                    classes={cellBodyStyle}
-                    align='center'
-                    className={classes.flex1}>
-                    {LastName}
+                    className={clsx(classes.flex2, classes.ellipsisText)}>
+                    {FirstName} {LastName}
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
@@ -196,32 +204,32 @@ const SmsReplies = ({ classes, ...other }) => {
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
-                    className={classes.flex1}>
+                    className={classes.flex2}>
                     {Cellphone}
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
                     className={classes.flex2}>
-                    {creation.format('DD/MM/YYYY')} {creation.format('LT')}
+                    {creation.format('DD/MM/YYYY')} {creation.format('HH:mm:ss')}
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
                     className={classes.flex1}>
-                    {SmsStatus}
+                    {statusToText(SmsStatus, 'sms')}
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
                     className={classes.flex1}>
-                    {Status}
+                    {statusToText(Status, 'email')}
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
                     align='center'
                     className={classes.flex2}>
-                    {reply.format('DD/MM/YYYY')} {reply.format('LT')}
+                    {reply.format('DD/MM/YYYY')} {reply.format('HH:mm:ss')}
                 </TableCell>
                 <TableCell
                     classes={cellBodyStyle}
@@ -295,6 +303,7 @@ const SmsReplies = ({ classes, ...other }) => {
                     <Grid
                         className={icon.disable && classes.disabledCursor}
                         key={icon.key}
+                        style={{ maxWidth: 100 }}
                         item >
                         <ManagmentIcon
                             classes={classes}

@@ -54,6 +54,7 @@
   "responses": "Responses",
   "SMSReplies":"SMS Replies",
   "SMSRepliesSubTitle": "This are the recipients that were found according the search paramters. You can edit the recipients, export the list or create a group from the found recipients.",
+  "clientName": "Client Name",
   "smsReport": {
     "statuses": {
       "other": "Other",

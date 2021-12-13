@@ -65,9 +65,11 @@
   "Clicks": "הקלקות",
   "CreationDate": "תאריך יצירה",
   "Email": "כתובת דואר אלקטרוני",
+  "Mail": "דואר אלקטרוני",
   "Opens": "פתיחות",
   "Status": "סטאטוס",
   "smsStatus": "סטאטוס סמס",
+  "emailStatus": "סטאטוס אימייל",
   "ClicksUnique": "הקלקות ייחודיות",
   "ErrorEmail": "שגיאה",
   "ErrorType": "סוג שגיאה",
@@ -353,7 +355,7 @@
   "CommentLink": "קישור לתגובה",
   "FacebookName": "שם בפייסבוק",
   "Icons": "אייקונים",
-  "MessageContent": "תוכן ההודעה",
+  "MessageContent": "מילת הסרה",
   "Reaction": "ריאקציה",
   "SendComment": "שלח תגובה",
   "SendPostComment": "שלח תגובה לפוסט",
@@ -531,6 +533,7 @@
   "restricted": "מוגבל",
   "deleteFromAllGroups": "מחק מכל הקבוצות",
   "removeFromAccount": "הסרה מחשבון",
-  "removeSmsClient": "הסר לקוח סמס"
-
+  "removeSmsClient": "הסר לקוח סמס",
+  "AddedDate": "תאריך הוספה למערכת",
+  "Clients": "לקוחות"
 }
