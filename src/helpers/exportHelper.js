@@ -96,3 +96,13 @@ export const deletePropertyFromArrayObject = (arr, property) => {
     });
     return newArr;
 }
+
+
+export const switchStatusDescription = (obj, statuses) => {
+    obj.map((o) => {
+      if (o.STATUS) {
+        o.StatusDescription = i18n.t(statuses[o.STATUS] ? statuses[o.STATUS].value : null);
+      }
+    });
+    return obj;
+  }

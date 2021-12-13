@@ -14,7 +14,6 @@ import smsReport from './SMSReport.json'
 import emailStatus from './EmailStatus.json'
 import emoji from './Emoji.json'
 import payment from './payment.json'
-import emailStatus from './EmailStatus.json'
 import client from './Client.json'
 
 export const en={
@@ -34,6 +33,5 @@ export const en={
   emailStatus,
   emoji,
   payment,
-  emailStatus,
   client
 }

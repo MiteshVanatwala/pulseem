@@ -11,5 +11,9 @@
   "spam": "Spam",
   "removed": "Removed",
   "removedBySystem": "Removed By System",
-  "noStatus": "No Status"
+  "noStatus": "No Status",
+  "noAttachments": "No Attachments",
+  "optIn": "OptIn",
+  "approve": "Waiting for approval",
+  "other": "Other"
 }
