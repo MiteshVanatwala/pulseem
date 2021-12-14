@@ -84,7 +84,8 @@ const SmsReport = ({ classes }) => {
     },
     DLR: {
       title: t('common.DLR'),
-      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: ``
+      //href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     }
   })
 
