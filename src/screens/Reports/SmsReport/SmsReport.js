@@ -75,7 +75,7 @@ const SmsReport = ({ classes }) => {
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Removed: {
-      title: t('mainReport.removed'),
+      title: t('common.Removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Replies: {
@@ -577,7 +577,7 @@ const SmsReport = ({ classes }) => {
             </Grid>
             <Grid item>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {t("mainReport.removals")}
+                {t("common.Removed")}
               </Typography>
               <Grid container spacing={2}>
                 <Grid item>
