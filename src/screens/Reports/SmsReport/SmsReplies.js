@@ -338,6 +338,9 @@ const SmsReplies = ({ classes, ...other }) => {
 
     useEffect(() => {
         const handler = event => {
+            if(event.data && !event.data.message){
+                return;
+            }
             const data = JSON.parse(event.data)
             setDialogType(null);
             if (data === "confirm") {
