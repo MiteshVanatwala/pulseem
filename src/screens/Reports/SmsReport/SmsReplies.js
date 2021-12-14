@@ -337,14 +337,22 @@ const SmsReplies = ({ classes, ...other }) => {
     }
 
     useEffect(() => {
-        const handler = event => {
-            if(event.data && !event.data.message){
-                return;
+        function isJson(obj) {
+            try {
+                JSON.parse(obj);
+                return true;
+            } catch (e) {
+                return false;
             }
-            const data = JSON.parse(event.data)
-            setDialogType(null);
-            if (data === "confirm") {
-                getData();
+        }
+
+        const handler = event => {
+            if (isJson(event.data.message)) {
+                const data = JSON.parse(event.data)
+                setDialogType(null);
+                if (data === "confirm") {
+                    getData();
+                }
             }
         }
 
