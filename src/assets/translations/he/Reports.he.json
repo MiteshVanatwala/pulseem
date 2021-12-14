@@ -3,7 +3,7 @@
   "FromEmail": "מייל השולח",
   "ToEmail": "לכתובת מייל",
   "Recipient": "נמען",
-  "ExternalRef": "מזהה חיצוני",
+  "ExternalRef": "External Ref - מזהה חיצוני",
   "Subject": "נושא",
   "TotalMessagesSent": "סה\"כ הודעות שנשלחו",
   "TotalBillingCredits": "סה\"כ קרדיטים לחיוב",
