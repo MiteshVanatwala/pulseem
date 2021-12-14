@@ -75,7 +75,7 @@ const SmsReport = ({ classes }) => {
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Removed: {
-      title: t('mainReport.removed'),
+      title: t('common.Removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Replies: {
@@ -84,7 +84,8 @@ const SmsReport = ({ classes }) => {
     },
     DLR: {
       title: t('common.DLR'),
-      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: ``
+      //href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     }
   })
 
@@ -349,22 +350,13 @@ const SmsReport = ({ classes }) => {
       <TableHead>
         <TableRow classes={rowStyle}>
           <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t('campaigns.camapignName')}</TableCell>
-
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.locTotalSendPlan.HeaderText")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.ToalSent")}</TableCell>
-
-          {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center' /> */}
           <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("common.Clicks")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.feedback")}</TableCell>
-          {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center' /> */}
-
-          {/* <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("common.failedStatus")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("mainReport.removals")}</TableCell> */}
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
-
           <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("smsReport.credits")}</TableCell>
-
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.DLR")}</TableCell>
         </TableRow>
       </TableHead>
@@ -462,13 +454,13 @@ const SmsReport = ({ classes }) => {
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(TotalSendPlan, '', hrefs.TotalSendTo)}
+          {renderIntData(TotalSendPlan, '')}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(totalSent, '')}
+          {renderIntData(totalSent, '', hrefs.TotalSendTo)}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
@@ -585,7 +577,7 @@ const SmsReport = ({ classes }) => {
             </Grid>
             <Grid item>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {t("mainReport.removals")}
+                {t("common.Removed")}
               </Typography>
               <Grid container spacing={2}>
                 <Grid item>
@@ -612,13 +604,16 @@ const SmsReport = ({ classes }) => {
 
   const renderTableBody = () => {
     let rowData = searchResults || smsReport;
-    rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
-    return (
-      <TableBody>
-        {rowData
-          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-      </TableBody>
-    )
+    if (rowData.length > 0) {
+      rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
+      return (
+        <TableBody>
+          {rowData
+            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        </TableBody>
+      )
+    }
+    return <Typography className={classes.flexCenter}>{t("common.NoData")}</Typography>
   }
 
   const renderTable = () => {
