@@ -62,7 +62,7 @@ const SmsReport = ({ classes }) => {
       //href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     ClickCount: {
-      title: t('common.Clicks'),
+      title: windowSize === 'xs' ? t('common.Total') : t('common.Clicks'),
       href: ``
       //href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
@@ -71,11 +71,11 @@ const SmsReport = ({ classes }) => {
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Failed: {
-      title: t("common.failedStatus"),
+      title: windowSize === 'xs' ? '' : t("common.failedStatus"),
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Removed: {
-      title: t('mainReport.removed'),
+      title: windowSize === 'xs' ? '' : t('mainReport.removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Replies: {
@@ -83,7 +83,7 @@ const SmsReport = ({ classes }) => {
       href: `/Pulseem/SmsReplies.aspx?ReplyCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     DLR: {
-      title: t('common.DLR'),
+      title: windowSize === 'xs' ? '' : t('common.DLR'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     }
   })
@@ -403,7 +403,7 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}, clickable = true) => {
-    const { title = t("notifications.tblBody.total"), href = '' } = data
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '' } = data
     const innerRef = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
@@ -546,15 +546,15 @@ const SmsReport = ({ classes }) => {
             </Grid>
           </Grid>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }}>
-            <Grid item>
+            <Grid item xs={3}>
               {renderIntData(ClicksCount, 'blue', hrefs.ClickCount, false)}
             </Grid>
-            <Grid item>
+            <Grid item xs={3}>
               {renderIntData(UniqueClicksCount, 'blue', hrefs.ClickCountUnique, false)}
             </Grid>
           </Grid>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
-            <Grid item>
+            <Grid item xs={3}>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("common.Sent")}
               </Typography>
@@ -564,7 +564,7 @@ const SmsReport = ({ classes }) => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item>
+            <Grid item xs={3}>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("common.failedStatus")}
               </Typography>
@@ -574,7 +574,7 @@ const SmsReport = ({ classes }) => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item>
+            <Grid item xs={3}>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("mainReport.removals")}
               </Typography>
@@ -584,7 +584,7 @@ const SmsReport = ({ classes }) => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item>
+            <Grid item xs={3}>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("common.DLR")}
               </Typography>
