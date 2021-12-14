@@ -364,8 +364,8 @@ const SmsReplies = ({ classes, ...other }) => {
         const handleRemoveFromGroup = async () => {
             setDialogType(null);
             setShowLoader(true);
-            const result = await dispatch(deleteFromGroups(selectedClient));
-            console.log(result);
+            await dispatch(deleteFromGroups(selectedClient));
+            await getData();
             setShowLoader(false);
         }
         return {
@@ -389,6 +389,7 @@ const SmsReplies = ({ classes, ...other }) => {
             setDialogType(null);
             setShowLoader(true);
             await dispatch(removeEmailClient(selectedClient));
+            await getData();
             setShowLoader(false);
         }
         return {
@@ -412,6 +413,7 @@ const SmsReplies = ({ classes, ...other }) => {
             setDialogType(null);
             setShowLoader(true);
             await dispatch(removeSmsClient(selectedClient));
+            await getData();
             setShowLoader(false);
         }
         return {

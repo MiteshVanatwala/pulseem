@@ -470,20 +470,10 @@ const NewslettersReport = ({ classes }) => {
     if (windowSize === 'xs') {
       return (
         <>
-          <Tooltip
-            arrow
-            title={Name}
-            placement={'top'}
-            classes={{
-              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-              arrow: classes.fBlack
-            }}
-          >
-            <Typography noWrap={false} className={classes.nameEllipsis}>
-              {Name}
-            </Typography>
-            {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
-          </Tooltip>
+          <Typography noWrap={false} className={classes.nameEllipsis}>
+            {Name}
+          </Typography>
+          {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           {SendDate !== null && SendDate !== '' ?
             (
               <Typography className={classes.grayTextCell}>
