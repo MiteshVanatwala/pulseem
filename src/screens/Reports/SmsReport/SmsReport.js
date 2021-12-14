@@ -576,7 +576,7 @@ const SmsReport = ({ classes }) => {
             </Grid>
             <Grid item xs={3}>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-                {t("mainReport.removals")}
+                {t("common.Removed")}
               </Typography>
               <Grid container spacing={2}>
                 <Grid item>
