@@ -339,8 +339,8 @@ const SmsReplies = ({ classes, ...other }) => {
     //#region Dialogs
     const editClientDialog = () => {
         return {
-            title: t('common.UpdateClientInfo'),
-            showDivider: true,
+            // title: t('common.UpdateClientInfo'),
+            showDivider: false,
             disableBackdropClick: false,
             icon: (
                 <AiOutlineExclamationCircle
@@ -351,8 +351,9 @@ const SmsReplies = ({ classes, ...other }) => {
             content: (
                 <Box>
                     <iframe
-                        width="100%"
-                        style={{ minHeight: 400 }}
+                        title="EditClient"
+                        border="0"
+                        className={classes.editClientIframe}
                         src={`${actionURL}AddSingleClient.aspx?ClientID=${selectedClient}&Culture=he-IL`} />
                 </Box>
             ),
