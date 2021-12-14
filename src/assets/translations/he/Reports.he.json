@@ -1,8 +1,8 @@
 {
   "DirectSendReport": "דוחות שליחה ישירה",
-  "FromEmail": "מייל השולח",
-  "ToEmail": "לכתובת מייל",
-  "Recipient": "נמען",
+  "FromEmail": "מאת מייל",
+  "ToEmail": "למייל",
+  "Recipient": "שם נמען",
   "ExternalRef": "External Ref - מזהה חיצוני",
   "Subject": "נושא",
   "TotalMessagesSent": "סה\"כ הודעות שנשלחו",
