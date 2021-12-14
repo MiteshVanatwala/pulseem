@@ -336,6 +336,21 @@ const SmsReplies = ({ classes, ...other }) => {
         )
     }
 
+    useEffect(() => {
+        const handler = event => {
+            const data = JSON.parse(event.data)
+            setDialogType(null);
+            if (data === "confirm") {
+                getData();
+            }
+        }
+
+        window.addEventListener("message", handler)
+
+        // clean up
+        return () => window.removeEventListener("message", handler)
+    }, []) // empty array => run only once
+
     //#region Dialogs
     const editClientDialog = () => {
         return {
@@ -358,7 +373,7 @@ const SmsReplies = ({ classes, ...other }) => {
                 </Box>
             ),
             showDefaultButtons: false,
-            onClose: () => { setDialogType(null) }
+            // onClose: () => { setDialogType(null); getData(); }
         }
     }
     const removeFromGroupsDialog = () => {
