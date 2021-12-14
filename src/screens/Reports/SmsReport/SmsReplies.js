@@ -346,12 +346,12 @@ const SmsReplies = ({ classes, ...other }) => {
             }
         }
 
-        const handler = event => {
+        const handler = async (event) => {
             if (isJson(event.data)) {
                 const data = JSON.parse(event.data)
                 setDialogType(null);
-                if (data === "confirm") {
-                    getData();
+                if (data.message === "confirm") {
+                    await getData();
                 }
             }
         }
