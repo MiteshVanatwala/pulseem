@@ -57,7 +57,7 @@ const NewslettersReport = ({ classes }) => {
       //href: `/CampaignStatistics/${id}`
     },
     OpenCount: {
-      title: t('mainReport.GridButtonColumnResource1.HeaderText'),
+      title: windowSize === 'xs' ? t('common.Total') : t('mainReport.GridButtonColumnResource1.HeaderText'),
       href: ``,
       clickable: false
       //href: `/CampaignStatistics/${id}?tab=2`
@@ -69,7 +69,7 @@ const NewslettersReport = ({ classes }) => {
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     ClickCount: {
-      title: t('common.Clicks'),
+      title: windowSize === 'xs' ? t('common.Total') : t('common.Clicks'),
       href: ``,
       clickable: false
       //href: `/CampaignStatistics/${id}?tab=2`
@@ -81,12 +81,12 @@ const NewslettersReport = ({ classes }) => {
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemovedClients: {
-      title: t('mainReport.removedClients'),
+      title: windowSize === 'xs' ? '' : t('mainReport.removedClients'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     SendError: {
-      title: t('mainReport.GridButtonColumnResource4.HeaderText'),
+      title: windowSize === 'xs' ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
       href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
@@ -112,7 +112,7 @@ const NewslettersReport = ({ classes }) => {
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     NotOpened: {
-      title: t("mainReport.GridButtonColumnResource3.HeaderText"),
+      title: windowSize === 'xs' ? '' : t("mainReport.GridButtonColumnResource3.HeaderText"),
       href: `/Pulseem/ClientSearchResult.aspx?NotOpenedCampaignID=${id}&fromreact=true`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
@@ -590,7 +590,7 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
-    const { title = t("notifications.tblBody.total"), href = '' } = data
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '' } = data
     return (
       <Box className={classes.cellText}>
         <Typography component={href !== '' && clickable && value > 0 ? 'a' : 'p'}
@@ -753,31 +753,37 @@ const NewslettersReport = ({ classes }) => {
             {renderNameCell(row)}
           </Box>
           <Box className={classes.ml10}>
-            <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-              {t("mainReport.GridButtonColumnResource1.HeaderText")}
-            </Typography>
             <Grid container spacing={2}>
-              <Grid item>
-                {renderIntData(OpenCount, 'green', hrefs.OpenCount, false)}
+              <Grid item xs={6}>
+                <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                  {t("mainReport.GridButtonColumnResource1.HeaderText")}
+                </Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    {renderIntData(OpenCount, 'green', hrefs.OpenCount, false)}
+                  </Grid>
+                  <Grid item xs={6}>
+                    {renderIntData(OpenCountUnique, 'green', hrefs.OpenCountUnique, false)}
+                  </Grid>
+                </Grid>
               </Grid>
-              <Grid item>
-                {renderIntData(OpenCountUnique, 'green', hrefs.OpenCountUnique, false)}
-              </Grid>
-            </Grid>
-            <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
-              {t("mainReport.GridButtonColumnResource2.HeaderText")}
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item>
-                {renderIntData(ClickCount, 'blue', hrefs.ClickCount, false)}
-              </Grid>
-              <Grid item>
-                {renderIntData(ClickCountUnique, 'blue', hrefs.ClickCountUnique, false)}
+              <Grid item xs={6}>
+                <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                  {t("mainReport.GridButtonColumnResource2.HeaderText")}
+                </Typography>
+                <Grid container spacing={2}>
+                  <Grid item xs={6}>
+                    {renderIntData(ClickCount, 'blue', hrefs.ClickCount, false)}
+                  </Grid>
+                  <Grid item xs={6}>
+                    {renderIntData(ClickCountUnique, 'blue', hrefs.ClickCountUnique, false)}
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
           </Box>
           <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
-            <Grid item>
+            <Grid item xs={3}>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("common.Sent")}
               </Typography>
@@ -787,19 +793,19 @@ const NewslettersReport = ({ classes }) => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item>
+            <Grid item xs={3}>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("mainReport.GridButtonColumnResource4.HeaderText")}
               </Typography>
               {renderIntData(SendError, 'red', hrefs.SendError, false)}
             </Grid>
-            <Grid item>
+            <Grid item xs={3}>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("mainReport.removals")}
               </Typography>
               {renderIntData(RemovedClients, 'red', hrefs.RemovedClients, false)}
             </Grid>
-            <Grid item>
+            <Grid item xs={3}>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("mainReport.GridButtonColumnResource3.HeaderText")}
               </Typography>
