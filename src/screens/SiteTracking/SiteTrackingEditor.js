@@ -1,47 +1,55 @@
-import React from 'react';
 import clsx from 'clsx';
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { Loader } from '../../components/Loader/Loader'
 import { useTranslation } from 'react-i18next';
 import Title from '../../components/Wizard/Title'
 import {
-    Typography, Button, TextField, Grid, Box, FormControlLabel,
-    FormLabel, FormControl, Select, MenuItem, Radio, RadioGroup
+    Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Select, MenuItem, Radio, RadioGroup, Checkbox
 } from '@material-ui/core'
 import PageItem from './PageItem'
 import { eventsOptions, domainProtocol } from '../../helpers/PulseemArrays'
 import { getGroupsBySubAccountId } from "../../redux/reducers/smsSlice";
 import { useDispatch, useSelector } from 'react-redux'
-import { get, post } from '../../redux/reducers/siteTrackingSlice';
+import { get, post, getScript } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel, SiteTrackingModel } from '../../model/SiteTracking/SiteTrackingModel';
 import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
 import Toast from '../../components/Toast/Toast.component';
-import { eventsControllerCreate, CreateEventDefinitionInputDto } from '../../services/test';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { getCookie, setCookie } from '../../helpers/cookies';
+//import { eventsControllerCreate, CreateEventDefinitionInputDto } from '../../services/test';
 
 
 const SiteTrackingEditor = ({ classes }) => {
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [model, setModel] = useState(new SiteTrackingModel());
-    const { ToastMessages } = useSelector((state) => state.siteTracking);
+    const { ToastMessages, siteScript } = useSelector((state) => state.siteTracking);
     const [validationError, setValidationError] = useState([]);
     const [protocol, setDomainProtocol] = useState('https://');
     const [dialogType, setDialogType] = useState({ type: null });
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
+    const [copyStatus, setCopyStatus] = useState(false);
+    const refScriptCode = useRef(null);
+    const [scriptDialog, handleScriptDialogCheck] = useState(false);
 
     useEffect(() => {
         getData();
     }, [dispatch]);
 
     const getData = async () => {
+        await dispatch(getScript());
         await dispatch(getGroupsBySubAccountId());
         const response = await dispatch(get(EventRequestModel.PageView));
         setModel(response.payload);
         setShowLoader(false);
+        const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
+        if (hideScriptIntro === "false") {
+            setDialogType({ type: 'scriptImplementation' });
+        }
     }
 
 
@@ -117,20 +125,30 @@ const SiteTrackingEditor = ({ classes }) => {
                 setDialogType({ type: 'missingMandatoryAction' })
                 break;
             }
+            case 409: {
+                setDialogType({ type: 'domainAlreadyExist' })
+                break;
+            }
             case 500: {
                 setDialogType({ type: 'serverNotAble' })
+                break;
+            }
+            default: {
                 break;
             }
         }
     }
 
+    //#region Dialogs
     const renderDialog = () => {
         const { type } = dialogType || {}
         const dialogContent = {
             notAutorized: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.notAuthorized')),
             missingMandatoryAction: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.missingMandatoryAction')),
             serverNotAble: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.serverNotAble')),
-            validationError: validationErrorDialog()
+            domainAlreadyExist: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.serverNotAble')),
+            validationError: validationErrorDialog(),
+            scriptImplementation: scriptImplementationDialog()
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -206,6 +224,96 @@ const SiteTrackingEditor = ({ classes }) => {
             )
         };
     }
+    const handleCopyScript = () => {
+        setCopyStatus(true);
+        setTimeout(() => {
+            setCopyStatus(false);
+        }, 1000);
+    }
+    const handleImplementScript = (value) => {
+        if (value) {
+            setCookie('hideScriptSiteEventDialog', true, { maxAge: 2147483647 });
+        }
+        setDialogType(null);
+    }
+    const scriptImplementationDialog = () => {
+        return {
+            title: null,
+            showDivider: false,
+            icon: (
+                <div className={classes.dialogIconContent}>
+                    {'\u005E'}
+                </div>
+            ),
+            content: (
+                <Box className={classes.dialogBox}>
+                    <Typography
+                        className={classes.f28}>
+                        {t('notifications.implementDialog.beforeYouStarted')}
+                    </Typography>
+                    <Typography
+                        className={clsx(classes.f20, classes.pb10)}>
+                        {t('siteTracking.scriptDescription')}
+                    </Typography>
+                    <hr />
+                    <Typography className={classes.f18}>
+                        {t('siteTracking.scriptInstruction')}
+                    </Typography>
+                    <Typography className={clsx(classes.bold, classes.pb10, classes.pt10, classes.f18)}>
+                        {t('siteTracking.scriptPayAttention')}
+                    </Typography>
+                    <CopyToClipboard text={siteScript} onCopy={handleCopyScript}>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                            startIcon={<div className={classes.copyIcon}>{copyStatus ? '\uE134' : '\ue0b0'}</div>}
+                        >
+                            {copyStatus ? t('notifications.copied') : t('notifications.copy')}
+                        </Button>
+                    </CopyToClipboard>
+                    <Box style={{ direction: 'ltr' }}>
+                        <Typography className={clsx(classes.bold, classes.f16)}>
+                            {t('notifications.headTagOpenText')} {'<head>'}
+                        </Typography>
+                        <pre>
+                            <div ref={refScriptCode} className={classes.scriptCode}>
+                                {siteScript}
+                            </div>
+                        </pre>
+                        <Typography className={clsx(classes.bold, classes.f16)}>
+                            {t('notifications.headTagClosesText')} {'</head>'}
+                        </Typography>
+                    </Box>
+                </Box>
+            ),
+            renderButtons: () => (
+                <>
+                    <FormControl className={classes.ps25}>
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={scriptDialog}
+                                    onChange={() => handleScriptDialogCheck(!scriptDialog)}
+                                    color="primary"
+                                />
+                            }
+                            label={t('notifications.implementDialog.dontShowThisMessage')} />
+                    </FormControl>
+                    <Button
+                        variant='contained'
+                        size='small'
+                        onClick={() => handleImplementScript(true)}
+                        className={clsx(
+                            classes.gruopsDialogButton,
+                            classes.dialogConfirmButton,
+                        )}>
+                        {t('common.Ok')}
+                    </Button>
+                </>
+            )
+        }
+    }
 
     const renderToast = () => {
         if (toastMessage) {
@@ -219,6 +327,7 @@ const SiteTrackingEditor = ({ classes }) => {
         return null;
     }
 
+    //#endregion Dialogs
     return <DefaultScreen
         currentPage='settings'
         subPage='SiteTracking'
@@ -232,7 +341,7 @@ const SiteTrackingEditor = ({ classes }) => {
             />
             {renderToast()}
             {renderDialog()}
-            <Box style={{ marginBottom: 'auto' }}>
+            {model && <Box style={{ marginBottom: 'auto' }}>
                 <form className={classes.root} noValidate autoComplete="off">
                     <Grid container alignItems="center">
                         <Grid item xs={12}>
@@ -298,7 +407,7 @@ const SiteTrackingEditor = ({ classes }) => {
                         </Grid>
                     </Grid>
                 </form>
-            </Box>
+            </Box>}
             <Box>
                 <Grid item xs={12} style={{ marginTop: 'auto' }}>
                     <Button
@@ -309,6 +418,14 @@ const SiteTrackingEditor = ({ classes }) => {
                         onClick={() => onSave()}
                         style={{ height: '100%', minWidth: 100 }}
                     >{t('common.Save')}</Button>
+                    <Button
+                        onClick={() => setDialogType({ type: 'scriptImplementation' })}
+                        variant='contained'
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonDarkBlue)}
+                        style={{ height: '100%', minWidth: 100, marginInline: 10 }}
+                    >{t("siteTracking.scriptImplementation")}</Button>
                 </Grid>
             </Box>
         </Box>

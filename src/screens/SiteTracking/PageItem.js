@@ -39,7 +39,7 @@ const PageItem = ({
         setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.GroupIds.includes(g.GroupID.toString()) }));
     }
 
-    return <Box className={classes.marginBlock20}>
+    return siteEvent && <Box className={classes.marginBlock20}>
         <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start' }}>
             <Box>
                 <Typography>{t("siteTracking.pageUrl")}</Typography>

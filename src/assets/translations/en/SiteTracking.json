@@ -8,6 +8,10 @@
     "addPageUrl": "Add Page URL",
     "pageUrl": "Page URL",
     "saved": "Event saved succesfuly",
+    "scriptImplementation": "Implement Script",
+    "scriptDescription": "In order to start tracking your customers are interacting with your site, you must first implement the script below so visitors to your site can receive notifications.",
+    "scriptInstruction":"Copy the following lines of code and paste them in the last line before \"head\" element",
+    "scriptPayAttention":"* Pay attention, Site tracking will only work on sites with SSL certificate",
     "conditions": {
         "none": "None",
         "contains": "Contains",
@@ -29,6 +33,7 @@
     "serverResponse": {
         "notAuthorized": "Permission warnning. Please contact support.",
         "missingMandatoryAction": "One of the parameter is missing. Please try again",
-        "serverNotAble": "Server Error. Please contact support."
+        "serverNotAble": "Server Error. Please contact support.",
+        "domainAlreadyExist": "Domain already exist"
     }
 }
