@@ -41,8 +41,14 @@ const DirectSendReport = ({ classes }) => {
     getEmailReportData();
     getSMSReportData();
     setSearchData({
-      email: {},
-      sms: {}
+      email: {
+        FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
+        ToDate: moment().format('YYYY-MM-DD HH:mm') 
+      },
+      sms: {
+        FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
+        ToDate: moment().format('YYYY-MM-DD HH:mm') 
+      }
     });
     setSearchParam({
       email: {},
