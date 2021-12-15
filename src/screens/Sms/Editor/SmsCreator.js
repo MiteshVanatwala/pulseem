@@ -146,7 +146,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [CampaignSearch, setCampaignSearch] = useState("");
   const [removalLinkDisabled, setremovalLinkDisabled] = useState(false);
   const [waize, setwaize] = useState(false);
-  const [PhoneNumberCampaignId, setPhoneNumberCampaignId] = useState("");
+  const [smsCampaignId, setCampaignId] = useState("");
   const [ContactSearch, setContactSearch] = useState("");
   const [phone, setphone] = useState("");
   const [alertToggle, setalertToggle] = useState(false);
@@ -308,7 +308,8 @@ const SmsCreator = ({ classes, ...props }) => {
       IsTestCampaign: isTestCampaign,
       IsTest: true,
       IsLinksStatistics: isLinksStatistics,
-      LogData: logData
+      LogData: logData,
+      SmsCampaignID: smsCampaignId
     }
     await dispatch(smsQuick(FinalPayloadData));
     setfinalApi(true);
@@ -505,16 +506,16 @@ const SmsCreator = ({ classes, ...props }) => {
           handleSendResult(r.payload.Result)
         }
         else {
-          if (PhoneNumberCampaignId !== "") {
+          if (smsCampaignId !== "") {
             const smsQuickSendData = {
-              ...quickSendPayload, SmsCampaignID: PhoneNumberCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-                SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: PhoneNumberCampaignId, Credits: messageCount,
+              ...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+                SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: smsCampaignId, Credits: messageCount,
                 TotalRecipients: 1
               }
             }
             setLoader(true);
             let r = await dispatch(smsQuick(smsQuickSendData));
-            setPhoneNumberCampaignId(r.payload.SmsCampaignId)
+            setCampaignId(r.payload.SmsCampaignId)
             setLoader(false);
             handleSendResult(r.payload.Result)
           }
@@ -527,7 +528,7 @@ const SmsCreator = ({ classes, ...props }) => {
             }
             setLoader(true);
             let r = await dispatch(smsQuick(smsQuickSendData));
-            setPhoneNumberCampaignId(r.payload.SmsCampaignId)
+            setCampaignId(r.payload.SmsCampaignId)
             setLoader(false);
             handleSendResult(r.payload.Result)
           }
@@ -1251,7 +1252,7 @@ const SmsCreator = ({ classes, ...props }) => {
       const groupIds = selectedGroup.map((g) => { return g.GroupID });
       settotal(selectedGroup.length);
       if (validationCheck()) {
-        const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds }
+        const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, SmsCampaignID: smsCampaignId }
         let r = await dispatch(smsSave(payloadToPush));
         if (r.payload.Status == 2) {
           let payload2 = {
