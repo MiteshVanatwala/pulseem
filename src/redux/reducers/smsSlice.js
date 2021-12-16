@@ -436,7 +436,8 @@ export const smsSlice = createSlice({
       state.previousLandingData = payload
     })
     builder.addCase(getTestGroups.fulfilled, (state, { payload }) => {
-      state.testGroups = payload
+      state.testGroups = payload;
+      state.testGroups.forEach((c) => c.IsTestGroup = true);
     })
     builder.addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
       state.commonSettings = payload

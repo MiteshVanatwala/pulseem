@@ -36,6 +36,7 @@ const Groups = ({ classes,
     callbackUpdateGroups = () => null,
     callbackSelectAll = () => null,
     callbackReciFilter = () => null,
+    callbackShowTestGroup = () => null,
     uniqueKey = null
 }) => {
     const { language, isRTL, windowSize } = useSelector(state => state.core)
@@ -43,6 +44,19 @@ const Groups = ({ classes,
     const [groupNameSearch, setGroupNameSearch] = useState('');
     const [clearInput, setClearInput] = useState(false);
     const [groupHover, setIsHover] = useState(null);
+    const [showTestGroups, setShowTestGroups] = useState(false);
+    const renderHtml = (html) => {
+        function createMarkup() {
+            return { __html: html };
+        }
+        return (
+            <label dangerouslySetInnerHTML={createMarkup()}></label>
+        );
+    }
+    const handleShowTestGroup = () => {
+        callbackShowTestGroup(showTestGroups);
+        setShowTestGroups(!showTestGroups);
+    }
     const handleSearch = (event) => {
         setClearInput(event.target.value != '');
         setGroupNameSearch(event.target.value);
@@ -268,7 +282,7 @@ const Groups = ({ classes,
                 </Grid>
             }
             <Grid item xs={12} className={clsx(classes.flex, classes.groupFilterRow)}>
-                {windowSize !== 'xs' && <FormControl className={classes.margin, classes.searchInput}>
+                {windowSize !== 'xs' && <FormControl className={clsx(classes.margin, classes.searchInput)}>
                     <Input
                         autoComplete='off'
                         onChange={handleSearch}
@@ -287,6 +301,10 @@ const Groups = ({ classes,
 
                     />
                 </FormControl>}
+                {isSms && <Button variant="outlined"
+                    className={clsx(classes.formControl, classes.twoLineButton, showTestGroups ? classes.buttonActiveGreen : null)}
+                    onClick={() => handleShowTestGroup()}
+                >{renderHtml(t("sms.showTestGroups"))}</Button>}
                 {showSortBy && <Box>
                     {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", color: "#1D82B3", fontWeight: "600", textTransform: "capitalize" }}>
                         <BsFilter style={{ fontSize: "22px", color: "#1D82B3" }} />  {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}

@@ -988,5 +988,38 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         padding: "10px",
         width: "160px",
         maxWidth: "280px",
+    },
+    breakSpaces: {
+        textAlign: 'center',
+        width: 'min-content',
+        whiteSpace: 'pre-line',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        fontSize: 12
+    },
+    twoLineButton: {
+        borderColor: '#1c82b2',
+        cursor: 'pointer',
+        '&:hover': {
+            backgroundColor: 'transparent'
+        },
+        '& label': {
+            fontSize: 12,
+            cursor: 'pointer',
+            color: '#1c82b2',
+            lineHeight: 1,
+            textTransform: 'capitalize'
+        }
+    },
+    buttonActiveGreen: {
+        borderColor: '#1c82b2',
+        backgroundColor: '#1c82b2',
+        '&:hover': {
+            borderColor: '#1c82b2',
+            backgroundColor: '#1c82b2',
+        },
+        '& label': {
+            color: '#fff'
+        }
     }
 });

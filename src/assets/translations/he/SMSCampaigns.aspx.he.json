@@ -564,5 +564,6 @@
   "typeDays": "יש להזין מספר ימים לפני/אחרי",
   "alreadySent": "קמפיין כבר נשלח",
   "notEnoughCreditLeft": "אין מספיק קרדיטים בחשבון כדי לשלוח קמפיין זה.<br/><br/>",
-  "notEnoughCreditLeftDesc": "על מנת להוסיף קרדיטים לחשבון,<br/>יש ליצור עמנו קשר בטלפון 03-524-0290 או במייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>"
+  "notEnoughCreditLeftDesc": "על מנת להוסיף קרדיטים לחשבון,<br/>יש ליצור עמנו קשר בטלפון 03-524-0290 או במייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+  "showTestGroups": "הצג קבוצות<br/> ניסיון"
 }
