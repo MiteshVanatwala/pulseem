@@ -1254,6 +1254,7 @@ const SmsCreator = ({ classes, ...props }) => {
       if (validationCheck()) {
         const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, SmsCampaignID: smsCampaignId }
         let r = await dispatch(smsSave(payloadToPush));
+        setCampaignId(r.payload.Message)
         if (r.payload.Status == 2) {
           let payload2 = {
             IsTestGroups: true,
