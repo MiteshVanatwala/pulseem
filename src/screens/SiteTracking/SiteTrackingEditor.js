@@ -18,6 +18,8 @@ import { Dialog } from '../../components/managment/index';
 import Toast from '../../components/Toast/Toast.component';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getCookie, setCookie } from '../../helpers/cookies';
+import { FaExclamationCircle } from 'react-icons/fa'
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 //import { eventsControllerCreate, CreateEventDefinitionInputDto } from '../../services/test';
 
 
@@ -148,7 +150,7 @@ const SiteTrackingEditor = ({ classes }) => {
             serverNotAble: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.serverNotAble')),
             domainAlreadyExist: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.serverNotAble')),
             validationError: validationErrorDialog(),
-            scriptImplementation: scriptImplementationDialog()
+            scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog()
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -236,6 +238,46 @@ const SiteTrackingEditor = ({ classes }) => {
         }
         setDialogType(null);
     }
+    const scriptErrorImplementationDialog = () => {
+        return {
+            title: t("siteTracking.title"),
+            showDivider: true,
+            icon: (
+                <AiOutlineExclamationCircle
+                    style={{ fontSize: 30, color: "#fff" }}
+                />
+            ),
+            content: (
+                <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+                    <FaExclamationCircle style={{ fontSize: 100 }} />
+                    <Typography className={classes.mt4}>
+                        {t('common.ErrorOccured')}.
+                    </Typography>
+                    <Typography style={{ textAlign: 'center' }}>{t("common.tryAgain")}</Typography>
+                </Box>
+            ),
+            renderButtons: () => (
+                <Grid
+                    container
+                    spacing={4}
+                    className={classes.dialogButtonsContainer}>
+                    <Grid item>
+                        <Button
+                            variant='contained'
+                            size='large'
+                            style={{ height: 40 }}
+                            onClick={() => { setDialogType(null) }}
+                            className={clsx(
+                                classes.confirmButton,
+                                classes.dialogConfirmButton,
+                            )}>
+                            {t('common.confirm')}
+                        </Button>
+                    </Grid>
+                </Grid>
+            )
+        }
+    }
     const scriptImplementationDialog = () => {
         return {
             title: null,
@@ -277,7 +319,7 @@ const SiteTrackingEditor = ({ classes }) => {
                             {t('notifications.headTagOpenText')} {'<head>'}
                         </Typography>
                         <pre>
-                            <div ref={refScriptCode} className={classes.scriptCode}>
+                            <div ref={refScriptCode} className={classes.scriptCode} style={{ padding: 5 }}>
                                 {siteScript}
                             </div>
                         </pre>
@@ -334,11 +376,25 @@ const SiteTrackingEditor = ({ classes }) => {
         classes={classes}
         containerClass={classes.management}>
         <Box style={{ height: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column' }}>
-            <Title title={t("siteTracking.title")}
-                classes={classes}
-                subTitle={t("siteTracking.setUp")}
-                topZero={false}
-            />
+            <Grid container>
+                <Grid item xs={7}>
+                    <Title title={t("siteTracking.title")}
+                        classes={classes}
+                        subTitle={t("siteTracking.setUp")}
+                        topZero={false}
+                    />
+                </Grid>
+                <Grid item xs={5} style={{ alignItems: 'center', display: 'flex', marginTop: -10 }}>
+                    <Button
+                        onClick={() => setDialogType({ type: 'scriptImplementation' })}
+                        variant='contained'
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonDarkBlue)}
+                    >{t("siteTracking.scriptImplementation")}</Button>
+                </Grid>
+            </Grid>
+
             {renderToast()}
             {renderDialog()}
             {model && <Box style={{ marginBottom: 'auto' }}>
@@ -418,14 +474,6 @@ const SiteTrackingEditor = ({ classes }) => {
                         onClick={() => onSave()}
                         style={{ height: '100%', minWidth: 100 }}
                     >{t('common.Save')}</Button>
-                    <Button
-                        onClick={() => setDialogType({ type: 'scriptImplementation' })}
-                        variant='contained'
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonDarkBlue)}
-                        style={{ height: '100%', minWidth: 100, marginInline: 10 }}
-                    >{t("siteTracking.scriptImplementation")}</Button>
                 </Grid>
             </Box>
         </Box>

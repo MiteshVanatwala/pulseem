@@ -40,7 +40,7 @@ export const siteTrackingSlice = createSlice({
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'siteTracking.saved', showAnimtionCheck: true }
     },
-    siteScript: ''
+    siteScript: null
   },
   // middleware: [
   //   ...getDefaultMiddleware({
