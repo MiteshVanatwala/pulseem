@@ -80,7 +80,8 @@ const SmsReport = ({ classes }) => {
     },
     Replies: {
       title: t('common.Total'),
-      href: `/Pulseem/SmsReplies.aspx?ReplyCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      // href: `/Pulseem/SmsReplies.aspx?ReplyCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     DLR: {
       title: t('common.DLR'),
