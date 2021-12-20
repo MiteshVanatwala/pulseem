@@ -585,8 +585,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
         justifyContent: 'space-between'
     },
     controlField: {
-        marginRight: 5,
-        marginLeft: 5,
         height: 36,
         fontSize: 24,
         '& .MuiButton-label': {

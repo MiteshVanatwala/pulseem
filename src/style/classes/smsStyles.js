@@ -1010,18 +1010,47 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         marginRight: 'auto',
         fontSize: 12
     },
+    filterButtonsContainer: {
+        '& *:not(svg):not(span)': {
+            marginInlineEnd: 5
+        },
+        '& .MuiButton-root': {
+            minWidth: 50
+        },
+        '& div.MuiInput-formControl': {
+            paddingInline: '0 !important',
+        },
+        '& .MuiInputBase-formControl': {
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingInline: 10,
+            '& .MuiSelect-selectMenu': {
+                // paddingLeft: isRTL ? 0 : 10,
+                // paddingRight: isRTL ? 10 : 0
+                paddingInline: 14
+            },
+            '& .MuiSelect-icon': {
+                left: !isRTL ? 'auto' : 0,
+                right: isRTL ? 'auto' : 0
+            }
+        }
+    },
     twoLineButton: {
         borderColor: '#1c82b2',
         cursor: 'pointer',
         '&:hover': {
             backgroundColor: 'transparent'
         },
-        '& label': {
-            fontSize: 12,
+        '& label, & span': {
+            fontSize: 16,
             cursor: 'pointer',
             color: '#1c82b2',
-            lineHeight: 1,
-            textTransform: 'capitalize'
+            lineHeight: 1.5,
+            textTransform: 'capitalize',
+            fontWeight: 400
         }
     },
     buttonActiveGreen: {
