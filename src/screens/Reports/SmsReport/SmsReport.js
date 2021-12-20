@@ -157,6 +157,9 @@ const SmsReport = ({ classes }) => {
 
   const renderSearchSection = () => {
     const handleSearch = () => {
+      if (campaignName === '' && !fromDate && !toDate) {
+        return;
+      }
       const searchArray = [{
         type: 'name',
         campaignName: campaignName

@@ -217,6 +217,9 @@ const NewslettersReport = ({ classes }) => {
 
 
   const handleSearch = () => {
+    if (notificationNameSearch === '' && !fromDate && !toDate) {
+      return;
+    }
     const searchArray = [{
       type: 'name',
       notificationName: notificationNameSearch

@@ -319,6 +319,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   useEffect(async () => {
     setLoader(true);
+    setCampaignId(props && props.match.params.id ? props.match.params.id : -1);
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
     await dispatch(getPreviousCampaignData());
@@ -1164,11 +1165,10 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const onContinueClick = async (isSave, returnToAutomation = false) => {
     if (validationCheck()) {
-      let smsCampaignId = props && props.match.params.id ? props.match.params.id : -1;
       const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: smsCampaignId }
       setLoader(true);
       let r = await dispatch(smsSave(payloadToPush));
-      smsCampaignId = r.payload.Message;
+      setCampaignId(r.payload.Message);
       setLoader(false);
       if (r.payload.Status == 2) {
         if (isSave) {
@@ -1180,8 +1180,6 @@ const SmsCreator = ({ classes, ...props }) => {
         } else if (returnToAutomation) {
           window.location = getAutomationReturnUrl(smsCampaignId);
         } else {
-
-          history.push(`/sms/edit/${smsCampaignId}`);
           history.push(`/sms/send/${smsCampaignId}`);
         }
       }
