@@ -1020,6 +1020,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         '& div.MuiInput-formControl': {
             paddingInline: '0 !important',
         },
+        '& .MuiButton-text': {
+            paddingInline: 10
+        },
         '& .MuiInputBase-formControl': {
             width: '100%',
             height: '100%',
@@ -1028,8 +1031,6 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             justifyContent: 'center',
             paddingInline: 10,
             '& .MuiSelect-selectMenu': {
-                // paddingLeft: isRTL ? 0 : 10,
-                // paddingRight: isRTL ? 10 : 0
                 paddingInline: 14
             },
             '& .MuiSelect-icon': {
@@ -1060,8 +1061,13 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             borderColor: '#1c82b2',
             backgroundColor: '#1c82b2',
         },
-        '& label': {
-            color: '#fff'
+        '& label, & span': {
+            fontSize: 16,
+            cursor: 'pointer',
+            color: '#fff',
+            lineHeight: 1.5,
+            textTransform: 'capitalize',
+            fontWeight: 400
         }
     }
 });
