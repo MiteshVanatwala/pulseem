@@ -1023,6 +1023,12 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         '& .MuiButton-text': {
             paddingInline: 10
         },
+        "@media screen and (max-width: 480px)": {
+            marginInline: 10,
+            '& *:not(svg):not(span):not(.MuiInputBase-formControl)': {
+                marginTop: 5
+            },
+        },
         '& .MuiInputBase-formControl': {
             width: '100%',
             height: '100%',
@@ -1030,6 +1036,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             alignItems: 'center',
             justifyContent: 'center',
             paddingInline: 10,
+
             '& .MuiSelect-selectMenu': {
                 paddingInline: 14
             },
