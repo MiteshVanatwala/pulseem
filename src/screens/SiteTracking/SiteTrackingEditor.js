@@ -11,7 +11,7 @@ import PageItem from './PageItem'
 import { eventsOptions, domainProtocol } from '../../helpers/PulseemArrays'
 import { getGroupsBySubAccountId } from "../../redux/reducers/smsSlice";
 import { useDispatch, useSelector } from 'react-redux'
-import { get, post, getScript } from '../../redux/reducers/siteTrackingSlice';
+import { get, post, getScript, setDomain } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel, SiteTrackingModel } from '../../model/SiteTracking/SiteTrackingModel';
 import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
@@ -80,7 +80,7 @@ const SiteTrackingEditor = ({ classes }) => {
     const validateForm = (event) => {
         let isValid = true;
         const isValidDomain = () => {
-            const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$/
+            const domainRegex = /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/g
             return model.domain.match(domainRegex);
         }
         if (model.domain === '') {
@@ -103,17 +103,34 @@ const SiteTrackingEditor = ({ classes }) => {
         if (validateForm()) {
             const request = { ...model };
             request.domain = protocol + request.domain;
-            const response = await dispatch(post(request));
-            onSaveReponse(response.payload);
+            const setDomainResponse = await dispatch(setDomain({ DomainAddress: request.domain }));
+            if (setDomainResponse.payload.Result === 1) {
+                const response = await dispatch(post(request));
+                onSaveReponse(response.payload);
+            }
+            else {
+                onPulseemSaveReponse(setDomainResponse.payload);
+            }
         }
         else {
             setDialogType({ type: "validationError" });
         }
         setShowLoader(false);
     }
-
+    const onPulseemSaveReponse = (response) => {
+        switch (response.Result) {
+            default:
+            case -1: {
+                setDialogType({ type: 'dynamicMessage', message: response.Message })
+                break;
+            }
+            case 0: {
+                setDialogType({ type: 'domainAlreadyExist' });
+                break;
+            }
+        }
+    }
     const onSaveReponse = (response) => {
-        console.log(response);
         switch (response.statusCode) {
             case 200: {
                 setToastMessage(ToastMessages.SUCCESS);
@@ -143,14 +160,16 @@ const SiteTrackingEditor = ({ classes }) => {
 
     //#region Dialogs
     const renderDialog = () => {
-        const { type } = dialogType || {}
+        const { type, message } = dialogType || {}
         const dialogContent = {
             notAutorized: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.notAuthorized')),
             missingMandatoryAction: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.missingMandatoryAction')),
             serverNotAble: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.serverNotAble')),
-            domainAlreadyExist: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.serverNotAble')),
+            domainAlreadyExist: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.domainAlreadyExist')),
             validationError: validationErrorDialog(),
-            scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog()
+            scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog(),
+            dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message)
+
         }
 
         const currentDialog = dialogContent[type] || {}

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import { eventsInstance } from '../../helpers/api';
+import { eventsInstance, instence } from '../../helpers/api';
 
 export const get = createAsyncThunk(
   'events', async (data, thunkAPI) => {
@@ -32,6 +32,16 @@ export const getScript = createAsyncThunk(
   }
 )
 
+export const setDomain = createAsyncThunk(
+  'siteTracking/SetDomain', async (domain, thunkAPI) => {
+    try {
+      const response = await instence.post('siteTracking/SetDomain', domain);
+      return JSON.parse(response.data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
 
 export const siteTrackingSlice = createSlice({
   name: 'siteTracking',
