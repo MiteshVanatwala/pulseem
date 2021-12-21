@@ -302,15 +302,15 @@ const Groups = ({ classes,
                     />
                 </FormControl>}
                 {showSortBy && <Box className={classes.filterButtonsContainer}>
-                    {isSms && <Button variant="outlined"
-                        className={clsx(classes.formControl, showTestGroups ? classes.buttonActiveGreen : classes.twoLineButton)}
-                        onClick={() => handleShowTestGroup()}
-                    >{t("sms.showTestGroups")}</Button>}
                     {selectedList.length > 0 && showFilter ? <Button className={clsx(classes.formControl, classes.dropDown)} onClick={callbackReciFilter} style={{ height: "36px", color: "#1D82B3", fontWeight: "600", textTransform: "capitalize" }}>
                         <BsFilter style={{ fontSize: "22px", color: "#1D82B3" }} />  {bsDot ? <BsDot style={{ position: "absolute", left: "8px", top: "-6px", fontSize: "28px" }} /> : null} {t("mainReport.recipientFilter")}
 
                     </Button> : null}
-                    <FormControl className={clsx(classes.formControl, classes.dropDown)}>
+                    {isSms && <Button variant="outlined"
+                        className={clsx(classes.formControl, showTestGroups ? classes.buttonActiveGreen : classes.twoLineButton)}
+                        onClick={() => handleShowTestGroup()}
+                    >{t("sms.showTestGroups")}</Button>}
+                    <FormControl className={clsx(classes.formControl, classes.dropDown, selectedList.length > 0 && isSms && windowSize === 'xs' ? classes.mt5 : null)}>
                         <Select
                             id="groupOrder"
                             value={sortBySelected}
