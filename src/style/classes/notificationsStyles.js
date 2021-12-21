@@ -552,7 +552,6 @@ export const getNotificationStyle = (windowSize, isRTL, theme) => ({
     },
     dropDown: {
         marginLeft: 5,
-        marginRight: 5,
         alignSelf: 'flex-end',
         border: '1px solid #1c82b2',
         borderRadius: '.2rem',

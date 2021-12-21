@@ -310,7 +310,7 @@ const Groups = ({ classes,
                         className={clsx(classes.formControl, showTestGroups ? classes.buttonActiveGreen : classes.twoLineButton)}
                         onClick={() => handleShowTestGroup()}
                     >{t("sms.showTestGroups")}</Button>}
-                    <FormControl className={clsx(classes.formControl, classes.dropDown, selectedList.length > 0 && isSms && windowSize === 'xs' ? classes.mt5 : null)}>
+                    <FormControl className={clsx(classes.formControl, classes.dropDown)}>
                         <Select
                             id="groupOrder"
                             value={sortBySelected}
