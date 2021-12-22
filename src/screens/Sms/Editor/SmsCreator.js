@@ -1168,19 +1168,20 @@ const SmsCreator = ({ classes, ...props }) => {
       const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: smsCampaignId }
       setLoader(true);
       let r = await dispatch(smsSave(payloadToPush));
-      setCampaignId(r.payload.Message);
+      const campaignId = r.payload.Message;
+      setCampaignId(campaignId);
       setLoader(false);
       if (r.payload.Status == 2) {
         if (isSave) {
           setToastMessage(ToastMessages.SUCCESS);
           setTimeout(() => {
-            history.push(`/sms/edit/${smsCampaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
+            history.push(`/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
             setToastMessage(null);
           }, 1500);
         } else if (returnToAutomation) {
-          window.location = getAutomationReturnUrl(smsCampaignId);
+          window.location = getAutomationReturnUrl(campaignId);
         } else {
-          history.push(`/sms/send/${smsCampaignId}`);
+          history.push(`/sms/send/${campaignId}`);
         }
       }
       else if (r.payload.Status == 3) {
