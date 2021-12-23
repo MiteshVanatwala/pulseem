@@ -5,18 +5,10 @@ import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, Tooltip
 } from '@material-ui/core'
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import {
-  AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
-  GroupsIcon, PreviewIcon, ReportsIcon, CopyIcon
-} from '../../../assets/images/managment/index'
-import {
-  TablePagination, ManagmentIcon, DateField, Dialog, PopMassage, SearchField, RestorDialogContent
-} from '../../../components/managment/index'
+import { DuplicateIcon, SearchIcon, PreviewIcon } from '../../../assets/images/managment/index'
+import { TablePagination, ManagmentIcon, DateField, Dialog, PopMassage, SearchField } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import {
-  getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign
-} from '../../../redux/reducers/newsletterSlice'
+import { getArchiveCampaigns, duplicteCampaign } from '../../../redux/reducers/newsletterSlice'
 import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -31,7 +23,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 const ArchiveManagementScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
-  const { newslettersData, newslettersDataError, newslettersDeletedData } = useSelector(state => state.newsletter)
+  const { newsletterArchiveData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
   const [toDate, handleToDate] = useState(null)
@@ -43,17 +35,14 @@ const ArchiveManagementScreen = ({ classes }) => {
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
   const [dialogType, setDialogType] = useState(null)
-  const [showCopied, setShowCopied] = useState(null)
-  const [copyRef, setCopyRef] = useState(null)
   const [restoreArray, setRestoreArray] = useState([])
   const [showLoader, setLoader] = useState(true);
-  const history = useCtrlHistory()
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   moment.locale(language)
 
   const getData = async () => {
-    await dispatch(getNewslatterData())
+    await dispatch(getArchiveCampaigns())
     setLoader(false);
   }
 
@@ -121,7 +110,7 @@ const ArchiveManagementScreen = ({ classes }) => {
         }
       }
 
-      let sortData = newslettersData
+      let sortData = newsletterArchiveData
       searchArray.forEach(values => {
         sortData = sortData.filter(row => filtersObject[values.type](row, values))
       });
@@ -224,36 +213,9 @@ const ArchiveManagementScreen = ({ classes }) => {
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize !== 'xs' && <Grid item>
-          <Button
-            variant='contained'
-            size='medium'
-            href='/Pulseem/Editor/CampaignInfo?new=1&fromreact=true'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightGreen
-            )}>
-            {t('campaigns.create')}
-          </Button>
-        </Grid>}
-        {windowSize !== 'xs' && <Grid item>
-          <Button
-            variant='contained'
-            size='medium'
-            className={clsx(
-              classes.actionButton,
-              classes.actionButtonLightBlue
-            )}
-            onClick={() => setDialogType({
-              type: 'restore',
-              data: newslettersDeletedData
-            })}>
-            {t('campaigns.restoreDeleted')}
-          </Button>
-        </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching ? searchResults.length : newslettersData.length} ${t('campaigns.newsletters')}`}
+            {`${isSearching ? searchResults.length : newsletterArchiveData.length} ${t('campaigns.newsletters')}`}
           </Typography>
         </Grid>
       </Grid>
@@ -274,29 +236,9 @@ const ArchiveManagementScreen = ({ classes }) => {
   }
 
   const renderCellIcons = (row) => {
-    const { Status, Groups, AutomationID, CampaignID, shareUrl, AutomationTriggerInActive } = row
-
-    const renderCopyToClipoard = (
-      showCopied === CampaignID ?
-        <PopMassage
-          classes={classes}
-          show={showCopied === CampaignID}
-          timeout={2000}
-          label={t('common.copyClip')}
-          innerRef={copyRef}
-        /> : null
-    )
+    const { CampaignID } = row
 
     const iconsMap = [[
-      {
-        key: 'send',
-        icon: SendGreenIcon,
-        lable: t('campaigns.imgSendResource1.ToolTip'),
-        remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
-        rootClass: classes.sendIcon,
-        textClass: classes.sendIconText,
-        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
-      },
       {
         key: 'preview',
         icon: PreviewIcon,
@@ -308,15 +250,6 @@ const ArchiveManagementScreen = ({ classes }) => {
         }
       },
       {
-        key: 'edit',
-        icon: EditIcon,
-        disable: Status !== 1 || AutomationID !== 0,
-        lable: t('campaigns.Image2Resource1.ToolTip'),
-        remove: windowSize === 'xs',
-        href: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
-        rootClass: classes.paddingIcon,
-      },
-      {
         key: 'duplicate',
         icon: DuplicateIcon,
         lable: t('campaigns.lnkEditResource1.ToolTip'),
@@ -324,69 +257,6 @@ const ArchiveManagementScreen = ({ classes }) => {
         onClick: () => {
           setDialogType({
             type: 'duplicate',
-            data: CampaignID
-          })
-        }
-      },
-      {
-        key: 'groups',
-        icon: GroupsIcon,
-        disable: Groups && Groups.length === 0,
-        lable: t('campaigns.lnkPreviewResource1.ToolTip'),
-        remove: windowSize === 'xs',
-        rootClass: classes.paddingIcon,
-        onClick: () => {
-          setDialogType({
-            type: 'groups',
-            data: row.Groups
-          })
-        }
-      },
-      {
-        key: 'copy',
-        icon: CopyIcon,
-        lable: t('campaigns.CloneResource1.HeaderText'),
-        rootClass: classes.paddingIcon,
-        text: shareUrl || '',
-        type: 'copy',
-        onClick: (e) => {
-          setCopyRef(e.current)
-          setShowCopied(CampaignID)
-          setTimeout(() => {
-            setShowCopied(null)
-          }, 1000)
-        }
-      },
-      {
-        key: 'reports',
-        icon: ReportsIcon,
-        disable: Status === 1,
-        lable: t('campaigns.Reports'),
-        remove: windowSize === 'xs',
-        href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`,
-        rootClass: classes.paddingIcon,
-      },
-      {
-        key: 'automation',
-        icon: AutomationIcon,
-        disable: AutomationID === 0,
-        lable: t('campaigns.automation'),
-        remove: windowSize === 'xs',
-        onClick: () => {
-          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`)
-        },
-        rootClass: classes.paddingIcon,
-      },
-      {
-        key: 'delete',
-        icon: DeleteIcon,
-        lable: t('campaigns.DeleteResource1.HeaderText'),
-        rootClass: classes.paddingIcon,
-        disable: AutomationID !== 0,
-        showPhone: true,
-        onClick: () => {
-          setDialogType({
-            type: 'delete',
             data: CampaignID
           })
         }
@@ -413,7 +283,6 @@ const ArchiveManagementScreen = ({ classes }) => {
                     classes={classes}
                     {...icon}
                   />
-                  {icon.key === 'copy' && renderCopyToClipoard}
                 </Grid>
               ))}
             </Grid>
@@ -464,12 +333,6 @@ const ArchiveManagementScreen = ({ classes }) => {
       </>
     )
   }
-
-  const HtmlTooltip = withStyles((theme) => ({
-    tooltip: {
-      maxWidth: 220
-    },
-  }))(Tooltip);
 
   const renderNameCell = (row) => {
     let date = null
@@ -563,7 +426,7 @@ const ArchiveManagementScreen = ({ classes }) => {
   }
 
   const renderTableBody = () => {
-    let sortData = isSearching ? searchResults : newslettersData;
+    let sortData = isSearching ? searchResults : newsletterArchiveData;
     let rpp = parseInt(rowsPerPage)
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
@@ -593,7 +456,7 @@ const ArchiveManagementScreen = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching ? searchResults.length : newslettersData.length}
+        rows={isSearching ? searchResults.length : newsletterArchiveData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
@@ -615,34 +478,6 @@ const ArchiveManagementScreen = ({ classes }) => {
 
   const handleClose = () => {
     setDialogType(null)
-  }
-
-  const getRestorDialog = (data = []) => {
-    if (!data || !Array.isArray(data)) return null
-    return {
-      title: t('campaigns.restoreCampaignTitle'),
-      showDivider: false,
-      icon: (
-        <div className={classes.dialogIconContent}>
-          {'\uE185'}
-        </div>
-      ),
-      content: (
-        <RestorDialogContent
-          classes={classes}
-          data={data}
-          currentChecked={restoreArray}
-          onChange={handleChange}
-          dataIdVar='CampaignID'
-        />
-      ),
-      onConfirm: async () => {
-        handleClose()
-        await dispatch(restoreCampaigns(restoreArray))
-        setRestoreArray([])
-        getData()
-      }
-    }
   }
 
   const getGruopsDialog = (data = []) => {
@@ -686,27 +521,6 @@ const ArchiveManagementScreen = ({ classes }) => {
     }
   }
 
-  const getDeleteDialog = (data = '') => ({
-    title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
-    showDivider: false,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
-    content: (
-      <Typography style={{ fontSize: 18 }}>
-        {t('campaigns.GridButtonColumnResource2.ConfirmText')}
-      </Typography>
-    ),
-    onConfirm: async () => {
-      clearSearch()
-      handleClose()
-      await dispatch(deleteCampaign(data))
-      getData()
-    }
-  })
-
   const getDuplicateDialog = (data = '') => ({
     title: t('campaigns.dialogDuplicateTitle'),
     showDivider: false,
@@ -732,9 +546,7 @@ const ArchiveManagementScreen = ({ classes }) => {
     const { data, type } = dialogType || {}
 
     const dialogContent = {
-      restore: getRestorDialog(data),
       groups: getGruopsDialog(data),
-      delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data)
     }
 
