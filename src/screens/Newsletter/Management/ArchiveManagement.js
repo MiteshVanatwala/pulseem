@@ -471,46 +471,6 @@ const ArchiveManagementScreen = ({ classes }) => {
     setDialogType(null)
   }
 
-  const getGruopsDialog = (data = []) => {
-    if (!data || !Array.isArray(data)) return null
-    return {
-      title: t('campaigns.ShowGroupsTitle'),
-      showDivider: false,
-      icon: (
-        <div className={classes.dialogIconContent}>
-          {'\uE0D5'}
-        </div>
-      ),
-      content: (
-        <Box
-          className={classes.gruopsDialogContent}>
-          {data.map(group => {
-            return (
-              <Typography
-                key={group}
-                className={classes.gruopsDialogText}>
-                <FiberManualRecordIcon
-                  className={classes.gruopsDialogBullet} />
-                {group}
-              </Typography>
-            )
-          })}
-        </Box>
-      ),
-      renderButtons: () => (
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleClose}
-          className={clsx(
-            classes.gruopsDialogButton,
-            classes.dialogConfirmButton,
-          )}>
-          {t('common.Ok')}
-        </Button>
-      )
-    }
-  }
 
   const getDuplicateDialog = (data = '') => ({
     title: t('campaigns.dialogDuplicateTitle'),
@@ -539,7 +499,6 @@ const ArchiveManagementScreen = ({ classes }) => {
     const { data, type } = dialogType || {}
 
     const dialogContent = {
-      groups: getGruopsDialog(data),
       duplicate: getDuplicateDialog(data)
     }
 
