@@ -2086,7 +2086,7 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const callbackShowTestGroup = async (showTestGroups) => {
     if (!showTestGroups && testGroups.length > 0) {
-      setGroupList(groupList.concat(testGroups));
+      setGroupList(testGroups.concat(groupList));
     }
     else {
       const g = groupList.filter((group) => { return group.IsTestGroup !== true });

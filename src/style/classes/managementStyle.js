@@ -246,10 +246,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     width: '100%',
     padding: iconPadding[windowSize],
     color: '#333',
-    "@media screen and (max-width: 768px)": {
+    "@media screen and (max-width: 768px) and (min-width: 480px)": {
       padding: 0
-    },
-
+    }
   },
   managmentIcon: {
     width: iconWidth[windowSize],
