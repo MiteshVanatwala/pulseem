@@ -533,7 +533,6 @@ const ArchiveManagementScreen = ({ classes }) => {
       if (newCampaignId.payload > 0) {
         window.open('/react/Campaigns');
       }
-      getData()
     }
   })
   const renderDialog = () => {
