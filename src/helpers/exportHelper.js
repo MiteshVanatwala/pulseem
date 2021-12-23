@@ -40,9 +40,10 @@ export const booleanToNumber = (obj, column, isBoolean = false, t) => {
     return obj;
 }
 
-export const formatDateTime = (arr) => {
+export const formatDateTime = (arr, t) => {
     const newArr = [...arr];
     newArr.forEach((a) => {
+        
         if (a.SendDate) {
             a.SendDate = moment(a.SendDate).format("DD/MM/YYYY HH:mm");
         }
@@ -54,6 +55,9 @@ export const formatDateTime = (arr) => {
         }
         if (a.UpdateDate) {
             a.UpdateDate = moment(a.UpdateDate).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.SendDate === '' || !a.SendDate) {
+            a.SendDate = t('common.notSent');
         }
     });
 

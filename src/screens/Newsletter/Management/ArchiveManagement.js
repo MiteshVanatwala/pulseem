@@ -5,7 +5,7 @@ import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, Tooltip
 } from '@material-ui/core'
-import { DuplicateIcon, SearchIcon, PreviewIcon } from '../../../assets/images/managment/index'
+import { DuplicateIcon, SearchIcon, PreviewIcon, ExportIcon, ReportsIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon, DateField, Dialog, PopMassage, SearchField } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { getArchiveCampaigns, cloneArchiveCampaign } from '../../../redux/reducers/newsletterSlice'
@@ -20,6 +20,9 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { exportFile } from '../../../helpers/exportFromJson';
+import { EmailStatus } from '../../../helpers/PulseemArrays';
+import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 
 const ArchiveManagementScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -35,7 +38,6 @@ const ArchiveManagementScreen = ({ classes }) => {
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
   const [dialogType, setDialogType] = useState(null)
-  const [restoreArray, setRestoreArray] = useState([])
   const [showLoader, setLoader] = useState(true);
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
@@ -210,9 +212,47 @@ const ArchiveManagementScreen = ({ classes }) => {
     )
   }
 
+  const handleDownloadCsv = async () => {
+    const exportColumnHeader = {
+      "Name": t('common.CampaignName'),
+      "SendDate": t('mainReport.GridBoundColumnResource3.HeaderText'),
+      "Status": t('common.Status'),
+      "StatusName": t('mainReport.statusName'),
+    }
+
+    let orderList = [];
+
+    const list = searchResults || newsletterArchiveData;
+    orderList = await preferredOrder(list, Object.keys(exportColumnHeader));
+    orderList = await statusNumberToString(t, orderList, EmailStatus);
+    orderList = await formatDateTime(orderList, t);
+    orderList = await deletePropertyFromArrayObject(orderList, "Status");
+    exportFile({
+      data: orderList,
+      fileName: 'emailReport',
+      exportType: 'xls',
+      fields: exportColumnHeader
+    });
+  }
+
+
   const renderManagmentLine = () => {
     return (
-      <Grid container spacing={2} className={classes.linePadding} >
+      <Grid container spacing={2} className={classes.linePadding}>
+        {windowSize !== 'xs' && <Grid item>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonGreen,
+              newsletterArchiveData.length > 0 ? null : classes.disabled
+            )}
+            onClick={handleDownloadCsv}
+            startIcon={<ExportIcon />}>
+            {t('campaigns.exportFile')}
+          </Button>
+        </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${isSearching ? searchResults.length : newsletterArchiveData.length} ${t('campaigns.newsletters')}`}
