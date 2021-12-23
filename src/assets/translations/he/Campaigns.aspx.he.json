@@ -335,6 +335,9 @@
   "logPageHeaderResource1": {
     "Text": "ניהול קמפיינים"
   },
+  "logPageHeaderArchive": {
+    "Text": "ארכיון קמפיינים"
+  },
   "PageResource1": {
     "Title": "ניהול קמפיינים | מערכת פולסים"
   },
