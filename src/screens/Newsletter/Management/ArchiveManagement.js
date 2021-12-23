@@ -8,7 +8,7 @@ import {
 import { DuplicateIcon, SearchIcon, PreviewIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon, DateField, Dialog, PopMassage, SearchField } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import { getArchiveCampaigns, duplicteCampaign } from '../../../redux/reducers/newsletterSlice'
+import { getArchiveCampaigns, cloneArchiveCampaign } from '../../../redux/reducers/newsletterSlice'
 import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -466,15 +466,6 @@ const ArchiveManagementScreen = ({ classes }) => {
     )
   }
 
-  const handleChange = (CampaignID) => () => {
-    const found = restoreArray.includes(CampaignID)
-    if (found) {
-      setRestoreArray(restoreArray.filter(restore => restore !== CampaignID))
-    } else {
-      setRestoreArray([...restoreArray, CampaignID])
-    }
-
-  }
 
   const handleClose = () => {
     setDialogType(null)
@@ -538,7 +529,10 @@ const ArchiveManagementScreen = ({ classes }) => {
       clearSearch()
       handleClose()
       setPage(1)
-      await dispatch(duplicteCampaign(data))
+      const newCampaignId = await dispatch(cloneArchiveCampaign(data))
+      if (newCampaignId.payload > 0) {
+        window.open('/react/Campaigns');
+      }
       getData()
     }
   })

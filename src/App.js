@@ -120,6 +120,11 @@ const renderRoutes = (classes, history) => {
       {/* Newsletter */}
       <Route
         exact
+        path="/Campaigns"
+        render={props => <NewsletterManagment {...props} classes={classes} />}
+      />
+      <Route
+        exact
         path="/Campaigns/Archive"
         render={props => <ArchiveManagement {...props} classes={classes} />}
       />
