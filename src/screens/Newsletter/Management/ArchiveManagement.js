@@ -390,6 +390,7 @@ const ArchiveManagementScreen = ({ classes }) => {
     return (
       <>
         <CustomTooltip
+          key={row.ID}
           isSimpleTooltip={false}
           classes={classes}
           interactive={true}
