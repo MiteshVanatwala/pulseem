@@ -317,7 +317,8 @@ const ArchiveManagementScreen = ({ classes }) => {
         {iconsMap.map((map, index) => (
           <Grid
             key={index}
-            item>
+            item
+            className={classes.fullFlexItem}>
             <Grid
               container>
               {map.map(icon => (

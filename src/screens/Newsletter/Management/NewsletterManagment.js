@@ -255,7 +255,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             {t('campaigns.restoreDeleted')}
           </Button>
         </Grid>}
-        <Grid item>
+        <Grid item xs={windowSize === 'xs' && 12}>
           <Button
             variant='contained'
             size='medium'
@@ -268,7 +268,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
             {t('master.redirectToArchive')}
           </Button>
         </Grid>
-        <Grid item className={classes.groupsLableContainer} >
+        <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${isSearching ? searchResults.length : newslettersData.length} ${t('campaigns.newsletters')}`}
           </Typography>
