@@ -237,6 +237,9 @@ const ArchiveManagementScreen = ({ classes }) => {
       fields: exportColumnHeader
     });
   }
+  const redirctToArchive = () => {
+    window.location = '/react/Campaigns/Archive'
+  }
 
 
   const renderManagmentLine = () => {
