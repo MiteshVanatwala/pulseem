@@ -61,7 +61,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 1500
   },
   managmentNarrow: {
-    maxWidth: 1200
+    maxWidth: 950
   },
   managementTitle: {
     fontSize: windowSize === 'xs' ? '25px' : '36px',
