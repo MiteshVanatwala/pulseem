@@ -79,6 +79,9 @@ const ArchiveManagementScreen = ({ classes }) => {
       }
     }
     const handleSearch = () => {
+      if (campaineNameSearch === '' && !fromDate && !toDate) {
+        return;
+      }
       const searchArray = [{
         type: 'name',
         campaineName: campaineNameSearch
@@ -560,7 +563,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       currentPage="newsletter"
       subPage='archiveManagement'
       classes={classes}
-      containerClass={classes.management}>
+      containerClass={classes.managmentNarrow}>
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}
