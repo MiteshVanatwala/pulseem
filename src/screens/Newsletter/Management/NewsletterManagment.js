@@ -221,6 +221,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
+  const redirctToArchive = () => {
+    window.location = '/react/Campaigns/Archive'
+  }
+
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
@@ -251,6 +255,19 @@ const NewsletterManagnentScreen = ({ classes }) => {
             {t('campaigns.restoreDeleted')}
           </Button>
         </Grid>}
+        <Grid item>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonDarkBlue
+            )}
+            onClick={redirctToArchive}
+          >
+            {t('master.redirectToArchive')}
+          </Button>
+        </Grid>
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${isSearching ? searchResults.length : newslettersData.length} ${t('campaigns.newsletters')}`}
