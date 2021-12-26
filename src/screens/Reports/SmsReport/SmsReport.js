@@ -144,7 +144,7 @@ const SmsReport = ({ classes }) => {
   const handleDownloadCsv = async () => {
     let orderList = preferredOrder(searchResults || smsReport, Object.keys(exportColumnHeader));
     orderList = await statusNumberToString(t, orderList, smsReportStatus);
-    orderList = await formatDateTime(orderList);
+    orderList = await formatDateTime(orderList, t);
     orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
     orderList = await deletePropertyFromArrayObject(orderList, "Status");
     exportFile({

@@ -541,5 +541,6 @@
   "removeSmsClient": "Remove receipient",
   "AddedDate": "Creation Date",
   "Clients": "Clients",
-  "NoDataTryFilter": "No Data, Try another filter combination."
+  "NoDataTryFilter": "No Data, Try another filter combination.",
+  "notSent": "Not sent"
 }
