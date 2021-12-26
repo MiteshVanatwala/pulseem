@@ -43,7 +43,7 @@ export const booleanToNumber = (obj, column, isBoolean = false, t) => {
 export const formatDateTime = (arr, t) => {
     const newArr = [...arr];
     newArr.forEach((a) => {
-        
+
         if (a.SendDate) {
             a.SendDate = moment(a.SendDate).format("DD/MM/YYYY HH:mm");
         }
@@ -61,6 +61,7 @@ export const formatDateTime = (arr, t) => {
         }
         if (a.ReplyDate) {
             a.ReplyDate = moment(a.ReplyDate).format("DD/MM/YYYY HH:mm");
+        }
         if (a.SendDate === '' || !a.SendDate) {
             a.SendDate = t('common.notSent');
         }
@@ -103,9 +104,9 @@ export const deletePropertyFromArrayObject = (arr, property) => {
 
 export const switchStatusDescription = (obj, statuses) => {
     obj.map((o) => {
-      if (o.STATUS) {
-        o.StatusDescription = i18n.t(statuses[o.STATUS] ? statuses[o.STATUS].value : null);
-      }
+        if (o.STATUS) {
+            o.StatusDescription = i18n.t(statuses[o.STATUS] ? statuses[o.STATUS].value : null);
+        }
     });
     return obj;
-  }
+}
