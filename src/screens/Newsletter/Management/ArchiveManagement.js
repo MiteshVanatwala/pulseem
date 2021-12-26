@@ -269,10 +269,10 @@ const ArchiveManagementScreen = ({ classes }) => {
     return (
       <TableHead>
         <TableRow classes={rowStyle}>
-          <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("common.CampaignName")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.recipients")}</TableCell>
-          <TableCell classes={cellStyle} className={classes.flex1} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
-          <TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex12} ></TableCell>
+          <TableCell classes={cellStyle} className={classes.flex6} align='center'>{t("common.CampaignName")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex4} align='center'>{t("campaigns.recipients")}</TableCell>
+          <TableCell classes={cellStyle} className={classes.flex4} align='center'>{t("campaigns.lblCampaignStatusResource1.Text")}</TableCell>
+          <TableCell classes={{ root: classes.tableCellRoot }} className={classes.flex4} ></TableCell>
         </TableRow>
       </TableHead>
     )
@@ -309,8 +309,8 @@ const ArchiveManagementScreen = ({ classes }) => {
     return (
       <Grid
         container
-        direction={windowSize === 'sm' ? 'column' : 'row'}
-        justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
+        className={windowSize !== 'xs' ? classes.justifyCenterOfCenter : null}
+        direction={windowSize === 'sm' ? 'column' : 'row'}>
         {iconsMap.map((map, index) => (
           <Grid
             key={index}
@@ -421,26 +421,27 @@ const ArchiveManagementScreen = ({ classes }) => {
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex3}>
+          className={classes.flex6}>
           {renderNameCell(row)}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex1}>
+          className={classes.flex4}>
           {renderRecipientsCell(row.SentCount)}
         </TableCell>
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flex1}>
+          className={classes.flex4}>
           {renderStatusCell(row.Status)}
         </TableCell>
         <TableCell
           component="th"
           scope="row"
           classes={{ root: classes.tableCellRoot }}
-          className={classes.flex12}>
+          className={classes.flex4}
+        >
           {renderCellIcons(row)}
 
         </TableCell>
