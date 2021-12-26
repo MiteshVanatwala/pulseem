@@ -80,7 +80,8 @@ const SmsReport = ({ classes }) => {
     },
     Replies: {
       title: t('common.Total'),
-      href: `/react/reports/SmsReplies/${id}`
+      //href: `/react/reports/SmsReplies/${id}`
+      href: `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     DLR: {
       title: windowSize === 'xs' ? '' : t('common.DLR'),
@@ -156,6 +157,9 @@ const SmsReport = ({ classes }) => {
 
   const renderSearchSection = () => {
     const handleSearch = () => {
+      if (campaignName === '' && !fromDate && !toDate) {
+        return;
+      }
       const searchArray = [{
         type: 'name',
         campaignName: campaignName

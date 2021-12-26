@@ -1010,18 +1010,55 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         marginRight: 'auto',
         fontSize: 12
     },
+    filterButtonsContainer: {
+        '& *:not(svg):not(span)': {
+            marginInlineEnd: 5
+        },
+        '& .MuiButton-root': {
+            minWidth: 50
+        },
+        '& div.MuiInput-formControl': {
+            paddingInline: '0 !important',
+        },
+        '& .MuiButton-text': {
+            paddingInline: 10
+        },
+        "@media screen and (max-width: 480px)": {
+            marginInline: 10,
+            '& *:not(svg):not(span):not(.MuiInputBase-formControl)': {
+                marginTop: 5
+            },
+        },
+        '& .MuiInputBase-formControl': {
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingInline: 10,
+
+            '& .MuiSelect-selectMenu': {
+                paddingInline: 14
+            },
+            '& .MuiSelect-icon': {
+                left: !isRTL ? 'auto' : 0,
+                right: isRTL ? 'auto' : 0
+            }
+        }
+    },
     twoLineButton: {
         borderColor: '#1c82b2',
         cursor: 'pointer',
         '&:hover': {
             backgroundColor: 'transparent'
         },
-        '& label': {
-            fontSize: 12,
+        '& label, & span': {
+            fontSize: 16,
             cursor: 'pointer',
             color: '#1c82b2',
-            lineHeight: 1,
-            textTransform: 'capitalize'
+            lineHeight: 1.5,
+            textTransform: 'capitalize',
+            fontWeight: 400
         }
     },
     buttonActiveGreen: {
@@ -1031,8 +1068,13 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
             borderColor: '#1c82b2',
             backgroundColor: '#1c82b2',
         },
-        '& label': {
-            color: '#fff'
+        '& label, & span': {
+            fontSize: 16,
+            cursor: 'pointer',
+            color: '#fff',
+            lineHeight: 1.5,
+            textTransform: 'capitalize',
+            fontWeight: 400
         }
     }
 });
