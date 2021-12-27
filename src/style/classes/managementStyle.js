@@ -1471,7 +1471,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     alignItems: 'center',
     '& .MuiGrid-container': {
-      justifyContent: 'space-around'
+      justifyContent: windowSize !== 'xs' ? 'space-around' : null
     }
   }
 })
