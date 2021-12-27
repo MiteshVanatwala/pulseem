@@ -2,51 +2,52 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
-  Typography,Divider,Table,TableBody,TableRow,TableHead,TableCell,TableContainer,
-  Grid,Button,TextField,Box, Tooltip
+  Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
+  Grid, Button, TextField, Box
 } from '@material-ui/core'
 import {
-  DeleteIcon,DuplicateIcon,EditIcon,SearchIcon,
-  PreviewIcon,ReportsIcon,CopyIcon,EmbedCodeIcon,SurveryResultsIcon
+  DeleteIcon, DuplicateIcon, EditIcon, SearchIcon,
+  PreviewIcon, ReportsIcon, CopyIcon, EmbedCodeIcon, SurveryResultsIcon
 } from '../../../assets/images/managment/index'
 import {
-  TablePagination,ManagmentIcon,RestorDialogContent,Dialog,PopMassage,SearchField
+  TablePagination, ManagmentIcon, RestorDialogContent, Dialog, PopMassage, SearchField
 } from '../../../components/managment/index'
 import {
-  getLandingPagesData,restoreLandingPages,deleteLandingPage,
-  duplicteLandingPage,downloadReport,exportSurvey
+  getLandingPagesData, restoreLandingPages, deleteLandingPage,
+  duplicteLandingPage, downloadReport, exportSurvey
 } from '../../../redux/reducers/landingPagesSlice'
 import useCtrlHistory from '../../../helpers/useCtrlHistory'
-import {openInNewTab} from '../../../helpers/functions'
-import {Link} from "react-router-dom";
-import {useSelector,useDispatch} from 'react-redux'
-import {useTranslation} from 'react-i18next'
+import { openInNewTab } from '../../../helpers/functions'
+import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
 import ClearIcon from '@material-ui/icons/Clear'
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
 
-const LandingPagesesManagmentScreen=({classes}) => {
-  const {windowSize,rowsPerPage}=useSelector(state => state.core)
-  const {landingPagesData,landingPagesDataError,landingPagesDeletedData}=useSelector(state => state.landingPages)
-  const {t}=useTranslation()
-  const [landingPageNameSearch,setLandingPageNameSearch]=useState('')
+const LandingPagesesManagmentScreen = ({ classes }) => {
+  const { windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { landingPagesData, landingPagesDataError, landingPagesDeletedData } = useSelector(state => state.landingPages)
+  const { t } = useTranslation()
+  const [landingPageNameSearch, setLandingPageNameSearch] = useState('')
   const rowsOptions = [6, 10, 20, 50]
-  const [page,setPage]=useState(1)
-  const [isSearching,setSearching]=useState(false)
-  const [searchResults,setSearchResults]=useState(null)
-  const rowStyle={head: classes.tableRowHead,root: classes.tableRowRoot}
-  const cellStyle={head: classes.tableCellHead,body: classes.tableCellBody,root: classes.tableCellRoot}
-  const [dialogType,setDialogType]=useState(null)
-  const [showCopied,setShowCopied]=useState(null)
-  const [copyRef,setCopyRef]=useState(null)
-  const [restoreArray,setRestoreArray]=useState([])
-  const history=useCtrlHistory()
-  const dispatch=useDispatch()
+  const [page, setPage] = useState(1)
+  const [isSearching, setSearching] = useState(false)
+  const [searchResults, setSearchResults] = useState(null)
+  const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
+  const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
+  const [dialogType, setDialogType] = useState(null)
+  const [showCopied, setShowCopied] = useState(null)
+  const [copyRef, setCopyRef] = useState(null)
+  const [restoreArray, setRestoreArray] = useState([])
+  const history = useCtrlHistory()
+  const dispatch = useDispatch()
   const [showLoader, setLoader] = useState(true);
 
-  const getData= async () => {
+  const getData = async () => {
     await dispatch(getLandingPagesData())
     setLoader(false);
   }
@@ -54,9 +55,9 @@ const LandingPagesesManagmentScreen=({classes}) => {
   useEffect(() => {
     setLoader(true);
     getData();
-  },[dispatch])
+  }, [dispatch])
 
-  const renderHeader=() => {
+  const renderHeader = () => {
     return (
       <>
         <Typography className={classes.managementTitle}>
@@ -67,52 +68,52 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const clearSearch=() => {
+  const clearSearch = () => {
     setLandingPageNameSearch('');
     setSearchResults(null);
     setSearching(false);
   }
 
-  const renderSearchLine=() => {
+  const renderSearchLine = () => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 13 || event.code === 'Enter') {
         handleSearch();
       }
     }
-    const handleSearch=() => {
-      const searchArray=[{
+    const handleSearch = () => {
+      const searchArray = [{
         type: 'name',
         campaignName: landingPageNameSearch
       }];
 
-      const filtersObject={
-        name: (row,values) => {
+      const filtersObject = {
+        name: (row, values) => {
           return String(row.Name.toLowerCase()).includes(values.campaignName.toLowerCase());
         }
       }
 
-      let sortData=landingPagesData
+      let sortData = landingPagesData
       searchArray.forEach(values => {
-        sortData=sortData.filter(row => filtersObject[values.type](row,values))
+        sortData = sortData.filter(row => filtersObject[values.type](row, values))
       });
       setSearchResults(sortData);
       setSearching(true);
       setPage(1);
     }
 
-    const handleKeyPress=(e) => {
+    const handleKeyPress = (e) => {
       if (e.charCode === 13) {
         handleSearch()
       }
     }
 
-    const handleCampainNameChange=event => {
+    const handleCampainNameChange = event => {
       setLandingPageNameSearch(event.target.value)
     }
 
-    const placeholder=t('landingPages.GridBoundColumnResource2.HeaderText')
+    const placeholder = t('landingPages.GridBoundColumnResource2.HeaderText')
 
-    if(windowSize==='xs') {
+    if (windowSize === 'xs') {
       return (
         <SearchField
           classes={classes}
@@ -134,7 +135,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             value={landingPageNameSearch}
             onKeyPress={handleKeyDown}
             onChange={handleCampainNameChange}
-            className={clsx(classes.textField,classes.minWidth252)}
+            className={clsx(classes.textField, classes.minWidth252)}
             placeholder={placeholder}
           />
         </Grid>
@@ -149,7 +150,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
         </Grid>
-        {isSearching&&<Grid item>
+        {isSearching && <Grid item>
           <Button
             size='large'
             variant='contained'
@@ -163,10 +164,10 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderManagmentLine=() => {
+  const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
-        {windowSize!=='xs'&&<Grid item>
+        {windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -178,7 +179,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
             {t('landingPages.CreateNewResource.Text')}
           </Button>
         </Grid>}
-        {windowSize!=='xs'&&<Grid item>
+        {windowSize !== 'xs' && <Grid item>
           <Button
             variant='contained'
             size='medium'
@@ -195,14 +196,14 @@ const LandingPagesesManagmentScreen=({classes}) => {
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
-            {`${isSearching? searchResults.length:landingPagesData.length} ${t('landingPages.landingPages')}`}
+            {`${isSearching ? searchResults.length : landingPagesData.length} ${t('landingPages.landingPages')}`}
           </Typography>
         </Grid>
       </Grid>
     )
   }
 
-  const renderTableHead=() => {
+  const renderTableHead = () => {
     return (
       <TableHead>
         <TableRow
@@ -232,16 +233,16 @@ const LandingPagesesManagmentScreen=({classes}) => {
             {t("landingPages.SubmitsResource1.HeaderText")}
           </TableCell>
           <TableCell
-            classes={{root: classes.tableCellRoot}}
+            classes={{ root: classes.tableCellRoot }}
             className={classes.flex5} />
         </TableRow>
       </TableHead>
     )
   }
 
-  const renderCellIcons=(row) => {
-    const {ID,IsPayment,PageLink,SurveyCount,Type,PageUrl,IsSurvey}=row
-    const copyDataObject={
+  const renderCellIcons = (row) => {
+    const { ID, IsPayment, PageLink, SurveyCount, Type, PageUrl, IsSurvey } = row
+    const copyDataObject = {
       1: {
         icon: CopyIcon,
         lable: t('landingPages.copyLink'),
@@ -264,29 +265,29 @@ const LandingPagesesManagmentScreen=({classes}) => {
       }
     }
 
-    const copyData=copyDataObject[Type]
-    const renderCopyToClipoard=(
-      showCopied===ID?
+    const copyData = copyDataObject[Type]
+    const renderCopyToClipoard = (
+      showCopied === ID ?
         <PopMassage
           classes={classes}
-          show={showCopied===ID}
+          show={showCopied === ID}
           timeout={2000}
           label={t('common.copyClip')}
           innerRef={copyRef}
-        />:null
+        /> : null
     )
 
-    const iconsMap=[
+    const iconsMap = [
       {
         key: 'purchase/survey',
-        icon: IsPayment? ReportsIcon:SurveryResultsIcon,
-        lable: IsPayment?
+        icon: IsPayment ? ReportsIcon : SurveryResultsIcon,
+        lable: IsPayment ?
           t('landingPages.PurchaseExportTitle')
-          :`${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
-        remove: (windowSize==='xs'||(!IsPayment&& (!IsSurvey || SurveyCount === 0))),
+          : `${t('landingPages.SurveyExportTitle')} (${SurveyCount})`,
+        remove: (windowSize === 'xs' || (!IsPayment && (!IsSurvey || SurveyCount === 0))),
         rootClass: clsx(classes.paddingIcon, classes.minWidth95),
         onClick: async () => {
-          if(IsPayment) {
+          if (IsPayment) {
             dispatch(downloadReport(row))
           }
           else {
@@ -298,7 +299,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'preview',
         icon: PreviewIcon,
         lable: t('campaigns.Image1Resource1.ToolTip'),
-        remove: windowSize==='xs',
+        remove: windowSize === 'xs',
         disable: !PageLink,
         rootClass: classes.paddingIcon,
         onClick: () => {
@@ -309,7 +310,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         key: 'edit',
         icon: EditIcon,
         lable: t('landingPages.EditResource1.HeaderText'),
-        remove: windowSize==='xs',
+        remove: windowSize === 'xs',
         href: `/Pulseem/NewWebForm/NewFormEdit/${ID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
@@ -327,11 +328,11 @@ const LandingPagesesManagmentScreen=({classes}) => {
       },
       {
         key: 'copy',
-        icon: (copyData&&copyData.icon)||null,
-        lable: (copyData&&copyData.lable)||'',
+        icon: (copyData && copyData.icon) || null,
+        lable: (copyData && copyData.lable) || '',
         rootClass: classes.minWidth95,
         disable: !PageLink,
-        text: (copyData&&copyData.copy)||'',
+        text: (copyData && copyData.copy) || '',
         disable: !PageLink,
         type: 'copy',
         onClick: (e) => {
@@ -339,7 +340,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
           setShowCopied(ID)
           setTimeout(() => {
             setShowCopied(null)
-          },1000)
+          }, 1000)
         }
       },
       {
@@ -359,7 +360,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
     return (
       <Grid
         container
-        justifyContent={windowSize==='xs'? 'flex-start':'flex-end'}>
+        justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
         {iconsMap.map(icon => (
           <Grid
             key={icon.key}
@@ -368,19 +369,19 @@ const LandingPagesesManagmentScreen=({classes}) => {
               classes={classes}
               {...icon}
             />
-            {icon.key==='copy'&&renderCopyToClipoard}
+            {icon.key === 'copy' && renderCopyToClipoard}
           </Grid>
         ))}
       </Grid>
     )
   }
 
-  const renderViewsCell=(views) => {
+  const renderViewsCell = (views) => {
     return (
       <>
         <Typography
           className={classes.middleText}>
-          {(views&&views.toLocaleString())||'0'}
+          {(views && views.toLocaleString()) || '0'}
         </Typography>
         <Typography
           className={classes.middleText}>
@@ -390,8 +391,8 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderTemplateCell=(type) => {
-    const types={
+  const renderTemplateCell = (type) => {
+    const types = {
       1: t('landingPages.WebForm'),
       2: t('landingPages.StaticPage'),
       3: t('landingPages.HtmlPage'),
@@ -408,12 +409,12 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderGroupNames=() => {
+  const renderGroupNames = () => {
     function createMarkup() {
-      return {__html: `${t("common.Groups")}: `};
+      return { __html: `${t("common.Groups")}: ` };
     }
     return (
-      <label dangerouslySetInnerHTML={createMarkup()} style={{fontWeight: 400}}></label>
+      <label dangerouslySetInnerHTML={createMarkup()} style={{ fontWeight: 400 }}></label>
     );
   }
 
@@ -428,19 +429,15 @@ const LandingPagesesManagmentScreen=({classes}) => {
   const renderNameCell = (row) => {
     return (
       <>
-        <Tooltip
-          arrow
-          title={row.Name}
+        <CustomTooltip
+          isSimpleTooltip={false}
+          classes={classes}
+          interactive={true}
+          arrow={true}
           placement={'top'}
-          classes={{
-            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-            arrow: classes.fBlack
-          }}
-        >
-          <Typography noWrap={false} className={classes.nameEllipsis}>
-            {row.Name}
-          </Typography>
-        </Tooltip>
+          title={<Typography noWrap={false}>{row.Name}</Typography>}
+          text={row.Name}
+        />
         <Typography
           className={classes.grayTextCell}>
           {row.GroupNames && row.GroupNames.length > 0 && <span>{renderGroupNames()}<b>{seperateGroupNames(row.GroupNames)}</b></span>}
@@ -450,18 +447,18 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderSubscribersCell=({ID,Submits}) => {
+  const renderSubscribersCell = ({ ID, Submits }) => {
     return (
       <>
         <Typography
           className={classes.middleText}>
-          {(Submits&&Submits.toLocaleString())||0}
+          {(Submits && Submits.toLocaleString()) || 0}
         </Typography>
-        {windowSize==='xs'?
+        {windowSize === 'xs' ?
           <Typography className={clsx(classes.middleText)}>{t('landingPages.SubmitsResource1.HeaderText')}</Typography>
-          :<a
+          : <a
             href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
-            className={clsx(classes.middleText,classes.pt2)}>
+            className={clsx(classes.middleText, classes.pt2)}>
             {t('landingPages.SubmitsResource1.HeaderText')}
           </a>
         }
@@ -469,7 +466,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderRow=(row) => {
+  const renderRow = (row) => {
     return (
       <TableRow
         key={row.ID}
@@ -501,7 +498,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         <TableCell
           component="th"
           scope="row"
-          classes={{root: classes.tableCellRoot}}
+          classes={{ root: classes.tableCellRoot }}
           className={classes.flex5}>
           {renderCellIcons(row)}
         </TableCell>
@@ -509,22 +506,22 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderPhoneRow=(row) => {
+  const renderPhoneRow = (row) => {
     return (
       <TableRow
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{flex: 1}} classes={{root: classes.tableCellRoot}}>
+        <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
           <Box className={classes.inlineGrid}>
             {renderNameCell(row)}
           </Box>
           <Grid container justifyContent={'space-between'}>
             <Grid item container className={classes.widthUnset}>
-              <Grid item className={clsx(classes.flexColumn2,classes.txtCenter,classes.pt14)}>
+              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
                 {renderViewsCell(row.Views)}
               </Grid>
-              <Grid item className={clsx(classes.flexColumn2,classes.txtCenter,classes.pt14)}>
+              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
                 {renderSubscribersCell(row)}
               </Grid>
 
@@ -538,39 +535,39 @@ const LandingPagesesManagmentScreen=({classes}) => {
     )
   }
 
-  const renderTableBody=() => {
+  const renderTableBody = () => {
 
-    let sortData=isSearching? searchResults:landingPagesData;
-    let rpp=parseInt(rowsPerPage)
-    sortData=sortData.slice((page-1)*rpp,(page-1)*rpp+rpp)
+    let sortData = isSearching ? searchResults : landingPagesData;
+    let rpp = parseInt(rowsPerPage)
+    sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     return (
       <TableBody>
         {sortData
-          .map(windowSize==='xs'? renderPhoneRow:renderRow)}
+          .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
       </TableBody>
     )
   }
 
-  const renderTable=() => {
+  const renderTable = () => {
     return (
       <TableContainer className={classes.tableStyle}>
         <Table className={classes.tableContainer}>
-          {windowSize!=='xs'&&renderTableHead()}
+          {windowSize !== 'xs' && renderTableHead()}
           {renderTableBody()}
         </Table>
       </TableContainer>
     )
   }
 
-  const renderTablePagination=() => {
-    const handleRowsPerPageChange=(val) => {
+  const renderTablePagination = () => {
+    const handleRowsPerPageChange = (val) => {
       dispatch(setRowsPerPage(val))
       setCookie('rpp', val, { maxAge: 2147483647 })
     }
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching? searchResults.length:landingPagesData.length}
+        rows={isSearching ? searchResults.length : landingPagesData.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={rowsOptions}
@@ -579,22 +576,22 @@ const LandingPagesesManagmentScreen=({classes}) => {
       />
     )
   }
-  const handleChange=(id) => () => {
-    const found=restoreArray.includes(id)
-    console.log('restore',id,'found:',found)
-    if(found) {
-      setRestoreArray(restoreArray.filter(restore => restore!==id))
+  const handleChange = (id) => () => {
+    const found = restoreArray.includes(id)
+    console.log('restore', id, 'found:', found)
+    if (found) {
+      setRestoreArray(restoreArray.filter(restore => restore !== id))
     } else {
-      setRestoreArray([...restoreArray,id])
+      setRestoreArray([...restoreArray, id])
     }
   }
 
-  const handleClose=() => {
+  const handleClose = () => {
     setDialogType(null);
   }
 
-  const getRestorDialog=(data=[]) => {
-    if(!data||!Array.isArray(data)) return null
+  const getRestorDialog = (data = []) => {
+    if (!data || !Array.isArray(data)) return null
 
     return {
       title: t('landingPages.restoreLandingPageTitle'),
@@ -622,11 +619,11 @@ const LandingPagesesManagmentScreen=({classes}) => {
     }
   }
 
-  const getDeleteDialog=(data='') => ({
+  const getDeleteDialog = (data = '') => ({
     title: t('landingPages.GridButtonColumnResource1.ConfirmTitle'),
     showDivider: false,
     content: (
-      <Typography style={{fontSize: 18}}>
+      <Typography style={{ fontSize: 18 }}>
         {t('landingPages.GridButtonColumnResource1.ConfirmText')}
       </Typography>
     ),
@@ -638,11 +635,11 @@ const LandingPagesesManagmentScreen=({classes}) => {
     }
   })
 
-  const getDuplicateDialog=(data='') => ({
+  const getDuplicateDialog = (data = '') => ({
     title: t('landingPages.dialogDuplicateTitle'),
     showDivider: false,
     content: (
-      <Typography style={{fontSize: 18}}>
+      <Typography style={{ fontSize: 18 }}>
         {t('landingPages.dialogDuplicateContent')}
       </Typography>
     ),
@@ -662,13 +659,13 @@ const LandingPagesesManagmentScreen=({classes}) => {
     }
   })
 
-  const getDuplicateSuccessfulDialog=(data='') => ({
+  const getDuplicateSuccessfulDialog = (data = '') => ({
     paperStyle: classes.maxWidth540,
     childrenStyle: classes.duplicateSuccessMsg,
     title: t('landingPages.duplicationSuccessful'),
     showDivider: false,
     content: (
-      <Typography style={{fontSize: 18}}>
+      <Typography style={{ fontSize: 18 }}>
         {t('landingPages.duplicationSuccessfulMessage')}
       </Typography>
     ),
@@ -692,25 +689,25 @@ const LandingPagesesManagmentScreen=({classes}) => {
           className={clsx(
             classes.gruopsDialogButton,
             classes.dialogConfirmButton,
-            )}>
+          )}>
           {t('common.Edit')}
         </Button>
       </Box>
     )
   })
 
-  const renderDialog=() => {
-    const {data,type}=dialogType||{}
-    const dialogContent={
+  const renderDialog = () => {
+    const { data, type } = dialogType || {}
+    const dialogContent = {
       restore: getRestorDialog(data),
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data) //,
       // duplicateSuccessful: getDuplicateSuccessfulDialog(data)
     }
 
-    const currentDialog=dialogContent[type]||{}
+    const currentDialog = dialogContent[type] || {}
     return (
-      dialogType&&<Dialog
+      dialogType && <Dialog
         classes={classes}
         open={dialogType}
         onClose={handleClose}

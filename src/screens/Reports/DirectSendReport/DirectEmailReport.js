@@ -164,13 +164,15 @@ const DirectEmailReportTab = ({
   handleSearching = () => null,
   handlePageChange = () => null,
   handleRowsPerPage = () => null,
+  handleAdvanceSearch = () => null,
   clearSearch,
   page,
   rowsPerPage,
   searchData,
   isSearching,
   directEmailReport,
-  rowsOptions
+  rowsOptions,
+  advanceSearch
 }) => {
   const { isRTL } = useSelector(state => state.core);
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
@@ -234,7 +236,7 @@ const DirectEmailReportTab = ({
 
   const renderDateFields = () => {
     const { email = {} } = searchData || {};
-    const { FromDate = null, ToDate = null } = email || {};
+    const { FromDate = null, ToDate = null, ToName = '' } = email || {};
 
     const handleFromDate = (val) => {
       let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
@@ -248,6 +250,16 @@ const DirectEmailReportTab = ({
 
     return (
       <>
+        <Grid item>
+          <TextField
+            variant='outlined'
+            size='small'
+            value={ToName}
+            onChange={(e) => handleSearchInput(e.target.value, 'ToName', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('automations.Recipient')}
+          />
+        </Grid>
         <Grid item>
           <DateField
             classes={classes}
@@ -298,16 +310,6 @@ const DirectEmailReportTab = ({
             onChange={(e) => handleSearchInput(e.target.value, 'ToEmail', 'email')}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('report.ToEmail')}
-          />
-        </Grid>
-        <Grid item>
-          <TextField
-            variant='outlined'
-            size='small'
-            value={ToName}
-            onChange={(e) => handleSearchInput(e.target.value, 'ToName', 'email')}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('automations.Recipient')}
           />
         </Grid>
         {renderDateFields()}
@@ -366,7 +368,7 @@ const DirectEmailReportTab = ({
     const { email = false } = isSearching || {};
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
-        {renderAdvanceSearch()}
+        {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
         <Grid item>
           <Button
             size='large'
@@ -376,7 +378,14 @@ const DirectEmailReportTab = ({
             endIcon={<SearchIcon />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
-
+          <Link
+            color='initial'
+            component='button'
+            underline='none'
+            onClick={() => handleAdvanceSearch(!advanceSearch)}
+            className={clsx(classes.dBlock, classes.mt5)}>
+            {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
+          </Link>
         </Grid>
 
         {email ? <Grid item>

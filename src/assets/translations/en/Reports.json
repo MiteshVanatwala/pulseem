@@ -1,5 +1,7 @@
 {
   "DirectSendReport": "DirectSend Report",
+  "DirectSendEmail": "DirectSend Email",
+  "DirectSendSMS": "DirectSend SMS",
   "FromEmail": "From Email",
   "ToEmail": "To Email",
   "Recipient": "Recipient",

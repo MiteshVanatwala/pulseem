@@ -48,7 +48,7 @@ const DirectSMSReportTab = ({
   const handleSearch = async () => {
     setLoader(true);
     const { sms = {} } = searchData || {};
-    const { FromNumber = '', ToNumber = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ResponseType = null} = sms || {};
+    const { FromNumber = '', ToNumber = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null} = sms || {};
     const param = {
       FromDate,
       ToDate,
@@ -58,7 +58,8 @@ const DirectSMSReportTab = ({
       Reference: ExternalRef,
       ResponseType: ResponseType,
       PageIndex: 0,
-      PageSize: rowsPerPage
+      PageSize: rowsPerPage,
+      Text
     }
     let searchObjects = {};
     Object.keys(param).map(item => {
@@ -155,7 +156,7 @@ const DirectSMSReportTab = ({
 
   const renderAdvanceSearch = () => {
     const { sms = {} } = searchData || {};
-    const { FromNumber = '', ToNumber = '', ExternalRef = '', Status = '', ResponseType = '' } = sms || {};
+    const { FromNumber = '', ToNumber = '', ExternalRef = '', Status = '', ResponseType = '', Text = '' } = sms || {};
 
     return (
       <>
@@ -193,7 +194,7 @@ const DirectSMSReportTab = ({
           />
         </Grid>
         <Grid item>
-          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+          {/* <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
             <Select
               autoWidth
               displayEmpty
@@ -218,7 +219,7 @@ const DirectSMSReportTab = ({
                 return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
               })}
             </Select>
-          </FormControl>
+          </FormControl> */}
         </Grid>
         <Grid item>
           <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>

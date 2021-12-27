@@ -41,8 +41,14 @@ const DirectSendReport = ({ classes }) => {
     getEmailReportData();
     getSMSReportData();
     setSearchData({
-      email: {},
-      sms: {}
+      email: {
+        FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
+        ToDate: moment().format('YYYY-MM-DD HH:mm')
+      },
+      sms: {
+        FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
+        ToDate: moment().format('YYYY-MM-DD HH:mm')
+      }
     });
     setSearchParam({
       email: {},
@@ -62,13 +68,13 @@ const DirectSendReport = ({ classes }) => {
     if (tabValue === 0) {
       setExportEnable(Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport.length > 0 ? true : false)
     } else {
-      setExportEnable(Object.keys(directSmsReport).length > 0  && directSmsReport.DirectReport.length > 0 ? true : false)
+      setExportEnable(Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport.length > 0 ? true : false)
     }
   }
 
   useEffect(initData, [dispatch])
-  
-  useEffect(handleExportEnable,[isSearching, tabValue])
+
+  useEffect(handleExportEnable, [isSearching, tabValue])
 
   const clearSearch = (key) => {
     let isSearchingData = isSearching;
@@ -204,7 +210,7 @@ const DirectSendReport = ({ classes }) => {
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={0} />
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={1} />
             </TabList>
-            <Button  className={clsx(classes.actionButtonGreen, classes.exportButton, exportEnable === false ? classes.disabled : '')} onClick={handleExportFile}>
+            <Button className={clsx(classes.actionButtonGreen, classes.exportButton, exportEnable === false ? classes.disabled : '')} onClick={handleExportFile}>
               {t('campaigns.exportFile')}
               <Box className={clsx(classes.pulseemIcon, classes.f20)}>
                 {'\uE17B'}
@@ -222,6 +228,9 @@ const DirectSendReport = ({ classes }) => {
                 handleSearching={handleSearching}
                 handlePageChange={setPageEmail}
                 handleRowsPerPage={handleRowsPerPage}
+                handleAdvanceSearch={(isAdanceSearchRequested) => {
+                  setAdvanceSearch(isAdanceSearchRequested)
+                }}
                 clearSearch={clearSearch}
                 page={pageEmail}
                 rowsPerPage={rowsPerPage}
@@ -229,6 +238,7 @@ const DirectSendReport = ({ classes }) => {
                 isSearching={isSearching}
                 directEmailReport={directNewsletterReport}
                 rowsOptions={rowsOptions}
+                advanceSearch={advanceSearch}
               />
             </TabPanel>
             <TabPanel value={1} index={1} className={classes.p0}>

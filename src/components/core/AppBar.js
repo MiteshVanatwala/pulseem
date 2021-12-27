@@ -20,7 +20,10 @@ import { logout } from '../../helpers/api'
 import { openInNewTab } from '../../helpers/functions'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { actionURL } from '../../config/index'
+import { SiCodeforces } from 'react-icons/si'
+import { VscGraph } from 'react-icons/vsc'
 import i18n from '../../i18n'
+
 const AppBarItem = ({
   item,
   onMainClick = () => { },
@@ -276,9 +279,9 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
       routes[2],
       routes[3],
       routes[4],
-      routes[5],
+      { title: t('mms.logPageHeaderResource1.Text'), iconUnicode: '\ue11b', href: '/react/MmsCampaigns', isShow: subAccountSettings && subAccountSettings.IsDirectAccount !== true },
       routes[6],
-      routes[7],
+      { title: t('master.Automations'), iconUnicode: '\ue087', href: '/react/Automations', isShow: subAccountSettings && subAccountSettings.IsDirectAccount !== true },
       { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
       { title: t('appBar.reports.smsReports'), iconUnicode: '\ue04c', href: reportsOptions[2].href, isShow: true },
       //routes[1]
@@ -336,10 +339,15 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
                             <Button
                               href={route.href}
                               style={{ alignSelf: 'center' }}>
-                              <Typography
+                              {route.iconUnicode ? (<Typography
                                 className={classes.phoneAppBarItemIcon}>
                                 {route.iconUnicode}
-                              </Typography>
+                              </Typography>)
+                                : route.key === 'directSendEmail' ? (<SiCodeforces />)
+
+                                  : route.key === 'directSendSMS' && (<VscGraph />)
+
+                              }
                             </Button>
                             <Typography
                               style={{ textAlign: 'center' }}>

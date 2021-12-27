@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-  Grid, Button, TextField, Box, Tooltip
+  Grid, Button, TextField, Box
 } from '@material-ui/core'
 import {
   DeleteIcon, DuplicateIcon, EditIcon, ReportsIcon, SearchIcon, PreviewIcon
@@ -25,6 +25,7 @@ import { pulseemNewTab } from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
@@ -124,7 +125,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
       setPage(1);
     }
 
-    const handleKeyPress=(e) => {
+    const handleKeyPress = (e) => {
       if (e.keyCode === 13 || e.code === "Enter") {
         handleSearch()
       }
@@ -423,19 +424,17 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
     return (
       <>
-        <Tooltip
+        <CustomTooltip
           arrow
+          isSimpleTooltip={false}
           title={row.Name}
+          classes={classes}
+          interactive={true}
+          arrow={true}
           placement={'top'}
-          classes={{
-            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-            arrow: classes.fBlack
-          }}
-        >
-          <Typography noWrap={false} className={classes.nameEllipsis}>
-            {row.Name}
-          </Typography>
-        </Tooltip>
+          title={<Typography noWrap={false}>{row.Name}</Typography>}
+          text={row.Name}
+        />
         <Typography
           className={classes.grayTextCell}>
           {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
