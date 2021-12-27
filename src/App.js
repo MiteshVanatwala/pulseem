@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
+import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
 import MmsManagment from './screens/Mms/Management/MmsManagment';
@@ -118,10 +119,15 @@ const renderRoutes = (classes, history) => {
       />
       {/* Newsletter */}
       <Route
+        exact
         path="/Campaigns"
         render={props => <NewsletterManagment {...props} classes={classes} />}
       />
-
+      <Route
+        exact
+        path="/Campaigns/Archive"
+        render={props => <ArchiveManagement {...props} classes={classes} />}
+      />
       <Route
         path={`/Editor/CampaignInfo`}
         component={transferUrl('/Pulseem/Editor/CampaignInfo?new=1')}
