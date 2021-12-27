@@ -167,6 +167,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
 
 export const TopAppBar = ({ classes, currentPage = '' }) => {
   let cookieFeature = getCookie("accountFeatures");
+  let subAccountSettings = getCookie("subAccountSettings");
   const cookieIsClal = getCookie("isClal");
 
   if (cookieFeature && cookieFeature.constructor.name !== 'Array') {
@@ -202,7 +203,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     setOpen(!open)
   }
   const { t } = useTranslation();
-  const routes = getRoutes(t, cookieIsClal, cookieFeature, windowSize, smsOldVersion, isRTL)
+  const routes = getRoutes(t, cookieIsClal, cookieFeature, subAccountSettings, windowSize, smsOldVersion, isRTL)
   const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
 
   const navigate = ({ uri }) => {

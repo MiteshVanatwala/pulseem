@@ -11,9 +11,9 @@ import report from './Reports.json'
 import mainReport from './MainReport.aspx.json'
 import dashboard from './Dashboard.json'
 import smsReport from './SMSReport.json'
+import emailStatus from './EmailStatus.json'
 import emoji from './Emoji.json'
 import payment from './payment.json'
-import emailStatus from './EmailStatus.json'
 
 export const en={
   automations,
@@ -29,6 +29,7 @@ export const en={
   mainReport,
   dashboard,
   smsReport,
+  emailStatus,
   emoji,
   payment,
   emailStatus

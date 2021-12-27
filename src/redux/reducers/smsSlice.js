@@ -135,9 +135,9 @@ export const saveManualClients = createAsyncThunk(
   })
 
 export const exportSMSDirectReport = createAsyncThunk(
-  'report/ExportSmsDirectReport', async (_, thunkAPI) => {
+  'report/ExportSmsDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`report/ExportSmsDirectReport`);
+      const response = await instence.post(`report/ExportSmsDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

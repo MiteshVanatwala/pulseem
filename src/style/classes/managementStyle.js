@@ -879,6 +879,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   minWidth252: {
     minWidth: '150px!important'
   },
+  minWidth192: {
+    minWidth: '192px!important'
+  },
+  dropDownItem: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxHeight: 40,
+  },
   verifyButton: {
     background: 'green',
     textTransform: 'capitalize',
@@ -1108,6 +1116,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     background: 'transparent',
     color: '#0371AD'
   },
+  // bulkOutlineStatic: {
+  //   marginBottom: '1rem',
+  //   padding: '3px 15px',
+  //   borderRadius: '.9rem',
+  //   border: '1px solid #0371AD',
+  //   background: 'transparent',
+  //   color: '#0371AD',
+  //   transition: 'all ease-in-out 0.2s'
+  // },
   bulkOutline: {
     marginBottom: '1rem',
     padding: '3px 15px',

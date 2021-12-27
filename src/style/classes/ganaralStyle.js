@@ -127,6 +127,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingLeft: summaryPadding[windowSize],
     overflowY: "auto",
   },
+  paddingSides15:{
+    paddingRight: 15,
+    paddingLeft: 15
+  },
+  paddingSides25: {
+    paddingRight: 25,
+    paddingLeft: 25
+  },
   copyClip: {
     border: "1px solid #3476b0",
     padding: 5,
@@ -581,7 +589,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     textTransform: "capitalize",
     lineHeight: 1,
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    textDecoration: 'underline'
   },
   blackDivider: {
     height: 2,

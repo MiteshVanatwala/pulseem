@@ -331,7 +331,7 @@
   "ErrorOccured": "אירעה שגיאה",
   "Pending": "ממתין",
   "RecipientsName": "שם הנמען",
-  "SentFromNumber": "נשלח למספר",
+  "SentFromNumber": "מאת",
   "SuccessfullyCompleted": "הסתיים בהצלחה",
   "SystemUpload": "העלאת מערכת",
   "UnderExamination": "בתהליך בדיקה",
@@ -406,13 +406,13 @@
   "floatdir": "right",
   "copyFooter": "<span>** לא רץ תחת פרוטוקול SSL</span>",
   "DeliveryApproval": "אישור מסירה",
-  "SendTo2": "לשליחה",
+  "SendTo2": "נשלח למספר",
   "SentTo": "נשלחו",
   "Succeeded": "הצליחו",
   "BestOptCampaign": "שלח את הקמפיין בשעה האופטימלית עבור כל לקוח",
   "ErrorSms": "שגיאה",
   "AutomationStatusSuccess": "מצב האוטומציה עודכן בהצלחה",
-  "Click": "לחץ",
+  "Click": "הקלקות",
   "EditAutomation": "כדי לערוך את האוטומציה",
   "here": "כאן",
   "SuccessTitle": "הצלחה",
@@ -508,5 +508,6 @@
   "tryAgain": "אנא נסה שוב.",
   "contactSupportForBilling": "כדי להמשיך, יש ליצור קשר<br/> עם המכירות בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או במייל<br/> <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
   "campaignType": "סוג קמפיין",
-  "notSent": "לא נשלח"
+  "notSent": "לא נשלח",
+  "NoDataTryFilter": "אין נתונים להצגה, נסה את אפשרויות הסינון."
 }
