@@ -22,6 +22,7 @@ import OTP from './OTP';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
 import { setCookie } from '../../../helpers/cookies'
 import { FaExclamationCircle } from 'react-icons/fa'
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 import { useHistory } from "react-router";
 import {
@@ -742,6 +743,9 @@ const SmsCreator = ({ classes, ...props }) => {
     setShowEmoji(false);
   }
   const handleTrackingLink = () => {
+    if (!commonSettings.SubAccountSettings.DomainAddress || commonSettings.SubAccountSettings.DomainAddress === '') {
+      return;
+    }
     const fullTrackingUrl = `${commonSettings.SubAccountSettings.DomainAddress}?ref=##ClientIDEnc##`;
     if (!smsModel.Text.includes(fullTrackingUrl)) {
       setTrackingLink(fullTrackingUrl);
@@ -943,12 +947,20 @@ const SmsCreator = ({ classes, ...props }) => {
                   </Typography>
                   {editmenuClick ? (
                     <Box className={classes.dropDiv}>
-                      {commonSettings.SubAccountSettings.DomainAddress !== '' && trackingButtonEnabled && <Typography
-                        className={classes.dropCon}
-                        onClick={() => {
-                          handleTrackingLink();
-                        }}
-                      >{t("sms.addTrackingUrl")}</Typography>}
+                      <Typography onClick={() => handleTrackingLink()} className={classes.dropCon}>
+                        {!commonSettings.SubAccountSettings.DomainAddress && <CustomTooltip
+                          isSimpleTooltip={false}
+                          classes={classes}
+                          interactive={true}
+                          arrow={true}
+                          style={{ position: 'absolute', fontSize: 14, marginInlineStart: 10, top: 12 }}
+                          placement={isRTL ? 'right' : 'left'}
+                          title={t("siteTracking.addFeatureTooltip")}
+                          text={<Typography className={classes.bodyInfo}>i</Typography>}
+                        />}
+                        {t("sms.addTrackingUrl")}
+                      </Typography>
+
                       <Typography
                         className={classes.dropCon}
                         onClick={() => {
