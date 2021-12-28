@@ -126,7 +126,6 @@ const SmsCreator = ({ classes, ...props }) => {
     testGroups,
     ToastMessages
   } = useSelector((state) => state.sms);
-
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [showEmoji, setShowEmoji] = useState(false);
@@ -172,6 +171,8 @@ const SmsCreator = ({ classes, ...props }) => {
   const [isFromAutomation, setIsFromAutomation] = useState(false);
   const [isNewVersion, setIsNewVersion] = useState(true);
   const [otpOpen, setOTPOpen] = useState(null);
+  const [trackingLink, setTrackingLink] = useState(null);
+  const [trackingButtonEnabled, setTrackingButtonEnabled] = useState(false);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -740,6 +741,17 @@ const SmsCreator = ({ classes, ...props }) => {
   const handleClickOutsideEmoji = () => {
     setShowEmoji(false);
   }
+  const handleTrackingLink = () => {
+    const fullTrackingUrl = `${commonSettings.SubAccountSettings.DomainAddress}?ref=##ClientIDEnc##`;
+    if (!smsModel.Text.includes(fullTrackingUrl)) {
+      setTrackingLink(fullTrackingUrl);
+      onAddText(fullTrackingUrl);
+    }
+  }
+
+  useEffect(() => {
+    setTrackingButtonEnabled(!smsModel.Text.includes(trackingLink));
+  }, [editmenuClick])
 
   const renderMsg = () => {
     return (
@@ -931,6 +943,12 @@ const SmsCreator = ({ classes, ...props }) => {
                   </Typography>
                   {editmenuClick ? (
                     <Box className={classes.dropDiv}>
+                      {commonSettings.SubAccountSettings.DomainAddress !== '' && trackingButtonEnabled && <Typography
+                        className={classes.dropCon}
+                        onClick={() => {
+                          handleTrackingLink();
+                        }}
+                      >{t("sms.addTrackingUrl")}</Typography>}
                       <Typography
                         className={classes.dropCon}
                         onClick={() => {
