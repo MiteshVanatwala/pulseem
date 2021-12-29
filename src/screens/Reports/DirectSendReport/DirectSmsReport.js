@@ -57,7 +57,7 @@ const DirectSMSReportTab = ({
       ToNumber,
       Reference: ExternalRef,
       ResponseType: ResponseType,
-      PageIndex: 0,
+      PageIndex: 1,
       PageSize: rowsPerPage,
       Text
     }
@@ -138,6 +138,8 @@ const DirectSMSReportTab = ({
             onChange={handleFromDate}
             placeholder={t('mms.locFromDateResource1.Text')}
             rootStyle={classes.maxWidth190}
+            toolbarDisabled={false}
+            minDate={'2000-01-01'}
           />
         </Grid>
         <Grid item>
@@ -147,6 +149,8 @@ const DirectSMSReportTab = ({
             onChange={handleToDate}
             placeholder={t('mms.locToDateResource1.Text')}
             minDate={FromDate ? FromDate : undefined}
+            toolbarDisabled={false}
+            minDate={'2000-01-01'}
             rootStyle={classes.maxWidth190}
           />
         </Grid>

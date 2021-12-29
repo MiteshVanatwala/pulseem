@@ -21,7 +21,8 @@ export const DateField = ({
   timePickerOpen = false,
   rootStyle = null,
   timeActive = null,
-  dateActive = null
+  dateActive = null,
+  toolbarDisabled = true
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -72,7 +73,7 @@ export const DateField = ({
 
     (<KeyboardDatePicker
       classes={{ root: rootStyle }}
-      disableToolbar
+      disableToolbar={toolbarDisabled}
       inputVariant="outlined"
       className={clsx(
         classes.textField,

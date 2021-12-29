@@ -267,6 +267,8 @@ const DirectEmailReportTab = ({
             onChange={handleFromDate}
             placeholder={t('mms.locFromDateResource1.Text')}
             rootStyle={classes.maxWidth190}
+            toolbarDisabled={false}
+            minDate={'2000-01-01'}
           />
         </Grid>
         <Grid item>
@@ -277,6 +279,8 @@ const DirectEmailReportTab = ({
             placeholder={t('mms.locToDateResource1.Text')}
             minDate={FromDate ? FromDate : undefined}
             rootStyle={classes.maxWidth190}
+            toolbarDisabled={false}
+            minDate={'2000-01-01'}
           />
         </Grid>
       </>
