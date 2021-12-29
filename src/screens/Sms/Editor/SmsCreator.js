@@ -754,7 +754,16 @@ const SmsCreator = ({ classes, ...props }) => {
   }
 
   useEffect(() => {
-    setTrackingButtonEnabled(!smsModel.Text.includes(trackingLink));
+    if (commonSettings && commonSettings.SubAccountSettings) {
+      const fullTrackingUrl = `${commonSettings.SubAccountSettings.DomainAddress}?ref=##ClientIDEnc##`;
+      if (!smsModel.Text.includes(fullTrackingUrl)) {
+        setTrackingButtonEnabled(true);
+      }
+      else {
+        setTrackingButtonEnabled(false);
+      }
+    }
+
   }, [editmenuClick])
 
   const renderMsg = () => {
@@ -947,7 +956,7 @@ const SmsCreator = ({ classes, ...props }) => {
                   </Typography>
                   {editmenuClick ? (
                     <Box className={classes.dropDiv}>
-                      <Typography onClick={() => handleTrackingLink()} className={classes.dropCon}>
+                      <Typography onClick={() => handleTrackingLink()} className={clsx(classes.dropCon, !trackingButtonEnabled ? classes.disabled : null)}>
                         {!commonSettings.SubAccountSettings.DomainAddress && <CustomTooltip
                           isSimpleTooltip={false}
                           classes={classes}

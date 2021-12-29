@@ -358,9 +358,7 @@ const renderRoutes = (classes, history) => {
 const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize } = useSelector(state => state.core)
-  useEffect(() => {
-    dispatch(setWindowSize(screenSize))
-  }, [windowSize]);
+  screenSize && dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
 

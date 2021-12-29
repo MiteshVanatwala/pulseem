@@ -16,7 +16,7 @@ const PageItem = ({
 }) => {
     const { t } = useTranslation();
     const { subAccountGroups } = useSelector((state) => state.sms);
-    const { isRTL } = useSelector((state) => state.core);
+    const { isRTL, windowSize } = useSelector((state) => state.core);
     const [selectedGroups, setSelectedGroups] = useState([]);
 
     const updateOperationData = (key, value) => {
@@ -39,8 +39,8 @@ const PageItem = ({
         setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.GroupIds.includes(g.GroupID.toString()) }));
     }
 
-    return siteEvent && <Box className={classes.marginBlock20}>
-        <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'start' }}>
+    return siteEvent && <Box className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row' }}>
+        <Box style={{ display: 'flex', flexDirection: 'row' }}>
             <Box>
                 <Typography>{t("siteTracking.pageUrl")}</Typography>
                 <FormControl variant="outlined"
@@ -78,9 +78,11 @@ const PageItem = ({
                     variant="outlined"
                     onChange={e => updateOperationData("OperatorValue", e.target.value)}
                     value={siteEvent.metadata.OperatorValue}
-                    style={{ minWidth: 300 }}
+                    style={{ minWidth: 220 }}
                 />
             </Box>
+        </Box>
+        <Box style={{ display: 'flex', flexDirection: 'row' }}>
             <Box>
                 <Box className={clsx(classes.flex, classes.justifyCenterOfCenter, classes.mt25)} style={{ height: 50, minWidth: 80 }}>
                     {isRTL ? <FaArrowCircleLeft className={classes.contentHead} /> : <FaArrowCircleRight className={classes.contentHead} />}
@@ -89,6 +91,7 @@ const PageItem = ({
             <Box>
                 <Typography>{t("siteTracking.addToGroups")}</Typography>
                 <CheckboxGroups
+                    style={{ maxWidth: windowSize === 'xs' ? 262 : null }}
                     classes={classes}
                     groups={subAccountGroups}
                     selectedGroups={selectedGroups}

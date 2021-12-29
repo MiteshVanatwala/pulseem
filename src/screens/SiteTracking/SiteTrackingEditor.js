@@ -33,7 +33,7 @@ const SiteTrackingEditor = ({ classes }) => {
     const [dialogType, setDialogType] = useState({ type: null });
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const { isRTL } = useSelector(state => state.core);
+    const { isRTL, windowSize } = useSelector(state => state.core);
     const [copyStatus, setCopyStatus] = useState(false);
     const refScriptCode = useRef(null);
     const [scriptDialog, handleScriptDialogCheck] = useState(false);
@@ -388,13 +388,8 @@ const SiteTrackingEditor = ({ classes }) => {
         return null;
     }
 
-    //#endregion Dialogs
-    return <DefaultScreen
-        currentPage='settings'
-        subPage='SiteTracking'
-        classes={classes}
-        containerClass={classes.management}>
-        <Box style={{ height: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column' }}>
+    const PageHeader = () => {
+        return <>
             <Grid container>
                 <Grid item xs={7}>
                     <Title title={t("siteTracking.title")}
@@ -407,23 +402,48 @@ const SiteTrackingEditor = ({ classes }) => {
                     <Button
                         onClick={() => setDialogType({ type: 'scriptImplementation' })}
                         variant='contained'
+                        style={{ lineHeight: windowSize === 'xs' ? 1 : null }}
                         className={clsx(
                             classes.actionButton,
                             classes.actionButtonDarkBlue)}
                     >{t("siteTracking.scriptImplementation")}</Button>
                 </Grid>
             </Grid>
+        </>
+    }
+    const PageFooter = () => {
+        return <Box>
+            <Grid item xs={12} className={classes.buttonContainer}>
+                <Button
+                    variant='contained'
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonLightGreen)}
+                    onClick={() => onSave()}
+                    style={{ height: '100%', minWidth: 100 }}
+                >{t('common.Save')}</Button>
+            </Grid>
+        </Box>
+    }
 
+    //#endregion Dialogs
+    return <DefaultScreen
+        currentPage='settings'
+        subPage='SiteTracking'
+        classes={classes}
+        containerClass={classes.management}>
+        <Box className={classes.editorContainer}>
+            {PageHeader()}
             {renderToast()}
             {renderDialog()}
             {model && <Box style={{ marginBottom: 'auto' }}>
                 <form className={classes.root} noValidate autoComplete="off">
                     <Grid container alignItems="center">
-                        <Grid item xs={12}>
+                        <Grid item lg={12} xs={12}>
                             <Typography className={clsx(classes.marginBlock20)}>{t("siteTracking.siteToTrack")}</Typography>
                             <Typography className={clsx(classes.mt10)}>{t("siteTracking.yourDomain")}</Typography>
                         </Grid>
-                        <Grid item xs={6} className={clsx(classes.flex)} style={{ height: 55, direction: 'ltr' }}>
+                        <Grid item sm={6} xs={12} className={clsx(classes.flex)} style={{ height: 55, direction: 'ltr' }}>
                             <FormControl variant="outlined"
                                 className={clsx(
                                     classes.formControl,
@@ -483,18 +503,7 @@ const SiteTrackingEditor = ({ classes }) => {
                     </Grid>
                 </form>
             </Box>}
-            <Box>
-                <Grid item xs={12} style={{ marginTop: 'auto' }}>
-                    <Button
-                        variant='contained'
-                        className={clsx(
-                            classes.actionButton,
-                            classes.actionButtonLightGreen)}
-                        onClick={() => onSave()}
-                        style={{ height: '100%', minWidth: 100 }}
-                    >{t('common.Save')}</Button>
-                </Grid>
-            </Box>
+            {PageFooter()}
         </Box>
         <Loader isOpen={showLoader} />
     </DefaultScreen>

@@ -29,6 +29,15 @@ export const getSiteTrackingStyle = (windowSize, isRTL) => ({
             overflow: 'hidden',
             textOverflow: 'ellipsis',
         }
+    },
+    editorContainer: {
+        height: 'calc(100vh - 80px)',
+        display: 'flex',
+        flexDirection: 'column'
+    },
+    buttonContainer: {
+        marginTop: 'auto',
+        marginBottom: 70
     }
 
 });

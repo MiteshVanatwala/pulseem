@@ -45,7 +45,7 @@ const CheckboxGroups = ({
                     <Typography className={classes.ellipsisText}>{option.GroupName}</Typography>
                 </React.Fragment>
             )}
-            style={{ width: 500 }}
+            style={{ width: 500, ...props.style }}
             renderInput={(params) => {
                 return (
                     <TextField
