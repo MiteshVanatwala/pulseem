@@ -194,34 +194,6 @@ const DirectSMSReportTab = ({
           />
         </Grid>
         <Grid item>
-          {/* <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
-            <Select
-              autoWidth
-              displayEmpty
-              className={clsx(classes.textField, classes.minWidth192)}
-              value={Status}
-              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
-              onChange={(e) => handleSearchInput(e.target.value, 'Status', 'sms')}
-              MenuProps={{
-                anchorOrigin: {
-                  vertical: "bottom",
-                  horizontal: "left"
-                },
-                transformOrigin: {
-                  vertical: "top",
-                  horizontal: "left"
-                },
-                getContentAnchorEl: null
-              }}
-            >
-              <MenuItem key={-1} value="" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
-              {SmsStatus.map(so => {
-                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
-              })}
-            </Select>
-          </FormControl> */}
-        </Grid>
-        <Grid item>
           <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
             <Select
               autoWidth

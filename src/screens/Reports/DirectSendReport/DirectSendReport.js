@@ -38,8 +38,6 @@ const DirectSendReport = ({ classes }) => {
   const dispatch = useDispatch();
 
   const initData = () => {
-    getEmailReportData();
-    getSMSReportData();
     setSearchData({
       email: {
         FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
@@ -50,6 +48,8 @@ const DirectSendReport = ({ classes }) => {
         ToDate: moment().format('YYYY-MM-DD HH:mm')
       }
     });
+    getEmailReportData();
+    getSMSReportData();
     setSearchParam({
       email: {},
       sms: {}
@@ -57,10 +57,20 @@ const DirectSendReport = ({ classes }) => {
   }
 
   const getEmailReportData = () => {
-    dispatch(getNewsletterDirectReport({}));
+    dispatch(getNewsletterDirectReport({
+      PageIndex: 1,
+      PageSize: rowsPerPage,
+      FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
+      ToDate: moment().format('YYYY-MM-DD HH:mm')
+    }));
   }
   const getSMSReportData = async () => {
-    await dispatch(getSMSDirectReport({ PageSize: 6, PageIndex: 0 }));
+    await dispatch(getSMSDirectReport({
+      PageSize: 6, 
+      PageIndex: 1,
+      FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
+      ToDate: moment().format('YYYY-MM-DD HH:mm')
+    }));
     setLoader(false);
   }
 
