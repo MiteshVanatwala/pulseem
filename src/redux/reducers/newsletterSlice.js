@@ -25,9 +25,9 @@ export const getNewsletterReports = createAsyncThunk(
 )
 
 export const getNewsletterDirectReport = createAsyncThunk(
-  'report/GetEmailDirectReport', async (data, thunkAPI) => {
+  'directReport/GetEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`report/GetEmailDirectReport`, data);
+      const response = await instence.post(`directReport/GetEmailDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -36,9 +36,9 @@ export const getNewsletterDirectReport = createAsyncThunk(
 )
 
 export const exportNewsletterDirectReport = createAsyncThunk(
-  'report/ExportEmailDirectReport', async (data, thunkAPI) => {
+  'directReport/ExportEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`report/ExportEmailDirectReport`, data);
+      const response = await instence.post(`directReport/ExportEmailDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -120,15 +120,15 @@ export const getArchiveCampaigns = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-  export const cloneArchiveCampaign = createAsyncThunk(
-    'email/CloneArchiveCampaign', async (campaignId, thunkAPI) => {
-      try {
-        const response = await instence.put(`email/CloneArchiveCampaign/${campaignId}`);
-        return response.data
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
-    })
+export const cloneArchiveCampaign = createAsyncThunk(
+  'email/CloneArchiveCampaign', async (campaignId, thunkAPI) => {
+    try {
+      const response = await instence.put(`email/CloneArchiveCampaign/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 export const newsletterSlice = createSlice({
   name: 'newsletter',

@@ -56,22 +56,24 @@ const DirectSendReport = ({ classes }) => {
     })
   }
 
-  const getEmailReportData = () => {
-    dispatch(getNewsletterDirectReport({
+  const getEmailReportData = async () => {
+    await dispatch(getNewsletterDirectReport({
       PageIndex: 1,
       PageSize: rowsPerPage,
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().format('YYYY-MM-DD HH:mm')
     }));
+    handleExportEnable();
   }
   const getSMSReportData = async () => {
     await dispatch(getSMSDirectReport({
-      PageSize: 6, 
+      PageSize: 6,
       PageIndex: 1,
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().format('YYYY-MM-DD HH:mm')
     }));
     setLoader(false);
+    handleExportEnable();
   }
 
   const handleExportEnable = () => {
@@ -86,7 +88,7 @@ const DirectSendReport = ({ classes }) => {
 
   useEffect(handleExportEnable, [isSearching, tabValue])
 
-  const clearSearch = (key) => {
+  const clearSearch = async (key) => {
     let isSearchingData = isSearching;
     let search = searchData;
     let params = searchParam;
@@ -98,13 +100,14 @@ const DirectSendReport = ({ classes }) => {
     setSearchData(search);
 
     if (key === 'sms') {
-      getSMSReportData()
+      await getSMSReportData()
     }
 
     if (key === 'email') {
-      getEmailReportData()
+      await getEmailReportData()
     }
 
+    handleExportEnable();
   }
 
   const handleSearchInput = (value, key, type) => {

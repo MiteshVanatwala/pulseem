@@ -98,9 +98,9 @@ export const getSmsByID = createAsyncThunk(
   })
 
 export const getSMSDirectReport = createAsyncThunk(
-  'report/GetSmsDirectReport', async (data, thunkAPI) => {
+  'directReport/GetSmsDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`report/GetSmsDirectReport`, data);
+      const response = await instence.post(`directReport/GetSmsDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -135,9 +135,9 @@ export const saveManualClients = createAsyncThunk(
   })
 
 export const exportSMSDirectReport = createAsyncThunk(
-  'report/ExportSmsDirectReport', async (data, thunkAPI) => {
+  'directReport/ExportSmsDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`report/ExportSmsDirectReport`, data);
+      const response = await instence.post(`directReport/ExportSmsDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
