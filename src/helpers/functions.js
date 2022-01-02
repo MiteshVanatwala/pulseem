@@ -10,7 +10,7 @@ export const pulseemNewTab = (path) => {
   if (newWindow) newWindow.opener = null
 }
 
-export const verifyGetUrl = async (url) => {
+export const verifyGetUrl = (url) => {
   return new Promise((resolve, reject) => {
     try {
       var xmlhttp = new XMLHttpRequest();
@@ -19,7 +19,7 @@ export const verifyGetUrl = async (url) => {
           resolve(xmlhttp.status && xmlhttp.status !== 404)
         }
       }
-      await xmlhttp.open("HEAD", url, true);
+      xmlhttp.open("HEAD", url, true);
       xmlhttp.send();
     } catch (error) {
       reject(false);
