@@ -405,7 +405,8 @@ const SiteTrackingEditor = ({ classes }) => {
                         style={{ lineHeight: windowSize === 'xs' ? 1 : null }}
                         className={clsx(
                             classes.actionButton,
-                            classes.actionButtonDarkBlue)}
+                            classes.actionButtonDarkBlue,
+                            siteScript ? null : classes.disabled)}
                     >{t("siteTracking.scriptImplementation")}</Button>
                 </Grid>
             </Grid>

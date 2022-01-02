@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import { eventsInstance, instence } from '../../helpers/api';
+import { verifyGetUrl } from '../../helpers/functions';
+import { siteTrackingScriptUrl } from '../../config/index';
 
 export const get = createAsyncThunk(
   'events', async (data, thunkAPI) => {
@@ -24,8 +26,19 @@ export const post = createAsyncThunk(
 export const getScript = createAsyncThunk(
   'getScript', async (_, thunkAPI) => {
     try {
-      const response = await eventsInstance.get(`getScript`);
-      return response.data;
+      verifyGetUrl(siteTrackingScriptUrl).then((result) => {
+        if (result === true) {
+          const scriptContainer = `<script type="text/javascript">
+          (function(d, t) {
+                ${siteTrackingScriptUrl}
+            }(document, "script"))
+        </script>`;
+          return scriptContainer;
+        }
+        return null;
+      })
+      // const response = await eventsInstance.get(`getScript`);
+      // return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -65,7 +78,8 @@ export const siteTrackingSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(getScript.fulfilled, (state, { payload }) => {
-        state.siteScript = payload.replace(/['"]+/g, '')
+        state.siteScript = payload;
+        //state.siteScript = payload.replace(/['"]+/g, '')
       })
       .addCase(get.rejected, (state, action) => {
         state.event = action.error.message
