@@ -13,14 +13,14 @@ export const pulseemNewTab = (path) => {
 export const verifyGetUrl = (url) => {
   return new Promise((resolve, reject) => {
     try {
-      var request = new XMLHttpRequest();
-      request.onreadystatechange = function () {
-        if (request.readyState === 4 && request.status === 200) {
-          resolve(true);
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4) {
+          resolve(xmlhttp.status && xmlhttp.status !== 404)
         }
       }
-      request.open("GET", url);
-      request.send(null);
+      xmlhttp.open("HEAD", url, true);
+      xmlhttp.send();
     } catch (error) {
       reject(false);
     }
