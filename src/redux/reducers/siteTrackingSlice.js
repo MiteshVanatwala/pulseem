@@ -26,19 +26,27 @@ export const post = createAsyncThunk(
 export const getScript = createAsyncThunk(
   'getScript', async (_, thunkAPI) => {
     try {
-      verifyGetUrl(siteTrackingScriptUrl).then((result) => {
-        if (result === true) {
-          const scriptContainer = `<script type="text/javascript">
-          (function(d, t) {
-                ${siteTrackingScriptUrl}
-            }(document, "script"))
-        </script>`;
-          return scriptContainer;
-        }
-        return null;
-      })
-      // const response = await eventsInstance.get(`getScript`);
-      // return response.data;
+      return `<script type="text/javascript">
+    (function(d, t) {
+    var g = d.createElement(t),
+    s = d.getElementsByTagName(t)[0];
+    g.src="${siteTrackingScriptUrl}";
+    }(document, "script"))
+</script>`;
+
+      //verifyGetUrl(siteTrackingScriptUrl).then((result) => {
+      //if (result === true) {
+      //   `<script type="text/javascript">
+      //   (function(d, t) {
+      //     var g = d.createElement(t),
+      //     s = d.getElementsByTagName(t)[0];
+      //     g.src="${siteTrackingScriptUrl}";
+      //     }(document, "script"))
+      // </script>`
+      // }
+      // return null;
+      //})
+      //});
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -78,7 +86,7 @@ export const siteTrackingSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(getScript.fulfilled, (state, { payload }) => {
-        state.siteScript = payload;
+        state.siteScript = payload.replace(/['"]+/g, '');
         //state.siteScript = payload.replace(/['"]+/g, '')
       })
       .addCase(get.rejected, (state, action) => {

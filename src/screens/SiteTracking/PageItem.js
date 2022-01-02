@@ -18,8 +18,10 @@ const PageItem = ({
     const { subAccountGroups } = useSelector((state) => state.sms);
     const { isRTL, windowSize } = useSelector((state) => state.core);
     const [selectedGroups, setSelectedGroups] = useState([]);
+    const [pageUrlIsValid, setPageUrlIsValid] = useState(null);
 
     const updateOperationData = (key, value) => {
+        setPageUrlIsValid(value !== '');
         siteEvent.metadata[key] = value;
         onUpdate(['metadata', key], value);
     }
@@ -72,7 +74,7 @@ const PageItem = ({
                     inputProps={{
                         shrink: false
                     }}
-                    className={clsx(classes.mt24, classes.textField, classes.fullWidth, classes.endElementNoRadius)}
+                    className={clsx(classes.mt24, classes.textField, classes.fullWidth, classes.endElementNoRadius, pageUrlIsValid === false ? classes.error : pageUrlIsValid !== null ? classes.valid : null )}
                     required
                     fullWidth
                     variant="outlined"

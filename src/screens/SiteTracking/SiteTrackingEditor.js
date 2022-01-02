@@ -95,6 +95,10 @@ const SiteTrackingEditor = ({ classes }) => {
             setValidationError([...validationError, t('siteTracking.validation.groupsRequired')])
             isValid = false;
         }
+        if (model.metadata.OperatorValue === '') {
+            setValidationError([...validationError, t('siteTracking.validation.pageUrlRequired')])
+            isValid = false;
+        }
         return isValid;
     }
 
@@ -226,7 +230,7 @@ const SiteTrackingEditor = ({ classes }) => {
             content: (
                 <Box className={classes.dialogBox}>
                     <ul>
-                        {validationError.map((d, index) => (<li key={{ index }}>{d}</li>))}
+                        {validationError.map((d, index) => (<li className={classes.red} key={{ index }}>{d}</li>))}
                     </ul>
                 </Box>
             ),

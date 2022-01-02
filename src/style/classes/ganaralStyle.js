@@ -706,6 +706,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   error: {
     borderBottom: "2px solid red !important",
   },
+  valid: {
+    borderBottom: "2px solid #008000 !important",
+  },
   msgHead: {
     fontSize: "20px",
     "@media screen and (max-width: 768px)": {

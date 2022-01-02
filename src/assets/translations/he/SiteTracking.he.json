@@ -29,7 +29,8 @@
     "validation": {
         "domainRequired": "דומיין - שדה חובה",
         "domainNotValid": "דומיין - כתובת לא חוקית",
-        "groupsRequired": "חובה להוסיף קבוצה לאירוע הנבחר"
+        "groupsRequired": "חובה להוסיף קבוצה לאירוע הנבחר",
+        "pageUrlRequired": "כתובת URL - שדה חובה"
     },
     "serverResponse": {
         "notAuthorized": "תקלת הרשאה - אנא פנה לתמיכה",
