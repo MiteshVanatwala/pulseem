@@ -14,7 +14,9 @@ const redirectToLogin = () => {
 export const logout = async () => {
   try {
     await axios.get(logoutURL)
-    setCookie('jtoken', '')
+    setCookie('jtoken','')
+    setCookie('accountFeatures','');
+    setCookie('isClal','');
     redirectToLogin()
   } catch (err) {
     console.log("logout error", err)

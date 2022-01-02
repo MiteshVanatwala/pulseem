@@ -37,16 +37,6 @@ const Toast = ({ data, onClose }) => {
 
     moment.locale(language);
 
-    // data.severity: error, warning, info, success
-    // data.color: 
-    const renderHtml = () => {
-        function createMarkup() {
-            return { __html: t(data.message) };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
     return (
         <div className={clsx(classes.root, "alert")}>
             <Alert severity={data.severity} color={data.color} className={classes.center} style={{ fontWeight: 900, fontSize: 16 }}>

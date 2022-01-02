@@ -1,6 +1,6 @@
 {
   "credits": "Credits",
-  "amountOfEmails": "Amount of emails per month",
+  "amountSent": "Amount sent per month",
   "searchSms": "Search",
   "recipientsFilter": "Recipients Filter",
   "filterInputText": "Don't send to recipients that got SMS in last previous days",
@@ -41,7 +41,7 @@
   "adjustTitle": "Adjust Title",
   "firstName": "First Name",
   "lastName": "Last Name",
-  "cellPhone": "Cell Phone",
+  "cellPhone": "Cellphone",
   "estimatedEndDate": "Estimated End Date",
   "packetsSending": "Packets sending",
   "NoGroups": "No groups selected",

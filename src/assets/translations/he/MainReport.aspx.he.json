@@ -225,6 +225,7 @@
     "FooterText": "",
     "GroupByExpression": "",
     "HeaderImageUrl": "",
+    "UniquePercentage": "אחוז ייחודיים",
     "HeaderText": "פתיחות",
     "ImageUrl": "",
     "SortExpression": "",
@@ -313,7 +314,7 @@
     "Text": "עד תאריך:"
   },
   "logPageHeaderResource1": {
-    "Text": "דוחות ניוזלטר"
+    "Text": "דוחות דיוור אלקטרוני"
   },
   "PageResource1": {
     "Title": "דוחות דיוור אלקטרוני | מערכת פולסים"
@@ -412,13 +413,13 @@
     "Text": "ייחודיות - מספר הנמענים שפתחו את המייל"
   },
   "ClicksTotalTooltip": {
-    "Text": "סה”כ - כמות הפעמים שהקליקו על הקישורים במייל. כולל הקלקות כפולות"
+    "Text": "כמות הפעמים שהקליקו על הקישורים במייל. כולל הקלקות כפולות"
   },
   "ClicksUniqueTooltip": {
     "Text": "ייחודיות - מספר הנמענים שהקליקו על הקישורים במייל"
   },
   "OpensTotalTooltip": {
-    "Text": "סה”כ - כמות הפעמים שפתחו את המייל סך הכל. כולל פתיחות כפולות"
+    "Text": "כמות הפעמים שפתחו את המייל סך הכל. כולל פתיחות כפולות"
   },
   "MainReportTitle": {
     "Text": "דוחות שליחה לקמפיינים שנשלחו במערכת. ניתן לחקור לעומק את נתוני השליחה בלחיצה על נתוני הקמפיין"
@@ -431,23 +432,34 @@
   "compareCampaigns": "השוואת קמפיינים",
   "names": "שמות",
   "fixedSendingDate": "תאריך שליחה קבוע",
-  "totalSendCompleted": "סה”כ השליחה הושלמה",
-  "totalSendPlan": "סה”כ תוכנית שליחה",
-  "openCount": "פתח ספירה", 
-  "openCountUnique": "פתח ספירה ייחודי",
-  "clickCount": "לחץ על ספירה",
-  "clickCountUnique": "לחץ על ספירת ייחודי",
-  "notOpened": "לא נפתח",
-  "sendError": "שלח שגיאה",
-  "removedClients": "הלקוחות הוסרו",
+  "totalSendCompleted": "נשלחו",
+  "totalSendPlan": "לשליחה",
+  "openCount": "פתיחות", 
+  "openCountUnique": "פתיחות ייחודיות",
+  "clickCount": "הקלקות",
+  "clickCountUnique": "הקלקות ייחודיות",
+  "notOpened": "לא נפתחו",
+  "sendError": "שגויים",
+  "removedClients": "מוסרים",
   "groupsNames": "שמות קבוצות",
   "files": "קבצים",
   "fileNames": "שמות קבצים",
-  "percentageOpens": "אחוז נפתח",
-  "percetangeClicks": "אחוז קליקים",
+  "percentageOpens": "אחוז פתיחות ייחודיות",
+  "percetangeClicks": "אחוז הקלקות ייחודיות",
   "percetangeRemovedClients": "אחוז הלקוחות שהוסרו",
   "attachments": "קבצים מצורפים",
   "totalBytes": "סה”כ בתים",
+  "opensAndClicks": "פתיחות והקלקות",
+  "geographicalReport": "דו\"ח גאוגרפיים",
+  "systemsReport": "דו\"ח מערכת",
+  "backToNewsletterReports": "חזור לדוח\"ות ניוזלטר",
+  "fromEmail": "מייל השולח",
+  "fromName": "שם השולח",
+  "attachedFiles": "קבצים מצורפים",
+  "campaignQuality": "איכות הקמפיין",
+  "campaignQualitySummary": "נקבע על פי נתוני הפתיחות וההקלקות ורם איפסום דולור סיט אמט, קונסקטורר אדיפיסינג אלית גולר מונפרר סוברט לורם שבצק יהול, לכנוץ בעריר גק ליץ, ושבעגט ליבם סולגק",
+  "billingCredits": "קרדיטים לחיוב",
+  "postCredits": "קרדיטים להודעה",
   "smsCampaign" : "יצירת קמפיין SMS",
   "sendSetting" : "הגדרות שליחה",
   "whomTosend" : "למי שולחים?",
@@ -528,7 +540,9 @@
   "handleExitTitle":"צא מעריכת קמפיין",
   "leaveCampaign":"האם תרצה לשמור את השינויים לפני היציאה?",
   "No":"לא",
-  "Ok":"כן"
-
-
+  "Ok":"כן",
+  "summaryModalTitle": "סיכום קמפיין",
+  "feedback": "משובים",
+  "isResponse": "משוב",
+  "statusName": "שם סטאטוס"
 }

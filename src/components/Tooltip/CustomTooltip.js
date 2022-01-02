@@ -7,8 +7,12 @@ import { BsInfoCircleFill } from 'react-icons/bs';
 const HtmlTooltip = withStyles(({ style }) => ({
   tooltip: {
     maxWidth: 220,
+    backgroundColor: '#000',
     ...style
   },
+  arrow: {
+    color: '#000'
+  }
 }))(Tooltip);
 
 const useStylesBootstrap = makeStyles((theme) => ({
@@ -41,11 +45,7 @@ const CustomTooltip = ({ classes, text, title, placement = 'top', arrow = true, 
       interactive={interactive}
       arrow={arrow}
       placement={placement}
-      style={{...style}}
-      classes={{
-        tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-        arrow: classes.fBlack
-      }}
+      style={{ ...style }}
       title={
         <React.Fragment>
           {title}

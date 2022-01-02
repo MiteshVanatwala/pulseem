@@ -38,6 +38,14 @@ const flexDirection = {
     xl: 'row',
 }
 
+const clientIframeSize = {
+    xs: '100%',
+    sm: '100%',
+    md: 680,
+    lg: 680,
+    xl: 680
+}
+
 export const getSmsStyle = (windowSize, isRTL, theme) => ({
     sectionTitle: {
         marginTop: 45,
@@ -653,8 +661,8 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         padding: 5,
         fontSize: 16,
         color: "#fff",
-        fontWeight: 400,
         borderRadius: 5,
+        fontWeight: 400,
         marginInlineStart: "3px"
     },
     mappedGroup:
@@ -988,5 +996,85 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         padding: "10px",
         width: "160px",
         maxWidth: "280px",
+    },
+    editClientIframe: {
+        minWidth: clientIframeSize[windowSize],
+        minHeight: 610,
+        border: 'none'
+    },
+    breakSpaces: {
+        textAlign: 'center',
+        width: 'min-content',
+        whiteSpace: 'pre-line',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        fontSize: 12
+    },
+    filterButtonsContainer: {
+        '& *:not(svg):not(span)': {
+            marginInlineEnd: 5
+        },
+        '& .MuiButton-root': {
+            minWidth: 50
+        },
+        '& div.MuiInput-formControl': {
+            paddingInline: '0 !important',
+        },
+        '& .MuiButton-text': {
+            paddingInline: 10
+        },
+        "@media screen and (max-width: 480px)": {
+            marginInline: 10,
+            '& *:not(svg):not(span):not(.MuiInputBase-formControl)': {
+                marginTop: 5
+            },
+        },
+        '& .MuiInputBase-formControl': {
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingInline: 10,
+
+            '& .MuiSelect-selectMenu': {
+                paddingInline: 14
+            },
+            '& .MuiSelect-icon': {
+                left: !isRTL ? 'auto' : 0,
+                right: isRTL ? 'auto' : 0
+            }
+        }
+    },
+    twoLineButton: {
+        borderColor: '#1c82b2',
+        cursor: 'pointer',
+        '&:hover': {
+            backgroundColor: 'transparent'
+        },
+        '& label, & span': {
+            fontSize: 16,
+            cursor: 'pointer',
+            color: '#1c82b2',
+            lineHeight: 1.5,
+            textTransform: 'capitalize',
+            fontWeight: 400
+        }
+    },
+    buttonActiveGreen: {
+        borderColor: '#1c82b2',
+        backgroundColor: '#1c82b2',
+        '&:hover': {
+            borderColor: '#1c82b2',
+            backgroundColor: '#1c82b2',
+        },
+        '& label, & span': {
+            fontSize: 16,
+            cursor: 'pointer',
+            color: '#fff',
+            lineHeight: 1.5,
+            textTransform: 'capitalize',
+            fontWeight: 400
+        }
     }
 });

@@ -1,6 +1,6 @@
 {
-  "credits": "נקודות זכות",
-  "amountOfEmails": "כמות שליחות לפי חודשים",
+  "credits": "קרדיטים",
+  "amountSent": "כמות שליחות לפי חודשים",
   "searchSms":"חיפוש",
   "recipientsFilter":"סינון נמענים",
   "filterInputText":"לא לשלוח ללקוחות שקיבלו סמס במספר הימים האחרונים",

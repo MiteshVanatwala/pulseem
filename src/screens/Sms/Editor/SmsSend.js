@@ -24,12 +24,13 @@ import Title from '../../../components/Wizard/Title'
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
   sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, smsCombinedGroup, saveManualClients,
-  getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getGroupsBySubAccountId
+  getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getGroupsBySubAccountId, getTestGroups
 } from "../../../redux/reducers/smsSlice";
 import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
+import { logout } from '../../../helpers/api'
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -128,14 +129,12 @@ const SmsSend = ({ classes, ...props }) => {
   const history = useHistory();
   const severe = useSnackSevere();
   const recipientSuccess = useSnackRecipients();
-  const { OTPPassed, ToastMessages } = useSelector((state) => state.sms);
+  const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups } = useSelector((state) => state.sms);
 
   const dispatch = useDispatch();
   const { windowSize, isRTL } = useSelector(
     (state) => state.core
   );
-  const { extraData, getCampaignSum, } =
-    useSelector((state) => state.sms);
   const theme = useTheme();
   const [selectedGroups, setSelected] = useState([]);
   const [allGroupsSelected, setAllGroupsSelected] = useState(false);
@@ -219,7 +218,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [otpOpen, setOTPOpen] = useState(null);
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
   const [sourcePulses, setSourcePulses] = useState({});
-
+  
   //#endregion
   useEffect(() => {
     setselectArray([
@@ -277,6 +276,9 @@ const SmsSend = ({ classes, ...props }) => {
         setOTPOpen(true);
         break;
       }
+      default: {
+        break;
+      }
     }
   }
 
@@ -292,7 +294,12 @@ const SmsSend = ({ classes, ...props }) => {
     if (props && props.match.params.id) {
       const finishedCampaigns = await dispatch(getFinishedCampaigns());
       const subAccountGroups = await dispatch(getGroupsBySubAccountId());
-      const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id))
+      const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id));
+      await dispatch(getTestGroups());
+
+      if (campaignSettings.payload.error) {
+        logout();
+      }
       settotalCampaigns(finishedCampaigns.payload);
       setGroupList(subAccountGroups.payload);
       if (campaignSettings.payload && campaignSettings.payload.PulseSettings) {
@@ -903,6 +910,7 @@ const SmsSend = ({ classes, ...props }) => {
               callbackUpdateGroups={callbackUpdateGroups}
               callbackSelectAll={callbackSelectAll}
               callbackReciFilter={callbackFilter}
+              callbackShowTestGroup={callbackShowTestGroup}
               isSms={true}
               bsDot={bsDot}
               uniqueKey={'groups_1'}
@@ -2035,6 +2043,7 @@ const SmsSend = ({ classes, ...props }) => {
                   selectedList={selectedFilterGroups}
                   callbackUpdateGroups={callbackUpdateGroupFilterd}
                   callbackSelectedGroups={callbackFilteredGroups}
+                  callbackShowTestGroup={callbackShowTestGroup}
                   noSelectionText={t("sms.NoFilteredGroups")}
                   innerHeight={160}
                   uniqueKey={'groups_2'}
@@ -2074,6 +2083,15 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const callbackUpdateGroupFilterd = (groups) => {
     setFilterGroups(groups);
+  }
+  const callbackShowTestGroup = async (showTestGroups) => {
+    if (!showTestGroups && testGroups.length > 0) {
+      setGroupList(testGroups.concat(groupList));
+    }
+    else {
+      const g = groupList.filter((group) => { return group.IsTestGroup !== true });
+      setGroupList(g);
+    }
   }
   const callbackFilteredGroups = (group) => {
     const found = selectedFilterGroups
