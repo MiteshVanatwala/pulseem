@@ -29,7 +29,8 @@
     "validation": {
         "domainRequired": "Domain - Required field",
         "domainNotValid": "Domain - Address not valid",
-        "groupsRequired": "Must add group for event"
+        "groupsRequired": "Must add group for event",
+        "pageUrlRequired": "Page Url - Required field"
     },
     "serverResponse": {
         "notAuthorized": "Permission warnning. Please contact support.",

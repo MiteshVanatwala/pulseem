@@ -17,28 +17,27 @@ export const post = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
       const response = await eventsInstance.post(`events`, data);
-      return response.data
+      return response;
     } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ status: error.statusCode });
     }
   });
 
 export const getScript = createAsyncThunk(
   'getScript', async (_, thunkAPI) => {
     try {
-      verifyGetUrl(siteTrackingScriptUrl).then((result) => {
-        if (result === true) {
-          const scriptContainer = `<script type="text/javascript">
-          (function(d, t) {
-                ${siteTrackingScriptUrl}
-            }(document, "script"))
-        </script>`;
-          return scriptContainer;
-        }
-        return null;
-      })
-      // const response = await eventsInstance.get(`getScript`);
-      // return response.data;
+      const isVerified = await verifyGetUrl(siteTrackingScriptUrl);
+      const response = {};
+      if (isVerified === true) {
+        response["data"] = `<script type="text/javascript">
+      (function(d, t) {
+        var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+        g.src="${siteTrackingScriptUrl}";
+        }(document, "script"))
+    </script>`;
+      }
+      return response;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -78,8 +77,7 @@ export const siteTrackingSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(getScript.fulfilled, (state, { payload }) => {
-        state.siteScript = payload;
-        //state.siteScript = payload.replace(/['"]+/g, '')
+        state.siteScript = payload.data;
       })
       .addCase(get.rejected, (state, action) => {
         state.event = action.error.message

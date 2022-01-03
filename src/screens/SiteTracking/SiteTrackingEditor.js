@@ -46,7 +46,9 @@ const SiteTrackingEditor = ({ classes }) => {
         await dispatch(getScript());
         await dispatch(getGroupsBySubAccountId());
         const response = await dispatch(get(EventRequestModel.PageView));
-        setModel(response.payload);
+        if (!response.error) {
+            setModel(response.payload);
+        }
         setShowLoader(false);
         const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
         if (hideScriptIntro === "false") {
@@ -91,8 +93,12 @@ const SiteTrackingEditor = ({ classes }) => {
             setValidationError([...validationError, t('siteTracking.validation.domainNotValid')])
             isValid = false;
         }
-        if (model.metadata.GroupIds.length === 0) {
+        if (model.metadata.groupIds.length === 0) {
             setValidationError([...validationError, t('siteTracking.validation.groupsRequired')])
+            isValid = false;
+        }
+        if (model.metadata.operatorValue === '') {
+            setValidationError([...validationError, t('siteTracking.validation.pageUrlRequired')])
             isValid = false;
         }
         return isValid;
@@ -131,8 +137,8 @@ const SiteTrackingEditor = ({ classes }) => {
         }
     }
     const onSaveReponse = (response) => {
-        switch (response.statusCode) {
-            case 200: {
+        switch (response.status) {
+            case 201: {
                 setToastMessage(ToastMessages.SUCCESS);
                 break;
             }
@@ -226,7 +232,7 @@ const SiteTrackingEditor = ({ classes }) => {
             content: (
                 <Box className={classes.dialogBox}>
                     <ul>
-                        {validationError.map((d, index) => (<li key={{ index }}>{d}</li>))}
+                        {validationError.map((d, index) => (<li className={classes.red} key={{ index }}>{d}</li>))}
                     </ul>
                 </Box>
             ),

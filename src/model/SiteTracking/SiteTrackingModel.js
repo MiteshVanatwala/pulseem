@@ -5,7 +5,7 @@ export const ACTION_TYPES = {
 
 export const EventRequestModel = {
     PageView: {
-        eventName: "PageView"
+        eventName: "PAGE_VIEW"
     }
 };
 export class SiteTrackingModel {
@@ -14,9 +14,9 @@ export class SiteTrackingModel {
         this.domain = domain || '';
         this.actionType = actionType || ACTION_TYPES.ADD_CLIENTS_TO_GROUP;
         this.metadata = {
-            OperatorKey: (metadata && metadata.OperatorKey) || '',
-            OperatorValue: (metadata && metadata.OperatorValue) || '',
-            GroupIds: (metadata && metadata.GroupIds) || []
+            operatorKey: (metadata && metadata.OperatorKey) || '',
+            operatorValue: (metadata && metadata.OperatorValue) || '',
+            groupIds: (metadata && metadata.GroupIds) || []
         };
     }
 };
