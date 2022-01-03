@@ -20,18 +20,22 @@ const PageItem = ({
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [pageUrlIsValid, setPageUrlIsValid] = useState(null);
 
-    const updateOperationData = (key, value) => {
-        setPageUrlIsValid(value !== '');
+    const setMetaData = () => {
         if (!siteEvent.metadata) {
             siteEvent['metadata'] = {};
             siteEvent['metadata']['groupIds'] = [];
         }
+    }
+    const updateOperationData = (key, value) => {
+        setPageUrlIsValid(value !== '');
+        setMetaData();
         siteEvent.metadata[key] = value;
         onUpdate(['metadata', key], value);
     }
 
     useEffect(() => {
-        if (subAccountGroups && subAccountGroups.length > 0 && siteEvent.metadata) {
+        setMetaData();
+        if (subAccountGroups && subAccountGroups.length > 0) {
             setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.groupIds && siteEvent.metadata.groupIds.includes(g.GroupID.toString()) }));
         }
     }, [siteEvent]);
