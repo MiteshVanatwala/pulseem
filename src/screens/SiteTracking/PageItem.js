@@ -37,7 +37,7 @@ const PageItem = ({
     }, [siteEvent]);
 
     const handleSelectedGroups = (group, exists) => {
-        if (exists) {
+        if (exists === true) {
             siteEvent.metadata.groupIds = siteEvent.metadata.groupIds.filter((sg) => { return sg.toString() !== group.GroupID.toString() })
         }
         else {
