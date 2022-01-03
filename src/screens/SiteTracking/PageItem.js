@@ -32,7 +32,7 @@ const PageItem = ({
 
     useEffect(() => {
         if (subAccountGroups && subAccountGroups.length > 0 && siteEvent.metadata) {
-            setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.groupIds.includes(g.GroupID.toString()) }));
+            setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.groupIds && siteEvent.metadata.groupIds.includes(g.GroupID.toString()) }));
         }
     }, [siteEvent]);
 
