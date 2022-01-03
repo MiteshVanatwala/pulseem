@@ -17,36 +17,27 @@ export const post = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
       const response = await eventsInstance.post(`events`, data);
-      return response.data
+      return response;
     } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ status: error.statusCode });
     }
   });
 
 export const getScript = createAsyncThunk(
   'getScript', async (_, thunkAPI) => {
     try {
-      return `<script type="text/javascript">
-    (function(d, t) {
-    var g = d.createElement(t),
-    s = d.getElementsByTagName(t)[0];
-    g.src="${siteTrackingScriptUrl}";
-    }(document, "script"))
-</script>`;
-
-      //verifyGetUrl(siteTrackingScriptUrl).then((result) => {
-      //if (result === true) {
-      //   `<script type="text/javascript">
-      //   (function(d, t) {
-      //     var g = d.createElement(t),
-      //     s = d.getElementsByTagName(t)[0];
-      //     g.src="${siteTrackingScriptUrl}";
-      //     }(document, "script"))
-      // </script>`
-      // }
-      // return null;
-      //})
-      //});
+      const isVerified = await verifyGetUrl(siteTrackingScriptUrl);
+      const response = {};
+      if (isVerified === true) {
+        response["data"] = `<script type="text/javascript">
+      (function(d, t) {
+        var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+        g.src="${siteTrackingScriptUrl}";
+        }(document, "script"))
+    </script>`;
+      }
+      return response;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -86,8 +77,7 @@ export const siteTrackingSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(getScript.fulfilled, (state, { payload }) => {
-        state.siteScript = payload.replace(/['"]+/g, '');
-        //state.siteScript = payload.replace(/['"]+/g, '')
+        state.siteScript = payload.data;
       })
       .addCase(get.rejected, (state, action) => {
         state.event = action.error.message

@@ -16,7 +16,10 @@ export const verifyGetUrl = (url) => {
       var xmlhttp = new XMLHttpRequest();
       xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState === 4) {
-          resolve(xmlhttp.status && xmlhttp.status !== 404)
+          if(xmlhttp.status === 200){
+            resolve(true);
+          }
+          //resolve(xmlhttp.status && xmlhttp.status !== 404)
         }
       }
       xmlhttp.open("HEAD", url, true);
