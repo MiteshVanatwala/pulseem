@@ -10,11 +10,14 @@ import notifications from './Notifications.he.json'
 import mainReport from './MainReport.aspx.he.json'
 import dashboard from './Dashboard.he.json'
 import smsReport from './SMSReport.he.json'
+import report from './Reports.he.json'
+import emailStatus from './EmailStatus.he.json'
 import emoji from './Emoji.he.json'
 import payment from './payment.he.json'
 import siteTracking from './SiteTracking.he.json'
+import client from './Client.he.json'
 
-export const he={
+export const he = {
   automations,
   campaigns,
   common,
@@ -27,7 +30,10 @@ export const he={
   mainReport,
   dashboard,
   smsReport,
+  report,
+  emailStatus,
   emoji,
   payment,
-  siteTracking
+  siteTracking,
+  client
 }

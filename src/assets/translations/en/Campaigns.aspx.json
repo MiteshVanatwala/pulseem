@@ -335,6 +335,9 @@
   "logPageHeaderResource1": {
     "Text": "Newsletters Management"
   },
+  "logPageHeaderArchive": {
+    "Text": "Newsletter Archive"
+  },
   "PageResource1": {
     "Title": "Campaigns Management | Pulseem System"
   },
@@ -467,7 +470,7 @@
     "Tooltip": "The Automation process is inactive. Click to preview"
   },
   "Reports": "Reports",
-  "camapignName": "Camapign Name",
+  "camapignName": "Campaign Name",
   "recipients": "Recipients",
   "automation": "Automation",
   "create": "Create New Newsletter",

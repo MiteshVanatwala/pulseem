@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
+import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
 import MmsManagment from './screens/Mms/Management/MmsManagment';
@@ -24,13 +25,16 @@ import moment from 'moment'
 import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
 import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
-import NewslettersReport from './screens/Reports/NewslettersReport'
+import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersReport'
 import { useMediaQuery } from '@material-ui/core';
 import DashboardScreen from './screens/Dashboard/Dashboard';
-import SmsReport from './screens/Reports/SmsReport';
+import GraphicReport from './screens/Reports/NewslettersReport/GraphicReport';
+import SmsReport from './screens/Reports/SmsReport/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
+import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
+
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -88,7 +92,8 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         path={`/CampaignStatistics/:campaignID`}
-        component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
+        // component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
+        render={props => <GraphicReport props={props} classes={classes} />}
       />
       <Route
         path={`/homepage`}
@@ -117,10 +122,15 @@ const renderRoutes = (classes, history) => {
       />
       {/* Newsletter */}
       <Route
+        exact
         path="/Campaigns"
         render={props => <NewsletterManagment {...props} classes={classes} />}
       />
-
+      <Route
+        exact
+        path="/Campaigns/Archive"
+        render={props => <ArchiveManagement {...props} classes={classes} />}
+      />
       <Route
         path={`/Editor/CampaignInfo`}
         component={transferUrl('/Pulseem/Editor/CampaignInfo?new=1')}
@@ -231,6 +241,11 @@ const renderRoutes = (classes, history) => {
         render={props => <SmsReport {...props} classes={classes} />}
       />
       <Route
+        exact
+        path={"/Reports/SmsReplies/:id"}
+        render={props => <SmsReplies props={props} classes={classes} />}
+      />
+      <Route
         path={`/MmsMainReport`}
         component={transferUrl('/Pulseem/MmsMainReport.aspx')}
       />
@@ -242,10 +257,10 @@ const renderRoutes = (classes, history) => {
         path={`/AccountReport`}
         component={transferUrl('/Pulseem/AccountReport.aspx')}
       />
-      <Route
+      {/* <Route
         path={`/CampaignComparison`}
         component={transferUrl('/Pulseem/CampaignComparison.aspx')}
-      />
+      /> */}
       <Route
         path={`/ClientReport`}
         component={transferUrl('/Pulseem/ClientReport.aspx')}
@@ -417,13 +432,13 @@ const App = ({ screenSize }) => {
     })
     updateToken()
     initFeatures()
-    document.body.classList.add(classes.sidebar);
   }, [dispatch])
 
 
   const classes = useClasses(windowSize, isRTL)()
   const theme = getTheme(language)
   const history = useHistory()
+  document.body.classList.add(classes.sidebar);
 
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
