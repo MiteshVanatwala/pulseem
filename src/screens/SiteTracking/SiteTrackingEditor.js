@@ -49,6 +49,9 @@ const SiteTrackingEditor = ({ classes }) => {
         if (!response.error) {
             setModel(response.payload);
         }
+        else{
+            setModel(new SiteTrackingModel());
+        }
         setShowLoader(false);
         const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
         if (hideScriptIntro === "false") {
