@@ -1,5 +1,5 @@
 import {
-    FormControl, Typography, TextField, Box, Input, Select, MenuItem, Checkbox, ListItemText
+    FormControl, Typography, TextField, Box, Select, MenuItem
 } from '@material-ui/core'
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux'
@@ -20,21 +20,21 @@ const PageItem = ({
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [pageUrlIsValid, setPageUrlIsValid] = useState(null);
 
-    const setMetaData = () => {
-        if (!siteEvent.metadata) {
-            siteEvent['metadata'] = {};
-            siteEvent['metadata']['groupIds'] = [];
-        }
-    }
+    // const setMetaData = () => {
+    //     if (!siteEvent.metadata) {
+    //         siteEvent['metadata'] = {};
+    //         siteEvent['metadata']['groupIds'] = [];
+    //     }
+    // }
     const updateOperationData = (key, value) => {
         setPageUrlIsValid(value !== '');
-        setMetaData();
+        //setMetaData();
         siteEvent.metadata[key] = value;
         onUpdate(['metadata', key], value);
     }
 
     useEffect(() => {
-        setMetaData();
+        //setMetaData();
         if (subAccountGroups && subAccountGroups.length > 0) {
             setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.groupIds && siteEvent.metadata.groupIds.includes(g.GroupID.toString()) }));
         }

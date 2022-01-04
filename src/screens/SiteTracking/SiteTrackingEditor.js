@@ -49,12 +49,12 @@ const SiteTrackingEditor = ({ classes }) => {
         if (!response.error) {
             setModel(response.payload);
         }
-        else{
+        else {
             setModel(new SiteTrackingModel());
         }
         setShowLoader(false);
         const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
-        if (hideScriptIntro === "false") {
+        if (hideScriptIntro !== 'true') {
             setDialogType({ type: 'scriptImplementation' });
         }
     }
@@ -130,7 +130,7 @@ const SiteTrackingEditor = ({ classes }) => {
         switch (response.Result) {
             default:
             case -1: {
-                setDialogType({ type: 'dynamicMessage', message: response.Message })
+                setDialogType({ type: 'dynamicMessage', message: response.Message || t('siteTracking.serverResponse.serverNotAble') })
                 break;
             }
             case 0: {
@@ -157,6 +157,7 @@ const SiteTrackingEditor = ({ classes }) => {
                 setDialogType({ type: 'domainAlreadyExist' })
                 break;
             }
+            case 400:
             case 500: {
                 setDialogType({ type: 'serverNotAble' })
                 break;
