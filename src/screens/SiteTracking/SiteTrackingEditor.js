@@ -141,6 +141,7 @@ const SiteTrackingEditor = ({ classes }) => {
     }
     const onSaveReponse = (response) => {
         switch (response.status) {
+            case 200: 
             case 201: {
                 setToastMessage(ToastMessages.SUCCESS);
                 break;
