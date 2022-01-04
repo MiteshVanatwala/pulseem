@@ -57,7 +57,7 @@ export const ClientStatus = {
     ]
 };
 export const eventsOptions = [
-    { key: 'PAGE_LOAD', value: 'siteTracking.events.pageLoad' },
+    // { key: 'PAGE_LOAD', value: 'siteTracking.events.pageLoad' },
     { key: 'PAGE_VIEW', value: 'siteTracking.events.pageView' }
 ];
 

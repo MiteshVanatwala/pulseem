@@ -20,7 +20,7 @@ const CheckboxGroups = ({
     ...props
 }) => {
     const onInputChange = (_, __, eventType, item) => {
-        onSelect(item.option, eventType === 'remove-option');
+        onSelect(item && item.option, eventType);
     }
 
     return (
@@ -38,14 +38,14 @@ const CheckboxGroups = ({
                     <Checkbox
                         icon={icon}
                         checkedIcon={checkedIcon}
-                        style={{ marginRight: 8 }}
+                        style={{ marginInlineEnd: 8 }}
                         checked={selected}
                         color="primary"
                     />
                     <Typography className={classes.ellipsisText}>{option.GroupName}</Typography>
                 </React.Fragment>
             )}
-            style={{ width: 500, ...props.style }}
+            style={{ ...props.style }}
             renderInput={(params) => {
                 return (
                     <TextField

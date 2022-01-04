@@ -20,41 +20,43 @@ const PageItem = ({
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [pageUrlIsValid, setPageUrlIsValid] = useState(null);
 
-    // const setMetaData = () => {
-    //     if (!siteEvent.metadata) {
-    //         siteEvent['metadata'] = {};
-    //         siteEvent['metadata']['groupIds'] = [];
-    //     }
-    // }
     const updateOperationData = (key, value) => {
         setPageUrlIsValid(value !== '');
-        //setMetaData();
         siteEvent.metadata[key] = value;
         onUpdate(['metadata', key], value);
     }
 
     useEffect(() => {
-        //setMetaData();
         if (subAccountGroups && subAccountGroups.length > 0) {
             setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.groupIds && siteEvent.metadata.groupIds.includes(g.GroupID.toString()) }));
         }
     }, [siteEvent]);
 
-    const handleSelectedGroups = (group, exists) => {
-        if (exists === true) {
-            siteEvent.metadata.groupIds = siteEvent.metadata.groupIds.filter((sg) => { return sg.toString() !== group.GroupID.toString() })
-        }
-        else {
-            siteEvent.metadata.groupIds.push(group.GroupID.toString());
+    const handleSelectedGroups = (group, eventType) => {
+        switch (eventType) {
+            case 'select-option': {
+                siteEvent.metadata.groupIds.push(group.GroupID.toString());
+                break;
+            }
+            case 'remove-option': {
+                siteEvent.metadata.groupIds = siteEvent.metadata.groupIds.filter((sg) => { return sg.toString() !== group.GroupID.toString() })
+                break;
+            }
+            case 'clear': {
+                siteEvent.metadata.groupIds = [];
+                break;
+            }
         }
         onUpdate(['metadata', 'GroupIds'], siteEvent.metadata.groupIds);
         setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.groupIds.includes(g.GroupID.toString()) }));
     }
 
-    return siteEvent && <Box className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row' }}>
-        <Box style={{ display: 'flex', flexDirection: 'row' }}>
+    return siteEvent && <Box className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row', justifyContent: 'space-between', width: '100%' }}>
+        <Box style={{ display: 'flex', flexDirection: 'row', width: '50%' }}>
             <Box>
-                <Typography>{t("siteTracking.pageUrl")}</Typography>
+                <Typography className={clsx(classes.buttonHead)}>
+                    {t("siteTracking.pageUrl")}
+                </Typography>
                 <FormControl variant="outlined"
                     className={clsx(
                         classes.formControl,
@@ -79,7 +81,7 @@ const PageItem = ({
                     </Select>
                 </FormControl>
             </Box>
-            <Box>
+            <Box style={{ width: '100%' }}>
                 <TextField
                     inputProps={{
                         shrink: false
@@ -90,20 +92,22 @@ const PageItem = ({
                     variant="outlined"
                     onChange={e => updateOperationData("operatorValue", e.target.value)}
                     value={siteEvent.metadata && siteEvent.metadata.operatorValue}
-                    style={{ minWidth: 220 }}
+                    style={{ minWidth: 220, width: '100%', marginTop: 40 }}
                 />
             </Box>
         </Box>
-        <Box style={{ display: 'flex', flexDirection: 'row' }}>
-            <Box>
-                <Box className={clsx(classes.flex, classes.justifyCenterOfCenter, classes.mt25)} style={{ height: 50, minWidth: 80 }}>
-                    {isRTL ? <FaArrowCircleLeft className={classes.contentHead} /> : <FaArrowCircleRight className={classes.contentHead} />}
-                </Box>
+        <Box>
+            <Box className={clsx(classes.flex, classes.justifyCenterOfCenter, classes.arrowContainer)}>
+                {isRTL ? <FaArrowCircleLeft className={classes.contentHead} /> : <FaArrowCircleRight className={classes.contentHead} />}
             </Box>
+        </Box>
+        <Box style={{ display: 'flex', width: '100%' }}>
             <Box>
-                <Typography>{t("siteTracking.addToGroups")}</Typography>
+                <Typography className={clsx(classes.buttonHead)}>
+                    {t("siteTracking.addToGroups")}
+                </Typography>
                 <CheckboxGroups
-                    style={{ maxWidth: windowSize === 'xs' ? 262 : null }}
+                    style={{ width: windowSize === 'xs' ? 320 : 460 }}
                     classes={classes}
                     groups={subAccountGroups}
                     selectedGroups={selectedGroups}

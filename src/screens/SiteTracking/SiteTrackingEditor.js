@@ -5,9 +5,9 @@ import { Loader } from '../../components/Loader/Loader'
 import { useTranslation } from 'react-i18next';
 import Title from '../../components/Wizard/Title'
 import {
-    Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Select, MenuItem, Radio, RadioGroup, Checkbox
+    Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Select, MenuItem, Tab, Checkbox
 } from '@material-ui/core'
-import PageItem from './PageItem'
+import EventToGroups from './EventToGroups'
 import { eventsOptions, domainProtocol } from '../../helpers/PulseemArrays'
 import { getGroupsBySubAccountId } from "../../redux/reducers/smsSlice";
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,6 +20,9 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getCookie, setCookie } from '../../helpers/cookies';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { AiOutlineExclamationCircle } from "react-icons/ai";
+import TabPanel from '@material-ui/lab/TabPanel';
+import TabContext from '@material-ui/lab/TabContext';
+import TabList from '@material-ui/lab/TabList';
 //import { eventsControllerCreate, CreateEventDefinitionInputDto } from '../../services/test';
 
 
@@ -37,6 +40,7 @@ const SiteTrackingEditor = ({ classes }) => {
     const [copyStatus, setCopyStatus] = useState(false);
     const refScriptCode = useRef(null);
     const [scriptDialog, handleScriptDialogCheck] = useState(false);
+    const [tabValue, setTabValue] = useState('PAGE_VIEW');
 
     useEffect(() => {
         getData();
@@ -82,26 +86,26 @@ const SiteTrackingEditor = ({ classes }) => {
         setModel(e);
     }
 
-    const validateForm = (event) => {
+    const validateForm = () => {
         let isValid = true;
         const isValidDomain = () => {
             const domainRegex = /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/g
             return model.domain.match(domainRegex);
         }
         if (model.domain === '') {
-            setValidationError([...validationError, t('siteTracking.validation.domainRequired')])
+            setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainRequired')])
             isValid = false;
         }
-        if (!isValidDomain()) {
-            setValidationError([...validationError, t('siteTracking.validation.domainNotValid')])
+        if (model.domain !== '' && !isValidDomain()) {
+            setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainNotValid')])
             isValid = false;
         }
         if (model.metadata.groupIds.length === 0) {
-            setValidationError([...validationError, t('siteTracking.validation.groupsRequired')])
+            setValidationError(oldArray => [...oldArray, t('siteTracking.validation.groupsRequired')])
             isValid = false;
         }
         if (model.metadata.operatorValue === '') {
-            setValidationError([...validationError, t('siteTracking.validation.pageUrlRequired')])
+            setValidationError(oldArray => [...oldArray, t('siteTracking.validation.pageUrlRequired')])
             isValid = false;
         }
         return isValid;
@@ -141,7 +145,7 @@ const SiteTrackingEditor = ({ classes }) => {
     }
     const onSaveReponse = (response) => {
         switch (response.status) {
-            case 200: 
+            case 200:
             case 201: {
                 setToastMessage(ToastMessages.SUCCESS);
                 break;
@@ -207,7 +211,7 @@ const SiteTrackingEditor = ({ classes }) => {
             ),
             title: title,
             content: (
-                <Box className={classes.dialogBox}>
+                <Box className={clsx(classes.dialogBox, classes.red)}>
                     {message}
                 </Box>
             ),
@@ -413,7 +417,7 @@ const SiteTrackingEditor = ({ classes }) => {
                     <Button
                         onClick={() => setDialogType({ type: 'scriptImplementation' })}
                         variant='contained'
-                        style={{ lineHeight: windowSize === 'xs' ? 1 : null }}
+                        style={{ lineHeight: windowSize === 'xs' ? 1 : null, marginInlineStart: 'auto' }}
                         className={clsx(
                             classes.actionButton,
                             classes.actionButtonDarkBlue)}
@@ -424,7 +428,7 @@ const SiteTrackingEditor = ({ classes }) => {
     }
     const PageFooter = () => {
         return <Box>
-            <Grid item xs={12} className={classes.buttonContainer}>
+            <Grid item xs={12} className={classes.baseButtonsContainer} style={{ marginBottom: 70 }}>
                 <Button
                     variant='contained'
                     className={clsx(
@@ -437,12 +441,47 @@ const SiteTrackingEditor = ({ classes }) => {
         </Box>
     }
 
+    const handleEventTab = (val) => {
+        setTabValue(val);
+    }
+    const EventTabs = () => {
+        return <TabContext value={tabValue}>
+            <Grid
+                container
+                justifyContent='space-between'
+                alignItems='center'
+                className={classes.borderBottom1}
+                item xs={12}>
+                <TabList
+                    onChange={(e, value) => handleEventTab(value)}
+                    indicatorColor="primary"
+                >
+                    {eventsOptions.map((eo, idx) => {
+                        return <Tab
+                            key={idx}
+                            label={t(eo.value)}
+                            classes={{ root: classes.minWidth100 }}
+                            value={eo.key}
+                        />
+                    })}
+                </TabList>
+            </Grid>
+            {eventsOptions.map((eo, idx) => {
+                return <TabPanel key={idx} value={eo.key} index={idx} className={classes.p0}>
+                    {
+                        model && <EventToGroups siteEvent={model} onUpdate={deepUpdate} classes={classes} />
+                    }
+                </TabPanel>
+            })}
+        </TabContext>
+    }
+
     //#endregion Dialogs
     return <DefaultScreen
         currentPage='settings'
         subPage='SiteTracking'
         classes={classes}
-        containerClass={classes.management}>
+        customPadding={true}>
         <Box className={classes.editorContainer}>
             {PageHeader()}
             {renderToast()}
@@ -452,7 +491,9 @@ const SiteTrackingEditor = ({ classes }) => {
                     <Grid container alignItems="center">
                         <Grid item lg={12} xs={12}>
                             <Typography className={clsx(classes.marginBlock20)}>{t("siteTracking.siteToTrack")}</Typography>
-                            <Typography className={clsx(classes.mt10)}>{t("siteTracking.yourDomain")}</Typography>
+                            <Typography className={clsx(classes.mt10, classes.buttonHead)}>
+                                {t("siteTracking.yourDomain")}
+                            </Typography>
                         </Grid>
                         <Grid item sm={6} xs={12} className={clsx(classes.flex)} style={{ height: 55, direction: 'ltr' }}>
                             <FormControl variant="outlined"
@@ -490,26 +531,7 @@ const SiteTrackingEditor = ({ classes }) => {
                         </Grid>
                         <Grid item xs={12}>
                             <Typography className={clsx(classes.marginBlock20)}>{t("siteTracking.eventToTrack")}</Typography>
-                            <Box>
-                                <FormControl component="fieldset">
-                                    <RadioGroup aria-label="eventName" name="eventName" value={model.eventName}>
-                                        {
-                                            eventsOptions.map((eo, idx) => {
-                                                return <FormControlLabel
-                                                    key={idx}
-                                                    value={eo.key}
-                                                    labelPlacement="end"
-                                                    onChange={() => handleModelChange("eventName", eo.key)}
-                                                    control={<Radio color="primary" />}
-                                                    label={t(eo.value)} />
-                                            })
-                                        }
-                                    </RadioGroup>
-                                </FormControl>
-                            </Box>
-                            {
-                                model && <PageItem siteEvent={model} onUpdate={deepUpdate} classes={classes} />
-                            }
+                            <EventTabs />
                         </Grid>
                     </Grid>
                 </form>

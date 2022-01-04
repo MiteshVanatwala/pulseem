@@ -38,6 +38,10 @@ export const getSiteTrackingStyle = (windowSize, isRTL) => ({
     buttonContainer: {
         marginTop: 'auto',
         marginBottom: 70
+    },
+    arrowContainer: {
+        height: 50,
+        minWidth: 80,
+        marginTop: 40
     }
-
 });
