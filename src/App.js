@@ -424,6 +424,13 @@ const App = ({ screenSize }) => {
       jtoken: updateToken
     }
 
+    const insertScript = () => {
+      const script = document.createElement("script");
+      script.src = "https://s3-webclientscriptbucket-aqeqhcqru4kj.s3.eu-west-1.amazonaws.com/main.js";
+      script.async = true;
+      document.head.appendChild(script);
+    }
+
     // window.addEventListener('resize',setWindowWidth)
     cookieListener(({ name }) => {
       const cookieFunction = cookieFunctionObj[name] || null
@@ -432,6 +439,7 @@ const App = ({ screenSize }) => {
     })
     updateToken()
     initFeatures()
+    insertScript()
   }, [dispatch])
 
 
