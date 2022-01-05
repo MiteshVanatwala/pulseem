@@ -241,7 +241,7 @@ const SiteTrackingEditor = ({ classes }) => {
             content: (
                 <Box className={classes.dialogBox}>
                     <ul>
-                        {validationError.map((d, index) => (<li className={classes.red} key={{ index }}>{d}</li>))}
+                        {validationError.map((d, index) => (<li key={index} className={classes.red}>{d}</li>))}
                     </ul>
                 </Box>
             ),
