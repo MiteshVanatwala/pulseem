@@ -1,57 +1,31 @@
-import {
-    FormControl, Typography, TextField, Box, Select, MenuItem
-} from '@material-ui/core'
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux'
 import clsx from 'clsx';
+import { useState } from 'react';
+import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next';
-import { eventConditions } from '../../helpers/PulseemArrays'
+import GroupTags from '../../components/Groups/GroupTags'
+import { EventConditions } from '../../helpers/PulseemArrays'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
-import CheckboxGroups from '../../components/Groups/CheckboxGroups';
+import { FormControl, Typography, TextField, Box, Select, MenuItem } from '@material-ui/core'
 
-const PageItem = ({
+const EventToGroups = ({
     classes,
     siteEvent,
-    onUpdate = () => null
+    onUpdate = () => null,
+    onShowGroups = () => null
 }) => {
     const { t } = useTranslation();
     const { subAccountGroups } = useSelector((state) => state.sms);
     const { isRTL, windowSize } = useSelector((state) => state.core);
-    const [selectedGroups, setSelectedGroups] = useState([]);
     const [pageUrlIsValid, setPageUrlIsValid] = useState(null);
 
-    const updateOperationData = (key, value) => {
+    const updateOperationData = (e, key, value) => {
+        e.preventDefault();
         setPageUrlIsValid(value !== '');
         siteEvent.metadata[key] = value;
         onUpdate(['metadata', key], value);
     }
 
-    useEffect(() => {
-        if (subAccountGroups && subAccountGroups.length > 0) {
-            setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.groupIds && siteEvent.metadata.groupIds.includes(g.GroupID.toString()) }));
-        }
-    }, [siteEvent]);
-
-    const handleSelectedGroups = (group, eventType) => {
-        switch (eventType) {
-            case 'select-option': {
-                siteEvent.metadata.groupIds.push(group.GroupID.toString());
-                break;
-            }
-            case 'remove-option': {
-                siteEvent.metadata.groupIds = siteEvent.metadata.groupIds.filter((sg) => { return sg.toString() !== group.GroupID.toString() })
-                break;
-            }
-            case 'clear': {
-                siteEvent.metadata.groupIds = [];
-                break;
-            }
-        }
-        onUpdate(['metadata', 'GroupIds'], siteEvent.metadata.groupIds);
-        setSelectedGroups(subAccountGroups.filter((g) => { return siteEvent.metadata.groupIds.includes(g.GroupID.toString()) }));
-    }
-
-    return siteEvent && <Box className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row', justifyContent: 'space-between', width: '100%' }}>
+    return <Box className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row', justifyContent: 'space-between', width: '100%' }}>
         <Box style={{ display: 'flex', flexDirection: 'row', width: '50%' }}>
             <Box>
                 <Typography className={clsx(classes.buttonHead)}>
@@ -67,10 +41,10 @@ const PageItem = ({
                         id="demo-simple-select-outlined"
                         name={siteEvent.metadata && siteEvent.metadata.operatorKey}
                         value={siteEvent.metadata && siteEvent.metadata.operatorKey}
-                        onChange={e => updateOperationData("operatorKey", e.target.value)}
+                        onChange={e => updateOperationData(e, "operatorKey", e.target.value)}
                         style={{ direction: 'ltr', textAlign: isRTL ? 'right' : 'left' }}
                     >
-                        {eventConditions.map((condition) => {
+                        {EventConditions.map((condition) => {
                             return <MenuItem
                                 key={condition.key}
                                 value={condition.key}
@@ -86,11 +60,12 @@ const PageItem = ({
                     inputProps={{
                         shrink: false
                     }}
+                    placeholder={t("siteTracking.placeHolderAddPageUrl")}
                     className={clsx(classes.mt24, classes.textField, classes.fullWidth, classes.endElementNoRadius, pageUrlIsValid === false ? classes.error : pageUrlIsValid !== null ? classes.valid : null)}
                     required
                     fullWidth
                     variant="outlined"
-                    onChange={e => updateOperationData("operatorValue", e.target.value)}
+                    onChange={e => updateOperationData(e, "operatorValue", e.target.value)}
                     value={siteEvent.metadata && siteEvent.metadata.operatorValue}
                     style={{ minWidth: 220, width: '100%', marginTop: 40 }}
                 />
@@ -106,17 +81,15 @@ const PageItem = ({
                 <Typography className={clsx(classes.buttonHead)}>
                     {t("siteTracking.addToGroups")}
                 </Typography>
-                <CheckboxGroups
-                    style={{ width: windowSize === 'xs' ? 320 : 460 }}
+                {subAccountGroups && subAccountGroups.length > 0 && <GroupTags
                     classes={classes}
-                    groups={subAccountGroups}
-                    selectedGroups={selectedGroups}
-                    onSelect={handleSelectedGroups}
-                    labelText={t('siteTracking.typeGroupName')}
-                />
+                    title={'siteTracking.typeGroupName'}
+                    onShowModal={onShowGroups}
+                    style={{ width: windowSize === 'xs' ? 320 : 460 }}
+                />}
             </Box>
         </Box>
     </Box >
 }
 
-export default PageItem;
+export default EventToGroups;

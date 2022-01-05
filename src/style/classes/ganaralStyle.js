@@ -87,7 +87,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   dialogCustomSize: {
     height: '40vh',
-    width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null
+    width: windowSize === 'lg' || windowSize === 'xl' ? '550px' : null
   },
   dialogContainer: {
     zIndex: '1500 !important',
@@ -922,7 +922,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer",
     display: "flex",
     justifyContent: "space-between",
-    width: "100%",
+    width: "90%",
     "@media screen and (max-width: 450px)": {
       width: 'calc(100% - 50px)'
     },

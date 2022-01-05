@@ -1,4 +1,4 @@
-export const domainProtocol = [
+export const DomainProtocol = [
     { key: 0, name: "http://" },
     { key: 1, name: "https://" }
 ];
@@ -56,13 +56,13 @@ export const ClientStatus = {
         { id: 5, value: 'common.Pending' }
     ]
 };
-export const eventsOptions = [
-    // { key: 'PAGE_LOAD', value: 'siteTracking.events.pageLoad' },
+export const EventsOptions = [
     { key: 'PAGE_VIEW', value: 'siteTracking.events.pageView' }
+    // { key: 'PAGE_LOAD', value: 'siteTracking.events.pageLoad' }
 ];
 
 
-export const eventConditions = [
+export const EventConditions = [
     { key: 'CONTAINS', value: "siteTracking.conditions.contains" },
     { key: 'EXACT', value: "siteTracking.conditions.exact" },
     { key: 'NOT_CONTAINS', value: "siteTracking.conditions.notcontain" }

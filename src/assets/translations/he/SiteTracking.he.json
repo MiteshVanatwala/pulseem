@@ -19,7 +19,8 @@
         "exact": "בדיוק",
         "notcontain": "לא כולל"
     },
-    "typeGroupName": "הקלד שם קבוצה",
+    "typeGroupName": "לחץ כאן להוספת קבוצות",
+    "placeHolderAddPageUrl":"הוסף כתובת URL כאן",
     "selectGroups": "בחר קבוצות",
     "addToGroups": "הוסף לקבוצות",
     "events": {

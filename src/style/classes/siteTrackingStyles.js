@@ -43,5 +43,11 @@ export const getSiteTrackingStyle = (windowSize, isRTL) => ({
         height: 50,
         minWidth: 80,
         marginTop: 40
+    },
+    domainAddress: {
+        '& input': {
+            textAlign: isRTL ? 'right' : 'left',
+            direction: 'ltr'
+        }
     }
 });

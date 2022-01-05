@@ -7,8 +7,7 @@ import Title from '../../components/Wizard/Title'
 import {
     Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Select, MenuItem, Tab, Checkbox
 } from '@material-ui/core'
-import EventToGroups from './EventToGroups'
-import { eventsOptions, domainProtocol } from '../../helpers/PulseemArrays'
+import { DomainProtocol } from '../../helpers/PulseemArrays'
 import { getGroupsBySubAccountId } from "../../redux/reducers/smsSlice";
 import { useDispatch, useSelector } from 'react-redux'
 import { get, post, getScript, setDomain } from '../../redux/reducers/siteTrackingSlice';
@@ -20,27 +19,25 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getCookie, setCookie } from '../../helpers/cookies';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { AiOutlineExclamationCircle } from "react-icons/ai";
-import TabPanel from '@material-ui/lab/TabPanel';
-import TabContext from '@material-ui/lab/TabContext';
-import TabList from '@material-ui/lab/TabList';
-//import { eventsControllerCreate, CreateEventDefinitionInputDto } from '../../services/test';
-
+import { GroupDialog } from '../../components/Groups/GroupDialog';
+import EventTabs from './EventTabs';
 
 const SiteTrackingEditor = ({ classes }) => {
+    const { subAccountGroups } = useSelector((state) => state.sms);
+    const { isRTL, windowSize } = useSelector(state => state.core);
+    const { selectedGroups } = useSelector((state) => state.group);
+    const { ToastMessages, siteScript } = useSelector((state) => state.siteTracking);
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [model, setModel] = useState(new SiteTrackingModel());
-    const { ToastMessages, siteScript } = useSelector((state) => state.siteTracking);
     const [validationError, setValidationError] = useState([]);
     const [protocol, setDomainProtocol] = useState('https://');
     const [dialogType, setDialogType] = useState({ type: null });
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const { isRTL, windowSize } = useSelector(state => state.core);
     const [copyStatus, setCopyStatus] = useState(false);
     const refScriptCode = useRef(null);
     const [scriptDialog, handleScriptDialogCheck] = useState(false);
-    const [tabValue, setTabValue] = useState('PAGE_VIEW');
 
     useEffect(() => {
         getData();
@@ -62,19 +59,15 @@ const SiteTrackingEditor = ({ classes }) => {
             setDialogType({ type: 'scriptImplementation' });
         }
     }
-
-
     const handleDomainProtocol = (event) => {
         setDomainProtocol(event.target.value);
     }
-
     const handleModelChange = (name, value) => {
         setModel(prevState => ({
             ...prevState,
             [name]: value
         }));
-    };
-
+    }
     const deepUpdate = (keys, value) => {
         let e = { ...model };
         if (e[keys[0]] && e[keys[0]][keys[1]]) {
@@ -85,7 +78,6 @@ const SiteTrackingEditor = ({ classes }) => {
         }
         setModel(e);
     }
-
     const validateForm = () => {
         let isValid = true;
         const isValidDomain = () => {
@@ -110,7 +102,6 @@ const SiteTrackingEditor = ({ classes }) => {
         }
         return isValid;
     }
-
     const onSave = async () => {
         setShowLoader(true);
         if (validateForm()) {
@@ -183,8 +174,8 @@ const SiteTrackingEditor = ({ classes }) => {
             domainAlreadyExist: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.serverResponse.domainAlreadyExist')),
             validationError: validationErrorDialog(),
             scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog(),
-            dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message)
-
+            dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
+            showGroups: renderGroupsDialog()
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -257,7 +248,9 @@ const SiteTrackingEditor = ({ classes }) => {
                     style={{ margin: '0 auto' }}>
                     {t('common.confirm')}
                 </Button>
-            )
+            ),
+            onCancel: () => { setDialogType(null); setValidationError([]); },
+            onClose: () => { setDialogType(null); setValidationError([]); },
         };
     }
     const handleCopyScript = () => {
@@ -390,7 +383,6 @@ const SiteTrackingEditor = ({ classes }) => {
             )
         }
     }
-
     const renderToast = () => {
         if (toastMessage) {
             setTimeout(() => {
@@ -402,6 +394,30 @@ const SiteTrackingEditor = ({ classes }) => {
         }
         return null;
     }
+    const handleGroupSelection = () => {
+        // model.metadata.groupIds = selectedGroups.map((g) => { return g.GroupID });
+        // deepUpdate(['metadata', 'GroupIds'], model.metadata.groupIds);
+        setDialogType(null);
+    }
+
+    useEffect(() => {
+        model.metadata.groupIds = selectedGroups.map((g) => { return g.GroupID });
+        deepUpdate(['metadata', 'GroupIds'], model.metadata.groupIds);
+        //setDialogType(null);
+    }, [selectedGroups]);
+
+    const renderGroupsDialog = () => {
+        return GroupDialog({
+            classes: classes,
+            title: t('mainReport.selectGroups'),
+            groups: subAccountGroups,
+            allowSelectAll: true,
+            groupsSelected: selectedGroups,
+            onConfirm: () => { handleGroupSelection() },
+            onClose: () => { setDialogType(null) }
+        });
+    }
+    //#endregion Dialogs
 
     const PageHeader = () => {
         return <>
@@ -441,42 +457,6 @@ const SiteTrackingEditor = ({ classes }) => {
         </Box>
     }
 
-    const handleEventTab = (val) => {
-        setTabValue(val);
-    }
-    const EventTabs = () => {
-        return <TabContext value={tabValue}>
-            <Grid
-                container
-                justifyContent='space-between'
-                alignItems='center'
-                className={classes.borderBottom1}
-                item xs={12}>
-                <TabList
-                    onChange={(e, value) => handleEventTab(value)}
-                    indicatorColor="primary"
-                >
-                    {eventsOptions.map((eo, idx) => {
-                        return <Tab
-                            key={idx}
-                            label={t(eo.value)}
-                            classes={{ root: classes.minWidth100 }}
-                            value={eo.key}
-                        />
-                    })}
-                </TabList>
-            </Grid>
-            {eventsOptions.map((eo, idx) => {
-                return <TabPanel key={idx} value={eo.key} index={idx} className={classes.p0}>
-                    {
-                        model && <EventToGroups siteEvent={model} onUpdate={deepUpdate} classes={classes} />
-                    }
-                </TabPanel>
-            })}
-        </TabContext>
-    }
-
-    //#endregion Dialogs
     return <DefaultScreen
         currentPage='settings'
         subPage='SiteTracking'
@@ -509,7 +489,7 @@ const SiteTrackingEditor = ({ classes }) => {
                                     onChange={(e) => handleDomainProtocol(e)}
                                     style={{ direction: 'ltr' }}
                                 >
-                                    {domainProtocol.map((protocol) => {
+                                    {DomainProtocol.map((protocol) => {
                                         return <MenuItem key={protocol.key} value={protocol.name}>
                                             {protocol.name}
                                         </MenuItem>
@@ -521,7 +501,7 @@ const SiteTrackingEditor = ({ classes }) => {
                                 inputProps={{
                                     shrink: false
                                 }}
-                                className={clsx(classes.textField, classes.fullWidth, isRTL ? classes.startElementNoRadius : classes.endElementNoRadius)}
+                                className={clsx(classes.textField, classes.fullWidth, isRTL ? classes.startElementNoRadius : classes.endElementNoRadius, classes.domainAddress)}
                                 required
                                 fullWidth
                                 variant="outlined"
@@ -531,7 +511,7 @@ const SiteTrackingEditor = ({ classes }) => {
                         </Grid>
                         <Grid item xs={12}>
                             <Typography className={clsx(classes.marginBlock20)}>{t("siteTracking.eventToTrack")}</Typography>
-                            <EventTabs />
+                            <EventTabs classes={classes} model={model} deepUpdate={deepUpdate} setDialog={setDialogType} />
                         </Grid>
                     </Grid>
                 </form>

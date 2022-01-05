@@ -19,7 +19,8 @@
         "exact": "Exact",
         "notcontain": "Not Contain"
     },
-    "typeGroupName": "Type group name",
+    "typeGroupName": "Click here to add groups",
+    "placeHolderAddPageUrl":"Add your page URL here",
     "selectGroups": "Select Groups",
     "addToGroups": "Add to Groups",
     "events": {
