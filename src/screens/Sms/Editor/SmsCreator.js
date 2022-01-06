@@ -961,7 +961,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     {t("mainReport.add")}
                   </Typography>
                   {editmenuClick ? (
-                    <Box className={classes.dropDiv}>
+                    <Box className={classes.dropDiv} style={{ top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-150px" : "-200px") : null }}>
                       <Typography onClick={() => handleTrackingLink()} className={clsx(classes.dropCon, !trackingButtonEnabled ? classes.disabled : null)}>
                         {!commonSettings.SubAccountSettings.DomainAddress && <CustomTooltip
                           isSimpleTooltip={false}
@@ -985,7 +985,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       >
                         {t("mainReport.landingLink")}
                       </Typography>
-                      {previousCampaignData.length == 0 ? null : (
+                      {previousCampaignData.length === 0 ? null : (
                         <Typography
                           className={classes.dropCon}
                           onClick={() => {

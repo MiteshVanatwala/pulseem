@@ -14,9 +14,9 @@ const redirectToLogin = () => {
 export const logout = async () => {
   try {
     await axios.get(logoutURL)
-    setCookie('jtoken','')
-    setCookie('accountFeatures','');
-    setCookie('isClal','');
+    setCookie('jtoken', '')
+    setCookie('accountFeatures', '');
+    setCookie('isClal', '');
     redirectToLogin()
   } catch (err) {
     console.log("logout error", err)
@@ -102,6 +102,34 @@ customInstance.interceptors.response.use(
     return Promise.reject(error.response.data)
   })
 
+eventsInstance.interceptors.request.use(async config => {
+  try {
+    const jtoken = getCookie('jtoken')
+    let token = jtoken
+    if (isProdMode) {
+      if (!jtoken) {
+        redirectToLogin()
+        return Promise.reject('Unautorized')
+      }
+      const language = getCookie('Culture')
+      const { data, request } = await axios.get(refreshTokenURL, {
+        headers: {
+          language
+        }
+      })
+      if (refreshTokenURL !== request.responseURL) {
+        redirectToLogin()
+        return Promise.reject('Unautorized')
+      }
+      token = data
+      setCookie('jtoken', token)
+    }
+    config.headers.Authorization = `Bearer ${token}`
+    return config
+  } catch (err) {
+    redirectToLogin()
+  }
+})
 eventsInstance.interceptors.response.use(
   res => res,
   error => {
