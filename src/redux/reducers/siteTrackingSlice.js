@@ -26,7 +26,7 @@ export const post = createAsyncThunk(
 export const getScript = createAsyncThunk(
   'getScript', async (_, thunkAPI) => {
     try {
-      const isVerified = await verifyGetUrl(siteTrackingScriptUrl);
+      const isVerified = await verifyGetUrl(`${siteTrackingScriptUrl}?v=${Math.random()}`);
       const response = {};
       if (isVerified === true) {
         response["data"] = `<script type="text/javascript">

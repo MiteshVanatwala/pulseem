@@ -574,7 +574,8 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         justifyContent: "center",
         padding: "5px",
         marginInlineStart: "5px",
-        marginBottom: 5
+        marginBottom: 5,
+        paddingInline: 10
     },
     reciFilterDiv:
     {
