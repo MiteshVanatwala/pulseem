@@ -63,7 +63,6 @@ const DirectSendReport = ({ classes }) => {
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().format('YYYY-MM-DD HH:mm')
     }));
-    handleExportEnable();
   }
   const getSMSReportData = async () => {
     await dispatch(getSMSDirectReport({
@@ -73,7 +72,6 @@ const DirectSendReport = ({ classes }) => {
       ToDate: moment().format('YYYY-MM-DD HH:mm')
     }));
     setLoader(false);
-    handleExportEnable();
   }
 
   const handleExportEnable = () => {
@@ -86,7 +84,7 @@ const DirectSendReport = ({ classes }) => {
 
   useEffect(initData, [dispatch])
 
-  useEffect(handleExportEnable, [isSearching, tabValue])
+  useEffect(handleExportEnable, [tabValue, directNewsletterReport, directSmsReport])
 
   const clearSearch = async (key) => {
     let isSearchingData = isSearching;
@@ -107,7 +105,6 @@ const DirectSendReport = ({ classes }) => {
       await getEmailReportData()
     }
 
-    handleExportEnable();
   }
 
   const handleSearchInput = (value, key, type) => {
