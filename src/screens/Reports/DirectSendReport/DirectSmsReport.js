@@ -34,7 +34,7 @@ const DirectSMSReportTab = ({
   rowsPerPage,
   searchData,
   isSearching,
-  directSmsReport,  
+  directSmsReport,
   showContent,
   advanceSearch,
   rowsOptions
@@ -48,7 +48,7 @@ const DirectSMSReportTab = ({
   const handleSearch = async () => {
     setLoader(true);
     const { sms = {} } = searchData || {};
-    const { FromNumber = '', ToNumber = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null} = sms || {};
+    const { FromNumber = '', ToNumber = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null } = sms || {};
     const param = {
       FromDate,
       ToDate,
@@ -117,7 +117,7 @@ const DirectSMSReportTab = ({
 
   const renderDateFields = () => {
     const { sms = {} } = searchData || {};
-    const { FromDate = null, ToDate = null } = sms || {};
+    const { FromDate = null, ToDate = null, ToNumber = '' } = sms || {};
 
     const handleFromDate = (val) => {
       let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
@@ -131,6 +131,17 @@ const DirectSMSReportTab = ({
 
     return (
       <>
+        <Grid item>
+          <TextField
+            type='tel'
+            variant='outlined'
+            size='small'
+            value={ToNumber}
+            onChange={(e) => handleSearchInput(e.target.value, 'ToNumber', 'sms')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('common.ToNumber')}
+          />
+        </Grid>
         <Grid item>
           <DateField
             classes={classes}
@@ -160,7 +171,7 @@ const DirectSMSReportTab = ({
 
   const renderAdvanceSearch = () => {
     const { sms = {} } = searchData || {};
-    const { FromNumber = '', ToNumber = '', ExternalRef = '', Status = '', ResponseType = '', Text = '' } = sms || {};
+    const { FromNumber = '', ExternalRef = '', Status = '', ResponseType = '', Text = '' } = sms || {};
 
     return (
       <>
@@ -175,17 +186,6 @@ const DirectSMSReportTab = ({
             placeholder={t('common.FrmNumber')}
           />
         </Grid>
-        <Grid item>
-          <TextField
-            type='tel'
-            variant='outlined'
-            size='small'
-            value={ToNumber}
-            onChange={(e) => handleSearchInput(e.target.value, 'ToNumber', 'sms')}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('common.ToNumber')}
-          />
-        </Grid>
         {renderDateFields()}
         <Grid item>
           <TextField
@@ -198,7 +198,7 @@ const DirectSMSReportTab = ({
           />
         </Grid>
         <Grid item>
-          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+          {/* <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
             <Select
               autoWidth
               displayEmpty
@@ -223,7 +223,15 @@ const DirectSMSReportTab = ({
                 return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
               })}
             </Select>
-          </FormControl>
+          </FormControl> */}
+          <TextField
+            variant='outlined'
+            size='small'
+            value={Text}
+            onChange={(e) => handleSearchInput(e.target.value, 'Text', 'sms')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('report.ContentOfMessage')}
+          />
         </Grid>
       </>
     )

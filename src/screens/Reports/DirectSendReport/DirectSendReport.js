@@ -220,12 +220,12 @@ const DirectSendReport = ({ classes }) => {
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={0} />
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={1} />
             </TabList>
-            <Button className={clsx(classes.actionButtonGreen, classes.exportButton, exportEnable === false ? classes.disabled : '')} onClick={handleExportFile}>
+            {windowSize !== 'xs' && <Button className={clsx(classes.actionButtonGreen, classes.exportButton, exportEnable === false ? classes.disabled : '')} onClick={handleExportFile}>
               {t('campaigns.exportFile')}
               <Box className={clsx(classes.pulseemIcon, classes.f20)}>
                 {'\uE17B'}
               </Box>
-            </Button>
+            </Button>}
           </Grid>
           <Grid item xs={12} className={classes.lastReportsTabPanels}>
             <TabPanel value={0} index={0} className={classes.p0}>

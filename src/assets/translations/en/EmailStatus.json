@@ -7,7 +7,7 @@
   "error": "Error",
   "retry": "Retry",
   "paused": "Paused",
-  "cancelled": "cancelled",
+  "cancelled": "Cancelled",
   "badError": "Direct Hard",
   "mediumError": "Direct Medium",
   "spam": "Spam",

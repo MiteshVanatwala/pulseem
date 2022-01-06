@@ -7,7 +7,6 @@ import clsx from 'clsx';
 import { ArrowDropUp } from '@material-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLanguage } from '../../redux/reducers/coreSlice'
-import Logo from '../../assets/images/pulseemnewlogo.png'
 import { useTranslation } from "react-i18next";
 import DoubleArrowIcon from '../../assets/images/doubleArrow.png'
 import { ReactComponent as QuestionIcon } from '../../assets/images/question.svg'
@@ -18,8 +17,6 @@ import { setCookie, getCookie } from '../../helpers/cookies'
 import { setScriptDialog } from '../../redux/reducers/notificationSlice';
 import { logout } from '../../helpers/api'
 import { openInNewTab } from '../../helpers/functions'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { actionURL } from '../../config/index'
 import { SiCodeforces } from 'react-icons/si'
 import { VscGraph } from 'react-icons/vsc'
 import i18n from '../../i18n'
@@ -284,7 +281,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
       { title: t('master.Automations'), iconUnicode: '\ue087', href: '/react/Automations', isShow: subAccountSettings && subAccountSettings.IsDirectAccount !== true },
       { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
       { title: t('appBar.reports.smsReports'), iconUnicode: '\ue04c', href: reportsOptions[2].href, isShow: true },
-      //routes[1]
+      { title: t('report.DirectSendReport'), key: 'directSendReport', href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true }      //routes[1]
     ]
     return (
       <>
@@ -343,10 +340,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
                                 className={classes.phoneAppBarItemIcon}>
                                 {route.iconUnicode}
                               </Typography>)
-                                : route.key === 'directSendEmail' ? (<SiCodeforces />)
-
-                                  : route.key === 'directSendSMS' && (<VscGraph />)
-
+                                : route.key === 'directSendReport' ? (<SiCodeforces />) : null
                               }
                             </Button>
                             <Typography
