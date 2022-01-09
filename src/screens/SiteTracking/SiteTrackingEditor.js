@@ -21,6 +21,7 @@ import { FaExclamationCircle } from 'react-icons/fa'
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { GroupDialog } from '../../components/Groups/GroupDialog';
 import EventTabs from './EventTabs';
+import { isValidUrl } from '../../helpers/UrlHelper';
 
 const SiteTrackingEditor = ({ classes }) => {
     const { subAccountGroups } = useSelector((state) => state.sms);
@@ -38,10 +39,18 @@ const SiteTrackingEditor = ({ classes }) => {
     const [copyStatus, setCopyStatus] = useState(false);
     const refScriptCode = useRef(null);
     const [scriptDialog, handleScriptDialogCheck] = useState(false);
+    const [isValidDomain, setIsValidDomain] = useState(null);
+
 
     useEffect(() => {
         getData();
     }, [dispatch]);
+
+    useEffect(() => {
+        if (isValidDomain !== null || model.domain !== '') {
+            setIsValidDomain(isValidUrl(model.domain));
+        }
+    }, [model.domain])
 
     const getData = async () => {
         await dispatch(getScript());
@@ -80,15 +89,12 @@ const SiteTrackingEditor = ({ classes }) => {
     }
     const validateForm = () => {
         let isValid = true;
-        const isValidDomain = () => {
-            const domainRegex = /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/g
-            return model.domain.match(domainRegex);
-        }
+
         if (model.domain === '') {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainRequired')])
             isValid = false;
         }
-        if (model.domain !== '' && !isValidDomain()) {
+        if (model.domain !== '' && !isValidUrl(model.domain)) {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainNotValid')])
             isValid = false;
         }
@@ -501,12 +507,17 @@ const SiteTrackingEditor = ({ classes }) => {
                                 inputProps={{
                                     shrink: false
                                 }}
-                                className={clsx(classes.textField, classes.fullWidth, isRTL ? classes.startElementNoRadius : classes.endElementNoRadius, classes.domainAddress)}
+                                className={clsx(classes.textField,
+                                    classes.fullWidth,
+                                    isRTL ? classes.startElementNoRadius : classes.endElementNoRadius,
+                                    classes.domainAddress,
+                                    isValidDomain === false ? classes.error : isValidDomain !== null ? classes.valid : null)}
                                 required
                                 fullWidth
                                 variant="outlined"
                                 onChange={e => { handleModelChange("domain", e.target.value) }}
                                 value={model.domain}
+                                style={{ marginTop: isValidDomain === false || isValidDomain === true ? 2 : 0 }}
                             />
                         </Grid>
                         <Grid item xs={12}>
