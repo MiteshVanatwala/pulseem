@@ -139,3 +139,31 @@ export const smsStatusToString = (status) => {
   return null;
 
 }
+
+export const emailStatusColor = (status) => {
+  switch (status.toString()) {
+    default:
+    case '1': {
+      return '#000';
+    }
+    case '2': {
+      return '#F59A23';
+    }
+    case '3': {
+      return '#27AE60';
+    }
+    case '4':
+    case '7':
+    case '8':
+    case '9':
+    case '10':
+    case '11':
+    case '12': {
+      return '#E74C3C';
+    }
+    case '6':
+    case '5': {
+      return '#0371AD';
+    }
+  }
+}

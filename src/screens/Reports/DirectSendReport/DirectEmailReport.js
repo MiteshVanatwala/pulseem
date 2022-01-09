@@ -16,7 +16,7 @@ import { getNewsletterDirectReport } from '../../../redux/reducers/newsletterSli
 import { Loader } from '../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { emailStatusToString } from '../../../helpers/functions';
+import { emailStatusToString, emailStatusColor } from '../../../helpers/functions';
 import { actionURL } from '../../../config/index'
 
 const RenderRow = ({
@@ -250,7 +250,7 @@ const DirectEmailReportTab = ({
 
     return (
       <>
-        <Grid item>
+        {windowSize !== 'xs' && <Grid item>
           <TextField
             variant='outlined'
             size='small'
@@ -260,6 +260,7 @@ const DirectEmailReportTab = ({
             placeholder={t('automations.Recipient')}
           />
         </Grid>
+        }
         <Grid item>
           <DateField
             classes={classes}
@@ -387,7 +388,7 @@ const DirectEmailReportTab = ({
             component='button'
             underline='none'
             onClick={() => handleAdvanceSearch(!advanceSearch)}
-            className={clsx(classes.dBlock, classes.mt5)}>
+            className={clsx(classes.dBlock, classes.mt5, windowSize === 'xs' ? classes.hidden : null)}>
             {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
           </Link>
         </Grid>
@@ -430,12 +431,6 @@ const DirectEmailReportTab = ({
             </Grid>
 
           </Grid>
-          {/* <Box>
-
-          </Box>
-          <Box className={classes.ml25}>
-
-          </Box> */}
         </Box>
         <Typography className={clsx(classes.colorGray, classes.mb5)}>
           {t('common.Total')} {directEmailReport.TotalRecords} {t('report.Messages')}
@@ -494,28 +489,89 @@ const DirectEmailReportTab = ({
     )
   }
 
+  const renderNameCell = (row) => {
+    const { SendDate, UpdateDate, CreatedDate } = row
+
+    const date = SendDate ? moment(SendDate) : ''
+    const udate = UpdateDate ? moment(UpdateDate) : '';
+    const showDate = SendDate ? date.format('L') : ''
+    const showTime = SendDate ? date.format('LT') : ''
+    const isSchedule = moment(SendDate) > moment();
+    const showUpdateDate = UpdateDate ? udate.format('L') : '';
+    const showTimeUpdate = UpdateDate ? udate.format('LT') : '';
+
+    return (
+      <>
+        <Typography className={classes.nameEllipsis}>
+          {t('report.SendDate')}
+        </Typography>
+        {SendDate !== null ?
+          (
+            <Typography className={classes.grayTextCell}>
+              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
+            </Typography>
+          ) :
+          (
+            <Typography className={classes.grayTextCell}>
+              {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+            </Typography>
+          )
+        }
+
+      </>
+    )
+  }
+
   const renderPhoneRow = (row) => {
+    const {
+      SendID,
+      Name,
+      SendDate,
+      UpdateDate,
+      CreatedDate,
+      ToEmail,
+      FromEmail,
+      Status
+    } = row
+
     return (
       <TableRow
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
-          <Box className={classes.inlineGrid}>
-            {/* {renderNameCell(row)} */}
+        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }} style={{ paddingInline: 10 }}>
+          <Box className={clsx(classes.dFlex)} style={{ width: '100%', justifyContent: 'space-between' }}>
+            <Box className={classes.dFlex} style={{ flexDirection: 'column', justifySelf: 'flex-start' }}>
+              {renderNameCell({ SendID, Name, SendDate, UpdateDate, Status, CreatedDate })}
+            </Box>
+            <Box style={{ justifySelf: 'flex-end' }}>
+              <Typography style={{ color: emailStatusColor(Status) }}>
+                {t(emailStatusToString(Status))}
+              </Typography>
+            </Box>
           </Box>
-          <Grid container justifyContent={'space-between'}>
-            <Grid item container className={classes.widthUnset}>
-              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
-                {/* {renderViewsCell(row.Views)} */}
-              </Grid>
-              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
-                {/* {renderSubscribersCell(row)} */}
-              </Grid>
-
-            </Grid>
+          <Grid container spacing={2}  >
             <Grid item>
-              {/* {renderCellIcons(row)} */}
+              <Typography className={classes.mobileReportHead}>
+                {t('report.FromEmail')}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              {FromEmail}
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t('report.ToEmail')}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {ToEmail}
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </TableCell>
@@ -526,7 +582,6 @@ const DirectEmailReportTab = ({
   const renderTableBody = () => {
     let sortData = directEmailReport && directEmailReport.DirectReport;
 
-    //sortData = sortData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
     return (
       <TableBody className={classes.tableDirectRow}>
         {!sortData ?
@@ -534,14 +589,15 @@ const DirectEmailReportTab = ({
             <Typography>{t("common.NoDataTryFilter")}</Typography>
           </Box> :
           sortData.map(row =>
-            <RenderRow
-              windowSize={windowSize}
-              classes={classes}
-              row={row}
-              noborderCell={noborderCell}
-              cellStyle={cellStyle}
-              rowStyle={rowStyle}
-              t={t} />
+            windowSize === 'xs' ? renderPhoneRow(row) :
+              <RenderRow
+                windowSize={windowSize}
+                classes={classes}
+                row={row}
+                noborderCell={noborderCell}
+                cellStyle={cellStyle}
+                rowStyle={rowStyle}
+                t={t} />
           )
         }
       </TableBody>
@@ -560,9 +616,10 @@ const DirectEmailReportTab = ({
   }
 
   const renderTablePagination = () => {
-    const emailData = directEmailReport && directEmailReport.TotalRecords || 1;
+    const emailData = (directEmailReport && directEmailReport.TotalRecords) || 1;
     return (
       <TablePagination
+        style={{ flexWrap: 'nowrap' }}
         classes={classes}
         rows={emailData}
         rowsPerPage={rowsPerPage}
