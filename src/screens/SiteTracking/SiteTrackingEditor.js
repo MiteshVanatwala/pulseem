@@ -415,7 +415,7 @@ const SiteTrackingEditor = ({ classes }) => {
     const renderGroupsDialog = () => {
         return GroupDialog({
             classes: classes,
-            title: t('mainReport.selectGroups'),
+            title: t('siteTracking.selectGroups'),
             groups: subAccountGroups,
             allowSelectAll: true,
             groupsSelected: selectedGroups,
@@ -476,7 +476,7 @@ const SiteTrackingEditor = ({ classes }) => {
                 <form className={classes.root} noValidate autoComplete="off">
                     <Grid container alignItems="center">
                         <Grid item lg={12} xs={12}>
-                            <Typography className={clsx(classes.marginBlock20)}>{t("siteTracking.siteToTrack")}</Typography>
+                            <Typography className={clsx(classes.marginBlock20, classes.font24)}>{t("siteTracking.siteToTrack")}</Typography>
                             <Typography className={clsx(classes.mt10, classes.buttonHead)}>
                                 {t("siteTracking.yourDomain")}
                             </Typography>
@@ -521,7 +521,7 @@ const SiteTrackingEditor = ({ classes }) => {
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            <Typography className={clsx(classes.marginBlock20)}>{t("siteTracking.eventToTrack")}</Typography>
+                            <Typography className={clsx(classes.marginBlock20, classes.font24)}>{t("siteTracking.eventToTrack")}</Typography>
                             <EventTabs classes={classes} model={model} deepUpdate={deepUpdate} setDialog={setDialogType} />
                         </Grid>
                     </Grid>
