@@ -32,6 +32,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import {
   CheckAnimation
 } from '../../../assets/images/settings/index'
+import { isValidUrl } from '../../../helpers/UrlHelper';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -622,11 +623,6 @@ const NotificationEditor = ({ props, classes }) => {
   /* #endregion */
   /* #region  Validators */
 
-  const validateWebsiteUrl = (websiteUrl) => {
-    const urlRegEx = new RegExp(/^((http|https):\/\/)?.([A-z]+)\.([A-z]{2,})/);
-    return urlRegEx.test(String(websiteUrl).toLowerCase());
-  };
-
   const updateUrlValue = (e) => {
     const val = e.target.value;
     if (val.trim().replace(" ", "") != "" && val.indexOf("http") == -1) {
@@ -656,7 +652,7 @@ const NotificationEditor = ({ props, classes }) => {
         document.querySelector("#notificationRedirectUrl").classList.add("error");
       }
       else {
-        if (!validateWebsiteUrl(model.RedirectURL)) {
+        if (!isValidUrl(model.RedirectURL)) {
           errorList.push({ message: t('notifications.validation.redirectUrlNotValid') });
           document.querySelector("#notificationRedirectUrl").classList.add("error");
         }
