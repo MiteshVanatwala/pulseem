@@ -61,7 +61,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     maxWidth: 1500
   },
   managmentNarrow: {
-    maxWidth: 950
+    maxWidth: 1050
   },
   managementTitle: {
     fontSize: windowSize === 'xs' ? '25px' : '36px',
@@ -1483,6 +1483,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: '0 !important',
     "@media screen and (max-width: 1170px)": {
       paddingBottom: '10px !important'
+    }
+  },
+  fullFlexItem: {
+    width: '100%',
+    justifyContent: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    '& .MuiGrid-container': {
+      justifyContent: windowSize !== 'xs' ? 'space-around' : null
     }
   }
 })
