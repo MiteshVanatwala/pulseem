@@ -28,13 +28,13 @@ const GroupTags = ({ classes,
             className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
             onClick={() => onShowModal()}
         >
-            {selectedGroups && selectedGroups.length <= 0 && <Box style={{ alignSelf: 'center', fontSize: 15}}>{t(title)}</Box>}
+            {selectedGroups && selectedGroups.length <= 0 && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
             {selectedGroups && selectedGroups.length > 0 ? (
-                <Box className={classes.mappedGroup} style={{maxWidth: '100%'}}>
+                <Box className={classes.mappedGroup} style={{ maxWidth: '100%' }}>
                     {selectedGroups.map((item, index) => {
                         return (
-                            <Box key={index} className={classes.selectedGroupsDiv}>
-                                <span className={classes.nameGroup}>
+                            <Box key={index} className={clsx(classes.selectedGroupsDiv)}>
+                                <span className={clsx(classes.ellipsisText, classes.nameGroup)}>
                                     {item.GroupName}
                                 </span>
                                 <RiCloseFill
