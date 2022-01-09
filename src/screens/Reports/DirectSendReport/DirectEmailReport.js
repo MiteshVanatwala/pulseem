@@ -544,7 +544,7 @@ const DirectEmailReportTab = ({
             <Box className={classes.dFlex} style={{ flexDirection: 'column', justifySelf: 'flex-start' }}>
               {renderNameCell({ SendID, Name, SendDate, UpdateDate, Status, CreatedDate })}
             </Box>
-            <Box style={{ justifySelf: 'flex-end' }}>
+            <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
               <Typography style={{ color: emailStatusColor(Status) }}>
                 {t(emailStatusToString(Status))}
               </Typography>

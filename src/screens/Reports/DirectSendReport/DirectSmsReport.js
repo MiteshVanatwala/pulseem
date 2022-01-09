@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer,
   TableCell, Link,
-  TableHead, TableRow, TextField, Typography, TableBody, FormControl, Select, MenuItem
+  TableHead, TableRow, TextField, Typography, TableBody
 } from '@material-ui/core';
 import {
   TablePagination, DateField
@@ -15,8 +15,8 @@ import Switch from "react-switch";
 import moment from 'moment';
 import { getSMSDirectReport } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { SmsStatus, ReponseType } from '../../../helpers/PulseemArrays';
-import { smsStatusToString } from '../../../helpers/functions';
+//import { SmsStatus, ReponseType } from '../../../helpers/PulseemArrays';
+import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
 
 const DirectSMSReportTab = ({
   classes,
@@ -251,7 +251,7 @@ const DirectSMSReportTab = ({
             endIcon={<SearchIcon />}>
             {t('campaigns.btnSearchResource1.Text')}
           </Button>
-          <Link
+          {windowSize !== 'xs' && <Link
             color='initial'
             component='button'
             underline='none'
@@ -259,6 +259,7 @@ const DirectSMSReportTab = ({
             className={clsx(classes.dBlock, classes.mt5)}>
             {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
           </Link>
+          }
         </Grid>
 
         {sms ? <Grid item>
@@ -399,12 +400,6 @@ const DirectSMSReportTab = ({
     return (
       <TableRow
         classes={rowStyle}>
-        {/* <TableCell
-          classes={noborderCell}
-          align='center'
-          className={classes.flex1}>
-          {renderCell(row.SMSCampaignID)}
-        </TableCell> */}
         <TableCell scope="row"
           classes={cellStyle}
           align='center'
@@ -471,28 +466,68 @@ const DirectSMSReportTab = ({
     )
   }
 
+  const renderNameCell = (row) => {
+    const { DATE } = row
+
+    const date = DATE ? moment(DATE) : ''
+    const showDate = DATE ? date.format('L') : ''
+    const showTime = DATE ? date.format('LT') : ''
+
+    return (
+      <>
+        <Typography className={classes.nameEllipsis}>
+          {t('report.SendDate')}
+        </Typography>
+        <Typography className={classes.grayTextCell}>
+          {t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
+        </Typography>
+      </>
+    )
+  }
+
   const renderPhoneRow = (row) => {
+    const {
+      PID, DATE, FROM, TO, STATUS
+    } = row
+
     return (
       <TableRow
         key={row.ID}
         component='div'
         classes={rowStyle}>
-        <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
-          <Box className={classes.inlineGrid}>
-            {/* {renderNameCell(row)} */}
+        <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }} style={{ paddingInline: 10 }}>
+          <Box className={clsx(classes.dFlex)} style={{ width: '100%', justifyContent: 'space-between' }}>
+            <Box className={classes.dFlex} style={{ flexDirection: 'column', justifySelf: 'flex-start' }}>
+              {renderNameCell({ PID, DATE, FROM, TO, STATUS })}
+            </Box>
+            <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
+              <Typography style={{ color: smsStatusColor(STATUS) }}>
+                {t(smsStatusToString(STATUS))}
+              </Typography>
+            </Box>
           </Box>
-          <Grid container justifyContent={'space-between'}>
-            <Grid item container className={classes.widthUnset}>
-              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
-                {/* {renderViewsCell(row.Views)} */}
-              </Grid>
-              <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
-                {/* {renderSubscribersCell(row)} */}
-              </Grid>
-
-            </Grid>
+          <Grid container spacing={2}  >
             <Grid item>
-              {/* {renderCellIcons(row)} */}
+              <Typography className={classes.mobileReportHead}>
+                {t('common.FrmNumber')}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              {FROM}
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t('common.ToNumber')}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {TO}
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </TableCell>
@@ -511,7 +546,7 @@ const DirectSMSReportTab = ({
 
     return (
       <TableBody>
-        {sortData.map(renderRow)}
+        {sortData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
       </TableBody>
     )
   }
