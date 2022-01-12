@@ -214,7 +214,7 @@ const DirectSendReport = ({ classes }) => {
             item xs={12}
             className={classes.borderBottom1}>
             <TabList
-              onChange={(e, value) => setTabValue(value)}
+              onChange={(e, value) => { setAdvanceSearch(tabValue !== value ? false : advanceSearch); setTabValue(value) }}
               indicatorColor="primary"
             >
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={0} />

@@ -581,8 +581,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tablePadingtonGridItem: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 50
+    alignItems: 'center'
+    // marginBottom: 50
   },
   tablePadingtonGridContainer: {
     paddingBlock: 10,
@@ -934,7 +934,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   reportPaperBgGray: {
     backgroundColor: 'rgba(242, 242, 242, 1)',
     padding: 10,
-    marginTop: 15,
     borderRadius: 0,
     border: '1px solid #ccc'
   },
