@@ -12,15 +12,12 @@ import DoubleArrowIcon from '../../assets/images/doubleArrow.png'
 import { ReactComponent as QuestionIcon } from '../../assets/images/question.svg'
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { SiCodeforces } from 'react-icons/si'
-import { VscGraph } from 'react-icons/vsc'
 import { getRoutes, getSettingsItem } from '../../helpers/routes'
 //import useCtrlHistory from '../../helpers/useCtrlHistory'
 import { setCookie, getCookie } from '../../helpers/cookies'
 import { setScriptDialog } from '../../redux/reducers/notificationSlice';
 import { logout } from '../../helpers/api'
 import { openInNewTab } from '../../helpers/functions'
-import { SiCodeforces } from 'react-icons/si'
-import { VscGraph } from 'react-icons/vsc'
 import i18n from '../../i18n'
 
 const AppBarItem = ({
