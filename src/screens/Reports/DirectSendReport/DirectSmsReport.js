@@ -278,7 +278,7 @@ const DirectSMSReportTab = ({
 
   const renderToggleContent = () => {
     return (
-      <Box className={clsx(classes.dFlex, classes.alignItemsCenter)}>
+      <Box className={clsx(classes.dFlex, classes.alignItemsCenter, classes.mb20)}>
         <Switch
           checked={showContent}
           onColor="#0371ad"
@@ -298,12 +298,12 @@ const DirectSMSReportTab = ({
   }
 
   const renderTotalSection = () => {
-    const { TotalCredits = 0, TotalSent = 0, TotalRecords } = directSmsReport || {};
+    const { TotalCredits = 0, TotalSent = 0, SMSCredits = 0, BulkEmails = 0, MmsCredits = 0 } = directSmsReport || {};
     return (
       <>
-        <Box className={clsx(classes.mt25, classes.paddingSides25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)}>
-          <Grid item container className={classes.widthUnset}>
-            <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+        <Box className={clsx(classes.paddingSides25, classes.reportPaperBgGray, classes.alignCenter)} style={{marginBottom: 50}}>
+          <Grid item container className={clsx(classes.justifyEvenly)} style={{ width: '100%' }}>
+            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
               <Typography className={clsx(classes.bold, classes.colorBlue)}>
                 {t('report.TotalSent')}
               </Typography>
@@ -311,19 +311,40 @@ const DirectSMSReportTab = ({
                 {TotalSent.toLocaleString()}
               </Typography>
             </Grid>
-            <Grid item className={clsx(classes.flexColumn2, classes.txtCenter, classes.pt14)}>
+            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
               <Typography className={clsx(classes.bold, classes.colorBlue)}>
                 {t('report.TotalCredits')}
               </Typography>
               <Typography align='center' className={clsx(classes.colorBlue)}>
-                {TotalCredits.toLocaleString() || 0}
+                {TotalSent.toLocaleString() || 0}
+              </Typography>
+            </Grid>
+            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
+              <Typography className={clsx(classes.bold, classes.colorBlue)}>
+                {t('report.remainSms')}
+              </Typography>
+              <Typography align='center' className={clsx(classes.colorBlue)}>
+                {SMSCredits.toLocaleString() || 0}
+              </Typography>
+            </Grid>
+            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
+              <Typography className={clsx(classes.bold, classes.colorBlue)}>
+                {t('report.remainEmail')}
+              </Typography>
+              <Typography align='center' className={clsx(classes.colorBlue)}>
+                {BulkEmails.toLocaleString() || 0}
+              </Typography>
+            </Grid>
+            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
+              <Typography className={clsx(classes.bold, classes.colorBlue)}>
+                {t('report.remainMms')}
+              </Typography>
+              <Typography align='center' className={clsx(classes.colorBlue)}>
+                {MmsCredits.toLocaleString() || 0}
               </Typography>
             </Grid>
           </Grid>
         </Box>
-        <Typography className={clsx(classes.colorGray, classes.mb5)}>
-          {t('common.Total')} {TotalSent.toLocaleString()} {t('report.Messages')}
-        </Typography>
       </>
     );
   }
@@ -360,7 +381,7 @@ const DirectSMSReportTab = ({
           <TableCell
             classes={cellStyle}
             align='center'
-            className={classes.flexHalf}>
+            className={classes.flex1}>
             {t('common.Status')}
           </TableCell>
           {showContent && <TableCell
@@ -425,7 +446,7 @@ const DirectSMSReportTab = ({
         <TableCell
           classes={cellStyle}
           align='center'
-          className={classes.flexHalf}>
+          className={classes.flex1}>
           {renderCell(row.STATUS, 'status')}
         </TableCell>
         {windowSize !== 'xs' && showContent && <TableCell
@@ -553,12 +574,17 @@ const DirectSMSReportTab = ({
 
   const renderTable = () => {
     return (
-      <TableContainer className={classes.borderAround}>
-        <Table className={clsx(classes.tableContainer, classes.noborder)}>
-          {windowSize !== 'xs' && renderTableHead()}
-          {renderTableBody()}
-        </Table>
-      </TableContainer>
+      <>
+        <Typography className={clsx(classes.colorGray, classes.mb5)}>
+          {t('common.Total')} {directSmsReport.TotalSent ?? 0} {t('report.Messages')}
+        </Typography>
+        <TableContainer className={classes.borderAround}>
+          <Table className={clsx(classes.tableContainer, classes.noborder)}>
+            {windowSize !== 'xs' && renderTableHead()}
+            {renderTableBody()}
+          </Table>
+        </TableContainer>
+      </>
     )
   }
 
@@ -582,9 +608,9 @@ const DirectSMSReportTab = ({
     <>
       {renderSearchLine()}
       {windowSize !== 'xs' && renderToggleContent()}
-      {renderTotalSection()}
       {renderTable()}
       {renderTablePagination()}
+      {renderTotalSection()}
       <Loader isOpen={showLoader} />
     </>
   );

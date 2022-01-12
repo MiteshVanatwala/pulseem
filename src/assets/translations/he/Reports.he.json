@@ -22,7 +22,7 @@
   "Messages": "הודעות",
   "Attachments": "קבצים מצורפים",
   "ToName": "שם נמען",
-  "FromName": "שם השולח",
+  "FromName": "מאת שם",
   "None": "ללא",
   "Opened": "נפתחו",
   "locUniqueOpens": "פתיחות ייחודיות",
@@ -56,6 +56,9 @@
   "clientStatus": "סטאטוס לקוח",
   "StatusDescription": "תיאור סטאטוס",
   "responses": "משובים",
+  "remainSms": "SMS שנותרו בחבילה",
+  "remainEmail": "אימיילים שנותרו בחבילה",
+  "remainMms": "MMS שנותרו בחבילה",
   "smsReport": {
     "statuses": {
       "other": "אחר",
