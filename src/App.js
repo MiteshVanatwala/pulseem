@@ -34,6 +34,7 @@ import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
+import { siteTrackingScriptUrl } from './config/index';
 
 
 const renderRoutes = (classes, history) => {
@@ -426,7 +427,7 @@ const App = ({ screenSize }) => {
 
     const insertScript = () => {
       const script = document.createElement("script");
-      script.src = "https://s3-webclientscriptbucket-aqeqhcqru4kj.s3.eu-west-1.amazonaws.com/main.js";
+      script.src = siteTrackingScriptUrl;
       script.async = true;
       document.head.appendChild(script);
     }
