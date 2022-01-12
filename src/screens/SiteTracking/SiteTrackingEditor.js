@@ -165,6 +165,7 @@ const SiteTrackingEditor = ({ classes }) => {
                 break;
             }
             default: {
+                setDialogType({ type: 'serverNotAble' })
                 break;
             }
         }
