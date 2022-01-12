@@ -12,25 +12,24 @@ export const pulseemNewTab = (path) => {
   if (newWindow) newWindow.opener = null
 }
 
-export const preferredOrder = (obj, order) => {
-  const arr = [];
-  for (var i = 0; i < obj.length; i++) {
-    var newObject = {};
-    order.map((o) => {
-      newObject[o] = obj[i][o];
-    });
-    arr.push(newObject);
-  }
-  return arr;
-}
-
-export const switchStatusDescription = (obj, statuses) => {
-  obj.map((o) => {
-    if (o.STATUS) {
-      o.StatusDescription = i18n.t(statuses[o.STATUS] ? statuses[o.STATUS].value : null);
+export const verifyGetUrl = (url) => {
+  return new Promise((resolve, reject) => {
+    try {
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4) {
+          if(xmlhttp.status === 200){
+            resolve(true);
+          }
+          //resolve(xmlhttp.status && xmlhttp.status !== 404)
+        }
+      }
+      xmlhttp.open("HEAD", url, true);
+      xmlhttp.send();
+    } catch (error) {
+      reject(false);
     }
   });
-  return obj;
 }
 
 export const emailStatusToString = (statusId) => {

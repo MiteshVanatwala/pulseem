@@ -22,6 +22,7 @@ import OTP from './OTP';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
 import { setCookie } from '../../../helpers/cookies'
 import { FaExclamationCircle } from 'react-icons/fa'
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 import { useHistory } from "react-router";
 import {
@@ -127,7 +128,6 @@ const SmsCreator = ({ classes, ...props }) => {
     testGroups,
     ToastMessages
   } = useSelector((state) => state.sms);
-
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [showEmoji, setShowEmoji] = useState(false);
@@ -173,6 +173,8 @@ const SmsCreator = ({ classes, ...props }) => {
   const [isFromAutomation, setIsFromAutomation] = useState(false);
   const [isNewVersion, setIsNewVersion] = useState(true);
   const [otpOpen, setOTPOpen] = useState(null);
+  const [trackingLink, setTrackingLink] = useState(null);
+  const [trackingButtonEnabled, setTrackingButtonEnabled] = useState(false);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -746,6 +748,29 @@ const SmsCreator = ({ classes, ...props }) => {
   const handleClickOutsideEmoji = () => {
     setShowEmoji(false);
   }
+  const handleTrackingLink = () => {
+    if (!commonSettings.SubAccountSettings.DomainAddress || commonSettings.SubAccountSettings.DomainAddress === '') {
+      return;
+    }
+    const fullTrackingUrl = `${commonSettings.SubAccountSettings.DomainAddress}?ref=##ClientIDEnc##`;
+    if (!smsModel.Text.includes(fullTrackingUrl)) {
+      setTrackingLink(fullTrackingUrl);
+      onAddText(fullTrackingUrl);
+    }
+  }
+
+  useEffect(() => {
+    if (commonSettings && commonSettings.SubAccountSettings) {
+      const fullTrackingUrl = `${commonSettings.SubAccountSettings.DomainAddress}?ref=##ClientIDEnc##`;
+      if (!smsModel.Text.includes(fullTrackingUrl)) {
+        setTrackingButtonEnabled(true);
+      }
+      else {
+        setTrackingButtonEnabled(false);
+      }
+    }
+
+  }, [editmenuClick])
 
   const renderMsg = () => {
     return (
@@ -936,7 +961,21 @@ const SmsCreator = ({ classes, ...props }) => {
                     {t("mainReport.add")}
                   </Typography>
                   {editmenuClick ? (
-                    <Box className={classes.dropDiv}>
+                    <Box className={classes.dropDiv} style={{ top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-150px" : "-200px") : null }}>
+                      <Typography onClick={() => handleTrackingLink()} className={clsx(classes.dropCon, !trackingButtonEnabled ? classes.disabled : null)}>
+                        {!commonSettings.SubAccountSettings.DomainAddress && <CustomTooltip
+                          isSimpleTooltip={false}
+                          classes={classes}
+                          interactive={true}
+                          arrow={true}
+                          style={{ position: 'absolute', fontSize: 14, marginInlineStart: 10, top: 12 }}
+                          placement={isRTL ? 'right' : 'left'}
+                          title={t("siteTracking.addFeatureTooltip")}
+                          text={<Typography className={classes.bodyInfo}>i</Typography>}
+                        />}
+                        {t("sms.addTrackingUrl")}
+                      </Typography>
+
                       <Typography
                         className={classes.dropCon}
                         onClick={() => {
@@ -946,7 +985,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       >
                         {t("mainReport.landingLink")}
                       </Typography>
-                      {previousCampaignData.length == 0 ? null : (
+                      {previousCampaignData.length === 0 ? null : (
                         <Typography
                           className={classes.dropCon}
                           onClick={() => {

@@ -1,0 +1,42 @@
+{
+    "title": "Site Tracking",
+    "setUp": "Set-up Site Tracking",
+    "yourDomain": "Your Domain",
+    "siteToTrack": "Which site would you like to track?",
+    "eventToTrack": "Which events would you like to track?",
+    "addDomain": "Add your domain here",
+    "addPageUrl": "Add Page URL",
+    "pageUrl": "Page URL",
+    "saved": "Event saved successfully!",
+    "scriptImplementation": "View Script",
+    "scriptDescription": "In order to start tracking your customers are interacting with your site, you must first implement the script below so visitors to your site can receive notifications.",
+    "scriptInstruction": "Copy the following lines of code and paste them in the last line before \"head\" element",
+    "scriptPayAttention": "* Pay attention, Site tracking will only work on sites with SSL certificate",
+    "addFeatureTooltip": "Want to set up tracking on your site? Talk to our sales team today at 03-5240290!",
+    "conditions": {
+        "none": "None",
+        "contains": "Contains",
+        "exact": "Exact",
+        "notcontain": "Not Contain"
+    },
+    "typeGroupName": "Click here to add groups",
+    "placeHolderAddPageUrl":"Add your page URL here",
+    "selectGroups": "Select Groups",
+    "addToGroups": "Add to Groups",
+    "events": {
+        "pageLoad": "Page Load",
+        "pageView": "Page View"
+    },
+    "validation": {
+        "domainRequired": "Domain - Required field",
+        "domainNotValid": "Domain - Address not valid",
+        "groupsRequired": "Must add group for event",
+        "pageUrlRequired": "Page URL - Required field"
+    },
+    "serverResponse": {
+        "notAuthorized": "Permission warnning. Please contact support.",
+        "missingMandatoryAction": "One of the parameter is missing. Please try again",
+        "serverNotAble": "Server Error. Please contact support.",
+        "domainAlreadyExist": "This domain already exists"
+    }
+}

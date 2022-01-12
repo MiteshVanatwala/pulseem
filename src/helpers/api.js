@@ -1,28 +1,29 @@
 import axios from 'axios'
-import {getCookie,setCookie} from './cookies';
-import {apiURL,actionURL,isProdMode} from '../config/index'
+import { getCookie, setCookie } from './cookies';
+import { apiURL, actionURL, isProdMode, siteTrackingURL } from '../config/index'
 
-const refreshTokenURL=`${actionURL}RefreshToken.ashx`
-const logoutURL=`${actionURL}LogoutSession.ashx`
+const refreshTokenURL = `${actionURL}RefreshToken.ashx`
+const logoutURL = `${actionURL}LogoutSession.ashx`
 const pulseemBaseUrl = `${actionURL}`
+const eventsBaseUrl = `${siteTrackingURL}`
 
-const redirectToLogin=() => {
-  window.location.href='/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true'
+const redirectToLogin = () => {
+  window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true'
 }
 
-export const logout=async () => {
+export const logout = async () => {
   try {
     await axios.get(logoutURL)
-    setCookie('jtoken','')
-    setCookie('accountFeatures','');
-    setCookie('isClal','');
+    setCookie('jtoken', '')
+    setCookie('accountFeatures', '');
+    setCookie('isClal', '');
     redirectToLogin()
-  } catch(err) {
-    console.log("logout error",err)
+  } catch (err) {
+    console.log("logout error", err)
   }
 }
 
-const instence=axios.create({
+const instence = axios.create({
   baseURL: apiURL,
   headers: {
     'Content-Type': 'application/json; charset=UTF-8'
@@ -42,31 +43,43 @@ const customInstance = axios.create({
 customInstance.defaults.withCredentials = true;
 customInstance.defaults.credentials = 'include';
 
+const eventsInstance = axios.create({
+  baseURL: eventsBaseUrl,
+  headers: {
+    'Content-Type': 'application/json; charset=UTF-8',
+    dataType: "json"
+  },
+  timeout: 300000
+});
+
+// eventsInstance.defaults.withCredentials = true;
+// eventsInstance.defaults.credentials = 'include';
+
 instence.interceptors.request.use(async config => {
   try {
-    const jtoken=getCookie('jtoken')
-    let token=jtoken
-    if(isProdMode) {
-      if(!jtoken) {
+    const jtoken = getCookie('jtoken')
+    let token = jtoken
+    if (isProdMode) {
+      if (!jtoken) {
         redirectToLogin()
         return Promise.reject('Unautorized')
       }
-      const language=getCookie('Culture')
-      const {data,request}=await axios.get(refreshTokenURL,{
+      const language = getCookie('Culture')
+      const { data, request } = await axios.get(refreshTokenURL, {
         headers: {
           language
         }
       })
-      if(refreshTokenURL!==request.responseURL) {
+      if (refreshTokenURL !== request.responseURL) {
         redirectToLogin()
         return Promise.reject('Unautorized')
       }
-      token=data
-      setCookie('jtoken',token)
+      token = data
+      setCookie('jtoken', token)
     }
-    config.headers.Authorization=`Bearer ${token}`
+    config.headers.Authorization = `Bearer ${token}`
     return config
-  } catch(err) {
+  } catch (err) {
     redirectToLogin()
   }
 })
@@ -74,19 +87,56 @@ instence.interceptors.request.use(async config => {
 instence.interceptors.response.use(
   res => res,
   error => {
-    if(error.response.status===401) {
+    if (error.response.status === 401) {
       redirectToLogin()
     }
     return Promise.reject(error.response.data)
   })
 
-  customInstance.interceptors.response.use(
-    res => res,
-    error => {
-      if(error.response.status===401) {
-        throw error.response.status;
-      }
-      return Promise.reject(error.response.data)
-    })
+customInstance.interceptors.response.use(
+  res => res,
+  error => {
+    if (error.response.status === 401) {
+      throw error.response.status;
+    }
+    return Promise.reject(error.response.data)
+  })
 
-export { instence, customInstance }
+eventsInstance.interceptors.request.use(async config => {
+  try {
+    const jtoken = getCookie('jtoken')
+    let token = jtoken
+    if (isProdMode) {
+      if (!jtoken) {
+        redirectToLogin()
+        return Promise.reject('Unautorized')
+      }
+      const language = getCookie('Culture')
+      const { data, request } = await axios.get(refreshTokenURL, {
+        headers: {
+          language
+        }
+      })
+      if (refreshTokenURL !== request.responseURL) {
+        redirectToLogin()
+        return Promise.reject('Unautorized')
+      }
+      token = data
+      setCookie('jtoken', token)
+    }
+    config.headers.Authorization = `Bearer ${token}`
+    return config
+  } catch (err) {
+    redirectToLogin()
+  }
+})
+eventsInstance.interceptors.response.use(
+  res => res,
+  error => {
+    if (error.response.status === 401) {
+      throw error.response.status;
+    }
+    return Promise.reject(error.response.data)
+  })
+
+export { instence, customInstance, eventsInstance }

@@ -11,6 +11,8 @@ import { useTranslation } from "react-i18next";
 import DoubleArrowIcon from '../../assets/images/doubleArrow.png'
 import { ReactComponent as QuestionIcon } from '../../assets/images/question.svg'
 import { FaBars, FaTimes } from 'react-icons/fa';
+import { SiCodeforces } from 'react-icons/si'
+import { VscGraph } from 'react-icons/vsc'
 import { getRoutes, getSettingsItem } from '../../helpers/routes'
 //import useCtrlHistory from '../../helpers/useCtrlHistory'
 import { setCookie, getCookie } from '../../helpers/cookies'
@@ -98,10 +100,14 @@ const AppBarItem = ({
                         classes={{ root: classes.appBarItemMenuRoot }}
                         className={classes.appBarItemMenuItem}
                       >
-                        <img
-                          src={option.iconSrc || DoubleArrowIcon}
-                          alt='Double Arrow Icon'
-                          className={classes.appBarItemDoubleArrowIcon} />
+                        {option.isFaIcon ?
+                          <option.iconSrc style={{padding: '0 5px'}} />
+                          :
+                          <img
+                            src={option.iconSrc || DoubleArrowIcon}
+                            alt='Double Arrow Icon'
+                            className={classes.appBarItemDoubleArrowIcon} />
+                        }
                         {option.title}
                       </MenuItem>
                     </Box>

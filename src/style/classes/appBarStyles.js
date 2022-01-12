@@ -1,6 +1,6 @@
-const appBarTitleTextSize={xs: 18,sm: 17,md: 15,lg: 17,xl: 19}
+const appBarTitleTextSize = { xs: 18, sm: 17, md: 15, lg: 17, xl: 19 }
 
-export const appBarStyle=(windowSize,isRTL,theme) => ({
+export const appBarStyle = (windowSize, isRTL, theme) => ({
   appBarItemContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -37,7 +37,7 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   },
   appBarItemDoubleArrowIcon: {
     marginInlineEnd: '0.5em',
-    transform: isRTL? 'rotate(0deg)':'rotateY(180deg)'
+    transform: isRTL ? 'rotate(0deg)' : 'rotateY(180deg)'
   },
   appBarItemArrow: {
     position: 'absolute',
@@ -55,7 +55,13 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
     fontFamily: 'OpenSansHebrew-Bold',
     alignSelf: 'center',
     textDecoration: 'none',
-    color: '#333'
+    color: '#333',
+    '& svg': {
+      fontSize: 17,
+      color: '#555555',
+      paddingRight: isRTL ? '0px !important' : '10px !important',
+      paddingLeft: isRTL ? '10px !important' : '0px !important',
+    }
   },
   appBarItemMenuRoot: {
     '&:hover': {
@@ -69,7 +75,7 @@ export const appBarStyle=(windowSize,isRTL,theme) => ({
   },
   appBarLogo: {
     marginInlineEnd: '1vw',
-    width: windowSize==='xs'?125:143,
+    width: windowSize === 'xs' ? 125 : 143,
     alignSelf: 'center'
   },
   appBerSpace: {

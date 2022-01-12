@@ -87,7 +87,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   dialogCustomSize: {
     height: '40vh',
-    width: windowSize === 'lg' || windowSize === 'xl' ? '500px' : null
+    width: windowSize === 'lg' || windowSize === 'xl' ? '550px' : null
   },
   dialogContainer: {
     zIndex: '1500 !important',
@@ -317,6 +317,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mb15: {
     marginBottom: 15
+  },
+  mt20: {
+    marginTop: 20
   },
   mb20: {
     marginBottom: 20
@@ -766,6 +769,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   error: {
     borderBottom: "2px solid red !important",
   },
+  valid: {
+    borderBottom: "2px solid #008000 !important",
+  },
   msgHead: {
     fontSize: "20px",
     "@media screen and (max-width: 768px)": {
@@ -916,7 +922,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     cursor: "pointer",
     display: "flex",
     justifyContent: "space-between",
-    width: "100%",
+    width: "90%",
     "@media screen and (max-width: 450px)": {
       width: 'calc(100% - 50px)'
     },
@@ -2034,6 +2040,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontWeight: 'bold',
     maxWidth: graphTextWidth[windowSize]
   },
+  mt24: {
+    marginTop: 24
+  },
   mb25: {
     marginBottom: 25
   },
@@ -2247,5 +2256,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   //#endregion
   textCenter: {
     textAlign: 'center'
+  },
+  marginBlock10: {
+    marginBlock: 10
+  },
+  marginBlock20: {
+    marginBlock: 20
+  },
+
+  MuiChipRoot: {
+    backgroundColor: '#1c82b2 !important',
+    '& span': {
+      color: '#fff'
+    },
+    '& .MuiChip-deleteIcon': {
+      color: '#fff',
+      fill: 'currentColor'
+    }
   }
 });
