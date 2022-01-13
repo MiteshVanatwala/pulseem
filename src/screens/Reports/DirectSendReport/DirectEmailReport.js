@@ -233,20 +233,18 @@ const DirectEmailReportTab = ({
     setLoader(false);
   }
 
+  const handleFromDate = (val) => {
+    let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
+    handleSearchInput(dateVal, 'FromDate', 'email')
+  }
 
+  const handleToDate = (val) => {
+    let dateVal = moment(val).endOf('day').format('YYYY-MM-DD HH:mm') || null;
+    handleSearchInput(dateVal, 'ToDate', 'email')
+  }
   const renderDateFields = () => {
     const { email = {} } = searchData || {};
     const { FromDate = null, ToDate = null, ToName = '' } = email || {};
-
-    const handleFromDate = (val) => {
-      let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
-      handleSearchInput(dateVal, 'FromDate', 'email')
-    }
-
-    const handleToDate = (val) => {
-      let dateVal = moment(val).endOf('day').format('YYYY-MM-DD HH:mm') || null;
-      handleSearchInput(dateVal, 'ToDate', 'email')
-    }
 
     return (
       <>
@@ -397,7 +395,11 @@ const DirectEmailReportTab = ({
           <Button
             size='large'
             variant='contained'
-            onClick={() => clearSearch('email')}
+            onClick={() => {
+              clearSearch('email');
+              handleFromDate(moment().startOf('month').format('YYYY-MM-DD HH:mm'));
+              handleToDate(moment().format('YYYY-MM-DD HH:mm'));
+            }}
             className={classes.searchButton}
             endIcon={<ClearIcon />}>
             {t('common.clear')}
@@ -411,7 +413,7 @@ const DirectEmailReportTab = ({
     const { TotalCredits = 0, TotalRecords = 0, SMSCredits = 0, BulkEmails = 0, MmsCredits = 0 } = directEmailReport || {};
     return (
       <>
-        <Box className={clsx(classes.paddingSides25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)} style={{marginBottom: 50}}>
+        <Box className={clsx(classes.paddingSides25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)} style={{ marginBottom: 50 }}>
           <Grid item container className={clsx(classes.justifyEvenly)} style={{ width: '100%' }}>
             <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
               <Typography className={clsx(classes.bold, classes.colorBlue)}>

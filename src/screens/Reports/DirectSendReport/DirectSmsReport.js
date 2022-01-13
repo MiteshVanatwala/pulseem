@@ -326,7 +326,11 @@ const DirectSMSReportTab = ({
           <Button
             size='large'
             variant='contained'
-            onClick={() => clearSearch('sms')}
+            onClick={() => {
+              clearSearch('sms');
+              handleFromDate(moment().startOf('month').format('YYYY-MM-DD HH:mm'));
+              handleToDate(moment().format('YYYY-MM-DD HH:mm'))
+            }}
             className={classes.searchButton}
             endIcon={<ClearIcon />}>
             {t('common.clear')}
