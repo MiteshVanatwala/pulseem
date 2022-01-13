@@ -131,18 +131,7 @@ const DirectSMSReportTab = ({
 
     return (
       <>
-        <Grid item>
-          <TextField
-            type='tel'
-            variant='outlined'
-            size='small'
-            value={ToNumber}
-            onChange={(e) => handleSearchInput(e.target.value, 'ToNumber', 'sms')}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('common.ToNumber')}
-          />
-        </Grid>
-        <Grid item>
+      <Grid item>
           <DateField
             classes={classes}
             value={FromDate}
@@ -159,12 +148,23 @@ const DirectSMSReportTab = ({
             value={ToDate}
             onChange={handleToDate}
             placeholder={t('mms.locToDateResource1.Text')}
-            minDate={FromDate ? FromDate : undefined}
+            minDate={FromDate ? FromDate : '2000-01-01'}
             toolbarDisabled={false}
-            minDate={'2000-01-01'}
             rootStyle={classes.maxWidth190}
           />
         </Grid>
+        <Grid item>
+          <TextField
+            type='tel'
+            variant='outlined'
+            size='small'
+            value={ToNumber}
+            onChange={(e) => handleSearchInput(e.target.value, 'ToNumber', 'sms')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('common.ToNumber')}
+          />
+        </Grid>
+        
       </>
     )
   }
@@ -175,6 +175,7 @@ const DirectSMSReportTab = ({
 
     return (
       <>
+        {renderDateFields()}
         <Grid item>
           <TextField
             type='tel'
@@ -186,7 +187,6 @@ const DirectSMSReportTab = ({
             placeholder={t('common.FrmNumber')}
           />
         </Grid>
-        {renderDateFields()}
         <Grid item>
           <TextField
             variant='outlined'
@@ -256,7 +256,7 @@ const DirectSMSReportTab = ({
             component='button'
             underline='none'
             onClick={() => handleAdvanceSearch(!advanceSearch)}
-            className={clsx(classes.dBlock, classes.mt5)}>
+            className={clsx(classes.dBlock, classes.mt5, advanceSearch && windowSize === 'lg' ? classes.mb15 : null)}>
             {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
           </Link>
           }
