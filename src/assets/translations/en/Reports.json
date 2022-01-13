@@ -54,6 +54,9 @@
   "clientStatus": "Client Status",
   "StatusDescription": "Status Description",
   "responses": "Responses",
+  "remainSms": "SMS left in package",
+  "remainEmail": "Email left in package",
+  "remainMms": "MMS left in package",
   "smsReport": {
     "statuses": {
       "other": "Other",
