@@ -16,7 +16,7 @@ import { preferredOrder, switchStatusDescription } from '../../../helpers/export
 import { exportFile } from '../../../helpers/exportFromJson';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
-import { setCookie } from '../../../helpers/cookies';
+import { setCookie, getCookie } from '../../../helpers/cookies';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 
 const DirectSendReport = ({ classes }) => {
@@ -59,14 +59,14 @@ const DirectSendReport = ({ classes }) => {
   const getEmailReportData = async () => {
     await dispatch(getNewsletterDirectReport({
       PageIndex: 1,
-      PageSize: rowsPerPage,
+      PageSize: getCookie('rpp') || rowsPerPage,
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().format('YYYY-MM-DD HH:mm')
     }));
   }
   const getSMSReportData = async () => {
     await dispatch(getSMSDirectReport({
-      PageSize: 6,
+      PageSize: getCookie('rpp') || rowsPerPage,
       PageIndex: 1,
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().format('YYYY-MM-DD HH:mm')

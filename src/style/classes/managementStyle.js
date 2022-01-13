@@ -1253,8 +1253,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: '5px 0px'
   },
   lastReportsTabPanels: {
-    paddingRight: 25,
-    paddingLeft: 25
+    paddingRight: windowSize !== 'xs' ? 25 : 0,
+    paddingLeft:  windowSize !== 'xs' ? 25 : 0
   },
   tabPanel: {
     minHeight: 220,

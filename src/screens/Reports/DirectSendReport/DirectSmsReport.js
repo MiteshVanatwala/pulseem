@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer,
-  TableCell, Link,
+  TableCell, Link, FormControl, Select, MenuItem,
   TableHead, TableRow, TextField, Typography, TableBody
 } from '@material-ui/core';
 import {
@@ -15,7 +15,7 @@ import Switch from "react-switch";
 import moment from 'moment';
 import { getSMSDirectReport } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-//import { SmsStatus, ReponseType } from '../../../helpers/PulseemArrays';
+import { SmsStatus } from '../../../helpers/PulseemArrays';
 import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
 
 const DirectSMSReportTab = ({
@@ -79,7 +79,7 @@ const DirectSMSReportTab = ({
     let { sms = {} } = searchData || {};
     let params = {
       PageSize: rowsPerPage,
-      PageIndex: (val - 1),
+      PageIndex: val,
       ...sms
     };
     handlePageChange(val);
@@ -115,33 +115,22 @@ const DirectSMSReportTab = ({
     );
   }
 
+  const handleFromDate = (val) => {
+    let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
+    handleSearchInput(dateVal, 'FromDate', 'sms')
+  }
+
+  const handleToDate = (val) => {
+    let dateVal = moment(val).endOf('day').format('YYYY-MM-DD HH:mm') || null;
+    handleSearchInput(dateVal, 'ToDate', 'sms')
+  }
+
   const renderDateFields = () => {
     const { sms = {} } = searchData || {};
     const { FromDate = null, ToDate = null, ToNumber = '' } = sms || {};
 
-    const handleFromDate = (val) => {
-      let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
-      handleSearchInput(dateVal, 'FromDate', 'sms')
-    }
-
-    const handleToDate = (val) => {
-      let dateVal = moment(val).endOf('day').format('YYYY-MM-DD HH:mm') || null;
-      handleSearchInput(dateVal, 'ToDate', 'sms')
-    }
-
     return (
       <>
-        <Grid item>
-          <TextField
-            type='tel'
-            variant='outlined'
-            size='small'
-            value={ToNumber}
-            onChange={(e) => handleSearchInput(e.target.value, 'ToNumber', 'sms')}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('common.ToNumber')}
-          />
-        </Grid>
         <Grid item>
           <DateField
             classes={classes}
@@ -159,19 +148,30 @@ const DirectSMSReportTab = ({
             value={ToDate}
             onChange={handleToDate}
             placeholder={t('mms.locToDateResource1.Text')}
-            minDate={FromDate ? FromDate : undefined}
+            minDate={FromDate ? FromDate : '2000-01-01'}
             toolbarDisabled={false}
-            minDate={'2000-01-01'}
             rootStyle={classes.maxWidth190}
           />
         </Grid>
+        <Grid item>
+          <TextField
+            type='tel'
+            variant='outlined'
+            size='small'
+            value={ToNumber}
+            onChange={(e) => handleSearchInput(e.target.value, 'ToNumber', 'sms')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('common.ToNumber')}
+          />
+        </Grid>
+
       </>
     )
   }
 
   const renderAdvanceSearch = () => {
     const { sms = {} } = searchData || {};
-    const { FromNumber = '', ExternalRef = '', Status = '', ResponseType = '', Text = '' } = sms || {};
+    const { FromNumber = '', ExternalRef = '', Status = '', Text = '', FromDate = null, ToDate = null, ToNumber = '' } = sms || {};
 
     return (
       <>
@@ -186,15 +186,15 @@ const DirectSMSReportTab = ({
             placeholder={t('common.FrmNumber')}
           />
         </Grid>
-        {renderDateFields()}
         <Grid item>
           <TextField
+            type='tel'
             variant='outlined'
             size='small'
-            value={ExternalRef}
-            onChange={(e) => handleSearchInput(e.target.value, 'ExternalRef', 'sms')}
+            value={ToNumber}
+            onChange={(e) => handleSearchInput(e.target.value, 'ToNumber', 'sms')}
             className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('report.ExternalRef')}
+            placeholder={t('common.ToNumber')}
           />
         </Grid>
         <Grid item>
@@ -233,6 +233,66 @@ const DirectSMSReportTab = ({
             placeholder={t('report.ContentOfMessage')}
           />
         </Grid>
+        <Grid item>
+          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+            <Select
+              autoWidth
+              displayEmpty
+              className={clsx(classes.textField, classes.minWidth192)}
+              value={Status}
+              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
+              onChange={(e) => handleSearchInput(e.target.value, 'Status', 'sms')}
+              MenuProps={{
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left"
+                },
+                transformOrigin: {
+                  vertical: "top",
+                  horizontal: "left"
+                },
+                getContentAnchorEl: null
+              }}
+            >
+              <MenuItem key={-1} value="" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
+              {SmsStatus.map(so => {
+                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
+              })}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item>
+          <DateField
+            classes={classes}
+            value={FromDate}
+            onChange={handleFromDate}
+            placeholder={t('mms.locFromDateResource1.Text')}
+            rootStyle={classes.maxWidth190}
+            toolbarDisabled={false}
+            minDate={'2000-01-01'}
+          />
+        </Grid>
+        <Grid item>
+          <DateField
+            classes={classes}
+            value={ToDate}
+            onChange={handleToDate}
+            placeholder={t('mms.locToDateResource1.Text')}
+            minDate={FromDate ? FromDate : '2000-01-01'}
+            toolbarDisabled={false}
+            rootStyle={classes.maxWidth190}
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            variant='outlined'
+            size='small'
+            value={ExternalRef}
+            onChange={(e) => handleSearchInput(e.target.value, 'ExternalRef', 'sms')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('report.ExternalRef')}
+          />
+        </Grid>
       </>
     )
   }
@@ -256,7 +316,7 @@ const DirectSMSReportTab = ({
             component='button'
             underline='none'
             onClick={() => handleAdvanceSearch(!advanceSearch)}
-            className={clsx(classes.dBlock, classes.mt5)}>
+            className={clsx(classes.dBlock, classes.mt5, advanceSearch && windowSize === 'lg' ? classes.mb15 : null)}>
             {t(!advanceSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
           </Link>
           }
@@ -266,7 +326,11 @@ const DirectSMSReportTab = ({
           <Button
             size='large'
             variant='contained'
-            onClick={() => clearSearch('sms')}
+            onClick={() => {
+              clearSearch('sms');
+              handleFromDate(moment().startOf('month').format('YYYY-MM-DD HH:mm'));
+              handleToDate(moment().format('YYYY-MM-DD HH:mm'))
+            }}
             className={classes.searchButton}
             endIcon={<ClearIcon />}>
             {t('common.clear')}
@@ -301,7 +365,7 @@ const DirectSMSReportTab = ({
     const { TotalCredits = 0, TotalSent = 0, SMSCredits = 0, BulkEmails = 0, MmsCredits = 0 } = directSmsReport || {};
     return (
       <>
-        <Box className={clsx(classes.paddingSides25, classes.reportPaperBgGray, classes.alignCenter)} style={{marginBottom: 50}}>
+        <Box className={clsx(classes.paddingSides25, classes.reportPaperBgGray, classes.alignCenter)} style={{ marginBottom: 50 }}>
           <Grid item container className={clsx(classes.justifyEvenly)} style={{ width: '100%' }}>
             <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
               <Typography className={clsx(classes.bold, classes.colorBlue)}>
@@ -599,7 +663,7 @@ const DirectSMSReportTab = ({
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={handlePageSearching}
-        returnPageOne={true}
+        returnPageOne={false}
       />
     )
   }
