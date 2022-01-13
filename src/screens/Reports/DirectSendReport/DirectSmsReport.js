@@ -79,7 +79,7 @@ const DirectSMSReportTab = ({
     let { sms = {} } = searchData || {};
     let params = {
       PageSize: rowsPerPage,
-      PageIndex: (val - 1),
+      PageIndex: val,
       ...sms
     };
     handlePageChange(val);
@@ -599,7 +599,7 @@ const DirectSMSReportTab = ({
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={handlePageSearching}
-        returnPageOne={true}
+        returnPageOne={false}
       />
     )
   }
