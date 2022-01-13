@@ -440,6 +440,7 @@ const SmsCreator = ({ classes, ...props }) => {
     dispatch(getCreditsforSMS(count)).then((res) => {
       let credits = res.payload.split("#");
       setmessageCount(credits[0]);
+      handleSmsModelChange("CreditsPerSms", credits[0]);
     });
   }
   const onCamppaignChange = (e) => {
