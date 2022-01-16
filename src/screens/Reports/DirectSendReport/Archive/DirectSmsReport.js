@@ -8,15 +8,15 @@ import {
 } from '@material-ui/core';
 import {
   TablePagination, DateField
-} from '../../../components/managment/index';
-import { SearchIcon } from '../../../assets/images/managment';
+} from '../../../../components/managment/index';
+import { SearchIcon } from '../../../../assets/images/managment';
 import ClearIcon from '@material-ui/icons/Clear';
 import Switch from "react-switch";
 import moment from 'moment';
-import { getSMSDirectReport } from '../../../redux/reducers/smsSlice';
-import { Loader } from '../../../components/Loader/Loader';
-import { SmsStatus } from '../../../helpers/PulseemArrays';
-import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
+import { getSMSDirectReport } from '../../../../redux/reducers/smsSlice';
+import { Loader } from '../../../../components/Loader/Loader';
+import { SmsStatus } from '../../../../helpers/PulseemArrays';
+import { smsStatusToString, smsStatusColor } from '../../../../helpers/functions';
 
 const DirectSMSReportTab = ({
   classes,
@@ -642,15 +642,6 @@ const DirectSMSReportTab = ({
   const renderTable = () => {
     return (
       <>
-        <Button
-          size='large'
-          variant='contained'
-          onClick={() => {
-            window.location = '/react/Reports/DirectSendReport/Archive/?t=1'
-          }}
-          className={clsx(classes.smsGraphMenuPaper, classes.mb15)}>
-          {t('master.campaignsArchive')}
-        </Button>
         <Typography className={clsx(classes.colorGray, classes.mb5)}>
           {t('common.Total')} {directSmsReport.TotalSent ?? 0} {t('report.Messages')}
         </Typography>
@@ -665,7 +656,7 @@ const DirectSMSReportTab = ({
   }
 
   const renderTablePagination = () => {
-    const smsData = directSmsReport && directSmsReport.TotalSent || 0;
+    const smsData = (directSmsReport && directSmsReport.TotalSent) || 0;
     return (
       <TablePagination
         classes={classes}

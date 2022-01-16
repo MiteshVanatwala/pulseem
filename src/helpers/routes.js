@@ -191,6 +191,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, su
       //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
       //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
       {key:'directSendReport',title: t('report.DirectSendReport'),href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
+      {key:'directSendReportArchive',title: t('master.campaignsArchive'),href: '/react/Reports/DirectSendReport/Archive', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
       {title: t('master.OpenedClickedReport'),href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true', isShow: true },
     ]
   }

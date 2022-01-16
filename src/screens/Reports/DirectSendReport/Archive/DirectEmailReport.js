@@ -3,21 +3,21 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer, Link,
-  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, InputLabel, Select, MenuItem
+  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, Select, MenuItem
 } from '@material-ui/core';
-import { TablePagination, DateField } from '../../../components/managment/index';
-import { SearchIcon } from '../../../assets/images/managment';
+import { TablePagination, DateField } from '../../../../components/managment/index';
+import { SearchIcon } from '../../../../assets/images/managment';
 import ClearIcon from '@material-ui/icons/Clear';
 import ControlPointIcon from '@material-ui/icons/ControlPoint';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import moment from 'moment';
-import { getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
-import { Loader } from '../../../components/Loader/Loader';
+import { getNewsletterDirectReport } from '../../../../redux/reducers/newsletterSlice';
+import { Loader } from '../../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { emailStatusToString, emailStatusColor } from '../../../helpers/functions';
-import { actionURL } from '../../../config/index'
+import { EmailStatus } from '../../../../helpers/PulseemArrays';
+import { emailStatusToString, emailStatusColor } from '../../../../helpers/functions';
+import { actionURL } from '../../../../config/index'
 
 const RenderRow = ({
   classes,
@@ -629,15 +629,6 @@ const DirectEmailReportTab = ({
   const renderTable = () => {
     return (
       <>
-        <Button
-          size='large'
-          variant='contained'
-          onClick={() => {
-            window.location = '/react/Reports/DirectSendReport/Archive/?t=0'
-          }}
-          className={clsx(classes.smsGraphMenuPaper, classes.mb15)}>
-          {t('master.campaignsArchive')}
-        </Button>
         <Typography className={clsx(classes.colorGray, classes.mb5)}>
           {t('common.Total')} {directEmailReport.TotalRecords} {t('report.Messages')}
         </Typography>
