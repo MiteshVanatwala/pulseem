@@ -106,6 +106,17 @@ export const getSMSDirectReport = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+
+export const getArchiveSMSDirectReport = createAsyncThunk(
+  'directReport/GetArchiveSmsDirect', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`directReport/GetArchiveSmsDirect`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 export const getSMSRequestOTP = createAsyncThunk(
   'RequestOTP', async (data, thunkAPI) => {
     try {
@@ -143,6 +154,19 @@ export const exportSMSDirectReport = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+
+  export const exportArchiveSmsDirect = createAsyncThunk(
+    'directReport/ExportArchiveSmsDirect', async (data, thunkAPI) => {
+      try {
+        const response = await instence.post(`directReport/ExportArchiveSmsDirect`, data);
+        return JSON.parse(response.data)
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    })
+
+
+  
 
 export const restoreSms = createAsyncThunk(
   'smsCampaign/restoreSmsCampaigns', async (deletedsms, thunkAPI) => {
@@ -390,6 +414,7 @@ export const smsSlice = createSlice({
     testGroups: [],
     commonSettings: {},
     directSmsReport: {},
+    archiveDirectSmsReport: {},
     directSmsReportError: '',
     credits: [],
     smsCampaignSettings: [],
@@ -443,6 +468,9 @@ export const smsSlice = createSlice({
     })
     builder.addCase(getSMSDirectReport.fulfilled, (state, { payload }) => {
       state.directSmsReport = payload
+    })
+    builder.addCase(getArchiveSMSDirectReport.fulfilled, (state, { payload }) => {
+      state.archiveDirectSmsReport = payload
     })
     builder.addCase(getPreviousLandingData.fulfilled, (state, { payload }) => {
       state.previousLandingData = payload

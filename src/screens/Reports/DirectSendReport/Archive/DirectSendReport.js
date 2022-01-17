@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Grid, Tab, Typography } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
-import DefaultScreen from '../../DefaultScreen';
+import DefaultScreen from '../../../DefaultScreen';
 import { useTranslation } from 'react-i18next';
 import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
@@ -10,23 +10,25 @@ import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
-import { exportNewsletterDirectReport, getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
-import { exportSMSDirectReport, getSMSDirectReport } from '../../../redux/reducers/smsSlice';
-import { preferredOrder, switchStatusDescription } from '../../../helpers/exportHelper';
-import { exportFile } from '../../../helpers/exportFromJson';
-import { Loader } from '../../../components/Loader/Loader';
-import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
-import { setCookie, getCookie } from '../../../helpers/cookies';
-import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../../redux/reducers/newsletterSlice';
+import { exportArchiveSmsDirect, getArchiveSMSDirectReport } from '../../../../redux/reducers/smsSlice';
+import { preferredOrder, switchStatusDescription } from '../../../../helpers/functions';
+import { exportFile } from '../../../../helpers/exportFromJson';
+import { Loader } from '../../../../components/Loader/Loader';
+import { EmailStatus, SmsStatus } from '../../../../helpers/PulseemArrays';
+import { setCookie, getCookie } from '../../../../helpers/cookies';
+import { setRowsPerPage } from '../../../../redux/reducers/coreSlice';
+import queryString from 'query-string';
 
-const DirectSendReport = ({ classes }) => {
+const DirectSendReport = ({ classes, ...props }) => {
+  const qs = queryString.parse(props.location.search);
   const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
-  const { directNewsletterReport } = useSelector(state => state.newsletter);
-  const { directSmsReport } = useSelector(state => state.sms);
+  const { archiveDirectNewsletterReport } = useSelector(state => state.newsletter);
+  const { archiveDirectSmsReport } = useSelector(state => state.sms);
   const [searchData, setSearchData] = useState({});
   const [isSearching, setSearching] = useState({});
   const [searchParam, setSearchParam] = useState({});
-  const [tabValue, setTabValue] = useState(0);
+  const [tabValue, setTabValue] = useState((qs.t ? parseInt(qs.t) : null) || 0);
   const rowsOptions = [6, 10, 20, 50];
   const [pageEmail, setPageEmail] = useState(1);
   const [pageSms, setPageSms] = useState(1);
@@ -40,12 +42,14 @@ const DirectSendReport = ({ classes }) => {
   const initData = () => {
     setSearchData({
       email: {
-        FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
-        ToDate: moment().format('YYYY-MM-DD HH:mm')
+        PageIndex: 1,
+        FromDate: null,
+        ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
       },
       sms: {
-        FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
-        ToDate: moment().format('YYYY-MM-DD HH:mm')
+        PageIndex: 1,
+        FromDate: null,
+        ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
       }
     });
     getEmailReportData();
@@ -58,36 +62,36 @@ const DirectSendReport = ({ classes }) => {
 
   const getEmailReportData = async () => {
     setLoader(true);
-    await dispatch(getNewsletterDirectReport({
+    await dispatch(getArchiveDirectReport({
       PageIndex: 1,
       PageSize: getCookie('rpp') || rowsPerPage,
-      FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
-      ToDate: moment().format('YYYY-MM-DD HH:mm')
+      FromDate: null,
+      ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
     }));
     setLoader(false);
   }
   const getSMSReportData = async () => {
     setLoader(true);
-    await dispatch(getSMSDirectReport({
+    await dispatch(getArchiveSMSDirectReport({
       PageSize: getCookie('rpp') || rowsPerPage,
       PageIndex: 1,
-      FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
-      ToDate: moment().format('YYYY-MM-DD HH:mm')
+      FromDate: null,
+      ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
     }));
     setLoader(false);
   }
 
   const handleExportEnable = () => {
     if (tabValue === 0) {
-      setExportEnable(Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null ? true : false)
+      setExportEnable(Object.keys(archiveDirectNewsletterReport).length > 0 && archiveDirectNewsletterReport.DirectReport !== null ? true : false)
     } else {
-      setExportEnable(Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport !== null ? true : false)
+      setExportEnable(Object.keys(archiveDirectSmsReport).length > 0 && archiveDirectSmsReport.DirectReport !== null ? true : false)
     }
   }
 
   useEffect(initData, [dispatch])
 
-  useEffect(handleExportEnable, [tabValue, directNewsletterReport, directSmsReport])
+  useEffect(handleExportEnable, [tabValue, archiveDirectNewsletterReport, archiveDirectSmsReport])
 
   const clearSearch = async (key) => {
     let isSearchingData = isSearching;
@@ -133,7 +137,7 @@ const DirectSendReport = ({ classes }) => {
     return (
       <>
         <Typography className={classes.managementTitle}>
-          {t('report.DirectSendReport')}
+          {t('report.ArchiveDirectSendReport')}
         </Typography>
         <Divider />
       </>
@@ -142,7 +146,6 @@ const DirectSendReport = ({ classes }) => {
 
   const excelHeaders = {
     EMAIL: {
-      "CreatedDate": t('common.CreationDate'),
       "Status": t('common.Status'),
       "ToEmail": t('report.ToEmail'),
       "ToName": t('report.ToName'),
@@ -179,7 +182,7 @@ const DirectSendReport = ({ classes }) => {
       let response, finalData, headers, fileName = null;
 
       if (tabValue === 0) {
-        response = await dispatch(exportNewsletterDirectReport(searchData.email))
+        response = await dispatch(exportArchiveEmailDirectReport(searchData.email))
         finalData = preferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
         finalData = switchStatusDescription(finalData, EmailStatus);
         headers = excelHeaders.EMAIL;
@@ -187,7 +190,7 @@ const DirectSendReport = ({ classes }) => {
       }
 
       if (tabValue === 1) {
-        response = await dispatch(exportSMSDirectReport(searchData.sms));
+        response = await dispatch(exportArchiveSmsDirect(searchData.sms));
         finalData = preferredOrder(response.payload, Object.keys(excelHeaders.SMS));
         finalData = switchStatusDescription(finalData, SmsStatus);
         headers = excelHeaders.SMS;
@@ -223,21 +226,12 @@ const DirectSendReport = ({ classes }) => {
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={0} />
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={1} />
             </TabList>
-            <Grid item>
-              <Button
-                onClick={() => {
-                  window.location = `/react/Reports/DirectSendReport/Archive/?t=${tabValue}`
-                }}
-                className={clsx(classes.actionButtonArchive, classes.actionButtonLightBlue)}>
-                {t('master.campaignsArchive')}
-              </Button>
-              {windowSize !== 'xs' && <Button className={clsx(classes.actionButtonGreen, classes.exportButton, exportEnable === false ? classes.disabled : '')} onClick={handleExportFile}>
-                {t('campaigns.exportFile')}
-                <Box className={clsx(classes.pulseemIcon, classes.f20)}>
-                  {'\uE17B'}
-                </Box>
-              </Button>}
-            </Grid>
+            {windowSize !== 'xs' && <Button className={clsx(classes.actionButtonGreen, classes.exportButton, exportEnable === false ? classes.disabled : '')} onClick={handleExportFile}>
+              {t('campaigns.exportFile')}
+              <Box className={clsx(classes.pulseemIcon, classes.f20)}>
+                {'\uE17B'}
+              </Box>
+            </Button>}
           </Grid>
           <Grid item xs={12} className={classes.lastReportsTabPanels}>
             <TabPanel value={0} index={0} className={classes.p0}>
@@ -258,7 +252,7 @@ const DirectSendReport = ({ classes }) => {
                 rowsPerPage={rowsPerPage}
                 searchData={searchData}
                 isSearching={isSearching}
-                directEmailReport={directNewsletterReport}
+                directEmailReport={archiveDirectNewsletterReport}
                 rowsOptions={rowsOptions}
                 advanceSearch={advanceSearch}
               />
@@ -280,7 +274,7 @@ const DirectSendReport = ({ classes }) => {
                 rowsPerPage={rowsPerPage}
                 searchData={searchData}
                 isSearching={isSearching}
-                directSmsReport={directSmsReport}
+                directSmsReport={archiveDirectSmsReport}
                 showContent={showContent}
                 advanceSearch={advanceSearch}
                 setLoader={setLoader}
@@ -296,7 +290,7 @@ const DirectSendReport = ({ classes }) => {
 
   return (
     <DefaultScreen
-      subPage='directSendReport'
+      subPage='directSendReportArchive'
       currentPage='reports'
       classes={classes}
       containerClass={classes.management}>

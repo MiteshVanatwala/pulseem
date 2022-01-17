@@ -8,16 +8,16 @@ import {
 } from '@material-ui/core';
 import {
   TablePagination, DateField
-} from '../../../components/managment/index';
-import { SearchIcon } from '../../../assets/images/managment';
+} from '../../../../components/managment/index';
+import { SearchIcon } from '../../../../assets/images/managment';
 import ClearIcon from '@material-ui/icons/Clear';
 import Switch from "react-switch";
 import moment from 'moment';
-import { getSMSDirectReport } from '../../../redux/reducers/smsSlice';
-import { Loader } from '../../../components/Loader/Loader';
-import { SmsStatus } from '../../../helpers/PulseemArrays';
-import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
-import TotalSection from '../../../components/managment/TotalSection';
+import { getSMSDirectReport } from '../../../../redux/reducers/smsSlice';
+import { Loader } from '../../../../components/Loader/Loader';
+import { SmsStatus } from '../../../../helpers/PulseemArrays';
+import { smsStatusToString, smsStatusColor } from '../../../../helpers/functions';
+import TotalSection from '../../../../components/managment/TotalSection';
 
 const DirectSMSReportTab = ({
   classes,
@@ -362,14 +362,6 @@ const DirectSMSReportTab = ({
     );
   }
 
-  // const renderTotalSection = () => {
-  //   return (
-  //     <>
-  //       {directSmsReport && <TotalSection classes={classes} TotalObject={directSmsReport} />}
-  //     </>
-  //   );
-  // }
-
   const renderTableHead = () => {
     return (
       <TableHead>
@@ -585,12 +577,15 @@ const DirectSMSReportTab = ({
 
     return (
       <TableBody>
-        {!sortData ? <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+        {!sortData ? (<Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
           <Typography>{t("common.NoDataTryFilter")}</Typography>
-        </Box> :
-          sortData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)
+        </Box>) :
+          (<>
+            {sortData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+          </>)
         }
       </TableBody>
+
     )
   }
 
@@ -615,7 +610,7 @@ const DirectSMSReportTab = ({
   }
 
   const renderTablePagination = () => {
-    const smsData = directSmsReport && directSmsReport.TotalSent || 0;
+    const smsData = (directSmsReport && directSmsReport.TotalSent) || 0;
     return (
       <TablePagination
         classes={classes}

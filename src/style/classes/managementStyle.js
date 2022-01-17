@@ -351,6 +351,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: '#219150'
     }
   },
+  actionButtonArchive: {
+    textTransform: 'capitalize',
+    fontSize: 15,
+    marginInline: 10,
+    paddingBlock: 4,
+    marginTop: 1,
+    color: '#fff'
+  },
   textColorBlue: {
     color: '#3498DB'
   },
@@ -1254,7 +1262,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   lastReportsTabPanels: {
     paddingRight: windowSize !== 'xs' ? 25 : 0,
-    paddingLeft:  windowSize !== 'xs' ? 25 : 0
+    paddingLeft: windowSize !== 'xs' ? 25 : 0
   },
   tabPanel: {
     minHeight: 220,

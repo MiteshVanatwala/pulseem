@@ -5,21 +5,20 @@ import {
   Box, Button, Grid, Table, TableContainer, Link,
   TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, Select, MenuItem
 } from '@material-ui/core';
-import { TablePagination, DateField } from '../../../components/managment/index';
-import { SearchIcon } from '../../../assets/images/managment';
+import { TablePagination, DateField } from '../../../../components/managment/index';
+import { SearchIcon } from '../../../../assets/images/managment';
 import ClearIcon from '@material-ui/icons/Clear';
 import ControlPointIcon from '@material-ui/icons/ControlPoint';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import moment from 'moment';
-import { getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
-import { Loader } from '../../../components/Loader/Loader';
+import { getArchiveDirectReport } from '../../../../redux/reducers/newsletterSlice';
+import { Loader } from '../../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
-import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { emailStatusToString, emailStatusColor } from '../../../helpers/functions';
-import { actionURL } from '../../../config/index'
-import TotalSection from '../../../components/managment/TotalSection';
-
+import { EmailStatus } from '../../../../helpers/PulseemArrays';
+import { emailStatusToString, emailStatusColor } from '../../../../helpers/functions';
+import { actionURL } from '../../../../config/index'
+import TotalSection from '../../../../components/managment/TotalSection';
 
 const RenderRow = ({
   classes,
@@ -204,13 +203,14 @@ const DirectEmailReportTab = ({
     })
 
     setLoader(true)
-    dispatch(getNewsletterDirectReport(searchObjects))
+    await dispatch(getArchiveDirectReport(searchObjects))
     handleSearching('email', true);
     handlePageChange(1);
     setLoader(false)
   }
 
-  const handlePageSearching = (val) => {
+  const handlePageSearching = async (val) => {
+    setLoader(true);
     let { email = {} } = searchData || {};
     let params = {
       PageSize: rowsPerPage,
@@ -218,7 +218,8 @@ const DirectEmailReportTab = ({
       ...email
     };
     handlePageChange(val);
-    dispatch(getNewsletterDirectReport(params));
+    await dispatch(getArchiveDirectReport(params));
+    setLoader(false);
   }
 
   const handleRowsPerPageSearching = async (val) => {
@@ -229,7 +230,7 @@ const DirectEmailReportTab = ({
       PageIndex: page,
       ...email
     }
-    await dispatch(getNewsletterDirectReport(params));
+    await dispatch(getArchiveDirectReport(params));
     handleRowsPerPage(val)
     setLoader(false);
   }
@@ -581,7 +582,7 @@ const DirectEmailReportTab = ({
         <Grid container justifyContent='flex-end'>
           <Grid item>
             <Typography className={clsx(classes.colorGray, classes.mb5)}>
-              {t('common.Total')} {directEmailReport.TotalRecords} {t('report.Messages')}
+              {t('common.Total')} {directEmailReport.TotalSent ?? 0} {t('report.Messages')}
             </Typography>
           </Grid>
         </Grid>
@@ -617,7 +618,7 @@ const DirectEmailReportTab = ({
       {renderSearchLine()}
       {renderTable()}
       {renderTablePagination()}
-      {<TotalSection classes={classes} TotalObject={directEmailReport} />}
+      {directEmailReport && <TotalSection classes={classes} TotalObject={directEmailReport} />}
       <Loader isOpen={showLoader} />
     </>
   );

@@ -35,10 +35,32 @@ export const getNewsletterDirectReport = createAsyncThunk(
   }
 )
 
+export const getArchiveDirectReport = createAsyncThunk(
+  'directReport/GetArchiveEmailDirectReport', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`directReport/GetArchiveEmailDirectReport`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
+
 export const exportNewsletterDirectReport = createAsyncThunk(
   'directReport/ExportEmailDirectReport', async (data, thunkAPI) => {
     try {
       const response = await instence.post(`directReport/ExportEmailDirectReport`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
+
+export const exportArchiveEmailDirectReport = createAsyncThunk(
+  'directReport/ExportArchiveEmailDirectReport', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`directReport/ExportArchiveEmailDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -140,7 +162,8 @@ export const newsletterSlice = createSlice({
     newslettersReportsError: '',
     directNewsletterReport: {},
     directNewsletterReportError: '',
-    newsletterArchiveData: []
+    newsletterArchiveData: [],
+    archiveDirectNewsletterReport: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -169,6 +192,13 @@ export const newsletterSlice = createSlice({
     builder.addCase(getNewsletterDirectReport.rejected, (state, action) => {
       state.directNewsletterReportError = action.error.message
     })
+    builder.addCase(getArchiveDirectReport.fulfilled, (state, { payload }) => {
+      state.archiveDirectNewsletterReport = payload
+    })
+    builder.addCase(getArchiveDirectReport.rejected, (state, action) => {
+      state.archiveDirectNewsletterReportError = action.error.message
+    })
+    
 
     builder.addCase(restoreCampaigns.fulfilled, () => { console.log('api restoreCampaigns success') })
     builder.addCase(deleteCampaign.fulfilled, () => { console.log('api deleteCampaign success') })

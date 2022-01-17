@@ -23,6 +23,7 @@ import MomentUtils from '@date-io/moment';
 import { useHistory } from "react-router-dom";
 import moment from 'moment'
 import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
+import ArchiveDirectSendReport from './screens/Reports/DirectSendReport/Archive/DirectSendReport';
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
 import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
 import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersReport'
@@ -279,8 +280,14 @@ const renderRoutes = (classes, history) => {
         component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
       />
       <Route
+        exact
         path={`/Reports/DirectSendReport`}
         render={props => <DirectSendReport {...props} classes={classes} />}
+      />
+      <Route
+        exact
+        path={`/Reports/DirectSendReport/Archive`}
+        render={props => <ArchiveDirectSendReport {...props} classes={classes} />}
       />
       <Route
         path={`/EmailCampaignStatistics`}

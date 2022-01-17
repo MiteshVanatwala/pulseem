@@ -18,7 +18,7 @@ export const verifyGetUrl = (url) => {
       var xmlhttp = new XMLHttpRequest();
       xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState === 4) {
-          if(xmlhttp.status === 200){
+          if (xmlhttp.status === 200) {
             resolve(true);
           }
           //resolve(xmlhttp.status && xmlhttp.status !== 404)
@@ -28,6 +28,29 @@ export const verifyGetUrl = (url) => {
       xmlhttp.send();
     } catch (error) {
       reject(false);
+    }
+  });
+}
+
+export const preferredOrder = (obj, order) => {
+  const arr = [];
+  for (var i = 0; i < obj.length; i++) {
+    var newObject = {};
+    order.map((o) => {
+      newObject[o] = obj[i][o];
+    });
+    arr.push(newObject);
+  }
+  return arr;
+}
+
+export const switchStatusDescription = (obj, statuses) => {
+  obj.forEach((o) => {
+    if (o.STATUS) {
+      o.StatusDescription = i18n.t(statuses[o.STATUS] ? statuses[o.STATUS].value : null);
+    }
+    else if (o.Status) {
+      o.StatusDescription = i18n.t(statuses[o.Status] ? statuses[o.Status].value : null);
     }
   });
 }
