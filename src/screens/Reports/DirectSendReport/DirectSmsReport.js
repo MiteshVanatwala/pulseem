@@ -18,6 +18,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { SmsStatus } from '../../../helpers/PulseemArrays';
 import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
 import TotalSection from '../../../components/managment/TotalSection';
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 
 const DirectSMSReportTab = ({
   classes,
@@ -27,7 +28,6 @@ const DirectSMSReportTab = ({
   handleSearchInput = () => null,
   handleSearching = () => null,
   handlePageChange = () => null,
-  handleRowsPerPage = () => null,
   handleShowContent = () => null,
   handleAdvanceSearch = () => null,
   clearSearch,
@@ -90,6 +90,7 @@ const DirectSMSReportTab = ({
 
   const handleRowsPerPageSearching = async (val) => {
     setLoader(true);
+    dispatch(setRowsPerPage(val));
     let { sms = {} } = searchData || {};
     let params = {
       PageSize: val,
@@ -97,7 +98,6 @@ const DirectSMSReportTab = ({
       ...sms
     }
     await dispatch(getSMSDirectReport(params));
-    handleRowsPerPage(val)
     setLoader(false);
   }
 

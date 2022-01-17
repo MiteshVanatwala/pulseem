@@ -19,7 +19,7 @@ import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { emailStatusToString, emailStatusColor } from '../../../helpers/functions';
 import { actionURL } from '../../../config/index'
 import TotalSection from '../../../components/managment/TotalSection';
-
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 
 const RenderRow = ({
   classes,
@@ -164,7 +164,6 @@ const DirectEmailReportTab = ({
   handleSearchInput = () => null,
   handleSearching = () => null,
   handlePageChange = () => null,
-  handleRowsPerPage = () => null,
   handleAdvanceSearch = () => null,
   clearSearch,
   page,
@@ -223,6 +222,7 @@ const DirectEmailReportTab = ({
 
   const handleRowsPerPageSearching = async (val) => {
     setLoader(true);
+    dispatch(setRowsPerPage(val))
     let { email = {} } = searchData || {};
     let params = {
       PageSize: val,
@@ -230,7 +230,6 @@ const DirectEmailReportTab = ({
       ...email
     }
     await dispatch(getNewsletterDirectReport(params));
-    handleRowsPerPage(val)
     setLoader(false);
   }
 
