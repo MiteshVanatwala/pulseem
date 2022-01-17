@@ -60,7 +60,7 @@ const DirectSendReport = ({ classes }) => {
     setLoader(true);
     await dispatch(getNewsletterDirectReport({
       PageIndex: 1,
-      PageSize: getCookie('rpp') || rowsPerPage,
+      PageSize: rowsPerPage,
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().format('YYYY-MM-DD HH:mm')
     }));
@@ -69,7 +69,7 @@ const DirectSendReport = ({ classes }) => {
   const getSMSReportData = async () => {
     setLoader(true);
     await dispatch(getArchiveSMSDirectReport({
-      PageSize: getCookie('rpp') || rowsPerPage,
+      PageSize: rowsPerPage,
       PageIndex: 1,
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().format('YYYY-MM-DD HH:mm')
@@ -202,10 +202,6 @@ const DirectSendReport = ({ classes }) => {
       });
       setLoader(false);
     }
-    const handleRowsPerPage = (val) => {
-      dispatch(setRowsPerPage(val))
-      setCookie('rpp', val, { maxAge: 2147483647 });
-    }
 
     return (
       <Grid container>
@@ -249,7 +245,6 @@ const DirectSendReport = ({ classes }) => {
                 handleSearchInput={handleSearchInput}
                 handleSearching={handleSearching}
                 handlePageChange={setPageEmail}
-                handleRowsPerPage={handleRowsPerPage}
                 handleAdvanceSearch={(isAdanceSearchRequested) => {
                   setAdvanceSearch(isAdanceSearchRequested)
                 }}
@@ -272,7 +267,6 @@ const DirectSendReport = ({ classes }) => {
                 handleSearchInput={handleSearchInput}
                 handleSearching={handleSearching}
                 handlePageChange={setPageSms}
-                handleRowsPerPage={handleRowsPerPage}
                 handleAdvanceSearch={setAdvanceSearch}
                 handleShowContent={setShowContent}
                 clearSearch={clearSearch}
