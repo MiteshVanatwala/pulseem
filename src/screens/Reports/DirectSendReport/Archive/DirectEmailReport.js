@@ -18,6 +18,7 @@ import { useSelector } from 'react-redux';
 import { EmailStatus } from '../../../../helpers/PulseemArrays';
 import { emailStatusToString, emailStatusColor } from '../../../../helpers/functions';
 import { actionURL } from '../../../../config/index'
+import TotalSection from '../../../../components/managment/TotalSection';
 
 const RenderRow = ({
   classes,
@@ -29,7 +30,6 @@ const RenderRow = ({
   windowSize
 }) => {
   const [open, setOpen] = useState(false);
-  const [noDataToPresnt, setNoDataToPresent] = useState(true);
 
   const renderCell = (data, dataType) => {
     let text = data;
@@ -411,58 +411,6 @@ const DirectEmailReportTab = ({
     )
   }
 
-  const renderTotalSection = () => {
-    const { TotalCredits = 0, TotalRecords = 0, SMSCredits = 0, BulkEmails = 0, MmsCredits = 0 } = directEmailReport || {};
-    return (
-      <>
-        <Box className={clsx(classes.paddingSides25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)} style={{ marginBottom: 50 }}>
-          <Grid item container className={clsx(classes.justifyEvenly)} style={{ width: '100%' }}>
-            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
-              <Typography className={clsx(classes.bold, classes.colorBlue)}>
-                {t('report.TotalSent')}
-              </Typography>
-              <Typography align='center' className={clsx(classes.colorBlue)}>
-                {TotalRecords.toLocaleString()}
-              </Typography>
-            </Grid>
-            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
-              <Typography className={clsx(classes.bold, classes.colorBlue)}>
-                {t('report.TotalCredits')}
-              </Typography>
-              <Typography align='center' className={clsx(classes.colorBlue)}>
-                {TotalCredits.toLocaleString() || 0}
-              </Typography>
-            </Grid>
-            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
-              <Typography className={clsx(classes.bold, classes.colorBlue)}>
-                {t('report.remainSms')}
-              </Typography>
-              <Typography align='center' className={clsx(classes.colorBlue)}>
-                {SMSCredits.toLocaleString() || 0}
-              </Typography>
-            </Grid>
-            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
-              <Typography className={clsx(classes.bold, classes.colorBlue)}>
-                {t('report.remainEmail')}
-              </Typography>
-              <Typography align='center' className={clsx(classes.colorBlue)}>
-                {BulkEmails.toLocaleString() || 0}
-              </Typography>
-            </Grid>
-            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
-              <Typography className={clsx(classes.bold, classes.colorBlue)}>
-                {t('report.remainMms')}
-              </Typography>
-              <Typography align='center' className={clsx(classes.colorBlue)}>
-                {MmsCredits.toLocaleString() || 0}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>
-      </>
-    );
-  }
-
   const renderTableHead = () => {
     return (
       <TableHead>
@@ -604,7 +552,7 @@ const DirectEmailReportTab = ({
   }
 
   const renderTableBody = () => {
-    let sortData = directEmailReport && directEmailReport.DirectReport;
+    let sortData = directEmailReport && directEmailReport.DirectReport ? directEmailReport.DirectReport : null;
 
     return (
       <TableBody className={classes.tableDirectRow}>
@@ -631,9 +579,13 @@ const DirectEmailReportTab = ({
   const renderTable = () => {
     return (
       <>
-        <Typography className={clsx(classes.colorGray, classes.mb5)}>
-          {t('common.Total')} {directEmailReport.TotalRecords} {t('report.Messages')}
-        </Typography>
+        <Grid container justifyContent='flex-end'>
+          <Grid item>
+            <Typography className={clsx(classes.colorGray, classes.mb5)}>
+              {t('common.Total')} {directEmailReport.TotalSent ?? 0} {t('report.Messages')}
+            </Typography>
+          </Grid>
+        </Grid>
         <TableContainer className={clsx(classes.borderAround, classes.mt25)}>
           <Table className={clsx(classes.tableContainer, classes.noborder)} aria-label="collapsible table">
             {windowSize !== 'xs' && renderTableHead()}
@@ -666,7 +618,7 @@ const DirectEmailReportTab = ({
       {renderSearchLine()}
       {renderTable()}
       {renderTablePagination()}
-      {renderTotalSection()}
+      {directEmailReport && <TotalSection classes={classes} TotalObject={directEmailReport} />}
       <Loader isOpen={showLoader} />
     </>
   );

@@ -56,9 +56,10 @@
   "clientStatus": "סטאטוס לקוח",
   "StatusDescription": "תיאור סטאטוס",
   "responses": "משובים",
-  "remainSms": "SMS שנותרו בחבילה",
-  "remainEmail": "אימיילים שנותרו בחבילה",
-  "remainMms": "MMS שנותרו בחבילה",
+  "SMSCredits": "SMS שנותרו בחבילה",
+  "BulkEmails": "אימיילים שנותרו בחבילה",
+  "MmsCredits": "MMS שנותרו בחבילה",
+  "TotalRecords":"סה\"כ רשומות",
   "smsReport": {
     "statuses": {
       "other": "אחר",

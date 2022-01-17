@@ -81,7 +81,7 @@ const DirectSendReport = ({ classes }) => {
     if (tabValue === 0) {
       setExportEnable(Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null ? true : false)
     } else {
-      setExportEnable(Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport.length !== null ? true : false)
+      setExportEnable(Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport !== null ? true : false)
     }
   }
 

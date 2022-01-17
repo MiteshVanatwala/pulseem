@@ -17,6 +17,7 @@ import { getSMSDirectReport } from '../../../../redux/reducers/smsSlice';
 import { Loader } from '../../../../components/Loader/Loader';
 import { SmsStatus } from '../../../../helpers/PulseemArrays';
 import { smsStatusToString, smsStatusColor } from '../../../../helpers/functions';
+import TotalSection from '../../../../components/managment/TotalSection';
 
 const DirectSMSReportTab = ({
   classes,
@@ -361,58 +362,6 @@ const DirectSMSReportTab = ({
     );
   }
 
-  const renderTotalSection = () => {
-    const { TotalCredits = 0, TotalSent = 0, SMSCredits = 0, BulkEmails = 0, MmsCredits = 0 } = directSmsReport || {};
-    return (
-      <>
-        <Box className={clsx(classes.paddingSides25, classes.reportPaperBgGray, classes.alignCenter)} style={{ marginBottom: 50 }}>
-          <Grid item container className={clsx(classes.justifyEvenly)} style={{ width: '100%' }}>
-            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
-              <Typography className={clsx(classes.bold, classes.colorBlue)}>
-                {t('report.TotalSent')}
-              </Typography>
-              <Typography align='center' className={clsx(classes.colorBlue)}>
-                {TotalSent.toLocaleString()}
-              </Typography>
-            </Grid>
-            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
-              <Typography className={clsx(classes.bold, classes.colorBlue)}>
-                {t('report.TotalCredits')}
-              </Typography>
-              <Typography align='center' className={clsx(classes.colorBlue)}>
-                {TotalSent.toLocaleString() || 0}
-              </Typography>
-            </Grid>
-            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
-              <Typography className={clsx(classes.bold, classes.colorBlue)}>
-                {t('report.remainSms')}
-              </Typography>
-              <Typography align='center' className={clsx(classes.colorBlue)}>
-                {SMSCredits.toLocaleString() || 0}
-              </Typography>
-            </Grid>
-            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
-              <Typography className={clsx(classes.bold, classes.colorBlue)}>
-                {t('report.remainEmail')}
-              </Typography>
-              <Typography align='center' className={clsx(classes.colorBlue)}>
-                {BulkEmails.toLocaleString() || 0}
-              </Typography>
-            </Grid>
-            <Grid item className={clsx(classes.txtCenter, classes.pt14)}>
-              <Typography className={clsx(classes.bold, classes.colorBlue)}>
-                {t('report.remainMms')}
-              </Typography>
-              <Typography align='center' className={clsx(classes.colorBlue)}>
-                {MmsCredits.toLocaleString() || 0}
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>
-      </>
-    );
-  }
-
   const renderTableHead = () => {
     return (
       <TableHead>
@@ -624,28 +573,33 @@ const DirectSMSReportTab = ({
   }
 
   const renderTableBody = () => {
-    let sortData = directSmsReport && directSmsReport.DirectReport;
-    if (!sortData) {
-      return;
-    }
-
-    // let rpp = parseInt(rowsPerPage)
-    // sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+    let sortData = directSmsReport && directSmsReport.DirectReport ? directSmsReport.DirectReport : null;
 
     return (
       <TableBody>
-        {sortData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+        {!sortData ? (<Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+          <Typography>{t("common.NoDataTryFilter")}</Typography>
+        </Box>) :
+          (<>
+            {sortData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+          </>)
+        }
       </TableBody>
+
     )
   }
 
   const renderTable = () => {
     return (
       <>
-        <Typography className={clsx(classes.colorGray, classes.mb5)}>
-          {t('common.Total')} {directSmsReport.TotalSent ?? 0} {t('report.Messages')}
-        </Typography>
-        <TableContainer className={classes.borderAround}>
+        <Grid container justifyContent='flex-end'>
+          <Grid item>
+            <Typography className={clsx(classes.colorGray, classes.mb5)}>
+              {t('common.Total')} {directSmsReport.TotalSent ?? 0} {t('report.Messages')}
+            </Typography>
+          </Grid>
+        </Grid>
+        <TableContainer className={clsx(classes.borderAround, classes.mt25)}>
           <Table className={clsx(classes.tableContainer, classes.noborder)}>
             {windowSize !== 'xs' && renderTableHead()}
             {renderTableBody()}
@@ -677,7 +631,7 @@ const DirectSMSReportTab = ({
       {windowSize !== 'xs' && renderToggleContent()}
       {renderTable()}
       {renderTablePagination()}
-      {renderTotalSection()}
+      {directSmsReport && <TotalSection classes={classes} TotalObject={directSmsReport} />}
       <Loader isOpen={showLoader} />
     </>
   );
