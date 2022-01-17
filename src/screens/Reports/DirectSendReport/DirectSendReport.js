@@ -11,7 +11,7 @@ import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport } from '../../../redux/reducers/newsletterSlice';
-import { exportSMSDirectReport, getSMSDirectReport } from '../../../redux/reducers/smsSlice';
+import { exportSMSDirectReport, getArchiveSMSDirectReport } from '../../../redux/reducers/smsSlice';
 import { preferredOrder, switchStatusDescription } from '../../../helpers/functions';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { Loader } from '../../../components/Loader/Loader';
@@ -57,15 +57,18 @@ const DirectSendReport = ({ classes }) => {
   }
 
   const getEmailReportData = async () => {
+    setLoader(true);
     await dispatch(getNewsletterDirectReport({
       PageIndex: 1,
       PageSize: getCookie('rpp') || rowsPerPage,
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().format('YYYY-MM-DD HH:mm')
     }));
+    setLoader(false);
   }
   const getSMSReportData = async () => {
-    await dispatch(getSMSDirectReport({
+    setLoader(true);
+    await dispatch(getArchiveSMSDirectReport({
       PageSize: getCookie('rpp') || rowsPerPage,
       PageIndex: 1,
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
@@ -78,7 +81,7 @@ const DirectSendReport = ({ classes }) => {
     if (tabValue === 0) {
       setExportEnable(Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null ? true : false)
     } else {
-      setExportEnable(Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport.length  !== null ? true : false)
+      setExportEnable(Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport.length !== null ? true : false)
     }
   }
 
@@ -220,12 +223,21 @@ const DirectSendReport = ({ classes }) => {
               <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={0} />
               <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={1} />
             </TabList>
-            {windowSize !== 'xs' && <Button className={clsx(classes.actionButtonGreen, classes.exportButton, exportEnable === false ? classes.disabled : '')} onClick={handleExportFile}>
-              {t('campaigns.exportFile')}
-              <Box className={clsx(classes.pulseemIcon, classes.f20)}>
-                {'\uE17B'}
-              </Box>
-            </Button>}
+            <Grid item>
+              <Button
+                onClick={() => {
+                  window.location = `/react/Reports/DirectSendReport/Archive/?t=${tabValue}`
+                }}
+                className={clsx(classes.actionButtonArchive, classes.actionButtonLightBlue)}>
+                {t('master.campaignsArchive')}
+              </Button>
+              {windowSize !== 'xs' && <Button className={clsx(classes.actionButtonGreen, classes.exportButton, exportEnable === false ? classes.disabled : '')} onClick={handleExportFile}>
+                {t('campaigns.exportFile')}
+                <Box className={clsx(classes.pulseemIcon, classes.f20)}>
+                  {'\uE17B'}
+                </Box>
+              </Button>}
+            </Grid>
           </Grid>
           <Grid item xs={12} className={classes.lastReportsTabPanels}>
             <TabPanel value={0} index={0} className={classes.p0}>

@@ -88,5 +88,6 @@
       "activeHasResponse": "responses active - has responses",
       "activeNoResponse": "responses active - no responses"
     }
-  }
+  },
+  "ArchiveDirectSendReport": "DirectSend Report Archive"
 }

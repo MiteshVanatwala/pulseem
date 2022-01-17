@@ -642,19 +642,10 @@ const DirectSMSReportTab = ({
   const renderTable = () => {
     return (
       <>
-        <Button
-          size='large'
-          variant='contained'
-          onClick={() => {
-            window.location = '/react/Reports/DirectSendReport/Archive/?t=1'
-          }}
-          className={clsx(classes.smsGraphMenuPaper, classes.mb15)}>
-          {t('master.campaignsArchive')}
-        </Button>
         <Typography className={clsx(classes.colorGray, classes.mb5)}>
           {t('common.Total')} {directSmsReport.TotalSent ?? 0} {t('report.Messages')}
         </Typography>
-        <TableContainer className={classes.borderAround}>
+        <TableContainer className={clsx(classes.borderAround, classes.mt25)}>
           <Table className={clsx(classes.tableContainer, classes.noborder)}>
             {windowSize !== 'xs' && renderTableHead()}
             {renderTableBody()}

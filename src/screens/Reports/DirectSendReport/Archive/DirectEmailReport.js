@@ -12,7 +12,7 @@ import ControlPointIcon from '@material-ui/icons/ControlPoint';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import moment from 'moment';
-import { getNewsletterDirectReport } from '../../../../redux/reducers/newsletterSlice';
+import { getArchiveDirectReport } from '../../../../redux/reducers/newsletterSlice';
 import { Loader } from '../../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
 import { EmailStatus } from '../../../../helpers/PulseemArrays';
@@ -203,13 +203,14 @@ const DirectEmailReportTab = ({
     })
 
     setLoader(true)
-    dispatch(getNewsletterDirectReport(searchObjects))
+    await dispatch(getArchiveDirectReport(searchObjects))
     handleSearching('email', true);
     handlePageChange(1);
     setLoader(false)
   }
 
-  const handlePageSearching = (val) => {
+  const handlePageSearching = async (val) => {
+    setLoader(true);
     let { email = {} } = searchData || {};
     let params = {
       PageSize: rowsPerPage,
@@ -217,7 +218,8 @@ const DirectEmailReportTab = ({
       ...email
     };
     handlePageChange(val);
-    dispatch(getNewsletterDirectReport(params));
+    await dispatch(getArchiveDirectReport(params));
+    setLoader(false);
   }
 
   const handleRowsPerPageSearching = async (val) => {
@@ -228,7 +230,7 @@ const DirectEmailReportTab = ({
       PageIndex: page,
       ...email
     }
-    await dispatch(getNewsletterDirectReport(params));
+    await dispatch(getArchiveDirectReport(params));
     handleRowsPerPage(val)
     setLoader(false);
   }

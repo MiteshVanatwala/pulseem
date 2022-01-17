@@ -10,8 +10,8 @@ import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
-import { exportNewsletterDirectReport, getArchiveDirectReport } from '../../../../redux/reducers/newsletterSlice';
-import { exportSMSDirectReport, getArchiveSMSDirectReport } from '../../../../redux/reducers/smsSlice';
+import { exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../../redux/reducers/newsletterSlice';
+import { exportArchiveSmsDirect, getArchiveSMSDirectReport } from '../../../../redux/reducers/smsSlice';
 import { preferredOrder, switchStatusDescription } from '../../../../helpers/functions';
 import { exportFile } from '../../../../helpers/exportFromJson';
 import { Loader } from '../../../../components/Loader/Loader';
@@ -42,10 +42,12 @@ const DirectSendReport = ({ classes, ...props }) => {
   const initData = () => {
     setSearchData({
       email: {
+        PageIndex: 1,
         FromDate: null,
         ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
       },
       sms: {
+        PageIndex: 1,
         FromDate: null,
         ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
       }
@@ -59,14 +61,17 @@ const DirectSendReport = ({ classes, ...props }) => {
   }
 
   const getEmailReportData = async () => {
+    setLoader(true);
     await dispatch(getArchiveDirectReport({
       PageIndex: 1,
       PageSize: getCookie('rpp') || rowsPerPage,
       FromDate: null,
       ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
     }));
+    setLoader(false);
   }
   const getSMSReportData = async () => {
+    setLoader(true);
     await dispatch(getArchiveSMSDirectReport({
       PageSize: getCookie('rpp') || rowsPerPage,
       PageIndex: 1,
@@ -78,9 +83,9 @@ const DirectSendReport = ({ classes, ...props }) => {
 
   const handleExportEnable = () => {
     if (tabValue === 0) {
-      setExportEnable(Object.keys(archiveDirectNewsletterReport).length > 0 && archiveDirectNewsletterReport.DirectReport.length > 0 ? true : false)
+      setExportEnable(Object.keys(archiveDirectNewsletterReport).length > 0 && archiveDirectNewsletterReport.DirectReport !== null ? true : false)
     } else {
-      setExportEnable(Object.keys(archiveDirectSmsReport).length > 0 && archiveDirectSmsReport.DirectReport.length > 0 ? true : false)
+      setExportEnable(Object.keys(archiveDirectSmsReport).length > 0 && archiveDirectSmsReport.DirectReport !== null ? true : false)
     }
   }
 
@@ -132,7 +137,7 @@ const DirectSendReport = ({ classes, ...props }) => {
     return (
       <>
         <Typography className={classes.managementTitle}>
-          {t('report.DirectSendReport')}
+          {t('report.ArchiveDirectSendReport')}
         </Typography>
         <Divider />
       </>
@@ -141,7 +146,6 @@ const DirectSendReport = ({ classes, ...props }) => {
 
   const excelHeaders = {
     EMAIL: {
-      "CreatedDate": t('common.CreationDate'),
       "Status": t('common.Status'),
       "ToEmail": t('report.ToEmail'),
       "ToName": t('report.ToName'),
@@ -178,7 +182,7 @@ const DirectSendReport = ({ classes, ...props }) => {
       let response, finalData, headers, fileName = null;
 
       if (tabValue === 0) {
-        response = await dispatch(exportNewsletterDirectReport(searchData.email))
+        response = await dispatch(exportArchiveEmailDirectReport(searchData.email))
         finalData = preferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
         finalData = switchStatusDescription(finalData, EmailStatus);
         headers = excelHeaders.EMAIL;
@@ -186,7 +190,7 @@ const DirectSendReport = ({ classes, ...props }) => {
       }
 
       if (tabValue === 1) {
-        response = await dispatch(exportSMSDirectReport(searchData.sms));
+        response = await dispatch(exportArchiveSmsDirect(searchData.sms));
         finalData = preferredOrder(response.payload, Object.keys(excelHeaders.SMS));
         finalData = switchStatusDescription(finalData, SmsStatus);
         headers = excelHeaders.SMS;

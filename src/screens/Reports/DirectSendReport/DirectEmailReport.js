@@ -629,15 +629,6 @@ const DirectEmailReportTab = ({
   const renderTable = () => {
     return (
       <>
-        <Button
-          size='large'
-          variant='contained'
-          onClick={() => {
-            window.location = '/react/Reports/DirectSendReport/Archive/?t=0'
-          }}
-          className={clsx(classes.smsGraphMenuPaper, classes.mb15)}>
-          {t('master.campaignsArchive')}
-        </Button>
         <Typography className={clsx(classes.colorGray, classes.mb5)}>
           {t('common.Total')} {directEmailReport.TotalRecords} {t('report.Messages')}
         </Typography>

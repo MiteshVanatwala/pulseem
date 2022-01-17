@@ -90,5 +90,6 @@
       "activeHasResponse": "עם אפשרות למשובים - ויש משובים",
       "activeNoResponse": "עם אפשרות למשובים - ואין משובים"
     }
-  }
+  },
+  "ArchiveDirectSendReport": "ארכיון שליחה ישירה"
 }

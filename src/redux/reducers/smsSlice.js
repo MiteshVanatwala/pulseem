@@ -108,9 +108,9 @@ export const getSMSDirectReport = createAsyncThunk(
   })
 
 export const getArchiveSMSDirectReport = createAsyncThunk(
-  'directReport/getArchiveSMSDirectReport', async (data, thunkAPI) => {
+  'directReport/GetArchiveSmsDirect', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`directReport/getArchiveSMSDirectReport`, data);
+      const response = await instence.post(`directReport/GetArchiveSmsDirect`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -154,6 +154,19 @@ export const exportSMSDirectReport = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+
+  export const exportArchiveSmsDirect = createAsyncThunk(
+    'directReport/ExportArchiveSmsDirect', async (data, thunkAPI) => {
+      try {
+        const response = await instence.post(`directReport/ExportArchiveSmsDirect`, data);
+        return JSON.parse(response.data)
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    })
+
+
+  
 
 export const restoreSms = createAsyncThunk(
   'smsCampaign/restoreSmsCampaigns', async (deletedsms, thunkAPI) => {
