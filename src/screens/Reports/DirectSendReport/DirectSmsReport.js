@@ -582,7 +582,7 @@ const DirectSMSReportTab = ({
 
     return (
       <TableBody>
-        {!sortData ? <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+        {!sortData || sortData.length === 0 ? <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
           <Typography>{t("common.NoDataTryFilter")}</Typography>
         </Box> :
           sortData.map(windowSize === 'xs' ? renderPhoneRow : renderRow)
