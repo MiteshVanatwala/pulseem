@@ -13,7 +13,7 @@ import { SearchIcon } from '../../../assets/images/managment';
 import ClearIcon from '@material-ui/icons/Clear';
 import Switch from "react-switch";
 import moment from 'moment';
-import { getSMSDirectReport } from '../../../redux/reducers/smsSlice';
+import { getSMSDirectReport, getArchiveSMSDirectReport } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { SmsStatus } from '../../../helpers/PulseemArrays';
 import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
@@ -70,36 +70,32 @@ const DirectSMSReportTab = ({
       }
     })
 
-    await dispatch(getSMSDirectReport(searchObjects))
+    await dispatch(isArchive ? getArchiveSMSDirectReport(searchObjects) : getSMSDirectReport(searchObjects))
     handleSearching('sms', true);
     handlePageChange(1);
     setLoader(false);
   }
 
-  const handlePageSearching = async (val) => {
+  const searchRequest = async (pageNumber) => {
     setLoader(true);
     let { sms = {} } = searchData || {};
     let params = {
       PageSize: rowsPerPage,
-      PageIndex: val,
+      PageIndex: pageNumber,
       ...sms
     };
-    handlePageChange(val);
-    await dispatch(getSMSDirectReport(params));
+    await dispatch(isArchive ? getArchiveSMSDirectReport(params) : getSMSDirectReport(params))
     setLoader(false);
   }
 
-  const handleRowsPerPageSearching = async (val) => {
-    setLoader(true);
+  const handlePageSearching = (val) => {
+    searchRequest(val);
+    handlePageChange(val);
+  }
+
+  const handleRowsPerPageSearching = (val) => {
+    searchRequest(val);
     dispatch(setRowsPerPage(val))
-    let { sms = {} } = searchData || {};
-    let params = {
-      PageSize: val,
-      PageIndex: page,
-      ...sms
-    }
-    await dispatch(getSMSDirectReport(params));
-    setLoader(false);
   }
 
   const renderCell = (data, dataType) => {
