@@ -38,7 +38,8 @@ const DirectSMSReportTab = ({
   directSmsReport,
   showContent,
   advanceSearch,
-  rowsOptions
+  rowsOptions,
+  isArchive = false
 }) => {
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
@@ -328,9 +329,9 @@ const DirectSMSReportTab = ({
             size='large'
             variant='contained'
             onClick={() => {
+              handleFromDate(isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm'));
+              handleToDate(isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm'));
               clearSearch('sms');
-              handleFromDate(moment().startOf('month').format('YYYY-MM-DD HH:mm'));
-              handleToDate(moment().format('YYYY-MM-DD HH:mm'))
             }}
             className={classes.searchButton}
             endIcon={<ClearIcon />}>
