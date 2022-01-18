@@ -114,13 +114,17 @@ const DirectSMSReportTab = ({
   }
 
   const handleFromDate = (val) => {
-    let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
-    handleSearchInput(dateVal, 'FromDate', 'sms')
+    if (val) {
+      let dateVal = moment(val).startOf('day').format('YYYY-MM-DD HH:mm') || null;
+      handleSearchInput(dateVal, 'FromDate', 'sms')
+    }
   }
 
   const handleToDate = (val) => {
-    let dateVal = moment(val).endOf('day').format('YYYY-MM-DD HH:mm') || null;
-    handleSearchInput(dateVal, 'ToDate', 'sms')
+    if (val) {
+      let dateVal = moment(val).endOf('day').format('YYYY-MM-DD HH:mm') || null;
+      handleSearchInput(dateVal, 'ToDate', 'sms')
+    }
   }
 
   const renderDateFields = () => {
@@ -325,9 +329,11 @@ const DirectSMSReportTab = ({
             size='large'
             variant='contained'
             onClick={() => {
-              handleFromDate(isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm'));
-              handleToDate(isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm'));
+              const frmDate = isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm');
+              const tDate = isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm');
               clearSearch('sms');
+              handleFromDate(frmDate);
+              handleToDate(tDate);
             }}
             className={classes.searchButton}
             endIcon={<ClearIcon />}>
