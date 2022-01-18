@@ -414,7 +414,7 @@ export const smsSlice = createSlice({
     testGroups: [],
     commonSettings: {},
     directSmsReport: {},
-    archiveDirectSmsReport: {},
+    // archiveDirectSmsReport: {},
     directSmsReportError: '',
     credits: [],
     smsCampaignSettings: [],
@@ -470,7 +470,8 @@ export const smsSlice = createSlice({
       state.directSmsReport = payload
     })
     builder.addCase(getArchiveSMSDirectReport.fulfilled, (state, { payload }) => {
-      state.archiveDirectSmsReport = payload
+      state.directSmsReport = payload
+      //state.archiveDirectSmsReport = payload
     })
     builder.addCase(getPreviousLandingData.fulfilled, (state, { payload }) => {
       state.previousLandingData = payload
@@ -504,6 +505,9 @@ export const smsSlice = createSlice({
       state.subAccountGroups = tempArr;
     })
     builder.addCase(getSMSDirectReport.rejected, (state, action) => {
+      state.directSmsReportError = action.error
+    })
+    builder.addCase(getArchiveSMSDirectReport.rejected, (state, action) => {
       state.directSmsReportError = action.error
     })
     builder.addCase(getCampaignSettings.rejected, (state, action) => {

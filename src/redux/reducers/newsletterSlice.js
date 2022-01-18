@@ -162,8 +162,8 @@ export const newsletterSlice = createSlice({
     newslettersReportsError: '',
     directNewsletterReport: {},
     directNewsletterReportError: '',
-    newsletterArchiveData: [],
-    archiveDirectNewsletterReport: []
+    newsletterArchiveData: []
+    //archiveDirectNewsletterReport: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -193,12 +193,14 @@ export const newsletterSlice = createSlice({
       state.directNewsletterReportError = action.error.message
     })
     builder.addCase(getArchiveDirectReport.fulfilled, (state, { payload }) => {
-      state.archiveDirectNewsletterReport = payload
+      //state.archiveDirectNewsletterReport = payload
+      state.directNewsletterReport = payload;
     })
     builder.addCase(getArchiveDirectReport.rejected, (state, action) => {
-      state.archiveDirectNewsletterReportError = action.error.message
+      //state.archiveDirectNewsletterReportError = action.error.message
+      state.directNewsletterReportError = action.error.message
     })
-    
+
 
     builder.addCase(restoreCampaigns.fulfilled, () => { console.log('api restoreCampaigns success') })
     builder.addCase(deleteCampaign.fulfilled, () => { console.log('api deleteCampaign success') })

@@ -28,7 +28,8 @@ const RenderRow = ({
   rowStyle,
   row,
   t = () => null,
-  windowSize
+  windowSize,
+  isArchive = false
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -72,6 +73,7 @@ const RenderRow = ({
                         <Link
                           color="primary"
                           href={row.Attachments}
+                          target='_blank'
                           className={classes.f16}>
                           {t('landingPages.GridTemplateColumnResource1.HeaderText')}
                         </Link>
@@ -83,7 +85,7 @@ const RenderRow = ({
                   </TableRow>
                 </TableBody>
               </Table>
-              <Box className={classes.w20}>
+              {!isArchive && <Box className={classes.w20}>
                 <Box className={clsx(classes.floatRight, classes.txtCenter)} onClick={() => {
                   window.open(`${actionURL}DirectEmailPreview.aspx?id=${row.SendID}`, '_blank')
                 }}>
@@ -93,6 +95,7 @@ const RenderRow = ({
                   <Typography display='block' align='center' className={classes.mtNeg15}>{t('common.Preview')}</Typography>
                 </Box>
               </Box>
+              }
             </Box>
           </Collapse>
         </TableCell>
@@ -172,7 +175,8 @@ const DirectEmailReportTab = ({
   isSearching,
   directEmailReport,
   rowsOptions,
-  advanceSearch
+  advanceSearch,
+  isArchive = false
 }) => {
   const { isRTL } = useSelector(state => state.core);
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
@@ -396,9 +400,9 @@ const DirectEmailReportTab = ({
             size='large'
             variant='contained'
             onClick={() => {
+              handleFromDate(isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm'));
+              handleToDate(isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm'));
               clearSearch('email');
-              handleFromDate(moment().startOf('month').format('YYYY-MM-DD HH:mm'));
-              handleToDate(moment().format('YYYY-MM-DD HH:mm'));
             }}
             className={classes.searchButton}
             endIcon={<ClearIcon />}>
@@ -460,7 +464,7 @@ const DirectEmailReportTab = ({
   }
 
   const renderNameCell = (row) => {
-    const { SendDate, UpdateDate, CreatedDate } = row
+    const { SendDate, UpdateDate } = row
 
     const date = SendDate ? moment(SendDate) : ''
     const udate = UpdateDate ? moment(UpdateDate) : '';
@@ -567,7 +571,8 @@ const DirectEmailReportTab = ({
                 noborderCell={noborderCell}
                 cellStyle={cellStyle}
                 rowStyle={rowStyle}
-                t={t} />
+                t={t}
+                isArchive={isArchive} />
           )
         }
       </TableBody>
