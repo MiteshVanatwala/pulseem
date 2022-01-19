@@ -255,17 +255,6 @@ const DirectEmailReportTab = ({
 
     return (
       <>
-        {windowSize !== 'xs' && <Grid item>
-          <TextField
-            variant='outlined'
-            size='small'
-            value={ToName}
-            onChange={(e) => handleSearchInput(e.target.value, 'ToName', 'email')}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('automations.Recipient')}
-          />
-        </Grid>
-        }
         <Grid item>
           <DateField
             classes={classes}
@@ -286,9 +275,19 @@ const DirectEmailReportTab = ({
             minDate={FromDate ? FromDate : undefined}
             rootStyle={classes.maxWidth190}
             toolbarDisabled={false}
-            minDate={'2000-01-01'}
           />
         </Grid>
+        {windowSize !== 'xs' && <Grid item>
+          <TextField
+            variant='outlined'
+            size='small'
+            value={ToName}
+            onChange={(e) => handleSearchInput(e.target.value, 'ToName', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('automations.Recipient')}
+          />
+        </Grid>
+        }
       </>
     )
   }
@@ -324,36 +323,6 @@ const DirectEmailReportTab = ({
         </Grid>
         {renderDateFields()}
         <Grid item>
-          <TextField
-            variant='outlined'
-            size='small'
-            value={FromName}
-            onChange={(e) => handleSearchInput(e.target.value, 'FromName', 'email')}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('report.FromName')}
-          />
-        </Grid>
-        <Grid item>
-          <TextField
-            variant='outlined'
-            size='small'
-            value={ExternalRef}
-            onChange={(e) => handleSearchInput(e.target.value, 'ExternalRef', 'email')}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('report.ExternalRef')}
-          />
-        </Grid>
-        <Grid item>
-          <TextField
-            variant='outlined'
-            size='small'
-            value={Subject}
-            onChange={(e) => handleSearchInput(e.target.value, 'Subject', 'email')}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('report.Subject')}
-          />
-        </Grid>
-        <Grid item>
           <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
             <Select
               autoWidth
@@ -370,6 +339,37 @@ const DirectEmailReportTab = ({
             </Select>
           </FormControl>
         </Grid>
+        <Grid item>
+          <TextField
+            variant='outlined'
+            size='small'
+            value={ExternalRef}
+            onChange={(e) => handleSearchInput(e.target.value, 'ExternalRef', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('report.ExternalRef')}
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            variant='outlined'
+            size='small'
+            value={FromName}
+            onChange={(e) => handleSearchInput(e.target.value, 'FromName', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('report.FromName')}
+          />
+        </Grid>
+        <Grid item>
+          <TextField
+            variant='outlined'
+            size='small'
+            value={Subject}
+            onChange={(e) => handleSearchInput(e.target.value, 'Subject', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('report.Subject')}
+          />
+        </Grid>
+
       </>
     )
   }
