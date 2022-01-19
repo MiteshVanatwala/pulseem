@@ -264,6 +264,7 @@ const DirectEmailReportTab = ({
             rootStyle={classes.maxWidth190}
             toolbarDisabled={false}
             minDate={'2000-01-01'}
+            isRoundedOnMobile={windowSize === 'xs'}
           />
         </Grid>
         <Grid item>
@@ -275,6 +276,7 @@ const DirectEmailReportTab = ({
             minDate={FromDate ? FromDate : undefined}
             rootStyle={classes.maxWidth190}
             toolbarDisabled={false}
+            isRoundedOnMobile={windowSize === 'xs'}
           />
         </Grid>
         {windowSize !== 'xs' && <Grid item>
