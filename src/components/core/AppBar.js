@@ -17,8 +17,9 @@ import { setCookie, getCookie } from '../../helpers/cookies'
 import { setScriptDialog } from '../../redux/reducers/notificationSlice';
 import { logout } from '../../helpers/api'
 import { openInNewTab } from '../../helpers/functions'
-import { SiCodeforces } from 'react-icons/si'
-import { VscGraph } from 'react-icons/vsc'
+import {
+  ChartIcon
+} from '../../assets/images/drawer/index'
 import i18n from '../../i18n'
 
 const AppBarItem = ({
@@ -335,12 +336,15 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
                             className={classes.phoneAppBarItemContainer}>
                             <Button
                               href={route.href}
-                              style={{ alignSelf: 'center' }}>
+                              style={{ alignSelf: 'center', fontSize: route.key === 'directSendReport' ? 35 : null }}>
                               {route.iconUnicode ? (<Typography
                                 className={classes.phoneAppBarItemIcon}>
                                 {route.iconUnicode}
                               </Typography>)
-                                : route.key === 'directSendReport' ? (<SiCodeforces />) : null
+                                : route.key === 'directSendReport' ? (<img
+                                  style={{ paddingBottom: 5 }}
+                                  alt='DirectSend Icon'
+                                  src={ChartIcon} />) : null
                               }
                             </Button>
                             <Typography
