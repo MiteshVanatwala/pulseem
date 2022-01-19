@@ -22,7 +22,8 @@ export const DateField = ({
   rootStyle = null,
   timeActive = null,
   dateActive = null,
-  toolbarDisabled = true
+  toolbarDisabled = true,
+  isRoundedOnMobile = false
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -66,8 +67,12 @@ export const DateField = ({
       onClose={() => setIsTimePickerOpen(false)}
       open={isTimePickerOpen || timePickerOpen}
       onClick={() => setIsTimePickerOpen(true)}
-      InputProps={{ readOnly: true }}
+      InputProps={{
+        readOnly: true,
+        style: { borderRadius: isRoundedOnMobile === true ? 50 : null }
+      }}
       autoOk={true}
+      style={{ borderRadius: isRoundedOnMobile === true ? 50 : null }}
     />
   ) :
 
@@ -106,7 +111,10 @@ export const DateField = ({
       onClose={() => setIsDatePickerOpen(false)}
       open={isDatePickerOpen}
       onClick={() => setIsDatePickerOpen(true)}
-      InputProps={{ readOnly: true }}
+      InputProps={{
+        readOnly: true,
+        style: { borderRadius: isRoundedOnMobile === true ? 50 : null }
+      }}
       autoOk={true}
     />
     )

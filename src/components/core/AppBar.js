@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   AppBar, Toolbar, Typography, Button, IconButton, MenuItem, ClickAwayListener,
-  Grow, Paper, Popper, MenuList, SvgIcon, Grid, Box, Select, NativeSelect
+  Grow, Paper, Popper, MenuList, SvgIcon, Grid, Box
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { ArrowDropUp } from '@material-ui/icons';
@@ -11,13 +11,15 @@ import { useTranslation } from "react-i18next";
 import DoubleArrowIcon from '../../assets/images/doubleArrow.png'
 import { ReactComponent as QuestionIcon } from '../../assets/images/question.svg'
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { SiCodeforces } from 'react-icons/si'
 import { getRoutes, getSettingsItem } from '../../helpers/routes'
 //import useCtrlHistory from '../../helpers/useCtrlHistory'
 import { setCookie, getCookie } from '../../helpers/cookies'
 import { setScriptDialog } from '../../redux/reducers/notificationSlice';
 import { logout } from '../../helpers/api'
 import { openInNewTab } from '../../helpers/functions'
+import {
+  ChartIcon
+} from '../../assets/images/drawer/index'
 import i18n from '../../i18n'
 
 const AppBarItem = ({
@@ -338,12 +340,15 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
                             className={classes.phoneAppBarItemContainer}>
                             <Button
                               href={route.href}
-                              style={{ alignSelf: 'center' }}>
+                              style={{ alignSelf: 'center', fontSize: route.key === 'directSendReport' ? 35 : null }}>
                               {route.iconUnicode ? (<Typography
                                 className={classes.phoneAppBarItemIcon}>
                                 {route.iconUnicode}
                               </Typography>)
-                                : route.key === 'directSendReport' ? (<SiCodeforces />) : null
+                                : route.key === 'directSendReport' ? (<img
+                                  style={{ paddingBottom: 5 }}
+                                  alt='DirectSend Icon'
+                                  src={ChartIcon} />) : null
                               }
                             </Button>
                             <Typography

@@ -616,7 +616,10 @@ const SmsReport = ({ classes }) => {
         </TableBody>
       )
     }
-    return <Typography className={classes.flexCenter}>{t("common.NoData")}</Typography>
+    return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+      <Typography>{t("common.NoDataTryFilter")}</Typography>
+    </Box>
+
   }
 
   const renderTable = () => {

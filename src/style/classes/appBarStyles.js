@@ -164,5 +164,4 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
     fontSize: appBarTitleTextSize[windowSize],
     color: 'white'
   }
-
 })
