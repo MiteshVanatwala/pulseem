@@ -7,7 +7,7 @@ export const get = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
       const response = await eventsInstance.get(`events`, data);
-      return JSON.parse(response.data);
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -17,6 +17,16 @@ export const post = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
       const response = await eventsInstance.post(`events`, data);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ status: error.statusCode });
+    }
+  });
+
+export const update = createAsyncThunk(
+  'events', async (data, thunkAPI) => {
+    try {
+      const response = await eventsInstance.patch(`events/${data.id}`, data);
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue({ status: error.statusCode });

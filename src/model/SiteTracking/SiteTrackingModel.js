@@ -9,14 +9,15 @@ export const EventRequestModel = {
     }
 };
 export class SiteTrackingModel {
-    constructor(eventName, domain, actionType, metadata) {
+    constructor(id, eventName, domain, actionType, metadata) {
+        this.id = id;
         this.eventName = eventName || EventRequestModel.PageView.eventName;
         this.domain = domain || '';
         this.actionType = actionType || ACTION_TYPES.ADD_CLIENTS_TO_GROUP;
         this.metadata = {
-            operatorKey: (metadata && metadata.OperatorKey) || 'CONTAINS',
-            operatorValue: (metadata && metadata.OperatorValue) || '',
-            groupIds: (metadata && metadata.GroupIds) || []
+            operatorKey: (metadata && metadata.operatorKey) || 'CONTAINS',
+            operatorValue: (metadata && metadata.operatorValue) || '',
+            groupIds: (metadata && metadata.groupIds) || []
         };
     }
 };
