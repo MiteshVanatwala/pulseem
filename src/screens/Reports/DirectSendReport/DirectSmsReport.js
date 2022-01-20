@@ -365,14 +365,6 @@ const DirectSMSReportTab = ({
     );
   }
 
-  // const renderTotalSection = () => {
-  //   return (
-  //     <>
-  //       {directSmsReport && <TotalSection classes={classes} TotalObject={directSmsReport} />}
-  //     </>
-  //   );
-  // }
-
   const renderTableHead = () => {
     return (
       <TableHead>
@@ -600,8 +592,8 @@ const DirectSMSReportTab = ({
   const renderTable = () => {
     return (
       <>
-        <Grid container justifyContent='flex-end'>
-          <Grid item>
+        <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end'}}>
+          <Grid item className={windowSize === 'xs' ? classes.mt15 : null}>
             <Typography className={clsx(classes.colorGray, classes.mb5)}>
               {t('common.Total')} {directSmsReport.TotalSent ?? 0} {t('report.Messages')}
             </Typography>
