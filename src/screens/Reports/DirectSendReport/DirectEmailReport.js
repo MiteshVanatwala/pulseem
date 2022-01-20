@@ -50,53 +50,61 @@ const RenderRow = ({
 
   const renderCollapsibleRow = (row) => {
     return (
-      <TableRow className={clsx(classes.tableRowCollapse, 'directEmailRowCollapse')}>
-        <TableCell className={clsx(classes.pt0, classes.pb0)} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box margin={1} className={classes.dFlex}>
-              <Table size="small" className={classes.w80}>
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="left" className={classes.tableCollapseHead}>{t('automations.click')}</TableCell>
-                    <TableCell align="left" className={classes.tableCollapseHead}>{t('common.ExternalRef')}</TableCell>
-                    <TableCell align="left" className={classes.tableCollapseHead}>{t('report.Attachments')}</TableCell>
-                    <TableCell align="left" className={classes.tableCollapseHead}>{t('report.ToName')}</TableCell>
-                    <TableCell align="left" className={classes.tableCollapseHead}>{t('report.FromName')}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell component="th" scope="row" className={classes.noborder}>{row.ClickCount}</TableCell>
-                    <TableCell align="left" className={classes.noborder}>{row.ExternalRef}</TableCell>
-                    <TableCell align="left" className={classes.noborder}>
-                      {row.Attachments ?
-                        <Link
-                          color="primary"
-                          href={row.Attachments}
-                          target='_blank'
-                          className={classes.f16}>
-                          {t('landingPages.GridTemplateColumnResource1.HeaderText')}
-                        </Link>
-                        : t('report.None')
-                      }
-                    </TableCell>
-                    <TableCell align="left" className={classes.noborder}>{row.ToName}</TableCell>
-                    <TableCell align="left" className={classes.noborder}>{row.FromName}</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-              {!isArchive && <Box className={classes.w20}>
-                <Box className={clsx(classes.floatRight, classes.txtCenter)} onClick={() => {
-                  window.open(`${actionURL}DirectEmailPreview.aspx?id=${row.SendID}`, '_blank')
-                }}>
-                  <IconButton>
-                    <VisibilityIcon className={classes.black} />
-                  </IconButton>
-                  <Typography display='block' align='center' className={classes.mtNeg15}>{t('common.Preview')}</Typography>
-                </Box>
-              </Box>
-              }
-            </Box>
+      <TableRow
+        key={`expand_${row.ID}`}
+        className={clsx(classes.tableRowCollapse, 'directEmailRowCollapse')}>
+        <TableCell className={clsx(classes.noPadding, classes.dFlex, classes.fullWidth)}>
+          <Collapse in={open} timeout="auto" unmountOnExit className={classes.fullWidth}>
+            <Table>
+              <TableHead>
+                <TableRow className={clsx(classes.expandTableRow, 'directEmailRow')}
+
+                >
+                  <TableCell align="center" className={clsx(classes.tableCollapseHead)} style={{ width: 15, padding: 0 }}></TableCell>
+                  <TableCell align="center" className={clsx(classes.tableCollapseHead, classes.flex1)}>{t('automations.click')}</TableCell>
+                  <TableCell align="center" className={clsx(classes.tableCollapseHead, classes.flex1)}>{t('common.ExternalRef')}</TableCell>
+                  <TableCell align="center" className={clsx(classes.tableCollapseHead, classes.flex1)}>{t('report.Attachments')}</TableCell>
+                  <TableCell align="center" className={clsx(classes.tableCollapseHead, classes.flex1)}>{t('report.ToName')}</TableCell>
+                  <TableCell align="center" className={clsx(classes.tableCollapseHead, classes.flex2)}>{t('report.FromName')}</TableCell>
+                  <TableCell align="center" className={clsx(classes.tableCollapseHead, classes.flexHalf)} style={{paddingTop: 0, position: 'relative'}}>
+                    {!isArchive &&
+                      <Box className={clsx(classes.txtCenter, classes.directPreview)} onClick={() => {
+                        window.open(`${actionURL}DirectEmailPreview.aspx?id=${row.SendID}`, '_blank')
+                      }}>
+                        <IconButton>
+                          <VisibilityIcon className={classes.black} />
+                        </IconButton>
+                        <Typography display='block' align='center' className={classes.mtNeg15}>{t('common.Preview')}</Typography>
+                      </Box>
+                    }
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow className={clsx(classes.expandTableRow, 'directEmailRow')}>
+                  <TableCell align="center" style={{ width: 15 }}></TableCell>
+                  <TableCell align="center" className={clsx(classes.flex1)}>{row.ClickCount}</TableCell>
+                  <TableCell align="center" className={clsx(classes.flex1)}>{row.ExternalRef ? row.ExternalRef : t('report.None')}</TableCell>
+                  <TableCell align="center" className={clsx(classes.flex1)}>
+                    {row.Attachments ?
+                      <Link
+                        color="primary"
+                        href={row.Attachments}
+                        target='_blank'
+                        className={classes.f16}>
+                        {t('landingPages.GridTemplateColumnResource1.HeaderText')}
+                      </Link>
+                      : t('report.None')
+                    }
+                  </TableCell>
+                  <TableCell align="center" className={clsx(classes.flex1)}>{row.ToName}</TableCell>
+                  <TableCell align="center" className={clsx(classes.flex2)}>{row.FromName}</TableCell>
+                  <TableCell align="center" className={clsx(classes.flexHalf)}>
+
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </Collapse>
         </TableCell>
       </TableRow>
