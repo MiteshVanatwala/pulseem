@@ -16,11 +16,11 @@ const TotalSection = ({ classes, TotalObject }) => {
                         return false;
                     }
                     if (windowSize === 'xs') {
-                        if (to === 'TotalCredits' || to === 'TotalRecords') {
+                        if (to === 'TotalCredits' || to === 'TotalRecords' || to === 'TotalSent') {
                             return false;
                         }
                     }
-                    return <Grid item className={clsx(classes.txtCenter, classes.pt14)} style={{ maxWidth: windowSize === 'xs' ? 100 : null }}>
+                    return <Grid item className={clsx(classes.txtCenter, classes.pt14)} style={{ maxWidth: windowSize === 'xs' ? 100 : null }} key={to}>
                         <Typography className={clsx(classes.bold, classes.colorBlue)}>
                             {t(`report.${to}`)}
                         </Typography>
