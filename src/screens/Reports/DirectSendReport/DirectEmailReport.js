@@ -66,7 +66,7 @@ const RenderRow = ({
                   <TableCell align="center" className={clsx(classes.tableCollapseHead, classes.flex1)}>{t('report.Attachments')}</TableCell>
                   <TableCell align="center" className={clsx(classes.tableCollapseHead, classes.flex1)}>{t('report.ToName')}</TableCell>
                   <TableCell align="center" className={clsx(classes.tableCollapseHead, classes.flex2)}>{t('report.FromName')}</TableCell>
-                  <TableCell align="center" className={clsx(classes.tableCollapseHead, classes.flexHalf)} style={{paddingTop: 0, position: 'relative'}}>
+                  <TableCell align="center" className={clsx(classes.tableCollapseHead, classes.flexHalf)} style={{ paddingTop: 0, position: 'relative' }}>
                     {!isArchive &&
                       <Box className={clsx(classes.txtCenter, classes.directPreview)} onClick={() => {
                         window.open(`${actionURL}DirectEmailPreview.aspx?id=${row.SendID}`, '_blank')
@@ -597,8 +597,8 @@ const DirectEmailReportTab = ({
   const renderTable = () => {
     return (
       <>
-        <Grid container justifyContent='flex-end'>
-          <Grid item>
+        <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end'}}>
+          <Grid item className={windowSize === 'xs' ? classes.mt15 : null}>
             <Typography className={clsx(classes.colorGray, classes.mb5)}>
               {t('common.Total')} {directEmailReport.TotalRecords} {t('report.Messages')}
             </Typography>
