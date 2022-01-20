@@ -23,6 +23,16 @@ export const post = createAsyncThunk(
     }
   });
 
+export const update = createAsyncThunk(
+  'events', async (data, thunkAPI) => {
+    try {
+      const response = await eventsInstance.patch(`events/${data.id}`, data);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ status: error.statusCode });
+    }
+  });
+
 export const getScript = createAsyncThunk(
   'getScript', async (_, thunkAPI) => {
     try {

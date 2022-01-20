@@ -10,7 +10,7 @@ import {
 import { DomainProtocol } from '../../helpers/PulseemArrays'
 import { getGroupsBySubAccountId } from "../../redux/reducers/smsSlice";
 import { useDispatch, useSelector } from 'react-redux'
-import { get, post, getScript, setDomain } from '../../redux/reducers/siteTrackingSlice';
+import { get, post, update, getScript, setDomain } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel, SiteTrackingModel } from '../../model/SiteTracking/SiteTrackingModel';
 import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
@@ -58,10 +58,11 @@ const SiteTrackingEditor = ({ classes }) => {
         const pGroups = await dispatch(getGroupsBySubAccountId());
         const response = await dispatch(get(EventRequestModel.PageView));
         if (!response.error) {
-            const retModel = response.payload[0];
-            setModel(retModel);
-            if (retModel.metadata && retModel.metadata.groupIds) {
-                let gs = retModel.metadata.groupIds.map((gid) => {
+            const retModel = response.payload;
+            const currentObj = retModel[retModel.length - 1];
+            setModel(currentObj);
+            if (currentObj.metadata && currentObj.metadata.groupIds) {
+                let gs = currentObj.metadata.groupIds.map((gid) => {
                     return pGroups.payload.find((g) => { return g.GroupID === gid });
                 });
                 dispatch(setSelectedGroups(gs));
@@ -123,7 +124,13 @@ const SiteTrackingEditor = ({ classes }) => {
             request.domain = protocol + request.domain;
             const setDomainResponse = await dispatch(setDomain({ DomainAddress: request.domain }));
             if (setDomainResponse.payload.Result === 1) {
-                const response = await dispatch(post(request));
+                let response = null;
+                if(request.id !== ''){
+                    response =  await dispatch(update(request));
+                }
+                else{
+                    response = await dispatch(post(request));
+                }
                 onSaveReponse(response.payload);
             }
             else {

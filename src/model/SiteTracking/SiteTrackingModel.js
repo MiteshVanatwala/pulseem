@@ -9,7 +9,8 @@ export const EventRequestModel = {
     }
 };
 export class SiteTrackingModel {
-    constructor(eventName, domain, actionType, metadata) {
+    constructor(id, eventName, domain, actionType, metadata) {
+        this.id = id;
         this.eventName = eventName || EventRequestModel.PageView.eventName;
         this.domain = domain || '';
         this.actionType = actionType || ACTION_TYPES.ADD_CLIENTS_TO_GROUP;
