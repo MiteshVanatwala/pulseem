@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux'
-//import { useEffect, useState } from 'react';
 import { Box } from '@material-ui/core';
 import { RiCloseFill } from "react-icons/ri";
 import { setSelectedGroups } from '../../redux/reducers/groupSlice';
@@ -28,7 +27,7 @@ const GroupTags = ({ classes,
             className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
             onClick={() => onShowModal()}
         >
-            {selectedGroups && selectedGroups.length <= 0 && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
+            {(!selectedGroups || selectedGroups.length <= 0) && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
             {selectedGroups && selectedGroups.length > 0 ? (
                 <Box className={classes.mappedGroup} style={{ maxWidth: '100%' }}>
                     {selectedGroups.map((item, index) => {

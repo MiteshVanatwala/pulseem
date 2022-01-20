@@ -14,9 +14,9 @@ export class SiteTrackingModel {
         this.domain = domain || '';
         this.actionType = actionType || ACTION_TYPES.ADD_CLIENTS_TO_GROUP;
         this.metadata = {
-            operatorKey: (metadata && metadata.OperatorKey) || 'CONTAINS',
-            operatorValue: (metadata && metadata.OperatorValue) || '',
-            groupIds: (metadata && metadata.GroupIds) || []
+            operatorKey: (metadata && metadata.operatorKey) || 'CONTAINS',
+            operatorValue: (metadata && metadata.operatorValue) || '',
+            groupIds: (metadata && metadata.groupIds) || []
         };
     }
 };

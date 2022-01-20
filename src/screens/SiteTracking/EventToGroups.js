@@ -14,7 +14,6 @@ const EventToGroups = ({
     onShowGroups = () => null
 }) => {
     const { t } = useTranslation();
-    const { subAccountGroups } = useSelector((state) => state.sms);
     const { isRTL, windowSize } = useSelector((state) => state.core);
     const [pageUrlIsValid, setPageUrlIsValid] = useState(null);
 
@@ -81,12 +80,12 @@ const EventToGroups = ({
                 <Typography className={clsx(classes.buttonHead)}>
                     {t("siteTracking.addToGroups")}
                 </Typography>
-                {subAccountGroups && subAccountGroups.length > 0 && <GroupTags
+                <GroupTags
                     classes={classes}
                     title={'siteTracking.typeGroupName'}
                     onShowModal={onShowGroups}
                     style={{ width: windowSize === 'xs' ? 320 : 460 }}
-                />}
+                />
             </Box>
         </Box>
     </Box >

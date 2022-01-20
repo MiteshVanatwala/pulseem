@@ -5,7 +5,7 @@ import { Loader } from '../../components/Loader/Loader'
 import { useTranslation } from 'react-i18next';
 import Title from '../../components/Wizard/Title'
 import {
-    Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Select, MenuItem, Tab, Checkbox
+    Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Select, MenuItem, Checkbox
 } from '@material-ui/core'
 import { DomainProtocol } from '../../helpers/PulseemArrays'
 import { getGroupsBySubAccountId } from "../../redux/reducers/smsSlice";
@@ -22,6 +22,7 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { GroupDialog } from '../../components/Groups/GroupDialog';
 import EventTabs from './EventTabs';
 import { isValidUrl } from '../../helpers/UrlHelper';
+import { setSelectedGroups } from '../../redux/reducers/groupSlice';
 
 const SiteTrackingEditor = ({ classes }) => {
     const { subAccountGroups } = useSelector((state) => state.sms);
@@ -54,10 +55,17 @@ const SiteTrackingEditor = ({ classes }) => {
 
     const getData = async () => {
         await dispatch(getScript());
-        await dispatch(getGroupsBySubAccountId());
+        const pGroups = await dispatch(getGroupsBySubAccountId());
         const response = await dispatch(get(EventRequestModel.PageView));
         if (!response.error) {
-            setModel(response.payload);
+            const retModel = response.payload[0];
+            setModel(retModel);
+            if (retModel.metadata && retModel.metadata.groupIds) {
+                let gs = retModel.metadata.groupIds.map((gid) => {
+                    return pGroups.payload.find((g) => { return g.GroupID === gid });
+                });
+                dispatch(setSelectedGroups(gs));
+            }
         }
         else {
             setModel(new SiteTrackingModel());
@@ -409,7 +417,7 @@ const SiteTrackingEditor = ({ classes }) => {
 
     useEffect(() => {
         model.metadata.groupIds = selectedGroups.map((g) => { return g.GroupID });
-        deepUpdate(['metadata', 'GroupIds'], model.metadata.groupIds);
+        deepUpdate(['metadata', 'groupIds'], model.metadata.groupIds);
         //setDialogType(null);
     }, [selectedGroups]);
 

@@ -7,7 +7,7 @@ export const get = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
       const response = await eventsInstance.get(`events`, data);
-      return JSON.parse(response.data);
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
