@@ -57,12 +57,11 @@ const SiteTrackingEditor = ({ classes }) => {
         await dispatch(getScript());
         const pGroups = await dispatch(getGroupsBySubAccountId());
         const response = await dispatch(get(EventRequestModel.PageView));
-        if (!response.error) {
-            const retModel = response.payload;
-            const currentObj = retModel[retModel.length - 1];
-            setModel(currentObj);
-            if (currentObj.metadata && currentObj.metadata.groupIds) {
-                let gs = currentObj.metadata.groupIds.map((gid) => {
+        const retModel = response.payload;
+        if (!response.error && retModel.length !== 0) {
+            setModel(retModel);
+            if (retModel.metadata && retModel.metadata.groupIds) {
+                let gs = retModel.metadata.groupIds.map((gid) => {
                     return pGroups.payload.find((g) => { return g.GroupID === gid });
                 });
                 dispatch(setSelectedGroups(gs));
@@ -125,10 +124,10 @@ const SiteTrackingEditor = ({ classes }) => {
             const setDomainResponse = await dispatch(setDomain({ DomainAddress: request.domain }));
             if (setDomainResponse.payload.Result === 1) {
                 let response = null;
-                if(request.id !== ''){
-                    response =  await dispatch(update(request));
+                if (request.id && request.id !== '') {
+                    response = await dispatch(update(request));
                 }
-                else{
+                else {
                     response = await dispatch(post(request));
                 }
                 onSaveReponse(response.payload);
