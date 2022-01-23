@@ -537,5 +537,8 @@
   "AddedDate": "תאריך הוספה למערכת",
   "Clients": "לקוחות",
   "NoDataTryFilter": "אין נתונים להצגה",
-  "notSent": "לא נשלח"
+  "notSent": "לא נשלח",
+  "invalidDate": "יש לבחור תאריך",
+  "minimalDateRequired": "התאריך לא יכול להיות גדול מהתאריך המינימלי",
+  "maximalDateRequired": "התאריך לא יכול להיות קטן מהתאריך המקסימלי"
 }
