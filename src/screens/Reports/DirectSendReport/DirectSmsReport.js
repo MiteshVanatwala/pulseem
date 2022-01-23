@@ -76,12 +76,12 @@ const DirectSMSReportTab = ({
     setLoader(false);
   }
 
-  const searchRequest = async (pageNumber) => {
+  const searchRequest = async (pageSize, pageIndex) => {
     setLoader(true);
     let { sms = {} } = searchData || {};
     let params = {
-      PageSize: rowsPerPage,
-      PageIndex: pageNumber,
+      PageSize: pageSize,
+      PageIndex: pageIndex,
       ...sms
     };
     await dispatch(isArchive ? getArchiveSMSDirectReport(params) : getSMSDirectReport(params))
@@ -89,13 +89,13 @@ const DirectSMSReportTab = ({
   }
 
   const handlePageSearching = (val) => {
-    searchRequest(val);
+    searchRequest(rowsPerPage ,val);
     handlePageChange(val);
   }
 
   const handleRowsPerPageSearching = (val) => {
-    searchRequest(val);
     dispatch(setRowsPerPage(val))
+    searchRequest(val, page);
   }
 
   const renderCell = (data, dataType) => {
