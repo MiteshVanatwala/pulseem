@@ -59,12 +59,16 @@ const SiteTrackingEditor = ({ classes }) => {
         const response = await dispatch(get(EventRequestModel.PageView));
         const retModel = response.payload;
         if (!response.error && retModel.length !== 0) {
-            setModel(retModel);
-            if (retModel.metadata && retModel.metadata.groupIds) {
-                let gs = retModel.metadata.groupIds.map((gid) => {
+            const eventObject = retModel[0];
+            if (eventObject.metadata && eventObject.metadata.groupIds) {
+                setModel(eventObject);
+                let gs = eventObject.metadata.groupIds.map((gid) => {
                     return pGroups.payload.find((g) => { return g.GroupID === gid });
                 });
                 dispatch(setSelectedGroups(gs));
+            }
+            else {
+                setModel(new SiteTrackingModel());
             }
         }
         else {
