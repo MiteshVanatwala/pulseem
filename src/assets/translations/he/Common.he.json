@@ -509,5 +509,8 @@
   "contactSupportForBilling": "כדי להמשיך, יש ליצור קשר<br/> עם המכירות בטלפון <a href='tel:03-524-0290'>03-524-0290</a> או במייל<br/> <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
   "campaignType": "סוג קמפיין",
   "notSent": "לא נשלח",
-  "NoDataTryFilter": "אין נתונים להצגה"
+  "NoDataTryFilter": "אין נתונים להצגה",
+  "invalidDate": "יש לבחור תאריך",
+  "minimalDateRequired": "התאריך לא יכול להיות גדול מהתאריך המינימלי",
+  "maximalDateRequired": "התאריך לא יכול להיות קטן מהתאריך המקסימלי"
 }

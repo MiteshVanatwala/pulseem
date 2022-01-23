@@ -6,6 +6,7 @@ import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
 import moment from 'moment'
 import 'moment/locale/he'
 import { FiClock } from 'react-icons/fi'
+import { useTranslation } from 'react-i18next';
 
 export const DateField = ({
   minDate,
@@ -33,6 +34,7 @@ export const DateField = ({
   }
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const { t } = useTranslation();
 
   return isTimePicker ? (
     <KeyboardTimePicker
@@ -111,6 +113,9 @@ export const DateField = ({
       onClose={() => setIsDatePickerOpen(false)}
       open={isDatePickerOpen}
       onClick={() => setIsDatePickerOpen(true)}
+      invalidDateMessage={t("common.invalidDate")}
+      maxDateMessage={t("common.maximalDateRequired")}
+      minDateMessage={t("common.minimalDateRequired")}
       InputProps={{
         readOnly: true,
         style: { borderRadius: isRoundedOnMobile === true ? 50 : null }

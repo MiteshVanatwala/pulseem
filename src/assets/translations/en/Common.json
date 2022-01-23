@@ -514,5 +514,8 @@
   "contactSupportForBilling": "To continue, please be in touch with<br/> our sales at <a href='tel:03-524-0290'>03-524-0290</a> or at<br/> <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
   "campaignType": "Type",
   "notSent": "Not sent",
-  "NoDataTryFilter": "No data to display"
+  "NoDataTryFilter": "No data to display",
+  "invalidDate": "Date is required",
+  "minimalDateRequired": "Date should not be before minimal date",
+  "maximalDateRequired": "Date should not be after maximal date"
 }
