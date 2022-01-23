@@ -41,6 +41,9 @@ const RenderRow = ({
     }
     if (dataType === 'status') {
       text = t(emailStatusToString(data))
+      return (
+        <Typography style={{ color: emailStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+      )
     }
 
     return (
@@ -221,12 +224,12 @@ const DirectEmailReportTab = ({
     setLoader(false)
   }
 
-  const searchRequest = async (pageNumber) => {
+  const searchRequest = async (pageSize, pageIndex) => {
     setLoader(true);
     let { email = {} } = searchData || {};
     let params = {
-      PageSize: rowsPerPage,
-      PageIndex: pageNumber,
+      PageSize: pageSize,
+      PageIndex: pageIndex,
       ...email
     };
     await dispatch(isArchive ? getArchiveDirectReport(params) : getNewsletterDirectReport(params))
@@ -234,14 +237,13 @@ const DirectEmailReportTab = ({
   }
 
   const handlePageSearching = (val) => {
-    searchRequest(val);
+    searchRequest(rowsPerPage ,val);
     handlePageChange(val);
   }
 
   const handleRowsPerPageSearching = (val) => {
-    searchRequest(val);
     dispatch(setRowsPerPage(val))
-
+    searchRequest(val, page);
   }
 
   const handleFromDate = (val) => {
@@ -626,7 +628,7 @@ const DirectEmailReportTab = ({
         rowsPerPageOptions={rowsOptions}
         page={page}
         onPageChange={handlePageSearching}
-        returnPageOne={true}
+        returnPageOne={false}
       />
     )
   }

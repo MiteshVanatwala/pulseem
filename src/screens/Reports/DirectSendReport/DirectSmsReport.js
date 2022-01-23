@@ -76,12 +76,12 @@ const DirectSMSReportTab = ({
     setLoader(false);
   }
 
-  const searchRequest = async (pageNumber) => {
+  const searchRequest = async (pageSize, pageIndex) => {
     setLoader(true);
     let { sms = {} } = searchData || {};
     let params = {
-      PageSize: rowsPerPage,
-      PageIndex: pageNumber,
+      PageSize: pageSize,
+      PageIndex: pageIndex,
       ...sms
     };
     await dispatch(isArchive ? getArchiveSMSDirectReport(params) : getSMSDirectReport(params))
@@ -89,13 +89,13 @@ const DirectSMSReportTab = ({
   }
 
   const handlePageSearching = (val) => {
-    searchRequest(val);
+    searchRequest(rowsPerPage, val);
     handlePageChange(val);
   }
 
   const handleRowsPerPageSearching = (val) => {
-    searchRequest(val);
     dispatch(setRowsPerPage(val))
+    searchRequest(val, page);
   }
 
   const renderCell = (data, dataType) => {
@@ -106,6 +106,9 @@ const DirectSMSReportTab = ({
     }
     if (dataType === 'status') {
       text = t(smsStatusToString(text));
+      return (
+        <Typography style={{ color: smsStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+      )
     }
 
     return (
@@ -592,7 +595,7 @@ const DirectSMSReportTab = ({
   const renderTable = () => {
     return (
       <>
-        <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end'}}>
+        <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
           <Grid item className={windowSize === 'xs' ? classes.mt15 : null}>
             <Typography className={clsx(classes.colorGray, classes.mb5)}>
               {t('common.Total')} {directSmsReport.TotalSent ?? 0} {t('report.Messages')}
