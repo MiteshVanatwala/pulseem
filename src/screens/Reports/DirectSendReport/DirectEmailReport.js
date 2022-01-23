@@ -41,6 +41,9 @@ const RenderRow = ({
     }
     if (dataType === 'status') {
       text = t(emailStatusToString(data))
+      return (
+        <Typography style={{ color: emailStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+      )
     }
 
     return (
