@@ -15,6 +15,18 @@ export const preferredOrder = (obj, order) => {
     return arr;
 }
 
+export const switchStatusDescription = (obj, statuses) => {
+    obj.forEach((o) => {
+        if (o.STATUS) {
+            o.StatusDescription = i18n.t(statuses[o.STATUS] ? statuses[o.STATUS].value : null);
+        }
+        else if (o.Status) {
+            o.StatusDescription = i18n.t(statuses[o.Status] ? statuses[o.Status].value : null);
+        }
+    });
+    return obj;
+}
+
 export const statusNumberToString = (t, obj, statuses) => {
     obj.forEach((o) => {
         if (o.Status) {
@@ -43,7 +55,7 @@ export const booleanToNumber = (obj, column, isBoolean = false, t) => {
 export const formatDateTime = (arr, t) => {
     const newArr = [...arr];
     newArr.forEach((a) => {
-        
+
         if (a.SendDate) {
             a.SendDate = moment(a.SendDate).format("DD/MM/YYYY HH:mm");
         }
