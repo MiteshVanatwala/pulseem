@@ -112,16 +112,3 @@ export const deletePropertyFromArrayObject = (arr, property) => {
     });
     return newArr;
 }
-
-
-export const switchStatusDescription = (obj, statuses) => {
-    obj.forEach((o) => {
-        if (o.STATUS) {
-            o.StatusDescription = i18n.t(statuses[o.STATUS] ? statuses[o.STATUS].value : null);
-        }
-        else if (o.Status) {
-            o.StatusDescription = i18n.t(statuses[o.Status] ? statuses[o.Status].value : null);
-        }
-    });
-    return obj;
-}
