@@ -433,7 +433,7 @@ const App = ({ screenSize }) => {
 
     const insertScript = () => {
       const script = document.createElement("script");
-      script.src = siteTrackingScriptUrl;
+      script.src = `${siteTrackingScriptUrl}?v=` + Math.floor(Date.now() / 1000);
       script.async = true;
       document.head.appendChild(script);
     }
