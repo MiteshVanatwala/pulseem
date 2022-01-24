@@ -431,13 +431,6 @@ const App = ({ screenSize }) => {
       jtoken: updateToken
     }
 
-    const insertScript = () => {
-      const script = document.createElement("script");
-      script.src = `${siteTrackingScriptUrl}`; //?v=` + Math.floor(Date.now() / 1000);
-      script.async = false;
-      document.head.appendChild(script);
-    }
-
     // window.addEventListener('resize',setWindowWidth)
     cookieListener(({ name }) => {
       const cookieFunction = cookieFunctionObj[name] || null
@@ -446,15 +439,22 @@ const App = ({ screenSize }) => {
     })
     updateToken()
     initFeatures()
-    //Remove this implementation before uploading
-    insertScript()
   }, [dispatch])
 
 
+  const insertScript = () => {
+    const script = document.createElement("script");
+    script.src = `${siteTrackingScriptUrl}`; //?v=` + Math.floor(Date.now() / 1000);
+    script.async = false;
+    document.head.appendChild(script);
+  }
+  
   const classes = useClasses(windowSize, isRTL)()
   const theme = getTheme(language)
   const history = useHistory()
   document.body.classList.add(classes.sidebar);
+  //Remove this implementation before uploading
+  insertScript()
 
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
