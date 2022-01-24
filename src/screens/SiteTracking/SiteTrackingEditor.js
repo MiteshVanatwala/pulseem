@@ -311,7 +311,7 @@ const SiteTrackingEditor = ({ classes }) => {
         if (model.id && model.id !== '') {
             const pResponse = await dispatch(deletePulseemSiteTracking())
             console.log(pResponse);
-            //await dispatch(deleteSiteTrackingEvent(model.id))
+            await dispatch(deleteSiteTrackingEvent(model.id))
         }
         setModel(new SiteTrackingModel());
         dispatch(setSelectedGroups([]));
