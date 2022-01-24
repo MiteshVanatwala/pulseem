@@ -44,6 +44,7 @@ export const getScript = createAsyncThunk(
         var g = d.createElement(t),
         s = d.getElementsByTagName(t)[0];
         g.src="${siteTrackingScriptUrl}";
+        s.parentNode.insertBefore(g, s);
         }(document, "script"))
     </script>`;
       }
