@@ -33,6 +33,28 @@ export const update = createAsyncThunk(
     }
   });
 
+export const deleteSiteTrackingEvent = createAsyncThunk(
+  'events', async (eventId, thunkAPI) => {
+    try {
+      const response = await eventsInstance.delete(`events/${eventId}`);
+      return JSON.parse(response.data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
+
+export const deletePulseemSiteTracking = createAsyncThunk(
+  'siteTracking/DeleteDomain', async (_, thunkAPI) => {
+    try {
+      const response = await instence.delete(`siteTracking/DeleteDomain`);
+      return JSON.parse(response.data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
+
 export const getScript = createAsyncThunk(
   'getScript', async (_, thunkAPI) => {
     try {
