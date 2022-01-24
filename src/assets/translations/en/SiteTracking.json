@@ -38,5 +38,7 @@
         "missingMandatoryAction": "One of the parameter is missing. Please try again",
         "serverNotAble": "Server Error. Please contact support.",
         "domainAlreadyExist": "This domain already exists"
-    }
+    },
+    "deleteDialogTitle": "Delete Site Tracking?",
+    "deleteDialogMessage": "Are you sure?<br />Clicking on \"OK\" will stop all tracking on your site."
 }
