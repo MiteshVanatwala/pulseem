@@ -20,7 +20,7 @@
         "notcontain": "Not Contain"
     },
     "typeGroupName": "Click here to add groups",
-    "placeHolderAddPageUrl":"Add your page URL here",
+    "placeHolderAddPageUrl": "Add your page URL here",
     "selectGroups": "Select Groups",
     "addToGroups": "Add to Groups",
     "events": {
@@ -40,5 +40,6 @@
         "domainAlreadyExist": "This domain already exists"
     },
     "deleteDialogTitle": "Delete Site Tracking?",
-    "deleteDialogMessage": "Are you sure?<br />Clicking on \"OK\" will stop all tracking on your site."
+    "deleteDialogMessage": "Are you sure?<br />Clicking on \"OK\" will stop all tracking on your site.",
+    "NoticeLinkStatistics": "Be aware that adding a link without wrapping may incur higher charges per SMS sent."
 }
