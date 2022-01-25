@@ -277,7 +277,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
       routes[2],
       routes[3],
       routes[4],
-      { title: t('mms.logPageHeaderResource1.Text'), iconUnicode: '\ue11b', href: '/react/MmsCampaigns', isShow: subAccountSettings && subAccountSettings.IsDirectAccount !== true },
+      { title: t('mms.logPageHeaderResource1.Text'), iconUnicode: '\ue11b', href: '/react/MmsCampaigns', isShow: true },
       routes[6],
       { title: t('master.Automations'), iconUnicode: '\ue087', href: '/react/Automations', isShow: subAccountSettings && subAccountSettings.IsDirectAccount !== true },
       { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
