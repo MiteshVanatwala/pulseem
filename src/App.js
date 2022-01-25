@@ -433,8 +433,8 @@ const App = ({ screenSize }) => {
 
     const insertScript = () => {
       const script = document.createElement("script");
-      script.src = siteTrackingScriptUrl;
-      script.async = true;
+      script.src = `${siteTrackingScriptUrl}`; //?v=` + Math.floor(Date.now() / 1000);
+      script.async = false;
       document.head.appendChild(script);
     }
 
@@ -446,6 +446,7 @@ const App = ({ screenSize }) => {
     })
     updateToken()
     initFeatures()
+    //Remove this implementation before uploading
     insertScript()
   }, [dispatch])
 

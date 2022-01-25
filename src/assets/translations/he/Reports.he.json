@@ -1,7 +1,7 @@
 {
   "DirectSendEmail": "שליחה ישירה ניוזלטר",
   "DirectSendSMS": "שליחה ישירה SMS",
-  "DirectSendReport": "דוחות שליחה ישירה",
+  "DirectSendReport": "שליחה ישירה",
   "FromEmail": "מאת מייל",
   "ToEmail": "למייל",
   "Recipient": "שם נמען",
