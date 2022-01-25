@@ -48,7 +48,7 @@ export const TablePagination = ({
     const value = parseInt(event.target.value)
     if (value !== rowsPerPage) {
       onRowsPerPageChange(value)
-      if (returnPageOne) {
+      if (returnPageOne === true) {
         onPageChange(1)
       }
     }

@@ -19,6 +19,7 @@ import { SmsStatus } from '../../../helpers/PulseemArrays';
 import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 const DirectSMSReportTab = ({
   classes,
@@ -95,6 +96,7 @@ const DirectSMSReportTab = ({
 
   const handleRowsPerPageSearching = (val) => {
     dispatch(setRowsPerPage(val))
+    setCookie('rpp', val, { maxAge: 2147483647 })
     searchRequest(val, page);
   }
 

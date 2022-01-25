@@ -20,6 +20,7 @@ import { emailStatusToString, emailStatusColor } from '../../../helpers/function
 import { actionURL } from '../../../config/index'
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import { setCookie } from '../../../helpers/cookies';
 
 const RenderRow = ({
   classes,
@@ -237,12 +238,13 @@ const DirectEmailReportTab = ({
   }
 
   const handlePageSearching = (val) => {
-    searchRequest(rowsPerPage ,val);
+    searchRequest(rowsPerPage, val);
     handlePageChange(val);
   }
 
   const handleRowsPerPageSearching = (val) => {
     dispatch(setRowsPerPage(val))
+    setCookie('rpp', val, { maxAge: 2147483647 })
     searchRequest(val, page);
   }
 
@@ -599,7 +601,7 @@ const DirectEmailReportTab = ({
   const renderTable = () => {
     return (
       <>
-        <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end'}}>
+        <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
           <Grid item className={windowSize === 'xs' ? classes.mt15 : null}>
             <Typography className={clsx(classes.colorGray, classes.mb5)}>
               {t('common.Total')} {directEmailReport.TotalRecords} {t('report.Messages')}
