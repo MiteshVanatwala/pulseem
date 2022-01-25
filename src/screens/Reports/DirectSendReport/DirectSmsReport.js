@@ -62,7 +62,8 @@ const DirectSMSReportTab = ({
       ResponseType: ResponseType,
       PageIndex: 1,
       PageSize: rowsPerPage,
-      Text
+      Text,
+      ShowContent: showContent
     }
     let searchObjects = {};
     Object.keys(param).map(item => {
@@ -83,6 +84,7 @@ const DirectSMSReportTab = ({
     let params = {
       PageSize: pageSize,
       PageIndex: pageIndex,
+      ShowContent: showContent,
       ...sms
     };
     await dispatch(isArchive ? getArchiveSMSDirectReport(params) : getSMSDirectReport(params))

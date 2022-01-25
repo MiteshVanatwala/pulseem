@@ -45,7 +45,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       },
       sms: {
         FromDate: isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm'),
-        ToDate: isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm')
+        ToDate: isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm'),
+        ShowContent: showContent
       }
     });
     getEmailReportData();
@@ -79,6 +80,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       FromDate: null,
       ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
     }) : getSMSDirectReport({
+      ShowContent: showContent,
       PageSize: rowsPerPage,
       PageIndex: 1,
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
@@ -95,7 +97,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     }
   }
 
-  useEffect(initData, [dispatch])
+  useEffect(initData, [dispatch, showContent])
 
   useEffect(handleExportEnable, [tabValue, directNewsletterReport, directSmsReport])
 
@@ -200,6 +202,11 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
         finalData = preferredOrder(response.payload, Object.keys(excelHeaders.SMS));
         finalData = switchStatusDescription(finalData, SmsStatus);
+        if (showContent === false) {
+          finalData.forEach((fd) => {
+            delete fd.MESSAGE;
+          })
+        }
         headers = excelHeaders.SMS;
         fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
       }
