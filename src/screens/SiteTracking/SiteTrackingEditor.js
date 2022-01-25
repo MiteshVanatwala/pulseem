@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core'
 import { DomainProtocol } from '../../helpers/PulseemArrays'
 import { useDispatch, useSelector } from 'react-redux'
-import { get, post, update, getScript, setDomain } from '../../redux/reducers/siteTrackingSlice';
+import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel, SiteTrackingModel } from '../../model/SiteTracking/SiteTrackingModel';
 import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
@@ -22,6 +22,15 @@ import { GroupDialog } from '../../components/Groups/GroupDialog';
 import EventTabs from './EventTabs';
 import { isValidUrl } from '../../helpers/UrlHelper';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
+
+const renderHtml = (html) => {
+    function createMarkup() {
+        return { __html: html };
+    }
+    return (
+        <label dangerouslySetInnerHTML={createMarkup()}></label>
+    );
+}
 
 const SiteTrackingEditor = ({ classes }) => {
     // const { subAccountGroups } = useSelector((state) => state.sms);
@@ -199,7 +208,8 @@ const SiteTrackingEditor = ({ classes }) => {
             validationError: validationErrorDialog(),
             scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog(),
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
-            showGroups: renderGroupsDialog()
+            showGroups: renderGroupsDialog(),
+            deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), renderHtml(t("siteTracking.deleteDialogMessage")), false, true)
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -218,7 +228,10 @@ const SiteTrackingEditor = ({ classes }) => {
         return <></>
     }
 
-    const renderDynamicDataDialog = (title, message) => {
+    const renderDynamicDataDialog = (title, message, isErrorDialog = true, showCancel = false) => {
+        const handleClose = () => {
+            setDialogType(null);
+        }
         return {
             showDivider: true,
             icon: (
@@ -226,22 +239,36 @@ const SiteTrackingEditor = ({ classes }) => {
             ),
             title: title,
             content: (
-                <Box className={clsx(classes.dialogBox, classes.red)}>
+                <Box className={clsx(classes.dialogBox, isErrorDialog ? classes.red : null)}>
                     {message}
                 </Box>
             ),
             renderButtons: () => (
-                <Button
-                    variant='contained'
-                    size='large'
-                    onClick={() => setDialogType(null)}
-                    className={clsx(
-                        classes.confirmButton,
-                        classes.dialogConfirmButton,
-                    )}
-                    style={{ margin: '0 auto' }}>
-                    {t('common.confirm')}
-                </Button>
+                <Box className={classes.spaceEvenly}>
+                    {
+                        showCancel && <Button
+                            variant='contained'
+                            size='small'
+                            onClick={handleClose}
+                            className={clsx(
+                                classes.dialogButton,
+                                classes.dialogCancelButton
+                            )}>
+                            {t('common.Cancel')}
+                        </Button>
+                    }
+                    <Button
+                        variant='contained'
+                        size='small'
+                        onClick={() => handleDeleteEvent()}
+                        className={clsx(
+                            classes.dialogButton,
+                            classes.dialogConfirmButton
+                        )}
+                        style={{ margin: !showCancel ? '0 auto' : null }}>
+                        {t('common.confirm')}
+                    </Button>
+                </Box>
             )
         };
     }
@@ -263,11 +290,11 @@ const SiteTrackingEditor = ({ classes }) => {
             renderButtons: () => (
                 <Button
                     variant='contained'
-                    size='large'
+                    size='small'
                     onClick={() => { setDialogType(null); setValidationError([]); }}
                     className={clsx(
-                        classes.confirmButton,
-                        classes.dialogConfirmButton,
+                        classes.dialogButton,
+                        classes.dialogConfirmButton
                     )}
                     style={{ margin: '0 auto' }}>
                     {t('common.confirm')}
@@ -276,6 +303,18 @@ const SiteTrackingEditor = ({ classes }) => {
             onCancel: () => { setDialogType(null); setValidationError([]); },
             onClose: () => { setDialogType(null); setValidationError([]); },
         };
+    }
+    const handleDeleteEvent = async () => {
+        setShowLoader(true);
+        setDialogType(null);
+        if (model.id && model.id !== '') {
+            const pResponse = await dispatch(deletePulseemSiteTracking())
+            console.log(pResponse);
+            await dispatch(deleteSiteTrackingEvent(model.id))
+        }
+        setModel(new SiteTrackingModel());
+        dispatch(setSelectedGroups([]));
+        setShowLoader(false);
     }
     const handleCopyScript = () => {
         setCopyStatus(true);
@@ -319,8 +358,8 @@ const SiteTrackingEditor = ({ classes }) => {
                             style={{ height: 40 }}
                             onClick={() => { setDialogType(null) }}
                             className={clsx(
-                                classes.confirmButton,
-                                classes.dialogConfirmButton,
+                                classes.dialogButton,
+                                classes.dialogConfirmButton
                             )}>
                             {t('common.confirm')}
                         </Button>
@@ -467,18 +506,30 @@ const SiteTrackingEditor = ({ classes }) => {
         </>
     }
     const PageFooter = () => {
-        return <Box>
+        return <Grid container spacing={2}>
             <Grid item xs={12} className={classes.baseButtonsContainer} style={{ marginBottom: 70 }}>
+                <Button
+                    variant='contained'
+                    size='medium'
+                    className={clsx(
+                        classes.actionButton,
+                        classes.actionButtonRed
+                    )}
+                    style={{ margin: '8px', padding: '9px 15px' }}
+                    onClick={() => { setDialogType({ type: 'deleteEvent' }) }}
+                >
+                    {t("common.Delete")}
+                </Button>
                 <Button
                     variant='contained'
                     className={clsx(
                         classes.actionButton,
                         classes.actionButtonLightGreen)}
                     onClick={() => onSave()}
-                    style={{ height: '100%', minWidth: 100 }}
+                    style={{ height: '100%', minWidth: 100, margin: '8px', padding: '9px 0' }}
                 >{t('common.Save')}</Button>
             </Grid>
-        </Box>
+        </Grid>
     }
 
     return <DefaultScreen
