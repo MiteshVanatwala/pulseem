@@ -8,7 +8,6 @@ import {
     Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Select, MenuItem, Checkbox
 } from '@material-ui/core'
 import { DomainProtocol } from '../../helpers/PulseemArrays'
-import { getGroupsBySubAccountId } from "../../redux/reducers/smsSlice";
 import { useDispatch, useSelector } from 'react-redux'
 import { get, post, update, getScript, setDomain } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel, SiteTrackingModel } from '../../model/SiteTracking/SiteTrackingModel';
@@ -22,12 +21,12 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import { GroupDialog } from '../../components/Groups/GroupDialog';
 import EventTabs from './EventTabs';
 import { isValidUrl } from '../../helpers/UrlHelper';
-import { setSelectedGroups } from '../../redux/reducers/groupSlice';
+import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 
 const SiteTrackingEditor = ({ classes }) => {
-    const { subAccountGroups } = useSelector((state) => state.sms);
+    // const { subAccountGroups } = useSelector((state) => state.sms);
     const { isRTL, windowSize } = useSelector(state => state.core);
-    const { selectedGroups } = useSelector((state) => state.group);
+    const { selectedGroups, subAccountAllGroups } = useSelector((state) => state.group);
     const { ToastMessages, siteScript } = useSelector((state) => state.siteTracking);
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
@@ -435,7 +434,7 @@ const SiteTrackingEditor = ({ classes }) => {
         return GroupDialog({
             classes: classes,
             title: t('siteTracking.selectGroups'),
-            groups: subAccountGroups,
+            groups: subAccountAllGroups,
             allowSelectAll: true,
             groupsSelected: selectedGroups,
             onConfirm: () => { handleGroupSelection() },
