@@ -355,7 +355,7 @@
   "CommentLink": "Link",
   "FacebookName": "Facebook User",
   "Icons": "Icons",
-  "MessageContent": "Removal Reply",
+  "messageContent": "Message Content",
   "SendComment": "Reply To Comment",
   "SendPostComment": "Add Comment to Post",
   "SendPrivateMSG": "Private Message",

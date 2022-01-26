@@ -355,7 +355,7 @@
   "CommentLink": "קישור לתגובה",
   "FacebookName": "שם בפייסבוק",
   "Icons": "אייקונים",
-  "MessageContent": "מילת הסרה",
+  "messageContent": "תוכן ההודעה",
   "Reaction": "ריאקציה",
   "SendComment": "שלח תגובה",
   "SendPostComment": "שלח תגובה לפוסט",

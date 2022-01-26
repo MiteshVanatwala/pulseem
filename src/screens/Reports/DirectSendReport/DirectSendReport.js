@@ -171,7 +171,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     SMS: {
       "PID": t('common.campaignID'),
       "DATE": t('common.CreationDate'),
-      "MESSAGE": t('common.MessageContent'),
+      "MESSAGE": t('common.messageContent'),
       "FROM": t('common.SentFromNumber'),
       "TO": t('common.SendTo2'),
       "REFERENCE": t('report.id'),
