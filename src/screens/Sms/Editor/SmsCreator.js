@@ -172,6 +172,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [isFromAutomation, setIsFromAutomation] = useState(false);
   const [isNewVersion, setIsNewVersion] = useState(true);
   const [otpOpen, setOTPOpen] = useState(null);
+  const [isSiteTracking, setIsSiteTracking] = useState(false);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -279,11 +280,17 @@ const SmsCreator = ({ classes, ...props }) => {
     await handleSendResult();
   }, [smsSendResult]);
 
-  useEffect(async () => {
-    linkCalculation();
-  }, [smsModel, isLinksStatistics]);
+  useEffect(() => {
+    if (commonSettings.SubAccountSettings) {
+      siteTrackingLogic();
+    }
+  }, [commonSettings, smsModel]);
 
-  useEffect(async () => {
+  useEffect(() => {
+    linkCalculation();
+  }, [smsModel, isSiteTracking, isLinksStatistics])
+
+  useEffect(() => {
     getcredits(characterCount);
   }, [characterCount])
 
@@ -317,7 +324,8 @@ const SmsCreator = ({ classes, ...props }) => {
     setLoader(false);
   };
 
-  useEffect(async () => {
+
+  const initDispatch = async () => {
     setLoader(true);
     setCampaignId(props && props.match.params.id ? props.match.params.id : -1);
     await dispatch(getPreviousLandingData());
@@ -338,7 +346,10 @@ const SmsCreator = ({ classes, ...props }) => {
       setIsFromAutomation(true);
     }
     await initFromNumber();
+  }
 
+  useEffect(() => {
+    initDispatch();
   }, [dispatch]);
 
   const initFromNumber = async () => {
@@ -380,10 +391,9 @@ const SmsCreator = ({ classes, ...props }) => {
       if (response && !response.error) {
         setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
-        setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
         setSmsModel(response.payload);
         setIsLinksStatistics(response.payload.IsLinksStatistics);
-        //setkeep(response.payload.IsLinksStatistics);
+        setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
         return response.payload;
       }
       else {
@@ -407,8 +417,9 @@ const SmsCreator = ({ classes, ...props }) => {
     if (t && t.length > 0) {
       const res = t.replace('\n', ' ');
       // eslint-disable-next-line
-      const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_#]*)?\??(?:[{}\-\+=&;,%@\.\w_]*)#?(?:[\.\!\/\\\w+]*))?)/g;
+      const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\??(?:[{}\-\+=&;,%@\.\w_]*)##?(?:[\.\!\/\\\w+##]*))?)/g;
       const links = res.match(regex);
+      let tempTextCount = smsModel.Text.length;
 
       if (links && links.length > 0) {
         setlinkCount(links.length);
@@ -418,11 +429,15 @@ const SmsCreator = ({ classes, ...props }) => {
             var linkLength = links[i].length;
             linksCharsAddition += 35 - linkLength;
           }
-          setcharacterCount(smsModel.Text.length + linksCharsAddition);
+          tempTextCount += linksCharsAddition;
         }
         else {
-          setcharacterCount(smsModel.Text.length);
+          if (isSiteTracking === true && smsModel.Text.includes('ref=##ClientIDEnc##')) {
+            tempTextCount += 9;
+          }
         }
+
+        setcharacterCount(tempTextCount);
       }
       else {
         setlinkCount(0);
@@ -452,7 +467,7 @@ const SmsCreator = ({ classes, ...props }) => {
     var lastChar = text.substring(text.length, text.length - 1);
     var isNumber = /^[0-9]*$/;
     var english = /^[A-Za-z0-9 ]*$/;
-    // var reg = "/[^\x00-\xFF]/g";
+
     if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
       e.target.value = text.substring(0, 10);
     }
@@ -572,10 +587,10 @@ const SmsCreator = ({ classes, ...props }) => {
     if (afterUpdateCharCount < 1000) {
       var tArea = document.getElementById("yourMessage");
       // filter:
-      if (0 == text) {
+      if (0 === text) {
         return;
       }
-      if (0 == cursorPos) {
+      if (0 === cursorPos) {
         return;
       }
 
@@ -673,7 +688,6 @@ const SmsCreator = ({ classes, ...props }) => {
                 disabled
                 className={windowSize === "xs" ? classes.buttonFieldRemovalMobile : clsx(classes.buttonFieldRemoval)}
                 value={removalNumber}
-                disabled
               />
             </Box>
           ) : null}
@@ -687,8 +701,6 @@ const SmsCreator = ({ classes, ...props }) => {
     if (smsModel.Text && smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
       handleMsgSelect();
     }
-    let tempMsg = "";
-    tempMsg = e.target.value
     let arr = e.target.value.split("\n");
     setsplittedMsg(arr);
 
@@ -1162,30 +1174,36 @@ const SmsCreator = ({ classes, ...props }) => {
     sethidden(newSelection.length === 0);
   };
 
+  const siteTrackingLogic = () => {
+    if (commonSettings.SubAccountSettings.DomainAddress && commonSettings.SubAccountSettings.DomainAddress !== '') {
+      const domainName = commonSettings.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
+      if (smsModel.Text.includes(domainName)) {
+        setIsSiteTracking(true);
+      }
+      else {
+        setIsSiteTracking(false);
+      }
+    }
+  }
+
   const validationCheckpoint = async (callbackFunc) => {
-    let text = smsModel.Text;
     if (validationCheck()) {
-      if (commonSettings.SubAccountSettings.DomainAddress && commonSettings.SubAccountSettings.DomainAddress !== '') {
-        const domainName = commonSettings.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www', '');
-        if (smsModel.Text.includes(domainName)) {
-          if (!smsModel.Text.includes('ref=##ClientIDEnc##')) {
-            const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(commonSettings.SubAccountSettings.DomainAddress));
-            const originalLink = startIndex.split(' ') || startIndex.split('\n');
-            let originUrl = originalLink[0];
-            let newUrl = originUrl.trim();
-            newUrl += newUrl.includes('?') ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
-            text = smsModel.Text.replace(originUrl, newUrl);
-            setSmsModel((currentState) => {
-              currentState.Text = text;
-              return currentState;
-            });
-          }
-          if (!isLinksStatistics) {
-            setDialogType({ type: 'linkStatisticAlert', data: { onConfirmFunc: () => callbackFunc(), test: 'data' } });
-          }
-          else {
-            callbackFunc();
-          }
+      if (isSiteTracking === true) {
+        if (!smsModel.Text.includes('ref')) {
+          let text = smsModel.Text;
+          const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(commonSettings.SubAccountSettings.DomainAddress));
+          const originalLink = startIndex.split(' ') || startIndex.split('\n');
+          let originUrl = originalLink[0];
+          let newUrl = originUrl.trim();
+          newUrl += newUrl.includes('?') ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
+          text = smsModel.Text.replace(originUrl, newUrl);
+          setSmsModel((currentState) => {
+            currentState.Text = text;
+            return currentState;
+          });
+        }
+        if (!isLinksStatistics) {
+          setDialogType({ type: 'linkStatisticAlert', data: { onConfirmFunc: () => callbackFunc(), test: 'data' } });
         }
         else {
           callbackFunc();
@@ -1198,13 +1216,14 @@ const SmsCreator = ({ classes, ...props }) => {
   }
 
   const onSave = async (isSave, returnToAutomation = false) => {
+    linkCalculation();
     const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: smsCampaignId }
     setLoader(true);
     let r = await dispatch(smsSave(payloadToPush));
     const campaignId = r.payload.Message;
     setCampaignId(campaignId);
     setLoader(false);
-    if (r.payload.Status == 2) {
+    if (r.payload.Status === 2) {
       if (isSave) {
         setToastMessage(ToastMessages.SUCCESS);
         setTimeout(() => {
@@ -1217,7 +1236,7 @@ const SmsCreator = ({ classes, ...props }) => {
         history.push(`/sms/send/${campaignId}`);
       }
     }
-    else if (r.payload.Status == 3) {
+    else if (r.payload.Status === 3) {
       setOTPOpen(true);
     }
   };
