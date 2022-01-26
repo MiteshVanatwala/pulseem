@@ -160,7 +160,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [toastMessage, setToastMessage] = useState(null);
   const [removalNumber, setremovalNumber] = useState(null);
   const [storedValue, setstoredValue] = useState("");
-  const [keep, setkeep] = useState(true);
   const [summary, setsummary] = useState(false);
   const [campaignNumberValidated, setcampaignNumberValidated] = useState(false);
   const [total, settotal] = useState(0);
@@ -382,6 +381,7 @@ const SmsCreator = ({ classes, ...props }) => {
         setmessageCount(response.payload.CreditsPerSms);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
         setSmsModel(response.payload);
+        setIsLinksStatistics(response.payload.IsLinksStatistics);
         return response.payload;
       }
       else {
@@ -395,8 +395,6 @@ const SmsCreator = ({ classes, ...props }) => {
     setIsTestCampaign(!isTestCampaign)
   };
   const toggleKeep = () => {
-    let toggle = !isLinksStatistics
-    setkeep((prev) => !prev);
     setIsLinksStatistics(!isLinksStatistics);
   };
 
@@ -982,7 +980,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       ? clsx(classes.reactSwitchHe, "react-switch")
                       : clsx(classes.reactSwitch, "react-switch")
                   }
-                  checked={keep}
+                  checked={isLinksStatistics}
                   onChange={toggleKeep}
                   onColor="#28a745"
                   checkedIcon={false}
