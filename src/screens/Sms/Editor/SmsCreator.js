@@ -159,7 +159,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [toastMessage, setToastMessage] = useState(null);
   const [removalNumber, setremovalNumber] = useState(null);
   const [storedValue, setstoredValue] = useState("");
-  const [keep, setkeep] = useState(true);
+  // const [keep, setkeep] = useState(true);
   const [summary, setsummary] = useState(false);
   const [campaignNumberValidated, setcampaignNumberValidated] = useState(false);
   const [total, settotal] = useState(0);
@@ -382,6 +382,8 @@ const SmsCreator = ({ classes, ...props }) => {
         setmessageCount(response.payload.CreditsPerSms);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
         setSmsModel(response.payload);
+        setIsLinksStatistics(response.payload.IsLinksStatistics);
+        //setkeep(response.payload.IsLinksStatistics);
         return response.payload;
       }
       else {
@@ -395,8 +397,6 @@ const SmsCreator = ({ classes, ...props }) => {
     setIsTestCampaign(!isTestCampaign)
   };
   const toggleKeep = () => {
-    let toggle = !isLinksStatistics
-    setkeep((prev) => !prev);
     setIsLinksStatistics(!isLinksStatistics);
   };
 
@@ -980,7 +980,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       ? clsx(classes.reactSwitchHe, "react-switch")
                       : clsx(classes.reactSwitch, "react-switch")
                   }
-                  checked={keep}
+                  checked={isLinksStatistics}
                   onChange={toggleKeep}
                   onColor="#28a745"
                   checkedIcon={false}
@@ -1165,8 +1165,9 @@ const SmsCreator = ({ classes, ...props }) => {
   const validationCheckpoint = async (callbackFunc) => {
     let text = smsModel.Text;
     if (validationCheck()) {
-      if (commonSettings.SubAccountSettings.DomainAddress) {
-        if (smsModel.Text.includes(commonSettings.SubAccountSettings.DomainAddress)) {
+      if (commonSettings.SubAccountSettings.DomainAddress && commonSettings.SubAccountSettings.DomainAddress !== '') {
+        const domainName = commonSettings.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www', '');
+        if (smsModel.Text.includes(domainName)) {
           if (!smsModel.Text.includes('ref=##ClientIDEnc##')) {
             const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(commonSettings.SubAccountSettings.DomainAddress));
             const originalLink = startIndex.split(' ') || startIndex.split('\n');
@@ -1320,27 +1321,27 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const handleExit = async (saveBeforeExit) => {
     if (saveBeforeExit) {
-        const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
-        let saveResponse = await dispatch(smsSave(payloadToPush));
-        if (saveResponse) {
-          if (saveResponse.payload.Status === 3) {
-            setOTPOpen(true);
-            return;
-          }
-          else if (saveResponse.payload.Status === 2) {
-            setDialogType(null);
-            history.push("/SMSCampaigns");
+      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
+      let saveResponse = await dispatch(smsSave(payloadToPush));
+      if (saveResponse) {
+        if (saveResponse.payload.Status === 3) {
+          setOTPOpen(true);
+          return;
+        }
+        else if (saveResponse.payload.Status === 2) {
+          setDialogType(null);
+          history.push("/SMSCampaigns");
 
-          }
-          else {
-            setDialogType(null);
-            setToastMessage(ToastMessages.ERROR);
-          }
         }
         else {
           setDialogType(null);
           setToastMessage(ToastMessages.ERROR);
         }
+      }
+      else {
+        setDialogType(null);
+        setToastMessage(ToastMessages.ERROR);
+      }
     }
     else if (saveBeforeExit === false) {
       history.push("/SMSCampaigns");
