@@ -352,7 +352,7 @@
   "CommentLink": "קישור לתגובה",
   "FacebookName": "שם בפייסבוק",
   "Icons": "אייקונים",
-  "MessageContent": "תוכן ההודעה",
+  "messageContent": "תוכן ההודעה",
   "Reaction": "ריאקציה",
   "SendComment": "שלח תגובה",
   "SendPostComment": "שלח תגובה לפוסט",
