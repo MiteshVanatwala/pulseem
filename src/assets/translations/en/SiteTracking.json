@@ -41,5 +41,5 @@
     },
     "deleteDialogTitle": "Delete Site Tracking?",
     "deleteDialogMessage": "Are you sure?<br />Clicking on \"OK\" will stop all tracking on your site.",
-    "NoticeLinkStatistics": "Be aware that adding a link without wrapping may incur higher charges per SMS sent."
+    "NoticeLinkStatistics": "Your account is set up for Site Tracking<br/>Removing link tracking will add characters to your message and may increase the credit count for your campaign "
 }
