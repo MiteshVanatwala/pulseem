@@ -1388,11 +1388,8 @@ const SmsCreator = ({ classes, ...props }) => {
     );
   };
   const onLocation = async () => {
-    let tempmsg = "";
-    tempmsg = smsModel.Text + "https://waze.to/?q=" + Searched.split(" ").join("%20");
-    handleSmsModelChange("Text", tempmsg);
-    let lc = linkCount;
-    setlinkCount(++lc);
+    onAddText("https://waze.to/?q=" + Searched.split(" ").join("%20"));
+    setlinkCount(linkCount + 1);
     setwaize(false);
     setDialogType(null);
   };
