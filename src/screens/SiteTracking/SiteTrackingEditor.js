@@ -458,15 +458,12 @@ const SiteTrackingEditor = ({ classes }) => {
         return null;
     }
     const handleGroupSelection = () => {
-        // model.metadata.groupIds = selectedGroups.map((g) => { return g.GroupID });
-        // deepUpdate(['metadata', 'GroupIds'], model.metadata.groupIds);
         setDialogType(null);
     }
 
     useEffect(() => {
         model.metadata.groupIds = selectedGroups.map((g) => { return g.GroupID });
         deepUpdate(['metadata', 'groupIds'], model.metadata.groupIds);
-        //setDialogType(null);
     }, [selectedGroups]);
 
     const renderGroupsDialog = () => {
