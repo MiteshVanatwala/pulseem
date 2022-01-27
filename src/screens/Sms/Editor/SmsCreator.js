@@ -573,10 +573,10 @@ const SmsCreator = ({ classes, ...props }) => {
     if (afterUpdateCharCount < 1000) {
       var tArea = document.getElementById("yourMessage");
       // filter:
-      if (0 == text) {
+      if (0 === text) {
         return;
       }
-      if (0 == cursorPos) {
+      if (0 === cursorPos) {
         return;
       }
 
@@ -597,7 +597,7 @@ const SmsCreator = ({ classes, ...props }) => {
         tArea.selectionStart = tArea.selectionEnd = cursorPos;
       }, 10);
 
-      tArea.focus();
+      focusOnMessage();
     }
   }
 
@@ -1339,14 +1339,20 @@ const SmsCreator = ({ classes, ...props }) => {
       </>
     );
   };
+
+  const focusOnMessage = () => {
+    const textArea = document.getElementById("yourMessage");
+    setTimeout(() => {
+      textArea.focus();
+    }, 500)
+  }
+
   const onLocation = async () => {
-    let tempmsg = "";
-    tempmsg = smsModel.Text + "https://waze.to/?q=" + Searched.split(" ").join("%20");
-    handleSmsModelChange("Text", tempmsg);
-    let lc = linkCount;
-    setlinkCount(++lc);
+    onAddText("https://waze.to/?q=" + Searched.split(" ").join("%20"));
+    setlinkCount(linkCount + 1);
     setwaize(false);
     setDialogType(null);
+    focusOnMessage();
   };
 
   const renderToast = () => {
