@@ -352,7 +352,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
                               }
                             </Button>
                             <Typography
-                              style={{ textAlign: 'center' }}>
+                              style={{ textAlign: 'center', direction: isRTL ? 'rtl' : 'ltr' }}>
                               {route.title}
                             </Typography>
                           </Box>
