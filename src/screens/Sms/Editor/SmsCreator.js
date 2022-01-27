@@ -1352,7 +1352,6 @@ const SmsCreator = ({ classes, ...props }) => {
     setlinkCount(linkCount + 1);
     setwaize(false);
     setDialogType(null);
-    focusOnMessage();
   };
 
   const renderToast = () => {
