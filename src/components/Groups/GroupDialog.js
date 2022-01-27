@@ -138,15 +138,23 @@ export const GroupDialog = ({ classes,
                     </Box>}
                     {groups && groups.length > 0 && groups
                         .filter((val) => {
-                            if (search == "") {
-                                return val;
+                            let retVal = '';
+                            if (search === "") {
+                                retVal = val;
                             } else if (
                                 val.GroupName.toLowerCase().includes(
                                     search.toLowerCase()
                                 )
                             ) {
-                                return val;
+                                retVal = val;
                             }
+                            return retVal;
+                        }).sort((item) => {
+                            const itemChecked = newSelection.length > 0 && newSelection.filter((g) => { return g.GroupID === item.GroupID }).length > 0;
+                            if (itemChecked) {
+                                return -1;
+                            }
+                            return 1;
                         })
                         .map((item, idx) => {
                             const itemChecked = newSelection.length > 0 && newSelection.filter((g) => { return g.GroupID === item.GroupID }).length > 0
