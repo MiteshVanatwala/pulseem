@@ -1516,5 +1516,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     position: 'absolute',
     left: 0,
     right: 0
+  },
+  redLink: {
+    color: 'red',
+    fontWeight: 600,
+    cursor: 'pointer'
   }
 })

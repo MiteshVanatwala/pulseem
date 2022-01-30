@@ -90,5 +90,6 @@
       "activeNoResponse": "responses active - no responses"
     }
   },
-  "ArchiveDirectSendReport": "DirectSend Report Archive"
+  "ArchiveDirectSendReport": "DirectSend Report Archive",
+  "Reactivate": "Reactivate / Cancel removal"
 }

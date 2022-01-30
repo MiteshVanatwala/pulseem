@@ -12,7 +12,7 @@ import ControlPointIcon from '@material-ui/icons/ControlPoint';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import moment from 'moment';
-import { getNewsletterDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
+import { getNewsletterDirectReport, getArchiveDirectReport, reactivateEmail } from '../../../redux/reducers/newsletterSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { useSelector } from 'react-redux';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
@@ -30,7 +30,8 @@ const RenderRow = ({
   row,
   t = () => null,
   windowSize,
-  isArchive = false
+  isArchive = false,
+  dispatch
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -115,6 +116,24 @@ const RenderRow = ({
     )
   }
 
+  const renderReactivate = (row) => {
+    const reactivate = async () => {
+      const request = {
+        From: row.FromEmail,
+        To: row.ToEmail,
+        ErrorCode: row.Status
+      };
+      await dispatch(reactivateEmail(request));
+    }
+    return (<Link
+      color="primary"
+      onClick={() => { reactivate() }}
+      target='_blank'
+      className={clsx(classes.f16, classes.redLink)}>
+      {t('report.Reactivate')}
+    </Link>)
+  }
+
   return (
     <>
       <TableRow
@@ -143,6 +162,7 @@ const RenderRow = ({
           align='center'
           className={classes.flex1}>
           {renderCell(row.ToEmail)}
+          {row.Status === 8 && renderReactivate(row)}
         </TableCell>
         {windowSize !== 'xs' && (
           <>
@@ -592,7 +612,8 @@ const DirectEmailReportTab = ({
                 cellStyle={cellStyle}
                 rowStyle={rowStyle}
                 t={t}
-                isArchive={isArchive} />
+                isArchive={isArchive}
+                dispatch={dispatch} />
           )
         }
       </TableBody>

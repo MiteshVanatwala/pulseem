@@ -92,5 +92,6 @@
       "activeNoResponse": "עם אפשרות למשובים - ואין משובים"
     }
   },
-  "ArchiveDirectSendReport": "ארכיון שליחה ישירה"
+  "ArchiveDirectSendReport": "ארכיון שליחה ישירה",
+  "Reactivate": "Reactivate / בטל הסרה"
 }

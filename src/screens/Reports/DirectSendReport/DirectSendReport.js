@@ -26,7 +26,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchData, setSearchData] = useState({});
   const [isSearching, setSearching] = useState({});
   const [searchParam, setSearchParam] = useState({});
-  const [tabValue, setTabValue] = useState((qs.t ? parseInt(qs.t) : null) || 0);
+  const [tabValue, setTabValue] = useState((qs.t ? parseInt(qs.t) : 0) || 0);
   const rowsOptions = [6, 10, 20, 50];
   const [pageEmail, setPageEmail] = useState(1);
   const [pageSms, setPageSms] = useState(1);
@@ -67,9 +67,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
   const handleExportEnable = () => {
     if (tabValue === 0) {
-      setExportEnable(Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null ? true : false)
-    } else {
       setExportEnable(Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport !== null ? true : false)
+    } else {
+      setExportEnable(Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null ? true : false)
     }
   }
 
@@ -192,14 +192,6 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       let response, finalData, headers, fileName = null;
 
       if (tabValue === 0) {
-        response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
-        finalData = preferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
-        finalData = switchStatusDescription(finalData, EmailStatus);
-        headers = excelHeaders.EMAIL;
-        fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
-      }
-
-      if (tabValue === 1) {
         response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
         finalData = preferredOrder(response.payload, Object.keys(excelHeaders.SMS));
         finalData = switchStatusDescription(finalData, SmsStatus);
@@ -210,6 +202,14 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         }
         headers = excelHeaders.SMS;
         fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
+      }
+
+      if (tabValue === 1) {
+        response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
+        finalData = preferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
+        finalData = switchStatusDescription(finalData, EmailStatus);
+        headers = excelHeaders.EMAIL;
+        fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
       }
 
       exportFile({
@@ -234,8 +234,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
               onChange={(e, value) => { setAdvanceSearch(tabValue !== value ? false : advanceSearch); setTabValue(value) }}
               indicatorColor="primary"
             >
-              <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={0} />
-              <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={1} />
+              <Tab label={t('appBar.sms.title')} classes={{ root: classes.minWidth100 }} value={0} />
+              <Tab label={t('master.lblUserMailResource1.Text')} classes={{ root: classes.minWidth100 }} value={1} />
             </TabList>
             <Grid item>
               {!isArchive && <Button
@@ -255,29 +255,6 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
           </Grid>
           <Grid item xs={12} className={classes.lastReportsTabPanels}>
             <TabPanel value={0} index={0} className={classes.p0}>
-              <DirectEmailReportTab
-                classes={classes}
-                dispatch={dispatch}
-                windowSize={windowSize}
-                isRTL={isRTL}
-                handleSearchInput={handleSearchInput}
-                handleSearching={handleSearching}
-                handlePageChange={setPageEmail}
-                handleAdvanceSearch={(isAdanceSearchRequested) => {
-                  setAdvanceSearch(isAdanceSearchRequested)
-                }}
-                clearSearch={clearSearch}
-                page={pageEmail}
-                rowsPerPage={rowsPerPage}
-                searchData={searchData}
-                isSearching={isSearching}
-                directEmailReport={directNewsletterReport}
-                rowsOptions={rowsOptions}
-                advanceSearch={advanceSearch}
-                isArchive={isArchive}
-              />
-            </TabPanel>
-            <TabPanel value={1} index={1} className={classes.p0}>
               <DirectSMSReportTab
                 classes={classes}
                 dispatch={dispatch}
@@ -298,6 +275,30 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                 advanceSearch={advanceSearch}
                 setLoader={setLoader}
                 rowsOptions={rowsOptions}
+                isArchive={isArchive}
+              />
+
+            </TabPanel>
+            <TabPanel value={1} index={1} className={classes.p0}>
+              <DirectEmailReportTab
+                classes={classes}
+                dispatch={dispatch}
+                windowSize={windowSize}
+                isRTL={isRTL}
+                handleSearchInput={handleSearchInput}
+                handleSearching={handleSearching}
+                handlePageChange={setPageEmail}
+                handleAdvanceSearch={(isAdanceSearchRequested) => {
+                  setAdvanceSearch(isAdanceSearchRequested)
+                }}
+                clearSearch={clearSearch}
+                page={pageEmail}
+                rowsPerPage={rowsPerPage}
+                searchData={searchData}
+                isSearching={isSearching}
+                directEmailReport={directNewsletterReport}
+                rowsOptions={rowsOptions}
+                advanceSearch={advanceSearch}
                 isArchive={isArchive}
               />
             </TabPanel>
