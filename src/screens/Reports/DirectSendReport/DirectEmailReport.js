@@ -199,7 +199,7 @@ const DirectEmailReportTab = ({
 
   const handleSearch = async () => {
     const { email = {} } = searchData || {};
-    const { FromEmail = '', ToEmail = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ToName = '' } = email || {};
+    const { FromEmail = '', ToEmail = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ToName = '', Subject = '' } = email || {};
     const param = {
       FromDate,
       ToDate,
@@ -208,6 +208,7 @@ const DirectEmailReportTab = ({
       ToEmail,
       Reference: ExternalRef,
       ToName,
+      Subject,
       PageIndex: 1,
       PageSize: rowsPerPage
     }

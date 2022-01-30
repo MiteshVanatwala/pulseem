@@ -14,7 +14,7 @@ export const coreSlice=createSlice({
     imageURL: '',
     isWhiteLabel: false,
     companyName: '',
-    rowsPerPage: 6,
+    rowsPerPage: getCookie('rpp') || 6,
     isClal: false,
     accountFeatures: null,
     cameFromSubAccount: null,

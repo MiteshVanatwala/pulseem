@@ -37,28 +37,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
-  const initData = () => {
-    setSearchData({
-      email: {
-        FromDate: isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm'),
-        ToDate: isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm')
-      },
-      sms: {
-        FromDate: isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm'),
-        ToDate: isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm'),
-        ShowContent: showContent
-      }
-    });
-    getEmailReportData();
-    getSMSReportData();
-    setSearchParam({
-      email: {},
-      sms: {}
-    })
-  }
-
   const getEmailReportData = async () => {
-    setLoader(true);
     await dispatch(isArchive ? getArchiveDirectReport({
       PageSize: rowsPerPage,
       PageIndex: 1,
@@ -70,10 +49,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().format('YYYY-MM-DD HH:mm')
     }));
-    setLoader(false);
   }
   const getSMSReportData = async () => {
-    setLoader(true);
     await dispatch(isArchive ? getArchiveSMSDirectReport({
       PageIndex: 1,
       PageSize: rowsPerPage,
@@ -86,7 +63,6 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().format('YYYY-MM-DD HH:mm')
     }));
-    setLoader(false);
   }
 
   const handleExportEnable = () => {
@@ -97,11 +73,35 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     }
   }
 
-  useEffect(initData, [dispatch, showContent])
+  useEffect(() => {
+    const initData = async () => {
+      setLoader(true);
+      setSearchData({
+        email: {
+          FromDate: isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm'),
+          ToDate: isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm')
+        },
+        sms: {
+          FromDate: isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm'),
+          ToDate: isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm'),
+          ShowContent: showContent
+        }
+      });
+      await getEmailReportData();
+      await getSMSReportData();
+      // setSearchParam({
+      //   email: {},
+      //   sms: {}
+      // });
+      setLoader(false);
+    }
+    initData();
+  }, [dispatch, showContent])
 
   useEffect(handleExportEnable, [tabValue, directNewsletterReport, directSmsReport])
 
   const clearSearch = async (key) => {
+    setLoader(true);
     let isSearchingData = isSearching;
     let search = searchData;
     let params = searchParam;
@@ -119,6 +119,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     if (key === 'email') {
       await getEmailReportData()
     }
+    setLoader(false);
 
   }
 
@@ -169,7 +170,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "StatusDescription": t('report.StatusDescription')
     },
     SMS: {
-      "PID": t('common.campaignID'),
+      // "PID": t('common.campaignID'),
       "DATE": t('common.CreationDate'),
       "MESSAGE": t('common.messageContent'),
       "FROM": t('common.SentFromNumber'),
@@ -180,7 +181,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "TOTALRESPONSES": t('report.totalResponses'),
       "CHARSCOUNT": t('report.Characters'),
       "Credits": t('report.Credits'),
-      "ClientStatus": t('report.clientStatus'),
+      // "ClientStatus": t('report.clientStatus'),
       "StatusDescription": t('report.StatusDescription')
     }
   };
