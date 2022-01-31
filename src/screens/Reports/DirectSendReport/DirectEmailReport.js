@@ -31,7 +31,8 @@ const RenderRow = ({
   t = () => null,
   windowSize,
   isArchive = false,
-  dispatch
+  dispatch,
+  onRefresh = () => null
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -124,6 +125,7 @@ const RenderRow = ({
         ErrorCode: row.Status
       };
       await dispatch(reactivateEmail(request));
+      onRefresh();
     }
     return (<Link
       color="primary"
@@ -162,7 +164,7 @@ const RenderRow = ({
           align='center'
           className={classes.flex1}>
           {renderCell(row.ToEmail)}
-          {row.Status === 8 && renderReactivate(row)}
+          {(row.ClientStatus === 1) && renderReactivate(row)}
         </TableCell>
         {windowSize !== 'xs' && (
           <>
@@ -229,7 +231,7 @@ const DirectEmailReportTab = ({
       Reference: Reference,
       ToName,
       Subject,
-      PageIndex: 1,
+      PageIndex: page,
       PageSize: rowsPerPage
     }
     let searchObjects = {};
@@ -625,7 +627,8 @@ const DirectEmailReportTab = ({
                 rowStyle={rowStyle}
                 t={t}
                 isArchive={isArchive}
-                dispatch={dispatch} />
+                dispatch={dispatch}
+                onRefresh={handleSearch} />
           )
         }
       </TableBody>
