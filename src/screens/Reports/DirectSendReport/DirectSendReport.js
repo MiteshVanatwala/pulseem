@@ -41,7 +41,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     await dispatch(isArchive ? getArchiveDirectReport({
       PageSize: rowsPerPage,
       PageIndex: 1,
-      FromDate: null,
+      FromDate: moment().subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
     }) : getNewsletterDirectReport({
       PageIndex: 1,
@@ -54,7 +54,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     await dispatch(isArchive ? getArchiveSMSDirectReport({
       PageIndex: 1,
       PageSize: rowsPerPage,
-      FromDate: null,
+      FromDate: moment().subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm'),
       ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
     }) : getSMSDirectReport({
       ShowContent: showContent,
@@ -78,21 +78,18 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       setLoader(true);
       setSearchData({
         email: {
-          FromDate: isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm'),
+          FromDate: isArchive ? moment().subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm') : moment().startOf('month').format('YYYY-MM-DD HH:mm'),
           ToDate: isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm')
         },
         sms: {
-          FromDate: isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm'),
+          FromDate: isArchive ? moment().subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm') : moment().startOf('month').format('YYYY-MM-DD HH:mm'),
           ToDate: isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm'),
           ShowContent: showContent
         }
       });
       await getEmailReportData();
       await getSMSReportData();
-      // setSearchParam({
-      //   email: {},
-      //   sms: {}
-      // });
+
       setLoader(false);
     }
     initData();
@@ -108,6 +105,10 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     search[key] = {};
     params[key] = {};
     isSearchingData[key] = false;
+
+    if (isArchive) {
+      search[key]["FromDate"] = moment().subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm')
+    }
 
     setSearching({ ...isSearching });
     setSearchData(search);
