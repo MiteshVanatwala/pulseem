@@ -312,17 +312,6 @@ const DirectEmailReportTab = ({
             isRoundedOnMobile={windowSize === 'xs'}
           />
         </Grid>
-        {windowSize !== 'xs' && <Grid item>
-          <TextField
-            variant='outlined'
-            size='small'
-            value={ToName}
-            onChange={(e) => handleSearchInput(e.target.value, 'ToName', 'email')}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('automations.Recipient')}
-          />
-        </Grid>
-        }
       </>
     )
   }
@@ -357,6 +346,17 @@ const DirectEmailReportTab = ({
           />
         </Grid>
         {renderDateFields()}
+        {windowSize !== 'xs' && <Grid item>
+          <TextField
+            variant='outlined'
+            size='small'
+            value={ToName}
+            onChange={(e) => handleSearchInput(e.target.value, 'ToName', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('automations.Recipient')}
+          />
+        </Grid>
+        }
         <Grid item>
           <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
             <Select
@@ -411,9 +411,22 @@ const DirectEmailReportTab = ({
 
   const renderSearchLine = () => {
     const { email = false } = isSearching || {};
+    const { ToEmail = '' } = email || {};
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
+        {!advanceSearch && <Grid item>
+          <TextField
+            type='tel'
+            variant='outlined'
+            size='small'
+            value={ToEmail}
+            onChange={(e) => handleSearchInput(e.target.value, 'ToEmail', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('report.ToEmail')}
+          />
+        </Grid>
+        }
         <Grid item>
           <Button
             size='large'
