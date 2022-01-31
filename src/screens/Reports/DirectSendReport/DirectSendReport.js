@@ -16,6 +16,7 @@ import { preferredOrder, switchStatusDescription, formatDateTime, replaceNull } 
 import { exportFile } from '../../../helpers/exportFromJson';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
+import { ExportIcon } from '../../../assets/images/managment/index'
 import queryString from 'query-string';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
@@ -250,11 +251,18 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                 className={clsx(classes.actionButtonArchive, classes.actionButtonLightBlue)}>
                 {t('master.campaignsArchive')}
               </Button>}
-              {windowSize !== 'xs' && <Button className={clsx(classes.actionButtonGreen, classes.exportButton, exportEnable === false ? classes.disabled : '')} onClick={handleExportFile}>
+              {windowSize !== 'xs' && <Button
+                variant='contained'
+                size='medium'
+                className={clsx(
+                  classes.actionButton,
+                  classes.actionButtonGreen,
+                  classes.exportButton, exportEnable === false ? classes.disabled : ''
+                )}
+                onClick={handleExportFile}
+                startIcon={<ExportIcon />}
+              >
                 {t('campaigns.exportFile')}
-                <Box className={clsx(classes.pulseemIcon, classes.f20)}>
-                  {'\uE17B'}
-                </Box>
               </Button>}
             </Grid>
           </Grid>
