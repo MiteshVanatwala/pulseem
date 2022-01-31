@@ -204,7 +204,6 @@ const DirectEmailReportTab = ({
   page,
   rowsPerPage,
   searchData,
-  isSearching,
   directEmailReport,
   rowsOptions,
   advanceSearch,
@@ -219,7 +218,7 @@ const DirectEmailReportTab = ({
 
   const handleSearch = async () => {
     const { email = {} } = searchData || {};
-    const { FromEmail = '', ToEmail = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ToName = '', Subject = '' } = email || {};
+    const { FromEmail = '', ToEmail = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ToName = '', FromName = '', Subject = '' } = email || {};
     const param = {
       FromDate,
       ToDate,
@@ -229,6 +228,7 @@ const DirectEmailReportTab = ({
       Reference: ExternalRef,
       ToName,
       Subject,
+      FromName,
       PageIndex: 1,
       PageSize: rowsPerPage
     }
@@ -410,7 +410,7 @@ const DirectEmailReportTab = ({
   }
 
   const renderSearchLine = () => {
-    const { email = false } = isSearching || {};
+    const { email = {} } = searchData || {};
     const { ToEmail = '' } = email || {};
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>

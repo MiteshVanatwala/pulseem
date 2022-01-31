@@ -295,7 +295,6 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                 page={pageEmail}
                 rowsPerPage={rowsPerPage}
                 searchData={searchData}
-                isSearching={isSearching}
                 directEmailReport={directNewsletterReport}
                 rowsOptions={rowsOptions}
                 advanceSearch={advanceSearch}
