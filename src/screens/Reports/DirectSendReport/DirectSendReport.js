@@ -12,7 +12,7 @@ import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
-import { preferredOrder, switchStatusDescription } from '../../../helpers/exportHelper';
+import { preferredOrder, switchStatusDescription, formatDateTime } from '../../../helpers/exportHelper';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
@@ -195,6 +195,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
         finalData = preferredOrder(response.payload, Object.keys(excelHeaders.SMS));
         finalData = switchStatusDescription(finalData, SmsStatus);
+        finalData = await formatDateTime(finalData, t);
         if (showContent === false) {
           finalData.forEach((fd) => {
             delete fd.MESSAGE;
@@ -208,6 +209,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
         finalData = preferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
         finalData = switchStatusDescription(finalData, EmailStatus);
+        finalData = await formatDateTime(finalData, t);
         headers = excelHeaders.EMAIL;
         fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
       }
@@ -215,7 +217,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       exportFile({
         data: finalData,
         fileName: fileName,
-        exportType: 'xls',
+        exportType: 'csv',
         fields: headers
       });
       setLoader(false);

@@ -55,7 +55,6 @@ export const booleanToNumber = (obj, column, isBoolean = false, t) => {
 export const formatDateTime = (arr, t) => {
     const newArr = [...arr];
     newArr.forEach((a) => {
-
         if (a.SendDate) {
             a.SendDate = moment(a.SendDate).format("DD/MM/YYYY HH:mm");
         }
@@ -71,12 +70,19 @@ export const formatDateTime = (arr, t) => {
         if (a.CreationDate) {
             a.CreationDate = moment(a.CreationDate).format("DD/MM/YYYY HH:mm");
         }
+        if (a.CreatedDate) {
+            a.CreatedDate = moment(a.CreatedDate).format("DD/MM/YYYY HH:mm");
+        }
         if (a.ReplyDate) {
             a.ReplyDate = moment(a.ReplyDate).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.DATE) {
+            a.DATE = moment(a.DATE).format("DD/MM/YYYY HH:mm");
         }
         if (a.SendDate === '' || !a.SendDate) {
             a.SendDate = t('common.notSent');
         }
+
     });
 
     return newArr;
