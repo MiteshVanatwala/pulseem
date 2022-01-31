@@ -89,7 +89,7 @@ const RenderRow = ({
                 <TableRow className={clsx(classes.expandTableRow, 'directEmailRow')}>
                   <TableCell align="center" style={{ width: 15 }}></TableCell>
                   <TableCell align="center" className={clsx(classes.flex1)}>{row.ClickCount}</TableCell>
-                  <TableCell align="center" className={clsx(classes.flex1)}>{row.ExternalRef ? row.ExternalRef : t('report.None')}</TableCell>
+                  <TableCell align="center" className={clsx(classes.flex1)}>{row.Reference ? row.Reference : t('report.None')}</TableCell>
                   <TableCell align="center" className={clsx(classes.flex1)}>
                     {row.Attachments ?
                       <Link
@@ -219,14 +219,14 @@ const DirectEmailReportTab = ({
 
   const handleSearch = async () => {
     const { email = {} } = searchData || {};
-    const { FromEmail = '', ToEmail = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ToName = '', Subject = '' } = email || {};
+    const { FromEmail = '', ToEmail = '', Reference = '', Status = '', FromDate = null, ToDate = null, ToName = '', Subject = '' } = email || {};
     const param = {
       FromDate,
       ToDate,
       Status,
       FromEmail,
       ToEmail,
-      Reference: ExternalRef,
+      Reference: Reference,
       ToName,
       Subject,
       PageIndex: 1,
@@ -331,7 +331,7 @@ const DirectEmailReportTab = ({
 
   const renderAdvanceSearch = () => {
     const { email = {} } = searchData || {};
-    const { FromEmail = '', ToEmail = '', Recipient = '', ExternalRef = '', Status = '', ToName = '', FromName = '', Subject = '' } = email || {};
+    const { FromEmail = '', ToEmail = '', Recipient = '', Reference = '', Status = '', ToName = '', FromName = '', Subject = '' } = email || {};
 
     return (
       <>
@@ -390,8 +390,8 @@ const DirectEmailReportTab = ({
           <TextField
             variant='outlined'
             size='small'
-            value={ExternalRef}
-            onChange={(e) => handleSearchInput(e.target.value, 'ExternalRef', 'email')}
+            value={Reference}
+            onChange={(e) => handleSearchInput(e.target.value, 'Reference', 'email')}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('report.ExternalRef')}
           />

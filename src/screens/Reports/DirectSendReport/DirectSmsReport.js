@@ -51,14 +51,14 @@ const DirectSMSReportTab = ({
   const handleSearch = async () => {
     setLoader(true);
     const { sms = {} } = searchData || {};
-    const { FromNumber = '', ToNumber = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null } = sms || {};
+    const { FromNumber = '', ToNumber = '', Reference = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null } = sms || {};
     const param = {
       FromDate,
       ToDate,
       Status,
       FromNumber,
       ToNumber,
-      Reference: ExternalRef,
+      Reference: Reference,
       ResponseType: ResponseType,
       PageIndex: 1,
       PageSize: rowsPerPage,
@@ -182,7 +182,7 @@ const DirectSMSReportTab = ({
 
   const renderAdvanceSearch = () => {
     const { sms = {} } = searchData || {};
-    const { FromNumber = '', ExternalRef = '', Status = '', Text = '', FromDate = null, ToDate = null, ToNumber = '' } = sms || {};
+    const { FromNumber = '', Reference = '', Status = '', Text = '', FromDate = null, ToDate = null, ToNumber = '' } = sms || {};
 
     return (
       <>
@@ -298,8 +298,8 @@ const DirectSMSReportTab = ({
           <TextField
             variant='outlined'
             size='small'
-            value={ExternalRef}
-            onChange={(e) => handleSearchInput(e.target.value, 'ExternalRef', 'sms')}
+            value={Reference}
+            onChange={(e) => handleSearchInput(e.target.value, 'Reference', 'sms')}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('report.ExternalRef')}
           />
