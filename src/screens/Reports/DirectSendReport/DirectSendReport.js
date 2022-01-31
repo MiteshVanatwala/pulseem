@@ -12,7 +12,7 @@ import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
-import { preferredOrder, switchStatusDescription, formatDateTime } from '../../../helpers/exportHelper';
+import { preferredOrder, switchStatusDescription, formatDateTime, replaceNull } from '../../../helpers/exportHelper';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
@@ -166,6 +166,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "ExternalRef": t('report.ExternalRef'),
       "OpenCount": t('mainReport.openCount'),
       "ClickCount": t('mainReport.clickCount'),
+      "Attachments": t("mainReport.attachments"),
       "ClientStatus": t('report.clientStatus'),
       "StatusDescription": t('report.StatusDescription')
     },
@@ -209,6 +210,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
         response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
         finalData = preferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
         finalData = switchStatusDescription(finalData, EmailStatus);
+        finalData = replaceNull(finalData, 'Attachments', t('emailStatus.noAttachments'));
         finalData = await formatDateTime(finalData, t);
         headers = excelHeaders.EMAIL;
         fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
@@ -297,6 +299,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                 page={pageEmail}
                 rowsPerPage={rowsPerPage}
                 searchData={searchData}
+                isSearching={isSearching}
                 directEmailReport={directNewsletterReport}
                 rowsOptions={rowsOptions}
                 advanceSearch={advanceSearch}

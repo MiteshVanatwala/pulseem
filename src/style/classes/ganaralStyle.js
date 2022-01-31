@@ -127,7 +127,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingLeft: summaryPadding[windowSize],
     overflowY: "auto",
   },
-  paddingSides15:{
+  paddingSides15: {
     paddingRight: 15,
     paddingLeft: 15
   },
@@ -2273,5 +2273,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       color: '#fff',
       fill: 'currentColor'
     }
+  },
+  roundedBorder: {
+    borderRadius: 50
   }
 });

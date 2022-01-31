@@ -204,6 +204,7 @@ const DirectEmailReportTab = ({
   page,
   rowsPerPage,
   searchData,
+  isSearching,
   directEmailReport,
   rowsOptions,
   advanceSearch,
@@ -218,7 +219,7 @@ const DirectEmailReportTab = ({
 
   const handleSearch = async () => {
     const { email = {} } = searchData || {};
-    const { FromEmail = '', ToEmail = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ToName = '', FromName = '', Subject = '' } = email || {};
+    const { FromEmail = '', ToEmail = '', ExternalRef = '', Status = '', FromDate = null, ToDate = null, ToName = '', Subject = '' } = email || {};
     const param = {
       FromDate,
       ToDate,
@@ -228,7 +229,6 @@ const DirectEmailReportTab = ({
       Reference: ExternalRef,
       ToName,
       Subject,
-      FromName,
       PageIndex: 1,
       PageSize: rowsPerPage
     }
@@ -284,7 +284,7 @@ const DirectEmailReportTab = ({
   }
   const renderDateFields = () => {
     const { email = {} } = searchData || {};
-    const { FromDate = null, ToDate = null, ToName = '' } = email || {};
+    const { FromDate = null, ToDate = null, ToEmail = '' } = email || {};
 
     return (
       <>
@@ -312,6 +312,18 @@ const DirectEmailReportTab = ({
             isRoundedOnMobile={windowSize === 'xs'}
           />
         </Grid>
+        {(windowSize !== 'xs' && !advanceSearch) && <Grid item>
+          <TextField
+            type='tel'
+            variant='outlined'
+            size='small'
+            value={ToEmail}
+            onChange={(e) => handleSearchInput(e.target.value, 'ToEmail', 'email')}
+            className={clsx(classes.textField, classes.minWidth252)}
+            placeholder={t('report.ToEmail')}
+          />
+        </Grid>
+        }
       </>
     )
   }
@@ -410,23 +422,10 @@ const DirectEmailReportTab = ({
   }
 
   const renderSearchLine = () => {
-    const { email = {} } = searchData || {};
-    const { ToEmail = '' } = email || {};
+    const { email = false } = isSearching || {};
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         {advanceSearch ? renderAdvanceSearch() : renderDateFields()}
-        {!advanceSearch && <Grid item>
-          <TextField
-            type='tel'
-            variant='outlined'
-            size='small'
-            value={ToEmail}
-            onChange={(e) => handleSearchInput(e.target.value, 'ToEmail', 'email')}
-            className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t('report.ToEmail')}
-          />
-        </Grid>
-        }
         <Grid item>
           <Button
             size='large'

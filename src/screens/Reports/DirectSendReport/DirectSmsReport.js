@@ -149,6 +149,7 @@ const DirectSMSReportTab = ({
             rootStyle={classes.maxWidth190}
             toolbarDisabled={false}
             minDate={'2000-01-01'}
+            isRoundedOnMobile={windowSize === 'xs'}
           />
         </Grid>
         <Grid item>
@@ -160,9 +161,10 @@ const DirectSMSReportTab = ({
             minDate={FromDate ? FromDate : '2000-01-01'}
             toolbarDisabled={false}
             rootStyle={classes.maxWidth190}
+            isRoundedOnMobile={windowSize === 'xs'}
           />
         </Grid>
-        <Grid item>
+        {windowSize !== 'xs' && <Grid item>
           <TextField
             type='tel'
             variant='outlined'
@@ -173,7 +175,7 @@ const DirectSMSReportTab = ({
             placeholder={t('common.ToNumber')}
           />
         </Grid>
-
+        }
       </>
     )
   }

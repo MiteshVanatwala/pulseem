@@ -27,6 +27,15 @@ export const switchStatusDescription = (obj, statuses) => {
     return obj;
 }
 
+export const replaceNull = (obj, property, val = '') => {
+    obj.forEach((o) => {
+        if (o[property] === null || o[property] === '') {
+            o[property] = val;
+        }
+    });
+    return obj;
+}
+
 export const statusNumberToString = (t, obj, statuses) => {
     obj.forEach((o) => {
         if (o.Status) {
