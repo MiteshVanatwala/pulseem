@@ -354,11 +354,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   actionButtonArchive: {
     textTransform: 'capitalize',
-    fontSize: 15,
+    fontSize: 18,
     marginInline: 10,
     paddingBlock: 4,
-    marginTop: 1,
-    color: '#fff'
+    color: '#fff',
+    fontWeight: 400
   },
   textColorBlue: {
     color: '#3498DB'
@@ -934,11 +934,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   exportButton: {
     color: 'white',
-    padding: '0 10px',
-    textTransform: 'capitalize',
-    '&>span>*': {
-      paddingInlineStart: 5
-    }
+    fontWeight: 400,
+    paddingBlock: 4,
+    textTransform: 'capitalize'
   },
   reportPaperBgGray: {
     backgroundColor: 'rgba(242, 242, 242, 1)',

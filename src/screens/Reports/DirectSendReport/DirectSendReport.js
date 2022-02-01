@@ -265,7 +265,11 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                 onClick={() => {
                   window.location = `/react/Reports/DirectSendReport/Archive/?t=${tabValue}`
                 }}
-                className={clsx(classes.actionButtonArchive, classes.actionButtonLightBlue)}>
+                variant='contained'
+                className={clsx(
+                  classes.actionButton,
+                  classes.actionButtonArchive,
+                  classes.actionButtonLightBlue)}>
                 {t('master.campaignsArchive')}
               </Button>}
               {windowSize !== 'xs' && <Button
