@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
@@ -14,12 +14,14 @@ import ClearIcon from '@material-ui/icons/Clear';
 import Switch from "react-switch";
 import moment from 'moment';
 import { getSMSDirectReport, getArchiveSMSDirectReport } from '../../../redux/reducers/smsSlice';
+import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { SmsStatus } from '../../../helpers/PulseemArrays';
 import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
+import { useSelector } from 'react-redux';
 
 const DirectSMSReportTab = ({
   classes,
@@ -29,7 +31,6 @@ const DirectSMSReportTab = ({
   handleSearchInput = () => null,
   handleSearching = () => null,
   handlePageChange = () => null,
-  handleShowContent = () => null,
   handleAdvanceSearch = () => null,
   clearSearch,
   page,
@@ -37,7 +38,6 @@ const DirectSMSReportTab = ({
   searchData,
   isSearching,
   directSmsReport,
-  showContent,
   advanceSearch,
   rowsOptions,
   isArchive = false
@@ -47,6 +47,8 @@ const DirectSMSReportTab = ({
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false)
+  const { showContent } = useSelector(state => state.report);
+  //const dispatch = useDispatch();
 
   const handleSearch = async () => {
     setLoader(true);
@@ -77,6 +79,10 @@ const DirectSMSReportTab = ({
     handlePageChange(1);
     setLoader(false);
   }
+
+  useEffect(() => {
+    handleSearch();
+  }, [showContent])
 
   const searchRequest = async (pageSize, pageIndex) => {
     setLoader(true);
@@ -265,7 +271,7 @@ const DirectSMSReportTab = ({
                 getContentAnchorEl: null
               }}
             >
-              <MenuItem key={-1} value="" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
+              <MenuItem key={null} value="null" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
               {SmsStatus.map(so => {
                 return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
               })}
@@ -367,7 +373,7 @@ const DirectSMSReportTab = ({
           height={15}
           width={40}
           className={clsx({ [classes.rtlSwitch]: isRTL })}
-          onChange={() => handleShowContent(!showContent)}
+          onChange={() => dispatch(setShowContent(!showContent))}
         />
         <Typography>{t('report.ShowContent')}</Typography>
       </Box>

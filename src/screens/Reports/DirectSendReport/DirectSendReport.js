@@ -21,6 +21,7 @@ import queryString from 'query-string';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const qs = queryString.parse(props.location.search);
+  const { showContent } = useSelector(state => state.report);
   const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
   const { directSmsReport } = useSelector(state => state.sms);
@@ -32,11 +33,11 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [pageEmail, setPageEmail] = useState(1);
   const [pageSms, setPageSms] = useState(1);
   const [advanceSearch, setAdvanceSearch] = useState(false);
-  const [showContent, setShowContent] = useState(false);
   const [showLoader, setLoader] = useState(true);
   const [exportEnable, setExportEnable] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+
 
   const getEmailReportData = async () => {
     await dispatch(isArchive ? getArchiveDirectReport({
@@ -94,7 +95,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       setLoader(false);
     }
     initData();
-  }, [dispatch, showContent])
+  }, [dispatch])
 
   useEffect(handleExportEnable, [tabValue, directNewsletterReport, directSmsReport])
 
@@ -189,44 +190,44 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     }
   };
 
-  const renderTabs = () => {
-    const handleExportFile = async () => {
-      setLoader(true);
-      let response, finalData, headers, fileName = null;
+  const handleExportFile = async () => {
+    setLoader(true);
+    let response, finalData, headers, fileName = null;
 
-      if (tabValue === 0) {
-        response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
-        finalData = preferredOrder(response.payload, Object.keys(excelHeaders.SMS));
-        finalData = switchStatusDescription(finalData, SmsStatus);
-        finalData = await formatDateTime(finalData, t);
-        if (showContent === false) {
-          finalData.forEach((fd) => {
-            delete fd.MESSAGE;
-          })
-        }
-        headers = excelHeaders.SMS;
-        fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
+    if (tabValue === 0) {
+      searchData.sms.ShowContent = showContent;
+      response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
+      finalData = preferredOrder(response.payload, Object.keys(excelHeaders.SMS));
+      finalData = switchStatusDescription(finalData, SmsStatus);
+      finalData = await formatDateTime(finalData, t);
+      if (showContent === false) {
+        finalData.forEach((fd) => {
+          delete fd.MESSAGE;
+        })
       }
-
-      if (tabValue === 1) {
-        response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
-        finalData = preferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
-        finalData = switchStatusDescription(finalData, EmailStatus);
-        finalData = replaceNull(finalData, 'Attachments', t('emailStatus.noAttachments'));
-        finalData = await formatDateTime(finalData, t);
-        headers = excelHeaders.EMAIL;
-        fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
-      }
-
-      exportFile({
-        data: finalData,
-        fileName: fileName,
-        exportType: 'csv',
-        fields: headers
-      });
-      setLoader(false);
+      headers = excelHeaders.SMS;
+      fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
     }
 
+    if (tabValue === 1) {
+      response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
+      finalData = preferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
+      finalData = switchStatusDescription(finalData, EmailStatus);
+      finalData = replaceNull(finalData, 'Attachments', t('emailStatus.noAttachments'));
+      finalData = await formatDateTime(finalData, t);
+      headers = excelHeaders.EMAIL;
+      fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
+    }
+
+    exportFile({
+      data: finalData,
+      fileName: fileName,
+      exportType: 'csv',
+      fields: headers
+    });
+    setLoader(false);
+  }
+  const renderTabs = () => {
     return (
       <Grid container>
         <TabContext value={tabValue}>
@@ -277,14 +278,12 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                 handleSearching={handleSearching}
                 handlePageChange={setPageSms}
                 handleAdvanceSearch={setAdvanceSearch}
-                handleShowContent={setShowContent}
                 clearSearch={clearSearch}
                 page={pageSms}
                 rowsPerPage={rowsPerPage}
                 searchData={searchData}
                 isSearching={isSearching}
                 directSmsReport={directSmsReport}
-                showContent={showContent}
                 advanceSearch={advanceSearch}
                 setLoader={setLoader}
                 rowsOptions={rowsOptions}

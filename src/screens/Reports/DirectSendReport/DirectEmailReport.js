@@ -90,7 +90,7 @@ const RenderRow = ({
                 <TableRow className={clsx(classes.expandTableRow, 'directEmailRow')}>
                   <TableCell align="center" style={{ width: 15 }}></TableCell>
                   <TableCell align="center" className={clsx(classes.flex1)}>{row.ClickCount}</TableCell>
-                  <TableCell align="center" className={clsx(classes.flex1)}>{row.Reference ? row.Reference : t('report.None')}</TableCell>
+                  <TableCell align="center" className={clsx(classes.flex1)}>{row.ExternalRef ? row.ExternalRef : t('report.None')}</TableCell>
                   <TableCell align="center" className={clsx(classes.flex1)}>
                     {row.Attachments ?
                       <Link
@@ -221,7 +221,7 @@ const DirectEmailReportTab = ({
 
   const handleSearch = async () => {
     const { email = {} } = searchData || {};
-    const { FromEmail = '', ToEmail = '', Reference = '', Status = '', FromDate = null, ToDate = null, ToName = '', Subject = '' } = email || {};
+    const { FromEmail = '', ToEmail = '', Reference = '', Status = '', FromDate = null, ToDate = null, ToName = '', Subject = '', FromName = '' } = email || {};
     const param = {
       FromDate,
       ToDate,
@@ -230,6 +230,7 @@ const DirectEmailReportTab = ({
       ToEmail,
       Reference: Reference,
       ToName,
+      FromName,
       Subject,
       PageIndex: page,
       PageSize: rowsPerPage
@@ -381,7 +382,7 @@ const DirectEmailReportTab = ({
               style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
               onChange={(e) => handleSearchInput(e.target.value, 'Status', 'email')}
             >
-              <MenuItem key={-1} value="" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
+              <MenuItem key={null} value="null" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
               {EmailStatus.map(so => {
                 return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
               })}

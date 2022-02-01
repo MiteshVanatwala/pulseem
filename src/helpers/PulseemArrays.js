@@ -29,7 +29,7 @@ export const smsReportStatus = [
 ];
 
 export const SmsStatus = [
-    { id: -1, value: 'common.All' },
+    { id: null, value: 'common.All' },
     { id: 1, value: 'report.directReport.statuses.pending' },
     { id: 2, value: 'report.directReport.statuses.sending' },
     { id: 3, value: 'report.directReport.statuses.sentSuccessfuly' },
