@@ -96,7 +96,7 @@ export const smsStatusToString = (status) => {
         return "report.success";
       }
       case "4": {
-        return "report.failure";
+        return "report.error";
       }
       case "5": {
         return "report.removed";

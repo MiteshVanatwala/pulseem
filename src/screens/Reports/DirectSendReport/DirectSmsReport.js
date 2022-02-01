@@ -277,7 +277,7 @@ const DirectSMSReportTab = ({
                 getContentAnchorEl: null
               }}
             >
-              <MenuItem key={null} value="null" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
+              <MenuItem key={-1} value="" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
               {SmsStatus.map(so => {
                 return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
               })}
