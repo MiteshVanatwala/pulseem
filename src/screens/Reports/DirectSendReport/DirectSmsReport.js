@@ -48,6 +48,7 @@ const DirectSMSReportTab = ({
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false)
   const { showContent } = useSelector(state => state.report);
+  const [isFirstLoaded, setIsFirstLoaded] = useState(true);
   //const dispatch = useDispatch();
 
   const handleSearch = async () => {
@@ -73,14 +74,19 @@ const DirectSMSReportTab = ({
         searchObjects[item] = param[item];
       }
     })
+    searchObjects["ShowContent"] = showContent;
 
     await dispatch(isArchive ? getArchiveSMSDirectReport(searchObjects) : getSMSDirectReport(searchObjects))
     handleSearching('sms', true);
     handlePageChange(1);
     setLoader(false);
+    setIsFirstLoaded(false);
   }
 
   useEffect(() => {
+    if (isFirstLoaded) {
+      return;
+    }
     handleSearch();
   }, [showContent])
 

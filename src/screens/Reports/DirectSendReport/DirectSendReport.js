@@ -38,32 +38,43 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
+  const defaultsDates = {
+    archive: {
+      from: moment({ hour: 0, minute: 0, second: 0 }).subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm'),
+      to: moment({ hour: 23, minute: 59, second: 59 }).subtract(1, 'year').format('YYYY-MM-DD HH:mm')
 
+    },
+    current: {
+      from: moment({ hour: 0, minute: 0, second: 0 }).startOf('month').format('YYYY-MM-DD HH:mm'),
+      to: moment({ hour: 23, minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm')
+    }
+  }
   const getEmailReportData = async () => {
     await dispatch(isArchive ? getArchiveDirectReport({
       PageSize: rowsPerPage,
       PageIndex: 1,
-      FromDate: moment().subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm'),
-      ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
+      FromDate: defaultsDates.archive.from,
+      ToDate: defaultsDates.archive.to
     }) : getNewsletterDirectReport({
       PageIndex: 1,
       PageSize: rowsPerPage,
-      FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
-      ToDate: moment().format('YYYY-MM-DD HH:mm')
+      FromDate: defaultsDates.current.from,
+      ToDate: defaultsDates.current.to
     }));
   }
   const getSMSReportData = async () => {
     await dispatch(isArchive ? getArchiveSMSDirectReport({
       PageIndex: 1,
       PageSize: rowsPerPage,
-      FromDate: moment().subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm'),
-      ToDate: moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm')
+      FromDate: defaultsDates.archive.from,
+      ToDate: defaultsDates.archive.to,
+      ShowContent: showContent
     }) : getSMSDirectReport({
-      ShowContent: showContent,
       PageSize: rowsPerPage,
       PageIndex: 1,
-      FromDate: moment().startOf('month').format('YYYY-MM-DD HH:mm'),
-      ToDate: moment().format('YYYY-MM-DD HH:mm')
+      FromDate: defaultsDates.current.from,
+      ToDate: defaultsDates.current.to,
+      ShowContent: showContent
     }));
   }
 
@@ -80,12 +91,12 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       setLoader(true);
       setSearchData({
         email: {
-          FromDate: isArchive ? moment().subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm') : moment().startOf('month').format('YYYY-MM-DD HH:mm'),
-          ToDate: isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm')
+          FromDate: isArchive ? defaultsDates.archive.from : defaultsDates.current.from,
+          ToDate: isArchive ? defaultsDates.archive.to : defaultsDates.current.to
         },
         sms: {
-          FromDate: isArchive ? moment().subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm') : moment().startOf('month').format('YYYY-MM-DD HH:mm'),
-          ToDate: isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm'),
+          FromDate: isArchive ? defaultsDates.archive.from : defaultsDates.current.from,
+          ToDate: isArchive ? defaultsDates.archive.to : defaultsDates.current.to,
           ShowContent: showContent
         }
       });
