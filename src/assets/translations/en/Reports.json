@@ -81,7 +81,7 @@
       "success": "Success",
       "sentSuccessfuly": "Sent Successfully",
       "error": "Error",
-      "removed": "Blocked for sending",
+      "removed": "Blocked for Sending",
       "cancelled": "Cancelled"
     },
     "responseType": {
