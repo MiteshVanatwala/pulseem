@@ -90,10 +90,10 @@ export const smsStatusToString = (status) => {
         return "report.pending";
       }
       case "2": {
-        return "report.sent";
+        return "report.directReport.statuses.sending";
       }
       case "3": {
-        return "report.success";
+        return "report.directReport.statuses.sentSuccessfuly";
       }
       case "4": {
         return "report.error";
