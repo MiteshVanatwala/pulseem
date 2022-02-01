@@ -215,6 +215,11 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       finalData = switchStatusDescription(finalData, EmailStatus);
       finalData = replaceNull(finalData, 'Attachments', t('emailStatus.noAttachments'));
       finalData = await formatDateTime(finalData, t);
+      if (isArchive) {
+        finalData.forEach((fd) => {
+          delete fd.CreatedDate;
+        })
+      }
       headers = excelHeaders.EMAIL;
       fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
     }

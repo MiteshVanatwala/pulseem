@@ -11,7 +11,7 @@
   "badError": "Direct Hard",
   "mediumError": "Direct Medium",
   "spam": "Spam",
-  "removed": "Removed",
+  "removed": "Blocked for Sending",
   "removedBySystem": "Removed By System",
   "noStatus": "No Status",
   "noAttachments": "No Attachments",
