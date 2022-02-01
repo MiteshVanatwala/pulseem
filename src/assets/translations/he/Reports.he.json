@@ -68,7 +68,7 @@
       "sending": "בשליחה",
       "sent": "נשלח",
       "error": "שגיאה",
-      "removed": "הסיר עצמו",
+      "removed": "חסום לשליחה",
       "cancelled": "מבוטל",
       "inProcess": "בתהליך",
       "draft": "טיוטה"
@@ -81,7 +81,7 @@
       "sending": "נשלח",
       "sentSuccessfuly": "נשלח בהצלחה",
       "error": "שגיאה",
-      "removed": "הסיר עצמו",
+      "removed": "חסום לשליחה",
       "cancelled": "מבוטל"
     },
     "responseType": {
