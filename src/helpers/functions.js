@@ -16,7 +16,7 @@ export const verifyGetUrl = (url) => {
       var xmlhttp = new XMLHttpRequest();
       xmlhttp.onreadystatechange = function () {
         if (xmlhttp.readyState === 4) {
-          if(xmlhttp.status === 200){
+          if (xmlhttp.status === 200) {
             resolve(true);
           }
           //resolve(xmlhttp.status && xmlhttp.status !== 404)
@@ -99,7 +99,7 @@ export const smsStatusToString = (status) => {
         return "report.error";
       }
       case "5": {
-        return "report.removed";
+        return "report.directReport.statuses.removed";
       }
       case "6": {
         return "report.stopped";
