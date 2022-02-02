@@ -92,14 +92,18 @@ const RenderRow = ({
                   <TableCell align="center" className={clsx(classes.flex1)}>{row.ClickCount}</TableCell>
                   <TableCell align="center" className={clsx(classes.flex1)}>{row.ExternalRef ? row.ExternalRef : t('report.None')}</TableCell>
                   <TableCell align="center" className={clsx(classes.flex1)}>
-                    {row.Attachments ?
-                      <Link
-                        color="primary"
-                        href={row.Attachments}
-                        target='_blank'
-                        className={classes.f16}>
-                        {t('landingPages.GridTemplateColumnResource1.HeaderText')}
-                      </Link>
+                    {row.Attachments ? row.Attachments.split('##').map((link, index) => {
+                      return (
+                        <Link
+                          key={index}
+                          color="primary"
+                          href={link}
+                          target='_blank'
+                          className={clsx(classes.emailAttachment, classes.f16)}>
+                          {t('landingPages.GridTemplateColumnResource1.HeaderText')}
+                        </Link>
+                      )
+                    })
                       : t('report.None')
                     }
                   </TableCell>

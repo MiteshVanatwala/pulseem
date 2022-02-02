@@ -1523,5 +1523,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     color: 'red',
     fontWeight: 600,
     cursor: 'pointer'
+  },
+  emailAttachment: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    paddingInline: 10
   }
 })
