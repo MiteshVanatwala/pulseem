@@ -17,7 +17,7 @@ export const DateField = ({
   placeholder = '',
   isTimePicker = false,
   buttons = null,
-  ampm = true,
+  ampm = false,
   maximumDate = undefined,
   timePickerOpen = false,
   rootStyle = null,
@@ -50,7 +50,7 @@ export const DateField = ({
       popoverprops={{
         dir: direction[isRTL]
       }}
-      format={"hh:mm a"}
+      format={"HH:mm a"}
       margin='none'
       placeholder={placeholder}
       initialFocusedDate={moment().hours(0).minutes(0)}
@@ -73,7 +73,7 @@ export const DateField = ({
         readOnly: true,
         style: { borderRadius: isRoundedOnMobile === true ? 50 : null }
       }}
-      autoOk={true}
+      autoOk={false}
       style={{ borderRadius: isRoundedOnMobile === true ? 50 : null }}
     />
   ) :
