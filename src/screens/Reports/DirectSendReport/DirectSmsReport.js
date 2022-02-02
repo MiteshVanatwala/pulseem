@@ -48,10 +48,9 @@ const DirectSMSReportTab = ({
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false)
   const { showContent } = useSelector(state => state.report);
-  const [isFirstLoaded, setIsFirstLoaded] = useState(true);
   //const dispatch = useDispatch();
 
-  const handleSearch = async () => {
+  const handleSearch = async (sContent = false) => {
     setLoader(true);
     const { sms = {} } = searchData || {};
     const { FromNumber = '', ToNumber = '', Reference = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null } = sms || {};
@@ -66,7 +65,7 @@ const DirectSMSReportTab = ({
       PageIndex: 1,
       PageSize: rowsPerPage,
       Text,
-      ShowContent: showContent
+      ShowContent: !sContent
     }
     let searchObjects = {};
     Object.keys(param).map(item => {
@@ -74,21 +73,14 @@ const DirectSMSReportTab = ({
         searchObjects[item] = param[item];
       }
     })
-    searchObjects["ShowContent"] = showContent;
+    searchObjects["ShowContent"] = !sContent;
 
     await dispatch(isArchive ? getArchiveSMSDirectReport(searchObjects) : getSMSDirectReport(searchObjects))
     handleSearching('sms', true);
     handlePageChange(1);
     setLoader(false);
-    setIsFirstLoaded(false);
+    dispatch(setShowContent(!sContent));
   }
-
-  useEffect(() => {
-    if (isFirstLoaded) {
-      return;
-    }
-    handleSearch();
-  }, [showContent])
 
   const searchRequest = async (pageSize, pageIndex) => {
     setLoader(true);
@@ -351,7 +343,7 @@ const DirectSMSReportTab = ({
           height={15}
           width={40}
           className={clsx({ [classes.rtlSwitch]: isRTL })}
-          onChange={() => dispatch(setShowContent(!showContent))}
+          onChange={() => handleSearch(showContent)}
         />
         <Typography>{t('report.ShowContent')}</Typography>
       </Box>
