@@ -120,8 +120,8 @@ const RenderRow = ({
   const renderReactivate = (row) => {
     const reactivate = async () => {
       const request = {
-        From: row.FromEmail,
-        To: row.ToEmail,
+        From: row.FromEmail.trim().replace(' ', ''),
+        To: row.ToEmail.trim().replace(' ', ''),
         ErrorCode: row.Status
       };
       await dispatch(reactivateEmail(request));
@@ -226,9 +226,9 @@ const DirectEmailReportTab = ({
       FromDate,
       ToDate,
       Status,
-      FromEmail,
-      ToEmail,
-      Reference: Reference,
+      FromEmail: FromEmail.trim().replace(' ', ''),
+      ToEmail: ToEmail.trim().replace(' ', ''),
+      Reference: Reference.trim().replace(' ', ''),
       ToName,
       FromName,
       Subject,
