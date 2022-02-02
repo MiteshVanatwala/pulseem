@@ -4,7 +4,7 @@ export const DomainProtocol = [
 ];
 export const EmailStatus = [
 
-    { id: 0, value: 'emailStatus.noStatus' },
+    // { id: 0, value: 'emailStatus.noStatus' },
     { id: 1, value: 'emailStatus.pending' },
     { id: 2, value: 'emailStatus.sending' },
     { id: 3, value: 'emailStatus.succeeded' },
@@ -29,7 +29,7 @@ export const smsReportStatus = [
 ];
 
 export const SmsStatus = [
-    { id: null, value: 'common.All' },
+    // { id: '', value: 'common.All' },
     { id: 1, value: 'report.directReport.statuses.pending' },
     { id: 2, value: 'report.directReport.statuses.sending' },
     { id: 3, value: 'report.directReport.statuses.sentSuccessfuly' },

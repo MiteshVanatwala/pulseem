@@ -727,6 +727,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   formControlSelect: {
     '& .MuiSelect-outlined.MuiSelect-outlined': {
       padding: '12px 32px'
+    },
+    '& .MuiSvgIcon-root.MuiSelect-icon.MuiSelect-iconOutlined': {
+      left: !isRTL ? 'auto !important' : '10px !important',
+      right: !isRTL ? '10px !important' : 'auto !important'
     }
   },
   dialogBox: {

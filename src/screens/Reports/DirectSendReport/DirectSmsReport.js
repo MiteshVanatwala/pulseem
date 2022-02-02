@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer,
   TableCell, Link, FormControl, Select, MenuItem,
-  TableHead, TableRow, TextField, Typography, TableBody
+  TableHead, TableRow, TextField, Typography, TableBody, InputLabel
 } from '@material-ui/core';
 import {
   TablePagination, DateField
@@ -156,7 +156,7 @@ const DirectSMSReportTab = ({
           <DateField
             classes={classes}
             value={FromDate}
-            onChange={handleFromDate}
+            onChange={(v) => handleFromDate(v)}
             placeholder={t('mms.locFromDateResource1.Text')}
             rootStyle={classes.maxWidth190}
             toolbarDisabled={false}
@@ -168,7 +168,7 @@ const DirectSMSReportTab = ({
           <DateField
             classes={classes}
             value={ToDate}
-            onChange={handleToDate}
+            onChange={(v) => handleToDate(v)}
             placeholder={t('mms.locToDateResource1.Text')}
             minDate={FromDate ? FromDate : '2000-01-01'}
             toolbarDisabled={false}
@@ -221,32 +221,6 @@ const DirectSMSReportTab = ({
           />
         </Grid>
         <Grid item>
-          {/* <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
-            <Select
-              autoWidth
-              displayEmpty
-              className={clsx(classes.textField, classes.minWidth192)}
-              value={ResponseType}
-              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
-              onChange={(e) => handleSearchInput(e.target.value, 'ResponseType', 'sms')}
-              MenuProps={{
-                anchorOrigin: {
-                  vertical: "bottom",
-                  horizontal: "left"
-                },
-                transformOrigin: {
-                  vertical: "top",
-                  horizontal: "left"
-                },
-                getContentAnchorEl: null
-              }}
-            >
-              <MenuItem key={-1} value="" className={clsx(classes.dropDownItem)}>{t('report.responses')}</MenuItem>
-              {ReponseType.map(so => {
-                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
-              })}
-            </Select>
-          </FormControl> */}
           <TextField
             variant='outlined'
             size='small'
@@ -261,7 +235,7 @@ const DirectSMSReportTab = ({
             <Select
               autoWidth
               displayEmpty
-              className={clsx(classes.textField, classes.minWidth192)}
+              className={clsx(classes.textField, classes.minWidth192, classes.formControlSelect)}
               value={Status}
               style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
               onChange={(e) => handleSearchInput(e.target.value, 'Status', 'sms')}
@@ -277,7 +251,9 @@ const DirectSMSReportTab = ({
                 getContentAnchorEl: null
               }}
             >
-              <MenuItem key={-1} value="" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
+              <MenuItem key={-1} value="" className={classes.dropDownItem}>
+                {t("common.All")}
+              </MenuItem>
               {SmsStatus.map(so => {
                 return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
               })}
@@ -350,11 +326,7 @@ const DirectSMSReportTab = ({
             size='large'
             variant='contained'
             onClick={() => {
-              const frmDate = isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm');
-              const tDate = isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm');
               clearSearch('sms');
-              handleFromDate(frmDate);
-              handleToDate(tDate);
             }}
             className={classes.searchButton}
             endIcon={<ClearIcon />}>
@@ -634,7 +606,7 @@ const DirectSMSReportTab = ({
   }
 
   const renderTablePagination = () => {
-    const smsData = directSmsReport && directSmsReport.TotalSent || 0;
+    const smsData = (directSmsReport && directSmsReport.TotalSent) || 0;
     return (
       <TablePagination
         classes={classes}

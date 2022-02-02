@@ -40,7 +40,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
   const defaultsDates = {
     archive: {
-      from: moment({ hour: 0, minute: 0, second: 0 }).subtract(6, 'month').format('YYYY-MM-DD HH:mm'),
+      from: moment({ hour: 0, minute: 0, second: 0 }).subtract(4, 'month').format('YYYY-MM-DD HH:mm'),
       to: moment({ hour: 23, minute: 59, second: 59 }).subtract(3, 'month').format('YYYY-MM-DD HH:mm')
 
     },
@@ -131,7 +131,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     isSearchingData[key] = false;
 
     if (isArchive) {
-      search[key]["FromDate"] = moment().subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm')
+      search[key]["FromDate"] = defaultsDates.archive.from
+      search[key]["ToDate"] = defaultsDates.archive.to
     }
 
     setSearching({ ...isSearching });

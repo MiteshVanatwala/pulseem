@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import {
   Box, Button, Grid, Table, TableContainer, Link,
-  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, Select, MenuItem
+  TableCell, TableHead, TableRow, TextField, Typography, TableBody, IconButton, Collapse, FormControl, Select, MenuItem, InputLabel
 } from '@material-ui/core';
 import { TablePagination, DateField } from '../../../components/managment/index';
 import { SearchIcon } from '../../../assets/images/managment';
@@ -295,7 +295,7 @@ const DirectEmailReportTab = ({
           <DateField
             classes={classes}
             value={FromDate}
-            onChange={handleFromDate}
+            onChange={(v) => handleFromDate(v)}
             placeholder={t('mms.locFromDateResource1.Text')}
             rootStyle={classes.maxWidth190}
             toolbarDisabled={false}
@@ -307,7 +307,7 @@ const DirectEmailReportTab = ({
           <DateField
             classes={classes}
             value={ToDate}
-            onChange={handleToDate}
+            onChange={(v) => handleToDate(v)}
             placeholder={t('mms.locToDateResource1.Text')}
             minDate={FromDate ? FromDate : undefined}
             rootStyle={classes.maxWidth190}
@@ -377,12 +377,14 @@ const DirectEmailReportTab = ({
             <Select
               autoWidth
               displayEmpty
-              className={clsx(classes.textField, classes.minWidth192)}
+              className={clsx(classes.textField, classes.minWidth192, classes.formControlSelect)}
               value={Status}
               style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
               onChange={(e) => handleSearchInput(e.target.value, 'Status', 'email')}
             >
-              <MenuItem key={-1} value="" className={classes.dropDownItem}>{t('common.Status')}</MenuItem>
+              <MenuItem key={-1} value="" className={classes.dropDownItem}>
+                {t("common.All")}
+              </MenuItem>
               {EmailStatus.map(so => {
                 return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
               })}
@@ -453,11 +455,7 @@ const DirectEmailReportTab = ({
             size='large'
             variant='contained'
             onClick={() => {
-              const frmDate = isArchive ? null : moment().startOf('month').format('YYYY-MM-DD HH:mm');
-              const tDate = isArchive ? moment().subtract(1, 'year').format('YYYY-MM-DD HH:mm') : moment().format('YYYY-MM-DD HH:mm');
               clearSearch('email');
-              handleFromDate(frmDate);
-              handleToDate(tDate);
             }}
             className={classes.searchButton}
             endIcon={<ClearIcon />}>
