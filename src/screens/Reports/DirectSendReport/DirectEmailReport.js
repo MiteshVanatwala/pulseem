@@ -232,7 +232,7 @@ const DirectEmailReportTab = ({
       Status,
       FromEmail: FromEmail.trim().replace(' ', ''),
       ToEmail: ToEmail.trim().replace(' ', ''),
-      Reference: Reference.trim().replace(' ', ''),
+      Reference: (Reference && Reference !== '') ? Reference.trim().replace(' ', '') : null,
       ToName,
       FromName,
       Subject,
@@ -400,7 +400,7 @@ const DirectEmailReportTab = ({
             variant='outlined'
             size='small'
             value={Reference}
-            onChange={(e) => handleSearchInput(e.target.value, 'Reference', 'email')}
+            onChange={(e) => handleSearchInput(e.target.value !== '' ? e.target.value : null, 'Reference', 'email')}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('report.ExternalRef')}
           />

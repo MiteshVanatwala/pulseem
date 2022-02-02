@@ -197,7 +197,6 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "StatusDescription": t('report.StatusDescription')
     },
     SMS: {
-      // "PID": t('common.campaignID'),
       "DATE": t('common.CreationDate'),
       "MESSAGE": t('common.messageContent'),
       "FROM": t('common.SentFromNumber'),
@@ -208,7 +207,6 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "TOTALRESPONSES": t('report.totalResponses'),
       "CHARSCOUNT": t('report.Characters'),
       "Credits": t('report.Credits'),
-      // "ClientStatus": t('report.clientStatus'),
       "StatusDescription": t('report.StatusDescription')
     }
   };

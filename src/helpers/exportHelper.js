@@ -18,10 +18,12 @@ export const preferredOrder = (obj, order) => {
 export const switchStatusDescription = (obj, statuses) => {
     obj.forEach((o) => {
         if (o.STATUS) {
-            o.StatusDescription = i18n.t(statuses[o.STATUS] ? statuses[o.STATUS].value : null);
+            let status = statuses.find((s) => { return s.id === o.STATUS });
+            o.StatusDescription = i18n.t(status ? status.value : null);
         }
         else if (o.Status) {
-            o.StatusDescription = i18n.t(statuses[o.Status] ? statuses[o.Status].value : null);
+            let status = statuses.find((s) => { return s.id === o.Status });
+            o.StatusDescription = i18n.t(status ? status.value : null);
         }
     });
     return obj;
@@ -39,7 +41,8 @@ export const replaceNull = (obj, property, val = '') => {
 export const statusNumberToString = (t, obj, statuses) => {
     obj.forEach((o) => {
         if (o.Status) {
-            o.StatusName = t(statuses[o.Status] ? statuses[o.Status].value : null);
+            let status = statuses.find((s) => { return s.id === o.Status });
+            o.StatusName = t(status ? status.value : null);
         }
         if (o.Attachments && (o.Attachments === 'No_Attachments' || o.Attachments === '')) {
             o.Attachments = t('emailStatus.noAttachments');
