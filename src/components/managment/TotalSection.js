@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { Box, Grid, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
 
-const TotalSection = ({ classes, TotalObject }) => {
+const TotalSection = ({ classes, TotalObject, callerType }) => {
     const { t } = useTranslation();
     const { windowSize } = useSelector(state => state.core);
 
@@ -20,6 +20,7 @@ const TotalSection = ({ classes, TotalObject }) => {
                             return false;
                         }
                     }
+                    if (callerType === 'email' && to === 'TotalCredits') return false;
                     return <Grid item className={clsx(classes.txtCenter, classes.pt14)} style={{ maxWidth: windowSize === 'xs' ? 100 : null }} key={to}>
                         <Typography className={clsx(classes.bold, classes.colorBlue)}>
                             {t(`report.${to}`)}

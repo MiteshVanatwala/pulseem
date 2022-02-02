@@ -641,12 +641,12 @@ const DirectEmailReportTab = ({
       <>
         <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
           <Grid item className={windowSize === 'xs' ? classes.mt15 : null}>
-            <Typography className={clsx(classes.colorGray, classes.mb5)}>
+            <Typography className={clsx(classes.groupsLable, classes.mb5)}>
               {t('common.Total')} {directEmailReport.TotalRecords} {t('report.Messages')}
             </Typography>
           </Grid>
         </Grid>
-        <TableContainer className={clsx(classes.borderAround, classes.mt25)}>
+        <TableContainer className={clsx(classes.borderAround, classes.mt10)}>
           <Table className={clsx(classes.tableContainer, classes.noborder)} aria-label="collapsible table">
             {windowSize !== 'xs' && renderTableHead()}
             {renderTableBody()}
@@ -678,7 +678,7 @@ const DirectEmailReportTab = ({
       {renderSearchLine()}
       {renderTable()}
       {renderTablePagination()}
-      {<TotalSection classes={classes} TotalObject={directEmailReport} />}
+      {<TotalSection classes={classes} TotalObject={directEmailReport} callerType="email" />}
       <Loader isOpen={showLoader} />
     </>
   );
