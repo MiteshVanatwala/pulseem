@@ -12,7 +12,7 @@ import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
-import { preferredOrder, switchStatusDescription, formatDateTime, replaceNull } from '../../../helpers/exportHelper';
+import { preferredOrder, switchStatusDescription, formatDateTime, replaceNull, replaceClientStatus, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
@@ -237,7 +237,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       finalData = preferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
       finalData = switchStatusDescription(finalData, EmailStatus);
       finalData = replaceNull(finalData, 'Attachments', t('emailStatus.noAttachments'));
+      finalData = replaceClientStatus(finalData);
       finalData = await formatDateTime(finalData, t);
+      finalData = deletePropertyFromArrayObject(finalData, 'Status');
       if (isArchive) {
         finalData.forEach((fd) => {
           delete fd.CreatedDate;
