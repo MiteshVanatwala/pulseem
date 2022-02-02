@@ -40,42 +40,53 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
   const defaultsDates = {
     archive: {
-      from: moment({ hour: 0, minute: 0, second: 0 }).subtract(1, 'year').subtract(3, 'month').format('YYYY-MM-DD HH:mm'),
-      to: moment({ hour: 23, minute: 59, second: 59 }).subtract(1, 'year').format('YYYY-MM-DD HH:mm')
+      from: moment({ hour: 0, minute: 0, second: 0 }).subtract(6, 'month').format('YYYY-MM-DD HH:mm'),
+      to: moment({ hour: 23, minute: 59, second: 59 }).subtract(3, 'month').format('YYYY-MM-DD HH:mm')
 
     },
     current: {
-      from: moment({ hour: 0, minute: 0, second: 0 }).startOf('month').format('YYYY-MM-DD HH:mm'),
+      from: moment({ hour: 0, minute: 0, second: 0 }).subtract(30, 'day').startOf('month').format('YYYY-MM-DD HH:mm'),
       to: moment({ hour: 23, minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm')
     }
   }
+
+  const defaultRequests = {
+    Email: {
+      Archive: {
+        PageSize: rowsPerPage,
+        PageIndex: 1,
+        FromDate: defaultsDates.archive.from,
+        ToDate: defaultsDates.archive.to
+      },
+      Default: {
+        PageIndex: 1,
+        PageSize: rowsPerPage,
+        FromDate: defaultsDates.current.from,
+        ToDate: defaultsDates.current.to
+      }
+    },
+    SMS: {
+      Archive: {
+        PageIndex: 1,
+        PageSize: rowsPerPage,
+        FromDate: defaultsDates.archive.from,
+        ToDate: defaultsDates.archive.to,
+        ShowContent: showContent
+      },
+      Default: {
+        PageSize: rowsPerPage,
+        PageIndex: 1,
+        FromDate: defaultsDates.current.from,
+        ToDate: defaultsDates.current.to,
+        ShowContent: showContent
+      }
+    }
+  };
   const getEmailReportData = async () => {
-    await dispatch(isArchive ? getArchiveDirectReport({
-      PageSize: rowsPerPage,
-      PageIndex: 1,
-      FromDate: defaultsDates.archive.from,
-      ToDate: defaultsDates.archive.to
-    }) : getNewsletterDirectReport({
-      PageIndex: 1,
-      PageSize: rowsPerPage,
-      FromDate: defaultsDates.current.from,
-      ToDate: defaultsDates.current.to
-    }));
+    await dispatch(isArchive ? getArchiveDirectReport(defaultRequests.Email.Archive) : getNewsletterDirectReport(defaultRequests.Email.Default));
   }
   const getSMSReportData = async () => {
-    await dispatch(isArchive ? getArchiveSMSDirectReport({
-      PageIndex: 1,
-      PageSize: rowsPerPage,
-      FromDate: defaultsDates.archive.from,
-      ToDate: defaultsDates.archive.to,
-      ShowContent: showContent
-    }) : getSMSDirectReport({
-      PageSize: rowsPerPage,
-      PageIndex: 1,
-      FromDate: defaultsDates.current.from,
-      ToDate: defaultsDates.current.to,
-      ShowContent: showContent
-    }));
+    await dispatch(isArchive ? getArchiveSMSDirectReport(defaultRequests.SMS.Archive) : getSMSDirectReport(defaultRequests.SMS.Default));
   }
 
   const handleExportEnable = () => {
