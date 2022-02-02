@@ -1383,6 +1383,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: '#3da6f6',
     color: '#fff',
     fontSize: 16,
+    '& p': {
+      wordBreak: 'break-word'
+    },
     '&::before':
     {
       borderBottomLeftRadius: '0.8rem 0.7rem',
