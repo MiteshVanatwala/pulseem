@@ -190,12 +190,12 @@ const SiteTrackingEditor = ({ classes }) => {
                 setDialogType({ type: 'domainAlreadyExist' })
                 break;
             }
-            case 400:
-            case 500: {
-                setDialogType({ type: 'serverNotAble' })
-                break;
+            case 400: {
+                setDialogType({ type: 'invalidDomain' })
+                break
             }
-            default: {
+            default: 
+            case 500: {
                 setDialogType({ type: 'serverNotAble' })
                 break;
             }
@@ -214,7 +214,8 @@ const SiteTrackingEditor = ({ classes }) => {
             scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog(),
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
             showGroups: renderGroupsDialog(),
-            deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), renderHtml(t("siteTracking.deleteDialogMessage")), false, true, true)
+            deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), renderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
+            invalidDomain: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), t('siteTracking.invalidDomainAddress')),
         }
 
         const currentDialog = dialogContent[type] || {}
