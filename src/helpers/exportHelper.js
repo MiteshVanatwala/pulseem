@@ -133,7 +133,7 @@ export const deletePropertyFromArrayObject = (arr, property) => {
 
 export const replaceClientStatus = (obj) => {
     obj.forEach((o) => {
-        o.ClientStatus = o.ClientStatus === 1 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
+        o.ClientStatus = o.ClientStatus === 0 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
     });
     return obj;
 }

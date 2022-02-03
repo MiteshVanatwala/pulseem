@@ -21,6 +21,7 @@ import { actionURL } from '../../../config/index'
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
+import { shortStr } from '../../../helpers/StringHelper';
 
 const RenderRow = ({
   classes,
@@ -90,7 +91,10 @@ const RenderRow = ({
                 <TableRow className={clsx(classes.expandTableRow, 'directEmailRow')}>
                   <TableCell align="center" style={{ width: 15 }}></TableCell>
                   <TableCell align="center" className={clsx(classes.flex1)}>{row.ClickCount}</TableCell>
-                  <TableCell align="center" className={clsx(classes.flex1)}>{row.ExternalRef ? row.ExternalRef : t('report.None')}</TableCell>
+                  <TableCell align="center" className={clsx(classes.flex1, classes.ellipsisText)}
+                    title={row.ExternalRef ? row.ExternalRef : t('report.None')}>
+                    {row.ExternalRef ? shortStr(row.ExternalRef, 25) : t('report.None')
+                    }</TableCell>
                   <TableCell align="center" className={clsx(classes.flex1)}>
                     {row.Attachments ? row.Attachments.split('##').map((link, index) => {
                       return (
@@ -236,7 +240,7 @@ const DirectEmailReportTab = ({
       ToName,
       FromName,
       Subject,
-      PageIndex: page,
+      PageIndex: 1,
       PageSize: rowsPerPage
     }
     let searchObjects = {};

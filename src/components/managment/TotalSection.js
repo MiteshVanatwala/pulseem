@@ -8,11 +8,11 @@ const TotalSection = ({ classes, TotalObject, callerType }) => {
     const { t } = useTranslation();
     const { windowSize } = useSelector(state => state.core);
 
-    if (typeof TotalObject === 'object') {
+    if (typeof TotalObject === 'object' && Object.keys(TotalObject).length > 0) {
         return <Box className={clsx(classes.paddingSides25, classes.mb10, classes.reportPaperBgGray, classes.alignCenter)} style={{ marginBottom: 50 }}>
             <Grid item container className={clsx(classes.justifyEvenly)} style={{ width: '100%' }}>
                 {Object.keys(TotalObject).map((to) => {
-                    if (typeof TotalObject[to] === 'object') {
+                    if (typeof TotalObject[to] === 'object' || to === 'TotalCredits') {
                         return false;
                     }
                     if (windowSize === 'xs') {
