@@ -134,6 +134,10 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       search[key]["FromDate"] = defaultsDates.archive.from
       search[key]["ToDate"] = defaultsDates.archive.to
     }
+    else{
+      search[key]["FromDate"] = defaultsDates.current.from
+      search[key]["ToDate"] = defaultsDates.current.to
+    }
 
     setSearching({ ...isSearching });
     setSearchData(search);

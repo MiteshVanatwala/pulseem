@@ -390,8 +390,8 @@ const DirectEmailReportTab = ({
               style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
               onChange={(e) => handleSearchInput(e.target.value, 'Status', 'email')}
             >
-              <MenuItem key={-1} value="" className={classes.dropDownItem}>
-                {t("common.All")}
+              <MenuItem value="" className={classes.dropDownItem}>
+                {t("common.Status")}
               </MenuItem>
               {EmailStatus.map(so => {
                 return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
