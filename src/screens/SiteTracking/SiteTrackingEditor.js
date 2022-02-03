@@ -5,7 +5,7 @@ import { Loader } from '../../components/Loader/Loader'
 import { useTranslation } from 'react-i18next';
 import Title from '../../components/Wizard/Title'
 import {
-    Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Select, MenuItem, Checkbox
+    Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox
 } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking } from '../../redux/reducers/siteTrackingSlice';
@@ -21,6 +21,7 @@ import { GroupDialog } from '../../components/Groups/GroupDialog';
 import EventTabs from './EventTabs';
 import { isValidUrl } from '../../helpers/UrlHelper';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
+import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 
 const renderHtml = (html) => {
     function createMarkup() {
@@ -30,6 +31,7 @@ const renderHtml = (html) => {
         <label dangerouslySetInnerHTML={createMarkup()}></label>
     );
 }
+
 
 const SiteTrackingEditor = ({ classes }) => {
     // const { subAccountGroups } = useSelector((state) => state.sms);
@@ -47,6 +49,14 @@ const SiteTrackingEditor = ({ classes }) => {
     const refScriptCode = useRef(null);
     const [scriptDialog, handleScriptDialogCheck] = useState(false);
     const [isValidDomain, setIsValidDomain] = useState(null);
+
+    const theme = createMuiTheme({
+        palette: {
+            text: {
+                disabled: '#000'
+            }
+        },
+    });
 
 
     useEffect(() => {
@@ -565,7 +575,19 @@ const SiteTrackingEditor = ({ classes }) => {
                                     isRTL ? classes.endElementNoRadius : classes.startElementNoRadius)
                                 }
                                 style={{ minWidth: 100 }}>
-                                <TextField variant="outlined" style={{color: 'rgba(0,0,0,0.6)'}} value="https://www." disabled></TextField>
+                                <ThemeProvider theme={theme}>
+                                    <TextField
+                                        InputProps={{
+                                            style: {
+                                                borderTopRightRadius: 0,
+                                                borderBottomRightRadius: 0
+                                            }
+                                        }}
+                                        variant="outlined"
+                                        value="https://www."
+                                        disabled
+                                    ></TextField>
+                                </ThemeProvider>
                             </FormControl>
                             <TextField
                                 placeholder={t('siteTracking.addDomain')}
