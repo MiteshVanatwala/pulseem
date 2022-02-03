@@ -243,7 +243,7 @@ const DirectSMSReportTab = ({
                 getContentAnchorEl: null
               }}
             >
-               <MenuItem value="" className={classes.dropDownItem}>
+              <MenuItem value="" className={classes.dropDownItem}>
                 {t("common.Status")}
               </MenuItem>
               {SmsStatus.map(so => {
@@ -578,7 +578,7 @@ const DirectSMSReportTab = ({
     return (
       <>
         <Grid container style={{ justifyContent: windowSize === 'xs' ? 'flex-start' : 'flex-end' }}>
-          <Grid item className={windowSize === 'xs' ? classes.mt15 : null}>
+          <Grid item className={windowSize === 'xs' ? classes.mt15 : null} style={{ textAlign: isRTL ? 'left' : 'right' }}>
             <Typography className={clsx(classes.groupsLable, classes.mb5)}>
               {t('common.Total')} {directSmsReport.TotalSent ?? 0} {t('report.Messages')}
             </Typography>
