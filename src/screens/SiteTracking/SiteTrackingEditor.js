@@ -535,6 +535,11 @@ const SiteTrackingEditor = ({ classes }) => {
         const finalUrl = splittedUrl[0];
         handleModelChange("domain", finalUrl);
     }
+
+    const handleOnDomainChange = (e) => {
+        const url = e.target.value.replace('http://', '').replace('https://', '').replace('www.', '');
+        handleModelChange("domain", url);
+    }
     return <DefaultScreen
         currentPage='settings'
         subPage='SiteTracking'
@@ -560,7 +565,7 @@ const SiteTrackingEditor = ({ classes }) => {
                                     isRTL ? classes.endElementNoRadius : classes.startElementNoRadius)
                                 }
                                 style={{ minWidth: 100 }}>
-                                <TextField variant="outlined" value="https://" disabled></TextField>
+                                <TextField variant="outlined" style={{color: 'rgba(0,0,0,0.6)'}} value="https://www." disabled></TextField>
                             </FormControl>
                             <TextField
                                 placeholder={t('siteTracking.addDomain')}
@@ -576,7 +581,7 @@ const SiteTrackingEditor = ({ classes }) => {
                                 fullWidth
                                 onPaste={handleDomainAddress}
                                 variant="outlined"
-                                onChange={e => { handleModelChange("domain", e.target.value) }}
+                                onChange={handleOnDomainChange}
                                 value={model.domain}
                                 style={{ marginTop: isValidDomain === false || isValidDomain === true ? 2 : 0 }}
                             />
