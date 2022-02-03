@@ -110,7 +110,7 @@ const DirectSMSReportTab = ({
     let text = data;
     if (dataType === 'date') {
       text = moment(text);
-      text = `${text.format('DD/MM/YYYY hh:mm')}`
+      text = `${text.format('DD/MM/YYYY HH:mm')}`
     }
     if (dataType === 'status') {
       text = t(smsStatusToString(text));
@@ -504,7 +504,7 @@ const DirectSMSReportTab = ({
           {t('report.SendDate')}
         </Typography>
         <Typography className={classes.grayTextCell}>
-          {t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
+          {t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${moment(showTime).format("HH:mm")}`}
         </Typography>
       </>
     )
