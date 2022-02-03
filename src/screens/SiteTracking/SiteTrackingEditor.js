@@ -7,7 +7,6 @@ import Title from '../../components/Wizard/Title'
 import {
     Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Select, MenuItem, Checkbox
 } from '@material-ui/core'
-import { DomainProtocol } from '../../helpers/PulseemArrays'
 import { useDispatch, useSelector } from 'react-redux'
 import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel, SiteTrackingModel } from '../../model/SiteTracking/SiteTrackingModel';
@@ -41,7 +40,6 @@ const SiteTrackingEditor = ({ classes }) => {
     const [toastMessage, setToastMessage] = useState(null);
     const [model, setModel] = useState(new SiteTrackingModel());
     const [validationError, setValidationError] = useState([]);
-    const [protocol, setDomainProtocol] = useState('https://');
     const [dialogType, setDialogType] = useState({ type: null });
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -88,9 +86,7 @@ const SiteTrackingEditor = ({ classes }) => {
             setDialogType({ type: 'scriptImplementation' });
         }
     }
-    const handleDomainProtocol = (event) => {
-        setDomainProtocol(event.target.value);
-    }
+
     const handleModelChange = (name, value) => {
         setModel(prevState => ({
             ...prevState,
@@ -132,7 +128,6 @@ const SiteTrackingEditor = ({ classes }) => {
         setShowLoader(true);
         if (validateForm()) {
             const request = { ...model };
-            request.domain = protocol + request.domain;
             const setDomainResponse = await dispatch(setDomain({ DomainAddress: request.domain }));
             if (setDomainResponse.payload.Result === 1) {
                 let response = null;
@@ -209,7 +204,7 @@ const SiteTrackingEditor = ({ classes }) => {
             scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog(),
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
             showGroups: renderGroupsDialog(),
-            deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), renderHtml(t("siteTracking.deleteDialogMessage")), false, true)
+            deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), renderHtml(t("siteTracking.deleteDialogMessage")), false, true, true)
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -228,7 +223,7 @@ const SiteTrackingEditor = ({ classes }) => {
         return <></>
     }
 
-    const renderDynamicDataDialog = (title, message, isErrorDialog = true, showCancel = false) => {
+    const renderDynamicDataDialog = (title, message, isErrorDialog = true, showCancel = false, showDelete = false) => {
         const handleClose = () => {
             setDialogType(null);
         }
@@ -260,7 +255,7 @@ const SiteTrackingEditor = ({ classes }) => {
                     <Button
                         variant='contained'
                         size='small'
-                        onClick={() => handleDeleteEvent()}
+                        onClick={() => { !isErrorDialog && showDelete === true ? handleDeleteEvent() : handleClose() }}
                         className={clsx(
                             classes.dialogButton,
                             classes.dialogConfirmButton
@@ -529,6 +524,17 @@ const SiteTrackingEditor = ({ classes }) => {
         </Grid>
     }
 
+    const handleDomainAddress = (e) => {
+        var clipboardData, pastedData;
+        e.stopPropagation();
+        e.preventDefault();
+        clipboardData = e.clipboardData || window.clipboardData;
+        pastedData = clipboardData.getData('Text');
+        const url = pastedData.replace('http://', '').replace('https://', '').replace('www.', '');
+        const splittedUrl = url.split('/');
+        const finalUrl = splittedUrl[0];
+        handleModelChange("domain", finalUrl);
+    }
     return <DefaultScreen
         currentPage='settings'
         subPage='SiteTracking'
@@ -553,20 +559,8 @@ const SiteTrackingEditor = ({ classes }) => {
                                     classes.formControl,
                                     isRTL ? classes.endElementNoRadius : classes.startElementNoRadius)
                                 }
-                                style={{ minWidth: 120 }}>
-                                <Select
-                                    id="drpSelectDomainProtocol"
-                                    name="drpSelectDomainProtocol"
-                                    value={protocol}
-                                    onChange={(e) => handleDomainProtocol(e)}
-                                    style={{ direction: 'ltr' }}
-                                >
-                                    {DomainProtocol.map((protocol) => {
-                                        return <MenuItem key={protocol.key} value={protocol.name}>
-                                            {protocol.name}
-                                        </MenuItem>
-                                    })}
-                                </Select>
+                                style={{ minWidth: 100 }}>
+                                <TextField variant="outlined" value="https://" disabled></TextField>
                             </FormControl>
                             <TextField
                                 placeholder={t('siteTracking.addDomain')}
@@ -580,6 +574,7 @@ const SiteTrackingEditor = ({ classes }) => {
                                     isValidDomain === false ? classes.error : isValidDomain !== null ? classes.valid : null)}
                                 required
                                 fullWidth
+                                onPaste={handleDomainAddress}
                                 variant="outlined"
                                 onChange={e => { handleModelChange("domain", e.target.value) }}
                                 value={model.domain}
