@@ -48,12 +48,11 @@ const DirectSMSReportTab = ({
   const { t } = useTranslation();
   const [showLoader, setLoader] = useState(false)
   const { showContent } = useSelector(state => state.report);
-  //const dispatch = useDispatch();
 
-  const handleSearch = async (sContent = false) => {
+  const handleSearch = async () => {
     setLoader(true);
     const { sms = {} } = searchData || {};
-    const { FromNumber = '', ToNumber = '', Reference = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null } = sms || {};
+    const { FromNumber = '', ToNumber = '', Reference = '', Status = '', FromDate = null, ToDate = null, ResponseType = null, Text = null, ShowContent = false } = sms || {};
     const param = {
       FromDate,
       ToDate,
@@ -62,10 +61,10 @@ const DirectSMSReportTab = ({
       ToNumber,
       Reference: Reference,
       ResponseType: ResponseType,
-      PageIndex: 1,
+      PageIndex: page,
       PageSize: rowsPerPage,
       Text,
-      ShowContent: !sContent
+      ShowContent: sms.ShowContent ?? showContent
     }
     let searchObjects = {};
     Object.keys(param).map(item => {
@@ -73,13 +72,10 @@ const DirectSMSReportTab = ({
         searchObjects[item] = param[item];
       }
     })
-    searchObjects["ShowContent"] = !sContent;
 
     await dispatch(isArchive ? getArchiveSMSDirectReport(searchObjects) : getSMSDirectReport(searchObjects))
     handleSearching('sms', true);
-    handlePageChange(1);
     setLoader(false);
-    dispatch(setShowContent(!sContent));
   }
 
   const searchRequest = async (pageSize, pageIndex) => {
@@ -88,9 +84,9 @@ const DirectSMSReportTab = ({
     let params = {
       PageSize: pageSize,
       PageIndex: pageIndex,
-      ShowContent: showContent,
       ...sms
     };
+    params["ShowContent"] = sms.ShowContent ?? showContent;
     await dispatch(isArchive ? getArchiveSMSDirectReport(params) : getSMSDirectReport(params))
     setLoader(false);
   }
@@ -329,6 +325,12 @@ const DirectSMSReportTab = ({
     )
   }
 
+  const handleShowContent = async (e) => {
+    await dispatch(setShowContent(e));
+    handleSearchInput(e, 'ShowContent', 'sms');
+    handleSearch();
+  }
+
   const renderToggleContent = () => {
     return (
       <Box className={clsx(classes.dFlex, classes.alignItemsCenter, classes.mb20)}>
@@ -343,7 +345,7 @@ const DirectSMSReportTab = ({
           height={15}
           width={40}
           className={clsx({ [classes.rtlSwitch]: isRTL })}
-          onChange={() => handleSearch(showContent)}
+          onChange={(e) => handleShowContent(e)}
         />
         <Typography>{t('report.ShowContent')}</Typography>
       </Box>

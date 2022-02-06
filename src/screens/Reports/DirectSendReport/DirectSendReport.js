@@ -134,7 +134,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       search[key]["FromDate"] = defaultsDates.archive.from
       search[key]["ToDate"] = defaultsDates.archive.to
     }
-    else{
+    else {
       search[key]["FromDate"] = defaultsDates.current.from
       search[key]["ToDate"] = defaultsDates.current.to
     }
@@ -143,10 +143,13 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     setSearchData(search);
 
     if (key === 'sms') {
+      search[key]["ShowContent"] = searchData[key]["ShowContent"];
+      setPageSms(1);
       await getSMSReportData()
     }
 
     if (key === 'email') {
+      setPageEmail(1);
       await getEmailReportData()
     }
     setLoader(false);
@@ -155,6 +158,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
   const handleSearchInput = (value, key, type) => {
     let { sms = {}, email = {} } = searchData || {};
+    if (key !== 'ShowContent') {
+      type === 'sms' ? setPageSms(1) : setPageEmail(1);
+    }
     if (type === 'sms') {
       sms[key] = value;
     }
