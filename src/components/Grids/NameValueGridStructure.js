@@ -6,9 +6,9 @@ const NameValueGridStructure = ({ gridArr = [], gridSize = { xs: 12, sm: 6 }, cl
         <>
             <Grid container direction="row" >
                 {
-                    gridArr.map((obj) => {
+                    gridArr.map((obj, idx) => {
                         return (
-                            <Grid item xs={gridSize?.xs} sm={gridSize?.sm} md={gridSize?.md ?? ''} lg={gridSize?.lg ?? ''} >
+                            <Grid item xs={gridSize?.xs} sm={gridSize?.sm} md={gridSize?.md ?? ''} lg={gridSize?.lg ?? ''} key={idx}>
                                 {reverse &&
                                     <Typography className={obj.classes?.name ?? classes?.name ?? ''} align={align} variant={variant}>
                                         {obj?.name ?? "-"}

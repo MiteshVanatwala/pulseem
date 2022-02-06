@@ -20,8 +20,8 @@ import { CSVLink } from 'react-csv'
 import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { exportFile } from '../../../helpers/exportFromJson';
-import { MMSReportStatus, smsReportStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { MMSReportStatus } from '../../../helpers/PulseemArrays';
+import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import NameValueGridStructure from '../../../components/Grids/NameValueGridStructure';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
@@ -50,21 +50,20 @@ const MmsReport = ({ classes }) => {
     const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
     const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
     const csvLinkRef = useRef(null)
-    const [mmsQuery, setMmsQuery] = useState({ SerachTxt: '', From: null, To: null, ShowTestCampaigns: false, SmsCampaignID: null })
     const [showLoader, setLoader] = useState(true);
 
     moment.locale(language)
 
-    const getMmsData = async () => {
-        setLoader(true);
-        await dispatch(getMmsReport(mmsQuery));
-        setLoader(false);
-        await dispatch(getMmsGraph());
-    }
 
     useEffect(() => {
+        const getMmsData = async () => {
+            setLoader(true);
+            await dispatch(getMmsReport(isDemoSend));
+            setLoader(false);
+            await dispatch(getMmsGraph());
+        }
         getMmsData();
-    }, [dispatch, isDemoSend]);
+    }, [isDemoSend]);
 
 
     const exportColumnHeader = {
@@ -102,7 +101,7 @@ const MmsReport = ({ classes }) => {
 
     const handleDownloadCsv = async () => {
         let orderList = preferredOrder(searchResults || mmsReport, Object.keys(exportColumnHeader));
-        orderList = await statusNumberToString(t, orderList, smsReportStatus);
+        orderList = await statusNumberToString(t, orderList, MMSReportStatus);
         orderList = await formatDateTime(orderList, t);
         orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
         // orderList = await deletePropertyFromArrayObject(orderList, "Status");
@@ -244,7 +243,7 @@ const MmsReport = ({ classes }) => {
                         height={15}
                         width={40}
                         className={clsx({ [classes.rtlSwitch]: isRTL })}
-                        onChange={() => { setMmsQuery({ ...mmsQuery, ShowTestCampaigns: !isDemoSend }); setIsDemoSend(!isDemoSend) }}
+                        onChange={() => { setIsDemoSend(!isDemoSend) }}
                     />
                     <Typography style={{ marginInlineStart: 8 }}>
                         {t('mainReport.locShowTestCampaigns.Text')}
@@ -332,8 +331,8 @@ const MmsReport = ({ classes }) => {
         )
     }
 
-    const renderNameCell = (name, date, align = "center") => (
-        <>
+    const renderNameCell = (name, date, align = "center") => {
+        return <>
             <Typography fullWidth className={clsx(classes.nameEllipsis, classes.fullWidth)} align={align} variant="body1">
                 {name}
             </Typography>
@@ -341,12 +340,6 @@ const MmsReport = ({ classes }) => {
                 {date && (moment(date).format('LLL') ?? '')}
             </Typography>
         </>
-    )
-
-    const colorTextStyle = {
-        red: classes.textColorRed,
-        blue: classes.textColorBlue,
-        green: classes.sendIconText
     }
 
     const renderRow = (row) => {
