@@ -73,11 +73,11 @@ export const EventConditions = [
     { key: 'NOT_CONTAINS', value: "siteTracking.conditions.notcontain" }
 ];
 
-export const MMSReportStatus = {
-    "0": { value: 'report.smsReport.statuses.other', color: '' },
-    "1": { value: 'report.smsReport.statuses.draft', color: "textColorOrange" },
-    "2": { value: 'report.smsReport.statuses.inProcess', color: "textColorBlue" },
-    "3": { value: 'report.smsReport.statuses.error', color: "textColorRed" },
-    "4": { value: 'report.smsReport.statuses.sent', color: "sendIconText" },
-    "5": { value: 'report.smsReport.statuses.cancelled', color: "textColorRed" }
-};
+export const MMSReportStatus = [
+    { id: 0, value: 'report.smsReport.statuses.other', color: '' },
+    { id: 1, value: 'report.smsReport.statuses.draft', color: "textColorOrange" },
+    { id: 2, value: 'report.smsReport.statuses.inProcess', color: "textColorBlue" },
+    { id: 3, value: 'report.smsReport.statuses.error', color: "textColorRed" },
+    { id: 4, value: 'report.smsReport.statuses.sent', color: "sendIconText" },
+    { id: 5, value: 'report.smsReport.statuses.cancelled', color: "textColorRed" }
+];

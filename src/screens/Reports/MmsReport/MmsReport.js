@@ -83,7 +83,7 @@ const MmsReport = ({ classes }) => {
             href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=4&Culture=${isRTL ? 'he-IL' : 'en-US'}`
         },
         Removed: {
-            title: windowSize === 'xs' ? '' : t('report.removals'),
+            title: windowSize === 'xs' ? '' : t('common.Removed'),
             href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=5&Culture=${isRTL ? 'he-IL' : 'en-US'}`
         },
         CreditsPerMms: {
