@@ -1,0 +1,11 @@
+{
+    "sent":"Sent",
+    "creditsPerMms":"Credits Per MMS",  
+    "totalCreditsSent":"Total Credits Sent",
+    "credits":"Credits",
+    "amount":"Amount",
+    "updateDate":"Update Date",
+    "postCredits": "Credits per mms",
+    "futureSends": "Future Sends",
+    "removal":"Removal"
+}
