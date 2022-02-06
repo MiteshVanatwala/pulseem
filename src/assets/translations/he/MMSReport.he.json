@@ -1,11 +1,12 @@
 {
-    "sent": "נשלח",
-    "creditsPerMms": "Credits Per MMS",
-    "totalCreditsSent": "Total Credits Sent",
-    "credits": "Credits",
-    "amount": "Amount",
-    "updateDate": "Update Date",
-    "postCredits": "Credits per mms",
-    "futureSends": "Future Sends",
-    "removal": "Removal"
+    "sent": "נשלחו",
+    "creditsPerMms": "קרדיטים להודעה",
+    "totalCreditsSent": "סה\"כ קרדיטים",
+    "credits": "קרדיטים",
+    "amount": "כמות",
+    "amountToSend": "לשליחה",
+    "updateDate": "עודכן בתאריך",
+    "postCredits": "קרדיטים להודעה",
+    "futureSends": "עתידית",
+    "removal": "הסרות"
 }

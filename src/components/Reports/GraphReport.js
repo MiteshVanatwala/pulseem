@@ -1,3 +1,4 @@
+import React from 'react';
 import clsx from 'clsx';
 import { Loader } from '../Loader/Loader';
 import { useTranslation } from 'react-i18next';
@@ -82,4 +83,4 @@ const GraphReport = ({ classes, reportData, showLoader }) => {
     )
 }
 
-export default GraphReport;
+export default React.memo(GraphReport);

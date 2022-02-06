@@ -65,6 +65,37 @@ const MmsReport = ({ classes }) => {
         getMmsData();
     }, [isDemoSend]);
 
+    const getHrefs = (id) => ({
+        TotalSendTo: {
+            title: t('mmsreport.amountToSend'),
+            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+        },
+        TotalSent: {
+            title: t('common.Total'),
+            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=3&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+        },
+        FutureSends: {
+            title: t('mmsreport.futureSends'),
+            href: ''
+        },
+        Failed: {
+            title: windowSize === 'xs' ? '' : t("common.failedStatus"),
+            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=4&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+        },
+        Removed: {
+            title: windowSize === 'xs' ? '' : t('report.removals'),
+            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=5&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+        },
+        CreditsPerMms: {
+            title: t('mmsreport.creditsPerMms'),
+            href: ''
+        },
+        TotalCredits: {
+            title: t('mmsreport.totalCreditsSent'),
+            href: ''
+        }
+    })
+
 
     const exportColumnHeader = {
         "MmsCampaignID": t('common.campaignID'),
@@ -324,26 +355,110 @@ const MmsReport = ({ classes }) => {
                     <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("common.Status")}</TableCell>
                     <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t('mmsreport.amount')}</TableCell>
                     <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t('mmsreport.sent')}</TableCell>
-                    <TableCell classes={cell50wStyle} className={classes.flex2} align='center' >{t('mmsreport.removal')}</TableCell>
+                    <TableCell classes={cell50wStyle} className={classes.flex2} align='center' ></TableCell>
                     <TableCell classes={cell50wStyle} className={classes.flex2} align='center' >{t('mmsreport.credits')}</TableCell>
                 </TableRow>
             </TableHead>
         )
     }
 
-    const renderNameCell = (name, date, align = "center") => {
-        return <>
-            <Typography fullWidth className={clsx(classes.nameEllipsis, classes.fullWidth)} align={align} variant="body1">
-                {name}
+    const renderNameCell = (row) => {
+        const { Name, SendDate, UpdateDate, Status } = row
+
+    const date = SendDate ? moment(SendDate) : ''
+    const udate = UpdateDate ? moment(UpdateDate) : '';
+    const showDate = SendDate ? date.format('L') : ''
+    const showTime = SendDate ? date.format('LT') : ''
+    const isSchedule = moment(SendDate) > moment();
+    const showUpdateDate = UpdateDate ? udate.format('L') : '';
+    const showTimeUpdate = UpdateDate ? udate.format('LT') : '';
+
+    return (
+      <>
+        <Typography className={classes.nameEllipsis}>
+          {Name}
+        </Typography>
+        {Status === 5 ? <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
+        {SendDate !== null ?
+          (
+            <Typography className={classes.grayTextCell}>
+              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
             </Typography>
-            <Typography className={classes.grayTextCell} align={align} variant="body1">
-                {date && (moment(date).format('LLL') ?? '')}
+          ) :
+          (
+            <Typography className={classes.grayTextCell}>
+              {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
             </Typography>
-        </>
+          )
+        }
+
+      </>
+    )
+
+        // return <>
+        //     <Typography fullWidth className={clsx(classes.nameEllipsis, classes.fullWidth)} align={align} variant="body1">
+        //         {name}
+        //     </Typography>
+        //     <Typography className={classes.grayTextCell} align={align} variant="body1">
+        //         {date && (moment(date).format('LLL') ?? '')}
+        //     </Typography>
+        // </>
+    }
+
+    const colorTextStyle = {
+        red: classes.textColorRed,
+        blue: classes.textColorBlue,
+        green: classes.sendIconText
+    }
+
+    const renderIntData = (value, type, data = {}, clickable = true) => {
+        const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '' } = data
+        const innerRef = clickable ? href : '';
+        return (
+            <Box style={{ display: 'flex', flexDirection: 'column' }} >
+                <Typography component={innerRef && value > 0 ? 'a' : 'p'}
+                    href={innerRef}
+                    className={clsx(classes.middleText, colorTextStyle[type] || '')}
+                    target="_blank">
+                    {value && value.toLocaleString() || '0'}
+                </Typography>
+                <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
+                    {title}
+                </Typography>
+            </Box>
+        )
+
+    }
+
+    const renderStatusCell = (status) => {
+        const statuses = {
+            1: 'common.Created',
+            2: 'common.Sending',
+            3: 'campaigns.Stopped',
+            4: 'common.Sent',
+            5: 'campaigns.Canceled',
+            6: 'campaigns.Optin',
+            7: 'campaigns.Approve'
+        }
+        return (
+            <>
+                <Typography className={clsx(
+                    classes.middleText,
+                    classes.recipientsStatus,
+                    {
+                        [classes.recipientsStatusCreated]: status === 1,
+                        [classes.recipientsStatusSent]: status === 4,
+                        [classes.recipientsStatusSending]: status === 2,
+                        [classes.recipientsStatusCanceled]: status === 5
+                    }
+                )}>
+                    {t(statuses[status])}
+                </Typography>
+            </>
+        )
     }
 
     const renderRow = (row) => {
-
         const {
             MmsCampaignID,
             Name,
@@ -358,6 +473,7 @@ const MmsReport = ({ classes }) => {
             Failure,
             CreditsPerMms
         } = row
+        const hrefs = getHrefs(MmsCampaignID)
         return (
             <TableRow
                 key={MmsCampaignID}
@@ -366,57 +482,58 @@ const MmsReport = ({ classes }) => {
                     classes={cellBodyStyle}
                     align='center'
                     className={clsx(classes.flex2)}>
-                    {renderNameCell(Name, SendDate ?? UpdateDate)}
+                    {renderNameCell(row)}
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    <Typography className={classes[MMSReportStatus[Status ?? 0].color]} variant="subtitle2">
-                        {t(MMSReportStatus[Status ?? 0].value)}
-                    </Typography>
+                    {renderStatusCell(Status)}
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex2}>
-                    <NameValueGridStructure
-                        gridArr={[
-                            { name: t('report.TotalSent'), value: TotalSendPlan ?? "-" },
-                            { name: t("mmsreport.futureSends"), value: FutureSends ?? "-" }
-                        ]}
-                        classes={{ name: classes?.grayTextCell, value: classes?.grayTextCell }}
-                    />
+                    <Grid container direction={'row'} className={classes.justifyEvenly}>
+                        <Grid item className={classes.plr10}>
+                            {renderIntData(TotalSendPlan, '', hrefs.TotalSendTo)}
+                        </Grid>
+                        <Grid item className={classes.plr10}>
+                            {renderIntData(FutureSends, '', hrefs.FutureSends)}
+                        </Grid>
+                    </Grid>
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {TotalSent ?? "-"}
+                    {renderIntData(TotalSent, '', hrefs.TotalSent)}
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex2}>
-                    <NameValueGridStructure
-                        gridArr={[
-                            { name: t('common.Removed'), value: Removed ?? "-" },
-                            { name: t('report.failure'), value: Failure ?? "-" }
-                        ]}
-                        classes={{ name: classes.textColorRed, value: classes.textColorRed }}
-                    />
+                    <Grid container direction={'row'} className={classes.justifyEvenly}>
+                        <Grid item className={classes.plr10}>
+                            {renderIntData(Failure, 'red', hrefs.Failed)}
+                        </Grid>
+                        <Grid item className={classes.plr10}>
+                            {renderIntData(Removed, 'red', hrefs.Removed)}
+                        </Grid>
+                    </Grid>
                 </TableCell>
                 <TableCell
                     classes={noBorderCellStyle}
                     align='center'
                     className={classes.flex2}>
-                    <NameValueGridStructure
-                        gridArr={[
-                            { name: t('mmsreport.postCredits'), value: CreditsPerMms ?? "-" },
-                            { name: t('mmsreport.totalCreditsSent'), value: TotalCredits ?? "-" }
-                        ]}
-                        classes={{ name: classes?.grayTextCell, value: classes?.grayTextCell }}
-                    />
+                    <Grid container direction={'row'} className={classes.justifyEvenly}>
+                        <Grid item className={classes.plr10}>
+                            {renderIntData(CreditsPerMms, '', hrefs.CreditsPerMms)}
+                        </Grid>
+                        <Grid item className={classes.plr10}>
+                            {renderIntData(TotalCredits, '', hrefs.TotalCredits)}
+                        </Grid>
+                    </Grid>
                 </TableCell>
             </TableRow>
         )
@@ -444,8 +561,7 @@ const MmsReport = ({ classes }) => {
                 classes={rowStyle}>
                 <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
                     <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
-                        {/* {renderNameCell({ SMSCampaignID, Name, SendDate, UpdateDate })} */}
-                        {renderNameCell(Name, SendDate ?? UpdateDate, "left")}
+                        {renderNameCell(row)}
                     </Box>
 
                     <NameValueGridStructure
@@ -479,7 +595,8 @@ const MmsReport = ({ classes }) => {
     const renderTableBody = () => {
         let rowData = searchResults || mmsReport;
         if (rowData.length > 0) {
-            rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
+            let rpp = parseInt(rowsPerPage)
+            rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
             return (
                 <TableBody>
                     {rowData
@@ -505,6 +622,9 @@ const MmsReport = ({ classes }) => {
         dispatch(setRowsPerPage(val))
         setCookie('rpp', val, { maxAge: 2147483647 })
     }
+    const handlePageChange = (val) => {
+        setPage(val);
+    }
 
     const renderTablePagination = () => {
         return (
@@ -515,7 +635,7 @@ const MmsReport = ({ classes }) => {
                 onRowsPerPageChange={handleRowsPerPageSearching}
                 rowsPerPageOptions={rowsOptions}
                 page={page}
-                onPageChange={setPage}
+                onPageChange={handlePageChange}
             />
         )
     }
