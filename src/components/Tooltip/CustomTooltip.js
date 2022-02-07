@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { Typography, Tooltip, IconButton } from '@material-ui/core'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { BsInfoCircleFill } from 'react-icons/bs';
+import { useSelector } from 'react-redux';
 
 const HtmlTooltip = withStyles(({ style }) => ({
   tooltip: {
@@ -31,6 +32,7 @@ function BootstrapTooltip(props) {
 }
 
 const CustomTooltip = ({ classes, text, title, placement = 'top', arrow = true, interactive = false, isSimpleTooltip = true, icon, style }) => {
+  const { isRTL } = useSelector(state => state.core)
   return (isSimpleTooltip ?
     <BootstrapTooltip
       style={{ color: '#000', ...style }}
@@ -48,7 +50,7 @@ const CustomTooltip = ({ classes, text, title, placement = 'top', arrow = true, 
       style={{ ...style }}
       title={
         <React.Fragment>
-          {title}
+          <span style={{direction: isRTL ? 'rtl' : 'ltr'}}>{title}</span>
         </React.Fragment>
       }
     >

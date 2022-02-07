@@ -6,6 +6,7 @@ import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
 import moment from 'moment'
 import 'moment/locale/he'
 import { FiClock } from 'react-icons/fi'
+import { useTranslation } from 'react-i18next';
 
 export const DateField = ({
   minDate,
@@ -21,7 +22,9 @@ export const DateField = ({
   timePickerOpen = false,
   rootStyle = null,
   timeActive = null,
-  dateActive = null
+  dateActive = null,
+  toolbarDisabled = true,
+  isRoundedOnMobile = false
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -31,6 +34,7 @@ export const DateField = ({
   }
   const [isTimePickerOpen, setIsTimePickerOpen] = useState(false);
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const { t } = useTranslation();
 
   return isTimePicker ? (
     <KeyboardTimePicker
@@ -46,7 +50,7 @@ export const DateField = ({
       popoverprops={{
         dir: direction[isRTL]
       }}
-      format={"hh:mm a"}
+      format={"HH:mm a"}
       margin='none'
       placeholder={placeholder}
       initialFocusedDate={moment().hours(0).minutes(0)}
@@ -65,14 +69,18 @@ export const DateField = ({
       onClose={() => setIsTimePickerOpen(false)}
       open={isTimePickerOpen || timePickerOpen}
       onClick={() => setIsTimePickerOpen(true)}
-      InputProps={{ readOnly: true }}
-      autoOk={true}
+      InputProps={{
+        readOnly: true,
+        style: { borderRadius: isRoundedOnMobile === true ? 50 : null }
+      }}
+      autoOk={false}
+      style={{ borderRadius: isRoundedOnMobile === true ? 50 : null }}
     />
   ) :
 
     (<KeyboardDatePicker
       classes={{ root: rootStyle }}
-      disableToolbar
+      disableToolbar={toolbarDisabled}
       inputVariant="outlined"
       className={clsx(
         classes.textField,
@@ -105,7 +113,13 @@ export const DateField = ({
       onClose={() => setIsDatePickerOpen(false)}
       open={isDatePickerOpen}
       onClick={() => setIsDatePickerOpen(true)}
-      InputProps={{ readOnly: true }}
+      invalidDateMessage={t("common.invalidDate")}
+      maxDateMessage={t("common.maximalDateRequired")}
+      minDateMessage={t("common.minimalDateRequired")}
+      InputProps={{
+        readOnly: true,
+        style: { borderRadius: isRoundedOnMobile === true ? 50 : null }
+      }}
       autoOk={true}
     />
     )

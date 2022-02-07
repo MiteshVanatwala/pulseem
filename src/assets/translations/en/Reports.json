@@ -1,5 +1,7 @@
 {
-  "DirectSendReport": "Direct Send Report",
+  "DirectSendReport": "DirectSend",
+  "DirectSendEmail": "DirectSend Email",
+  "DirectSendSMS": "DirectSend SMS",
   "FromEmail": "From Email",
   "ToEmail": "To Email",
   "Recipient": "Recipient",
@@ -9,11 +11,11 @@
   "TotalBillingCredits": "Total Billing Credits",
   "Opening": "Opening",
   "SendDate": "Send Date",
-  "ContentOfMessage": "Content of the Message",
+  "ContentOfMessage": "Message content",
   "Characters": "Characters",
   "Credits": "Credits",
-  "AdvanceSearch": "Advance Search",
-  "closeAdvanceSearch": "Close Advance Search",
+  "AdvanceSearch": "Advanced Search",
+  "closeAdvanceSearch": "Close Advanced Search",
   "ShowContent": "Show Content",
   "TotalCredits": "Total Credits",
   "TotalSent": "Total Sent",
@@ -52,6 +54,10 @@
   "clientStatus": "Client Status",
   "StatusDescription": "Status Description",
   "responses": "Responses",
+  "SMSCredits": "SMS left in package",
+  "BulkEmails": "Email left in package",
+  "MmsCredits": "MMS left in package",
+  "TotalRecords": "Total Records",
   "smsReport": {
     "statuses": {
       "other": "Other",
@@ -60,7 +66,7 @@
       "sending": "Sending",
       "sent": "Sent",
       "error": "Error",
-      "removed": "Removed",
+      "removed": "Blocked for Sending",
       "cancelled": "Cancelled",
       "inProcess": "In Progress",
       "draft": "Draft"
@@ -69,11 +75,13 @@
   "directReport": {
     "statuses": {
       "all": "All",
+      "sent": "Sent",
       "pending": "Pending",
       "sending": "Sending",
-      "sentSuccessfuly": "Sent Successfuly",
+      "success": "Success",
+      "sentSuccessfuly": "Sent Successfully",
       "error": "Error",
-      "removed": "Removed",
+      "removed": "Blocked for Sending",
       "cancelled": "Cancelled"
     },
     "responseType": {
@@ -83,5 +91,7 @@
       "activeHasResponse": "responses active - has responses",
       "activeNoResponse": "responses active - no responses"
     }
-  }
+  },
+  "ArchiveDirectSendReport": "DirectSend Report Archive",
+  "Reactivate": "Reactivate / Cancel removal"
 }

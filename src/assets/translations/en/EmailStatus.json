@@ -7,15 +7,15 @@
   "error": "Error",
   "retry": "Retry",
   "paused": "Paused",
-  "cancelled": "cancelled",
+  "cancelled": "Cancelled",
   "badError": "Direct Hard",
   "mediumError": "Direct Medium",
   "spam": "Spam",
-  "removed": "Removed",
+  "removed": "Blocked for Sending",
   "removedBySystem": "Removed By System",
   "noStatus": "No Status",
   "noAttachments": "No Attachments",
   "optIn": "OptIn",
-  "approve": "Approve Pending",
+  "approve": "Waiting for approval",
   "other": "Other"
 }

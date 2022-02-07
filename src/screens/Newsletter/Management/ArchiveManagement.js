@@ -48,9 +48,15 @@ const ArchiveManagementScreen = ({ classes }) => {
     setLoader(false);
   }
 
+  const handleDefaultDates = () => {
+    let lastYear = moment().subtract(1, 'year');
+    let dateVal = moment(lastYear).format('YYYY-MM-DD HH:mm') || null;
+    handleToDate(dateVal);
+  }
   useEffect(() => {
     setLoader(true);
     getData();
+    handleDefaultDates();
   }, [dispatch])
 
   const renderHeader = () => {
@@ -67,9 +73,9 @@ const ArchiveManagementScreen = ({ classes }) => {
   const clearSearch = () => {
     setCampaineNameSearch('');
     handleFromDate(null);
-    handleToDate(null);
     setSearchResults(null);
     setSearching(false);
+    handleDefaultDates();
   }
 
   const renderSearchLine = () => {
@@ -82,46 +88,50 @@ const ArchiveManagementScreen = ({ classes }) => {
       if (campaineNameSearch === '' && !fromDate && !toDate) {
         return;
       }
-      const searchArray = [{
-        type: 'name',
-        campaineName: campaineNameSearch
-      }, {
-        type: 'date',
-        fromDate,
-        toDate
-      }];
+      try {
+        const searchArray = [{
+          type: 'name',
+          campaineName: campaineNameSearch
+        }, {
+          type: 'date',
+          fromDate,
+          toDate
+        }];
 
-      const filtersObject = {
-        name: (row, values) => {
-          return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
-        },
-        date: (row, values) => {
-          const { UpdatedDate, SendDate } = row
-          const lastUpdate = SendDate ?
-            moment(SendDate, dateFormat).valueOf()
-            : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+        const filtersObject = {
+          name: (row, values) => {
+            return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
+          },
+          date: (row, values) => {
+            const { UpdatedDate, SendDate } = row
+            const lastUpdate = SendDate ?
+              moment(SendDate, dateFormat).valueOf()
+              : moment(UpdatedDate, dateFormat).valueOf()
+            const startFromDate = values.fromDate && moment(values.fromDate).hour(0).minute(0).valueOf() || null
+            const endToDate = values.toDate && moment(values.toDate).hour(23).minute(59).valueOf() || null
 
-          if (!values)
+            if (!values)
+              return true
+            if (fromDate && toDate && startFromDate && endToDate)
+              return ((lastUpdate >= startFromDate) && (lastUpdate <= endToDate))
+            if (fromDate && startFromDate)
+              return (lastUpdate >= startFromDate)
+            if (toDate && endToDate)
+              return (lastUpdate <= endToDate)
             return true
-          if (fromDate && toDate && startFromDate && endToDate)
-            return ((lastUpdate >= startFromDate) && (lastUpdate <= endToDate))
-          if (fromDate && startFromDate)
-            return (lastUpdate >= startFromDate)
-          if (toDate && endToDate)
-            return (lastUpdate <= endToDate)
-          return true
+          }
         }
-      }
 
-      let sortData = newsletterArchiveData
-      searchArray.forEach(values => {
-        sortData = sortData.filter(row => filtersObject[values.type](row, values))
-      });
-      setSearchResults(sortData);
-      setSearching(true);
-      setPage(1);
+        let sortData = newsletterArchiveData
+        searchArray.forEach(values => {
+          sortData = sortData.filter(row => filtersObject[values.type](row, values))
+        });
+        setSearchResults(sortData);
+        setSearching(true);
+        setPage(1);
+      } catch (error) {
+        console.log(error);
+      }
     }
 
     const handleKeyPress = (e) => {
@@ -130,12 +140,7 @@ const ArchiveManagementScreen = ({ classes }) => {
       }
     }
 
-    const handleFromDateChange = (value) => {
-      if (value > toDate) {
-        handleToDate(null);
-      }
-      handleFromDate(value);
-    }
+
 
     const handleCampainNameChange = event => {
       setCampaineNameSearch(event.target.value)
@@ -167,30 +172,7 @@ const ArchiveManagementScreen = ({ classes }) => {
             placeholder={t('common.CampaignName')}
           />
         </Grid>
-
-        {windowSize !== 'xs' ?
-          <Grid item>
-            <DateField
-              classes={classes}
-              value={fromDate}
-              onChange={handleFromDateChange}
-              placeholder={t('mms.locFromDateResource1.Text')}
-            />
-          </Grid>
-          : null}
-
-        {windowSize !== 'xs' ?
-          <Grid item>
-            <DateField
-              classes={classes}
-              value={toDate}
-              onChange={handleToDate}
-              placeholder={t('mms.locToDateResource1.Text')}
-              minDate={fromDate ? fromDate : undefined}
-            />
-          </Grid>
-          : null}
-
+        {renderDateFields()}
         <Grid item>
           <Button
             size='large'
@@ -213,6 +195,47 @@ const ArchiveManagementScreen = ({ classes }) => {
         </Grid>}
       </Grid>
     )
+  }
+
+  const handleFromDateChange = (value) => {
+    if (value > toDate) {
+      handleToDate(null);
+    }
+    handleFromDate(value);
+  }
+
+  const renderDateFields = () => {
+    return <>
+      {
+        windowSize !== 'xs' ?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={fromDate}
+              onChange={handleFromDateChange}
+              placeholder={t('mms.locFromDateResource1.Text')}
+              maximumDate={moment().subtract(1, 'year')}
+              toolbarDisabled={false}
+            />
+          </Grid>
+          : null
+      }
+
+      {
+        windowSize !== 'xs' ?
+          <Grid item>
+            <DateField
+              classes={classes}
+              value={toDate}
+              onChange={handleToDate}
+              placeholder={t('mms.locToDateResource1.Text')}
+              minDate={fromDate ? fromDate : undefined}
+              toolbarDisabled={false}
+            />
+          </Grid>
+          : null
+      }
+    </>
   }
 
   const handleDownloadCsv = async () => {

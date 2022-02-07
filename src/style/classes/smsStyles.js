@@ -574,7 +574,9 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         justifyContent: "center",
         padding: "5px",
         marginInlineStart: "5px",
-        marginBottom: 5
+        marginBottom: 5,
+        paddingInline: 10,
+        maxWidth: '95%'
     },
     reciFilterDiv:
     {
@@ -609,13 +611,14 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     },
     nameGroup:
     {
-        marginInlineEnd: "4px"
+        marginInlineEnd: "4px",
+        maxWidth: '95%'
     },
     groupCloseicn:
     {
         color: "#fff",
         cursor: "pointer",
-        alignItems: "center",
+        alignItems: "center"
     },
     editorLink: {
         marginInlineEnd: "5px",

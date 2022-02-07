@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Tooltip, Typography, ClickAwayListener } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import DefaultScreen from "../../DefaultScreen";
@@ -127,7 +127,6 @@ const SmsCreator = ({ classes, ...props }) => {
     testGroups,
     ToastMessages
   } = useSelector((state) => state.sms);
-
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [showEmoji, setShowEmoji] = useState(false);
@@ -172,6 +171,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const [isFromAutomation, setIsFromAutomation] = useState(false);
   const [isNewVersion, setIsNewVersion] = useState(true);
   const [otpOpen, setOTPOpen] = useState(null);
+  const [isSiteTracking, setIsSiteTracking] = useState(false);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -268,6 +268,7 @@ const SmsCreator = ({ classes, ...props }) => {
         setOTPOpen(true);
         break;
       }
+      default:
       case 5: {// ACCEPTED
         break;
       }
@@ -278,11 +279,17 @@ const SmsCreator = ({ classes, ...props }) => {
     await handleSendResult();
   }, [smsSendResult]);
 
-  useEffect(async () => {
-    linkCalculation();
-  }, [smsModel, isLinksStatistics]);
+  useEffect(() => {
+    if (commonSettings.SubAccountSettings) {
+      siteTrackingLogic();
+    }
+  }, [commonSettings, smsModel]);
 
-  useEffect(async () => {
+  useEffect(() => {
+    linkCalculation();
+  }, [smsModel, isSiteTracking, isLinksStatistics])
+
+  useEffect(() => {
     getcredits(characterCount);
   }, [characterCount])
 
@@ -316,7 +323,8 @@ const SmsCreator = ({ classes, ...props }) => {
     setLoader(false);
   };
 
-  useEffect(async () => {
+
+  const initDispatch = async () => {
     setLoader(true);
     setCampaignId(props && props.match.params.id ? props.match.params.id : -1);
     await dispatch(getPreviousLandingData());
@@ -337,7 +345,10 @@ const SmsCreator = ({ classes, ...props }) => {
       setIsFromAutomation(true);
     }
     await initFromNumber();
+  }
 
+  useEffect(() => {
+    initDispatch();
   }, [dispatch]);
 
   const initFromNumber = async () => {
@@ -379,9 +390,9 @@ const SmsCreator = ({ classes, ...props }) => {
       if (response && !response.error) {
         setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
-        setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
         setSmsModel(response.payload);
         setIsLinksStatistics(response.payload.IsLinksStatistics);
+        setcharacterCount(response.payload.Text ? response.payload.Text.length : 0);
         return response.payload;
       }
       else {
@@ -405,8 +416,9 @@ const SmsCreator = ({ classes, ...props }) => {
     if (t && t.length > 0) {
       const res = t.replace('\n', ' ');
       // eslint-disable-next-line
-      const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_#]*)?\??(?:[{}\-\+=&;,%@\.\w_]*)#?(?:[\.\!\/\\\w+]*))?)/g;
+      const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\??(?:[{}\-\+=&;,%@\.\w_]*)##?(?:[\.\!\/\\\w+##]*))?)/g;
       const links = res.match(regex);
+      let tempTextCount = smsModel.Text.length;
 
       if (links && links.length > 0) {
         setlinkCount(links.length);
@@ -416,11 +428,15 @@ const SmsCreator = ({ classes, ...props }) => {
             var linkLength = links[i].length;
             linksCharsAddition += 35 - linkLength;
           }
-          setcharacterCount(smsModel.Text.length + linksCharsAddition);
+          tempTextCount += linksCharsAddition;
         }
         else {
-          setcharacterCount(smsModel.Text.length);
+          if (isSiteTracking === true && smsModel.Text.includes('ref=##ClientIDEnc##')) {
+            tempTextCount += 9;
+          }
         }
+
+        setcharacterCount(tempTextCount);
       }
       else {
         setlinkCount(0);
@@ -451,7 +467,7 @@ const SmsCreator = ({ classes, ...props }) => {
     var lastChar = text.substring(text.length, text.length - 1);
     var isNumber = /^[0-9]*$/;
     var english = /^[A-Za-z0-9 ]*$/;
-    // var reg = "/[^\x00-\xFF]/g";
+    
     if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
       e.target.value = text.substring(0, 10);
     }
@@ -491,51 +507,49 @@ const SmsCreator = ({ classes, ...props }) => {
     return isValid;
   };
   const handleSend = async () => {
-    if (validationCheck()) {
-      if (phone !== "") {
-        if (props && props.match.params.id) {
+    if (phone !== "") {
+      if (props && props.match.params.id) {
+        const smsQuickSendData = {
+          ...quickSendPayload, SmsCampaignID: props.match.params.id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+            SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: props.match.params.id, Credits: messageCount,
+            TotalRecipients: 1
+          }
+        }
+        setLoader(true);
+        let r = await dispatch(smsQuick(smsQuickSendData));
+        setLoader(false);
+        handleSendResult(r.payload.Result)
+      }
+      else {
+        if (smsCampaignId !== "") {
           const smsQuickSendData = {
-            ...quickSendPayload, SmsCampaignID: props.match.params.id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-              SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: props.match.params.id, Credits: messageCount,
+            ...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+              SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: smsCampaignId, Credits: messageCount,
               TotalRecipients: 1
             }
           }
           setLoader(true);
           let r = await dispatch(smsQuick(smsQuickSendData));
+          setCampaignId(r.payload.SmsCampaignId)
           setLoader(false);
           handleSendResult(r.payload.Result)
         }
         else {
-          if (smsCampaignId !== "") {
-            const smsQuickSendData = {
-              ...quickSendPayload, SmsCampaignID: smsCampaignId, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-                SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: smsCampaignId, Credits: messageCount,
-                TotalRecipients: 1
-              }
+          const smsQuickSendData = {
+            ...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+              SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: -1, Credits: messageCount,
+              TotalRecipients: 1
             }
-            setLoader(true);
-            let r = await dispatch(smsQuick(smsQuickSendData));
-            setCampaignId(r.payload.SmsCampaignId)
-            setLoader(false);
-            handleSendResult(r.payload.Result)
           }
-          else {
-            const smsQuickSendData = {
-              ...quickSendPayload, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-                SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: -1, Credits: messageCount,
-                TotalRecipients: 1
-              }
-            }
-            setLoader(true);
-            let r = await dispatch(smsQuick(smsQuickSendData));
-            setCampaignId(r.payload.SmsCampaignId)
-            setLoader(false);
-            handleSendResult(r.payload.Result)
-          }
+          setLoader(true);
+          let r = await dispatch(smsQuick(smsQuickSendData));
+          setCampaignId(r.payload.SmsCampaignId)
+          setLoader(false);
+          handleSendResult(r.payload.Result)
         }
-      } else {
-        setToastMessage(ToastMessages.INVALID_NUMBER);
       }
+    } else {
+      setToastMessage(ToastMessages.INVALID_NUMBER);
     }
   };
   const onLeave = (e) => {
@@ -674,7 +688,6 @@ const SmsCreator = ({ classes, ...props }) => {
                 disabled
                 className={windowSize === "xs" ? classes.buttonFieldRemovalMobile : clsx(classes.buttonFieldRemoval)}
                 value={removalNumber}
-                disabled
               />
             </Box>
           ) : null}
@@ -688,8 +701,6 @@ const SmsCreator = ({ classes, ...props }) => {
     if (smsModel.Text && smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
       handleMsgSelect();
     }
-    let tempMsg = "";
-    tempMsg = e.target.value
     let arr = e.target.value.split("\n");
     setsplittedMsg(arr);
 
@@ -935,7 +946,8 @@ const SmsCreator = ({ classes, ...props }) => {
                     {t("mainReport.add")}
                   </Typography>
                   {editmenuClick ? (
-                    <Box className={classes.dropDiv}>
+                    <Box className={classes.dropDiv} style={{ top: windowSize !== 'xs' ? (previousCampaignData.length === 0 ? "-150px" : "-200px") : null }}>
+
                       <Typography
                         className={classes.dropCon}
                         onClick={() => {
@@ -945,7 +957,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       >
                         {t("mainReport.landingLink")}
                       </Typography>
-                      {previousCampaignData.length == 0 ? null : (
+                      {previousCampaignData.length === 0 ? null : (
                         <Typography
                           className={classes.dropCon}
                           onClick={() => {
@@ -1093,7 +1105,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       maxLength="12"
                       onChange={handleNumberChange}
                     />
-                    <span className={classes.rightSend} onClick={handleSend}>
+                    <span className={classes.rightSend} onClick={() => { validationCheckpoint(() => handleSend()) }}>
                       {t("mainReport.send")}
                     </span>
 
@@ -1162,30 +1174,70 @@ const SmsCreator = ({ classes, ...props }) => {
     sethidden(newSelection.length === 0);
   };
 
-  const onContinueClick = async (isSave, returnToAutomation = false) => {
+  const siteTrackingLogic = () => {
+    if (commonSettings.SubAccountSettings.DomainAddress && commonSettings.SubAccountSettings.DomainAddress !== '') {
+      const domainName = commonSettings.SubAccountSettings.DomainAddress.replace('https://', '').replace('http://', '').replace('www.', '');
+      if (smsModel.Text.includes(domainName)) {
+        setIsSiteTracking(true);
+      }
+      else {
+        setIsSiteTracking(false);
+      }
+    }
+  }
+
+  const validationCheckpoint = async (callbackFunc) => {
     if (validationCheck()) {
-      const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: smsCampaignId }
-      setLoader(true);
-      let r = await dispatch(smsSave(payloadToPush));
-      const campaignId = r.payload.Message;
-      setCampaignId(campaignId);
-      setLoader(false);
-      if (r.payload.Status == 2) {
-        if (isSave) {
-          setToastMessage(ToastMessages.SUCCESS);
-          setTimeout(() => {
-            history.push(`/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
-            setToastMessage(null);
-          }, 1500);
-        } else if (returnToAutomation) {
-          window.location = getAutomationReturnUrl(campaignId);
-        } else {
-          history.push(`/sms/send/${campaignId}`);
+      if (isSiteTracking === true) {
+        if (!smsModel.Text.includes('ref')) {
+          let text = smsModel.Text;
+          const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(commonSettings.SubAccountSettings.DomainAddress));
+          const originalLink = startIndex.split(' ') || startIndex.split('\n');
+          let originUrl = originalLink[0];
+          let newUrl = originUrl.trim();
+          newUrl += newUrl.includes('?') ? '&ref=##ClientIDEnc##' : '?ref=##ClientIDEnc##';
+          text = smsModel.Text.replace(originUrl, newUrl);
+          setSmsModel((currentState) => {
+            currentState.Text = text;
+            return currentState;
+          });
+        }
+        if (!isLinksStatistics) {
+          setDialogType({ type: 'linkStatisticAlert', data: { onConfirmFunc: () => callbackFunc(), test: 'data' } });
+        }
+        else {
+          callbackFunc();
         }
       }
-      else if (r.payload.Status == 3) {
-        setOTPOpen(true);
+      else {
+        callbackFunc();
       }
+    }
+  }
+
+  const onSave = async (isSave, returnToAutomation = false) => {
+    linkCalculation();
+    const payloadToPush = { ...smsModel, FromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, CreditsPerSms: `${messageCount}`, IsLinksStatistics: isLinksStatistics, IsTest: isTestCampaign, AccountID: commonSettings.AccountID, SubAccountID: commonSettings.SubAccountId, SmsCampaignID: smsCampaignId }
+    setLoader(true);
+    let r = await dispatch(smsSave(payloadToPush));
+    const campaignId = r.payload.Message;
+    setCampaignId(campaignId);
+    setLoader(false);
+    if (r.payload.Status === 2) {
+      if (isSave) {
+        setToastMessage(ToastMessages.SUCCESS);
+        setTimeout(() => {
+          history.push(`/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
+          setToastMessage(null);
+        }, 1500);
+      } else if (returnToAutomation) {
+        window.location = getAutomationReturnUrl(campaignId);
+      } else {
+        history.push(`/sms/send/${campaignId}`);
+      }
+    }
+    else if (r.payload.Status === 3) {
+      setOTPOpen(true);
     }
   };
 
@@ -1249,28 +1301,26 @@ const SmsCreator = ({ classes, ...props }) => {
     if (selectedGroup.length > 0) {
       const groupIds = selectedGroup.map((g) => { return g.GroupID });
       settotal(selectedGroup.length);
-      if (validationCheck()) {
-        const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, SmsCampaignID: smsCampaignId }
-        let r = await dispatch(smsSave(payloadToPush));
-        setCampaignId(r.payload.Message);
-        if (r.payload.Status == 2) {
-          let payload2 = {
-            IsTestGroups: true,
-            SMSCampaignID: r.payload.Message,
-            TestGroupsIds: groupIds,
-          };
-          handleSmsModelChange("SMSCampaignID", r.payload.Message);
-          let r2 = await dispatch(smsSaveGroup(payload2));
-          await dispatch(getCampaignSumm(r.payload.Message));
-          setsummary(true);
-          setDialogType(null);
-        }
-        else if (r.payload.Status == 3) {
-          setOTPOpen(true);
-        }
-        else {
-          setDialogType(null);
-        }
+      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text, TestGroupsIds: groupIds, SmsCampaignID: smsCampaignId }
+      let r = await dispatch(smsSave(payloadToPush));
+      setCampaignId(r.payload.Message);
+      if (r.payload.Status === 2) {
+        let payload2 = {
+          IsTestGroups: true,
+          SMSCampaignID: r.payload.Message,
+          TestGroupsIds: groupIds,
+        };
+        handleSmsModelChange("SMSCampaignID", r.payload.Message);
+        let r2 = await dispatch(smsSaveGroup(payload2));
+        await dispatch(getCampaignSumm(r.payload.Message));
+        setsummary(true);
+        setDialogType(null);
+      }
+      else if (r.payload.Status === 3) {
+        setOTPOpen(true);
+      }
+      else {
+        setDialogType(null);
       }
     }
     sethidden(true);
@@ -1290,28 +1340,26 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const handleExit = async (saveBeforeExit) => {
     if (saveBeforeExit) {
-      if (validationCheck()) {
-        const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
-        let saveResponse = await dispatch(smsSave(payloadToPush));
-        if (saveResponse) {
-          if (saveResponse.payload.Status === 3) {
-            setOTPOpen(true);
-            return;
-          }
-          else if (saveResponse.payload.Status === 2) {
-            setDialogType(null);
-            history.push("/SMSCampaigns");
+      const payloadToPush = { ...smsModel, fromNumber: campaignNumber, Name: smsModel.Name, Text: smsModel.Text }
+      let saveResponse = await dispatch(smsSave(payloadToPush));
+      if (saveResponse) {
+        if (saveResponse.payload.Status === 3) {
+          setOTPOpen(true);
+          return;
+        }
+        else if (saveResponse.payload.Status === 2) {
+          setDialogType(null);
+          history.push("/SMSCampaigns");
 
-          }
-          else {
-            setDialogType(null);
-            setToastMessage(ToastMessages.ERROR);
-          }
         }
         else {
           setDialogType(null);
           setToastMessage(ToastMessages.ERROR);
         }
+      }
+      else {
+        setDialogType(null);
+        setToastMessage(ToastMessages.ERROR);
       }
     }
     else if (saveBeforeExit === false) {
@@ -1408,7 +1456,7 @@ const SmsCreator = ({ classes, ...props }) => {
           color="primary"
           style={{ margin: '8px' }}
           onClick={() => {
-            onContinueClick(true, isFromAutomation);
+            validationCheckpoint(() => onSave(true, isFromAutomation));
           }}>
           {t('mainReport.saveSms')}
         </Button>
@@ -1423,7 +1471,7 @@ const SmsCreator = ({ classes, ...props }) => {
           color="primary"
           style={{ margin: '8px' }}
           onClick={() => {
-            onContinueClick(false, isFromAutomation);
+            validationCheckpoint(() => onSave(false, isFromAutomation));
           }}>
           {!isFromAutomation ? t("mainReport.continue") : t("sms.saveAndExit")}
         </Button>
@@ -1745,7 +1793,7 @@ const SmsCreator = ({ classes, ...props }) => {
       showDefaultButtons: true,
       onCancel: () => { setselectedGroup([]); setDialogType(null); setContactSearch("") },
       onClose: () => { setselectedGroup([]); setDialogType(null); setContactSearch("") },
-      onConfirm: () => { handleGroupClose() }
+      onConfirm: () => { validationCheckpoint(() => handleGroupClose()) }
     }
   }
   const exitDialog = () => {
@@ -1766,9 +1814,9 @@ const SmsCreator = ({ classes, ...props }) => {
       showDefaultButtons: true,
       confirmText: t("common.Yes"),
       cancelText: t("common.No"),
-      onClose: () => { handleExit(false) },
+      onClose: () => { validationCheckpoint(() => handleExit(false)) },
       onCancel: () => { setDialogType(null) },
-      onConfirm: () => { handleExit(true) }
+      onConfirm: () => { validationCheckpoint(() => handleExit(true)); }
     }
   }
   const alertDialog = () => {
@@ -1823,8 +1871,31 @@ const SmsCreator = ({ classes, ...props }) => {
       onConfirm: () => { setDialogType(null) }
     }
   }
+  const siteTrackingLinkDialog = (data) => {
+    return {
+      showDivider: false,
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+          <FaExclamationCircle style={{ fontSize: 60 }} />
+          <Typography className={classes.mt2} style={{ fontWeight: 'bold' }}>{t("common.Notice")}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("siteTracking.NoticeLinkStatistics"))}</Typography>
+        </Box>
+      ),
+      showDefaultButtons: true,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => {
+        setDialogType(null);
+        data.onConfirmFunc()
+      }
+    }
+  }
   const renderDialog = () => {
-    const { type } = dialogType || {}
+    const { type, data } = dialogType || {}
 
     const dialogContent = {
       latestLP: lpDialog(),
@@ -1835,7 +1906,8 @@ const SmsCreator = ({ classes, ...props }) => {
       groups: groupDialog(),
       exit: exitDialog(),
       alert: alertDialog(),
-      noCredit: noCreditDialog()
+      noCredit: noCreditDialog(),
+      linkStatisticAlert: siteTrackingLinkDialog(data)
     }
 
     const currentDialog = dialogContent[type] || {}

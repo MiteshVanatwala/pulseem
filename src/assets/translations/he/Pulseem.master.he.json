@@ -374,5 +374,7 @@
   "manageNotifications": "ניהול נוטיפיקציות",
   "guides": "מדריכים",
   "implementScript": "הטמעת סקריפט",
-  "pulseemSystem": "מערכת פולסים "
+  "pulseemSystem": "מערכת פולסים ",
+  "siteTracking": "מעקב אתרים",
+  "smsReplies": "משובי SMS"
 }

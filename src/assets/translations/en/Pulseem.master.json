@@ -377,5 +377,7 @@
   "manageNotifications": "Manage Notifications",
   "implementScript": "Implement Script",
   "guides": "Guides",
-  "pulseemSystem": "Pulseem System"
+  "pulseemSystem": "Pulseem System",
+  "siteTracking": "Site Tracking",
+  "smsReplies": "SMS Replies"
 }
