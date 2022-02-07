@@ -376,10 +376,10 @@ const MmsReport = ({ classes }) => {
         return (
             <>
                 {
-                    fullwidth ? <Typography className={classes.nameEllipsis} style={{ maxWidth: "100%" }}>
+                    fullwidth ? <Typography className={classes.nameEllipsis} style={{ maxWidth: "100%" }} title={Name}>
                         {Name}
                     </Typography> :
-                        <Typography className={classes.nameEllipsis} >
+                        <Typography className={classes.nameEllipsis} title={Name}>
                             {Name}
                         </Typography>
                 }
