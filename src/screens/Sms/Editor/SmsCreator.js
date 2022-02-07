@@ -454,6 +454,7 @@ const SmsCreator = ({ classes, ...props }) => {
     dispatch(getCreditsforSMS(count)).then((res) => {
       let credits = res.payload.split("#");
       setmessageCount(credits[0]);
+      handleSmsModelChange("CreditsPerSms", credits[0]);
     });
   }
   const onCamppaignChange = (e) => {
@@ -610,7 +611,7 @@ const SmsCreator = ({ classes, ...props }) => {
         tArea.selectionStart = tArea.selectionEnd = cursorPos;
       }, 10);
 
-      tArea.focus();
+      focusOnMessage();
     }
   }
 
@@ -1386,6 +1387,14 @@ const SmsCreator = ({ classes, ...props }) => {
       </>
     );
   };
+
+  const focusOnMessage = () => {
+    const textArea = document.getElementById("yourMessage");
+    setTimeout(() => {
+      textArea.focus();
+    }, 500)
+  }
+
   const onLocation = async () => {
     onAddText("https://waze.to/?q=" + Searched.split(" ").join("%20"));
     setlinkCount(linkCount + 1);
