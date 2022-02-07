@@ -137,3 +137,10 @@ export const replaceClientStatus = (obj) => {
     });
     return obj;
 }
+
+export const setTotalSent = (obj) => {
+    obj.forEach((o) => {
+        o["TotalCredits"] = o.TotalSent * o.CreditsPerMms;
+    });
+    return obj;
+}
