@@ -362,38 +362,43 @@ const MmsReport = ({ classes }) => {
         )
     }
 
-    const renderNameCell = (row) => {
+    const renderNameCell = (row, fullwidth) => {
         const { Name, SendDate, UpdateDate, Status } = row
 
-    const date = SendDate ? moment(SendDate) : ''
-    const udate = UpdateDate ? moment(UpdateDate) : '';
-    const showDate = SendDate ? date.format('L') : ''
-    const showTime = SendDate ? date.format('LT') : ''
-    const isSchedule = moment(SendDate) > moment();
-    const showUpdateDate = UpdateDate ? udate.format('L') : '';
-    const showTimeUpdate = UpdateDate ? udate.format('LT') : '';
+        const date = SendDate ? moment(SendDate) : ''
+        const udate = UpdateDate ? moment(UpdateDate) : '';
+        const showDate = SendDate ? date.format('L') : ''
+        const showTime = SendDate ? date.format('LT') : ''
+        const isSchedule = moment(SendDate) > moment();
+        const showUpdateDate = UpdateDate ? udate.format('L') : '';
+        const showTimeUpdate = UpdateDate ? udate.format('LT') : '';
 
-    return (
-      <>
-        <Typography className={classes.nameEllipsis}>
-          {Name}
-        </Typography>
-        {Status === 5 ? <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
-        {SendDate !== null ?
-          (
-            <Typography className={classes.grayTextCell}>
-              {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
-            </Typography>
-          ) :
-          (
-            <Typography className={classes.grayTextCell}>
-              {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
-            </Typography>
-          )
-        }
+        return (
+            <>
+                {
+                    fullwidth ? <Typography className={classes.nameEllipsis} style={{ maxWidth: "100%" }}>
+                        {Name}
+                    </Typography> :
+                        <Typography className={classes.nameEllipsis} >
+                            {Name}
+                        </Typography>
+                }
+                {Status === 5 ? <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
+                {SendDate !== null ?
+                    (
+                        <Typography className={classes.grayTextCell}>
+                            {isSchedule ? t("common.ScheduledFor") : t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${showTime}`}
+                        </Typography>
+                    ) :
+                    (
+                        <Typography className={classes.grayTextCell}>
+                            {t("common.UpdatedOn")} {`${isRTL ? showUpdateDate : moment(showUpdateDate).format("DD/MM/YYYY")} ${showTimeUpdate}`}
+                        </Typography>
+                    )
+                }
 
-      </>
-    )
+            </>
+        )
 
         // return <>
         //     <Typography fullWidth className={clsx(classes.nameEllipsis, classes.fullWidth)} align={align} variant="body1">
@@ -554,6 +559,7 @@ const MmsReport = ({ classes }) => {
             Failure,
             CreditsPerMms
         } = row
+        const hrefs = getHrefs(MmsCampaignID)
         return (
             <TableRow
                 key={row.ID}
@@ -561,32 +567,44 @@ const MmsReport = ({ classes }) => {
                 classes={rowStyle}>
                 <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
                     <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
-                        {renderNameCell(row)}
+                        {renderNameCell({ MmsCampaignID, Name, SendDate, UpdateDate }, true)}
                     </Box>
 
-                    <NameValueGridStructure
-                        gridArr={[
-                            { name: t('mmsreport.postCredits'), value: CreditsPerMms ?? "-", classes: { value: classes.fontBold } },
-                            { name: t('mmsreport.totalCreditsSent'), value: TotalCredits ?? "-", classes: { value: classes.fontBold } }
-                        ]}
-                        classes={{ name: clsx(classes.mobileReportHead, classes.ml0), value: classes?.grayTextCell }}
-                        variant="body1"
-                        reverse
-                        gridSize={{ xs: 6, sm: 6 }}
-                        align="left"
-                    />
-                    <NameValueGridStructure
-                        gridArr={[
-                            { name: t("common.Sent"), value: TotalSent ?? "-", classes: { value: classes.fontBold } },
-                            { name: t('report.failure'), value: Failure ?? "-", classes: { value: clsx(classes.fontBold, classes.textColorRed) } },
-                            { name: t('common.Removed'), value: Removed ?? "-", classes: { value: clsx(classes.fontBold, classes.textColorRed) } }
-                        ]}
-                        classes={{ name: clsx(classes.mobileReportHead, classes.ml0), value: classes?.grayTextCell }}
-                        variant="body1"
-                        reverse
-                        gridSize={{ xs: 4, sm: 4 }}
-                        align="left"
-                    />
+                    <Grid container spacing={2} style={{ paddingInlineStart: 10 }}>
+                        <Grid item xs={6}>
+                            <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                                {t("mmsreport.creditsPerMms")}
+                            </Typography>
+                            {renderIntData(CreditsPerMms, '', { ...hrefs.CreditsPerMms, title: '' }, false)}
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                                {t("mmsreport.totalCreditsSent")}
+                            </Typography>
+                            {renderIntData(TotalCredits, '', { ...hrefs.TotalCredits, title: '' }, false)}
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={2} style={{ paddingInlineStart: 10 }} >
+                        <Grid item xs={4}>
+                            <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                                {t("common.Sent")}
+                            </Typography>
+                            {renderIntData(TotalSent, '', {}, false)}
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                                {t("common.failedStatus")}
+                            </Typography>
+                            {renderIntData(Failure, 'red', hrefs.Failed, false)}
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                                {t("common.Removed")}
+                            </Typography>
+                            {renderIntData(Removed, 'red', hrefs.Removed, false)}
+                        </Grid>
+                    </Grid>
+
                 </TableCell>
             </TableRow>
         )
