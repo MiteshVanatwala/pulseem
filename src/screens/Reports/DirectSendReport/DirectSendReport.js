@@ -45,7 +45,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
     },
     current: {
-      from: moment({ hour: 0, minute: 0, second: 0 }).subtract(30, 'day').startOf('month').format('YYYY-MM-DD HH:mm'),
+      from: moment({ hour: 0, minute: 0, second: 0 }).startOf('month').format('YYYY-MM-DD HH:mm'),
       to: moment({ hour: 23, minute: 59, second: 59 }).format('YYYY-MM-DD HH:mm')
     }
   }
