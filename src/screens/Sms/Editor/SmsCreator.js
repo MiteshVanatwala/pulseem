@@ -159,7 +159,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [toastMessage, setToastMessage] = useState(null);
   const [removalNumber, setremovalNumber] = useState(null);
   const [storedValue, setstoredValue] = useState("");
-  // const [keep, setkeep] = useState(true);
   const [summary, setsummary] = useState(false);
   const [campaignNumberValidated, setcampaignNumberValidated] = useState(false);
   const [total, settotal] = useState(0);
@@ -467,7 +466,7 @@ const SmsCreator = ({ classes, ...props }) => {
     var lastChar = text.substring(text.length, text.length - 1);
     var isNumber = /^[0-9]*$/;
     var english = /^[A-Za-z0-9 ]*$/;
-
+    
     if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
       e.target.value = text.substring(0, 10);
     }

@@ -173,8 +173,8 @@ const BulkStatus = ({ classes }) => {
             item xs={9}
             className={getBillingTypeText(Sms) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
             justifyContent='space-between'
-          // onMouseEnter={() => showSmsPackage(true)}
-          // onMouseLeave={() => showSmsPackage(false)}
+            // onMouseEnter={() => showSmsPackage(true)}
+            // onMouseLeave={() => showSmsPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             {isShowSmsPackage && isAllowSms() ? (

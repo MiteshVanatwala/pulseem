@@ -446,8 +446,6 @@ const App = ({ screenSize }) => {
     })
     updateToken()
     initFeatures()
-    //Remove this implementation before uploading
-    insertScript()
   }, [dispatch])
 
 
