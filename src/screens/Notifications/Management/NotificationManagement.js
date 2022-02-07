@@ -267,7 +267,7 @@ const NotificationManagement = ({ classes }) => {
       setPage(1);
     }
 
-    const handleKeyPress=(e) => {
+    const handleKeyPress = (e) => {
       if (e.charCode === 13) {
         handleSearch()
       }
@@ -315,6 +315,7 @@ const NotificationManagement = ({ classes }) => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
+              toolbarDisabled={false}
               classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
@@ -326,6 +327,7 @@ const NotificationManagement = ({ classes }) => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
+              toolbarDisabled={false}
               classes={classes}
               value={toDate}
               onChange={handleToDate}

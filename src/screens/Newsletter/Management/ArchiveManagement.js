@@ -215,6 +215,7 @@ const ArchiveManagementScreen = ({ classes }) => {
               onChange={handleFromDateChange}
               placeholder={t('mms.locFromDateResource1.Text')}
               maximumDate={moment().subtract(1, 'year')}
+              toolbarDisabled={false}
             />
           </Grid>
           : null
@@ -229,6 +230,7 @@ const ArchiveManagementScreen = ({ classes }) => {
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
               minDate={fromDate ? fromDate : undefined}
+              toolbarDisabled={false}
             />
           </Grid>
           : null
