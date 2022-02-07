@@ -135,7 +135,7 @@ const MmsReport = ({ classes }) => {
         orderList = await statusNumberToString(t, orderList, MMSReportStatus);
         orderList = await formatDateTime(orderList, t);
         orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-        orderList = setTotalSent(orderList);
+
         exportFile({
             data: orderList,
             fileName: 'mmsReport',
@@ -536,7 +536,7 @@ const MmsReport = ({ classes }) => {
                             {renderIntData(CreditsPerMms, '', hrefs.CreditsPerMms)}
                         </Grid>
                         <Grid item className={classes.plr10}>
-                            {renderIntData((TotalSent * CreditsPerMms), '', hrefs.TotalCredits)}
+                            {renderIntData(TotalCredits, '', hrefs.TotalCredits)}
                         </Grid>
                     </Grid>
                 </TableCell>
