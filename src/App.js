@@ -32,6 +32,10 @@ import GraphicReport from './screens/Reports/NewslettersReport/GraphicReport';
 import SmsReport from './screens/Reports/SmsReport/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
+import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
+import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
+import { siteTrackingScriptUrl } from './config/index';
+
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -238,6 +242,11 @@ const renderRoutes = (classes, history) => {
         render={props => <SmsReport {...props} classes={classes} />}
       />
       <Route
+        exact
+        path={"/Reports/SmsReplies/:id"}
+        render={props => <SmsReplies props={props} classes={classes} />}
+      />
+      <Route
         path={`/MmsMainReport`}
         component={transferUrl('/Pulseem/MmsMainReport.aspx')}
       />
@@ -270,8 +279,14 @@ const renderRoutes = (classes, history) => {
         component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
       />
       <Route
+        exact
         path={`/Reports/DirectSendReport`}
-        render={props => <DirectSendReport {...props} classes={classes} />}
+        render={props => <DirectSendReport {...props} classes={classes} isArchive={false} />}
+      />
+      <Route
+        exact
+        path={`/Reports/DirectSendReport/Archive`}
+        render={props => <DirectSendReport {...props} classes={classes} isArchive={true} />}
       />
       <Route
         path={`/EmailCampaignStatistics`}
@@ -353,6 +368,11 @@ const renderRoutes = (classes, history) => {
           return null
         }}
       />
+      <Route
+        exact
+        path={`/SiteTracking`}
+        render={props => <SiteTrackingEditor props={props} classes={classes} />}
+      />
     </>
   )
 }
@@ -360,9 +380,7 @@ const renderRoutes = (classes, history) => {
 const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize } = useSelector(state => state.core)
-  useEffect(() => {
-    dispatch(setWindowSize(screenSize))
-  }, [windowSize]);
+  screenSize && dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
 
@@ -411,6 +429,13 @@ const App = ({ screenSize }) => {
 
     const cookieFunctionObj = {
       jtoken: updateToken
+    }
+
+    const insertScript = () => {
+      const script = document.createElement("script");
+      script.src = `${siteTrackingScriptUrl}`; //?v=` + Math.floor(Date.now() / 1000);
+      script.async = false;
+      document.head.appendChild(script);
     }
 
     // window.addEventListener('resize',setWindowWidth)

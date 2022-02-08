@@ -1,0 +1,46 @@
+{
+    "title": "מעקב אתרים",
+    "setUp": "הגדר מעקב אתרים",
+    "yourDomain": "הדומיין שלך",
+    "siteToTrack": "מהי כתובת האתר שברצונך להגדיר מעקב?",
+    "eventToTrack": "אחרי אילו אירועים ברצונך לעקוב?",
+    "addDomain": "הוסף את הדומיין שלך כאן",
+    "addPageUrl": "הוסף קישור לדף",
+    "pageUrl": "קישור לדף",
+    "saved": "מעקב אתרים נשמר בהצלחה!",
+    "scriptImplementation": "הצג סקריפט",
+    "scriptDescription": "על מנת להתחיל לעקוב אחר אינטראקציית הלקוחות עם האתר שלך, תחילה עליך להטמיע את הסקריפט המצורף מטה כדי שמבקרים באתר שלך יוכלו לקבל התראות.",
+    "scriptInstruction": "יש להעתיק את שורות הקוד הבאות ולהדביקן בשורה האחרונה לפני סגירת האלמנט \"head\"",
+    "scriptPayAttention": "* שימו לב. נוטיפקציות יעבדו רק באתרים עם תעודת SSL",
+    "addFeatureTooltip": "מעוניין להגדיר מעקב אחר כניסות לאתר שלך? דבר איתנו עוד היום ב-03-5240290!",
+    "conditions": {
+        "none": "ללא",
+        "contains": "כולל",
+        "exact": "בדיוק",
+        "notcontain": "לא כולל"
+    },
+    "typeGroupName": "לחץ כאן להוספת קבוצות",
+    "placeHolderAddPageUrl": "הוסף כתובת URL כאן",
+    "selectGroups": "בחר קבוצות",
+    "addToGroups": "הוסף לקבוצות",
+    "events": {
+        "pageLoad": "טעינת עמוד",
+        "pageView": "צפייה בעמוד"
+    },
+    "validation": {
+        "domainRequired": "דומיין - שדה חובה",
+        "domainNotValid": "דומיין - כתובת לא חוקית",
+        "groupsRequired": "חובה להוסיף קבוצה לאירוע הנבחר",
+        "pageUrlRequired": "כתובת URL - שדה חובה"
+    },
+    "serverResponse": {
+        "notAuthorized": "תקלת הרשאה - אנא פנה לתמיכה",
+        "missingMandatoryAction": "אחד הפרמטרים חסרים. אנא נסה שוב.",
+        "serverNotAble": "תקלה כללית בשרת. אנא פנה לתמיכה.",
+        "domainAlreadyExist": "דומיין זה כבר הוגדר במערכת"
+    },
+    "deleteDialogTitle": "למחוק את מעקב האתרים?",
+    "deleteDialogMessage": "האם אתה בטוח?<br />לחיצה על אישור תעצור את כל המעקבים באתר שלך.",
+    "NoticeLinkStatistics": "החשבון שלך מוגדר למעקב התנהגות באתר (site tracking)<br />הורדה של מעקב הקלקות יוסיף תווים להודעת הסמס ועלול לגרור ספירת קרדיטים נוספת בעת השליחה",
+    "invalidDomainAddress": "כתובת דומיין אינה תקינה"
+}

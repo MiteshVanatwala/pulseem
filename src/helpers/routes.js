@@ -5,10 +5,12 @@ import {
 import {
   CodeMenuIcon,DolarMenuIcon,SettingsMenuIcon,StarMenuIcon,GrafMenuIcon,GroupMenuIcon
 } from '../assets/images/settings/index'
+import { FaBinoculars } from 'react-icons/fa'
 import SettingsLogo from '../assets/images/settings-white.png';
 import { FaHome } from 'react-icons/fa'
 
 export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
+  key: 'settings',
   title: <img
     alt='settings'
     src={SettingsLogo}
@@ -22,11 +24,12 @@ export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
     {title: t('master.RadMenuItemResource4.Text'),href: '/Pulseem/AccountUsersReport.aspx?fromreact=true',iconSrc: GrafMenuIcon, isShow: isAllowSwitchAccount},
     {title: t('master.RadMenuItemResource23.Text'),href: '/Pulseem/ExtraFieldsDefinition.aspx?fromreact=true',iconSrc: StarMenuIcon, isShow: true},
     {title: t('master.linkApiSettingsResource1.Text'),href: '/Pulseem/ApiSettings.aspx?fromreact=true',iconSrc: CodeMenuIcon, isShow: true},
+    {key: 'SiteTracking', title: t('master.siteTracking'),href: '/react/SiteTracking',iconSrc: FaBinoculars, isFaIcon: true, isShow: true},
   ]
 })
 
 
-export const getRoutes=(t=() => null, isClalAccount = false, features = null, windowSize = null, smsOldVersion, isRTL) => [
+export const getRoutes=(t=() => null, isClalAccount = false, features = null, subAccountSettings = null, windowSize = null, smsOldVersion, isRTL) => [
   {
     key: 'dashboard',
     title: t('dashboard.pageTitle'),
@@ -187,9 +190,13 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, wi
       {title: t('master.RadMenuItemResource18.Text'),href: '/Pulseem/ClientReport.aspx?fromreact=true', isShow: true },
       {title: t('master.RadMenuItemResource30.Text'),href: '/Pulseem/EmailAutoReports.aspx?fromreact=true', isShow: true },
       {title: t('master.locRemovedReason.Text'),href: '/Pulseem/RemovedStats.aspx?fromreact=true', isShow: true },
-      {title: t('master.DirectSmsReport.Text'),href: '/Pulseem/DirectSmsReport.aspx?fromreact=true', isShow: true },
-      {title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
+      //{title: t('master.DirectSmsReport.Text'),href: '/Pulseem/DirectSmsReport.aspx?fromreact=true', isShow: true },
+      //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
+      //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
+      {key:'directSendReport',title: t('report.DirectSendReport'),href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
+      {key:'directSendReportArchive',title: t('report.ArchiveDirectSendReport'),href: '/react/Reports/DirectSendReport/Archive', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
       {title: t('master.OpenedClickedReport'),href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true', isShow: true },
+      {key: 'smsResponse', title: t('master.smsReplies'),href: '/react/reports/SmsReplies', isShow: false },
     ]
   }
 ]

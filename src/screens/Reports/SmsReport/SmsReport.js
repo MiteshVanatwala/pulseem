@@ -80,7 +80,7 @@ const SmsReport = ({ classes }) => {
     },
     Replies: {
       title: t('common.Total'),
-      // href: `/Pulseem/SmsReplies.aspx?ReplyCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      //href: `/react/reports/SmsReplies/${id}`
       href: `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     DLR: {
@@ -251,6 +251,7 @@ const SmsReport = ({ classes }) => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
+              toolbarDisabled={false}
               classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
@@ -262,6 +263,7 @@ const SmsReport = ({ classes }) => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
+              toolbarDisabled={false}
               classes={classes}
               value={toDate}
               onChange={handleToDate}
@@ -616,7 +618,10 @@ const SmsReport = ({ classes }) => {
         </TableBody>
       )
     }
-    return <Typography className={classes.flexCenter}>{t("common.NoData")}</Typography>
+    return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+      <Typography>{t("common.NoDataTryFilter")}</Typography>
+    </Box>
+
   }
 
   const renderTable = () => {

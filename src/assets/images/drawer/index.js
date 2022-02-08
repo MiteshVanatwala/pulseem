@@ -8,6 +8,7 @@ import ReportsIcon from './reports.png'
 import LogoutIcon from './logout.png'
 import GroupsIcon from './groups.png'
 import GuidsIcon from './guides.png'
+import ChartIcon from './chart.png'
 import MmsIcon from './mms.png'
 import SmsIcon from './sms.png'
 
@@ -22,6 +23,7 @@ export {
   LogoutIcon,
   GroupsIcon,
   GuidsIcon,
+  ChartIcon,
   MmsIcon,
-  SmsIcon
+  SmsIcon,
 }

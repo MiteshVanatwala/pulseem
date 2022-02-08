@@ -1,13 +1,22 @@
+export const DomainProtocol = [
+    { key: 0, name: "http://" },
+    { key: 1, name: "https://" }
+];
 export const EmailStatus = [
-
-    { id: 0, value: 'emailStatus.other' },
-    { id: 1, value: 'emailStatus.draft' },
+    { id: null, value: 'common.All' },
+    // { id: 0, value: 'emailStatus.noStatus' },
+    { id: 1, value: 'emailStatus.pending' },
     { id: 2, value: 'emailStatus.sending' },
-    { id: 3, value: 'emailStatus.sent' },
-    { id: 4, value: 'emailStatus.sent' },
-    { id: 5, value: 'emailStatus.cancelled' },
-    { id: 6, value: 'emailStatus.optIn' },
-    { id: 7, value: 'emailStatus.approve' }
+    { id: 3, value: 'emailStatus.succeeded' },
+    { id: 4, value: 'emailStatus.error' },
+    { id: 5, value: 'emailStatus.retry' },
+    { id: 6, value: 'emailStatus.paused' },
+    { id: 7, value: 'emailStatus.cancelled' },
+    { id: 8, value: 'emailStatus.badError' },
+    { id: 9, value: 'emailStatus.mediumError' },
+    { id: 10, value: 'emailStatus.spam' },
+    { id: 11, value: 'emailStatus.removed' },
+    { id: 12, value: 'emailStatus.removedBySystem' }
 ];
 
 export const smsReportStatus = [
@@ -20,7 +29,7 @@ export const smsReportStatus = [
 ];
 
 export const SmsStatus = [
-    { id: 0, value: 'emailStatus.noStatus' },
+    { id: null, value: 'common.All' },
     { id: 1, value: 'report.directReport.statuses.pending' },
     { id: 2, value: 'report.directReport.statuses.sending' },
     { id: 3, value: 'report.directReport.statuses.sentSuccessfuly' },
@@ -35,3 +44,31 @@ export const ReponseType = [
     { id: 3, value: 'report.directReport.responseType.activeHasResponse' },
     { id: 4, value: 'report.directReport.responseType.activeNoResponse' }
 ]
+
+export const ClientStatus = {
+    Sms: [
+        { id: -1, value: 'common.noSms' },
+        { id: 0, value: 'common.statusActive' },
+        { id: 1, value: 'common.Unsubscribed' },
+        { id: 4, value: 'common.invalid' }
+    ],
+    Email: [
+        { id: -1, value: 'common.noEmail' },
+        { id: 1, value: 'common.statusActive' },
+        { id: 2, value: 'common.Unsubscribed' },
+        { id: 3, value: 'common.restricted' },
+        { id: 4, value: 'common.invalid' },
+        { id: 5, value: 'common.Pending' }
+    ]
+};
+export const EventsOptions = [
+    { key: 'PAGE_VIEW', value: 'siteTracking.events.pageView' }
+    // { key: 'PAGE_LOAD', value: 'siteTracking.events.pageLoad' }
+];
+
+
+export const EventConditions = [
+    { key: 'CONTAINS', value: "siteTracking.conditions.contains" },
+    { key: 'EXACT', value: "siteTracking.conditions.exact" },
+    { key: 'NOT_CONTAINS', value: "siteTracking.conditions.notcontain" }
+];
