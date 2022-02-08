@@ -151,16 +151,6 @@ export const cloneArchiveCampaign = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
-export const reactivateEmail = createAsyncThunk(
-  'email/reactivateEmail', async (payload, thunkAPI) => {
-    try {
-      const response = await instence.put(`email/reactivateEmail`, payload);
-      return response.data
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  })
-
 
 export const newsletterSlice = createSlice({
   name: 'newsletter',
