@@ -1,0 +1,10 @@
+{
+  "logPageHeaderResource1": {
+    "Text": "Recipient Management"
+  },
+  "PageResource1": {
+    "Title": "Manage Recipient"
+  },
+  "delete": "Delete Recipients",
+  "unsubscribe": "Unsubscribe Recipient"
+}

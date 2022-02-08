@@ -35,7 +35,7 @@ import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import { siteTrackingScriptUrl } from './config/index';
-
+import GroupsManagement from './screens/Groups/Management/GroupsManagement';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -100,10 +100,13 @@ const renderRoutes = (classes, history) => {
         path={`/homepage`}
         component={transferUrl('/Pulseem/homepage.aspx')}
       />
-      {/* Groups */}
-      <Route
+      {/* <Route
         path={`/Groups`}
         component={transferUrl('/Pulseem/Groups.aspx')}
+      /> */}
+      <Route
+        path={'/Groups'}
+        render={props => <GroupsManagement props={props} classes={classes} />}
       />
       <Route
         path={`/ClientSearch`}

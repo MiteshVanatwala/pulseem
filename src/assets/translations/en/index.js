@@ -16,8 +16,10 @@ import emoji from './Emoji.json'
 import payment from './payment.json'
 import siteTracking from './SiteTracking.json'
 import client from './Client.json'
+import recipient from './Recipient.json'
+import group from './group.json'
 
-export const en={
+export const en = {
   automations,
   campaigns,
   notifications,
@@ -35,5 +37,7 @@ export const en={
   emoji,
   payment,
   siteTracking,
-  client
+  client,
+  recipient,
+  group
 }

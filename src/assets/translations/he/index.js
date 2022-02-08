@@ -16,6 +16,8 @@ import emoji from './Emoji.he.json'
 import payment from './payment.he.json'
 import siteTracking from './SiteTracking.he.json'
 import client from './Client.he.json'
+import recipient from './Recipient.json'
+import group from './group.json'
 
 export const he = {
   automations,
@@ -35,5 +37,7 @@ export const he = {
   emoji,
   payment,
   siteTracking,
-  client
+  client,
+  recipient,
+  group
 }
