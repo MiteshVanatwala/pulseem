@@ -217,7 +217,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "TOTALRESPONSES": t('report.totalResponses'),
       "CHARSCOUNT": t('report.Characters'),
       "Credits": t('report.Credits'),
-      "StatusDescription": t('report.StatusDescription')
+      "StatusDescription": t('report.StatusDescription'),
+      "ClientStatus": t('report.clientStatus')
     }
   };
 
@@ -231,6 +232,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       finalData = preferredOrder(response.payload, Object.keys(excelHeaders.SMS));
       finalData = switchStatusDescription(finalData, SmsStatus);
       finalData = await formatDateTime(finalData, t);
+      finalData = replaceClientStatus(finalData);
       if (showContent === false) {
         finalData.forEach((fd) => {
           delete fd.MESSAGE;
