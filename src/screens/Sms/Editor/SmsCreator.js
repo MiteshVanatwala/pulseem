@@ -233,7 +233,7 @@ const SmsCreator = ({ classes, ...props }) => {
       if (accountFeatures.includes('38')) {
         setSmsModel((currentState) => {
           if (currentState.Text === '') {
-            onAddText(`${t("sms.toUnsubscribe")} ${removalNumber}`);
+            onAddText(`${t("sms.toUnsubscribe")}${removalNumber}`);
             setremovalMessageButtonDisabled(true);
             setTimeout(() => {
               const cName = document.getElementById('campaignName');
