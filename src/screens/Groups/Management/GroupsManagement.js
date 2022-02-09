@@ -7,8 +7,9 @@ import {
 } from '@material-ui/core'
 import {
     AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
-    GroupsIcon, PreviewIcon
+    GroupsIcon, PreviewIcon, ExportIcon
 } from '../../../assets/images/managment/index'
+import { CSVLink } from 'react-csv'
 import {
     TablePagination, ManagmentIcon, DateField, Dialog, SearchField, RestorDialogContent
 } from '../../../components/managment/index'
@@ -39,7 +40,7 @@ const GroupsManagement = ({ classes }) => {
     const [numberError, handleNumberError] = useState(false);
     const [verificationCode, handleVerificationCodeInput] = useState('');
     const [verificationCodeError, handleVerificationCodeError] = useState(false);
-    const [campaineNameSearch, setCampaineNameSearch] = useState('')
+    const [groupNameSearch, setGroupNameSearch] = useState('')
     const rowsOptions = [6, 10, 20, 50]
     const [page, setPage] = useState(1)
     const [isSearching, setSearching] = useState(false)
@@ -58,10 +59,10 @@ const GroupsManagement = ({ classes }) => {
         setLoader(false);
     }
 
-    useEffect(() => {
-        setLoader(true);
-        getData();
-    }, [dispatch])
+    // useEffect(() => {
+    //     setLoader(true);
+    //     getData();
+    // }, [dispatch])
 
     const renderHeader = () => {
         return (
@@ -75,13 +76,13 @@ const GroupsManagement = ({ classes }) => {
     }
 
     const clearSearch = () => {
-        setCampaineNameSearch('')
+        setGroupNameSearch('')
         handleFromDate(null)
         handleToDate(null)
         setSearchResults(null)
         setSearching(false)
     }
-
+    // DONE
     const renderSearchLine = () => {
         const handleKeyDown = (event) => {
             if (event.keyCode === 13 || event.code === 'Enter') {
@@ -91,33 +92,11 @@ const GroupsManagement = ({ classes }) => {
         const handleSearch = () => {
             const searchArray = [{
                 type: 'name',
-                campaineName: campaineNameSearch
-            }, {
-                type: 'date',
-                fromDate,
-                toDate
+                campaineName: groupNameSearch
             }];
             const filtersObject = {
                 name: (row, values) => {
                     return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
-                },
-                date: (row, values) => {
-                    const { UpdatedDate, SendDate } = row
-                    const lastUpdate = SendDate ?
-                        moment(SendDate, dateFormat).valueOf()
-                        : moment(UpdatedDate, dateFormat).valueOf()
-                    const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-                    const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
-
-                    if (!values)
-                        return true
-                    if (fromDate && toDate && startFromDate && endToDate)
-                        return ((lastUpdate >= startFromDate) && (lastUpdate <= endToDate))
-                    if (fromDate && startFromDate)
-                        return (lastUpdate >= startFromDate)
-                    if (toDate && endToDate)
-                        return (lastUpdate <= endToDate)
-                    return true
                 }
             }
 
@@ -136,23 +115,16 @@ const GroupsManagement = ({ classes }) => {
             }
         }
 
-        const handleFromDateChange = (value) => {
-            if (value > toDate) {
-                handleToDate(null);
-            }
-            handleFromDate(value);
-        }
-
-        const handleCampainNameChange = event => {
-            setCampaineNameSearch(event.target.value)
+        const handleGroupNameChange = event => {
+            setGroupNameSearch(event.target.value)
         }
 
         if (windowSize === 'xs') {
             return (
                 <SearchField
                     classes={classes}
-                    value={campaineNameSearch}
-                    onChange={handleCampainNameChange}
+                    value={groupNameSearch}
+                    onChange={handleGroupNameChange}
                     onClick={handleSearch}
                     onKeyPress={handleKeyPress}
                     placeholder={t('common.CampaignName')}
@@ -166,37 +138,13 @@ const GroupsManagement = ({ classes }) => {
                     <TextField
                         variant='outlined'
                         size='small'
-                        value={campaineNameSearch}
+                        value={groupNameSearch}
                         onKeyPress={handleKeyDown}
-                        onChange={handleCampainNameChange}
+                        onChange={handleGroupNameChange}
                         className={clsx(classes.textField, classes.minWidth252)}
-                        placeholder={t('sms.GridBoundColumnResource2.HeaderText')}
+                        placeholder={t('common.GroupName')}
                     />
                 </Grid>
-
-                {windowSize !== 'xs' ?
-                    <Grid item>
-                        <DateField
-                            classes={classes}
-                            value={fromDate}
-                            onChange={handleFromDateChange}
-                            placeholder={t('mms.locFromDateResource1.Text')}
-                        />
-                    </Grid>
-                    : null}
-
-                {windowSize !== 'xs' ?
-                    <Grid item>
-                        <DateField
-                            classes={classes}
-                            value={toDate}
-                            onChange={handleToDate}
-                            placeholder={t('mms.locToDateResource1.Text')}
-                            minDate={fromDate ? fromDate : undefined}
-                        />
-                    </Grid>
-                    : null}
-
                 <Grid item>
                     <Button
                         size='large'
@@ -250,7 +198,7 @@ const GroupsManagement = ({ classes }) => {
                         size='medium'
                         className={clsx(
                             classes.actionButton,
-                            classes.actionButtonLightBlue
+                            classes.actionButtonRed
                         )}
                         onClick={() => setDialogType({
                             type: 'restore',
@@ -266,7 +214,7 @@ const GroupsManagement = ({ classes }) => {
                         href={smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : "/react/sms/create"}
                         className={clsx(
                             classes.actionButton,
-                            classes.actionButtonLightGreen
+                            classes.actionButtonRed
                         )}>
                         {t('recipient.delete')}
                     </Button>
@@ -283,18 +231,37 @@ const GroupsManagement = ({ classes }) => {
                         {t('recipient.unsubscribe')}
                     </Button>
                 </Grid>
-                {windowSize !== 'xs' && <Grid item>
+                {/* <Grid item xs={windowSize === 'xs' && 12}> */}
+                <Grid item xs={windowSize === 'xs' && 12}>
                     <Button
                         variant='contained'
                         size='medium'
                         className={clsx(
                             classes.actionButton,
-                            classes.actionButtonDarkBlue
+                            classes.actionButtonGreen,
+                            //   smsReport.length > 0 ? null : classes.disabled
                         )}
-                        onClick={handleVerificationDialog}>
-                        {t('sms.verificationDialogTitle')}
+                        // onClick={handleDownloadCsv}
+                        onClick={() => true}
+                        startIcon={<ExportIcon />}>
+                        {t('campaigns.exportFile')}
                     </Button>
-                </Grid>}
+                    <CSVLink
+                        // data={csvData ?? null}
+                        data={[
+                            ["firstname", "lastname", "email"],
+                            ["Ahmed", "Tomi", "ah@smthing.co.com"],
+                            ["Raed", "Labes", "rl@smthing.co.com"],
+                            ["Yezzi", "Min l3b", "ymin@cocococo.com"]
+                        ]}
+                        filename='report.csv'
+                        className='hidden'
+                        // ref={csvLinkRef ?? null}
+                        ref={null}
+                        target='_blank'
+                    />
+                </Grid>
+                {/* </Grid> */}
 
                 <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
                     <Typography className={classes.groupsLable}>
@@ -1085,7 +1052,7 @@ const GroupsManagement = ({ classes }) => {
             {renderTable()}
             {renderTablePagination()}
             {renderDialog()}
-            <Loader isOpen={showLoader} />
+            {/* <Loader isOpen={showLoader} /> */}
         </DefaultScreen>
     )
 }
