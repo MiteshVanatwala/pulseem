@@ -117,7 +117,7 @@ const DirectSMSReportTab = ({
     }
 
     return (
-      <Typography className={dataType === 'content' ? classes.wordBreak : null}>{text}</Typography>
+      <Typography style={{ wordBreak: dataType === 'content' ? 'break-word' : null}}>{text}</Typography>
     );
   }
 
