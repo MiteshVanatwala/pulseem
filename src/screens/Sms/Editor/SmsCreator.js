@@ -113,7 +113,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const history = useHistory();
   const dispatch = useDispatch();
-  const { language, windowSize, isRTL } = useSelector(
+  const { language, windowSize, isRTL, accountFeatures } = useSelector(
     (state) => state.core
   );
   const {
@@ -172,6 +172,8 @@ const SmsCreator = ({ classes, ...props }) => {
   const [isNewVersion, setIsNewVersion] = useState(true);
   const [otpOpen, setOTPOpen] = useState(null);
   const [isSiteTracking, setIsSiteTracking] = useState(false);
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
+  const [showRemovalLink, setShowRemovalLink] = useState(false);
   const [smsModel, setSmsModel] = useState({
     SubAccountID: -1,
     CreditsPerSms: "1",
@@ -225,6 +227,25 @@ const SmsCreator = ({ classes, ...props }) => {
   useEffect(() => {
     setAlignment(isRTL ? "right" : "left");
   }, [isRTL])
+
+  useEffect(() => {
+    if (isPageLoaded && accountFeatures) {
+      if (accountFeatures.includes('38')) {
+        setSmsModel((currentState) => {
+          if (currentState.Text === '') {
+            onAddText(`${t("sms.toUnsubscribe")} ${removalNumber}`);
+            setremovalMessageButtonDisabled(true);
+            setTimeout(() => {
+              const cName = document.getElementById('campaignName');
+              cName.focus();
+            }, 500);
+          }
+          return currentState;
+        });
+      }
+      setShowRemovalLink(!accountFeatures.includes('39'))
+    }
+  }, [isPageLoaded || accountFeatures]);
 
   const qs = queryString.parse(props.location.search);
 
@@ -345,6 +366,7 @@ const SmsCreator = ({ classes, ...props }) => {
       setIsFromAutomation(true);
     }
     await initFromNumber();
+    setIsPageLoaded(true);
   }
 
   useEffect(() => {
@@ -467,7 +489,7 @@ const SmsCreator = ({ classes, ...props }) => {
     var lastChar = text.substring(text.length, text.length - 1);
     var isNumber = /^[0-9]*$/;
     var english = /^[A-Za-z0-9 ]*$/;
-    
+
     if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
       e.target.value = text.substring(0, 10);
     }
@@ -627,7 +649,7 @@ const SmsCreator = ({ classes, ...props }) => {
             {t("mainReport.campName")}
           </Typography>
           <TextField
-            id="outlined-basic"
+            id="campaignName"
             type="text"
             placeholder={t("mainReport.campaignNamePlaceholder")}
             className={
@@ -862,6 +884,7 @@ const SmsCreator = ({ classes, ...props }) => {
                       arrow
                     >
                       <img
+                        alt="emoji picker"
                         src={Emoj}
                         style={{
                           marginInlineEnd: "8px",
@@ -892,7 +915,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     {t("mainReport.removalMsg")}
                   </Button>
                 </Tooltip>
-                <Tooltip
+                {showRemovalLink && <Tooltip
                   disableFocusListener
                   title={t("mainReport.removalLinkTooltip")}
                   classes={{ tooltip: styles.customWidth }}
@@ -907,6 +930,7 @@ const SmsCreator = ({ classes, ...props }) => {
                     {t("mainReport.removalLink")}
                   </Button>
                 </Tooltip>
+                }
               </Box>
               <Box className={classes.endButtons}>
                 <Box className={classes.selectMsg}>
