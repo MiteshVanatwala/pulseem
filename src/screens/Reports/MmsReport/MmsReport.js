@@ -26,19 +26,24 @@ import GraphReport from '../../../components/Reports/GraphReport';
 import NameValueGridStructure from '../../../components/Grids/NameValueGridStructure';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
+import DataTable from '../../../components/Table/DataTable';
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
+const DEFAULT_FILTER = {
+    fromDate: null,
+    toDate: null,
+    campaignName: ''
+}
 
 const MmsReport = ({ classes }) => {
     const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { mmsReport, mmsGraph } = useSelector(state => state.mms)
     const { t } = useTranslation()
-    const [fromDate, handleFromDate] = useState(null);
-    const [toDate, handleToDate] = useState(null);
-    const [campaignName, setCampaignNameSearch] = useState('');
-    const rowsOptions = [6, 10, 20, 50]
+    const [filterValues, setFilterValues] = useState(DEFAULT_FILTER)
+    const [filter, setFilter] = useState(false);
     const [page, setPage] = useState(1)
-    const [isSearching, setSearching] = useState(false)
-    const [searchResults, setSearchResults] = useState(null)
+
+    const [filteredResults, setFilteredResults] = useState([])
     const [isDemoSend, setIsDemoSend] = useState(false)
     const [csvData, setCsvData] = useState('')
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
@@ -54,6 +59,14 @@ const MmsReport = ({ classes }) => {
 
     moment.locale(language)
 
+    const TABLE_HEAD = [
+        { label: t("common.CampaignName"), classes: cell50wStyle, className: classes.flex2, align: 'center' },
+        { label: t("common.Status"), classes: cell50wStyle, className: classes.flex1, align: 'center' },
+        { label: t('mmsreport.amount'), classes: cell50wStyle, className: classes.flex2, align: 'center' },
+        { label: t('mmsreport.sent'), classes: cell50wStyle, className: classes.flex1, align: 'center' },
+        { label: '', classes: cell50wStyle, className: classes.flex2, align: 'center' },
+        { label: t('mmsreport.credits'), classes: cell50wStyle, className: classes.flex2, align: 'center' },
+    ]
 
     useEffect(() => {
         const getMmsData = async () => {
@@ -65,6 +78,14 @@ const MmsReport = ({ classes }) => {
         getMmsData();
     }, [isDemoSend]);
 
+    useEffect(() => {
+        handleSearch(filterValues);
+    }, [mmsReport])
+
+
+
+
+    //  HANDLERS  //
     const getHrefs = (id) => ({
         TotalSendTo: {
             title: t('mmsreport.amountToSend'),
@@ -83,7 +104,7 @@ const MmsReport = ({ classes }) => {
             href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=4&Culture=${isRTL ? 'he-IL' : 'en-US'}`
         },
         Removed: {
-            title: windowSize === 'xs' ? '' : t('common.Removed'),
+            title: windowSize === 'xs' ? '' : t('mmsreport.removal'),
             href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=5&Culture=${isRTL ? 'he-IL' : 'en-US'}`
         },
         CreditsPerMms: {
@@ -95,7 +116,6 @@ const MmsReport = ({ classes }) => {
             href: ''
         }
     })
-
 
     const exportColumnHeader = {
         "MmsCampaignID": t('common.campaignID'),
@@ -111,27 +131,8 @@ const MmsReport = ({ classes }) => {
         "TotalCredits": t('mmsreport.totalCreditsSent')
     }
 
-    const renderHeader = () => {
-        return (
-            <>
-                <Typography className={classes.managementTitle}>
-                    {t('common.MMSReports')}
-                </Typography>
-                <Divider />
-            </>
-        )
-    }
-
-    const clearSearch = () => {
-        setCampaignNameSearch('')
-        handleFromDate(null)
-        handleToDate(null)
-        setSearchResults(null)
-        setSearching(false)
-    }
-
     const handleDownloadCsv = async () => {
-        let orderList = preferredOrder(searchResults || mmsReport, Object.keys(exportColumnHeader));
+        let orderList = preferredOrder(filteredResults, Object.keys(exportColumnHeader));
         orderList = await statusNumberToString(t, orderList, MMSReportStatus);
         orderList = await formatDateTime(orderList, t);
         orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
@@ -144,77 +145,59 @@ const MmsReport = ({ classes }) => {
         });
     }
 
+    const colorTextStyle = {
+        red: classes.textColorRed,
+        blue: classes.textColorBlue,
+        green: classes.sendIconText
+    }
 
-    const renderSearchSection = () => {
-        const handleSearch = () => {
-            if (campaignName === '' && !fromDate && !toDate) {
-                return;
-            }
-            const searchArray = [{
-                type: 'name',
-                campaignName: campaignName
-            }, {
-                type: 'date',
-                fromDate,
-                toDate
-            }];
+    const handleRowsPerPageSearching = (val) => {
+        dispatch(setRowsPerPage(val))
+        setCookie('rpp', val, { maxAge: 2147483647 })
+    }
+    const handlePageChange = (val) => {
+        setPage(val);
+    }
 
-            const filtersObject = {
-                name: (row, values) => {
-                    return String(row.Name.toLowerCase()).includes(values.campaignName.toLowerCase());
-                },
-                date: (row, values) => {
-                    const { UpdateDate, SendDate } = row
-                    const lastUpdate = SendDate ?
-                        moment(SendDate, dateFormat).valueOf()
-                        : moment(UpdateDate, dateFormat).valueOf()
-                    const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-                    const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
-
-                    if (!values)
-                        return true
-                    if (fromDate && toDate && startFromDate && endToDate)
-                        return ((lastUpdate >= startFromDate) && (lastUpdate <= endToDate))
-                    if (fromDate && startFromDate)
-                        return (lastUpdate >= startFromDate)
-                    if (toDate && endToDate)
-                        return (lastUpdate <= endToDate)
+    const handleSearch = (values) => {
+        const rowData = mmsReport;
+        console.log("FilterVAlues:", filterValues)
+        const filteredReports =
+            rowData.filter((obj) => {
+                if (
+                    (values.campaignName ? obj.Name.includes(values.campaignName) : obj)
+                ) {
                     return true
                 }
-            }
-
-            let sortData = mmsReport;
-            searchArray.forEach(values => {
-                sortData = sortData.filter(row => filtersObject[values.type](row, values))
-            });
-            setSearchResults(sortData);
-            if (mmsReport.length !== sortData.length) {
-                setSearching(true);
-                setPage(1);
-            }
-        }
-
-        const handleKeyPress = (event) => {
-            if (event.keyCode === 13 || event.code === 'Enter') {
-                handleSearch();
-            }
-        }
-
-        const handleFromDateChange = (value) => {
-            if (value > toDate) {
-                handleToDate(null);
-            }
-            handleFromDate(value);
-        }
+                return false
+            }).filter(obj => {
+                const lastUpdated = new Date(obj.SendDate || obj.UpdateDate)
+                const fromDate = values.fromDate;
+                const toDate = values.toDate ?? new Date();
+                if (lastUpdated < toDate && lastUpdated > fromDate) {
+                    return true;
+                }
+                return false;
+            })
+        setFilteredResults(filteredReports)
+        setPage(1);
+    }
 
 
 
+
+    //  COMPONENTS  //
+
+    const renderFilter = () => {
         if (windowSize === 'xs') {
             return (
                 <SearchField
                     classes={classes}
-                    value={campaignName}
-                    onChange={(e) => setCampaignNameSearch(e.target.value)}
+                    value={filterValues.campaignName}
+                    onChange={(e) => setFilterValues({
+                        ...filterValues,
+                        campaignName: e.target.value
+                    })}
                     onClick={() => handleSearch()}
                     placeholder={t('common.CampaignName')}
                 />
@@ -230,9 +213,12 @@ const MmsReport = ({ classes }) => {
                     <TextField
                         variant='outlined'
                         size='small'
-                        value={campaignName}
-                        onKeyPress={handleKeyPress}
-                        onChange={(e) => setCampaignNameSearch(e.target.value)}
+                        value={filterValues.campaignName}
+                        // onKeyPress={handleKeyPress}
+                        onChange={(e) => setFilterValues({
+                            ...filterValues,
+                            campaignName: e.target.value
+                        })}
                         className={clsx(classes.textField, classes.minWidth252)}
                         placeholder={t('common.CampaignName')}
                     />
@@ -242,9 +228,13 @@ const MmsReport = ({ classes }) => {
                     <Grid item>
                         <DateField
                             classes={classes}
-                            value={fromDate}
-                            onChange={handleFromDateChange}
+                            value={filterValues.fromDate}
+                            onChange={(value) => setFilterValues({
+                                ...filterValues,
+                                fromDate: filterValues.toDate ? (value < filterValues.toDate ? value : null) : value
+                            })}
                             placeholder={t('mms.locFromDateResource1.Text')}
+                            maxDate={filterValues.toDate ? filterValues.toDate : undefined}
                         />
                     </Grid>
                     : null}
@@ -253,10 +243,15 @@ const MmsReport = ({ classes }) => {
                     <Grid item>
                         <DateField
                             classes={classes}
-                            value={toDate}
-                            onChange={handleToDate}
+                            value={filterValues.toDate}
+                            onChange={(value) => {
+                                setFilterValues({
+                                    ...filterValues,
+                                    toDate: value > filterValues.fromDate ? value : filterValues.fromDate
+                                })
+                            }}
                             placeholder={t('mms.locToDateResource1.Text')}
-                            minDate={fromDate ? fromDate : undefined}
+                            minDate={filterValues.fromDate ? filterValues.fromDate : undefined}
                         />
                     </Grid>
                     : null}
@@ -284,21 +279,28 @@ const MmsReport = ({ classes }) => {
                     <Button
                         size='large'
                         variant='contained'
-                        onClick={() => handleSearch()}
+                        onClick={() => {
+                            handleSearch(filterValues)
+                            setFilter(true);
+                        }}
                         className={classes.searchButton}
                         endIcon={<SearchIcon />}
                     >
                         {t('notifications.buttons.search')}
-
-                        {/* <SearchIcon /> */}
                     </Button>
                 </Grid>
                 {
-                    isSearching && <Grid item>
+                    (filterValues.campaignName || filterValues.fromDate || filterValues.toDate) && <Grid item>
                         <Button
                             size='large'
                             variant='contained'
-                            onClick={() => clearSearch()}
+                            onClick={() => {
+                                setFilterValues(DEFAULT_FILTER)
+                                if (filter) {
+                                    handleSearch(DEFAULT_FILTER)
+                                    setFilter(false);
+                                }
+                            }}
                             className={classes.searchButton}
                             endIcon={<ClearIcon />}>
                             {t('common.clear')}
@@ -310,7 +312,7 @@ const MmsReport = ({ classes }) => {
     }
 
     const renderManagmentLine = () => {
-        const dataLength = isSearching ? searchResults.length : mmsReport.length;
+        const dataLength = filteredResults.length;
         return (
             <Grid container spacing={2} className={classes.linePadding} >
                 {windowSize !== 'xs' && <Grid item>
@@ -347,21 +349,6 @@ const MmsReport = ({ classes }) => {
         )
     }
 
-    const renderTableHead = () => {
-        return (
-            <TableHead>
-                <TableRow classes={rowStyle}>
-                    <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t("common.CampaignName")}</TableCell>
-                    <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t("common.Status")}</TableCell>
-                    <TableCell classes={cell50wStyle} className={classes.flex2} align='center'>{t('mmsreport.amount')}</TableCell>
-                    <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>{t('mmsreport.sent')}</TableCell>
-                    <TableCell classes={cell50wStyle} className={classes.flex2} align='center' ></TableCell>
-                    <TableCell classes={cell50wStyle} className={classes.flex2} align='center' >{t('mmsreport.credits')}</TableCell>
-                </TableRow>
-            </TableHead>
-        )
-    }
-
     const renderNameCell = (row, fullwidth) => {
         const { Name, SendDate, UpdateDate, Status } = row
 
@@ -375,14 +362,30 @@ const MmsReport = ({ classes }) => {
 
         return (
             <>
-                {
-                    fullwidth ? <Typography className={classes.nameEllipsis} style={{ maxWidth: "100%" }}>
-                        {Name}
-                    </Typography> :
-                        <Typography className={classes.nameEllipsis} >
+                <CustomTooltip
+                    isSimpleTooltip={false}
+                    interactive={true}
+                    classes={{
+                        tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                        arrow: classes.fBlack
+                    }}
+                    arrow={true}
+                    style={{ fontSize: 18, fontWeight: 'bold' }}
+                    placement={'top'}
+                    title={<Typography noWrap={false}>{Name}</Typography>}
+                    text={Name}
+
+                >
+                    {
+                        fullwidth ? <Typography className={classes.nameEllipsis} style={{ maxWidth: "100%" }}>
                             {Name}
-                        </Typography>
-                }
+                        </Typography> :
+                            <Typography className={classes.nameEllipsis} >
+                                {Name}
+                            </Typography>
+
+                    }
+                </CustomTooltip>
                 {Status === 5 ? <Typography className={clsx(classes.dInlineBlock, classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
                 {SendDate !== null ?
                     (
@@ -408,12 +411,6 @@ const MmsReport = ({ classes }) => {
         //         {date && (moment(date).format('LLL') ?? '')}
         //     </Typography>
         // </>
-    }
-
-    const colorTextStyle = {
-        red: classes.textColorRed,
-        blue: classes.textColorBlue,
-        green: classes.sendIconText
     }
 
     const renderIntData = (value, type, data = {}, clickable = true) => {
@@ -611,10 +608,12 @@ const MmsReport = ({ classes }) => {
     }
 
     const renderTableBody = () => {
-        let rowData = searchResults || mmsReport;
+        let rowData = filteredResults;
+
         if (rowData.length > 0) {
             let rpp = parseInt(rowsPerPage)
             rowData = rowData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+
             return (
                 <TableBody>
                     {rowData
@@ -625,38 +624,6 @@ const MmsReport = ({ classes }) => {
         return <Typography className={classes.flexCenter}>{t("common.NoData")}</Typography>
     }
 
-    const renderTable = () => {
-        return (
-            <TableContainer className={classes.tableStyle}>
-                <Table className={classes.tableContainer}>
-                    {windowSize !== 'xs' && renderTableHead()}
-                    {renderTableBody()}
-                </Table>
-            </TableContainer>
-        )
-    }
-
-    const handleRowsPerPageSearching = (val) => {
-        dispatch(setRowsPerPage(val))
-        setCookie('rpp', val, { maxAge: 2147483647 })
-    }
-    const handlePageChange = (val) => {
-        setPage(val);
-    }
-
-    const renderTablePagination = () => {
-        return (
-            <TablePagination
-                classes={classes}
-                rows={isSearching ? searchResults.length : mmsReport.length}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleRowsPerPageSearching}
-                rowsPerPageOptions={rowsOptions}
-                page={page}
-                onPageChange={handlePageChange}
-            />
-        )
-    }
 
     return (
         <DefaultScreen
@@ -664,15 +631,34 @@ const MmsReport = ({ classes }) => {
             containerClass={classes.management}
             currentPage="reports"
             subPage="MmsReport">
-            {renderHeader()}
-            {renderSearchSection()}
+            <Typography className={classes.managementTitle}>
+                {t('common.MMSReports')}
+            </Typography>
+            <Divider />
+            {renderFilter()}
             {renderManagmentLine()}
-            {mmsReport.length > 0 ? renderTable() : null}
-            {renderTablePagination()}
+            <DataTable
+                tableContainer={{ className: classes.tableStyle }}
+                table={{ className: classes.tableContainer }}
+                tableHead={{ tableHeadCells: TABLE_HEAD, classes: rowStyle, className: windowSize === 'xs' && classes.dNone }}
+            >
+                {renderTableBody()}
+            </DataTable>
+            <TablePagination
+                classes={classes}
+                rows={filteredResults?.length ?? 0}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleRowsPerPageSearching}
+                rowsPerPageOptions={[6, 10, 20, 50]}
+                page={page}
+                onPageChange={handlePageChange}
+            />
             <GraphReport classes={classes} showLoader={!mmsGraph || mmsGraph.length <= 0} reportData={mmsGraph} />
             <Loader isOpen={showLoader} showBackdrop={true} />
         </DefaultScreen>
     )
 };
+
+
 
 export default MmsReport;
