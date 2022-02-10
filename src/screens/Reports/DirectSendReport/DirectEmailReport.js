@@ -382,25 +382,6 @@ const DirectEmailReportTab = ({
         </Grid>
         }
         <Grid item>
-          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
-            <Select
-              autoWidth
-              displayEmpty
-              className={clsx(classes.textField, classes.minWidth192, classes.formControlSelect)}
-              value={Status}
-              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
-              onChange={(e) => handleSearchInput(e.target.value, 'Status', 'email')}
-            >
-              <MenuItem value="" className={classes.dropDownItem}>
-                {t("common.Status")}
-              </MenuItem>
-              {EmailStatus.map(so => {
-                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
-              })}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item>
           <TextField
             variant='outlined'
             size='small'
@@ -429,6 +410,25 @@ const DirectEmailReportTab = ({
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('report.Subject')}
           />
+        </Grid>
+        <Grid item>
+          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+            <Select
+              autoWidth
+              displayEmpty
+              className={clsx(classes.textField, classes.minWidth192, classes.formControlSelect)}
+              value={Status}
+              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
+              onChange={(e) => handleSearchInput(e.target.value, 'Status', 'email')}
+            >
+              <MenuItem value="" className={classes.dropDownItem}>
+                {t("common.Status")}
+              </MenuItem>
+              {EmailStatus.map(so => {
+                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
+              })}
+            </Select>
+          </FormControl>
         </Grid>
 
       </>
