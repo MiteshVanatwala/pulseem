@@ -176,6 +176,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
               value={fromDate}
               onChange={handleFromDateChange}
               placeholder={t('mms.locFromDateResource1.Text')}
+              toolbarDisabled={false}
             />
           </Grid>
           : null}
@@ -188,6 +189,7 @@ const AutomationsManagnentScreen = ({ classes }) => {
               onChange={handleToDate}
               placeholder={t('mms.locToDateResource1.Text')}
               minDate={fromDate ? fromDate : undefined}
+              toolbarDisabled={false}
             />
           </Grid>
           : null}

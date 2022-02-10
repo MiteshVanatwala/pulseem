@@ -159,7 +159,6 @@ const SmsCreator = ({ classes, ...props }) => {
   const [toastMessage, setToastMessage] = useState(null);
   const [removalNumber, setremovalNumber] = useState(null);
   const [storedValue, setstoredValue] = useState("");
-  // const [keep, setkeep] = useState(true);
   const [summary, setsummary] = useState(false);
   const [campaignNumberValidated, setcampaignNumberValidated] = useState(false);
   const [total, settotal] = useState(0);
@@ -455,6 +454,7 @@ const SmsCreator = ({ classes, ...props }) => {
     dispatch(getCreditsforSMS(count)).then((res) => {
       let credits = res.payload.split("#");
       setmessageCount(credits[0]);
+      handleSmsModelChange("CreditsPerSms", credits[0]);
     });
   }
   const onCamppaignChange = (e) => {
@@ -467,7 +467,7 @@ const SmsCreator = ({ classes, ...props }) => {
     var lastChar = text.substring(text.length, text.length - 1);
     var isNumber = /^[0-9]*$/;
     var english = /^[A-Za-z0-9 ]*$/;
-
+    
     if (!text.match(isNumber) && text.match(english) && text.length >= 10) {
       e.target.value = text.substring(0, 10);
     }
@@ -611,7 +611,7 @@ const SmsCreator = ({ classes, ...props }) => {
         tArea.selectionStart = tArea.selectionEnd = cursorPos;
       }, 10);
 
-      tArea.focus();
+      focusOnMessage();
     }
   }
 
@@ -1387,6 +1387,14 @@ const SmsCreator = ({ classes, ...props }) => {
       </>
     );
   };
+
+  const focusOnMessage = () => {
+    const textArea = document.getElementById("yourMessage");
+    setTimeout(() => {
+      textArea.focus();
+    }, 500)
+  }
+
   const onLocation = async () => {
     onAddText("https://waze.to/?q=" + Searched.split(" ").join("%20"));
     setlinkCount(linkCount + 1);

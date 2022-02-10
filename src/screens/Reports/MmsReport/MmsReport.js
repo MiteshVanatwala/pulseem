@@ -21,7 +21,7 @@ import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { MMSReportStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
+import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, setTotalSent } from '../../../helpers/exportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import NameValueGridStructure from '../../../components/Grids/NameValueGridStructure';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
@@ -118,17 +118,17 @@ const MmsReport = ({ classes }) => {
     })
 
     const exportColumnHeader = {
-        "MmsCampaignID": t('common.campaignID'),
+        "MmsCampaignID": t('mainReport.CampaignID'),
         "Status": t('common.Status'),
         "Name": t('common.CampaignName'),
-        "UpdateDate": t("mmsreport.updateDate"),
-        "Amount": t('mmsreport.amount'),
+        "UpdateDate": t("common.UpdateDate"),
         "SendDate": t('common.SendDate'),
-        "CreditsPerSms": t('mmsreport.postCredits'),
-        "TotalSent": t('report.TotalSent'),
-        "failure": t('report.failure'),
+        "CreditsPerMms": t('mmsreport.postCredits'),
+        "TotalSent": t('mmsreport.amount'),
+        "Failure": t('common.failedStatus'),
         "Removed": t('common.Removed'),
-        "TotalCredits": t('mmsreport.totalCreditsSent')
+        "TotalCredits": t('mmsreport.totalCreditsSent'),
+        "FutureSends": t('mmsreport.futureSends'),
     }
 
     const handleDownloadCsv = async () => {
@@ -136,11 +136,11 @@ const MmsReport = ({ classes }) => {
         orderList = await statusNumberToString(t, orderList, MMSReportStatus);
         orderList = await formatDateTime(orderList, t);
         orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-        // orderList = await deletePropertyFromArrayObject(orderList, "Status");
+
         exportFile({
             data: orderList,
             fileName: 'mmsReport',
-            exportType: 'xls',
+            exportType: 'csv',
             fields: exportColumnHeader
         });
     }

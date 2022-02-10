@@ -585,7 +585,7 @@ const SiteTrackingEditor = ({ classes }) => {
                                             }
                                         }}
                                         variant="outlined"
-                                        value="https://www."
+                                        value="https://"
                                         disabled
                                     ></TextField>
                                 </ThemeProvider>
