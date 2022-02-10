@@ -93,5 +93,6 @@
     }
   },
   "ArchiveDirectSendReport": "ארכיון שליחה ישירה",
-  "Reactivate": "Reactivate / בטל הסרה"
+  "Reactivate": "Reactivate / בטל הסרה",
+  "ExportLimitation": "לא ניתן להוריד קובץ שמכיל מעל 600 אלף רשומות"
 }

@@ -18,6 +18,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
 import { ExportIcon } from '../../../assets/images/managment/index'
 import queryString from 'query-string';
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const qs = queryString.parse(props.location.search);
@@ -37,6 +38,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [exportEnable, setExportEnable] = useState(false);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const MAX_EXPORT_RECORDS = 600000;
 
   const defaultsDates = {
     archive: {
@@ -91,9 +93,19 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
   const handleExportEnable = () => {
     if (tabValue === 0) {
-      setExportEnable(Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport !== null ? true : false)
+      if (Object.keys(directSmsReport).length > 0 && directSmsReport.DirectReport !== null) {
+        setExportEnable(directSmsReport.TotalSent > 0 && directSmsReport.TotalSent < MAX_EXPORT_RECORDS)
+      }
+      else {
+        setExportEnable(false);
+      }
     } else {
-      setExportEnable(Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null ? true : false)
+      if (Object.keys(directNewsletterReport).length > 0 && directNewsletterReport.DirectReport !== null) {
+        setExportEnable(directNewsletterReport.TotalRecords > 0 && directNewsletterReport.TotalRecords < MAX_EXPORT_RECORDS)
+      }
+      else {
+        setExportEnable(false);
+      }
     }
   }
 
@@ -296,19 +308,26 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
                   classes.actionButtonLightBlue)}>
                 {t('master.campaignsArchive')}
               </Button>}
-              {windowSize !== 'xs' && <Button
-                variant='contained'
-                size='medium'
-                className={clsx(
-                  classes.actionButton,
-                  classes.actionButtonGreen,
-                  classes.exportButton, exportEnable === false ? classes.disabled : ''
-                )}
-                onClick={handleExportFile}
-                startIcon={<ExportIcon />}
+              {windowSize !== 'xs' && <CustomTooltip
+                style={{ fontSize: 14 }}
+                text={t('report.ExportLimitation')}
+                icon={<Button
+                  variant='contained'
+                  size='medium'
+                  className={clsx(
+                    classes.actionButton,
+                    classes.actionButtonGreen,
+                    classes.exportButton, exportEnable === false ? classes.disabled : ''
+                  )}
+                  onClick={handleExportFile}
+                  startIcon={<ExportIcon />}
+                >
+                  {t('campaigns.exportFile')}
+                </Button>}
               >
-                {t('campaigns.exportFile')}
-              </Button>}
+
+              </CustomTooltip>
+              }
             </Grid>
           </Grid>
           <Grid item xs={12} className={classes.lastReportsTabPanels}>
