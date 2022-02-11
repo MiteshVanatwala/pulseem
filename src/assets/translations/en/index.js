@@ -18,6 +18,7 @@ import siteTracking from './SiteTracking.json'
 import client from './Client.json'
 import recipient from './Recipient.json'
 import group from './group.json'
+import mmsreport from './MMSReport.json'
 
 export const en = {
   automations,
@@ -39,5 +40,6 @@ export const en = {
   siteTracking,
   client,
   recipient,
-  group
+  group,
+  mmsreport
 }
