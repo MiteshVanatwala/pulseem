@@ -3,7 +3,7 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
     Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-    Grid, Button, TextField, Box, List, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction
+    Grid, Button, TextField, Box, List, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, Checkbox, FormControlLabel
 } from '@material-ui/core'
 import {
     AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
@@ -28,12 +28,373 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import DataTable from '../../../components/Table/DataTable';
+import NameValueGridStructure from '../../../components/Grids/NameValueGridStructure';
+
+const StaticData = [
+    {
+        "ActiveCell": 411,
+        "ActiveEmails": 275,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 842297,
+        "InvalidCell": 850,
+        "InvalidEmails": 641,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 256,
+        "Recipients": 917,
+        "RemovedCell": 132,
+        "RemovedEmails": 102,
+        "RestrictedEmails": 454,
+        "SubAccountID": 852,
+        "TotalRecipients": 123,
+        "GroupName": "Mayo Kim",
+        "UpdatedDate": "2018-09-22T03:29:28 -06:-30",
+        "CreatedDate": "2020-03-30T07:49:24 -06:-30"
+    },
+    {
+        "ActiveCell": 517,
+        "ActiveEmails": 651,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 448132,
+        "InvalidCell": 955,
+        "InvalidEmails": 407,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 357,
+        "Recipients": 534,
+        "RemovedCell": 838,
+        "RemovedEmails": 571,
+        "RestrictedEmails": 688,
+        "SubAccountID": 99,
+        "TotalRecipients": 528,
+        "GroupName": "Barbra Lopez",
+        "UpdatedDate": "2016-04-09T04:46:31 -06:-30",
+        "CreatedDate": "2015-05-31T05:05:56 -06:-30"
+    },
+    {
+        "ActiveCell": 872,
+        "ActiveEmails": 794,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 715956,
+        "InvalidCell": 831,
+        "InvalidEmails": 556,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 694,
+        "Recipients": 605,
+        "RemovedCell": 625,
+        "RemovedEmails": 776,
+        "RestrictedEmails": 598,
+        "SubAccountID": 48,
+        "TotalRecipients": 198,
+        "GroupName": "Mejia Mills",
+        "UpdatedDate": "2021-08-17T01:33:28 -06:-30",
+        "CreatedDate": "2018-09-03T11:43:00 -06:-30"
+    },
+    {
+        "ActiveCell": 200,
+        "ActiveEmails": 583,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 827193,
+        "InvalidCell": 142,
+        "InvalidEmails": 381,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 666,
+        "Recipients": 17,
+        "RemovedCell": 340,
+        "RemovedEmails": 949,
+        "RestrictedEmails": 934,
+        "SubAccountID": 170,
+        "TotalRecipients": 304,
+        "GroupName": "Mcmillan Jenkins",
+        "UpdatedDate": "2018-02-11T11:03:51 -06:-30",
+        "CreatedDate": "2022-02-06T04:02:39 -06:-30"
+    },
+    {
+        "ActiveCell": 884,
+        "ActiveEmails": 512,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 451184,
+        "InvalidCell": 940,
+        "InvalidEmails": 446,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 179,
+        "Recipients": 379,
+        "RemovedCell": 430,
+        "RemovedEmails": 156,
+        "RestrictedEmails": 780,
+        "SubAccountID": 7,
+        "TotalRecipients": 621,
+        "GroupName": "Bray Bell",
+        "UpdatedDate": "2014-08-10T08:30:25 -06:-30",
+        "CreatedDate": "2014-11-10T02:20:12 -06:-30"
+    },
+    {
+        "ActiveCell": 183,
+        "ActiveEmails": 493,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 936792,
+        "InvalidCell": 66,
+        "InvalidEmails": 279,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 706,
+        "Recipients": 365,
+        "RemovedCell": 479,
+        "RemovedEmails": 419,
+        "RestrictedEmails": 266,
+        "SubAccountID": 450,
+        "TotalRecipients": 395,
+        "GroupName": "Brown Banks",
+        "UpdatedDate": "2019-04-19T08:28:11 -06:-30",
+        "CreatedDate": "2021-08-01T09:32:40 -06:-30"
+    },
+    {
+        "ActiveCell": 457,
+        "ActiveEmails": 827,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 182670,
+        "InvalidCell": 530,
+        "InvalidEmails": 193,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 671,
+        "Recipients": 469,
+        "RemovedCell": 154,
+        "RemovedEmails": 736,
+        "RestrictedEmails": 756,
+        "SubAccountID": 525,
+        "TotalRecipients": 52,
+        "GroupName": "Opal Case",
+        "UpdatedDate": "2018-05-31T07:25:09 -06:-30",
+        "CreatedDate": "2018-06-08T06:18:53 -06:-30"
+    },
+    {
+        "ActiveCell": 650,
+        "ActiveEmails": 565,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 983492,
+        "InvalidCell": 21,
+        "InvalidEmails": 90,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 753,
+        "Recipients": 875,
+        "RemovedCell": 19,
+        "RemovedEmails": 71,
+        "RestrictedEmails": 843,
+        "SubAccountID": 429,
+        "TotalRecipients": 74,
+        "GroupName": "Cohen Mccarthy",
+        "UpdatedDate": "2018-08-09T02:50:28 -06:-30",
+        "CreatedDate": "2017-05-31T03:45:47 -06:-30"
+    },
+    {
+        "ActiveCell": 275,
+        "ActiveEmails": 577,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 324693,
+        "InvalidCell": 274,
+        "InvalidEmails": 833,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 316,
+        "Recipients": 275,
+        "RemovedCell": 829,
+        "RemovedEmails": 633,
+        "RestrictedEmails": 382,
+        "SubAccountID": 598,
+        "TotalRecipients": 32,
+        "GroupName": "Silva Holloway",
+        "UpdatedDate": "2015-09-14T02:37:55 -06:-30",
+        "CreatedDate": "2016-03-29T04:05:44 -06:-30"
+    },
+    {
+        "ActiveCell": 452,
+        "ActiveEmails": 204,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 652985,
+        "InvalidCell": 374,
+        "InvalidEmails": 264,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 260,
+        "Recipients": 652,
+        "RemovedCell": 200,
+        "RemovedEmails": 425,
+        "RestrictedEmails": 517,
+        "SubAccountID": 715,
+        "TotalRecipients": 382,
+        "GroupName": "Kristine Ramirez",
+        "UpdatedDate": "2019-10-29T01:08:52 -06:-30",
+        "CreatedDate": "2015-11-22T04:09:21 -06:-30"
+    },
+    {
+        "ActiveCell": 664,
+        "ActiveEmails": 301,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 114051,
+        "InvalidCell": 567,
+        "InvalidEmails": 518,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 844,
+        "Recipients": 999,
+        "RemovedCell": 114,
+        "RemovedEmails": 822,
+        "RestrictedEmails": 790,
+        "SubAccountID": 428,
+        "TotalRecipients": 857,
+        "GroupName": "Concepcion Sanford",
+        "UpdatedDate": "2016-07-21T11:35:21 -06:-30",
+        "CreatedDate": "2022-01-08T11:45:33 -06:-30"
+    },
+    {
+        "ActiveCell": 287,
+        "ActiveEmails": 442,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 602466,
+        "InvalidCell": 499,
+        "InvalidEmails": 188,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 189,
+        "Recipients": 484,
+        "RemovedCell": 648,
+        "RemovedEmails": 54,
+        "RestrictedEmails": 963,
+        "SubAccountID": 253,
+        "TotalRecipients": 957,
+        "GroupName": "Hickman Bentley",
+        "UpdatedDate": "2017-08-09T12:25:55 -06:-30",
+        "CreatedDate": "2019-12-16T04:13:49 -06:-30"
+    },
+    {
+        "ActiveCell": 816,
+        "ActiveEmails": 645,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 188716,
+        "InvalidCell": 894,
+        "InvalidEmails": 151,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 760,
+        "Recipients": 939,
+        "RemovedCell": 138,
+        "RemovedEmails": 107,
+        "RestrictedEmails": 583,
+        "SubAccountID": 585,
+        "TotalRecipients": 88,
+        "GroupName": "Leta Williamson",
+        "UpdatedDate": "2016-07-25T03:25:25 -06:-30",
+        "CreatedDate": "2018-04-15T10:52:01 -06:-30"
+    },
+    {
+        "ActiveCell": 628,
+        "ActiveEmails": 422,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 937434,
+        "InvalidCell": 875,
+        "InvalidEmails": 55,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 119,
+        "Recipients": 456,
+        "RemovedCell": 562,
+        "RemovedEmails": 389,
+        "RestrictedEmails": 940,
+        "SubAccountID": 219,
+        "TotalRecipients": 385,
+        "GroupName": "Guerrero Parrish",
+        "UpdatedDate": "2019-10-11T01:46:25 -06:-30",
+        "CreatedDate": "2021-03-20T10:37:11 -06:-30"
+    },
+    {
+        "ActiveCell": 126,
+        "ActiveEmails": 629,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 825098,
+        "InvalidCell": 968,
+        "InvalidEmails": 679,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 874,
+        "Recipients": 148,
+        "RemovedCell": 678,
+        "RemovedEmails": 477,
+        "RestrictedEmails": 913,
+        "SubAccountID": 963,
+        "TotalRecipients": 875,
+        "GroupName": "Avila Ross",
+        "UpdatedDate": "2020-09-24T12:50:32 -06:-30",
+        "CreatedDate": "2019-07-29T10:14:37 -06:-30"
+    },
+    {
+        "ActiveCell": 676,
+        "ActiveEmails": 473,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 920988,
+        "InvalidCell": 839,
+        "InvalidEmails": 763,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 416,
+        "Recipients": 32,
+        "RemovedCell": 451,
+        "RemovedEmails": 920,
+        "RestrictedEmails": 24,
+        "SubAccountID": 570,
+        "TotalRecipients": 996,
+        "GroupName": "Nicole Haney",
+        "UpdatedDate": "2014-06-24T02:46:45 -06:-30",
+        "CreatedDate": "2020-06-01T08:02:50 -06:-30"
+    }
+]
 
 const GroupsManagement = ({ classes }) => {
     const { language, windowSize, email, phone, rowsPerPage, smsOldVersion, isRTL } = useSelector(state => state.core)
     const { smsData, smsDataError, smsDeletedData, authorizationData } = useSelector(state => state.sms)
     const { username } = useSelector(state => state.user)
     const { t } = useTranslation()
+    const [filteredData, setFilteredData] = useState([])
+    const [selectedGroups, setSelectedGroups] = useState([])
+    const [searchStr, setSearchStr] = useState('');
+    const [filter, setFilter] = useState(false);
     const [fromDate, handleFromDate] = useState(null);
     const [toDate, handleToDate] = useState(null);
     const [number, handleNumber] = useState('');
@@ -54,15 +415,49 @@ const GroupsManagement = ({ classes }) => {
     const dispatch = useDispatch()
     moment.locale(language)
 
+    const colorTextStyle = {
+        red: classes.textColorRed,
+        blue: classes.textColorBlue,
+        green: classes.sendIconText
+    }
+
+    const TABLE_HEAD = [
+        { label: t("common.GroupName"), classes: cellStyle, className: classes.flex2, align: 'center' },
+        { label: t("recipient.emails"), classes: cellStyle, className: classes.flex2, align: 'center' },
+        { label: t('recipient.sms/mms'), classes: cellStyle, className: classes.flex2, align: 'center' },
+        { label: '', classes: cellStyle, className: classes.flex3, align: 'center' },
+    ]
+
     const getData = async () => {
         await dispatch(getSmsData())
         setLoader(false);
     }
 
-    // useEffect(() => {
-    //     setLoader(true);
-    //     getData();
-    // }, [dispatch])
+    useEffect(() => {
+        // setLoader(true);
+        // getData();
+        handleSearch(searchStr);
+    }, [dispatch])
+
+    const handleSearch = (values) => {
+        const data = StaticData; //TODO: Replace StaticData from Data from redux
+        const result = data.filter((obj) => obj.GroupName.includes(values))
+        setFilteredData(result);
+        console.log("RESULT:", result)
+        setPage(1);
+    }
+
+    const handleSelected = (id) => {
+        const index = selectedGroups.indexOf(id)
+        if (index !== -1) {
+            let temp = [...selectedGroups]
+            temp.splice(index, 1)
+            setSelectedGroups([...temp])
+            // setSelectedGroups(temp)
+        }
+        else
+            setSelectedGroups([...selectedGroups, id])
+    }
 
     const renderHeader = () => {
         return (
@@ -89,25 +484,6 @@ const GroupsManagement = ({ classes }) => {
                 handleSearch();
             }
         }
-        const handleSearch = () => {
-            const searchArray = [{
-                type: 'name',
-                campaineName: groupNameSearch
-            }];
-            const filtersObject = {
-                name: (row, values) => {
-                    return String(row.Name.toLowerCase()).includes(values.campaineName.toLowerCase());
-                }
-            }
-
-            let sortData = smsData
-            searchArray.forEach(values => {
-                sortData = sortData.filter(row => filtersObject[values.type](row, values))
-            });
-            setSearchResults(sortData);
-            setSearching(true);
-            setPage(1);
-        }
 
         const handleKeyPress = (e) => {
             if (e.charCode === 13 || e.code === "Enter") {
@@ -123,8 +499,8 @@ const GroupsManagement = ({ classes }) => {
             return (
                 <SearchField
                     classes={classes}
-                    value={groupNameSearch}
-                    onChange={handleGroupNameChange}
+                    value={searchStr}
+                    onChange={(e) => setSearchStr(e.target.value)}
                     onClick={handleSearch}
                     onKeyPress={handleKeyPress}
                     placeholder={t('common.CampaignName')}
@@ -138,9 +514,9 @@ const GroupsManagement = ({ classes }) => {
                     <TextField
                         variant='outlined'
                         size='small'
-                        value={groupNameSearch}
+                        value={searchStr}
                         onKeyPress={handleKeyDown}
-                        onChange={handleGroupNameChange}
+                        onChange={(e) => setSearchStr(e.target.value)}
                         className={clsx(classes.textField, classes.minWidth252)}
                         placeholder={t('common.GroupName')}
                     />
@@ -149,17 +525,26 @@ const GroupsManagement = ({ classes }) => {
                     <Button
                         size='large'
                         variant='contained'
-                        onClick={handleSearch}
+                        onClick={() => {
+                            handleSearch(searchStr)
+                            setFilter(true)
+                        }}
                         className={classes.searchButton}
                         endIcon={<SearchIcon />}>
                         {t('campaigns.btnSearchResource1.Text')}
                     </Button>
                 </Grid>
-                {isSearching && <Grid item>
+                {searchStr && <Grid item>
                     <Button
                         size='large'
                         variant='contained'
-                        onClick={clearSearch}
+                        onClick={() => {
+                            setSearchStr('')
+                            if (filter) {
+                                handleSearch('')
+                                setFilter(false)
+                            }
+                        }}
                         className={classes.searchButton}
                         endIcon={<ClearIcon />}>
                         {t('common.clear')}
@@ -265,7 +650,7 @@ const GroupsManagement = ({ classes }) => {
 
                 <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
                     <Typography className={classes.groupsLable}>
-                        {`${isSearching ? searchResults.length : smsData.length} ${t('mms.campaigns')}`}
+                        {`${filteredData.length} ${t('mms.campaigns')}`}
                     </Typography>
                 </Grid>
             </Grid>
@@ -447,144 +832,9 @@ const GroupsManagement = ({ classes }) => {
         )
     }
 
-    const renderNameCell = (row) => {
-        let date = null
-        let text = ''
-        if (!row.SendDate) {
-            date = moment(row.UpdatedDate, dateFormat)
-            text = t('common.UpdatedOn')
-        } else {
-            date = moment(row.SendDate, dateFormat)
-            const dateMillis = date.valueOf()
-            const currentDateMillis = moment().valueOf()
-            text = dateMillis > currentDateMillis ? t('common.ScheduledFor') : t('common.SentOn')
-        }
-
-        return (
-            <>
-                <CustomTooltip
-                    isSimpleTooltip={false}
-                    interactive={true}
-                    classes={{
-                        tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                        arrow: classes.fBlack
-                    }}
-                    arrow={true}
-                    style={{ fontSize: 18, fontWeight: 'bold' }}
-                    placement={'top'}
-                    title={<Typography noWrap={false}>{row.Name}</Typography>}
-                    text={row.Name}
-
-                />
-                <Typography
-                    className={classes.grayTextCell}>
-                    {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
-                </Typography>
-            </>
-        )
-    }
-
-    const renderRow = (row) => {
-        return (
-            <TableRow
-                key={Math.round(Math.random() * 999999999)}
-                classes={rowStyle}>
-                <TableCell
-                    classes={cellStyle}
-                    align='center'
-                    className={classes.flex3}>
-                    {renderNameCell(row)}
-                </TableCell>
-                <TableCell
-                    classes={cellStyle}
-                    align='center'
-                    className={clsx(classes.flex1, classes.maxnWidth75)}>
-                    {renderRecipientsCell(row.SentCount)}
-                </TableCell>
-                <TableCell
-                    classes={cellStyle}
-                    align='center'
-                    className={classes.flex1}>
-                    {renderMessagesCell(row.CreditsPerSms)}
-                </TableCell>
-                <TableCell
-                    classes={cellStyle}
-                    align='center'
-                    className={classes.flex1}>
-                    {renderStatusCell(row.Status)}
-                </TableCell>
-                <TableCell
-                    component="th"
-                    scope="row"
-                    classes={{ root: classes.tableCellRoot }}
-                    className={classes.flex5}>
-                    {renderCellIcons(row)}
-
-                </TableCell>
-            </TableRow>
-        )
-    }
-
-    const renderPhoneRow = (row) => {
-        return (
-            <TableRow
-                key={row.Id}
-                component='div'
-                classes={rowStyle}>
-                <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
-                    <Box className={classes.justifyBetween}>
-                        <Box className={classes.inlineGrid}>
-                            {renderNameCell(row)}
-                        </Box>
-                        <Box>
-                            {renderStatusCell(row.Status)}
-                        </Box>
-                    </Box>
-                    {renderCellIcons(row)}
-                </TableCell>
-            </TableRow>
-        )
-    }
-
-    const renderTableBody = () => {
-        let sortData = isSearching ? searchResults : smsData;
-        let rpp = parseInt(rowsPerPage)
-        sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
-        return (
-            <TableBody>
-                {sortData
-                    .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
-            </TableBody>
-        )
-    }
-
-    const renderTable = () => {
-        return (
-            <TableContainer>
-                <Table className={classes.tableContainer}>
-                    {windowSize !== 'xs' && renderTableHead()}
-                    {renderTableBody()}
-                </Table>
-            </TableContainer>
-        )
-    }
-
-    const renderTablePagination = () => {
-        const handleRowsPerPageChange = (val) => {
-            dispatch(setRowsPerPage(val))
-            setCookie('rpp', val, { maxAge: 2147483647 })
-        }
-        return (
-            <TablePagination
-                classes={classes}
-                rows={isSearching ? searchResults.length : smsData.length}
-                rowsPerPage={rowsPerPage}
-                onRowsPerPageChange={handleRowsPerPageChange}
-                rowsPerPageOptions={rowsOptions}
-                page={page}
-                onPageChange={setPage}
-            />
-        )
+    const handleRowsPerPageChange = (val) => {
+        dispatch(setRowsPerPage(val))
+        setCookie('rpp', val, { maxAge: 2147483647 })
     }
 
     const handleChange = (Id) => () => {
@@ -1041,17 +1291,207 @@ const GroupsManagement = ({ classes }) => {
             </Dialog>
         )
     }
+
+
+
+    const renderNameCell = (row, fullwidth) => {
+        let date = null
+        const { GroupName } = row;
+        let text = '';
+        if (!row.SendDate) {
+            date = moment(row.UpdatedDate, dateFormat)
+            text = t('common.UpdatedOn')
+        } else {
+            date = moment(row.SendDate, dateFormat)
+            const dateMillis = date.valueOf()
+            const currentDateMillis = moment().valueOf()
+            text = dateMillis > currentDateMillis ? t('common.ScheduledFor') : t('common.SentOn')
+        }
+
+        return (
+            <>
+                <CustomTooltip
+                    isSimpleTooltip={false}
+                    interactive={true}
+                    classes={{
+                        tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                        arrow: classes.fBlack
+                    }}
+                    arrow={true}
+                    style={{ fontSize: 18, fontWeight: 'bold' }}
+                    placement={'top'}
+                    title={<Typography noWrap={false}>{GroupName}</Typography>}
+                    text={GroupName}
+
+                >
+                    {
+                        fullwidth ? <Typography className={classes.nameEllipsis} style={{ maxWidth: "100%" }}>
+                            {GroupName}
+                        </Typography> :
+                            <Typography className={classes.nameEllipsis} >
+                                {GroupName}
+                            </Typography>
+
+                    }
+                </CustomTooltip>
+                <Typography
+                    className={classes.grayTextCell}>
+                    {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+                </Typography>
+            </>
+        )
+    }
+
+    const renderRow = (row) => { //TODO: Translation left, confirm keys
+
+        const {
+            ActiveCell,
+            ActiveEmails,
+            CreatedDate,
+            DynamicData,
+            DynamicLastUpdate,
+            DynamicUpdatePolicy,
+            GroupID,
+            GroupName,
+            InvalidCell,
+            InvalidEmails,
+            IsDynamic,
+            IsTestGroup,
+            PendingEmails,
+            Recipients,
+            RemovedCell,
+            RemovedEmails,
+            RestrictedEmails,
+            SubAccountID,
+            TotalRecipients,
+            UpdatedDate
+        } = row
+        return (
+            <TableRow
+                key={Math.round(Math.random() * 999999999)}
+                classes={rowStyle}>
+                <TableCell
+                    classes={cellStyle}
+                    align='center'
+                    className={classes.flex2}>
+                    <FormControlLabel
+                        label={renderNameCell(row)}
+                        control={
+                            <Checkbox
+                                checked={selectedGroups.indexOf(GroupID) !== -1}
+                                // indeterminate={}
+                                onClick={() => { handleSelected(GroupID) }}
+                            />
+                        }
+                    />
+                </TableCell>
+                <TableCell
+                    classes={cellStyle}
+                    align='center'
+                    className={classes.flex2}>
+                    <NameValueGridStructure
+                        gridArr={[
+                            { name: 'Total Recipients', value: TotalRecipients, classes: { name: colorTextStyle.blue, value: colorTextStyle.blue } },
+                            { name: 'Active', value: ActiveEmails, classes: { name: colorTextStyle.green, value: colorTextStyle.green } },
+                            { name: 'Removed', value: RemovedEmails, classes: { name: colorTextStyle.red, value: colorTextStyle.red } },
+                            { name: 'Bounced', value: InvalidEmails, classes: { name: colorTextStyle.red, value: colorTextStyle.red } },
+                        ]}
+                        gridSize={{ xs: 12, sm: 3 }}
+                        variant="body1"
+                        align="center"
+                    />
+                </TableCell>
+                <TableCell
+                    classes={cellStyle}
+                    align='center'
+                    className={classes.flex2}>
+                    <NameValueGridStructure
+                        gridArr={[
+                            { name: 'Total Recipients', value: TotalRecipients, classes: { name: colorTextStyle.blue, value: colorTextStyle.blue } },
+                            { name: 'Active', value: ActiveCell, classes: { name: colorTextStyle.green, value: colorTextStyle.green } },
+                            { name: 'Removed', value: RemovedCell, classes: { name: colorTextStyle.red, value: colorTextStyle.red } },
+                            { name: 'Bounced', value: InvalidCell, classes: { name: colorTextStyle.red, value: colorTextStyle.red } },
+                        ]}
+                        gridSize={{ xs: 12, sm: 3 }}
+                        variant="body1"
+                        align="center"
+                    />
+                </TableCell>
+                <TableCell
+                    classes={cellStyle}
+                    align='center'
+                    className={classes.flex3}>
+                    Icons
+                </TableCell>
+            </TableRow>
+        )
+    }
+
+    const renderPhoneRow = (row) => { //PENDING 
+        return (
+            <TableRow
+                key={row.Id}
+                component='div'
+                classes={rowStyle}>
+                <TableCell style={{ flex: 1 }} classes={{ root: classes.tableCellRoot }}>
+                    <Box className={classes.justifyBetween}>
+                        <Box className={classes.inlineGrid}>
+                            {renderNameCell(row)}
+                        </Box>
+                        <Box>
+                            {renderStatusCell(row.Status)}
+                        </Box>
+                    </Box>
+                    {renderCellIcons(row)}
+                </TableCell>
+            </TableRow>
+        )
+    }
+
+    const renderTableBody = () => {
+        let sortData = filteredData;
+        let rpp = parseInt(rowsPerPage)
+        sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+        return (
+            <TableBody>
+                {sortData
+                    .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+            </TableBody>
+        )
+    }
+
     return (
         <DefaultScreen
-            currentPage='sms'
+            currentPage='groups'
             classes={classes}
             containerClass={classes.management}>
             {renderHeader()}
             {renderSearchLine()}
             {renderManagmentLine()}
+            <DataTable
+                tableContainer={{ className: classes.tableStyle }}
+                table={{ className: classes.tableContainer }}
+                tableHead={{ tableHeadCells: TABLE_HEAD, classes: rowStyle, className: windowSize === 'xs' && classes.dNone }}
+            >
+                {renderTableBody()}
+            </DataTable>
+            <TablePagination
+                classes={classes}
+                // rows={isSearching ? searchResults.length : smsData.length}
+                rows={filteredData.length}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                rowsPerPageOptions={[6, 10, 20, 50]}
+                page={page}
+                onPageChange={setPage}
+            />
+            {/* {renderDialog()} */}
+            {/* 
+            {renderSearchLine()}
+            {renderManagmentLine()}
             {renderTable()}
             {renderTablePagination()}
-            {renderDialog()}
+            {renderDialog()} */}
             {/* <Loader isOpen={showLoader} /> */}
         </DefaultScreen>
     )

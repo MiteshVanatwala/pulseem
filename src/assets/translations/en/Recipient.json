@@ -6,5 +6,7 @@
     "Title": "Manage Recipient"
   },
   "delete": "Delete Recipients",
-  "unsubscribe": "Unsubscribe Recipient"
+  "unsubscribe": "Unsubscribe Recipient",
+  "emails": "Emails",
+  "sms/mms": "SMS/MMS"
 }
