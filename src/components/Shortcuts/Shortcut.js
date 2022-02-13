@@ -136,11 +136,11 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
       pages: [
         {
           title: 'master.RadMenuItemResource13.Text',
-          link: '/Pulseem/MainReport.aspx'
+          link: '/react/reports/NewsletterReports'
         },
         {
           title: 'master.RadMenuItemResource24.Text',
-          link: '/Pulseem/SMSMainReport.aspx'
+          link: '/react/reports/SMSMainReport'
         },
         {
           title: 'master.MmsMainReport.Text',
@@ -168,11 +168,11 @@ const Shortcut = ({ classes, windowSize, t, isRTL }) => {
         },
         {
           title: 'master.DirectReportsResource1.Text',
-          link: '/Pulseem/DirectEmailReport.aspx'
+          link: '/react/Reports/DirectSendReport?t=1'
         },
         {
           title: 'master.DirectSmsReport.Text',
-          link: '/Pulseem/DirectSmsReport.aspx'
+          link: '/react/Reports/DirectSendReport?t=0'
         },
         {
           title: 'dashboard.openedClickedReport',

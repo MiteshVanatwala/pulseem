@@ -14,6 +14,7 @@ import ClearIcon from '@material-ui/icons/Clear';
 import Switch from "react-switch";
 import moment from 'moment';
 import { getSMSDirectReport, getArchiveSMSDirectReport } from '../../../redux/reducers/smsSlice';
+import { reactivateSms } from '../../../redux/reducers/clientSlice';
 import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { SmsStatus } from '../../../helpers/PulseemArrays';
@@ -116,7 +117,7 @@ const DirectSMSReportTab = ({
     }
 
     return (
-      <Typography>{text}</Typography>
+      <Typography style={{ wordBreak: dataType === 'content' ? 'break-word' : null}}>{text}</Typography>
     );
   }
 
@@ -219,36 +220,6 @@ const DirectSMSReportTab = ({
           />
         </Grid>
         <Grid item>
-          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
-            <Select
-              autoWidth
-              displayEmpty
-              className={clsx(classes.textField, classes.minWidth192, classes.formControlSelect)}
-              value={Status}
-              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
-              onChange={(e) => handleSearchInput(e.target.value, 'Status', 'sms')}
-              MenuProps={{
-                anchorOrigin: {
-                  vertical: "bottom",
-                  horizontal: "left"
-                },
-                transformOrigin: {
-                  vertical: "top",
-                  horizontal: "left"
-                },
-                getContentAnchorEl: null
-              }}
-            >
-              <MenuItem value="" className={classes.dropDownItem}>
-                {t("common.Status")}
-              </MenuItem>
-              {SmsStatus.map(so => {
-                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
-              })}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item>
           <DateField
             classes={classes}
             value={FromDate}
@@ -279,6 +250,36 @@ const DirectSMSReportTab = ({
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('report.ExternalRef')}
           />
+        </Grid>
+        <Grid item>
+          <FormControl variant="outlined" className={classes.formControl} style={{ width: '100%', maxHeight: 40 }}>
+            <Select
+              autoWidth
+              displayEmpty
+              className={clsx(classes.textField, classes.minWidth192, classes.formControlSelect)}
+              value={Status}
+              style={{ maxHeight: 40, overflow: 'hidden', paddingLeft: 0, paddingRight: 0 }}
+              onChange={(e) => handleSearchInput(e.target.value, 'Status', 'sms')}
+              MenuProps={{
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left"
+                },
+                transformOrigin: {
+                  vertical: "top",
+                  horizontal: "left"
+                },
+                getContentAnchorEl: null
+              }}
+            >
+              <MenuItem value="" className={classes.dropDownItem}>
+                {t("common.Status")}
+              </MenuItem>
+              {SmsStatus.map(so => {
+                return <MenuItem key={so.id} value={so.id} className={classes.dropDownItem}>{t(so.value)}</MenuItem>
+              })}
+            </Select>
+          </FormControl>
         </Grid>
       </>
     )
@@ -423,6 +424,23 @@ const DirectSMSReportTab = ({
     )
   }
 
+  const renderReactivate = (row) => {
+    const reactivate = async () => {
+      const request = {
+        To: row.TO
+      };
+      await dispatch(reactivateSms(request));
+      handleSearch();
+    }
+    return (<Link
+      color="primary"
+      onClick={() => { reactivate() }}
+      target='_blank'
+      className={clsx(classes.f16, classes.redLink)}>
+      {t('report.Reactivate')}
+    </Link>)
+  }
+
   const renderRow = (row) => {
     return (
       <TableRow
@@ -446,6 +464,7 @@ const DirectSMSReportTab = ({
               align='center'
               className={classes.flex1}>
               {renderCell(row.TO)}
+              {(row.ClientStatus === 1) && renderReactivate(row)}
             </TableCell>
           </>
         )}
@@ -459,7 +478,7 @@ const DirectSMSReportTab = ({
           classes={cellStyle}
           align='center'
           className={classes.flex3}>
-          {renderCell(row.MESSAGE)}
+          {renderCell(row.MESSAGE, 'content')}
         </TableCell>}
         <TableCell
           classes={noborderCell}
