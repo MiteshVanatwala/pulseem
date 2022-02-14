@@ -471,6 +471,7 @@ const MmsReport = ({ classes }) => {
             TotalSent,
             SendDate,
             UpdateDate,
+            Success,
             FutureSends,
             TotalSendPlan,
             Failure,
@@ -510,7 +511,7 @@ const MmsReport = ({ classes }) => {
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {renderIntData(TotalSent, '', hrefs.TotalSent)}
+                    {renderIntData(Success, '', hrefs.TotalSent)}
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
@@ -565,7 +566,7 @@ const MmsReport = ({ classes }) => {
                 classes={rowStyle}>
                 <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
                     <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
-                        {renderNameCell({ MmsCampaignID, Name, SendDate, UpdateDate }, true)}
+                        {renderNameCell({ MmsCampaignID, Name, SendDate, UpdateDate, Status }, true)}
                     </Box>
 
                     <Grid container spacing={2} style={{ paddingInlineStart: 10 }}>
