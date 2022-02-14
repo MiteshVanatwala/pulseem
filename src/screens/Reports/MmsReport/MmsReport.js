@@ -124,11 +124,12 @@ const MmsReport = ({ classes }) => {
         "UpdateDate": t("common.UpdateDate"),
         "SendDate": t('common.SendDate'),
         "CreditsPerMms": t('mmsreport.postCredits'),
-        "TotalSent": t('mmsreport.amount'),
         "Failure": t('common.failedStatus'),
         "Removed": t('common.Removed'),
-        "TotalCredits": t('mmsreport.totalCreditsSent'),
+        // "TotalCredits": t('mmsreport.totalCreditsSent'),
+        "TotalSent": t('mmsreport.sent'),
         "FutureSends": t('mmsreport.futureSends'),
+        "Amount": t('mmsreport.amount'),
     }
 
     const handleDownloadCsv = async () => {
@@ -136,7 +137,14 @@ const MmsReport = ({ classes }) => {
         orderList = await statusNumberToString(t, orderList, MMSReportStatus);
         orderList = await formatDateTime(orderList, t);
         orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-
+        orderList = orderList.reduce(
+            (previousValue, currentValue) => {
+                currentValue.Amount = currentValue.TotalSent + currentValue.FutureSends
+                return [...previousValue, currentValue]
+            },
+            []
+        );
+        console.log("OrderLIST: ", orderList)
         exportFile({
             data: orderList,
             fileName: 'mmsReport',
@@ -327,10 +335,8 @@ const MmsReport = ({ classes }) => {
                         onClick={() => handleDownloadCsv()}
                         startIcon={<ExportIcon />}
                     >
-                        {/* <ExportIcon /> */}
-                        <Typography variant="button" >
-                            {t('campaigns.exportFile')}
-                        </Typography>
+
+                        {t('campaigns.exportFile')}
                     </Button>
                     <CSVLink
                         data={csvData}
@@ -372,7 +378,7 @@ const MmsReport = ({ classes }) => {
                     arrow={true}
                     style={{ fontSize: 18, fontWeight: 'bold' }}
                     placement={'top'}
-                    title={<Typography noWrap={false}>{Name}</Typography>}
+                    title={<Typography noWrap={false} align="center">{Name}</Typography>}
                     text={Name}
 
                 >
