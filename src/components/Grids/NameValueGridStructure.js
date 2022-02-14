@@ -1,4 +1,4 @@
-import { Grid, Typography } from "@material-ui/core"
+import { Box, Grid, Typography } from "@material-ui/core"
 
 const NameValueGridStructure = ({ gridArr = [],
     gridSize = { xs: 12, sm: 6 },
@@ -29,6 +29,12 @@ const NameValueGridStructure = ({ gridArr = [],
                                     variant={variant}>
                                     {obj?.value}
                                 </Typography>
+                                {
+                                    obj.component ?
+                                        <Box style={{ display: 'flex', justifyContent: 'center' }}>
+                                            {obj.component}
+                                        </Box> : ''
+                                }
                                 {!reverse &&
                                     <Typography className={obj.classes?.name ?? classes?.name ?? ''} align={align} variant={variant}>
                                         {obj?.name}

@@ -30,6 +30,8 @@ import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import DataTable from '../../../components/Table/DataTable';
 import NameValueGridStructure from '../../../components/Grids/NameValueGridStructure';
+import IconWrapper from '../../../components/icons/IconWrapper';
+import FlexGrid from '../../../components/Grids/FlexGrid';
 
 const StaticData = [
     {
@@ -421,7 +423,28 @@ const GroupsManagement = ({ classes }) => {
         green: classes.sendIconText
     }
 
+
+    const HeaderCheck = (label) => <FormControlLabel
+        label={label}
+        control={
+            <Checkbox
+                checked={selectedGroups.length === filteredData.length}
+                // indeterminate={}
+                onClick={() => {
+                    if (selectedGroups.length === filteredData.length) {
+                        return setSelectedGroups([])
+                    }
+                    const allGroups = filteredData.reduce((previous, current) => [...previous, current.GroupID], [])
+                    setSelectedGroups(allGroups)
+                }
+                }
+            />
+        }
+    />
+
+
     const TABLE_HEAD = [
+        { label: HeaderCheck(''), align: 'center' },
         { label: t("common.GroupName"), classes: cellStyle, className: classes.flex2, align: 'center' },
         { label: t("recipient.emails"), classes: cellStyle, className: classes.flex2, align: 'center' },
         { label: t('recipient.sms/mms'), classes: cellStyle, className: classes.flex2, align: 'center' },
@@ -1370,12 +1393,9 @@ const GroupsManagement = ({ classes }) => {
             <TableRow
                 key={Math.round(Math.random() * 999999999)}
                 classes={rowStyle}>
-                <TableCell
-                    classes={cellStyle}
-                    align='center'
-                    className={classes.flex2}>
+                <TableCell align='center'>
                     <FormControlLabel
-                        label={renderNameCell(row)}
+                        label=''
                         control={
                             <Checkbox
                                 checked={selectedGroups.indexOf(GroupID) !== -1}
@@ -1384,6 +1404,12 @@ const GroupsManagement = ({ classes }) => {
                             />
                         }
                     />
+                </TableCell>
+                <TableCell
+                    classes={cellStyle}
+                    align='center'
+                    className={classes.flex2}>
+                    {renderNameCell(row)}
                 </TableCell>
                 <TableCell
                     classes={cellStyle}
@@ -1420,8 +1446,25 @@ const GroupsManagement = ({ classes }) => {
                 <TableCell
                     classes={cellStyle}
                     align='center'
-                    className={classes.flex3}>
-                    Icons
+                    className={classes.flex4}
+                >
+                    <FlexGrid
+                        gridArr={[
+                            { label: "Preview", component: <IconWrapper iconName='preview' /> },
+                            { label: "Automation", component: <IconWrapper iconName='automation' /> },
+                            { label: "Delete", component: <IconWrapper iconName='delete' /> },
+                            { label: "Add Recipient", component: <IconWrapper /> },
+                            { label: "Add Recipients", component: <IconWrapper /> },
+                            // { label: "Reset", component: <IconWrapper /> },
+                            // { label: "Settings", component: <IconWrapper /> }
+
+                        ]}
+                        gridSize={{ xs: 12, sm: 2 }}
+                        variant="body1"
+                        align="center"
+                    />
+                    {/* <IconWrapper iconName='alert' classes={clsx(classes.dialogAlertIcon, colorTextStyle.red)} />
+                    <IconWrapper iconName='copy' classes={colorTextStyle.blue} /> */}
                 </TableCell>
             </TableRow>
         )
