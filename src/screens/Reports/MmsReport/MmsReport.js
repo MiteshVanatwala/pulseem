@@ -161,11 +161,10 @@ const MmsReport = ({ classes }) => {
 
     const handleSearch = (values) => {
         const rowData = mmsReport;
-        console.log("FilterVAlues:", filterValues)
         const filteredReports =
             rowData.filter((obj) => {
                 if (
-                    (values.campaignName ? obj.Name.includes(values.campaignName) : obj)
+                    (values.campaignName ? obj.Name.toLowerCase().includes(values.campaignName.toLowerCase()) : obj)
                 ) {
                     return true
                 }
@@ -183,11 +182,7 @@ const MmsReport = ({ classes }) => {
         setPage(1);
     }
 
-
-
-
     //  COMPONENTS  //
-
     const renderFilter = () => {
         if (windowSize === 'xs') {
             return (
