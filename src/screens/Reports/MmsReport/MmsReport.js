@@ -500,7 +500,7 @@ const MmsReport = ({ classes }) => {
                     className={classes.flex2}>
                     <Grid container direction={'row'} className={classes.justifyEvenly}>
                         <Grid item className={classes.plr10}>
-                            {renderIntData(TotalSendPlan, '', hrefs.TotalSendTo)}
+                            {renderIntData(TotalSent, '', hrefs.TotalSendTo)}
                         </Grid>
                         <Grid item className={classes.plr10}>
                             {renderIntData(FutureSends, '', hrefs.FutureSends)}
