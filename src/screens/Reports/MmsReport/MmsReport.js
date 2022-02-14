@@ -127,7 +127,7 @@ const MmsReport = ({ classes }) => {
         "TotalSent": t('mmsreport.amount'),
         "Failure": t('common.failedStatus'),
         "Removed": t('common.Removed'),
-        "TotalCredits": t('mmsreport.totalCreditsSent'),
+        // "TotalCredits": t('mmsreport.totalCreditsSent'),
         "FutureSends": t('mmsreport.futureSends'),
     }
 
@@ -370,10 +370,11 @@ const MmsReport = ({ classes }) => {
                         arrow: classes.fBlack
                     }}
                     arrow={true}
-                    style={{ fontSize: 18, fontWeight: 'bold' }}
+                    style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}
                     placement={'top'}
                     title={<Typography noWrap={false}>{Name}</Typography>}
                     text={Name}
+                    textAlign={'center'}
 
                 >
                     {
