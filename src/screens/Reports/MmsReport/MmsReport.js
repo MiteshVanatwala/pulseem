@@ -169,11 +169,10 @@ const MmsReport = ({ classes }) => {
 
     const handleSearch = (values) => {
         const rowData = mmsReport;
-        console.log("FilterVAlues:", filterValues)
         const filteredReports =
             rowData.filter((obj) => {
                 if (
-                    (values.campaignName ? obj.Name.includes(values.campaignName) : obj)
+                    (values.campaignName ? obj.Name.toLowerCase().includes(values.campaignName.toLowerCase()) : obj)
                 ) {
                     return true
                 }
@@ -191,11 +190,7 @@ const MmsReport = ({ classes }) => {
         setPage(1);
     }
 
-
-
-
     //  COMPONENTS  //
-
     const renderFilter = () => {
         if (windowSize === 'xs') {
             return (
@@ -376,10 +371,11 @@ const MmsReport = ({ classes }) => {
                         arrow: classes.fBlack
                     }}
                     arrow={true}
-                    style={{ fontSize: 18, fontWeight: 'bold' }}
+                    style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}
                     placement={'top'}
                     title={<Typography noWrap={false} align="center">{Name}</Typography>}
                     text={Name}
+                    textAlign={'center'}
 
                 >
                     {
@@ -476,6 +472,7 @@ const MmsReport = ({ classes }) => {
             TotalSent,
             SendDate,
             UpdateDate,
+            Success,
             FutureSends,
             TotalSendPlan,
             Failure,
@@ -504,7 +501,7 @@ const MmsReport = ({ classes }) => {
                     className={classes.flex2}>
                     <Grid container direction={'row'} className={classes.justifyEvenly}>
                         <Grid item className={classes.plr10}>
-                            {renderIntData(TotalSendPlan, '', hrefs.TotalSendTo)}
+                            {renderIntData(TotalSent, '', hrefs.TotalSendTo)}
                         </Grid>
                         <Grid item className={classes.plr10}>
                             {renderIntData(FutureSends, '', hrefs.FutureSends)}
@@ -515,7 +512,7 @@ const MmsReport = ({ classes }) => {
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {renderIntData(TotalSent, '', hrefs.TotalSent)}
+                    {renderIntData(Success, '', hrefs.TotalSent)}
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
@@ -570,7 +567,7 @@ const MmsReport = ({ classes }) => {
                 classes={rowStyle}>
                 <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
                     <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
-                        {renderNameCell({ MmsCampaignID, Name, SendDate, UpdateDate }, true)}
+                        {renderNameCell({ MmsCampaignID, Name, SendDate, UpdateDate, Status }, true)}
                     </Box>
 
                     <Grid container spacing={2} style={{ paddingInlineStart: 10 }}>

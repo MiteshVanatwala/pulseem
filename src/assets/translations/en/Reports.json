@@ -25,7 +25,7 @@
   "FromName": "From Name",
   "None": "None",
   "id": "Reference ID",
-  "takenBySender": "Taken by sender",
+  "takenBySender": "No Status",
   "pending": "Pending",
   "sent": "Sent",
   "success": "Success",
@@ -93,5 +93,6 @@
     }
   },
   "ArchiveDirectSendReport": "DirectSend Report Archive",
-  "Reactivate": "Reactivate / Cancel removal"
+  "Reactivate": "Reactivate / Cancel removal",
+  "ExportLimitation": "Exported docs cannot contain more than 600K results"
 }
