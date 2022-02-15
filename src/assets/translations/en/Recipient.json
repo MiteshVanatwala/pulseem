@@ -5,8 +5,19 @@
   "PageResource1": {
     "Title": "Manage Recipient"
   },
-  "delete": "Delete Recipients",
+  "deleteRecipient": "Delete Recipients",
   "unsubscribe": "Unsubscribe Recipient",
   "emails": "Emails",
-  "sms/mms": "SMS/MMS"
+  "sms/mms": "SMS/MMS",
+  "totalRecipients": "Total Recipients",
+  "Active": "Active",
+  "Removed": "Removed",
+  "Bounced": "Bounced",
+  "preview": "Preview",
+  "automation": "Automation",
+  "delete": "Delete",
+  "addRecipient": "Add Recipient",
+  "addRecipients": "Add Recipients",
+  "reset": "Reset",
+  "settings": "Settings"
 }

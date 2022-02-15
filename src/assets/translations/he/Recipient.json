@@ -5,8 +5,19 @@
   "PageResource1": {
     "Title": ""
   },
-  "delete": "",
+  "deleteRecipient": "",
   "unsubscribe": "",
   "emails": "",
-  "sms/mms": ""
+  "sms/mms": "",
+  "totalRecipients": "",
+  "Active": "",
+  "Removed": "",
+  "Bounced": "",
+  "preview": "",
+  "automation": "",
+  "delete": "",
+  "addRecipient": "",
+  "addRecipients": "",
+  "reset": "",
+  "settings": ""
 }

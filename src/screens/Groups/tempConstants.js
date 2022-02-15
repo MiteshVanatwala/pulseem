@@ -1,370 +1,354 @@
-export const StaticRecipientData = [
+export const StaticData = [
     {
-        "GroupName": "Sallie Farley",
-        "UpdatedDate": "2020-04-10T12:25:02 -06:-30",
-        "CreatedDate": "2016-08-26T05:00:22 -06:-30",
-        "Email": {
-            "TotalRecipients": 122,
-            "ActiveRecipients": 272,
-            "RemovedRecipients": 306,
-            "BouncedRecipients": 683
-        },
-        "sms": {
-            "TotalRecipients": 680,
-            "ActiveRecipients": 443,
-            "RemovedRecipients": 627,
-            "BouncedRecipients": 272
-        },
-        "mms": {
-            "TotalRecipients": 152,
-            "ActiveRecipients": 923,
-            "RemovedRecipients": 740,
-            "BouncedRecipients": 662
-        }
+        "ActiveCell": 411,
+        "ActiveEmails": 275,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 842297,
+        "InvalidCell": 850,
+        "InvalidEmails": 641,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 256,
+        "Recipients": 917,
+        "RemovedCell": 132,
+        "RemovedEmails": 102,
+        "RestrictedEmails": 454,
+        "SubAccountID": 852,
+        "TotalRecipients": 123,
+        "GroupName": "Mayo Kim",
+        "UpdatedDate": "2018-09-22T03:29:28 -06:-30",
+        "CreatedDate": "2020-03-30T07:49:24 -06:-30"
     },
     {
-        "GroupName": "Ferguson Whitney",
-        "UpdatedDate": "2017-01-07T08:31:17 -06:-30",
-        "CreatedDate": "2021-05-21T04:45:05 -06:-30",
-        "Email": {
-            "TotalRecipients": 26,
-            "ActiveRecipients": 731,
-            "RemovedRecipients": 61,
-            "BouncedRecipients": 816
-        },
-        "sms": {
-            "TotalRecipients": 97,
-            "ActiveRecipients": 712,
-            "RemovedRecipients": 633,
-            "BouncedRecipients": 86
-        },
-        "mms": {
-            "TotalRecipients": 699,
-            "ActiveRecipients": 722,
-            "RemovedRecipients": 702,
-            "BouncedRecipients": 553
-        }
+        "ActiveCell": 517,
+        "ActiveEmails": 651,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 448132,
+        "InvalidCell": 955,
+        "InvalidEmails": 407,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 357,
+        "Recipients": 534,
+        "RemovedCell": 838,
+        "RemovedEmails": 571,
+        "RestrictedEmails": 688,
+        "SubAccountID": 99,
+        "TotalRecipients": 528,
+        "GroupName": "Barbra Lopez",
+        "UpdatedDate": "2016-04-09T04:46:31 -06:-30",
+        "CreatedDate": "2015-05-31T05:05:56 -06:-30"
     },
     {
-        "GroupName": "Tommie Leon",
-        "UpdatedDate": "2017-03-27T05:07:27 -06:-30",
-        "CreatedDate": "2018-12-09T11:12:40 -06:-30",
-        "Email": {
-            "TotalRecipients": 384,
-            "ActiveRecipients": 308,
-            "RemovedRecipients": 354,
-            "BouncedRecipients": 547
-        },
-        "sms": {
-            "TotalRecipients": 786,
-            "ActiveRecipients": 569,
-            "RemovedRecipients": 864,
-            "BouncedRecipients": 178
-        },
-        "mms": {
-            "TotalRecipients": 71,
-            "ActiveRecipients": 23,
-            "RemovedRecipients": 13,
-            "BouncedRecipients": 538
-        }
+        "ActiveCell": 872,
+        "ActiveEmails": 794,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 715956,
+        "InvalidCell": 831,
+        "InvalidEmails": 556,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 694,
+        "Recipients": 605,
+        "RemovedCell": 625,
+        "RemovedEmails": 776,
+        "RestrictedEmails": 598,
+        "SubAccountID": 48,
+        "TotalRecipients": 198,
+        "GroupName": "Mejia Mills",
+        "UpdatedDate": "2021-08-17T01:33:28 -06:-30",
+        "CreatedDate": "2018-09-03T11:43:00 -06:-30"
     },
     {
-        "GroupName": "Sutton Tyson",
-        "UpdatedDate": "2015-01-02T01:28:09 -06:-30",
-        "CreatedDate": "2020-02-15T04:39:50 -06:-30",
-        "Email": {
-            "TotalRecipients": 537,
-            "ActiveRecipients": 199,
-            "RemovedRecipients": 654,
-            "BouncedRecipients": 735
-        },
-        "sms": {
-            "TotalRecipients": 194,
-            "ActiveRecipients": 186,
-            "RemovedRecipients": 803,
-            "BouncedRecipients": 269
-        },
-        "mms": {
-            "TotalRecipients": 431,
-            "ActiveRecipients": 959,
-            "RemovedRecipients": 337,
-            "BouncedRecipients": 117
-        }
+        "ActiveCell": 200,
+        "ActiveEmails": 583,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 827193,
+        "InvalidCell": 142,
+        "InvalidEmails": 381,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 666,
+        "Recipients": 17,
+        "RemovedCell": 340,
+        "RemovedEmails": 949,
+        "RestrictedEmails": 934,
+        "SubAccountID": 170,
+        "TotalRecipients": 304,
+        "GroupName": "Mcmillan Jenkins",
+        "UpdatedDate": "2018-02-11T11:03:51 -06:-30",
+        "CreatedDate": "2022-02-06T04:02:39 -06:-30"
     },
     {
-        "GroupName": "Ora Norton",
-        "UpdatedDate": "2018-06-10T08:54:19 -06:-30",
-        "CreatedDate": "2021-10-17T11:21:00 -06:-30",
-        "Email": {
-            "TotalRecipients": 434,
-            "ActiveRecipients": 873,
-            "RemovedRecipients": 299,
-            "BouncedRecipients": 141
-        },
-        "sms": {
-            "TotalRecipients": 748,
-            "ActiveRecipients": 684,
-            "RemovedRecipients": 194,
-            "BouncedRecipients": 202
-        },
-        "mms": {
-            "TotalRecipients": 350,
-            "ActiveRecipients": 694,
-            "RemovedRecipients": 801,
-            "BouncedRecipients": 85
-        }
+        "ActiveCell": 884,
+        "ActiveEmails": 512,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 451184,
+        "InvalidCell": 940,
+        "InvalidEmails": 446,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 179,
+        "Recipients": 379,
+        "RemovedCell": 430,
+        "RemovedEmails": 156,
+        "RestrictedEmails": 780,
+        "SubAccountID": 7,
+        "TotalRecipients": 621,
+        "GroupName": "Bray Bell",
+        "UpdatedDate": "2014-08-10T08:30:25 -06:-30",
+        "CreatedDate": "2014-11-10T02:20:12 -06:-30"
     },
     {
-        "GroupName": "Harrington Mann",
-        "UpdatedDate": "2015-09-03T11:43:36 -06:-30",
-        "CreatedDate": "2015-05-02T03:24:40 -06:-30",
-        "Email": {
-            "TotalRecipients": 588,
-            "ActiveRecipients": 66,
-            "RemovedRecipients": 119,
-            "BouncedRecipients": 645
-        },
-        "sms": {
-            "TotalRecipients": 387,
-            "ActiveRecipients": 117,
-            "RemovedRecipients": 852,
-            "BouncedRecipients": 168
-        },
-        "mms": {
-            "TotalRecipients": 22,
-            "ActiveRecipients": 712,
-            "RemovedRecipients": 429,
-            "BouncedRecipients": 32
-        }
+        "ActiveCell": 183,
+        "ActiveEmails": 493,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 936792,
+        "InvalidCell": 66,
+        "InvalidEmails": 279,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 706,
+        "Recipients": 365,
+        "RemovedCell": 479,
+        "RemovedEmails": 419,
+        "RestrictedEmails": 266,
+        "SubAccountID": 450,
+        "TotalRecipients": 395,
+        "GroupName": "Brown Banks",
+        "UpdatedDate": "2019-04-19T08:28:11 -06:-30",
+        "CreatedDate": "2021-08-01T09:32:40 -06:-30"
     },
     {
-        "GroupName": "Sharon Rowland",
-        "UpdatedDate": "2017-02-19T08:28:48 -06:-30",
-        "CreatedDate": "2020-01-04T04:43:35 -06:-30",
-        "Email": {
-            "TotalRecipients": 622,
-            "ActiveRecipients": 825,
-            "RemovedRecipients": 503,
-            "BouncedRecipients": 492
-        },
-        "sms": {
-            "TotalRecipients": 552,
-            "ActiveRecipients": 873,
-            "RemovedRecipients": 854,
-            "BouncedRecipients": 806
-        },
-        "mms": {
-            "TotalRecipients": 574,
-            "ActiveRecipients": 299,
-            "RemovedRecipients": 860,
-            "BouncedRecipients": 349
-        }
+        "ActiveCell": 457,
+        "ActiveEmails": 827,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 182670,
+        "InvalidCell": 530,
+        "InvalidEmails": 193,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 671,
+        "Recipients": 469,
+        "RemovedCell": 154,
+        "RemovedEmails": 736,
+        "RestrictedEmails": 756,
+        "SubAccountID": 525,
+        "TotalRecipients": 52,
+        "GroupName": "Opal Case",
+        "UpdatedDate": "2018-05-31T07:25:09 -06:-30",
+        "CreatedDate": "2018-06-08T06:18:53 -06:-30"
     },
     {
-        "GroupName": "Garner Donaldson",
-        "UpdatedDate": "2016-05-20T08:16:37 -06:-30",
-        "CreatedDate": "2022-01-16T04:13:45 -06:-30",
-        "Email": {
-            "TotalRecipients": 814,
-            "ActiveRecipients": 77,
-            "RemovedRecipients": 133,
-            "BouncedRecipients": 460
-        },
-        "sms": {
-            "TotalRecipients": 808,
-            "ActiveRecipients": 797,
-            "RemovedRecipients": 577,
-            "BouncedRecipients": 379
-        },
-        "mms": {
-            "TotalRecipients": 818,
-            "ActiveRecipients": 923,
-            "RemovedRecipients": 625,
-            "BouncedRecipients": 394
-        }
+        "ActiveCell": 650,
+        "ActiveEmails": 565,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 983492,
+        "InvalidCell": 21,
+        "InvalidEmails": 90,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 753,
+        "Recipients": 875,
+        "RemovedCell": 19,
+        "RemovedEmails": 71,
+        "RestrictedEmails": 843,
+        "SubAccountID": 429,
+        "TotalRecipients": 74,
+        "GroupName": "Cohen Mccarthy",
+        "UpdatedDate": "2018-08-09T02:50:28 -06:-30",
+        "CreatedDate": "2017-05-31T03:45:47 -06:-30"
     },
     {
-        "GroupName": "Jenny Ryan",
-        "UpdatedDate": "2015-10-22T06:27:03 -06:-30",
-        "CreatedDate": "2019-07-13T09:10:07 -06:-30",
-        "Email": {
-            "TotalRecipients": 960,
-            "ActiveRecipients": 508,
-            "RemovedRecipients": 298,
-            "BouncedRecipients": 976
-        },
-        "sms": {
-            "TotalRecipients": 978,
-            "ActiveRecipients": 134,
-            "RemovedRecipients": 106,
-            "BouncedRecipients": 870
-        },
-        "mms": {
-            "TotalRecipients": 373,
-            "ActiveRecipients": 585,
-            "RemovedRecipients": 140,
-            "BouncedRecipients": 552
-        }
+        "ActiveCell": 275,
+        "ActiveEmails": 577,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 324693,
+        "InvalidCell": 274,
+        "InvalidEmails": 833,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 316,
+        "Recipients": 275,
+        "RemovedCell": 829,
+        "RemovedEmails": 633,
+        "RestrictedEmails": 382,
+        "SubAccountID": 598,
+        "TotalRecipients": 32,
+        "GroupName": "Silva Holloway",
+        "UpdatedDate": "2015-09-14T02:37:55 -06:-30",
+        "CreatedDate": "2016-03-29T04:05:44 -06:-30"
     },
     {
-        "GroupName": "Hartman Burton",
-        "UpdatedDate": "2020-10-17T04:07:26 -06:-30",
-        "CreatedDate": "2020-12-10T05:31:40 -06:-30",
-        "Email": {
-            "TotalRecipients": 725,
-            "ActiveRecipients": 987,
-            "RemovedRecipients": 405,
-            "BouncedRecipients": 18
-        },
-        "sms": {
-            "TotalRecipients": 772,
-            "ActiveRecipients": 462,
-            "RemovedRecipients": 300,
-            "BouncedRecipients": 988
-        },
-        "mms": {
-            "TotalRecipients": 598,
-            "ActiveRecipients": 459,
-            "RemovedRecipients": 60,
-            "BouncedRecipients": 94
-        }
+        "ActiveCell": 452,
+        "ActiveEmails": 204,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 652985,
+        "InvalidCell": 374,
+        "InvalidEmails": 264,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 260,
+        "Recipients": 652,
+        "RemovedCell": 200,
+        "RemovedEmails": 425,
+        "RestrictedEmails": 517,
+        "SubAccountID": 715,
+        "TotalRecipients": 382,
+        "GroupName": "Kristine Ramirez",
+        "UpdatedDate": "2019-10-29T01:08:52 -06:-30",
+        "CreatedDate": "2015-11-22T04:09:21 -06:-30"
     },
     {
-        "GroupName": "Imelda Ferrell",
-        "UpdatedDate": "2018-10-15T07:27:04 -06:-30",
-        "CreatedDate": "2020-07-21T12:41:20 -06:-30",
-        "Email": {
-            "TotalRecipients": 644,
-            "ActiveRecipients": 644,
-            "RemovedRecipients": 672,
-            "BouncedRecipients": 332
-        },
-        "sms": {
-            "TotalRecipients": 108,
-            "ActiveRecipients": 729,
-            "RemovedRecipients": 415,
-            "BouncedRecipients": 632
-        },
-        "mms": {
-            "TotalRecipients": 238,
-            "ActiveRecipients": 453,
-            "RemovedRecipients": 91,
-            "BouncedRecipients": 285
-        }
+        "ActiveCell": 664,
+        "ActiveEmails": 301,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 114051,
+        "InvalidCell": 567,
+        "InvalidEmails": 518,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 844,
+        "Recipients": 999,
+        "RemovedCell": 114,
+        "RemovedEmails": 822,
+        "RestrictedEmails": 790,
+        "SubAccountID": 428,
+        "TotalRecipients": 857,
+        "GroupName": "Concepcion Sanford",
+        "UpdatedDate": "2016-07-21T11:35:21 -06:-30",
+        "CreatedDate": "2022-01-08T11:45:33 -06:-30"
     },
     {
-        "GroupName": "Mcknight Dotson",
-        "UpdatedDate": "2018-10-02T09:30:41 -06:-30",
-        "CreatedDate": "2018-05-30T11:25:28 -06:-30",
-        "Email": {
-            "TotalRecipients": 646,
-            "ActiveRecipients": 227,
-            "RemovedRecipients": 387,
-            "BouncedRecipients": 339
-        },
-        "sms": {
-            "TotalRecipients": 664,
-            "ActiveRecipients": 992,
-            "RemovedRecipients": 38,
-            "BouncedRecipients": 742
-        },
-        "mms": {
-            "TotalRecipients": 560,
-            "ActiveRecipients": 67,
-            "RemovedRecipients": 184,
-            "BouncedRecipients": 373
-        }
+        "ActiveCell": 287,
+        "ActiveEmails": 442,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 602466,
+        "InvalidCell": 499,
+        "InvalidEmails": 188,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 189,
+        "Recipients": 484,
+        "RemovedCell": 648,
+        "RemovedEmails": 54,
+        "RestrictedEmails": 963,
+        "SubAccountID": 253,
+        "TotalRecipients": 957,
+        "GroupName": "Hickman Bentley",
+        "UpdatedDate": "2017-08-09T12:25:55 -06:-30",
+        "CreatedDate": "2019-12-16T04:13:49 -06:-30"
     },
     {
-        "GroupName": "Duke Russo",
-        "UpdatedDate": "2016-06-19T07:40:57 -06:-30",
-        "CreatedDate": "2021-03-05T12:41:26 -06:-30",
-        "Email": {
-            "TotalRecipients": 863,
-            "ActiveRecipients": 834,
-            "RemovedRecipients": 316,
-            "BouncedRecipients": 418
-        },
-        "sms": {
-            "TotalRecipients": 964,
-            "ActiveRecipients": 808,
-            "RemovedRecipients": 639,
-            "BouncedRecipients": 326
-        },
-        "mms": {
-            "TotalRecipients": 103,
-            "ActiveRecipients": 636,
-            "RemovedRecipients": 56,
-            "BouncedRecipients": 356
-        }
+        "ActiveCell": 816,
+        "ActiveEmails": 645,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 188716,
+        "InvalidCell": 894,
+        "InvalidEmails": 151,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 760,
+        "Recipients": 939,
+        "RemovedCell": 138,
+        "RemovedEmails": 107,
+        "RestrictedEmails": 583,
+        "SubAccountID": 585,
+        "TotalRecipients": 88,
+        "GroupName": "Leta Williamson",
+        "UpdatedDate": "2016-07-25T03:25:25 -06:-30",
+        "CreatedDate": "2018-04-15T10:52:01 -06:-30"
     },
     {
-        "GroupName": "Kellie Contreras",
-        "UpdatedDate": "2017-10-12T01:12:33 -06:-30",
-        "CreatedDate": "2018-11-11T08:26:48 -06:-30",
-        "Email": {
-            "TotalRecipients": 183,
-            "ActiveRecipients": 737,
-            "RemovedRecipients": 601,
-            "BouncedRecipients": 768
-        },
-        "sms": {
-            "TotalRecipients": 408,
-            "ActiveRecipients": 748,
-            "RemovedRecipients": 210,
-            "BouncedRecipients": 175
-        },
-        "mms": {
-            "TotalRecipients": 830,
-            "ActiveRecipients": 551,
-            "RemovedRecipients": 262,
-            "BouncedRecipients": 331
-        }
+        "ActiveCell": 628,
+        "ActiveEmails": 422,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 937434,
+        "InvalidCell": 875,
+        "InvalidEmails": 55,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 119,
+        "Recipients": 456,
+        "RemovedCell": 562,
+        "RemovedEmails": 389,
+        "RestrictedEmails": 940,
+        "SubAccountID": 219,
+        "TotalRecipients": 385,
+        "GroupName": "Guerrero Parrish",
+        "UpdatedDate": "2019-10-11T01:46:25 -06:-30",
+        "CreatedDate": "2021-03-20T10:37:11 -06:-30"
     },
     {
-        "GroupName": "Stanton Bradley",
-        "UpdatedDate": "2019-12-05T09:15:38 -06:-30",
-        "CreatedDate": "2014-11-29T06:05:49 -06:-30",
-        "Email": {
-            "TotalRecipients": 621,
-            "ActiveRecipients": 819,
-            "RemovedRecipients": 690,
-            "BouncedRecipients": 508
-        },
-        "sms": {
-            "TotalRecipients": 904,
-            "ActiveRecipients": 975,
-            "RemovedRecipients": 810,
-            "BouncedRecipients": 229
-        },
-        "mms": {
-            "TotalRecipients": 641,
-            "ActiveRecipients": 718,
-            "RemovedRecipients": 539,
-            "BouncedRecipients": 556
-        }
+        "ActiveCell": 126,
+        "ActiveEmails": 629,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 825098,
+        "InvalidCell": 968,
+        "InvalidEmails": 679,
+        "IsDynamic": false,
+        "IsTestGroup": null,
+        "PendingEmails": 874,
+        "Recipients": 148,
+        "RemovedCell": 678,
+        "RemovedEmails": 477,
+        "RestrictedEmails": 913,
+        "SubAccountID": 963,
+        "TotalRecipients": 875,
+        "GroupName": "Avila Ross",
+        "UpdatedDate": "2020-09-24T12:50:32 -06:-30",
+        "CreatedDate": "2019-07-29T10:14:37 -06:-30"
     },
     {
-        "GroupName": "Conrad Browning",
-        "UpdatedDate": "2015-07-06T09:59:37 -06:-30",
-        "CreatedDate": "2015-04-16T08:00:26 -06:-30",
-        "Email": {
-            "TotalRecipients": 532,
-            "ActiveRecipients": 141,
-            "RemovedRecipients": 758,
-            "BouncedRecipients": 316
-        },
-        "sms": {
-            "TotalRecipients": 643,
-            "ActiveRecipients": 179,
-            "RemovedRecipients": 296,
-            "BouncedRecipients": 32
-        },
-        "mms": {
-            "TotalRecipients": 278,
-            "ActiveRecipients": 603,
-            "RemovedRecipients": 400,
-            "BouncedRecipients": 654
-        }
+        "ActiveCell": 676,
+        "ActiveEmails": 473,
+        "DynamicData": null,
+        "DynamicLastUpdate": null,
+        "DynamicUpdatePolicy": null,
+        "GroupID": 920988,
+        "InvalidCell": 839,
+        "InvalidEmails": 763,
+        "IsDynamic": true,
+        "IsTestGroup": null,
+        "PendingEmails": 416,
+        "Recipients": 32,
+        "RemovedCell": 451,
+        "RemovedEmails": 920,
+        "RestrictedEmails": 24,
+        "SubAccountID": 570,
+        "TotalRecipients": 996,
+        "GroupName": "Nicole Haney",
+        "UpdatedDate": "2014-06-24T02:46:45 -06:-30",
+        "CreatedDate": "2020-06-01T08:02:50 -06:-30"
     }
 ]
