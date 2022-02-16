@@ -80,7 +80,7 @@ export const mmsSlice = createSlice({
     mmsDeletedData: [],
     mmsDataError: '',
     mmsReport: [],
-    mmsGraph: [],
+    mmsGraph: null,
     mmsReportError: ''
   },
   reducers: {},

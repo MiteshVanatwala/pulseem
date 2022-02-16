@@ -624,7 +624,9 @@ const MmsReport = ({ classes }) => {
                 </TableBody>
             )
         }
-        return <Typography className={classes.flexCenter}>{t("common.NoData")}</Typography>
+        return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+            <Typography>{t("common.NoDataTryFilter")}</Typography>
+        </Box>
     }
 
 
@@ -656,7 +658,7 @@ const MmsReport = ({ classes }) => {
                 page={page}
                 onPageChange={handlePageChange}
             />
-            <GraphReport classes={classes} showLoader={!mmsGraph || mmsGraph.length <= 0} reportData={mmsGraph} />
+            <GraphReport classes={classes} showLoader={!mmsGraph} reportData={mmsGraph} />
             <Loader isOpen={showLoader} showBackdrop={true} />
         </DefaultScreen>
     )
