@@ -125,11 +125,11 @@ const MmsReport = ({ classes }) => {
         "SendDate": t('common.SendDate'),
         "CreditsPerMms": t('mmsreport.postCredits'),
         "Failure": t('common.failedStatus'),
-        "Removed": t('common.Removed'),
+        "Removed": t('mmsreport.removal'),
         // "TotalCredits": t('mmsreport.totalCreditsSent'),
         "TotalSent": t('mmsreport.sent'),
         "FutureSends": t('mmsreport.futureSends'),
-        "Amount": t('mmsreport.amount'),
+        "Amount": t('mmsreport.sendAmout'),
     }
 
     const handleDownloadCsv = async () => {
@@ -293,7 +293,7 @@ const MmsReport = ({ classes }) => {
                     </Button>
                 </Grid>
                 {
-                    (filterValues.campaignName || filterValues.fromDate || filterValues.toDate) && <Grid item>
+                    filter && <Grid item>
                         <Button
                             size='large'
                             variant='contained'
