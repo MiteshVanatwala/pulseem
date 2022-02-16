@@ -99,7 +99,7 @@
     "Text": "תבניות קמפיין"
   },
   "RadMenuItemResource24": {
-    "Text": "סמס"
+    "Text": "SMS"
   },
   "PackagesResource": {
     "Text": "חבילות"
@@ -332,10 +332,10 @@
     "Text": "MMS קמפיין"
   },
   "MmsMainReport": {
-    "Text": "MMS"
+    "Text": "דוחות MMS"
   },
   "DirectSmsReport": {
-    "Text": "שליחה ישירה – סמס"
+    "Text": "שליחה ישירה – SMS"
   },
   "RadMenuItemResourceDynamicGroups": {
     "Text": "קבוצות דינאמיות"

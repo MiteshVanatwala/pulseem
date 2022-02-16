@@ -198,6 +198,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dBlock: {
     display: 'block'
   },
+  dNone: {
+    display: 'none'
+  },
   borderAround: {
     border: '1px solid #000'
   },

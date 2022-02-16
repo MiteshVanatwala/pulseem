@@ -72,3 +72,12 @@ export const EventConditions = [
     { key: 'EXACT', value: "siteTracking.conditions.exact" },
     { key: 'NOT_CONTAINS', value: "siteTracking.conditions.notcontain" }
 ];
+
+export const MMSReportStatus = [
+    { id: 0, value: 'report.smsReport.statuses.other', color: '' },
+    { id: 1, value: 'report.smsReport.statuses.draft', color: "textColorOrange" },
+    { id: 2, value: 'report.smsReport.statuses.inProcess', color: "textColorBlue" },
+    { id: 3, value: 'report.smsReport.statuses.error', color: "textColorRed" },
+    { id: 4, value: 'report.smsReport.statuses.sent', color: "sendIconText" },
+    { id: 5, value: 'report.smsReport.statuses.cancelled', color: "textColorRed" }
+];

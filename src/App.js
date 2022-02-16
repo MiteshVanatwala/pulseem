@@ -35,6 +35,7 @@ import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import { siteTrackingScriptUrl } from './config/index';
+import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 
 
 const renderRoutes = (classes, history) => {
@@ -247,8 +248,8 @@ const renderRoutes = (classes, history) => {
         render={props => <SmsReplies props={props} classes={classes} />}
       />
       <Route
-        path={`/MmsMainReport`}
-        component={transferUrl('/Pulseem/MmsMainReport.aspx')}
+        path={`/Reports/MmsMainReport`}
+        render={props => <MmsReport {...props} classes={classes} />}
       />
       <Route
         path={`/AbTestsReport`}
