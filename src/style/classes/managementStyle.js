@@ -630,6 +630,50 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   lineTopMarging: {
     marginTop: '1rem'
   },
+
+  customDialog: {
+    "& .MuiDialog-paperScrollPaper": {
+      padding: 20
+    }
+  },
+  customDialogInnerbox: {
+    padding: 10,
+    border: '2px #0371ad solid',
+    width: '500px'
+  },
+  customDialogIconBox: {
+    top: 0,
+    left: 0,
+    padding: 10,
+    background: '#0371ad',
+    borderRadius: '0% 0% 100% 0% / 0% 0% 100% 0%',
+    maxWidth: 'max-content',
+    overflow: 'overlay',
+    color: '#fff',
+    position: 'absolute',
+  },
+  customDialogTitle: {
+    marginLeft: 30,
+    '& h2': { fontSize: 35 }
+  },
+  customDialogContentBox: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    '& *': {
+      alignSelf: 'center'
+    },
+    '& .MuiTextField-root': {
+      // paddingRight: 0,
+      '& .MuiOutlinedInput-root ': {
+        padding: 0,
+        '& .MuiOutlinedInput-input': {
+          padding: 5
+        }
+      },
+
+    },
+  },
+
   restoreDialogCheckBoxLable: {
     '& .MuiFormControlLabel-label': {
       fontWeight: 'bold'

@@ -3,7 +3,13 @@ import DefaultScreen from '../../DefaultScreen'
 import clsx from 'clsx';
 import {
     Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
-    Grid, Button, TextField, Box, List, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, Checkbox, FormControlLabel
+    Grid, Button, TextField, Box, List, ListItem, ListItemAvatar, Avatar, ListItemText, ListItemSecondaryAction, Checkbox, FormControlLabel,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    useMediaQuery,
+    makeStyles,
 } from '@material-ui/core'
 import {
     AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
@@ -34,6 +40,8 @@ import IconWrapper from '../../../components/icons/IconWrapper';
 import FlexGrid from '../../../components/Grids/FlexGrid';
 import { StaticData } from '../tempConstants';
 import CustomPopup from '../../../components/Popup/CustomPopup';
+import { GrGroup } from 'react-icons/gr';
+import { BsInfoSquare } from 'react-icons/bs';
 
 const GroupsManagement = ({ classes }) => {
     const { language, windowSize, email, phone, rowsPerPage, smsOldVersion, isRTL } = useSelector(state => state.core)
@@ -58,7 +66,8 @@ const GroupsManagement = ({ classes }) => {
     const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot }
     const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot }
     const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
-    const [dialogType, setDialogType] = useState(null)
+    const [dialog, setDialog] = useState(null)
+    const [dialog1, setDialog1] = useState(false)
     const [restoreArray, setRestoreArray] = useState([])
     const [showLoader, setLoader] = useState(true);
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
@@ -94,7 +103,7 @@ const GroupsManagement = ({ classes }) => {
     />
 
     const TABLE_HEAD = [
-        { label: HeaderCheck(''), align: 'center' },
+        { label: '', align: 'center' },
         { label: t("common.GroupName"), classes: cellStyle, className: classes.flex2, align: 'center' },
         { label: t("recipient.emails"), classes: cellStyle, className: classes.flex2, align: 'center' },
         { label: t('recipient.sms/mms'), classes: cellStyle, className: classes.flex2, align: 'center' },
@@ -227,13 +236,13 @@ const GroupsManagement = ({ classes }) => {
     }
 
     const renderManagmentLine = () => {
-        const handleVerificationDialog = async () => {
-            const numbers = await dispatch(getAuthorizeNumbers());
-            setDialogType({
-                type: 'verify',
-                data: numbers.payload
-            })
-        }
+        // const handleVerificationDialog = async () => {
+        //     const numbers = await dispatch(getAuthorizeNumbers());
+        //     setDialogType({
+        //         type: 'verify',
+        //         data: numbers.payload
+        //     })
+        // }
         return (
             <Grid container spacing={2} className={classes.linePadding} >
                 <Grid item xs={windowSize === 'xs' && 12}>
@@ -257,10 +266,13 @@ const GroupsManagement = ({ classes }) => {
                             classes.actionButton,
                             classes.actionButtonRed
                         )}
-                        onClick={() => setDialogType({
-                            type: 'restore',
-                            data: smsDeletedData
-                        })}>
+                    // onClick={
+                    //     () => setDialogType({
+                    //     type: 'restore',
+                    //     data: smsDeletedData
+                    // })
+                    // }
+                    >
                         {t('group.delete')}
                     </Button>
                 </Grid>}
@@ -350,10 +362,10 @@ const GroupsManagement = ({ classes }) => {
                 rootClass: classes.paddingIcon,
                 onClick: async () => {
                     const sms = await dispatch(getSmsByID(Id));
-                    setDialogType({
-                        type: 'preview',
-                        data: sms.payload
-                    })
+                    // setDialogType({
+                    //     type: 'preview',
+                    //     data: sms.payload
+                    // })
                 }
             },
             {
@@ -370,10 +382,10 @@ const GroupsManagement = ({ classes }) => {
                 lable: t('campaigns.lnkEditResource1.ToolTip'),
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    setDialogType({
-                        type: 'duplicate',
-                        data: Id
-                    })
+                    // setDialogType({
+                    //     type: 'duplicate',
+                    //     data: Id
+                    // })
                 }
             },
             {
@@ -384,10 +396,10 @@ const GroupsManagement = ({ classes }) => {
                 remove: windowSize === 'xs',
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    setDialogType({
-                        type: 'groups',
-                        data: row.Groups
-                    })
+                    // setDialogType({
+                    //     type: 'groups',
+                    //     data: row.Groups
+                    // })
                 }
             },
             {
@@ -409,10 +421,10 @@ const GroupsManagement = ({ classes }) => {
                 disable: AutomationID !== 0,
                 rootClass: classes.paddingIcon,
                 onClick: () => {
-                    setDialogType({
-                        type: 'delete',
-                        data: Id
-                    })
+                    // setDialogType({
+                    //     type: 'delete',
+                    //     data: Id
+                    // })
                 }
             }
         ]
@@ -657,6 +669,116 @@ const GroupsManagement = ({ classes }) => {
         )
     }
 
+    //POPUP Components
+    const AddGroupPopUp = <>
+        <Box className={classes.customDialogIconBox}>
+            <GrGroup size={60} />
+        </Box>
+        <Box className={classes.customDialogInnerbox}>
+            <DialogTitle id="responsive-dialog-title" className={classes.customDialogTitle}>Create New Group</DialogTitle>
+            <DialogContent>
+                <Box className={classes.customDialogContentBox}>
+                    <Typography>Group Name:</Typography>
+                    <TextField id="outlined-basic" label="" variant="outlined" />
+                    <FormControlLabel
+                        control={<Checkbox name="testGroup" size='small' />}
+                        label="Test Group"
+                    />
+                    <BsInfoSquare />
+                </Box>
+                <Box>
+                    <Grid container spacing={2} className={classes.linePadding} >
+                        <Grid item xs={windowSize === 'xs' && 12}>
+                            <Button
+                                variant='contained'
+                                size='medium'
+                                className={clsx(
+                                    classes.actionButton,
+                                    classes.actionButtonRed
+                                )}
+                            // onClick={
+                            //     () => setDialogType({
+                            //     type: 'restore',
+                            //     data: smsDeletedData
+                            // })
+                            // }
+                            >
+                                {t('group.cancel')}
+                            </Button>
+                        </Grid>
+                        <Grid item xs={windowSize === 'xs' && 12}>
+                            <Button
+                                variant='contained'
+                                size='medium'
+                                className={clsx(
+                                    classes.actionButton,
+                                    classes.actionButtonLightGreen
+                                )}
+                            // onClick={
+                            //     () => setDialogType({
+                            //     type: 'restore',
+                            //     data: smsDeletedData
+                            // })
+                            // }
+                            >
+                                {t('recipient.addRecipient')}
+                            </Button>
+                        </Grid>
+                        <Grid item xs={windowSize === 'xs' && 12}>
+                            <Button
+                                variant='contained'
+                                size='medium'
+                                className={clsx(
+                                    classes.actionButton,
+                                    classes.actionButtonLightGreen
+                                )}
+                            // onClick={
+                            //     () => setDialogType({
+                            //     type: 'restore',
+                            //     data: smsDeletedData
+                            // })
+                            // }
+                            >
+                                {t('group.ok')}
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Box>
+            </DialogContent>
+
+            {/* <DialogActions>
+                <Button autoFocus onClick={handleClose} color="primary">
+                    Disagree
+                </Button>
+                <Button onClick={handleClose} color="primary" autoFocus>
+                    Agree
+                </Button>
+            </DialogActions> */}
+        </Box>
+    </>
+
+
+    const getDeleteDialog = (data = '') => ({
+        title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
+        showDivider: false,
+        icon: (
+            <Box className={classes.dialogAlertIcon}>
+                !
+            </Box>
+        ),
+        content: (
+            <Typography style={{ fontSize: 18 }}>
+                {t('campaigns.GridButtonColumnResource2.ConfirmText')}
+            </Typography>
+        ),
+        onConfirm: async () => {
+            //   clearSearch()
+            //   handleClose()
+            //   await dispatch(deleteSms(data))
+            //   getData()
+        }
+    })
+
     return (
         <DefaultScreen
             currentPage='groups'
@@ -690,7 +812,22 @@ const GroupsManagement = ({ classes }) => {
             {renderTablePagination()}
             {renderDialog()} */}
             {/* <Loader isOpen={showLoader} /> */}
-            <CustomPopup />
+            <Button variant="outlined" color="primary" onClick={() => setDialog(AddGroupPopUp)}>
+                Open responsive dialog
+            </Button>
+            <Button variant="outlined" color="primary" onClick={() => setDialog1(true)}>
+                Open dialog
+            </Button>
+            <CustomPopup isOpen={!!dialog} handleClose={() => setDialog(null)} className={classes.customDialog}>
+                {dialog}
+            </CustomPopup>
+            <Dialog
+                classes={classes}
+                open={dialog1}
+                onClose={() => setDialog1(false)}
+            >
+                {getDeleteDialog()}
+            </Dialog>
         </DefaultScreen>
     )
 }

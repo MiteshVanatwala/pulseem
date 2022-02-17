@@ -1,4 +1,6 @@
 {
   "new": "New Group",
-  "delete": "Delete Group"
+  "delete": "Delete Group",
+  "ok": "Ok",
+  "cancel": "Cancel"
 }
