@@ -10,6 +10,8 @@ import {
     DialogTitle,
     useMediaQuery,
     makeStyles,
+    useTheme,
+    Dialog
 } from '@material-ui/core'
 import {
     AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
@@ -17,7 +19,7 @@ import {
 } from '../../../assets/images/managment/index'
 import { CSVLink } from 'react-csv'
 import {
-    TablePagination, ManagmentIcon, DateField, Dialog, SearchField, RestorDialogContent
+    TablePagination, ManagmentIcon, DateField, SearchField, RestorDialogContent
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
@@ -39,7 +41,6 @@ import NameValueGridStructure from '../../../components/Grids/NameValueGridStruc
 import IconWrapper from '../../../components/icons/IconWrapper';
 import FlexGrid from '../../../components/Grids/FlexGrid';
 import { StaticData } from '../tempConstants';
-import CustomPopup from '../../../components/Popup/CustomPopup';
 import { GrGroup } from 'react-icons/gr';
 import { BsInfoSquare } from 'react-icons/bs';
 
@@ -73,11 +74,18 @@ const GroupsManagement = ({ classes }) => {
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
     const dispatch = useDispatch()
     moment.locale(language)
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const colorTextStyle = {
         red: classes.textColorRed,
         blue: classes.textColorBlue,
         green: classes.sendIconText
+    }
+
+    const DialogType = {
+        ADD_GROUP: 'addGroup',
+        DELETE_GROUP: 'delete group'
     }
 
 
@@ -249,11 +257,14 @@ const GroupsManagement = ({ classes }) => {
                     <Button
                         variant='contained'
                         size='medium'
-                        href={smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : "/react/sms/create"}
+                        // href={smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : "/react/sms/create"}
                         className={clsx(
                             classes.actionButton,
                             classes.actionButtonLightGreen
-                        )}>
+                        )}
+                        onClick={() => setDialog(DialogType.ADD_GROUP)}
+                    >
+
                         {t('group.new')}
                     </Button>
                 </Grid>
@@ -266,12 +277,7 @@ const GroupsManagement = ({ classes }) => {
                             classes.actionButton,
                             classes.actionButtonRed
                         )}
-                    // onClick={
-                    //     () => setDialogType({
-                    //     type: 'restore',
-                    //     data: smsDeletedData
-                    // })
-                    // }
+                        onClick={() => setDialog(DialogType.DELETE_GROUP)}
                     >
                         {t('group.delete')}
                     </Button>
@@ -670,114 +676,195 @@ const GroupsManagement = ({ classes }) => {
     }
 
     //POPUP Components
-    const AddGroupPopUp = <>
-        <Box className={classes.customDialogIconBox}>
-            <GrGroup size={60} />
-        </Box>
-        <Box className={classes.customDialogInnerbox}>
-            <DialogTitle id="responsive-dialog-title" className={classes.customDialogTitle}>Create New Group</DialogTitle>
-            <DialogContent>
-                <Box className={classes.customDialogContentBox}>
-                    <Typography>Group Name:</Typography>
-                    <TextField id="outlined-basic" label="" variant="outlined" />
-                    <FormControlLabel
-                        control={<Checkbox name="testGroup" size='small' />}
-                        label="Test Group"
-                    />
-                    <BsInfoSquare />
-                </Box>
-                <Box>
-                    <Grid container spacing={2} className={classes.linePadding} >
-                        <Grid item xs={windowSize === 'xs' && 12}>
-                            <Button
-                                variant='contained'
-                                size='medium'
-                                className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonRed
-                                )}
-                            // onClick={
-                            //     () => setDialogType({
-                            //     type: 'restore',
-                            //     data: smsDeletedData
-                            // })
-                            // }
-                            >
-                                {t('group.cancel')}
-                            </Button>
-                        </Grid>
-                        <Grid item xs={windowSize === 'xs' && 12}>
-                            <Button
-                                variant='contained'
-                                size='medium'
-                                className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonLightGreen
-                                )}
-                            // onClick={
-                            //     () => setDialogType({
-                            //     type: 'restore',
-                            //     data: smsDeletedData
-                            // })
-                            // }
-                            >
-                                {t('recipient.addRecipient')}
-                            </Button>
-                        </Grid>
-                        <Grid item xs={windowSize === 'xs' && 12}>
-                            <Button
-                                variant='contained'
-                                size='medium'
-                                className={clsx(
-                                    classes.actionButton,
-                                    classes.actionButtonLightGreen
-                                )}
-                            // onClick={
-                            //     () => setDialogType({
-                            //     type: 'restore',
-                            //     data: smsDeletedData
-                            // })
-                            // }
-                            >
-                                {t('group.ok')}
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </Box>
-            </DialogContent>
-
-            {/* <DialogActions>
-                <Button autoFocus onClick={handleClose} color="primary">
-                    Disagree
-                </Button>
-                <Button onClick={handleClose} color="primary" autoFocus>
-                    Agree
-                </Button>
-            </DialogActions> */}
-        </Box>
-    </>
-
-
-    const getDeleteDialog = (data = '') => ({
-        title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
-        showDivider: false,
-        icon: (
-            <Box className={classes.dialogAlertIcon}>
-                !
-            </Box>
-        ),
-        content: (
-            <Typography style={{ fontSize: 18 }}>
-                {t('campaigns.GridButtonColumnResource2.ConfirmText')}
-            </Typography>
-        ),
-        onConfirm: async () => {
-            //   clearSearch()
-            //   handleClose()
-            //   await dispatch(deleteSms(data))
-            //   getData()
+    const AddGroupPopUp = () => {
+        const DEFAULT_NEW_GROUP = {
+            "ActiveCell": 0,
+            "ActiveEmails": 0,
+            "DynamicData": null,
+            "DynamicLastUpdate": null,
+            "DynamicUpdatePolicy": null,
+            "GroupID": null,
+            "InvalidCell": 0,
+            "InvalidEmails": 0,
+            "IsDynamic": true,
+            "IsTestGroup": null,
+            "PendingEmails": 0,
+            "Recipients": 0,
+            "RemovedCell": 0,
+            "RemovedEmails": 0,
+            "RestrictedEmails": 0,
+            "SubAccountID": 0,
+            "TotalRecipients": 0,
+            "GroupName": "",
+            "UpdatedDate": new Date(),
+            "CreatedDate": new Date()
         }
-    })
+        const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP)
+        return (
+            <Dialog
+                fullScreen={classes.fullScreen}
+                open={dialog === DialogType.ADD_GROUP}
+                onClose={() => setDialog(null)}
+                aria-labelledby="responsive-dialog-title"
+                className={classes.customDialog}
+            >
+                <Box className={classes.customDialogIconBox}>
+                    <GrGroup size={60} />
+                </Box>
+                <Box className={classes.customDialogInnerbox}>
+                    <DialogTitle id="responsive-dialog-title" className={classes.customDialogTitle}>Create New Group</DialogTitle>
+                    <DialogContent>
+                        <Box className={classes.customDialogContentBox}>
+                            <Typography>Group Name:</Typography>
+                            <TextField id="outlined-basic" label="" variant="outlined" value={newGroupData.GroupName} onChange={(e) => { e.preventDefault(); console.log("DATA:", newGroupData, e.target.value); setNewGroupData({ ...newGroupData, GroupName: e.target.value }) }} />
+                            <FormControlLabel
+                                control={<Checkbox name="testGroup" size='small' />}
+                                label="Test Group"
+                            />
+                            <BsInfoSquare />
+                        </Box>
+                        <Box>
+                            <Grid container spacing={2} className={classes.linePadding} >
+                                <Grid item xs={windowSize === 'xs' && 12} sm={4} className={
+                                    classes.txtCenter}>
+                                    <Button
+                                        variant='contained'
+                                        size='medium'
+                                        className={clsx(
+                                            classes.actionButton,
+                                            classes.actionButtonRed,
+                                            classes.fullWidth
+                                        )}
+                                        onClick={
+                                            () => setDialog(null)
+                                        }
+                                    >
+                                        {t('group.cancel')}
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={windowSize === 'xs' && 12} sm={4} className={
+                                    classes.txtCenter}>
+                                    <Button
+                                        variant='contained'
+                                        size='medium'
+                                        className={clsx(
+                                            classes.actionButton,
+                                            classes.actionButtonLightGreen,
+                                            classes.fullWidth
+                                        )}
+                                    // onClick={
+                                    //TODO: ADD ADD Recipient Functionality
+                                    //     () => setDialogType({
+                                    //     type: 'restore',
+                                    //     data: smsDeletedData
+                                    // })
+                                    // }
+                                    >
+                                        {t('recipient.addRecipient')}
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={windowSize === 'xs' && 12} sm={4} className={
+                                    classes.txtCenter}>
+                                    <Button
+                                        variant='contained'
+                                        size='medium'
+                                        className={clsx(
+                                            classes.actionButton,
+                                            classes.actionButtonLightGreen,
+                                            classes.fullWidth
+                                        )}
+                                        onClick={
+                                            //TODO: Make handler with api
+                                            () => {
+                                                const data = { ...newGroupData, GroupID: Math.random() * 1000000 }
+                                                setFilteredData([...filteredData, data])
+                                                setNewGroupData(DEFAULT_NEW_GROUP)
+                                                setDialog(null)
+                                            }
+                                        }
+                                    >
+                                        {t('group.ok')}
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </DialogContent>
+                </Box>
+            </Dialog>
+        )
+    }
+
+    const ConfirmDeletePopUp = () => {
+        // const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP)
+        return (
+            <Dialog
+                fullScreen={classes.fullScreen}
+                open={dialog === DialogType.DELETE_GROUP}
+                onClose={() => setDialog(null)}
+                aria-labelledby="responsive-dialog-title"
+                className={classes.customDialog}
+            >
+                <Box className={classes.customDialogIconBox}>
+                    <GrGroup size={60} />
+                </Box>
+                <Box className={classes.customDialogInnerbox}>
+                    <DialogTitle id="responsive-dialog-title" className={classes.customDialogTitle}>Delete Group</DialogTitle>
+                    <DialogContent>
+                        <Box>
+                            <Typography variant="subtitle1">
+                                Are you sure you want to delete following group
+                            </Typography>
+                        </Box>
+                        <Box>
+                            <Grid container spacing={2} className={classes.linePadding} >
+                                <Grid item xs={windowSize === 'xs' && 12} sm={4} className={
+                                    classes.txtCenter}>
+                                    <Button
+                                        variant='contained'
+                                        size='medium'
+                                        className={clsx(
+                                            classes.actionButton,
+                                            classes.actionButtonRed,
+                                            classes.fullWidth
+                                        )}
+                                        onClick={
+                                            () => setDialog(null)
+                                        }
+                                    >
+                                        {t('group.cancel')}
+                                    </Button>
+                                </Grid>
+                                <Grid item xs={windowSize === 'xs' && 12} sm={4} className={
+                                    classes.txtCenter}>
+                                    <Button
+                                        variant='contained'
+                                        size='medium'
+                                        className={clsx(
+                                            classes.actionButton,
+                                            classes.actionButtonLightGreen,
+                                            classes.fullWidth
+                                        )}
+                                        onClick={
+                                            //TODO: Make handler with api
+                                            () => {
+                                                const tempData = filteredData;
+                                                const result = tempData.filter((obj) => selectedGroups.indexOf(obj.GroupID) === -1)
+                                                setFilteredData(result)
+                                                setDialog(null)
+                                            }
+                                        }
+                                    >
+                                        {t('group.ok')}
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </DialogContent>
+                </Box>
+            </Dialog>
+        )
+    }
+
 
     return (
         <DefaultScreen
@@ -812,22 +899,18 @@ const GroupsManagement = ({ classes }) => {
             {renderTablePagination()}
             {renderDialog()} */}
             {/* <Loader isOpen={showLoader} /> */}
-            <Button variant="outlined" color="primary" onClick={() => setDialog(AddGroupPopUp)}>
-                Open responsive dialog
-            </Button>
-            <Button variant="outlined" color="primary" onClick={() => setDialog1(true)}>
+            {/* <Button variant="outlined" color="primary" onClick={() => setDialog1(true)}>
                 Open dialog
-            </Button>
-            <CustomPopup isOpen={!!dialog} handleClose={() => setDialog(null)} className={classes.customDialog}>
-                {dialog}
-            </CustomPopup>
-            <Dialog
+            </Button> */}
+            {AddGroupPopUp()}
+            {ConfirmDeletePopUp()}
+            {/* <Dialog
                 classes={classes}
                 open={dialog1}
                 onClose={() => setDialog1(false)}
             >
                 {getDeleteDialog()}
-            </Dialog>
+            </Dialog> */}
         </DefaultScreen>
     )
 }

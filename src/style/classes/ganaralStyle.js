@@ -2101,6 +2101,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   fullWidth: {
     width: '100%'
   },
+  width90P: {
+    width: '90%'
+  },
   errorLabel: {
     marginTop: 8,
     color: "red",
