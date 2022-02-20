@@ -69,7 +69,7 @@ const GraphReport = ({ classes, reportData, showLoader }) => {
     chart.plugins.push(new am4plugins_annotation.Annotation());
 
     return (
-        (reportData && reportData.length > 0) && <>
+        <>
             <Box style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
                 <img src={arrowDown} width={50} height={50} className={classes.pl25} alt="" />
                 <Typography className={clsx(classes.f28, classes.bold)} align='center'>{t('smsReport.amountSent')}</Typography>
