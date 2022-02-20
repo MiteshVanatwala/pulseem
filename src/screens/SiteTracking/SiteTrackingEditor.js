@@ -146,6 +146,9 @@ const SiteTrackingEditor = ({ classes }) => {
                 }
                 else {
                     response = await dispatch(post(request));
+                    if (response.payload && response.payload.data) {
+                        handleModelChange('id', response.payload.data.id);
+                    }
                 }
                 onSaveReponse(response.payload);
             }
@@ -194,7 +197,7 @@ const SiteTrackingEditor = ({ classes }) => {
                 setDialogType({ type: 'invalidDomain' })
                 break
             }
-            default: 
+            default:
             case 500: {
                 setDialogType({ type: 'serverNotAble' })
                 break;
@@ -315,8 +318,8 @@ const SiteTrackingEditor = ({ classes }) => {
         setDialogType(null);
         if (model.id && model.id !== '') {
             const pResponse = await dispatch(deletePulseemSiteTracking())
-            console.log(pResponse);
             await dispatch(deleteSiteTrackingEvent(model.id))
+            handleModelChange('id', null);
         }
         setModel(new SiteTrackingModel());
         dispatch(setSelectedGroups([]));

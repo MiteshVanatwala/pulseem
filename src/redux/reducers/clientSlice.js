@@ -31,6 +31,25 @@ export const removeSmsClient = createAsyncThunk(
     }
   });
 
+export const reactivateEmail = createAsyncThunk(
+  'client/ReactivateEmail', async (payload, thunkAPI) => {
+    try {
+      const response = await instence.put(`client/ReactivateEmail`, payload);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+export const reactivateSms = createAsyncThunk(
+  'client/ReactivateSms', async (payload, thunkAPI) => {
+    try {
+      const response = await instence.put(`client/ReactivateSms`, payload);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 
 export const clientSlice = createSlice({
