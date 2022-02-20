@@ -665,9 +665,7 @@ const MmsReport = ({ classes }) => {
                 page={page}
                 onPageChange={handlePageChange}
             />
-            {
-                mmsGraph && mmsGraph.length > 0 && <GraphReport classes={classes} showLoader={!mmsGraph || mmsGraph.length <= 0} reportData={mmsGraph} />
-            }
+            <GraphReport classes={classes} showLoader={!mmsGraph || mmsGraph.length <= 0} reportData={mmsGraph} />
             <Loader isOpen={showLoader} showBackdrop={true} />
         </DefaultScreen>
     )
