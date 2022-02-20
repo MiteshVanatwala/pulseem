@@ -1,6 +1,5 @@
 import { Box, makeStyles } from '@material-ui/core'
-import React from 'react'
-import { CopyIcon, DeleteIcon, AutomationIcon, PreviewIcon } from '../../assets/images/managment/index'
+import { CopyIcon, DeleteIcon, AutomationIcon, PreviewIcon, AddRecipient, AddRecipients, Reset, SettingsIcon } from '../../assets/images/managment/index'
 import NotAvailable from '../../assets/images/notAvailable.png'
 
 const Icons = {
@@ -23,6 +22,22 @@ const Icons = {
     preview: {
         type: 1,
         url: PreviewIcon
+    },
+    addRecipient: {
+        type: 1,
+        url: AddRecipient
+    },
+    addRecipients: {
+        type: 1,
+        url: AddRecipients
+    },
+    reset: {
+        type: 1,
+        url: Reset
+    },
+    settings: {
+        type: 1,
+        url: SettingsIcon
     },
     alert: {
         type: 2,

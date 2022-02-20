@@ -1,23 +1,20 @@
 {
   "logPageHeaderResource1": {
-    "Text": ""
+    "Text": "ניהול קבוצות נמענים"
   },
-  "PageResource1": {
-    "Title": ""
-  },
-  "deleteRecipient": "",
-  "unsubscribe": "",
-  "emails": "",
-  "sms/mms": "",
-  "totalRecipients": "",
-  "Active": "",
-  "Removed": "",
-  "Bounced": "",
-  "preview": "",
-  "automation": "",
-  "delete": "",
-  "addRecipient": "",
-  "addRecipients": "",
-  "reset": "",
-  "settings": ""
+  "deleteRecipient": "מחק מקבוצה",
+  "unsubscribe": "הסר מחשבון",
+  "emails": "מיילים",
+  "sms/mms": "SMS/MMS",
+  "totalRecipients": "סה\"כ נמענים",
+  "Active": "פעילים",
+  "Removed": "מוסרים",
+  "Bounced": "שגויים",
+  "preview": "הצג",
+  "automation": "Automation",
+  "delete": "מחק",
+  "addRecipient": "הוסף נמען",
+  "addRecipients": "הוסף נמענים",
+  "reset": "איפוס",
+  "settings": "הגדרות"
 }

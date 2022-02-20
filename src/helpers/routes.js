@@ -48,16 +48,15 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
     icon: <FaHome style={{ color: "#fff" }} />
   },
   {
-    key: 'gruops',
-    title: t('master.RadMenuItemResource8.Text'),
+    key: 'groups',
+    title: t('recipient.logPageHeaderResource1.Text'),
     iconUnicode: '\ue0d5',
-    href: '/Pulseem/Groups.aspx?fromreact=true',
+    href: '/react/groups',
     isShow: true,
     icon: <img
       alt='Groups'
       src={GroupsIcon} />,
     options: [
-      // { title: t('master.RadMenuItemResource6.Text'), href: '/Pulseem/Groups.aspx?fromreact=true', isShow: true },
       { title: t('master.RadMenuItemResource6.Text'), href: '/react/groups', isShow: true },
       { title: t('master.RadMenuItemResource7.Text'), href: '/Pulseem/ClientSearch.aspx?fromreact=true', isShow: true },
       { title: t('master.RadMenuItemResource37.Text'), href: '/Pulseem/ClientAdvancedSearch.aspx?fromreact=true', isShow: true },

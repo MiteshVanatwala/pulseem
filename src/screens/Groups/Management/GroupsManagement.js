@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core'
 import {
     AutomationIcon, DeleteIcon, DuplicateIcon, EditIcon, SendGreenIcon, SearchIcon,
-    GroupsIcon, PreviewIcon, ExportIcon
+    GroupsIcon, PreviewIcon, ExportIcon, AddRecipient
 } from '../../../assets/images/managment/index'
 import { CSVLink } from 'react-csv'
 import {
@@ -159,7 +159,7 @@ const GroupsManagement = ({ classes }) => {
         return (
             <>
                 <Typography className={classes.managementTitle}>
-                    {t('recipient.PageResource1.Title')}
+                    {t('recipient.logPageHeaderResource1.Text')}
                 </Typography>
                 <Divider />
             </>
@@ -301,7 +301,7 @@ const GroupsManagement = ({ classes }) => {
                         href={smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : "/react/sms/create"}
                         className={clsx(
                             classes.actionButton,
-                            classes.actionButtonLightGreen
+                            classes.actionButtonRed
                         )}>
                         {t('recipient.unsubscribe')}
                     </Button>
@@ -622,12 +622,14 @@ const GroupsManagement = ({ classes }) => {
                     <FlexGrid
                         gridArr={[
                             { label: t("recipient.preview"), component: <IconWrapper iconName='preview' className={classes.mxAuto} />, classes: { text: classes.wrapText } },
+                            { label: t("recipient.addRecipient"), component: <IconWrapper iconName='addRecipient' className={classes.mxAuto} />, classes: { text: classes.wrapText } },
+                            { label: t("recipient.addRecipients"), component: <IconWrapper  iconName='addRecipients' className={classes.mxAuto} />, classes: { text: classes.wrapText } },
+                            { label: t("recipient.reset"), component: <IconWrapper  iconName='reset' className={classes.mxAuto} />, classes: { text: classes.wrapText } },
+                            { label: t("recipient.settings"), component: <IconWrapper  iconName='settings' className={classes.mxAuto} />, classes: { text: classes.wrapText } },
+                            //TODO: Disable if !== null
                             { label: t("recipient.automation"), component: <IconWrapper iconName='automation' className={classes.mxAuto} />, classes: { text: classes.wrapText } },
-                            { label: t("recipient.delete"), component: <IconWrapper iconName='delete' className={classes.mxAuto} />, classes: { text: classes.wrapText } },
-                            { label: t("recipient.addRecipient"), component: <IconWrapper className={classes.mxAuto} />, classes: { text: classes.wrapText } },
-                            { label: t("recipient.addRecipients"), component: <IconWrapper className={classes.mxAuto} />, classes: { text: classes.wrapText } },
-                            { label: t("recipient.reset"), component: <IconWrapper className={classes.mxAuto} />, classes: { text: classes.wrapText } },
-                            { label: t("recipient.settings"), component: <IconWrapper className={classes.mxAuto} />, classes: { text: classes.wrapText } }
+                            //TODO: Disable if (IsConnectedToWebForm === true || IsConnectedToWebForm === true)
+                            { label: t("recipient.delete"), component: <IconWrapper iconName='delete' className={classes.mxAuto} />, classes: { text: classes.wrapText } }
 
                         ]}
                         // direction="column"
