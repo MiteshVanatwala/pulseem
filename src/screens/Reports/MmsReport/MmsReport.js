@@ -21,9 +21,8 @@ import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { MMSReportStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, setTotalSent } from '../../../helpers/exportHelper';
+import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
-import NameValueGridStructure from '../../../components/Grids/NameValueGridStructure';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import DataTable from '../../../components/Table/DataTable';
@@ -188,6 +187,13 @@ const MmsReport = ({ classes }) => {
             })
         setFilteredResults(filteredReports)
         setPage(1);
+
+        if (values.fromDate || values.toDate || values.campaignName) {
+            setFilter(true);
+        }
+        else {
+            setFilter(false);
+        }
     }
 
     //  COMPONENTS  //
@@ -230,6 +236,7 @@ const MmsReport = ({ classes }) => {
                 {windowSize !== 'xs' ?
                     <Grid item>
                         <DateField
+                            toolbarDisabled={false}
                             classes={classes}
                             value={filterValues.fromDate}
                             onChange={(value) => setFilterValues({
@@ -245,6 +252,7 @@ const MmsReport = ({ classes }) => {
                 {windowSize !== 'xs' ?
                     <Grid item>
                         <DateField
+                            toolbarDisabled={false}
                             classes={classes}
                             value={filterValues.toDate}
                             onChange={(value) => {
@@ -284,7 +292,6 @@ const MmsReport = ({ classes }) => {
                         variant='contained'
                         onClick={() => {
                             handleSearch(filterValues)
-                            setFilter(true);
                         }}
                         className={classes.searchButton}
                         endIcon={<SearchIcon />}
