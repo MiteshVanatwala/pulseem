@@ -432,15 +432,19 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const linkCalculation = () => {
-    let linksCharsAddition = 0;
-    let t = smsModel.Text.toLowerCase();
+    const text = document.getElementById("yourMessage").value;
+    let t = text.toLowerCase();
+    let totalCount = t.length;
+
+    let arr = t.split("\n");
+    setsplittedMsg(arr);
+    totalCount += (arr.length - 1);
 
     if (t && t.length > 0) {
-      const res = t.replace('\n', ' ');
+      const res = t.replace('\r\n', ' ');
       // eslint-disable-next-line
       const regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_##]*)?\??(?:[{}\-\+=&;,%@\.\w_]*)##?(?:[\.\!\/\\\w+##]*))?)/g;
       const links = res.match(regex);
-      let tempTextCount = smsModel.Text.length;
 
       if (links && links.length > 0) {
         setlinkCount(links.length);
@@ -448,21 +452,20 @@ const SmsCreator = ({ classes, ...props }) => {
           setSplittedLinks(links);
           for (var i = 0; i < links.length; i++) {
             var linkLength = links[i].length;
-            linksCharsAddition += 35 - linkLength;
+            totalCount += 35 - linkLength;
           }
-          tempTextCount += linksCharsAddition;
         }
         else {
-          if (isSiteTracking === true && smsModel.Text.includes('ref=##ClientIDEnc##')) {
-            tempTextCount += 9;
+          if (isSiteTracking === true && text.includes('ref=##ClientIDEnc##')) {
+            totalCount += 9;
           }
         }
 
-        setcharacterCount(tempTextCount);
+        setcharacterCount(totalCount);
       }
       else {
         setlinkCount(0);
-        setcharacterCount(smsModel.Text.length);
+        setcharacterCount(text.length);
       }
     }
     else {
@@ -723,15 +726,9 @@ const SmsCreator = ({ classes, ...props }) => {
     if (smsModel.Text && smsModel.Text !== "" && e.target.value.length < smsModel.Text.length) {
       handleMsgSelect();
     }
-    let arr = e.target.value.split("\n");
-    setsplittedMsg(arr);
 
-    let count = 0;
-    for (let i = 0; i < arr.length; i++) {
-      if (arr[i] != "") {
-        count++;
-      }
-    }
+    // let arr = smsModel.Text.split("\n");
+    // setcharacterCount(characterCount + (arr.length - 1));
   };
 
   const onRemovalLink = async () => {
