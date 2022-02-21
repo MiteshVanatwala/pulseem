@@ -403,7 +403,7 @@ export const smsSlice = createSlice({
     smsDataError: '',
     authorizationData: [],
     smsReport: [],
-    smsGraph: [],
+    smsGraph: null,
     previousLandingData: [],
     previousCampaignData: [],
     extraData: [],
