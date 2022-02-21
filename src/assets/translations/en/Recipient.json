@@ -16,5 +16,22 @@
   "addRecipient": "Add Recipient",
   "addRecipients": "Add Recipients",
   "reset": "Reset",
-  "settings": "Settings"
+  "settings": "Settings",
+  "emailStatus":"EmailStatus",
+  "smsStatus":"SMSStatus",
+  "creationDate":"CreationDate",
+  "firstName":"FirstName",
+  "name":"Name",
+  "email":"Email",
+  "telephone":"Telephone",
+  "cellphone":"Cellphone",
+  "address":"Address",
+  "birthdayDate":"BirthdayDate",
+  "city":"City",
+  "state":"State",
+  "country":"Country",
+  "zip":"Zip",
+  "company":"Company",
+  "reminderDate":"ReminderDate",
+  "errorMessage":"ErrorMessage"
 }

@@ -16,5 +16,22 @@
   "addRecipient": "הוסף נמען",
   "addRecipients": "הוסף נמענים",
   "reset": "איפוס",
-  "settings": "הגדרות"
+  "settings": "הגדרות",
+  "emailStatus": "סטאטוס מייל",
+  "smaStatus": "סטאטוס סמס ",
+  "creationDate": "תאריך יצירה",
+  "firstName": "שם פרטיlast ",
+  "name": "שם משפחה",
+  "email": "מייל",
+  "telephone": "מספר טלפון",
+  "cellphone": "מספר סלולרי",
+  "address": "כתובת",
+  "birthdayDate": "תאריך יום הולדת",
+  "city": "עיר",
+  "state": "מדינה",
+  "country": "ארץ",
+  "zip": "מיקוד",
+  "company": "חברה",
+  "reminderDate": "תאריך תזכורת",
+  "errorMessage": "הודעת שגיעה"
 }
