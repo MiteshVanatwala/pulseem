@@ -88,8 +88,6 @@ export const setDomain = createAsyncThunk(
   }
 )
 
-const dummy = [{ "id": "9b30b88f-b278-4969-9e0a-cd259eb8bd10", "createdAt": "2022-02-06T11:59:09.446Z", "createdBy": "s6phvaT3dhKeSU3YYU0DjA==", "domain": "pulseemdev.co.il", "eventName": "PAGE_VIEW", "actionType": "ADD_CLIENTS_TO_GROUP", "metadata": [{ "operatorKey": "CONTAINS", "operatorValue": "sms", "groupIds": [551841] }, { "operatorKey": "CONTAINS", "operatorValue": "cart", "groupIds": [551841] }] }];
-
 export const siteTrackingSlice = createSlice({
   name: 'siteTracking',
   initialState: {
@@ -110,6 +108,15 @@ export const siteTrackingSlice = createSlice({
     },
     updateMetaData: (state, action) => {
       state.event.metadata[action.payload.index][action.payload.key] = action.payload.value;
+    },
+    deleteMetaData: (state, action) => {
+      state.event.metadata = state.event.metadata.filter((item, idx) => idx !== action.payload);
+    },
+    addMetaData: (state, action) => {
+      state.event.metadata = [...state.event.metadata, action.payload];
+    },
+    resetEventModel: (state, action) => {
+      state.event = null;
     }
   },
   extraReducers: builder => {
@@ -118,8 +125,7 @@ export const siteTrackingSlice = createSlice({
         state.siteScript = payload.data;
       })
       .addCase(get.fulfilled, (state, { payload }) => {
-        console.log('get payload', payload);
-        state.event = dummy[0];
+        state.event = payload[0] ?? payload.data;
       })
       .addCase(get.rejected, (state, action) => {
         state.event = action.error.message
@@ -127,5 +133,5 @@ export const siteTrackingSlice = createSlice({
   }
 })
 
-export const { updateEventModel, updateMetaData } = siteTrackingSlice.actions
+export const { updateEventModel, updateMetaData, deleteMetaData, addMetaData, resetEventModel } = siteTrackingSlice.actions
 export default siteTrackingSlice.reducer

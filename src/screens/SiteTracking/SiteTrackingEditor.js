@@ -38,7 +38,6 @@ const SiteTrackingEditor = ({ classes }) => {
     const { ToastMessages, siteScript, event } = useSelector((state) => state.siteTracking);
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
-    const [model, setModel] = useState(new SiteTrackingModel());
     const [validationError, setValidationError] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
     const { t } = useTranslation();
@@ -69,26 +68,21 @@ const SiteTrackingEditor = ({ classes }) => {
 
     const getData = async () => {
         await dispatch(getScript());
-        const pGroups = await dispatch(getGroupsBySubAccountId());
+        await dispatch(getGroupsBySubAccountId());
         const response = await dispatch(get(EventRequestModel.PageView));
-        const retModel = response.payload;
-        if (!response.error && retModel.length !== 0) {
-            // const eventObject = retModel[0];
-            // if (eventObject.metadata && eventObject.metadata.groupIds) {
-            //     setModel(eventObject);
-            //     let gs = eventObject.metadata.groupIds.map((gid) => {
-            //         return pGroups.payload.find((g) => { return g.GroupID === gid });
-            //     });
-            //     dispatch(setSelectedGroups(gs));
-            //     //await dispatch(updateEventModel({ type: 'model', model: eventObject }))
-            // }
-            // else {
-            //     setModel(new SiteTrackingModel());
-            // }
-        }
-        else {
-            setModel(new SiteTrackingModel());
-        }
+        // const retModel = response.payload;
+        // if (!response.error && retModel.length !== 0) {
+        //     const eventObject = retModel[0];
+        //     if (eventObject.metadata && eventObject.metadata.groupIds) {
+        //         dispatch(updateEventModel(retModel[0]));
+        //     }
+        //     else {
+        //         dispatch(updateEventModel(new SiteTrackingModel()));
+        //     }
+        // }
+        // else {
+        //     dispatch(updateEventModel(new SiteTrackingModel()));
+        // }
         setShowLoader(false);
         const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
         if (hideScriptIntro !== 'true') {
@@ -98,36 +92,33 @@ const SiteTrackingEditor = ({ classes }) => {
 
     const handleModelChange = async (name, value) => {
         await dispatch(updateEventModel({ prop: name, value: value }))
-        setModel(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
     }
     const validateForm = () => {
         let isValid = true;
 
-        if (model.domain === '') {
+        if (event.domain === '') {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainRequired')])
             isValid = false;
         }
-        if (model.domain !== '' && !isValidUrl(model.domain)) {
+        if (event.domain !== '' && !isValidUrl(event.domain)) {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainNotValid')])
             isValid = false;
         }
-        if (model.metadata.groupIds.length === 0) {
-            setValidationError(oldArray => [...oldArray, t('siteTracking.validation.groupsRequired')])
-            isValid = false;
-        }
-        if (model.metadata.operatorValue === '') {
-            setValidationError(oldArray => [...oldArray, t('siteTracking.validation.pageUrlRequired')])
-            isValid = false;
-        }
+        // TODO: run on all metadata's objects
+        // if (event.metadata.groupIds.length === 0) {
+        //     setValidationError(oldArray => [...oldArray, t('siteTracking.validation.groupsRequired')])
+        //     isValid = false;
+        // }
+        // if (event.metadata.operatorValue === '') {
+        //     setValidationError(oldArray => [...oldArray, t('siteTracking.validation.pageUrlRequired')])
+        //     isValid = false;
+        // }
         return isValid;
     }
     const onSave = async () => {
         setShowLoader(true);
         if (validateForm()) {
-            const request = { ...model };
+            const request = { ...event };
             const setDomainResponse = await dispatch(setDomain({ DomainAddress: request.domain }));
             if (setDomainResponse.payload.Result === 1) {
                 let response = null;
@@ -137,7 +128,9 @@ const SiteTrackingEditor = ({ classes }) => {
                 else {
                     response = await dispatch(post(request));
                     if (response.payload && response.payload.data) {
-                        handleModelChange('id', response.payload.data.id);
+                        const id = response.payload.data.id;
+                        dispatch(updateEventModel({ prop: 'id', id }));
+                        // handleModelChange('id', response.payload.data.id);
                     }
                 }
                 onSaveReponse(response.payload);
@@ -305,12 +298,12 @@ const SiteTrackingEditor = ({ classes }) => {
     const handleDeleteEvent = async () => {
         setShowLoader(true);
         setDialogType(null);
-        if (model.id && model.id !== '') {
+        if (event.id && event.id !== '') {
             const pResponse = await dispatch(deletePulseemSiteTracking())
-            await dispatch(deleteSiteTrackingEvent(model.id))
+            await dispatch(deleteSiteTrackingEvent(event.id))
             handleModelChange('id', null);
         }
-        setModel(new SiteTrackingModel());
+        dispatch(updateEventModel(new SiteTrackingModel()));
         dispatch(setSelectedGroups([]));
         setShowLoader(false);
     }
@@ -532,7 +525,7 @@ const SiteTrackingEditor = ({ classes }) => {
             {PageHeader()}
             {renderToast()}
             {renderDialog()}
-            {model && <Box style={{ marginBottom: 'auto' }}>
+            {event && <Box style={{ marginBottom: 'auto' }}>
                 <form className={classes.root} noValidate autoComplete="off">
                     <Grid container alignItems="center">
                         <Grid item lg={12} xs={12}>
@@ -577,7 +570,7 @@ const SiteTrackingEditor = ({ classes }) => {
                                 onPaste={handleDomainAddress}
                                 variant="outlined"
                                 onChange={handleOnDomainChange}
-                                value={model.domain}
+                                value={event.domain}
                                 style={{ marginTop: isValidDomain === false || isValidDomain === true ? 2 : 0 }}
                             />
                         </Grid>

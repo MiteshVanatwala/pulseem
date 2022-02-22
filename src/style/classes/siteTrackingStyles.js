@@ -49,5 +49,14 @@ export const getSiteTrackingStyle = (windowSize, isRTL) => ({
             textAlign: isRTL ? 'right' : 'left',
             direction: 'ltr'
         }
+    },
+    deleteButtonContainer: {
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        display: 'flex',
+        marginBottom: 10,
+        '& .MuiButton-root:hover': {
+            backgroundColor: 'transparent'
+        }
     }
 });

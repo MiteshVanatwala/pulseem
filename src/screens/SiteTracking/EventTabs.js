@@ -4,17 +4,27 @@ import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, Tab } from '@material-ui/core'
+import { Grid, Tab, Button } from '@material-ui/core'
 import EventToGroups from './EventToGroups'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { addMetaData } from '../../redux/reducers/siteTrackingSlice'
 
 const EventTabs = ({ classes, setDialog }) => {
     const { t } = useTranslation();
     const [tabValue, setTabValue] = useState('PAGE_VIEW');
     const { event } = useSelector((state) => state.siteTracking);
+    const dispatch = useDispatch();
 
+    const emptyMetaData = {
+        operatorKey: "CONTAINS",
+        operatorValue: "",
+        groupIds: []
+    };
     const handleEventTab = (val) => {
         setTabValue(val);
+    }
+    const onAddEvent = () => {
+        dispatch(addMetaData(emptyMetaData));
     }
     return <TabContext value={tabValue}>
         <Grid
@@ -47,7 +57,7 @@ const EventTabs = ({ classes, setDialog }) => {
                                     key={idx}
                                     index={idx}
                                     currentEvent={mt}
-                                    // onUpdate={(k, v) => deepUpdate(k, v)}
+                                    eventsCount={event.metadata.length}
                                     classes={classes}
                                     onShowGroups={() => { setDialog({ type: 'showGroups' }) }}
                                     onHideGroups={() => { setDialog(null) }}
@@ -58,6 +68,7 @@ const EventTabs = ({ classes, setDialog }) => {
                         :
                         <></>
                 }
+                <Button onClick={onAddEvent}>+ Add event</Button>
             </TabPanel>
         })}
     </TabContext>

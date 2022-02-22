@@ -57,9 +57,9 @@ export const GroupDialog = ({ classes,
 
     const handleSelect = (id) => {
         let tempArr = [];
-        const isExist = newSelection.length > 0 && newSelection.filter((g) => { return g.GroupID === id }).length > 0;
+        const isExist = newSelection.length > 0 && newSelection.filter((g) => { return g === id }).length > 0;
         if (isExist) {
-            tempArr = newSelection.filter((g) => { return g.GroupID !== id });
+            tempArr = newSelection.filter((g) => { return g !== id });
             setNewSelection(tempArr);
         }
         else {

@@ -5,15 +5,17 @@ import { useTranslation } from 'react-i18next';
 import GroupTags from '../../components/Groups/GroupTags'
 import { EventConditions } from '../../helpers/PulseemArrays'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
-import { FormControl, Typography, TextField, Box, Select, MenuItem } from '@material-ui/core'
-import { updateMetaData } from '../../redux/reducers/siteTrackingSlice';
+import { FormControl, Typography, TextField, Box, Select, MenuItem, Button } from '@material-ui/core'
+import { updateMetaData, deleteMetaData } from '../../redux/reducers/siteTrackingSlice';
 import { Dialog } from '../../components/managment/index';
 import { GroupDialog } from '../../components/Groups/GroupDialog';
+import { DeleteIcon } from '../../assets/images/managment/index'
 
 const EventToGroups = ({
     classes,
     index = 0,
-    currentEvent = null
+    currentEvent = null,
+    eventsCount
 }) => {
     const { t } = useTranslation();
     const { isRTL, windowSize } = useSelector((state) => state.core);
@@ -33,12 +35,14 @@ const EventToGroups = ({
     const handleRemoveGroup = (newList) => {
         let newSelection = newList ? newList : [];
         setGroupSelected(newSelection);
-        dispatch(updateMetaData({ index, key: 'groupIds', newSelection }));
+        dispatch(updateMetaData({ index, key: 'groupIds', value: newSelection }));
     }
 
     useEffect(() => {
         if (currentEvent) {
             setGroupSelected(currentEvent.groupIds);
+            let newSelection = currentEvent.groupIds;
+            dispatch(updateMetaData({ index, key: 'groupIds', value: newSelection }));
         }
     }, [currentEvent]);
 
@@ -48,7 +52,7 @@ const EventToGroups = ({
             title: t('siteTracking.selectGroups'),
             groups: subAccountAllGroups,
             allowSelectAll: true,
-            groupsSelected: groupSelected,
+            groupsSelected: currentEvent.groupIds,
             onConfirm: (e) => { handleGroupSelection(e) },
             onClose: () => { setShowGroupsDialog(false) }
         });
@@ -58,7 +62,7 @@ const EventToGroups = ({
         const newSelection = e.map((g) => { return g }).filter(function (element) {
             return element !== undefined;
         });
-        dispatch(updateMetaData({ index, key: 'groupIds', newSelection }));
+        dispatch(updateMetaData({ index, key: 'groupIds', value: newSelection }));
         setGroupSelected(newSelection);
         setShowGroupsDialog(false);
     }
@@ -80,8 +84,13 @@ const EventToGroups = ({
         setShowGroupsDialog(true);
     }
 
+    const onDelete = () => {
+        dispatch(deleteMetaData(index));
+    }
+
     return <Box className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row', justifyContent: 'space-between', width: '100%' }}>
         {showGroups()}
+        {index}
         <Box style={{ display: 'flex', flexDirection: 'row', width: '50%' }}>
             <Box>
                 <Typography className={clsx(classes.buttonHead)}>
@@ -146,6 +155,12 @@ const EventToGroups = ({
                     style={{ width: windowSize === 'xs' ? 320 : 460 }}
                 />
             </Box>
+            {eventsCount > 1 && <Box className={classes.deleteButtonContainer}>
+                <Button onClick={onDelete}>
+                    <img src={DeleteIcon} alt="" style={{ width: 30, height: 30, cursor: 'pointer' }} />
+                </Button>
+            </Box>
+            }
         </Box>
     </Box>
 }
