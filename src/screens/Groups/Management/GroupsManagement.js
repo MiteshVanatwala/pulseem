@@ -84,6 +84,8 @@ import { BsInfoSquare } from "react-icons/bs";
 import { exportFile } from "../../../helpers/exportFromJson";
 import { preferredOrder } from "../../../helpers/exportHelper";
 import RenderRow from "./RenderRow";
+import RenderPhoneRow from "./RenderPhoneRow";
+import { getGroups } from "../../../redux/reducers/groupSlice";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -96,7 +98,7 @@ const GroupsManagement = ({ classes }) => {
     isRTL,
   } = useSelector((state) => state.core);
 
-  // const { smsData, smsDataError, smsDeletedData, authorizationData } = useSelector(state => state.sms)
+  const { groupData } = useSelector(state => state.group)
   // const { username } = useSelector(state => state.user)
   const { t } = useTranslation();
   const [filteredData, setFilteredData] = useState([]);
@@ -127,7 +129,7 @@ const GroupsManagement = ({ classes }) => {
   const [dialog, setDialog] = useState(null);
   // const [dialog1, setDialog1] = useState(false)
   // const [restoreArray, setRestoreArray] = useState([])
-  // const [showLoader, setLoader] = useState(true);
+  const [showLoader, setLoader] = useState(true);
   const dateFormat = "YYYY-MM-DD HH:mm:ss.FFF";
   const dispatch = useDispatch();
   moment.locale(language);
@@ -197,13 +199,13 @@ const GroupsManagement = ({ classes }) => {
   ];
 
   const getData = async () => {
-    await dispatch(getSmsData());
-    // setLoader(false);
+    await dispatch(getGroups());
+    setLoader(false);
   };
 
   useEffect(() => {
-    // setLoader(true);
-    // getData();
+    setLoader(true);
+    getData();
     handleSearch(searchStr);
   }, [dispatch]);
 
@@ -242,10 +244,10 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const handleSearch = (values) => {
-    const data = StaticData; //TODO: Replace StaticData from Data from redux
-    const result = data.filter((obj) => obj.GroupName.includes(values));
+    const data = groupData.length > 0 ? groupData : StaticData; //TODO: Replace StaticData from Data from redux
+    const result = data.filter((obj) => obj.GroupName?.toLowerCase().includes(values?.toLowerCase()));
     setFilteredData(result);
-    console.log("RESULT:", result);
+    // console.log("RESULT:", result);
     setPage(1);
   };
 
@@ -296,7 +298,7 @@ const GroupsManagement = ({ classes }) => {
           classes={classes}
           value={searchStr}
           onChange={(e) => setSearchStr(e.target.value)}
-          onClick={handleSearch}
+          onClick={() => handleSearch(searchStr)}
           onKeyPress={handleKeyPress}
           placeholder={t("common.CampaignName")}
         />
@@ -396,9 +398,8 @@ const GroupsManagement = ({ classes }) => {
             size="medium"
             href={
               smsOldVersion === "true"
-                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${
-                    isRTL ? "he-IL" : "en-US"
-                  }`
+                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
+                }`
                 : "/react/sms/create"
             }
             className={clsx(classes.actionButton, classes.actionButtonRed)}
@@ -412,9 +413,8 @@ const GroupsManagement = ({ classes }) => {
             size="medium"
             href={
               smsOldVersion === "true"
-                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${
-                    isRTL ? "he-IL" : "en-US"
-                  }`
+                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
+                }`
                 : "/react/sms/create"
             }
             className={clsx(classes.actionButton, classes.actionButtonRed)}
@@ -483,9 +483,8 @@ const GroupsManagement = ({ classes }) => {
         textClass: classes.sendIconText,
         href:
           smsOldVersion === "true"
-            ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${
-                isRTL ? "he-IL" : "en-US"
-              }`
+            ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? "he-IL" : "en-US"
+            }`
             : `/react/sms/send/${Id}`,
       },
       {
@@ -509,9 +508,8 @@ const GroupsManagement = ({ classes }) => {
         lable: t("campaigns.Image2Resource1.ToolTip"),
         href:
           smsOldVersion === "true"
-            ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${
-                isRTL ? "he-IL" : "en-US"
-              }`
+            ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? "he-IL" : "en-US"
+            }`
             : `/react/sms/edit/${Id}`,
         rootClass: classes.paddingIcon,
       },
@@ -653,7 +651,7 @@ const GroupsManagement = ({ classes }) => {
         >
           {fullwidth ? (
             <Typography
-              className={classes.nameEllipsis}
+              className={clsx(classes.nameEllipsis, classes.fullWidth)}
               style={{ maxWidth: "100%" }}
             >
               {GroupName}
@@ -671,259 +669,43 @@ const GroupsManagement = ({ classes }) => {
     );
   };
 
-  const renderRow = (row) => {
-    //TODO: Translation left, confirm keys
-
-    const {
-      ActiveCell,
-      ActiveEmails,
-      CreatedDate,
-      DynamicData,
-      DynamicLastUpdate,
-      DynamicUpdatePolicy,
-      GroupID,
-      GroupName,
-      InvalidCell,
-      InvalidEmails,
-      IsDynamic,
-      IsTestGroup,
-      PendingEmails,
-      Recipients,
-      RemovedCell,
-      RemovedEmails,
-      RestrictedEmails,
-      SubAccountID,
-      TotalRecipients,
-      UpdatedDate,
-    } = row;
-    return (
-      <TableRow key={Math.round(Math.random() * 999999999)} classes={rowStyle}>
-        <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-          <Grid container direction="row">
-            <Grid item sm={2}>
-              <FormControlLabel
-                label=""
-                className={classes.ml0}
-                control={
-                  <Checkbox
-                    checked={selectedGroups.indexOf(GroupID) !== -1}
-                    // indeterminate={}
-                    onClick={() => {
-                      handleSelected(GroupID);
-                    }}
-                  />
-                }
-              />
-            </Grid>
-            <Grid item sm={10}>
-              {renderNameCell(row)}
-            </Grid>
-          </Grid>
-        </TableCell>
-        <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-          <NameValueGridStructure
-            gridArr={[
-              {
-                name: t("recipient.totalRecipients"),
-                value: TotalRecipients,
-                classes: {
-                  name: colorTextStyle.blue,
-                  value: colorTextStyle.blue,
-                },
-              },
-              {
-                name: t("recipient.Active"),
-                value: ActiveEmails,
-                classes: {
-                  name: colorTextStyle.green,
-                  value: colorTextStyle.green,
-                },
-              },
-              {
-                name: t("recipient.Removed"),
-                value: RemovedEmails,
-                classes: {
-                  name: colorTextStyle.red,
-                  value: colorTextStyle.red,
-                },
-              },
-              {
-                name: t("recipient.Bounced"),
-                value: InvalidEmails,
-                classes: {
-                  name: colorTextStyle.red,
-                  value: colorTextStyle.red,
-                },
-              },
-            ]}
-            gridSize={{ xs: 12, sm: 3 }}
-            variant="body1"
-            align="center"
-          />
-        </TableCell>
-        <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-          <NameValueGridStructure
-            gridArr={[
-              {
-                name: t("recipient.totalRecipients"),
-                value: TotalRecipients,
-                classes: {
-                  name: colorTextStyle.blue,
-                  value: colorTextStyle.blue,
-                },
-              },
-              {
-                name: t("recipient.Active"),
-                value: ActiveCell,
-                classes: {
-                  name: colorTextStyle.green,
-                  value: colorTextStyle.green,
-                },
-              },
-              {
-                name: t("recipient.Removed"),
-                value: RemovedCell,
-                classes: {
-                  name: colorTextStyle.red,
-                  value: colorTextStyle.red,
-                },
-              },
-              {
-                name: t("recipient.Bounced"),
-                value: InvalidCell,
-                classes: {
-                  name: colorTextStyle.red,
-                  value: colorTextStyle.red,
-                },
-              },
-            ]}
-            gridSize={{ xs: 12, sm: 3 }}
-            variant="body1"
-            align="center"
-          />
-        </TableCell>
-        <TableCell
-          classes={noBorderCellStyle}
-          align="center"
-          className={classes.flex4}
-        >
-          <FlexGrid
-            gridArr={[
-              {
-                label: t("recipient.preview"),
-                component: (
-                  <IconWrapper iconName="preview" className={classes.mxAuto} />
-                ),
-                classes: { text: classes.wrapText },
-              },
-              {
-                label: t("recipient.addRecipient"),
-                component: (
-                  <IconWrapper
-                    iconName="addRecipient"
-                    className={classes.mxAuto}
-                  />
-                ),
-                classes: { text: classes.wrapText },
-              },
-              {
-                label: t("recipient.addRecipients"),
-                component: (
-                  <IconWrapper
-                    iconName="addRecipients"
-                    className={classes.mxAuto}
-                  />
-                ),
-                classes: { text: classes.wrapText },
-              },
-              {
-                label: t("recipient.reset"),
-                component: (
-                  <IconWrapper iconName="reset" className={classes.mxAuto} />
-                ),
-                classes: { text: classes.wrapText },
-              },
-              {
-                label: t("recipient.settings"),
-                component: (
-                  <IconWrapper iconName="settings" className={classes.mxAuto} />
-                ),
-                classes: { text: classes.wrapText },
-              },
-              //TODO: Disable if !== null
-              {
-                label: t("recipient.automation"),
-                component: (
-                  <IconWrapper
-                    iconName="automation"
-                    className={classes.mxAuto}
-                  />
-                ),
-                classes: { text: classes.wrapText },
-              },
-              //TODO: Disable if (IsConnectedToWebForm === true || IsConnectedToWebForm === true)
-              {
-                label: t("recipient.delete"),
-                component: (
-                  <IconWrapper
-                    iconName="delete"
-                    className={classes.mxAuto}
-                    onClick={() => setDialog(DialogType.DELETE_GROUP)}
-                  />
-                ),
-                classes: { text: classes.wrapText },
-              },
-            ]}
-            // direction="column"
-            // gridSize={{ xs: 12, sm: 2 }}
-            variant="body1"
-            align="center"
-          />
-          {/* <IconWrapper iconName='alert' classes={clsx(classes.dialogAlertIcon, colorTextStyle.red)} />
-                    <IconWrapper iconName='copy' classes={colorTextStyle.blue} /> */}
-        </TableCell>
-      </TableRow>
-    );
-  };
-
-  const renderPhoneRow = (row) => {
-    //PENDING
-    return (
-      <TableRow key={row.Id} component="div" classes={rowStyle}>
-        <TableCell
-          style={{ flex: 1 }}
-          classes={{ root: classes.tableCellRoot }}
-        >
-          <Box className={classes.justifyBetween}>
-            <Box className={classes.inlineGrid}>{renderNameCell(row)}</Box>
-            <Box>{renderStatusCell(row.Status)}</Box>
-          </Box>
-          {renderCellIcons(row)}
-        </TableCell>
-      </TableRow>
-    );
-  };
-
   const renderTableBody = useMemo(() => {
     let sortData = filteredData;
     let rpp = parseInt(rowsPerPage);
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
     return (
+      // <TableBody>
+      //   {sortData.map(windowSize === "xs" ? renderPhoneRow : renderRow)}
+      // </TableBody>
       <TableBody>
-        {sortData.map(windowSize === "xs" ? renderPhoneRow : renderRow)}
+        {sortData.map((obj) => windowSize === "xs" ?
+          <RenderPhoneRow
+            row={obj}
+            rowStyle={rowStyle}
+            cellIcons={renderCellIcons(obj)}
+            name={renderNameCell(obj, true)}
+            classes={classes}
+            colorTextStyle={colorTextStyle}
+          />
+          :
+
+          <RenderRow
+            row={obj}
+            classes={classes}
+            setDialog={(val) => setDialog(val)}
+            handleSelected={(id) => handleSelected(id)}
+            selectedGroups={selectedGroups}
+            DialogType={DialogType}
+            dateFormat={dateFormat}
+            rowStyle={rowStyle}
+            cellStyle={cellStyle}
+            noBorderCellStyle={noBorderCellStyle}
+            colorTextStyle={colorTextStyle}
+          />
+
+        )}
       </TableBody>
-      //   <RenderRow
-      //   row
-      //   classes
-      //   setDialog={(val) => setDialog(val)}
-      //   handleSelected={(id) => handleSelected(id)}
-      //   selectedGroups
-      //   DialogType
-      //   dateFormat
-      //   rowStyle
-      //   cellStyle
-      //   noBorderCellStyle
-      // />
+
     );
   }, [filteredData, rowsPerPage, page, classes, selectedGroups]);
 
@@ -1028,13 +810,13 @@ const GroupsManagement = ({ classes }) => {
                       classes.actionButtonLightGreen,
                       classes.fullWidth
                     )}
-                    // onClick={
-                    //TODO: ADD ADD Recipient Functionality
-                    //     () => setDialogType({
-                    //     type: 'restore',
-                    //     data: smsDeletedData
-                    // })
-                    // }
+                  // onClick={
+                  //TODO: ADD ADD Recipient Functionality
+                  //     () => setDialogType({
+                  //     type: 'restore',
+                  //     data: smsDeletedData
+                  // })
+                  // }
                   >
                     {t("recipient.addRecipient")}
                   </Button>
@@ -1199,7 +981,7 @@ const GroupsManagement = ({ classes }) => {
             {renderTable()}
             {renderTablePagination()}
             {renderDialog()} */}
-      {/* <Loader isOpen={showLoader} /> */}
+
       {/* <Button variant="outlined" color="primary" onClick={() => setDialog1(true)}>
                 Open dialog
             </Button> */}
@@ -1212,6 +994,7 @@ const GroupsManagement = ({ classes }) => {
             >
                 {getDeleteDialog()}
             </Dialog> */}
+      <Loader isOpen={showLoader} />
     </DefaultScreen>
   );
 };

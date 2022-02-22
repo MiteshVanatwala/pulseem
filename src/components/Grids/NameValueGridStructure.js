@@ -5,13 +5,14 @@ const NameValueGridStructure = ({ gridArr = [],
     classes = { name: {}, value: {}, href: {} },
     variant = "subtitle2",
     align = "center",
+    direction = "row",
     reverse,
     ...props
 }) => {
 
     return (
         <>
-            <Grid container direction="row" >
+            <Grid container direction={direction} >
                 {
                     gridArr.map((obj, idx) => {
                         return (

@@ -11,13 +11,33 @@ export const getGroupsBySubAccountId = createAsyncThunk(
         }
     });
 
+export const getGroups = createAsyncThunk(
+    'api/Group/Get', async (_, thunkAPI) => {
+        try {
+            const response = await instence.get(`api/Group/Get`);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+export const deleteGroups = createAsyncThunk(
+    '/api/Group/Delete', async (payload, thunkAPI) => {
+        try {
+            const response = await instence.delete(`/api/Group/Delete`, payload);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 
 export const groupSlice = createSlice({
     name: 'group',
     initialState: {
         selectedGroups: [],
-        subAccountAllGroups: []
-
+        subAccountAllGroups: [],
+        groupData: []
     },
     reducers: {
         setSelectedGroups: (state, action) => {
@@ -28,6 +48,13 @@ export const groupSlice = createSlice({
         builder.addCase(getGroupsBySubAccountId.fulfilled, (state, { payload }) => {
             state.subAccountAllGroups = payload;
         })
+        builder.addCase(getGroups.fulfilled, (state, { payload }) => {
+            state.groupData = payload.Groups;
+        })
+        builder.addCase(getGroups.fulfilled, (state, { payload }) => {
+            state.groupData = payload.Groups;
+        })
+        builder.addCase(deleteGroups.rejected, (_, action) => console.log('Error - api deleteGroups: ' + action.error))
     }
 })
 

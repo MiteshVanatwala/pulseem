@@ -20,6 +20,9 @@ export const StaticData = [
     GroupName: "Mayo Kim",
     UpdatedDate: "2018-09-22T03:29:28 -06:-30",
     CreatedDate: "2020-03-30T07:49:24 -06:-30",
+    IsAutoResponder: true,
+    IsConnectedToWebForm: true,
+    AutomationID: null
   },
   {
     ActiveCell: 517,
@@ -42,6 +45,9 @@ export const StaticData = [
     GroupName: "Barbra Lopez",
     UpdatedDate: "2016-04-09T04:46:31 -06:-30",
     CreatedDate: "2015-05-31T05:05:56 -06:-30",
+    IsAutoResponder: false,
+    IsConnectedToWebForm: false,
+    AutomationID: null
   },
   {
     ActiveCell: 872,
@@ -64,6 +70,9 @@ export const StaticData = [
     GroupName: "Mejia Mills",
     UpdatedDate: "2021-08-17T01:33:28 -06:-30",
     CreatedDate: "2018-09-03T11:43:00 -06:-30",
+    IsAutoResponder: true,
+    IsConnectedToWebForm: true,
+    AutomationID: null
   },
   {
     ActiveCell: 200,
@@ -86,6 +95,9 @@ export const StaticData = [
     GroupName: "Mcmillan Jenkins",
     UpdatedDate: "2018-02-11T11:03:51 -06:-30",
     CreatedDate: "2022-02-06T04:02:39 -06:-30",
+    IsAutoResponder: true,
+    IsConnectedToWebForm: true,
+    AutomationID: null
   },
   {
     ActiveCell: 884,
@@ -108,6 +120,9 @@ export const StaticData = [
     GroupName: "Bray Bell",
     UpdatedDate: "2014-08-10T08:30:25 -06:-30",
     CreatedDate: "2014-11-10T02:20:12 -06:-30",
+    IsAutoResponder: false,
+    IsConnectedToWebForm: false,
+    AutomationID: null
   },
   {
     ActiveCell: 183,
@@ -130,6 +145,9 @@ export const StaticData = [
     GroupName: "Brown Banks",
     UpdatedDate: "2019-04-19T08:28:11 -06:-30",
     CreatedDate: "2021-08-01T09:32:40 -06:-30",
+    IsAutoResponder: false,
+    IsConnectedToWebForm: false,
+    AutomationID: null
   },
   {
     ActiveCell: 457,
@@ -152,6 +170,9 @@ export const StaticData = [
     GroupName: "Opal Case",
     UpdatedDate: "2018-05-31T07:25:09 -06:-30",
     CreatedDate: "2018-06-08T06:18:53 -06:-30",
+    IsAutoResponder: true,
+    IsConnectedToWebForm: false,
+    AutomationID: null
   },
   {
     ActiveCell: 650,
@@ -174,6 +195,9 @@ export const StaticData = [
     GroupName: "Cohen Mccarthy",
     UpdatedDate: "2018-08-09T02:50:28 -06:-30",
     CreatedDate: "2017-05-31T03:45:47 -06:-30",
+    IsAutoResponder: false,
+    IsConnectedToWebForm: true,
+    AutomationID: null
   },
   {
     ActiveCell: 275,
@@ -196,6 +220,9 @@ export const StaticData = [
     GroupName: "Silva Holloway",
     UpdatedDate: "2015-09-14T02:37:55 -06:-30",
     CreatedDate: "2016-03-29T04:05:44 -06:-30",
+    IsAutoResponder: true,
+    IsConnectedToWebForm: true,
+    AutomationID: null
   },
   {
     ActiveCell: 452,
@@ -218,6 +245,9 @@ export const StaticData = [
     GroupName: "Kristine Ramirez",
     UpdatedDate: "2019-10-29T01:08:52 -06:-30",
     CreatedDate: "2015-11-22T04:09:21 -06:-30",
+    IsAutoResponder: true,
+    IsConnectedToWebForm: true,
+    AutomationID: null
   },
   {
     ActiveCell: 664,
@@ -240,6 +270,9 @@ export const StaticData = [
     GroupName: "Concepcion Sanford",
     UpdatedDate: "2016-07-21T11:35:21 -06:-30",
     CreatedDate: "2022-01-08T11:45:33 -06:-30",
+    IsAutoResponder: false,
+    IsConnectedToWebForm: true,
+    AutomationID: null
   },
   {
     ActiveCell: 287,
@@ -262,6 +295,9 @@ export const StaticData = [
     GroupName: "Hickman Bentley",
     UpdatedDate: "2017-08-09T12:25:55 -06:-30",
     CreatedDate: "2019-12-16T04:13:49 -06:-30",
+    IsAutoResponder: true,
+    IsConnectedToWebForm: true,
+    AutomationID: null
   },
   {
     ActiveCell: 816,
@@ -284,6 +320,9 @@ export const StaticData = [
     GroupName: "Leta Williamson",
     UpdatedDate: "2016-07-25T03:25:25 -06:-30",
     CreatedDate: "2018-04-15T10:52:01 -06:-30",
+    IsAutoResponder: true,
+    IsConnectedToWebForm: true,
+    AutomationID: null
   },
   {
     ActiveCell: 628,
@@ -306,6 +345,9 @@ export const StaticData = [
     GroupName: "Guerrero Parrish",
     UpdatedDate: "2019-10-11T01:46:25 -06:-30",
     CreatedDate: "2021-03-20T10:37:11 -06:-30",
+    IsAutoResponder: true,
+    IsConnectedToWebForm: false,
+    AutomationID: null
   },
   {
     ActiveCell: 126,
@@ -328,6 +370,9 @@ export const StaticData = [
     GroupName: "Avila Ross",
     UpdatedDate: "2020-09-24T12:50:32 -06:-30",
     CreatedDate: "2019-07-29T10:14:37 -06:-30",
+    IsAutoResponder: true,
+    IsConnectedToWebForm: true,
+    AutomationID: null
   },
   {
     ActiveCell: 676,
@@ -350,6 +395,9 @@ export const StaticData = [
     GroupName: "Nicole Haney",
     UpdatedDate: "2014-06-24T02:46:45 -06:-30",
     CreatedDate: "2020-06-01T08:02:50 -06:-30",
+    IsAutoResponder: true,
+    IsConnectedToWebForm: true,
+    AutomationID: null
   },
 ];
 

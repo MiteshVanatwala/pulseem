@@ -1,88 +1,28 @@
 import React, { useState, useEffect, useMemo } from "react";
 import DefaultScreen from "../../DefaultScreen";
+import PropTypes from 'prop-types';
 import clsx from "clsx";
 import {
   Typography,
-  Divider,
-  Table,
-  TableBody,
   TableRow,
-  TableHead,
   TableCell,
-  TableContainer,
   Grid,
-  Button,
-  TextField,
-  Box,
-  List,
-  ListItem,
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
-  ListItemSecondaryAction,
   Checkbox,
   FormControlLabel,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  useMediaQuery,
-  makeStyles,
-  useTheme,
-  Dialog,
 } from "@material-ui/core";
-import {
-  AutomationIcon,
-  DeleteIcon,
-  DuplicateIcon,
-  EditIcon,
-  SendGreenIcon,
-  SearchIcon,
-  GroupsIcon,
-  PreviewIcon,
-  ExportIcon,
-  AddRecipient,
-} from "../../../assets/images/managment/index";
-import { CSVLink } from "react-csv";
-import {
-  TablePagination,
-  ManagmentIcon,
-  DateField,
-  SearchField,
-  RestorDialogContent,
-} from "../../../components/managment/index";
-import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-import {
-  getSmsData,
-  restoreSms,
-  deleteSms,
-  duplicteSms,
-  getSmsAuthorizationData,
-  getAuthorizeNumbers,
-  sendVerificationCode,
-  verifyCode,
-  getSmsByID,
-} from "../../../redux/reducers/smsSlice";
+
+
+
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import ClearIcon from "@material-ui/icons/Clear";
 import moment from "moment";
 import "moment/locale/he";
-import { Preview } from "../../../components/Notifications/Preview/Preview";
-import { pulseemNewTab } from "../../../helpers/functions";
-import { Loader } from "../../../components/Loader/Loader";
-import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
-import { setCookie } from "../../../helpers/cookies";
+
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
-import DataTable from "../../../components/Table/DataTable";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
 import IconWrapper from "../../../components/icons/IconWrapper";
 import FlexGrid from "../../../components/Grids/FlexGrid";
-import { ExcelData, StaticData } from "../tempConstants";
-import { GrGroup } from "react-icons/gr";
-import { BsInfoSquare } from "react-icons/bs";
-import { exportFile } from "../../../helpers/exportFromJson";
-import { preferredOrder } from "../../../helpers/exportHelper";
+
 
 const RenderWebRow = ({
   row,
@@ -92,9 +32,10 @@ const RenderWebRow = ({
   dateFormat,
   rowStyle,
   cellStyle,
-  selectedGroups,
-  DialogType,
+  selectedGroups = [],
+  DialogType = {},
   noBorderCellStyle,
+  colorTextStyle
 }) => {
   const {
     language,
@@ -108,12 +49,6 @@ const RenderWebRow = ({
   //TODO: Translation left, confirm keys
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const colorTextStyle = {
-    red: classes.textColorRed,
-    blue: classes.textColorBlue,
-    green: classes.sendIconText,
-  };
-
   const {
     ActiveCell,
     ActiveEmails,
@@ -135,6 +70,9 @@ const RenderWebRow = ({
     SubAccountID,
     TotalRecipients,
     UpdatedDate,
+    IsAutoResponder,
+    IsConnectedToWebForm,
+    AutomationID
   } = row;
 
   //   const renderCellIcons = (row) => {
@@ -345,7 +283,7 @@ const RenderWebRow = ({
               className={classes.ml0}
               control={
                 <Checkbox
-                  checked={selectedGroups.indexOf(GroupID) !== -1}
+                  checked={selectedGroups?.indexOf(GroupID) !== -1}
                   // indeterminate={}
                   onClick={() => {
                     handleSelected(GroupID);
@@ -363,7 +301,7 @@ const RenderWebRow = ({
         <NameValueGridStructure
           gridArr={[
             {
-              name: t("recipient.totalRecipients"),
+              name: t("campaigns.recipients"),
               value: TotalRecipients,
               classes: {
                 name: colorTextStyle.blue,
@@ -404,7 +342,7 @@ const RenderWebRow = ({
         <NameValueGridStructure
           gridArr={[
             {
-              name: t("recipient.totalRecipients"),
+              name: t("campaigns.recipients"),
               value: TotalRecipients,
               classes: {
                 name: colorTextStyle.blue,
@@ -493,7 +431,7 @@ const RenderWebRow = ({
             {
               label: t("recipient.automation"),
               component: (
-                <IconWrapper iconName="automation" className={classes.mxAuto} />
+                <IconWrapper iconName="automation" className={AutomationID ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto} />
               ),
               classes: { text: classes.wrapText },
             },
@@ -503,7 +441,7 @@ const RenderWebRow = ({
               component: (
                 <IconWrapper
                   iconName="delete"
-                  className={classes.mxAuto}
+                  className={IsConnectedToWebForm ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
                   onClick={() => setDialog(DialogType.DELETE_GROUP)}
                 />
               ),
@@ -521,5 +459,21 @@ const RenderWebRow = ({
     </TableRow>
   );
 };
+
+
+RenderWebRow.propTypes = {
+  row: PropTypes.object,
+  classes: PropTypes.object,
+  setDialog: PropTypes.object,
+  handleSelected: PropTypes.func,
+  dateFormat: PropTypes.string,
+  rowStyle: PropTypes.object,
+  cellStyle: PropTypes.object,
+  selectedGroups: PropTypes.array,
+  DialogType: PropTypes.object,
+  noBorderCellStyle: PropTypes.object,
+  colorTextStyle: PropTypes.object
+}
+
 
 export default RenderWebRow;
