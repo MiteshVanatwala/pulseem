@@ -9,8 +9,7 @@ import IconButton from "@material-ui/core/IconButton";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import { makeStyles } from "@material-ui/core/styles";
 import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedGroups } from '../../redux/reducers/groupSlice';
+import { useSelector } from 'react-redux';
 
 
 const useStyleNew = makeStyles((theme) => ({
@@ -40,30 +39,21 @@ export const GroupDialog = ({ classes,
     onClose = () => null
 }) => {
     const [search, setSearch] = useState("");
-    const { selectedGroups } = useSelector((state) => state.group);
     const btnStyle = useStyleNew();
     const { t } = useTranslation();
     const { windowSize } = useSelector(state => state.core);
     const [selectAll, setSelectAll] = useState(false);
-    const dispatch = useDispatch();
-    const [newSelection, setNewSelection] = useState([]);
+    const [newSelection, setNewSelection] = useState(groupsSelected);
 
     const onBeforeClose = () => {
-        dispatch(setSelectedGroups(selectedGroups));
-        setNewSelection(selectedGroups);
+        setNewSelection(groupsSelected);
         setSelectAll(false);
         onClose();
     }
     const onBeforeConfirm = () => {
-        dispatch(setSelectedGroups(newSelection));
         setSelectAll(false);
-        onConfirm();
+        onConfirm(newSelection);
     }
-
-    useEffect(() => {
-        setNewSelection(groupsSelected);
-    }, [groupsSelected]);
-
 
     const handleSelect = (id) => {
         let tempArr = [];
@@ -74,13 +64,13 @@ export const GroupDialog = ({ classes,
         }
         else {
             const newItem = groups.filter((g) => { return g.GroupID === id })[0];
-            setNewSelection([...newSelection, newItem]);
+            setNewSelection([...newSelection, newItem.GroupID]);
         }
     };
 
     const handleSelectAll = () => {
         if (!selectAll) {
-            setNewSelection(groups);
+            setNewSelection(groups.map((g) => { return g.GroupID }));
         }
         else {
             setNewSelection([]);
@@ -150,14 +140,14 @@ export const GroupDialog = ({ classes,
                             }
                             return retVal;
                         }).sort((item) => {
-                            const itemChecked = newSelection.length > 0 && newSelection.filter((g) => { return g.GroupID === item.GroupID }).length > 0;
+                            const itemChecked = newSelection.length > 0 && newSelection.filter((g) => { return g === item.GroupID }).length > 0;
                             if (itemChecked) {
                                 return -1;
                             }
                             return 1;
                         })
                         .map((item, idx) => {
-                            const itemChecked = newSelection.length > 0 && newSelection.filter((g) => { return g.GroupID === item.GroupID }).length > 0
+                            const itemChecked = newSelection.length > 0 && newSelection.filter((g) => { return g === item.GroupID }).length > 0
                             return (
                                 <div key={idx} className={classes.searchCon} onClick={() => {
                                     handleSelect(item.GroupID);

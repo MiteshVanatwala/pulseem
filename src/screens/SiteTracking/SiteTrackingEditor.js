@@ -8,7 +8,7 @@ import {
     Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox
 } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
-import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking } from '../../redux/reducers/siteTrackingSlice';
+import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel, SiteTrackingModel } from '../../model/SiteTracking/SiteTrackingModel';
 import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
@@ -17,7 +17,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getCookie, setCookie } from '../../helpers/cookies';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { AiOutlineExclamationCircle } from "react-icons/ai";
-import { GroupDialog } from '../../components/Groups/GroupDialog';
 import EventTabs from './EventTabs';
 import { isValidUrl } from '../../helpers/UrlHelper';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
@@ -36,8 +35,7 @@ const renderHtml = (html) => {
 const SiteTrackingEditor = ({ classes }) => {
     // const { subAccountGroups } = useSelector((state) => state.sms);
     const { isRTL, windowSize } = useSelector(state => state.core);
-    const { selectedGroups, subAccountAllGroups } = useSelector((state) => state.group);
-    const { ToastMessages, siteScript } = useSelector((state) => state.siteTracking);
+    const { ToastMessages, siteScript, event } = useSelector((state) => state.siteTracking);
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [model, setModel] = useState(new SiteTrackingModel());
@@ -64,10 +62,10 @@ const SiteTrackingEditor = ({ classes }) => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (isValidDomain !== null || model.domain !== '') {
-            setIsValidDomain(isValidUrl(model.domain));
+        if (event && (isValidDomain !== null || event.domain !== '')) {
+            setIsValidDomain(isValidUrl(event.domain));
         }
-    }, [model.domain])
+    }, [event])
 
     const getData = async () => {
         await dispatch(getScript());
@@ -75,17 +73,18 @@ const SiteTrackingEditor = ({ classes }) => {
         const response = await dispatch(get(EventRequestModel.PageView));
         const retModel = response.payload;
         if (!response.error && retModel.length !== 0) {
-            const eventObject = retModel[0];
-            if (eventObject.metadata && eventObject.metadata.groupIds) {
-                setModel(eventObject);
-                let gs = eventObject.metadata.groupIds.map((gid) => {
-                    return pGroups.payload.find((g) => { return g.GroupID === gid });
-                });
-                dispatch(setSelectedGroups(gs));
-            }
-            else {
-                setModel(new SiteTrackingModel());
-            }
+            // const eventObject = retModel[0];
+            // if (eventObject.metadata && eventObject.metadata.groupIds) {
+            //     setModel(eventObject);
+            //     let gs = eventObject.metadata.groupIds.map((gid) => {
+            //         return pGroups.payload.find((g) => { return g.GroupID === gid });
+            //     });
+            //     dispatch(setSelectedGroups(gs));
+            //     //await dispatch(updateEventModel({ type: 'model', model: eventObject }))
+            // }
+            // else {
+            //     setModel(new SiteTrackingModel());
+            // }
         }
         else {
             setModel(new SiteTrackingModel());
@@ -97,21 +96,12 @@ const SiteTrackingEditor = ({ classes }) => {
         }
     }
 
-    const handleModelChange = (name, value) => {
+    const handleModelChange = async (name, value) => {
+        await dispatch(updateEventModel({ prop: name, value: value }))
         setModel(prevState => ({
             ...prevState,
             [name]: value
         }));
-    }
-    const deepUpdate = (keys, value) => {
-        let e = { ...model };
-        if (e[keys[0]] && e[keys[0]][keys[1]]) {
-            e[keys[0]][keys[1]] = value;
-        }
-        else {
-            e[keys] = value;
-        }
-        setModel(e);
     }
     const validateForm = () => {
         let isValid = true;
@@ -216,7 +206,6 @@ const SiteTrackingEditor = ({ classes }) => {
             validationError: validationErrorDialog(),
             scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog(),
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
-            showGroups: renderGroupsDialog(),
             deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), renderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
             invalidDomain: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), t('siteTracking.invalidDomainAddress')),
         }
@@ -466,26 +455,6 @@ const SiteTrackingEditor = ({ classes }) => {
         }
         return null;
     }
-    const handleGroupSelection = () => {
-        setDialogType(null);
-    }
-
-    useEffect(() => {
-        model.metadata.groupIds = selectedGroups.map((g) => { return g.GroupID });
-        deepUpdate(['metadata', 'groupIds'], model.metadata.groupIds);
-    }, [selectedGroups]);
-
-    const renderGroupsDialog = () => {
-        return GroupDialog({
-            classes: classes,
-            title: t('siteTracking.selectGroups'),
-            groups: subAccountAllGroups,
-            allowSelectAll: true,
-            groupsSelected: selectedGroups,
-            onConfirm: () => { handleGroupSelection() },
-            onClose: () => { setDialogType(null) }
-        });
-    }
     //#endregion Dialogs
 
     const PageHeader = () => {
@@ -614,7 +583,7 @@ const SiteTrackingEditor = ({ classes }) => {
                         </Grid>
                         <Grid item xs={12}>
                             <Typography className={clsx(classes.marginBlock20, classes.font24)}>{t("siteTracking.eventToTrack")}</Typography>
-                            <EventTabs classes={classes} model={model} deepUpdate={deepUpdate} setDialog={setDialogType} />
+                            <EventTabs classes={classes} setDialog={setDialogType} />
                         </Grid>
                     </Grid>
                 </form>

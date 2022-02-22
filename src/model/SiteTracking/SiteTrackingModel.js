@@ -14,11 +14,11 @@ export class SiteTrackingModel {
         this.eventName = eventName || EventRequestModel.PageView.eventName;
         this.domain = domain || '';
         this.actionType = actionType || ACTION_TYPES.ADD_CLIENTS_TO_GROUP;
-        this.metadata = {
+        this.metadata = [{
             operatorKey: (metadata && metadata.operatorKey) || 'CONTAINS',
             operatorValue: (metadata && metadata.operatorValue) || '',
             groupIds: (metadata && metadata.groupIds) || []
-        };
+        }];
     }
 };
 

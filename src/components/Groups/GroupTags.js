@@ -1,25 +1,41 @@
 import { useTranslation } from 'react-i18next';
-import { useDispatch, useSelector } from 'react-redux'
 import { Box } from '@material-ui/core';
 import { RiCloseFill } from "react-icons/ri";
-import { setSelectedGroups } from '../../redux/reducers/groupSlice';
 import clsx from 'clsx';
+import { useSelector } from 'react-redux'
+import React, { useState, useEffect } from 'react';
 
 const GroupTags = ({ classes,
+    groupSelected,
     title = 'mainReport.ChooseLinks',
     onShowModal = () => null,
+    onRemoveGroup = () => null,
     style = null
 }) => {
     const { t } = useTranslation();
-    const { selectedGroups } = useSelector((state) => state.group);
-    const dispatch = useDispatch();
+    const { subAccountAllGroups } = useSelector((state) => state.group);
+    const [groups, setGroups] = useState([]);
 
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();
         e.preventDefault();
-        const newList = selectedGroups.filter((g) => { return g.GroupID !== groupId });
-        dispatch(setSelectedGroups(newList));
+        const newList = groups.filter((g) => { return g.GroupID !== groupId });
+        onRemoveGroup(newList);
     }
+
+    useEffect(() => {
+        if (groupSelected && subAccountAllGroups) {
+            let tmpGroups = [];
+            groupSelected.forEach((grp) => {
+                const findGroup = subAccountAllGroups.find((g) => { return g.GroupID === grp });
+                if (findGroup) {
+                    tmpGroups.push(findGroup)
+                }
+            });
+
+            setGroups(tmpGroups);
+        }
+    }, [groupSelected])
 
     return (<Box className={classes.rightForm} style={{ ...style }}>
         <Box
@@ -27,10 +43,10 @@ const GroupTags = ({ classes,
             className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
             onClick={() => onShowModal()}
         >
-            {(!selectedGroups || selectedGroups.length <= 0) && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
-            {selectedGroups && selectedGroups.length > 0 ? (
+            {(!groups || groups.length <= 0) && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
+            {groups && groups.length > 0 ? (
                 <Box className={classes.mappedGroup} style={{ maxWidth: '100%' }}>
-                    {selectedGroups.map((item, index) => {
+                    {groups.map((item, index) => {
                         return (
                             <Box key={index} className={clsx(classes.selectedGroupsDiv)}>
                                 <span className={clsx(classes.ellipsisText, classes.nameGroup)}>

@@ -1,30 +1,87 @@
 import clsx from 'clsx';
-import { useState } from 'react';
-import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next';
 import GroupTags from '../../components/Groups/GroupTags'
 import { EventConditions } from '../../helpers/PulseemArrays'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
 import { FormControl, Typography, TextField, Box, Select, MenuItem } from '@material-ui/core'
+import { updateMetaData } from '../../redux/reducers/siteTrackingSlice';
+import { Dialog } from '../../components/managment/index';
+import { GroupDialog } from '../../components/Groups/GroupDialog';
 
 const EventToGroups = ({
     classes,
-    siteEvent,
-    onUpdate = () => null,
-    onShowGroups = () => null
+    index = 0,
+    currentEvent = null
 }) => {
     const { t } = useTranslation();
     const { isRTL, windowSize } = useSelector((state) => state.core);
+    const { subAccountAllGroups } = useSelector((state) => state.group);
     const [pageUrlIsValid, setPageUrlIsValid] = useState(null);
+    const [groupSelected, setGroupSelected] = useState([]);
+    const [showGroupsDialog, setShowGroupsDialog] = useState(false);
+
+    const dispatch = useDispatch();
 
     const updateOperationData = (e, key, value) => {
         e.preventDefault();
         setPageUrlIsValid(value !== '');
-        siteEvent.metadata[key] = value;
-        onUpdate(['metadata', key], value);
+        dispatch(updateMetaData({ index, key, value }));
+    }
+
+    const handleRemoveGroup = (newList) => {
+        let newSelection = newList ? newList : [];
+        setGroupSelected(newSelection);
+        dispatch(updateMetaData({ index, key: 'groupIds', newSelection }));
+    }
+
+    useEffect(() => {
+        if (currentEvent) {
+            setGroupSelected(currentEvent.groupIds);
+        }
+    }, [currentEvent]);
+
+    const renderGroupsDialog = () => {
+        return GroupDialog({
+            classes: classes,
+            title: t('siteTracking.selectGroups'),
+            groups: subAccountAllGroups,
+            allowSelectAll: true,
+            groupsSelected: groupSelected,
+            onConfirm: (e) => { handleGroupSelection(e) },
+            onClose: () => { setShowGroupsDialog(false) }
+        });
+    }
+
+    const handleGroupSelection = (e) => {
+        const newSelection = e.map((g) => { return g }).filter(function (element) {
+            return element !== undefined;
+        });
+        dispatch(updateMetaData({ index, key: 'groupIds', newSelection }));
+        setGroupSelected(newSelection);
+        setShowGroupsDialog(false);
+    }
+
+    const showGroups = () => {
+        const dialog = renderGroupsDialog();
+
+        return (
+            <Dialog
+                classes={classes}
+                open={showGroupsDialog}
+                onClose={() => { setShowGroupsDialog(false) }}
+                {...dialog}>
+                {dialog.content}
+            </Dialog>
+        )
+    }
+    const handleShowGroup = () => {
+        setShowGroupsDialog(true);
     }
 
     return <Box className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row', justifyContent: 'space-between', width: '100%' }}>
+        {showGroups()}
         <Box style={{ display: 'flex', flexDirection: 'row', width: '50%' }}>
             <Box>
                 <Typography className={clsx(classes.buttonHead)}>
@@ -38,8 +95,8 @@ const EventToGroups = ({
                     style={{ minWidth: 100 }}>
                     <Select
                         id="demo-simple-select-outlined"
-                        name={siteEvent.metadata && siteEvent.metadata.operatorKey}
-                        value={siteEvent.metadata && siteEvent.metadata.operatorKey}
+                        name={currentEvent && currentEvent.operatorKey}
+                        value={currentEvent && currentEvent.operatorKey}
                         onChange={e => updateOperationData(e, "operatorKey", e.target.value)}
                         style={{ direction: 'ltr', textAlign: isRTL ? 'right' : 'left' }}
                     >
@@ -65,7 +122,7 @@ const EventToGroups = ({
                     fullWidth
                     variant="outlined"
                     onChange={e => updateOperationData(e, "operatorValue", e.target.value)}
-                    value={siteEvent.metadata && siteEvent.metadata.operatorValue}
+                    value={currentEvent && currentEvent.operatorValue}
                     style={{ minWidth: 220, width: '100%', marginTop: 40 }}
                 />
             </Box>
@@ -81,14 +138,16 @@ const EventToGroups = ({
                     {t("siteTracking.addToGroups")}
                 </Typography>
                 <GroupTags
+                    groupSelected={groupSelected}
+                    onRemoveGroup={handleRemoveGroup}
                     classes={classes}
                     title={'siteTracking.typeGroupName'}
-                    onShowModal={onShowGroups}
+                    onShowModal={handleShowGroup}
                     style={{ width: windowSize === 'xs' ? 320 : 460 }}
                 />
             </Box>
         </Box>
-    </Box >
+    </Box>
 }
 
 export default EventToGroups;
