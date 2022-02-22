@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { eventsInstance, instence } from '../../helpers/api';
 import { verifyGetUrl } from '../../helpers/functions';
 import { siteTrackingScriptUrl } from '../../config/index';
@@ -88,6 +88,16 @@ export const setDomain = createAsyncThunk(
   }
 )
 
+export const makeId = () => {
+  let ID = "";
+  let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  for (var i = 0; i < 12; i++) {
+    ID += characters.charAt(Math.floor(Math.random() * 36));
+  }
+  return ID;
+}
+
+
 export const siteTrackingSlice = createSlice({
   name: 'siteTracking',
   initialState: {
@@ -99,21 +109,43 @@ export const siteTrackingSlice = createSlice({
   },
   reducers: {
     updateEventModel: (state, action) => {
-      if (action.payload.type === 'model') {
-        state.event = action.payload.model;
-      }
-      else {
-        state.event[action.payload.prop] = action.payload;
+      try {
+        const newModel = {
+          id: '',
+          eventName: 'PAGE_VIEW',
+          domain: '',
+          actionType: 'ADD_CLIENTS_TO_GROUP',
+          metadata: [{
+            id: makeId(),
+            operatorKey: 'CONTAINS',
+            operatorValue: '',
+            groupIds: []
+          }]
+        };
+        if (action.payload.type === 'model') {
+          state.event = action.payload.model;
+        }
+        else if (action.payload.type === 'new') {
+          state.event = newModel;
+        }
+        else {
+          state.event[action.payload.prop] = action.payload;
+        }
+      } catch (err) {
+        console.error(err);
       }
     },
     updateMetaData: (state, action) => {
+      //const metaData = state.event.metadata.filter((mt) => { return mt.id === action.payload.id });
       state.event.metadata[action.payload.index][action.payload.key] = action.payload.value;
     },
     deleteMetaData: (state, action) => {
-      state.event.metadata = state.event.metadata.filter((item, idx) => idx !== action.payload);
+      state.event.metadata = state.event.metadata.filter((item, idx) => item.id !== action.payload);
     },
     addMetaData: (state, action) => {
-      state.event.metadata = [...state.event.metadata, action.payload];
+      const newMetaData = action.payload;
+      newMetaData.id = makeId();
+      state.event.metadata = [...state.event.metadata, newMetaData];
     },
     resetEventModel: (state, action) => {
       state.event = null;

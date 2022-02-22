@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel } from '../../redux/reducers/siteTrackingSlice';
-import { EventRequestModel, SiteTrackingModel } from '../../model/SiteTracking/SiteTrackingModel';
+import { EventRequestModel } from '../../model/SiteTracking/SiteTrackingModel';
 import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
 import Toast from '../../components/Toast/Toast.component';
@@ -64,25 +64,22 @@ const SiteTrackingEditor = ({ classes }) => {
         if (event && (isValidDomain !== null || event.domain !== '')) {
             setIsValidDomain(isValidUrl(event.domain));
         }
-    }, [event])
+    }, [event]);
 
     const getData = async () => {
         await dispatch(getScript());
         await dispatch(getGroupsBySubAccountId());
         const response = await dispatch(get(EventRequestModel.PageView));
-        // const retModel = response.payload;
-        // if (!response.error && retModel.length !== 0) {
-        //     const eventObject = retModel[0];
-        //     if (eventObject.metadata && eventObject.metadata.groupIds) {
-        //         dispatch(updateEventModel(retModel[0]));
-        //     }
-        //     else {
-        //         dispatch(updateEventModel(new SiteTrackingModel()));
-        //     }
-        // }
-        // else {
-        //     dispatch(updateEventModel(new SiteTrackingModel()));
-        // }
+        const retModel = response.payload;
+        if (!response.error && retModel.length !== 0) {
+            const eventObject = retModel[0];
+            if (!eventObject.metadata) {
+                dispatch(updateEventModel({ type: 'new' }));
+            }
+        }
+        else {
+            dispatch(updateEventModel({ type: 'new' }));
+        }
         setShowLoader(false);
         const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
         if (hideScriptIntro !== 'true') {
@@ -130,7 +127,6 @@ const SiteTrackingEditor = ({ classes }) => {
                     if (response.payload && response.payload.data) {
                         const id = response.payload.data.id;
                         dispatch(updateEventModel({ prop: 'id', id }));
-                        // handleModelChange('id', response.payload.data.id);
                     }
                 }
                 onSaveReponse(response.payload);
@@ -303,7 +299,7 @@ const SiteTrackingEditor = ({ classes }) => {
             await dispatch(deleteSiteTrackingEvent(event.id))
             handleModelChange('id', null);
         }
-        dispatch(updateEventModel(new SiteTrackingModel()));
+        dispatch(updateEventModel({ type: "new" }));
         dispatch(setSelectedGroups([]));
         setShowLoader(false);
     }

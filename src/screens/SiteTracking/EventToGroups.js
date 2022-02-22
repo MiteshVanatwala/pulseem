@@ -29,22 +29,24 @@ const EventToGroups = ({
     const updateOperationData = (e, key, value) => {
         e.preventDefault();
         setPageUrlIsValid(value !== '');
-        dispatch(updateMetaData({ index, key, value }));
+        dispatch(updateMetaData({ index, key, value, id: currentEvent.id }));
     }
 
     const handleRemoveGroup = (newList) => {
         let newSelection = newList ? newList : [];
         setGroupSelected(newSelection);
-        dispatch(updateMetaData({ index, key: 'groupIds', value: newSelection }));
+        dispatch(updateMetaData({ index, key: 'groupIds', value: newSelection, id: currentEvent.id }));
     }
 
     useEffect(() => {
         if (currentEvent) {
             setGroupSelected(currentEvent.groupIds);
             let newSelection = currentEvent.groupIds;
-            dispatch(updateMetaData({ index, key: 'groupIds', value: newSelection }));
+            dispatch(updateMetaData({ index, key: 'groupIds', value: newSelection, id: currentEvent.id }));
         }
     }, [currentEvent]);
+
+    console.log(currentEvent.groupIds);
 
     const renderGroupsDialog = () => {
         return GroupDialog({
@@ -62,7 +64,7 @@ const EventToGroups = ({
         const newSelection = e.map((g) => { return g }).filter(function (element) {
             return element !== undefined;
         });
-        dispatch(updateMetaData({ index, key: 'groupIds', value: newSelection }));
+        dispatch(updateMetaData({ index, key: 'groupIds', value: newSelection, id: currentEvent.id }));
         setGroupSelected(newSelection);
         setShowGroupsDialog(false);
     }
@@ -85,12 +87,11 @@ const EventToGroups = ({
     }
 
     const onDelete = () => {
-        dispatch(deleteMetaData(index));
+        dispatch(deleteMetaData(currentEvent.id));
     }
 
     return <Box className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row', justifyContent: 'space-between', width: '100%' }}>
         {showGroups()}
-        {index}
         <Box style={{ display: 'flex', flexDirection: 'row', width: '50%' }}>
             <Box>
                 <Typography className={clsx(classes.buttonHead)}>
