@@ -68,7 +68,7 @@ const EventTabs = ({ classes, setDialog }) => {
                         :
                         <></>
                 }
-                <Button onClick={onAddEvent}>+ Add event</Button>
+                <Button onClick={onAddEvent}>{t("siteTracking.addEvent")}</Button>
             </TabPanel>
         })}
     </TabContext>
