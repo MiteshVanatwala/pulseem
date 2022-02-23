@@ -2,5 +2,6 @@
   "new": "צור קבוצה",
   "delete": "מחק נמענים",
   "ok": "אישור",
-  "cancel": "ביטול"
+  "cancel": "ביטול",
+  "deleteConfirm": ""
 }

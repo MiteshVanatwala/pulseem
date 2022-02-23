@@ -35,7 +35,8 @@ const RenderWebRow = ({
   selectedGroups = [],
   DialogType = {},
   noBorderCellStyle,
-  colorTextStyle
+  colorTextStyle,
+  setSelectedGroups
 }) => {
   const {
     language,
@@ -442,7 +443,10 @@ const RenderWebRow = ({
                 <IconWrapper
                   iconName="delete"
                   className={IsConnectedToWebForm ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
-                  onClick={() => setDialog(DialogType.DELETE_GROUP)}
+                  onClick={() => {
+                    setSelectedGroups(GroupID)
+                    setDialog(DialogType.DELETE_GROUP)
+                  }}
                 />
               ),
               classes: { text: classes.wrapText },

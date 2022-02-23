@@ -85,7 +85,8 @@ import { exportFile } from "../../../helpers/exportFromJson";
 import { preferredOrder } from "../../../helpers/exportHelper";
 import RenderRow from "./RenderRow";
 import RenderPhoneRow from "./RenderPhoneRow";
-import { getGroups } from "../../../redux/reducers/groupSlice";
+import { getGroups, deleteGroups, createGroup } from "../../../redux/reducers/groupSlice";
+import { deleteFromGroups } from "../../../redux/reducers/clientSlice";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -250,6 +251,32 @@ const GroupsManagement = ({ classes }) => {
     // console.log("RESULT:", result);
     setPage(1);
   };
+
+  const handleAddGroup = async (data) => {
+    // const data = {
+    //   ...newGroupData,
+    //   // GroupID: Math.random() * 1000000,
+    // };
+    // setFilteredData([...filteredData, data]);
+    // setNewGroupData(DEFAULT_NEW_GROUP);
+    try {
+      await dispatch(createGroup(data))
+      setDialog(null);
+    }
+    catch (err) {
+      return false;
+    }
+  }
+  const handleDeleteGroup = async () => {
+    // const tempData = filteredData;
+    // const result = tempData.filter(
+    //   (obj) => selectedGroups.indexOf(obj.GroupID) === -1
+    // );
+    await dispatch(deleteGroups(selectedGroups))
+    setSelectedGroups([]);
+    // setFilteredData(result);
+    setDialog(null);
+  }
 
   const handleSelected = (id) => {
     const index = selectedGroups.indexOf(id);
@@ -688,19 +715,20 @@ const GroupsManagement = ({ classes }) => {
             colorTextStyle={colorTextStyle}
           />
           :
-
           <RenderRow
             row={obj}
             classes={classes}
             setDialog={(val) => setDialog(val)}
             handleSelected={(id) => handleSelected(id)}
             selectedGroups={selectedGroups}
+            setSelectedGroups={(id) => setSelectedGroups([id])}
             DialogType={DialogType}
             dateFormat={dateFormat}
             rowStyle={rowStyle}
             cellStyle={cellStyle}
             noBorderCellStyle={noBorderCellStyle}
             colorTextStyle={colorTextStyle}
+            handleDeleteGroup={handleDeleteGroup}
           />
 
         )}
@@ -838,13 +866,10 @@ const GroupsManagement = ({ classes }) => {
                     onClick={
                       //TODO: Make handler with api
                       () => {
-                        const data = {
-                          ...newGroupData,
-                          GroupID: Math.random() * 1000000,
-                        };
-                        setFilteredData([...filteredData, data]);
-                        setNewGroupData(DEFAULT_NEW_GROUP);
-                        setDialog(null);
+                        const result = handleAddGroup(newGroupData)
+                        if (result) {
+                          setNewGroupData(DEFAULT_NEW_GROUP)
+                        }
                       }
                     }
                   >
@@ -877,12 +902,12 @@ const GroupsManagement = ({ classes }) => {
             id="responsive-dialog-title"
             className={classes.customDialogTitle}
           >
-            Delete Group
+            {t("group.delete")}
           </DialogTitle>
           <DialogContent>
             <Box>
               <Typography variant="subtitle1">
-                Are you sure you want to delete following group
+                {t("group.deleteConfirm")}
               </Typography>
             </Box>
             <Box>
@@ -922,14 +947,7 @@ const GroupsManagement = ({ classes }) => {
                     )}
                     onClick={
                       //TODO: Make handler with api
-                      () => {
-                        const tempData = filteredData;
-                        const result = tempData.filter(
-                          (obj) => selectedGroups.indexOf(obj.GroupID) === -1
-                        );
-                        setFilteredData(result);
-                        setDialog(null);
-                      }
+                      () => handleDeleteGroup()
                     }
                   >
                     {t("group.ok")}
