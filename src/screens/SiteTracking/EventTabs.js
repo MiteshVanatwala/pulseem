@@ -8,6 +8,7 @@ import { Grid, Tab, Button } from '@material-ui/core'
 import EventToGroups from './EventToGroups'
 import { useDispatch, useSelector } from 'react-redux'
 import { addMetaData } from '../../redux/reducers/siteTrackingSlice'
+import { AiOutlinePlusCircle } from "react-icons/ai";
 
 const EventTabs = ({ classes, setDialog }) => {
     const { t } = useTranslation();
@@ -69,7 +70,10 @@ const EventTabs = ({ classes, setDialog }) => {
                         :
                         <></>
                 }
-                <Button onClick={onAddEvent}>{t("siteTracking.addEvent")}</Button>
+                <Button onClick={onAddEvent}>
+                    <AiOutlinePlusCircle className={classes.addOptionsIcon} />
+                    {t("siteTracking.addEvent")}
+                </Button>
             </TabPanel>
         })}
     </TabContext>
