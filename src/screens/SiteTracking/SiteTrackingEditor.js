@@ -101,15 +101,18 @@ const SiteTrackingEditor = ({ classes }) => {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainNotValid')])
             isValid = false;
         }
-        // TODO: run on all metadata's objects
-        // if (event.metadata.groupIds.length === 0) {
-        //     setValidationError(oldArray => [...oldArray, t('siteTracking.validation.groupsRequired')])
-        //     isValid = false;
-        // }
-        // if (event.metadata.operatorValue === '') {
-        //     setValidationError(oldArray => [...oldArray, t('siteTracking.validation.pageUrlRequired')])
-        //     isValid = false;
-        // }
+        event.metadata.forEach((mt) => {
+            if (mt.groupIds.length === 0) {
+                setValidationError(oldArray => [...oldArray, t('siteTracking.validation.groupsRequired')])
+                isValid = false;
+            }
+            if (mt.operatorValue === '') {
+                setValidationError(oldArray => [...oldArray, t('siteTracking.validation.pageUrlRequired')])
+                isValid = false;
+                const el = document.getElementById(mt.id);
+                el.querySelector('input[type="text"]').classList.add('error');
+            }
+        });
         return isValid;
     }
     const onSave = async () => {

@@ -54,6 +54,7 @@ const EventTabs = ({ classes, setDialog }) => {
                         <>
                             {event.metadata.map((mt, idx) => {
                                 return <EventToGroups
+                                    id={mt.id}
                                     key={idx}
                                     index={idx}
                                     currentEvent={mt}

@@ -27,7 +27,7 @@ export const update = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
       const response = await eventsInstance.patch(`events/${data.id}`, data);
-      return response;
+      return { status: response.status, data: response.data };
     } catch (error) {
       return thunkAPI.rejectWithValue({ status: error.statusCode });
     }

@@ -288,9 +288,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pt2rem: {
     paddingTop: "2rem",
   },
-  pt0: {
-    paddingTop: 0
-  },
   pt10: {
     paddingTop: 10,
   },
@@ -299,9 +296,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pt2: {
     paddingTop: 1.4,
-  },
-  pb0: {
-    paddingBottom: 0
   },
   pb0: {
     paddingBottom: 0
@@ -368,9 +362,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   f12: {
     fontSize: 12,
-  },
-  mt20: {
-    marginTop: 20
   },
   f14: {
     fontSize: 14,
@@ -556,9 +547,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mr5: {
     marginRight: 5
   },
-  ml5: {
-    marginLeft: 5
-  },
   font13: {
     fontSize: 13
   },
@@ -610,7 +598,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   blueLink: {
-    textDecoration: 'none',
     color: '#0371ad',
     textTransform: 'capitalize',
     lineHeight: 1,
@@ -621,9 +608,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&:hover': {
       backgroundColor: 'transparent'
     }
-  },
-  floatRight: {
-    float: 'right'
   },
   size150: {
     width: 127,
@@ -2051,9 +2035,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mb25: {
     marginBottom: 25
-  },
-  mt25: {
-    marginTop: 25
   },
   fullSize: {
     height: '100%',

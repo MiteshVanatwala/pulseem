@@ -90,7 +90,7 @@ const EventToGroups = ({
         dispatch(deleteMetaData(currentEvent.id));
     }
 
-    return <Box className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row', justifyContent: 'space-between', width: '100%' }}>
+    return <Box id={currentEvent.id} className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row', justifyContent: 'space-between', width: '100%' }}>
         {showGroups()}
         <Box style={{ display: 'flex', flexDirection: 'row', width: '50%' }}>
             <Box>
