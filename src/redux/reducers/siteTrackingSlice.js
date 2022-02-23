@@ -124,6 +124,14 @@ export const siteTrackingSlice = createSlice({
         };
         if (action.payload.type === 'model') {
           state.event = action.payload.model;
+          if (state.event.metadata) {
+            state.event.metadata.map((mt) => {
+              if (!mt.id || mt.id === '') {
+                mt.id = makeId();
+              }
+              return mt;
+            });
+          }
         }
         else if (action.payload.type === 'new') {
           state.event = newModel;
@@ -136,8 +144,12 @@ export const siteTrackingSlice = createSlice({
       }
     },
     updateMetaData: (state, action) => {
-      //const metaData = state.event.metadata.filter((mt) => { return mt.id === action.payload.id });
-      state.event.metadata[action.payload.index][action.payload.key] = action.payload.value;
+      state.event.metadata.map((item) => {
+        if (item.id === action.payload.id) {
+          item[action.payload.key] = action.payload.value;
+        }
+        return item;
+      });
     },
     deleteMetaData: (state, action) => {
       state.event.metadata = state.event.metadata.filter((item, idx) => item.id !== action.payload);
@@ -149,6 +161,10 @@ export const siteTrackingSlice = createSlice({
     },
     resetEventModel: (state, action) => {
       state.event = null;
+    },
+    getCurrentEventGroups: (state, action) => {
+      const currentEvent = state.event.metadata.filter((item) => item.id === action.payload);
+      return currentEvent.groupIds;
     }
   },
   extraReducers: builder => {
@@ -158,6 +174,14 @@ export const siteTrackingSlice = createSlice({
       })
       .addCase(get.fulfilled, (state, { payload }) => {
         state.event = payload[0] ?? payload.data;
+        if (state.event.metadata) {
+          state.event.metadata.map((mt) => {
+            if (!mt.id || mt.id === '') {
+              mt.id = makeId();
+            }
+            return mt;
+          });
+        }
       })
       .addCase(get.rejected, (state, action) => {
         state.event = action.error.message
@@ -165,5 +189,12 @@ export const siteTrackingSlice = createSlice({
   }
 })
 
-export const { updateEventModel, updateMetaData, deleteMetaData, addMetaData, resetEventModel } = siteTrackingSlice.actions
+export const {
+  addMetaData,
+  updateMetaData,
+  deleteMetaData,
+  resetEventModel,
+  updateEventModel,
+  getCurrentEventGroups
+} = siteTrackingSlice.actions
 export default siteTrackingSlice.reducer

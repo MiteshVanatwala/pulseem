@@ -6,7 +6,7 @@ import GroupTags from '../../components/Groups/GroupTags'
 import { EventConditions } from '../../helpers/PulseemArrays'
 import { FaArrowCircleLeft, FaArrowCircleRight } from 'react-icons/fa'
 import { FormControl, Typography, TextField, Box, Select, MenuItem, Button } from '@material-ui/core'
-import { updateMetaData, deleteMetaData } from '../../redux/reducers/siteTrackingSlice';
+import { updateMetaData, deleteMetaData, getCurrentEventGroups } from '../../redux/reducers/siteTrackingSlice';
 import { Dialog } from '../../components/managment/index';
 import { GroupDialog } from '../../components/Groups/GroupDialog';
 import { DeleteIcon } from '../../assets/images/managment/index'
@@ -20,6 +20,7 @@ const EventToGroups = ({
     const { t } = useTranslation();
     const { isRTL, windowSize } = useSelector((state) => state.core);
     const { subAccountAllGroups } = useSelector((state) => state.group);
+    const { event } = useSelector((state) => state.siteTracking);
     const [pageUrlIsValid, setPageUrlIsValid] = useState(null);
     const [groupSelected, setGroupSelected] = useState([]);
     const [showGroupsDialog, setShowGroupsDialog] = useState(false);
@@ -46,15 +47,14 @@ const EventToGroups = ({
         }
     }, [currentEvent]);
 
-    console.log(currentEvent.groupIds);
-
     const renderGroupsDialog = () => {
+        const currentMetaData = event.metadata.find((item) => { return item.id === currentEvent.id });
         return GroupDialog({
             classes: classes,
             title: t('siteTracking.selectGroups'),
             groups: subAccountAllGroups,
             allowSelectAll: true,
-            groupsSelected: currentEvent.groupIds,
+            groupsSelected: currentMetaData.groupIds,
             onConfirm: (e) => { handleGroupSelection(e) },
             onClose: () => { setShowGroupsDialog(false) }
         });

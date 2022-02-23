@@ -43,7 +43,7 @@ export const GroupDialog = ({ classes,
     const { t } = useTranslation();
     const { windowSize } = useSelector(state => state.core);
     const [selectAll, setSelectAll] = useState(false);
-    const [newSelection, setNewSelection] = useState(groupsSelected);
+    const [newSelection, setNewSelection] = useState([]);
 
     const onBeforeClose = () => {
         setNewSelection(groupsSelected);
@@ -54,6 +54,12 @@ export const GroupDialog = ({ classes,
         setSelectAll(false);
         onConfirm(newSelection);
     }
+
+    useEffect(() => {
+        if (groupsSelected) {
+            setNewSelection(groupsSelected);
+        }
+    }, [groupsSelected]);
 
     const handleSelect = (id) => {
         let tempArr = [];
