@@ -382,7 +382,7 @@ const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize } = useSelector(state => state.core)
   screenSize && dispatch(setWindowSize(screenSize))
-
+  
   useEffect(() => {
 
     const initFeatures = async () => {
