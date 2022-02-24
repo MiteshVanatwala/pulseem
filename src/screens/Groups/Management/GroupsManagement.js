@@ -78,7 +78,7 @@ import DataTable from "../../../components/Table/DataTable";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
 import IconWrapper from "../../../components/icons/IconWrapper";
 import FlexGrid from "../../../components/Grids/FlexGrid";
-import { ExcelData, StaticData } from "../tempConstants";
+// import { ExcelData, StaticData } from "../tempConstants";
 import { GrGroup } from "react-icons/gr";
 import { BsInfoSquare } from "react-icons/bs";
 import { exportFile } from "../../../helpers/exportFromJson";
@@ -100,21 +100,14 @@ const GroupsManagement = ({ classes }) => {
   } = useSelector((state) => state.core);
 
   const { groupData } = useSelector(state => state.group)
-  // const { username } = useSelector(state => state.user)
   const { t } = useTranslation();
   const [filteredData, setFilteredData] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [filter, setFilter] = useState(false);
-  // const [fromDate, handleFromDate] = useState(null);
-  // const [toDate, handleToDate] = useState(null);
-  // const [number, handleNumber] = useState('');
-  // const [numberError, handleNumberError] = useState(false);
-  // const [verificationCode, handleVerificationCodeInput] = useState('');
-  // const [verificationCodeError, handleVerificationCodeError] = useState(false);
   const [groupNameSearch, setGroupNameSearch] = useState("");
-  // const rowsOptions = [6, 10, 20, 50]
   const [page, setPage] = useState(1);
+  const [serachData, setSearchData] = useState({ PageIndex: 1, PageSize: rowsPerPage, SearchTerm: '' })
   // const [isSearching, setSearching] = useState(false)
   // const [searchResults, setSearchResults] = useState(null)
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
@@ -128,8 +121,6 @@ const GroupsManagement = ({ classes }) => {
     root: clsx(classes.tableCellRoot, classes.minWidth50),
   };
   const [dialog, setDialog] = useState(null);
-  // const [dialog1, setDialog1] = useState(false)
-  // const [restoreArray, setRestoreArray] = useState([])
   const [showLoader, setLoader] = useState(true);
   const dateFormat = "YYYY-MM-DD HH:mm:ss.FFF";
   const dispatch = useDispatch();
@@ -200,7 +191,7 @@ const GroupsManagement = ({ classes }) => {
   ];
 
   const getData = async () => {
-    await dispatch(getGroups());
+    await dispatch(getGroups({ PageIndex: page, PageSize: rowsPerPage, SearchTerm: searchStr }));
     setLoader(false);
   };
 
@@ -232,7 +223,7 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const handleDownloadCsv = async () => {
-    let orderList = preferredOrder(ExcelData, Object.keys(exportColumnHeader));
+    let orderList = preferredOrder(groupData.Groups, Object.keys(exportColumnHeader));
     // orderList = await statusNumberToString(t, orderList, MMSReportStatus);
     // orderList = await formatDateTime(orderList, t);
     // orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
@@ -245,11 +236,12 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const handleSearch = (values) => {
-    const data = groupData.length > 0 ? groupData : StaticData; //TODO: Replace StaticData from Data from redux
-    const result = data.filter((obj) => obj.GroupName?.toLowerCase().includes(values?.toLowerCase()));
-    setFilteredData(result);
-    // console.log("RESULT:", result);
-    setPage(1);
+    if (groupData !== null) {
+      const result = groupData.Groups.filter((obj) => obj.GroupName?.toLowerCase().includes(values?.toLowerCase()));
+      setFilteredData(result);
+      // console.log("RESULT:", result);
+      setPage(1);
+    }
   };
 
   const handleAddGroup = async (data) => {
@@ -488,7 +480,7 @@ const GroupsManagement = ({ classes }) => {
           className={classes.groupsLableContainer}
         >
           <Typography className={classes.groupsLable}>
-            {`${filteredData.length} ${t("mms.campaigns")}`}
+            {`${groupData ? groupData.RecordCount : 0} ${t("common.Groups")}`}
           </Typography>
         </Grid>
       </Grid>
@@ -697,7 +689,11 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const renderTableBody = useMemo(() => {
-    let sortData = filteredData;
+    let sortData = groupData ? groupData.Groups : [];
+    if (sortData.length <= 0) {
+      return <></>;
+    }
+
     let rpp = parseInt(rowsPerPage);
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
     return (
@@ -961,6 +957,8 @@ const GroupsManagement = ({ classes }) => {
     );
   };
 
+  const groupsLength = (groupData && groupData.RecordCount) || 0;
+
   return (
     <DefaultScreen
       currentPage="groups"
@@ -985,7 +983,7 @@ const GroupsManagement = ({ classes }) => {
       <TablePagination
         classes={classes}
         // rows={isSearching ? searchResults.length : smsData.length}
-        rows={filteredData.length}
+        rows={groupsLength}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={[6, 10, 20, 50]}

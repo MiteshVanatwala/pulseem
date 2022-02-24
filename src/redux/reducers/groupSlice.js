@@ -12,9 +12,9 @@ export const getGroupsBySubAccountId = createAsyncThunk(
     });
 
 export const getGroups = createAsyncThunk(
-    'api/Group/Get', async (_, thunkAPI) => {
+    'Group/Get', async (data, thunkAPI) => {
         try {
-            const response = await instence.get(`api/Group/Get`);
+            const response = await instence.post(`Group/Get`, data);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -22,9 +22,9 @@ export const getGroups = createAsyncThunk(
     });
 
 export const createGroup = createAsyncThunk(
-    '/api/Group/Create', async (payload, thunkAPI) => {
+    'Group/Create', async (payload, thunkAPI) => {
         try {
-            const response = await instence.delete(`/api/Group/Create`, payload);
+            const response = await instence.delete(`Group/Create`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -32,9 +32,9 @@ export const createGroup = createAsyncThunk(
     });
 
 export const deleteGroups = createAsyncThunk(
-    '/api/Group/Delete', async (payload, thunkAPI) => {
+    'Group/Delete', async (payload, thunkAPI) => {
         try {
-            const response = await instence.delete(`/api/Group/Delete`, payload);
+            const response = await instence.delete(`Group/Delete`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -47,7 +47,7 @@ export const groupSlice = createSlice({
     initialState: {
         selectedGroups: [],
         subAccountAllGroups: [],
-        groupData: [],
+        groupData: null,
         error: ""
     },
     reducers: {
@@ -60,7 +60,7 @@ export const groupSlice = createSlice({
             state.subAccountAllGroups = payload;
         })
         builder.addCase(getGroups.fulfilled, (state, { payload }) => {
-            state.groupData = payload.Groups;
+            state.groupData = payload;
         })
         builder.addCase(createGroup.rejected, (state, { error }) => {
             state.error = error.message;
