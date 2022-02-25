@@ -1,47 +1,46 @@
 import { Box, TableCell, TableRow, Typography } from '@material-ui/core'
-import React from 'react'
+// import React from 'react'
 import PropTypes from 'prop-types';
 import clsx from "clsx";
 import NameValueGridStructure from '../../../components/Grids/NameValueGridStructure';
 import { useTranslation } from "react-i18next";
-import FlexGrid from '../../../components/Grids/FlexGrid';
+// import FlexGrid from '../../../components/Grids/FlexGrid';
 import IconWrapper from '../../../components/icons/IconWrapper';
 
 
 
-const RenderPhoneRow = ({ cellIcons, name, classes, rowStyle, row, colorTextStyle }) => {
+const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelectedGroups, setDialog, DialogType }) => {
     const { t } = useTranslation();
     const {
         ActiveCell,
         ActiveEmails,
-        CreatedDate,
-        DynamicData,
-        DynamicLastUpdate,
-        DynamicUpdatePolicy,
         GroupID,
-        GroupName,
         InvalidCell,
         InvalidEmails,
-        IsDynamic,
-        IsTestGroup,
-        PendingEmails,
-        Recipients,
         RemovedCell,
         RemovedEmails,
-        RestrictedEmails,
-        SubAccountID,
         TotalRecipients,
-        UpdatedDate,
     } = row;
     return (
         <TableRow key={GroupID} component="div" classes={rowStyle}>
             <TableCell
                 style={{ flex: 1 }}
                 classes={{ root: classes.tableCellRoot }}
+                className={classes.p10}
             >
                 <Box className={classes.justifyBetween}>
-                    <Box className={clsx(classes.inlineGrid, classes.fullWidth)}>{name}</Box>
-                    {/* <Box>{renderStatusCell(row.Status)}</Box> */}
+                    <Box className={classes.inlineGrid}>{name}</Box>
+                    <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
+                        <IconWrapper
+                            iconName="addRecipients"
+                            className={classes.mxAuto}
+                            onClick={() => {
+                                setSelectedGroups(GroupID)
+                                setDialog(DialogType.DELETE_GROUP)
+                            }}
+                        />
+                        <Typography variant="body1" className={classes.text}>{t("recipient.addRecipient")}</Typography>
+                    </Box>
                 </Box>
                 <Box className={classes.mt3}>
                     <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.emails")}</Typography>
@@ -128,8 +127,6 @@ const RenderPhoneRow = ({ cellIcons, name, classes, rowStyle, row, colorTextStyl
                         align="center"
                     />
                 </Box>
-
-                {cellIcons}
             </TableCell>
         </TableRow>
     )
@@ -140,14 +137,10 @@ RenderPhoneRow.propTypes = {
     classes: PropTypes.object,
     name: PropTypes.string,
     cellIcons: PropTypes.any,
-    rowStyle: PropTypes.object
-    // setDialog: PropTypes.object,
-    // handleSelected: PropTypes.func,
-    // dateFormat: PropTypes.string,
-    // cellStyle: PropTypes.object,
-    // selectedGroups: PropTypes.array,
-    // DialogType: PropTypes.object,
-    // noBorderCellStyle: PropTypes.object,
+    rowStyle: PropTypes.object,
+    setSelectedGroups: PropTypes.func,
+    setDialog: PropTypes.func,
+    DialogType: PropTypes.object
 }
 
 export default RenderPhoneRow

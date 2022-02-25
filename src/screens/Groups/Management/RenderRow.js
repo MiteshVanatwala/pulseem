@@ -1,5 +1,3 @@
-import React, { useState, useEffect, useMemo } from "react";
-import DefaultScreen from "../../DefaultScreen";
 import PropTypes from 'prop-types';
 import clsx from "clsx";
 import {
@@ -13,7 +11,6 @@ import {
 
 
 
-import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
@@ -38,189 +35,20 @@ const RenderWebRow = ({
   colorTextStyle,
   setSelectedGroups
 }) => {
-  const {
-    language,
-    windowSize,
-    email,
-    phone,
-    rowsPerPage,
-    smsOldVersion,
-    isRTL,
-  } = useSelector((state) => state.core);
   //TODO: Translation left, confirm keys
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const {
     ActiveCell,
     ActiveEmails,
-    CreatedDate,
-    DynamicData,
-    DynamicLastUpdate,
-    DynamicUpdatePolicy,
     GroupID,
-    GroupName,
     InvalidCell,
     InvalidEmails,
-    IsDynamic,
-    IsTestGroup,
-    PendingEmails,
-    Recipients,
     RemovedCell,
     RemovedEmails,
-    RestrictedEmails,
-    SubAccountID,
     TotalRecipients,
-    UpdatedDate,
-    IsAutoResponder,
     IsConnectedToWebForm,
     AutomationID
   } = row;
-
-  //   const renderCellIcons = (row) => {
-  //     const { Status, Groups, AutomationID, Id, AutomationTriggerInActive } = row;
-
-  //     const iconsMap = [
-  //       {
-  //         key: "send",
-  //         icon: SendGreenIcon,
-  //         lable: t("campaigns.imgSendResource1.ToolTip"),
-  //         remove:
-  //           Status !== 1 ||
-  //           (AutomationID !== 0 && AutomationTriggerInActive === false),
-  //         rootClass: classes.sendIcon,
-  //         textClass: classes.sendIconText,
-  //         href:
-  //           smsOldVersion === "true"
-  //             ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${
-  //                 isRTL ? "he-IL" : "en-US"
-  //               }`
-  //             : `/react/sms/send/${Id}`,
-  //       },
-  //       {
-  //         key: "preview",
-  //         icon: PreviewIcon,
-  //         lable: t("campaigns.Image1Resource1.ToolTip"),
-  //         remove: windowSize === "xs",
-  //         rootClass: classes.paddingIcon,
-  //         onClick: async () => {
-  //           const sms = await dispatch(getSmsByID(Id));
-  //           // setDialogType({
-  //           //     type: 'preview',
-  //           //     data: sms.payload
-  //           // })
-  //         },
-  //       },
-  //       {
-  //         key: "edit",
-  //         icon: EditIcon,
-  //         disable: Status !== 1 || AutomationID !== 0,
-  //         lable: t("campaigns.Image2Resource1.ToolTip"),
-  //         href:
-  //           smsOldVersion === "true"
-  //             ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${
-  //                 isRTL ? "he-IL" : "en-US"
-  //               }`
-  //             : `/react/sms/edit/${Id}`,
-  //         rootClass: classes.paddingIcon,
-  //       },
-  //       {
-  //         key: "duplicate",
-  //         icon: DuplicateIcon,
-  //         lable: t("campaigns.lnkEditResource1.ToolTip"),
-  //         rootClass: classes.paddingIcon,
-  //         onClick: () => {
-  //           // setDialogType({
-  //           //     type: 'duplicate',
-  //           //     data: Id
-  //           // })
-  //         },
-  //       },
-  //       {
-  //         key: "groups",
-  //         icon: GroupsIcon,
-  //         disable: Groups && Groups.length === 0,
-  //         lable: t("campaigns.lnkPreviewResource1.ToolTip"),
-  //         remove: windowSize === "xs",
-  //         rootClass: classes.paddingIcon,
-  //         onClick: () => {
-  //           // setDialogType({
-  //           //     type: 'groups',
-  //           //     data: row.Groups
-  //           // })
-  //         },
-  //       },
-  //       {
-  //         key: "automation",
-  //         icon: AutomationIcon,
-  //         disable: AutomationID === 0,
-  //         lable: t("campaigns.automation"),
-  //         remove: windowSize === "xs",
-  //         onClick: () => {
-  //           pulseemNewTab(
-  //             `CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`
-  //           );
-  //         },
-  //         rootClass: classes.paddingIcon,
-  //       },
-  //       {
-  //         key: "delete",
-  //         icon: DeleteIcon,
-  //         lable: t("campaigns.DeleteResource1.HeaderText"),
-  //         showPhone: true,
-  //         disable: AutomationID !== 0,
-  //         rootClass: classes.paddingIcon,
-  //         onClick: () => {
-  //           // setDialogType({
-  //           //     type: 'delete',
-  //           //     data: Id
-  //           // })
-  //         },
-  //       },
-  //     ];
-  //     return (
-  //       <Grid
-  //         container
-  //         direction="row"
-  //         justifyContent={windowSize === "xs" ? "flex-start" : "flex-end"}
-  //       >
-  //         {iconsMap.map((icon) => (
-  //           <Grid
-  //             className={icon.disable && classes.disabledCursor}
-  //             key={icon.key}
-  //             item
-  //           >
-  //             <ManagmentIcon classes={classes} {...icon} />
-  //           </Grid>
-  //         ))}
-  //       </Grid>
-  //     );
-  //   };
-
-  //   const renderStatusCell = (status) => {
-  //     const statuses = {
-  //       1: "common.Created",
-  //       2: "common.Sending",
-  //       3: "campaigns.Stopped",
-  //       4: "common.Sent",
-  //       5: "campaigns.Canceled",
-  //       6: "campaigns.Optin",
-  //       7: "campaigns.Approve",
-  //     };
-  //     return (
-  //       <>
-  //         <Typography
-  //           className={clsx(classes.middleText, classes.recipientsStatus, {
-  //             [classes.recipientsStatusCreated]: status === 1,
-  //             [classes.recipientsStatusSent]: status === 4,
-  //             [classes.recipientsStatusSending]: status === 2,
-  //             [classes.recipientsStatusCanceled]: status === 5,
-  //           })}
-  //         >
-  //           {t(statuses[status])}
-  //         </Typography>
-  //       </>
-  //     );
-  //   };
 
   const renderNameCell = (row, fullwidth) => {
     let date = null;
@@ -452,13 +280,9 @@ const RenderWebRow = ({
               classes: { text: classes.wrapText },
             },
           ]}
-          // direction="column"
-          // gridSize={{ xs: 12, sm: 2 }}
           variant="body1"
           align="center"
         />
-        {/* <IconWrapper iconName='alert' classes={clsx(classes.dialogAlertIcon, colorTextStyle.red)} />
-                    <IconWrapper iconName='copy' classes={colorTextStyle.blue} /> */}
       </TableCell>
     </TableRow>
   );

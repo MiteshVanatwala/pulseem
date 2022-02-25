@@ -4,80 +4,38 @@ import clsx from "clsx";
 import {
   Typography,
   Divider,
-  Table,
   TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-  TableContainer,
   Grid,
   Button,
   TextField,
   Box,
-  List,
-  ListItem,
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
-  ListItemSecondaryAction,
   Checkbox,
   FormControlLabel,
-  DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
-  useMediaQuery,
-  makeStyles,
   useTheme,
   Dialog,
 } from "@material-ui/core";
 import {
-  AutomationIcon,
-  DeleteIcon,
-  DuplicateIcon,
-  EditIcon,
-  SendGreenIcon,
   SearchIcon,
-  GroupsIcon,
-  PreviewIcon,
   ExportIcon,
-  AddRecipient,
 } from "../../../assets/images/managment/index";
 import { CSVLink } from "react-csv";
 import {
   TablePagination,
-  ManagmentIcon,
-  DateField,
   SearchField,
-  RestorDialogContent,
 } from "../../../components/managment/index";
-import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-import {
-  getSmsData,
-  restoreSms,
-  deleteSms,
-  duplicteSms,
-  getSmsAuthorizationData,
-  getAuthorizeNumbers,
-  sendVerificationCode,
-  verifyCode,
-  getSmsByID,
-} from "../../../redux/reducers/smsSlice";
+
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import ClearIcon from "@material-ui/icons/Clear";
 import moment from "moment";
 import "moment/locale/he";
-import { Preview } from "../../../components/Notifications/Preview/Preview";
-import { pulseemNewTab } from "../../../helpers/functions";
 import { Loader } from "../../../components/Loader/Loader";
 import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
 import { setCookie } from "../../../helpers/cookies";
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import DataTable from "../../../components/Table/DataTable";
-import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
-import IconWrapper from "../../../components/icons/IconWrapper";
-import FlexGrid from "../../../components/Grids/FlexGrid";
 // import { ExcelData, StaticData } from "../tempConstants";
 import { GrGroup } from "react-icons/gr";
 import { BsInfoSquare } from "react-icons/bs";
@@ -86,7 +44,6 @@ import { preferredOrder } from "../../../helpers/exportHelper";
 import RenderRow from "./RenderRow";
 import RenderPhoneRow from "./RenderPhoneRow";
 import { getGroups, deleteGroups, createGroup } from "../../../redux/reducers/groupSlice";
-import { deleteFromGroups } from "../../../redux/reducers/clientSlice";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -101,15 +58,11 @@ const GroupsManagement = ({ classes }) => {
 
   const { groupData } = useSelector(state => state.group)
   const { t } = useTranslation();
-  const [filteredData, setFilteredData] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [searchStr, setSearchStr] = useState("");
-  const [filter, setFilter] = useState(false);
-  const [groupNameSearch, setGroupNameSearch] = useState("");
   const [page, setPage] = useState(1);
   const [serachData, setSearchData] = useState({ PageIndex: 1, PageSize: rowsPerPage, SearchTerm: '' })
-  // const [isSearching, setSearching] = useState(false)
-  // const [searchResults, setSearchResults] = useState(null)
+
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
     head: classes.tableCellHead,
@@ -126,7 +79,6 @@ const GroupsManagement = ({ classes }) => {
   const dispatch = useDispatch();
   moment.locale(language);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const colorTextStyle = {
     red: classes.textColorRed,
@@ -138,30 +90,6 @@ const GroupsManagement = ({ classes }) => {
     ADD_GROUP: "addGroup",
     DELETE_GROUP: "delete group",
   };
-
-  const HeaderCheck = (label) => (
-    <FormControlLabel
-      label={label}
-      className={(classes.ml0, classes.dNone)}
-      control={
-        <Checkbox
-          className={clsx(classes.pt0, classes.pb0)}
-          checked={selectedGroups.length === filteredData.length}
-          // indeterminate={}
-          onClick={() => {
-            if (selectedGroups.length === filteredData.length) {
-              return setSelectedGroups([]);
-            }
-            const allGroups = filteredData.reduce(
-              (previous, current) => [...previous, current.GroupID],
-              []
-            );
-            setSelectedGroups(allGroups);
-          }}
-        />
-      }
-    />
-  );
 
   const TABLE_HEAD = [
     {
@@ -191,15 +119,14 @@ const GroupsManagement = ({ classes }) => {
   ];
 
   const getData = async () => {
-    await dispatch(getGroups({ PageIndex: page, PageSize: rowsPerPage, SearchTerm: searchStr }));
+    setLoader(true);
+    await dispatch(getGroups({ ...serachData, PageSize: rowsPerPage }));
     setLoader(false);
   };
 
   useEffect(() => {
-    setLoader(true);
     getData();
-    handleSearch(searchStr);
-  }, [dispatch]);
+  }, [dispatch, serachData]);
 
   //  HANDLERS  //
 
@@ -235,22 +162,8 @@ const GroupsManagement = ({ classes }) => {
     });
   };
 
-  const handleSearch = (values) => {
-    if (groupData !== null) {
-      const result = groupData.Groups.filter((obj) => obj.GroupName?.toLowerCase().includes(values?.toLowerCase()));
-      setFilteredData(result);
-      // console.log("RESULT:", result);
-      setPage(1);
-    }
-  };
 
   const handleAddGroup = async (data) => {
-    // const data = {
-    //   ...newGroupData,
-    //   // GroupID: Math.random() * 1000000,
-    // };
-    // setFilteredData([...filteredData, data]);
-    // setNewGroupData(DEFAULT_NEW_GROUP);
     try {
       await dispatch(createGroup(data))
       setDialog(null);
@@ -260,13 +173,8 @@ const GroupsManagement = ({ classes }) => {
     }
   }
   const handleDeleteGroup = async () => {
-    // const tempData = filteredData;
-    // const result = tempData.filter(
-    //   (obj) => selectedGroups.indexOf(obj.GroupID) === -1
-    // );
     await dispatch(deleteGroups(selectedGroups))
     setSelectedGroups([]);
-    // setFilteredData(result);
     setDialog(null);
   }
 
@@ -276,7 +184,6 @@ const GroupsManagement = ({ classes }) => {
       let temp = [...selectedGroups];
       temp.splice(index, 1);
       setSelectedGroups([...temp]);
-      // setSelectedGroups(temp)
     } else setSelectedGroups([...selectedGroups, id]);
   };
 
@@ -297,18 +204,16 @@ const GroupsManagement = ({ classes }) => {
   const renderSearchLine = () => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 13 || event.code === "Enter") {
-        handleSearch(searchStr);
+        setSearchData({ PageIndex: 1, PageSize: rowsPerPage, SearchTerm: searchStr })
+        setPage(1);
       }
     };
 
     const handleKeyPress = (e) => {
       if (e.charCode === 13 || e.code === "Enter") {
-        handleSearch(searchStr);
+        setSearchData({ PageIndex: 1, PageSize: rowsPerPage, SearchTerm: searchStr })
+        setPage(1);
       }
-    };
-
-    const handleGroupNameChange = (event) => {
-      setGroupNameSearch(event.target.value);
     };
 
     if (windowSize === "xs") {
@@ -317,7 +222,10 @@ const GroupsManagement = ({ classes }) => {
           classes={classes}
           value={searchStr}
           onChange={(e) => setSearchStr(e.target.value)}
-          onClick={() => handleSearch(searchStr)}
+          onClick={() => {
+            setSearchData({ PageIndex: 1, PageSize: rowsPerPage, SearchTerm: searchStr })
+            setPage(1);
+          }}
           onKeyPress={handleKeyPress}
           placeholder={t("common.CampaignName")}
         />
@@ -342,8 +250,8 @@ const GroupsManagement = ({ classes }) => {
             size="large"
             variant="contained"
             onClick={() => {
-              handleSearch(searchStr);
-              setFilter(true);
+              setSearchData({ PageIndex: 1, PageSize: rowsPerPage, SearchTerm: searchStr })
+              setPage(1);
             }}
             className={classes.searchButton}
             endIcon={<SearchIcon />}
@@ -351,17 +259,15 @@ const GroupsManagement = ({ classes }) => {
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
         </Grid>
-        {searchStr && (
+        {serachData.SearchTerm && (
           <Grid item>
             <Button
               size="large"
               variant="contained"
               onClick={() => {
+                setSearchData({ ...serachData, SearchTerm: '' });
                 setSearchStr("");
-                if (filter) {
-                  handleSearch("");
-                  setFilter(false);
-                }
+                setPage(1);
               }}
               className={classes.searchButton}
               endIcon={<ClearIcon />}
@@ -375,20 +281,13 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const renderManagmentLine = () => {
-    // const handleVerificationDialog = async () => {
-    //     const numbers = await dispatch(getAuthorizeNumbers());
-    //     setDialogType({
-    //         type: 'verify',
-    //         data: numbers.payload
-    //     })
-    // }
+
     return (
       <Grid container spacing={2} className={classes.linePadding}>
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
             variant="contained"
             size="medium"
-            // href={smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : "/react/sms/create"}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -487,150 +386,6 @@ const GroupsManagement = ({ classes }) => {
     );
   };
 
-  const renderCellIcons = (row) => {
-    const { Status, Groups, AutomationID, Id, AutomationTriggerInActive } = row;
-
-    const iconsMap = [
-      {
-        key: "send",
-        icon: SendGreenIcon,
-        lable: t("campaigns.imgSendResource1.ToolTip"),
-        remove:
-          Status !== 1 ||
-          (AutomationID !== 0 && AutomationTriggerInActive === false),
-        rootClass: classes.sendIcon,
-        textClass: classes.sendIconText,
-        href:
-          smsOldVersion === "true"
-            ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? "he-IL" : "en-US"
-            }`
-            : `/react/sms/send/${Id}`,
-      },
-      {
-        key: "preview",
-        icon: PreviewIcon,
-        lable: t("campaigns.Image1Resource1.ToolTip"),
-        remove: windowSize === "xs",
-        rootClass: classes.paddingIcon,
-        onClick: async () => {
-          const sms = await dispatch(getSmsByID(Id));
-          // setDialogType({
-          //     type: 'preview',
-          //     data: sms.payload
-          // })
-        },
-      },
-      {
-        key: "edit",
-        icon: EditIcon,
-        disable: Status !== 1 || AutomationID !== 0,
-        lable: t("campaigns.Image2Resource1.ToolTip"),
-        href:
-          smsOldVersion === "true"
-            ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? "he-IL" : "en-US"
-            }`
-            : `/react/sms/edit/${Id}`,
-        rootClass: classes.paddingIcon,
-      },
-      {
-        key: "duplicate",
-        icon: DuplicateIcon,
-        lable: t("campaigns.lnkEditResource1.ToolTip"),
-        rootClass: classes.paddingIcon,
-        onClick: () => {
-          // setDialogType({
-          //     type: 'duplicate',
-          //     data: Id
-          // })
-        },
-      },
-      {
-        key: "groups",
-        icon: GroupsIcon,
-        disable: Groups && Groups.length === 0,
-        lable: t("campaigns.lnkPreviewResource1.ToolTip"),
-        remove: windowSize === "xs",
-        rootClass: classes.paddingIcon,
-        onClick: () => {
-          // setDialogType({
-          //     type: 'groups',
-          //     data: row.Groups
-          // })
-        },
-      },
-      {
-        key: "automation",
-        icon: AutomationIcon,
-        disable: AutomationID === 0,
-        lable: t("campaigns.automation"),
-        remove: windowSize === "xs",
-        onClick: () => {
-          pulseemNewTab(
-            `CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`
-          );
-        },
-        rootClass: classes.paddingIcon,
-      },
-      {
-        key: "delete",
-        icon: DeleteIcon,
-        lable: t("campaigns.DeleteResource1.HeaderText"),
-        showPhone: true,
-        disable: AutomationID !== 0,
-        rootClass: classes.paddingIcon,
-        onClick: () => {
-          // setDialogType({
-          //     type: 'delete',
-          //     data: Id
-          // })
-        },
-      },
-    ];
-    return (
-      <Grid
-        container
-        direction="row"
-        justifyContent={windowSize === "xs" ? "flex-start" : "flex-end"}
-      >
-        {iconsMap.map((icon) => (
-          <Grid
-            className={icon.disable && classes.disabledCursor}
-            key={icon.key}
-            item
-          >
-            <ManagmentIcon classes={classes} {...icon} />
-          </Grid>
-        ))}
-      </Grid>
-    );
-  };
-
-  const renderStatusCell = (status) => {
-    const statuses = {
-      1: "common.Created",
-      2: "common.Sending",
-      3: "campaigns.Stopped",
-      4: "common.Sent",
-      5: "campaigns.Canceled",
-      6: "campaigns.Optin",
-      7: "campaigns.Approve",
-    };
-    return (
-      <>
-        <Typography
-          className={clsx(classes.middleText, classes.recipientsStatus, {
-            [classes.recipientsStatusCreated]: status === 1,
-            [classes.recipientsStatusSent]: status === 4,
-            [classes.recipientsStatusSending]: status === 2,
-            [classes.recipientsStatusCanceled]: status === 5,
-          })}
-        >
-          {t(statuses[status])}
-        </Typography>
-      </>
-    );
-  };
-
   const handleRowsPerPageChange = (val) => {
     dispatch(setRowsPerPage(val));
     setCookie("rpp", val, { maxAge: 2147483647 });
@@ -697,18 +452,17 @@ const GroupsManagement = ({ classes }) => {
     let rpp = parseInt(rowsPerPage);
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
     return (
-      // <TableBody>
-      //   {sortData.map(windowSize === "xs" ? renderPhoneRow : renderRow)}
-      // </TableBody>
-      <TableBody>
+      <TableBody >
         {sortData.map((obj) => windowSize === "xs" ?
           <RenderPhoneRow
             row={obj}
             rowStyle={rowStyle}
-            cellIcons={renderCellIcons(obj)}
             name={renderNameCell(obj, true)}
             classes={classes}
             colorTextStyle={colorTextStyle}
+            setSelectedGroups={(id) => setSelectedGroups([id])}
+            DialogType={DialogType}
+            setDialog={(val) => setDialog(val)}
           />
           :
           <RenderRow
@@ -731,7 +485,7 @@ const GroupsManagement = ({ classes }) => {
       </TableBody>
 
     );
-  }, [filteredData, rowsPerPage, page, classes, selectedGroups]);
+  }, [groupData, rowsPerPage, page, classes, selectedGroups]);
 
   //POPUP Components
   const AddGroupPopUp = () => {
@@ -860,7 +614,6 @@ const GroupsManagement = ({ classes }) => {
                       classes.fullWidth
                     )}
                     onClick={
-                      //TODO: Make handler with api
                       () => {
                         const result = handleAddGroup(newGroupData)
                         if (result) {
@@ -881,7 +634,6 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const ConfirmDeletePopUp = () => {
-    // const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP)
     return (
       <Dialog
         fullScreen={classes.fullScreen}
@@ -942,7 +694,6 @@ const GroupsManagement = ({ classes }) => {
                       classes.fullWidth
                     )}
                     onClick={
-                      //TODO: Make handler with api
                       () => handleDeleteGroup()
                     }
                   >
@@ -957,6 +708,7 @@ const GroupsManagement = ({ classes }) => {
     );
   };
 
+
   const groupsLength = (groupData && groupData.RecordCount) || 0;
 
   return (
@@ -967,9 +719,9 @@ const GroupsManagement = ({ classes }) => {
     >
       {renderHeader()}
       {renderSearchLine()}
-      {renderManagmentLine()}
+      {windowSize !== "xs" && renderManagmentLine()}
       <DataTable
-        tableContainer={{ className: classes.tableStyle }}
+        tableContainer={{ className: windowSize === "xs" ? clsx(classes.mt3, classes.tableStyle) : classes.tableStyle }}
         table={{ className: classes.tableContainer }}
         tableHead={{
           tableHeadCells: TABLE_HEAD,
@@ -977,39 +729,25 @@ const GroupsManagement = ({ classes }) => {
           className: windowSize === "xs" && classes.dNone,
         }}
       >
-        {/* {renderTableBody()} */}
         {renderTableBody}
       </DataTable>
       <TablePagination
         classes={classes}
-        // rows={isSearching ? searchResults.length : smsData.length}
         rows={groupsLength}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={[6, 10, 20, 50]}
         page={page}
-        onPageChange={setPage}
+        onPageChange={
+          (val) => {
+            setPage(val)
+            setSearchData({ ...serachData, PageIndex: val })
+          }
+        }
       />
-      {/* {renderDialog()} */}
-      {/* 
-            {renderSearchLine()}
-            {renderManagmentLine()}
-            {renderTable()}
-            {renderTablePagination()}
-            {renderDialog()} */}
 
-      {/* <Button variant="outlined" color="primary" onClick={() => setDialog1(true)}>
-                Open dialog
-            </Button> */}
       {AddGroupPopUp()}
       {ConfirmDeletePopUp()}
-      {/* <Dialog
-                classes={classes}
-                open={dialog1}
-                onClose={() => setDialog1(false)}
-            >
-                {getDeleteDialog()}
-            </Dialog> */}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );

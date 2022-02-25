@@ -554,6 +554,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mb4: {
     marginBottom: 20,
   },
+  mb8: {
+    marginBottom: 40,
+  },
   m5: {
     margin: ".5rem",
   },
