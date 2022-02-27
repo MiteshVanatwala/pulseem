@@ -89,6 +89,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     height: '40vh',
     width: windowSize === 'lg' || windowSize === 'xl' ? '550px' : null
   },
+  solidDialogContainer: {
+    zIndex: '1500 !important',
+    "& .MuiPaper-root": {
+      overflowX: "hidden",
+      backgroundColor: '#f5f5f5'
+    },
+    "& .MuiDialog-paperWidthSm": {
+      minWidth: minDialogWidth[windowSize],
+      maxWidth: maxDialogWidth[windowSize],
+    },
+    "& .MuiDialog-paperScrollPaper": {
+      maxHeight: '100%'
+    },
+  },
   dialogContainer: {
     zIndex: '1500 !important',
     "& .MuiPaper-root": {
@@ -2135,6 +2149,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingInlineEnd: 15,
     paddingInlineStart: 60,
   },
+  solidDialogExitButton: {
+    width: 25,
+    height: 25,
+    textAlign: "center",
+    color: "#000",
+    borderRadius: 25,
+    fontWeight: "700",
+    position: "absolute",
+    top: "0.5rem",
+    cursor: "pointer",
+  },
   dialogExitButton: {
     width: 25,
     height: 25,
@@ -2152,6 +2177,23 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   dialogExitButtonLTR: {
     right: "0.5rem",
+  },
+  solidDialog: {
+    display: "flex",
+    flexDirection: "column",
+    borderRadius: 3,
+    margin: "1rem",
+    padding: "1rem",
+    minWidth: dialogWidth[windowSize],
+    backgroundColor: '#f5f5f5',
+    '& .title': {
+      '& p': {
+        color: '#000',
+        textAlign: 'center',
+        fontSize: 24,
+        fontWeight: 700
+      }
+    }
   },
   dialogContent: {
     display: "flex",
@@ -2212,6 +2254,16 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         minWidth: windowSize === 'xs' ? 0 : 100
       }
     }
+  },
+  solidDialogButton: {
+    fontFamily: "OpenSansHebrew",
+    color: "#fff",
+    textTransform: "capitalize",
+    width: 120,
+    fontSize: 18,
+    borderRadius: 8,
+    boxShadow: 'none !important',
+    border: 'none !important'
   },
   dialogButton: {
     fontFamily: "OpenSansHebrew",

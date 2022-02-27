@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,21 +11,46 @@ import PulseemTips from '../../components/Tips/PulseemTips';
 import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
+import { getCookie } from '../../helpers/cookies'
+import TFA from '../../components/DialogTemplates/TFA'
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL } = useSelector(state => state.core);
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const [showTFA, setShowTFA] = useState(false);
 
   useEffect(() => {
     dispatch(getCommonFeatures());
+    init2FA();
   }, [dispatch])
+
+  const init2FA = () => {
+    let subAccountSettings = getCookie("subAccountSettings");
+    if (subAccountSettings && subAccountSettings.TwoFactoryAuthEnabled === false) {
+      let userSelection = getCookie("2faPopup");
+      if (!userSelection && userSelection !== false) {
+        setShowTFA(true);
+      }
+    }
+  }
+
+  const onConfirm2FA = () => {
+    window.location = '/Pulseem/AccountSettings.aspx?2fa=1'
+  }
+  const onCancel2FA = () => {
+    setShowTFA(false);
+  }
 
   return (
     <DefaultScreen
       currentPage='dashboard'
       classes={classes}
       customStyle={classes.dashboard}>
+      <TFA classes={classes}
+        showTFA={showTFA}
+        onConfirm={onConfirm2FA}
+        onCancel={onCancel2FA} />
       <Grid container>
         <Grid item xs={12} sm={9} md={10} className={clsx(classes.pt20, classes.dashboardTop)}>
           <Grid container direction='row'>
