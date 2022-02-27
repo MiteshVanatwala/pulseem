@@ -15,7 +15,7 @@ const EventTabs = ({ classes, setDialog }) => {
     const [tabValue, setTabValue] = useState('PAGE_VIEW');
     const { event } = useSelector((state) => state.siteTracking);
     const dispatch = useDispatch();
-    const [metadataToShow, setMetadataToShow] = useState(100);
+    const [metadataToShow, setMetadataToShow] = useState(10);
 
     const emptyMetaData = {
         operatorKey: "CONTAINS",
@@ -27,12 +27,8 @@ const EventTabs = ({ classes, setDialog }) => {
     }
     const onAddEvent = () => {
         dispatch(addMetaData(emptyMetaData));
+        setMetadataToShow(event.metadata.length);
     }
-    useEffect(() => {
-        if (event.metadata.length > 10) {
-            setMetadataToShow(10);
-        }
-    }, [event]);
     return <TabContext value={tabValue}>
         <Grid
             container
@@ -60,7 +56,7 @@ const EventTabs = ({ classes, setDialog }) => {
                     event && event.metadata ?
                         <>
                             {event.metadata.map((mt, idx) => {
-                                if (idx <= metadataToShow) {
+                                if (idx < metadataToShow) {
                                     return <EventToGroups
                                         id={mt.id}
                                         key={idx}
@@ -78,12 +74,17 @@ const EventTabs = ({ classes, setDialog }) => {
                         :
                         <></>
                 }
-                <Box style={{ display: 'flex', flexDirection: 'row', maxWidth: 1150, justifyContent: 'space-between' }}>
+                <Box style={{ display: 'flex', flexDirection: 'row', maxWidth: 1150 }}>
                     <Button onClick={onAddEvent} style={{ justifyContent: 'flex-start' }}>
                         <AiOutlinePlusCircle className={classes.addOptionsIcon} />
                         {t("siteTracking.addEvent")}
                     </Button>
-                    {metadataToShow === 10 && <Link onClick={() => setMetadataToShow(1000)} className={classes.alignCenter} style={{ cursor: 'pointer' }}>{t('common.SeeAll')}</Link>}
+                </Box>
+                <Box style={{ display: 'flex', flexDirection: 'row', maxWidth: 1150, justifyContent: 'flex-end' }}>
+                    {event.metadata.length > 10 &&
+                        <Link onClick={() => setMetadataToShow(metadataToShow > 10 ? 10 : event.metadata.length)}
+                            className={classes.alignCenter}
+                            style={{ cursor: 'pointer', fontSize: 20 }}>{metadataToShow <= 10 ? t('common.SeeAll') : t('common.showTen')}</Link>}
                 </Box>
             </TabPanel>
         })}
