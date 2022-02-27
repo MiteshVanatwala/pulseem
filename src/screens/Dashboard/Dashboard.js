@@ -21,8 +21,12 @@ const DashboardScreen = ({ classes }) => {
   const [showTFA, setShowTFA] = useState(false);
 
   useEffect(() => {
-    dispatch(getCommonFeatures());
-    init2FA();
+    const initialize = async () => {
+      await dispatch(getCommonFeatures());
+      init2FA();
+    }
+    initialize();
+
   }, [dispatch])
 
   const init2FA = () => {
