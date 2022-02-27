@@ -26,12 +26,11 @@ const DashboardScreen = ({ classes }) => {
       init2FA();
     }
     initialize();
-
   }, [dispatch])
 
   const init2FA = () => {
     let subAccountSettings = getCookie("subAccountSettings");
-    if (subAccountSettings && subAccountSettings.TwoFactoryAuthEnabled === false) {
+    if (subAccountSettings && subAccountSettings.TwoFactoryAuthEnabled === null) {
       let userSelection = getCookie("2faPopup");
       if (!userSelection && userSelection !== false) {
         setShowTFA(true);
