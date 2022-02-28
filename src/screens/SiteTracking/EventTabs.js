@@ -75,7 +75,23 @@ const EventTabs = ({ classes, setDialog }) => {
         </Grid>
         {EventsOptions.map((eo, idx) => {
             return <TabPanel key={idx} value={eo.key} index={idx} className={classes.p0}>
-                <EventMeta />
+                {
+                    event && event.metadata && event.metadata.map((mt, idx) => {
+                        if (idx < metadataToShow) {
+                            return <EventToGroups
+                                id={mt.id}
+                                key={idx}
+                                index={idx}
+                                currentEvent={mt}
+                                eventsCount={event.metadata.length}
+                                classes={classes}
+                                onShowGroups={() => { setDialog({ type: 'showGroups' }) }}
+                                onHideGroups={() => { setDialog(null) }}
+                            />
+                        }
+                        return <></>
+                    })
+                }
                 <Box style={{ display: 'flex', flexDirection: 'row', maxWidth: 1150 }}>
                     <Button onClick={() => { onAddEvent() }} style={{ justifyContent: 'flex-start' }}>
                         <AiOutlinePlusCircle className={classes.addOptionsIcon} />

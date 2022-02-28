@@ -109,8 +109,8 @@ const SiteTrackingEditor = ({ classes }) => {
             if (mt.operatorValue === '') {
                 setValidationError(oldArray => [...oldArray, t('siteTracking.validation.pageUrlRequired')])
                 isValid = false;
-                const el = document.getElementById(mt.id);
-                el.querySelector('input[type="text"]').classList.add('error');
+                const el = document.getElementById(`input${mt.id}`);
+                el.classList.add('error');
             }
         });
         return isValid;

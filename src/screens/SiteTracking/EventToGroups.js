@@ -29,6 +29,9 @@ const EventToGroups = ({
 
     const updateOperationData = (e, key, value) => {
         e.preventDefault();
+        if (value !== '') {
+            e.target.classList.remove('error');
+        }
         setPageUrlIsValid(value !== '');
         dispatch(updateMetaData({ index, key, value, id: currentEvent.id }));
     }
@@ -131,6 +134,7 @@ const EventToGroups = ({
                     required
                     fullWidth
                     variant="outlined"
+                    id={`input${currentEvent.id}`}
                     onChange={e => updateOperationData(e, "operatorValue", e.target.value)}
                     value={currentEvent && currentEvent.operatorValue}
                     style={{ minWidth: 220, width: '100%', marginTop: 40 }}
