@@ -2150,15 +2150,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     paddingInlineStart: 60,
   },
   solidDialogExitButton: {
-    width: 25,
-    height: 25,
+    fontSize: 30,
+    fontFamily: 'Assistant',
     textAlign: "center",
     color: "#000",
-    borderRadius: 25,
     fontWeight: "700",
     position: "absolute",
     top: "0.5rem",
-    cursor: "pointer",
+    cursor: "pointer"
   },
   dialogExitButton: {
     width: 25,
@@ -2177,6 +2176,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   dialogExitButtonLTR: {
     right: "0.5rem",
+  },
+  solidExitButtonRTL: {
+    left: "1rem",
+  },
+  solidExitButtonLTL: {
+    right: "1rem",
   },
   solidDialog: {
     display: "flex",

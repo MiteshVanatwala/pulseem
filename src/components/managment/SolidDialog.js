@@ -55,8 +55,8 @@ export const SolidDialog = ({
           className={clsx(
             classes.solidDialogExitButton,
             {
-              [classes.dialogExitButtonRTL]: isRTL,
-              [classes.dialogExitButtonLTR]: !isRTL
+              [classes.solidExitButtonRTL]: isRTL,
+              [classes.solidExitButtonLTL]: !isRTL
             }
           )}>
           x
