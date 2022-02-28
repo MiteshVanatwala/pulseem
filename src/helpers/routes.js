@@ -49,7 +49,7 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
   },
   {
     key: 'groups',
-    title: t('recipient.logPageHeaderResource1.Text'),
+    title: t('appBar.groups.title'),
     iconUnicode: '\ue0d5',
     href: '/react/groups',
     isShow: true,
