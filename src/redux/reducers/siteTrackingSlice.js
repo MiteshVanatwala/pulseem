@@ -116,10 +116,10 @@ export const siteTrackingSlice = createSlice({
           domain: '',
           actionType: 'ADD_CLIENTS_TO_GROUP',
           metadata: [{
-            id: makeId(),
             operatorKey: 'CONTAINS',
             operatorValue: '',
-            groupIds: []
+            groupIds: [],
+            id: makeId()
           }]
         };
         if (action.payload.type === 'model') {
@@ -173,14 +173,17 @@ export const siteTrackingSlice = createSlice({
         state.siteScript = payload.data;
       })
       .addCase(get.fulfilled, (state, { payload }) => {
-        state.event = payload[0] ?? payload.data;
-        if (state.event.metadata) {
-          state.event.metadata.map((mt) => {
-            if (!mt.id || mt.id === '') {
-              mt.id = makeId();
-            }
-            return mt;
-          });
+        const eventResults = payload[0] ?? payload.data;
+        if (eventResults) {
+          state.event = payload[0] ?? payload.data;
+          if (state.event.metadata) {
+            state.event.metadata.map((mt) => {
+              if (!mt.id || mt.id === '') {
+                mt.id = makeId();
+              }
+              return mt;
+            });
+          }
         }
       })
       .addCase(get.rejected, (state, action) => {

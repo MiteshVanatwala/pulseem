@@ -2,7 +2,7 @@ import { EventsOptions } from '../../helpers/PulseemArrays'
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Grid, Tab, Button, Box, Link } from '@material-ui/core'
 import EventToGroups from './EventToGroups'
@@ -27,8 +27,31 @@ const EventTabs = ({ classes, setDialog }) => {
     }
     const onAddEvent = () => {
         dispatch(addMetaData(emptyMetaData));
-        setMetadataToShow(event.metadata.length);
+        setMetadataToShow(event.metadata.length + 1);
     }
+
+
+    const EventMeta = () => useMemo(() => {
+        if (event && event.metadata) {
+            return event.metadata.map((mt, idx) => {
+                if (idx < metadataToShow) {
+                    return <EventToGroups
+                        id={mt.id}
+                        key={idx}
+                        index={idx}
+                        currentEvent={mt}
+                        eventsCount={event.metadata.length}
+                        classes={classes}
+                        onShowGroups={() => { setDialog({ type: 'showGroups' }) }}
+                        onHideGroups={() => { setDialog(null) }}
+                    />
+                }
+                return <></>
+            });
+        }
+        return <></>;
+    }, [event]);
+
     return <TabContext value={tabValue}>
         <Grid
             container
@@ -52,37 +75,16 @@ const EventTabs = ({ classes, setDialog }) => {
         </Grid>
         {EventsOptions.map((eo, idx) => {
             return <TabPanel key={idx} value={eo.key} index={idx} className={classes.p0}>
-                {
-                    event && event.metadata ?
-                        <>
-                            {event.metadata.map((mt, idx) => {
-                                if (idx < metadataToShow) {
-                                    return <EventToGroups
-                                        id={mt.id}
-                                        key={idx}
-                                        index={idx}
-                                        currentEvent={mt}
-                                        eventsCount={event.metadata.length}
-                                        classes={classes}
-                                        onShowGroups={() => { setDialog({ type: 'showGroups' }) }}
-                                        onHideGroups={() => { setDialog(null) }}
-                                    />
-                                }
-                                return <></>
-                            })}
-                        </>
-                        :
-                        <></>
-                }
+                <EventMeta />
                 <Box style={{ display: 'flex', flexDirection: 'row', maxWidth: 1150 }}>
-                    <Button onClick={onAddEvent} style={{ justifyContent: 'flex-start' }}>
+                    <Button onClick={() => { onAddEvent() }} style={{ justifyContent: 'flex-start' }}>
                         <AiOutlinePlusCircle className={classes.addOptionsIcon} />
                         {t("siteTracking.addEvent")}
                     </Button>
                 </Box>
                 <Box style={{ display: 'flex', flexDirection: 'row', maxWidth: 1150, justifyContent: 'flex-end' }}>
                     {event.metadata.length > 10 &&
-                        <Link onClick={() => setMetadataToShow(metadataToShow > 10 ? 10 : event.metadata.length)}
+                        <Link onClick={() => setMetadataToShow(metadataToShow > 10 ? 10 : (event.metadata.length + 1))}
                             className={classes.alignCenter}
                             style={{ cursor: 'pointer', fontSize: 20 }}>{metadataToShow <= 10 ? t('common.SeeAll') : t('common.showTen')}</Link>}
                 </Box>

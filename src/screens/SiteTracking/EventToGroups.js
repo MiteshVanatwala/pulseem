@@ -157,7 +157,7 @@ const EventToGroups = ({
                 />
             </Box>
             {eventsCount > 1 && <Box className={classes.deleteButtonContainer}>
-                <Button onClick={onDelete}>
+                <Button onClick={() => { onDelete() }}>
                     <img src={DeleteIcon} alt="" style={{ width: 30, height: 30, cursor: 'pointer' }} />
                 </Button>
             </Box>
