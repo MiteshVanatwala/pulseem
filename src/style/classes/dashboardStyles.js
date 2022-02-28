@@ -26,8 +26,8 @@ const shortcutBoxWidth = {
 export const getDashboardStyle = (windowSize, isRTL, theme) => ({
     mobileReportHead: {
         fontWeight: 'bold',
-        marginTop: 15,
-        marginInlineStart: 10
+        marginTop: 10,
+        // marginInlineStart: 10
     },
     tabelCellPadding: {
         paddingBlock: 15
@@ -184,6 +184,9 @@ export const getDashboardStyle = (windowSize, isRTL, theme) => ({
         maxWidth: 480,
         '& .MuiIconButton-colorSecondary': {
             color: '#0371ad'
+        },
+        '& .MuiFormControlLabel-root': {
+            marginRight: 0
         }
     },
     shoppingCartIcon: {

@@ -1,0 +1,8 @@
+{
+    "removeClientFromGroupTitle": "Delete recipient from groups",
+    "removeClientFromGroupDescription": "Are you sure you want to remove the recipient from all groups?",
+    "removeClientFromAccountTitle": "Remove recipient from account",
+    "removeClientFromAccountDescription": "Are you sure you want to remove the recipient from the account?",
+    "removeClientFromSmsTitle": "Remove recipient from SMS",
+    "removeClientFromSmsDescription": "Are you sure you want to remove recipient from SMS?"
+}

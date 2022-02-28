@@ -84,7 +84,7 @@ div.error {
 
 .MuiTooltip-tooltipPlacementTop,
 .MuiTooltip-tooltipPlacementLeft {
-    font-size: 12px !important;
+    font-size: 12px;
 }
 
 .MuiPickersTimePickerToolbar-hourMinuteLabel {

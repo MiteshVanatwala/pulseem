@@ -430,7 +430,7 @@ const NotificationManagement = ({ classes }) => {
             title={t('notifications.arrivedTootltip')}
             arrow
             placement={'top'}
-            classes={{ tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.fBlack }}>
+            classes={{ tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement), arrow: classes.black }}>
             <TableCell classes={cell50wStyle} className={classes.flex1} align='center'>
               {t("notifications.arrived")}
             </TableCell>
@@ -1070,7 +1070,7 @@ const NotificationManagement = ({ classes }) => {
     (function(d, t) {
         var g = d.createElement(t),
         s = d.getElementsByTagName(t)[0];
-        g.src="#scriptSource#?d=" + Math.floor(Date.now() / 1000);
+        g.src="#scriptSource#scripts/application.js?d=" + Math.floor(Date.now() / 1000);
         g.setAttribute("key", #key#);
         #scriptpath#
         s.parentNode.insertBefore(g, s);

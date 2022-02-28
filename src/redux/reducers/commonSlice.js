@@ -1,5 +1,7 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { instence } from '../../helpers/api'
+import { setCookie } from '../../helpers/cookies'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
 
 export const getFileGallery = createAsyncThunk(
   '/GetFileGallery', async (_, thunkAPI) => {
@@ -63,13 +65,30 @@ export const getAccountFeatures = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
+export const getCommonFeatures = createAsyncThunk(
+  'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
-    Folders: []
+    Folders: [],
+    subAccountSettings: null
   },
+  extraReducers: builder => {
+    builder
+      .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
+        state.subAccountSettings = payload
+        setCookie("subAccountSettings", payload.SubAccountSettings);
+      })
+  }
 })
 
 

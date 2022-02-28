@@ -330,6 +330,7 @@ const LandingPagesesManagmentScreen=({classes}) => {
         icon: (copyData&&copyData.icon)||null,
         lable: (copyData&&copyData.lable)||'',
         rootClass: classes.minWidth95,
+        disable: !PageLink,
         text: (copyData&&copyData.copy)||'',
         disable: !PageLink,
         type: 'copy',

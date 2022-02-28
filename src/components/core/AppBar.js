@@ -12,6 +12,8 @@ import { useTranslation } from "react-i18next";
 import DoubleArrowIcon from '../../assets/images/doubleArrow.png'
 import { ReactComponent as QuestionIcon } from '../../assets/images/question.svg'
 import { FaBars, FaTimes } from 'react-icons/fa';
+import { SiCodeforces } from 'react-icons/si'
+import { VscGraph } from 'react-icons/vsc'
 import { getRoutes, getSettingsItem } from '../../helpers/routes'
 //import useCtrlHistory from '../../helpers/useCtrlHistory'
 import { setCookie, getCookie } from '../../helpers/cookies'
@@ -29,12 +31,12 @@ const AppBarItem = ({
   textStyle = '',
   showIcon = false,
   classes,
+  menuWidth = 290
 }) => {
   const [open, setOpen] = useState(false)
 
   const [buttonWidth, setButtonWidth] = useState(0)
   const buttonRef = useRef(null)
-  const menuWidth = 290
 
   useEffect(() => {
     setButtonWidth(buttonRef.current.clientWidth)
@@ -159,13 +161,22 @@ const LanguageSelector = ({ windowSize, classes }) => {
       textStyle={windowSize === 'xs' && classes.textCapitalize}
       classes={classes}
       item={item}
+      menuWidth={230}
       onInnerClick={changeLanguage} />
   )
 }
 
 
 export const TopAppBar = ({ classes, currentPage = '' }) => {
-  const { companyName, windowSize, isRTL, imageURL, isClal, accountFeatures, cameFromSubAccount, isAdmin, isAllowSwitchAccount, smsOldVersion } = useSelector(state => state.core)
+  let cookieFeature = getCookie("accountFeatures");
+  let subAccountSettings = getCookie("subAccountSettings");
+  const cookieIsClal = getCookie("isClal");
+
+  if (cookieFeature && cookieFeature.constructor.name !== 'Array') {
+    cookieFeature = null;
+  }
+
+  const { companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, smsOldVersion } = useSelector(state => state.core)
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
@@ -194,7 +205,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     setOpen(!open)
   }
   const { t } = useTranslation();
-  const routes = getRoutes(t, isClal, accountFeatures, windowSize, smsOldVersion, isRTL)
+  const routes = getRoutes(t, cookieIsClal, cookieFeature, subAccountSettings, windowSize, smsOldVersion, isRTL)
   const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
 
   const navigate = ({ uri }) => {
@@ -267,11 +278,13 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
       routes[2],
       routes[3],
       routes[4],
-      routes[5],
+      { title: t('mms.logPageHeaderResource1.Text'), iconUnicode: '\ue11b', href: '/react/MmsCampaigns', isShow: subAccountSettings && subAccountSettings.IsDirectAccount !== true },
       routes[6],
-      routes[7],
+      { title: t('master.Automations'), iconUnicode: '\ue087', href: '/react/Automations', isShow: subAccountSettings && subAccountSettings.IsDirectAccount !== true },
       { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
       { title: t('appBar.reports.smsReports'), iconUnicode: '\ue04c', href: reportsOptions[2].href, isShow: true },
+      { title: t('report.DirectSendEmail'), key: 'directSendEmail', href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
+      { title: t('report.DirectSendSMS'), key: 'directSendSMS', href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
       //routes[1]
     ]
     return (
@@ -327,10 +340,14 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
                             <Button
                               href={route.href}
                               style={{ alignSelf: 'center' }}>
-                              <Typography
+                              {route.iconUnicode ? (<Typography
                                 className={classes.phoneAppBarItemIcon}>
                                 {route.iconUnicode}
-                              </Typography>
+                              </Typography>)
+                                : route.key === 'directSendEmail' ? (<SiCodeforces />)
+                                  : route.key === 'directSendSMS' && (<VscGraph />)
+                              }
+
                             </Button>
                             <Typography
                               style={{ textAlign: 'center' }}>

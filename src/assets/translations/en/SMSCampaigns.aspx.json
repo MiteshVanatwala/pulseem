@@ -542,7 +542,7 @@
   "estimatedDelivery": "Estimated End Date",
   "dragXlOrCsv": "Drag & drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone. You are able to enter hundreds of thousands of recipients to this box",
   "saveAndExit": "Save and Exit",
-  "campaignIsOnItsWay": "Your camapign is on its way",
+  "campaignIsOnItsWay": "Your Campaign is on its way",
   "sent": "Sent!",
   "switchToOldeVersion": "Switch back to the old version",
   "message":"Message",
@@ -569,5 +569,8 @@
   "selectIntervalType": "Must select if campaign sends before/after event",
   "selectSpecialField": "Must select Special Date Type",
   "typeDays": "Must insert Number of Days",
-  "alreadySent": "Campaign already sent"
+  "alreadySent": "Campaign already sent",
+  "notEnoughCreditLeft": "You do not have enough credits to send this campaign.<br/><br/>",
+  "notEnoughCreditLeftDesc": "To re-fill your account,<br/>please contact us at 03-524-0290 or at <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
+  "showTestGroups": "Show Test<br/> Groups"
 }

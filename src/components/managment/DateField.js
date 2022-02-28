@@ -57,8 +57,8 @@ export const DateField = ({
         'aria-label': 'change time',
         className: classes.datePickerButton
       }}
-      cancelLabel={buttons && buttons.cancel}
-      okLabel={buttons && buttons.ok}
+      cancellabel={buttons && buttons.cancel}
+      oklabel={buttons && buttons.ok}
       ampm={ampm}
       id="timePicker"
       disabled={timeActive}
@@ -97,8 +97,8 @@ export const DateField = ({
         'aria-label': 'change date',
         className: classes.datePickerButton
       }}
-      cancelLabel={buttons && buttons.cancel}
-      okLabel={buttons && buttons.ok}
+      cancellabel={buttons && buttons.cancel}
+      oklabel={buttons && buttons.ok}
       id="datePicker"
       maxDate={maximumDate}
       disabled={dateActive}

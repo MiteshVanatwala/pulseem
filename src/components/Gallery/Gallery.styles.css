@@ -48,7 +48,6 @@
 .selected-file {
     background-color: rgba(0, 0, 0, 0.1) !important;
 }
-
 .drag-here {
     border: 2px dashed #8a8383;
     cursor: pointer;

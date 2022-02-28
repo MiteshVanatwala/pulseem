@@ -1,64 +1,49 @@
+import React from 'react';
 import { useTranslation } from 'react-i18next'
 import { Grid, Typography, Divider } from '@material-ui/core';
 import Package from '../../PackageBox/Package';
+import { useSelector } from 'react-redux'
 //import PurchaseLogs from '../PurhcaseLogs/Logs';
 
 const PackagesList = ({ data, classes, packageType, smsBulkData = null, newsletterBulkData = null, onSelect = () => null }) => {
     const { t } = useTranslation();
+    const { windowSize } = useSelector(state => state.core);
     if (data !== null) {
         const packageLength = data.length;
         let packPerLine = Math.ceil(12 / packageLength);
         packPerLine = packPerLine < 3 ? 3 : packPerLine;
-        switch (packageType) {
-            case 3: {
-                return (
-                    <>
-                        {/* {purchaseLogs && <PurchaseLogs classes={classes} data={purchaseLogs} />} */}
-                        <Grid item xs={12}>
-                            <Typography className={classes.dialogTitle} style={{ marginInline: 0 }}>{t('common.smsBulkTitle')}</Typography>
-                            <Divider />
-                            <Typography className={classes.mt3}>{t('common.smsBulkDescription')}</Typography>
-                        </Grid>
-                        {
-                            smsBulkData.sort((a, b) => a.Quantity - b.Quantity).map((d, index) => {
-                                return (
-                                    <Package
-                                        pack={d}
-                                        packSize={packPerLine}
-                                        key={`pack_${d.ID}`}
-                                        onSelect={onSelect}
-                                        packageType={packageType}
-                                        classes={classes} />
-                                )
-                            })
-                        }
-                    </>);
-            }
-            case 2: {
-                return (
-                    <>
-                        <Grid item xs={12}>
-                            <Typography className={classes.dialogTitle} style={{ marginInline: 0 }}>{t('common.newsletterBulkTitle')}</Typography>
-                            <Divider />
-                            <Typography className={classes.mt3}>{t('common.newsletterBulkDescription')}</Typography>
-                        </Grid>
-                        {
-                            newsletterBulkData.sort((a, b) => a.Quantity - b.Quantity).map((d) => {
-                                return (
-                                    <Package pack={d}
-                                        packSize={packPerLine}
-                                        key={d.ID}
-                                        onSelect={onSelect}
-                                        packageType={packageType}
-                                        classes={classes} />
-                                )
-                            })
-                        }
-                    </>);
-            }
-        }
+
+        const packageList = {
+            2: { data: newsletterBulkData, title: t('common.newsletterBulkTitle'), description: t('common.newsletterBulkDescription') },
+            3: { data: smsBulkData, title: t('common.smsBulkTitle'), description: t('common.smsBulkDescription') }
+        };
+
+        return (
+            packageList[packageType].data &&
+            <>
+                {/* {purchaseLogs && <PurchaseLogs classes={classes} data={purchaseLogs} />} */}
+                <Grid item xs={12}>
+                    <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{packageList[packageType].title}</Typography>
+                    <Divider />
+                    <Typography className={classes.mt3}>{packageList[packageType].description}</Typography>
+                </Grid>
+                {
+                    packageList[packageType].data.sort((a, b) => a.Quantity - b.Quantity).map((d, index) => {
+                        return (
+                            <Package
+                                pack={d}
+                                packSize={packPerLine}
+                                key={`pack_${d.ID}`}
+                                onSelect={onSelect}
+                                packageType={packageType}
+                                classes={classes} />
+                        )
+                    })
+                }
+            </>
+        );
     }
-    return (<></>);
+    return <></>;
 }
 
 export default PackagesList;

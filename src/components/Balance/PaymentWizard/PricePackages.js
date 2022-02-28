@@ -21,7 +21,7 @@ const PricePackages = ({ classes,
     onComplete = () => null,
     packageType
 }) => {
-    const { isRTL } = useSelector(state => state.core);
+    const { isRTL, windowSize } = useSelector(state => state.core);
     const { accountAvailablePackages } = useSelector(state => state.dashboard);
     const { tranzillaUrl, creditCards, paymentConfirmation } = useSelector(state => state.payment);
     const { t } = useTranslation();
@@ -44,26 +44,29 @@ const PricePackages = ({ classes,
         PackageType: 3,
         PackageName: ""
     });
-    const israelTax = 0.17;
 
-    const initData = async () => {
+    useEffect(() => {
         setAddNewCard(false);
         setShowPaymentResult(null);
-        setSmsBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 3 }));
-        setNewsletterBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 2 }));
 
-        setData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === packageType }));
-        await dispatch(getAccountCards());
-        await dispatch(getTranzillaURL(isRTL ? 'il' : 'us'));
-        setLoader(false);
-    }
+        const initPackages = async () => {
+            setSmsBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 3 }));
+            setNewsletterBulkData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === 2 }));
+            setData(accountAvailablePackages.filter((pack) => { return pack.CampaignType === packageType }));
+            setLoader(false);
+        }
 
-    useEffect(initData, [dispatch]);
+        const initData = async () => {
+            dispatch(getAccountCards());
+            dispatch(getTranzillaURL(isRTL ? 'il' : 'us'));
+            initPackages();
+        }
+
+        initData();
+    }, []);
 
     const selectPackage = (packageId) => {
         const pack = data.find((p) => { return p.ID === packageId });
-        const vat = (pack.Price * israelTax).toFixed(2);
-        const totalPrice = pack.Price + parseFloat(vat);
         setPackageId(packageId);
         setStep(step + 1);
 
@@ -81,6 +84,7 @@ const PricePackages = ({ classes,
     const purchaseWizard = () => {
         switch (step) {
             case 1:
+            default:
                 return <PackagesList data={data}
                     classes={classes}
                     onSelect={selectPackage}
@@ -137,36 +141,38 @@ const PricePackages = ({ classes,
     const showDynamicDialog = (type) => {
         let dialog = null;
         switch (type) {
-            case "newcard": {
-                dialog = {
-                    title: t('payment.updateCreditCard'),
-                    showDivider: true,
-                    icon: (
-                        <BiCreditCard style={{ fontSize: 30 }} />
-                    ),
-                    content: (
-                        <Grid container>
-                            <Grid item xs={12} className={clsx(classes.mb4)}>
-                                <iframe src={`${tranzillaUrl}`} width="400" height="400" border="no" frameBorder="0" style={{ border: "none !important" }} />
+            default:
+            case "newcard":
+                {
+                    dialog = {
+                        title: t('payment.updateCreditCard'),
+                        showDivider: true,
+                        icon: (
+                            <BiCreditCard style={{ fontSize: 30 }} />
+                        ),
+                        content: (
+                            <Grid container>
+                                <Grid item xs={12} className={clsx(classes.mb4)}>
+                                    <iframe title="Tranzila Url" src={`${tranzillaUrl}`} width={windowSize !== 'xs' ? 400 : 250} height="420" border="no" frameBorder="0" style={{ border: "none !important" }} />
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    ),
-                    renderButtons: () => (
-                        <Button
-                            variant='contained'
-                            size='small'
-                            onClick={handleTranzilaClose}
-                            className={clsx(
-                                classes.confirmButton,
-                                classes.dialogConfirmButton,
-                                classes.dialogButtonCenter
-                            )}>
-                            {t('payment.done')}
-                        </Button>
-                    )
-                };
-                break;
-            }
+                        ),
+                        renderButtons: () => (
+                            <Button
+                                variant='contained'
+                                size='small'
+                                onClick={handleTranzilaClose}
+                                className={clsx(
+                                    classes.confirmButton,
+                                    classes.dialogConfirmButton,
+                                    classes.dialogButtonCenter
+                                )}>
+                                {t('payment.done')}
+                            </Button>
+                        )
+                    };
+                    break;
+                }
             case "paymentResult": {
                 dialog = {
                     // title: t('payment.updateCreditCard'),
@@ -178,7 +184,7 @@ const PricePackages = ({ classes,
                         <Grid container>
                             <Grid item xs={12} className={clsx(classes.mb4)}>
                                 {paymentConfirmation === true ? (<Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-                                    <img src={CheckAnimation} />
+                                    <img src={CheckAnimation} alt="Checkmark animation" />
                                     <Typography style={{ fontWeight: 'bold' }}>{t("common.ThankYou")}</Typography>
                                     <Typography>{t("payment.paymentSuceess")}</Typography>
                                 </Box>) : (
@@ -231,7 +237,7 @@ const PricePackages = ({ classes,
     }
 
     return (
-        <Grid container spacing={1} style={{ maxWidth: '100%', pointerEvents: showLoader ? 'none' : 'auto' }}>
+        <Grid container spacing={1} style={{ pointerEvents: showLoader ? 'none' : 'auto' }}>
             {purchaseWizard()}
             {renderTranzillaFrame()}
             <Loader isOpen={showLoader} showBackdrop={false} />

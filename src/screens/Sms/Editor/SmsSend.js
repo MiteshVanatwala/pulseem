@@ -24,11 +24,13 @@ import Title from '../../../components/Wizard/Title'
 import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, TextField } from "@material-ui/core";
 import {
   sendSms, deleteSms, getSmsByID, IsOTPPassed, getCampaignSumm, smsCombinedGroup, saveManualClients,
-  getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getGroupsBySubAccountId
+  getAccountExtraData, saveSmsCampSettings, getCampaignSettings, getFinishedCampaigns, getGroupsBySubAccountId, getTestGroups
 } from "../../../redux/reducers/smsSlice";
 import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
+import { FaExclamationCircle } from 'react-icons/fa'
+import { logout } from '../../../helpers/api'
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -127,14 +129,12 @@ const SmsSend = ({ classes, ...props }) => {
   const history = useHistory();
   const severe = useSnackSevere();
   const recipientSuccess = useSnackRecipients();
-  const { OTPPassed, ToastMessages } = useSelector((state) => state.sms);
+  const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups } = useSelector((state) => state.sms);
 
   const dispatch = useDispatch();
   const { windowSize, isRTL } = useSelector(
     (state) => state.core
   );
-  const { extraData, getCampaignSum, } =
-    useSelector((state) => state.sms);
   const theme = useTheme();
   const [selectedGroups, setSelected] = useState([]);
   const [allGroupsSelected, setAllGroupsSelected] = useState(false);
@@ -218,7 +218,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [otpOpen, setOTPOpen] = useState(null);
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
   const [sourcePulses, setSourcePulses] = useState({});
-
+  
   //#endregion
   useEffect(() => {
     setselectArray([
@@ -264,7 +264,8 @@ const SmsSend = ({ classes, ...props }) => {
         break;
       }
       case 2: {// NO_CREDITS
-        setToastMessage(ToastMessages.NO_CREDITS)
+        setDialogType({ type: "noCredit" });
+        //setToastMessage(ToastMessages.NO_CREDITS)
         break;
       }
       case 3: {// INVALID_NUMBER
@@ -273,6 +274,9 @@ const SmsSend = ({ classes, ...props }) => {
       }
       case 4: {// OTP_NEEDED
         setOTPOpen(true);
+        break;
+      }
+      default: {
         break;
       }
     }
@@ -290,7 +294,12 @@ const SmsSend = ({ classes, ...props }) => {
     if (props && props.match.params.id) {
       const finishedCampaigns = await dispatch(getFinishedCampaigns());
       const subAccountGroups = await dispatch(getGroupsBySubAccountId());
-      const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id))
+      const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id));
+      await dispatch(getTestGroups());
+
+      if (campaignSettings.payload.error) {
+        logout();
+      }
       settotalCampaigns(finishedCampaigns.payload);
       setGroupList(subAccountGroups.payload);
       if (campaignSettings.payload && campaignSettings.payload.PulseSettings) {
@@ -901,6 +910,7 @@ const SmsSend = ({ classes, ...props }) => {
               callbackUpdateGroups={callbackUpdateGroups}
               callbackSelectAll={callbackSelectAll}
               callbackReciFilter={callbackFilter}
+              callbackShowTestGroup={callbackShowTestGroup}
               isSms={true}
               bsDot={bsDot}
               uniqueKey={'groups_1'}
@@ -2033,6 +2043,7 @@ const SmsSend = ({ classes, ...props }) => {
                   selectedList={selectedFilterGroups}
                   callbackUpdateGroups={callbackUpdateGroupFilterd}
                   callbackSelectedGroups={callbackFilteredGroups}
+                  callbackShowTestGroup={callbackShowTestGroup}
                   noSelectionText={t("sms.NoFilteredGroups")}
                   innerHeight={160}
                   uniqueKey={'groups_2'}
@@ -2073,6 +2084,15 @@ const SmsSend = ({ classes, ...props }) => {
   const callbackUpdateGroupFilterd = (groups) => {
     setFilterGroups(groups);
   }
+  const callbackShowTestGroup = async (showTestGroups) => {
+    if (!showTestGroups && testGroups.length > 0) {
+      setGroupList(groupList.concat(testGroups));
+    }
+    else {
+      const g = groupList.filter((group) => { return group.IsTestGroup !== true });
+      setGroupList(g);
+    }
+  }
   const callbackFilteredGroups = (group) => {
     const found = selectedFilterGroups
       .map((g) => {
@@ -2102,6 +2122,39 @@ const SmsSend = ({ classes, ...props }) => {
   }
   //#endregion
   //#region Dialogs
+  const noCreditDialog = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+          <FaExclamationCircle style={{ fontSize: 100 }} />
+          <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+          <Box style={{ marginTop: 25 }}>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => setDialogType(null)}
+              className={clsx(
+                classes.dialogButton,
+                classes.dialogConfirmButton
+              )}>
+              {t("common.Ok")}
+            </Button>
+          </Box>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
+  }
   const manualUploadDialog = () => {
     return {
       title: t('sms.columnAdjustment'),
@@ -2538,7 +2591,8 @@ const SmsSend = ({ classes, ...props }) => {
       pulses: pulseDialog(),
       delete: deleteDialog(),
       exit: exitDialog(),
-      sendSuccess: sendSuccessDialog()
+      sendSuccess: sendSuccessDialog(),
+      noCredit: noCreditDialog()
     }
 
     const currentDialog = dialogContent[type] || {}

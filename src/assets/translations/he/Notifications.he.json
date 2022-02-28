@@ -2,7 +2,7 @@
   "notificationManagement": "ניהול נוטיפיקציות",
   "searchSection": {
     "notificationName": "שם הנוטיפיקציה",
-    "status": "סטטוס",
+    "status": "סטאטוס",
     "fromDate": "מתאריך",
     "toDate": "עד תאריך"
   },
@@ -33,7 +33,7 @@
     "lastUpdate": "עודכן לאחרונה"
   },
   "status": {
-    "text": "סטטוס",
+    "text": "סטאטוס",
     "draft": "טיוטה",
     "sending": "בשליחה",
     "sent": "נשלח",

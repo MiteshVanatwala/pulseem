@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Grid, Box } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
@@ -10,10 +10,16 @@ import RecipientChart from '../../components/Charts/RecipientChart';
 import PulseemTips from '../../components/Tips/PulseemTips';
 import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
+import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL } = useSelector(state => state.core); 
+  const { windowSize, isRTL } = useSelector(state => state.core);
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCommonFeatures());
+  }, [dispatch])
 
   return (
     <DefaultScreen

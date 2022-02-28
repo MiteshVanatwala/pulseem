@@ -21,6 +21,7 @@ import Title from '../../../components/Wizard/Title'
 import OTP from './OTP';
 import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
 import { setCookie } from '../../../helpers/cookies'
+import { FaExclamationCircle } from 'react-icons/fa'
 
 import { useHistory } from "react-router";
 import {
@@ -54,6 +55,7 @@ import Switch from "react-switch";
 import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
 import MobilePreview from '../../../components/MobilePreive/Mobile'
+import { logout } from '../../../helpers/api'
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -98,6 +100,7 @@ const defaultAccountExtraData = [
   { "State": "common.state" },
   { "Zip": "common.zip" }
 ];
+
 
 const SmsCreator = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -226,6 +229,15 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const qs = queryString.parse(props.location.search);
 
+  const renderHtml = (html) => {
+    function createMarkup() {
+      return { __html: html };
+    }
+    return (
+      <label dangerouslySetInnerHTML={createMarkup()}></label>
+    );
+  }
+
   const handleSendResult = async (smsSendResult) => {
     switch (smsSendResult) {
       case -2: {// ALREADY_SENT
@@ -245,7 +257,8 @@ const SmsCreator = ({ classes, ...props }) => {
         break;
       }
       case 2: {// NO_CREDITS
-        setToastMessage(ToastMessages.NO_CREDITS)
+        //setToastMessage(ToastMessages.NO_CREDITS)
+        setDialogType({ type: "noCredit" });
         break;
       }
       case 3: {// INVALID_NUMBER
@@ -362,12 +375,15 @@ const SmsCreator = ({ classes, ...props }) => {
   const getSavedData = async () => {
     if (props && props.match.params.id) {
       let response = await dispatch(getSmsByID(props.match.params.id))
-      if (response) {
+      if (response && !response.error) {
         setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
         setcharacterCount(response.payload.Text ? response.payload.Text.length : 0)
         setSmsModel(response.payload);
         return response.payload;
+      }
+      else {
+        logout();
       }
     }
   }
@@ -1182,13 +1198,13 @@ const SmsCreator = ({ classes, ...props }) => {
     let campaign = {};
     if (linkType === 'campaign') {
       campaign = previousCampaignData.filter((campaign) => { return campaign.CampaignID === id });
-      if(campaign && campaign.length > 0){
+      if (campaign && campaign.length > 0) {
         text = campaign[0].EncryptURL;
       }
     }
     else if (linkType === 'lp') {
       campaign = previousLandingData.filter((campaign) => { return campaign.CampaignID === id });
-      if(campaign && campaign.length > 0){
+      if (campaign && campaign.length > 0) {
         text = campaign[0].PageHref;
       }
     }
@@ -1769,6 +1785,39 @@ const SmsCreator = ({ classes, ...props }) => {
       onConfirm: () => { handlecaution() }
     }
   }
+  const noCreditDialog = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      content: (
+        <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+          <FaExclamationCircle style={{ fontSize: 100 }} />
+          <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+          <Box style={{ marginTop: 25 }}>
+            <Button
+              variant='contained'
+              size='small'
+              onClick={() => setDialogType(null)}
+              className={clsx(
+                classes.dialogButton,
+                classes.dialogConfirmButton
+              )}>
+              {t("common.Ok")}
+            </Button>
+          </Box>
+        </Box>
+      ),
+      showDefaultButtons: false,
+      onClose: () => { setDialogType(null) },
+      onConfirm: () => { setDialogType(null) }
+    }
+  }
   const renderDialog = () => {
     const { type } = dialogType || {}
 
@@ -1780,7 +1829,8 @@ const SmsCreator = ({ classes, ...props }) => {
       valiateError: validationDialog(),
       groups: groupDialog(),
       exit: exitDialog(),
-      alert: alertDialog()
+      alert: alertDialog(),
+      noCredit: noCreditDialog()
     }
 
     const currentDialog = dialogContent[type] || {}

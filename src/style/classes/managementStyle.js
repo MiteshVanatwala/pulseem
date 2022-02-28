@@ -81,7 +81,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   tableCellBody: {
     borderInlineEnd: '1px solid #797979',
-    marginBlock: 20,
+    marginBlock: 10,
     borderBottom: 0,
     display: 'flex',
     justifyContent: 'center',
@@ -123,7 +123,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     display: 'flex',
     flexDirection: 'column',
     minWidth: 50,
-    padding: '0 10px'
+    padding: '0 10px',
+    "@media screen and (max-width: 1240px)": {
+      padding: '0px 5px'
+    },
+    "@media screen and (max-width: 1110px)": {
+      padding: '0px 5px'
+    },
   },
   tableRowRoot: {
     display: 'flex',
@@ -165,7 +171,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     alignItems: 'center'
   },
   tableRowReportHead: {
-    backgroundColor: '#D7D7D7',
+    // backgroundColor: '#D7D7D7',
+    backgroundColor: '#E3E9F0',
     borderColor: 'transparent',
   },
   middleText: {
@@ -173,24 +180,50 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
-    color: '#333'
+    color: '#333',
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 16
+    },
   },
   middleTxt: {
     fontSize: 18,
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
-    color: '#333'
+    color: '#333',
+    lineHeight: 1.1,
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 16,
+    },
+
   },
   middleWrapText: {
     fontSize: 18,
     overflow: "hidden",
-    color: '#333'
+    color: '#333',
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 15
+    },
+    "@media screen and (min-width: 600px) and (max-width: 1240px)": {
+      fontSize: 13
+    },
+    "@media screen and (min-width: 600px) and (max-width: 1100px)": {
+      fontSize: 11
+    },
   },
   wrapText: {
     fontSize: 16,
     flexWrap: "wrap",
     textOverflow: "ellipsis",
+    "@media screen and (min-width: 600px) and (max-width: 1366px)": {
+      fontSize: 15
+    },
+    "@media screen and (min-width: 600px) and (max-width: 1240px)": {
+      fontSize: 13
+    },
+    "@media screen and (min-width: 600px) and (max-width: 1100px)": {
+      fontSize: 11
+    },
   },
   errorText: {
     color: 'red'
@@ -212,7 +245,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     textDecoration: 'none',
     width: '100%',
     padding: iconPadding[windowSize],
-    color: '#333'
+    color: '#333',
+    "@media screen and (max-width: 768px)": {
+      padding: 0
+    },
+
   },
   managmentIcon: {
     width: iconWidth[windowSize],
@@ -307,6 +344,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   actionButtonLightGreen: {
     backgroundColor: '#27AE60',
+    // marginInlineEnd: '10px',
     '&:hover': {
       backgroundColor: '#219150'
     }
@@ -316,8 +354,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   actionButtonLightBlue: {
     backgroundColor: '#3498DB',
+    // marginInlineEnd: '10px',
     '&:hover': {
-      backgroundColor: '#2283c3'
+      backgroundColor: '#3498DB'
     }
   },
   actionButtonDarkBlue: {
@@ -397,7 +436,17 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     flex: 2
   },
   flex3: {
-    flex: 3
+    flex: 3,
+    flexBasis: '1%'
+  },
+  flex4: {
+    flex: 4
+  },
+  flex6: {
+    flex: 6
+  },
+  flex7: {
+    flex: 7
   },
   flex15: {
     flex: 1
@@ -556,6 +605,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     zIndex: 0
   },
   phoneSearchBarIcon: {
+    marginRight: isRTL ? 0 : -8,
+    marginLeft: isRTL ? -8 : 0,
     backgroundColor: '#E3E9F0',
     padding: 10,
     '&:hover': {
@@ -624,7 +675,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   grayTextCell: {
     'WebkitLineClamp': 1,
-    color: '#7F7F7F'
+    color: '#7F7F7F',
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 14
+    },
   },
   fontBold: {
     fontWeight: 700
@@ -715,7 +769,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   nameEllipsis: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 700,
     color: '#333333',
     fontFamily: 'Assistant',
@@ -723,7 +777,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     width: '100%',
-    maxWidth: 250
+    maxWidth: 250,
+    "@media screen and (max-width: 1366px)": {
+      fontSize: 16
+    },
   },
   p10: {
     padding: 10
@@ -822,6 +879,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   minWidth252: {
     minWidth: '150px!important'
+  },
+  minWidth192: {
+    minWidth: '192px!important'
+  },
+  dropDownItem: {
+    display: 'flex',
+    justifyContent: 'center',
+    maxHeight: 40,
   },
   verifyButton: {
     background: 'green',
@@ -1052,6 +1117,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     background: 'transparent',
     color: '#0371AD'
   },
+  // bulkOutlineStatic: {
+  //   marginBottom: '1rem',
+  //   padding: '3px 15px',
+  //   borderRadius: '.9rem',
+  //   border: '1px solid #0371AD',
+  //   background: 'transparent',
+  //   color: '#0371AD',
+  //   transition: 'all ease-in-out 0.2s'
+  // },
   bulkOutline: {
     marginBottom: '1rem',
     padding: '3px 15px',
@@ -1060,11 +1134,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     background: 'transparent',
     color: '#0371AD',
     transition: 'all ease-in-out 0.2s',
-    '&:hover': {
-      border: '1px solid #0371AD',
-      background: '#0371AD',
-      color: '#fff',
-    }
+    // '&:hover': {
+    //   border: '1px solid #0371AD',
+    //   background: '#0371AD',
+    //   color: '#fff',
+    // }
   },
   bulkTitle: {
     fontWeight: 700,
@@ -1345,5 +1419,68 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   modalText:
   {
     fontSize: "22px", marginTop: "5px"
+  },
+  cellText: {
+    display: 'flex',
+    flexDirection: 'column',
+    '& a, & p': {
+      lineHeight: '1.1'
+    }
+  },
+  tableCellRootResponsive: {
+    "@media screen and (max-width: 1460px)": {
+      padding: "0 5",
+    },
+  },
+  responsiveFlex: {
+    alignItems: 'center',
+    "@media screen and (max-width: 1460px)": {
+      flexWrap: 'nowrap',
+    },
+    "@media screen and (max-width: 1170px)": {
+      flexDirection: 'column',
+    }
+  },
+  maxHeightReponsive: {
+    "@media screen and (max-width: 1170px)": {
+      maxHeight: '150px !important',
+      textAlign: isRTL ? "right" : "left"
+    }
+  },
+  noPonSmallScreen: {
+    "@media screen and (max-width: 1170px)": {
+      padding: '0px !important'
+    }
+  },
+  hideInMiddleScreen: {
+    "@media screen and (max-width: 1170px) and (min-width: 768px)": {
+      display: 'none',
+      minWidth: 0,
+      padding: 0
+    }
+  },
+  hideOnSmallScreen: {
+    "@media screen and (max-width: 1170px)": {
+      display: 'none',
+      minWidth: 0,
+      padding: 0
+    }
+  },
+  showTitleInline: {
+    display: 'none',
+    "@media screen and (max-width: 1170px)": {
+      display: 'inline-block'
+    }
+  },
+  reponsivePB5: {
+    '& $middleWrapText': {
+      display: 'flex',
+      flexFlow: 'column wrap',
+      fontSize: 16
+    },
+    padding: '0 !important',
+    "@media screen and (max-width: 1170px)": {
+      paddingBottom: '10px !important'
+    }
   }
 })

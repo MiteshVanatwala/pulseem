@@ -38,6 +38,14 @@ const flexDirection = {
     xl: 'row',
 }
 
+const clientIframeSize = {
+    xs: '100%',
+    sm: '100%',
+    md: 680,
+    lg: 680,
+    xl: 680
+}
+
 export const getSmsStyle = (windowSize, isRTL, theme) => ({
     sectionTitle: {
         marginTop: 45,
@@ -650,12 +658,12 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
     newIcn:
     {
         backgroundColor: "#dc3545",
+        padding: 5,
+        fontSize: 16,
         color: "#fff",
-        borderRadius: "5px",
-        padding: "5px",
-        marginInlineStart: "3px",
-        fontWeight: "400",
-        fontSize: 16
+        borderRadius: 5,
+        fontWeight: 400,
+        marginInlineStart: "3px"
     },
     mappedGroup:
     {
@@ -988,5 +996,43 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         padding: "10px",
         width: "160px",
         maxWidth: "280px",
+    },
+    editClientIframe: {
+        minWidth: clientIframeSize[windowSize],
+        minHeight: 610,
+        border: 'none'
+    },
+    breakSpaces: {
+        textAlign: 'center',
+        width: 'min-content',
+        whiteSpace: 'pre-line',
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        fontSize: 12
+    },
+    twoLineButton: {
+        borderColor: '#1c82b2',
+        cursor: 'pointer',
+        '&:hover': {
+            backgroundColor: 'transparent'
+        },
+        '& label': {
+            fontSize: 12,
+            cursor: 'pointer',
+            color: '#1c82b2',
+            lineHeight: 1,
+            textTransform: 'capitalize'
+        }
+    },
+    buttonActiveGreen: {
+        borderColor: '#1c82b2',
+        backgroundColor: '#1c82b2',
+        '&:hover': {
+            borderColor: '#1c82b2',
+            backgroundColor: '#1c82b2',
+        },
+        '& label': {
+            color: '#fff'
+        }
     }
 });

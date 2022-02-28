@@ -99,7 +99,7 @@
     "Text": "תבניות קמפיין"
   },
   "RadMenuItemResource24": {
-    "Text": "סמס"
+    "Text": "דוחות סמס"
   },
   "PackagesResource": {
     "Text": "חבילות"
@@ -372,5 +372,6 @@
   "manageNotifications": "ניהול נוטיפיקציות",
   "guides": "מדריכים",
   "implementScript": "הטמעת סקריפט",
-  "pulseemSystem": "מערכת פולסים "
+  "pulseemSystem": "מערכת פולסים ",
+  "smsReplies": "משובי SMS"
 }
