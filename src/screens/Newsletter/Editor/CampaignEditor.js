@@ -18,12 +18,23 @@ const CampaignEditor = ({ classes }) => {
             console.log('saveDesign', design)
         })
     }
+
+    const onLoad = () => {
+        console.log('onReady');
+        editor.current.tools = {
+            html: {
+                enabled: false
+            }
+        }
+
+    };
+
     return (
         <DefaultScreen
             currentPage='campaignEditor'
             classes={classes}
-            >
-            <EmailEditor ref={editor} minHeight="calc(100vh - 100px)" />
+        >
+            <EmailEditor ref={editor} minHeight="calc(100vh - 100px)" onLoad={onLoad} />
             <Button onClick={exportHtml}>Export HTML</Button>
             <Button onClick={saveDesign}>Save Design</Button>
         </DefaultScreen>
