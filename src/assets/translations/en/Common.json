@@ -547,5 +547,6 @@
   "notSent": "Not sent",
   "invalidDate": "Date is required",
   "minimalDateRequired": "Date should not be before minimal date",
-  "maximalDateRequired": "Date should not be after maximal date"
+  "maximalDateRequired": "Date should not be after maximal date",
+  "notNow": "Not now"
 }

@@ -5,6 +5,8 @@ import {
 } from '@material-ui/core'
 import { useSelector } from 'react-redux'
 import { useTranslation } from 'react-i18next'
+import { CloseIcon } from '../../assets/images/managment/index'
+import { ManagmentIcon } from '../../components/managment/index'
 
 export const SolidDialog = ({
   childrenPadding = true,
@@ -53,13 +55,13 @@ export const SolidDialog = ({
         {props.exit ? null : <Box
           onClick={onExit}
           className={clsx(
-            classes.solidDialogExitButton,
-            {
-              [classes.solidExitButtonRTL]: isRTL,
-              [classes.solidExitButtonLTL]: !isRTL
-            }
+            classes.solidDialogExitButton
           )}>
-          x
+          <ManagmentIcon
+            classes={classes}
+            icon={CloseIcon}
+          />
+
         </Box>}  </>
 
     )

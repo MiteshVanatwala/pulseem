@@ -44,7 +44,7 @@ const TFA = ({ classes,
             <Grid container>
                 <Grid item xs={12} className={clsx(classes.mb4)} style={{ textAlign: 'center' }}>
                     {renderHtml(t('dashboard.2faDescription'))}
-                    <Box>
+                    <Box className={classes.mt15}>
                         <FormControlLabel
                             control={
                                 <Checkbox
@@ -87,7 +87,7 @@ const TFA = ({ classes,
                             classes.solidDialogButton,
                             classes.dialogCancelButton
                         )}>
-                        {t('common.No')}
+                        {t('common.notNow')}
                     </Button>
                 </Grid>
             </Grid>

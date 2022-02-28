@@ -92,7 +92,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   solidDialogContainer: {
     zIndex: '1500 !important',
     "& .MuiPaper-root": {
+      borderRadius: 25,
       overflowX: "hidden",
+      boxShadow: '5px 5px 5px rgb(0 0 0 / 35%)',
       backgroundColor: '#f5f5f5'
     },
     "& .MuiDialog-paperWidthSm": {
@@ -2177,16 +2179,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dialogExitButtonLTR: {
     right: "0.5rem",
   },
-  solidExitButtonRTL: {
-    left: "1rem",
-  },
-  solidExitButtonLTL: {
-    right: "1rem",
-  },
   solidDialog: {
     display: "flex",
     flexDirection: "column",
-    borderRadius: 3,
     margin: "1rem",
     padding: "1rem",
     minWidth: dialogWidth[windowSize],
@@ -2195,7 +2190,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       '& p': {
         color: '#000',
         textAlign: 'center',
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 700
       }
     }
