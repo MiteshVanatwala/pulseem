@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import EmailEditor from 'react-email-editor'
 import DefaultScreen from '../../DefaultScreen'
 
-const NewsletterEditor = ({ classes }) => {
+const CampaignEditor = ({ classes }) => {
     const editor = useRef(null);
 
     const exportHtml = () => {
@@ -20,7 +20,7 @@ const NewsletterEditor = ({ classes }) => {
     }
     return (
         <DefaultScreen
-            currentPage='newsletterEditor'
+            currentPage='campaignEditor'
             classes={classes}
             >
             <EmailEditor ref={editor} minHeight="calc(100vh - 100px)" />
@@ -30,4 +30,4 @@ const NewsletterEditor = ({ classes }) => {
     )
 }
 
-export default NewsletterEditor;
+export default CampaignEditor;
