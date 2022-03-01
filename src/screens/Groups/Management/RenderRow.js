@@ -54,17 +54,12 @@ const RenderWebRow = ({
     let date = null;
     const { GroupName } = row;
     let text = "";
-    if (!row.SendDate) {
-      date = moment(row.UpdatedDate, dateFormat);
+    if (!row.CreationDate) {
+      date = moment(row.UpdateDate, dateFormat);
       text = t("common.UpdatedOn");
     } else {
-      date = moment(row.SendDate, dateFormat);
-      const dateMillis = date.valueOf();
-      const currentDateMillis = moment().valueOf();
-      text =
-        dateMillis > currentDateMillis
-          ? t("common.ScheduledFor")
-          : t("common.SentOn");
+      date = moment(row.CreationDate, dateFormat);
+      text = t("common.CreationDate");
     }
 
     return (
