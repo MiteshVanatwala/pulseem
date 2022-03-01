@@ -181,6 +181,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     backgroundColor: "#E3E9F0",
     borderColor: "transparent",
   },
+
+  whiteSpaceNoWrap: {
+    whiteSpace: "nowrap",
+  },
+
   middleText: {
     fontSize: windowSize === "xs" ? 15 : 18,
     whiteSpace: "nowrap",
@@ -258,6 +263,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   managmentIcon: {
     width: iconWidth[windowSize],
     margin: "auto",
+  },
+  iconWhite: {
+    "& path": {
+      stroke: '#fff'
+    }
   },
   managmentUicon: {
     fontSize: 30,

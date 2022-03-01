@@ -3,5 +3,6 @@
   "delete": "Delete Group",
   "ok": "Ok",
   "cancel": "Cancel",
-  "deleteConfirm": "Are you sure you want to delete following groups"
+  "deleteConfirm": "Are you sure you want to delete following groups",
+  "createNew": "Create New Group"
 }

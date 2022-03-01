@@ -3,5 +3,6 @@
   "delete": "מחק נמענים",
   "ok": "אישור",
   "cancel": "ביטול",
-  "deleteConfirm": ""
+  "deleteConfirm": "",
+  "createNew": "צור קבוצה חדשה"
 }
