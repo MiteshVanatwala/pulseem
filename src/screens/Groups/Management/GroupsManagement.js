@@ -125,13 +125,13 @@ const GroupsManagement = ({ classes }) => {
 
   const getData = async () => {
     setLoader(true);
-    await dispatch(getGroups({ ...serachData, PageSize: rowsPerPage }));
+    await dispatch(getGroups({ ...serachData, PageSize: rowsPerPage, PageIndex: page }));
     setLoader(false);
   };
 
   useEffect(() => {
     getData();
-  }, [dispatch, serachData]);
+  }, [dispatch, serachData, page]);
 
   //  HANDLERS  //
 
@@ -501,8 +501,8 @@ const GroupsManagement = ({ classes }) => {
       return <></>;
     }
 
-    let rpp = parseInt(rowsPerPage);
-    sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
+    //let rpp = parseInt(rowsPerPage);
+    //sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
     return (
       <TableBody>
         {sortData.map((obj) =>
@@ -837,7 +837,7 @@ const GroupsManagement = ({ classes }) => {
         page={page}
         onPageChange={(val) => {
           setPage(val);
-          setSearchData({ ...serachData, PageIndex: val });
+          // setSearchData({ ...serachData, PageIndex: val });
         }}
       />
 
