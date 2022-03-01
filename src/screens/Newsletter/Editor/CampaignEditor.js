@@ -1,5 +1,5 @@
 import { Button } from '@material-ui/core'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import EmailEditor from 'react-email-editor'
 import DefaultScreen from '../../DefaultScreen'
 
@@ -22,41 +22,17 @@ const CampaignEditor = ({ classes }) => {
     const appearance = {
         panels: {
             tools: {
-                dock: 'left'
+                dock: 'dark'
             }
         }
     }
 
     const tools = {
         html: {
-            enabled: false
+            enabled: true
         },
-        ido: {
-            name: 'my_tool',
-            label: 'My Tool',
-            icon: 'fa-smile',
-            supportedDisplayModes: ['web', 'email'],
-            options: {},
-            values: {},
-            renderer: {
-                Viewer: (values) => {
-                    return "<div>I am a custom tool.</div>"
-                },
-                exporters: {
-                    web: function (values) {
-                        return "<div>I am a custom tool.</div>"
-                    },
-                    email: function (values) {
-                        return "<div>I am a custom tool.</div>"
-                    }
-                },
-                head: {
-                    css: function (values) { },
-                    js: function (values) { }
-                }
-
-            }
-        }
+        amp: "true",
+        
     };
 
     return (
@@ -71,6 +47,7 @@ const CampaignEditor = ({ classes }) => {
                 minHeight="calc(100vh - 100px)"
                 tools={tools}
                 appearance={appearance}
+                amp={true}
             />
         </DefaultScreen>
     )
