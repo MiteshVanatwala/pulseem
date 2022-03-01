@@ -24,7 +24,7 @@ export const getGroups = createAsyncThunk(
 export const createGroup = createAsyncThunk(
     'Group/Create', async (payload, thunkAPI) => {
         try {
-            const response = await instence.delete(`Group/Create`, payload);
+            const response = await instence.put(`Group/Create`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -34,7 +34,7 @@ export const createGroup = createAsyncThunk(
 export const deleteGroups = createAsyncThunk(
     'Group/Delete', async (payload, thunkAPI) => {
         try {
-            const response = await instence.delete(`Group/Delete`, payload);
+            const response = await instence.put(`Group/Delete`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -48,7 +48,10 @@ export const groupSlice = createSlice({
         selectedGroups: [],
         subAccountAllGroups: [],
         groupData: null,
-        error: ""
+        error: "",
+        ToastMessages: {
+            GROUP_CREATED: { severity: 'success', color: 'success', message: 'group.created', showAnimtionCheck: false },
+          }
     },
     reducers: {
         setSelectedGroups: (state, action) => {

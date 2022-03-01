@@ -37,6 +37,7 @@ import { exportFile } from "../../../helpers/exportFromJson";
 import { preferredOrder } from "../../../helpers/exportHelper";
 import RenderRow from "./RenderRow";
 import RenderPhoneRow from "./RenderPhoneRow";
+import Toast from '../../../components/Toast/Toast.component';
 import {
   getGroups,
   deleteGroups,
@@ -55,11 +56,12 @@ const GroupsManagement = ({ classes }) => {
     isRTL,
   } = useSelector((state) => state.core);
 
-  const { groupData } = useSelector((state) => state.group);
+  const { groupData, ToastMessages } = useSelector((state) => state.group);
   const { t } = useTranslation();
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
+  const [toastMessage, setToastMessage] = useState(null);
   const [serachData, setSearchData] = useState({
     PageIndex: 1,
     PageSize: rowsPerPage,
@@ -170,16 +172,47 @@ const GroupsManagement = ({ classes }) => {
 
   const handleAddGroup = async (data) => {
     try {
-      await dispatch(createGroup(data));
+      setLoader(true);
+      const response = await dispatch(createGroup(data));
       setDialog(null);
+      setLoader(false);
+      onCreateGroupResponse(response.payload);
     } catch (err) {
       return false;
     }
   };
+
+  const onCreateGroupResponse = (response) => {
+    switch (response.StatusCode) {
+      case 201: {
+        getData();
+        setToastMessage(ToastMessages.GROUP_CREATED);
+        break;
+      }
+      default: {
+        setDialog(null);
+      }
+    }
+  }
+
+  const renderToast = () => {
+    if (toastMessage) {
+
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 4000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
+
   const handleDeleteGroup = async () => {
     await dispatch(deleteGroups(selectedGroups));
     setSelectedGroups([]);
     setDialog(null);
+    getData();
   };
 
   const handleSelected = (id) => {
@@ -335,9 +368,8 @@ const GroupsManagement = ({ classes }) => {
             size="medium"
             href={
               smsOldVersion === "true"
-                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${
-                    isRTL ? "he-IL" : "en-US"
-                  }`
+                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
+                }`
                 : "/react/sms/create"
             }
             className={clsx(classes.actionButton, classes.actionButtonRed)}
@@ -351,9 +383,8 @@ const GroupsManagement = ({ classes }) => {
             size="medium"
             href={
               smsOldVersion === "true"
-                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${
-                    isRTL ? "he-IL" : "en-US"
-                  }`
+                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
+                }`
                 : "/react/sms/create"
             }
             className={clsx(classes.actionButton, classes.actionButtonRed)}
@@ -589,13 +620,13 @@ const GroupsManagement = ({ classes }) => {
                     classes.actionButtonLightGreen,
                     classes.whiteSpaceNoWrap
                   )}
-                  // onClick={
-                  //TODO: ADD ADD Recipient Functionality
-                  //     () => setDialogType({
-                  //     type: 'restore',
-                  //     data: smsDeletedData
-                  // })
-                  // }
+                // onClick={
+                //TODO: ADD ADD Recipient Functionality
+                //     () => setDialogType({
+                //     type: 'restore',
+                //     data: smsDeletedData
+                // })
+                // }
                 >
                   {t("recipient.addRecipients")}
                 </Button>
@@ -640,16 +671,17 @@ const GroupsManagement = ({ classes }) => {
               classes.responsiveFlex
             )}
           >
-            <Box className={classes.flex1}>
+            <Box className={classes.flex1} style={{ marginInlineEnd: 10 }}>
               <Typography>Group Name:</Typography>
             </Box>
-            <Box className={classes.flex2}>
+            <Box className={classes.flex2} style={{ marginInlineEnd: 10 }}>
               <TextField
                 id="outlined-basic"
                 label=""
                 variant="outlined"
                 value={newGroupData.GroupName}
-                className={classes.addGroupTextField}
+                className={clsx(classes.textField, classes.minWidth252)}
+                autoComplete="off"
                 onChange={(e) => {
                   e.preventDefault();
                   setNewGroupData({
@@ -776,6 +808,7 @@ const GroupsManagement = ({ classes }) => {
       classes={classes}
       containerClass={clsx(classes.management, classes.mb8)}
     >
+      {renderToast()}
       {renderHeader()}
       {renderSearchLine()}
       {windowSize !== "xs" && renderManagmentLine()}
