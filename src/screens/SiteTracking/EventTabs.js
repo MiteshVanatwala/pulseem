@@ -2,7 +2,7 @@ import { EventsOptions } from '../../helpers/PulseemArrays'
 import TabPanel from '@material-ui/lab/TabPanel';
 import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Grid, Tab, Button, Box, Link } from '@material-ui/core'
 import EventToGroups from './EventToGroups'
@@ -29,28 +29,6 @@ const EventTabs = ({ classes, setDialog }) => {
         dispatch(addMetaData(emptyMetaData));
         setMetadataToShow(event.metadata.length + 1);
     }
-
-
-    const EventMeta = () => useMemo(() => {
-        if (event && event.metadata) {
-            return event.metadata.map((mt, idx) => {
-                if (idx < metadataToShow) {
-                    return <EventToGroups
-                        id={mt.id}
-                        key={idx}
-                        index={idx}
-                        currentEvent={mt}
-                        eventsCount={event.metadata.length}
-                        classes={classes}
-                        onShowGroups={() => { setDialog({ type: 'showGroups' }) }}
-                        onHideGroups={() => { setDialog(null) }}
-                    />
-                }
-                return <></>
-            });
-        }
-        return <></>;
-    }, [event]);
 
     return <TabContext value={tabValue}>
         <Grid
@@ -98,7 +76,7 @@ const EventTabs = ({ classes, setDialog }) => {
                         {t("siteTracking.addEvent")}
                     </Button>
                 </Box>
-                <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', maxWidth: 1600, width: '100%' }} className={classes.mb25}>
+                <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', maxWidth: 1350, width: '100%' }} className={classes.mb25}>
                     {event.metadata.length > 10 &&
                         <Link onClick={() => setMetadataToShow(metadataToShow > 10 ? 10 : (event.metadata.length + 1))}
                             className={classes.alignCenter}

@@ -70,6 +70,7 @@ export const getSiteTrackingStyle = (windowSize, isRTL) => ({
     },
     eventGroupsContainer: {
         display: 'flex',
-        width: windowSize !== 'xs' ? '45%' : '100%'
+        width: windowSize !== 'xs' ? '45%' : '100%',
+        maxWidth: 1600
     }
 });
