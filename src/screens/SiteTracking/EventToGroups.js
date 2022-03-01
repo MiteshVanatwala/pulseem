@@ -100,7 +100,7 @@ const EventToGroups = ({
             justifyContent: 'space-between', maxWidth: 1600, width: '100%'
         }}>
         {showGroups()}
-        <Box style={{ display: 'flex', flexDirection: 'row', width: '45%' }}>
+        <Box className={classes.eventPageContainer}>
             <Box>
                 <Typography className={clsx(classes.buttonHead)}>
                     {t("siteTracking.pageUrl")}
@@ -146,13 +146,11 @@ const EventToGroups = ({
                 />
             </Box>
         </Box>
-        <Box style={{ display: 'flex', width: '5%', justifyContent: 'center' }}>
-            <Box className={clsx(classes.flex, classes.justifyCenterOfCenter, classes.arrowContainer)}>
-                {isRTL ? <FaArrowCircleLeft className={classes.contentHead} /> : <FaArrowCircleRight className={classes.contentHead} />}
-            </Box>
+        <Box className={classes.arrowContainer}>
+            {isRTL ? <FaArrowCircleLeft className={classes.contentHead} /> : <FaArrowCircleRight className={classes.contentHead} />}
         </Box>
-        <Box style={{ display: 'flex', width: '45%' }}>
-            <Box style={{ width: '100%' }}>
+        <Box className={classes.eventGroupsContainer}>
+            <Box style={{ width: '100%', maxWidth: 395 }}>
                 <Typography className={clsx(classes.buttonHead)}>
                     {t("siteTracking.addToGroups")}
                 </Typography>
