@@ -266,8 +266,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   iconWhite: {
     "& path": {
-      stroke: '#fff'
-    }
+      stroke: "#fff",
+    },
   },
   managmentUicon: {
     fontSize: 30,
@@ -277,7 +277,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   managmentIconDisable: {
     opacity: 0.5,
-    pointerEvents: 'none'
+    pointerEvents: "none",
   },
   managmentIconText: {
     textAlign: "center",
@@ -400,6 +400,25 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: "#ae2a27",
     },
   },
+
+  addGroupTextField: {
+    textTransform: "capitalize",
+    "& .MuiOutlinedInput-input": {
+      width: 220,
+    },
+    "& .MuiOutlinedInput-notchedOutline": {
+      borderColor: "#a6a6a6",
+    },
+    "& .MuiOutlinedInput-root": {
+      "&:hover fieldset": {
+        borderColor: "#797979",
+      },
+      "&.Mui-focused fieldset": {
+        border: "1px solid #797979",
+      },
+    },
+  },
+
   textField: {
     width: 180,
     textTransform: "capitalize",
@@ -1405,9 +1424,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     position: "relative",
     marginBottom: 50,
     "& .amcharts-amexport-item .amcharts-amexport-item-level-1 .amcharts-amexport-item-blank":
-    {
-      width: 150,
-    },
+      {
+        width: 150,
+      },
     "& .amcharts-amexport-menu-level-1": {
       right: "15px!important",
       "&::after": {

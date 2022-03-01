@@ -11,12 +11,9 @@ import {
   Box,
   Checkbox,
   FormControlLabel,
-  useTheme
+  useTheme,
 } from "@material-ui/core";
-import {
-  SearchIcon,
-  ExportIcon,
-} from "../../../assets/images/managment/index";
+import { SearchIcon, ExportIcon } from "../../../assets/images/managment/index";
 import { CSVLink } from "react-csv";
 import {
   TablePagination,
@@ -35,13 +32,17 @@ import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import DataTable from "../../../components/Table/DataTable";
 // import { ExcelData, StaticData } from "../tempConstants";
 import { GrGroup } from "react-icons/gr";
-import { BsInfoSquare } from "react-icons/bs";
+import { BsInfoCircleFill, BsInfoSquare } from "react-icons/bs";
 import { exportFile } from "../../../helpers/exportFromJson";
 import { preferredOrder } from "../../../helpers/exportHelper";
 import RenderRow from "./RenderRow";
 import RenderPhoneRow from "./RenderPhoneRow";
-import { getGroups, deleteGroups, createGroup } from "../../../redux/reducers/groupSlice";
-import { Dialog } from '../../../components/managment/Dialog';
+import {
+  getGroups,
+  deleteGroups,
+  createGroup,
+} from "../../../redux/reducers/groupSlice";
+import { Dialog } from "../../../components/managment/Dialog";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -54,12 +55,16 @@ const GroupsManagement = ({ classes }) => {
     isRTL,
   } = useSelector((state) => state.core);
 
-  const { groupData } = useSelector(state => state.group)
+  const { groupData } = useSelector((state) => state.group);
   const { t } = useTranslation();
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
-  const [serachData, setSearchData] = useState({ PageIndex: 1, PageSize: rowsPerPage, SearchTerm: '' })
+  const [serachData, setSearchData] = useState({
+    PageIndex: 1,
+    PageSize: rowsPerPage,
+    SearchTerm: "",
+  });
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
@@ -122,9 +127,9 @@ const GroupsManagement = ({ classes }) => {
     setLoader(false);
   };
 
-  // useEffect(() => {
-  //   getData();
-  // }, [dispatch, serachData]);
+  useEffect(() => {
+    getData();
+  }, [dispatch, serachData]);
 
   //  HANDLERS  //
 
@@ -148,7 +153,10 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const handleDownloadCsv = async () => {
-    let orderList = preferredOrder(groupData.Groups, Object.keys(exportColumnHeader));
+    let orderList = preferredOrder(
+      groupData.Groups,
+      Object.keys(exportColumnHeader)
+    );
     // orderList = await statusNumberToString(t, orderList, MMSReportStatus);
     // orderList = await formatDateTime(orderList, t);
     // orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
@@ -160,21 +168,19 @@ const GroupsManagement = ({ classes }) => {
     });
   };
 
-
   const handleAddGroup = async (data) => {
     try {
-      await dispatch(createGroup(data))
+      await dispatch(createGroup(data));
       setDialog(null);
-    }
-    catch (err) {
+    } catch (err) {
       return false;
     }
-  }
+  };
   const handleDeleteGroup = async () => {
-    await dispatch(deleteGroups(selectedGroups))
+    await dispatch(deleteGroups(selectedGroups));
     setSelectedGroups([]);
     setDialog(null);
-  }
+  };
 
   const handleSelected = (id) => {
     const index = selectedGroups.indexOf(id);
@@ -202,14 +208,22 @@ const GroupsManagement = ({ classes }) => {
   const renderSearchLine = () => {
     const handleKeyDown = (event) => {
       if (event.keyCode === 13 || event.code === "Enter") {
-        setSearchData({ PageIndex: 1, PageSize: rowsPerPage, SearchTerm: searchStr })
+        setSearchData({
+          PageIndex: 1,
+          PageSize: rowsPerPage,
+          SearchTerm: searchStr,
+        });
         setPage(1);
       }
     };
 
     const handleKeyPress = (e) => {
       if (e.charCode === 13 || e.code === "Enter") {
-        setSearchData({ PageIndex: 1, PageSize: rowsPerPage, SearchTerm: searchStr })
+        setSearchData({
+          PageIndex: 1,
+          PageSize: rowsPerPage,
+          SearchTerm: searchStr,
+        });
         setPage(1);
       }
     };
@@ -221,7 +235,11 @@ const GroupsManagement = ({ classes }) => {
           value={searchStr}
           onChange={(e) => setSearchStr(e.target.value)}
           onClick={() => {
-            setSearchData({ PageIndex: 1, PageSize: rowsPerPage, SearchTerm: searchStr })
+            setSearchData({
+              PageIndex: 1,
+              PageSize: rowsPerPage,
+              SearchTerm: searchStr,
+            });
             setPage(1);
           }}
           onKeyPress={handleKeyPress}
@@ -248,7 +266,11 @@ const GroupsManagement = ({ classes }) => {
             size="large"
             variant="contained"
             onClick={() => {
-              setSearchData({ PageIndex: 1, PageSize: rowsPerPage, SearchTerm: searchStr })
+              setSearchData({
+                PageIndex: 1,
+                PageSize: rowsPerPage,
+                SearchTerm: searchStr,
+              });
               setPage(1);
             }}
             className={classes.searchButton}
@@ -263,7 +285,7 @@ const GroupsManagement = ({ classes }) => {
               size="large"
               variant="contained"
               onClick={() => {
-                setSearchData({ ...serachData, SearchTerm: '' });
+                setSearchData({ ...serachData, SearchTerm: "" });
                 setSearchStr("");
                 setPage(1);
               }}
@@ -279,7 +301,6 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const renderManagmentLine = () => {
-
     return (
       <Grid container spacing={2} className={classes.linePadding}>
         <Grid item xs={windowSize === "xs" && 12}>
@@ -314,8 +335,9 @@ const GroupsManagement = ({ classes }) => {
             size="medium"
             href={
               smsOldVersion === "true"
-                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
-                }`
+                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${
+                    isRTL ? "he-IL" : "en-US"
+                  }`
                 : "/react/sms/create"
             }
             className={clsx(classes.actionButton, classes.actionButtonRed)}
@@ -329,8 +351,9 @@ const GroupsManagement = ({ classes }) => {
             size="medium"
             href={
               smsOldVersion === "true"
-                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
-                }`
+                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${
+                    isRTL ? "he-IL" : "en-US"
+                  }`
                 : "/react/sms/create"
             }
             className={clsx(classes.actionButton, classes.actionButtonRed)}
@@ -450,38 +473,38 @@ const GroupsManagement = ({ classes }) => {
     let rpp = parseInt(rowsPerPage);
     sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
     return (
-      <TableBody >
-        {sortData.map((obj) => windowSize === "xs" ?
-          <RenderPhoneRow
-            row={obj}
-            rowStyle={rowStyle}
-            name={renderNameCell(obj, true)}
-            classes={classes}
-            colorTextStyle={colorTextStyle}
-            setSelectedGroups={(id) => setSelectedGroups([id])}
-            DialogType={DialogType}
-            setDialog={(val) => setDialog(val)}
-          />
-          :
-          <RenderRow
-            row={obj}
-            classes={classes}
-            setDialog={(val) => setDialog(val)}
-            handleSelected={(id) => handleSelected(id)}
-            selectedGroups={selectedGroups}
-            setSelectedGroups={(id) => setSelectedGroups([id])}
-            DialogType={DialogType}
-            dateFormat={dateFormat}
-            rowStyle={rowStyle}
-            cellStyle={cellStyle}
-            noBorderCellStyle={noBorderCellStyle}
-            colorTextStyle={colorTextStyle}
-            handleDeleteGroup={handleDeleteGroup}
-          />
-
+      <TableBody>
+        {sortData.map((obj) =>
+          windowSize === "xs" ? (
+            <RenderPhoneRow
+              row={obj}
+              rowStyle={rowStyle}
+              name={renderNameCell(obj, true)}
+              classes={classes}
+              colorTextStyle={colorTextStyle}
+              setSelectedGroups={(id) => setSelectedGroups([id])}
+              DialogType={DialogType}
+              setDialog={(val) => setDialog(val)}
+            />
+          ) : (
+            <RenderRow
+              row={obj}
+              classes={classes}
+              setDialog={(val) => setDialog(val)}
+              handleSelected={(id) => handleSelected(id)}
+              selectedGroups={selectedGroups}
+              setSelectedGroups={(id) => setSelectedGroups([id])}
+              DialogType={DialogType}
+              dateFormat={dateFormat}
+              rowStyle={rowStyle}
+              cellStyle={cellStyle}
+              noBorderCellStyle={noBorderCellStyle}
+              colorTextStyle={colorTextStyle}
+              handleDeleteGroup={handleDeleteGroup}
+            />
+          )
         )}
       </TableBody>
-
     );
   }, [groupData, rowsPerPage, page, classes, selectedGroups]);
 
@@ -515,21 +538,19 @@ const GroupsManagement = ({ classes }) => {
         <Dialog
           classes={classes}
           open={dialog === DialogType.ADD_GROUP}
-          title={t("createNew")}
+          title={t("group.createNew")}
           icon={<GrGroup size={40} className={classes.iconWhite} />}
           showDivider={true}
           onClose={() => setDialog(null)}
           onCancel={() => setDialog(null)}
-          onConfirm={
-            () => {
-              const result = handleAddGroup(newGroupData)
-              if (result) {
-                setNewGroupData(DEFAULT_NEW_GROUP)
-              }
+          onConfirm={() => {
+            const result = handleAddGroup(newGroupData);
+            if (result) {
+              setNewGroupData(DEFAULT_NEW_GROUP);
             }
-          }
-          renderButtons={
-            () => (<Grid container spacing={2} className={classes.linePadding}>
+          }}
+          renderButtons={() => (
+            <Grid container spacing={2} className={classes.linePadding}>
               <Grid
                 item
                 xs={windowSize === "xs" && 12}
@@ -540,8 +561,8 @@ const GroupsManagement = ({ classes }) => {
                   variant="contained"
                   size="medium"
                   className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonRed,
+                    classes.dialogButton,
+                    classes.dialogCancelButton,
                     classes.fullWidth,
                     classes.whiteSpaceNoWrap
                   )}
@@ -560,20 +581,23 @@ const GroupsManagement = ({ classes }) => {
                   variant="contained"
                   size="medium"
                   className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonLightGreen,
                     classes.fullWidth,
+                    classes.dialogButton,
+                    classes.dialogConfirmButton,
+                    // classes.ps15,
+                    // classes.pe15,
+                    classes.actionButtonLightGreen,
                     classes.whiteSpaceNoWrap
                   )}
-                // onClick={
-                //TODO: ADD ADD Recipient Functionality
-                //     () => setDialogType({
-                //     type: 'restore',
-                //     data: smsDeletedData
-                // })
-                // }
+                  // onClick={
+                  //TODO: ADD ADD Recipient Functionality
+                  //     () => setDialogType({
+                  //     type: 'restore',
+                  //     data: smsDeletedData
+                  // })
+                  // }
                 >
-                  {t("recipient.addRecipient")}
+                  {t("recipient.addRecipients")}
                 </Button>
               </Grid>
               <Grid
@@ -586,58 +610,91 @@ const GroupsManagement = ({ classes }) => {
                   variant="contained"
                   size="medium"
                   className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonLightGreen,
+                    classes.dialogButton,
+                    classes.dialogConfirmButton,
                     classes.fullWidth,
-                    classes.whiteSpaceNoWrap
+                    classes.whiteSpaceNoWrap,
+                    classes.textCapitalize
                   )}
-                  onClick={
-                    () => {
-                      const result = handleAddGroup(newGroupData)
-                      if (result) {
-                        setNewGroupData(DEFAULT_NEW_GROUP)
-                      }
+                  onClick={() => {
+                    const result = handleAddGroup(newGroupData);
+                    if (result) {
+                      setNewGroupData(DEFAULT_NEW_GROUP);
                     }
-                  }
+                  }}
                 >
                   {t("group.ok")}
                 </Button>
               </Grid>
-            </Grid>)
-          }
-          customContainerStyle=''
-          cancelText='common.Cancel'
-          confirmText='common.Ok'
-
-        >
-          <Grid container className={clsx(classes.customDialogContentBox, classes.mt4)} >
-            <Grid item xs={12} sm={4}>
-              <Typography>Group Name:</Typography>
             </Grid>
-            <Grid item xs={12} sm={4}>
+          )}
+          customContainerStyle=""
+          cancelText="common.Cancel"
+          confirmText="common.Ok"
+        >
+          <Box
+            className={clsx(
+              classes.customDialogContentBox,
+              classes.flex,
+              classes.mt4,
+              classes.responsiveFlex
+            )}
+          >
+            <Box className={classes.flex1}>
+              <Typography>Group Name:</Typography>
+            </Box>
+            <Box className={classes.flex2}>
               <TextField
                 id="outlined-basic"
                 label=""
                 variant="outlined"
                 value={newGroupData.GroupName}
+                className={classes.addGroupTextField}
                 onChange={(e) => {
                   e.preventDefault();
-                  console.log("DATA:", newGroupData, e.target.value);
                   setNewGroupData({
                     ...newGroupData,
                     GroupName: e.target.value,
                   });
                 }}
               />
-            </Grid>
-            <Grid item xs={12} sm={4} className={classes.flex}>
+            </Box>
+            <Box
+              className={clsx(
+                classes.flex1,
+                classes.flex,
+                classes.responsiveFlex
+              )}
+            >
               <FormControlLabel
-                control={<Checkbox name="testGroup" size="small" />}
+                control={
+                  <Checkbox name="testGroup" size="small" color="primary" />
+                }
                 label="Test Group"
               />
-              <BsInfoSquare />
-            </Grid>
-          </Grid>
+              <CustomTooltip
+                isSimpleTooltip={false}
+                interactive={true}
+                classes={{
+                  tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                  arrow: classes.fBlack,
+                }}
+                arrow={true}
+                style={{ fontSize: 18, fontWeight: "bold" }}
+                placement={"top"}
+                title={
+                  <Typography noWrap={false}>
+                    {t("group.testGroupInfo")}
+                  </Typography>
+                }
+                text={t("group.testGroupInfo")}
+              >
+                <span>
+                  <BsInfoCircleFill />
+                </span>
+              </CustomTooltip>
+            </Box>
+          </Box>
         </Dialog>
       </>
     );
@@ -655,8 +712,8 @@ const GroupsManagement = ({ classes }) => {
           onClose={() => setDialog(null)}
           onCancel={() => setDialog(null)}
           onConfirm={() => handleDeleteGroup()}
-          renderButtons={
-            () => (<Grid container spacing={2} className={classes.linePadding}>
+          renderButtons={() => (
+            <Grid container spacing={2} className={classes.linePadding}>
               <Grid
                 item
                 xs={windowSize === "xs" && 12}
@@ -690,19 +747,16 @@ const GroupsManagement = ({ classes }) => {
                     classes.actionButtonLightGreen,
                     classes.fullWidth
                   )}
-                  onClick={
-                    () => handleDeleteGroup()
-                  }
+                  onClick={() => handleDeleteGroup()}
                 >
                   {t("group.ok")}
                 </Button>
               </Grid>
-            </Grid>)
-          }
-          customContainerStyle=''
-          cancelText='common.Cancel'
-          confirmText='common.Ok'
-
+            </Grid>
+          )}
+          customContainerStyle=""
+          cancelText="common.Cancel"
+          confirmText="common.Ok"
         >
           <Box>
             <Typography variant="subtitle1">
@@ -714,20 +768,24 @@ const GroupsManagement = ({ classes }) => {
     );
   };
 
-
   const groupsLength = (groupData && groupData.RecordCount) || 0;
 
   return (
     <DefaultScreen
       currentPage="groups"
       classes={classes}
-      containerClass={classes.management}
+      containerClass={clsx(classes.management, classes.mb8)}
     >
       {renderHeader()}
       {renderSearchLine()}
       {windowSize !== "xs" && renderManagmentLine()}
       <DataTable
-        tableContainer={{ className: windowSize === "xs" ? clsx(classes.mt3, classes.tableStyle) : classes.tableStyle }}
+        tableContainer={{
+          className:
+            windowSize === "xs"
+              ? clsx(classes.mt3, classes.tableStyle)
+              : classes.tableStyle,
+        }}
         table={{ className: classes.tableContainer }}
         tableHead={{
           tableHeadCells: TABLE_HEAD,
@@ -744,18 +802,15 @@ const GroupsManagement = ({ classes }) => {
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={[6, 10, 20, 50]}
         page={page}
-        onPageChange={
-          (val) => {
-            setPage(val)
-            setSearchData({ ...serachData, PageIndex: val })
-          }
-        }
+        onPageChange={(val) => {
+          setPage(val);
+          setSearchData({ ...serachData, PageIndex: val });
+        }}
       />
 
       {AddGroupPopUp()}
       {ConfirmDeletePopUp()}
-      {/* <Loader isOpen={showLoader} /> */}
-      {/* {SampleDialog()} */}
+      <Loader isOpen={showLoader} />
     </DefaultScreen>
   );
 };

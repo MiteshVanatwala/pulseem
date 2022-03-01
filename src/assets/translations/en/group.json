@@ -4,5 +4,6 @@
   "ok": "Ok",
   "cancel": "Cancel",
   "deleteConfirm": "Are you sure you want to delete following groups",
-  "createNew": "Create New Group"
+  "createNew": "Create New Group",
+  "testGroupInfo":"Test Groups allow you to send a test directly from the campaign editor"
 }
