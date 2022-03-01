@@ -157,7 +157,8 @@ const SiteTrackingEditor = ({ classes }) => {
         }
     }
     const onSaveReponse = (response) => {
-        switch (response.status) {
+        let statusCode = response.status ?? response.statusCode
+        switch (statusCode) {
             case 200:
             case 201: {
                 setToastMessage(ToastMessages.SUCCESS);

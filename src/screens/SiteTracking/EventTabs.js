@@ -92,13 +92,13 @@ const EventTabs = ({ classes, setDialog }) => {
                         return <></>
                     })
                 }
-                <Box style={{ display: 'flex', flexDirection: 'row', maxWidth: 1150 }}>
+                <Box style={{ display: 'flex', flexDirection: 'row' }}>
                     <Button onClick={() => { onAddEvent() }} style={{ justifyContent: 'flex-start' }}>
                         <AiOutlinePlusCircle className={classes.addOptionsIcon} />
                         {t("siteTracking.addEvent")}
                     </Button>
                 </Box>
-                <Box style={{ display: 'flex', flexDirection: 'row', maxWidth: 1150, justifyContent: 'flex-end' }}>
+                <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }} className={classes.mb25}>
                     {event.metadata.length > 10 &&
                         <Link onClick={() => setMetadataToShow(metadataToShow > 10 ? 10 : (event.metadata.length + 1))}
                             className={classes.alignCenter}

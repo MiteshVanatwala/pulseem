@@ -751,13 +751,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     }
   },
   success: {
-    borderBottom: "2px solid green",
+    borderBottom: "1px solid green",
   },
   error: {
-    borderBottom: "2px solid red !important",
+    borderBottom: "1px solid red !important",
   },
   valid: {
-    borderBottom: "2px solid #008000 !important",
+    borderBottom: "1px solid #008000 !important",
   },
   msgHead: {
     fontSize: "20px",

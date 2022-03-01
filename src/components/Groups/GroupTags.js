@@ -39,13 +39,13 @@ const GroupTags = ({ classes,
 
     return (<Box className={classes.rightForm} style={{ ...style }}>
         <Box
-            style={{ minHeight: 40, maxHeight: 40 }}
+            style={{ minHeight: 40, maxHeight: 40, width: '100%' }}
             className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
             onClick={() => onShowModal()}
         >
             {(!groups || groups.length <= 0) && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
             {groups && groups.length > 0 ? (
-                <Box className={classes.mappedGroup} style={{ maxWidth: '100%' }}>
+                <Box className={classes.mappedGroup} style={{ width: '100%' }}>
                     {groups.map((item, index) => {
                         return (
                             <Box key={index} className={clsx(classes.selectedGroupsDiv)}>

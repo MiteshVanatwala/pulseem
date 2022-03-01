@@ -95,7 +95,7 @@ const EventToGroups = ({
 
     return <Box id={currentEvent.id} className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row', justifyContent: 'space-between', width: '100%' }}>
         {showGroups()}
-        <Box style={{ display: 'flex', flexDirection: 'row', width: '50%' }}>
+        <Box style={{ display: 'flex', flexDirection: 'row', width: '45%' }}>
             <Box>
                 <Typography className={clsx(classes.buttonHead)}>
                     {t("siteTracking.pageUrl")}
@@ -141,13 +141,13 @@ const EventToGroups = ({
                 />
             </Box>
         </Box>
-        <Box>
+        <Box style={{ width: '5%' }}>
             <Box className={clsx(classes.flex, classes.justifyCenterOfCenter, classes.arrowContainer)}>
                 {isRTL ? <FaArrowCircleLeft className={classes.contentHead} /> : <FaArrowCircleRight className={classes.contentHead} />}
             </Box>
         </Box>
-        <Box style={{ display: 'flex', width: '100%' }}>
-            <Box>
+        <Box style={{ display: 'flex', width: '45%' }}>
+            <Box style={{ width: '100%' }}>
                 <Typography className={clsx(classes.buttonHead)}>
                     {t("siteTracking.addToGroups")}
                 </Typography>
@@ -157,7 +157,7 @@ const EventToGroups = ({
                     classes={classes}
                     title={'siteTracking.typeGroupName'}
                     onShowModal={handleShowGroup}
-                    style={{ width: windowSize === 'xs' ? 320 : 460 }}
+                    style={{ width: '100%' }}
                 />
             </Box>
             {eventsCount > 1 && <Box className={classes.deleteButtonContainer}>
