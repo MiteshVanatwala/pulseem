@@ -30,10 +30,12 @@ const CampaignEditor = ({ classes }) => {
     const tools = {
         html: {
             enabled: true
-        },
-        amp: "true",
-        
+        }        
     };
+
+    const options = {
+        amp: true
+    }
 
     return (
         <DefaultScreen
@@ -47,7 +49,7 @@ const CampaignEditor = ({ classes }) => {
                 minHeight="calc(100vh - 100px)"
                 tools={tools}
                 appearance={appearance}
-                amp={true}
+                options={options}
             />
         </DefaultScreen>
     )
