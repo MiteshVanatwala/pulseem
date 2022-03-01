@@ -93,7 +93,12 @@ const EventToGroups = ({
         dispatch(deleteMetaData(currentEvent.id));
     }
 
-    return <Box id={currentEvent.id} className={classes.marginBlock20} style={{ display: 'flex', flexDirection: windowSize === 'xs' ? 'column' : 'row', justifyContent: 'space-between', width: '100%' }}>
+    return <Box id={currentEvent.id} className={classes.marginBlock20}
+        style={{
+            display: 'flex',
+            flexDirection: windowSize === 'xs' ? 'column' : 'row',
+            justifyContent: 'space-between', maxWidth: 1600, width: '100%'
+        }}>
         {showGroups()}
         <Box style={{ display: 'flex', flexDirection: 'row', width: '45%' }}>
             <Box>
@@ -141,7 +146,7 @@ const EventToGroups = ({
                 />
             </Box>
         </Box>
-        <Box style={{ width: '5%' }}>
+        <Box style={{ display: 'flex', width: '5%', justifyContent: 'center' }}>
             <Box className={clsx(classes.flex, classes.justifyCenterOfCenter, classes.arrowContainer)}>
                 {isRTL ? <FaArrowCircleLeft className={classes.contentHead} /> : <FaArrowCircleRight className={classes.contentHead} />}
             </Box>
