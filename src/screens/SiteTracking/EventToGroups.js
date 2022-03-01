@@ -29,7 +29,7 @@ const EventToGroups = ({
 
     const updateOperationData = (e, key, value) => {
         e.preventDefault();
-        if (value !== '') {
+        if (value !== '' && e.target.classList) {
             e.target.classList.remove('error');
         }
         setPageUrlIsValid(value !== '');
