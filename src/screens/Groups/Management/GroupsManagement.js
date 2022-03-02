@@ -17,7 +17,7 @@ import { SearchIcon, ExportIcon } from "../../../assets/images/managment/index";
 import { CSVLink } from "react-csv";
 import {
   TablePagination,
-  SearchField,
+  SearchField
 } from "../../../components/managment/index";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -570,7 +570,9 @@ const GroupsManagement = ({ classes }) => {
           classes={classes}
           open={dialog === DialogType.ADD_GROUP}
           title={t("group.createNew")}
-          icon={<GrGroup size={40} className={classes.iconWhite} />}
+          icon={<div className={classes.dialogIconContent}>
+            {'\uE0D5'}
+          </div>}
           showDivider={true}
           onClose={() => setDialog(null)}
           onCancel={() => setDialog(null)}

@@ -54,12 +54,12 @@ const RenderWebRow = ({
     let date = null;
     const { GroupName } = row;
     let text = "";
-    if (!row.CreationDate) {
-      date = moment(row.UpdateDate, dateFormat);
-      text = t("common.UpdatedOn");
-    } else {
+    if (!row.UpdateDate) {
       date = moment(row.CreationDate, dateFormat);
       text = t("common.CreationDate");
+    } else {
+      date = moment(row.UpdateDate, dateFormat);
+      text = t("common.UpdatedOn");
     }
 
     return (
