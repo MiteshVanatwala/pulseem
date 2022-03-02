@@ -15,6 +15,7 @@
   "delete": "מחק",
   "addRecipient": "הוסף נמען",
   "addRecipients": "הוסף נמענים",
+  "addAnotherRecipient": "הוסף נמען נוסף",
   "reset": "איפוס",
   "settings": "הגדרות",
   "emailStatus": "סטאטוס מייל",
@@ -33,5 +34,6 @@
   "zip": "מיקוד",
   "company": "חברה",
   "reminderDate": "תאריך תזכורת",
-  "errorMessage": "הודעת שגיעה"
+  "errorMessage": "הודעת שגיעה",
+  "recipientAddPopUpTitle": "הוסף נמען בודד לקבוצה אחת או יותר"
 }

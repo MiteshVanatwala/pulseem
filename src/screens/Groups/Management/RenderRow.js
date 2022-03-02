@@ -47,18 +47,19 @@ const RenderWebRow = ({
     RemovedEmails,
     TotalRecipients,
     IsConnectedToWebForm,
-    AutomationID
+    AutomationID,
+    IsAutoResponder
   } = row;
 
   const renderNameCell = (row, fullwidth) => {
     let date = null;
     const { GroupName } = row;
     let text = "";
-    if (!row.UpdateDate) {
-      date = moment(row.CreationDate, dateFormat);
-      text = t("common.CreationDate");
+    if (row.UpdatedDate) {
+      date = moment(row.CreatedDate, dateFormat);
+      text = t("common.CreatedOn");
     } else {
-      date = moment(row.UpdateDate, dateFormat);
+      date = moment(row.UpdatedDate, dateFormat);
       text = t("common.UpdatedOn");
     }
 
@@ -223,6 +224,10 @@ const RenderWebRow = ({
                 <IconWrapper
                   iconName="addRecipient"
                   className={classes.mxAuto}
+                  onClick={() => {
+                    setSelectedGroups(GroupID)
+                    setDialog(DialogType.ADD_RECIPIENT)
+                  }}
                 />
               ),
               classes: { text: classes.wrapText },
@@ -255,7 +260,11 @@ const RenderWebRow = ({
             {
               label: t("recipient.automation"),
               component: (
-                <IconWrapper iconName="automation" className={AutomationID ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto} />
+                <IconWrapper iconName="automation" className={!AutomationID ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
+                  onClick={() => {
+                    window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${AutomationID}&fromreact=true`
+                  }}
+                />
               ),
               classes: { text: classes.wrapText },
             },
@@ -265,7 +274,7 @@ const RenderWebRow = ({
               component: (
                 <IconWrapper
                   iconName="delete"
-                  className={IsConnectedToWebForm ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
+                  className={IsConnectedToWebForm || IsAutoResponder ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
                   onClick={() => {
                     setSelectedGroups(GroupID)
                     setDialog(DialogType.DELETE_GROUP)

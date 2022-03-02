@@ -299,6 +299,7 @@
   "RemovalWordDesc": "If you change this number, your customers will not be able to reply to the campaign.",
   "AdvancedSearch": "Advanced Search",
   "Created": "Created",
+  "CreatedOn": "Created on",
   "Sending": "Sending",
   "SentOn": "Sent on",
   "WillBeSentOn": "Will be sent on",

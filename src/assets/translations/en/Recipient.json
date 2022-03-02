@@ -15,6 +15,7 @@
   "delete": "Delete",
   "addRecipient": "Add Recipient",
   "addRecipients": "Add Recipients",
+  "addAnotherRecipient": "Add Another Recipient",
   "reset": "Reset",
   "settings": "Settings",
   "emailStatus": "EmailStatus",
@@ -33,5 +34,6 @@
   "zip": "Zip",
   "company": "Company",
   "reminderDate": "ReminderDate",
-  "errorMessage": "ErrorMessage"
+  "errorMessage": "ErrorMessage",
+  "recipientAddPopUpTitle": "Add a single recipient to one or more groups"
 }

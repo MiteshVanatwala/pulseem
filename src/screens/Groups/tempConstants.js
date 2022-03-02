@@ -22,7 +22,7 @@ export const StaticData = [
     CreatedDate: "2020-03-30T07:49:24 -06:-30",
     IsAutoResponder: true,
     IsConnectedToWebForm: true,
-    AutomationID: null
+    AutomationID: 1
   },
   {
     ActiveCell: 517,

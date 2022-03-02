@@ -17,7 +17,7 @@ import { SearchIcon, ExportIcon } from "../../../assets/images/managment/index";
 import { CSVLink } from "react-csv";
 import {
   TablePagination,
-  SearchField
+  SearchField,
 } from "../../../components/managment/index";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -37,6 +37,9 @@ import { exportFile } from "../../../helpers/exportFromJson";
 import { preferredOrder } from "../../../helpers/exportHelper";
 import RenderRow from "./RenderRow";
 import RenderPhoneRow from "./RenderPhoneRow";
+import AddGroupPopUp from "./AddGroupPopUp";
+import AddRecipientPopup from "./AddRecipientPopup";
+import ConfirmDeletePopUp from "./ConfirmDeletePopUp";
 import Toast from '../../../components/Toast/Toast.component';
 import {
   getGroups,
@@ -44,6 +47,7 @@ import {
   createGroup,
 } from "../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../components/managment/Dialog";
+import { StaticData } from "../tempConstants";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -94,6 +98,7 @@ const GroupsManagement = ({ classes }) => {
   const DialogType = {
     ADD_GROUP: "addGroup",
     DELETE_GROUP: "delete group",
+    ADD_RECIPIENT: "add recipient"
   };
 
   const TABLE_HEAD = [
@@ -168,18 +173,6 @@ const GroupsManagement = ({ classes }) => {
       exportType: "csv",
       fields: exportColumnHeader,
     });
-  };
-
-  const handleAddGroup = async (data) => {
-    try {
-      setDialog(null);
-      setLoader(true);
-      const response = await dispatch(createGroup(data));
-      setLoader(false);
-      onCreateGroupResponse(response.payload);
-    } catch (err) {
-      return false;
-    }
   };
 
   const onCreateGroupResponse = (response) => {
@@ -349,14 +342,15 @@ const GroupsManagement = ({ classes }) => {
             {t("group.new")}
           </Button>
         </Grid>
-
         {windowSize !== "xs" && (
           <Grid item>
             <Button
               variant="contained"
               size="medium"
               className={clsx(classes.actionButton, classes.actionButtonRed)}
-              onClick={() => setDialog(DialogType.DELETE_GROUP)}
+              onClick={() => {
+                selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_GROUP)
+              }}
             >
               {t("group.delete")}
             </Button>
@@ -447,17 +441,12 @@ const GroupsManagement = ({ classes }) => {
     let date = null;
     const { GroupName } = row;
     let text = "";
-    if (!row.SendDate) {
+    if (row.UpdatedDate) {
+      date = moment(row.CreatedDate, dateFormat);
+      text = t("common.CreatedOn");
+    } else {
       date = moment(row.UpdatedDate, dateFormat);
       text = t("common.UpdatedOn");
-    } else {
-      date = moment(row.SendDate, dateFormat);
-      const dateMillis = date.valueOf();
-      const currentDateMillis = moment().valueOf();
-      text =
-        dateMillis > currentDateMillis
-          ? t("common.ScheduledFor")
-          : t("common.SentOn");
     }
 
     return (
@@ -496,7 +485,8 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const renderTableBody = useMemo(() => {
-    let sortData = groupData ? groupData.Groups : [];
+    // let sortData = groupData ? groupData.Groups : [];
+    let sortData = StaticData;
     if (sortData.length <= 0) {
       return <></>;
     }
@@ -539,268 +529,6 @@ const GroupsManagement = ({ classes }) => {
     );
   }, [groupData, rowsPerPage, page, classes, selectedGroups]);
 
-  //POPUP Components
-  const AddGroupPopUp = () => {
-    const DEFAULT_NEW_GROUP = {
-      ActiveCell: 0,
-      ActiveEmails: 0,
-      DynamicData: null,
-      DynamicLastUpdate: null,
-      DynamicUpdatePolicy: null,
-      GroupID: null,
-      InvalidCell: 0,
-      InvalidEmails: 0,
-      IsDynamic: true,
-      IsTestGroup: null,
-      PendingEmails: 0,
-      Recipients: 0,
-      RemovedCell: 0,
-      RemovedEmails: 0,
-      RestrictedEmails: 0,
-      SubAccountID: 0,
-      TotalRecipients: 0,
-      GroupName: "",
-      UpdatedDate: new Date(),
-      CreatedDate: new Date(),
-    };
-    const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP);
-    return (
-      <>
-        <Dialog
-          classes={classes}
-          open={dialog === DialogType.ADD_GROUP}
-          title={t("group.createNew")}
-          icon={<div className={classes.dialogIconContent}>
-            {'\uE0D5'}
-          </div>}
-          showDivider={true}
-          onClose={() => setDialog(null)}
-          onCancel={() => setDialog(null)}
-          onConfirm={() => {
-            const result = handleAddGroup(newGroupData);
-            if (result) {
-              setNewGroupData(DEFAULT_NEW_GROUP);
-            }
-          }}
-          renderButtons={() => (
-            <Grid container spacing={2} className={classes.linePadding}>
-              <Grid
-                item
-                xs={windowSize === "xs" && 12}
-                sm={4}
-                className={classes.txtCenter}
-              >
-                <Button
-                  variant="contained"
-                  size="medium"
-                  className={clsx(
-                    classes.dialogButton,
-                    classes.dialogCancelButton,
-                    classes.fullWidth,
-                    classes.whiteSpaceNoWrap
-                  )}
-                  onClick={() => setDialog(null)}
-                >
-                  {t("group.cancel")}
-                </Button>
-              </Grid>
-              <Grid
-                item
-                xs={windowSize === "xs" && 12}
-                sm={4}
-                className={classes.txtCenter}
-              >
-                <Button
-                  variant="contained"
-                  size="medium"
-                  className={clsx(
-                    classes.fullWidth,
-                    classes.dialogButton,
-                    classes.dialogConfirmButton,
-                    // classes.ps15,
-                    // classes.pe15,
-                    classes.actionButtonLightGreen,
-                    classes.whiteSpaceNoWrap
-                  )}
-                // onClick={
-                //TODO: ADD ADD Recipient Functionality
-                //     () => setDialogType({
-                //     type: 'restore',
-                //     data: smsDeletedData
-                // })
-                // }
-                >
-                  {t("recipient.addRecipients")}
-                </Button>
-              </Grid>
-              <Grid
-                item
-                xs={windowSize === "xs" && 12}
-                sm={4}
-                className={classes.txtCenter}
-              >
-                <Button
-                  variant="contained"
-                  size="medium"
-                  className={clsx(
-                    classes.dialogButton,
-                    classes.dialogConfirmButton,
-                    classes.fullWidth,
-                    classes.whiteSpaceNoWrap,
-                    classes.textCapitalize
-                  )}
-                  onClick={() => {
-                    const result = handleAddGroup(newGroupData);
-                    if (result) {
-                      setNewGroupData(DEFAULT_NEW_GROUP);
-                    }
-                  }}
-                >
-                  {t("group.ok")}
-                </Button>
-              </Grid>
-            </Grid>
-          )}
-          customContainerStyle=""
-          cancelText="common.Cancel"
-          confirmText="common.Ok"
-        >
-          <Box
-            className={clsx(
-              classes.customDialogContentBox,
-              classes.flex,
-              classes.mt4,
-              classes.responsiveFlex
-            )}
-          >
-            <Box className={classes.flex1} style={{ marginInlineEnd: 10 }}>
-              <Typography>Group Name:</Typography>
-            </Box>
-            <Box className={classes.flex2} style={{ marginInlineEnd: 10 }}>
-              <TextField
-                id="outlined-basic"
-                label=""
-                variant="outlined"
-                value={newGroupData.GroupName}
-                className={clsx(classes.textField, classes.minWidth252)}
-                autoComplete="off"
-                onChange={(e) => {
-                  e.preventDefault();
-                  setNewGroupData({
-                    ...newGroupData,
-                    GroupName: e.target.value,
-                  });
-                }}
-              />
-            </Box>
-            <Box
-              className={clsx(
-                classes.flex1,
-                classes.flex,
-                classes.responsiveFlex
-              )}
-            >
-              <FormControlLabel
-                control={
-                  <Checkbox name="testGroup" size="small" color="primary" />
-                }
-                label="Test Group"
-              />
-              <CustomTooltip
-                isSimpleTooltip={false}
-                interactive={true}
-                classes={{
-                  tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                  arrow: classes.fBlack,
-                }}
-                arrow={true}
-                style={{ fontSize: 18, fontWeight: "bold" }}
-                placement={"top"}
-                title={
-                  <Typography noWrap={false}>
-                    {t("group.testGroupInfo")}
-                  </Typography>
-                }
-                text={t("group.testGroupInfo")}
-              >
-                <span>
-                  <BsInfoCircleFill />
-                </span>
-              </CustomTooltip>
-            </Box>
-          </Box>
-        </Dialog>
-      </>
-    );
-  };
-
-  const ConfirmDeletePopUp = () => {
-    return (
-      <>
-        <Dialog
-          classes={classes}
-          open={dialog === DialogType.DELETE_GROUP}
-          title={t("group.delete")}
-          icon={<GrGroup size={40} className={classes.iconWhite} />}
-          showDivider={true}
-          onClose={() => setDialog(null)}
-          onCancel={() => setDialog(null)}
-          onConfirm={() => handleDeleteGroup()}
-          renderButtons={() => (
-            <Grid container spacing={2} className={classes.linePadding}>
-              <Grid
-                item
-                xs={windowSize === "xs" && 12}
-                sm={4}
-                className={classes.txtCenter}
-              >
-                <Button
-                  variant="contained"
-                  size="medium"
-                  className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonRed,
-                    classes.fullWidth
-                  )}
-                  onClick={() => setDialog(null)}
-                >
-                  {t("group.cancel")}
-                </Button>
-              </Grid>
-              <Grid
-                item
-                xs={windowSize === "xs" && 12}
-                sm={4}
-                className={classes.txtCenter}
-              >
-                <Button
-                  variant="contained"
-                  size="medium"
-                  className={clsx(
-                    classes.actionButton,
-                    classes.actionButtonLightGreen,
-                    classes.fullWidth
-                  )}
-                  onClick={() => handleDeleteGroup()}
-                >
-                  {t("group.ok")}
-                </Button>
-              </Grid>
-            </Grid>
-          )}
-          customContainerStyle=""
-          cancelText="common.Cancel"
-          confirmText="common.Ok"
-        >
-          <Box>
-            <Typography variant="subtitle1">
-              {t("group.deleteConfirm")}
-            </Typography>
-          </Box>
-        </Dialog>
-      </>
-    );
-  };
 
   const groupsLength = (groupData && groupData.RecordCount) || 0;
 
@@ -843,8 +571,29 @@ const GroupsManagement = ({ classes }) => {
         }}
       />
 
-      {AddGroupPopUp()}
-      {ConfirmDeletePopUp()}
+      <AddGroupPopUp
+        classes={classes}
+        isOpen={dialog === DialogType.ADD_GROUP}
+        onClose={() => setDialog(null)}
+        setLoader={setLoader}
+        onCreateGroupResponse={() => onCreateGroupResponse()}
+        windowSize={windowSize}
+      />
+      <AddRecipientPopup
+        classes={classes}
+        isOpen={dialog === DialogType.ADD_RECIPIENT}
+        onClose={() => setDialog(null)}
+        setLoader={setLoader}
+        onCreateGroupResponse={() => onCreateGroupResponse()}
+        windowSize={windowSize}
+      />
+      <ConfirmDeletePopUp
+        classes={classes}
+        isOpen={dialog === DialogType.DELETE_GROUP}
+        onClose={() => setDialog(null)}
+        windowSize={windowSize}
+        handleDeleteGroup={() => handleDeleteGroup()}
+      />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );

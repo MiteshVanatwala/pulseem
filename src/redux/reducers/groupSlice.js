@@ -51,7 +51,8 @@ export const groupSlice = createSlice({
         error: "",
         ToastMessages: {
             GROUP_CREATED: { severity: 'success', color: 'success', message: 'group.created', showAnimtionCheck: false },
-          }
+            GROUP_ZERO_SELECT: { severity: 'error', color: 'error', message: 'group.zeroSelected', showAnimtionCheck: false },
+        }
     },
     reducers: {
         setSelectedGroups: (state, action) => {
