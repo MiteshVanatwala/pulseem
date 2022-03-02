@@ -66,7 +66,7 @@ export const getSiteTrackingStyle = (windowSize, isRTL) => ({
     eventPageContainer: {
         display: 'flex',
         flexDirection: 'row',
-        width: windowSize !== 'xs' ? '45%' : '100%'
+        width: windowSize !== 'xs' ? '40%' : '100%'
     },
     eventGroupsContainer: {
         display: 'flex',
