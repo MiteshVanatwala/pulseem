@@ -172,9 +172,9 @@ const GroupsManagement = ({ classes }) => {
 
   const handleAddGroup = async (data) => {
     try {
+      setDialog(null);
       setLoader(true);
       const response = await dispatch(createGroup(data));
-      setDialog(null);
       setLoader(false);
       onCreateGroupResponse(response.payload);
     } catch (err) {
