@@ -1,4 +1,5 @@
 import { useState } from "react";
+import PropTypes from 'prop-types';
 import clsx from "clsx";
 import {
     Typography,
@@ -244,5 +245,15 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
         </>
     );
 };
+
+AddGroupPopUp.propTypes = {
+    classes: PropTypes.object,
+    isOpen: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    onCreateGroupResponse: PropTypes.func.isRequired,
+    windowSize: PropTypes.string.isRequired,
+    ToastMessages: PropTypes.object.isRequired,
+    setToastMessage: PropTypes.func.isRequired,
+}
 
 export default AddGroupPopUp;
