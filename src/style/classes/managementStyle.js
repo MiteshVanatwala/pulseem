@@ -277,7 +277,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   managmentIconDisable: {
     opacity: 0.5,
-    pointerEvents: "none",
+    // pointerEvents: "none",
+    cursor: 'not-allowed'
   },
   managmentIconText: {
     textAlign: "center",
@@ -1424,9 +1425,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     position: "relative",
     marginBottom: 50,
     "& .amcharts-amexport-item .amcharts-amexport-item-level-1 .amcharts-amexport-item-blank":
-      {
-        width: 150,
-      },
+    {
+      width: 150,
+    },
     "& .amcharts-amexport-menu-level-1": {
       right: "15px!important",
       "&::after": {

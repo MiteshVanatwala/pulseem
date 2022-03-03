@@ -262,7 +262,8 @@ const RenderWebRow = ({
               component: (
                 <IconWrapper iconName="automation" className={!AutomationID ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
                   onClick={() => {
-                    window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${AutomationID}&fromreact=true`
+                    if (AutomationID)
+                      window.location = `/Pulseem/CreateAutomations.aspx?AutomationID=${AutomationID}&fromreact=true`
                   }}
                 />
               ),
@@ -276,8 +277,10 @@ const RenderWebRow = ({
                   iconName="delete"
                   className={IsConnectedToWebForm || IsAutoResponder ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
                   onClick={() => {
-                    setSelectedGroups(GroupID)
-                    setDialog(DialogType.DELETE_GROUP)
+                    if (!(IsConnectedToWebForm || IsAutoResponder)) {
+                      setSelectedGroups(GroupID)
+                      setDialog(DialogType.DELETE_GROUP)
+                    }
                   }}
                 />
               ),
