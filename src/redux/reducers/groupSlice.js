@@ -52,6 +52,12 @@ export const groupSlice = createSlice({
         ToastMessages: {
             GROUP_CREATED: { severity: 'success', color: 'success', message: 'group.created', showAnimtionCheck: false },
             GROUP_ZERO_SELECT: { severity: 'error', color: 'error', message: 'group.zeroSelected', showAnimtionCheck: false },
+            GROUP_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'group.inputIncorrect', showAnimtionCheck: false },
+            GROUP_INVALID_API: { severity: 'error', color: 'error', message: 'group.invalidApi', showAnimtionCheck: false },
+            GROUP_ERROR: { severity: 'error', color: 'error', message: 'group.error', showAnimtionCheck: false },
+            GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
+            GROUP_NAME_MAXLENGTH: { severity: 'error', color: 'error', message: 'group.nameMaxLength', showAnimtionCheck: false },
+            GROUP_NAME_EMPTY: { severity: 'error', color: 'error', message: 'group.emptyGroupName', showAnimtionCheck: false },
         }
     },
     reducers: {

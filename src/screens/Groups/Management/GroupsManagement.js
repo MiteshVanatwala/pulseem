@@ -182,6 +182,26 @@ const GroupsManagement = ({ classes }) => {
         setToastMessage(ToastMessages.GROUP_CREATED);
         break;
       }
+      case 400: {
+        getData();
+        setToastMessage(ToastMessages.GROUP_INPUT_INCORRECT);
+        break;
+      }
+      case 401: {
+        getData();
+        setToastMessage(ToastMessages.GROUP_INVALID_API);
+        break;
+      }
+      case 405: {
+        getData();
+        setToastMessage(ToastMessages.GROUP_ERROR);
+        break;
+      }
+      case 422: {
+        getData();
+        setToastMessage(ToastMessages.GROUP_ALREADY_EXIST);
+        break;
+      }
       default: {
         setDialog(null);
       }
@@ -578,6 +598,8 @@ const GroupsManagement = ({ classes }) => {
         setLoader={setLoader}
         onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
+        ToastMessages={ToastMessages}
+        setToastMessage={setToastMessage}
       />
       <AddRecipientPopup
         classes={classes}
@@ -586,6 +608,7 @@ const GroupsManagement = ({ classes }) => {
         setLoader={setLoader}
         onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
+        setToastMessage={setToastMessage}
       />
       <ConfirmDeletePopUp
         classes={classes}

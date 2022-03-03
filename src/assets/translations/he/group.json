@@ -7,5 +7,11 @@
   "createNew": "צור קבוצה חדשה",
   "testGroupInfo": "קבוצות ניסיון מאפשרת שליחת נסיון לקבוצה ממסך יצירת קמפיין",
   "created": "הקבוצה נוצרה בהצלחה",
-  "zeroSelected": "לא נבחרה קבוצה"
+  "zeroSelected": "לא נבחרה קבוצה",
+  "inputIncorrect": "",
+  "invalidApi": "",
+  "error": "",
+  "alreadyExist": "",
+  "nameMaxLength": "",
+  "emptyGroupName": ""
 }

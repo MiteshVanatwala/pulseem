@@ -7,5 +7,11 @@
   "createNew": "Create New Group",
   "testGroupInfo": "Test Groups allow you to send a test directly from the campaign editor",
   "created": "Group created successfuly",
-  "zeroSelected": "No Group Selected"
+  "zeroSelected": "No Group Selected",
+  "inputIncorrect": "The input is in incorrect format, missing GroupName",
+  "invalidApi": "Invalid or missing API KEY",
+  "error": "Error Occured",
+  "alreadyExist": "Group name already exists",
+  "nameMaxLength": "Maximum length for group length is 100 characters",
+  "emptyGroupName": "Group Name can't be empty"
 }

@@ -19,7 +19,7 @@ import {
 } from "../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../components/managment/Dialog";
 
-const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize }) => {
+const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -50,6 +50,10 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
 
 
     const handleAddGroup = async (data) => {
+        if (!newGroupData.GroupName) {
+            setToastMessage(ToastMessages.GROUP_NAME_EMPTY)
+            return false;
+        }
         try {
             onClose()
             setLoader(true);
@@ -60,7 +64,6 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
             return false;
         }
     };
-
 
     return (
         <>
@@ -182,6 +185,16 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                             value={newGroupData.GroupName}
                             className={clsx(classes.textField, classes.minWidth252)}
                             autoComplete="off"
+                            onKeyDown={(e) => {
+                                console.log(e.which)
+                                if (e.which === 8 || e.target.value.length < 100) {
+                                    return true
+                                }
+                                else {
+                                    e.preventDefault()
+                                    setToastMessage(ToastMessages.GROUP_NAME_MAXLENGTH)
+                                }
+                            }}
                             onChange={(e) => {
                                 e.preventDefault();
                                 setNewGroupData({
