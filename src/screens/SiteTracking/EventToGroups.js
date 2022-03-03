@@ -149,7 +149,7 @@ const EventToGroups = ({
             {isRTL ? <FaArrowCircleLeft className={classes.contentHead} /> : <FaArrowCircleRight className={classes.contentHead} />}
         </Box>
         <Box className={classes.eventGroupsContainer}>
-            <Box style={{ width: '100%' }}>
+            <Box style={{ width: 'calc(100% - 64px)' }}>
                 <Typography className={clsx(classes.buttonHead)}>
                     {t("siteTracking.addToGroups")}
                 </Typography>
