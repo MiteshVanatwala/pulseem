@@ -47,7 +47,7 @@ import {
   createGroup,
 } from "../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../components/managment/Dialog";
-import { StaticData } from "../tempConstants";
+// import { StaticData } from "../tempConstants";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -485,8 +485,8 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const renderTableBody = useMemo(() => {
-    // let sortData = groupData ? groupData.Groups : [];
-    let sortData = StaticData;
+    let sortData = groupData ? groupData.Groups : [];
+    // let sortData = StaticData;
     if (sortData.length <= 0) {
       return <></>;
     }
