@@ -66,11 +66,11 @@ export const getSiteTrackingStyle = (windowSize, isRTL) => ({
     eventPageContainer: {
         display: 'flex',
         flexDirection: 'row',
-        width: windowSize !== 'xs' ? '40%' : '100%'
+        width: windowSize !== 'xs' ? '50%' : 'calc(100% - 20px)'
     },
     eventGroupsContainer: {
         display: 'flex',
-        width: windowSize !== 'xs' ? '45%' : '100%',
+        width: windowSize !== 'xs' ? 460 : 'calc(100% - 20px)',
         maxWidth: 1600
     }
 });

@@ -574,7 +574,7 @@ const SiteTrackingEditor = ({ classes }) => {
                                 style={{ marginTop: isValidDomain === false || isValidDomain === true ? 2 : 0 }}
                             />
                         </Grid>
-                        <Grid item xs={12}>
+                        <Grid item xs={12} style={{ maxWidth: 1120 }}>
                             <Typography className={clsx(classes.marginBlock20, classes.font24)}>{t("siteTracking.eventToTrack")}</Typography>
                             <EventTabs classes={classes} setDialog={setDialogType} />
                         </Grid>

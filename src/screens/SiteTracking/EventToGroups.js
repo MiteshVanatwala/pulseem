@@ -96,8 +96,7 @@ const EventToGroups = ({
     return <Box id={currentEvent.id} className={classes.marginBlock20}
         style={{
             display: 'flex',
-            flexDirection: windowSize === 'xs' ? 'column' : 'row',
-            justifyContent: 'space-between', maxWidth: 1600, width: '100%'
+            flexDirection: windowSize === 'xs' ? 'column' : 'row'
         }}>
         {showGroups()}
         <Box className={classes.eventPageContainer}>
@@ -150,7 +149,7 @@ const EventToGroups = ({
             {isRTL ? <FaArrowCircleLeft className={classes.contentHead} /> : <FaArrowCircleRight className={classes.contentHead} />}
         </Box>
         <Box className={classes.eventGroupsContainer}>
-            <Box style={{ width: '100%', maxWidth: 395 }}>
+            <Box style={{ width: '100%' }}>
                 <Typography className={clsx(classes.buttonHead)}>
                     {t("siteTracking.addToGroups")}
                 </Typography>

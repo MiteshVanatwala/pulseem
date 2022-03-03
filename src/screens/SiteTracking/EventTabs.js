@@ -4,7 +4,7 @@ import TabContext from '@material-ui/lab/TabContext';
 import TabList from '@material-ui/lab/TabList';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Grid, Tab, Button, Box, Link } from '@material-ui/core'
+import { Grid, Tab, Button, Box, Link, Divider } from '@material-ui/core'
 import EventToGroups from './EventToGroups'
 import { useDispatch, useSelector } from 'react-redux'
 import { addMetaData } from '../../redux/reducers/siteTrackingSlice'
@@ -14,6 +14,7 @@ const EventTabs = ({ classes, setDialog }) => {
     const { t } = useTranslation();
     const [tabValue, setTabValue] = useState('PAGE_VIEW');
     const { event } = useSelector((state) => state.siteTracking);
+    const { windowSize } = useSelector((state) => state.core);
     const dispatch = useDispatch();
     const [metadataToShow, setMetadataToShow] = useState(10);
 
@@ -56,7 +57,7 @@ const EventTabs = ({ classes, setDialog }) => {
                 {
                     event && event.metadata && event.metadata.map((mt, idx) => {
                         if (idx < metadataToShow) {
-                            return <EventToGroups
+                            return <><EventToGroups
                                 id={mt.id}
                                 key={idx}
                                 index={idx}
@@ -66,6 +67,8 @@ const EventTabs = ({ classes, setDialog }) => {
                                 onShowGroups={() => { setDialog({ type: 'showGroups' }) }}
                                 onHideGroups={() => { setDialog(null) }}
                             />
+                                {windowSize === 'xs' ? <Divider /> : null}
+                            </>
                         }
                         return <></>
                     })
