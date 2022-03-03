@@ -441,8 +441,8 @@ const GroupsManagement = ({ classes }) => {
     let date = null;
     const { GroupName } = row;
     let text = "";
-    if (row.UpdatedDate) {
-      date = moment(row.CreatedDate, dateFormat);
+    if (!row.UpdatedDate) {
+      date = moment(row.CreationDate, dateFormat);
       text = t("common.CreatedOn");
     } else {
       date = moment(row.UpdatedDate, dateFormat);
