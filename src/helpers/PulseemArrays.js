@@ -69,8 +69,7 @@ export const EventsOptions = [
 
 export const EventConditions = [
     { key: 'CONTAINS', value: "siteTracking.conditions.contains" },
-    { key: 'EXACT', value: "siteTracking.conditions.exact" },
-    { key: 'NOT_CONTAINS', value: "siteTracking.conditions.notcontain" }
+    { key: 'EXACT', value: "siteTracking.conditions.exact" }
 ];
 
 export const MMSReportStatus = [
