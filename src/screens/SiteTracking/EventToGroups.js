@@ -96,7 +96,8 @@ const EventToGroups = ({
     return <Box id={currentEvent.id} className={classes.marginBlock20}
         style={{
             display: 'flex',
-            flexDirection: windowSize === 'xs' ? 'column' : 'row'
+            flexDirection: windowSize === 'xs' ? 'column' : 'row',
+            maxWidth: 1150
         }}>
         {showGroups()}
         <Box className={classes.eventPageContainer}>
