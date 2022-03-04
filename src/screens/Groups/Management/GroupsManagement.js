@@ -601,7 +601,7 @@ const GroupsManagement = ({ classes }) => {
         isOpen={dialog === DialogType.ADD_GROUP}
         onClose={() => setDialog(null)}
         setLoader={setLoader}
-        onCreateGroupResponse={() => onCreateGroupResponse()}
+        onCreateGroupResponse={(val) => onCreateGroupResponse(val)}
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}

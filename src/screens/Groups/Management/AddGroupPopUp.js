@@ -60,7 +60,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
             setLoader(true);
             const response = await dispatch(createGroup(data));
             setLoader(false);
-            onCreateGroupResponse();
+            onCreateGroupResponse(response);
         } catch (err) {
             return false;
         }
