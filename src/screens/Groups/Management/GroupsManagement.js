@@ -452,8 +452,12 @@ const GroupsManagement = ({ classes }) => {
     );
   };
 
-  const handleRowsPerPageChange = (val) => {
-    dispatch(setRowsPerPage(val));
+  const handleRowsPerPageChange = async (val) => {
+    await dispatch(setRowsPerPage(val));
+    setSearchData({
+      ...serachData,
+      PageSize: val
+    })
     setCookie("rpp", val, { maxAge: 2147483647 });
   };
 
@@ -461,13 +465,14 @@ const GroupsManagement = ({ classes }) => {
     let date = null;
     const { GroupName } = row;
     let text = "";
-    if (!row.UpdateDate) {
-      date = moment(row.CreationDate, dateFormat);
+    if (!row.UpdatedDate) {
+      date = moment(row.CreatedDate, dateFormat);
       text = t("common.CreatedOn");
     } else {
-      date = moment(row.UpdateDate, dateFormat);
+      date = moment(row.UpdatedDate, dateFormat);
       text = t("common.UpdatedOn");
     }
+
 
     return (
       <>
