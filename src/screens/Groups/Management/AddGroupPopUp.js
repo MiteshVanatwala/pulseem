@@ -176,7 +176,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                     )}
                 >
                     <Box className={classes.flex1} style={{ marginInlineEnd: 10 }}>
-                        <Typography>Group Name:</Typography>
+                        <Typography>{t("common.GroupName")}:</Typography>
                     </Box>
                     <Box className={classes.flex2} style={{ marginInlineEnd: 10 }}>
                         <TextField
@@ -216,7 +216,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                             control={
                                 <Checkbox name="testGroup" size="small" color="primary" />
                             }
-                            label="Test Group"
+                            label={t("group.testGroup")}
                         />
                         <CustomTooltip
                             isSimpleTooltip={false}
