@@ -17,7 +17,10 @@
         "none": "None",
         "contains": "Contains",
         "exact": "Exact",
-        "notcontain": "Not Contain"
+        "notcontain": "Not Contain",
+        "tooltip": {
+            "exact": "Track customers who land on a specific URL"
+        }
     },
     "typeGroupName": "Click here to add groups",
     "placeHolderAddPageUrl": "Add your page URL here",
