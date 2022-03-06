@@ -158,7 +158,7 @@ const RenderWebRow = ({
               },
             },
           ]}
-          gridSize={{ xs: 12, sm: 3 }}
+          gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
           variant="body1"
           align="center"
         />
@@ -199,7 +199,7 @@ const RenderWebRow = ({
               },
             },
           ]}
-          gridSize={{ xs: 12, sm: 3 }}
+          gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
           variant="body1"
           align="center"
         />

@@ -4,7 +4,10 @@ const useStyles = makeStyles({
         display: 'flex',
         flexDirection: (props) => props.direction || 'row',
         justifyContent: 'space-around',
-        width: '100%'
+        width: '100%',
+        "@media screen and (max-width: 1160px)": {
+            flexWrap: 'wrap'
+        }
     },
     iconBox: {
         flexGrow: 1,
