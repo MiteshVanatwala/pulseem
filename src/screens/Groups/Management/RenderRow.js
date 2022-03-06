@@ -108,6 +108,7 @@ const RenderWebRow = ({
               className={classes.ml0}
               control={
                 <Checkbox
+                  color="primary"
                   checked={selectedGroups?.indexOf(GroupID) !== -1}
                   // indeterminate={}
                   onClick={() => {
