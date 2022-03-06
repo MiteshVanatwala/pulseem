@@ -176,7 +176,7 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const onCreateGroupResponse = (response) => {
-    switch (response.StatusCode) {
+    switch (response.payload.StatusCode) {
       case 201: {
         getData();
         setToastMessage(ToastMessages.GROUP_CREATED);
