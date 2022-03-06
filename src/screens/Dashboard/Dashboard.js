@@ -15,7 +15,7 @@ import { getCookie } from '../../helpers/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL } = useSelector(state => state.core);
+  const { windowSize, isRTL, accountFeatures } = useSelector(state => state.core);
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [showTFA, setShowTFA] = useState(false);
@@ -23,21 +23,21 @@ const DashboardScreen = ({ classes }) => {
   useEffect(() => {
     const initialize = async () => {
       await dispatch(getCommonFeatures());
-      init2FA();
+      if (accountFeatures && document.referrer.toLocaleLowerCase().includes('login.aspx')) {
+        init2FA();
+      }
     }
     initialize();
-  }, [dispatch])
+  }, [dispatch, accountFeatures])
 
   const init2FA = () => {
-    //if (document.referrer.includes('Login.aspx')) {
-      let subAccountSettings = getCookie("subAccountSettings");
-      if (subAccountSettings && subAccountSettings.TwoFactoryAuthEnabled === null) {
-        let userSelection = getCookie("2faPopup");
-        if (!userSelection && userSelection !== false) {
-          setShowTFA(true);
-        }
+    let subAccountSettings = getCookie("subAccountSettings");
+    if (subAccountSettings && subAccountSettings.TwoFactoryAuthEnabled === null && accountFeatures.includes('40')) {
+      let userSelection = getCookie("2faPopup");
+      if (!userSelection && userSelection !== false) {
+        setShowTFA(true);
       }
-    //}
+    }
   }
 
   const onConfirm2FA = () => {
