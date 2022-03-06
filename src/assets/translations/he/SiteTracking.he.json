@@ -17,7 +17,10 @@
         "none": "ללא",
         "contains": "כולל",
         "exact": "בדיוק",
-        "notcontain": "לא כולל"
+        "notcontain": "לא כולל",
+        "tooltip": {
+            "exact": "עקוב אחר לקוחות שמגיעים לכתובת אתר ספציפית"
+        }
     },
     "typeGroupName": "לחץ כאן להוספת קבוצות",
     "placeHolderAddPageUrl": "הוסף כתובת URL כאן",

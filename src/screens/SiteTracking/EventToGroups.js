@@ -9,7 +9,8 @@ import { FormControl, Typography, TextField, Box, Select, MenuItem, Button } fro
 import { updateMetaData, deleteMetaData, getCurrentEventGroups } from '../../redux/reducers/siteTrackingSlice';
 import { Dialog } from '../../components/managment/index';
 import { GroupDialog } from '../../components/Groups/GroupDialog';
-import { DeleteIcon } from '../../assets/images/managment/index'
+import { DeleteIcon } from '../../assets/images/managment/index';
+import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 
 const EventToGroups = ({
     classes,
@@ -116,14 +117,28 @@ const EventToGroups = ({
                         name={currentEvent && currentEvent.operatorKey}
                         value={currentEvent && currentEvent.operatorKey}
                         onChange={e => updateOperationData(e, "operatorKey", e.target.value)}
-                        style={{ direction: 'ltr', textAlign: isRTL ? 'right' : 'left' }}
+                        style={{ direction: 'ltr', textAlign: isRTL ? 'right' : 'left', maxHeight: 57 }}
                     >
                         {EventConditions.map((condition) => {
                             return <MenuItem
                                 key={condition.key}
                                 value={condition.key}
                                 name={condition.key}
-                            >{t(condition.value)}
+                                style={{ direction: isRTL ? 'rtl' : 'ltr' }}
+                            >{
+                                    condition.tooltip ? <CustomTooltip
+                                        isSimpleTooltip={false}
+                                        classes={classes}
+                                        interactive={false}
+                                        arrow={true}
+                                        style={{ fontSize: 16, fontWeight: 400 }}
+                                        placement={'top'}
+                                        nameEllipsis={false}
+                                        title={<Typography style={{maxHeight: 50}} noWrap={false}>{t(condition.tooltip)}</Typography>}
+                                        text={t(condition.value)}
+                                    /> :
+                                        t(condition.value)
+                                }
                             </MenuItem>
                         })}
                     </Select>
