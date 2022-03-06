@@ -39,15 +39,38 @@ export const getSiteTrackingStyle = (windowSize, isRTL) => ({
         marginTop: 'auto',
         marginBottom: 70
     },
-    arrowContainer: {
-        height: 50,
-        minWidth: 80,
-        marginTop: 40
-    },
     domainAddress: {
         '& input': {
             textAlign: isRTL ? 'right' : 'left',
             direction: 'ltr'
         }
+    },
+    deleteButtonContainer: {
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        display: 'flex',
+        marginBottom: 10,
+        '& .MuiButton-root:hover': {
+            backgroundColor: 'transparent'
+        }
+    },
+    arrowContainer: {
+        height: windowSize !== 'xs' ? 50 : 30,
+        width: '5%',
+        minWidth: 80,
+        display: 'flex',
+        justifyContent: windowSize !== 'xs' ? 'center' : 'flex-start',
+        marginTop: windowSize !== 'xs' ? 40 : 10,
+        alignItems: 'center'
+    },
+    eventPageContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        width: windowSize !== 'xs' ? '50%' : 'calc(100% - 20px)'
+    },
+    eventGroupsContainer: {
+        display: 'flex',
+        maxWidth: windowSize !== 'xs' ? 520 : 'calc(100% - 20px)',
+        minWidth: windowSize !== 'xs' ? 520 : 'calc(100% - 20px)'
     }
 });
