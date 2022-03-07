@@ -186,22 +186,23 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                             value={newGroupData.GroupName}
                             className={clsx(classes.textField, classes.minWidth252)}
                             autoComplete="off"
-                            onKeyDown={(e) => {
-                                console.log(e.which)
-                                if (e.which === 8 || e.target.value.length < 100) {
-                                    return true
+                            onChange={(e) => {
+                                if (e.target.value.length <= 100) {
+                                    setNewGroupData({
+                                        ...newGroupData,
+                                        GroupName: e.target.value,
+                                    });
                                 }
                                 else {
                                     e.preventDefault()
+                                    setNewGroupData({
+                                        ...newGroupData,
+                                        GroupName: e.target.value.substring(0, 100),
+                                    });
                                     setToastMessage(ToastMessages.GROUP_NAME_MAXLENGTH)
                                 }
-                            }}
-                            onChange={(e) => {
                                 e.preventDefault();
-                                setNewGroupData({
-                                    ...newGroupData,
-                                    GroupName: e.target.value,
-                                });
+
                             }}
                         />
                     </Box>

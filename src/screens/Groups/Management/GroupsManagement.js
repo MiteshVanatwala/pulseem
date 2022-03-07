@@ -47,7 +47,7 @@ import {
   createGroup,
 } from "../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../components/managment/Dialog";
-// import { StaticData } from "../tempConstants";
+import { StaticData } from "../tempConstants";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -83,7 +83,7 @@ const GroupsManagement = ({ classes }) => {
     root: clsx(classes.tableCellRoot, classes.minWidth50),
   };
   const [dialog, setDialog] = useState(null);
-  const [showLoader, setLoader] = useState(true);
+  const [showLoader, setLoader] = useState(false);
   const dateFormat = "YYYY-MM-DD HH:mm:ss.FFF";
   const dispatch = useDispatch();
   moment.locale(language);
@@ -135,7 +135,7 @@ const GroupsManagement = ({ classes }) => {
   };
 
   useEffect(() => {
-    getData();
+    getData(); // BUG: UNCOMMENT THIS
   }, [dispatch, serachData, page]);
 
   //  HANDLERS  //
@@ -510,8 +510,8 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const renderTableBody = useMemo(() => {
-    let sortData = groupData ? groupData.Groups : [];
-    // let sortData = StaticData;
+    let sortData = groupData ? groupData.Groups : []; // BUG: UNCOMMENT THIS 
+    // let sortData = [StaticData[0]]; // BUG: COMMENT THIS 
     if (sortData.length <= 0) {
       return <></>;
     }
