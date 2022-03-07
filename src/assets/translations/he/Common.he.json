@@ -247,7 +247,7 @@
   "AddSmsBulk": "הוסף חבילת SMS",
   "Pulished": "פורסמו",
   "Recipients": "נמענים",
-  "SeeAll": "ראה הכל",
+  "SeeAll": "הצג הכל",
   "Send": "נשלחו",
   "UserGuides": "מדריכים למשתמש",
   "CreateFacebookPost": "צור פוסט בפייסבוק",
@@ -542,5 +542,6 @@
   "notSent": "לא נשלח",
   "invalidDate": "יש לבחור תאריך",
   "minimalDateRequired": "התאריך לא יכול להיות גדול מהתאריך המינימלי",
-  "maximalDateRequired": "התאריך לא יכול להיות קטן מהתאריך המקסימלי"
+  "maximalDateRequired": "התאריך לא יכול להיות קטן מהתאריך המקסימלי",
+  "showTen": "הצג 10"
 }
