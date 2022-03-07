@@ -34,7 +34,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
         InvalidCell: 0,
         InvalidEmails: 0,
         IsDynamic: true,
-        IsTestGroup: null,
+        IsTestGroup: false,
         PendingEmails: 0,
         Recipients: 0,
         RemovedCell: 0,
@@ -215,7 +215,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                     >
                         <FormControlLabel
                             control={
-                                <Checkbox name="testGroup" size="small" color="primary" />
+                                <Checkbox checked={newGroupData.IsTestGroup} onClick={() => { setNewGroupData({ ...newGroupData, IsTestGroup: !newGroupData.IsTestGroup }) }} name="testGroup" size="small" color="primary" />
                             }
                             label={t("group.testGroup")}
                         />

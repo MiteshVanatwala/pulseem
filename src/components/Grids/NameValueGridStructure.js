@@ -1,4 +1,14 @@
-import { Box, Grid, Typography } from "@material-ui/core"
+import { Box, Grid, makeStyles, Typography } from "@material-ui/core"
+
+const useStyles = makeStyles({
+    dataBox: {
+        "@media screen and (max-width: 1160px)": {
+            '& p': {
+                fontSize: '1em'
+            }
+        }
+    }
+});
 
 const NameValueGridStructure = ({ gridArr = [],
     gridSize = { xs: 12, sm: 6 },
@@ -10,13 +20,15 @@ const NameValueGridStructure = ({ gridArr = [],
     ...props
 }) => {
 
+    const localClasses = useStyles();
+
     return (
         <>
             <Grid container direction={direction} >
                 {
                     gridArr.map((obj, idx) => {
                         return (
-                            <Grid item xs={gridSize?.xs} sm={gridSize?.sm} md={gridSize?.md ?? ''} lg={gridSize?.lg ?? ''} key={idx}>
+                            <Grid className={localClasses.dataBox} item xs={gridSize?.xs} sm={gridSize?.sm} md={gridSize?.md ?? ''} lg={gridSize?.lg ?? ''} key={idx}>
                                 {reverse &&
                                     <Typography className={obj.classes?.name ?? classes?.name ?? ''} align={align} variant={variant}>
                                         {obj?.name}

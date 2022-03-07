@@ -7,6 +7,7 @@ import {
   Grid,
   Checkbox,
   FormControlLabel,
+  makeStyles,
 } from "@material-ui/core";
 
 
@@ -19,6 +20,23 @@ import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
 import IconWrapper from "../../../components/icons/IconWrapper";
 import FlexGrid from "../../../components/Grids/FlexGrid";
+
+const useStyles = makeStyles({
+  groupName: {
+    "@media screen and (max-width: 1160px)": {
+
+      fontSize: '16px'
+
+    }
+  },
+  date: {
+    "@media screen and (max-width: 1160px)": {
+
+      fontSize: '13px'
+
+    }
+  }
+});
 
 
 const RenderWebRow = ({
@@ -51,6 +69,8 @@ const RenderWebRow = ({
     IsAutoResponder
   } = row;
 
+  const localClasses = useStyles();
+
   const renderNameCell = (row, fullwidth) => {
     let date = null;
     const { GroupName } = row;
@@ -80,18 +100,18 @@ const RenderWebRow = ({
         >
           {fullwidth ? (
             <Typography
-              className={classes.nameEllipsis}
+              className={clsx(classes.nameEllipsis, localClasses.groupName)}
               style={{ maxWidth: "100%" }}
             >
               {GroupName}
             </Typography>
           ) : (
-            <Typography className={classes.nameEllipsis}>
+            <Typography className={clsx(classes.nameEllipsis, localClasses.groupName)}>
               {GroupName}
             </Typography>
           )}
         </CustomTooltip>
-        <Typography className={classes.grayTextCell}>
+        <Typography className={clsx(classes.grayTextCell, localClasses.date)}>
           {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
         </Typography>
       </>
@@ -105,7 +125,6 @@ const RenderWebRow = ({
           <Grid item sm={2}>
             <FormControlLabel
               label=""
-              className={classes.ml0}
               control={
                 <Checkbox
                   color="primary"

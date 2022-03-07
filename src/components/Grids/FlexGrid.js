@@ -6,13 +6,25 @@ const useStyles = makeStyles({
         justifyContent: 'space-around',
         width: '100%',
         "@media screen and (max-width: 1160px)": {
-            flexWrap: 'wrap'
+            flexWrap: 'wrap',
+            justifyContent: 'left',
+            marginInline: 5
         }
     },
     iconBox: {
         flexGrow: 1,
-        maxWidth: 'min-content',
-        cursor: 'pointer'
+        maxWidth: 'max-content',
+        cursor: 'pointer',
+        marginInline: 2,
+        "@media screen and (max-width: 1160px)": {
+            marginInline: 5,
+            '& img': {
+                width: '80%'
+            },
+            '& p': {
+                fontSize: '1em'
+            }
+        }
     }
 });
 
