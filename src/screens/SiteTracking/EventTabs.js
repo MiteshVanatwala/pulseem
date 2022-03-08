@@ -80,7 +80,7 @@ const EventTabs = ({ classes, setDialog }) => {
                     </Button>
                 </Box>
                 <Box style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', maxWidth: 1135, width: '100%' }} className={classes.mb25}>
-                    {event.metadata.length > 10 &&
+                    {event.metadata && event.metadata.length > 10 &&
                         <Link onClick={() => setMetadataToShow(metadataToShow > 10 ? 10 : (event.metadata.length + 1))}
                             className={classes.alignCenter}
                             style={{ cursor: 'pointer', fontSize: 20 }}>{metadataToShow <= 10 ? t('common.SeeAll') : t('common.showTen')}</Link>}
