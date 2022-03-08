@@ -24,16 +24,18 @@ import FlexGrid from "../../../components/Grids/FlexGrid";
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
-
       fontSize: '16px'
-
+    }
+  },
+  dataBox: {
+    whiteSpace: 'nowrap',
+    "@media screen and (max-width: 1350px)": {
+      fontSize: '14px'
     }
   },
   date: {
     "@media screen and (max-width: 1160px)": {
-
       fontSize: '13px'
-
     }
   }
 });
@@ -149,7 +151,7 @@ const RenderWebRow = ({
               name: t("campaigns.recipients"),
               value: TotalRecipients,
               classes: {
-                name: colorTextStyle.blue,
+                name: clsx(colorTextStyle.blue, localClasses.dataBox),
                 value: colorTextStyle.blue,
               },
             },
@@ -157,7 +159,7 @@ const RenderWebRow = ({
               name: t("recipient.Active"),
               value: ActiveEmails,
               classes: {
-                name: colorTextStyle.green,
+                name: clsx(colorTextStyle.green, localClasses.dataBox),
                 value: colorTextStyle.green,
               },
             },
@@ -165,7 +167,7 @@ const RenderWebRow = ({
               name: t("recipient.Removed"),
               value: RemovedEmails,
               classes: {
-                name: colorTextStyle.red,
+                name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
             },
@@ -173,7 +175,7 @@ const RenderWebRow = ({
               name: t("recipient.Bounced"),
               value: InvalidEmails,
               classes: {
-                name: colorTextStyle.red,
+                name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
             },
@@ -190,7 +192,7 @@ const RenderWebRow = ({
               name: t("campaigns.recipients"),
               value: TotalRecipients,
               classes: {
-                name: colorTextStyle.blue,
+                name: clsx(colorTextStyle.blue, localClasses.dataBox),
                 value: colorTextStyle.blue,
               },
             },
@@ -198,7 +200,7 @@ const RenderWebRow = ({
               name: t("recipient.Active"),
               value: ActiveCell,
               classes: {
-                name: colorTextStyle.green,
+                name: clsx(colorTextStyle.green, localClasses.dataBox),
                 value: colorTextStyle.green,
               },
             },
@@ -206,7 +208,7 @@ const RenderWebRow = ({
               name: t("recipient.Removed"),
               value: RemovedCell,
               classes: {
-                name: colorTextStyle.red,
+                name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
             },
@@ -214,7 +216,7 @@ const RenderWebRow = ({
               name: t("recipient.Bounced"),
               value: InvalidCell,
               classes: {
-                name: colorTextStyle.red,
+                name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
             },

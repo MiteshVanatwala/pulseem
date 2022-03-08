@@ -18,6 +18,7 @@ const useStyles = makeStyles({
         marginInline: 2,
         "@media screen and (max-width: 1160px)": {
             marginInline: 5,
+            marginBottom: 3,
             '& img': {
                 width: '80%'
             },
