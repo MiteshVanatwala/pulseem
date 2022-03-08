@@ -157,34 +157,40 @@ const SiteTrackingEditor = ({ classes }) => {
         }
     }
     const onSaveReponse = (response) => {
-        let statusCode = response.statusCode ? response.statusCode : response.status
-        switch (statusCode) {
-            case 200:
-            case 201: {
-                setToastMessage(ToastMessages.SUCCESS);
-                break;
+        try {
+            let statusCode = response.statusCode ? response.statusCode : response.status
+            switch (statusCode) {
+                case 200:
+                case 201: {
+                    setToastMessage(ToastMessages.SUCCESS);
+                    break;
+                }
+                case 401: {
+                    setDialogType({ type: "notAutorized" });
+                    break;
+                }
+                case 422: {
+                    setDialogType({ type: 'missingMandatoryAction' })
+                    break;
+                }
+                case 409: {
+                    setDialogType({ type: 'domainAlreadyExist' })
+                    break;
+                }
+                case 400: {
+                    setDialogType({ type: 'invalidDomain' })
+                    break
+                }
+                default:
+                case 500: {
+                    setDialogType({ type: 'serverNotAble' })
+                    break;
+                }
             }
-            case 401: {
-                setDialogType({ type: "notAutorized" });
-                break;
-            }
-            case 422: {
-                setDialogType({ type: 'missingMandatoryAction' })
-                break;
-            }
-            case 409: {
-                setDialogType({ type: 'domainAlreadyExist' })
-                break;
-            }
-            case 400: {
-                setDialogType({ type: 'invalidDomain' })
-                break
-            }
-            default:
-            case 500: {
-                setDialogType({ type: 'serverNotAble' })
-                break;
-            }
+        }
+        catch (e) {
+            console.log(e);
+            setDialogType({ type: 'serverNotAble' })
         }
     }
 
