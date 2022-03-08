@@ -157,7 +157,7 @@ const SiteTrackingEditor = ({ classes }) => {
         }
     }
     const onSaveReponse = (response) => {
-        let statusCode = response.status ?? response.statusCode
+        let statusCode = response.statusCode ? response.statusCode : response.status
         switch (statusCode) {
             case 200:
             case 201: {
