@@ -102,6 +102,7 @@ export const siteTrackingSlice = createSlice({
   name: 'siteTracking',
   initialState: {
     event: null,
+    eventError: null,
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'siteTracking.saved', showAnimtionCheck: true }
     },
@@ -187,7 +188,7 @@ export const siteTrackingSlice = createSlice({
         }
       })
       .addCase(get.rejected, (state, action) => {
-        state.event = action.error.message
+        state.eventError = action.error.message
       })
   }
 })
