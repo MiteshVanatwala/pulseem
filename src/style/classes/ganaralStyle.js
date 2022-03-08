@@ -480,6 +480,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   textCapitalize: {
     textTransform: "capitalize",
   },
+  textUppercase: {
+    textTransform: "uppercase !important",
+  },
   noborder: {
     border: "none",
   },

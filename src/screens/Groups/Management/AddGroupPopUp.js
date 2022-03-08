@@ -149,7 +149,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                                     classes.dialogConfirmButton,
                                     classes.fullWidth,
                                     classes.whiteSpaceNoWrap,
-                                    classes.textCapitalize
+                                    classes.textUppercase
                                 )}
                                 onClick={() => {
                                     const result = handleAddGroup(newGroupData);

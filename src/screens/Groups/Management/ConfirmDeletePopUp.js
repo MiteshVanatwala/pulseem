@@ -63,7 +63,7 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, hand
                                 classes.dialogConfirmButton,
                                 classes.fullWidth,
                                 classes.whiteSpaceNoWrap,
-                                classes.textCapitalize
+                                classes.textUppercase
                             )}
                             onClick={() => handleDeleteGroup()}
                         >
