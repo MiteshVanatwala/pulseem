@@ -211,6 +211,10 @@ const CampaignEditor = ({ classes, id = 2 }) => {
     const onLoad = () => {
         if (id && savedDesign !== null) {
             editorRef.current.loadDesign(savedDesign);
+            // {
+                // html: '<html><body><div>This is a legacy HTML template.</div></body></html>',
+                // classic: true
+            //}
         }
     }
 

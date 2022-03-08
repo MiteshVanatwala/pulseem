@@ -5,6 +5,7 @@
   "homepage": "https://www.reactstage.club/react/",
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.21",
+    "@babel/helper-environment-visitor": "^7.16.7",
     "@date-io/moment": "1.x",
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
