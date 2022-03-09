@@ -1210,7 +1210,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const validationCheckpoint = async (callbackFunc) => {
     if (validationCheck()) {
       if (isSiteTracking === true) {
-        if (!smsModel.Text.includes('ref')) {
+        if (!smsModel.Text.includes('ref') && isLinksStatistics) {
           let text = smsModel.Text;
           const startIndex = smsModel.Text.substring(smsModel.Text.indexOf(commonSettings.SubAccountSettings.DomainAddress));
           const originalLink = startIndex.split(' ') || startIndex.split('\n');
