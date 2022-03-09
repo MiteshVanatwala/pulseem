@@ -20,7 +20,7 @@ const SimpleGrid = ({ gridArr = [],
 
     return (
         <>
-            <Grid container direction={direction} >
+            <Grid container direction={direction} spacing={2}>
                 {
                     gridArr.map((obj, idx) => {
                         return (

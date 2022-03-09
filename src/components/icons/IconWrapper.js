@@ -57,8 +57,8 @@ const Icons = {
 const useStyles = makeStyles((theme) => ({
   box: {
     fontSize: 32,
-    width: 40,
-    height: 40,
+    width: 25,
+    height: 'auto',
     color: "#000000",
     "& img": {
       maxWidth: "100%",
