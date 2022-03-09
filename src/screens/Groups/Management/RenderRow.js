@@ -9,6 +9,8 @@ import {
   FormControlLabel,
   makeStyles,
 } from "@material-ui/core";
+import { MdOutlineLockClock } from "react-icons/md"
+import { RiPagesLine } from "react-icons/ri"
 
 
 
@@ -72,6 +74,9 @@ const RenderWebRow = ({
   } = row;
 
   const localClasses = useStyles();
+  let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
+    return e === true
+  }).length;
 
   const renderNameCell = (row, fullwidth) => {
     let date = null;
@@ -139,9 +144,47 @@ const RenderWebRow = ({
               }
             />
           </Grid>
-          <Grid item sm={10}>
+          <Grid item sm={10 - iconsCells}>
             {renderNameCell(row)}
           </Grid>
+          {
+            row.IsAutoResponder === true ? (
+              <Grid item sm={1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CustomTooltip
+                  isSimpleTooltip={true}
+                  interactive={false}
+                  classes={{
+                    tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                    arrow: classes.fBlack,
+                  }}
+                  arrow={true}
+                  style={{ fontSize: 18, fontWeight: "bold" }}
+                  placement={"top"}
+                  icon={<MdOutlineLockClock style={{ fontSize: 24 }} />}
+                  text={t("group.autoResponderConnected")}
+                ></CustomTooltip>
+              </Grid>
+            ) : null
+          }
+          {
+            row.IsConnectedToWebForm === true ? (
+              <Grid item sm={1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CustomTooltip
+                  isSimpleTooltip={true}
+                  interactive={false}
+                  classes={{
+                    tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                    arrow: classes.fBlack,
+                  }}
+                  arrow={true}
+                  style={{ fontSize: 18, fontWeight: "bold" }}
+                  placement={"top"}
+                  icon={<RiPagesLine style={{ fontSize: 24 }} />}
+                  text={t("group.webformConnected")}
+                ></CustomTooltip>
+              </Grid>
+            ) : null
+          }
         </Grid>
       </TableCell>
       <TableCell classes={cellStyle} align="center" className={classes.flex2}>
