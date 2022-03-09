@@ -179,7 +179,7 @@ const BulkStatus = ({ classes }) => {
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             {isShowSmsPackage && isAllowSms() ? (
               <a
-                href="javascript(0);"
+              href="javascript:;"
                 onClick={() => showPackageDialogType(3)}
                 className={clsx(getBillingTypeText(Sms) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
               >
@@ -204,7 +204,7 @@ const BulkStatus = ({ classes }) => {
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             {isShowEmailPackage && isAllowNewsletter() ? (
               <a
-                href="javascript(0);"
+              href="javascript:;"
                 onClick={() => showPackageDialogType(2)}
                 className={clsx(getBillingTypeText(Newsletters) === 0 ? classes.blueLink : classes.whiteLink, classes.dinline)}
               >
