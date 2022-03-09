@@ -16,6 +16,7 @@ import {ReactComponent as SelectArrowIcon} from './select_arrow.svg'
 import {ReactComponent as CalendarIcon} from './calendar.svg'
 import {ReactComponent as SearchIcon} from './search.svg'
 import {ReactComponent as PageArrowIcon} from './page_arrow.svg'
+import CloseIcon from './x.png'
 
 export {
   AutomationIcon,
@@ -35,5 +36,6 @@ export {
   PageArrowIcon,
   CopyIcon,
   EmbedCodeIcon,
-  SurveryResultsIcon
+  SurveryResultsIcon,
+  CloseIcon
 }
