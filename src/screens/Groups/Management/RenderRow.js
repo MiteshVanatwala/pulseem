@@ -27,8 +27,14 @@ const useStyles = makeStyles({
       fontSize: '16px'
     }
   },
-  dataBox: {
+  noWrap: {
     whiteSpace: 'nowrap',
+    '& p': {
+      whiteSpace: 'nowrap',
+    }
+  },
+  dataBox: {
+    whiteSpaces: 'nowrap',
     "@media screen and (max-width: 1350px)": {
       fontSize: '14px'
     }
@@ -238,7 +244,7 @@ const RenderWebRow = ({
               component: (
                 <IconWrapper iconName="preview" className={classes.mxAuto} />
               ),
-              classes: { text: classes.wrapText },
+              classes: { text: localClasses.noWrap },
             },
             {
               label: t("recipient.addRecipient"),
@@ -252,7 +258,7 @@ const RenderWebRow = ({
                   }}
                 />
               ),
-              classes: { text: classes.wrapText },
+              classes: { text: localClasses.noWrap },
             },
             {
               label: t("recipient.addRecipients"),
@@ -262,21 +268,21 @@ const RenderWebRow = ({
                   className={classes.mxAuto}
                 />
               ),
-              classes: { text: classes.wrapText },
+              classes: { text: localClasses.noWrap },
             },
             {
               label: t("recipient.reset"),
               component: (
                 <IconWrapper iconName="reset" className={classes.mxAuto} />
               ),
-              classes: { text: classes.wrapText },
+              classes: { text: localClasses.noWrap },
             },
             {
               label: t("recipient.settings"),
               component: (
                 <IconWrapper iconName="settings" className={classes.mxAuto} />
               ),
-              classes: { text: classes.wrapText },
+              classes: { text: localClasses.noWrap },
             },
             //TODO: Disable if !== null
             {
@@ -289,7 +295,7 @@ const RenderWebRow = ({
                   }}
                 />
               ),
-              classes: { text: classes.wrapText },
+              classes: { text: localClasses.noWrap },
             },
             //TODO: Disable if (IsConnectedToWebForm === true || IsConnectedToWebForm === true)
             {
@@ -306,7 +312,7 @@ const RenderWebRow = ({
                   }}
                 />
               ),
-              classes: { text: classes.wrapText },
+              classes: { text: localClasses.noWrap },
             },
           ]}
           variant="body1"

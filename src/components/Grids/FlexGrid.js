@@ -5,7 +5,7 @@ const useStyles = makeStyles({
         flexDirection: (props) => props.direction || 'row',
         justifyContent: 'space-around',
         width: '100%',
-        "@media screen and (max-width: 1160px)": {
+        "@media screen and (max-width: 1320px)": {
             flexWrap: 'wrap',
             justifyContent: 'left',
             marginInline: 5
@@ -16,12 +16,12 @@ const useStyles = makeStyles({
         maxWidth: 'max-content',
         cursor: 'pointer',
         marginInline: 2,
-        "@media screen and (max-width: 1160px)": {
+        "@media screen and (max-width: 1320px)": {
             marginInline: 5,
             marginBottom: 3,
-            '& img': {
-                width: '80%'
-            },
+            // '& img': {
+            //     width: '80%'
+            // },
             '& p': {
                 fontSize: '1em'
             }
@@ -46,11 +46,11 @@ const FlexGrid = ({ gridArr = [],
                         return (
                             <Box className={localClasses.iconBox} key={idx}>
                                 {reverse &&
-                                    <Typography variant={textVariant} align={alignText} className={classes.text}>{obj.label}</Typography>
+                                    <Typography variant={textVariant} align={alignText} className={obj.classes.text}>{obj.label}</Typography>
                                 }
                                 {obj.component}
                                 {!reverse &&
-                                    <Typography variant={textVariant} align={alignText} className={classes.text}>{obj.label}</Typography>
+                                    <Typography variant={textVariant} align={alignText} className={obj.classes.text}>{obj.label}</Typography>
                                 }
                             </Box>
 
