@@ -13,6 +13,7 @@ import shortcutReducer from './reducers/shortcutSlice';
 import paymentReducer from './reducers/paymentSlice';
 import commonReducer from './reducers/commonSlice';
 import clientReducer from './reducers/clientSlice';
+import campaignReducer from './reducers/campaignEditorSlice'
 
 export default configureStore({
   reducer: {
@@ -29,6 +30,7 @@ export default configureStore({
     shortcuts: shortcutReducer,
     payment: paymentReducer,
     common: commonReducer,
-    client: clientReducer
+    client: clientReducer,
+    campaignEditor: campaignReducer
   },
 });

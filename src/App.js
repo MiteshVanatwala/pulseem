@@ -126,7 +126,7 @@ const renderRoutes = (classes, history) => {
         render={props => <NewsletterManagment {...props} classes={classes} />}
       />
       <Route
-        path="/Campaigns/editor"
+        path="/Campaigns/editor/:id"
         render={props => <CampaignEditor {...props} classes={classes} />}
       />
 
