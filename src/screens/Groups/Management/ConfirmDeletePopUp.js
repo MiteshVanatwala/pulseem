@@ -32,7 +32,7 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, hand
         >
             <Box>
                 <Typography variant="subtitle1">
-                    {t("mainReport.confirmSure")}
+                    {t("group.deleteConfirm")}
                 </Typography>
             </Box>
         </Dialog>

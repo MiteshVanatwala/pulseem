@@ -3,7 +3,7 @@
   "delete": "Delete Groups",
   "ok": "Ok",
   "cancel": "Cancel",
-  "deleteConfirm": "Are you sure you want to delete following groups",
+  "deleteConfirm": "Are you sure you want to delete the following groups",
   "createNew": "Create New Group",
   "testGroupInfo": "Test Groups allow you to send a test directly from the campaign editor",
   "created": "Group created successfuly",
