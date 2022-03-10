@@ -446,9 +446,9 @@
   "CreditsResource1": {
     "HeaderText": "הודעות"
   },
-  "CampsAmountLimit": "חשבון זה ניצל את מכסת סמס קמפיינים, צור קשר עם תמיכה שלנו על מנת לשדרג את חשבונך.",
+  "CampsAmountLimit": "חשבון זה ניצל את מכסת SMS קמפיינים, צור קשר עם תמיכה שלנו על מנת לשדרג את חשבונך.",
   "AlertHeading": "שימו לב!",
-  "NumberChangeErrorMessage": "שיניתם את המספר שהוקצה לכם ממערכת פולסים וכעת נמענים לא יוכלו להסיר את עצמם ע\"י שליחת סמס חזרה.",
+  "NumberChangeErrorMessage": "שיניתם את המספר שהוקצה לכם ממערכת פולסים וכעת נמענים לא יוכלו להסיר את עצמם ע\"י שליחת SMS חזרה.",
   "create": "צור SMS",
   "verification": "אימות מספר לשליחה",
   "verificationDialogTitle": "אימות מספר לשליחה",
@@ -486,9 +486,9 @@
   "filterRemoved": "הוסר",
   "filterEmptyNumbers": "מספרים ריקים",
   "filterInvalid": "לא חוקי",
-  "pageTitle": "יצירת סמס מערכת פולסים",
+  "pageTitle": "יצירת SMS מערכת פולסים",
   "sendPageTitle": "Send SMS | Pulseem System",
-  "saved": "קמפיין סמס נשמר בהצלחה",
+  "saved": "קמפיין SMS נשמר בהצלחה",
   "settings_saved": "SMS settings saved sucessfully!",
   "error": "Error saving SMS ",
   "quickSend": "שליחת ניסיון נשלחה בהצלחה",
@@ -565,5 +565,6 @@
   "alreadySent": "קמפיין כבר נשלח",
   "notEnoughCreditLeft": "אין מספיק קרדיטים בחשבון כדי לשלוח קמפיין זה.<br/><br/>",
   "notEnoughCreditLeftDesc": "על מנת להוסיף קרדיטים לחשבון,<br/>יש ליצור עמנו קשר בטלפון 03-524-0290 או במייל <a href='mailto:support@pulseem.com'>support@pulseem.com</a>",
-  "showTestGroups": "הצג קבוצות<br/> ניסיון"
+  "addTrackingUrl": "מעקב URL",
+  "showTestGroups": "הצג קבוצות ניסיון"
 }

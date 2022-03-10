@@ -1,28 +1,27 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   AppBar, Toolbar, Typography, Button, IconButton, MenuItem, ClickAwayListener,
-  Grow, Paper, Popper, MenuList, SvgIcon, Grid, Box, Select, NativeSelect
+  Grow, Paper, Popper, MenuList, SvgIcon, Grid, Box
 } from '@material-ui/core';
 import clsx from 'clsx';
 import { ArrowDropUp } from '@material-ui/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import { setLanguage } from '../../redux/reducers/coreSlice'
-import Logo from '../../assets/images/pulseemnewlogo.png'
 import { useTranslation } from "react-i18next";
 import DoubleArrowIcon from '../../assets/images/doubleArrow.png'
 import { ReactComponent as QuestionIcon } from '../../assets/images/question.svg'
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { SiCodeforces } from 'react-icons/si'
-import { VscGraph } from 'react-icons/vsc'
 import { getRoutes, getSettingsItem } from '../../helpers/routes'
 //import useCtrlHistory from '../../helpers/useCtrlHistory'
 import { setCookie, getCookie } from '../../helpers/cookies'
 import { setScriptDialog } from '../../redux/reducers/notificationSlice';
 import { logout } from '../../helpers/api'
 import { openInNewTab } from '../../helpers/functions'
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { actionURL } from '../../config/index'
+import {
+  ChartIcon
+} from '../../assets/images/drawer/index'
 import i18n from '../../i18n'
+
 const AppBarItem = ({
   item,
   onMainClick = () => { },
@@ -100,10 +99,14 @@ const AppBarItem = ({
                         classes={{ root: classes.appBarItemMenuRoot }}
                         className={classes.appBarItemMenuItem}
                       >
-                        <img
-                          src={option.iconSrc || DoubleArrowIcon}
-                          alt='Double Arrow Icon'
-                          className={classes.appBarItemDoubleArrowIcon} />
+                        {option.isFaIcon ?
+                          <option.iconSrc style={{padding: '0 5px'}} />
+                          :
+                          <img
+                            src={option.iconSrc || DoubleArrowIcon}
+                            alt='Double Arrow Icon'
+                            className={classes.appBarItemDoubleArrowIcon} />
+                        }
                         {option.title}
                       </MenuItem>
                     </Box>
@@ -278,14 +281,12 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
       routes[2],
       routes[3],
       routes[4],
-      { title: t('mms.logPageHeaderResource1.Text'), iconUnicode: '\ue11b', href: '/react/MmsCampaigns', isShow: subAccountSettings && subAccountSettings.IsDirectAccount !== true },
+      { title: t('mms.logPageHeaderResource1.Text'), iconUnicode: '\ue11b', href: '/react/MmsCampaigns', isShow: true },
       routes[6],
       { title: t('master.Automations'), iconUnicode: '\ue087', href: '/react/Automations', isShow: subAccountSettings && subAccountSettings.IsDirectAccount !== true },
       { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
       { title: t('appBar.reports.smsReports'), iconUnicode: '\ue04c', href: reportsOptions[2].href, isShow: true },
-      { title: t('report.DirectSendEmail'), key: 'directSendEmail', href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
-      { title: t('report.DirectSendSMS'), key: 'directSendSMS', href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
-      //routes[1]
+      { title: t('report.DirectSendReport'), key: 'directSendReport', href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true }      //routes[1]
     ]
     return (
       <>
@@ -339,18 +340,19 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
                             className={classes.phoneAppBarItemContainer}>
                             <Button
                               href={route.href}
-                              style={{ alignSelf: 'center' }}>
+                              style={{ alignSelf: 'center', fontSize: route.key === 'directSendReport' ? 35 : null }}>
                               {route.iconUnicode ? (<Typography
                                 className={classes.phoneAppBarItemIcon}>
                                 {route.iconUnicode}
                               </Typography>)
-                                : route.key === 'directSendEmail' ? (<SiCodeforces />)
-                                  : route.key === 'directSendSMS' && (<VscGraph />)
+                                : route.key === 'directSendReport' ? (<img
+                                  style={{ paddingBottom: 5 }}
+                                  alt='DirectSend Icon'
+                                  src={ChartIcon} />) : null
                               }
-
                             </Button>
                             <Typography
-                              style={{ textAlign: 'center' }}>
+                              style={{ textAlign: 'center', direction: isRTL ? 'rtl' : 'ltr' }}>
                               {route.title}
                             </Typography>
                           </Box>

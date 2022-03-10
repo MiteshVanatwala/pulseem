@@ -1,7 +1,7 @@
 {
-  "DirectSendReport": "דוחות שליחה ישירה",
   "DirectSendEmail": "שליחה ישירה ניוזלטר",
   "DirectSendSMS": "שליחה ישירה SMS",
+  "DirectSendReport": "שליחה ישירה",
   "FromEmail": "מאת מייל",
   "ToEmail": "למייל",
   "Recipient": "שם נמען",
@@ -22,7 +22,7 @@
   "Messages": "הודעות",
   "Attachments": "קבצים מצורפים",
   "ToName": "שם נמען",
-  "FromName": "שם השולח",
+  "FromName": "מאת שם",
   "None": "ללא",
   "Opened": "נפתחו",
   "locUniqueOpens": "פתיחות ייחודיות",
@@ -36,7 +36,7 @@
   "date": "תאריך",
   "distributeOfUse": "התפלגות שימוש",
   "id": "מזהה (reference)",
-  "takenBySender": "Taken by sender",
+  "takenBySender": "אין סטטוס",
   "pending": "בהמתנה",
   "sent": "נשלח",
   "success": "נשלח בהצלחה",
@@ -56,9 +56,10 @@
   "clientStatus": "סטאטוס לקוח",
   "StatusDescription": "תיאור סטאטוס",
   "responses": "משובים",
-  "SMSReplies":"משובי SMS",
-  "SMSRepliesSubTitle": "להלן תוצאות החיפוש שבוצע. מכאן ניתן ליצור קבוצה או לייצא את רשימת הלקוחות שנמצאו.",
-  "clientName": "שם הלקוח",
+  "SMSCredits": "SMS שנותרו בחבילה",
+  "BulkEmails": "אימיילים שנותרו בחבילה",
+  "MmsCredits": "MMS שנותרו בחבילה",
+  "TotalRecords":"סה\"כ רשומות",
   "smsReport": {
     "statuses": {
       "other": "אחר",
@@ -67,7 +68,7 @@
       "sending": "בשליחה",
       "sent": "נשלח",
       "error": "שגיאה",
-      "removed": "הסיר עצמו",
+      "removed": "חסום לשליחה",
       "cancelled": "מבוטל",
       "inProcess": "בתהליך",
       "draft": "טיוטה"
@@ -80,7 +81,7 @@
       "sending": "נשלח",
       "sentSuccessfuly": "נשלח בהצלחה",
       "error": "שגיאה",
-      "removed": "הסיר עצמו",
+      "removed": "חסום לשליחה",
       "cancelled": "מבוטל"
     },
     "responseType": {
@@ -90,5 +91,8 @@
       "activeHasResponse": "עם אפשרות למשובים - ויש משובים",
       "activeNoResponse": "עם אפשרות למשובים - ואין משובים"
     }
-  }
+  },
+  "ArchiveDirectSendReport": "ארכיון שליחה ישירה",
+  "Reactivate": "Reactivate / בטל הסרה",
+  "ExportLimitation": "לא ניתן להוריד קובץ שמכיל מעל 600 אלף רשומות"
 }

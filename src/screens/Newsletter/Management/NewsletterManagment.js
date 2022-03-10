@@ -177,6 +177,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
+              toolbarDisabled={false}
               classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
@@ -188,6 +189,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
+              toolbarDisabled={false}
               classes={classes}
               value={toDate}
               onChange={handleToDate}
@@ -221,6 +223,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
     )
   }
 
+  const redirctToArchive = () => {
+    window.location = '/react/Campaigns/Archive'
+  }
+
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
@@ -251,7 +257,20 @@ const NewsletterManagnentScreen = ({ classes }) => {
             {t('campaigns.restoreDeleted')}
           </Button>
         </Grid>}
-        <Grid item className={classes.groupsLableContainer} >
+        <Grid item xs={windowSize === 'xs' && 12}>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonDarkBlue
+            )}
+            onClick={redirctToArchive}
+          >
+            {t('master.redirectToArchive')}
+          </Button>
+        </Grid>
+        <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
             {`${isSearching ? searchResults.length : newslettersData.length} ${t('campaigns.newsletters')}`}
           </Typography>

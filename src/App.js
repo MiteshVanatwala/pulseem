@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
 import CampaignEditor from './screens/Newsletter/Editor/CampaignEditor';
+import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
 import MmsManagment from './screens/Mms/Management/MmsManagment';
@@ -32,7 +33,10 @@ import GraphicReport from './screens/Reports/NewslettersReport/GraphicReport';
 import SmsReport from './screens/Reports/SmsReport/SmsReport';
 import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
+import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
+import { siteTrackingScriptUrl } from './config/index';
+import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 
 
 const renderRoutes = (classes, history) => {
@@ -129,7 +133,11 @@ const renderRoutes = (classes, history) => {
         path="/Campaigns/editor/:id"
         render={props => <CampaignEditor {...props} classes={classes} />}
       />
-
+      <Route
+        exact
+        path="/Campaigns/Archive"
+        render={props => <ArchiveManagement {...props} classes={classes} />}
+      />
       <Route
         path={`/Editor/CampaignInfo`}
         component={transferUrl('/Pulseem/Editor/CampaignInfo?new=1')}
@@ -245,8 +253,8 @@ const renderRoutes = (classes, history) => {
         render={props => <SmsReplies props={props} classes={classes} />}
       />
       <Route
-        path={`/MmsMainReport`}
-        component={transferUrl('/Pulseem/MmsMainReport.aspx')}
+        path={`/Reports/MmsMainReport`}
+        render={props => <MmsReport {...props} classes={classes} />}
       />
       <Route
         path={`/AbTestsReport`}
@@ -277,8 +285,14 @@ const renderRoutes = (classes, history) => {
         component={transferUrl('/Pulseem/DirectEmailReport.aspx')}
       />
       <Route
+        exact
         path={`/Reports/DirectSendReport`}
-        render={props => <DirectSendReport {...props} classes={classes} />}
+        render={props => <DirectSendReport {...props} classes={classes} isArchive={false} />}
+      />
+      <Route
+        exact
+        path={`/Reports/DirectSendReport/Archive`}
+        render={props => <DirectSendReport {...props} classes={classes} isArchive={true} />}
       />
       <Route
         path={`/EmailCampaignStatistics`}
@@ -360,6 +374,11 @@ const renderRoutes = (classes, history) => {
           return null
         }}
       />
+      <Route
+        exact
+        path={`/SiteTracking`}
+        render={props => <SiteTrackingEditor props={props} classes={classes} />}
+      />
     </>
   )
 }
@@ -367,9 +386,7 @@ const renderRoutes = (classes, history) => {
 const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize } = useSelector(state => state.core)
-  useEffect(() => {
-    dispatch(setWindowSize(screenSize))
-  }, [windowSize]);
+  screenSize && dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
 
@@ -418,6 +435,13 @@ const App = ({ screenSize }) => {
 
     const cookieFunctionObj = {
       jtoken: updateToken
+    }
+
+    const insertScript = () => {
+      const script = document.createElement("script");
+      script.src = `${siteTrackingScriptUrl}`; //?v=` + Math.floor(Date.now() / 1000);
+      script.async = false;
+      document.head.appendChild(script);
     }
 
     // window.addEventListener('resize',setWindowWidth)

@@ -1,0 +1,174 @@
+openapi: 3.0.0
+paths:
+  /events:
+    post:
+      operationId: EventsController_create
+      summary: Create event definition
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventDefinitionInputDto'
+      responses:
+        '201':
+          description: Event Definition Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateEventDefinitionOutputDto'
+        '401':
+          description: Invalid auth token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedErrorDto'
+        '422':
+          description: Missing mandatory field for Action metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableErrorDto'
+        '500':
+          description: Server not able to store the event definition
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerErrorDto'
+      tags:
+        - Events
+      security:
+        - bearer: []
+info:
+  title: Events API
+  description: ''
+  version: 0.0.1
+  contact: {}
+tags:
+  - name: Events API
+    description: ''
+servers: []
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    EventMetadataDto:
+      type: object
+      properties:
+        operatorKey:
+          type: string
+          enum:
+            - CONTAINS
+            - NOT_CONTAINS
+            - EXACT
+        operatorValue:
+          type: string
+        groupIds:
+          type: array
+          items:
+            type: number
+      required:
+        - operatorKey
+        - operatorValue
+    CreateEventDefinitionInputDto:
+      type: object
+      properties:
+        domain:
+          type: string
+        eventName:
+          type: string
+          enum:
+            - PAGE_VIEW
+        actionType:
+          type: string
+          enum:
+            - ADD_CLIENTS_TO_GROUP
+        metadata:
+          $ref: '#/components/schemas/EventMetadataDto'
+      required:
+        - domain
+        - eventName
+        - actionType
+        - metadata
+    CreateEventDefinitionOutputDto:
+      type: object
+      properties:
+        domain:
+          type: string
+        eventName:
+          type: string
+          enum:
+            - PAGE_VIEW
+        actionType:
+          type: string
+          enum:
+            - ADD_CLIENTS_TO_GROUP
+        metadata:
+          $ref: '#/components/schemas/EventMetadataDto'
+      required:
+        - domain
+        - eventName
+        - actionType
+        - metadata
+    UnauthorizedErrorDto:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          description: HTTP Status Code
+          example: 401
+        error:
+          type: string
+          description: HTTP Error description
+          example: Unauthorized
+        message:
+          type: string
+          description: Detailed error message
+          example: Invalid auth token
+      required:
+        - statusCode
+        - error
+        - message
+    UnprocessableErrorDto:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          description: HTTP Status Code
+          example: 422
+        error:
+          type: string
+          description: HTTP Error description
+          example: Internal Server Error
+        message:
+          type: string
+          description: Detailed error message
+          example: Missing mandatory field for Action metadata
+      required:
+        - statusCode
+        - error
+        - message
+    InternalServerErrorDto:
+      type: object
+      properties:
+        statusCode:
+          type: number
+          description: HTTP Status Code
+          example: 500
+        error:
+          type: string
+          description: HTTP Error description
+          example: Internal Server Error
+        message:
+          type: string
+          description: Detailed error message
+          example: Server not able to store the event definition
+      required:
+        - statusCode
+        - error
+        - message
+

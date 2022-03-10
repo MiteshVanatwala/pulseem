@@ -99,7 +99,7 @@
     "Text": "תבניות קמפיין"
   },
   "RadMenuItemResource24": {
-    "Text": "דוחות סמס"
+    "Text": "SMS"
   },
   "PackagesResource": {
     "Text": "חבילות"
@@ -332,10 +332,10 @@
     "Text": "MMS קמפיין"
   },
   "MmsMainReport": {
-    "Text": "MMS"
+    "Text": "דוחות MMS"
   },
   "DirectSmsReport": {
-    "Text": "שליחה ישירה – סמס"
+    "Text": "שליחה ישירה – SMS"
   },
   "RadMenuItemResourceDynamicGroups": {
     "Text": "קבוצות דינאמיות"
@@ -363,6 +363,8 @@
     "MainAccount": "חשבון ראשי"
   },
   "newsletter": "ניוזלטר",
+  "campaignsArchive": "ארכיון",
+  "redirectToArchive": "עבור לארכיון",
   "notifications": "נוטיפיקציות",
   "newslatterBasicEditor": "עורך בסיסי",
   "chatbotSMS": "צ'אטבוט SMS",
@@ -374,5 +376,6 @@
   "implementScript": "הטמעת סקריפט",
   "pulseemSystem": "מערכת פולסים ",
   "smsReplies": "משובי SMS",
-  "newEditor": "עורך חדש"
+  "newEditor": "עורך חדש",
+  "siteTracking": "מעקב אתרים"
 }

@@ -15,10 +15,34 @@ export const preferredOrder = (obj, order) => {
     return arr;
 }
 
+export const switchStatusDescription = (obj, statuses) => {
+    obj.forEach((o) => {
+        if (o.STATUS) {
+            let status = statuses.find((s) => { return s.id === o.STATUS });
+            o.StatusDescription = i18n.t(status ? status.value : null);
+        }
+        else if (o.Status) {
+            let status = statuses.find((s) => { return s.id === o.Status });
+            o.StatusDescription = i18n.t(status ? status.value : null);
+        }
+    });
+    return obj;
+}
+
+export const replaceNull = (obj, property, val = '') => {
+    obj.forEach((o) => {
+        if (o[property] === null || o[property] === '') {
+            o[property] = val;
+        }
+    });
+    return obj;
+}
+
 export const statusNumberToString = (t, obj, statuses) => {
     obj.forEach((o) => {
         if (o.Status) {
-            o.StatusName = t(statuses[o.Status] ? statuses[o.Status].value : null);
+            let status = statuses.find((s) => { return s.id === o.Status });
+            o.StatusName = t(status ? status.value : null);
         }
         if (o.Attachments && (o.Attachments === 'No_Attachments' || o.Attachments === '')) {
             o.Attachments = t('emailStatus.noAttachments');
@@ -40,7 +64,7 @@ export const booleanToNumber = (obj, column, isBoolean = false, t) => {
     return obj;
 }
 
-export const formatDateTime = (arr) => {
+export const formatDateTime = (arr, t) => {
     const newArr = [...arr];
     newArr.forEach((a) => {
         if (a.SendDate) {
@@ -58,9 +82,19 @@ export const formatDateTime = (arr) => {
         if (a.CreationDate) {
             a.CreationDate = moment(a.CreationDate).format("DD/MM/YYYY HH:mm");
         }
+        if (a.CreatedDate) {
+            a.CreatedDate = moment(a.CreatedDate).format("DD/MM/YYYY HH:mm");
+        }
         if (a.ReplyDate) {
             a.ReplyDate = moment(a.ReplyDate).format("DD/MM/YYYY HH:mm");
         }
+        if (a.DATE) {
+            a.DATE = moment(a.DATE).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.SendDate === '' || !a.SendDate) {
+            a.SendDate = t('common.notSent');
+        }
+
     });
 
     return newArr;
@@ -97,12 +131,9 @@ export const deletePropertyFromArrayObject = (arr, property) => {
     return newArr;
 }
 
-
-export const switchStatusDescription = (obj, statuses) => {
-    obj.map((o) => {
-      if (o.STATUS) {
-        o.StatusDescription = i18n.t(statuses[o.STATUS] ? statuses[o.STATUS].value : null);
-      }
+export const replaceClientStatus = (obj) => {
+    obj.forEach((o) => {
+        o.ClientStatus = o.ClientStatus === 0 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
     });
     return obj;
-  }
+}

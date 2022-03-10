@@ -60,6 +60,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   management: {
     maxWidth: 1500
   },
+  managmentNarrow: {
+    maxWidth: 1050
+  },
   managementTitle: {
     fontSize: windowSize === 'xs' ? '25px' : '36px',
     color: '#333333',
@@ -154,7 +157,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tableCollapseHead: {
     fontWeight: 'bold',
     borderBottom: 'unset',
-    fontSize: 16
+    fontSize: 16,
+    paddingBottom: 0
   },
   tableRowCollapse: {
     '&.directEmailRowCollapse': {
@@ -246,10 +250,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     width: '100%',
     padding: iconPadding[windowSize],
     color: '#333',
-    "@media screen and (max-width: 768px)": {
+    "@media screen and (max-width: 768px) and (min-width: 480px)": {
       padding: 0
-    },
-
+    }
   },
   managmentIcon: {
     width: iconWidth[windowSize],
@@ -349,6 +352,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: '#219150'
     }
   },
+  actionButtonArchive: {
+    textTransform: 'capitalize',
+    fontSize: 18,
+    marginInline: 10,
+    paddingBlock: 4,
+    color: '#fff',
+    fontWeight: 400
+  },
   textColorBlue: {
     color: '#3498DB'
   },
@@ -444,9 +455,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   flex6: {
     flex: 6
-  },
-  flex7: {
-    flex: 7
   },
   flex15: {
     flex: 1
@@ -579,8 +587,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tablePadingtonGridItem: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 50
+    alignItems: 'center'
+    // marginBottom: 50
   },
   tablePadingtonGridContainer: {
     paddingBlock: 10,
@@ -716,6 +724,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   formControlSelect: {
     '& .MuiSelect-outlined.MuiSelect-outlined': {
       padding: '12px 32px'
+    },
+    '& .MuiSvgIcon-root.MuiSelect-icon.MuiSelect-iconOutlined': {
+      left: !isRTL ? 'auto !important' : '10px !important',
+      right: !isRTL ? '10px !important' : 'auto !important'
     }
   },
   dialogBox: {
@@ -923,16 +935,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   exportButton: {
     color: 'white',
-    padding: '0 10px',
-    textTransform: 'capitalize',
-    '&>span>*': {
-      paddingInlineStart: 5
-    }
+    fontWeight: 400,
+    paddingBlock: 4,
+    textTransform: 'capitalize'
   },
   reportPaperBgGray: {
     backgroundColor: 'rgba(242, 242, 242, 1)',
     padding: 10,
-    marginTop: 15,
     borderRadius: 0,
     border: '1px solid #ccc'
   },
@@ -1252,8 +1261,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     padding: '5px 0px'
   },
   lastReportsTabPanels: {
-    paddingRight: 25,
-    paddingLeft: 25
+    paddingRight: windowSize !== 'xs' ? 25 : 0,
+    paddingLeft: windowSize !== 'xs' ? 25 : 0
   },
   tabPanel: {
     minHeight: 220,
@@ -1482,5 +1491,41 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     "@media screen and (max-width: 1170px)": {
       paddingBottom: '10px !important'
     }
+  },
+  fullFlexItem: {
+    width: '100%',
+    justifyContent: 'center',
+    display: 'flex',
+    alignItems: 'center',
+    '& .MuiGrid-container': {
+      justifyContent: windowSize !== 'xs' ? 'space-around' : null
+    }
+  },
+  expandTableRow: {
+    display: 'flex',
+    justifyContent: 'center',
+    '& td': {
+      paddingTop: 0,
+      paddingRight: 0,
+      paddingLeft: 0
+    }
+  },
+  directPreview: {
+    top: 5,
+    position: 'absolute',
+    left: 0,
+    right: 0
+  },
+  redLink: {
+    color: 'red',
+    fontWeight: 600,
+    cursor: 'pointer'
+  },
+  emailAttachment: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    paddingInline: 10
   }
 })

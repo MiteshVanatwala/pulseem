@@ -1,14 +1,16 @@
 import {
-  AutomationsIcon,DashboardIcon,GroupsIcon,LandingPageIcon,
-  MmsIcon,NewsletterIcon,NotificationsIcon,ReportsIcon,SmsIcon
+  AutomationsIcon, DashboardIcon, GroupsIcon, LandingPageIcon,
+  MmsIcon, NewsletterIcon, NotificationsIcon, ReportsIcon, SmsIcon
 } from '../assets/images/drawer/index'
 import {
-  CodeMenuIcon,DolarMenuIcon,SettingsMenuIcon,StarMenuIcon,GrafMenuIcon,GroupMenuIcon
+  CodeMenuIcon, DolarMenuIcon, SettingsMenuIcon, StarMenuIcon, GrafMenuIcon, GroupMenuIcon
 } from '../assets/images/settings/index'
+import { FaBinoculars } from 'react-icons/fa'
 import SettingsLogo from '../assets/images/settings-white.png';
 import { FaHome } from 'react-icons/fa'
 
-export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
+export const getSettingsItem = (t, style = '', isAllowSwitchAccount) => ({
+  key: 'settings',
   title: <img
     alt='settings'
     src={SettingsLogo}
@@ -16,17 +18,18 @@ export const getSettingsItem=(t,style='', isAllowSwitchAccount) => ({
   />,
   href: '/Pulseem/AccountSettings.aspx',
   options: [
-    {title: t('master.RadMenuItemResource2.Text'),href: '/Pulseem/AccountSettings.aspx?fromreact=true',iconSrc: SettingsMenuIcon, isShow: true},
-    {title: t('master.linkAccountBilling.Text'),href: '/Pulseem/AccountBilling.aspx?fromreact=true',iconSrc: DolarMenuIcon, isShow: true},
-    {title: t('master.RadMenuItemResource3.Text'),href: '/Pulseem/AccountUsers.aspx?fromreact=true',iconSrc: GroupMenuIcon, isShow: isAllowSwitchAccount },
-    {title: t('master.RadMenuItemResource4.Text'),href: '/Pulseem/AccountUsersReport.aspx?fromreact=true',iconSrc: GrafMenuIcon, isShow: isAllowSwitchAccount},
-    {title: t('master.RadMenuItemResource23.Text'),href: '/Pulseem/ExtraFieldsDefinition.aspx?fromreact=true',iconSrc: StarMenuIcon, isShow: true},
-    {title: t('master.linkApiSettingsResource1.Text'),href: '/Pulseem/ApiSettings.aspx?fromreact=true',iconSrc: CodeMenuIcon, isShow: true},
+    { title: t('master.RadMenuItemResource2.Text'), href: '/Pulseem/AccountSettings.aspx?fromreact=true', iconSrc: SettingsMenuIcon, isShow: true },
+    { title: t('master.linkAccountBilling.Text'), href: '/Pulseem/AccountBilling.aspx?fromreact=true', iconSrc: DolarMenuIcon, isShow: true },
+    { title: t('master.RadMenuItemResource3.Text'), href: '/Pulseem/AccountUsers.aspx?fromreact=true', iconSrc: GroupMenuIcon, isShow: isAllowSwitchAccount },
+    { title: t('master.RadMenuItemResource4.Text'), href: '/Pulseem/AccountUsersReport.aspx?fromreact=true', iconSrc: GrafMenuIcon, isShow: isAllowSwitchAccount },
+    { title: t('master.RadMenuItemResource23.Text'), href: '/Pulseem/ExtraFieldsDefinition.aspx?fromreact=true', iconSrc: StarMenuIcon, isShow: true },
+    { title: t('master.linkApiSettingsResource1.Text'), href: '/Pulseem/ApiSettings.aspx?fromreact=true', iconSrc: CodeMenuIcon, isShow: true },
+    { key: 'SiteTracking', title: t('master.siteTracking'), href: '/react/SiteTracking', iconSrc: FaBinoculars, isFaIcon: true, isShow: true },
   ]
 })
 
 
-export const getRoutes=(t=() => null, isClalAccount = false, features = null, subAccountSettings = null, windowSize = null, smsOldVersion, isRTL) => [
+export const getRoutes = (t = () => null, isClalAccount = false, features = null, subAccountSettings = null, windowSize = null, smsOldVersion, isRTL) => [
   {
     key: 'dashboard',
     title: t('dashboard.pageTitle'),
@@ -42,7 +45,7 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, su
     title: t('dashboard.pageTitle'),
     href: '/react',
     isShow: true,
-    icon: <FaHome style={{ color: "#fff"}} />
+    icon: <FaHome style={{ color: "#fff" }} />
   },
   {
     key: 'gruops',
@@ -54,11 +57,11 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, su
       alt='Groups'
       src={GroupsIcon} />,
     options: [
-      {title: t('master.RadMenuItemResource6.Text'),href: '/Pulseem/Groups.aspx?fromreact=true', isShow: true},
-      {title: t('master.RadMenuItemResource7.Text'),href: '/Pulseem/ClientSearch.aspx?fromreact=true', isShow: true},
-      {title: t('master.RadMenuItemResource37.Text'),href: '/Pulseem/ClientAdvancedSearch.aspx?fromreact=true', isShow: true},
-      {title: t('master.RadMenuItemResourceDynamicGroups.Text'),href: '/Pulseem/DynamicGroups.aspx?fromreact=true', isShow: true},
-      {title: t('master.RadMenuItemResourceFileUploads.Text'),href: '/Pulseem/FileUploads.aspx?fromreact=true', isShow: true},
+      { title: t('master.RadMenuItemResource6.Text'), href: '/Pulseem/Groups.aspx?fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemResource7.Text'), href: '/Pulseem/ClientSearch.aspx?fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemResource37.Text'), href: '/Pulseem/ClientAdvancedSearch.aspx?fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemResourceDynamicGroups.Text'), href: '/Pulseem/DynamicGroups.aspx?fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemResourceFileUploads.Text'), href: '/Pulseem/FileUploads.aspx?fromreact=true', isShow: true },
     ]
   },
   {
@@ -72,14 +75,15 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, su
       alt='Newsletter'
       src={NewsletterIcon} />,
     options: [
-      {title: t('master.RadMenuItemResource9b.Text'),href: '/Pulseem/Editor/CampaignInfo?new=1&fromreact=true', isShow: true},
-      {title: t('master.RadMenuItemResource9.Text'),href: '/react/Campaigns', isShow: true},
-      {title: t('master.linkSendCampaignByResultResource1.Text'),href: '/Pulseem/CampaignsByResults.aspx?fromreact=true', isShow: true},
-      {title: t('master.linkAbTestingsResource1.Text'),href: '/Pulseem/CampaignsAbTestings.aspx?fromreact=true', isShow: true},
-      {title: t('master.RadMenuItemResource9a.Text'),href: '/Pulseem/AutoSendPlans.aspx?fromreact=true', isShow: true},
-      {title: t('master.RadMenuItemResource10.Text'),href: '/Pulseem/CampaignTemplates.aspx?fromreact=true', isShow: true},
-      {title: t('master.newslatterBasicEditor'),href: '/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic&fromreact=true', isShow: true},
-      {title: t('master.newEditor'),href: '/react/Campaigns/editor', isShow: true},
+      { title: t('master.RadMenuItemResource9b.Text'), href: '/Pulseem/Editor/CampaignInfo?new=1&fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemResource9.Text'), href: '/react/Campaigns', isShow: true },
+      { title: t('master.linkSendCampaignByResultResource1.Text'), href: '/Pulseem/CampaignsByResults.aspx?fromreact=true', isShow: true },
+      { title: t('master.linkAbTestingsResource1.Text'), href: '/Pulseem/CampaignsAbTestings.aspx?fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemResource9a.Text'), href: '/Pulseem/AutoSendPlans.aspx?fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemResource10.Text'), href: '/Pulseem/CampaignTemplates.aspx?fromreact=true', isShow: true },
+      { title: t('master.newslatterBasicEditor'), href: '/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic&fromreact=true', isShow: true },
+      { key: 'archiveManagement', title: t('master.campaignsArchive'), href: '/react/Campaigns/Archive', isShow: true },
+      {title: t('master.newEditor'),href: '/react/Campaigns/editor', isShow: true}
     ]
   },
   {
@@ -93,10 +97,10 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, su
       alt='Sms'
       src={SmsIcon} />,
     options: [
-      {key: 'create', title: t('master.RadMenuItemResource101.Text'),href: smsOldVersion === 'true' ? `/Pulseem/SMSCampaignEdit.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : '/react/sms/create', isShow: true},
-      {title: t('master.RadMenuItemResource102.Text'),href: '/react/SMSCampaigns', isShow: true},
-      {title: t('master.chatbotSMS'),href: '/Pulseem/SMSSmartResponses.aspx?fromreact=true', isShow: true},
-      {title: t('master.linkSMSResponsesReport.Text'),href: '/Pulseem/ResponsesReport.aspx?fromreact=true', isShow: true},
+      { key: 'create', title: t('master.RadMenuItemResource101.Text'), href: smsOldVersion === 'true' ? `/Pulseem/SMSCampaignEdit.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : '/react/sms/create', isShow: true },
+      { title: t('master.RadMenuItemResource102.Text'), href: '/react/SMSCampaigns', isShow: true },
+      { title: t('master.chatbotSMS'), href: '/Pulseem/SMSSmartResponses.aspx?fromreact=true', isShow: true },
+      { title: t('master.linkSMSResponsesReport.Text'), href: '/Pulseem/ResponsesReport.aspx?fromreact=true', isShow: true },
     ]
   },
   {
@@ -110,8 +114,8 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, su
       alt='Mms'
       src={MmsIcon} />,
     options: [
-      {title: t('master.NewMMSCampaign.Text'),href: '/Pulseem/MmsCampaignEdit.aspx?fromreact=true', isShow: true},
-      {title: t('master.MmsCampaignMnage.Text'),href: '/react/MmsCampaigns', isShow: true}
+      { title: t('master.NewMMSCampaign.Text'), href: '/Pulseem/MmsCampaignEdit.aspx?fromreact=true', isShow: true },
+      { title: t('master.MmsCampaignMnage.Text'), href: '/react/MmsCampaigns', isShow: true }
     ]
   },
   {
@@ -125,9 +129,9 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, su
       alt='Landing Pages'
       src={LandingPageIcon} />,
     options: [
-      {title: t('master.RadMenuItemLandingPage.Text'),href: '/Pulseem/LandingPageWizard.aspx?fromreact=true', isShow: true},
-      {title: t('master.RadMenuItemLandingManagement.Text'),href: '/react/EditRegistrationPage', isShow: true},
-      {title: t('master.FormTemplatesResource1.Text'),href: '/Pulseem/FormTemplates.aspx?fromreact=true', isShow: true},
+      { title: t('master.RadMenuItemLandingPage.Text'), href: '/Pulseem/LandingPageWizard.aspx?fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemLandingManagement.Text'), href: '/react/EditRegistrationPage', isShow: true },
+      { title: t('master.FormTemplatesResource1.Text'), href: '/Pulseem/FormTemplates.aspx?fromreact=true', isShow: true },
     ]
   },
   {
@@ -141,8 +145,8 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, su
       alt='Automations'
       src={AutomationsIcon} />,
     options: [
-      {title: t('master.RadMenuItemCreateAutomationResource.Text'),href: '/Pulseem/CreateAutomations.aspx?fromreact=true', isShow: true},
-      {title: t('master.RadMenuItemManageAutomationResource.Text'),href: '/react/Automations', isShow: true}
+      { title: t('master.RadMenuItemCreateAutomationResource.Text'), href: '/Pulseem/CreateAutomations.aspx?fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemManageAutomationResource.Text'), href: '/react/Automations', isShow: true }
     ]
   },
   {
@@ -162,8 +166,8 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, su
         href: '/react/Notification/create',
         isShow: true
       },
-      {title: t('master.manageNotifications'),href: '/react/Notifications', isShow: true},
-      {title: t('master.implementScript'),uri: '/react/Notifications', isShow: true}
+      { title: t('master.manageNotifications'), href: '/react/Notifications', isShow: true },
+      { title: t('master.implementScript'), uri: '/react/Notifications', isShow: true }
     ]
   },
   {
@@ -177,22 +181,23 @@ export const getRoutes=(t=() => null, isClalAccount = false, features = null, su
       alt='Reports'
       src={ReportsIcon} />,
     options: [
-      {title: t('master.clalCollage'),href: '/Pulseem/ClalReport.aspx?fromreact=true', isShow: (isClalAccount === 'true' || isClalAccount === true) },
-      {title: t('master.RadMenuItemResource13.Text'),href: '/react/reports/NewsletterReports', isShow: true },
-      {key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'),href: '/react/reports/SMSMainReport', isShow: true },
-      {title: t('master.MmsMainReport.Text'),href: '/Pulseem/MmsMainReport.aspx?fromreact=true', isShow: true },
-      {title: t('master.AbTestsReport.Text'),href: '/Pulseem/AbTestsReport.aspx?fromreact=true', isShow: true },
-      {title: t('master.RadMenuItemResource15.Text'),href: '/Pulseem/AccountReport.aspx?fromreact=true', isShow: true },
-      {title: t('master.RadMenuItemResource16.Text'),href: '/Pulseem/CampaignComparison.aspx?fromreact=true', isShow: false },
-      {title: t('master.RadMenuItemResource18.Text'),href: '/Pulseem/ClientReport.aspx?fromreact=true', isShow: true },
-      {title: t('master.RadMenuItemResource30.Text'),href: '/Pulseem/EmailAutoReports.aspx?fromreact=true', isShow: true },
-      {title: t('master.locRemovedReason.Text'),href: '/Pulseem/RemovedStats.aspx?fromreact=true', isShow: true },
+      { title: t('master.clalCollage'), href: '/Pulseem/ClalReport.aspx?fromreact=true', isShow: (isClalAccount === 'true' || isClalAccount === true) },
+      { title: t('master.RadMenuItemResource13.Text'), href: '/react/reports/NewsletterReports', isShow: true },
+      { key: 'SmsReport', title: t('master.RadMenuItemResource24.Text'), href: '/react/reports/SMSMainReport', isShow: true },
+      { key: 'MmsReport', title: t('mmsreport.mmsReport'), href: '/react/reports/MMSMainReport', isShow: true },
+      { title: t('master.AbTestsReport.Text'), href: '/Pulseem/AbTestsReport.aspx?fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemResource15.Text'), href: '/Pulseem/AccountReport.aspx?fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemResource16.Text'), href: '/Pulseem/CampaignComparison.aspx?fromreact=true', isShow: false },
+      { title: t('master.RadMenuItemResource18.Text'), href: '/Pulseem/ClientReport.aspx?fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemResource30.Text'), href: '/Pulseem/EmailAutoReports.aspx?fromreact=true', isShow: true },
+      { title: t('master.locRemovedReason.Text'), href: '/Pulseem/RemovedStats.aspx?fromreact=true', isShow: true },
       //{title: t('master.DirectSmsReport.Text'),href: '/Pulseem/DirectSmsReport.aspx?fromreact=true', isShow: true },
       //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
       //{title: t('master.DirectReportsResource1.Text'),href: '/Pulseem/DirectEmailReport.aspx?fromreact=true', isShow: true },
-      {key:'directSendReport',title: t('report.DirectSendReport'),href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
-      {title: t('master.OpenedClickedReport'),href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true', isShow: true },
-      {key: 'smsResponse', title: t('master.smsReplies'),href: '/react/reports/SmsReplies', isShow: false },
+      { key: 'directSendReport', title: t('report.DirectSendReport'), href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
+      { key: 'directSendReportArchive', title: t('report.ArchiveDirectSendReport'), href: '/react/Reports/DirectSendReport/Archive', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true },
+      { title: t('master.OpenedClickedReport'), href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true', isShow: true },
+      { key: 'smsResponse', title: t('master.smsReplies'), href: '/react/reports/SmsReplies', isShow: false },
     ]
   }
 ]

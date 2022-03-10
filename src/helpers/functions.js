@@ -10,6 +10,26 @@ export const pulseemNewTab = (path) => {
   if (newWindow) newWindow.opener = null
 }
 
+export const verifyGetUrl = (url) => {
+  return new Promise((resolve, reject) => {
+    try {
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4) {
+          if (xmlhttp.status === 200) {
+            resolve(true);
+          }
+          //resolve(xmlhttp.status && xmlhttp.status !== 404)
+        }
+      }
+      xmlhttp.open("HEAD", url, true);
+      xmlhttp.send();
+    } catch (error) {
+      reject(false);
+    }
+  });
+}
+
 export const emailStatusToString = (statusId) => {
   if (statusId) {
     switch (statusId.toString()) {
@@ -70,16 +90,16 @@ export const smsStatusToString = (status) => {
         return "report.pending";
       }
       case "2": {
-        return "report.sent";
+        return "report.directReport.statuses.sending";
       }
       case "3": {
-        return "report.success";
+        return "report.directReport.statuses.sentSuccessfuly";
       }
       case "4": {
-        return "report.failure";
+        return "report.error";
       }
       case "5": {
-        return "report.removed";
+        return "report.directReport.statuses.removed";
       }
       case "6": {
         return "report.stopped";
@@ -115,4 +135,61 @@ export const smsStatusToString = (status) => {
   }
   return null;
 
+}
+
+export const smsStatusColor = (status) => {
+  switch (status.toString()) {
+    default:
+    case '-1':
+    case '1': {
+      return '#000';
+    }
+    case '2': {
+      return '#F59A23';
+    }
+    case '3': {
+      return '#27AE60';
+    }
+    case '4':
+    case '7':
+    case '8':
+    case '9':
+    case '10':
+    case '11':
+    case '12': {
+      return '#E74C3C';
+    }
+    case '6':
+    case '5': {
+      return '#0371AD';
+    }
+  }
+}
+
+export const emailStatusColor = (status) => {
+  switch (status.toString()) {
+    default:
+    case '1': {
+      return '#000';
+    }
+    case '2': {
+      return '#F59A23';
+    }
+    case '3': {
+      return '#27AE60';
+    }
+    case '4':
+    case '7':
+    case '8':
+    case '9':
+    case '10':
+    case '11':
+    case '12': {
+      return '#E74C3C';
+    }
+    case '6':
+    case '5': {
+      return '#0371AD';
+    }
+  }
 }

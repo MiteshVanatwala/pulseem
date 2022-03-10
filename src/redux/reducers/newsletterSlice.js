@@ -25,9 +25,20 @@ export const getNewsletterReports = createAsyncThunk(
 )
 
 export const getNewsletterDirectReport = createAsyncThunk(
-  'report/GetEmailDirectReport', async (data, thunkAPI) => {
+  'directReport/GetEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`report/GetEmailDirectReport`, data);
+      const response = await instence.post(`directReport/GetEmailDirectReport`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
+
+export const getArchiveDirectReport = createAsyncThunk(
+  'directReport/GetArchiveEmailDirectReport', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`directReport/GetArchiveEmailDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -36,9 +47,20 @@ export const getNewsletterDirectReport = createAsyncThunk(
 )
 
 export const exportNewsletterDirectReport = createAsyncThunk(
-  'report/ExportEmailDirectReport', async (data, thunkAPI) => {
+  'directReport/ExportEmailDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`report/ExportEmailDirectReport`, data);
+      const response = await instence.post(`directReport/ExportEmailDirectReport`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
+
+export const exportArchiveEmailDirectReport = createAsyncThunk(
+  'directReport/ExportArchiveEmailDirectReport', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`directReport/ExportArchiveEmailDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -111,6 +133,24 @@ export const downloadNewsletterReport = createAsyncThunk(
     }
   }
 )
+export const getArchiveCampaigns = createAsyncThunk(
+  'email/GetArchiveCampaigns', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`email/GetArchiveCampaigns`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+export const cloneArchiveCampaign = createAsyncThunk(
+  'email/CloneArchiveCampaign', async (campaignId, thunkAPI) => {
+    try {
+      const response = await instence.put(`email/CloneArchiveCampaign/${campaignId}`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 export const newsletterSlice = createSlice({
   name: 'newsletter',
@@ -121,7 +161,9 @@ export const newsletterSlice = createSlice({
     newslettersReports: [],
     newslettersReportsError: '',
     directNewsletterReport: {},
-    directNewsletterReportError: ''
+    directNewsletterReportError: '',
+    newsletterArchiveData: []
+    //archiveDirectNewsletterReport: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -138,12 +180,28 @@ export const newsletterSlice = createSlice({
     builder.addCase(getNewsletterReports.rejected, (state, action) => {
       state.newslettersReportsError = action.error.message
     })
+    builder.addCase(getArchiveCampaigns.fulfilled, (state, { payload }) => {
+      state.newsletterArchiveData = payload
+    })
+    builder.addCase(getArchiveCampaigns.rejected, (state, action) => {
+      state.newsletterArchiveData = action.error.message
+    })
     builder.addCase(getNewsletterDirectReport.fulfilled, (state, { payload }) => {
       state.directNewsletterReport = payload
     })
     builder.addCase(getNewsletterDirectReport.rejected, (state, action) => {
       state.directNewsletterReportError = action.error.message
     })
+    builder.addCase(getArchiveDirectReport.fulfilled, (state, { payload }) => {
+      //state.archiveDirectNewsletterReport = payload
+      state.directNewsletterReport = payload;
+    })
+    builder.addCase(getArchiveDirectReport.rejected, (state, action) => {
+      //state.archiveDirectNewsletterReportError = action.error.message
+      state.directNewsletterReportError = action.error.message
+    })
+
+
     builder.addCase(restoreCampaigns.fulfilled, () => { console.log('api restoreCampaigns success') })
     builder.addCase(deleteCampaign.fulfilled, () => { console.log('api deleteCampaign success') })
     builder.addCase(duplicteCampaign.fulfilled, () => { console.log('api duplicteCampaign success') })

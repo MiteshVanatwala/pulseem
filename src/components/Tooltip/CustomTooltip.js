@@ -3,12 +3,17 @@ import clsx from 'clsx';
 import { Typography, Tooltip, IconButton } from '@material-ui/core'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import { BsInfoCircleFill } from 'react-icons/bs';
+import { useSelector } from 'react-redux';
 
 const HtmlTooltip = withStyles(({ style }) => ({
   tooltip: {
     maxWidth: 220,
+    backgroundColor: '#000',
     ...style
   },
+  arrow: {
+    color: '#000'
+  }
 }))(Tooltip);
 
 const useStylesBootstrap = makeStyles((theme) => ({
@@ -26,7 +31,8 @@ function BootstrapTooltip(props) {
   return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
 }
 
-const CustomTooltip = ({ classes, text, title, placement = 'top', arrow = true, interactive = false, isSimpleTooltip = true, icon, style }) => {
+const CustomTooltip = ({ children, classes, text, title, placement = 'top', arrow = true, interactive = false, isSimpleTooltip = true, icon, style, textAlign = null }) => {
+  const { isRTL } = useSelector(state => state.core)
   return (isSimpleTooltip ?
     <BootstrapTooltip
       style={{ color: '#000', ...style }}
@@ -41,18 +47,15 @@ const CustomTooltip = ({ classes, text, title, placement = 'top', arrow = true, 
       interactive={interactive}
       arrow={arrow}
       placement={placement}
-      style={{...style}}
-      classes={{
-        tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-        arrow: classes.fBlack
-      }}
+      style={{ ...style, maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}
       title={
         <React.Fragment>
-          {title}
+          <span style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: textAlign }}>{title}</span>
         </React.Fragment>
       }
     >
-      <Typography noWrap={false} className={classes.nameEllipsis}>{text}</Typography>
+      {children ? children : <Typography noWrap={false} className={classes.nameEllipsis}>{text}</Typography>}
+
     </HtmlTooltip>)
 }
 

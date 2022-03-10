@@ -80,7 +80,8 @@ const SmsReport = ({ classes }) => {
     },
     Replies: {
       title: t('common.Total'),
-      href: `/react/reports/SmsReplies/${id}`
+      //href: `/react/reports/SmsReplies/${id}`
+      href: `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     DLR: {
       title: windowSize === 'xs' ? '' : t('common.DLR'),
@@ -143,7 +144,7 @@ const SmsReport = ({ classes }) => {
   const handleDownloadCsv = async () => {
     let orderList = preferredOrder(searchResults || smsReport, Object.keys(exportColumnHeader));
     orderList = await statusNumberToString(t, orderList, smsReportStatus);
-    orderList = await formatDateTime(orderList);
+    orderList = await formatDateTime(orderList, t);
     orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
     orderList = await deletePropertyFromArrayObject(orderList, "Status");
     exportFile({
@@ -156,6 +157,9 @@ const SmsReport = ({ classes }) => {
 
   const renderSearchSection = () => {
     const handleSearch = () => {
+      if (campaignName === '' && !fromDate && !toDate) {
+        return;
+      }
       const searchArray = [{
         type: 'name',
         campaignName: campaignName
@@ -247,6 +251,7 @@ const SmsReport = ({ classes }) => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
+              toolbarDisabled={false}
               classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
@@ -258,6 +263,7 @@ const SmsReport = ({ classes }) => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
+              toolbarDisabled={false}
               classes={classes}
               value={toDate}
               onChange={handleToDate}
@@ -612,7 +618,10 @@ const SmsReport = ({ classes }) => {
         </TableBody>
       )
     }
-    return <Typography className={classes.flexCenter}>{t("common.NoData")}</Typography>
+    return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+      <Typography>{t("common.NoDataTryFilter")}</Typography>
+    </Box>
+
   }
 
   const renderTable = () => {
@@ -651,7 +660,7 @@ const SmsReport = ({ classes }) => {
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
-      <GraphReport classes={classes} showLoader={!smsGraph || smsGraph.length <= 0} reportData={smsGraph} />
+      <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>
   )

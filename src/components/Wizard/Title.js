@@ -33,7 +33,7 @@ const Title = ({ classes, title, tooltip = null, stepNumber, subTitle, topZero =
             }
         </Box>
         <Box className={classes.headDiv}>
-            <Typography className={classes.headNo}>{stepNumber}</Typography>
+            {stepNumber && <Typography className={classes.headNo}>{stepNumber}</Typography>}
             <Typography className={classes.contentHead}>
                 {subTitle}
             </Typography>

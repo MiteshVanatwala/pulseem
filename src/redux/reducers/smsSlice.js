@@ -98,14 +98,25 @@ export const getSmsByID = createAsyncThunk(
   })
 
 export const getSMSDirectReport = createAsyncThunk(
-  'report/GetSmsDirectReport', async (data, thunkAPI) => {
+  'directReport/GetSmsDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`report/GetSmsDirectReport`, data);
+      const response = await instence.post(`directReport/GetSmsDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+
+export const getArchiveSMSDirectReport = createAsyncThunk(
+  'directReport/GetArchiveSmsDirect', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`directReport/GetArchiveSmsDirect`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 export const getSMSRequestOTP = createAsyncThunk(
   'RequestOTP', async (data, thunkAPI) => {
     try {
@@ -135,14 +146,27 @@ export const saveManualClients = createAsyncThunk(
   })
 
 export const exportSMSDirectReport = createAsyncThunk(
-  'report/ExportSmsDirectReport', async (data, thunkAPI) => {
+  'directReport/ExportSmsDirectReport', async (data, thunkAPI) => {
     try {
-      const response = await instence.post(`report/ExportSmsDirectReport`, data);
+      const response = await instence.post(`directReport/ExportSmsDirectReport`, data);
       return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   })
+
+  export const exportArchiveSmsDirect = createAsyncThunk(
+    'directReport/ExportArchiveSmsDirect', async (data, thunkAPI) => {
+      try {
+        const response = await instence.post(`directReport/ExportArchiveSmsDirect`, data);
+        return JSON.parse(response.data)
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    })
+
+
+  
 
 export const restoreSms = createAsyncThunk(
   'smsCampaign/restoreSmsCampaigns', async (deletedsms, thunkAPI) => {
@@ -379,16 +403,18 @@ export const smsSlice = createSlice({
     smsDataError: '',
     authorizationData: [],
     smsReport: [],
-    smsGraph: [],
+    smsGraph: null,
     previousLandingData: [],
     previousCampaignData: [],
     extraData: [],
     accountId: [],
+    subAccountGroups: [],
     getCampaignSum: [],
     finishedCampaigns: [],
     testGroups: [],
     commonSettings: {},
     directSmsReport: {},
+    // archiveDirectSmsReport: {},
     directSmsReportError: '',
     credits: [],
     smsCampaignSettings: [],
@@ -443,6 +469,10 @@ export const smsSlice = createSlice({
     builder.addCase(getSMSDirectReport.fulfilled, (state, { payload }) => {
       state.directSmsReport = payload
     })
+    builder.addCase(getArchiveSMSDirectReport.fulfilled, (state, { payload }) => {
+      state.directSmsReport = payload
+      //state.archiveDirectSmsReport = payload
+    })
     builder.addCase(getPreviousLandingData.fulfilled, (state, { payload }) => {
       state.previousLandingData = payload
     })
@@ -471,9 +501,13 @@ export const smsSlice = createSlice({
       for (let i = 0; i < payload.length; i++) {
         tempArr.push({ ...payload[i], selected: false })
       }
-      state.accountId = tempArr
+      state.accountId = tempArr;
+      state.subAccountGroups = tempArr;
     })
     builder.addCase(getSMSDirectReport.rejected, (state, action) => {
+      state.directSmsReportError = action.error
+    })
+    builder.addCase(getArchiveSMSDirectReport.rejected, (state, action) => {
       state.directSmsReportError = action.error
     })
     builder.addCase(getCampaignSettings.rejected, (state, action) => {

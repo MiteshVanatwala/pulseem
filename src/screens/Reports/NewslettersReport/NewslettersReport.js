@@ -187,7 +187,7 @@ const NewslettersReport = ({ classes }) => {
       const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
       orderList = await preferredOrder(fileArray, Object.keys(exportColumnHeader));
       orderList = await statusNumberToString(t, orderList, EmailStatus);
-      orderList = await formatDateTime(orderList);
+      orderList = await formatDateTime(orderList, t);
       orderList = await deletePropertyFromArrayObject(orderList, "Status");
       orderList =
         exportFile({
@@ -201,7 +201,7 @@ const NewslettersReport = ({ classes }) => {
       const list = searchResults || newslettersReports;
       orderList = await preferredOrder(list, Object.keys(exportColumnHeader));
       orderList = await statusNumberToString(t, orderList, EmailStatus);
-      orderList = await formatDateTime(orderList);
+      orderList = await formatDateTime(orderList, t);
       orderList = await deletePropertyFromArrayObject(orderList, "Status");
       exportFile({
         data: orderList,
@@ -217,6 +217,9 @@ const NewslettersReport = ({ classes }) => {
 
 
   const handleSearch = () => {
+    if (notificationNameSearch === '' && !fromDate && !toDate) {
+      return;
+    }
     const searchArray = [{
       type: 'name',
       notificationName: notificationNameSearch
@@ -314,6 +317,7 @@ const NewslettersReport = ({ classes }) => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
+              toolbarDisabled={false}
               classes={classes}
               value={fromDate}
               onChange={handleFromDateChange}
@@ -325,6 +329,7 @@ const NewslettersReport = ({ classes }) => {
         {windowSize !== 'xs' ?
           <Grid item>
             <DateField
+              toolbarDisabled={false}
               classes={classes}
               value={toDate}
               onChange={handleToDate}

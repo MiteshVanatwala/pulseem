@@ -29,31 +29,48 @@ export const Loader = ({
   size = 80,
   thickness = 3.6,
   variant = 'indeterminate',
-  showBackdrop = true
-
+  showBackdrop = true,
+  ...props
 }) => {
   const classes = useStyles();
   return (
-    <div>
-      {showBackdrop ? (<Backdrop className={classes.backdrop} open={isOpen}>
-        <CircularProgress
-          style={{ position: 'absolute', right: 0, left: 0, textAlign: 'center', margin: '0 auto' }}
-          color={color}
-          size={size}
-          thickness={thickness}
-          variant={variant}
-        />
-      </Backdrop>)
-        :
-        (<Box className={classes.loader} style={{ display: isOpen ? 'flex' : 'none' }}>
-          <CircularProgress
-            color={color}
-            size={size}
-            thickness={thickness}
-            variant={variant}
-          />
-        </Box>)
+    <>
+      {
+        props.contained ?
+          <div style={{ width: '100%', minHeight: '100px', display: 'flex', justifyContent: 'center' }}>
+            <CircularProgress
+              style={{ textAlign: 'center', margin: '0 auto', alignSelf: 'center' }}
+              color="#fff"
+              size={40}
+              thickness={3.6}
+              variant="indeterminate"
+            />
+          </div>
+          :
+          <div>
+            {
+              showBackdrop ? (<Backdrop className={classes.backdrop} open={isOpen} >
+                <CircularProgress
+                  style={{ position: 'absolute', right: 0, left: 0, textAlign: 'center', margin: '0 auto' }}
+                  color={color}
+                  size={size}
+                  thickness={thickness}
+                  variant={variant}
+                />
+              </Backdrop>)
+                :
+                (<Box className={classes.loader} style={{ display: isOpen ? 'flex' : 'none' }}>
+                  <CircularProgress
+                    color={color}
+                    size={size}
+                    thickness={thickness}
+                    variant={variant}
+                  />
+                </Box>)
+            }
+          </div>
+
       }
-    </div>
+    </>
   );
 }

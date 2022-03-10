@@ -1,5 +1,5 @@
 {
-  "DirectSendReport": "DirectSend Report",
+  "DirectSendReport": "DirectSend",
   "DirectSendEmail": "DirectSend Email",
   "DirectSendSMS": "DirectSend SMS",
   "FromEmail": "From Email",
@@ -11,11 +11,11 @@
   "TotalBillingCredits": "Total Billing Credits",
   "Opening": "Opening",
   "SendDate": "Send Date",
-  "ContentOfMessage": "Content of the Message",
+  "ContentOfMessage": "Message content",
   "Characters": "Characters",
   "Credits": "Credits",
-  "AdvanceSearch": "Advance Search",
-  "closeAdvanceSearch": "Close Advance Search",
+  "AdvanceSearch": "Advanced Search",
+  "closeAdvanceSearch": "Close Advanced Search",
   "ShowContent": "Show Content",
   "TotalCredits": "Total Credits",
   "TotalSent": "Total Sent",
@@ -25,7 +25,7 @@
   "FromName": "From Name",
   "None": "None",
   "id": "Reference ID",
-  "takenBySender": "Taken by sender",
+  "takenBySender": "No Status",
   "pending": "Pending",
   "sent": "Sent",
   "success": "Success",
@@ -54,9 +54,10 @@
   "clientStatus": "Client Status",
   "StatusDescription": "Status Description",
   "responses": "Responses",
-  "SMSReplies":"SMS Replies",
-  "SMSRepliesSubTitle": "This are the recipients that were found according the search paramters. You can edit the recipients, export the list or create a group from the found recipients.",
-  "clientName": "Client Name",
+  "SMSCredits": "SMS left in package",
+  "BulkEmails": "Email left in package",
+  "MmsCredits": "MMS left in package",
+  "TotalRecords": "Total Records",
   "smsReport": {
     "statuses": {
       "other": "Other",
@@ -65,7 +66,7 @@
       "sending": "Sending",
       "sent": "Sent",
       "error": "Error",
-      "removed": "Removed",
+      "removed": "Blocked for Sending",
       "cancelled": "Cancelled",
       "inProcess": "In Progress",
       "draft": "Draft"
@@ -74,11 +75,13 @@
   "directReport": {
     "statuses": {
       "all": "All",
+      "sent": "Sent",
       "pending": "Pending",
       "sending": "Sending",
-      "sentSuccessfuly": "Sent Successfuly",
+      "success": "Success",
+      "sentSuccessfuly": "Sent Successfully",
       "error": "Error",
-      "removed": "Removed",
+      "removed": "Blocked for Sending",
       "cancelled": "Cancelled"
     },
     "responseType": {
@@ -88,5 +91,8 @@
       "activeHasResponse": "responses active - has responses",
       "activeNoResponse": "responses active - no responses"
     }
-  }
+  },
+  "ArchiveDirectSendReport": "DirectSend Report Archive",
+  "Reactivate": "Reactivate / Cancel removal",
+  "ExportLimitation": "Exported docs cannot contain more than 600K results"
 }

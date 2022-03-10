@@ -12,8 +12,11 @@ import recipientReportsReducer from './reducers/recipientsReportSlice';
 import shortcutReducer from './reducers/shortcutSlice';
 import paymentReducer from './reducers/paymentSlice';
 import commonReducer from './reducers/commonSlice';
+import siteTrackingReducer from './reducers/siteTrackingSlice'
 import clientReducer from './reducers/clientSlice';
-import campaignReducer from './reducers/campaignEditorSlice'
+import campaignReducer from './reducers/campaignEditorSlice';
+import groupSlice from './reducers/groupSlice';
+import reportSlice from './reducers/reportSlice';
 
 export default configureStore({
   reducer: {
@@ -31,6 +34,9 @@ export default configureStore({
     payment: paymentReducer,
     common: commonReducer,
     client: clientReducer,
-    campaignEditor: campaignReducer
+    campaignEditor: campaignReducer,
+    siteTracking: siteTrackingReducer,
+    group: groupSlice,
+    report: reportSlice
   },
 });

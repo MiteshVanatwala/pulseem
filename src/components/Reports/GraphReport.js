@@ -1,3 +1,4 @@
+import React from 'react';
 import clsx from 'clsx';
 import { Loader } from '../Loader/Loader';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +28,7 @@ const GraphReport = ({ classes, reportData, showLoader }) => {
     var series = chart.series.push(new am4charts.ColumnSeries3D());
     series.dataFields.valueY = "amount";
     series.dataFields.categoryX = "month";
-    series.dataFields.color = "color";  
+    series.dataFields.color = "color";
     series.tooltipText = "{categoryX}\n{valueY}";
     series.tooltip.getFillFromObject = false;
     series.tooltip.background.strokeWidth = 2;
@@ -74,7 +75,7 @@ const GraphReport = ({ classes, reportData, showLoader }) => {
                 <Typography className={clsx(classes.f28, classes.bold)} align='center'>{t('smsReport.amountSent')}</Typography>
                 <img src={arrowDown} width={50} height={50} className={classes.pr25} alt="" />
             </Box>
-            <Paper elevation={3} className={classes.smsGraph} style={{position: 'relative'}}>
+            <Paper elevation={3} className={classes.smsGraph} style={{ position: 'relative' }}>
                 <Loader isOpen={showLoader} showBackdrop={false} />
                 <div dir="ltr" id="chartdiv" style={{ width: "100%", height: "450px" }}></div>
             </Paper>
@@ -82,4 +83,4 @@ const GraphReport = ({ classes, reportData, showLoader }) => {
     )
 }
 
-export default GraphReport;
+export default React.memo(GraphReport);
