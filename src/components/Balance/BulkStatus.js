@@ -156,7 +156,9 @@ const BulkStatus = ({ classes }) => {
           style={{ position: 'absolute', fontSize: 14 }}
           placement={'top'}
           icon={<span className={classes.newIcn}>{t("mainReport.newFeature")}</span>}
-          text={t("dashboard.tooltipPurchaseNewFeature")}
+          text={
+            <Typography noWrap={false} className={classes.tooltipText}>{t("dashboard.tooltipPurchaseNewFeature")}</Typography>
+          }
         />
         <Grid container justifyContent='center'>
           <Grid item xs={9} className={classes.bulkStatusTitleSection}>
@@ -173,8 +175,8 @@ const BulkStatus = ({ classes }) => {
             item xs={9}
             className={getBillingTypeText(Sms) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
             justifyContent='space-between'
-            // onMouseEnter={() => showSmsPackage(true)}
-            // onMouseLeave={() => showSmsPackage(false)}
+          // onMouseEnter={() => showSmsPackage(true)}
+          // onMouseLeave={() => showSmsPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             {isShowSmsPackage && isAllowSms() ? (
@@ -199,8 +201,8 @@ const BulkStatus = ({ classes }) => {
             item xs={9}
             className={getBillingTypeText(Newsletters) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
             justifyContent='space-between'
-            // onMouseEnter={() => showEmailPackage(true)}
-            // onMouseLeave={() => showEmailPackage(false)}
+          // onMouseEnter={() => showEmailPackage(true)}
+          // onMouseLeave={() => showEmailPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             {isShowEmailPackage && isAllowNewsletter() ? (

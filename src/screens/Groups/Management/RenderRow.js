@@ -22,6 +22,7 @@ import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
 import IconWrapper from "../../../components/icons/IconWrapper";
 import FlexGrid from "../../../components/Grids/FlexGrid";
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
   groupName: {
@@ -80,6 +81,7 @@ const RenderWebRow = ({
   } = row;
 
   const localClasses = useStyles();
+  const { isRTL } = useSelector(state => state.core);
   let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
     return e === true
   }).length;
@@ -106,7 +108,7 @@ const RenderWebRow = ({
             arrow: classes.fBlack,
           }}
           arrow={true}
-          style={{ fontSize: 18, fontWeight: "bold" }}
+          style={{ fontSize: 18 }}
           placement={"top"}
           title={<Typography noWrap={false}>{GroupName}</Typography>}
           text={GroupName}
@@ -164,10 +166,12 @@ const RenderWebRow = ({
                     arrow: classes.fBlack,
                   }}
                   arrow={true}
-                  style={{ fontSize: 18, fontWeight: "bold" }}
+                  style={{ fontSize: 18 }}
                   placement={"top"}
                   icon={<MdOutlineLockClock style={{ fontSize: 24 }} />}
-                  text={t("group.autoResponderConnected")}
+                  text={
+                    <Typography noWrap={false} className={classes.tooltipText}
+                      style={{ direction: isRTL ? 'rtl' : 'ltr', color: '#fff' }}>{t("group.autoResponderConnected")}</Typography>}
                 ></CustomTooltip>
               </Grid>
             ) : null
@@ -177,16 +181,18 @@ const RenderWebRow = ({
               <Grid item sm={1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <CustomTooltip
                   isSimpleTooltip={true}
+                  iconStyle={{ color: '#000' }}
                   interactive={false}
                   classes={{
                     tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
                     arrow: classes.fBlack,
                   }}
                   arrow={true}
-                  style={{ fontSize: 18, fontWeight: "bold" }}
+                  style={{ fontSize: 18 }}
                   placement={"top"}
                   icon={<RiPagesLine style={{ fontSize: 24 }} />}
-                  text={t("group.webformConnected")}
+                  text={
+                    <Typography noWrap={false} className={classes.tooltipText}>{t("group.webformConnected")}</Typography>}
                 ></CustomTooltip>
               </Grid>
             ) : null

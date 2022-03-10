@@ -27,58 +27,12 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, hand
             onClose={onClose}
             onCancel={onClose}
             onConfirm={() => handleDeleteGroup()}
-            renderButtons={() => (
-                <Grid container spacing={2} className={classes.linePadding}>
-                    <Grid
-                        item
-                        xs={windowSize === "xs" && 12}
-                        sm={4}
-                        className={classes.txtCenter}
-                    >
-                        <Button
-                            variant="contained"
-                            size="medium"
-                            className={clsx(
-                                classes.dialogButton,
-                                classes.dialogCancelButton,
-                                classes.fullWidth,
-                                classes.whiteSpaceNoWrap
-                            )}
-                            onClick={onClose}
-                        >
-                            {t("group.cancel")}
-                        </Button>
-                    </Grid>
-                    <Grid
-                        item
-                        xs={windowSize === "xs" && 12}
-                        sm={4}
-                        className={classes.txtCenter}
-                    >
-                        <Button
-                            variant="contained"
-                            size="medium"
-                            className={clsx(
-                                classes.dialogButton,
-                                classes.dialogConfirmButton,
-                                classes.fullWidth,
-                                classes.whiteSpaceNoWrap,
-                                classes.textUppercase
-                            )}
-                            onClick={() => handleDeleteGroup()}
-                        >
-                            {t("group.ok")}
-                        </Button>
-                    </Grid>
-                </Grid>
-            )}
-            customContainerStyle=""
             cancelText="common.Cancel"
             confirmText="common.Ok"
         >
             <Box>
                 <Typography variant="subtitle1">
-                    {t("group.deleteConfirm")}
+                    {t("mainReport.confirmSure")}
                 </Typography>
             </Box>
         </Dialog>

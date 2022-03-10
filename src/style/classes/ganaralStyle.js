@@ -2249,4 +2249,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   roundedBorder: {
     borderRadius: 50,
   },
+  tooltipText: {
+    ontWeight: 400,
+    fontSize: 16,
+    direction: isRTL ? 'rtl' : 'ltr',
+    color: '#fff'
+  }
 });
