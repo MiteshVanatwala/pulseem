@@ -566,7 +566,17 @@ const GroupsManagement = ({ classes }) => {
       {renderToast()}
       {renderHeader()}
       {renderSearchLine()}
-      {windowSize !== "xs" && renderManagmentLine()}
+      {windowSize !== "xs" ? renderManagmentLine() :
+        <Box
+          item
+          xs={windowSize === "xs" && 12}
+          className={classes.groupsLableContainer}
+        >
+          <Typography className={classes.groupsLable}>
+            {`${groupData ? groupData.RecordCount : 0} ${t("common.Groups")}`}
+          </Typography>
+        </Box>
+      }
       <DataTable
         tableContainer={{
           className:

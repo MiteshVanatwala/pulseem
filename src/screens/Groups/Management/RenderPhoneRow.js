@@ -39,7 +39,7 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                                 setDialog(DialogType.DELETE_GROUP)
                             }}
                         />
-                        <Typography variant="body1" className={classes.text}>{t("recipient.addRecipient")}</Typography>
+                        {/* <Typography variant="body1" className={classes.text}>{t("recipient.addRecipient")}</Typography> */}
                     </Box>
                 </Box>
                 <Box className={classes.mt3}>
