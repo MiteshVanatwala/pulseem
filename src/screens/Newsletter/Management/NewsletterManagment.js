@@ -332,7 +332,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
+        href: `/react/Campaigns/editor/${CampaignID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {

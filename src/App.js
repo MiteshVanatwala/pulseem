@@ -130,6 +130,10 @@ const renderRoutes = (classes, history) => {
         render={props => <NewsletterManagment {...props} classes={classes} />}
       />
       <Route
+        path="/Campaigns/editor"
+        render={props => <CampaignEditor {...props} classes={classes} />}
+      />
+      <Route
         path="/Campaigns/editor/:id"
         render={props => <CampaignEditor {...props} classes={classes} />}
       />
@@ -387,7 +391,7 @@ const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize } = useSelector(state => state.core)
   screenSize && dispatch(setWindowSize(screenSize))
-
+  
   useEffect(() => {
 
     const initFeatures = async () => {

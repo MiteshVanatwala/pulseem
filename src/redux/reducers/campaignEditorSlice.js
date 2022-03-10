@@ -12,6 +12,16 @@ export const getCampaignById = createAsyncThunk(
         }
     });
 
+export const saveCampaign = createAsyncThunk(
+    '/CampaignEditor/SaveCampaign/', async (campaign, thunkAPI) => {
+        try {
+            const response = await instence.post(`/CampaignEditor/SaveCampaign/`, campaign);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
