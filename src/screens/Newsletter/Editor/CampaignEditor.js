@@ -1,10 +1,33 @@
 import { Button } from '@material-ui/core'
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import EmailEditor from 'react-email-editor'
 import DefaultScreen from '../../DefaultScreen'
+import { useSelector, useDispatch } from 'react-redux';
+import { getCampaignById } from '../../../redux/reducers/campaignEditorSlice';
+import { Loader } from '../../../components/Loader/Loader';
 
-const CampaignEditor = ({ classes, id = 2 }) => {
+const CampaignEditor = ({ classes, ...props }) => {
+    const dispatch = useDispatch()
     const editorRef = useRef(null);
+    const [showLoader, setLoader] = useState(true);
+    const { campaign } = useSelector(state => state.campaignEditor);
+
+    const getData = async () => {
+        setLoader(true);
+        await dispatch(getCampaignById(props.match.params.id));
+        setLoader(false);
+    }
+
+    useEffect(() => {
+        if (campaign !== null)
+            onLoad();
+    }, [campaign]);
+
+    useEffect(() => {
+        if (props && props.match.params.id != null && parseInt(props.match.params.id) > 0) {
+            getData();
+        }
+    }, [dispatch]);
 
     const savedDesign = {
         "counters":
@@ -116,6 +139,14 @@ const CampaignEditor = ({ classes, id = 2 }) => {
         })
     }
 
+    const finish = () => {
+        editorRef.current.saveDesign(design => {
+            console.log('saveDesign', design);
+            window.location = `/Pulseem/SendCampaign.aspx?CampaignID=${props.match.params.id}&fromreact=true`;
+        })
+        //redirectionLink
+    }
+
     const appearance = {
         panels: {
             dock: 'right'
@@ -209,12 +240,21 @@ const CampaignEditor = ({ classes, id = 2 }) => {
     }
 
     const onLoad = () => {
-        if (id && savedDesign !== null) {
-            editorRef.current.loadDesign(savedDesign);
-            // {
-                // html: '<html><body><div>This is a legacy HTML template.</div></body></html>',
-                // classic: true
-            //}
+        if (props.match.params.id && savedDesign !== null) {
+            if (campaign && campaign.HTMLtoSend) {
+                try {
+                    editorRef.current.loadDesign({
+                        html: campaign.HTMLtoSend.toString(),
+                        classic: true
+                    });
+                } catch (error) {
+                    console.error(error);
+                    editorRef.current.loadDesign(null);
+                }
+            }
+            else {
+                editorRef.current.loadDesign(savedDesign);
+            }
         }
     }
 
@@ -223,10 +263,11 @@ const CampaignEditor = ({ classes, id = 2 }) => {
             currentPage='campaignEditor'
             classes={classes}
         >
-            <Button onClick={exportHtml}>Export HTML</Button>
-            <Button onClick={saveDesign}>Save Design</Button>
+            <Button onClick={() => exportHtml()}>Export HTML</Button>
+            <Button onClick={() => saveDesign()}>Save</Button>
+            <Button onClick={() => finish()}>Finish</Button>
             <EmailEditor
-                onLoad={onLoad}
+                onReady={onLoad}
                 ref={editorRef}
                 minHeight="calc(100vh - 100px)"
                 tools={tools}
@@ -235,6 +276,7 @@ const CampaignEditor = ({ classes, id = 2 }) => {
                 features={features}
                 registerTab={onRegisterTabs}
             />
+            <Loader isOpen={showLoader} showBackdrop={false} />
         </DefaultScreen>
     )
 }
