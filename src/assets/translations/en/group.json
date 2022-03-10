@@ -14,5 +14,7 @@
   "alreadyExist": "Group name already exists",
   "nameMaxLength": "Maximum length for group length is 100 characters",
   "emptyGroupName": "Group Name can't be empty",
-  "testGroup": "Test Group"
+  "testGroup": "Test Group",
+  "autoResponderConnected": "Autoresponder attached to this group",
+  "webformConnected": "Landing page atteched to this group"
 }

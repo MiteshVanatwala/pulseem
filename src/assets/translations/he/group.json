@@ -14,5 +14,7 @@
   "alreadyExist": "שם קבוצה כבר קיים.",
   "nameMaxLength": "שם קבוצה יכול להכיל עד 100 תווים",
   "emptyGroupName": "שם קבוצה לא יכול להיות ריק",
-  "testGroup": "קבוצת ניסיון"
+  "testGroup": "קבוצת ניסיון",
+  "autoResponderConnected": "לקבוצה זו משוייך Autoresponder",
+  "webformConnected": "לקבוצה זו משוייך דף נחיתה"
 }
