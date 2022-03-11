@@ -484,7 +484,7 @@ const GroupsManagement = ({ classes }) => {
             arrow: classes.fBlack,
           }}
           arrow={true}
-          style={{ fontSize: 18, fontWeight: "bold" }}
+          style={{ fontSize: 18, fontWeight: "bold", direction: isRTL ? 'rtl' : 'ltr' }}
           placement={"top"}
           title={<Typography noWrap={false}>{GroupName}</Typography>}
           text={GroupName}
