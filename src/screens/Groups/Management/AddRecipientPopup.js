@@ -48,57 +48,29 @@ import {
 } from "../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../components/managment/Dialog";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
+import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS } from "../../../model/Groups/Contants";
+
 
 const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
-    const DEFAULT_RECIPIENT_DATA = {
-        ClientID: null,
-        FirstName: '',
-        LastName: '',
-        Email: '',
-        Cellphone: '',
-        Status: null,
-        SmsStatus: null,
-        Telephone: '',
-        Address: '',
-        City: '',
-        State: '',
-        Country: '',
-        Zip: '',
-        Company: '',
-        BirthDate: '',
-        ReminderDate: '',
-        LastSendDate: '',
-        CreationDate: '',
-        FailedSendingCounter: null,
-        IsWebService: false,
-        LastEmailOpened: '',
-        LastEmailClicked: '',
-        BestEmailOpenTime: null,
-        ExtraDate1: '',
-        ExtraDate2: '',
-        ExtraDate3: '',
-        ExtraDate4: '',
-        ExtraField1: '',
-        ExtraField2: '',
-        ExtraField3: '',
-        ExtraField4: '',
-        ExtraField5: '',
-        ExtraField6: '',
-        ExtraField7: '',
-        ExtraField8: '',
-        ExtraField9: '',
-        ExtraField10: '',
-        ExtraField11: '',
-        ExtraField12: '',
-        ExtraField13: '',
-        GroupIds: []
-    }
+
+
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
+    const [abc, setAbc] = useState('');
+    const [groupIds, setGroupIds] = useState([]);
 
 
-    const PERSONAL_DETAILS_FORM = <SimpleGrid
+    const handleChange = (e) => {
+        setAddRecipientData({
+            ...addRecipientData, [e.target.name]: e.target.value
+        })
+        console.log("Data:", addRecipientData, e.target.name, e.target.value);
+    }
+
+
+
+    const PERSONAL_DETAILS_FORM = () => <SimpleGrid
         gridArr={[{
             content: <SimpleGrid
                 gridArr={[{
@@ -110,16 +82,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                         id="outlined-basic"
                         label=""
                         variant="outlined"
+                        name="FirstName"
                         value={addRecipientData.FirstName}
-                        className={clsx(classes.plr10, classes.plr10, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
-                        onChange={(e) => {
-                            e.preventDefault();
-                            setAddRecipientData({
-                                ...addRecipientData,
-                                FirstName: e.target.value,
-                            });
-                        }}
+                        onChange={handleChange}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -138,16 +105,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                         id="outlined-basic"
                         label=""
                         variant="outlined"
+                        name="LastName"
                         value={addRecipientData.LastName}
-                        className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
-                        onChange={(e) => {
-                            e.preventDefault();
-                            setAddRecipientData({
-                                ...addRecipientData,
-                                LastName: e.target.value,
-                            });
-                        }}
+                        onChange={handleChange}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -166,16 +128,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                         id="outlined-basic"
                         label=""
                         variant="outlined"
+                        name="Email"
                         value={addRecipientData.Email}
-                        className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
-                        onChange={(e) => {
-                            e.preventDefault();
-                            setAddRecipientData({
-                                ...addRecipientData,
-                                Email: e.target.value,
-                            });
-                        }}
+                        onChange={handleChange}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -194,16 +151,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                         id="outlined-basic"
                         label=""
                         variant="outlined"
+                        name="Cellphone"
                         value={addRecipientData.Cellphone}
-                        className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
-                        onChange={(e) => {
-                            e.preventDefault();
-                            setAddRecipientData({
-                                ...addRecipientData,
-                                Cellphone: e.target.value,
-                            });
-                        }}
+                        onChange={handleChange}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -222,16 +174,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                         id="outlined-basic"
                         label=""
                         variant="outlined"
+                        name="Telephone"
                         value={addRecipientData.Telephone}
-                        className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
-                        onChange={(e) => {
-                            e.preventDefault();
-                            setAddRecipientData({
-                                ...addRecipientData,
-                                Telephone: e.target.value,
-                            });
-                        }}
+                        onChange={handleChange}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -250,16 +197,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                         id="outlined-basic"
                         label=""
                         variant="outlined"
+                        name="Company"
                         value={addRecipientData.Company}
-                        className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                        className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
-                        onChange={(e) => {
-                            e.preventDefault();
-                            setAddRecipientData({
-                                ...addRecipientData,
-                                Company: e.target.value,
-                            });
-                        }}
+                        onChange={handleChange}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -269,7 +211,7 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         ]}
     />
 
-    const LOCATION_DETAILS_FORM = <SimpleGrid
+    const LOCATION_DETAILS_FORM = () => <SimpleGrid
         gridArr={[{
             content: <SimpleGrid
                 gridArr={[
@@ -282,16 +224,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                             id="outlined-basic"
                             label=""
                             variant="outlined"
+                            name="Address"
                             value={addRecipientData.Address}
-                            className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                             autoComplete="off"
-                            onChange={(e) => {
-                                e.preventDefault();
-                                setAddRecipientData({
-                                    ...addRecipientData,
-                                    Address: e.target.value,
-                                });
-                            }}
+                            onChange={handleChange}
                         />,
                         gridSize: { xs: 12, sm: 8 }
                     }
@@ -311,16 +248,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                             id="outlined-basic"
                             label=""
                             variant="outlined"
+                            name="City"
                             value={addRecipientData.City}
-                            className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                             autoComplete="off"
-                            onChange={(e) => {
-                                e.preventDefault();
-                                setAddRecipientData({
-                                    ...addRecipientData,
-                                    City: e.target.value,
-                                });
-                            }}
+                            onChange={handleChange}
                         />,
                         gridSize: { xs: 12, sm: 8 }
                     }
@@ -340,16 +272,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                             id="outlined-basic"
                             label=""
                             variant="outlined"
+                            name="State"
                             value={addRecipientData.State}
-                            className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                             autoComplete="off"
-                            onChange={(e) => {
-                                e.preventDefault();
-                                setAddRecipientData({
-                                    ...addRecipientData,
-                                    State: e.target.value,
-                                });
-                            }}
+                            onChange={handleChange}
                         />,
                         gridSize: { xs: 12, sm: 8 }
                     }
@@ -369,16 +296,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                             id="outlined-basic"
                             label=""
                             variant="outlined"
+                            name="Country"
                             value={addRecipientData.Country}
-                            className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                             autoComplete="off"
-                            onChange={(e) => {
-                                e.preventDefault();
-                                setAddRecipientData({
-                                    ...addRecipientData,
-                                    Country: e.target.value,
-                                });
-                            }}
+                            onChange={handleChange}
                         />,
                         gridSize: { xs: 12, sm: 8 }
                     }
@@ -398,16 +320,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                             id="outlined-basic"
                             label=""
                             variant="outlined"
+                            name="Zip"
                             value={addRecipientData.Zip}
-                            className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                             autoComplete="off"
-                            onChange={(e) => {
-                                e.preventDefault();
-                                setAddRecipientData({
-                                    ...addRecipientData,
-                                    Zip: e.target.value,
-                                });
-                            }}
+                            onChange={handleChange}
                         />,
                         gridSize: { xs: 12, sm: 8 }
                     }
@@ -418,7 +335,7 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         ]}
     />
 
-    const DATES_FORM = <SimpleGrid
+    const DATES_FORM = () => <SimpleGrid
         gridArr={[{
             content: <SimpleGrid
                 gridArr={[
@@ -431,16 +348,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                             id="outlined-basic"
                             label=""
                             variant="outlined"
+                            name="BirthDate"
                             value={addRecipientData.BirthDate}
-                            className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                             autoComplete="off"
-                            onChange={(e) => {
-                                e.preventDefault();
-                                setAddRecipientData({
-                                    ...addRecipientData,
-                                    BirthDate: e.target.value,
-                                });
-                            }}
+                            onChange={handleChange}
                         />,
                         gridSize: { xs: 12, sm: 8 }
                     }
@@ -460,16 +372,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                             id="outlined-basic"
                             label=""
                             variant="outlined"
+                            name="ReminderDate"
                             value={addRecipientData.ReminderDate}
-                            className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                            className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                             autoComplete="off"
-                            onChange={(e) => {
-                                e.preventDefault();
-                                setAddRecipientData({
-                                    ...addRecipientData,
-                                    ReminderDate: e.target.value,
-                                });
-                            }}
+                            onChange={handleChange}
                         />,
                         gridSize: { xs: 12, sm: 8 }
                     }
@@ -480,7 +387,7 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         ]}
     />
 
-    const EXTRA_DETAILS_FORM = <SimpleGrid
+    const EXTRA_DETAILS_FORM = () => <SimpleGrid
         gridArr={[
             {
                 content: <SimpleGrid
@@ -494,16 +401,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraDate1"
                                 value={addRecipientData.ExtraDate1}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraDate1: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -523,16 +425,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraDate2"
                                 value={addRecipientData.ExtraDate2}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraDate2: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -552,16 +449,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraDate3"
                                 value={addRecipientData.ExtraDate3}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraDate3: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -581,16 +473,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraDate4"
                                 value={addRecipientData.ExtraDate4}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraDate4: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -610,16 +497,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField1"
                                 value={addRecipientData.ExtraField1}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField1: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -639,16 +521,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField2"
                                 value={addRecipientData.ExtraField2}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField2: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -668,16 +545,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraDate3"
                                 value={addRecipientData.ExtraDate3}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraDate3: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -697,16 +569,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField4"
                                 value={addRecipientData.ExtraField4}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField4: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -726,16 +593,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField5"
                                 value={addRecipientData.ExtraField5}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField5: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -755,16 +617,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField6"
                                 value={addRecipientData.ExtraField6}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField6: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -784,16 +641,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField7"
                                 value={addRecipientData.ExtraField7}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField7: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -813,16 +665,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField8"
                                 value={addRecipientData.ExtraField8}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField8: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -842,16 +689,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField9"
                                 value={addRecipientData.ExtraField9}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField9: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -871,16 +713,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField10"
                                 value={addRecipientData.ExtraField10}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField10: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -900,16 +737,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField11"
                                 value={addRecipientData.ExtraField11}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField11: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -929,16 +761,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField12"
                                 value={addRecipientData.ExtraField12}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField12: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -958,16 +785,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
+                                name="ExtraField13"
                                 value={addRecipientData.ExtraField13}
-                                className={clsx(classes.plr10, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={(e) => {
-                                    e.preventDefault();
-                                    setAddRecipientData({
-                                        ...addRecipientData,
-                                        ExtraField13: e.target.value,
-                                    });
-                                }}
+                                onChange={handleChange}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
@@ -979,21 +801,18 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         ]}
     />
 
-    const ACTIVE_TAB_DATA = {
+    const ACTIVE_TAB_DATA = useMemo(() => ({
         '0': {
             index: 0,
             label: 'Personal Details',
-            content: PERSONAL_DETAILS_FORM,
         },
         '1': {
             index: 1,
             label: 'Location',
-            content: LOCATION_DETAILS_FORM,
         },
         '2': {
             index: 2,
             label: 'Date',
-            content: DATES_FORM,
             LastSendDate: addRecipientData.LastSendDate,
             CreationDate: addRecipientData.CreationDate,
             LastEmailOpened: addRecipientData.LastEmailOpened,
@@ -1002,48 +821,47 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         '3': {
             index: 3,
             label: 'Extra fields',
-            content: EXTRA_DETAILS_FORM
         },
         '4': {
             index: 4,
             label: 'Add recipient to group/s',
-            content: 'Groups',
-            GroupIds: addRecipientData.GroupIds
+            GroupIds: addRecipientData.groupIds
         }
-    }
+    }), [addRecipientData])
 
-    const [activeTab, setActiveTab] = useState(ACTIVE_TAB_DATA['0'])
+    // const [activeTab, setActiveTab] = useState(ACTIVE_TAB_DATA['0'])
+    const [activeTab, setActiveTab] = useState(0)
 
 
 
-    const ActiveForm = (formProps) => {
+    const ActiveForm = (label, index) => {
         return (
             <Accordion
-                expanded={activeTab.index === formProps.index}
-                onClick={() => {
-                    if (formProps.index === activeTab.index)
-                        setActiveTab({ index: null })
-                    else
-                        setActiveTab(ACTIVE_TAB_DATA[formProps.index])
-                }}
+                expanded={activeTab === index}
             >
                 <AccordionSummary
                     expandIcon={""}
                     aria-controls="panel1a-content"
                     id="panel1a-header"
-
+                    onClick={() => {
+                        if (index === activeTab)
+                            setActiveTab({ index: null })
+                        else
+                            setActiveTab(index)
+                    }}
                 >
-                    <Typography>{formProps.label} {formProps.index} {activeTab.index === formProps.index ? <GrFormSubtract /> : <GrFormAdd />}</Typography>
+                    <Typography>{label} {activeTab === index ? <GrFormSubtract /> : <GrFormAdd />}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Typography>
-                        {activeTab.content}
-                    </Typography>
-
+                    {index === 0 && PERSONAL_DETAILS_FORM()}
+                    {index === 1 && LOCATION_DETAILS_FORM()}
+                    {index === 2 && DATES_FORM()}
+                    {index === 3 && EXTRA_DETAILS_FORM()}
                 </AccordionDetails>
             </Accordion>
         )
     }
+
 
     const handleAddRecipient = async (data) => {
         try {
@@ -1159,7 +977,7 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
             confirmText="common.Ok"
         >
             {
-                Object.keys(ACTIVE_TAB_DATA).map((key) => ActiveForm(ACTIVE_TAB_DATA[key]))
+                ADD_RECIPIENT_TABS.map((label, index) => ActiveForm(label, index))
                 // Array.from({ length: 5 }, (val, i) => ActiveForm(i))
             }
 
@@ -1186,16 +1004,11 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                         id="outlined-basic"
                         label=""
                         variant="outlined"
+                        name="GroupName"
                         value={newGroupData.GroupName}
                         className={clsx(classes.textField, classes.minWidth252)}
                         autoComplete="off"
-                        onChange={(e) => {
-                            e.preventDefault();
-                            setNewGroupData({
-                                ...newGroupData,
-                                GroupName: e.target.value,
-                            });
-                        }}
+                        onChange={handleChange}
                     />
                 </Box>
                 <Box

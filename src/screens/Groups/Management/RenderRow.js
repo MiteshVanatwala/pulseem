@@ -290,15 +290,16 @@ const RenderWebRow = ({
               classes: { text: localClasses.noWrap },
             },
             {
+              onClick: () => {
+                setSelectedGroups(GroupID)
+                setDialog(DialogType.ADD_RECIPIENT)
+              },
               label: t("recipient.addRecipient"),
               component: (
                 <IconWrapper
                   iconName="addRecipient"
                   className={classes.mxAuto}
-                  onClick={() => {
-                    setSelectedGroups(GroupID)
-                    setDialog(DialogType.ADD_RECIPIENT)
-                  }}
+
                 />
               ),
               classes: { text: localClasses.noWrap },
@@ -342,17 +343,18 @@ const RenderWebRow = ({
             },
             //TODO: Disable if (IsConnectedToWebForm === true || IsConnectedToWebForm === true)
             {
+              onClick: () => {
+                if (!(AutomationID || IsConnectedToWebForm || IsAutoResponder)) {
+                  setSelectedGroups(GroupID)
+                  setDialog(DialogType.DELETE_GROUP)
+                }
+              },
               label: t("recipient.delete"),
               component: (
                 <IconWrapper
                   iconName="delete"
-                  className={IsConnectedToWebForm || IsAutoResponder ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
-                  onClick={() => {
-                    if (!(IsConnectedToWebForm || IsAutoResponder)) {
-                      setSelectedGroups(GroupID)
-                      setDialog(DialogType.DELETE_GROUP)
-                    }
-                  }}
+                  className={(AutomationID || IsConnectedToWebForm || IsAutoResponder) ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
+
                 />
               ),
               classes: { text: localClasses.noWrap },

@@ -40,3 +40,5 @@ export const DEFAULT_RECIPIENT_DATA = {
     ExtraField12: '',
     ExtraField13: '',
 }
+
+export const ADD_RECIPIENT_TABS = ['Personal Details', 'Location', 'Date', 'Extra fields', 'Add recipient to group/s']

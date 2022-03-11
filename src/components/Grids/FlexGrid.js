@@ -7,7 +7,7 @@ const useStyles = makeStyles({
         width: '100%',
         "@media screen and (max-width: 1320px)": {
             flexWrap: 'wrap',
-            justifyContent: 'left',
+            justifyContent: 'right',
             marginInline: 5
         }
     },
@@ -40,11 +40,11 @@ const FlexGrid = ({ gridArr = [],
     const localClasses = useStyles({ direction: direction, textVariant: textVariant })
     return (
         <>
-            <Box className={localClasses.flexBox}>
+            <Box className={localClasses.flexBox} >
                 {
                     gridArr.map((obj, idx) => {
                         return (
-                            <Box className={localClasses.iconBox} key={idx}>
+                            <Box className={localClasses.iconBox} key={idx} onClick={() => obj.onClick?.()}>
                                 {reverse &&
                                     <Typography variant={textVariant} align={alignText} className={obj.classes.text}>{obj.label}</Typography>
                                 }

@@ -172,7 +172,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                         classes.customDialogContentBox,
                         classes.flex,
                         classes.mt4,
-                        classes.responsiveFlex
+                        // classes.responsiveFlex
                     )}
                 >
                     <Box className={classes.flex1} style={{ marginInlineEnd: 10 }}>
@@ -210,7 +210,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                         className={clsx(
                             classes.flex1,
                             classes.flex,
-                            classes.responsiveFlex
+                            // classes.responsiveFlex
                         )}
                     >
                         <FormControlLabel
