@@ -117,7 +117,7 @@ const GroupsManagement = ({ classes }) => {
     {
       label: t("recipient.sms/mms"),
       classes: cellStyle,
-      className: clsx(classes.flex2, classes.textCapitalize),
+      className: clsx(classes.flex2, classes.textUppercase),
       align: "center",
     },
     {

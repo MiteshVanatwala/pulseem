@@ -86,7 +86,7 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                     />
                 </Box>
                 <Box className={classes.mt2}>
-                    <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("sms/mms")}</Typography>
+                    <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth, classes.textUppercase)}>{t("recipient.sms/mms")}</Typography>
                     <NameValueGridStructure
                         gridSize={{ xs: 3, sm: 3 }}
                         gridArr={[

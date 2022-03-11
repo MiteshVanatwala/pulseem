@@ -57,7 +57,6 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
 
 
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
-    const [abc, setAbc] = useState('');
     const [groupIds, setGroupIds] = useState([]);
 
 
@@ -801,38 +800,7 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         ]}
     />
 
-    const ACTIVE_TAB_DATA = useMemo(() => ({
-        '0': {
-            index: 0,
-            label: 'Personal Details',
-        },
-        '1': {
-            index: 1,
-            label: 'Location',
-        },
-        '2': {
-            index: 2,
-            label: 'Date',
-            LastSendDate: addRecipientData.LastSendDate,
-            CreationDate: addRecipientData.CreationDate,
-            LastEmailOpened: addRecipientData.LastEmailOpened,
-            LastEmailClicked: addRecipientData.LastEmailClicked,
-        },
-        '3': {
-            index: 3,
-            label: 'Extra fields',
-        },
-        '4': {
-            index: 4,
-            label: 'Add recipient to group/s',
-            GroupIds: addRecipientData.groupIds
-        }
-    }), [addRecipientData])
-
-    // const [activeTab, setActiveTab] = useState(ACTIVE_TAB_DATA['0'])
     const [activeTab, setActiveTab] = useState(0)
-
-
 
     const ActiveForm = (label, index) => {
         return (
@@ -861,7 +829,6 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
             </Accordion>
         )
     }
-
 
     const handleAddRecipient = async (data) => {
         try {
