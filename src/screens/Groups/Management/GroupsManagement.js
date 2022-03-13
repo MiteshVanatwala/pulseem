@@ -563,7 +563,7 @@ const GroupsManagement = ({ classes }) => {
     <DefaultScreen
       currentPage="groups"
       classes={classes}
-      containerClass={clsx(classes.management, classes.mb8)}
+      containerClass={clsx(classes.management, classes.mb50)}
     >
       {renderToast()}
       {renderHeader()}
