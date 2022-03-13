@@ -39,12 +39,12 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                                 setDialog(DialogType.DELETE_GROUP)
                             }}
                         />
-                        {/* <Typography variant="body1" className={classes.text}>{t("recipient.addRecipient")}</Typography> */}
                     </Box>
                 </Box>
                 <Box className={classes.mt3}>
                     <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.emails")}</Typography>
                     <NameValueGridStructure
+                        rootClass={classes.autoAlign}
                         gridSize={{ xs: 3, sm: 3 }}
                         gridArr={[
                             {
@@ -82,12 +82,12 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                         ]}
 
                         variant="body1"
-                        align="center"
                     />
                 </Box>
                 <Box className={classes.mt2}>
                     <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth, classes.textUppercase)}>{t("recipient.sms/mms")}</Typography>
                     <NameValueGridStructure
+                        rootClass={classes.autoAlign}
                         gridSize={{ xs: 3, sm: 3 }}
                         gridArr={[
                             {

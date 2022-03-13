@@ -520,9 +520,10 @@ const GroupsManagement = ({ classes }) => {
     //sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
     return (
       <TableBody>
-        {sortData.map((obj) =>
+        {sortData.map((obj, idx) =>
           windowSize === "xs" ? (
             <RenderPhoneRow
+              key={idx}
               row={obj}
               rowStyle={rowStyle}
               name={renderNameCell(obj, true)}
@@ -534,6 +535,7 @@ const GroupsManagement = ({ classes }) => {
             />
           ) : (
             <RenderRow
+              key={idx}
               row={obj}
               classes={classes}
               setDialog={(val) => setDialog(val)}

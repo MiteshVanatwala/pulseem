@@ -806,6 +806,8 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         return (
             <Accordion
                 expanded={activeTab === index}
+                className={classes.noBoxShadow}
+                key={index}
             >
                 <AccordionSummary
                     expandIcon={""}
