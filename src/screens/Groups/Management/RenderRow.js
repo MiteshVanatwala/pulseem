@@ -345,7 +345,7 @@ const RenderWebRow = ({
                   }}
                 />
               ),
-              classes: { text: localClasses.noWrap },
+              classes: { text: clsx(localClasses.noWrap, !AutomationID ? classes.disabled : null) },
             },
             //TODO: Disable if (IsConnectedToWebForm === true || IsConnectedToWebForm === true)
             {
@@ -363,7 +363,7 @@ const RenderWebRow = ({
 
                 />
               ),
-              classes: { text: localClasses.noWrap },
+              classes: { text: clsx(localClasses.noWrap, (AutomationID || IsConnectedToWebForm || IsAutoResponder) ? classes.disabled : null) },
             },
           ]}
           variant="body1"
