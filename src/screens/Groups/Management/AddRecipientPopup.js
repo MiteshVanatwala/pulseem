@@ -14,8 +14,9 @@ import {
     useTheme,
     Accordion,
     AccordionSummary,
-    AccordionDetails,
+    AccordionDetails
 } from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
 // import {ExpandMoreIcon} from '@mui/i'
 import { SearchIcon, ExportIcon } from "../../../assets/images/managment/index";
 import { CSVLink } from "react-csv";
@@ -51,7 +52,7 @@ import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS } from "../../../model/Groups/Contants";
 
 
-const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize }) => {
+const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, Groups = [], selectedGroups, selectGroup }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -800,6 +801,41 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         ]}
     />
 
+    // const DefaultValues = Groups?.reduce((prevVal, newVal) => {
+    //     if (selectedGroups.indexOf(newVal.GroupID) !== -1) {
+    //         return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
+    //     }
+    //     return [...prevVal];
+    // }, [])
+
+    // console.log("VAlue", DefaultValues)
+
+    const GROUPS_FORM = () => (
+        <div className={classes.fullWidth}>
+            <Autocomplete
+                multiple
+                id="tags-outlined"
+                options={[
+                    { title: 'The Shawshank Redemption', year: 1994 },
+                    { title: 'The Godfather', year: 1972 },
+                    { title: 'The Godfather: Part II', year: 1974 },
+                    { title: 'The Dark Knight', year: 2008 },
+                    { title: '12 Angry Men', year: 1957 }]}
+                getOptionLabel={(option) => option.title}
+                defaultValue={[{ title: 'The Shawshank Redemption', year: 1994 }]}
+                filterSelectedOptions
+                renderInput={(params) => (
+                    <TextField
+                        {...params}
+                        variant="outlined"
+                        label="filterSelectedOptions"
+                        placeholder="Favorites"
+                    />
+                )}
+            />
+        </div>)
+
+
     const [activeTab, setActiveTab] = useState(0)
 
     const ActiveForm = (label, index) => {
@@ -827,6 +863,7 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                     {index === 1 && LOCATION_DETAILS_FORM()}
                     {index === 2 && DATES_FORM()}
                     {index === 3 && EXTRA_DETAILS_FORM()}
+                    {index === 4 && GROUPS_FORM()}
                 </AccordionDetails>
             </Accordion>
         )

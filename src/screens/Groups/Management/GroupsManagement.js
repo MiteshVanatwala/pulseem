@@ -626,6 +626,10 @@ const GroupsManagement = ({ classes }) => {
         onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
         setToastMessage={setToastMessage}
+        // Groups={groupData.map((obj) => ({ GroupID: obj.GroupID, GroupName: obj.GroupName }))}
+        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
+        selectedGroups={selectedGroups}
+        selectGroup={(id) => setSelectedGroups([...selectedGroups, id])}
       />
       <ConfirmDeletePopUp
         classes={classes}
