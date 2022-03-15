@@ -41,7 +41,7 @@ export const DEFAULT_RECIPIENT_DATA = {
     ExtraField13: '',
 }
 
-export const ADD_RECIPIENT_TABS = ['common.PersonalDetails', 'common.Location', 'report.date', 'common.extraFields', 'recipient.addRecipientToGroups']
+export const ADD_RECIPIENT_TABS = ['common.PersonalDetails', 'common.Location', 'recipient.dates', 'common.extraFields', 'recipient.addRecipientToGroups']
 
 export const ADD_RECIPIENT_REQUIRED_ERRORS = {
     FirstName: 'recipient.errors.firstName',

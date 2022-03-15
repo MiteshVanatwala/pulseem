@@ -18,6 +18,7 @@ import {
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 // import {ExpandMoreIcon} from '@mui/i'
+import { DateField } from '../../../components/managment/index'
 import { SearchIcon, ExportIcon } from "../../../assets/images/managment/index";
 import { CSVLink } from "react-csv";
 import {
@@ -54,12 +55,23 @@ import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../model/Groups/Contants";
 import { IconContext } from "react-icons";
 
-const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, Groups = [], selectedGroups, selectGroup }) => {
+const AddRecipientPopup = ({ classes,
+    isOpen = false,
+    onClose,
+    setLoader,
+    onCreateGroupResponse,
+    windowSize,
+    Groups = [],
+    selectedGroups,
+    selectGroup,
+    onAddRecipient = () => null
+}) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
-
+    const { extraData } = useSelector((state) => state.sms);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
+    const [accountExtraFields, setAccountExtraFields] = useState(null);
     const [activeTab, setActiveTab] = useState(0)
     const [errors, setErrors] = useState({
         FirstName: '',
@@ -67,7 +79,7 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         Email: '',
         Cellphone: ''
     })
-
+    const dateFormat = "yyyy-MM-dd HH:mm:ss";
 
     // const handleAddREcipientResponse = (response) => {
     //     switch (response.payload.StatusCode) {
@@ -108,14 +120,31 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         }
     }
 
-    const handleChange = (e) => {
-        if (Object.keys(errors).indexOf(e.target.name) !== -1 && errors[e.target.name]) {
-            setErrors({ ...errors, [e.target.name]: '' })
+    const handleChange = (e, dateField = null, isExtraData = false) => {
+        if (dateField) {
+            const { date, field } = dateField;
+            setAccountExtraFields({
+                ...accountExtraFields, [field]: moment(date, dateFormat)
+            });
         }
-        setAddRecipientData({
-            ...addRecipientData, [e.target.name]: e.target.value
-        })
-        console.log("Data:", addRecipientData, e.target.name, e.target.value);
+        else {
+            if (Object.keys(errors).indexOf(e.target.name) !== -1 && errors[e.target.name]) {
+                setErrors({ ...errors, [e.target.name]: '' });
+            }
+
+            else if (isExtraData) {
+                setAccountExtraFields({
+                    ...accountExtraFields, [e.target.name]: e.target.value
+                });
+            }
+            else {
+                setAddRecipientData({
+                    ...addRecipientData, [e.target.name]: e.target.value
+                })
+                // console.log("Data:", addRecipientData, e.target.name, e.target.value);
+            }
+        }
+
     }
 
     const handleSubmit = async () => {
@@ -149,8 +178,16 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
             return;
         }
         try {
-            const response = await dispatch(addRecipient(data))
-            onClose()
+            const clientsData = [];
+            //addRecipientData.ExtraFields = { ...accountExtraFields }
+            clientsData.push({ ...addRecipientData, ...accountExtraFields });
+
+            const request = {
+                ClientsData: clientsData,
+                GroupIds: [...selectedGroups]
+            }
+            await dispatch(addRecipient(request))
+            onAddRecipient();
         }
         catch (err) {
             console.log('errr:', err)
@@ -489,419 +526,44 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         ]}
     />
 
-    const EXTRA_DETAILS_FORM = () => <SimpleGrid
-        gridArr={[
-            {
+    const EXTRA_DETAILS_FORM = () => {
+        let extraFields = Object.keys(extraData).filter((key, index) => { return Object.values(extraData)[index] && Object.values(extraData)[index] !== '' });
+        const json = extraFields.map((ef) => {
+            return {
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraDate1")}</Typography>,
+                            content: <Typography className={classes.plr10}>{extraData[ef]}</Typography>,
                             gridSize: { xs: 12, sm: 4 }
                         },
                         {
-                            content: <TextField
+                            content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
+                                classes={classes}
+                                value={accountExtraFields && accountExtraFields[ef] ? accountExtraFields[ef] : null}
+                                onChange={e => handleChange(e, { date: e, field: ef }, true)}
+                                toolbarDisabled={false}
+                            /> : <TextField
                                 id="outlined-basic"
                                 label=""
                                 variant="outlined"
-                                name="ExtraDate1"
-                                value={addRecipientData.ExtraDate1}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                name={ef}
+                                value={addRecipientData[extraData[ef]]}
+                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
-                                onChange={handleChange}
+                                onChange={e => handleChange(e, null, true)}
                             />,
                             gridSize: { xs: 12, sm: 8 }
                         }
                     ]}
 
                 />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraDate2")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraDate2"
-                                value={addRecipientData.ExtraDate2}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
+            };
+        })
 
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraDate3")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraDate3"
-                                value={addRecipientData.ExtraDate3}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraDate4")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraDate4"
-                                value={addRecipientData.ExtraDate4}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField1")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField1"
-                                value={addRecipientData.ExtraField1}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField2")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField2"
-                                value={addRecipientData.ExtraField2}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraDate3")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraDate3"
-                                value={addRecipientData.ExtraDate3}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField4")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField4"
-                                value={addRecipientData.ExtraField4}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField5")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField5"
-                                value={addRecipientData.ExtraField5}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField6")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField6"
-                                value={addRecipientData.ExtraField6}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField7")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField7"
-                                value={addRecipientData.ExtraField7}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField8")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField8"
-                                value={addRecipientData.ExtraField8}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField9")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField9"
-                                value={addRecipientData.ExtraField9}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField10")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField10"
-                                value={addRecipientData.ExtraField10}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField11")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField11"
-                                value={addRecipientData.ExtraField11}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField12")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField12"
-                                value={addRecipientData.ExtraField12}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <Typography className={classes.plr10}>{t("common.ExtraField13")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
-                        },
-                        {
-                            content: <TextField
-                                id="outlined-basic"
-                                label=""
-                                variant="outlined"
-                                name="ExtraField13"
-                                value={addRecipientData.ExtraField13}
-                                className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                autoComplete="off"
-                                onChange={handleChange}
-                            />,
-                            gridSize: { xs: 12, sm: 8 }
-                        }
-                    ]}
-
-                />
-            },
-
-        ]}
-    />
+        return extraData && <SimpleGrid
+            gridArr={json}
+        />
+    }
 
     const GROUPS_FORM = () => (
         <div className={classes.fullWidth}>

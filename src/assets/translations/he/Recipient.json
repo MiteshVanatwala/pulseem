@@ -36,7 +36,8 @@
   "reminderDate": "תאריך תזכורת",
   "errorMessage": "הודעת שגיעה",
   "recipientAddPopUpTitle": "הוסף נמען בודד לקבוצה אחת או יותר",
-  "addRecipientToGroups": "",
+  "addRecipientToGroups": "שיוך לקוח לקבוצות",
+  "dates": "תאריכים",
   "errors": {
     "firstName": "",
     "lastName": "",

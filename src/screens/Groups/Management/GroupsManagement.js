@@ -43,11 +43,9 @@ import ConfirmDeletePopUp from "./ConfirmDeletePopUp";
 import Toast from '../../../components/Toast/Toast.component';
 import {
   getGroups,
-  deleteGroups,
-  createGroup,
+  deleteGroups
 } from "../../../redux/reducers/groupSlice";
-import { Dialog } from "../../../components/managment/Dialog";
-import { StaticData } from "../tempConstants";
+import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -71,6 +69,7 @@ const GroupsManagement = ({ classes }) => {
     PageSize: rowsPerPage,
     SearchTerm: "",
   });
+
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
@@ -131,6 +130,8 @@ const GroupsManagement = ({ classes }) => {
   const getData = async () => {
     setLoader(true);
     await dispatch(getGroups({ ...serachData, PageSize: rowsPerPage, PageIndex: page }));
+    await dispatch(getAccountExtraData());
+    setDialog(null);
     setLoader(false);
   };
 
@@ -630,6 +631,7 @@ const GroupsManagement = ({ classes }) => {
         Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
         selectedGroups={selectedGroups}
         selectGroup={(idArr) => setSelectedGroups(idArr)}
+        onAddRecipient={getData}
       />}
       <ConfirmDeletePopUp
         classes={classes}

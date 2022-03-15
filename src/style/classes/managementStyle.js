@@ -441,7 +441,10 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   NoPaddingtextField: {
     '& .MuiInputBase-input':
     {
-      padding: 3
+      height: 35,
+      paddingInline: 10,
+      paddingBottom: 3,
+      paddingTop: 3,
     }
   },
   selectField: {
