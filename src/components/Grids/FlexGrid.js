@@ -14,7 +14,6 @@ const useStyles = makeStyles({
     iconBox: {
         flexGrow: 1,
         maxWidth: 'max-content',
-        cursor: 'pointer',
         marginInline: 2,
         "@media screen and (max-width: 1320px)": {
             marginInline: 5,
@@ -45,7 +44,7 @@ const FlexGrid = ({ gridArr = [],
                 {
                     gridArr.map((obj, idx) => {
                         return (
-                            <Box className={localClasses.iconBox} key={idx} onClick={() => obj.onClick?.()}>
+                            <Box className={localClasses.iconBox} key={idx} onClick={() => obj.onClick?.()} style={{ cursor: obj.isDisabled ? 'not-allowed' : 'pointer' }}>
                                 {reverse &&
                                     <Typography variant={textVariant} align={alignText} className={obj.classes.text}>{obj.label}</Typography>
                                 }
