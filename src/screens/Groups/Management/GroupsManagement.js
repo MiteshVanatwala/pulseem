@@ -618,7 +618,7 @@ const GroupsManagement = ({ classes }) => {
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
       />
-      <AddRecipientPopup
+      {dialog === DialogType.ADD_RECIPIENT && <AddRecipientPopup
         classes={classes}
         isOpen={dialog === DialogType.ADD_RECIPIENT}
         onClose={() => setDialog(null)}
@@ -629,8 +629,8 @@ const GroupsManagement = ({ classes }) => {
         // Groups={groupData.map((obj) => ({ GroupID: obj.GroupID, GroupName: obj.GroupName }))}
         Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
         selectedGroups={selectedGroups}
-        selectGroup={(id) => setSelectedGroups([...selectedGroups, id])}
-      />
+        selectGroup={(idArr) => setSelectedGroups(idArr)}
+      />}
       <ConfirmDeletePopUp
         classes={classes}
         isOpen={dialog === DialogType.DELETE_GROUP}

@@ -46,11 +46,13 @@ import {
     getGroups,
     deleteGroups,
     createGroup,
+    setSelectedGroups,
+    addRecipient,
 } from "../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../components/managment/Dialog";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
-import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS } from "../../../model/Groups/Contants";
-
+import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../model/Groups/Contants";
+import { IconContext } from "react-icons";
 
 const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, Groups = [], selectedGroups, selectGroup }) => {
     const { t } = useTranslation();
@@ -58,14 +60,102 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
 
 
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
-    const [groupIds, setGroupIds] = useState([]);
+    const [activeTab, setActiveTab] = useState(0)
+    const [errors, setErrors] = useState({
+        FirstName: '',
+        LastName: '',
+        Email: '',
+        Cellphone: ''
+    })
 
+
+    // const handleAddREcipientResponse = (response) => {
+    //     switch (response.payload.StatusCode) {
+    //       case 201: {
+    //         getData();
+    //         setToastMessage(ToastMessages.GROUP_CREATED);
+    //         break;
+    //       }
+    //       case 400: {
+    //         getData();
+    //         setToastMessage(ToastMessages.GROUP_INPUT_INCORRECT);
+    //         break;
+    //       }
+    //       case 401: {
+    //         getData();
+    //         setToastMessage(ToastMessages.GROUP_INVALID_API);
+    //         break;
+    //       }
+    //       case 405: {
+    //         getData();
+    //         setToastMessage(ToastMessages.GROUP_ERROR);
+    //         break;
+    //       }
+    //       case 422: {
+    //         getData();
+    //         setToastMessage(ToastMessages.GROUP_ALREADY_EXIST);
+    //         break;
+    //       }
+    //       default: {
+    //         setDialog(null);
+    //       }
+    //     }
+    //   }
+
+    const handleBlur = (e) => {
+        if (!e.target.value) {
+            setErrors({ ...errors, [e.target.name]: t(ADD_RECIPIENT_REQUIRED_ERRORS[e.target.name]) })
+        }
+    }
 
     const handleChange = (e) => {
+        if (Object.keys(errors).indexOf(e.target.name) !== -1 && errors[e.target.name]) {
+            setErrors({ ...errors, [e.target.name]: '' })
+        }
         setAddRecipientData({
             ...addRecipientData, [e.target.name]: e.target.value
         })
         console.log("Data:", addRecipientData, e.target.name, e.target.value);
+    }
+
+    const handleSubmit = async () => {
+        const data = {
+            ClientsData: addRecipientData,
+            GroupIds: [...selectedGroups]
+        }
+        const tempError = { ...errors }
+
+        if (!data.ClientsData.FirstName ||
+            !data.ClientsData.LastName ||
+            !data.ClientsData.Email ||
+            !data.ClientsData.Cellphone) {
+
+
+            if (!data.ClientsData.FirstName) {
+                tempError.FirstName = t(ADD_RECIPIENT_REQUIRED_ERRORS.FirstName)
+            }
+            if (!data.ClientsData.LastName) {
+                tempError.LastName = t(ADD_RECIPIENT_REQUIRED_ERRORS.LastName)
+            }
+            if (!data.ClientsData.Email) {
+                tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
+            }
+            if (!data.ClientsData.Cellphone) {
+                tempError.Cellphone = t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone)
+            }
+
+            setErrors({ ...tempError })
+
+            return;
+        }
+        try {
+            const response = await dispatch(addRecipient(data))
+            onClose()
+        }
+        catch (err) {
+            console.log('errr:', err)
+        }
+
     }
 
 
@@ -87,6 +177,9 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                         className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
+                        error={errors.FirstName}
+                        helperText={errors.FirstName}
+                        onBlur={handleBlur}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -110,6 +203,9 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                         className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
+                        error={errors.LastName}
+                        helperText={errors.LastName}
+                        onBlur={handleBlur}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -133,6 +229,9 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                         className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
+                        error={errors.Email}
+                        helperText={errors.Email}
+                        onBlur={handleBlur}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -156,6 +255,9 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                         className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={handleChange}
+                        error={errors.Cellphone}
+                        helperText={errors.Cellphone}
+                        onBlur={handleBlur}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -801,42 +903,44 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         ]}
     />
 
-    // const DefaultValues = Groups?.reduce((prevVal, newVal) => {
-    //     if (selectedGroups.indexOf(newVal.GroupID) !== -1) {
-    //         return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
-    //     }
-    //     return [...prevVal];
-    // }, [])
-
-    // console.log("VAlue", DefaultValues)
-
     const GROUPS_FORM = () => (
         <div className={classes.fullWidth}>
             <Autocomplete
                 multiple
                 id="tags-outlined"
-                options={[
-                    { title: 'The Shawshank Redemption', year: 1994 },
-                    { title: 'The Godfather', year: 1972 },
-                    { title: 'The Godfather: Part II', year: 1974 },
-                    { title: 'The Dark Knight', year: 2008 },
-                    { title: '12 Angry Men', year: 1957 }]}
-                getOptionLabel={(option) => option.title}
-                defaultValue={[{ title: 'The Shawshank Redemption', year: 1994 }]}
+                options={Groups}
+                // options={[
+                //     { title: 'The Shawshank Redemption', year: 1994 },
+                //     { title: 'The Godfather', year: 1972 },
+                //     { title: 'The Godfather: Part II', year: 1974 },
+                //     { title: 'The Dark Knight', year: 2008 },
+                //     { title: '12 Angry Men', year: 1957 }]}
+                getOptionLabel={(option) => option?.GroupName}
+                defaultValue={Groups?.reduce((prevVal, newVal) => {
+                    if (selectedGroups.indexOf(newVal.GroupID) !== -1) {
+                        return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
+                    }
+                    else {
+                        return [...prevVal]
+                    }
+                }, [])}
+                onChange={(e, val) => {
+                    const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
+                    selectGroup(idArr)
+                }}
                 filterSelectedOptions
                 renderInput={(params) => (
                     <TextField
                         {...params}
                         variant="outlined"
-                        label="filterSelectedOptions"
-                        placeholder="Favorites"
+                        label="Groups"
+                        placeholder="Select Groups"
                     />
                 )}
             />
         </div>)
 
 
-    const [activeTab, setActiveTab] = useState(0)
 
     const ActiveForm = (label, index) => {
         return (
@@ -856,7 +960,15 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                             setActiveTab(index)
                     }}
                 >
-                    <Typography>{label} {activeTab === index ? <GrFormSubtract /> : <GrFormAdd />}</Typography>
+                    {/* <IconContext.Provider value={{ color: "#0371ad" }}> */}
+                    <Typography>{t(label)}
+
+                        {activeTab === index ?
+                            <GrFormSubtract size={24} color='#0371ad' style={{ position: 'absolute' }} /> :
+                            <GrFormAdd size={24} color='#0371ad' style={{ position: 'absolute' }} />
+                        }
+                    </Typography>
+                    {/* </IconContext.Provider> */}
                 </AccordionSummary>
                 <AccordionDetails>
                     {index === 0 && PERSONAL_DETAILS_FORM()}
@@ -869,17 +981,17 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
         )
     }
 
-    const handleAddRecipient = async (data) => {
-        try {
-            onClose()
-            // setLoader(true);
-            // const response = await dispatch(createGroup(data));
-            // setLoader(false);
-            // onCreateGroupResponse();
-        } catch (err) {
-            return false;
-        }
-    };
+    // const handleAddRecipient = async (data) => {
+    //     try {
+    //         onClose()
+    //         // setLoader(true);
+    //         // const response = await dispatch(createGroup(data));
+    //         // setLoader(false);
+    //         // onCreateGroupResponse();
+    //     } catch (err) {
+    //         return false;
+    //     }
+    // };
 
 
     return (
@@ -894,12 +1006,7 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}
-            onConfirm={() => {
-                const result = handleAddRecipient(addRecipientData);
-                if (result) {
-                    setAddRecipientData(DEFAULT_RECIPIENT_DATA);
-                }
-            }}
+            onConfirm={handleSubmit}
             renderButtons={() => (
                 <Grid container spacing={2} className={classes.linePadding}>
                     <Grid
@@ -938,12 +1045,14 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 classes.whiteSpaceNoWrap,
                                 classes.textCapitalize
                             )}
-                            onClick={() => {
-                                const result = handleAddRecipient(addRecipientData);
-                                if (result) {
-                                    setAddRecipientData(DEFAULT_RECIPIENT_DATA);
-                                }
-                            }}
+
+                            onClick={handleSubmit}
+                        // onClick={() => {
+                        //     const result = handleAddRecipient(addRecipientData);
+                        //     if (result) {
+                        //         setAddRecipientData(DEFAULT_RECIPIENT_DATA);
+                        //     }
+                        // }}
                         >
                             {t("group.ok")}
                         </Button>
@@ -962,7 +1071,7 @@ const AddRecipientPopup = ({ classes, isOpen = false, onClose, setLoader, onCrea
                                 classes.dialogButton,
                                 classes.dialogConfirmButton,
                                 classes.actionButtonLightGreen,
-                                classes.whiteSpaceNoWrap
+                                classes.whiteSpaceNoWrap,
                             )}
                         // onClick={
                         //TODO: ADD ADD Recipient Functionality

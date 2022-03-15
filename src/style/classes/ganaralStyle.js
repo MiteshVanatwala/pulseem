@@ -2062,6 +2062,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 28,
   },
   fullWidth: {
+    maxWidth: '100% !important',
     width: "100% !important",
   },
   width90P: {

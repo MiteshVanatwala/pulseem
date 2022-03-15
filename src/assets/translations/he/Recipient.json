@@ -35,5 +35,12 @@
   "company": "חברה",
   "reminderDate": "תאריך תזכורת",
   "errorMessage": "הודעת שגיעה",
-  "recipientAddPopUpTitle": "הוסף נמען בודד לקבוצה אחת או יותר"
+  "recipientAddPopUpTitle": "הוסף נמען בודד לקבוצה אחת או יותר",
+  "addRecipientToGroups": "",
+  "errors": {
+    "firstName": "",
+    "lastName": "",
+    "email": "",
+    "cellPhone": ""
+  }
 }

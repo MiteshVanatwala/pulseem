@@ -35,5 +35,12 @@
   "company": "Company",
   "reminderDate": "ReminderDate",
   "errorMessage": "ErrorMessage",
-  "recipientAddPopUpTitle": "Add a single recipient to one or more groups"
+  "recipientAddPopUpTitle": "Add a single recipient to one or more groups",
+  "addRecipientToGroups": "Add recipient to group/s",
+  "errors": {
+    "firstName": "First Name can't be empty",
+    "lastName": "Last Name can't be empty",
+    "email": "Enter a valid email",
+    "cellPhone": "Invalid cellphone"
+  }
 }
