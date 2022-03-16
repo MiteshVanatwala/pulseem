@@ -38,6 +38,8 @@
   "recipientAddPopUpTitle": "הוסף נמען בודד לקבוצה אחת או יותר",
   "addRecipientToGroups": "שיוך לקוח לקבוצות",
   "dates": "תאריכים",
+  "addRecipientSuccess": "",
+  "incorrectRecipientInput": "",
   "errors": {
     "firstName": "",
     "lastName": "",

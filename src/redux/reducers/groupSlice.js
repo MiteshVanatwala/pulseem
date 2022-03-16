@@ -68,6 +68,8 @@ export const groupSlice = createSlice({
             GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
             GROUP_NAME_MAXLENGTH: { severity: 'error', color: 'error', message: 'group.nameMaxLength', showAnimtionCheck: false },
             GROUP_NAME_EMPTY: { severity: 'error', color: 'error', message: 'group.emptyGroupName', showAnimtionCheck: false },
+            RECIPIENT_ADDED: { severity: 'success', color: 'success', message: 'group.addRecipientSuccess', showAnimtionCheck: false },
+            RECIPIENT_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'group.incorrectRecipientInput', showAnimtionCheck: false },
         }
     },
     reducers: {

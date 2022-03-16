@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
-import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
 import {
     Typography,
-    Divider,
-    TableBody,
+    // DeBody,
     Grid,
     Button,
     TextField,
@@ -14,46 +12,32 @@ import {
     useTheme,
     Accordion,
     AccordionSummary,
-    AccordionDetails
+    AccordionDetails,
+    makeStyles
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
-// import {ExpandMoreIcon} from '@mui/i'
 import { DateField } from '../../../components/managment/index'
-import { SearchIcon, ExportIcon } from "../../../assets/images/managment/index";
-import { CSVLink } from "react-csv";
-import {
-    TablePagination,
-    SearchField,
-} from "../../../components/managment/index";
 
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import ClearIcon from "@material-ui/icons/Clear";
 import moment from "moment";
 import "moment/locale/he";
-import { Loader } from "../../../components/Loader/Loader";
-import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
-import { setCookie } from "../../../helpers/cookies";
-import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
-import DataTable from "../../../components/Table/DataTable";
-// import { ExcelData, StaticData } from "../tempConstants";
 import { GrGroup, GrFormAdd, GrFormSubtract } from "react-icons/gr";
-import { exportFile } from "../../../helpers/exportFromJson";
-import { preferredOrder } from "../../../helpers/exportHelper";
-import RenderRow from "./RenderRow";
-import RenderPhoneRow from "./RenderPhoneRow";
-import Toast from '../../../components/Toast/Toast.component';
 import {
-    getGroups,
-    deleteGroups,
-    createGroup,
-    setSelectedGroups,
     addRecipient,
 } from "../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../components/managment/Dialog";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../model/Groups/Contants";
-import { IconContext } from "react-icons";
+import GroupTags from "../../../components/Groups/GroupTags";
+
+
+const useStyles = makeStyles({
+    contentBox: {
+        "height": '30vh'
+    },
+
+});
 
 const AddRecipientPopup = ({ classes,
     isOpen = false,
@@ -64,59 +48,58 @@ const AddRecipientPopup = ({ classes,
     Groups = [],
     selectedGroups,
     selectGroup,
+    setToastMessage,
+    ToastMessages,
     onAddRecipient = () => null
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const localClasses = useStyles()
 
     const { extraData } = useSelector((state) => state.sms);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [accountExtraFields, setAccountExtraFields] = useState(null);
     const [activeTab, setActiveTab] = useState(0)
     const [errors, setErrors] = useState({
-        FirstName: '',
-        LastName: '',
         Email: '',
         Cellphone: ''
     })
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
 
-    // const handleAddREcipientResponse = (response) => {
-    //     switch (response.payload.StatusCode) {
-    //       case 201: {
-    //         getData();
-    //         setToastMessage(ToastMessages.GROUP_CREATED);
-    //         break;
-    //       }
-    //       case 400: {
-    //         getData();
-    //         setToastMessage(ToastMessages.GROUP_INPUT_INCORRECT);
-    //         break;
-    //       }
-    //       case 401: {
-    //         getData();
-    //         setToastMessage(ToastMessages.GROUP_INVALID_API);
-    //         break;
-    //       }
-    //       case 405: {
-    //         getData();
-    //         setToastMessage(ToastMessages.GROUP_ERROR);
-    //         break;
-    //       }
-    //       case 422: {
-    //         getData();
-    //         setToastMessage(ToastMessages.GROUP_ALREADY_EXIST);
-    //         break;
-    //       }
-    //       default: {
-    //         setDialog(null);
-    //       }
-    //     }
-    //   }
+    const handleAddREcipientResponse = (response) => {
+        switch (response.payload.StatusCode) {
+            case 201: {
+                setToastMessage(ToastMessages.RECIPIENT_ADDED);
+                break;
+            }
+            case 400: {
+                setToastMessage(ToastMessages.RECIPIENT_INPUT_INCORRECT);
+                break;
+            }
+            case 401: {
+                setToastMessage(ToastMessages.GROUP_INVALID_API);
+                break;
+            }
+            case 405: {
+                setToastMessage(ToastMessages.GROUP_ERROR);
+                break;
+            }
+            default: {
+
+            }
+        }
+    }
 
     const handleBlur = (e) => {
         if (!e.target.value) {
             setErrors({ ...errors, [e.target.name]: t(ADD_RECIPIENT_REQUIRED_ERRORS[e.target.name]) })
+        }
+        if (e.target.name === "Email") {
+            if (!e.target.value.match(
+                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            )) {
+                setErrors({ ...errors, Email: t(ADD_RECIPIENT_REQUIRED_ERRORS.Email) })
+            }
         }
     }
 
@@ -141,7 +124,6 @@ const AddRecipientPopup = ({ classes,
                 setAddRecipientData({
                     ...addRecipientData, [e.target.name]: e.target.value
                 })
-                // console.log("Data:", addRecipientData, e.target.name, e.target.value);
             }
         }
 
@@ -154,19 +136,11 @@ const AddRecipientPopup = ({ classes,
         }
         const tempError = { ...errors }
 
-        if (!data.ClientsData.FirstName ||
-            !data.ClientsData.LastName ||
-            !data.ClientsData.Email ||
+        if (!data.ClientsData.Email &&
             !data.ClientsData.Cellphone) {
-
-
-            if (!data.ClientsData.FirstName) {
-                tempError.FirstName = t(ADD_RECIPIENT_REQUIRED_ERRORS.FirstName)
-            }
-            if (!data.ClientsData.LastName) {
-                tempError.LastName = t(ADD_RECIPIENT_REQUIRED_ERRORS.LastName)
-            }
-            if (!data.ClientsData.Email) {
+            if (!data.ClientsData.Email || !data.ClientsData.Email.match(
+                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            )) {
                 tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             }
             if (!data.ClientsData.Cellphone) {
@@ -186,7 +160,8 @@ const AddRecipientPopup = ({ classes,
                 ClientsData: clientsData,
                 GroupIds: [...selectedGroups]
             }
-            await dispatch(addRecipient(request))
+            const response = await dispatch(addRecipient(request))
+            handleAddREcipientResponse(response)
             onAddRecipient();
         }
         catch (err) {
@@ -216,7 +191,6 @@ const AddRecipientPopup = ({ classes,
                         onChange={handleChange}
                         error={errors.FirstName}
                         helperText={errors.FirstName}
-                        onBlur={handleBlur}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -242,7 +216,6 @@ const AddRecipientPopup = ({ classes,
                         onChange={handleChange}
                         error={errors.LastName}
                         helperText={errors.LastName}
-                        onBlur={handleBlur}
                     />,
                     gridSize: { xs: 12, sm: 8 }
                 }
@@ -291,7 +264,11 @@ const AddRecipientPopup = ({ classes,
                         value={addRecipientData.Cellphone}
                         className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
-                        onChange={handleChange}
+                        onChange={(e) => {
+                            if (e.target.value.match(/^\d+$/)) {
+                                handleChange(e)
+                            }
+                        }}
                         error={errors.Cellphone}
                         helperText={errors.Cellphone}
                         onBlur={handleBlur}
@@ -567,38 +544,20 @@ const AddRecipientPopup = ({ classes,
 
     const GROUPS_FORM = () => (
         <div className={classes.fullWidth}>
-            <Autocomplete
-                multiple
-                id="tags-outlined"
-                options={Groups}
-                // options={[
-                //     { title: 'The Shawshank Redemption', year: 1994 },
-                //     { title: 'The Godfather', year: 1972 },
-                //     { title: 'The Godfather: Part II', year: 1974 },
-                //     { title: 'The Dark Knight', year: 2008 },
-                //     { title: '12 Angry Men', year: 1957 }]}
-                getOptionLabel={(option) => option?.GroupName}
-                defaultValue={Groups?.reduce((prevVal, newVal) => {
-                    if (selectedGroups.indexOf(newVal.GroupID) !== -1) {
-                        return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
-                    }
-                    else {
-                        return [...prevVal]
-                    }
-                }, [])}
-                onChange={(e, val) => {
-                    const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
-                    selectGroup(idArr)
-                }}
-                filterSelectedOptions
-                renderInput={(params) => (
-                    <TextField
-                        {...params}
-                        variant="outlined"
-                        label="Groups"
-                        placeholder="Select Groups"
-                    />
-                )}
+            <GroupTags
+                classes={classes}
+                title={'siteTracking.typeGroupName'}
+                // onShowModal={onShowGroups}
+                style={{ width: windowSize === 'xs' ? 320 : 460 }}
+                dropdown
+                dropDownProps={{
+                    onChange: (e, val) => {
+                        const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
+                        selectGroup(idArr)
+                    },
+                    selectedGroups: selectedGroups
+                }
+                }
             />
         </div>)
 
@@ -642,18 +601,6 @@ const AddRecipientPopup = ({ classes,
             </Accordion>
         )
     }
-
-    // const handleAddRecipient = async (data) => {
-    //     try {
-    //         onClose()
-    //         // setLoader(true);
-    //         // const response = await dispatch(createGroup(data));
-    //         // setLoader(false);
-    //         // onCreateGroupResponse();
-    //     } catch (err) {
-    //         return false;
-    //     }
-    // };
 
 
     return (
@@ -753,77 +700,13 @@ const AddRecipientPopup = ({ classes,
             cancelText="common.Cancel"
             confirmText="common.Ok"
         >
-            {
-                ADD_RECIPIENT_TABS.map((label, index) => ActiveForm(label, index))
-                // Array.from({ length: 5 }, (val, i) => ActiveForm(i))
-            }
+            <Box className={localClasses.contentBox}>
+                {
+                    ADD_RECIPIENT_TABS.map((label, index) => ActiveForm(label, index))
+                    // Array.from({ length: 5 }, (val, i) => ActiveForm(i))
+                }
+            </Box>
 
-            {/* <Box
-                className={clsx(
-                    classes.customDialogContentBox,
-                    // classes.flex,
-                    classes.mt4,
-                    // classes.responsiveFlex
-                )}
-            > */}
-
-
-
-
-
-
-
-            {/* <Box className={classes.flex1} style={{ marginInlineEnd: 10 }}>
-                    <Typography>Group Name:</Typography>
-                </Box>
-                <Box className={classes.flex2} style={{ marginInlineEnd: 10 }}>
-                    <TextField
-                        id="outlined-basic"
-                        label=""
-                        variant="outlined"
-                        name="GroupName"
-                        value={newGroupData.GroupName}
-                        className={clsx(classes.textField, classes.minWidth252)}
-                        autoComplete="off"
-                        onChange={handleChange}
-                    />
-                </Box>
-                <Box
-                    className={clsx(
-                        classes.flex1,
-                        classes.flex,
-                        classes.responsiveFlex
-                    )}
-                >
-                    <FormControlLabel
-                        control={
-                            <Checkbox name="testGroup" size="small" color="primary" />
-                        }
-                        label="Test Group"
-                    />
-                    <CustomTooltip
-                        isSimpleTooltip={false}
-                        interactive={true}
-                        classes={{
-                            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                            arrow: classes.fBlack,
-                        }}
-                        arrow={true}
-                        style={{ fontSize: 18, fontWeight: "bold" }}
-                        placement={"top"}
-                        title={
-                            <Typography noWrap={false}>
-                                {t("group.testGroupInfo")}
-                            </Typography>
-                        }
-                        text={t("group.testGroupInfo")}
-                    >
-                        <span>
-                            <BsInfoCircleFill />
-                        </span>
-                    </CustomTooltip>
-                </Box> */}
-            {/* </Box> */}
         </Dialog>
     );
 };

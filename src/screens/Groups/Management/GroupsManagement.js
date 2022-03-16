@@ -626,6 +626,7 @@ const GroupsManagement = ({ classes }) => {
         setLoader={setLoader}
         onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
+        ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
         // Groups={groupData.map((obj) => ({ GroupID: obj.GroupID, GroupName: obj.GroupName }))}
         Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}

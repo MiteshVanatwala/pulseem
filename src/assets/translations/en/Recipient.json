@@ -38,6 +38,8 @@
   "recipientAddPopUpTitle": "Add a single recipient to one or more groups",
   "addRecipientToGroups": "Add recipient to group/s",
   "dates": "Dates",
+  "addRecipientSuccess": "Success",
+  "incorrectRecipientInput": "Invalid or missing API KEY",
   "errors": {
     "firstName": "First Name can't be empty",
     "lastName": "Last Name can't be empty",
