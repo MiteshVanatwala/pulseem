@@ -2,17 +2,19 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux'
 import { Box, Checkbox, TextField } from '@material-ui/core';
 import { RiCloseFill } from "react-icons/ri";
-import { setSelectedGroups } from '../../redux/reducers/groupSlice';
 import clsx from 'clsx';
 import { Autocomplete } from '@material-ui/lab';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import { setSelectedGroups } from '../../redux/reducers/groupSlice';
 
 
 const GroupTags = ({ classes,
+    groupSelected,
     title = 'mainReport.ChooseLinks',
     onShowModal = () => null,
+    onRemoveGroup = () => null,
     style = null,
     dropDownProps = {
         selectedGroups: [],
@@ -21,21 +23,36 @@ const GroupTags = ({ classes,
     ...props
 }) => {
     const { t } = useTranslation();
+    const { subAccountAllGroups } = useSelector((state) => state.group);
+    const [groups, setGroups] = useState([]);
     const { selectedGroups, groupData } = useSelector((state) => state.group);
-    const dispatch = useDispatch();
-
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
-
+    const dispatch = useDispatch();
 
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();
         e.preventDefault();
-        const newList = selectedGroups.filter((g) => { return g.GroupID !== groupId });
+        const newList = groups.filter((g) => { return g.GroupID !== groupId });
+        onRemoveGroup(newList);
         dispatch(setSelectedGroups(newList));
     }
 
+    useEffect(() => {
+        if (groupSelected && subAccountAllGroups) {
+            let tmpGroups = [];
+            groupSelected.forEach((grp) => {
+                const findGroup = subAccountAllGroups.find((g) => { return g.GroupID === grp });
+                if (findGroup) {
+                    tmpGroups.push(findGroup)
+                }
+            });
+
+            setGroups(tmpGroups);
+            dispatch(setSelectedGroups(tmpGroups));
+
+        }
+    }, [groupSelected])
     const CheckBoxPanel = () => (
         <Box className={classes.rightForm} style={{ ...style }}>
             <Box
