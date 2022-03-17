@@ -51,6 +51,16 @@ export const addRecipient = createAsyncThunk(
         }
     });
 
+export const addRecipients = createAsyncThunk(
+    'Client/Upload', async (payload, thunkAPI) => {
+        try {
+            const response = await instence.post(`Client/Upload`, payload);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 
 export const groupSlice = createSlice({
     name: 'group',
