@@ -2,27 +2,22 @@ import React, { useState, useEffect, useMemo } from "react";
 import clsx from "clsx";
 import {
     Typography,
-    // DeBody,
     Grid,
     Button,
     TextField,
     Box,
-    Checkbox,
-    FormControlLabel,
-    useTheme,
     Accordion,
     AccordionSummary,
     AccordionDetails,
     makeStyles
 } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
 import { DateField } from '../../../components/managment/index'
 
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
-import { GrGroup, GrFormAdd, GrFormSubtract } from "react-icons/gr";
+import { GrFormAdd, GrFormSubtract } from "react-icons/gr";
 import {
     addRecipient,
 } from "../../../redux/reducers/groupSlice";
@@ -30,22 +25,25 @@ import { Dialog } from "../../../components/managment/Dialog";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../model/Groups/Contants";
 import GroupTags from "../../../components/Groups/GroupTags";
+import { ValidateEmail, ValidateNumber } from "../../../helpers/utils";
 
 
 const useStyles = makeStyles({
     contentBox: {
         "height": '30vh'
     },
-
+    accordionIcons: {
+        position: 'absolute',
+        '& path': {
+            stroke: '#0371ad'
+        }
+    }
 });
 
 const AddRecipientPopup = ({ classes,
     isOpen = false,
     onClose,
-    setLoader,
-    onCreateGroupResponse,
     windowSize,
-    Groups = [],
     selectedGroups,
     selectGroup,
     setToastMessage,
@@ -95,9 +93,7 @@ const AddRecipientPopup = ({ classes,
             setErrors({ ...errors, [e.target.name]: t(ADD_RECIPIENT_REQUIRED_ERRORS[e.target.name]) })
         }
         if (e.target.name === "Email") {
-            if (!e.target.value.match(
-                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            )) {
+            if (!ValidateEmail(e.target.value)) {
                 setErrors({ ...errors, Email: t(ADD_RECIPIENT_REQUIRED_ERRORS.Email) })
             }
         }
@@ -138,9 +134,7 @@ const AddRecipientPopup = ({ classes,
 
         if (!data.ClientsData.Email &&
             !data.ClientsData.Cellphone) {
-            if (!data.ClientsData.Email || !data.ClientsData.Email.match(
-                /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-            )) {
+            if (!data.ClientsData.Email || !ValidateEmail(data.ClientsData.Email)) {
                 tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             }
             if (!data.ClientsData.Cellphone) {
@@ -153,7 +147,6 @@ const AddRecipientPopup = ({ classes,
         }
         try {
             const clientsData = [];
-            //addRecipientData.ExtraFields = { ...accountExtraFields }
             clientsData.push({ ...addRecipientData, ...accountExtraFields });
 
             const request = {
@@ -265,7 +258,7 @@ const AddRecipientPopup = ({ classes,
                         className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={(e) => {
-                            if (e.target.value.match(/^\d+$/)) {
+                            if (ValidateNumber(e.target.value)) {
                                 handleChange(e)
                             }
                         }}
@@ -581,15 +574,13 @@ const AddRecipientPopup = ({ classes,
                             setActiveTab(index)
                     }}
                 >
-                    {/* <IconContext.Provider value={{ color: "#0371ad" }}> */}
                     <Typography>{t(label)}
 
                         {activeTab === index ?
-                            <GrFormSubtract size={24} color='#0371ad' style={{ position: 'absolute' }} /> :
-                            <GrFormAdd size={24} color='#0371ad' style={{ position: 'absolute' }} />
+                            <GrFormSubtract size={24} className={localClasses.accordionIcons} /> :
+                            <GrFormAdd size={24} className={localClasses.accordionIcons} />
                         }
                     </Typography>
-                    {/* </IconContext.Provider> */}
                 </AccordionSummary>
                 <AccordionDetails>
                     {index === 0 && PERSONAL_DETAILS_FORM()}
@@ -607,7 +598,6 @@ const AddRecipientPopup = ({ classes,
         <Dialog
             classes={classes}
             open={isOpen}
-            // title={t("group.createNew")}
             title={t('recipient.recipientAddPopUpTitle')}
             icon={<div className={classes.dialogIconContent}>
                 {'\uE0D5'}
@@ -617,7 +607,7 @@ const AddRecipientPopup = ({ classes,
             onCancel={onClose}
             onConfirm={handleSubmit}
             renderButtons={() => (
-                <Grid container spacing={2} className={classes.linePadding}>
+                <Grid container spacing={2} className={clsx(classes.linePadding, classes.maxWidth540, classes.mxAuto)}>
                     <Grid
                         item
                         xs={windowSize === "xs" && 12}
@@ -656,12 +646,6 @@ const AddRecipientPopup = ({ classes,
                             )}
 
                             onClick={handleSubmit}
-                        // onClick={() => {
-                        //     const result = handleAddRecipient(addRecipientData);
-                        //     if (result) {
-                        //         setAddRecipientData(DEFAULT_RECIPIENT_DATA);
-                        //     }
-                        // }}
                         >
                             {t("group.ok")}
                         </Button>
@@ -676,19 +660,12 @@ const AddRecipientPopup = ({ classes,
                             variant="contained"
                             size="medium"
                             className={clsx(
-                                classes.fullWidth,
+                                classes.maxContent,
                                 classes.dialogButton,
                                 classes.dialogConfirmButton,
                                 classes.actionButtonLightGreen,
                                 classes.whiteSpaceNoWrap,
                             )}
-                        // onClick={
-                        //TODO: ADD ADD Recipient Functionality
-                        //     () => setDialogType({
-                        //     type: 'restore',
-                        //     data: smsDeletedData
-                        // })
-                        // }
                         >
                             {t("recipient.addAnotherRecipient")}
                         </Button>
@@ -703,7 +680,6 @@ const AddRecipientPopup = ({ classes,
             <Box className={localClasses.contentBox}>
                 {
                     ADD_RECIPIENT_TABS.map((label, index) => ActiveForm(label, index))
-                    // Array.from({ length: 5 }, (val, i) => ActiveForm(i))
                 }
             </Box>
 

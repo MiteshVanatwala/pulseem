@@ -71,6 +71,9 @@ const GroupTags = ({ classes,
         <Autocomplete
             multiple
             id="tags-outlined"
+            // style={{ height: 100 }}
+            debug={true}
+            className={classes.autoCompleteTag}
             disableCloseOnSelect
             options={groupData?.Groups ?? []}
             getOptionLabel={(option) => option?.GroupName}

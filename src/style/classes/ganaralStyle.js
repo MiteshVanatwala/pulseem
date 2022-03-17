@@ -2258,5 +2258,17 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 16,
     direction: isRTL ? 'rtl' : 'ltr',
     color: '#fff'
+  },
+  autoCompleteTag: {
+    '& .MuiAutocomplete-tag': {
+      backgroundColor: '#0371ad',
+      color: '#fff',
+      '& .MuiChip-deleteIcon': {
+        fill: '#fff'
+      }
+    }
+  },
+  maxContent: {
+    width: 'max-Content'
   }
 });
