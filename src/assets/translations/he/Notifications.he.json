@@ -138,7 +138,7 @@
   "implementDialog": {
     "beforeYouStarted": "לפני שאתה מתחיל...",
     "startSendingOutMessage": "על מנת להתחיל לשלוח נוטיפקציות ללקוחות שלך, עליך להטמיע את הסקריפט שלמטה כדי שמבקרים באתר שלך יוכלו לקבל נוטיפקציות.",
-    "dontShowThisMessage": "אל תציג לי הודעה זו"
+    "dontShowThisMessage": "אל תציג לי הודעה זו שוב"
   },
   "copy": "העתק",
   "copied": "הועתק",
