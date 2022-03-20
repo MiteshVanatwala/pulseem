@@ -198,5 +198,17 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
       { title: t('master.OpenedClickedReport'), href: '/Pulseem/EmailCampaignStatistics.aspx?fromreact=true', isShow: true },
       { key: 'smsResponse', title: t('master.smsReplies'), href: '/react/reports/SmsReplies', isShow: false },
     ]
-  }
+  },
+  {
+    key: 'testUploader',
+    title: 'uploader',
+    pageTitle: 'uploader',
+    iconUnicode: '\ue117',
+    href: '/Test/Uploader',
+    isShow: features && !features.error && features !== null && features.indexOf('35') > -1,
+    icon: <img
+      alt='Notifications'
+      src={NotificationsIcon} />,
+    options: []
+  },
 ]

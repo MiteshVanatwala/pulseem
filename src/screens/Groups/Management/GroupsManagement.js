@@ -513,8 +513,8 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const renderTableBody = useMemo(() => {
-    let sortData = groupData ? groupData.Groups : []; // BUG: UNCOMMENT THIS 
-    // let sortData = [StaticData[0]]; // BUG: COMMENT THIS 
+    let sortData = groupData ? groupData.Groups : []; // BUG: UNCOMMENT THIS
+    // let sortData = [StaticData[0]]; // BUG: COMMENT THIS
     if (sortData.length <= 0) {
       return <></>;
     }
@@ -575,7 +575,7 @@ const GroupsManagement = ({ classes }) => {
     setIsFilePicked(true);
     return false;
   };
-  
+
 
   useEffect(() => {
     const upload = () => {
