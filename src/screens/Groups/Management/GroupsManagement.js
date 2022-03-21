@@ -1,4 +1,3 @@
-import { AiOutlineCloudUpload } from 'react-icons/ai';
 import React, { useState, useEffect, useMemo } from "react";
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
@@ -10,8 +9,6 @@ import {
   Button,
   TextField,
   Box,
-  Checkbox,
-  FormControlLabel,
   useTheme,
 } from "@material-ui/core";
 import { SearchIcon, ExportIcon } from "../../../assets/images/managment/index";
@@ -31,9 +28,6 @@ import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
 import { setCookie } from "../../../helpers/cookies";
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import DataTable from "../../../components/Table/DataTable";
-// import { ExcelData, StaticData } from "../tempConstants";
-import { GrGroup } from "react-icons/gr";
-import { BsInfoCircleFill, BsInfoSquare } from "react-icons/bs";
 import { exportFile } from "../../../helpers/exportFromJson";
 import { preferredOrder } from "../../../helpers/exportHelper";
 import RenderRow from "./RenderRow";
@@ -44,8 +38,7 @@ import ConfirmDeletePopUp from "./ConfirmDeletePopUp";
 import Toast from '../../../components/Toast/Toast.component';
 import {
   getGroups,
-  deleteGroups,
-  addRecipients
+  deleteGroups
 } from "../../../redux/reducers/groupSlice";
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 
@@ -561,43 +554,6 @@ const GroupsManagement = ({ classes }) => {
 
   const groupsLength = (groupData && groupData.RecordCount) || 0;
 
-  const [fileToUpload, setFileToUpload] = useState(null);
-  const [isFilePicked, setIsFilePicked] = useState(false);
-
-  const hiddenFileInput = React.useRef(null);
-  const handleUploadClick = () => {
-    hiddenFileInput.current.click();
-  };
-  const changeHandler = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setFileToUpload(event.target.files[0]);
-    setIsFilePicked(true);
-    return false;
-  };
-
-
-  useEffect(() => {
-    const upload = () => {
-      setIsFilePicked(false);
-      setFileToUpload(null);
-      var reader = new FileReader();
-      reader.onload = async function (event) {
-        var fileContent = event.target.result;
-        const fileModel = {
-          FileRequest: fileContent,
-          GroupID: 1
-        }
-        await dispatch(addRecipients(fileModel));
-      }
-      reader.readAsDataURL(fileToUpload);
-
-    }
-    if (fileToUpload != null && isFilePicked) {
-      upload();
-    }
-  }, [fileToUpload]);
-
   return (
     <DefaultScreen
       currentPage="groups"
@@ -680,23 +636,6 @@ const GroupsManagement = ({ classes }) => {
         handleDeleteGroup={() => handleDeleteGroup()}
       />
       <Loader isOpen={showLoader} />
-      {/* addRecipients */}
-      <Grid item lg={4} md={6} xs={12}>
-        <Button
-          className={"select-image"}
-          onClick={handleUploadClick}
-          style={{ padding: "6px 8px", backgroundColor: 'transparent !important' }}>
-          <input type="file" name="file"
-            ref={hiddenFileInput}
-            onChange={changeHandler}
-            hidden
-            accept=".xls,.xlsx,.csv,.xslb" />
-          <Box className="img-container drag-here">
-            <AiOutlineCloudUpload style={{ fontSize: 30 }} />
-            {t('common.chooseImage')}
-          </Box>
-        </Button>
-      </Grid>
     </DefaultScreen>
   );
 };
