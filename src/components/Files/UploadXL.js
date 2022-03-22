@@ -345,9 +345,17 @@ const UploadXL = ({
                 }
             }
 
+            // Set mapping
+            const mapping = headers.map((h, idx) => {
+                if (h != t("sms.adjustTitle")) { return { Index: idx, Title: h.trim().replace(' ', '') } }
+            }).filter(function (x) {
+                return x !== undefined;
+            });
+
             const finalPayload = {
                 ClientsData: requestPayload,
-                GroupIds: uploadToGroups.split(',')
+                GroupIds: uploadToGroups.split(','),
+                Mapping: JSON.stringify(mapping)
             }
 
             setDialogType(null);
@@ -357,6 +365,7 @@ const UploadXL = ({
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
                 formData.append("groupids", uploadToGroups);
+                formData.append("mapping", JSON.stringify(mapping));
                 r = await dispatch(addRecipients(formData))
             }
             else {
