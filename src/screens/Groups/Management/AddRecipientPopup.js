@@ -623,9 +623,7 @@ const AddRecipientPopup = ({ classes,
                             className={clsx(
                                 classes.dialogButton,
                                 classes.dialogButtonResponive,
-                                classes.dialogCancelButton,
-                                // classes.fullWidth,
-                                // classes.whiteSpaceNoWrap
+                                classes.dialogCancelButton
                             )}
                             onClick={onClose}
                         >
@@ -646,8 +644,6 @@ const AddRecipientPopup = ({ classes,
                                 classes.dialogButton,
                                 classes.dialogButtonResponive,
                                 classes.dialogConfirmButton,
-                                // classes.fullWidth,
-                                // classes.whiteSpaceNoWrap,
                                 classes.textCapitalize
                             )}
 
@@ -670,9 +666,7 @@ const AddRecipientPopup = ({ classes,
                                 classes.maxContent,
                                 classes.dialogButton,
                                 classes.dialogButtonResponive,
-                                classes.dialogConfirmButton,
-                                // classes.actionButtonLightGreen,
-                                // classes.whiteSpaceNoWrap,
+                                classes.dialogConfirmButton
                             )}
                         >
                             {t("recipient.addAnotherRecipient")}
@@ -680,74 +674,7 @@ const AddRecipientPopup = ({ classes,
                     </Box>
 
                 </Box>
-                // <Grid container spacing={2} className={clsx(classes.linePadding, classes.maxWidth540, classes.mxAuto)}>
-                //     <Grid
-                //         item
-                //         xs={windowSize === "xs" && 12}
-                //         sm={2}
-                //         md={2}
-                //         className={classes.txtCenter}
-                //     >
-                //         <Button
-                //             variant="contained"
-                //             size="medium"
-                //             className={clsx(
-                //                 classes.dialogButton,
-                //                 classes.dialogCancelButton,
-                //                 classes.fullWidth,
-                //                 classes.whiteSpaceNoWrap
-                //             )}
-                //             onClick={onClose}
-                //         >
-                //             {t("group.cancel")}
-                //         </Button>
-                //     </Grid>
-                //     <Grid
-                //         item
-                //         xs={windowSize === "xs" && 12}
-                //         sm={2}
-                //         md={2}
-                //         className={classes.txtCenter}
-                //     >
-                //         <Button
-                //             variant="contained"
-                //             size="medium"
-                //             className={clsx(
-                //                 classes.dialogButton,
-                //                 classes.dialogConfirmButton,
-                //                 classes.fullWidth,
-                //                 classes.whiteSpaceNoWrap,
-                //                 classes.textCapitalize
-                //             )}
 
-                //             onClick={handleSubmit}
-                //         >
-                //             {t("group.ok")}
-                //         </Button>
-                //     </Grid>
-                //     <Grid
-                //         item
-                //         xs={windowSize === "xs" && 12}
-                //         sm={6}
-                //         md={6}
-                //         className={clsx(classes.maxContent, classes.txtCenter)}
-                //     >
-                //         <Button
-                //             variant="contained"
-                //             size="medium"
-                //             className={clsx(
-                //                 classes.maxContent,
-                //                 classes.dialogButton,
-                //                 classes.dialogConfirmButton,
-                //                 classes.actionButtonLightGreen,
-                //                 classes.whiteSpaceNoWrap,
-                //             )}
-                //         >
-                //             {t("recipient.addAnotherRecipient")}
-                //         </Button>
-                //     </Grid>
-
-                // </Grid>
             )}
             customContainerStyle=""
             cancelText="common.Cancel"
