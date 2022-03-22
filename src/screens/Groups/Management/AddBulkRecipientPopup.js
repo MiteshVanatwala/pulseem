@@ -78,6 +78,7 @@ const AddBulkRecipientPopup = ({ classes,
                 classes={classes}
                 onDone={(e) => console.log("RESULT:", e)}
                 settings={UploadSettings.GROUPS}
+                uploadToGroups={selectedGroups}
             />
 
         </Dialog>

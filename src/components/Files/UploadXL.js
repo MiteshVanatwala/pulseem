@@ -32,7 +32,7 @@ const UploadXL = ({
     classes,
     placeHolder = "sms.dragXlOrCsv",
     onDone = () => null,
-    uploadToGroups = "166609,166608,165651",
+    uploadToGroups = [],
     settings = null
 }) => {
     const { t } = useTranslation();
@@ -354,14 +354,14 @@ const UploadXL = ({
 
             const finalPayload = {
                 ClientsData: requestPayload,
-                GroupIds: uploadToGroups.split(','),
+                GroupIds: uploadToGroups,
                 Mapping: JSON.stringify(mapping)
             }
 
             setDialogType(null);
             setLoader(true);
             let r = null;
-            if (fileToUpload !== null) {
+            if (fileToUpload !== null && contacts.length >= 5000) {
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
                 formData.append("groupids", uploadToGroups);
