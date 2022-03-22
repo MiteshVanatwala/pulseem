@@ -45,5 +45,6 @@
     "lastName": "Last Name can't be empty",
     "email": "Enter a valid email",
     "cellPhone": "Invalid cellphone"
-  }
+  },
+  "bulkImportTitle": "Recipient Import"
 }

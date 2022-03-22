@@ -606,42 +606,44 @@ const AddRecipientPopup = ({ classes,
             onClose={onClose}
             onCancel={onClose}
             onConfirm={handleSubmit}
+            reduceTitle
             renderButtons={() => (
-                <Grid container spacing={2} className={clsx(classes.linePadding, classes.maxWidth540, classes.mxAuto)}>
-                    <Grid
+
+                <Box container spacing={2} className={clsx(classes.responsiveLinePadding, classes.maxWidth540, classes.mxAuto, classes.justifyCenterOfCenter, classes.flexWrap, classes.pt0, classes.pb0)}>
+                    <Box
                         item
                         xs={windowSize === "xs" && 12}
                         sm={4}
-                        className={classes.txtCenter}
+                        md={4}
+                        className={clsx(classes.txtCenter, classes.mt5)}
                     >
                         <Button
                             variant="contained"
                             size="medium"
                             className={clsx(
                                 classes.dialogButton,
-                                classes.dialogCancelButton,
-                                classes.fullWidth,
-                                classes.whiteSpaceNoWrap
+                                classes.dialogButtonResponive,
+                                classes.dialogCancelButton
                             )}
                             onClick={onClose}
                         >
                             {t("group.cancel")}
                         </Button>
-                    </Grid>
-                    <Grid
+                    </Box>
+                    <Box
                         item
                         xs={windowSize === "xs" && 12}
                         sm={4}
-                        className={classes.txtCenter}
+                        md={4}
+                        className={clsx(classes.txtCenter, classes.mt5)}
                     >
                         <Button
                             variant="contained"
                             size="medium"
                             className={clsx(
                                 classes.dialogButton,
+                                classes.dialogButtonResponive,
                                 classes.dialogConfirmButton,
-                                classes.fullWidth,
-                                classes.whiteSpaceNoWrap,
                                 classes.textCapitalize
                             )}
 
@@ -649,12 +651,13 @@ const AddRecipientPopup = ({ classes,
                         >
                             {t("group.ok")}
                         </Button>
-                    </Grid>
-                    <Grid
+                    </Box>
+                    <Box
                         item
                         xs={windowSize === "xs" && 12}
                         sm={4}
-                        className={classes.txtCenter}
+                        md={4}
+                        className={clsx(classes.txtCenter, classes.mt5, classes.maxContent)}
                     >
                         <Button
                             variant="contained"
@@ -662,16 +665,16 @@ const AddRecipientPopup = ({ classes,
                             className={clsx(
                                 classes.maxContent,
                                 classes.dialogButton,
-                                classes.dialogConfirmButton,
-                                classes.actionButtonLightGreen,
-                                classes.whiteSpaceNoWrap,
+                                classes.dialogButtonResponive,
+                                classes.dialogConfirmButton
                             )}
                         >
                             {t("recipient.addAnotherRecipient")}
                         </Button>
-                    </Grid>
+                    </Box>
 
-                </Grid>
+                </Box>
+
             )}
             customContainerStyle=""
             cancelText="common.Cancel"

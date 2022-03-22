@@ -311,6 +311,10 @@ const RenderWebRow = ({
               classes: { text: localClasses.noWrap },
             },
             {
+              onClick: () => {
+                setSelectedGroups(GroupID)
+                setDialog(DialogType.ADD_RECIPIENTS)
+              },
               label: t("recipient.addRecipients"),
               component: (
                 <IconWrapper

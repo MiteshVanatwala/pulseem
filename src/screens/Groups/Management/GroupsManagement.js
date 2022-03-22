@@ -41,6 +41,7 @@ import {
   deleteGroups
 } from "../../../redux/reducers/groupSlice";
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
+import AddBulkRecipientPopup from "./AddBulkRecipientPopup";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -92,7 +93,8 @@ const GroupsManagement = ({ classes }) => {
   const DialogType = {
     ADD_GROUP: "addGroup",
     DELETE_GROUP: "delete group",
-    ADD_RECIPIENT: "add recipient"
+    ADD_RECIPIENT: "add recipient",
+    ADD_RECIPIENTS: "add recipients"
   };
 
   const TABLE_HEAD = [
@@ -616,6 +618,21 @@ const GroupsManagement = ({ classes }) => {
       {dialog === DialogType.ADD_RECIPIENT && <AddRecipientPopup
         classes={classes}
         isOpen={dialog === DialogType.ADD_RECIPIENT}
+        onClose={() => setDialog(null)}
+        setLoader={setLoader}
+        onCreateGroupResponse={() => onCreateGroupResponse()}
+        windowSize={windowSize}
+        ToastMessages={ToastMessages}
+        setToastMessage={setToastMessage}
+        // Groups={groupData.map((obj) => ({ GroupID: obj.GroupID, GroupName: obj.GroupName }))}
+        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
+        selectedGroups={selectedGroups}
+        selectGroup={(idArr) => setSelectedGroups(idArr)}
+        onAddRecipient={getData}
+      />}
+      {dialog === DialogType.ADD_RECIPIENTS && <AddBulkRecipientPopup
+        classes={classes}
+        isOpen={dialog === DialogType.ADD_RECIPIENTS}
         onClose={() => setDialog(null)}
         setLoader={setLoader}
         onCreateGroupResponse={() => onCreateGroupResponse()}

@@ -379,11 +379,6 @@ const renderRoutes = (classes, history) => {
         path={`/SiteTracking`}
         render={props => <SiteTrackingEditor props={props} classes={classes} />}
       />
-      <Route
-        exact
-        path="/Test/Uploader"
-        render={props => <TestUploader {...props} classes={classes} />}
-      />
     </>
   )
 }
@@ -392,7 +387,7 @@ const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize } = useSelector(state => state.core)
   screenSize && dispatch(setWindowSize(screenSize))
-  setCookie('jtoken', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IlRlc3Q0QnJpamVzaCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3NpZCI6IkZXQS9kSXNMVWRqL25iU25aVUZCMkE9PSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2RucyI6InB1bHNlZW1kZXYuY28uaWwiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy91cmkiOiJGYWxzZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2xvY2FsaXR5IjoiaGUtaWwiLCJlbWFpbCI6IiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2hvbWVwaG9uZSI6IiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL3N0YXRlb3Jwcm92aW5jZSI6Imh0dHBzOi8vd3d3LnB1bHNlZW0uY28uaWwvUHVsc2VlbS9Db250ZW50L2ltYWdlcy9wdWxzZWVtbmV3bG9nby5wbmciLCJnaXZlbl9uYW1lIjoiUHVsc2VlbSIsIm5hbWVpZCI6IlRlc3Q0QnJpamVzaDEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9hdXRob3JpemF0aW9uZGVjaXNpb24iOiIiLCJyb2xlIjoiIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy91c2VyZGF0YSI6IlRydWUiLCJjZXJ0dGh1bWJwcmludCI6IjAiLCJuYmYiOjE2NDc3Nzg0NTIsImV4cCI6MTY0Nzc4MjA1MiwiaWF0IjoxNjQ3Nzc4NDUyfQ.q5ooM2recheEZJDHBeKln5Jgl7tQSpTEwTfWtQWjzK0');
+
   useEffect(() => {
 
     const initFeatures = async () => {
