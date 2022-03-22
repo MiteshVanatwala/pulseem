@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api';
+import { instence, uploaderInstance } from '../../helpers/api';
 
 export const getGroupsBySubAccountId = createAsyncThunk(
     'Group/GetGroupsBySubAccountId', async (_, thunkAPI) => {
@@ -45,6 +45,16 @@ export const addRecipient = createAsyncThunk(
     'client/AddClients', async (payload, thunkAPI) => {
         try {
             const response = await instence.post(`client/AddClients`, payload);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+export const addRecipients = createAsyncThunk(
+    'Client/Upload', async (payload, thunkAPI) => {
+        try {
+            const response = await uploaderInstance.post(`Client/Upload`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
