@@ -9,8 +9,6 @@ import {
   Button,
   TextField,
   Box,
-  Checkbox,
-  FormControlLabel,
   useTheme,
 } from "@material-ui/core";
 import { SearchIcon, ExportIcon } from "../../../assets/images/managment/index";
@@ -30,9 +28,6 @@ import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
 import { setCookie } from "../../../helpers/cookies";
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import DataTable from "../../../components/Table/DataTable";
-// import { ExcelData, StaticData } from "../tempConstants";
-import { GrGroup } from "react-icons/gr";
-import { BsInfoCircleFill, BsInfoSquare } from "react-icons/bs";
 import { exportFile } from "../../../helpers/exportFromJson";
 import { preferredOrder } from "../../../helpers/exportHelper";
 import RenderRow from "./RenderRow";
@@ -511,8 +506,8 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const renderTableBody = useMemo(() => {
-    let sortData = groupData ? groupData.Groups : []; // BUG: UNCOMMENT THIS 
-    // let sortData = [StaticData[0]]; // BUG: COMMENT THIS 
+    let sortData = groupData ? groupData.Groups : []; // BUG: UNCOMMENT THIS
+    // let sortData = [StaticData[0]]; // BUG: COMMENT THIS
     if (sortData.length <= 0) {
       return <></>;
     }
@@ -556,7 +551,6 @@ const GroupsManagement = ({ classes }) => {
       </TableBody>
     );
   }, [groupData, rowsPerPage, page, classes, selectedGroups]);
-
 
   const groupsLength = (groupData && groupData.RecordCount) || 0;
 

@@ -439,3 +439,59 @@ export const ExcelData = [
     ErrorMessage: "sdadafsa",
   },
 ];
+
+export const UploadSettings = {
+  SMS: {
+    ShowGroupName: true,
+    Fields: [
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "FirstName",
+        label: "common.first_name"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "LastName",
+        label: "common.last_name"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "CellPhone",
+        label: "common.cellphone"
+      }
+    ]
+  },
+  GROUPS: {
+    ShowGroupName: false,
+    Fields: [
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "FirstName",
+        label: "common.first_name"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "LastName",
+        label: "common.last_name"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "CellPhone",
+        label: "common.cellphone"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "Email",
+        label: "common.email"
+      }
+    ]
+  }
+
+};
