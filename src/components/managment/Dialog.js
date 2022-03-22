@@ -69,7 +69,7 @@ export const Dialog = ({
   const renderTitleDefault = () => {
     return (
       <>
-        <Typography className={clsx(classes.dialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)}>
+        <Typography className={clsx(props.reduceTitle ? classes.reducedTitle : '', classes.dialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)}>
           {title}
         </Typography>
         {showDivider && <Divider />}

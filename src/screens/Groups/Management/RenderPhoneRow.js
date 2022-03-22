@@ -32,11 +32,11 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                     <Box className={classes.inlineGrid}>{name}</Box>
                     <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
                         <IconWrapper
-                            iconName="addRecipients"
+                            iconName="addRecipient"
                             className={classes.mxAuto}
                             onClick={() => {
                                 setSelectedGroups(GroupID)
-                                setDialog(DialogType.DELETE_GROUP)
+                                setDialog(DialogType.ADD_RECIPIENT)
                             }}
                         />
                     </Box>

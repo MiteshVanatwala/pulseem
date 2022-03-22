@@ -445,6 +445,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       paddingInline: 10,
       paddingBottom: 3,
       paddingTop: 3,
+      "@media screen and (max-width: 768px)": {
+        height: 20,
+      },
     }
   },
   selectField: {
@@ -667,6 +670,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   linePadding: {
     paddingBlock: "1rem",
+  },
+  responsiveLinePadding: {
+    paddingBlock: "1rem",
+    "@media screen and (max-width: 768px)": {
+      paddingBlock: 0
+    },
   },
   lineTopMarging: {
     marginTop: "1rem",

@@ -1,10 +1,10 @@
 import { Box, Grid, makeStyles, Typography } from "@material-ui/core"
 
 const useStyles = makeStyles({
-    dataBox: {
-        "@media screen and (max-width: 1160px)": {
+    contentBox: {
+        "@media screen and (max-width: 768px)": {
             '& p': {
-                fontSize: '1em'
+                fontSize: '.9rem'
             }
         }
     }
@@ -16,7 +16,7 @@ const SimpleGrid = ({ gridArr = [],
     ...props
 }) => {
 
-    // const localClasses = useStyles();
+    const localClasses = useStyles();
 
     return (
         <>
@@ -24,7 +24,7 @@ const SimpleGrid = ({ gridArr = [],
                 {
                     gridArr.map((obj, idx) => {
                         return (
-                            <Grid item xs={obj.gridSize?.xs ?? 12} sm={obj.gridSize?.sm ?? 6}>
+                            <Grid className={localClasses.contentBox} item xs={obj.gridSize?.xs ?? 12} sm={obj.gridSize?.sm ?? 6}>
                                 {obj.content}
                             </Grid>
                         )

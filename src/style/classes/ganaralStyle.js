@@ -119,6 +119,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInline: 25,
     whiteSpace: "pre-line",
   },
+  reducedTitle: {
+    "@media screen and (max-width: 768px)": {
+      fontSize: "1.3rem",
+    }
+  },
   dialogChildren: {
     // marginInline: 25,
     marginBlock: 10,
@@ -307,6 +312,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   pb10: {
     paddingBottom: 10,
+  },
+  m10: {
+    margin: 10,
   },
   mr10: {
     marginInlineEnd: 10,
@@ -646,6 +654,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   noWrap: {
     flexWrap: "nowrap",
+  },
+  flexWrap: {
+    flexWrap: "wrap",
   },
   infoDiv: {
     height: "100px",
@@ -2190,6 +2201,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     width: 120,
     fontSize: 18,
     borderRadius: 50,
+  },
+  dialogButtonResponive: {
+    marginInline: 10,
+    "@media screen and (max-width: 768px)": {
+      fontSize: 14,
+      marginTop: 5,
+      marginBottom: 5,
+      width: 100
+    },
   },
   dialogButtonCenter: {
     margin: "0 auto",
