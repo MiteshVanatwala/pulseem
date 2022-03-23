@@ -361,7 +361,7 @@ const UploadXL = ({
 
             // Set mapping
             const mapping = headers.map((h, idx) => {
-                if (h != t("sms.adjustTitle")) { return { Index: idx, Title: h.trim().replace(' ', '') } }
+                if (h != t("sms.adjustTitle")) { return { Index: idx, Title: translateHebrewColumns(h.toLocaleString().replaceAll(' ', '')) } }
             }).filter(function (x) {
                 return x !== undefined;
             });
@@ -369,13 +369,13 @@ const UploadXL = ({
             const finalPayload = {
                 ClientsData: requestPayload,
                 GroupIds: uploadToGroups,
-                Mapping: JSON.stringify(mapping)
+                Mapping: mapping
             }
 
             setDialogType(null);
             setLoader(true);
             let r = null;
-            if (fileToUpload !== null && contacts.length >= 5000) {
+            if (fileToUpload !== null && requestPayload.length >= 5000) {
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
                 formData.append("groupids", uploadToGroups);
@@ -430,6 +430,7 @@ const UploadXL = ({
                 selectArray[i].isdisabled = false;
                 selectArray[i].idx = -1;
             }
+            setFileToUpload(null);
         }
     }
     const handleManualDialog = (e) => {
