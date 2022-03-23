@@ -366,15 +366,10 @@ const UploadXL = ({
                 return x !== undefined;
             });
 
-            const finalPayload = {
-                ClientsData: requestPayload,
-                GroupIds: uploadToGroups,
-                Mapping: mapping
-            }
-
             setDialogType(null);
             setLoader(true);
             let r = null;
+
             if (fileToUpload !== null && requestPayload.length >= 5000) {
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
@@ -383,6 +378,11 @@ const UploadXL = ({
                 r = await dispatch(addRecipients(formData))
             }
             else {
+                const finalPayload = {
+                    ClientsData: requestPayload,
+                    GroupIds: uploadToGroups,
+                    Mapping: mapping
+                }
                 r = await dispatch(addRecipient(finalPayload))
             }
 
