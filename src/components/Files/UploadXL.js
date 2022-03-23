@@ -63,6 +63,20 @@ const UploadXL = ({
     const [dropIndex, setdropIndex] = useState(-1);
 
     useEffect(() => {
+        Object.keys(extraData).forEach((ed) => {
+            const exist = settings.Fields.filter((e) => {
+                return e.value === ed;
+            });
+
+            if (exist <= 0 && extraData[ed] !== '') {
+                settings.Fields.push({
+                    eisdisabled: false,
+                    idx: -1,
+                    value: ed,
+                    label: extraData[ed]
+                });
+            }
+        });
         const fields = settings.Fields.map((e) => {
             return {
                 eisdisabled: e.isdisabled,
