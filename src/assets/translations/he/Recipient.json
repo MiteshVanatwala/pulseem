@@ -41,10 +41,10 @@
   "addRecipientSuccess": "נמען נוסף בהצלחה",
   "incorrectRecipientInput": "מספר סלולארי או כתובת המייל שהוזנו לא תקינים",
   "errors": {
-    "firstName": "",
-    "lastName": "",
-    "email": "",
-    "cellPhone": ""
+    "firstName": "שם פרטי - שדה חובה",
+    "lastName": "שם משפחה - שדה חובה",
+    "email": "יש להזין כתובת מייל חוקית",
+    "cellPhone": "יש להזין מספר סלולרי חוקי"
   },
-  "bulkImportTitle": ""
+  "bulkImportTitle": "העלאת נמענים"
 }

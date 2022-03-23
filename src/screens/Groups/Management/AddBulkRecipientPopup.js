@@ -31,7 +31,8 @@ import UploadXL from '../../../components/Files/UploadXL'
 
 const useStyles = makeStyles({
     contentBox: {
-        "height": '40vh'
+        "width": 560,
+        "height": '50vh'
     },
     accordionIcons: {
         position: 'absolute',
@@ -74,13 +75,14 @@ const AddBulkRecipientPopup = ({ classes,
             renderButtons={() => (<></>)}
             customContainerStyle=""
         >
-            <UploadXL
-                classes={classes}
-                onDone={(e) => console.log("RESULT:", e)}
-                settings={UploadSettings.GROUPS}
-                uploadToGroups={selectedGroups}
-            />
-
+            <Box className={localClasses.contentBox}>
+                <UploadXL
+                    classes={classes}
+                    onDone={(e) => console.log("RESULT:", e)}
+                    settings={UploadSettings.GROUPS}
+                    uploadToGroups={selectedGroups}
+                />
+            </Box>
         </Dialog>
     );
 };
