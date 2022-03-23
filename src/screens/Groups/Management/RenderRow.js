@@ -72,6 +72,7 @@ const RenderWebRow = ({
     GroupID,
     InvalidCell,
     InvalidEmails,
+    RestrictedEmails,
     RemovedCell,
     RemovedEmails,
     TotalRecipients,
@@ -204,7 +205,7 @@ const RenderWebRow = ({
           gridArr={[
             {
               name: t("campaigns.recipients"),
-              value: TotalRecipients,
+              value: (ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0),
               classes: {
                 name: clsx(colorTextStyle.blue, localClasses.dataBox),
                 value: colorTextStyle.blue,
