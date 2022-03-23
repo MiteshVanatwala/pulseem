@@ -31,7 +31,7 @@ import UploadXL from '../../../components/Files/UploadXL'
 
 const useStyles = makeStyles({
     contentBox: {
-        "height": '30vh'
+        "height": '40vh'
     },
     accordionIcons: {
         position: 'absolute',

@@ -79,7 +79,8 @@ export const groupSlice = createSlice({
             GROUP_NAME_MAXLENGTH: { severity: 'error', color: 'error', message: 'group.nameMaxLength', showAnimtionCheck: false },
             GROUP_NAME_EMPTY: { severity: 'error', color: 'error', message: 'group.emptyGroupName', showAnimtionCheck: false },
             RECIPIENT_ADDED: { severity: 'success', color: 'success', message: 'group.addRecipientSuccess', showAnimtionCheck: false },
-            RECIPIENT_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'group.incorrectRecipientInput', showAnimtionCheck: false },
+            RECIPIENT_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'recipient.incorrectRecipientInput', showAnimtionCheck: false },
+            GROUP_INVALID_ID: { severity: 'error', color: 'error', message: 'group.invalidGroupId', showAnimtionCheck: false },
         }
     },
     reducers: {
