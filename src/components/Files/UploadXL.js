@@ -387,50 +387,8 @@ const UploadXL = ({
             }
 
             setLoader(false);
-
-
-            if (r && r.payload.Reason == "no_recipients_to_update") {
-                setToastMessage(ToastMessages.INVALID_RECIPIENTS)
-                settypedData([]);
-                setContacts([]);
-                setgroupNameInput("");
-                setGroupTextError(false);
-            }
-            else {
-                let tempres = [];
-                let temp = [];
-                for (let i = 0; i < groupList.length; i++) {
-                    tempres.push(groupList[i]);
-                }
-                for (let i = 0; i < selectedGroups.length; i++) {
-                    temp.push(selectedGroups[i]);
-                }
-
-                temp.push({
-                    Recipients: r.payload.Recipients,
-                    GroupName: groupNameInput,
-                    GroupID: r.payload.GroupID
-                });
-
-                tempres.push({
-                    Recipients: r.payload.Recipients,
-                    GroupName: groupNameInput,
-                    GroupID: r.payload.GroupID
-                });
-                setGroupList(tempres);
-                setSelected(temp);
-                setareaData("");
-                settypedData([]);
-                setContacts([]);
-                setgroupNameInput("");
-                setGroupTextError(false);
-                setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
-            }
-            for (let i = 0; i < selectArray.length; i++) {
-                selectArray[i].isdisabled = false;
-                selectArray[i].idx = -1;
-            }
             setFileToUpload(null);
+            onDone(r);
         }
     }
     const handleManualDialog = (e) => {
