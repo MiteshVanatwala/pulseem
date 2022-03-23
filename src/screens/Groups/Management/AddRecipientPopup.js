@@ -89,7 +89,7 @@ const AddRecipientPopup = ({ classes,
                 setToastMessage(ToastMessages.GROUP_INVALID_API);
                 break;
             }
-            case 402: {
+            case 406: {
                 setToastMessage(ToastMessages.GROUP_INVALID_ID);
                 break;
             }
