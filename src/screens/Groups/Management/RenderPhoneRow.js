@@ -54,6 +54,7 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                                     name: colorTextStyle.blue,
                                     value: colorTextStyle.blue,
                                 },
+                                onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
                             },
                             {
                                 name: t("recipient.Active"),
@@ -62,6 +63,7 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                                     name: colorTextStyle.green,
                                     value: colorTextStyle.green,
                                 },
+                                onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
                             },
                             {
                                 name: t("recipient.Removed"),
@@ -70,6 +72,7 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                                     name: colorTextStyle.red,
                                     value: colorTextStyle.red,
                                 },
+                                onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
                             },
                             {
                                 name: t("recipient.Bounced"),
@@ -78,6 +81,7 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                                     name: colorTextStyle.red,
                                     value: colorTextStyle.red,
                                 },
+                                onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
                             },
                         ]}
 
@@ -97,6 +101,7 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                                     name: colorTextStyle.blue,
                                     value: colorTextStyle.blue,
                                 },
+                                onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
                             },
                             {
                                 name: t("recipient.Active"),
@@ -105,6 +110,7 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                                     name: colorTextStyle.green,
                                     value: colorTextStyle.green,
                                 },
+                                onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
                             },
                             {
                                 name: t("recipient.Removed"),
@@ -113,6 +119,7 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                                     name: colorTextStyle.red,
                                     value: colorTextStyle.red,
                                 },
+                                onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
                             },
                             {
                                 name: t("recipient.Bounced"),
@@ -121,6 +128,7 @@ const RenderPhoneRow = ({ name, classes, rowStyle, row, colorTextStyle, setSelec
                                     name: colorTextStyle.red,
                                     value: colorTextStyle.red,
                                 },
+                                onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
                             },
                         ]}
                         variant="body1"

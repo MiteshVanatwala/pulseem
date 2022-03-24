@@ -210,6 +210,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.blue, localClasses.dataBox),
                 value: colorTextStyle.blue,
               },
+              onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
             },
             {
               name: t("recipient.Active"),
@@ -218,6 +219,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.green, localClasses.dataBox),
                 value: colorTextStyle.green,
               },
+              onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
             },
             {
               name: t("recipient.Removed"),
@@ -226,6 +228,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
+              onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
             },
             {
               name: t("recipient.Bounced"),
@@ -234,6 +237,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
+              onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
             },
           ]}
           gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
@@ -251,6 +255,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.blue, localClasses.dataBox),
                 value: colorTextStyle.blue,
               },
+              onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
             },
             {
               name: t("recipient.Active"),
@@ -259,6 +264,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.green, localClasses.dataBox),
                 value: colorTextStyle.green,
               },
+              onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
             },
             {
               name: t("recipient.Removed"),
@@ -267,6 +273,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
+              onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
             },
             {
               name: t("recipient.Bounced"),
@@ -275,6 +282,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
+              onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
             },
           ]}
           gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}

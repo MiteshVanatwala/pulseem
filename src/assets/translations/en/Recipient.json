@@ -44,7 +44,8 @@
     "firstName": "First Name can't be empty",
     "lastName": "Last Name can't be empty",
     "email": "Enter a valid email",
-    "cellPhone": "Invalid cellphone"
+    "cellPhone": "Invalid cellphone",
+    "cellphoneLength": "Cellphone should be between 10-12 digits"
   },
   "bulkImportTitle": "Recipient Import",
   "importResponses":{

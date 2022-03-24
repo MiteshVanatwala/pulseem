@@ -185,7 +185,7 @@ const GroupsManagement = ({ classes }) => {
     });
   };
 
-  const onCreateGroupResponse = (response) => {
+  const onCreateGroupResponse = (response, openAddRec) => {
     switch (response.payload.StatusCode) {
       case 201: {
         getData();
@@ -646,6 +646,7 @@ const GroupsManagement = ({ classes }) => {
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
+        openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
       />
       {dialog === DialogType.ADD_RECIPIENT && <AddRecipientPopup
         classes={classes}
