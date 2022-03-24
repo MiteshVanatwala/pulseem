@@ -6,25 +6,57 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getCampaignById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { appearance, tools, options, features } from './constants'
+import { ClientFields } from '../../../model/PulseemFields/Fields'
+import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
+import { useTranslation } from "react-i18next";
 
 const CampaignEditor = ({ classes, ...props }) => {
+    const { t } = useTranslation();
     const dispatch = useDispatch()
     const editorRef = useRef(null);
     const [showLoader, setLoader] = useState(true);
     const { campaign } = useSelector(state => state.campaignEditor);
     const campaignId = props.match.params.id;
     const [dataReady, setDataReady] = useState(false);
+    const [dataLoaded, setDataLoaded] = useState(false);
+    const { extraData } = useSelector(state => state.sms);
+    const [mergeData, setPulseemMergeData] = useState({});
 
     const getData = async () => {
         setLoader(true);
         await dispatch(getCampaignById(props.match.params.id));
+        await dispatch(getAccountExtraData());
         setDataReady(true);
         setLoader(false);
     }
 
     useEffect(() => {
-        onLoad();
+      if(dataReady){
+        let exData = [...ClientFields];
+        Object.keys(extraData).forEach((item, i) => {
+          if(Object.values(extraData)[i] && Object.values(extraData)[i] != ''){
+            exData.push({ value: item, label: Object.values(extraData)[i], isExtraField: true})
+          }
+        });
+
+        const mData = {};
+        exData.forEach((ed) => {
+          mData[ed.value] = {
+              name: !ed.isExtraField ? t(ed.label) : ed.label,
+              value: "##" + ed.value + "##"
+          }
+        });
+        setPulseemMergeData(mData);
+        setDataLoaded(true);
+      }
+
     }, [dataReady]);
+
+    useEffect(() => {
+      if(dataLoaded){
+        onLoad();
+      }
+    }, [dataLoaded])
 
     useEffect(() => {
         if (props.match.params.id != null && props.match.params.id > 0) {
@@ -74,16 +106,25 @@ const CampaignEditor = ({ classes, ...props }) => {
                     setTimeout(() => {
                         editorRef.current.loadDesign(JSON.parse(campaign.JsonData));
                         setLoader(false);
+                        editorRef.current.setMergeTags(mergeData);
                         return;
                     }, 1000);
                 }
                 else if (campaign.HtmlData) {
                     setTimeout(() => {
+                      editorRef.current.mergeTags = {
+                        first_name: {
+                          name: "first Name",
+                          value: "{{first_name}}",
+                          sample: "John"
+                        }
+                      };
                         editorRef.current.loadDesign({
                             html: campaign.HTMLtoSend,
                             classic: true
                         });
                         setLoader(false);
+
                         return;
                     }, 1000);
                 }
@@ -123,6 +164,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         <DefaultScreen
             currentPage='campaignEditor'
             classes={classes}
+            style={{paddingBottom: 100}}
         >
             <Button onClick={() => saveDesign()}>Save</Button>
             <Button onClick={() => saveDesign(true)}>Finish</Button>
