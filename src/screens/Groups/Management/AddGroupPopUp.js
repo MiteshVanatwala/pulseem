@@ -20,7 +20,7 @@ import {
 } from "../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../components/managment/Dialog";
 
-const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage }) => {
+const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, openARDialog }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -61,10 +61,24 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
             const response = await dispatch(createGroup(data));
             setLoader(false);
             onCreateGroupResponse(response);
+            return response
         } catch (err) {
             return false;
         }
     };
+
+    const handleAddRecipient = () => {
+        try {
+            const response = handleAddGroup();
+            if (response.payload?.StatusCode === 200) {
+                openARDialog()
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+
+    }
 
     return (
         <>
@@ -119,18 +133,11 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                                     classes.fullWidth,
                                     classes.dialogButton,
                                     classes.dialogConfirmButton,
-                                    // classes.ps15,
-                                    // classes.pe15,
                                     classes.actionButtonLightGreen,
-                                    classes.whiteSpaceNoWrap
+                                    classes.whiteSpaceNoWrap,
+                                    !newGroupData.GroupName ? classes.disabled : ''
                                 )}
-                            // onClick={
-                            //TODO: ADD ADD Recipient Functionality
-                            //     () => setDialogType({
-                            //     type: 'restore',
-                            //     data: smsDeletedData
-                            // })
-                            // }
+                                onClick={handleAddRecipient}
                             >
                                 {t("recipient.addRecipients")}
                             </Button>

@@ -48,4 +48,5 @@ export const ADD_RECIPIENT_REQUIRED_ERRORS = {
     LastName: 'recipient.errors.lastName',
     Email: 'recipient.errors.email',
     Cellphone: 'recipient.errors.cellPhone',
+    CellphoneLength: 'recipient.errors.cellphoneLength',
 }

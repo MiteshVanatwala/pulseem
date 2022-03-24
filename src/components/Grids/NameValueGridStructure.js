@@ -31,7 +31,7 @@ const NameValueGridStructure = ({ gridArr = [],
                         return (
                             <Grid className={localClasses.dataBox} item xs={gridSize?.xs} sm={gridSize?.sm} md={gridSize?.md ?? ''} lg={gridSize?.lg ?? ''} key={idx}>
                                 {reverse &&
-                                    <Typography className={obj.classes?.name ?? classes?.name ?? ''} align={align} variant={variant}>
+                                    <Typography className={obj.classes?.name ?? classes?.name ?? ''} onClick={obj.onClick ?? (() => null)} align={align} variant={variant}>
                                         {obj?.name}
                                     </Typography>
                                 }
@@ -50,7 +50,7 @@ const NameValueGridStructure = ({ gridArr = [],
                                         </Box> : ''
                                 }
                                 {!reverse &&
-                                    <Typography className={obj.classes?.name ?? classes?.name ?? ''} align={align} variant={variant}>
+                                    <Typography className={obj.classes?.name ?? classes?.name ?? ''} onClick={obj.onClick ?? (() => null)} align={align} variant={variant}>
                                         {obj?.name}
                                     </Typography>
                                 }
