@@ -56,24 +56,6 @@ const AddBulkRecipientPopup = ({ classes,
     const dispatch = useDispatch();
     const localClasses = useStyles()
 
-    const handleResponse = (res) => {
-        console.log(res);
-        switch(res.StatusCode){
-            case 201: {
-                //TODO: Show Summary modal
-                break;
-            }
-            case 202: {
-                // TODO: Uploading modal
-                break;
-            }
-            default: {
-                // TODO: Default
-            }
-        }
-    }
-
-
     return (
         <Dialog
             classes={classes}
@@ -90,7 +72,7 @@ const AddBulkRecipientPopup = ({ classes,
             <Box className={localClasses.contentBox}>
                 <UploadXL
                     classes={classes}
-                    onDone={handleResponse}
+                    onDone={onAddRecipient}
                     settings={UploadSettings.GROUPS}
                     uploadToGroups={selectedGroups}
                 />

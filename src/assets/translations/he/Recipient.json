@@ -46,5 +46,10 @@
     "email": "יש להזין כתובת מייל חוקית",
     "cellPhone": "יש להזין מספר סלולרי חוקי"
   },
-  "bulkImportTitle": "העלאת נמענים"
+  "bulkImportTitle": "העלאת נמענים",
+  "importResponses":{
+    "noFolderFound": "לא נמצאה תיקייה.",
+    "genericError": "שגיאה כללית. יש ליצור קשר עם התמיכה.",
+    "fileUploaded": "הקובץ נשמר בהצלחה במערכת.<br />העלאת הנמענים תתבצע בדקות הקרובות.<br />באפשרותך לעקוב אחר סטטוס ההעלאה ב<a href='/Pulseem/FileUploads.aspx' target='_blank'>הסטורית העלאת נמענים</a> תחת תפריט קבוצות."
+  }
 }

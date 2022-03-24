@@ -42,6 +42,7 @@ import {
 } from "../../../redux/reducers/groupSlice";
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import AddBulkRecipientPopup from "./AddBulkRecipientPopup";
+import AddRecipientResponse from "./AddRecipientResponse";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -65,6 +66,16 @@ const GroupsManagement = ({ classes }) => {
     PageSize: rowsPerPage,
     SearchTerm: "",
   });
+  const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
+
+  const renderHtml = (html) => {
+      function createMarkup() {
+          return { __html: html };
+      }
+      return (
+          <label dangerouslySetInnerHTML={createMarkup()}></label>
+      );
+  }
 
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
@@ -94,7 +105,8 @@ const GroupsManagement = ({ classes }) => {
     ADD_GROUP: "addGroup",
     DELETE_GROUP: "delete group",
     ADD_RECIPIENT: "add recipient",
-    ADD_RECIPIENTS: "add recipients"
+    ADD_RECIPIENTS: "add recipients",
+    MESSAGE: "message"
   };
 
   const TABLE_HEAD = [
@@ -181,22 +193,18 @@ const GroupsManagement = ({ classes }) => {
         break;
       }
       case 400: {
-        getData();
         setToastMessage(ToastMessages.GROUP_INPUT_INCORRECT);
         break;
       }
       case 401: {
-        getData();
         setToastMessage(ToastMessages.GROUP_INVALID_API);
         break;
       }
       case 405: {
-        getData();
         setToastMessage(ToastMessages.GROUP_ERROR);
         break;
       }
       case 422: {
-        getData();
         setToastMessage(ToastMessages.GROUP_ALREADY_EXIST);
         break;
       }
@@ -556,6 +564,30 @@ const GroupsManagement = ({ classes }) => {
 
   const groupsLength = (groupData && groupData.RecordCount) || 0;
 
+  const handleAddRecipientResponse = (res) => {
+    switch(res.payload.StatusCode){
+        case 201: {
+            // TODO: Show summery res.payload.Summary[]
+            setDialog(DialogType.MESSAGE);
+            break;
+        }
+        case 202: {
+            setResponseMessage({ title: t("recipient.bulkImportTitle"), message: renderHtml(t("recipient.importResponses.fileUploaded"))})
+            setDialog(DialogType.MESSAGE);
+            break;
+        }
+        case 404: {
+            setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound")})
+            setDialog(DialogType.MESSAGE);
+            break;
+        }
+        default: {
+            setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
+            setDialog(DialogType.MESSAGE);
+        }
+    }
+  }
+
   return (
     <DefaultScreen
       currentPage="groups"
@@ -639,11 +671,10 @@ const GroupsManagement = ({ classes }) => {
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
-        // Groups={groupData.map((obj) => ({ GroupID: obj.GroupID, GroupName: obj.GroupName }))}
         Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
         selectedGroups={selectedGroups}
         selectGroup={(idArr) => setSelectedGroups(idArr)}
-        onAddRecipient={getData}
+        onAddRecipient={handleAddRecipientResponse}
       />}
       <ConfirmDeletePopUp
         classes={classes}
@@ -651,6 +682,14 @@ const GroupsManagement = ({ classes }) => {
         onClose={() => setDialog(null)}
         windowSize={windowSize}
         handleDeleteGroup={() => handleDeleteGroup()}
+      />
+      <AddRecipientResponse
+        classes={classes}
+        isOpen={dialog === DialogType.MESSAGE}
+        onClose={() => setDialog(null)}
+        windowSize={windowSize}
+        title={responseMessage.title}
+        message={responseMessage.message}
       />
       <Loader isOpen={showLoader} />
     </DefaultScreen>

@@ -46,5 +46,10 @@
     "email": "Enter a valid email",
     "cellPhone": "Invalid cellphone"
   },
-  "bulkImportTitle": "Recipient Import"
+  "bulkImportTitle": "Recipient Import",
+  "importResponses":{
+    "noFolderFound": "No folder has been found.",
+    "genericError": "Generic error. Please contact support.",
+    "fileUploaded": "The file was successfully recorded on our system!<br />The upload will take place the next few minutes.<br />You can track the file upload status on the <a href='/Pulseem/FileUploads.aspx' target='_blank'>Upload History</a> page under Groups menu."
+  }
 }
