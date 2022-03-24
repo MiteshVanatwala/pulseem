@@ -32,7 +32,7 @@ import { Loader } from "../../../components/Loader/Loader";
 
 const useStyles = makeStyles({
     contentBox: {
-        "height": '30vh'
+        "height": '50vh'
     },
     accordionIcons: {
         position: 'absolute',
@@ -72,22 +72,36 @@ const AddRecipientPopup = ({ classes,
         switch (response.payload.StatusCode) {
             case 201: {
                 setToastMessage(ToastMessages.RECIPIENT_ADDED);
+                onAddRecipient();
                 break;
             }
             case 400: {
                 setToastMessage(ToastMessages.RECIPIENT_INPUT_INCORRECT);
+                if (addRecipientData.Cellphone) {
+                    setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
+                    document.getElementById("rec_cellphone").classList.add("error");
+                    document.getElementById("rec_cellphone").focus();
+                }
+                else if (addRecipientData.Email) {
+                    setErrors({ ...errors, Email: t(ADD_RECIPIENT_REQUIRED_ERRORS.Email) })
+                    document.getElementById("rec_email").classList.add("error");
+                    document.getElementById("rec_email").focus();
+                }
                 break;
             }
             case 401: {
                 setToastMessage(ToastMessages.GROUP_INVALID_API);
                 break;
             }
-            case 405: {
-                setToastMessage(ToastMessages.GROUP_ERROR);
+            case 406: {
+                setToastMessage(ToastMessages.GROUP_INVALID_ID);
                 break;
             }
+            case 405:
+            case 500:
             default: {
-
+                setToastMessage(ToastMessages.GROUP_ERROR);
+                break;
             }
         }
     }
@@ -377,7 +391,7 @@ const AddRecipientPopup = ({ classes,
                 },
                 {
                     content: <TextField
-                        id="outlined-basic"
+                        id="rec_email"
                         label=""
                         placeholder={t("common.email")}
                         variant="outlined"
@@ -393,7 +407,7 @@ const AddRecipientPopup = ({ classes,
                 },
                 {
                     content: <TextField
-                        id="outlined-basic"
+                        id="rec_cellphone"
                         label=""
                         placeholder={t("common.cellphone")}
                         variant="outlined"

@@ -37,7 +37,6 @@ import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import { siteTrackingScriptUrl } from './config/index';
 import GroupsManagement from './screens/Groups/Management/GroupsManagement';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
-import TestUploader from './screens/Groups/Management/TestUploader';
 
 
 const renderRoutes = (classes, history) => {

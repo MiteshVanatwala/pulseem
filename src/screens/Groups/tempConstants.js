@@ -490,6 +490,60 @@ export const UploadSettings = {
         idx: -1,
         value: "Email",
         label: "common.email"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "Telephone",
+        label: "common.telephone"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "Address",
+        label: "common.address"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "City",
+        label: "common.city"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "State",
+        label: "common.state"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "Country",
+        label: "common.country"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "Zip",
+        label: "common.zip"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "Company",
+        label: "common.company"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "BirthDate",
+        label: "common.birth_date"
+      },
+      {
+        isdisabled: false,
+        idx: -1,
+        value: "ReminderDate",
+        label: "common.reminder_date"
       }
     ]
   }

@@ -32,7 +32,7 @@ const UploadXL = ({
     classes,
     placeHolder = "sms.dragXlOrCsv",
     onDone = () => null,
-    uploadToGroups = "166609,166608,165651",
+    uploadToGroups = [],
     settings = null
 }) => {
     const { t } = useTranslation();
@@ -63,6 +63,20 @@ const UploadXL = ({
     const [dropIndex, setdropIndex] = useState(-1);
 
     useEffect(() => {
+        Object.keys(extraData).forEach((ed) => {
+            const exist = settings.Fields.filter((e) => {
+                return e.value === ed;
+            });
+
+            if (exist <= 0 && extraData[ed] !== '') {
+                settings.Fields.push({
+                    eisdisabled: false,
+                    idx: -1,
+                    value: ed,
+                    label: extraData[ed]
+                });
+            }
+        });
         const fields = settings.Fields.map((e) => {
             return {
                 eisdisabled: e.isdisabled,
@@ -345,68 +359,36 @@ const UploadXL = ({
                 }
             }
 
-            const finalPayload = {
-                ClientsData: requestPayload,
-                GroupIds: uploadToGroups.split(',')
-            }
+            // Set mapping
+            const mapping = headers.map((h, idx) => {
+                if (h != t("sms.adjustTitle")) { return { Index: idx, Title: translateHebrewColumns(h.toLocaleString().replaceAll(' ', '')) } }
+            }).filter(function (x) {
+                return x !== undefined;
+            });
 
             setDialogType(null);
             setLoader(true);
             let r = null;
-            if (fileToUpload !== null) {
+
+            if (fileToUpload !== null && requestPayload.length >= 5000) {
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
                 formData.append("groupids", uploadToGroups);
+                formData.append("mapping", JSON.stringify(mapping));
                 r = await dispatch(addRecipients(formData))
             }
             else {
+                const finalPayload = {
+                    ClientsData: requestPayload,
+                    GroupIds: uploadToGroups,
+                    Mapping: mapping
+                }
                 r = await dispatch(addRecipient(finalPayload))
             }
 
             setLoader(false);
-
-
-            if (r && r.payload.Reason == "no_recipients_to_update") {
-                setToastMessage(ToastMessages.INVALID_RECIPIENTS)
-                settypedData([]);
-                setContacts([]);
-                setgroupNameInput("");
-                setGroupTextError(false);
-            }
-            else {
-                let tempres = [];
-                let temp = [];
-                for (let i = 0; i < groupList.length; i++) {
-                    tempres.push(groupList[i]);
-                }
-                for (let i = 0; i < selectedGroups.length; i++) {
-                    temp.push(selectedGroups[i]);
-                }
-
-                temp.push({
-                    Recipients: r.payload.Recipients,
-                    GroupName: groupNameInput,
-                    GroupID: r.payload.GroupID
-                });
-
-                tempres.push({
-                    Recipients: r.payload.Recipients,
-                    GroupName: groupNameInput,
-                    GroupID: r.payload.GroupID
-                });
-                setGroupList(tempres);
-                setSelected(temp);
-                setareaData("");
-                settypedData([]);
-                setContacts([]);
-                setgroupNameInput("");
-                setGroupTextError(false);
-                setToastMessage(ToastMessages.GROUP_CREATED_SUCCESS);
-            }
-            for (let i = 0; i < selectArray.length; i++) {
-                selectArray[i].isdisabled = false;
-                selectArray[i].idx = -1;
-            }
+            setFileToUpload(null);
+            onDone(r);
         }
     }
     const handleManualDialog = (e) => {
