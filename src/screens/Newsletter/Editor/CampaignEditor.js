@@ -5,9 +5,9 @@ import DefaultScreen from '../../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
 import { getCampaignById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { appearance, tools, options, features } from './constants'
+import { appearance, tools, options, features, fonts } from './constants'
 import { ClientFields } from '../../../model/PulseemFields/Fields'
-import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
+import { getAccountExtraData, getPreviousCampaignData,  getPreviousLandingData } from "../../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -19,51 +19,90 @@ const CampaignEditor = ({ classes, ...props }) => {
     const campaignId = props.match.params.id;
     const [dataReady, setDataReady] = useState(false);
     const [dataLoaded, setDataLoaded] = useState(false);
-    const { extraData } = useSelector(state => state.sms);
+    const { extraData, previousLandingData } = useSelector(state => state.sms);
     const [mergeData, setPulseemMergeData] = useState({});
-
-    const getData = async () => {
-        setLoader(true);
-        await dispatch(getCampaignById(props.match.params.id));
-        await dispatch(getAccountExtraData());
-        setDataReady(true);
-        setLoader(false);
-    }
+    const [specialLinks, setSpecialLinks] = useState([]);
 
     useEffect(() => {
       if(dataReady){
-        let exData = [...ClientFields];
-        Object.keys(extraData).forEach((item, i) => {
-          if(Object.values(extraData)[i] && Object.values(extraData)[i] != ''){
-            exData.push({ value: item, label: Object.values(extraData)[i], isExtraField: true})
-          }
-        });
-
-        const mData = {};
-        exData.forEach((ed) => {
-          mData[ed.value] = {
-              name: !ed.isExtraField ? t(ed.label) : ed.label,
-              value: "##" + ed.value + "##"
-          }
-        });
-        setPulseemMergeData(mData);
-        setDataLoaded(true);
+        Promise.all([initExtraDataField(), initLandingPages()]).then(() => {
+          setDataLoaded(true);
+        })
       }
 
     }, [dataReady]);
-
     useEffect(() => {
       if(dataLoaded){
-        onLoad();
+        setTimeout(() => {
+          onLoad();
+        }, 1000)
       }
-    }, [dataLoaded])
-
+    }, [dataLoaded]);
     useEffect(() => {
         if (props.match.params.id != null && props.match.params.id > 0) {
             getData();
         }
     }, [dispatch]);
+    const getData = async () => {
+        setLoader(true);
+        await dispatch(getCampaignById(props.match.params.id));
+        await dispatch(getAccountExtraData());
+        await dispatch(getPreviousLandingData());
+        setDataReady(true);
+        setLoader(false);
+    }
+    const initExtraDataField = () => {
+      return new Promise((resolve, reject) => {
+        try {
+          let exData = [...ClientFields];
+          Object.keys(extraData).forEach((item, i) => {
+            if(Object.values(extraData)[i] && Object.values(extraData)[i] != ''){
+              exData.push({ value: item, label: Object.values(extraData)[i], isExtraField: true})
+            }
+          });
 
+          const mData = {};
+          exData.forEach((ed) => {
+            mData[ed.value] = {
+                name: !ed.isExtraField ? t(ed.label) : ed.label,
+                value: "##" + ed.value + "##"
+            }
+          });
+          setPulseemMergeData(mData);
+        } catch (e) {
+          reject(e);
+        } finally {
+          resolve();
+        }
+      });
+
+    }
+    const initLandingPages = () => {
+      return new Promise((resolve, reject) => {
+        try {
+          const titleName = t('campaigns.newsletters');
+          const sLinks = [{
+            name: titleName,
+            specialLinks: []
+          }];
+
+          previousLandingData.forEach((item, i) => {
+            sLinks[0].specialLinks.push({
+              name: item.CampaignName,
+              href: item.PageHref,
+              target: '_blank'
+            });
+          });
+          setSpecialLinks(sLinks);
+        }
+        catch (e) {
+          reject(e);
+        }
+        finally {
+          resolve();
+        }
+      });
+    }
     const exportHtml = () => {
         editorRef.current.exportHtml(data => {
             const { design, html } = data
@@ -94,49 +133,39 @@ const CampaignEditor = ({ classes, ...props }) => {
         })
 
     }
-
     const onLoad = () => {
         try {
+            // Only for premium
+            editorRef.current.editor.fonts = fonts.fonts;
+            // end
+            editorRef.current.editor.setSpecialLinks(specialLinks);
+            editorRef.current.setMergeTags(mergeData);
             if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
                 setLoader(false);
                 return;
             }
             else {
                 if (campaign.JsonData) {
-                    setTimeout(() => {
-                        editorRef.current.loadDesign(JSON.parse(campaign.JsonData));
-                        setLoader(false);
-                        editorRef.current.setMergeTags(mergeData);
-                        return;
-                    }, 1000);
+                    editorRef.current.loadDesign(JSON.parse(campaign.JsonData));
+                    setLoader(false);
+                    return;
                 }
                 else if (campaign.HtmlData) {
-                    setTimeout(() => {
-                      editorRef.current.mergeTags = {
-                        first_name: {
-                          name: "first Name",
-                          value: "{{first_name}}",
-                          sample: "John"
-                        }
-                      };
-                        editorRef.current.loadDesign({
-                            html: campaign.HTMLtoSend,
-                            classic: true
-                        });
-                        setLoader(false);
+                    editorRef.current.loadDesign({
+                        html: campaign.HTMLtoSend,
+                        classic: true
+                    });
+                    setLoader(false);
 
-                        return;
-                    }, 1000);
+                    return;
                 }
                 else if (campaign.HTMLtoSend) {
-                    setTimeout(() => {
-                        editorRef.current.loadDesign({
-                            html: campaign.HTMLtoSend,
-                            classic: true
-                        });
-                        setLoader(false);
-                        return;
-                    }, 500);
+                    editorRef.current.loadDesign({
+                        html: campaign.HTMLtoSend,
+                        classic: true
+                    });
+                    setLoader(false);
+                    return;
                 }
             }
         }
@@ -144,7 +173,6 @@ const CampaignEditor = ({ classes, ...props }) => {
             return;
         }
     }
-
     const renderEditor = () => {
         if (dataReady) {
             return <EmailEditor
@@ -154,7 +182,6 @@ const CampaignEditor = ({ classes, ...props }) => {
                 appearance={appearance}
                 options={options}
                 features={features}
-            // onLoad={onLoad}
             />
         }
         return <></>
