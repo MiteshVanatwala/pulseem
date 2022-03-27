@@ -1,5 +1,5 @@
 import { Button } from '@material-ui/core'
-import { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import EmailEditor from 'react-email-editor'
 import DefaultScreen from '../../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -22,7 +22,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const { extraData, previousLandingData } = useSelector(state => state.sms);
     const [mergeData, setPulseemMergeData] = useState({});
     const [specialLinks, setSpecialLinks] = useState([]);
-    const { language, isRTL, windowSize } = useSelector(state => state.core)
+    const { language, isRTL, windowSize, companyName, email } = useSelector(state => state.core)
     const [iframeKey, setIframeKey] = useState(0);
 
     useEffect(() => {
@@ -46,12 +46,10 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
     }, [dispatch]);
     useEffect(() => {
-      options.locale = language === 'he' ? 'he-IL' : 'en-US';
-      setIframeKey(iframeKey + 1);
+      initOptions();
       setTimeout(() => {
         onLoad();
-      }, 0)
-
+      }, 0);
     }, [language])
     const getData = async () => {
         setLoader(true);
@@ -113,6 +111,14 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
       });
     }
+    const initOptions = () => {
+      options.locale = language === 'he' ? 'he-IL' : 'en-US';
+      options.user.id = "12dasd12e1";
+      options.user.name = companyName;
+      options.user.email = 'ido@pulseem.com';
+      appearance.panels.dock = language === 'he' ? 'right' : 'left';
+      setIframeKey(iframeKey + 1);
+    }
     const exportHtml = () => {
         editorRef.current.exportHtml(data => {
             const { design, html } = data
@@ -145,9 +151,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     const onLoad = () => {
         try {
-            // Only for premium
             editorRef.current.editor.fonts = fonts.fonts;
-            // end
             editorRef.current.editor.setSpecialLinks(specialLinks);
             editorRef.current.setMergeTags(mergeData);
             if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
@@ -185,15 +189,18 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     const renderEditor = () => {
         if (dataReady) {
-            return <EmailEditor
-                ref={editorRef}
-                minHeight="calc(100vh - 100px)"
-                tools={tools}
-                appearance={appearance}
-                options={options}
-                features={features}
-                key={iframeKey}
-            />
+            return <React.StrictMode>
+                <EmailEditor
+                  ref={editorRef}
+                  minHeight="calc(100vh - 100px)"
+                  tools={tools}
+                  appearance={appearance}
+                  options={options}
+                  features={features}
+                  key={iframeKey}
+                  projectId={props.match.params.id}
+              />
+          </React.StrictMode>
         }
         return <></>
     }

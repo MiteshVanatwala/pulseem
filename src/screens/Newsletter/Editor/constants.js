@@ -60,6 +60,11 @@ export const tools = {
 };
 export const options = {
     amp: true,
+    user: {
+      id: -1,
+      name: "",
+      email: "",
+    },
     locale: "he-IL",
     translations:
     {
