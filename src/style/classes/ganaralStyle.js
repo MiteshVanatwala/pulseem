@@ -93,9 +93,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     "& .MuiPaper-root": {
       overflowX: "hidden",
     },
+    "& .MuiDialog-scrollPaper": {
+      "@media screen and (max-width: 330px)": {
+        zoom: '70%'
+      }
+    },
     "& .MuiDialog-paperWidthSm": {
       minWidth: minDialogWidth[windowSize],
       maxWidth: maxDialogWidth[windowSize],
+
     },
     "& .MuiDialog-paperScrollPaper": {
       maxHeight: "100%",

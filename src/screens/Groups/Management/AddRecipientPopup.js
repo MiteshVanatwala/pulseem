@@ -39,6 +39,21 @@ const useStyles = makeStyles({
         '& path': {
             stroke: '#0371ad'
         }
+    },
+    expandedBox: {
+        margin: '0 !important',
+        '& .MuiAccordionSummary-root': {
+            minHeight: 30,
+            maxHeight: 48
+        },
+        '& .MuiAccordionSummary-content': {
+            margin: 0
+        }
+        // '& .MuiAccordion-root': {
+        //     '& .Mui-expanded': {
+        //         margin: 0
+        //     }
+        // }
     }
 });
 
@@ -143,6 +158,9 @@ const AddRecipientPopup = ({ classes,
                 });
             }
             else {
+                if (e.target.name === "Email") {
+                    e.target.value = e.target.value.replace(/ /g, "")
+                }
                 setAddRecipientData({
                     ...addRecipientData, [e.target.name]: e.target.value
                 })
@@ -157,6 +175,7 @@ const AddRecipientPopup = ({ classes,
             ClientsData: addRecipientData,
             GroupIds: [...selectedGroups]
         }
+
         const tempError = { ...errors }
 
         if (!data.ClientsData.Email &&
@@ -171,6 +190,10 @@ const AddRecipientPopup = ({ classes,
             setErrors({ ...tempError })
 
             return;
+        } else if (!ValidateEmail(data.ClientsData.Email)) {
+            tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
+            setErrors({ ...tempError })
+            return
         }
         try {
             setLoader(true)
@@ -198,10 +221,11 @@ const AddRecipientPopup = ({ classes,
 
     const PERSONAL_DETAILS_FORM = () => {
         const WebView = <SimpleGrid
+            spacing={3}
             gridArr={[{
                 content: <SimpleGrid
                     gridArr={[{
-                        content: <Typography className={classes.plr10}>{t("common.first_name")}</Typography>,
+                        content: <Typography align="right" className={classes.plr10} >{t("common.first_name")}</Typography>,
                         gridSize: { xs: 12, sm: 4 }
                     },
                     {
@@ -226,7 +250,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
 
                     gridArr={[{
-                        content: <Typography className={classes.plr10}>{t("common.last_name")}</Typography>,
+                        content: <Typography align="right" className={classes.plr10}>{t("common.last_name")}</Typography>,
                         gridSize: { xs: 12, sm: 4 }
                     },
                     {
@@ -251,7 +275,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
 
                     gridArr={[{
-                        content: <Typography className={classes.plr10}>{t("common.email")}</Typography>,
+                        content: <Typography align="right" className={classes.plr10}>{t("common.email")}</Typography>,
                         gridSize: { xs: 12, sm: 4 }
                     },
                     {
@@ -277,7 +301,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
 
                     gridArr={[{
-                        content: <Typography className={classes.plr10}>{t("common.cellphone")}</Typography>,
+                        content: <Typography align="right" className={classes.plr10}>{t("common.cellphone")}</Typography>,
                         gridSize: { xs: 12, sm: 4 }
                     },
                     {
@@ -312,7 +336,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
 
                     gridArr={[{
-                        content: <Typography className={classes.plr10}>{t("common.telephone")}</Typography>,
+                        content: <Typography align="right" className={classes.plr10}>{t("common.telephone")}</Typography>,
                         gridSize: { xs: 12, sm: 4 }
                     },
                     {
@@ -324,7 +348,15 @@ const AddRecipientPopup = ({ classes,
                             value={addRecipientData.Telephone}
                             className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                             autoComplete="off"
-                            onChange={handleChange}
+                            onChange={(e) => {
+                                let tempVal = e.target.value
+                                if (!tempVal) {
+                                    handleChange(e)
+                                }
+                                else if (ValidateNumber(tempVal)) {
+                                    handleChange(e)
+                                }
+                            }}
                         />,
                         gridSize: { xs: 12, sm: 8 }
                     }
@@ -335,7 +367,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
 
                     gridArr={[{
-                        content: <Typography className={classes.plr10}>{t("common.company")}</Typography>,
+                        content: <Typography align="right" className={classes.plr10}>{t("common.company")}</Typography>,
                         gridSize: { xs: 12, sm: 4 }
                     },
                     {
@@ -440,7 +472,15 @@ const AddRecipientPopup = ({ classes,
                         value={addRecipientData.Telephone}
                         className={clsx(classes.plr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
-                        onChange={handleChange}
+                        onChange={(e) => {
+                            let tempVal = e.target.value
+                            if (!tempVal) {
+                                handleChange(e)
+                            }
+                            else if (ValidateNumber(tempVal)) {
+                                handleChange(e)
+                            }
+                        }}
                     />
                 },
                 {
@@ -463,11 +503,12 @@ const AddRecipientPopup = ({ classes,
 
     const LOCATION_DETAILS_FORM = () => {
         const WebView = <SimpleGrid
+            spacing={3}
             gridArr={[{
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={classes.plr10}>{t("common.address")}</Typography>,
+                            content: <Typography align="right" className={classes.plr10}>{t("common.address")}</Typography>,
                             gridSize: { xs: 12, sm: 4 }
                         },
                         {
@@ -491,7 +532,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={classes.plr10}>{t("common.city")}</Typography>,
+                            content: <Typography align="right" className={classes.plr10}>{t("common.city")}</Typography>,
                             gridSize: { xs: 12, sm: 4 }
                         },
                         {
@@ -515,7 +556,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={classes.plr10}>{t("common.state")}</Typography>,
+                            content: <Typography align="right" className={classes.plr10}>{t("common.state")}</Typography>,
                             gridSize: { xs: 12, sm: 4 }
                         },
                         {
@@ -539,7 +580,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={classes.plr10}>{t("common.country")}</Typography>,
+                            content: <Typography align="right" className={classes.plr10}>{t("common.country")}</Typography>,
                             gridSize: { xs: 12, sm: 4 }
                         },
                         {
@@ -563,7 +604,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={classes.plr10}>{t("common.zip")}</Typography>,
+                            content: <Typography align="right" className={classes.plr10}>{t("common.zip")}</Typography>,
                             gridSize: { xs: 12, sm: 4 }
                         },
                         {
@@ -661,11 +702,12 @@ const AddRecipientPopup = ({ classes,
     const DATES_FORM = () => {
 
         const WebView = <SimpleGrid
+            spacing={3}
             gridArr={[{
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={classes.plr10}>{t("common.birth_date")}</Typography>,
+                            content: <Typography align="right" className={classes.plr10}>{t("common.birth_date")}</Typography>,
                             gridSize: { xs: 12, sm: 4 }
                         },
                         {
@@ -689,7 +731,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={classes.plr10}>{t("common.reminder_date")}</Typography>,
+                            content: <Typography align="right" className={classes.plr10}>{t("common.reminder_date")}</Typography>,
                             gridSize: { xs: 12, sm: 4 }
                         },
                         {
@@ -777,7 +819,7 @@ const AddRecipientPopup = ({ classes,
                     content: <SimpleGrid
                         gridArr={[
                             {
-                                content: <Typography className={classes.plr10}>{extraData[ef]}</Typography>,
+                                content: <Typography align="right" className={clsx(classes.plr10, classes.textEllipses)}>{extraData[ef]}</Typography>,
                                 gridSize: { xs: 12, sm: 4 }
                             },
                             {
@@ -834,7 +876,7 @@ const AddRecipientPopup = ({ classes,
         return (
             <Accordion
                 expanded={activeTab === index}
-                className={classes.noBoxShadow}
+                className={clsx(classes.noBoxShadow, localClasses.expandedBox)}
                 key={index}
             >
                 <AccordionSummary
@@ -848,7 +890,7 @@ const AddRecipientPopup = ({ classes,
                             setActiveTab(index)
                     }}
                 >
-                    <Typography>{t(label)}
+                    <Typography align="right">{t(label)}
 
                         {activeTab === index ?
                             <GrFormSubtract size={24} className={localClasses.accordionIcons} /> :
@@ -881,6 +923,7 @@ const AddRecipientPopup = ({ classes,
             onCancel={onClose}
             onConfirm={handleSubmit}
             reduceTitle
+            style={{ minWidth: 250 }}
             renderButtons={() => (
 
                 <Box container spacing={2} className={clsx(classes.responsiveLinePadding, classes.maxWidth540, classes.mxAuto, classes.justifyCenterOfCenter, classes.flexWrap, classes.pt0, classes.pb0)}>

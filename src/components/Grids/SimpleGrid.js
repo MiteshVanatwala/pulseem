@@ -13,6 +13,7 @@ const useStyles = makeStyles({
 const SimpleGrid = ({ gridArr = [],
     classes,
     direction = "row",
+    spacing = 1,
     ...props
 }) => {
 
@@ -20,7 +21,7 @@ const SimpleGrid = ({ gridArr = [],
 
     return (
         <>
-            <Grid container direction={direction} spacing={2}>
+            <Grid container direction={direction} spacing={spacing}>
                 {
                     gridArr.map((obj, idx) => {
                         return (

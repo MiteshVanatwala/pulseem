@@ -38,7 +38,7 @@
   "recipientAddPopUpTitle": "Add a single recipient to one or more groups",
   "addRecipientToGroups": "Add recipient to group/s",
   "dates": "Dates",
-  "addRecipientSuccess": "Recipient successfuly added",
+  "addRecipientSuccess": "Recipient successfully added",
   "incorrectRecipientInput": "None of the clients have either valid email or valid cellphone",
   "errors": {
     "firstName": "First Name can't be empty",
@@ -48,7 +48,7 @@
     "cellphoneLength": "Cellphone should be between 10-12 digits"
   },
   "bulkImportTitle": "Recipient Import",
-  "importResponses":{
+  "importResponses": {
     "noFolderFound": "No folder has been found.",
     "genericError": "Generic error. Please contact support.",
     "fileUploaded": "The file was successfully recorded on our system!<br />The upload will take place the next few minutes.<br />You can track the file upload status on the <a href='/Pulseem/FileUploads.aspx' target='_blank'>Upload History</a> page under Groups menu."

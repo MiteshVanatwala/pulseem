@@ -875,6 +875,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       color: "darkred",
     },
   },
+  textEllipses: {
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
   nameEllipsis: {
     fontSize: 18,
     fontWeight: 700,

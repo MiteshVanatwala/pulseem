@@ -298,6 +298,9 @@ const RenderWebRow = ({
         <FlexGrid
           gridArr={[
             {
+              onClick: () => {
+                window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
+              },
               label: t("recipient.preview"),
               component: (
                 <IconWrapper iconName="preview" className={classes.mxAuto} />
