@@ -22,6 +22,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     const { extraData, previousLandingData } = useSelector(state => state.sms);
     const [mergeData, setPulseemMergeData] = useState({});
     const [specialLinks, setSpecialLinks] = useState([]);
+    const { language, isRTL, windowSize } = useSelector(state => state.core)
+    const [iframeKey, setIframeKey] = useState(0);
 
     useEffect(() => {
       if(dataReady){
@@ -43,6 +45,14 @@ const CampaignEditor = ({ classes, ...props }) => {
             getData();
         }
     }, [dispatch]);
+    useEffect(() => {
+      options.locale = language === 'he' ? 'he-IL' : 'en-US';
+      setIframeKey(iframeKey + 1);
+      setTimeout(() => {
+        onLoad();
+      }, 0)
+
+    }, [language])
     const getData = async () => {
         setLoader(true);
         await dispatch(getCampaignById(props.match.params.id));
@@ -80,7 +90,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     const initLandingPages = () => {
       return new Promise((resolve, reject) => {
         try {
-          const titleName = t('campaigns.newsletters');
+          const titleName = t('landingPages.landingPages');
           const sLinks = [{
             name: titleName,
             specialLinks: []
@@ -182,6 +192,7 @@ const CampaignEditor = ({ classes, ...props }) => {
                 appearance={appearance}
                 options={options}
                 features={features}
+                key={iframeKey}
             />
         }
         return <></>
