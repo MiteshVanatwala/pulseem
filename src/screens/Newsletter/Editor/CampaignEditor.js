@@ -47,11 +47,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       getData();
     }
   }, [dispatch]);
-  useEffect(() => { 
-      initOptions();
-      setTimeout(() => {
-        onLoad();
-      }, 0);
+  useEffect(() => {
+    initOptions();
+    setTimeout(() => {
+      onLoad();
+    }, 0);
   }, [language])
   const getData = async () => {
     setLoader(true);
@@ -117,9 +117,46 @@ const CampaignEditor = ({ classes, ...props }) => {
     options.locale = language === 'he' ? 'he-IL' : 'en-US';
     appearance.panels.dock = language === 'he' ? 'right' : 'left';
     options.user = {
-      id: subAccountSettings.UnlayerUniqueID
+      id: subAccountSettings.UnlayerUniqueID //,
+      // name: username,
+      // email: 'ido@pulseem.com'
     }
     setIframeKey(iframeKey + 1);
+  }
+  const registerEvents = () => {
+    const unlayer = editorRef.current;
+    //unlayer.reloadProvider('blocks');
+    unlayer.registerCallback('block:added', function (newBlock, done) {
+      console.log('block:added', newBlock);
+
+      // Save the block to your database here
+      // and pass the object to done callback.
+      // Each block should have it's own unique id
+
+      done(block);
+    });
+
+    unlayer.registerCallback('block:modified', function (existingBlock, done) {
+      console.log('block:modified', existingBlock);
+
+      // Update the block in your database here
+      // and pass the updated object to done callback.
+
+      done(block);
+    });
+
+    unlayer.registerCallback('block:removed', function (existingBlock, done) {
+      console.log('block:removed', existingBlock);
+
+      // Delete the block from your database here.
+
+      done(block);
+    });
+
+    unlayer.registerProvider('blocks', function (params, done) {
+      console.log('blocks provider', params);
+      done(blocks);
+    });
   }
   const saveDesign = (redirectAfterSave = false) => {
     return new Promise((reject, resolve) => {
@@ -180,6 +217,9 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     catch (e) {
       return;
+    }
+    finally {
+      registerEvents();
     }
   }
   const renderEditor = () => {
