@@ -52,5 +52,21 @@
     "noFolderFound": "לא נמצאה תיקייה.",
     "genericError": "שגיאה כללית. יש ליצור קשר עם התמיכה.",
     "fileUploaded": "הקובץ נשמר בהצלחה במערכת.<br />העלאת הנמענים תתבצע בדקות הקרובות.<br />באפשרותך לעקוב אחר סטטוס ההעלאה ב<a href='/Pulseem/FileUploads.aspx' target='_blank'>הסטורית העלאת נמענים</a> תחת תפריט קבוצות."
+  },
+  "summary": {
+    "summaryImportTitle": "סיכום העלאת נמענים",
+    "commonSummary": "סיכום כללי",
+    "smsSummary": "סיכום SMS",
+    "emailSummary": "סיכום דואר אלקטרוני",
+    "totalValidUploadedRecords": "כמות רשימות תקינות שהועלו:",
+    "totalInvalidOrEmptyAddresses": "כמות רשומות שלא הועלו:",
+    "totalDuplicates": "כמות כפולים בקובץ:",
+    "totalRecords": "כמות הרשומות הכוללת:",
+    "invalidOrEmptyEmailAddresses": "כמות כתובות דואר ריקים או שגויים:",
+    "duplicateEmailAddressesInFile": "כמות כתובות דואר אלקטרוני כפולים בקובץ:",
+    "totalEmailExistingInAccount": "כמות כתובות דואר הקיימים כבר בחשבון:",
+    "invalidOrEmptyCellphones": "כמות סלולרים ריקים או שגויים:",
+    "duplicateCellphoneInFile": "כמות סלולרים כפולים בקובץ:",
+    "totalCellularExistingInAccount": "כמות סלולרים הקיימים כבר בחשבון:"
   }
 }

@@ -52,5 +52,21 @@
     "noFolderFound": "No folder has been found.",
     "genericError": "Generic error. Please contact support.",
     "fileUploaded": "The file was successfully recorded on our system!<br />The upload will take place the next few minutes.<br />You can track the file upload status on the <a href='/Pulseem/FileUploads.aspx' target='_blank'>Upload History</a> page under Groups menu."
+  },
+  "summary": {
+    "summaryImportTitle": "Summary Recipient Import",
+    "commonSummary": "Common Summary",
+    "smsSummary": "SMS Summary",
+    "emailSummary": "Email Summary",
+    "totalValidUploadedRecords": "Total valid uploaded records:",
+    "totalInvalidOrEmptyAddresses": "Total invalid or empty addresses:",
+    "totalDuplicates":"Total duplicates:",
+    "totalRecords": "Total records:",
+    "invalidOrEmptyEmailAddresses": "Invalid or empty email addresses:",
+    "duplicateEmailAddressesInFile": "Duplicate email addresses in file:",
+    "totalEmailExistingInAccount": "Total email existing in account:",
+    "invalidOrEmptyCellphones": "Invalid or empty cellphones:",
+    "duplicateCellphoneInFile": "Duplicate cellphone in file:",
+    "totalCellularExistingInAccount": "Total cellular existing in account:"
   }
 }

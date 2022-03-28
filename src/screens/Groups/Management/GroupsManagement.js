@@ -106,7 +106,8 @@ const GroupsManagement = ({ classes }) => {
     DELETE_GROUP: "delete group",
     ADD_RECIPIENT: "add recipient",
     ADD_RECIPIENTS: "add recipients",
-    MESSAGE: "message"
+    MESSAGE: "message",
+    SUMMARY: "summary"
   };
 
   const TABLE_HEAD = [
@@ -567,7 +568,7 @@ const GroupsManagement = ({ classes }) => {
   const handleAddRecipientResponse = (res) => {
     switch(res.payload.StatusCode){
         case 201: {
-            // TODO: Show summery res.payload.Summary[]
+            setResponseMessage({ title: t("recipient.summary.summaryImportTitle"), message: '', summary: res.payload.Summary})
             setDialog(DialogType.MESSAGE);
             break;
         }
@@ -687,10 +688,11 @@ const GroupsManagement = ({ classes }) => {
       <AddRecipientResponse
         classes={classes}
         isOpen={dialog === DialogType.MESSAGE}
-        onClose={() => setDialog(null)}
+        onClose={() => { setDialog(null); getData(); }}
         windowSize={windowSize}
         title={responseMessage.title}
         message={responseMessage.message}
+        summary={responseMessage.summary}
       />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
