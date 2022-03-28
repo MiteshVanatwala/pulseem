@@ -7,216 +7,211 @@ import { getCampaignById, saveCampaign } from '../../../redux/reducers/campaignE
 import { Loader } from '../../../components/Loader/Loader';
 import { appearance, tools, options, features, fonts } from './constants'
 import { ClientFields } from '../../../model/PulseemFields/Fields'
-import { getAccountExtraData, getPreviousCampaignData,  getPreviousLandingData } from "../../../redux/reducers/smsSlice";
+import { getAccountExtraData, getPreviousCampaignData, getPreviousLandingData } from "../../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
+import { getCookie } from '../../../helpers/cookies'
 
 const CampaignEditor = ({ classes, ...props }) => {
-    const { t } = useTranslation();
-    const dispatch = useDispatch()
-    const editorRef = useRef(null);
-    const [showLoader, setLoader] = useState(true);
-    const { campaign } = useSelector(state => state.campaignEditor);
-    const campaignId = props.match.params.id;
-    const [dataReady, setDataReady] = useState(false);
-    const [dataLoaded, setDataLoaded] = useState(false);
-    const { extraData, previousLandingData } = useSelector(state => state.sms);
-    const [mergeData, setPulseemMergeData] = useState({});
-    const [specialLinks, setSpecialLinks] = useState([]);
-    const { language, isRTL, windowSize, companyName, email } = useSelector(state => state.core)
-    const [iframeKey, setIframeKey] = useState(0);
+  const { t } = useTranslation();
+  const dispatch = useDispatch()
+  const editorRef = useRef(null);
+  const [showLoader, setLoader] = useState(true);
+  const campaignId = props.match.params.id;
+  const [dataReady, setDataReady] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  const [mergeData, setPulseemMergeData] = useState({});
+  const [specialLinks, setSpecialLinks] = useState([]);
+  const { campaign } = useSelector(state => state.campaignEditor);
+  const { extraData, previousLandingData } = useSelector(state => state.sms);
+  const { language } = useSelector(state => state.core)
+  const [iframeKey, setIframeKey] = useState(0);
+  const subAccountSettings = getCookie("subAccountSettings");
 
-    useEffect(() => {
-      if(dataReady){
-        Promise.all([initExtraDataField(), initLandingPages()]).then(() => {
-          setDataLoaded(true);
-        })
-      }
+  useEffect(() => {
+    if (dataReady) {
+      Promise.all([initExtraDataField(), initLandingPages()]).then(() => {
+        setDataLoaded(true);
+      })
+    }
 
-    }, [dataReady]);
-    useEffect(() => {
-      if(dataLoaded){
-        setTimeout(() => {
-          onLoad();
-        }, 1000)
-      }
-    }, [dataLoaded]);
-    useEffect(() => {
-        if (props.match.params.id != null && props.match.params.id > 0) {
-            getData();
-        }
-    }, [dispatch]);
-    useEffect(() => {
+  }, [dataReady]);
+  useEffect(() => {
+    if (dataLoaded) {
+      setTimeout(() => {
+        onLoad();
+      }, 1000)
+    }
+  }, [dataLoaded]);
+  useEffect(() => {
+    if (props.match.params.id != null && props.match.params.id > 0) {
+      getData();
+    }
+  }, [dispatch]);
+  useEffect(() => { 
       initOptions();
       setTimeout(() => {
         onLoad();
       }, 0);
-    }, [language])
-    const getData = async () => {
-        setLoader(true);
-        await dispatch(getCampaignById(props.match.params.id));
-        await dispatch(getAccountExtraData());
-        await dispatch(getPreviousLandingData());
-        setDataReady(true);
+  }, [language])
+  const getData = async () => {
+    setLoader(true);
+    await dispatch(getCampaignById(props.match.params.id));
+    await dispatch(getAccountExtraData());
+    await dispatch(getPreviousLandingData());
+    setDataReady(true);
+    setLoader(false);
+  }
+  const initExtraDataField = () => {
+    return new Promise((resolve, reject) => {
+      try {
+        let exData = [...ClientFields];
+        Object.keys(extraData).forEach((item, i) => {
+          if (Object.values(extraData)[i] && Object.values(extraData)[i] != '') {
+            exData.push({ value: item, label: Object.values(extraData)[i], isExtraField: true })
+          }
+        });
+
+        const mData = {};
+        exData.forEach((ed) => {
+          mData[ed.value] = {
+            name: !ed.isExtraField ? t(ed.label) : ed.label,
+            value: "##" + ed.value + "##"
+          }
+        });
+        setPulseemMergeData(mData);
+      } catch (e) {
+        reject(e);
+      } finally {
+        resolve();
+      }
+    });
+
+  }
+  const initLandingPages = () => {
+    return new Promise((resolve, reject) => {
+      try {
+        const titleName = t('landingPages.landingPages');
+        const sLinks = [{
+          name: titleName,
+          specialLinks: []
+        }];
+
+        previousLandingData.forEach((item, i) => {
+          sLinks[0].specialLinks.push({
+            name: item.CampaignName,
+            href: item.PageHref,
+            target: '_blank'
+          });
+        });
+        setSpecialLinks(sLinks);
+      }
+      catch (e) {
+        reject(e);
+      }
+      finally {
+        resolve();
+      }
+    });
+  }
+  const initOptions = () => {
+    options.locale = language === 'he' ? 'he-IL' : 'en-US';
+    appearance.panels.dock = language === 'he' ? 'right' : 'left';
+    options.user = {
+      id: subAccountSettings.UnlayerUniqueID
+    }
+    setIframeKey(iframeKey + 1);
+  }
+  const saveDesign = (redirectAfterSave = false) => {
+    return new Promise((reject, resolve) => {
+      try {
+        editorRef.current.exportHtml(async (data) => {
+          const { design, html } = data;
+          const response = await dispatch(saveCampaign({ campaignId: campaignId, JsonData: JSON.stringify(design), HtmlData: html }));
+          if (response.payload === true) {
+            if (redirectAfterSave) {
+              window.location = `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
+            }
+            console.log('saved!');
+          }
+          else {
+            console.log(response);
+          }
+          resolve(response.payload);
+        })
+      } catch (error) {
+        reject();
+      }
+    })
+
+  }
+  const onLoad = () => {
+    try {
+      editorRef.current.editor.fonts = fonts.fonts;
+      editorRef.current.editor.setSpecialLinks(specialLinks);
+      editorRef.current.setMergeTags(mergeData);
+      if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
         setLoader(false);
-    }
-    const initExtraDataField = () => {
-      return new Promise((resolve, reject) => {
-        try {
-          let exData = [...ClientFields];
-          Object.keys(extraData).forEach((item, i) => {
-            if(Object.values(extraData)[i] && Object.values(extraData)[i] != ''){
-              exData.push({ value: item, label: Object.values(extraData)[i], isExtraField: true})
-            }
+        return;
+      }
+      else {
+        if (campaign.JsonData) {
+          editorRef.current.loadDesign(JSON.parse(campaign.JsonData));
+          setLoader(false);
+          return;
+        }
+        else if (campaign.HtmlData) {
+          editorRef.current.loadDesign({
+            html: campaign.HTMLtoSend,
+            classic: true
           });
+          setLoader(false);
 
-          const mData = {};
-          exData.forEach((ed) => {
-            mData[ed.value] = {
-                name: !ed.isExtraField ? t(ed.label) : ed.label,
-                value: "##" + ed.value + "##"
-            }
+          return;
+        }
+        else if (campaign.HTMLtoSend) {
+          editorRef.current.loadDesign({
+            html: campaign.HTMLtoSend,
+            classic: true
           });
-          setPulseemMergeData(mData);
-        } catch (e) {
-          reject(e);
-        } finally {
-          resolve();
+          setLoader(false);
+          return;
         }
-      });
+      }
+    }
+    catch (e) {
+      return;
+    }
+  }
+  const renderEditor = () => {
+    if (dataReady) {
+      return <React.StrictMode>
+        <EmailEditor
+          ref={editorRef}
+          minHeight="calc(100vh - 100px)"
+          tools={tools}
+          appearance={appearance}
+          options={options}
+          features={features}
+          key={iframeKey}
+          projectId={71525}
+        />
+      </React.StrictMode>
+    }
+    return <></>
+  }
 
-    }
-    const initLandingPages = () => {
-      return new Promise((resolve, reject) => {
-        try {
-          const titleName = t('landingPages.landingPages');
-          const sLinks = [{
-            name: titleName,
-            specialLinks: []
-          }];
-
-          previousLandingData.forEach((item, i) => {
-            sLinks[0].specialLinks.push({
-              name: item.CampaignName,
-              href: item.PageHref,
-              target: '_blank'
-            });
-          });
-          setSpecialLinks(sLinks);
-        }
-        catch (e) {
-          reject(e);
-        }
-        finally {
-          resolve();
-        }
-      });
-    }
-    const initOptions = () => {
-      options.locale = language === 'he' ? 'he-IL' : 'en-US';
-      options.user.id = "12dasd12e1";
-      options.user.name = companyName;
-      options.user.email = 'ido@pulseem.com';
-      appearance.panels.dock = language === 'he' ? 'right' : 'left';
-      setIframeKey(iframeKey + 1);
-    }
-    const exportHtml = () => {
-        editorRef.current.exportHtml(data => {
-            const { design, html } = data
-            console.log('exportHtml', html)
-            console.log('design', JSON.stringify(design))
-        })
-    }
-    const saveDesign = (redirectAfterSave = false) => {
-        return new Promise((reject, resolve) => {
-            try {
-                editorRef.current.exportHtml(async (data) => {
-                    const { design, html } = data;
-                    const response = await dispatch(saveCampaign({ campaignId: campaignId, JsonData: JSON.stringify(design), HtmlData: html }));
-                    if (response.payload === true) {
-                        if (redirectAfterSave) {
-                            window.location = `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
-                        }
-                        console.log('saved!');
-                    }
-                    else {
-                        console.log(response);
-                    }
-                    resolve(response.payload);
-                })
-            } catch (error) {
-                reject();
-            }
-        })
-
-    }
-    const onLoad = () => {
-        try {
-            editorRef.current.editor.fonts = fonts.fonts;
-            editorRef.current.editor.setSpecialLinks(specialLinks);
-            editorRef.current.setMergeTags(mergeData);
-            if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
-                setLoader(false);
-                return;
-            }
-            else {
-                if (campaign.JsonData) {
-                    editorRef.current.loadDesign(JSON.parse(campaign.JsonData));
-                    setLoader(false);
-                    return;
-                }
-                else if (campaign.HtmlData) {
-                    editorRef.current.loadDesign({
-                        html: campaign.HTMLtoSend,
-                        classic: true
-                    });
-                    setLoader(false);
-
-                    return;
-                }
-                else if (campaign.HTMLtoSend) {
-                    editorRef.current.loadDesign({
-                        html: campaign.HTMLtoSend,
-                        classic: true
-                    });
-                    setLoader(false);
-                    return;
-                }
-            }
-        }
-        catch (e) {
-            return;
-        }
-    }
-    const renderEditor = () => {
-        if (dataReady) {
-            return <React.StrictMode>
-                <EmailEditor
-                  ref={editorRef}
-                  minHeight="calc(100vh - 100px)"
-                  tools={tools}
-                  appearance={appearance}
-                  options={options}
-                  features={features}
-                  key={iframeKey}
-                  projectId={props.match.params.id}
-              />
-          </React.StrictMode>
-        }
-        return <></>
-    }
-
-    return (
-        <DefaultScreen
-            currentPage='campaignEditor'
-            classes={classes}
-            style={{paddingBottom: 100}}
-        >
-            <Button onClick={() => saveDesign()}>Save</Button>
-            <Button onClick={() => saveDesign(true)}>Finish</Button>
-            {renderEditor()}
-            <Loader isOpen={showLoader} showBackdrop={false} />
-        </DefaultScreen>
-    )
+  return (
+    <DefaultScreen
+      currentPage='campaignEditor'
+      classes={classes}
+      style={{ paddingBottom: 100 }}
+    >
+      <Button onClick={() => saveDesign()}>Save</Button>
+      <Button onClick={() => saveDesign(true)}>Finish</Button>
+      {renderEditor()}
+      <Loader isOpen={showLoader} showBackdrop={false} />
+    </DefaultScreen>
+  )
 }
 
 export default CampaignEditor;
