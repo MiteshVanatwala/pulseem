@@ -32,7 +32,7 @@ import { Loader } from "../../../components/Loader/Loader";
 
 const useStyles = makeStyles({
     contentBox: {
-        "height": '50vh'
+        "height": '40vh'
     },
     accordionIcons: {
         position: 'absolute',
@@ -884,17 +884,13 @@ const AddRecipientPopup = ({ classes,
                     aria-controls="panel1a-content"
                     id="panel1a-header"
                     onClick={() => {
-                        if (index === activeTab)
-                            setActiveTab({ index: null })
-                        else
-                            setActiveTab(index)
+                        setActiveTab(index)
                     }}
                 >
                     <Typography align="right">{t(label)}
 
-                        {activeTab === index ?
-                            <GrFormSubtract size={24} className={localClasses.accordionIcons} /> :
-                            <GrFormAdd size={24} className={localClasses.accordionIcons} />
+                        {activeTab !== index && <GrFormAdd size={24} className={localClasses.accordionIcons} />
+
                         }
                     </Typography>
                 </AccordionSummary>
@@ -923,7 +919,7 @@ const AddRecipientPopup = ({ classes,
             onCancel={onClose}
             onConfirm={handleSubmit}
             reduceTitle
-            style={{ minWidth: 250 }}
+            style={{ minWidth: 240 }}
             renderButtons={() => (
 
                 <Box container spacing={2} className={clsx(classes.responsiveLinePadding, classes.maxWidth540, classes.mxAuto, classes.justifyCenterOfCenter, classes.flexWrap, classes.pt0, classes.pb0)}>
