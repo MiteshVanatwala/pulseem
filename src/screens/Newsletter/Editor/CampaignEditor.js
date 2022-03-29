@@ -3,11 +3,11 @@ import React, { useRef, useState, useEffect } from 'react'
 import EmailEditor from 'react-email-editor'
 import DefaultScreen from '../../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
-import { getCampaignById, saveCampaign } from '../../../redux/reducers/campaignEditorSlice';
+import { getCampaignById, saveCampaign, getUserblocks, saveUserBlock, updateUserBlock, deleteUserBlock } from '../../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { appearance, tools, options, features, fonts } from './constants'
 import { ClientFields } from '../../../model/PulseemFields/Fields'
-import { getAccountExtraData, getPreviousCampaignData, getPreviousLandingData } from "../../../redux/reducers/smsSlice";
+import { getAccountExtraData, getPreviousLandingData } from "../../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
 import { getCookie } from '../../../helpers/cookies'
 
@@ -21,7 +21,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
   const [specialLinks, setSpecialLinks] = useState([]);
-  const { campaign } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language } = useSelector(state => state.core)
   const [iframeKey, setIframeKey] = useState(0);
@@ -29,7 +29,7 @@ const CampaignEditor = ({ classes, ...props }) => {
 
   useEffect(() => {
     if (dataReady) {
-      Promise.all([initExtraDataField(), initLandingPages()]).then(() => {
+      Promise.all([initExtraDataField(), initLandingPages(), initUserBlocks()]).then(() => {
         setDataLoaded(true);
       })
     }
@@ -60,6 +60,12 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getPreviousLandingData());
     setDataReady(true);
     setLoader(false);
+  }
+  const initUserBlocks = () => {
+    return new Promise(async (resolve) => {
+      await dispatch(getUserblocks());
+      resolve();
+    });
   }
   const initExtraDataField = () => {
     return new Promise((resolve, reject) => {
@@ -125,38 +131,45 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const registerEvents = () => {
     const unlayer = editorRef.current;
-    //unlayer.reloadProvider('blocks');
-    unlayer.registerCallback('block:added', function (newBlock, done) {
-      console.log('block:added', newBlock);
+    if (unlayer) {
+      unlayer.registerCallback('block:added', async function (newBlock, done) {
+        // Each block should have it's own unique id
+        const res = await dispatch(saveUserBlock(newBlock));
+        const newId = res.payload.Block.ID;
+        newBlock.id = newId;
 
-      // Save the block to your database here
-      // and pass the object to done callback.
-      // Each block should have it's own unique id
+        done(newBlock);
+      });
 
-      done(block);
-    });
+      unlayer.registerCallback('block:modified', async function (existingBlock, done) {
+        console.log('block:modified', existingBlock);
 
-    unlayer.registerCallback('block:modified', function (existingBlock, done) {
-      console.log('block:modified', existingBlock);
+        // Update the block in your database here
+        // and pass the updated object to done callback.
+        await dispatch(updateUserBlock(existingBlock));
 
-      // Update the block in your database here
-      // and pass the updated object to done callback.
+        done(existingBlock);
+      });
 
-      done(block);
-    });
+      unlayer.registerCallback('block:removed', async function (existingBlock, done) {
+        console.log('block:removed', existingBlock);
 
-    unlayer.registerCallback('block:removed', function (existingBlock, done) {
-      console.log('block:removed', existingBlock);
+        // Delete the block from your database here.
+        await dispatch(deleteUserBlock(existingBlock.id));
 
-      // Delete the block from your database here.
+        done(existingBlock);
+      });
 
-      done(block);
-    });
+      unlayer.editor.registerProvider('blocks', async function (params, done) {
+        if(params.userId){
+          console.log(params);
+          done(userBlocks);
+        }
+      });
 
-    unlayer.registerProvider('blocks', function (params, done) {
-      console.log('blocks provider', params);
-      done(blocks);
-    });
+      unlayer.editor.reloadProvider('blocks');
+    }
+
   }
   const saveDesign = (redirectAfterSave = false) => {
     return new Promise((reject, resolve) => {
