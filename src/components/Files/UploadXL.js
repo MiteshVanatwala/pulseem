@@ -180,7 +180,7 @@ const UploadXL = ({
     const handleFiles = (e) => {
         e.preventDefault();
         setdropClick(true);
-        const file = e.dataTransfer.files[0];
+        const file = e.dataTransfer?.files[0] || e.target.files[0];;
         const reader = new FileReader();
         setFileToUpload(file);
         var p = new Promise((resolve, reject) => {
@@ -650,6 +650,12 @@ const UploadXL = ({
                     setHighlighted(false);
                     handleFiles(e)
                 }}
+            />
+            <input
+                onChange={handleFiles}
+                style={{ display: 'none' }}
+                id="uploadxl"
+                type="file"
             />
         </Grid>
         <Grid item md={12} xs={12}>
