@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../components/managment/Dialog";
 import { UploadSettings } from "../tempConstants";
 import UploadXL from '../../../components/Files/UploadXL'
+import { FaUpload } from "react-icons/fa";
 
 const useStyles = makeStyles({
     contentBox: {
@@ -33,7 +34,16 @@ const AddBulkRecipientPopup = ({ classes,
         <Dialog
             classes={classes}
             open={isOpen}
-            title={t('recipient.bulkImportTitle')}
+            title={
+                <Box className={clsx(classes.flex, classes.justifyBetween)}>
+                    <Box>{t('recipient.bulkImportTitle')}</Box>
+                    <Box style={{ cursor: 'pointer' }}>
+                        <label htmlFor="uploadxl">
+                            <FaUpload color='#000' />
+                        </label>
+                    </Box>
+                </Box>
+            }
             icon={<div className={classes.dialogIconContent}>
                 {'\uE0D5'}
             </div>}
@@ -51,6 +61,7 @@ const AddBulkRecipientPopup = ({ classes,
                     showUploadButton={true}
                 />
             </Box>
+
         </Dialog>
     );
 };
