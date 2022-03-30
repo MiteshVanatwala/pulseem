@@ -161,7 +161,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       });
 
       unlayer.editor.registerProvider('blocks', async function (params, done) {
-        if(params.userId){
+        if (params.userId) {
           console.log(params);
           done(userBlocks);
         }
@@ -196,7 +196,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const onLoad = () => {
     try {
-      editorRef.current.editor.fonts = fonts.fonts;
+      editorRef.current.editor.fonts = fonts;
       editorRef.current.editor.setSpecialLinks(specialLinks);
       editorRef.current.setMergeTags(mergeData);
       if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {

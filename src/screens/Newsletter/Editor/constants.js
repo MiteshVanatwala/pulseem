@@ -470,10 +470,6 @@ export const fonts = {
     showDefaultFonts: false,
     customFonts: [
       {
-        label: "Andale Mono",
-        value: "andale mono,times"
-      },
-      {
         label: "Arial",
         value: "arial,helvetica,sans-serif"
       },
@@ -481,6 +477,14 @@ export const fonts = {
         label: "Arial Black",
         value: "arial black,avant garde,arial"
       },
+      {
+        label: "Andale Mono",
+        value: "andale mono,times"
+      },
+      // {
+      //   label: "Assistant",
+      //   value: "TODO"
+      // },
       {
         label: "Book Antiqua",
         value: "book antiqua,palatino"
@@ -505,6 +509,26 @@ export const fonts = {
         label: "Impact",
         value: "impact,chicago"
       },
+      // {
+      //   label: "Monospace",
+      //   value: "TODO"
+      // },
+      // {
+      //   label: "New Roman",
+      //   value: "TODO"
+      // },
+      // {
+      //   label: "Serif",
+      //   value: "TODO"
+      // },
+      {
+        label: "Trebuchet MS",
+        value: "trebuchet ms,geneva"
+      },
+      {
+        label: "Verdana",
+        value: "verdana,geneva"
+      },
       {
         label: "Symbol",
         value: "symbol"
@@ -520,14 +544,6 @@ export const fonts = {
       {
         label: "Times New Roman",
         value: "times new roman,times"
-      },
-      {
-        label: "Trebuchet MS",
-        value: "trebuchet ms,geneva"
-      },
-      {
-        label: "Verdana",
-        value: "verdana,geneva"
       },
       {
         label: "Lobster Two",
