@@ -190,7 +190,7 @@ const AddRecipientPopup = ({ classes,
             setErrors({ ...tempError })
 
             return;
-        } else if (!ValidateEmail(data.ClientsData.Email)) {
+        } else if (data.ClientsData.Email && !ValidateEmail(data.ClientsData.Email)) {
             tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             setErrors({ ...tempError })
             return
