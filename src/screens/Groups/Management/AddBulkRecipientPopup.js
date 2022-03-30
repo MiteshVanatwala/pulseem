@@ -64,7 +64,7 @@ const AddBulkRecipientPopup = ({ classes,
             title={
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>{t('recipient.bulkImportTitle')}</Box>
-                    <Box>
+                    <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
                             <FaUpload color='#000' />
                         </label>
