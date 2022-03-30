@@ -38,7 +38,8 @@ import ConfirmDeletePopUp from "./ConfirmDeletePopUp";
 import Toast from '../../../components/Toast/Toast.component';
 import {
   getGroups,
-  deleteGroups
+  deleteGroups,
+  getGroupsBySubAccountId
 } from "../../../redux/reducers/groupSlice";
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import AddBulkRecipientPopup from "./AddBulkRecipientPopup";
@@ -55,7 +56,7 @@ const GroupsManagement = ({ classes }) => {
     isRTL,
   } = useSelector((state) => state.core);
 
-  const { groupData, ToastMessages } = useSelector((state) => state.group);
+  const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
   const { t } = useTranslation();
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [searchStr, setSearchStr] = useState("");
@@ -69,12 +70,12 @@ const GroupsManagement = ({ classes }) => {
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
 
   const renderHtml = (html) => {
-      function createMarkup() {
-          return { __html: html };
-      }
-      return (
-          <label dangerouslySetInnerHTML={createMarkup()}></label>
-      );
+    function createMarkup() {
+      return { __html: html };
+    }
+    return (
+      <label dangerouslySetInnerHTML={createMarkup()}></label>
+    );
   }
 
 
@@ -141,6 +142,9 @@ const GroupsManagement = ({ classes }) => {
     setLoader(true);
     await dispatch(getGroups({ ...serachData, PageSize: rowsPerPage, PageIndex: page }));
     await dispatch(getAccountExtraData());
+    if (subAccountAllGroups.length === 0) {
+      await dispatch(getGroupsBySubAccountId())
+    }
     setDialog(null);
     setLoader(false);
   };
@@ -566,26 +570,26 @@ const GroupsManagement = ({ classes }) => {
   const groupsLength = (groupData && groupData.RecordCount) || 0;
 
   const handleAddRecipientResponse = (res) => {
-    switch(res.payload.StatusCode){
-        case 201: {
-            setResponseMessage({ title: t("recipient.summary.summaryImportTitle"), message: '', summary: res.payload.Summary})
-            setDialog(DialogType.MESSAGE);
-            break;
-        }
-        case 202: {
-            setResponseMessage({ title: t("recipient.bulkImportTitle"), message: renderHtml(t("recipient.importResponses.fileUploaded"))})
-            setDialog(DialogType.MESSAGE);
-            break;
-        }
-        case 404: {
-            setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound")})
-            setDialog(DialogType.MESSAGE);
-            break;
-        }
-        default: {
-            setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
-            setDialog(DialogType.MESSAGE);
-        }
+    switch (res.payload.StatusCode) {
+      case 201: {
+        setResponseMessage({ title: t("recipient.summary.summaryImportTitle"), message: '', summary: res.payload.Summary })
+        setDialog(DialogType.MESSAGE);
+        break;
+      }
+      case 202: {
+        setResponseMessage({ title: t("recipient.bulkImportTitle"), message: renderHtml(t("recipient.importResponses.fileUploaded")) })
+        setDialog(DialogType.MESSAGE);
+        break;
+      }
+      case 404: {
+        setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound") })
+        setDialog(DialogType.MESSAGE);
+        break;
+      }
+      default: {
+        setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
+        setDialog(DialogType.MESSAGE);
+      }
     }
   }
 

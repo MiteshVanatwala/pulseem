@@ -2296,5 +2296,21 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   maxContent: {
     width: 'max-Content'
+  },
+  alignDir: {
+    textAlign: isRTL ? "right" : "left"
+  },
+  '.MuiAccordion-root': {
+    '&::before': {
+      top: '-1px',
+      left: 0,
+      right: 0,
+      height: 1,
+      content: "",
+      opacity: 1,
+      position: 'absolute',
+      transition: 'opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+      backgroundColor: 'rgba(0, 0, 0, 0.12)'
+    }
   }
 });
