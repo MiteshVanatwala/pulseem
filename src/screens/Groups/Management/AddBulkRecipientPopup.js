@@ -6,7 +6,8 @@ import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../components/managment/Dialog";
 import { UploadSettings } from "../tempConstants";
 import UploadXL from '../../../components/Files/UploadXL'
-import { FaUpload } from "react-icons/fa";
+import { AiOutlineCloudUpload } from 'react-icons/ai';
+import clsx from 'clsx';
 
 const useStyles = makeStyles({
     contentBox: {
@@ -39,7 +40,7 @@ const AddBulkRecipientPopup = ({ classes,
                     <Box>{t('recipient.bulkImportTitle')}</Box>
                     <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
-                            <FaUpload color='#000' />
+                            <AiOutlineCloudUpload style={{ fontSize: 30 }} />
                         </label>
                     </Box>
                 </Box>
@@ -58,10 +59,8 @@ const AddBulkRecipientPopup = ({ classes,
                     onDone={onAddRecipient}
                     settings={UploadSettings.GROUPS}
                     uploadToGroups={selectedGroups}
-                    showUploadButton={true}
                 />
             </Box>
-
         </Dialog>
     );
 };

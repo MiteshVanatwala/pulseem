@@ -15,7 +15,6 @@ import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { Loader } from '../Loader/Loader';
 import { useTranslation } from "react-i18next";
-import { AiOutlineCloudUpload } from 'react-icons/ai';
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -34,8 +33,7 @@ const UploadXL = ({
     placeHolder = "sms.dragXlOrCsv",
     onDone = () => null,
     uploadToGroups = [],
-    settings = null,
-    showUploadButton = false
+    settings = null
 }) => {
     const { t } = useTranslation();
     const { ToastMessages, extraData } = useSelector((state) => state.sms);
@@ -624,19 +622,6 @@ const UploadXL = ({
 
     }
     return <Grid container>
-        <Grid item style={{ position: 'absolute', top: 30, display: 'flex', justifyContent: 'flex-end', left: isRTL ? 60 : 'auto', right: isRTL ? 'auto' : 60 }}>
-            <Button
-                className={"select-image"}
-                onClick={handleUploadClick}
-                style={{ padding: "6px 8px", backgroundColor: 'transparent !important' }}>
-                <AiOutlineCloudUpload style={{ fontSize: 30 }} />
-                <input type="file" name="file"
-                    ref={hiddenFileInput}
-                    onChange={changeHandler}
-                    hidden
-                    accept=".xls,.xlsx,.csv" />
-            </Button>
-        </Grid>
         <Grid item md={12} xs={12} className={
             highlighted
                 ? clsx(classes.greenManual)
