@@ -234,7 +234,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[{
                         content: <Typography className={classes.alignDir}>{t("common.first_name")}</Typography>,
-                        gridSize: { xs: 12, sm: 4 }
+                        gridSize: { xs: 12, sm: 3 }
                     },
                     {
                         content: <TextField
@@ -249,7 +249,7 @@ const AddRecipientPopup = ({ classes,
                             error={errors.FirstName}
                             helperText={errors.FirstName}
                         />,
-                        gridSize: { xs: 12, sm: 8 }
+                      gridSize: { xs: 12, sm: 9 }
                     }
                     ]}
                 />
@@ -258,7 +258,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[{
                         content: <Typography className={clsx(classes.plr10, classes.alignDir)}>{t("common.last_name")}</Typography>,
-                        gridSize: { xs: 12, sm: 4 }
+                        gridSize: { xs: 12, sm: 3 }
                     },
                     {
                         content: <TextField
@@ -273,7 +273,7 @@ const AddRecipientPopup = ({ classes,
                             error={errors.LastName}
                             helperText={errors.LastName}
                         />,
-                        gridSize: { xs: 12, sm: 8 }
+                      gridSize: { xs: 12, sm: 9 }
                     }
                     ]}
                 />
@@ -282,7 +282,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[{
                         content: <Typography className={classes.alignDir}>{t("common.telephone")}</Typography>,
-                        gridSize: { xs: 12, sm: 4 }
+                        gridSize: { xs: 12, sm: 3 }
                     },
                     {
                         content: <TextField
@@ -303,7 +303,7 @@ const AddRecipientPopup = ({ classes,
                                 }
                             }}
                         />,
-                        gridSize: { xs: 12, sm: 8 }
+                      gridSize: { xs: 12, sm: 9 }
                     }
                     ]}
                 />
@@ -312,7 +312,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[{
                         content: <Typography className={clsx(classes.plr10, classes.alignDir)}>{t("common.cellphone")}</Typography>,
-                        gridSize: { xs: 12, sm: 4 }
+                        gridSize: { xs: 12, sm: 3 }
                     },
                     {
                         content: <TextField
@@ -337,7 +337,7 @@ const AddRecipientPopup = ({ classes,
                             helperText={errors.Cellphone}
                             onBlur={handleBlur}
                         />,
-                        gridSize: { xs: 12, sm: 8 }
+                      gridSize: { xs: 12, sm: 9 }
                     }
                     ]}
                 />
@@ -346,7 +346,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[{
                         content: <Typography className={classes.alignDir}>{t("common.email")}</Typography>,
-                        gridSize: { xs: 12, sm: 4 }
+                        gridSize: { xs: 12, sm: 3 }
                     },
                     {
                         content: <TextField
@@ -362,7 +362,7 @@ const AddRecipientPopup = ({ classes,
                             helperText={errors.Email}
                             onBlur={handleBlur}
                         />,
-                        gridSize: { xs: 12, sm: 8 }
+                      gridSize: { xs: 12, sm: 9 }
                     }
                     ]}
                 />
@@ -371,7 +371,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[{
                         content: <Typography className={clsx(classes.plr10, classes.alignDir)}>{t("common.company")}</Typography>,
-                        gridSize: { xs: 12, sm: 4 }
+                        gridSize: { xs: 12, sm: 3 }
                     },
                     {
                         content: <TextField
@@ -384,7 +384,7 @@ const AddRecipientPopup = ({ classes,
                             autoComplete="off"
                             onChange={handleChange}
                         />,
-                        gridSize: { xs: 12, sm: 8 }
+                      gridSize: { xs: 12, sm: 9 }
                     }
                     ]}
                 />
@@ -512,7 +512,7 @@ const AddRecipientPopup = ({ classes,
                     gridArr={[
                         {
                             content: <Typography className={classes.alignDir}>{t("common.address")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
+                            gridSize: { xs: 12, sm: 3 }
                         },
                         {
                             content: <TextField
@@ -525,7 +525,7 @@ const AddRecipientPopup = ({ classes,
                                 autoComplete="off"
                                 onChange={handleChange}
                             />,
-                            gridSize: { xs: 12, sm: 8 }
+                          gridSize: { xs: 12, sm: 9 }
                         }
                     ]}
 
@@ -536,7 +536,7 @@ const AddRecipientPopup = ({ classes,
                     gridArr={[
                         {
                             content: <Typography className={clsx(classes.plr10, classes.alignDir)}>{t("common.city")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
+                            gridSize: { xs: 12, sm: 3 }
                         },
                         {
                             content: <TextField
@@ -549,7 +549,7 @@ const AddRecipientPopup = ({ classes,
                                 autoComplete="off"
                                 onChange={handleChange}
                             />,
-                            gridSize: { xs: 12, sm: 8 }
+                          gridSize: { xs: 12, sm: 9 }
                         }
                     ]}
                 />
@@ -560,7 +560,7 @@ const AddRecipientPopup = ({ classes,
                     gridArr={[
                         {
                             content: <Typography className={classes.alignDir}>{t("common.state")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
+                            gridSize: { xs: 12, sm: 3 }
                         },
                         {
                             content: <TextField
@@ -573,7 +573,7 @@ const AddRecipientPopup = ({ classes,
                                 autoComplete="off"
                                 onChange={handleChange}
                             />,
-                            gridSize: { xs: 12, sm: 8 }
+                          gridSize: { xs: 12, sm: 9 }
                         }
                     ]}
                 />
@@ -584,7 +584,7 @@ const AddRecipientPopup = ({ classes,
                     gridArr={[
                         {
                             content: <Typography className={clsx(classes.plr10, classes.alignDir)}>{t("common.country")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
+                            gridSize: { xs: 12, sm: 3 }
                         },
                         {
                             content: <TextField
@@ -597,7 +597,7 @@ const AddRecipientPopup = ({ classes,
                                 autoComplete="off"
                                 onChange={handleChange}
                             />,
-                            gridSize: { xs: 12, sm: 8 }
+                          gridSize: { xs: 12, sm: 9 }
                         }
                     ]}
                 />
@@ -608,7 +608,7 @@ const AddRecipientPopup = ({ classes,
                     gridArr={[
                         {
                             content: <Typography align="right" className={classes.alignDir}>{t("common.zip")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
+                            gridSize: { xs: 12, sm: 3 }
                         },
                         {
                             content: <TextField
@@ -621,7 +621,7 @@ const AddRecipientPopup = ({ classes,
                                 autoComplete="off"
                                 onChange={handleChange}
                             />,
-                            gridSize: { xs: 12, sm: 8 }
+                          gridSize: { xs: 12, sm: 9 }
                         }
                     ]}
                 />
@@ -711,7 +711,7 @@ const AddRecipientPopup = ({ classes,
                     gridArr={[
                         {
                             content: <Typography align="right" className={classes.alignDir}>{t("common.birth_date")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
+                            gridSize: { xs: 12, sm: 3 }
                         },
                         {
                             content: <DateField
@@ -721,7 +721,7 @@ const AddRecipientPopup = ({ classes,
                                 onChange={e => handleChange(e, { date: e, field: 'BirthDate' }, false)}
                                 toolbarDisabled={false}
                             />,
-                            gridSize: { xs: 12, sm: 8 }
+                          gridSize: { xs: 12, sm: 9 }
                         }
                     ]}
 
@@ -732,7 +732,7 @@ const AddRecipientPopup = ({ classes,
                     gridArr={[
                         {
                             content: <Typography align="right" className={clsx(classes.plr10, classes.alignDir)}>{t("common.reminder_date")}</Typography>,
-                            gridSize: { xs: 12, sm: 4 }
+                            gridSize: { xs: 12, sm: 3 }
                         },
                         {
                             content: <DateField
@@ -742,7 +742,7 @@ const AddRecipientPopup = ({ classes,
                                 onChange={e => handleChange(e, { date: e, field: 'ReminderDate' }, false)}
                                 toolbarDisabled={false}
                             />,
-                            gridSize: { xs: 12, sm: 8 }
+                          gridSize: { xs: 12, sm: 9 }
                         }
                     ]}
                 />
@@ -826,7 +826,7 @@ const AddRecipientPopup = ({ classes,
                         gridArr={[
                             {
                                 content: <Typography align="right" className={clsx(classes.plr10, classes.textEllipses, classes.alignDir)}>{extraData[ef]}</Typography>,
-                                gridSize: { xs: 12, sm: 4 }
+                                gridSize: { xs: 12, sm: 3 }
                             },
                             {
                                 content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
@@ -844,7 +844,7 @@ const AddRecipientPopup = ({ classes,
                                     autoComplete="off"
                                     onChange={e => handleChange(e, null, true)}
                                 />,
-                                gridSize: { xs: 12, sm: 8 }
+                              gridSize: { xs: 12, sm: 9 }
                             }
                         ]}
 
@@ -893,7 +893,7 @@ const AddRecipientPopup = ({ classes,
                     }}
                 >
                     <Box className={classes.mb5}>
-                        <Typography align="right" className={classes.font18}>{t(label)}
+                        <Typography align="right" className={clsx(classes.font18, classes.bold)}>{t(label)}
                             {
                                 activeTab !== index && <GrFormAdd size={26} className={localClasses.accordionIcons} />
                             }
@@ -999,7 +999,7 @@ const AddRecipientPopup = ({ classes,
             cancelText="common.Cancel"
             confirmText="common.Ok"
         >
-            <Box className={localClasses.contentBox}>
+            <Box className={clsx(localClasses.contentBox, classes.mt10)}>
                 {
                     ADD_RECIPIENT_TABS.map((label, index) => ActiveForm(label, index))
                 }

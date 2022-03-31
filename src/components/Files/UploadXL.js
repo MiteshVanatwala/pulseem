@@ -327,6 +327,9 @@ const UploadXL = ({
         if (key === 'סלולרי') {
             return "Cellphone";
         }
+        if (key === 'דואראלקטרוני') {
+            return "Email";
+        }
         return key;
     }
     const handleDataManual = async () => {
