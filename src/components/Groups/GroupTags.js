@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux'
-import { Box, Checkbox, TextField } from '@material-ui/core';
+import { Box, Checkbox, Paper, TextField } from '@material-ui/core';
 import { RiCloseFill } from "react-icons/ri";
 import clsx from 'clsx';
 import { Autocomplete } from '@material-ui/lab';
@@ -122,7 +122,11 @@ const GroupTags = ({ classes,
                     placeholder={t("siteTracking.selectGroups")}
                 />
             )}
+            PaperComponent={({ children }) => (
+                <Paper className={classes.groupsAutoComplete}>{children}</Paper>
+            )}
         />
+
     )
 
     return props.dropdown ? DropDownPanel() : CheckBoxPanel()

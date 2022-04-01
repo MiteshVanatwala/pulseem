@@ -1626,4 +1626,31 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     width: "100%",
     paddingInline: 10,
   },
+  groupsAutoComplete: {
+    '& .MuiAutocomplete-listbox': {
+      overflowX: 'hidden',
+      overflowY: 'scroll',
+      maxHeight: 150,
+      '& :hover': {
+        color: '#0371ad'
+      },
+      '&::-webkit-scrollbar': {
+        width: '6px',
+
+      },
+      '&::-webkit-scrollbar-track': {
+        'boxShadow': 'inset 0 0 5px #e9e9e9',
+        'borderRadius': '10px',
+      },
+
+      '&::-webkit-scrollbar-thumb': {
+        background: '#0371ad',
+        borderRadius: '10px'
+      },
+
+      '&::-webkit-scrollbar-thumb:hover': {
+        background: '#036297'
+      }
+    }
+  },
 });

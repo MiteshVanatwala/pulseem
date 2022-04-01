@@ -1,3 +1,5 @@
+import { Hidden } from "@material-ui/core";
+
 const dialogWidth = {
   xs: "200px",
   sm: "350px",
@@ -2312,5 +2314,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       transition: 'opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
       backgroundColor: 'rgba(0, 0, 0, 0.12)'
     }
-  }
+  },
+  scrollY: {
+    overflowX: 'hidden',
+    overflowY: 'scroll',
+
+  },
+
+
 });

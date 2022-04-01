@@ -48,7 +48,7 @@
     "cellphoneLength": ""
   },
   "bulkImportTitle": "העלאת נמענים",
-  "importResponses":{
+  "importResponses": {
     "noFolderFound": "לא נמצאה תיקייה.",
     "genericError": "שגיאה כללית. יש ליצור קשר עם התמיכה.",
     "fileUploaded": "הקובץ נשמר בהצלחה במערכת.<br />העלאת הנמענים תתבצע בדקות הקרובות.<br />באפשרותך לעקוב אחר סטטוס ההעלאה ב<a href='/Pulseem/FileUploads.aspx' target='_blank'>הסטורית העלאת נמענים</a> תחת תפריט קבוצות."
@@ -68,5 +68,6 @@
     "invalidOrEmptyCellphones": "כמות סלולרים ריקים או שגויים:",
     "duplicateCellphoneInFile": "כמות סלולרים כפולים בקובץ:",
     "totalCellularExistingInAccount": "כמות סלולרים הקיימים כבר בחשבון:"
-  }
+  },
+  "bulkRecUpldTooltipText": "באפשרותך להעלות עד 600,000 נמענים בבת אחת"
 }

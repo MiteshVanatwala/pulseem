@@ -60,7 +60,7 @@
     "emailSummary": "Email Summary",
     "totalValidUploadedRecords": "Total valid uploaded records:",
     "totalInvalidOrEmptyAddresses": "Total invalid or empty addresses:",
-    "totalDuplicates":"Total duplicates:",
+    "totalDuplicates": "Total duplicates:",
     "totalRecords": "Total records:",
     "invalidOrEmptyEmailAddresses": "Invalid or empty email addresses:",
     "duplicateEmailAddressesInFile": "Duplicate email addresses in file:",
@@ -68,5 +68,6 @@
     "invalidOrEmptyCellphones": "Invalid or empty cellphones:",
     "duplicateCellphoneInFile": "Duplicate cellphone in file:",
     "totalCellularExistingInAccount": "Total cellular existing in account:"
-  }
+  },
+  "bulkRecUpldTooltipText": "You are able to upload up to 600,000 recipients at once"
 }

@@ -67,10 +67,11 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
         }
     };
 
-    const handleAddRecipient = () => {
+    const handleAddRecipient = async () => {
         try {
-            const response = handleAddGroup();
-            if (response.payload?.StatusCode === 200) {
+            const response = await handleAddGroup(newGroupData);
+            console.log("STATUSCODE:", response.payload?.StatusCode);
+            if (response.payload?.StatusCode === 201) {
                 openARDialog()
             }
         }

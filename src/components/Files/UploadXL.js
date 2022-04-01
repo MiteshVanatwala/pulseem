@@ -518,7 +518,7 @@ const UploadXL = ({
 
                                                             return (
                                                                 <span
-                                                                    className={item.isdisabled ? clsx(classes.grayGroup) : clsx(classes.grouping)}
+                                                                    className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.textEllipses)}
                                                                     onClick={() => {
                                                                         handleSelectFirst(item, id, idx);
                                                                     }}
