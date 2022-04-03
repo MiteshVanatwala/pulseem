@@ -250,7 +250,7 @@ const RenderWebRow = ({
           gridArr={[
             {
               name: t("campaigns.recipients"),
-              value: TotalRecipients,
+              value: (ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0),
               classes: {
                 name: clsx(colorTextStyle.blue, localClasses.dataBox),
                 value: colorTextStyle.blue,
