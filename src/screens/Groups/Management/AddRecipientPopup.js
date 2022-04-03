@@ -79,7 +79,8 @@ const AddRecipientPopup = ({ classes,
     const [activeTab, setActiveTab] = useState(0)
     const [errors, setErrors] = useState({
         Email: '',
-        Cellphone: ''
+        Cellphone: '',
+        Groups: ''
     })
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
 
@@ -205,6 +206,12 @@ const AddRecipientPopup = ({ classes,
             setErrors({ ...tempError })
             setActiveTab(0);
             return
+        }
+        else if (selectedGroups.length === 0) {
+          tempError.Groups = t(ADD_RECIPIENT_REQUIRED_ERRORS.Groups)
+          setErrors({ ...tempError })
+          setActiveTab(4);
+          return
         }
         try {
             setLoader(true)
@@ -876,6 +883,8 @@ const AddRecipientPopup = ({ classes,
                     selectedGroups: selectedGroups
                 }
                 }
+                error={errors.Groups}
+                helperText={errors.Groups}
             />
         </div>)
 

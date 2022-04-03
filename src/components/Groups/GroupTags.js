@@ -20,6 +20,8 @@ const GroupTags = ({ classes,
         selectedGroups: [],
         onChange: () => false
     },
+    error = '',
+    helperText = '',
     ...props
 }) => {
     const { t } = useTranslation();
@@ -121,6 +123,8 @@ const GroupTags = ({ classes,
                     variant="outlined"
                     label={t("common.Groups")}
                     placeholder={t("siteTracking.selectGroups")}
+                    error={error}
+                    helperText={helperText}
                 />
             )}
             PaperComponent={({ children }) => (

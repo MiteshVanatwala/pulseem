@@ -45,7 +45,8 @@
     "lastName": "שם משפחה - שדה חובה",
     "email": "יש להזין כתובת מייל חוקית",
     "cellPhone": "יש להזין מספר סלולרי חוקי",
-    "cellphoneLength": ""
+    "cellphoneLength": "יש להזין מספר סלולרי בעל 10-12 ספרות",
+    "groupLength": "יש לבחור מהרשימה קבוצה אחת לפחות"
   },
   "bulkImportTitle": "העלאת נמענים",
   "importResponses": {
