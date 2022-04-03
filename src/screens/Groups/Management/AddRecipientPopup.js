@@ -96,11 +96,13 @@ const AddRecipientPopup = ({ classes,
                     setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
                     document.getElementById("rec_cellphone").classList.add("error");
                     document.getElementById("rec_cellphone").focus();
+                    setActiveTab(0);
                 }
                 else if (addRecipientData.Email) {
                     setErrors({ ...errors, Email: t(ADD_RECIPIENT_REQUIRED_ERRORS.Email) })
                     document.getElementById("rec_email").classList.add("error");
                     document.getElementById("rec_email").focus();
+                    setActiveTab(0);
                 }
                 break;
             }
@@ -195,11 +197,13 @@ const AddRecipientPopup = ({ classes,
             }
 
             setErrors({ ...tempError })
+            setActiveTab(0);
 
             return;
         } else if (data.ClientsData.Email && !ValidateEmail(data.ClientsData.Email)) {
             tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             setErrors({ ...tempError })
+            setActiveTab(0);
             return
         }
         try {
