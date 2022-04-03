@@ -70,5 +70,6 @@
     "duplicateCellphoneInFile": "Duplicate cellphone in file:",
     "totalCellularExistingInAccount": "Total cellular existing in account:"
   },
-  "bulkRecUpldTooltipText": "You are able to upload up to 600,000 recipients at once"
+  "bulkRecUpldTooltipText": "You are able to upload up to 600,000 recipients at once",
+  "reactiveUnsubscriber": "Reactivate removed recipient"
 }

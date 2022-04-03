@@ -70,5 +70,6 @@
     "duplicateCellphoneInFile": "כמות סלולרים כפולים בקובץ:",
     "totalCellularExistingInAccount": "כמות סלולרים הקיימים כבר בחשבון:"
   },
-  "bulkRecUpldTooltipText": "באפשרותך להעלות עד 600,000 נמענים בבת אחת"
+  "bulkRecUpldTooltipText": "באפשרותך להעלות עד 600,000 נמענים בבת אחת",
+  "reactiveUnsubscriber": "הפעל נמען מוסר"
 }
