@@ -36,7 +36,7 @@
   "reminderDate": "ReminderDate",
   "errorMessage": "ErrorMessage",
   "recipientAddPopUpTitle": "Add a single recipient to one or more groups",
-  "addRecipientToGroups": "Add recipient to group/s",
+  "addRecipientToGroups": "Add recipient to groups",
   "dates": "Dates",
   "addRecipientSuccess": "Recipient successfully added",
   "incorrectRecipientInput": "None of the clients have either valid email or valid cellphone",
