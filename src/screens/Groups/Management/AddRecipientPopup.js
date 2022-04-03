@@ -879,6 +879,9 @@ const AddRecipientPopup = ({ classes,
                     onChange: (e, val) => {
                         const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
                         selectGroup(idArr)
+                        if (idArr.length > 0) {
+                           setErrors({ ...errors, Groups: '' })
+                        }
                     },
                     selectedGroups: selectedGroups
                 }
