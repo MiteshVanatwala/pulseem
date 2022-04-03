@@ -5,7 +5,7 @@ import {
     Typography,
     Grid,
     Button,
-    Box,
+    Box
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../components/managment/Dialog";
@@ -19,9 +19,9 @@ const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, hand
             classes={classes}
             open={isOpen}
             title={t("group.delete")}
-            icon={<div className={classes.dialogIconContent}>
-                {'\uE0D2'}
-            </div>}
+            icon={<Box className={classes.dialogAlertIcon}>
+                !
+            </Box>}
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}
