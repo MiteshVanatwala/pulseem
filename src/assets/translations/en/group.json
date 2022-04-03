@@ -17,5 +17,6 @@
   "testGroup": "Test Group",
   "autoResponderConnected": "Autoresponder attached to this group",
   "webformConnected": "Landing page atteched to this group",
-  "invalidGroupId": "Invalid Group ID"
+  "invalidGroupId": "Invalid Group ID",
+  "noGroupFound": "No groups found"
 }

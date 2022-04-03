@@ -17,5 +17,6 @@
   "testGroup": "קבוצת ניסיון",
   "autoResponderConnected": "לקבוצה זו משוייך Autoresponder",
   "webformConnected": "לקבוצה זו משוייך דף נחיתה",
-  "invalidGroupId": "מספר המזהה של הקבוצה אינו תקין"
+  "invalidGroupId": "מספר המזהה של הקבוצה אינו תקין",
+  "noGroupFound": "לא נמצאו קבוצות"
 }

@@ -86,6 +86,7 @@ const GroupTags = ({ classes,
     const DropDownPanel = () => (
         <Autocomplete
             multiple
+            noOptionsText={t("group.noGroupFound")}
             id="tags-outlined"
             // style={{ height: 100 }}
             debug={true}
