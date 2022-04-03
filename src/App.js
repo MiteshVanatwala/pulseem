@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
-import CampaignEditor from './screens/Newsletter/Editor/CampaignEditor';
+import CampaignEditor from './screens/HtmlCampaign/CampaignEditor';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'

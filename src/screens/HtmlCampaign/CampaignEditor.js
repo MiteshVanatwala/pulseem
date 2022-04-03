@@ -1,15 +1,17 @@
 import { Button } from '@material-ui/core'
 import React, { useRef, useState, useEffect } from 'react'
 import EmailEditor from 'react-email-editor'
-import DefaultScreen from '../../DefaultScreen'
+import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
-import { getCampaignById, saveCampaign, getUserblocks, saveUserBlock, updateUserBlock, deleteUserBlock } from '../../../redux/reducers/campaignEditorSlice';
-import { Loader } from '../../../components/Loader/Loader';
+import { getCampaignById, saveCampaign, getUserblocks, saveUserBlock, updateUserBlock, deleteUserBlock } from '../../redux/reducers/campaignEditorSlice';
+import { Loader } from '../../components/Loader/Loader';
 import { appearance, tools, options, features, fonts } from './constants'
-import { ClientFields } from '../../../model/PulseemFields/Fields'
-import { getAccountExtraData, getPreviousLandingData } from "../../../redux/reducers/smsSlice";
+import { ClientFields } from '../../model/PulseemFields/Fields'
+import { getAccountExtraData, getPreviousLandingData } from "../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
-import { getCookie } from '../../../helpers/cookies'
+import { getCookie } from '../../helpers/cookies'
+import TopEditor from './TopEditor';
+import TestSend from './modals/TestSend'
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -25,7 +27,12 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language } = useSelector(state => state.core)
   const [iframeKey, setIframeKey] = useState(0);
+  const [dialog, setDialog] = useState(null);
   const subAccountSettings = getCookie("subAccountSettings");
+  const DialogType = {
+    TEST_SEND: "testSend",
+    DELETE: "delete"
+  };
 
   useEffect(() => {
     if (dataReady) {
@@ -140,7 +147,6 @@ const CampaignEditor = ({ classes, ...props }) => {
 
         done(newBlock);
       });
-
       unlayer.registerCallback('block:modified', async function (existingBlock, done) {
         console.log('block:modified', existingBlock);
 
@@ -150,7 +156,6 @@ const CampaignEditor = ({ classes, ...props }) => {
 
         done(existingBlock);
       });
-
       unlayer.registerCallback('block:removed', async function (existingBlock, done) {
         console.log('block:removed', existingBlock);
 
@@ -159,43 +164,19 @@ const CampaignEditor = ({ classes, ...props }) => {
 
         done(existingBlock);
       });
-
       unlayer.editor.registerProvider('blocks', async function (params, done) {
         if (params.userId) {
-          console.log(params);
           done(userBlocks);
         }
       });
-
+      unlayer.customJS = ['console.log(123123)','https://www.pulseemdev.co.il/pulseem/CompanyDetails.js'];
       unlayer.editor.reloadProvider('blocks');
     }
 
   }
-  const saveDesign = (redirectAfterSave = false) => {
-    return new Promise((reject, resolve) => {
-      try {
-        editorRef.current.exportHtml(async (data) => {
-          const { design, html } = data;
-          const response = await dispatch(saveCampaign({ campaignId: campaignId, JsonData: JSON.stringify(design), HtmlData: html }));
-          if (response.payload === true) {
-            if (redirectAfterSave) {
-              window.location = `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
-            }
-            console.log('saved!');
-          }
-          else {
-            console.log(response);
-          }
-          resolve(response.payload);
-        })
-      } catch (error) {
-        reject();
-      }
-    })
-
-  }
   const onLoad = () => {
     try {
+      editorRef.current.editor.customJS = ['console.log(123123)'];
       editorRef.current.editor.fonts = fonts;
       editorRef.current.editor.setSpecialLinks(specialLinks);
       editorRef.current.setMergeTags(mergeData);
@@ -239,6 +220,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (dataReady) {
       return <React.StrictMode>
         <EmailEditor
+          editorId="campaign-editor"
           ref={editorRef}
           minHeight="calc(100vh - 100px)"
           tools={tools}
@@ -247,20 +229,55 @@ const CampaignEditor = ({ classes, ...props }) => {
           features={features}
           key={iframeKey}
           projectId={71525}
+          customJS={['console.log("123123")']}
         />
       </React.StrictMode>
     }
     return <></>
   }
+  const saveDesign = (redirectAfterSave = false) => {
+    return new Promise((reject, resolve) => {
+      try {
+        editorRef.current.exportHtml(async (data) => {
+          const { design, html } = data;
+          const response = await dispatch(saveCampaign({ campaignId: campaignId, JsonData: JSON.stringify(design), HtmlData: html }));
+          if (response.payload === true) {
+            if (redirectAfterSave) {
+              window.location = `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
+            }
+            console.log('saved!');
+          }
+          else {
+            console.log(response);
+          }
+          resolve(response.payload);
+        })
+      } catch (error) {
+        reject();
+      }
+    })
 
+  }
+  const onDelete = () => {
+    console.log('delete');
+    //TODO: Show confirm modal
+  }
   return (
     <DefaultScreen
       currentPage='campaignEditor'
       classes={classes}
       style={{ paddingBottom: 100 }}
     >
-      <Button onClick={() => saveDesign()}>Save</Button>
-      <Button onClick={() => saveDesign(true)}>Finish</Button>
+      <TopEditor
+        classes={classes}
+        onTestSend={() => {setDialog(DialogType.TEST_SEND}}
+        onSave={saveDesign}
+        onDelete={onDelete} />
+      <TestSend
+        classes={classes}
+        isOpen={dialog === DialogType.TEST_SEND}
+        onClose={() => setDialog(null)}
+      />
       {renderEditor()}
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>

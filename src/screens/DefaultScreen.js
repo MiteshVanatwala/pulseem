@@ -31,7 +31,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
 
   title = title ? `${title} | ${t('master.pulseemSystem')}` : t('master.pulseemSystem');
 
-  useEffect(() => {
+  /* useEffect(() => {
     const liveChat = document.createElement("script");
     liveChat.type = 'text/javascript';
     liveChat.async = true;
@@ -50,7 +50,7 @@ const DefaultScreen = ({ classes, children, currentPage = '', subPage = '', cont
     return () => {
       document.body.removeChild(liveChat);
     }
-  }, [])
+  }, []) */
 
 
   return (
