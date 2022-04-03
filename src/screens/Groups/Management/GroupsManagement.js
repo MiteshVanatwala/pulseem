@@ -656,7 +656,7 @@ const GroupsManagement = ({ classes }) => {
       {dialog === DialogType.ADD_RECIPIENT && <AddRecipientPopup
         classes={classes}
         isOpen={dialog === DialogType.ADD_RECIPIENT}
-        onClose={() => setDialog(null)}
+        onClose={() => { setDialog(null); setSelectedGroups([]);}}
         setLoader={setLoader}
         onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
@@ -671,7 +671,7 @@ const GroupsManagement = ({ classes }) => {
       {dialog === DialogType.ADD_RECIPIENTS && <AddBulkRecipientPopup
         classes={classes}
         isOpen={dialog === DialogType.ADD_RECIPIENTS}
-        onClose={() => setDialog(null)}
+        onClose={() => { setDialog(null); setSelectedGroups([]);}}
         setLoader={setLoader}
         onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
@@ -685,14 +685,14 @@ const GroupsManagement = ({ classes }) => {
       <ConfirmDeletePopUp
         classes={classes}
         isOpen={dialog === DialogType.DELETE_GROUP}
-        onClose={() => setDialog(null)}
+        onClose={() => { setDialog(null); setSelectedGroups([]);}}
         windowSize={windowSize}
         handleDeleteGroup={() => handleDeleteGroup()}
       />
       <AddRecipientResponse
         classes={classes}
         isOpen={dialog === DialogType.MESSAGE}
-        onClose={() => { setDialog(null); getData(); }}
+        onClose={() => { setDialog(null); setSelectedGroups([]); getData(); }}
         windowSize={windowSize}
         title={responseMessage.title}
         message={responseMessage.message}
