@@ -163,7 +163,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     padding: 5,
   },
   dialogAlertIcon: {
-    fontSize: 32,
+    fontSize: 28,
     color: "#fff",
     border: "1px solid #fff",
     borderRadius: 50,
