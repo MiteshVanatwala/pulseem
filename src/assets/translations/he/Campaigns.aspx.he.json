@@ -472,5 +472,6 @@
   "restorecampaignTitle": "בחר את הקמפיינים שברצונך לשחזר",
   "dialogDuplicateTitle": "שיכפול קמפיין",
   "dialogDuplicateContent": "האם ברצונך לשכפל את הקמפיין?",
-  "newsletters": "ניוזלטרים"
+  "newsletters": "ניוזלטרים",
+  "sendToContact": "שלח לאיש קשר אחד"
 }

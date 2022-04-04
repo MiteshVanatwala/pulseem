@@ -7,7 +7,7 @@ import { getCampaignById, saveCampaign, getUserblocks, saveUserBlock, updateUser
 import { Loader } from '../../components/Loader/Loader';
 import { appearance, tools, options, features, fonts } from './constants'
 import { ClientFields } from '../../model/PulseemFields/Fields'
-import { getAccountExtraData, getPreviousLandingData } from "../../redux/reducers/smsSlice";
+import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
 import { getCookie } from '../../helpers/cookies'
 import TopEditor from './TopEditor';
@@ -65,6 +65,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getCampaignById(props.match.params.id));
     await dispatch(getAccountExtraData());
     await dispatch(getPreviousLandingData());
+    await dispatch(getTestGroups())
     setDataReady(true);
     setLoader(false);
   }
@@ -270,7 +271,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     >
       <TopEditor
         classes={classes}
-        onTestSend={() => {setDialog(DialogType.TEST_SEND}}
+        onTestSend={() => {setDialog(DialogType.TEST_SEND)}}
         onSave={saveDesign}
         onDelete={onDelete} />
       <TestSend

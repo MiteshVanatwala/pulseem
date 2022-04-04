@@ -543,5 +543,6 @@
   "invalidDate": "יש לבחור תאריך",
   "minimalDateRequired": "התאריך לא יכול להיות גדול מהתאריך המינימלי",
   "maximalDateRequired": "התאריך לא יכול להיות קטן מהתאריך המקסימלי",
-  "showTen": "הצג 10"
+  "showTen": "הצג 10",
+  "saveTemplate": "שמור תבנית"
 }

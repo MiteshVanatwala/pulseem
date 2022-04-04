@@ -481,5 +481,6 @@
   "restoreCampaignTitle": "Select the newsletters you want to restore",
   "dialogDuplicateTitle": "Duplicate campaign",
   "dialogDuplicateContent": "Do you want to duplicate the campaign?",
-  "newsletters": "Newsletters"
+  "newsletters": "Newsletters",
+  "sendToContact": "Send to one contact"
 }
