@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { getCookie } from '../../helpers/cookies'
 import TopEditor from './TopEditor';
 import TestSend from './modals/TestSend'
+import { TreeItem } from '@material-ui/lab';
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -170,7 +171,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           done(userBlocks);
         }
       });
-      unlayer.customJS = ['console.log(123123)','https://www.pulseemdev.co.il/pulseem/CompanyDetails.js'];
+      unlayer.customJS = ['console.log(123123)', 'https://www.pulseemdev.co.il/pulseem/CompanyDetails.js'];
       unlayer.editor.reloadProvider('blocks');
     }
 
@@ -251,7 +252,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           else {
             console.log(response);
           }
-          resolve(response.payload);
+          resolve();
         })
       } catch (error) {
         reject();
@@ -263,6 +264,12 @@ const CampaignEditor = ({ classes, ...props }) => {
     console.log('delete');
     //TODO: Show confirm modal
   }
+  const onTestSendSubmit = async (sendRequest) => {
+    await saveDesign(false).then(() => {
+      console.log(sendRequest);
+    });
+    return true;
+  }
   return (
     <DefaultScreen
       currentPage='campaignEditor'
@@ -271,13 +278,14 @@ const CampaignEditor = ({ classes, ...props }) => {
     >
       <TopEditor
         classes={classes}
-        onTestSend={() => {setDialog(DialogType.TEST_SEND)}}
+        onTestSend={() => { setDialog(DialogType.TEST_SEND) }}
         onSave={saveDesign}
         onDelete={onDelete} />
       <TestSend
         classes={classes}
         isOpen={dialog === DialogType.TEST_SEND}
         onClose={() => setDialog(null)}
+        onSubmit={onTestSendSubmit}
       />
       {renderEditor()}
       <Loader isOpen={showLoader} showBackdrop={false} />

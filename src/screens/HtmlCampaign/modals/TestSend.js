@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, createRef, useRef } from "react";
 import clsx from "clsx";
 import { Typography, Button, TextField, Box } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
@@ -15,22 +15,29 @@ const TestSend = ({
     classes,
     isOpen = false,
     onClose,
-    handleSubmit = () => null,
-    showLoader = false
+    onSubmit = () => null
 }) => {
     const { t } = useTranslation();
-    const [sendSendMethod, setSendMethod] = useState(1);
-    const [recipient, setRecipient] = useState('');
+    const [sendSendMethod, setSendMethod] = useState("1");
+    const [recipient, setRecipient] = useState(null);
     const [selectedGroups, setTestGroups] = useState([]);
+    const [showLoader, setShowLoader] = useState(false);
     const { testGroups } = useSelector(state => state.sms);
     const { windowSize } = useSelector(state => state.core);
 
     const handleRecipient = (e) => {
-        console.log(e.target.value);
         setRecipient(e.target.value);
     }
     const handleSendMethod = (e) => {
         setSendMethod(e.target.value);
+    }
+
+    const prepareForSubmit = async () => {
+        setShowLoader(true);
+        // TODO: Save the html before send
+        // TODO: Create object for send test
+        await onSubmit({ recipient: recipient, groupIds: selectedGroups });
+        setShowLoader(false);
     }
 
     const radios = [
@@ -38,47 +45,45 @@ const TestSend = ({
             value: "1",
             classes: [classes.radioButtonActive],
             label: t("campaigns.sendToContact"),
-            child: <Box>
-                <TextField
-                    variant='outlined'
-                    size='small'
-                    value={recipient}
-                    onChange={handleRecipient}
-                    className={classes.textField}
-                    style={{ width: '100%' }}
-                    placeholder={t('common.Email')}
-                />
-            </Box>
+            child: <TextField
+                variant='outlined'
+                size='small'
+                value={recipient}
+                onChange={handleRecipient}
+                className={classes.textField}
+                style={{ width: '100%' }}
+                placeholder={t('common.Email')}
+                autoFocus
+            />
         },
         {
             value: "2",
             classes: [classes.radioButtonActive],
-            label: <CustomTooltip
-                isSimpleTooltip={true}
-                classes={classes}
-                interactive={true}
-                arrow={true}
-                style={{ fontSize: 14 }}
-                placement={'top'}
-                icon={<span className={classes.newIcn}>{t("mainReport.newFeature")}</span>}
-                text={t("mainReport.sendToGroups")}
-            />,
-            child: <Box>
-                <GroupTags
+            label:
+                <CustomTooltip
+                    isSimpleTooltip={false}
                     classes={classes}
-                    title={'siteTracking.typeGroupName'}
-                    style={{ width: windowSize === 'xs' ? 320 : 460 }}
-                    dropdown
-                    dropDownProps={{
-                        onChange: (e, val) => {
-                            const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
-                            setTestGroups(idArr)
-                        },
-                        selectedGroups: selectedGroups,
-                        groups: testGroups
-                    }}
-                />
-            </Box>
+                    interactive={true}
+                    arrow={true}
+                    style={{ fontSize: 17 }}
+                    placement={'top'}
+                    title={<Typography noWrap={false}>{t("mainReport.sendToGroups")}</Typography>}
+                    text={<>{t("mainReport.sendToGroups")}<span className={classes.newIcn}>{t("mainReport.newFeature")}</span></>}
+                />,
+            child: <GroupTags
+                classes={classes}
+                title={'siteTracking.typeGroupName'}
+                style={{ width: windowSize === 'xs' ? 320 : 460 }}
+                dropdown
+                dropDownProps={{
+                    onChange: (e, val) => {
+                        const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
+                        setTestGroups(idArr)
+                    },
+                    selectedGroups: selectedGroups,
+                    groups: testGroups
+                }}
+            />
         }
     ];
 
@@ -94,7 +99,7 @@ const TestSend = ({
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}
-            onConfirm={handleSubmit}
+            onConfirm={prepareForSubmit}
             contentStyle={classes.testSendDialog}
             reduceTitle
             style={{ minWidth: 240, zIndex: '100 !important' }}
