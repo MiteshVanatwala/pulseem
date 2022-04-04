@@ -285,6 +285,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   pr25: {
     paddingInlineStart: 25,
   },
+  pr10: {
+    paddingInlineStart: 10,
+  },
+  pl5: {
+    paddingInlineStart: 5,
+  },
   ps15: {
     paddingInlineStart: 8,
   },
