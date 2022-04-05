@@ -16,7 +16,7 @@ const PulseemRadio = ({
     radioOptions
 }) => {
     return (
-        <FormControl component="fieldset" className={classes.fullWidth}>
+        <FormControl component="fieldset" className={classes.fullWidth} key="123">
             <RadioGroup
                 aria-label={name}
                 name={name}
@@ -24,23 +24,24 @@ const PulseemRadio = ({
                 value={value}
             >
                 {radioOptions.map((radio, idx) => {
-                    return <><FormControlLabel
-                        key={idx}
-                        value={radio.value}
-                        control={<Radio color="primary"
-                            className={radio.classes}
-                            checked={radio.value.toString() === value.toString()}
-                        />}
-                        label={
-                            <span className={classes.radioText}>
-                                {radio.label}
-                            </span>
-                        }
-                    />
+                    return <Box key={`'c_${idx}`}>
+                        <FormControlLabel
+                            value={radio.value}
+                            control={<Radio color="primary"
+                                key={`'radio_${idx}`}
+                                className={radio.className}
+                                checked={radio.value.toString() === value.toString()}
+                            />}
+                            label={
+                                <span className={classes.radioText}>
+                                    {radio.label}
+                                </span>
+                            }
+                        />
                         <Box className={value !== radio.value ? classes.disabled : null}>
                             {radio.child}
                         </Box>
-                    </>
+                    </Box>
                 })}
             </RadioGroup>
         </FormControl>

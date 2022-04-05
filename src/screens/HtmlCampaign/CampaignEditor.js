@@ -264,11 +264,13 @@ const CampaignEditor = ({ classes, ...props }) => {
     console.log('delete');
     //TODO: Show confirm modal
   }
-  const onTestSendSubmit = async (sendRequest) => {
-    await saveDesign(false).then(() => {
+  const onTestSendSubmit = (sendRequest) => {
+    saveDesign().then((r) => {
+      console.log('r', r);
       console.log(sendRequest);
+      //TODO: Call to TestSend
+      return true;
     });
-    return true;
   }
   return (
     <DefaultScreen

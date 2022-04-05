@@ -19,7 +19,7 @@ const TestSend = ({
 }) => {
     const { t } = useTranslation();
     const [sendSendMethod, setSendMethod] = useState("1");
-    const [recipient, setRecipient] = useState(null);
+    const [recipient, setRecipient] = useState('');
     const [selectedGroups, setTestGroups] = useState([]);
     const [showLoader, setShowLoader] = useState(false);
     const { testGroups } = useSelector(state => state.sms);
@@ -43,7 +43,7 @@ const TestSend = ({
     const radios = [
         {
             value: "1",
-            classes: [classes.radioButtonActive],
+            className: classes.radioButtonActive,
             label: t("campaigns.sendToContact"),
             child: <TextField
                 variant='outlined'
@@ -58,7 +58,7 @@ const TestSend = ({
         },
         {
             value: "2",
-            classes: [classes.radioButtonActive],
+            className: classes.radioButtonActive,
             label:
                 <CustomTooltip
                     isSimpleTooltip={false}
