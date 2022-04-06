@@ -101,6 +101,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   flexRow: {
     flexDirection: "row",
   },
+  flexColumn: {
+    flexDirection: "column",
+  },
   minWidth75: {
     minWidth: "75px!important",
   },
@@ -877,7 +880,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   textEllipses: {
     whiteSpace: "nowrap",
-    overflow: "hidden",
+    overflowX: "clip",
     textOverflow: "ellipsis",
   },
   nameEllipsis: {

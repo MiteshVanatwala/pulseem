@@ -513,7 +513,7 @@ const UploadXL = ({
                                                     {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
                                                     {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
                                                 {dropIndex == idx ? (
-                                                    <div className={classes.adjustC}>
+                                                    <div className={clsx(classes.adjustC, classes.scrollY)} style={{ maxHeight: 175 }}>
                                                         {selectArray.map((item, id) => {
 
                                                             return (

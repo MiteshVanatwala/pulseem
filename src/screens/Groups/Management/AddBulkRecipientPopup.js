@@ -46,7 +46,7 @@ const AddBulkRecipientPopup = ({ classes,
                         arrow: classes.fBlack,
                     }}
                     arrow={true}
-                    style={{ fontSize: 18 }}
+                    // style={{ fontSize: 18 }}
                     placement={"top"}
                     title={<Typography noWrap={false}>{t('recipient.bulkRecUpldTooltipText')}</Typography>}
                     text={t('recipient.bulkRecUpldTooltipText')}
@@ -55,7 +55,7 @@ const AddBulkRecipientPopup = ({ classes,
                         <Box>{t('recipient.bulkImportTitle')}</Box>
                         <Box style={{ cursor: 'pointer' }}>
                             <label htmlFor="uploadxl">
-                                <AiOutlineCloudUpload style={{ fontSize: 30 }} />
+                                <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
                             </label>
                         </Box>
                     </Box>

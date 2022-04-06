@@ -966,19 +966,21 @@ const AddRecipientPopup = ({ classes,
                     onClick={() => {
                         setActiveTab(index)
                     }}
+
                 >
-                    <Box className={classes.mb5}>
-                        <Typography align="right" className={clsx(classes.font18, classes.bold)}>{t(label)}
+                    <Box className={clsx(classes.mb5, classes.fullWidth)}>
+                        <Typography align="left" className={clsx(classes.font18, classes.bold)}>{t(label)}
                             {
                                 activeTab !== index && <GrFormAdd size={26} className={localClasses.accordionIcons} />
                             }
                         </Typography>
+                        <Box style={{ padding: '5px 5px 10px 0px' }}>
+                            <Divider />
+                        </Box>
                     </Box>
 
                 </AccordionSummary>
-                <Box style={{ padding: '5px 5px 10px 15px' }}>
-                    <Divider />
-                </Box>
+
                 <AccordionDetails>
                     {index === 0 && PERSONAL_DETAILS_FORM()}
                     {index === 1 && LOCATION_DETAILS_FORM()}
