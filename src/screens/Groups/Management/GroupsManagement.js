@@ -586,6 +586,11 @@ const GroupsManagement = ({ classes }) => {
         setDialog(DialogType.MESSAGE);
         break;
       }
+      case 400: {
+        setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound") })
+        setDialog(DialogType.MESSAGE);
+        break;
+      }
       default: {
         setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
         setDialog(DialogType.MESSAGE);
@@ -656,7 +661,7 @@ const GroupsManagement = ({ classes }) => {
       {dialog === DialogType.ADD_RECIPIENT && <AddRecipientPopup
         classes={classes}
         isOpen={dialog === DialogType.ADD_RECIPIENT}
-        onClose={() => { setDialog(null); setSelectedGroups([]);}}
+        onClose={() => { setDialog(null); setSelectedGroups([]); }}
         setLoader={setLoader}
         onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
@@ -671,7 +676,7 @@ const GroupsManagement = ({ classes }) => {
       {dialog === DialogType.ADD_RECIPIENTS && <AddBulkRecipientPopup
         classes={classes}
         isOpen={dialog === DialogType.ADD_RECIPIENTS}
-        onClose={() => { setDialog(null); setSelectedGroups([]);}}
+        onClose={() => { setDialog(null); setSelectedGroups([]); }}
         setLoader={setLoader}
         onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
@@ -685,7 +690,7 @@ const GroupsManagement = ({ classes }) => {
       <ConfirmDeletePopUp
         classes={classes}
         isOpen={dialog === DialogType.DELETE_GROUP}
-        onClose={() => { setDialog(null); setSelectedGroups([]);}}
+        onClose={() => { setDialog(null); setSelectedGroups([]); }}
         windowSize={windowSize}
         handleDeleteGroup={() => handleDeleteGroup()}
       />

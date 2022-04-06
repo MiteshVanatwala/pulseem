@@ -584,11 +584,26 @@ const UploadXL = ({
             onConfirm: () => { handleDataManual() }
         }
     }
+
+    const cautionDialog = () => {
+        return {
+            title: t('sms.columnAdjustment'),
+            content: <Typography>
+                {t('sms.reset_manual_upload_notice')}
+            </Typography>,
+
+            onClose: () => setDialogType('manualUpload'),
+            onCancel: () => setDialogType(null),
+            onConfirm: () => settypedData('')
+        }
+    }
+
     const renderDialog = () => {
         const { type } = dialogType || {}
 
         const dialogContent = {
-            manualUpload: manualUploadDialog()
+            manualUpload: manualUploadDialog(),
+            caution: cautionDialog()
         }
 
         const currentDialog = dialogContent[type] || {}

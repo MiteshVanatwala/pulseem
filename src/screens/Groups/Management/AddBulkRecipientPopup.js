@@ -10,6 +10,7 @@ import UploadXL from '../../../components/Files/UploadXL'
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import clsx from 'clsx';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
+import { BsInfoCircleFill } from "react-icons/bs";
 
 const useStyles = makeStyles({
     contentBox: {
@@ -38,28 +39,34 @@ const AddBulkRecipientPopup = ({ classes,
             classes={classes}
             open={isOpen}
             title={
-                <CustomTooltip
-                    isSimpleTooltip={false}
-                    interactive={true}
-                    classes={{
-                        tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                        arrow: classes.fBlack,
-                    }}
-                    arrow={true}
-                    // style={{ fontSize: 18 }}
-                    placement={"top"}
-                    title={<Typography noWrap={false}>{t('recipient.bulkRecUpldTooltipText')}</Typography>}
-                    text={t('recipient.bulkRecUpldTooltipText')}
-                >
-                    <Box className={clsx(classes.flex, classes.justifyBetween)}>
-                        <Box>{t('recipient.bulkImportTitle')}</Box>
-                        <Box style={{ cursor: 'pointer' }}>
-                            <label htmlFor="uploadxl">
-                                <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
-                            </label>
-                        </Box>
+                <Box className={clsx(classes.flex, classes.justifyBetween)}>
+                    <Box>
+                        {t('recipient.bulkImportTitle')}
+                        <CustomTooltip
+                            isSimpleTooltip={false}
+                            interactive={true}
+                            classes={{
+                                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                                arrow: classes.fBlack,
+                            }}
+                            arrow={true}
+                            // style={{ fontSize: 18 }}
+                            placement={"top"}
+                            title={<Typography noWrap={false}>{t('recipient.bulkRecUpldTooltipText')}</Typography>}
+                            text={t('recipient.bulkRecUpldTooltipText')}
+                        >
+                            <span >
+                                <BsInfoCircleFill className={classes.plr10} size={24} style={{ color: '#000' }} />
+                            </span>
+                        </CustomTooltip>
                     </Box>
-                </CustomTooltip>
+                    <Box style={{ cursor: 'pointer' }}>
+                        <label htmlFor="uploadxl">
+                            <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
+                        </label>
+                    </Box>
+                </Box>
+
 
             }
             icon={<div className={classes.dialogIconContent}>
