@@ -15,15 +15,15 @@ const TestSend = ({
     classes,
     isOpen = false,
     onClose,
+    campaignId,
     onSubmit = () => null
 }) => {
     const { t } = useTranslation();
     const [sendSendMethod, setSendMethod] = useState("1");
     const [recipient, setRecipient] = useState('');
     const [selectedGroups, setTestGroups] = useState([]);
-    const [showLoader, setShowLoader] = useState(false);
     const { testGroups } = useSelector(state => state.sms);
-    const { windowSize } = useSelector(state => state.core);
+    const { windowSize, isRTL } = useSelector(state => state.core);
 
     const handleRecipient = (e) => {
         setRecipient(e.target.value);
@@ -32,12 +32,14 @@ const TestSend = ({
         setSendMethod(e.target.value);
     }
 
-    const prepareForSubmit = async () => {
-        setShowLoader(true);
-        // TODO: Save the html before send
-        // TODO: Create object for send test
-        await onSubmit({ recipient: recipient, groupIds: selectedGroups });
-        setShowLoader(false);
+    const prepareForSubmit = () => {
+        const request = {
+          Language: `${isRTL ? 'he-IL' : 'en-US'}`,
+          CampaignID: campaignId,
+          Emails: recipient,
+          GroupdIds: selectedGroups
+        }
+        onSubmit(request);
     }
 
     const radios = [
@@ -115,7 +117,6 @@ const TestSend = ({
                     radioOptions={radios}
                 />
             </Box>
-            <Loader isOpen={showLoader} />
         </Dialog>
     );
 }

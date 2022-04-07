@@ -3,7 +3,7 @@ import React, { useRef, useState, useEffect } from 'react'
 import EmailEditor from 'react-email-editor'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
-import { getCampaignById, saveCampaign, getUserblocks, saveUserBlock, updateUserBlock, deleteUserBlock } from '../../redux/reducers/campaignEditorSlice';
+import { getCampaignById, saveCampaign, getUserblocks, saveUserBlock, updateUserBlock, deleteUserBlock, testSend } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { appearance, tools, options, features, fonts } from './constants'
 import { ClientFields } from '../../model/PulseemFields/Fields'
@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { getCookie } from '../../helpers/cookies'
 import TopEditor from './TopEditor';
 import TestSend from './modals/TestSend'
+import ResponseModal from './modals/ResponseModal'
 import { TreeItem } from '@material-ui/lab';
 
 const CampaignEditor = ({ classes, ...props }) => {
@@ -32,9 +33,13 @@ const CampaignEditor = ({ classes, ...props }) => {
   const subAccountSettings = getCookie("subAccountSettings");
   const DialogType = {
     TEST_SEND: "testSend",
-    DELETE: "delete"
+    DELETE: "delete",
+    SUCCESS_SENT: "campaigns.successSent",
+    MISSING_API_KEY: "campaigns.missingApi",
+    CAMPAIGN_NOT_FOUND: "campaigns.campaignNotFound",
+    CANNOT_CREATE_GROUP: "campaigns.cannotCreateGroup",
+    ERROR_OCCURED: "campaigns.errorOccured",
   };
-
   useEffect(() => {
     if (dataReady) {
       Promise.all([initExtraDataField(), initLandingPages(), initUserBlocks()]).then(() => {
@@ -136,6 +141,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       // name: username,
       // email: 'ido@pulseem.com'
     }
+    options.customJS= ['console.log("123123")', `${process.env.PUBLIC_URL}/assets/scripts/CompanyDetails.js`];
     setIframeKey(iframeKey + 1);
   }
   const registerEvents = () => {
@@ -231,14 +237,13 @@ const CampaignEditor = ({ classes, ...props }) => {
           features={features}
           key={iframeKey}
           projectId={71525}
-          customJS={['console.log("123123")']}
         />
       </React.StrictMode>
     }
     return <></>
   }
   const saveDesign = (redirectAfterSave = false) => {
-    return new Promise((reject, resolve) => {
+    return new Promise((resolve, reject) => {
       try {
         editorRef.current.exportHtml(async (data) => {
           const { design, html } = data;
@@ -265,12 +270,38 @@ const CampaignEditor = ({ classes, ...props }) => {
     //TODO: Show confirm modal
   }
   const onTestSendSubmit = (sendRequest) => {
-    saveDesign().then((r) => {
-      console.log('r', r);
-      console.log(sendRequest);
-      //TODO: Call to TestSend
-      return true;
+    setLoader(true);
+    saveDesign().then(async (r) => {
+      const reponse = await dispatch(testSend({...sendRequest}));
+      onResponse(reponse.payload.StatusCode);
+      setLoader(false);
     });
+
+    const onResponse = (statusCode) => {
+      switch(statusCode){
+        case 201:{
+        setDialog(DialogType.SUCCESS_SENT);
+          break;
+        }
+        case 401:{
+          setDialog(DialogType.MISSING_API_KEY);
+          break;
+        }
+        case 404:{
+          setDialog(DialogType.CAMPAIGN_NOT_FOUND);
+          break;
+        }
+        case 405:{
+          setDialog(DialogType.CANNOT_CREATE_GROUP);
+          break;
+        }
+        case 500:
+        default: {
+          setDialog(DialogType.ERROR_OCCURED);
+          break;
+        }
+      }
+    }
   }
   return (
     <DefaultScreen
@@ -288,6 +319,14 @@ const CampaignEditor = ({ classes, ...props }) => {
         isOpen={dialog === DialogType.TEST_SEND}
         onClose={() => setDialog(null)}
         onSubmit={onTestSendSubmit}
+        campaignId={campaignId || props.match.params.id}
+      />
+      <ResponseModal
+        classes={classes}
+        isOpen={dialog && dialog !== DialogType.TEST_SEND}
+        onClose={() => setDialog(null)}
+        onConfirm={() => setDialog(null)}
+        message={dialog}
       />
       {renderEditor()}
       <Loader isOpen={showLoader} showBackdrop={false} />

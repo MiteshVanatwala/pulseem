@@ -482,5 +482,10 @@
   "dialogDuplicateTitle": "Duplicate campaign",
   "dialogDuplicateContent": "Do you want to duplicate the campaign?",
   "newsletters": "Newsletters",
-  "sendToContact": "Send to one contact"
+  "sendToContact": "Send to one contact",
+  "successSent": "Sent Successfully",
+  "missingApi": "Missing api key",
+  "campaignNotFound": "Campaign was not found or cannot duplicated for sending",
+  "cannotCreateGroup": "Cannot create default group for test send",
+  "errorOccured": "Error Occured"
 }

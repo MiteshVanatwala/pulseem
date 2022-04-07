@@ -67,6 +67,18 @@ export const deleteUserBlock = createAsyncThunk(
         }
     });
 
+export const testSend = createAsyncThunk(
+    '/CampaignEditor/TestSend/', async (payload, thunkAPI) => {
+        try {
+            const response = await instence.post(`/CampaignEditor/TestSend/`, payload);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+
+
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
