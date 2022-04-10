@@ -1,6 +1,7 @@
 {
   "new": "New Group",
   "delete": "Delete Groups",
+  "edit": "Edit groups",
   "ok": "Ok",
   "cancel": "Cancel",
   "deleteConfirm": "Are you sure you want to delete the following groups",

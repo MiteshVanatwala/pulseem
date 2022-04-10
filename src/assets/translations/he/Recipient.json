@@ -40,6 +40,8 @@
   "dates": "תאריכים",
   "addRecipientSuccess": "נמען נוסף בהצלחה",
   "incorrectRecipientInput": "מספר סלולארי או כתובת המייל שהוזנו לא תקינים",
+  "unsubRecipients": "Remove recipients from account",
+  "deleteRecipients": "Delete recipient/s from group",
   "errors": {
     "firstName": "שם פרטי - שדה חובה",
     "lastName": "שם משפחה - שדה חובה",

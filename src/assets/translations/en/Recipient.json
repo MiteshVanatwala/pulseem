@@ -40,6 +40,8 @@
   "dates": "Dates",
   "addRecipientSuccess": "Recipient successfully added",
   "incorrectRecipientInput": "None of the clients have either valid email or valid cellphone",
+  "unsubRecipients": "Remove recipients from account",
+  "deleteRecipients": "Delete recipient/s from group",
   "errors": {
     "firstName": "First Name can't be empty",
     "lastName": "Last Name can't be empty",

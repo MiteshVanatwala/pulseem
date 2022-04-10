@@ -344,9 +344,16 @@ const RenderWebRow = ({
               classes: { text: localClasses.noWrap },
             },
             {
+              onClick: () => {
+                setSelectedGroups(GroupID)
+                setDialog(DialogType.EDIT_GROUP)
+              },
               label: t("recipient.settings"),
               component: (
-                <IconWrapper iconName="settings" className={classes.mxAuto} />
+                <IconWrapper iconName="settings" className={classes.mxAuto}
+
+                />
+
               ),
               classes: { text: localClasses.noWrap },
             },

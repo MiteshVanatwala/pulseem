@@ -44,6 +44,9 @@ import {
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import AddBulkRecipientPopup from "./AddBulkRecipientPopup";
 import AddRecipientResponse from "./AddRecipientResponse";
+import UnSubRecPopup from "./UnSubRecPopup";
+import DeleteRecPopup from "./DeleteRecPopup";
+import EditGroupPopup from "./EditGroupPopup";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -104,9 +107,12 @@ const GroupsManagement = ({ classes }) => {
 
   const DialogType = {
     ADD_GROUP: "addGroup",
+    EDIT_GROUP: "editGroup",
     DELETE_GROUP: "delete group",
     ADD_RECIPIENT: "add recipient",
     ADD_RECIPIENTS: "add recipients",
+    UNSUB_RECIPIENT: "unsubscribe recipients",
+    DELETE_RECIPIENT: "delete recipients",
     MESSAGE: "message",
     SUMMARY: "summary"
   };
@@ -391,13 +397,14 @@ const GroupsManagement = ({ classes }) => {
           <Button
             variant="contained"
             size="medium"
-            href={
-              smsOldVersion === "true"
-                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
-                }`
-                : "/react/sms/create"
-            }
+            // href={
+            //   smsOldVersion === "true"
+            //     ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
+            //     }`
+            //     : "/react/sms/create"
+            // }
             className={clsx(classes.actionButton, classes.actionButtonRed)}
+            onClick={() => selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_RECIPIENT)}
           >
             {t("recipient.deleteRecipient")}
           </Button>
@@ -406,13 +413,14 @@ const GroupsManagement = ({ classes }) => {
           <Button
             variant="contained"
             size="medium"
-            href={
-              smsOldVersion === "true"
-                ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
-                }`
-                : "/react/sms/create"
-            }
+            // href={
+            //   smsOldVersion === "true"
+            //     ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
+            //     }`
+            //     : "/react/sms/create"
+            // }
             className={clsx(classes.actionButton, classes.actionButtonRed)}
+            onClick={() => selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.UNSUB_RECIPIENT)}
           >
             {t("recipient.unsubscribe")}
           </Button>
@@ -658,6 +666,17 @@ const GroupsManagement = ({ classes }) => {
         setToastMessage={setToastMessage}
         openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
       />
+      {dialog === DialogType.EDIT_GROUP && selectedGroups.length !== 0 && <EditGroupPopup
+        classes={classes}
+        isOpen={dialog === DialogType.EDIT_GROUP}
+        onClose={() => setDialog(null)}
+        setLoader={setLoader}
+        onCreateGroupResponse={(val) => onCreateGroupResponse(val)}
+        windowSize={windowSize}
+        ToastMessages={ToastMessages}
+        setToastMessage={setToastMessage}
+        openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
+      />}
       {dialog === DialogType.ADD_RECIPIENT && <AddRecipientPopup
         classes={classes}
         isOpen={dialog === DialogType.ADD_RECIPIENT}
@@ -676,6 +695,34 @@ const GroupsManagement = ({ classes }) => {
       {dialog === DialogType.ADD_RECIPIENTS && <AddBulkRecipientPopup
         classes={classes}
         isOpen={dialog === DialogType.ADD_RECIPIENTS}
+        onClose={() => { setDialog(null); setSelectedGroups([]); }}
+        setLoader={setLoader}
+        onCreateGroupResponse={() => onCreateGroupResponse()}
+        windowSize={windowSize}
+        ToastMessages={ToastMessages}
+        setToastMessage={setToastMessage}
+        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
+        selectedGroups={selectedGroups}
+        selectGroup={(idArr) => setSelectedGroups(idArr)}
+        onAddRecipient={handleAddRecipientResponse}
+      />}
+      {dialog === DialogType.UNSUB_RECIPIENT && <UnSubRecPopup
+        classes={classes}
+        isOpen={dialog === DialogType.UNSUB_RECIPIENT}
+        onClose={() => { setDialog(null); setSelectedGroups([]); }}
+        setLoader={setLoader}
+        onCreateGroupResponse={() => onCreateGroupResponse()}
+        windowSize={windowSize}
+        ToastMessages={ToastMessages}
+        setToastMessage={setToastMessage}
+        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
+        selectedGroups={selectedGroups}
+        selectGroup={(idArr) => setSelectedGroups(idArr)}
+        onAddRecipient={handleAddRecipientResponse}
+      />}
+      {dialog === DialogType.DELETE_RECIPIENT && <DeleteRecPopup
+        classes={classes}
+        isOpen={dialog === DialogType.DELETE_RECIPIENT}
         onClose={() => { setDialog(null); setSelectedGroups([]); }}
         setLoader={setLoader}
         onCreateGroupResponse={() => onCreateGroupResponse()}
