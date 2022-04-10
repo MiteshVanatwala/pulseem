@@ -14,6 +14,7 @@ import TopEditor from './TopEditor';
 import TestSend from './modals/TestSend'
 import ResponseModal from './modals/ResponseModal'
 import { TreeItem } from '@material-ui/lab';
+import Toast from '../../components/Toast/Toast.component';
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -25,12 +26,14 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [mergeData, setPulseemMergeData] = useState({});
   const [specialLinks, setSpecialLinks] = useState([]);
-  const { campaign, userBlocks } = useSelector(state => state.campaignEditor);
+  const { campaign, userBlocks, ToastMessages } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language } = useSelector(state => state.core)
   const [iframeKey, setIframeKey] = useState(0);
   const [dialog, setDialog] = useState(null);
+  const [summaryData, setSummaryData] = useState(null);
   const subAccountSettings = getCookie("subAccountSettings");
+  const [toastMessage, setToastMessage] = useState(null);
   const DialogType = {
     TEST_SEND: "testSend",
     DELETE: "delete",
@@ -39,6 +42,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     CAMPAIGN_NOT_FOUND: "campaigns.campaignNotFound",
     CANNOT_CREATE_GROUP: "campaigns.cannotCreateGroup",
     ERROR_OCCURED: "campaigns.errorOccured",
+    NONE_ACTIVE_RECIPIENT: "campaigns.noneActiveRecipientsFound",
   };
   useEffect(() => {
     if (dataReady) {
@@ -274,17 +278,22 @@ const CampaignEditor = ({ classes, ...props }) => {
     saveDesign().then(async (r) => {
       const reponse = await dispatch(testSend({...sendRequest}));
       onResponse(reponse.payload.StatusCode);
+      setSummaryData(reponse.payload.Summary);
       setLoader(false);
     });
 
     const onResponse = (statusCode) => {
       switch(statusCode){
         case 201:{
-        setDialog(DialogType.SUCCESS_SENT);
+          setDialog(DialogType.SUCCESS_SENT);
           break;
         }
         case 401:{
           setDialog(DialogType.MISSING_API_KEY);
+          break;
+        }
+        case 402:{
+          setToastMessage(ToastMessages.NO_CREDITS_LEFT);
           break;
         }
         case 404:{
@@ -295,6 +304,10 @@ const CampaignEditor = ({ classes, ...props }) => {
           setDialog(DialogType.CANNOT_CREATE_GROUP);
           break;
         }
+        case 406:{
+          setToastMessage(ToastMessages.RECIPIENT_BLOCKED);
+          break;
+        }
         case 500:
         default: {
           setDialog(DialogType.ERROR_OCCURED);
@@ -303,12 +316,25 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
     }
   }
+  const renderToast = () => {
+    if (toastMessage) {
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 4000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
+
   return (
     <DefaultScreen
       currentPage='campaignEditor'
       classes={classes}
       style={{ paddingBottom: 100 }}
     >
+      {renderToast()}
       <TopEditor
         classes={classes}
         onTestSend={() => { setDialog(DialogType.TEST_SEND) }}
@@ -326,6 +352,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         isOpen={dialog && dialog !== DialogType.TEST_SEND}
         onClose={() => setDialog(null)}
         onConfirm={() => setDialog(null)}
+        summaryData={summaryData}
         message={dialog}
       />
       {renderEditor()}

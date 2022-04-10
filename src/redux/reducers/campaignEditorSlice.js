@@ -83,7 +83,11 @@ export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
         campaign: null,
-        userBlocks: null
+        userBlocks: null,
+        ToastMessages: {
+          RECIPIENT_BLOCKED: { severity: 'error', color: 'error', message: "campaigns.recipientBlocked", showAnimtionCheck: false },
+          NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
+        },
     },
     extraReducers: builder => {
         builder

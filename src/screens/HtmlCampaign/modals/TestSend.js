@@ -37,7 +37,7 @@ const TestSend = ({
           Language: `${isRTL ? 'he-IL' : 'en-US'}`,
           CampaignID: campaignId,
           Emails: recipient,
-          GroupdIds: selectedGroups
+          GroupIds: selectedGroups
         }
         onSubmit(request);
     }
@@ -57,8 +57,8 @@ const TestSend = ({
                 placeholder={t('common.Email')}
                 autoFocus
             />
-        },
-        {
+        }//,
+        /*{
             value: "2",
             className: classes.radioButtonActive,
             label:
@@ -86,7 +86,7 @@ const TestSend = ({
                     groups: testGroups
                 }}
             />
-        }
+        }*/
     ];
 
     return (
