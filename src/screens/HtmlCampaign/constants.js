@@ -452,6 +452,9 @@ export const options = {
         "tools.text.personalize": "שדה אישי",
         "tools.tooltip.drag_on_canvas": "גרור אל הקנאנבס",
         "tools.tooltip.got_it": "הבנתי"
+      },
+      'en-US': {
+        "labels.merge_tags": "Personalization"
       }
     }
 }

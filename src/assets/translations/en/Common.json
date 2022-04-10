@@ -549,5 +549,5 @@
   "minimalDateRequired": "Date should not be before minimal date",
   "maximalDateRequired": "Date should not be after maximal date",
   "showTen": "Show 10",
-  "saveTemplate": "Save templage"
+  "saveTemplate": "Save template"
 }

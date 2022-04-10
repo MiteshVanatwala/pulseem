@@ -256,7 +256,9 @@ const CampaignEditor = ({ classes, ...props }) => {
             if (redirectAfterSave) {
               window.location = `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
             }
-            console.log('saved!');
+            else {
+              setToastMessage(ToastMessages.CAMPAIGN_SAVED);
+            }
           }
           else {
             console.log(response);
