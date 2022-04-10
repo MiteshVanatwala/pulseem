@@ -24,22 +24,34 @@ const TestSend = ({
     const [selectedGroups, setTestGroups] = useState([]);
     const { testGroups } = useSelector(state => state.sms);
     const { windowSize, isRTL } = useSelector(state => state.core);
+    const emailRef = useRef(null);
 
     const handleRecipient = (e) => {
         setRecipient(e.target.value);
+    }
+    const validateEmail = () => {
+      emailRef.current.classList.remove('error');
+      var regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@(([[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (!regex.test(recipient)) {
+        emailRef.current.classList.add('error');
+        return false;
+      }
+      return true;
     }
     const handleSendMethod = (e) => {
         setSendMethod(e.target.value);
     }
 
     const prepareForSubmit = () => {
-        const request = {
-          Language: `${isRTL ? 'he-IL' : 'en-US'}`,
-          CampaignID: campaignId,
-          Emails: recipient,
-          GroupIds: selectedGroups
+        if(validateEmail()){
+          const request = {
+            Language: `${isRTL ? 'he-IL' : 'en-US'}`,
+            CampaignID: campaignId,
+            Emails: recipient,
+            GroupIds: selectedGroups
+          }
+          onSubmit(request);
         }
-        onSubmit(request);
     }
 
     const radios = [
@@ -56,6 +68,7 @@ const TestSend = ({
                 style={{ width: '100%' }}
                 placeholder={t('common.Email')}
                 autoFocus
+                ref={emailRef}
             />
         }//,
         /*{
