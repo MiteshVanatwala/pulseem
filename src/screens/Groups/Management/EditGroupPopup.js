@@ -91,13 +91,6 @@ const EditGroupPopup = ({ classes,
                 showDivider={true}
                 onClose={onClose}
                 onCancel={onClose}
-                onConfirm={() => {
-                    const result = handleEditGroup(editableFroupData);
-                    if (result) {
-                        //handleUpdateGroup();
-                        //setEditableFroupData(DEFAULT_NEW_GROUP);
-                    }
-                }}
                 renderButtons={() => (
                     <Grid
                         container
@@ -125,10 +118,7 @@ const EditGroupPopup = ({ classes,
                                     classes.dialogConfirmButton
                                 )}
                                 onClick={() => {
-                                    const result = handleEditGroup(editableFroupData);
-                                    if (result) {
-                                        //setEditableFroupData(DEFAULT_NEW_GROUP);
-                                    }
+                                    handleEditGroup(editableFroupData);
                                 }}
                             >
                                 {t("group.ok")}
@@ -144,8 +134,7 @@ const EditGroupPopup = ({ classes,
                     className={clsx(
                         classes.customDialogContentBox,
                         classes.flex,
-                        classes.mt4,
-                        // classes.responsiveFlex
+                        classes.mt4
                     )}
                 >
                     <Grid container spacing={2}>
