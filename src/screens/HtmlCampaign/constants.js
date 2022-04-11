@@ -350,7 +350,7 @@ export const options = {
         "labels.shadow": "צל",
         "labels.size": "גודל",
         "labels.something_went_wrong": "משהו השתבש",
-        "labels.special_links": "קישורים נוספים",
+        "labels.special_links": "הוסף קישור",
         "labels.stock_photos_by": "Powered by Unsplash, Pexels, Pixabay.",
         "labels.stock_photos_license": "All images licensed under Creative Commons Zero.",
         "labels.stop": "עצור",
@@ -454,7 +454,8 @@ export const options = {
         "tools.tooltip.got_it": "הבנתי"
       },
       'en-US': {
-        "labels.merge_tags": "Personalization"
+        "labels.merge_tags": "Personalization",
+        "labels.special_links": "Add Link"
       }
     }
 }

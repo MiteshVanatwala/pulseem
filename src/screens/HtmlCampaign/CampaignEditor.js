@@ -145,7 +145,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       // name: username,
       // email: 'ido@pulseem.com'
     }
-    options.customJS= ['console.log("123123")', `${process.env.PUBLIC_URL}/assets/scripts/CompanyDetails.js`];
+    options.customJS=['console.log("123123")', `${process.env.PUBLIC_URL}/assets/scripts/CompanyDetails.js`];
+    
     setIframeKey(iframeKey + 1);
   }
   const registerEvents = () => {
