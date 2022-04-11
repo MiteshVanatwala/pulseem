@@ -82,8 +82,7 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
       { title: t('master.RadMenuItemResource9a.Text'), href: '/Pulseem/AutoSendPlans.aspx?fromreact=true', isShow: true },
       { title: t('master.RadMenuItemResource10.Text'), href: '/Pulseem/CampaignTemplates.aspx?fromreact=true', isShow: true },
       { title: t('master.newslatterBasicEditor'), href: '/Pulseem/CampaignEdit.aspx?NewsLetterType=Basic&fromreact=true', isShow: true },
-      { key: 'archiveManagement', title: t('master.campaignsArchive'), href: '/react/Campaigns/Archive', isShow: true },
-      {title: t('master.newEditor'),href: '/react/Campaigns/editor', isShow: true}
+      { key: 'archiveManagement', title: t('master.campaignsArchive'), href: '/react/Campaigns/Archive', isShow: true }
     ]
   },
   {

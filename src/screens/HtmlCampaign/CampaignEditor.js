@@ -145,8 +145,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       // name: username,
       // email: 'ido@pulseem.com'
     }
-    options.customJS=['console.log("123123")', `${process.env.PUBLIC_URL}/assets/scripts/CompanyDetails.js`];
-    
+    options.customJS = ['console.log("123123")', `${process.env.PUBLIC_URL}/assets/scripts/CompanyDetails.js`];
+
     setIframeKey(iframeKey + 1);
   }
   const registerEvents = () => {
@@ -183,15 +183,24 @@ const CampaignEditor = ({ classes, ...props }) => {
         }
       });
       unlayer.customJS = ['console.log(123123)', 'https://www.pulseemdev.co.il/pulseem/CompanyDetails.js'];
+      unlayer.customCSS = ['https://examples.unlayer.com/examples/custom-css/custom.css'];
       unlayer.editor.reloadProvider('blocks');
     }
 
   }
   const onLoad = () => {
     try {
-      editorRef.current.editor.customJS = ['console.log(123123)'];
       editorRef.current.editor.fonts = fonts;
       editorRef.current.editor.setSpecialLinks(specialLinks);
+      // editorRef.current.editor.setBodyValues({
+      //   backgroundColor: "#e7e7e7",
+      //   contentWidth: "600px", // or percent "50%"
+      //   fontFamily: {
+      //     label: "Helvetica",
+      //     value: "'Helvetica Neue', Helvetica, Arial, sans-serif"
+      //   },
+      //   preheaderText: "Hello World"
+      // });
       editorRef.current.setMergeTags(mergeData);
       if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
         setLoader(false);
@@ -242,6 +251,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           features={features}
           key={iframeKey}
           projectId={71525}
+          customCSS={'https://examples.unlayer.com/examples/custom-css/custom.css'}
         />
       </React.StrictMode>
     }
@@ -279,35 +289,35 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onTestSendSubmit = (sendRequest) => {
     setLoader(true);
     saveDesign().then(async (r) => {
-      const reponse = await dispatch(testSend({...sendRequest}));
+      const reponse = await dispatch(testSend({ ...sendRequest }));
       onResponse(reponse.payload.StatusCode);
       setSummaryData(reponse.payload.Summary);
       setLoader(false);
     });
 
     const onResponse = (statusCode) => {
-      switch(statusCode){
-        case 201:{
+      switch (statusCode) {
+        case 201: {
           setDialog(DialogType.SUCCESS_SENT);
           break;
         }
-        case 401:{
+        case 401: {
           setDialog(DialogType.MISSING_API_KEY);
           break;
         }
-        case 402:{
+        case 402: {
           setToastMessage(ToastMessages.NO_CREDITS_LEFT);
           break;
         }
-        case 404:{
+        case 404: {
           setDialog(DialogType.CAMPAIGN_NOT_FOUND);
           break;
         }
-        case 405:{
+        case 405: {
           setDialog(DialogType.CANNOT_CREATE_GROUP);
           break;
         }
-        case 406:{
+        case 406: {
           setToastMessage(ToastMessages.RECIPIENT_BLOCKED);
           break;
         }
