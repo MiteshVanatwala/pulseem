@@ -8,6 +8,7 @@
   "createNew": "Create New Group",
   "testGroupInfo": "Test Groups allow you to send a test directly from the campaign editor",
   "created": "Group created successfuly",
+  "updated": "Group updated successfuly",
   "zeroSelected": "No Group Selected",
   "inputIncorrect": "The input is in incorrect format, missing GroupName",
   "invalidApi": "Invalid or missing API KEY",

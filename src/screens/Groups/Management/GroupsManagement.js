@@ -200,7 +200,7 @@ const GroupsManagement = ({ classes }) => {
     switch (response.payload.StatusCode) {
       case 201: {
         getData();
-        setToastMessage(ToastMessages.GROUP_CREATED);
+        setToastMessage(ToastMessages.GROUP_UPDATED);
         break;
       }
       case 400: {
@@ -675,6 +675,7 @@ const GroupsManagement = ({ classes }) => {
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
+        selectedGroup={selectedGroups[0]}
         openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
       />}
       {dialog === DialogType.ADD_RECIPIENT && <AddRecipientPopup
