@@ -70,6 +70,24 @@ export const addRecipients = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
+export const unsubRecipients = createAsyncThunk(
+    'Client/UnsubscribeRecipients', async (payload, thunkAPI) => {
+        try {
+            const response = await instence.delete(`Client/UnsubscribeRecipients`, { data: payload });
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+export const deleteRecipients = createAsyncThunk(
+    'Client//DeleteRecipientsFromGroups', async (payload, thunkAPI) => {
+        try {
+            const response = await instence.delete(`Client/DeleteRecipientsFromGroups`, { data: payload });
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
 
 
 export const groupSlice = createSlice({
@@ -115,6 +133,12 @@ export const groupSlice = createSlice({
             state.error = error.message;
         })
         builder.addCase(deleteGroups.rejected, (_, action) => console.log('Error - api deleteGroups: ' + action.error))
+        builder.addCase(unsubRecipients.rejected, (state, { error }) => {
+            state.error = error.message;
+        })
+        builder.addCase(deleteRecipients.rejected, (state, { error }) => {
+            state.error = error.message;
+        })
     }
 })
 

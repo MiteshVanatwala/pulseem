@@ -719,6 +719,7 @@ const GroupsManagement = ({ classes }) => {
         selectedGroups={selectedGroups}
         selectGroup={(idArr) => setSelectedGroups(idArr)}
         onAddRecipient={handleAddRecipientResponse}
+
       />}
       {dialog === DialogType.DELETE_RECIPIENT && <DeleteRecPopup
         classes={classes}

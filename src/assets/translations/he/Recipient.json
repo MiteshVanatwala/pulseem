@@ -48,7 +48,8 @@
     "email": "יש להזין כתובת מייל חוקית",
     "cellPhone": "יש להזין מספר סלולרי חוקי",
     "cellphoneLength": "יש להזין מספר סלולרי בעל 10-12 ספרות",
-    "groupLength": "יש לבחור מהרשימה קבוצה אחת לפחות"
+    "groupLength": "יש לבחור מהרשימה קבוצה אחת לפחות",
+    "noData": "No data found"
   },
   "bulkImportTitle": "העלאת נמענים",
   "importResponses": {
@@ -74,5 +75,11 @@
     "totalCellularExistingInAccount": "כמות סלולרים הקיימים כבר בחשבון:"
   },
   "bulkRecUpldTooltipText": "באפשרותך להעלות עד 600,000 נמענים בבת אחת",
-  "reactiveUnsubscriber": "הפעל נמען מוסר"
+  "reactiveUnsubscriber": "הפעל נמען מוסר",
+  "advanceOptions": "Advanced Options",
+  "phone&email": "Phone number & email",
+  "emailOnly": "Only Email",
+  "phoneOnly": "Only Phone Number",
+  "rowsUpdated": "Row/s updated",
+  "deleteConfirm": "Are you sure you want to delete recipients from the following groups"
 }

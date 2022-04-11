@@ -15,10 +15,13 @@ import clsx from 'clsx';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
+import { deleteRecipients } from "../../../redux/reducers/groupSlice";
 import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { Loader } from "../../../components/Loader/Loader";
+import { ValidateEmail, ValidateNumber } from "../../../helpers/utils";
+import { VscCircleFilled } from "react-icons/vsc";
 // import { Loader } from '../Loader/Loader';
 // import DropBox from "../../../components/Files/DropBox";
 
@@ -84,6 +87,7 @@ const DeleteRecPopup = ({ classes,
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
     const [columnValidate, setcolumnValidate] = useState(false);
     const [dropIndex, setdropIndex] = useState(-1);
+    const [confirm, setConfirm] = useState(false)
 
     // const [activeTab, setActiveTab] = useState(1)
 
@@ -237,26 +241,64 @@ const DeleteRecPopup = ({ classes,
         setdropClick(false);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        setLoader(true)
         let tempData = areaData;
         let tempDataArr = tempData.split('\n')
         let tempArr3 = [];
         let tempArr2 = tempDataArr.map((obj) => {
             const childArr = obj.split(',')
             childArr.map((cObj) => {
-                tempArr3 = [...tempArr3, cObj]
+                const rObj = cObj.replace(/ /g, '')
+                tempArr3 = [...tempArr3, rObj]
             })
         })
-        settotalRecords(tempArr2.length)
+        const filteredData = tempArr3.filter(obj => !!obj && obj !== '""')
+        if (filteredData.length == 0) {
+            return;
+        }
+
+        const cellPhoneData = filteredData.filter(obj => ValidateNumber(obj))
+        const EmailData = filteredData.filter(obj => ValidateEmail(obj))
+
+        const payload = {
+            GroupIDs: selectedGroups,
+            CellphoneList: cellPhoneData,
+            EmailList: EmailData
+        }
+
+        const response = await dispatch(deleteRecipients(payload))
+        settotalRecords(filteredData.length)
+        setLoader(false)
+        // console.log("RESPONSE:", response)
+        if (response.payload.StatusCode === 201 || response.payload.Message.StatusCode === 201) {
+            onClose()
+            // setIsSubmitted(true)
+        }
+
     }
 
-    const handlePasted = () => {
 
-    };
+    const RenderSummaryDialog = () => {
+        return (
+            <Dialog
+                classes={classes}
+                open={confirm}
+                title={"System Notice"}
+                icon={<div className={classes.dialogIconContent}>
+                    {'\uE0D5'}
+                </div>}
+                showDivider={true}
+                onClose={() => { setConfirm(false) }}
+                onCancel={() => { setConfirm(false) }}
+                onConfirm={() => { handleSubmit(); setConfirm(false) }}
+            >
 
-    const renderDialog = () => {
-        return <></>
+                <Typography>{t('recipient.deleteConfirm')}</Typography>
+            </Dialog>
+        )
     }
+
 
     const DropBox = (classes) => (<Grid container>
         <Grid item md={12} xs={12} className={
@@ -264,7 +306,7 @@ const DeleteRecPopup = ({ classes,
                 ? clsx(classes.greenManual)
                 : clsx(classes.areaManual)
         }>
-            {renderDialog()}
+            {RenderSummaryDialog()}
             <textarea
                 placeholder={t(placeHolder)}
                 spellCheck="false"
@@ -341,7 +383,7 @@ const DeleteRecPopup = ({ classes,
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}
-            onConfirm={handleSubmit}
+            onConfirm={() => setConfirm(true)}
             // renderButtons={() => (<></>)}
             customContainerStyle=""
         >

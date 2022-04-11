@@ -11,10 +11,12 @@ import { Dialog } from "../../../components/managment/Dialog";
 import { UploadSettings } from "../tempConstants";
 import UploadXL from '../../../components/Files/UploadXL'
 import { AiOutlineCloudUpload } from 'react-icons/ai';
+import { VscCircleFilled } from 'react-icons/vsc';
 import clsx from 'clsx';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
+import { unsubRecipients } from "../../../redux/reducers/groupSlice";
 import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
@@ -84,8 +86,10 @@ const UnSubRecPopup = ({ classes,
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
     const [columnValidate, setcolumnValidate] = useState(false);
     const [dropIndex, setdropIndex] = useState(-1);
-
-    const [activeTab, setActiveTab] = useState(1)
+    const [advanceOpt, setAdvanceOpt] = useState(false)
+    const [activeTab, setActiveTab] = useState(0)
+    const [error, setError] = useState('')
+    const [isSubmitted, setIsSubmitted] = useState(false);
 
 
     const handleFiles = (e) => {
@@ -229,6 +233,10 @@ const UnSubRecPopup = ({ classes,
     }
 
     const areaChange = (e) => {
+        if (e.target.value.length > 0 && error) {
+            setError('')
+        }
+
         let enteredValue = e.target.value.split("\n")
         // enteredValue = enteredValue.split(",")
         const records = enteredValue.filter((r) => { return r !== "" });
@@ -237,25 +245,63 @@ const UnSubRecPopup = ({ classes,
         setdropClick(false);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        setLoader(true)
         let tempData = areaData;
         let tempDataArr = tempData.split('\n')
         let tempArr3 = [];
         let tempArr2 = tempDataArr.map((obj) => {
             const childArr = obj.split(',')
             childArr.map((cObj) => {
-                tempArr3 = [...tempArr3, cObj]
+                const rObj = cObj.replace(/ /g, '')
+                tempArr3 = [...tempArr3, rObj]
             })
         })
-        settotalRecords(tempArr2.length)
+        const filteredData = tempArr3.filter(obj => !!obj && obj !== '""')
+        if (filteredData.length == 0) {
+            return;
+        }
+        const payload = {
+            ListOfValues: filteredData,
+            RemovingOption: activeTab
+        }
+
+        const response = await dispatch(unsubRecipients(payload))
+        settotalRecords(filteredData.length)
+        setLoader(false)
+        console.log("RESPONSE:", response)
+        if (response.payload.StatusCode === 201 || response.payload.Message.StatusCode === 201) {
+            // onClose()
+            setIsSubmitted(true)
+        }
+
     }
 
     const handlePasted = () => {
 
     };
 
-    const renderDialog = () => {
-        return <></>
+    const RenderSummaryDialog = () => {
+        return (
+            <Dialog
+                classes={classes}
+                open={isSubmitted}
+                title={"System Notice"}
+                icon={<div className={classes.dialogIconContent}>
+                    {'\uE0D5'}
+                </div>}
+                showDivider={true}
+                onClose={() => { setIsSubmitted(false); onClose() }}
+                onCancel={() => { setIsSubmitted(false); onClose() }}
+                onConfirm={() => { setIsSubmitted(false); onClose() }}
+            >
+
+                <Box className={clsx(localClasses.contentBox, classes.flex)}>
+                    <Box><VscCircleFilled /></Box>
+                    <Box>{totalRecords} {t('recipient.rowsUpdated')}</Box>
+                </Box>
+            </Dialog>
+        )
     }
 
     const DropBox = (classes) => (<Grid container>
@@ -264,7 +310,7 @@ const UnSubRecPopup = ({ classes,
                 ? clsx(classes.greenManual)
                 : clsx(classes.areaManual)
         }>
-            {renderDialog()}
+            {RenderSummaryDialog()}
             <textarea
                 placeholder={t(placeHolder)}
                 spellCheck="false"
@@ -289,7 +335,14 @@ const UnSubRecPopup = ({ classes,
                     setHighlighted(false);
                     handleFiles(e)
                 }}
+                onBlur={(e) => {
+                    if (!e.target.value) {
+                        setError(t('recipient.errors.noData'))
+                    }
+                }}
+            // onChange={}
             />
+
             <input
                 onChange={handleFiles}
                 style={{ display: 'none' }}
@@ -298,6 +351,7 @@ const UnSubRecPopup = ({ classes,
             />
         </Grid>
         <Loader isOpen={showLoader} />
+        {error && <label style={{ color: 'red', fontSize: '.9em' }}>{error}</label>}
     </Grid>)
 
     return (
@@ -349,16 +403,19 @@ const UnSubRecPopup = ({ classes,
                 {DropBox(classes)}
                 <FormControlLabel
                     control={
-                        <Switch defaultChecked className={localClasses.switch} />
+                        <Switch checked={advanceOpt} onClick={() => {
+                            setActiveTab(0)
+                            setAdvanceOpt(!advanceOpt)
+                        }} className={localClasses.switch} />
                     }
-                    label="Advanced Options"
+                    label={t("recipient.advanceOptions")}
                 />
 
-                <Box className={clsx(classes.flex, classes.mt10, classes.mb20)}>
-                    <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>Phone Number & Email</Box>
-                    <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>Only Email</Box>
-                    <Box className={activeTab === 3 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(3)}>Only Phone Number</Box>
-                </Box>
+                {advanceOpt && (<Box className={clsx(classes.flex, classes.mt10, classes.mb20)}>
+                    <Box className={activeTab === 0 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(0)}>{t("recipient.phone&email")}</Box>
+                    <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>{t("recipient.emailOnly")}</Box>
+                    <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box>
+                </Box>)}
             </Box>
             {/* <Box className={localClasses.contentBox}>
               

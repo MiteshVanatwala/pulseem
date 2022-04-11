@@ -48,7 +48,8 @@
     "email": "Enter a valid email",
     "cellPhone": "Invalid cellphone",
     "cellphoneLength": "Cellphone should be between 10-12 digits",
-    "groupLength": "Please select at least 1 group"
+    "groupLength": "Please select at least 1 group",
+    "noData": "No data found"
   },
   "bulkImportTitle": "Recipient Import",
   "importResponses": {
@@ -74,5 +75,11 @@
     "totalCellularExistingInAccount": "Total cellular existing in account:"
   },
   "bulkRecUpldTooltipText": "You are able to upload up to 600,000 recipients at once",
-  "reactiveUnsubscriber": "Reactivate removed recipient"
+  "reactiveUnsubscriber": "Reactivate removed recipient",
+  "advanceOptions": "Advanced Options",
+  "phone&email": "Phone number & email",
+  "emailOnly": "Only Email",
+  "phoneOnly": "Only Phone Number",
+  "rowsUpdated": "Row/s updated",
+  "deleteConfirm": "Are you sure you want to delete recipients from the following groups"
 }
