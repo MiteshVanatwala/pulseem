@@ -32,9 +32,9 @@ export const createGroup = createAsyncThunk(
     });
 
 export const editGroup = createAsyncThunk(
-    'Group/edit', async (payload, thunkAPI) => {
+    'Group/UpdateSettings', async (payload, thunkAPI) => {
         try {
-            const response = await instence.put(`Group/edit`, payload);
+            const response = await instence.put(`Group/UpdateSettings`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -99,6 +99,7 @@ export const groupSlice = createSlice({
         error: "",
         ToastMessages: {
             GROUP_CREATED: { severity: 'success', color: 'success', message: 'group.created', showAnimtionCheck: false },
+            GROUP_UPDATED: { severity: 'success', color: 'success', message: 'group.updated', showAnimtionCheck: false },
             GROUP_ZERO_SELECT: { severity: 'error', color: 'error', message: 'group.zeroSelected', showAnimtionCheck: false },
             GROUP_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'group.inputIncorrect', showAnimtionCheck: false },
             GROUP_INVALID_API: { severity: 'error', color: 'error', message: 'group.invalidApi', showAnimtionCheck: false },

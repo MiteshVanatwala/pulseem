@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from 'prop-types';
 import clsx from "clsx";
 import {
@@ -10,29 +10,43 @@ import {
     Checkbox,
     FormControlLabel,
 } from "@material-ui/core";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
+import moment from "moment";
 import "moment/locale/he";
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
-import {
-    editGroup,
-} from "../../../redux/reducers/groupSlice";
+import { editGroup, } from "../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../components/managment/Dialog";
 
-const EditGroupPopup = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, openARDialog }) => {
+const EditGroupPopup = ({ classes,
+    isOpen = false,
+    onClose,
+    setLoader,
+    onCreateGroupResponse,
+    windowSize,
+    ToastMessages,
+    setToastMessage,
+    openARDialog,
+    selectedGroup }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
+    const [editableFroupData, setEditableFroupData] = useState(null);
+    const { groupData } = useSelector((state) => state.group);
+    const { language, isRTL } = useSelector((state) => state.core);
+    moment.locale(language);
 
-    const DEFAULT_NEW_GROUP = {
-        GroupID: null,
-        GroupName: "",
-        UpdatedDate: new Date(),
-        CreatedDate: new Date(),
-    };
-    const [editableFroupData, setEditableFroupData] = useState(DEFAULT_NEW_GROUP);
+    useEffect(() => {
+        setLoader(true);
 
+        const initData = async () => {
+            const currentGroup = { ...groupData.Groups.find((g) => { return g.GroupID == selectedGroup }) };
+            setEditableFroupData(currentGroup);
+            setLoader(false);
+        }
 
+        initData();
+    }, [])
 
     const handleEditGroup = async (data) => {
         if (!editableFroupData.GroupName) {
@@ -67,7 +81,7 @@ const EditGroupPopup = ({ classes, isOpen = false, onClose, setLoader, onCreateG
 
     return (
         <>
-            <Dialog
+            {editableFroupData && <Dialog
                 classes={classes}
                 open={isOpen}
                 title={t("group.edit")}
@@ -77,77 +91,34 @@ const EditGroupPopup = ({ classes, isOpen = false, onClose, setLoader, onCreateG
                 showDivider={true}
                 onClose={onClose}
                 onCancel={onClose}
-                onConfirm={() => {
-                    const result = handleEditGroup(editableFroupData);
-                    if (result) {
-                        setEditableFroupData(DEFAULT_NEW_GROUP);
-                    }
-                }}
                 renderButtons={() => (
-                    <Grid container spacing={2} className={classes.linePadding}>
-                        <Grid
-                            item
-                            xs={windowSize === "xs" && 12}
-                            sm={4}
-                            className={classes.txtCenter}
-                        >
+                    <Grid
+                        container
+                        spacing={4}
+                        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                        <Grid item>
                             <Button
                                 variant="contained"
-                                size="medium"
+                                size="small"
                                 className={clsx(
                                     classes.dialogButton,
-                                    classes.dialogCancelButton,
-                                    classes.fullWidth,
-                                    classes.whiteSpaceNoWrap
+                                    classes.dialogCancelButton
                                 )}
-                                onClick={onClose}
+                                onClick={() => onClose()}
                             >
                                 {t("group.cancel")}
                             </Button>
                         </Grid>
-                        <Grid
-                            item
-                            xs={windowSize === "xs" && 12}
-                            sm={4}
-                            className={classes.txtCenter}
-                        >
+                        <Grid item>
                             <Button
                                 variant="contained"
-                                size="medium"
-                                className={clsx(
-                                    classes.fullWidth,
-                                    classes.dialogButton,
-                                    classes.dialogConfirmButton,
-                                    classes.actionButtonLightGreen,
-                                    classes.whiteSpaceNoWrap,
-                                    !editableFroupData.GroupName ? classes.disabled : ''
-                                )}
-                                onClick={handleAddRecipient}
-                            >
-                                {t("recipient.addRecipients")}
-                            </Button>
-                        </Grid>
-                        <Grid
-                            item
-                            xs={windowSize === "xs" && 12}
-                            sm={4}
-                            className={classes.txtCenter}
-                        >
-                            <Button
-                                variant="contained"
-                                size="medium"
+                                size="small"
                                 className={clsx(
                                     classes.dialogButton,
-                                    classes.dialogConfirmButton,
-                                    classes.fullWidth,
-                                    classes.whiteSpaceNoWrap,
-                                    classes.textUppercase
+                                    classes.dialogConfirmButton
                                 )}
                                 onClick={() => {
-                                    const result = handleEditGroup(editableFroupData);
-                                    if (result) {
-                                        setEditableFroupData(DEFAULT_NEW_GROUP);
-                                    }
+                                    handleEditGroup(editableFroupData);
                                 }}
                             >
                                 {t("group.ok")}
@@ -163,108 +134,103 @@ const EditGroupPopup = ({ classes, isOpen = false, onClose, setLoader, onCreateG
                     className={clsx(
                         classes.customDialogContentBox,
                         classes.flex,
-                        classes.mt4,
-                        // classes.responsiveFlex
+                        classes.mt4
                     )}
                 >
-                    <Box className={classes.flex1} style={{ marginInlineEnd: 10 }}>
-                        <Typography>{t("common.GroupName")}:</Typography>
-                    </Box>
-                    <Box className={classes.flex2} style={{ marginInlineEnd: 10 }}>
-                        <TextField
-                            id="outlined-basic"
-                            label=""
-                            variant="outlined"
-                            value={editableFroupData.GroupName}
-                            className={clsx(classes.textField, classes.minWidth252)}
-                            autoComplete="off"
-                            onChange={(e) => {
-                                if (e.target.value.length <= 100) {
-                                    setEditableFroupData({
-                                        ...editableFroupData,
-                                        GroupName: e.target.value,
-                                    });
-                                }
-                                else {
-                                    e.preventDefault()
-                                    setEditableFroupData({
-                                        ...editableFroupData,
-                                        GroupName: e.target.value.substring(0, 100),
-                                    });
-                                    setToastMessage(ToastMessages.GROUP_NAME_MAXLENGTH)
-                                }
-                                e.preventDefault();
+                    <Grid container spacing={2}>
+                        <Grid item xs={8}>
+                            <Box style={{ marginInlineEnd: 10, display: 'flex' }}>
+                                <Typography style={{ marginInlineEnd: 10 }}>{t("common.GroupName")}:</Typography>
+                                <TextField
+                                    id="outlined-basic"
+                                    label=""
+                                    variant="outlined"
+                                    value={editableFroupData.GroupName}
+                                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                    autoComplete="off"
+                                    onChange={(e) => {
+                                        if (e.target.value.length <= 100) {
+                                            setEditableFroupData({
+                                                ...editableFroupData,
+                                                GroupName: e.target.value,
+                                            });
+                                        }
+                                        else {
+                                            e.preventDefault()
+                                            setEditableFroupData({
+                                                ...editableFroupData,
+                                                GroupName: e.target.value.substring(0, 100),
+                                            });
+                                            setToastMessage(ToastMessages.GROUP_NAME_MAXLENGTH)
+                                        }
+                                        e.preventDefault();
 
-                            }}
-                        />
-                        <TextField
-                            id="outlined-basic"
-                            label=""
-                            variant="outlined"
-                            value={editableFroupData.id}
-                            className={clsx(classes.textField, classes.minWidth252)}
-                            autoComplete="off"
-                        // onChange={(e) => {
-                        //     if (e.target.value.length <= 100) {
-                        //         setEditableFroupData({
-                        //             ...editableFroupData,
-                        //             GroupName: e.target.value,
-                        //         });
-                        //     }
-                        //     else {
-                        //         e.preventDefault()
-                        //         setEditableFroupData({
-                        //             ...editableFroupData,
-                        //             GroupName: e.target.value.substring(0, 100),
-                        //         });
-                        //         setToastMessage(ToastMessages.GROUP_NAME_MAXLENGTH)
-                        //     }
-                        //     e.preventDefault();
-
-                        // }}
-                        />
-                    </Box>
-                    <Box className={classes.flex} style={{ marginInlineEnd: 10, justifyContent: 'space-between' }}>
-                        <Typography>{t("common.CreatedOn")}:{editableFroupData.CreatedDate}</Typography>
-                        <Typography>{t("common.UpdatedOn")}:{editableFroupData.UpdatedDate}</Typography>
-                    </Box>
-                    <Box
-                        className={clsx(
-                            classes.flex1,
-                            classes.flex,
-                            // classes.responsiveFlex
-                        )}
-                    >
-                        <FormControlLabel
-                            control={
-                                <Checkbox checked={editableFroupData.IsTestGroup} onClick={() => { setEditableFroupData({ ...editableFroupData, IsTestGroup: !editableFroupData.IsTestGroup }) }} name="testGroup" size="small" color="primary" />
-                            }
-                            label={t("group.testGroup")}
-                        />
-                        <CustomTooltip
-                            isSimpleTooltip={false}
-                            interactive={true}
-                            classes={{
-                                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                                arrow: classes.fBlack,
-                            }}
-                            arrow={true}
-                            style={{ fontSize: 18, fontWeight: "bold" }}
-                            placement={"top"}
-                            title={
-                                <Typography noWrap={false}>
-                                    {t("group.testGroupInfo")}
-                                </Typography>
-                            }
-                            text={t("group.testGroupInfo")}
-                        >
-                            <span>
-                                <BsInfoCircleFill />
-                            </span>
-                        </CustomTooltip>
-                    </Box>
+                                    }}
+                                    style={{ marginInlineEnd: 10 }}
+                                />
+                                <TextField
+                                    id="outlined-basic"
+                                    label=""
+                                    variant="outlined"
+                                    value={editableFroupData.GroupID}
+                                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252, classes.disabled)}
+                                    autoComplete="off"
+                                    style={{ marginInlineEnd: 10, width: 40, maxWidth: 40 }}
+                                />
+                            </Box>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <Box
+                                className={clsx(
+                                    classes.flex1,
+                                    classes.flex
+                                )}
+                                style={{ paddingInlineStart: 10 }}
+                            >
+                                <FormControlLabel
+                                    control={
+                                        <Checkbox checked={editableFroupData.IsTestGroup} onClick={() => { setEditableFroupData({ ...editableFroupData, IsTestGroup: !editableFroupData.IsTestGroup }) }} name="testGroup" size="small" color="primary" />
+                                    }
+                                    label={t("group.testGroup")}
+                                />
+                                <CustomTooltip
+                                    isSimpleTooltip={false}
+                                    interactive={true}
+                                    classes={{
+                                        tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                                        arrow: classes.fBlack,
+                                    }}
+                                    arrow={true}
+                                    style={{ fontSize: 18, fontWeight: "bold" }}
+                                    placement={"top"}
+                                    title={
+                                        <Typography noWrap={false}>
+                                            {t("group.testGroupInfo")}
+                                        </Typography>
+                                    }
+                                    text={t("group.testGroupInfo")}
+                                >
+                                    <span>
+                                        <BsInfoCircleFill />
+                                    </span>
+                                </CustomTooltip>
+                            </Box>
+                        </Grid>
+                    </Grid>
+                </Box>
+                <Box
+                    className={clsx(
+                        classes.customDialogContentBox,
+                        classes.flex,
+                        classes.mt4
+                    )}
+                    style={{ justifyContent: 'space-between' }}
+                >
+                    <Typography>{t("common.CreatedOn")}:{moment(editableFroupData.CreationDate).format("DD/MM/YYYY HH:mm")}</Typography>
+                    <Typography>{t("common.UpdatedOn")}:{moment(editableFroupData.UpdateDate).format("DD/MM/YYYY HH:mm")}</Typography>
                 </Box>
             </Dialog>
+            }
         </>
     );
 };
