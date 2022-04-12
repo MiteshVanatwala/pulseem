@@ -76,6 +76,10 @@ export const tools = {
         }
       }
     }
+  },
+  image: {
+    position: 1,
+    enabled: true
   }
 };
 export const options = {
@@ -477,6 +481,11 @@ export const options = {
       "labels.merge_tags": "Personalization",
       "labels.special_links": "Add Link"
     }
+  }
+}
+export const tabs = {
+  images: {
+    enabled: true
   }
 }
 export const features = {

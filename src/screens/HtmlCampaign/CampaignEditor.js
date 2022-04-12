@@ -13,7 +13,7 @@ import {
   testSend
 } from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
-import { appearance, tools, options, features, fonts } from './constants'
+import { appearance, tools, options, features, fonts, tabs } from './constants'
 import { ClientFields } from '../../model/PulseemFields/Fields'
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
@@ -158,9 +158,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     options.locale = language === 'he' ? 'he-IL' : 'en-US';
     appearance.panels.dock = language === 'he' ? 'right' : 'left';
     options.user = {
-      id: subAccountSettings.UnlayerUniqueID //,
-      // name: username,
-      // email: 'ido@pulseem.com'
+      id: subAccountSettings.UnlayerUniqueID
     }
     options.customJS = ['console.log("123123")', `${process.env.PUBLIC_URL}/assets/scripts/CompanyDetails.js`];
 
@@ -169,6 +167,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const registerEvents = () => {
     const unlayer = editorRef.current;
     if (unlayer) {
+      // Blocks
       unlayer.registerCallback('block:added', async function (newBlock, done) {
         // Each block should have it's own unique id
         const res = await dispatch(saveUserBlock(newBlock));
@@ -199,9 +198,16 @@ const CampaignEditor = ({ classes, ...props }) => {
           done(userBlocks);
         }
       });
-      unlayer.customJS = ['console.log(123123)', 'https://www.pulseemdev.co.il/pulseem/CompanyDetails.js'];
-      unlayer.customCSS = ['https://examples.unlayer.com/examples/custom-css/custom.css'];
+      // unlayer.customJS = ['console.log(123123)', 'https://www.pulseemdev.co.il/pulseem/CompanyDetails.js'];
+      // unlayer.customCSS = ['https://examples.unlayer.com/examples/custom-css/custom.css'];
+      // Gallery
+      unlayer.registerCallback('selectImage', function (data, done) {
+        console.log(data);
+        console.log(done);
+      });
       unlayer.editor.reloadProvider('blocks');
+
+
     }
 
   }
@@ -254,26 +260,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     finally {
       registerEvents();
     }
-  }
-  const renderEditor = () => {
-    if (dataReady) {
-      return <React.StrictMode>
-        <EmailEditor
-          editorId="campaign-editor"
-          ref={editorRef}
-          minHeight="calc(100vh - 170px)"
-          tools={tools}
-          appearance={appearance}
-          options={options}
-          features={features}
-          key={iframeKey}
-          projectId={71525}
-          customCSS={'https://examples.unlayer.com/examples/custom-css/custom.css'}
-        />
-      </React.StrictMode>
-    }
-    return <></>
-  }
+  }  
   const saveDesign = (redirectAfterSave = false, redirectUrl = null) => {
     return new Promise((resolve, reject) => {
       try {
@@ -396,6 +383,26 @@ const CampaignEditor = ({ classes, ...props }) => {
       );
     }
     return null;
+  }
+  const renderEditor = () => {
+    if (dataReady) {
+      return <React.StrictMode>
+        <EmailEditor
+          editorId="campaign-editor"
+          ref={editorRef}
+          minHeight="calc(100vh - 170px)"
+          tools={tools}
+          appearance={appearance}
+          options={options}
+          features={features}
+          tabs={tabs}
+          key={iframeKey}
+          projectId={71525}
+          customCSS={['https://examples.unlayer.com/examples/custom-css/custom.css']}
+        />
+      </React.StrictMode>
+    }
+    return <></>
   }
 
   return (
