@@ -20,7 +20,7 @@ import {
 } from "../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../components/managment/Dialog";
 
-const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, openARDialog }) => {
+const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, openARDialog, getData, handleResponses = (response, actions) => null }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -50,7 +50,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
 
 
 
-    const handleAddGroup = async (data) => {
+    const handleAddGroup = async (data, callback) => {
         if (!newGroupData.GroupName) {
             setToastMessage(ToastMessages.GROUP_NAME_EMPTY)
             return false;
@@ -60,26 +60,63 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
             setLoader(true);
             const response = await dispatch(createGroup(data));
             setLoader(false);
-            onCreateGroupResponse(response);
-            return response
+            console.log("response:", response.payload.Message)
+            handleResponses(response, {
+                'S_201': {
+                    code: 201,
+                    message: ToastMessages.GROUP_UPDATED,
+                    Func: new Promise(async (resolutionFunc, rejectionFunc) => {
+                        await resolutionFunc(getData());
+                    }).then((res) => {
+                        // selectGroup(response.payload.Message)
+                        callback?.()
+                    }),
+                },
+                'S_400': {
+                    code: 201,
+                    message: ToastMessages.GROUP_INPUT_INCORRECT,
+                    Func: () => null
+                },
+                'S_401': {
+                    code: 201,
+                    message: ToastMessages.GROUP_INVALID_API,
+                    Func: () => null
+                },
+                'S_405': {
+                    code: 201,
+                    message: ToastMessages.GROUP_ERROR,
+                    Func: () => null
+                },
+                'S_422': {
+                    code: 201,
+                    message: ToastMessages.GROUP_ALREADY_EXIST,
+                    Func: () => null
+                },
+                'default': {
+                    message: '',
+                    Func: () => null
+                },
+            })
+            // onCreateGroupResponse(response);
+            // return response
         } catch (err) {
             return false;
         }
     };
 
-    const handleAddRecipient = async () => {
-        try {
-            const response = await handleAddGroup(newGroupData);
-            console.log("STATUSCODE:", response.payload?.StatusCode);
-            if (response.payload?.StatusCode === 201) {
-                openARDialog()
-            }
-        }
-        catch (err) {
-            console.log(err)
-        }
+    // const handleAddRecipient = async () => {
+    //     try {
+    //         const response = await handleAddGroup(newGroupData);
+    //         console.log("STATUSCODE:", response.payload?.StatusCode);
+    //         if (response.payload?.StatusCode === 201) {
+    //             openARDialog()
+    //         }
+    //     }
+    //     catch (err) {
+    //         console.log(err)
+    //     }
 
-    }
+    // }
 
     return (
         <>
@@ -138,7 +175,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                                     classes.whiteSpaceNoWrap,
                                     !newGroupData.GroupName ? classes.disabled : ''
                                 )}
-                                onClick={handleAddRecipient}
+                                onClick={() => handleAddGroup(newGroupData, openARDialog)}
                             >
                                 {t("recipient.addRecipients")}
                             </Button>

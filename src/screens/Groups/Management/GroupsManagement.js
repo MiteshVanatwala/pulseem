@@ -196,30 +196,97 @@ const GroupsManagement = ({ classes }) => {
     });
   };
 
-  const onCreateGroupResponse = (response, openAddRec) => {
-    switch (response.payload.StatusCode) {
+  // const onCreateGroupResponse = (response) => {
+  //   switch (response.payload.StatusCode) {
+  //     case 201: {
+  //       getData();
+  //       setToastMessage(ToastMessages.GROUP_UPDATED);
+  //       break;
+  //     }
+  //     case 400: {
+  //       setToastMessage(ToastMessages.GROUP_INPUT_INCORRECT);
+  //       break;
+  //     }
+  //     case 401: {
+  //       setToastMessage(ToastMessages.GROUP_INVALID_API);
+  //       break;
+  //     }
+  //     case 405: {
+  //       setToastMessage(ToastMessages.GROUP_ERROR);
+  //       break;
+  //     }
+  //     case 422: {
+  //       setToastMessage(ToastMessages.GROUP_ALREADY_EXIST);
+  //       break;
+  //     }
+  //     default: {
+  //       setDialog(null);
+  //     }
+  //   }
+  // }
+
+
+  const handleResponses = (response, actions = {
+    'S_201': {
+      code: 201,
+      message: '',
+      Func: () => null
+    },
+    'S_400': {
+      code: 201,
+      message: '',
+      Func: () => null
+    },
+    'S_401': {
+      code: 201,
+      message: '',
+      Func: () => null
+    },
+    'S_405': {
+      code: 201,
+      message: '',
+      Func: () => null
+    },
+    'S_422': {
+      code: 201,
+      message: '',
+      Func: () => null
+    },
+    'default': {
+      message: '',
+      Func: () => null
+    },
+  }) => {
+    switch (response.payload.StatusCode || response.payload.Message.StatusCode) {
       case 201: {
-        getData();
-        setToastMessage(ToastMessages.GROUP_UPDATED);
+        // getData();
+        actions?.S_201?.Func?.();
+        setToastMessage(actions?.S_201?.message);
         break;
       }
       case 400: {
-        setToastMessage(ToastMessages.GROUP_INPUT_INCORRECT);
+        actions?.S_400?.Func?.();
+        setToastMessage(actions?.S_400?.message);
         break;
       }
       case 401: {
-        setToastMessage(ToastMessages.GROUP_INVALID_API);
+        actions?.S_401?.Func?.();
+        setToastMessage(actions?.S_401?.message);
         break;
       }
       case 405: {
-        setToastMessage(ToastMessages.GROUP_ERROR);
+        actions?.S_405?.Func?.();
+        setToastMessage(actions?.S_405?.message);
         break;
       }
       case 422: {
-        setToastMessage(ToastMessages.GROUP_ALREADY_EXIST);
+        actions?.S_422?.Func?.();
+        setToastMessage(actions?.S_422?.message);
         break;
       }
       default: {
+        actions?.default?.Func?.();
+        setToastMessage(actions?.default?.message);
         setDialog(null);
       }
     }
@@ -660,18 +727,21 @@ const GroupsManagement = ({ classes }) => {
         isOpen={dialog === DialogType.ADD_GROUP}
         onClose={() => setDialog(null)}
         setLoader={setLoader}
-        onCreateGroupResponse={(val) => onCreateGroupResponse(val)}
+        // onCreateGroupResponse={(val) => onCreateGroupResponse(val)}
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
-        openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
+        openARDialog={() => setDialog(DialogType.ADD_RECIPIENTS)}
+        getData={getData}
+        // selectGroup={(id) => setSelectedGroups([...selectedGroups, id])}
+        handleResponses={(response, actions) => handleResponses(response, actions)}
       />
       {dialog === DialogType.EDIT_GROUP && selectedGroups.length !== 0 && <EditGroupPopup
         classes={classes}
         isOpen={dialog === DialogType.EDIT_GROUP}
         onClose={() => setDialog(null)}
         setLoader={setLoader}
-        onCreateGroupResponse={(val) => onCreateGroupResponse(val)}
+        // onCreateGroupResponse={(val) => onCreateGroupResponse(val)}
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
@@ -683,7 +753,7 @@ const GroupsManagement = ({ classes }) => {
         isOpen={dialog === DialogType.ADD_RECIPIENT}
         onClose={() => { setDialog(null); setSelectedGroups([]); }}
         setLoader={setLoader}
-        onCreateGroupResponse={() => onCreateGroupResponse()}
+        // onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
@@ -698,7 +768,7 @@ const GroupsManagement = ({ classes }) => {
         isOpen={dialog === DialogType.ADD_RECIPIENTS}
         onClose={() => { setDialog(null); setSelectedGroups([]); }}
         setLoader={setLoader}
-        onCreateGroupResponse={() => onCreateGroupResponse()}
+        // onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
@@ -712,29 +782,21 @@ const GroupsManagement = ({ classes }) => {
         isOpen={dialog === DialogType.UNSUB_RECIPIENT}
         onClose={() => { setDialog(null); setSelectedGroups([]); }}
         setLoader={setLoader}
-        onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
-        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
-        selectedGroups={selectedGroups}
-        selectGroup={(idArr) => setSelectedGroups(idArr)}
-        onAddRecipient={handleAddRecipientResponse}
-
+        handleResponses={(response, actions) => handleResponses(response, actions)}
       />}
       {dialog === DialogType.DELETE_RECIPIENT && <DeleteRecPopup
         classes={classes}
         isOpen={dialog === DialogType.DELETE_RECIPIENT}
         onClose={() => { setDialog(null); setSelectedGroups([]); }}
         setLoader={setLoader}
-        onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
-        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
         selectedGroups={selectedGroups}
-        selectGroup={(idArr) => setSelectedGroups(idArr)}
-        onAddRecipient={handleAddRecipientResponse}
+        handleResponses={(response, actions) => handleResponses(response, actions)}
       />}
       <ConfirmDeletePopUp
         classes={classes}

@@ -5,3 +5,12 @@ export const ValidateEmail = (email) => {
 export const ValidateNumber = (number) => {
     return number.match(/^\d+$/)
 }
+
+export const renderHtml = (html) => {
+    function createMarkup() {
+        return { __html: html };
+    }
+    return (
+        <label dangerouslySetInnerHTML={createMarkup()}></label>
+    );
+}

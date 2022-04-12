@@ -1,55 +1,21 @@
 import {
     Box,
-    FormControlLabel,
     Grid,
-    makeStyles,
-    Switch,
     Typography
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../components/managment/Dialog";
-import { UploadSettings } from "../tempConstants";
-import UploadXL from '../../../components/Files/UploadXL'
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import clsx from 'clsx';
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { deleteRecipients } from "../../../redux/reducers/groupSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { Loader } from "../../../components/Loader/Loader";
 import { ValidateEmail, ValidateNumber } from "../../../helpers/utils";
-import { VscCircleFilled } from "react-icons/vsc";
-// import { Loader } from '../Loader/Loader';
-// import DropBox from "../../../components/Files/DropBox";
-
-
-const useStyles = makeStyles({
-    switch: {
-        '& .MuiSwitch-switchBase.Mui-checked': {
-            color: '#339933',
-            '&:hover': {
-                backgroundColor: 'transparent'
-            },
-        },
-        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-            backgroundColor: '#339933',
-        },
-    },
-    accordionIcons: {
-        position: 'absolute',
-        '& path': {
-            stroke: '#0371ad'
-        }
-    }
-});
-
-
-
-
-
 
 
 const DeleteRecPopup = ({ classes,
@@ -57,47 +23,23 @@ const DeleteRecPopup = ({ classes,
     onClose,
     selectedGroups,
     placeHolder = "sms.dragXlOrCsv",
-    onAddRecipient = () => null
+    handleResponses = (response, actions) => null,
 }) => {
     const { t } = useTranslation();
-    const localClasses = useStyles()
     const [highlighted, setHighlighted] = useState(false);
-    const { ToastMessages, extraData } = useSelector((state) => state.sms);
-    const { isRTL } = useSelector((state) => state.core);
     const dispatch = useDispatch();
-    const styles = useStyles();
-    const [fileToUpload, setFileToUpload] = useState(null);
-    const [isFilePicked, setIsFilePicked] = useState(false);
     const [showLoader, setLoader] = useState(false);
-    const hiddenFileInput = useRef(null);
     const [totalRecords, settotalRecords] = useState(0);
     const [areaData, setareaData] = useState("");
     const [dropClick, setdropClick] = useState(false);
     const [typedData, settypedData] = useState([]);
-    const [initialheadstate, setinitialheadstate] = useState([]);
-    const [headers, setheaders] = useState(initialheadstate);
-    const [dialogType, setDialogType] = useState({ type: null });
-    const [contacts, setContacts] = useState([]);
-    const [groupNameInput, setgroupNameInput] = useState("");
-    const [toastMessage, setToastMessage] = useState(null);
-    const [groupList, setGroupList] = useState([]);
-    // const [selectedGroups, setSelected] = useState([]);
-    const [selectArray, setselectArray] = useState([]);
-    const [groupTextError, setGroupTextError] = useState(false);
-    const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
-    const [columnValidate, setcolumnValidate] = useState(false);
-    const [dropIndex, setdropIndex] = useState(-1);
     const [confirm, setConfirm] = useState(false)
-
-    // const [activeTab, setActiveTab] = useState(1)
-
 
     const handleFiles = (e) => {
         e.preventDefault();
         setdropClick(true);
         const file = e.dataTransfer?.files[0] || e.target.files[0];;
         const reader = new FileReader();
-        setFileToUpload(file);
         var p = new Promise((resolve, reject) => {
             try {
                 if (file.name.toLowerCase().indexOf("xls") > -1) {
@@ -234,7 +176,6 @@ const DeleteRecPopup = ({ classes,
 
     const areaChange = (e) => {
         let enteredValue = e.target.value.split("\n")
-        // enteredValue = enteredValue.split(",")
         const records = enteredValue.filter((r) => { return r !== "" });
         settotalRecords(records.length)
         setareaData(e.target.value);
@@ -270,11 +211,37 @@ const DeleteRecPopup = ({ classes,
         const response = await dispatch(deleteRecipients(payload))
         settotalRecords(filteredData.length)
         setLoader(false)
-        // console.log("RESPONSE:", response)
-        if (response.payload.StatusCode === 201 || response.payload.Message.StatusCode === 201) {
-            onClose()
-            // setIsSubmitted(true)
-        }
+        handleResponses(response, {
+            'S_201': {
+                code: 201,
+                message: '',
+                Func: onClose()
+            },
+            'S_400': {
+                code: 201,
+                message: 'UnAuthorized',
+                Func: () => null
+            },
+            'S_401': {
+                code: 201,
+                message: 'Not found',
+                Func: () => null
+            },
+            'S_405': {
+                code: 201,
+                message: '',
+                Func: () => null
+            },
+            'S_422': {
+                code: 201,
+                message: '',
+                Func: () => null
+            },
+            'default': {
+                message: '',
+                Func: () => null
+            },
+        })
 
     }
 
@@ -384,28 +351,11 @@ const DeleteRecPopup = ({ classes,
             onClose={onClose}
             onCancel={onClose}
             onConfirm={() => setConfirm(true)}
-            // renderButtons={() => (<></>)}
             customContainerStyle=""
         >
-            <Box className={localClasses.contentBox}>
+            <Box >
                 {DropBox(classes)}
-                {/* <FormControlLabel
-                    control={
-                        <Switch defaultChecked className={localClasses.switch} />
-                    }
-                    label="Advanced Options"
-                />
-
-                <Box className={clsx(classes.flex, classes.mt10, classes.mb20)}>
-                    <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>Phone Number & Email</Box>
-                    <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>Only Email</Box>
-                    <Box className={activeTab === 3 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(3)}>Only Phone Number</Box>
-                </Box> */}
             </Box>
-            {/* <Box className={localClasses.contentBox}>
-              
-
-            </Box> */}
         </Dialog>
     );
 };

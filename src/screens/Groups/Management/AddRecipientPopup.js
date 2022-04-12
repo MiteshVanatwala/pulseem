@@ -403,39 +403,39 @@ const AddRecipientPopup = ({ classes,
                     ]}
                 />
             },
-            {
-                content: <SimpleGrid
-                    gridArr={[
-                        {
-                            content: <FormControlLabel
-                                className={classes.restoreDialogCheckBoxLable}
-                                control={
-                                    <Checkbox
-                                        style={{ width: 'auto' }}
-                                        id="Status"
-                                        name="Status"
-                                        checked={addRecipientData.SmsStatus || addRecipientData.Status}
-                                        className={clsx(classes.NoPaddingtextField, classes.textField)}
-                                        onChange={e => {
-                                            const status = e.target.checked ? 1 : null;
-                                            const smsStatus = e.target.checked ? 0 : null;
-                                            setAddRecipientData({
-                                                ...addRecipientData, ['SmsStatus']: status, ['Status']: status
-                                            });
-                                        }
-                                        }
-                                        color='primary'
-                                        size='small'
-                                    />
-                                }
-                                label={t("recipient.reactiveUnsubscriber")}
-                            />,
-                            gridSize: { xs: 3, sm: 9 }
-                        },
-                        {}
-                    ]}
-                />
-            }
+                // {
+                //     content: <SimpleGrid
+                //         gridArr={[
+                //             {
+                //                 content: <FormControlLabel
+                //                     className={classes.restoreDialogCheckBoxLable}
+                //                     control={
+                //                         <Checkbox
+                //                             style={{ width: 'auto' }}
+                //                             id="Status"
+                //                             name="Status"
+                //                             checked={addRecipientData.SmsStatus || addRecipientData.Status}
+                //                             className={clsx(classes.NoPaddingtextField, classes.textField)}
+                //                             onChange={e => {
+                //                                 const status = e.target.checked ? 1 : null;
+                //                                 const smsStatus = e.target.checked ? 0 : null;
+                //                                 setAddRecipientData({
+                //                                     ...addRecipientData, ['SmsStatus']: status, ['Status']: status
+                //                                 });
+                //                             }
+                //                             }
+                //                             color='primary'
+                //                             size='small'
+                //                         />
+                //                     }
+                //                     label={t("recipient.reactiveUnsubscriber")}
+                //                 />,
+                //                 gridSize: { xs: 3, sm: 9 }
+                //             },
+                //             {}
+                //         ]}
+                //     />
+                // }
             ]}
         />
 

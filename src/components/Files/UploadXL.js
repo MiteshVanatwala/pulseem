@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from "react-redux";
 import { Typography, Grid, Button, Box, TextField } from "@material-ui/core";
 import { Dialog } from "../managment/index";
@@ -15,6 +16,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { Loader } from '../Loader/Loader';
 import { useTranslation } from "react-i18next";
+import { renderHtml } from "../../helpers/utils";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -311,6 +313,7 @@ const UploadXL = ({
                 else {
                     return false;
                 }
+                setLoader(false)
             }
             catch (error) {
                 reject(error);
@@ -588,13 +591,15 @@ const UploadXL = ({
     const cautionDialog = () => {
         return {
             title: t('sms.columnAdjustment'),
-            content: <Typography>
-                {t('sms.reset_manual_upload_notice')}
-            </Typography>,
-
+            content: renderHtml(t('sms.reset_manual_upload_notice')),
             onClose: () => setDialogType('manualUpload'),
             onCancel: () => setDialogType(null),
-            onConfirm: () => settypedData('')
+            onConfirm: () => {
+                setareaData('');
+                settypedData([]);
+                settotalRecords(0)
+                setDialogType(null);
+            }
         }
     }
 
