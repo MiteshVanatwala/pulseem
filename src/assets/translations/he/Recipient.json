@@ -76,10 +76,10 @@
   },
   "bulkRecUpldTooltipText": "באפשרותך להעלות עד 600,000 נמענים בבת אחת",
   "reactiveUnsubscriber": "הפעל נמען מוסר",
-  "advanceOptions": "Advanced Options",
-  "phone&email": "Phone number & email",
-  "emailOnly": "Only Email",
-  "phoneOnly": "Only Phone Number",
-  "rowsUpdated": "Row/s updated",
-  "deleteConfirm": "Are you sure you want to delete recipients from the following groups"
+  "advanceOptions": "אפשרויות הסרה מתקדמות",
+  "phone&email": "הסר דואר אלקטרוני וסלולרי",
+  "emailOnly": "הסר רק דואר אלקטרוני",
+  "phoneOnly": "הסר רק סלולרי",
+  "rowsUpdated": "שורות שעודכנו",
+  "deleteConfirm": "האם אתה בטוח שברצונך להסיר את הלקוחות מהקבוצות שבחרת?"
 }
