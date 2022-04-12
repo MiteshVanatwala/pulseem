@@ -3,18 +3,29 @@ import React, { useRef, useState, useEffect } from 'react'
 import EmailEditor from 'react-email-editor'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
-import { getCampaignById, saveCampaign, getUserblocks, saveUserBlock, updateUserBlock, deleteUserBlock, testSend } from '../../redux/reducers/campaignEditorSlice';
+import {
+  getCampaignById,
+  saveCampaign,
+  getUserblocks,
+  saveUserBlock,
+  updateUserBlock,
+  deleteUserBlock,
+  testSend
+} from '../../redux/reducers/campaignEditorSlice';
 import { Loader } from '../../components/Loader/Loader';
 import { appearance, tools, options, features, fonts } from './constants'
 import { ClientFields } from '../../model/PulseemFields/Fields'
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
 import { getCookie } from '../../helpers/cookies'
-import TopEditor from './TopEditor';
+import EditorActions from './EditorActions';
 import TestSend from './modals/TestSend'
 import ResponseModal from './modals/ResponseModal'
-import { TreeItem } from '@material-ui/lab';
 import Toast from '../../components/Toast/Toast.component';
+import GenericModal from './modals/GenericModal';
+import { GiExitDoor } from 'react-icons/gi'
+import { BsTrash } from "react-icons/bs";
+import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -34,6 +45,11 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [summaryData, setSummaryData] = useState(null);
   const subAccountSettings = getCookie("subAccountSettings");
   const [toastMessage, setToastMessage] = useState(null);
+  const [redirectOnExit, setRedirectOnExit] = useState('');
+  const [genericModalData, setGenericModalData] = useState({
+    title: "",
+    message: ""
+  })
   const DialogType = {
     TEST_SEND: "testSend",
     DELETE: "delete",
@@ -43,6 +59,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     CANNOT_CREATE_GROUP: "campaigns.cannotCreateGroup",
     ERROR_OCCURED: "campaigns.errorOccured",
     NONE_ACTIVE_RECIPIENT: "campaigns.noneActiveRecipientsFound",
+    GENERIC: "generic"
   };
   useEffect(() => {
     if (dataReady) {
@@ -244,7 +261,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         <EmailEditor
           editorId="campaign-editor"
           ref={editorRef}
-          minHeight="calc(100vh - 100px)"
+          minHeight="calc(100vh - 170px)"
           tools={tools}
           appearance={appearance}
           options={options}
@@ -257,7 +274,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     return <></>
   }
-  const saveDesign = (redirectAfterSave = false) => {
+  const saveDesign = (redirectAfterSave = false, redirectUrl = null) => {
     return new Promise((resolve, reject) => {
       try {
         editorRef.current.exportHtml(async (data) => {
@@ -265,7 +282,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           const response = await dispatch(saveCampaign({ campaignId: campaignId, JsonData: JSON.stringify(design), HtmlData: html }));
           if (response.payload === true) {
             if (redirectAfterSave) {
-              window.location = `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
+              window.location = redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
             }
             else {
               setToastMessage(ToastMessages.CAMPAIGN_SAVED);
@@ -282,9 +299,49 @@ const CampaignEditor = ({ classes, ...props }) => {
     })
 
   }
+  const deleteNewsllter = async () => {
+    setDialog(null);
+    await dispatch(deleteCampaign(campaignId));
+    window.location = `/react/Campaigns`;
+  }
   const onDelete = () => {
-    console.log('delete');
-    //TODO: Show confirm modal
+    setGenericModalData({
+      title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
+      message: t("mainReport.confirmSure"),
+      icon: <BsTrash />,
+      onConfirm: () => deleteNewsllter(),
+      onCancel: () => setDialog(null),
+      onClose: () => setDialog(null)
+    });
+    setDialog(DialogType.GENERIC);
+  }
+  const handleExitCampaign = (saveBeforeExit = true) => {
+    setDialog(null);
+    if (saveBeforeExit) {
+      saveDesign().then(() => {
+        setTimeout(() => {
+          window.location.href = redirectOnExit;
+        }, 3000);
+      })
+    }
+    else {
+      window.location.href = redirectOnExit;
+    }
+  }
+  const onExit = () => {
+    setGenericModalData({
+      title: t('mainReport.handleExitTitle'),
+      message: t("mainReport.leaveCampaign"),
+      icon: <GiExitDoor />,
+      onClose: () => handleExitCampaign(false),
+      onConfirm: () => handleExitCampaign(true),
+      onCancel: () => setDialog(null)
+    });
+    setRedirectOnExit(`/react/Campaigns`);
+    setDialog(DialogType.GENERIC);
+  }
+  const onBack = () => {
+    saveDesign(true, `/Pulseem/Editor/CampaignInfo/${campaignId}`)
   }
   const onTestSendSubmit = (sendRequest) => {
     setLoader(true);
@@ -345,14 +402,10 @@ const CampaignEditor = ({ classes, ...props }) => {
     <DefaultScreen
       currentPage='campaignEditor'
       classes={classes}
-      style={{ paddingBottom: 100 }}
+      customPadding={true}
+      containerClass={[classes.fullWidth, classes.noPadding]}
     >
       {renderToast()}
-      <TopEditor
-        classes={classes}
-        onTestSend={() => { setDialog(DialogType.TEST_SEND) }}
-        onSave={saveDesign}
-        onDelete={onDelete} />
       <TestSend
         classes={classes}
         isOpen={dialog === DialogType.TEST_SEND}
@@ -360,15 +413,29 @@ const CampaignEditor = ({ classes, ...props }) => {
         onSubmit={onTestSendSubmit}
         campaignId={campaignId || props.match.params.id}
       />
+      <GenericModal
+        classes={classes}
+        modalData={genericModalData}
+        isOpen={dialog === DialogType.GENERIC}
+      />
       <ResponseModal
         classes={classes}
-        isOpen={dialog && dialog !== DialogType.TEST_SEND}
+        isOpen={dialog && (dialog !== DialogType.TEST_SEND && dialog !== DialogType.GENERIC)}
         onClose={() => setDialog(null)}
         onConfirm={() => setDialog(null)}
         summaryData={summaryData}
         message={dialog}
       />
       {renderEditor()}
+      <EditorActions
+        campaignId={campaignId}
+        innerStyle={{ paddingInline: 15 }}
+        classes={classes}
+        onExit={onExit}
+        onTestSend={() => { setDialog(DialogType.TEST_SEND) }}
+        onSave={saveDesign}
+        onBack={onBack}
+        onDelete={onDelete} />
       <Loader isOpen={showLoader} showBackdrop={false} />
     </DefaultScreen>
   )
