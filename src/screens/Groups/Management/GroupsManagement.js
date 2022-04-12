@@ -196,36 +196,6 @@ const GroupsManagement = ({ classes }) => {
     });
   };
 
-  // const onCreateGroupResponse = (response) => {
-  //   switch (response.payload.StatusCode) {
-  //     case 201: {
-  //       getData();
-  //       setToastMessage(ToastMessages.GROUP_UPDATED);
-  //       break;
-  //     }
-  //     case 400: {
-  //       setToastMessage(ToastMessages.GROUP_INPUT_INCORRECT);
-  //       break;
-  //     }
-  //     case 401: {
-  //       setToastMessage(ToastMessages.GROUP_INVALID_API);
-  //       break;
-  //     }
-  //     case 405: {
-  //       setToastMessage(ToastMessages.GROUP_ERROR);
-  //       break;
-  //     }
-  //     case 422: {
-  //       setToastMessage(ToastMessages.GROUP_ALREADY_EXIST);
-  //       break;
-  //     }
-  //     default: {
-  //       setDialog(null);
-  //     }
-  //   }
-  // }
-
-
   const handleResponses = (response, actions = {
     'S_201': {
       code: 201,
@@ -233,22 +203,27 @@ const GroupsManagement = ({ classes }) => {
       Func: () => null
     },
     'S_400': {
-      code: 201,
+      code: 400,
       message: '',
       Func: () => null
     },
     'S_401': {
-      code: 201,
+      code: 401,
       message: '',
       Func: () => null
     },
     'S_405': {
-      code: 201,
+      code: 405,
       message: '',
       Func: () => null
     },
     'S_422': {
-      code: 201,
+      code: 422,
+      message: '',
+      Func: () => null
+    },
+    'S_500': {
+      code: 500,
       message: '',
       Func: () => null
     },
@@ -258,6 +233,12 @@ const GroupsManagement = ({ classes }) => {
     },
   }) => {
     switch (response.payload.StatusCode || response.payload.Message.StatusCode) {
+      case 200: {
+        // getData();
+        actions?.S_200?.Func?.();
+        setToastMessage(actions?.S_200?.message);
+        break;
+      }
       case 201: {
         // getData();
         actions?.S_201?.Func?.();
@@ -281,6 +262,11 @@ const GroupsManagement = ({ classes }) => {
       }
       case 422: {
         actions?.S_422?.Func?.();
+        setToastMessage(actions?.S_422?.message);
+        break;
+      }
+      case 500: {
+        actions?.S_500?.Func?.();
         setToastMessage(actions?.S_422?.message);
         break;
       }
