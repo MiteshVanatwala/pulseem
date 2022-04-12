@@ -200,7 +200,7 @@ const GroupsManagement = ({ classes }) => {
     'S_201': {
       code: 201,
       message: '',
-      Func: () => null
+      Func: () => getData()
     },
     'S_400': {
       code: 400,
@@ -450,12 +450,6 @@ const GroupsManagement = ({ classes }) => {
           <Button
             variant="contained"
             size="medium"
-            // href={
-            //   smsOldVersion === "true"
-            //     ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
-            //     }`
-            //     : "/react/sms/create"
-            // }
             className={clsx(classes.actionButton, classes.actionButtonRed)}
             onClick={() => selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_RECIPIENT)}
           >
@@ -466,14 +460,8 @@ const GroupsManagement = ({ classes }) => {
           <Button
             variant="contained"
             size="medium"
-            // href={
-            //   smsOldVersion === "true"
-            //     ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? "he-IL" : "en-US"
-            //     }`
-            //     : "/react/sms/create"
-            // }
             className={clsx(classes.actionButton, classes.actionButtonRed)}
-            onClick={() => selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.UNSUB_RECIPIENT)}
+            onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
           >
             {t("recipient.unsubscribe")}
           </Button>

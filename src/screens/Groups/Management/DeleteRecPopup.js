@@ -192,8 +192,7 @@ const DeleteRecPopup = ({ classes,
 
         const payload = {
             GroupIDs: selectedGroups,
-            CellphoneList: cellPhoneData,
-            EmailList: EmailData
+            ListOfValues: cellPhoneData.concat(EmailData)
         }
 
         const response = await dispatch(deleteRecipients(payload))
