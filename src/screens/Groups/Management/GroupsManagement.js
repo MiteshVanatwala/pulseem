@@ -487,7 +487,7 @@ const GroupsManagement = ({ classes }) => {
             //     : "/react/sms/create"
             // }
             className={clsx(classes.actionButton, classes.actionButtonRed)}
-            onClick={() => selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.UNSUB_RECIPIENT)}
+            onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
           >
             {t("recipient.unsubscribe")}
           </Button>
@@ -727,13 +727,11 @@ const GroupsManagement = ({ classes }) => {
         isOpen={dialog === DialogType.ADD_GROUP}
         onClose={() => setDialog(null)}
         setLoader={setLoader}
-        // onCreateGroupResponse={(val) => onCreateGroupResponse(val)}
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
         openARDialog={() => setDialog(DialogType.ADD_RECIPIENTS)}
         getData={getData}
-        // selectGroup={(id) => setSelectedGroups([...selectedGroups, id])}
         handleResponses={(response, actions) => handleResponses(response, actions)}
       />
       {dialog === DialogType.EDIT_GROUP && selectedGroups.length !== 0 && <EditGroupPopup
@@ -741,23 +739,22 @@ const GroupsManagement = ({ classes }) => {
         isOpen={dialog === DialogType.EDIT_GROUP}
         onClose={() => setDialog(null)}
         setLoader={setLoader}
-        // onCreateGroupResponse={(val) => onCreateGroupResponse(val)}
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
         selectedGroup={selectedGroups[0]}
         openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
+        getData={getData}
+        handleResponses={(response, actions) => handleResponses(response, actions)}
       />}
       {dialog === DialogType.ADD_RECIPIENT && <AddRecipientPopup
         classes={classes}
         isOpen={dialog === DialogType.ADD_RECIPIENT}
         onClose={() => { setDialog(null); setSelectedGroups([]); }}
         setLoader={setLoader}
-        // onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
-        // Groups={groupData.map((obj) => ({ GroupID: obj.GroupID, GroupName: obj.GroupName }))}
         Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
         selectedGroups={selectedGroups}
         selectGroup={(idArr) => setSelectedGroups(idArr)}
@@ -768,7 +765,6 @@ const GroupsManagement = ({ classes }) => {
         isOpen={dialog === DialogType.ADD_RECIPIENTS}
         onClose={() => { setDialog(null); setSelectedGroups([]); }}
         setLoader={setLoader}
-        // onCreateGroupResponse={() => onCreateGroupResponse()}
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}

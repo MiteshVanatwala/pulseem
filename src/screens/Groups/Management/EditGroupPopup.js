@@ -23,12 +23,14 @@ const EditGroupPopup = ({ classes,
     isOpen = false,
     onClose,
     setLoader,
-    onCreateGroupResponse,
     windowSize,
     ToastMessages,
     setToastMessage,
     openARDialog,
-    selectedGroup }) => {
+    selectedGroup,
+    getData,
+    handleResponses = (response, actions) => null
+}) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [editableFroupData, setEditableFroupData] = useState(null);
@@ -58,26 +60,45 @@ const EditGroupPopup = ({ classes,
             setLoader(true);
             const response = await dispatch(editGroup(data));
             setLoader(false);
-            onCreateGroupResponse(response);
+            handleResponses(response, {
+                'S_201': {
+                    code: 201,
+                    message: ToastMessages.GROUP_UPDATED,
+                    Func: new Promise(async (resolutionFunc, rejectionFunc) => {
+                        await resolutionFunc(getData());
+                    }),
+                },
+                'S_400': {
+                    code: 201,
+                    message: ToastMessages.GROUP_INPUT_INCORRECT,
+                    Func: () => null
+                },
+                'S_401': {
+                    code: 201,
+                    message: ToastMessages.GROUP_INVALID_API,
+                    Func: () => null
+                },
+                'S_405': {
+                    code: 201,
+                    message: ToastMessages.GROUP_ERROR,
+                    Func: () => null
+                },
+                'S_422': {
+                    code: 201,
+                    message: ToastMessages.GROUP_ALREADY_EXIST,
+                    Func: () => null
+                },
+                'default': {
+                    message: '',
+                    Func: () => null
+                },
+            })
             return response
         } catch (err) {
             return false;
         }
     };
 
-    const handleAddRecipient = async () => {
-        try {
-            const response = await handleEditGroup(editableFroupData);
-            console.log("STATUSCODE:", response.payload?.StatusCode);
-            if (response.payload?.StatusCode === 201) {
-                openARDialog()
-            }
-        }
-        catch (err) {
-            console.log(err)
-        }
-
-    }
 
     return (
         <>

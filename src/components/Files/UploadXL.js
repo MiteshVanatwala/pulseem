@@ -153,7 +153,7 @@ const UploadXL = ({
         let cols = 0;
         if (temp.indexOf("\t") > -1) {
             for (let i = 0; i < a.length; i++) {
-                let splitted = a[i].split("\t");
+                let splitted = a[i].split("\t").filter(obj => !!obj.replace(/ /g, ''));
                 b.push(splitted);
                 if (splitted.length > cols) {
                     cols = splitted.length;
@@ -163,7 +163,7 @@ const UploadXL = ({
         else {
             const records = a.filter((r) => { return r !== "" });
             for (let i = 0; i < records.length; i++) {
-                let splitted = a[i].split(",");
+                let splitted = a[i].split(",").filter(obj => !!obj.replace(/ /g, ''));
                 b.push(splitted);
                 if (splitted.length > cols) {
                     cols = splitted.length;
@@ -426,7 +426,7 @@ const UploadXL = ({
 
         let columnHasValue = false;
         headers.forEach((value) => {
-            if (value == t("common.cellphone") || value == 'Cellphone') {
+            if (value == t("common.cellphone") || value == 'Cellphone' || value == t("common.email") || value == 'Email') {
                 columnHasValue = true
             }
         });

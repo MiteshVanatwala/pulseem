@@ -2331,13 +2331,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     background: '#e4e4e4',
     padding: '2px 10px 3px 10px',
     boxShadow: 'inset 0px 0px 5px #898888',
-    fontWeight: 500
+    fontWeight: 500,
+    cursor: 'pointer'
   },
   switchButtonActive: {
     background: '#a9d9a9',
     padding: '2px 10px 3px 10px',
     boxShadow: '0px 0px 5px #898888',
-    fontWeight: 500
+    fontWeight: 500,
+    cursor: 'pointer'
   },
   toggleSwitch: {
     '& .MuiSwitch-switchBase.Mui-checked': {

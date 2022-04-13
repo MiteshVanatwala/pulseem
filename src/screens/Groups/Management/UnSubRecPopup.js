@@ -23,7 +23,7 @@ import { Loader } from "../../../components/Loader/Loader";
 const UnSubRecPopup = ({ classes,
     isOpen = false,
     onClose,
-    placeHolder = "sms.dragXlOrCsv",
+    placeHolder = "recipient.unsubTextareaPlaceholder",
     handleResponses = (response, actions) => null,
 }) => {
     const { t } = useTranslation();
@@ -332,40 +332,40 @@ const UnSubRecPopup = ({ classes,
         <Dialog
             classes={classes}
             open={isOpen}
-            title={
-                <Box className={clsx(classes.flex, classes.justifyBetween)}>
-                    <Box>
-                        {t('recipient.unsubRecipients')}
-                        <CustomTooltip
-                            isSimpleTooltip={false}
-                            interactive={true}
-                            classes={{
-                                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                                arrow: classes.fBlack,
-                            }}
-                            arrow={true}
-                            // style={{ fontSize: 18 }}
-                            placement={"top"}
-                            title={<Typography noWrap={false}>{t('recipient.bulkRecUpldTooltipText')}</Typography>}
-                            text={t('recipient.bulkRecUpldTooltipText')}
-                        >
-                            <span >
-                                <BsInfoCircleFill className={classes.plr10} size={24} style={{ color: '#000' }} />
-                            </span>
-                        </CustomTooltip>
-                    </Box>
-                    <Box style={{ cursor: 'pointer' }}>
-                        <label htmlFor="uploadxl">
-                            <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
-                        </label>
-                    </Box>
-                </Box>
+            title={t('recipient.unsubRecipients')
+                // <Box className={clsx(classes.flex, classes.justifyBetween)}>
+                //     <Box>
+                //         {t('recipient.unsubRecipients')}
+                //         <CustomTooltip
+                //             isSimpleTooltip={false}
+                //             interactive={true}
+                //             classes={{
+                //                 tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                //                 arrow: classes.fBlack,
+                //             }}
+                //             arrow={true}
+                //             // style={{ fontSize: 18 }}
+                //             placement={"top"}
+                //             title={<Typography noWrap={false}>{t('recipient.bulkRecUpldTooltipText')}</Typography>}
+                //             text={t('recipient.bulkRecUpldTooltipText')}
+                //         >
+                //             <span >
+                //                 <BsInfoCircleFill className={classes.plr10} size={24} style={{ color: '#000' }} />
+                //             </span>
+                //         </CustomTooltip>
+                //     </Box>
+                //     <Box style={{ cursor: 'pointer' }}>
+                //         <label htmlFor="uploadxl">
+                //             <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
+                //         </label>
+                //     </Box>
+                // </Box>
 
 
             }
-            icon={<div className={classes.dialogIconContent}>
+            icon={< div className={classes.dialogIconContent} >
                 {'\uE0D5'}
-            </div>}
+            </div >}
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}
@@ -384,13 +384,16 @@ const UnSubRecPopup = ({ classes,
                     label={t("recipient.advanceOptions")}
                 />
 
-                {advanceOpt && (<Box className={clsx(classes.flex, classes.mt10, classes.mb20)}>
-                    <Box className={activeTab === 0 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(0)}>{t("recipient.phone&email")}</Box>
-                    <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>{t("recipient.emailOnly")}</Box>
-                    <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box>
-                </Box>)}
+                <Box className={clsx(classes.flex, classes.mt10, classes.mb20)}>
+                    {advanceOpt && (<>
+                        <Box className={activeTab === 0 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(0)}>{t("recipient.phone&email")}</Box>
+                        <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>{t("recipient.emailOnly")}</Box>
+                        <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box>
+                    </>
+                    )}
+                </Box>
             </Box>
-        </Dialog>
+        </Dialog >
     );
 };
 
