@@ -63,20 +63,8 @@ const DeleteRecPopup = ({ classes,
                             b.pop();
                             settypedData(b);
                             settotalRecords(b.length)
-
                             setareaData(b);
-                            // let dummyArr = [];
-                            // for (let i = 0; i < b[0].length; i++) {
-                            //     dummyArr.push(t("sms.adjustTitle"));
-                            // }
-                            // setinitialheadstate(dummyArr);
-                            // setheaders(dummyArr)
-
                             setLoader(false);
-                            // if (dummyArr !== 0) {
-                            //     setDialogType({ type: "manualUpload" });
-                            // }
-
                         }, 0);
                     };
                     reader.readAsArrayBuffer(file, "utf-8")
@@ -204,37 +192,36 @@ const DeleteRecPopup = ({ classes,
 
         const payload = {
             GroupIDs: selectedGroups,
-            CellphoneList: cellPhoneData,
-            EmailList: EmailData
+            ListOfValues: cellPhoneData.concat(EmailData)
         }
 
         const response = await dispatch(deleteRecipients(payload))
         settotalRecords(filteredData.length)
         setLoader(false)
         handleResponses(response, {
+            'S_200': {
+                code: 200,
+                message: 'recipient.responses.serverFoundWithNoResponse',
+                Func: () => null
+            },
             'S_201': {
                 code: 201,
-                message: '',
+                message: 'recipient.delete.succeeded',
                 Func: onClose()
-            },
-            'S_400': {
-                code: 201,
-                message: 'UnAuthorized',
-                Func: () => null
-            },
+            },            
             'S_401': {
-                code: 201,
-                message: 'Not found',
+                code: 401,
+                message: 'recipient.responses.unautorized',
                 Func: () => null
             },
-            'S_405': {
-                code: 201,
-                message: '',
+            'S_404': {
+                code: 404,
+                message: 'recipient.responses.notFound',
                 Func: () => null
             },
-            'S_422': {
-                code: 201,
-                message: '',
+            'S_500': {
+                code: 500,
+                message: 'common.ErrorOccured',
                 Func: () => null
             },
             'default': {

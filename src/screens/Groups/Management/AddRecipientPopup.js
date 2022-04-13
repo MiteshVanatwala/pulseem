@@ -156,7 +156,7 @@ const AddRecipientPopup = ({ classes,
             }
             else {
                 setAddRecipientData({
-                    ...addRecipientData, [field]: date
+                    ...addRecipientData, [field]: moment(date, dateFormat)
                 })
             }
         }
