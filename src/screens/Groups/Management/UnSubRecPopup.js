@@ -320,34 +320,18 @@ const UnSubRecPopup = ({ classes,
         <Dialog
             classes={classes}
             open={isOpen}
-            title={t('recipient.unsubRecipients')
-                // <Box className={clsx(classes.flex, classes.justifyBetween)}>
-                //     <Box>
-                //         {t('recipient.unsubRecipients')}
-                //         <CustomTooltip
-                //             isSimpleTooltip={false}
-                //             interactive={true}
-                //             classes={{
-                //                 tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                //                 arrow: classes.fBlack,
-                //             }}
-                //             arrow={true}
-                //             // style={{ fontSize: 18 }}
-                //             placement={"top"}
-                //             title={<Typography noWrap={false}>{t('recipient.bulkRecUpldTooltipText')}</Typography>}
-                //             text={t('recipient.bulkRecUpldTooltipText')}
-                //         >
-                //             <span >
-                //                 <BsInfoCircleFill className={classes.plr10} size={24} style={{ color: '#000' }} />
-                //             </span>
-                //         </CustomTooltip>
-                //     </Box>
-                //     <Box style={{ cursor: 'pointer' }}>
-                //         <label htmlFor="uploadxl">
-                //             <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
-                //         </label>
-                //     </Box>
-                // </Box>
+            title={
+                <Box className={clsx(classes.flex, classes.justifyBetween)}>
+                    <Box>
+                        {t('recipient.unsubRecipients')}
+
+                    </Box>
+                    <Box style={{ cursor: 'pointer' }}>
+                        <label htmlFor="uploadxl">
+                            <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
+                        </label>
+                    </Box>
+                </Box>
 
 
             }
@@ -358,9 +342,9 @@ const UnSubRecPopup = ({ classes,
             onClose={onClose}
             onCancel={onClose}
             onConfirm={handleSubmit}
-            customContainerStyle=""
+            customContainerStyle={{}}
         >
-            <Box>
+            <Box style={{ minWidth: 600 }}>
                 {DropBox(classes)}
                 <FormControlLabel
                     control={
@@ -372,7 +356,7 @@ const UnSubRecPopup = ({ classes,
                     label={t("recipient.advanceOptions")}
                 />
 
-                <Box className={clsx(classes.flex, classes.mt10, classes.mb20)}>
+                <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} style={{ height: 26 }}>
                     {advanceOpt && (<>
                         <Box className={activeTab === 0 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(0)}>{t("recipient.phone&email")}</Box>
                         <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>{t("recipient.emailOnly")}</Box>

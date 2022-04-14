@@ -247,8 +247,8 @@ const EditGroupPopup = ({ classes,
                     )}
                     style={{ justifyContent: 'space-between' }}
                 >
-                    <Typography>{t("common.CreatedOn")}:{moment(editableFroupData.CreationDate).format("DD/MM/YYYY HH:mm")}</Typography>
-                    <Typography>{t("common.UpdatedOn")}:{moment(editableFroupData.UpdateDate).format("DD/MM/YYYY HH:mm")}</Typography>
+                    <Typography>{t("common.CreatedOn")}: {moment(editableFroupData.CreationDate).format("DD/MM/YYYY HH:mm")}</Typography>
+                    <Typography>{t("common.UpdatedOn")}: {moment(editableFroupData.UpdateDate).format("DD/MM/YYYY HH:mm")}</Typography>
                 </Box>
             </Dialog>
             }
