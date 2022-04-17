@@ -21,6 +21,7 @@ import { getCookie } from '../../helpers/cookies'
 import EditorActions from './EditorActions';
 import TestSend from './modals/TestSend'
 import ResponseModal from './modals/ResponseModal'
+import NoCreditsModal from './modals/NoCreditsModal'
 import Toast from '../../components/Toast/Toast.component';
 import GenericModal from './modals/GenericModal';
 import { GiExitDoor } from 'react-icons/gi'
@@ -46,6 +47,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const subAccountSettings = getCookie("subAccountSettings");
   const [toastMessage, setToastMessage] = useState(null);
   const [redirectOnExit, setRedirectOnExit] = useState('');
+  const [isResponseModal, setIsResponseModal] = useState(false);
   const [genericModalData, setGenericModalData] = useState({
     title: "",
     message: ""
@@ -59,7 +61,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     CANNOT_CREATE_GROUP: "campaigns.cannotCreateGroup",
     ERROR_OCCURED: "campaigns.errorOccured",
     NONE_ACTIVE_RECIPIENT: "campaigns.noneActiveRecipientsFound",
-    GENERIC: "generic"
+    GENERIC: "generic",
+    NO_CREDITS_LEFT: "sms.noCredits"
   };
   useEffect(() => {
     if (dataReady) {
@@ -160,8 +163,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     options.user = {
       id: subAccountSettings.UnlayerUniqueID
     }
-    options.customJS = ['console.log("123123")', `${process.env.PUBLIC_URL}/assets/scripts/CompanyDetails.js`];
-
     setIframeKey(iframeKey + 1);
   }
   const registerEvents = () => {
@@ -198,8 +199,6 @@ const CampaignEditor = ({ classes, ...props }) => {
           done(userBlocks);
         }
       });
-      // unlayer.customJS = ['console.log(123123)', 'https://www.pulseemdev.co.il/pulseem/CompanyDetails.js'];
-      // unlayer.customCSS = ['https://examples.unlayer.com/examples/custom-css/custom.css'];
       // Gallery
       unlayer.registerCallback('selectImage', function (data, done) {
         console.log(data);
@@ -214,17 +213,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   const onLoad = () => {
     try {
       editorRef.current.editor.fonts = fonts;
+      editorRef.current.customCSS = ["body { background-color: black }"];
       editorRef.current.editor.setSpecialLinks(specialLinks);
-      // editorRef.current.editor.setBodyValues({
-      //   backgroundColor: "#e7e7e7",
-      //   contentWidth: "600px", // or percent "50%"
-      //   fontFamily: {
-      //     label: "Helvetica",
-      //     value: "'Helvetica Neue', Helvetica, Arial, sans-serif"
-      //   },
-      //   preheaderText: "Hello World"
-      // });
       editorRef.current.setMergeTags(mergeData);
+      editorRef.current.editor.customJS = ['console.log("123123")', `${process.env.PUBLIC_URL}/assets/scripts/CompanyDetails.js`];
       if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
         setLoader(false);
         return;
@@ -260,8 +252,8 @@ const CampaignEditor = ({ classes, ...props }) => {
     finally {
       registerEvents();
     }
-  }  
-  const saveDesign = (redirectAfterSave = false, redirectUrl = null) => {
+  }
+  const saveDesign = (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
     return new Promise((resolve, reject) => {
       try {
         editorRef.current.exportHtml(async (data) => {
@@ -271,7 +263,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             if (redirectAfterSave) {
               window.location = redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
             }
-            else {
+            else if(showAnimation) {
               setToastMessage(ToastMessages.CAMPAIGN_SAVED);
             }
           }
@@ -292,6 +284,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     window.location = `/react/Campaigns`;
   }
   const onDelete = () => {
+    setIsResponseModal(false);
     setGenericModalData({
       title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
       message: t("mainReport.confirmSure"),
@@ -332,7 +325,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const onTestSendSubmit = (sendRequest) => {
     setLoader(true);
-    saveDesign().then(async (r) => {
+    saveDesign(false, null, false).then(async (r) => {
       const reponse = await dispatch(testSend({ ...sendRequest }));
       onResponse(reponse.payload.StatusCode);
       setSummaryData(reponse.payload.Summary);
@@ -340,6 +333,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     });
 
     const onResponse = (statusCode) => {
+      setIsResponseModal(statusCode !== 402);
       switch (statusCode) {
         case 201: {
           setDialog(DialogType.SUCCESS_SENT);
@@ -350,7 +344,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           break;
         }
         case 402: {
-          setToastMessage(ToastMessages.NO_CREDITS_LEFT);
+          setDialog(DialogType.NO_CREDITS_LEFT);
           break;
         }
         case 404: {
@@ -390,7 +384,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         <EmailEditor
           editorId="campaign-editor"
           ref={editorRef}
-          minHeight="calc(100vh - 170px)"
+          minHeight="calc(100vh - 120px)"
           tools={tools}
           appearance={appearance}
           options={options}
@@ -398,7 +392,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           tabs={tabs}
           key={iframeKey}
           projectId={71525}
-          customCSS={['https://examples.unlayer.com/examples/custom-css/custom.css']}
+          customJS={['console.log("123123")', `${process.env.PUBLIC_URL}/assets/scripts/CompanyDetails.js`]}
         />
       </React.StrictMode>
     }
@@ -413,6 +407,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       containerClass={[classes.fullWidth, classes.noPadding]}
     >
       {renderToast()}
+      <NoCreditsModal
+        classes={classes}
+        onClose={() => setDialog(null)}
+        isOpen={dialog === DialogType.NO_CREDITS_LEFT}
+      />
       <TestSend
         classes={classes}
         isOpen={dialog === DialogType.TEST_SEND}
@@ -427,7 +426,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       />
       <ResponseModal
         classes={classes}
-        isOpen={dialog && (dialog !== DialogType.TEST_SEND && dialog !== DialogType.GENERIC)}
+        isOpen={dialog && isResponseModal}
         onClose={() => setDialog(null)}
         onConfirm={() => setDialog(null)}
         summaryData={summaryData}
@@ -439,7 +438,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         innerStyle={{ paddingInline: 15 }}
         classes={classes}
         onExit={onExit}
-        onTestSend={() => { setDialog(DialogType.TEST_SEND) }}
+        onTestSend={() => { setIsResponseModal(false); setDialog(DialogType.TEST_SEND) }}
         onSave={saveDesign}
         onBack={onBack}
         onDelete={onDelete} />

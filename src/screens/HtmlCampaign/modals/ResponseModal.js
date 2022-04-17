@@ -21,7 +21,8 @@ const ResponseModal = ({
     const { t } = useTranslation();
     const { windowSize, isRTL } = useSelector(state => state.core);
 
-    return (
+    return !isOpen ? (<></>) :
+    (
         <Dialog
             classes={classes}
             customContainerStyle={classes.dialogZindex}

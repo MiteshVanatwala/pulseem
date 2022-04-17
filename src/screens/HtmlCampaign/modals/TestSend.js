@@ -64,7 +64,7 @@ const TestSend = ({
                 size='small'
                 value={recipient}
                 onChange={handleRecipient}
-                className={classes.textField}
+                className={clsx(classes.textField, classes.emailField)}
                 style={{ width: '100%' }}
                 placeholder={t('common.Email')}
                 autoFocus
@@ -101,8 +101,8 @@ const TestSend = ({
             />
         }*/
     ];
-
-    return (
+    return !isOpen ? (<></>) :
+    (
         <Dialog
             classes={classes}
             customContainerStyle={classes.dialogZindex}

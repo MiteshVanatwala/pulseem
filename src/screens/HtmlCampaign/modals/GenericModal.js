@@ -12,8 +12,8 @@ const GenericModal = ({
   isOpen = false
 }) => {
   const { t } = useTranslation();
-
-  return (
+  return !isOpen ? (<></>) :
+  (
     <Dialog
       classes={classes}
       customContainerStyle={classes.dialogZindex}

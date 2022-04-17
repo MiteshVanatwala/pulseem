@@ -490,6 +490,9 @@ export const tabs = {
 }
 export const features = {
   imageEditor: true,
+  stockImages: {
+    enabled: false
+  },
   userUploads: true,
   pageAnchors: true,
   undoRedo: true,
