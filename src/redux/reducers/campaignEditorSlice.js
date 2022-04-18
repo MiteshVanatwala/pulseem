@@ -1,5 +1,6 @@
 import { instence } from '../../helpers/api'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createStore } from 'redux'
 
 
 export const getCampaignById = createAsyncThunk(
@@ -85,9 +86,9 @@ export const campaignEditorSlice = createSlice({
         campaign: null,
         userBlocks: null,
         ToastMessages: {
-          CAMPAIGN_SAVED: { severity: 'success', color: 'success', message: 'campaigns.campaignSaved', showAnimtionCheck: true },
-          RECIPIENT_BLOCKED: { severity: 'error', color: 'error', message: "campaigns.recipientBlocked", showAnimtionCheck: false },
-          NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
+            CAMPAIGN_SAVED: { severity: 'success', color: 'success', message: 'campaigns.campaignSaved', showAnimtionCheck: true },
+            RECIPIENT_BLOCKED: { severity: 'error', color: 'error', message: "campaigns.recipientBlocked", showAnimtionCheck: false },
+            NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
         },
     },
     extraReducers: builder => {
@@ -106,9 +107,22 @@ export const campaignEditorSlice = createSlice({
                 });
                 state.userBlocks = blocks
             })
-    }
+    },
+    reducers: {
+        save: async (_, action) => {
+            const res = await saveUserBlock(action.payload);
+            return res;
+        },
+        update: async (_, action) => {
+            await updateUserBlock(action.payload);
+        },
+        remove: async (_, action) => {
+            await deleteUserBlock(action.payload);
+        }
+    },
 })
 
 
-
+export const { save, update, remove } = campaignEditorSlice.actions
+export const store = createStore(campaignEditorSlice.reducer);
 export default campaignEditorSlice.reducer

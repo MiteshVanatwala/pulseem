@@ -27,6 +27,7 @@ import GenericModal from './modals/GenericModal';
 import { GiExitDoor } from 'react-icons/gi'
 import { BsTrash } from "react-icons/bs";
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
+import { initEvents } from './events/index';
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -89,7 +90,12 @@ const CampaignEditor = ({ classes, ...props }) => {
     setTimeout(() => {
       onLoad();
     }, 0);
-  }, [language])
+  }, [language]);
+  useEffect(() => {
+    if (userBlocks !== null) {
+      registerEvents();
+    }
+  }, [userBlocks]);
   const getData = async () => {
     setLoader(true);
     await dispatch(getCampaignById(props.match.params.id));
@@ -168,47 +174,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   const registerEvents = () => {
     const unlayer = editorRef.current;
     if (unlayer) {
-      // Blocks
-      unlayer.registerCallback('block:added', async function (newBlock, done) {
-        // Each block should have it's own unique id
-        const res = await dispatch(saveUserBlock(newBlock));
-        const newId = res.payload.Block.ID;
-        newBlock.id = newId;
-
-        done(newBlock);
-      });
-      unlayer.registerCallback('block:modified', async function (existingBlock, done) {
-        console.log('block:modified', existingBlock);
-
-        // Update the block in your database here
-        // and pass the updated object to done callback.
-        await dispatch(updateUserBlock(existingBlock));
-
-        done(existingBlock);
-      });
-      unlayer.registerCallback('block:removed', async function (existingBlock, done) {
-        console.log('block:removed', existingBlock);
-
-        // Delete the block from your database here.
-        await dispatch(deleteUserBlock(existingBlock.id));
-
-        done(existingBlock);
-      });
-      unlayer.editor.registerProvider('blocks', async function (params, done) {
-        if (params.userId) {
-          done(userBlocks);
-        }
-      });
-      // Gallery
-      unlayer.registerCallback('selectImage', function (data, done) {
-        console.log(data);
-        console.log(done);
-      });
-      unlayer.editor.reloadProvider('blocks');
-
-
+      initEvents({ unlayer, userBlocks }).then((res) => {
+        console.log(res)
+      })
     }
-
   }
   const onLoad = () => {
     try {
@@ -250,7 +219,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       return;
     }
     finally {
-      registerEvents();
+      //registerEvents();
     }
   }
   const saveDesign = (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
@@ -263,7 +232,7 @@ const CampaignEditor = ({ classes, ...props }) => {
             if (redirectAfterSave) {
               window.location = redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
             }
-            else if(showAnimation) {
+            else if (showAnimation) {
               setToastMessage(ToastMessages.CAMPAIGN_SAVED);
             }
           }

@@ -4,26 +4,6 @@ export const appearance = {
   }
 }
 export const tools = {
-  timer: {
-    properties: {
-      countdown: {
-        value: {
-          countdownUrl: `https://cdn.tools.unlayer.com/countdown/countdown.gif`,
-          endTime: '',
-          backgroundColor: '#000000',
-          labelColor: '#FFFFFF',
-          labelFontFamily: 'Open Sans',
-          labelFontSize: 28,
-          digitColor: '#FFFFFF',
-          digitFontFamily: 'Open Sans',
-          digitFontSize: 75,
-          timezone: 'America/Los_Angeles',
-          locale: null,
-          showLabels: false
-        }
-      }
-    }
-  },
   html: {
     enabled: true
   },
