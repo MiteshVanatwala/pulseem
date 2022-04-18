@@ -73,22 +73,22 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                     }),
                 },
                 'S_400': {
-                    code: 201,
+                    code: 400,
                     message: ToastMessages.GROUP_INPUT_INCORRECT,
                     Func: () => null
                 },
                 'S_401': {
-                    code: 201,
+                    code: 401,
                     message: ToastMessages.GROUP_INVALID_API,
                     Func: () => null
                 },
                 'S_405': {
-                    code: 201,
+                    code: 405,
                     message: ToastMessages.GROUP_ERROR,
                     Func: () => null
                 },
                 'S_422': {
-                    code: 201,
+                    code: 422,
                     message: ToastMessages.GROUP_ALREADY_EXIST,
                     Func: () => null
                 },

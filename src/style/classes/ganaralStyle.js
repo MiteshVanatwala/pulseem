@@ -127,6 +127,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     marginInline: 25,
     whiteSpace: "pre-line",
   },
+  resetDialogTitle: {
+    fontSize: "2rem",
+    fontWeight: "400",
+    color: "#0a74a9",
+    // marginInline: 25,
+    whiteSpace: "pre-line",
+  },
   reducedTitle: {
     "@media screen and (max-width: 768px)": {
       fontSize: "1.3rem",

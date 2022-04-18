@@ -47,6 +47,7 @@ import AddRecipientResponse from "./AddRecipientResponse";
 import UnSubRecPopup from "./UnSubRecPopup";
 import DeleteRecPopup from "./DeleteRecPopup";
 import EditGroupPopup from "./EditGroupPopup";
+import ResetGroupPopup from "./ResetGroupPopup";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -113,6 +114,7 @@ const GroupsManagement = ({ classes }) => {
     ADD_RECIPIENTS: "add recipients",
     UNSUB_RECIPIENT: "unsubscribe recipients",
     DELETE_RECIPIENT: "delete recipients",
+    RESET_GROUP: 'reset group',
     MESSAGE: "message",
     SUMMARY: "summary"
   };
@@ -151,7 +153,7 @@ const GroupsManagement = ({ classes }) => {
     if (subAccountAllGroups.length === 0) {
       await dispatch(getGroupsBySubAccountId())
     }
-    setDialog(null);
+    // setDialog(null);
     setLoader(false);
   };
 
@@ -217,6 +219,11 @@ const GroupsManagement = ({ classes }) => {
       message: '',
       Func: () => null
     },
+    'S_406': {
+      code: 406,
+      message: '',
+      Func: () => null
+    },
     'S_422': {
       code: 422,
       message: '',
@@ -258,6 +265,11 @@ const GroupsManagement = ({ classes }) => {
       case 405: {
         actions?.S_405?.Func?.();
         setToastMessage(actions?.S_405?.message);
+        break;
+      }
+      case 406: {
+        actions?.S_406?.Func?.();
+        setToastMessage(actions?.S_406?.message);
         break;
       }
       case 422: {
@@ -721,6 +733,20 @@ const GroupsManagement = ({ classes }) => {
         getData={getData}
         handleResponses={(response, actions) => handleResponses(response, actions)}
       />}
+      {dialog === DialogType.RESET_GROUP && selectedGroups.length === 1 && <ResetGroupPopup
+        classes={classes}
+        isOpen={dialog === DialogType.RESET_GROUP}
+        onClose={() => setDialog(null)}
+        setLoader={setLoader}
+        windowSize={windowSize}
+        // ToastMessages={ToastMessages}
+        setToastMessage={setToastMessage}
+        selectedGroup={{ GroupID: selectedGroups[0] }}
+        // openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
+        // getData={getData}
+        getData={getData}
+        handleResponses={(response, actions) => handleResponses(response, actions)}
+      />}
       {dialog === DialogType.ADD_RECIPIENT && <AddRecipientPopup
         classes={classes}
         isOpen={dialog === DialogType.ADD_RECIPIENT}
@@ -732,6 +758,9 @@ const GroupsManagement = ({ classes }) => {
         Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
         selectedGroups={selectedGroups}
         selectGroup={(idArr) => setSelectedGroups(idArr)}
+        DialogType={DialogType}
+        setDialog={setDialog}
+        handleResponses={(response, actions) => handleResponses(response, actions)}
         onAddRecipient={getData}
       />}
       {dialog === DialogType.ADD_RECIPIENTS && <AddBulkRecipientPopup

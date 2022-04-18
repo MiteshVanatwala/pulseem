@@ -68,7 +68,10 @@ const AddRecipientPopup = ({ classes,
     selectGroup,
     setToastMessage,
     ToastMessages,
-    onAddRecipient = () => null
+    DialogType,
+    setDialog,
+    onAddRecipient = () => null,
+    handleResponses = (response, actions) => null
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -87,45 +90,7 @@ const AddRecipientPopup = ({ classes,
     })
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
 
-    const handleAddREcipientResponse = (response) => {
-        switch (response.payload.StatusCode) {
-            case 201: {
-                setToastMessage(ToastMessages.RECIPIENT_ADDED);
-                onAddRecipient();
-                break;
-            }
-            case 400: {
-                setToastMessage(ToastMessages.RECIPIENT_INPUT_INCORRECT);
-                if (addRecipientData.Cellphone) {
-                    setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
-                    document.getElementById("rec_cellphone").classList.add("error");
-                    document.getElementById("rec_cellphone").focus();
-                    setActiveTab(0);
-                }
-                else if (addRecipientData.Email) {
-                    setErrors({ ...errors, Email: t(ADD_RECIPIENT_REQUIRED_ERRORS.Email) })
-                    document.getElementById("rec_email").classList.add("error");
-                    document.getElementById("rec_email").focus();
-                    setActiveTab(0);
-                }
-                break;
-            }
-            case 401: {
-                setToastMessage(ToastMessages.GROUP_INVALID_API);
-                break;
-            }
-            case 406: {
-                setToastMessage(ToastMessages.GROUP_INVALID_ID);
-                break;
-            }
-            case 405:
-            case 500:
-            default: {
-                setToastMessage(ToastMessages.GROUP_ERROR);
-                break;
-            }
-        }
-    }
+
 
     const handleBlur = (e) => {
         if (!e.target.value) {
@@ -182,7 +147,7 @@ const AddRecipientPopup = ({ classes,
 
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (callback) => {
 
         const data = {
             ClientsData: addRecipientData,
@@ -226,8 +191,64 @@ const AddRecipientPopup = ({ classes,
                 GroupIds: [...selectedGroups]
             }
             const response = await dispatch(addRecipient(request))
-            handleAddREcipientResponse(response)
-            onAddRecipient();
+            handleResponses(response, {
+                'S_201': {
+                    code: 201,
+                    message: ToastMessages.RECIPIENT_ADDED,
+                    Func: new Promise(async (resolutionFunc, rejectionFunc) => {
+                        resolutionFunc(onAddRecipient());
+                    }).then((res) => {
+                        // selectGroup(response.payload.Message)
+                        callback?.()
+                    }),
+                },
+                'S_400': {
+                    code: 400,
+                    message: ToastMessages.RECIPIENT_INPUT_INCORRECT,
+                    Func: () => {
+                        if (addRecipientData.Cellphone) {
+                            setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.Cellphone) })
+                            document.getElementById("rec_cellphone").classList.add("error");
+                            document.getElementById("rec_cellphone").focus();
+                            setActiveTab(0);
+                        }
+                        else if (addRecipientData.Email) {
+                            setErrors({ ...errors, Email: t(ADD_RECIPIENT_REQUIRED_ERRORS.Email) })
+                            document.getElementById("rec_email").classList.add("error");
+                            document.getElementById("rec_email").focus();
+                            setActiveTab(0);
+                        }
+                        // break;
+                    }
+                },
+                'S_401': {
+                    code: 401,
+                    message: ToastMessages.GROUP_INVALID_API,
+                    Func: () => null
+                },
+                'S_405': {
+                    code: 405,
+                    message: '',
+                    Func: () => null
+                },
+                'S_406': {
+                    code: 406,
+                    message: ToastMessages.GROUP_INVALID_ID,
+                    Func: () => null
+                },
+                'S_422': {
+                    code: 422,
+                    message: '',
+                    Func: () => null
+                },
+                'default': {
+                    message: ToastMessages.GROUP_ERROR,
+                    Func: () => null
+                },
+            })
+
+
+            // onAddRecipient();
 
         }
         catch (err) {
@@ -993,6 +1014,10 @@ const AddRecipientPopup = ({ classes,
     }
 
 
+
+
+
+
     return (
         <Dialog
             classes={classes}
@@ -1047,7 +1072,7 @@ const AddRecipientPopup = ({ classes,
                                 classes.textCapitalize
                             )}
 
-                            onClick={handleSubmit}
+                            onClick={() => handleSubmit(onClose)}
                         >
                             {t("group.ok")}
                         </Button>
@@ -1068,6 +1093,7 @@ const AddRecipientPopup = ({ classes,
                                 classes.dialogButtonResponive,
                                 classes.dialogConfirmButton
                             )}
+                            onClick={() => handleSubmit(setAddRecipientData(DEFAULT_RECIPIENT_DATA))}
                         >
                             {t("recipient.addAnotherRecipient")}
                         </Button>

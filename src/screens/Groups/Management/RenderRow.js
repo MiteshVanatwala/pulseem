@@ -349,6 +349,10 @@ const RenderWebRow = ({
               classes: { text: localClasses.noWrap },
             },
             {
+              onClick: () => {
+                setSelectedGroups(GroupID)
+                setDialog(DialogType.RESET_GROUP)
+              },
               label: t("recipient.reset"),
               component: (
                 <IconWrapper iconName="reset" className={classes.mxAuto} />
