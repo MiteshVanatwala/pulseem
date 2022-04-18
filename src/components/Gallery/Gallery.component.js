@@ -5,7 +5,7 @@ import {
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { createFolder, getFileGallery } from '../../redux/reducers/commonSlice';
+import { createFolder, getFileGallery } from '../../redux/reducers/gallerySlice';
 import clsx from 'clsx';
 import './Gallery.styles.css';
 import moment from 'moment'

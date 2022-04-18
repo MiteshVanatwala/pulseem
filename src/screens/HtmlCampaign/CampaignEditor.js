@@ -28,6 +28,7 @@ import { GiExitDoor } from 'react-icons/gi'
 import { BsTrash } from "react-icons/bs";
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import { initEvents } from './events/index';
+import { getFileGallery } from '../../redux/reducers/gallerySlice';
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -40,6 +41,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [mergeData, setPulseemMergeData] = useState({});
   const [specialLinks, setSpecialLinks] = useState([]);
   const { campaign, userBlocks, ToastMessages } = useSelector(state => state.campaignEditor);
+  const { UnlayerFilterFiles } = useSelector(state => state.gallery);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language } = useSelector(state => state.core)
   const [iframeKey, setIframeKey] = useState(0);
@@ -67,7 +69,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   };
   useEffect(() => {
     if (dataReady) {
-      Promise.all([initExtraDataField(), initLandingPages(), initUserBlocks()]).then(() => {
+      Promise.all([initExtraDataField(), initLandingPages(), initUserBlocks(), initGallery()]).then(() => {
         setDataLoaded(true);
       })
     }
@@ -104,6 +106,12 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getTestGroups())
     setDataReady(true);
     setLoader(false);
+  }
+  const initGallery = () => {
+    return new Promise(async (resolve) => {
+      await dispatch(getFileGallery());
+      resolve();
+    });
   }
   const initUserBlocks = () => {
     return new Promise(async (resolve) => {
@@ -174,7 +182,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const registerEvents = () => {
     const unlayer = editorRef.current;
     if (unlayer) {
-      initEvents({ unlayer, userBlocks }).then((res) => {
+      initEvents({ unlayer, userBlocks, }).then((res) => {
         console.log(res)
       })
     }

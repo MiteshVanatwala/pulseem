@@ -17,6 +17,7 @@ import clientReducer from './reducers/clientSlice';
 import campaignReducer from './reducers/campaignEditorSlice';
 import groupSlice from './reducers/groupSlice';
 import reportSlice from './reducers/reportSlice';
+import galleryReducer from './reducers/gallerySlice'
 
 export default configureStore({
   reducer: {
@@ -37,6 +38,7 @@ export default configureStore({
     campaignEditor: campaignReducer,
     siteTracking: siteTrackingReducer,
     group: groupSlice,
-    report: reportSlice
+    report: reportSlice,
+    gallery: galleryReducer
   },
 });
