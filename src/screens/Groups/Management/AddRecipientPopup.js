@@ -359,6 +359,9 @@ const AddRecipientPopup = ({ classes,
                             className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                             autoComplete="off"
                             onChange={(e) => {
+                                if (e.target.value.length === 1 && e.target.value == "-") {
+                                    return;
+                                }
                                 let tempVal = e.target.value
                                 if (!tempVal) {
                                     handleChange(e)
@@ -367,7 +370,7 @@ const AddRecipientPopup = ({ classes,
                                     handleChange(e)
                                 }
                             }}
-                            inputProps={{ maxlength: 12 }}
+                            inputProps={{ maxlength: 15 }}
                             error={errors.Cellphone}
                             helperText={errors.Cellphone}
                             onBlur={handleBlur}

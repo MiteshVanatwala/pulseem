@@ -3,8 +3,8 @@ export const ValidateEmail = (email) => {
 }
 
 export const ValidateNumber = (number) => {
-    const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
-    return number.match(/^\d+$/)
+    const phoneRegex = /^[0-9-]+$/
+    return number.match(phoneRegex)
 }
 
 export const renderHtml = (html) => {
