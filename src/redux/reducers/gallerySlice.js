@@ -1,12 +1,10 @@
 import { instence } from '../../helpers/api'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { createStore } from 'redux'
-
 
 export const getFileGallery = createAsyncThunk(
     '/Gallery/GetFiles', async (_, thunkAPI) => {
         try {
-            const response = await instence.get(`/GetFiles`);
+            const response = await instence.get(`/Gallery/GetFiles`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -50,15 +48,28 @@ export const deleteGalleryFile = createAsyncThunk(
 export const gallerySlice = createSlice({
     name: 'gallery',
     initialState: {
-        Folders: [],
-        UnlayerFilterFiles: []
+        folders: [],
+        images: []
     },
     extraReducers: builder => {
         builder
             .addCase(getFileGallery.fulfilled, (state, { payload }) => {
-                state.Folders = payload;
-                if (payload) {
-
+                try {
+                    if (payload) {
+                        payload.map((file) => {
+                            const f = {
+                                id: Date.now() + 1,
+                                location: file.FileURL,
+                                width: file.Properties.Width,
+                                height: file.Properties.Height,
+                                contentType: file.Properties.ContentType,
+                                source: 'user'
+                            };
+                            state.images.push(f);
+                        });
+                    }
+                } catch (e) {
+                    console.error(e);
                 }
             })
     }

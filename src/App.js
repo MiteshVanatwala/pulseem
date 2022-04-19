@@ -391,8 +391,9 @@ const renderRoutes = (classes, history) => {
 const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize } = useSelector(state => state.core)
-  screenSize && dispatch(setWindowSize(screenSize))
-
+  useEffect(() => {
+    dispatch(setWindowSize(screenSize))
+  }, [screenSize])
   useEffect(() => {
 
     const initFeatures = async () => {

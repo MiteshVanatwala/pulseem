@@ -41,7 +41,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [mergeData, setPulseemMergeData] = useState({});
   const [specialLinks, setSpecialLinks] = useState([]);
   const { campaign, userBlocks, ToastMessages } = useSelector(state => state.campaignEditor);
-  const { UnlayerFilterFiles } = useSelector(state => state.gallery);
+  const { images } = useSelector(state => state.gallery);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language } = useSelector(state => state.core)
   const [iframeKey, setIframeKey] = useState(0);
@@ -69,7 +69,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   };
   useEffect(() => {
     if (dataReady) {
-      Promise.all([initExtraDataField(), initLandingPages(), initUserBlocks(), initGallery()]).then(() => {
+      Promise.all([initExtraDataField(), initLandingPages()]).then(() => {
         setDataLoaded(true);
       })
     }
@@ -93,31 +93,16 @@ const CampaignEditor = ({ classes, ...props }) => {
       onLoad();
     }, 0);
   }, [language]);
-  useEffect(() => {
-    if (userBlocks !== null) {
-      registerEvents();
-    }
-  }, [userBlocks]);
   const getData = async () => {
     setLoader(true);
     await dispatch(getCampaignById(props.match.params.id));
     await dispatch(getAccountExtraData());
     await dispatch(getPreviousLandingData());
-    await dispatch(getTestGroups())
+    await dispatch(getTestGroups());
+    await dispatch(getFileGallery());
+    await dispatch(getUserblocks());
     setDataReady(true);
     setLoader(false);
-  }
-  const initGallery = () => {
-    return new Promise(async (resolve) => {
-      await dispatch(getFileGallery());
-      resolve();
-    });
-  }
-  const initUserBlocks = () => {
-    return new Promise(async (resolve) => {
-      await dispatch(getUserblocks());
-      resolve();
-    });
   }
   const initExtraDataField = () => {
     return new Promise((resolve, reject) => {
@@ -182,7 +167,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const registerEvents = () => {
     const unlayer = editorRef.current;
     if (unlayer) {
-      initEvents({ unlayer, userBlocks, }).then((res) => {
+      initEvents({ unlayer, userBlocks, images}).then((res) => {
         console.log(res)
       })
     }
@@ -227,7 +212,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       return;
     }
     finally {
-      //registerEvents();
+      registerEvents();
     }
   }
   const saveDesign = (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {

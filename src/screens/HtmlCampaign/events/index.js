@@ -1,15 +1,17 @@
 import { initFiles } from './gallery';
 import { initBlocks } from './blocks';
 
-export const initEvents = ({ unlayer, userBlocks, userFiles }) => {
+export const initEvents = (params) => {
   try {
+    const { unlayer, userBlocks, images } = params;
     return new Promise((resolve, reject) => {
       try {
         initBlocks(unlayer, userBlocks);
-        initFiles(unlayer, userFiles);
+        initFiles(unlayer, images);
         resolve(true);
       }
       catch (e) {
+        console.error(e);
         reject(false);
       }
     });
