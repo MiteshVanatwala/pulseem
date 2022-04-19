@@ -56,7 +56,7 @@ export const gallerySlice = createSlice({
             .addCase(getFileGallery.fulfilled, (state, { payload }) => {
                 try {
                     if (payload) {
-                        payload.map((file) => {
+                        payload.Files.map((file) => {
                             const f = {
                                 id: Date.now() + 1,
                                 location: file.FileURL,

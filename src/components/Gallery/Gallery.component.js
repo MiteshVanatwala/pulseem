@@ -56,18 +56,19 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             return;
         }
 
-        const f = Object.keys(data.payload);
+        const gallery = data.payload.Gallery;
+        const f = Object.keys(gallery);
         const tmpFolders = [];
         f.forEach((folder, index) => {
             if (index === 0) {
                 tmpFolders.push({
-                    FolderName: "main", files: data.payload[folder].sort((a, b) => {
+                    FolderName: "main", files: gallery[folder].sort((a, b) => {
                         return new Date(b.CreatedDate) - new Date(a.CreatedDate);
                     })
                 });
             } else {
                 tmpFolders.push({
-                    FolderName: folder.split("\\")[1], files: data.payload[folder].sort((a, b) => {
+                    FolderName: folder.split("\\")[1], files: gallery[folder].sort((a, b) => {
                         return new Date(b.CreatedDate) - new Date(a.CreatedDate);
                     })
                 });
