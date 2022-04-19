@@ -124,7 +124,7 @@ export const options = {
       "buttons.transform": "שנה מבנה",
       "buttons.update_field": "עדכן שדה",
       "buttons.upload": "העלאה",
-      "buttons.upload_image": "העלה תמונה",
+      "buttons.upload_image": "בחר מגלריה",
       "buttons.zoom": "זום",
       "collaboration.add_comment": "הוסף תגובה",
       "collaboration.empty.subtitle": "Your threads here",
@@ -459,13 +459,14 @@ export const options = {
     },
     'en-US': {
       "labels.merge_tags": "Personalization",
-      "labels.special_links": "Add Link"
+      "labels.special_links": "Add Link",
+      "buttons.upload_image": "Select from gallery",
     }
   }
 }
 export const tabs = {
   images: {
-    enabled: true
+    enabled: false
   }
 }
 export const features = {
@@ -473,7 +474,7 @@ export const features = {
   stockImages: {
     enabled: false
   },
-  userUploads: true,
+  userUploads: false,
   pageAnchors: true,
   undoRedo: true,
   textEditor: {

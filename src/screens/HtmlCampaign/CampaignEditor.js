@@ -259,7 +259,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     })
 
   }
-  const deleteNewsllter = async () => {
+  const deleteNewsletter = async () => {
     setDialog(null);
     await dispatch(deleteCampaign(campaignId));
     window.location = `/react/Campaigns`;
@@ -270,7 +270,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       title: t('campaigns.GridButtonColumnResource2.ConfirmTitle'),
       message: t("mainReport.confirmSure"),
       icon: <BsTrash />,
-      onConfirm: () => deleteNewsllter(),
+      onConfirm: () => deleteNewsletter(),
       onCancel: () => setDialog(null),
       onClose: () => setDialog(null)
     });
