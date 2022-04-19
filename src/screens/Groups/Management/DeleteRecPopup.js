@@ -22,7 +22,7 @@ const DeleteRecPopup = ({ classes,
     isOpen = false,
     onClose,
     selectedGroups,
-    placeHolder = "sms.dragXlOrCsv",
+    placeHolder = "recipient.deleteTextareaPlaceholder",
     handleResponses = (response, actions) => null,
 }) => {
     const { t } = useTranslation();

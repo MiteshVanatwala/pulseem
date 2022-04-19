@@ -83,6 +83,7 @@ const AddBulkRecipientPopup = ({ classes,
                     onDone={onAddRecipient}
                     settings={UploadSettings.GROUPS}
                     uploadToGroups={selectedGroups}
+                    placeHolder={"recipient.addRecTextareaPlaceholder"}
                 />
             </Box>
         </Dialog>
