@@ -58,7 +58,7 @@ export const gallerySlice = createSlice({
                     if (payload) {
                         payload.Files.map((file) => {
                             const f = {
-                                id: Date.now() + 1,
+                                id: Math.round(Math.random() * 999999999),
                                 location: file.FileURL,
                                 width: file.Properties.Width,
                                 height: file.Properties.Height,
