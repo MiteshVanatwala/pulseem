@@ -51,7 +51,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [toastMessage, setToastMessage] = useState(null);
   const [redirectOnExit, setRedirectOnExit] = useState('');
   const [isResponseModal, setIsResponseModal] = useState(false);
-  const [showGallery, setGalleryState] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [genericModalData, setGenericModalData] = useState({
     title: "",
@@ -171,7 +171,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (unlayer) {
       initEvents({ unlayer, userBlocks }).then((res) => {
         unlayer.registerCallback('selectImage', function (data, done) {
-          setGalleryState(true);
+          setShowGallery(true);
           setIsFileSelected(false);
 
           const button = document.querySelector('[name="btnConfirm"]');
@@ -361,7 +361,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   /* #region  Gallery Dialog */
   const handleSelectedImage = (image) => {
-    setGalleryState(false);
+    setShowGallery(false);
   }
   const handleGalleryConfirm = () => {
     setIsFileSelected(true);
@@ -379,7 +379,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           showDivider={false}
           classes={classes}
           open={showGallery}
-          onClose={() => setDialog(null)}
+          onClose={() => { setShowGallery(false)}}
           onConfirm={handleGalleryConfirm}
           {...dialog}>
           {dialog.content}

@@ -35,6 +35,8 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
     const [selectedFolder, setSelectedFolder] = useState('main');
     const [folderCreationState, setShowFolderCreation] = useState(false);
     const { windowSize, language, isRTL } = useSelector(state => state.core)
+    const { gallery } = useSelector(state => state.gallery)
+
 
     const renderToast = () => {
         if (toastMessage) {
@@ -50,32 +52,27 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
 
     moment.locale(language);
 
-    const initGallery = async () => {
-        const data = await dispatch(getFileGallery());
-        if (data.error) {
-            return;
+    const initGallery = async (forceInit) => {
+        if (!gallery || forceInit){
+          await dispatch(getFileGallery());
         }
+    }
 
-        const gallery = data.payload.Gallery;
+    useEffect(() => {
+      if(gallery){
         const f = Object.keys(gallery);
         const tmpFolders = [];
         f.forEach((folder, index) => {
-            if (index === 0) {
-                tmpFolders.push({
-                    FolderName: "main", files: gallery[folder].sort((a, b) => {
-                        return new Date(b?.CreatedDate) - new Date(a?.CreatedDate);
-                    })
-                });
-            } else {
-                tmpFolders.push({
-                    FolderName: folder.split("\\")[1], files: gallery[folder].sort((a, b) => {
-                        return new Date(b?.CreatedDate) - new Date(a?.CreatedDate);
-                    })
-                });
-            }
+            const folderFiles = [...gallery[folder]];
+            const folderName = index === 0 ? "main" : folder.split("\\")[1];
+            var files = folderFiles.sort((a, b) => {
+                return new Date(b?.CreatedDate) - new Date(a?.CreatedDate);
+            });
+            tmpFolders.push({ FolderName: folderName, files: files });
         });
         setFolders(tmpFolders);
-    }
+      }
+    }, [gallery])
 
     useEffect(() => {
         initGallery();
@@ -255,7 +252,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             const folderExists = folders.filter(f => f.FolderName === folderName).length > 0;
             if (!folderExists) {
                 await dispatch(createFolder(folderName));
-                initGallery();
+                initGallery(true);
                 handleCreateFolderRow();
                 setFolderName('');
             }
@@ -342,7 +339,7 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
                     {folders && <GalleryImages
                         classes={classes}
                         folder={folders.find((f) => { return f.FolderName === selectedFolder })}
-                        onReInitGallery={initGallery}
+                        onReInitGallery={() => {initGallery(true)}}
                         selectedFolder={selectedFolder}
                         scrollIndex={scrollIndex}
                         isRTL={isRTL}

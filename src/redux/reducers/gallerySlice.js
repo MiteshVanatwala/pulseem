@@ -14,7 +14,7 @@ export const getFileGallery = createAsyncThunk(
 export const createFolder = createAsyncThunk(
     '/Gallery/CreateFolder', async (folderName, thunkAPI) => {
         try {
-            const response = await instence.post(`/CreateFolder`, { FolderName: folderName }
+            const response = await instence.post(`/Gallery/CreateFolder`, { FolderName: folderName }
             );
             return JSON.parse(response.data)
         } catch (error) {
@@ -25,7 +25,7 @@ export const createFolder = createAsyncThunk(
 export const postImage = createAsyncThunk(
     '/Gallery/PostNewFile', async (fileGallery, thunkAPI) => {
         try {
-            const response = await instence.post(`/PostNewFile`, fileGallery
+            const response = await instence.post(`/Gallery/PostNewFile`, fileGallery
             );
             return JSON.parse(response.data)
         } catch (error) {
@@ -36,7 +36,7 @@ export const postImage = createAsyncThunk(
 export const deleteGalleryFile = createAsyncThunk(
     '/Gallery/DeleteFile', async (fileGallery, thunkAPI) => {
         try {
-            const response = await instence.post(`/DeleteFile`, fileGallery
+            const response = await instence.post(`/Gallery/DeleteFile`, fileGallery
             );
             return JSON.parse(response.data)
         } catch (error) {
@@ -49,30 +49,13 @@ export const gallerySlice = createSlice({
     name: 'gallery',
     initialState: {
         folders: [],
-        images: []
+        images: [],
+        gallery: null
     },
     extraReducers: builder => {
         builder
             .addCase(getFileGallery.fulfilled, (state, { payload }) => {
-                try {
-                    if (payload) {
-                        payload.Files.map((file) => {
-                            if (file && file.FileURL) {
-                                const f = {
-                                    id: Math.round(Math.random() * 999999999),
-                                    location: file.FileURL,
-                                    width: file.Properties.Width,
-                                    height: file.Properties.Height,
-                                    contentType: file.Properties.ContentType,
-                                    source: 'user'
-                                };
-                                state.images.push(f);
-                            }
-                        });
-                    }
-                } catch (e) {
-                    console.error(e);
-                }
+                state.gallery = payload.Gallery;
             })
     }
 })

@@ -136,14 +136,13 @@ export const GalleryImages = ({
             </Grid>
             {
                 images && images.map((f, index) => {
-                    const filePath = `${f.Path}/${f.FolderName === "main" ? "" : f.FolderName.replace('main\\', '')}/${f.FileName}`;
                     const imgKey = `${f.FolderName.replace('\\', '')}_${index}`;
                     return (
                         <Image
                             classes={classes}
                             onSelectFile={onSelectFile}
                             onDelete={deleteImage}
-                            imgSrc={filePath}
+                            imgSrc={f.FileURL}
                             imgKey={imgKey}
                             fileIndex={index}
                             selectedFile={selectedFile}
@@ -158,4 +157,3 @@ export const GalleryImages = ({
     }
     return <></>
 }
-
