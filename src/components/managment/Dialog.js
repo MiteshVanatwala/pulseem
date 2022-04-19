@@ -85,6 +85,7 @@ export const Dialog = ({
         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
         <Grid item>
           <Button
+            name="btnConfirm"
             variant='contained'
             size='small'
             onClick={onConfirm}

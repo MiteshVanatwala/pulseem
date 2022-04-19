@@ -57,15 +57,17 @@ export const gallerySlice = createSlice({
                 try {
                     if (payload) {
                         payload.Files.map((file) => {
-                            const f = {
-                                id: Math.round(Math.random() * 999999999),
-                                location: file.FileURL,
-                                width: file.Properties.Width,
-                                height: file.Properties.Height,
-                                contentType: file.Properties.ContentType,
-                                source: 'user'
-                            };
-                            state.images.push(f);
+                            if (file && file.FileURL) {
+                                const f = {
+                                    id: Math.round(Math.random() * 999999999),
+                                    location: file.FileURL,
+                                    width: file.Properties.Width,
+                                    height: file.Properties.Height,
+                                    contentType: file.Properties.ContentType,
+                                    source: 'user'
+                                };
+                                state.images.push(f);
+                            }
                         });
                     }
                 } catch (e) {

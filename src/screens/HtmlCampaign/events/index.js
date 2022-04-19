@@ -1,4 +1,4 @@
-import { initFiles } from './gallery';
+// import { initFiles } from './gallery';
 import { initBlocks } from './blocks';
 
 export const initEvents = (params) => {
@@ -7,7 +7,7 @@ export const initEvents = (params) => {
     return new Promise((resolve, reject) => {
       try {
         initBlocks(unlayer, userBlocks);
-        initFiles(unlayer, images);
+        //initFiles(unlayer, images);
         resolve(true);
       }
       catch (e) {

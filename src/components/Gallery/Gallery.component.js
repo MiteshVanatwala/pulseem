@@ -63,13 +63,13 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile }) => {
             if (index === 0) {
                 tmpFolders.push({
                     FolderName: "main", files: gallery[folder].sort((a, b) => {
-                        return new Date(b.CreatedDate) - new Date(a.CreatedDate);
+                        return new Date(b?.CreatedDate) - new Date(a?.CreatedDate);
                     })
                 });
             } else {
                 tmpFolders.push({
                     FolderName: folder.split("\\")[1], files: gallery[folder].sort((a, b) => {
-                        return new Date(b.CreatedDate) - new Date(a.CreatedDate);
+                        return new Date(b?.CreatedDate) - new Date(a?.CreatedDate);
                     })
                 });
             }

@@ -1,5 +1,5 @@
 import { Button } from '@material-ui/core'
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useCallback } from 'react'
 import EmailEditor from 'react-email-editor'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,11 +7,9 @@ import {
   getCampaignById,
   saveCampaign,
   getUserblocks,
-  saveUserBlock,
-  updateUserBlock,
-  deleteUserBlock,
   testSend
 } from '../../redux/reducers/campaignEditorSlice';
+import { IoMdImages } from 'react-icons/io'
 import { Loader } from '../../components/Loader/Loader';
 import { appearance, tools, options, features, fonts, tabs } from './constants'
 import { ClientFields } from '../../model/PulseemFields/Fields'
@@ -28,7 +26,9 @@ import { GiExitDoor } from 'react-icons/gi'
 import { BsTrash } from "react-icons/bs";
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import { initEvents } from './events/index';
-import { getFileGallery } from '../../redux/reducers/gallerySlice';
+// import { getFileGallery } from '../../redux/reducers/gallerySlice';
+import Gallery from '../../components/Gallery/Gallery.component';
+import { Dialog } from '../../components/managment/index';
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -41,7 +41,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [mergeData, setPulseemMergeData] = useState({});
   const [specialLinks, setSpecialLinks] = useState([]);
   const { campaign, userBlocks, ToastMessages } = useSelector(state => state.campaignEditor);
-  const { images } = useSelector(state => state.gallery);
+  // const { images } = useSelector(state => state.gallery);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language } = useSelector(state => state.core)
   const [iframeKey, setIframeKey] = useState(0);
@@ -51,6 +51,8 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [toastMessage, setToastMessage] = useState(null);
   const [redirectOnExit, setRedirectOnExit] = useState('');
   const [isResponseModal, setIsResponseModal] = useState(false);
+  const [showGallery, setGalleryState] = useState(false);
+  const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [genericModalData, setGenericModalData] = useState({
     title: "",
     message: ""
@@ -99,7 +101,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getAccountExtraData());
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
-    await dispatch(getFileGallery());
+    // await dispatch(getFileGallery());
     await dispatch(getUserblocks());
     setDataReady(true);
     setLoader(false);
@@ -167,8 +169,25 @@ const CampaignEditor = ({ classes, ...props }) => {
   const registerEvents = () => {
     const unlayer = editorRef.current;
     if (unlayer) {
-      initEvents({ unlayer, userBlocks, images}).then((res) => {
-        console.log(res)
+      initEvents({ unlayer, userBlocks }).then((res) => {
+        unlayer.registerCallback('selectImage', function (data, done) {
+          setGalleryState(true);
+          setIsFileSelected(false);
+
+          const button = document.querySelector('[name="btnConfirm"]');
+          if (button) {
+            button.addEventListener('mouseup', (event) => {
+              const modal = document.querySelector('.MuiDialog-paper');
+              const selectedIcon = modal.querySelector(".image-info svg");
+              if (selectedIcon) {
+                const imgElement = selectedIcon.parentNode.previousElementSibling;
+                const style = imgElement.currentStyle || window.getComputedStyle(imgElement, false);
+                const selectedImage = style.backgroundImage.slice(4, -1).replace(/"/g, "");
+                done({ url: selectedImage });
+              }
+            });
+          }
+        });
       })
     }
   }
@@ -340,6 +359,51 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
     return null;
   }
+  /* #region  Gallery Dialog */
+  const handleSelectedImage = (image) => {
+    setGalleryState(false);
+  }
+  const handleGalleryConfirm = () => {
+    setIsFileSelected(true);
+  }
+  const showGalleryModal = () => {
+    if (showGallery) {
+      let dialog = {};
+      dialog = renderGalleryDialog();
+
+      return (
+        <Dialog
+          maxHeight="calc(70vh)"
+          disableBackdropClick={true}
+          style={{ minHeight: 400 }}
+          showDivider={false}
+          classes={classes}
+          open={showGallery}
+          onClose={() => setDialog(null)}
+          onConfirm={handleGalleryConfirm}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
+    }
+  }
+  const renderGalleryDialog = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
+      ),
+      title: t("common.imageGallery"),
+      content: (
+        <Gallery
+          classes={classes}
+          isConfirm={isGalleryConfirmed}
+          callbackSelectFile={handleSelectedImage}
+          style={{ minWidth: 400 }} />
+      )
+    };
+  }
+  /* #endregion */
   const renderEditor = () => {
     if (dataReady) {
       return <React.StrictMode>
@@ -395,6 +459,7 @@ const CampaignEditor = ({ classes, ...props }) => {
         message={dialog}
       />
       {renderEditor()}
+      {showGalleryModal()}
       <EditorActions
         campaignId={campaignId}
         innerStyle={{ paddingInline: 15 }}
