@@ -151,12 +151,15 @@ const DeleteRecPopup = ({ classes,
                         setareaData(reader.result.substring(0, 1500));
                     };
                     reader.readAsText(file, "ISO-8859-8");
+                    setLoader(false);
                 }
                 else {
                     return false;
+                    setLoader(false);
                 }
             }
             catch (error) {
+                setLoader(false);
                 reject(error);
             }
         });
