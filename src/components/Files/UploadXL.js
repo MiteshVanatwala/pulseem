@@ -35,6 +35,7 @@ const UploadXL = ({
     placeHolder = "sms.dragXlOrCsv",
     onDone = () => null,
     uploadToGroups = [],
+    setToastMessage,
     settings = null
 }) => {
     const { t } = useTranslation();
@@ -56,7 +57,7 @@ const UploadXL = ({
     const [highlighted, setHighlighted] = React.useState(false);
     const [contacts, setContacts] = React.useState([]);
     const [groupNameInput, setgroupNameInput] = useState("");
-    const [toastMessage, setToastMessage] = useState(null);
+    // const [toastMessage, setToastMessage] = useState(null);
     const [groupList, setGroupList] = useState([]);
     const [selectedGroups, setSelected] = useState([]);
     const [selectArray, setselectArray] = useState([]);
@@ -433,6 +434,7 @@ const UploadXL = ({
 
         if (columnHasValue === false) {
             isValid = false;
+            setToastMessage({ severity: 'error', color: 'error', message: t('recipient.email/cell_notProvided'), showAnimtionCheck: false })
             setcolumnValidate(true);
         }
 

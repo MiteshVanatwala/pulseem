@@ -84,5 +84,6 @@
   "emailOnly": "Only Email",
   "phoneOnly": "Only Phone Number",
   "rowsUpdated": "Row/s updated",
-  "deleteConfirm": "Are you sure you want to delete recipients from the following groups"
+  "deleteConfirm": "Are you sure you want to delete recipients from the following groups",
+  "email/cell_notProvided": "Email/Cellphone not provided"
 }
