@@ -29,6 +29,7 @@ const AddBulkRecipientPopup = ({ classes,
     isOpen = false,
     onClose,
     selectedGroups,
+    setToastMessage,
     onAddRecipient = () => null
 }) => {
     const { t } = useTranslation();
@@ -83,6 +84,7 @@ const AddBulkRecipientPopup = ({ classes,
                     onDone={onAddRecipient}
                     settings={UploadSettings.GROUPS}
                     uploadToGroups={selectedGroups}
+                    setToastMessage={setToastMessage}
                     placeHolder={"recipient.addRecTextareaPlaceholder"}
                 />
             </Box>

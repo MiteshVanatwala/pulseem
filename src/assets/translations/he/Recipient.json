@@ -84,5 +84,6 @@
   "emailOnly": "הסר רק דואר אלקטרוני",
   "phoneOnly": "הסר רק סלולרי",
   "rowsUpdated": "שורות שעודכנו",
-  "deleteConfirm": "האם אתה בטוח שברצונך להסיר את הלקוחות מהקבוצות שבחרת?"
+  "deleteConfirm": "האם אתה בטוח שברצונך להסיר את הלקוחות מהקבוצות שבחרת?",
+  "email/cell_notProvided": "Email/Cellphone not provided"
 }
