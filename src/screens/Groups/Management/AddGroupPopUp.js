@@ -93,7 +93,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                     Func: () => null
                 },
                 'default': {
-                    message: '',
+                    message: ToastMessages.GROUP_ERROR,
                     Func: () => null
                 },
             })

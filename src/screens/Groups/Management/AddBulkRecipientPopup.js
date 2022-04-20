@@ -14,8 +14,8 @@ import { BsInfoCircleFill } from "react-icons/bs";
 
 const useStyles = makeStyles({
     contentBox: {
-        "width": 560,
-        "height": '50vh'
+        "width": '100%',
+        // "height": '50vh'
     },
     accordionIcons: {
         position: 'absolute',
@@ -25,10 +25,16 @@ const useStyles = makeStyles({
     }
 });
 
+// xs: "200px",
+//     sm: "350px",
+//         md: "350px",
+//             lg: "460px",
+
 const AddBulkRecipientPopup = ({ classes,
     isOpen = false,
     onClose,
     selectedGroups,
+    windowSize,
     onAddRecipient = () => null
 }) => {
     const { t } = useTranslation();
@@ -38,6 +44,8 @@ const AddBulkRecipientPopup = ({ classes,
         <Dialog
             classes={classes}
             open={isOpen}
+
+            // style={{ width: (windowSize === "sm" || windowSize === "sm") && 350 || (windowSize === "md" || windowSize === "lg") && 560 }}
             title={
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
@@ -75,9 +83,9 @@ const AddBulkRecipientPopup = ({ classes,
             showDivider={true}
             onClose={onClose}
             renderButtons={() => (<></>)}
-            customContainerStyle=""
+            paperStyle={classes.addRecipientDialog}
         >
-            <Box className={localClasses.contentBox}>
+            <Box>
                 <UploadXL
                     classes={classes}
                     onDone={onAddRecipient}

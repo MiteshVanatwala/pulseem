@@ -2328,6 +2328,25 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: 'rgba(0, 0, 0, 0.12)'
     }
   },
+  customScroll: {
+    '&::-webkit-scrollbar': {
+      width: '6px',
+
+    },
+    '&::-webkit-scrollbar-track': {
+      'boxShadow': 'inset 0 0 5px #e9e9e9',
+      'borderRadius': '10px',
+    },
+
+    '&::-webkit-scrollbar-thumb': {
+      background: '#cccccc',
+      borderRadius: '10px'
+    },
+
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: '#979595'
+    }
+  },
   scrollY: {
     overflowX: 'hidden',
     overflowY: 'scroll',

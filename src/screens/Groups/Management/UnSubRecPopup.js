@@ -18,6 +18,8 @@ import { useDispatch } from "react-redux";
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { Loader } from "../../../components/Loader/Loader";
+import { ValidateEmail, ValidateNumber } from "../../../helpers/utils";
+
 
 
 const UnSubRecPopup = ({ classes,
@@ -38,6 +40,7 @@ const UnSubRecPopup = ({ classes,
     const [activeTab, setActiveTab] = useState(0)
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
+    const [summaryCount, setSummaryCount] = useState(0)
 
 
     const handleFiles = (e) => {
@@ -197,6 +200,10 @@ const UnSubRecPopup = ({ classes,
         if (filteredData.length == 0) {
             return;
         }
+        const cellPhoneData = filteredData.filter(obj => ValidateNumber(obj))
+        const EmailData = filteredData.filter(obj => ValidateEmail(obj))
+        let tempCount = activeTab === 0 && (cellPhoneData.length + EmailData.length) || activeTab === 1 && EmailData.length || activeTab === 2 && cellPhoneData.length
+        setSummaryCount(tempCount)
         const payload = {
             ListOfValues: filteredData,
             RemovingOption: activeTab
@@ -244,6 +251,8 @@ const UnSubRecPopup = ({ classes,
     };
 
     const RenderSummaryDialog = () => {
+
+
         return (
             <Dialog
                 classes={classes}
@@ -260,7 +269,7 @@ const UnSubRecPopup = ({ classes,
 
                 <Box className={classes.flex}>
                     <Box><VscCircleFilled /></Box>
-                    <Box>{totalRecords} {t('recipient.rowsUpdated')}</Box>
+                    <Box>{summaryCount} {t('recipient.rowsUpdated')}</Box>
                 </Box>
             </Dialog>
         )

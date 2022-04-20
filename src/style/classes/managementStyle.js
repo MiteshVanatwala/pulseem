@@ -1656,4 +1656,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       }
     }
   },
+  addRecipientDialog: {
+    width: '640px !important',
+    "@media screen and (max-width: 768px)": {
+      width: '80% !important'
+    },
+    "@media screen and (max-width: 500px)": {
+      width: "100% !important",
+    },
+  }
 });
