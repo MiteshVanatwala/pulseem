@@ -545,5 +545,8 @@
   "maximalDateRequired": "התאריך לא יכול להיות קטן מהתאריך המקסימלי",
   "showTen": "הצג 10",
   "saveTemplate": "שמור תבנית",
-  "exit": "צא"
+  "exit": "צא",
+  "phone": "טלפון",
+  "companyName": "שם חברה",
+  "Fax": "פקס"
 }

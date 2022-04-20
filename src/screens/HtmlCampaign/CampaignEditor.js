@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core'
+import { Button, Box } from '@material-ui/core'
 import React, { useRef, useState, useEffect, useCallback } from 'react'
 import EmailEditor from 'react-email-editor'
 import DefaultScreen from '../DefaultScreen'
@@ -11,7 +11,7 @@ import {
 } from '../../redux/reducers/campaignEditorSlice';
 import { IoMdImages } from 'react-icons/io'
 import { Loader } from '../../components/Loader/Loader';
-import { appearance, tools, options, features, fonts, tabs } from './constants'
+import { options } from './constants'
 import { ClientFields } from '../../model/PulseemFields/Fields'
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
@@ -43,7 +43,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { campaign, userBlocks, ToastMessages } = useSelector(state => state.campaignEditor);
   // const { images } = useSelector(state => state.gallery);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
-  const { language } = useSelector(state => state.core)
+  const { language, isRTL } = useSelector(state => state.core)
   const [iframeKey, setIframeKey] = useState(0);
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
@@ -92,9 +92,12 @@ const CampaignEditor = ({ classes, ...props }) => {
   useEffect(() => {
     initOptions();
     setTimeout(() => {
-      onLoad();
+      if (dataLoaded) {
+        onLoad();
+      }
     }, 0);
   }, [language]);
+
   const getData = async () => {
     setLoader(true);
     await dispatch(getCampaignById(props.match.params.id));
@@ -160,7 +163,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   const initOptions = () => {
     options.locale = language === 'he' ? 'he-IL' : 'en-US';
-    appearance.panels.dock = language === 'he' ? 'right' : 'left';
     options.user = {
       id: subAccountSettings.UnlayerUniqueID
     }
@@ -191,13 +193,19 @@ const CampaignEditor = ({ classes, ...props }) => {
       })
     }
   }
+  const onReady = () => {
+    editorRef.current.editor.setBodyValues({
+      backgroundColor: "#e7e7e7",
+      contentWidth: "600px",
+      preheaderText: "Hello World"
+    });
+  }
   const onLoad = () => {
     try {
-      editorRef.current.editor.fonts = fonts;
-      editorRef.current.customCSS = ["body { background-color: black }"];
-      editorRef.current.editor.setSpecialLinks(specialLinks);
       editorRef.current.setMergeTags(mergeData);
-      editorRef.current.editor.customJS = ['console.log("123123")', `${process.env.PUBLIC_URL}/assets/scripts/CompanyDetails.js`];
+      editorRef.current.editor.setSpecialLinks(specialLinks);
+      editorRef.current.props.options.appearance.panels.tools.dock = isRTL ? 'left' : 'right';
+
       if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
         setLoader(false);
         return;
@@ -228,6 +236,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
     }
     catch (e) {
+      console.error(e);
       return;
     }
     finally {
@@ -379,7 +388,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           showDivider={false}
           classes={classes}
           open={showGallery}
-          onClose={() => { setShowGallery(false)}}
+          onClose={() => { setShowGallery(false) }}
           onConfirm={handleGalleryConfirm}
           {...dialog}>
           {dialog.content}
@@ -406,23 +415,38 @@ const CampaignEditor = ({ classes, ...props }) => {
   /* #endregion */
   const renderEditor = () => {
     if (dataReady) {
+      // Init custom tools
+      options.tools['custom#CompanyDetails'] = {
+        data: {
+          emailTitle: t("common.Mail"),
+          phoneTitle: t("common.phone"),
+          faxTitle: t("common.Fax"),
+          CompanyNameTitle: t("common.CompanyName"),
+          addressTitle: t("common.address"),
+          cityTitle: t("common.city"),
+          countryTitle: t("common.country"),
+          email: 'ido@pulseem.com',
+          phone: '',
+          fax: '',
+          city: 'Tel-Aviv',
+          company: 'Pulseem LTD',
+          address: '9 Taberski',
+          country: 'Israel'
+        }
+      }
       return <React.StrictMode>
         <EmailEditor
+          onReady={onReady}
           editorId="campaign-editor"
           ref={editorRef}
           minHeight="calc(100vh - 120px)"
-          tools={tools}
-          appearance={appearance}
           options={options}
-          features={features}
-          tabs={tabs}
           key={iframeKey}
           projectId={71525}
-          customJS={['console.log("123123")', `${process.env.PUBLIC_URL}/assets/scripts/CompanyDetails.js`]}
         />
       </React.StrictMode>
     }
-    return <></>
+    return <Box className={classes.containerFullHeight}></Box>
   }
 
   return (

@@ -1,69 +1,56 @@
 const React = window.unlayer.React
 
-/* const CompanyDetails = ({
-  fax = null,
-  city = null,
-  email = null,
-  phone = null,
-  country = null,
-  address = null,
-  companyName = null
-}) => {
-  return {
-    <table>
-      <tr>
-        <td style={{ textAlign: 'center', padding: 5, fontSize: 14 }}>
-          {email && <div>
-              <div>{t("common.Mail")} <a href={`mailto:${email}`}>{email}</a></div>
-          </div>}
-          {phone && <div>
-              <div>{t("common.Phone")}: {phone}</div>
-          </div>}
-          {fax && <div>
-              <div>{t("common.Fax")}: {fax}</div>
-          </div>}
-          {companyName && <div>
-              <div>{t("common.CompanyName")}: {companyName}</div>
-          </div>}
-          {address && <div>
-              <div>{t("common.address")}: {address}</div>
-          </div>}
-          {city && <div>
-              <div>{t("common.city")}: {city}</div>
-          </div>}
-          {country && <div>
-              <div>{t("common.country")}: {country}</div>
-          </div>}
-        </td>
-      </tr>
-    </table>
-  }
-}*/
-
-const Viewer = () => {
-  return <div>I am a custom tool.</div>
-}
-
 unlayer.registerTool({
   name: 'CompanyDetails',
-  label: 'Company Details',
-  icon: 'fa-smile',
+  label: 'Footer',
+  icon: 'fa-memo-circle-info',
   supportedDisplayModes: ['web', 'email'],
   options: {},
   values: {},
   renderer: {
-    Viewer: Viewer, // our React Viewer
+    Viewer: unlayer.createViewer({
+      render(values) {
+        return `<div style="font-weight: bold; text-align: center" contenteditable="true">
+        <span style="display: ${values.data.phone !== '' ? 'inline-block' : 'none'}">${values.data.phoneTitle}: ${values.data.phone} | </span>
+        <span style="display: ${values.data.fax !== '' ? 'inline-block' : 'none'}">${values.data.faxTitle}: ${values.data.fax} | </span>
+        <span style="display: ${values.data.email !== '' ? 'inline-block' : 'none'}">${values.data.emailTitle}: <a href="mailto:${values.data.email}"}>${values.data.email}</a></span>
+        <br />
+        <span style="display: ${values.data.company !== '' ? 'inline-block' : 'none'}">${values.data.company}</span>, 
+        <span style="display: ${values.data.address !== '' ? 'inline-block' : 'none'}">${values.data.address}</span>, 
+        <span style="display: ${values.data.city !== '' ? 'inline-block' : 'none'}">${values.data.city}</span>, 
+        <span style="display: ${values.data.country !== '' ? 'inline-block' : 'none'}">${values.data.country}</span>
+    </div>`
+      }
+    }), // our React Viewer
     exporters: {
-      web: function(values) {
-        return "<div>I am a custom tool.</div>"
+      web: function (values) {
+        return `<div style="font-weight: bold; text-align: center" contenteditable="true">
+        <span style="display: ${values.data.phone !== '' ? 'inline-block' : 'none'}">${values.data.phoneTitle}: ${values.data.phone} | </span>
+        <span style="display: ${values.data.fax !== '' ? 'inline-block' : 'none'}">${values.data.faxTitle}: ${values.data.fax} | </span>
+        <span style="display: ${values.data.email !== '' ? 'inline-block' : 'none'}">${values.data.emailTitle}: <a href="mailto:${values.data.email}"}>${values.data.email}</a></span>
+        <br />
+        <span style="display: ${values.data.company !== '' ? 'inline-block' : 'none'}">${values.data.company}</span>, 
+        <span style="display: ${values.data.address !== '' ? 'inline-block' : 'none'}">${values.data.address}</span>, 
+        <span style="display: ${values.data.city !== '' ? 'inline-block' : 'none'}">${values.data.city}</span>, 
+        <span style="display: ${values.data.country !== '' ? 'inline-block' : 'none'}">${values.data.country}</span>
+    </div>`
       },
-      email: function(values) {
-        return "<div>I am a custom tool.</div>"
+      email: function (values) {
+        return `<div style="font-weight: bold; text-align: center" contenteditable="true">
+        <span style="display: ${values.data.phone !== '' ? 'inline-block' : 'none'}">${values.data.phoneTitle}: ${values.data.phone} | </span>
+        <span style="display: ${values.data.fax !== '' ? 'inline-block' : 'none'}">${values.data.faxTitle}: ${values.data.fax} | </span>
+        <span style="display: ${values.data.email !== '' ? 'inline-block' : 'none'}">${values.data.emailTitle}: <a href="mailto:${values.data.email}"}>${values.data.email}</a></span>
+        <br />
+        <span style="display: ${values.data.company !== '' ? 'inline-block' : 'none'}">${values.data.company}</span>, 
+        <span style="display: ${values.data.address !== '' ? 'inline-block' : 'none'}">${values.data.address}</span>, 
+        <span style="display: ${values.data.city !== '' ? 'inline-block' : 'none'}">${values.data.city}</span>, 
+        <span style="display: ${values.data.country !== '' ? 'inline-block' : 'none'}">${values.data.country}</span>
+    </div>`
       }
     },
     head: {
-      css: function(values) {},
-      js: function(values) {}
+      css: function (values) { },
+      js: function (values) { }
     }
   }
 });

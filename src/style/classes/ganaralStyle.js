@@ -2308,5 +2308,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   testSendDialog: {
     width: 440,
     maxWidth: 440
+  },
+  containerFullHeight: {
+    minHeight: 'calc(100vh - 120px)'
   }
 });

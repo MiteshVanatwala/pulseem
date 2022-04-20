@@ -1,69 +1,16 @@
-export const appearance = {
-  panels: {
-    dock: 'right'
-  }
-}
-export const tools = {
-  html: {
-    enabled: true
-  },
-  social: {
-    enabled: true
-  },
-  timer: {
-    enabled: true
-  },
-  video: {
-    enabled: true
-  },
-  form: {
-    enabled: true,
-    usageLimit: 1,
-    properties: {
-      fields: { // Put pulseem defaults here
-        editor: {
-          data: {
-            defaultFields: [
-              { name: "birthday", label: "Birthday", type: "date" },
-              { name: "company", label: "Company", type: "text" },
-              { name: "email", label: "Email", type: "email" },
-              { name: "first_name", label: "First Name", type: "text" },
-              { name: "last_name", label: "Last Name", type: "text" },
-              { name: "phone_number", label: "Phone Number", type: "text" },
-              { name: "website", label: "Website", type: "text" },
-              { name: "zip_code", label: "Zip Code", type: "text" }
-            ]
-          }
-        }
-      },
-      action: {
-        editor: {
-          data: {
-            actions: [
-              {
-                label: 'Marketing',
-                method: 'POST',
-                url: 'http://whatever.com/marketing-form-submission',
-              },
-              {
-                label: 'Sales',
-                method: 'POST',
-                target: '_blank',
-                url: 'http://whatever.com/sales-form-submission',
-              }
-            ]
-          }
-        }
+export const options = {
+  amp: true,
+  appearance:
+  {
+    panels:
+    {
+      tools:
+      {
+        dock: 'right',
+        collapsible: false
       }
     }
   },
-  image: {
-    position: 1,
-    enabled: true
-  }
-};
-export const options = {
-  amp: true,
   user: {
     id: -1,
     name: "",
@@ -75,7 +22,7 @@ export const options = {
     'he-IL': {
       "buttons.add_column": "הוסף עמודה",
       "buttons.add_content": "הוסף תוכן",
-      "buttons.add_display_condition": "Add Display Condition",
+      "buttons.add_display_condition": "הוסף תנאי לתצוגה",
       "buttons.add_field": "הוסף שדה",
       "buttons.add_new_field": "הוסף שדה חדש",
       "buttons.add_new_item": "הוסף מבנה נוסף",
@@ -127,10 +74,10 @@ export const options = {
       "buttons.upload_image": "בחר מגלריה",
       "buttons.zoom": "זום",
       "collaboration.add_comment": "הוסף תגובה",
-      "collaboration.empty.subtitle": "Your threads here",
+      "collaboration.empty.subtitle": "השרשורים שלך כאן",
       "collaboration.empty.title": "Team collaboration made easy!",
-      "collaboration.empty_filtered.subtitle": "matching your filters",
-      "collaboration.empty_filtered.title": "No threads found",
+      "collaboration.empty_filtered.subtitle": "התאמת סינון",
+      "collaboration.empty_filtered.title": "לא נמצאו שרשורים",
       "collaboration.exit_mode": "סגור תגובות",
       "collaboration.filters.all": "הכל",
       "collaboration.filters.only_yours": "שלך בלבד",
@@ -138,14 +85,14 @@ export const options = {
       "collaboration.follow_docs_to_setup": "Follow the docs to setup team collaboration",
       "collaboration.leave_repply": "השאר תגובה",
       "collaboration.login_to_collaborate": "You need to be logged in to be able to collaborate",
-      "collaboration.panel.threads": "Threads",
+      "collaboration.panel.threads": "שרשורים",
       "collaboration.replies.one": "תגובה אחת",
       "collaboration.replies.n": "{n} תגובות",
       "collaboration.replies.none": "אין תגובות",
-      "collaboration.resolve": "Resolve",
-      "collaboration.resolved": "Resolved",
-      "collaboration.types.feedback": "Feedback",
-      "collaboration.types.idea": "Idea",
+      "collaboration.resolve": "פתור",
+      "collaboration.resolved": "נפתר",
+      "collaboration.types.feedback": "משוב",
+      "collaboration.types.idea": "רעיון",
       "collaboration.types.question": "שאלה",
       "collaboration.types.urgent": "דחוף",
       "colors.black": "שחור",
@@ -167,16 +114,16 @@ export const options = {
       "editor.align.label": "יישר",
       "editor.alignment.label": "יישור",
       "editor.all_sides.label": "כל הצדדים",
-      "editor.alternate_text.label": "Alternate Text",
+      "editor.alternate_text.label": "טקסט אלטרנטיבי",
       "editor.anchor.section_already_exists": "קיים כבר קטע עם שם זה",
       "editor.background_color.label": "צבע רקע",
       "editor.background_image.center": "מרכז",
-      "editor.background_image.cover_mode": "Cover Mode",
+      "editor.background_image.cover_mode": "מצב עטיפה",
       "editor.background_image.full_width": "כל הרוחב",
       "editor.background_image.label": "תמונת רקע",
       "editor.background_image.repeat": "בצע שוב",
-      "editor.border.dashed": "Dashed",
-      "editor.border.dotted": "מקווקוו",
+      "editor.border.dashed": "מקווקו",
+      "editor.border.dotted": "מנוקד",
       "editor.border.label": "גבול",
       "editor.border.solid": "מלא",
       "editor.bottom.label": "למטה",
@@ -198,8 +145,8 @@ export const options = {
       "editor.fields.label": "שדות",
       "editor.font_family.label": "משפחת פונטים",
       "editor.font_size.label": "גודל פונט",
-      "editor.form.custom": "Custom",
-      "editor.form.method": "Method",
+      "editor.form.custom": "ידני",
+      "editor.form.method": "מתודה",
       "editor.form_alignment.label": "יישור טופס",
       "editor.form_width.label": "רוחב הטופס",
       "editor.full_width.label": "רוחב מירבי",
@@ -207,23 +154,23 @@ export const options = {
       "editor.height.label": "גובה",
       "editor.hide_on_desktop.label": "הסתר בדסקטופ",
       "editor.hide_on_mobile.label": "הסתר בנייד",
-      "editor.hover_background.label": "Hover Background",
+      "editor.hover_background.label": "מעבר רקע",
       "editor.hover_color.label": "צבע במעבר עכבר",
       "editor.hover_text.label": "טקסט במעבר עכשיו",
       "editor.hover_underline.label": "קו תחתון במעבר עכבר",
       "editor.icon_spacing.label": "ריווח אייקונים",
       "editor.icon_type.label": "סוג אייקון",
-      "editor.image.added_drawing": "Added: drawing",
-      "editor.image.added_frame": "Added: frame",
-      "editor.image.added_overlay_image": "Added: overlay image",
-      "editor.image.added_shape": "Added: shape",
-      "editor.image.added_sticker": "Added: sticker",
-      "editor.image.added_text": "Added: text",
-      "editor.image.applied_crop": "Applied: crop",
-      "editor.image.applied_filter": "Applied: filter",
-      "editor.image.applied_resize": "Applied: resize",
-      "editor.image.applied_rounded_corners": "Applied: rounded corners",
-      "editor.image.applied_transform": "Applied: transform",
+      "editor.image.added_drawing": "נוסף: ציור",
+      "editor.image.added_frame": "נוסף: מסגרת",
+      "editor.image.added_overlay_image": "נוסף: שכבה על תמונה",
+      "editor.image.added_shape": "נוסף: צורה",
+      "editor.image.added_sticker": "נוסף: סטיקר",
+      "editor.image.added_text": "נוסף: טקסט",
+      "editor.image.applied_crop": "הוחל: חיתוך",
+      "editor.image.applied_filter": "הוחל: סינון",
+      "editor.image.applied_resize": "הוחל: שינוי גודל",
+      "editor.image.applied_rounded_corners": "הוחל: קצוות מעוגלים",
+      "editor.image.applied_transform": "הוחל: שינוי צורה",
       "editor.image.auto": "אטוטומטי",
       "editor.image.auto_width": "רוחב אוטומטי",
       "editor.image.auto_width_switch_off": "בטל התאמת גודל אוטומאטית",
@@ -231,14 +178,14 @@ export const options = {
       "editor.image.brush_size": "גודל מברשת",
       "editor.image.brush_type": "סוג מברשת",
       "editor.image.canvas_background": "רקע קנבס",
-      "editor.image.changed_background": "Changed: background",
-      "editor.image.changed_background_image": "Changed: background image",
-      "editor.image.changed_style": "Changed: style",
+      "editor.image.changed_background": "רקע השתנה",
+      "editor.image.changed_background_image": "תמונת רקע השתנתה",
+      "editor.image.changed_style": "עיצוב שונה",
       "editor.image.drop_upload": "גרור תמונה לפה או העלה מהמחשב.",
       "editor.image.full_width_mobile": "רוחב מירבי בנייד",
       "editor.image.image_options": "אפשרויות תמונה",
       "editor.image.image_url": "קישור לתמונה",
-      "editor.image.initial": "Initial",
+      "editor.image.initial": "התחלתי",
       "editor.image.label": "תמונה",
       "editor.image.loaded_state": "Loaded: state",
       "editor.image.maintain_aspect_ratio": "שמור יחס",
@@ -246,7 +193,7 @@ export const options = {
       "editor.image.objects_merged": "אובייקטים מוזגו",
       "editor.image.offset_x": "Offset X",
       "editor.image.offset_y": "Offset Y",
-      "editor.image.outline_width": "Outline Width",
+      "editor.image.outline_width": "רוחב קו חיצוני",
       "editor.image.uploading": "מעלה",
       "editor.image.upload_error": "בעיה בהעלאת התמונה, וודא שהגודל וסוג הקובץ מותר להעלאה",
       "editor.image.use_percentages": "השתמש באחוזים",
@@ -259,12 +206,12 @@ export const options = {
       "editor.layout.label": "מבנה",
       "editor.left.label": "שמאל",
       "editor.line.label": "Line",
-      "editor.line_height.label": "Line Height",
+      "editor.line_height.label": "גובה שורה",
       "editor.link.body": "גוף",
       "editor.link.call_phone": "מספר נייד",
       "editor.link.mailto": "אימייל ל",
       "editor.link.new_tab": "חלונית חדשה",
-      "editor.link.no_page_sections_found": "No page sections found",
+      "editor.link.no_page_sections_found": "לא נמצאו קטעי עמוד",
       "editor.link.onclick_unsupported": "בעת הקלקה לא נתמך",
       "editor.link.open_website": "פתח אתר",
       "editor.link.page_section": "עבור לדף",
@@ -273,7 +220,7 @@ export const options = {
       "editor.link.send_email": "שלח מייל",
       "editor.link.send_sms": "שלח SMS",
       "editor.link.subject": "נושא",
-      "editor.link.target": "Target",
+      "editor.link.target": "יעד",
       "editor.link.url": "כתובת אתר",
       "editor.link_color.label": "צבע הקישור",
       "editor.margin.label": "Margin",
@@ -294,7 +241,7 @@ export const options = {
       "editor.separator.label": "מפריד",
       "editor.social_links.label": "קישורים חברתיים",
       "editor.space_between_fields.label": "ריווח שדות",
-      "editor.submit_action.label": "Submit Action",
+      "editor.submit_action.label": "שלח",
       "editor.text.label": "טקסט",
       "editor.text_align.label": "יישור טקסט",
       "editor.text_color.label": "צבע טקסט",
@@ -302,7 +249,7 @@ export const options = {
       "editor.top_left.label": "שמאל עליון",
       "editor.top_right.label": "ימין עליון",
       "editor.underline.label": "קו תחתון",
-      "editor.video.arrow_only": "Arrow Only",
+      "editor.video.arrow_only": "חיצים בלבד",
       "editor.video.video_camera": "מצלמת וידאו",
       "editor.video_url.description": "הוסף קישור מ יוטיוב או וימאו ליצרו תמונה מקדימה. התמונה תפנה לקישור שתוסיף.",
       "editor.video_url.label": "קישור לוידאו",
@@ -323,7 +270,7 @@ export const options = {
       "labels.color_picker": "בחירת צבע",
       "labels.comments": "הערות",
       "labels.desktop_preview": "תצוגה מקדימה בדסקטופ",
-      "labels.device_override": "This device is overriding values",
+      "labels.device_override": "מכשיר זה דורס ערכים",
       "labels.display_conditions": "תנאי תצוגה",
       "labels.editor": "עורך",
       "labels.font": "פונט",
@@ -343,20 +290,20 @@ export const options = {
       "labels.no_images": "אין תמונות",
       "labels.no_results": "אין תוצאה",
       "labels.objects": "נושאים",
-      "labels.outline": "Outline",
+      "labels.outline": "קו חיצוני",
       "labels.page": "עמוד",
       "labels.radius": "רדיוס",
       "labels.redo": "בצע מחדש",
       "labels.safe_search": "חיפוש בטוח",
       "labels.search": "חיפוש",
-      "labels.search_images": "Search millions of images",
+      "labels.search_images": "חיפוש במיליוני תמונות",
       "labels.section": "מקטע",
       "labels.shadow": "צל",
       "labels.size": "גודל",
       "labels.something_went_wrong": "משהו השתבש",
       "labels.special_links": "הוסף קישור",
-      "labels.stock_photos_by": "Powered by Unsplash, Pexels, Pixabay.",
-      "labels.stock_photos_license": "All images licensed under Creative Commons Zero.",
+      "labels.stock_photos_by": "",
+      "labels.stock_photos_license": "",
       "labels.stop": "עצור",
       "labels.tags": "תגיות",
       "labels.texture": "טקסטורה",
@@ -397,10 +344,10 @@ export const options = {
       "option_groups.html.title": "HTML",
       "option_groups.icons.title": "אייקונים",
       "option_groups.image.title": "תמונה",
-      "option_groups.labels.title": "Labels",
+      "option_groups.labels.title": "תוויות",
       "option_groups.last_saved.title": "נשמר לאחרונה",
-      "option_groups.layout.title": "Layout",
-      "option_groups.line.title": "Line",
+      "option_groups.layout.title": "מבנה",
+      "option_groups.line.title": "שורה",
       "option_groups.link.title": "קישור",
       "option_groups.links.title": "קישורים",
       "option_groups.menu_items.title": "פריטי תפריט",
@@ -441,14 +388,14 @@ export const options = {
       "tools.form.field_value": "ערך שדה",
       "tools.form.new_field": "שדה חדש",
       "tools.form.options_one_per_line": "אפשרויות (אחת בכל שורה)",
-      "tools.form.placeholder_text": "Placeholder Text",
+      "tools.form.placeholder_text": "טקסט הסבר",
       "tools.form.required_field": "שדה חובה",
       "tools.form.show_label": "הראה תווית",
       "tools.form.update_field": "עדכן שדה",
       "tools.social.click_icons_to_add": "לחץ על האייקון כדי להוסיף",
-      "tools.tabs.audit": "Audit",
+      "tools.tabs.audit": "בדיקה",
       "tools.tabs.blocks": "תבניות",
-      "tools.tabs.body": "Body",
+      "tools.tabs.body": "עיצוב",
       "tools.tabs.content": "תוכן",
       "tools.tabs.images": "תמונות",
       "tools.tabs.row": "שורה",
@@ -462,27 +409,87 @@ export const options = {
       "labels.special_links": "Add Link",
       "buttons.upload_image": "Select from gallery",
     }
-  }
-}
-export const tabs = {
-  images: {
-    enabled: false
-  }
-}
-export const features = {
-  imageEditor: true,
-  stockImages: {
-    enabled: false
   },
-  userUploads: false,
-  pageAnchors: true,
-  undoRedo: true,
-  textEditor: {
-    tables: true,
-    emojis: true
-  }
-}
-export const fonts = {
+  tabs: {
+    images: {
+      enabled: false
+    },
+    blocks: {
+      enabled: true,
+    },
+  },
+  tools: {
+    html: {
+      enabled: true
+    },
+    social: {
+      enabled: true
+    },
+    timer: {
+      enabled: true
+    },
+    video: {
+      enabled: false
+    },
+    form: {
+      enabled: true,
+      usageLimit: 1,
+      properties: {
+        fields: { // Put pulseem defaults here
+          editor: {
+            data: {
+              defaultFields: [
+                { name: "birthday", label: "Birthday", type: "date" },
+                { name: "company", label: "Company", type: "text" },
+                { name: "email", label: "Email", type: "email" },
+                { name: "first_name", label: "First Name", type: "text" },
+                { name: "last_name", label: "Last Name", type: "text" },
+                { name: "phone_number", label: "Phone Number", type: "text" },
+                { name: "website", label: "Website", type: "text" },
+                { name: "zip_code", label: "Zip Code", type: "text" }
+              ]
+            }
+          }
+        },
+        action: {
+          editor: {
+            data: {
+              actions: [
+                {
+                  label: 'Marketing',
+                  method: 'POST',
+                  url: 'http://whatever.com/marketing-form-submission',
+                },
+                {
+                  label: 'Sales',
+                  method: 'POST',
+                  target: '_blank',
+                  url: 'http://whatever.com/sales-form-submission',
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    image: {
+      position: 1,
+      enabled: true
+    }
+  },
+  features: {
+    imageEditor: true,
+    stockImages: {
+      enabled: false
+    },
+    userUploads: false,
+    pageAnchors: true,
+    undoRedo: true,
+    textEditor: {
+      tables: true,
+      emojis: true
+    }
+  },
   fonts: {
     showDefaultFonts: false,
     customFonts: [
@@ -498,10 +505,6 @@ export const fonts = {
         label: "Andale Mono",
         value: "andale mono,times"
       },
-      // {
-      //   label: "Assistant",
-      //   value: "TODO"
-      // },
       {
         label: "Book Antiqua",
         value: "book antiqua,palatino"
@@ -526,18 +529,6 @@ export const fonts = {
         label: "Impact",
         value: "impact,chicago"
       },
-      // {
-      //   label: "Monospace",
-      //   value: "TODO"
-      // },
-      // {
-      //   label: "New Roman",
-      //   value: "TODO"
-      // },
-      // {
-      //   label: "Serif",
-      //   value: "TODO"
-      // },
       {
         label: "Trebuchet MS",
         value: "trebuchet ms,geneva"
@@ -623,5 +614,7 @@ export const fonts = {
         url: "https://fonts.googleapis.com/css?family=Pacifico"
       }
     ]
-  }
+  },
+  customJS: [`https://pulseemdev.co.il/Pulseem/CompanyDetails.js`],
+  customCSS: ["body { background-color: black } .beMelL { background-image: none; background-color: #fff; overflow-x: hidden}"]
 }

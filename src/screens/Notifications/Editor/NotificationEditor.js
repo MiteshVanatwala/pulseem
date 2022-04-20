@@ -896,7 +896,7 @@ const NotificationEditor = ({ props, classes }) => {
           </Box>
         </Grid>
         <div className={classes.notification} id={model.ID}>
-          <div style={{ marginBottom: 5 }} className={clsx(
+          <div className={clsx(
             classes.flexJustifyCenter,
             classes.dashed,
             classes.notificationTop,
@@ -906,7 +906,8 @@ const NotificationEditor = ({ props, classes }) => {
             onMouseLeave={() => setHovered(false)}
             onClick={openGallery(false)}
             style={{
-              backgroundImage: `url(${model.Image})`
+              backgroundImage: `url(${model.Image})`,
+              marginBottom: 5
             }}
           >
             {model == null || !model.Image ? chooseImage() : ""
