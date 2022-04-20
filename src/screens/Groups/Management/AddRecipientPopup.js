@@ -102,7 +102,7 @@ const AddRecipientPopup = ({ classes,
             }
         }
         if (e.target.name === "Cellphone") {
-            if (e.target.value.length > 12 || e.target.value.length < 10) {
+            if (e.target.value.length > 15 || e.target.value.length < 10) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength) })
             }
             else if (!ValidateNumber(e.target.value)) {
@@ -110,6 +110,8 @@ const AddRecipientPopup = ({ classes,
             }
         }
     }
+
+
 
     const handleChange = (e, dateField = null, isExtraData = false, customValue = null) => {
         if (dateField) {
@@ -148,6 +150,7 @@ const AddRecipientPopup = ({ classes,
     }
 
     const handleSubmit = async (callback) => {
+        // return false
 
         const data = {
             ClientsData: addRecipientData,
@@ -161,7 +164,7 @@ const AddRecipientPopup = ({ classes,
             if (!data.ClientsData.Email || !ValidateEmail(data.ClientsData.Email)) {
                 tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             }
-            if (data.ClientsData.Cellphone.length < 10 || data.ClientsData.Cellphone.length > 12) {
+            if (data.ClientsData.Cellphone.length < 10 || data.ClientsData.Cellphone.length > 15) {
                 tempError.Cellphone = t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength)
             }
 

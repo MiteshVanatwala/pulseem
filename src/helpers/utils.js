@@ -4,7 +4,7 @@ export const ValidateEmail = (email) => {
 
 export const ValidateNumber = (number) => {
     const phoneRegex = /^[0-9-]+$/
-    return number.match(phoneRegex)
+    return phoneRegex.test(number)
 }
 
 export const renderHtml = (html) => {
