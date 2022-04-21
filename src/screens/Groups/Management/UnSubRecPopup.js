@@ -272,7 +272,7 @@ const UnSubRecPopup = ({ classes,
 
                 <Box className={classes.flex}>
                     <Box><VscCircleFilled /></Box>
-                    <Box>{summaryCount} {t('recipient.rowsUpdated')}</Box>
+                    <Box>{summaryCount} {summaryCount === 1 ? t('recipient.rowUpdated') : t('recipient.rowsUpdated')}</Box>
                 </Box>
             </Dialog>
         )
