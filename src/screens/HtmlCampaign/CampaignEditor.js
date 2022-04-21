@@ -26,7 +26,6 @@ import { GiExitDoor } from 'react-icons/gi'
 import { BsTrash } from "react-icons/bs";
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import { initEvents } from './events/index';
-// import { getFileGallery } from '../../redux/reducers/gallerySlice';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { Dialog } from '../../components/managment/index';
 
@@ -41,7 +40,6 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [mergeData, setPulseemMergeData] = useState({});
   const [specialLinks, setSpecialLinks] = useState([]);
   const { campaign, userBlocks, ToastMessages } = useSelector(state => state.campaignEditor);
-  // const { images } = useSelector(state => state.gallery);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
   const [iframeKey, setIframeKey] = useState(0);
@@ -49,7 +47,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [summaryData, setSummaryData] = useState(null);
   const subAccountSettings = getCookie("subAccountSettings");
   const [toastMessage, setToastMessage] = useState(null);
-    const [isResponseModal, setIsResponseModal] = useState(false);
+  const [isResponseModal, setIsResponseModal] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [genericModalData, setGenericModalData] = useState({
@@ -103,7 +101,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     await dispatch(getAccountExtraData());
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
-    // await dispatch(getFileGallery());
     await dispatch(getUserblocks());
     setDataReady(true);
     setLoader(false);
@@ -196,14 +193,14 @@ const CampaignEditor = ({ classes, ...props }) => {
     editorRef.current.editor.setBodyValues({
       backgroundColor: "#e7e7e7",
       contentWidth: "600px",
-      preheaderText: "Hello World"
+      preheaderText: ""
     });
   }
   const onLoad = () => {
     try {
       editorRef.current.setMergeTags(mergeData);
       editorRef.current.editor.setSpecialLinks(specialLinks);
-      editorRef.current.props.options.appearance.panels.tools.dock = isRTL ? 'left' : 'right';
+      //editorRef.current.props.options.appearance.panels.tools.dock = isRTL ? 'left' : 'right';
 
       if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
         setLoader(false);
