@@ -271,7 +271,7 @@ const AddRecipientPopup = ({ classes,
             gridArr={[{
                 content: <SimpleGrid
                     gridArr={[{
-                        content: <Typography className={classes.alignDir}>{t("common.first_name")}</Typography>,
+                        content: <Typography title={t("common.first_name")} className={classes.alignDir}>{t("common.first_name")}</Typography>,
                         gridSize: { xs: 12, sm: 3 }
                     },
                     {
@@ -295,7 +295,7 @@ const AddRecipientPopup = ({ classes,
             {
                 content: <SimpleGrid
                     gridArr={[{
-                        content: <Typography className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.last_name")}</Typography>,
+                        content: <Typography title={t("common.last_name")} className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.last_name")}</Typography>,
                         gridSize: { xs: 12, sm: 3 }
                     },
                     {
@@ -319,7 +319,7 @@ const AddRecipientPopup = ({ classes,
             {
                 content: <SimpleGrid
                     gridArr={[{
-                        content: <Typography className={classes.alignDir}>{t("common.telephone")}</Typography>,
+                        content: <Typography title={t("common.telephone")} className={classes.alignDir}>{t("common.telephone")}</Typography>,
                         gridSize: { xs: 12, sm: 3 }
                     },
                     {
@@ -349,7 +349,7 @@ const AddRecipientPopup = ({ classes,
             {
                 content: <SimpleGrid
                     gridArr={[{
-                        content: <Typography className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.cellphone")}</Typography>,
+                        content: <Typography title={t("common.cellphone")} className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.cellphone")}</Typography>,
                         gridSize: { xs: 12, sm: 3 }
                     },
                     {
@@ -386,7 +386,7 @@ const AddRecipientPopup = ({ classes,
             {
                 content: <SimpleGrid
                     gridArr={[{
-                        content: <Typography className={classes.alignDir}>{t("common.email")}</Typography>,
+                        content: <Typography title={t("common.email")} className={classes.alignDir}>{t("common.email")}</Typography>,
                         gridSize: { xs: 12, sm: 3 }
                     },
                     {
@@ -411,7 +411,7 @@ const AddRecipientPopup = ({ classes,
             {
                 content: <SimpleGrid
                     gridArr={[{
-                        content: <Typography className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.company")}</Typography>,
+                        content: <Typography title={t("common.company")} className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.company")}</Typography>,
                         gridSize: { xs: 12, sm: 3 }
                     },
                     {
@@ -585,7 +585,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={classes.alignDir}>{t("common.address")}</Typography>,
+                            content: <Typography title={t("common.address")} className={classes.alignDir}>{t("common.address")}</Typography>,
                             gridSize: { xs: 12, sm: 3 }
                         },
                         {
@@ -609,7 +609,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.city")}</Typography>,
+                            content: <Typography title={t("common.city")} className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.city")}</Typography>,
                             gridSize: { xs: 12, sm: 3 }
                         },
                         {
@@ -633,7 +633,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={classes.alignDir}>{t("common.state")}</Typography>,
+                            content: <Typography title={t("common.state")} className={classes.alignDir}>{t("common.state")}</Typography>,
                             gridSize: { xs: 12, sm: 3 }
                         },
                         {
@@ -657,7 +657,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.country")}</Typography>,
+                            content: <Typography title={t("common.country")} className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.country")}</Typography>,
                             gridSize: { xs: 12, sm: 3 }
                         },
                         {
@@ -681,7 +681,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography align="right" className={classes.alignDir}>{t("common.zip")}</Typography>,
+                            content: <Typography title={t("common.zip")} align="right" className={classes.alignDir}>{t("common.zip")}</Typography>,
                             gridSize: { xs: 12, sm: 3 }
                         },
                         {
@@ -784,7 +784,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography align="right" className={classes.alignDir}>{t("common.birth_date")}</Typography>,
+                            content: <Typography title={t("common.birth_date")} align="right" className={classes.alignDir}>{t("common.birth_date")}</Typography>,
                             gridSize: { xs: 12, sm: 3 }
                         },
                         {
@@ -805,7 +805,7 @@ const AddRecipientPopup = ({ classes,
                 content: <SimpleGrid
                     gridArr={[
                         {
-                            content: <Typography align="right" className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.reminder_date")}</Typography>,
+                            content: <Typography title={t("common.reminder_date")} align="right" className={clsx(classes.pl5, classes.pr10, classes.alignDir)}>{t("common.reminder_date")}</Typography>,
                             gridSize: { xs: 12, sm: 3 }
                         },
                         {
@@ -922,7 +922,7 @@ const AddRecipientPopup = ({ classes,
                     content: <SimpleGrid
                         gridArr={[
                             {
-                                content: <Typography align="right" className={clsx(classes.pl5, classes.pr10, classes.textEllipses, classes.alignDir)}>{extraData[ef]}</Typography>,
+                                content: <Typography title={extraData[ef]} align="right" className={clsx(classes.pl5, classes.pr10, classes.textEllipses, classes.alignDir)}>{extraData[ef]}</Typography>,
                                 gridSize: { xs: 12, sm: 3 }
                             },
                             {

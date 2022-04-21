@@ -434,7 +434,7 @@ const UploadXL = ({
 
         if (columnHasValue === false) {
             isValid = false;
-            setToastMessage({ severity: 'error', color: 'error', message: t('recipient.email/cell_notProvided'), showAnimtionCheck: false })
+            setToastMessage({ severity: 'error', color: 'error', message: t('recipient.email_cell_notProvided'), showAnimtionCheck: false })
             setcolumnValidate(true);
         }
 

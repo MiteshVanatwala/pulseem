@@ -241,7 +241,7 @@ const DeleteRecPopup = ({ classes,
             <Dialog
                 classes={classes}
                 open={confirm}
-                title={"System Notice"}
+                title={t("common.systemNotice")}
                 icon={<div className={classes.dialogIconContent}>
                     {'\uE0D5'}
                 </div>}
