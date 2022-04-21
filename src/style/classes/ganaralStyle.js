@@ -211,6 +211,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   dFlex: {
     display: "flex",
   },
+  width_min_content: {
+    width: 'min-content'
+  },
   rtlSwitch: {
     transform: "rotateY(180deg)",
   },
@@ -1625,8 +1628,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontSize: "16px",
       fontFamily: "inherit",
     },
+    "@media screen and (max-width: 965px)": {
+
+      maxHeight: 275
+    },
     "@media screen and (max-width: 768px)": {
       width: "90%",
+
     },
   },
   greenCon: {
