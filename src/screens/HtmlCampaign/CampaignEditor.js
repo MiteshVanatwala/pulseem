@@ -49,8 +49,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [summaryData, setSummaryData] = useState(null);
   const subAccountSettings = getCookie("subAccountSettings");
   const [toastMessage, setToastMessage] = useState(null);
-  const [redirectOnExit, setRedirectOnExit] = useState('');
-  const [isResponseModal, setIsResponseModal] = useState(false);
+    const [isResponseModal, setIsResponseModal] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
   const [genericModalData, setGenericModalData] = useState({
@@ -288,14 +287,10 @@ const CampaignEditor = ({ classes, ...props }) => {
   const handleExitCampaign = (saveBeforeExit = true) => {
     setDialog(null);
     if (saveBeforeExit) {
-      saveDesign().then(() => {
-        setTimeout(() => {
-          window.location.href = redirectOnExit;
-        }, 3000);
-      })
+      saveDesign(true, '/react/Campaigns', false);
     }
     else {
-      window.location.href = redirectOnExit;
+      window.location.href = '/react/Campaigns';
     }
   }
   const onExit = () => {
@@ -307,7 +302,6 @@ const CampaignEditor = ({ classes, ...props }) => {
       onConfirm: () => handleExitCampaign(true),
       onCancel: () => setDialog(null)
     });
-    setRedirectOnExit(`/react/Campaigns`);
     setDialog(DialogType.GENERIC);
   }
   const onBack = () => {
