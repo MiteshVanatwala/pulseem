@@ -84,7 +84,7 @@ const AddBulkRecipientPopup = ({ classes,
             showDivider={true}
             onClose={onClose}
             renderButtons={() => (<></>)}
-            paperStyle={classes.addRecipientDialog}
+            customContainerStyle={classes.addRecipientDialog}
         >
             <Box>
                 <UploadXL
