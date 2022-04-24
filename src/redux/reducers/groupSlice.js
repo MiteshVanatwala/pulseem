@@ -53,7 +53,7 @@ export const deleteGroups = createAsyncThunk(
 export const resetGroups = createAsyncThunk(
     'Group/ClearGroupRecipientData', async (payload, thunkAPI) => {
         try {
-            const response = await instence.post(`Group/ClearGroupRecipientData`, payload);
+            const response = await instence.put(`Group/ClearGroupRecipientData`, payload);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });

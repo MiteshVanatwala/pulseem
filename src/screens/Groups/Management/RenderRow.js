@@ -222,7 +222,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.blue, localClasses.dataBox),
                 value: colorTextStyle.blue,
               },
-              onClick: () => window.open(`https://www.pulseemdev.co.il/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
+              onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
             },
             {
               name: t("recipient.Active"),
@@ -231,7 +231,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.green, localClasses.dataBox),
                 value: colorTextStyle.green,
               },
-              onClick: () => window.open(`https://www.pulseemdev.co.il/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsActive}&GroupID=${GroupID}`)
+              onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsActive}&GroupID=${GroupID}`)
             },
             {
               name: t("recipient.Removed"),
@@ -240,7 +240,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
-              onClick: () => window.open(`https://www.pulseemdev.co.il/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsRemoved}&GroupID=${GroupID}`)
+              onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsRemoved}&GroupID=${GroupID}`)
             },
             {
               name: t("recipient.Bounced"),
@@ -249,7 +249,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
-              onClick: () => window.open(`https://www.pulseemdev.co.il/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsErrored}&GroupID=${GroupID}`)
+              onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsErrored}&GroupID=${GroupID}`)
             },
           ]}
           gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
@@ -267,7 +267,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.blue, localClasses.dataBox),
                 value: colorTextStyle.blue,
               },
-              onClick: () => window.open(`https://www.pulseemdev.co.il/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSms}&GroupID=${GroupID}`)
+              onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSms}&GroupID=${GroupID}`)
             },
             {
               name: t("recipient.Active"),
@@ -276,7 +276,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.green, localClasses.dataBox),
                 value: colorTextStyle.green,
               },
-              onClick: () => window.open(`https://www.pulseemdev.co.il/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsActive}&GroupID=${GroupID}`)
+              onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsActive}&GroupID=${GroupID}`)
             },
             {
               name: t("recipient.Removed"),
@@ -285,7 +285,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
-              onClick: () => window.open(`https://www.pulseemdev.co.il/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsRemoved}&GroupID=${GroupID}`)
+              onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsRemoved}&GroupID=${GroupID}`)
             },
             {
               name: t("recipient.Bounced"),
@@ -294,7 +294,7 @@ const RenderWebRow = ({
                 name: clsx(colorTextStyle.red, localClasses.dataBox),
                 value: colorTextStyle.red,
               },
-              onClick: () => window.open(`https://www.pulseemdev.co.il/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsErrored}&GroupID=${GroupID}`)
+              onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsErrored}&GroupID=${GroupID}`)
             },
           ]}
           gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
@@ -311,7 +311,7 @@ const RenderWebRow = ({
           gridArr={[
             {
               onClick: () => {
-                window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
+                window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=0&GroupID=${GroupID}`)
               },
               label: t("recipient.preview"),
               component: (

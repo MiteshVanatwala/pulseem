@@ -15,7 +15,6 @@ import { BsInfoCircleFill } from "react-icons/bs";
 const useStyles = makeStyles({
     contentBox: {
         "width": '100%',
-        // "height": '50vh'
     },
     accordionIcons: {
         position: 'absolute',
@@ -24,11 +23,6 @@ const useStyles = makeStyles({
         }
     }
 });
-
-// xs: "200px",
-//     sm: "350px",
-//         md: "350px",
-//             lg: "460px",
 
 const AddBulkRecipientPopup = ({ classes,
     isOpen = false,
@@ -46,7 +40,6 @@ const AddBulkRecipientPopup = ({ classes,
             classes={classes}
             open={isOpen}
 
-            // style={{ width: (windowSize === "sm" || windowSize === "sm") && 350 || (windowSize === "md" || windowSize === "lg") && 560 }}
             title={
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>

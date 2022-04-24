@@ -68,7 +68,6 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                     Func: new Promise(async (resolutionFunc, rejectionFunc) => {
                         await resolutionFunc(getData());
                     }).then((res) => {
-                        // selectGroup(response.payload.Message)
                         callback?.()
                     }),
                 },
@@ -97,26 +96,11 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                     Func: () => null
                 },
             })
-            // onCreateGroupResponse(response);
-            // return response
+
         } catch (err) {
             return false;
         }
     };
-
-    // const handleAddRecipient = async () => {
-    //     try {
-    //         const response = await handleAddGroup(newGroupData);
-    //         console.log("STATUSCODE:", response.payload?.StatusCode);
-    //         if (response.payload?.StatusCode === 201) {
-    //             openARDialog()
-    //         }
-    //     }
-    //     catch (err) {
-    //         console.log(err)
-    //     }
-
-    // }
 
     return (
         <>
@@ -217,7 +201,6 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                         classes.customDialogContentBox,
                         classes.flex,
                         classes.mt4,
-                        // classes.responsiveFlex
                     )}
                 >
                     <Box className={classes.flex1} style={{ marginInlineEnd: 10 }}>

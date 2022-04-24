@@ -32,22 +32,22 @@ const ResetGroupPopup = ({
                 })
             },
             'S_400': {
-                code: 201,
+                code: 400,
                 message: '',
                 Func: () => null
             },
             'S_401': {
-                code: 201,
+                code: 401,
                 message: '',
                 Func: () => null
             },
             'S_405': {
-                code: 201,
+                code: 405,
                 message: '',
                 Func: () => null
             },
             'S_422': {
-                code: 201,
+                code: 422,
                 message: '',
                 Func: () => null
             },

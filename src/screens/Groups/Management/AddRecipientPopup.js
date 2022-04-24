@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import { useState } from "react";
 import clsx from "clsx";
 import {
     Grid,
@@ -11,8 +11,7 @@ import {
     AccordionSummary,
     AccordionDetails,
     makeStyles,
-    Checkbox,
-    FormControlLabel
+
 } from "@material-ui/core";
 import { DateField } from '../../../components/managment/index'
 
@@ -20,7 +19,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
-import { GrFormAdd, GrFormSubtract } from "react-icons/gr";
+import { GrFormAdd } from "react-icons/gr";
 import { addRecipient } from "../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../components/managment/Dialog";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
@@ -52,11 +51,6 @@ const useStyles = makeStyles({
         '& .MuiAccordionSummary-content': {
             margin: 0
         }
-        // '& .MuiAccordion-root': {
-        //     '& .Mui-expanded': {
-        //         margin: 0
-        //     }
-        // }
     }
 });
 
@@ -66,10 +60,7 @@ const AddRecipientPopup = ({ classes,
     windowSize,
     selectedGroups,
     selectGroup,
-    setToastMessage,
     ToastMessages,
-    DialogType,
-    setDialog,
     onAddRecipient = () => null,
     handleResponses = (response, actions) => null
 }) => {
@@ -150,8 +141,6 @@ const AddRecipientPopup = ({ classes,
     }
 
     const handleSubmit = async (callback) => {
-        // return false
-
         const data = {
             ClientsData: addRecipientData,
             GroupIds: [...selectedGroups]
@@ -201,7 +190,6 @@ const AddRecipientPopup = ({ classes,
                     Func: new Promise(async (resolutionFunc, rejectionFunc) => {
                         resolutionFunc(onAddRecipient());
                     }).then((res) => {
-                        // selectGroup(response.payload.Message)
                         callback?.()
                     }),
                 },
@@ -221,7 +209,6 @@ const AddRecipientPopup = ({ classes,
                             document.getElementById("rec_email").focus();
                             setActiveTab(0);
                         }
-                        // break;
                     }
                 },
                 'S_401': {
@@ -250,8 +237,6 @@ const AddRecipientPopup = ({ classes,
                 },
             })
 
-
-            // onAddRecipient();
 
         }
         catch (err) {
@@ -430,39 +415,6 @@ const AddRecipientPopup = ({ classes,
                     ]}
                 />
             },
-                // {
-                //     content: <SimpleGrid
-                //         gridArr={[
-                //             {
-                //                 content: <FormControlLabel
-                //                     className={classes.restoreDialogCheckBoxLable}
-                //                     control={
-                //                         <Checkbox
-                //                             style={{ width: 'auto' }}
-                //                             id="Status"
-                //                             name="Status"
-                //                             checked={addRecipientData.SmsStatus || addRecipientData.Status}
-                //                             className={clsx(classes.NoPaddingtextField, classes.textField)}
-                //                             onChange={e => {
-                //                                 const status = e.target.checked ? 1 : null;
-                //                                 const smsStatus = e.target.checked ? 0 : null;
-                //                                 setAddRecipientData({
-                //                                     ...addRecipientData, ['SmsStatus']: status, ['Status']: status
-                //                                 });
-                //                             }
-                //                             }
-                //                             color='primary'
-                //                             size='small'
-                //                         />
-                //                     }
-                //                     label={t("recipient.reactiveUnsubscriber")}
-                //                 />,
-                //                 gridSize: { xs: 3, sm: 9 }
-                //             },
-                //             {}
-                //         ]}
-                //     />
-                // }
             ]}
         />
 
@@ -848,37 +800,6 @@ const AddRecipientPopup = ({ classes,
             ]}
 
         />
-        // const MobileView = <SimpleGrid
-        //     gridArr={[
-        //         {
-        //             content: <TextField
-        //                 id="outlined-basic"
-        //                 label=""
-        //                 placeholder={t("common.birth_date")}
-        //                 variant="outlined"
-        //                 name="BirthDate"
-        //                 value={addRecipientData.BirthDate}
-        //                 className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-        //                 autoComplete="off"
-        //                 onChange={handleChange}
-        //             />
-        //         },
-        //         {
-        //             content: <TextField
-        //                 id="outlined-basic"
-        //                 label=""
-        //                 placeholder={t("common.reminder_date")}
-        //                 variant="outlined"
-        //                 name="ReminderDate"
-        //                 value={addRecipientData.ReminderDate}
-        //                 className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-        //                 autoComplete="off"
-        //                 onChange={handleChange}
-        //             />
-        //         }
-        //     ]}
-
-        // />
 
         return (windowSize === 'xs' ? MobileView : WebView)
     }
