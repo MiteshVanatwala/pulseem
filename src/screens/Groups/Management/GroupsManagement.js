@@ -648,7 +648,7 @@ const GroupsManagement = ({ classes }) => {
         break;
       }
       case 400: {
-        setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound") })
+        setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.listEmptyOrClientInvalid") })
         setDialog(DialogType.MESSAGE);
         break;
       }
