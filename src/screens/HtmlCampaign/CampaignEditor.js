@@ -7,7 +7,10 @@ import {
   getCampaignById,
   saveCampaign,
   getUserblocks,
-  testSend
+  testSend,
+  saveUserBlock,
+  updateUserBlock,
+  deleteUserBlock
 } from '../../redux/reducers/campaignEditorSlice';
 import { IoMdImages } from 'react-icons/io'
 import { Loader } from '../../components/Loader/Loader';
@@ -25,9 +28,10 @@ import GenericModal from './modals/GenericModal';
 import { GiExitDoor } from 'react-icons/gi'
 import { BsTrash } from "react-icons/bs";
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
-import { initEvents } from './events/index';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { Dialog } from '../../components/managment/index';
+import { save, update, remove } from '../../redux/reducers/campaignEditorSlice';
+import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -45,7 +49,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [iframeKey, setIframeKey] = useState(0);
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
-  const subAccountSettings = getCookie("subAccountSettings");
+  let subAccountSettings = getCookie("subAccountSettings");
   const [toastMessage, setToastMessage] = useState(null);
   const [isResponseModal, setIsResponseModal] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
@@ -157,7 +161,10 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
     });
   }
-  const initOptions = () => {
+  const initOptions = async () => {
+    if(!subAccountSettings.UnlayerUniqueID){
+      subAccountSettings = await dispatch(getCommonFeatures());
+    }
     options.locale = language === 'he' ? 'he-IL' : 'en-US';
     options.user = {
       id: subAccountSettings.UnlayerUniqueID
@@ -167,26 +174,60 @@ const CampaignEditor = ({ classes, ...props }) => {
   const registerEvents = () => {
     const unlayer = editorRef.current;
     if (unlayer) {
-      initEvents({ unlayer, userBlocks }).then((res) => {
-        unlayer.registerCallback('selectImage', function (data, done) {
-          setShowGallery(true);
-          setIsFileSelected(false);
+      // Images
+      unlayer.registerCallback('selectImage', function (data, done) {
+        setShowGallery(true);
+        setIsFileSelected(false);
 
-          const button = document.querySelector('[name="btnConfirm"]');
-          if (button) {
-            button.addEventListener('mouseup', (event) => {
-              const modal = document.querySelector('.MuiDialog-paper');
-              const selectedIcon = modal.querySelector(".image-info svg");
-              if (selectedIcon) {
-                const imgElement = selectedIcon.parentNode.previousElementSibling;
-                const style = imgElement.currentStyle || window.getComputedStyle(imgElement, false);
-                const selectedImage = style.backgroundImage.slice(4, -1).replace(/"/g, "");
-                done({ url: selectedImage });
-              }
-            });
-          }
+        const button = document.querySelector('[name="btnConfirm"]');
+        if (button) {
+          button.addEventListener('mouseup', (event) => {
+            const modal = document.querySelector('.MuiDialog-paper');
+            const selectedIcon = modal.querySelector(".image-info svg");
+            if (selectedIcon) {
+              const imgElement = selectedIcon.parentNode.previousElementSibling;
+              const style = imgElement.currentStyle || window.getComputedStyle(imgElement, false);
+              const selectedImage = style.backgroundImage.slice(4, -1).replace(/"/g, "");
+              done({ url: selectedImage });
+            }
+          });
+        }
+      });
+      // blocks
+      try {
+        unlayer.registerCallback('block:added', async function (newBlock, done) {
+          // Each block should have it's own unique id
+          const res = await dispatch(saveUserBlock(newBlock));
+          const newId = res.payload.Block.ID;
+          newBlock.id = newId;
+
+          done(newBlock);
         });
-      })
+        unlayer.registerCallback('block:modified', async function (existingBlock, done) {
+          console.log('block:modified', existingBlock);
+
+          // Update the block in your database here
+          // and pass the updated object to done callback.
+          await dispatch(updateUserBlock(existingBlock));
+
+          done(existingBlock);
+        });
+        unlayer.registerCallback('block:removed', async function (existingBlock, done) {
+          console.log('block:removed', existingBlock);
+
+          // Delete the block from your database here.
+          await dispatch(deleteUserBlock(existingBlock.id));
+
+          done(existingBlock);
+        });
+        unlayer.editor.registerProvider('blocks', async function (params, done) {
+          done(userBlocks);
+        });
+        unlayer.editor.reloadProvider('blocks');
+      }
+      catch (e) {
+        console.error(e);
+      }
     }
   }
   const onReady = () => {
