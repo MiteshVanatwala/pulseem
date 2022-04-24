@@ -78,6 +78,13 @@
     "duplicateCellphoneInFile": "כמות סלולרים כפולים בקובץ:",
     "totalCellularExistingInAccount": "כמות סלולרים הקיימים כבר בחשבון:"
   },
+  "responses": {
+    "serverFoundWithNoResponse": "הבקשה התקבלה בשרת, אך לא התקבלה תגובה. יש לפנות לתמיכה.",
+    "notFound": "לא נמצאו נמענים להסרה"
+  },
+  "unsubscribed": {
+    "succeeded": "הנמענים שהזנת הוסרו מהקבוצות שנבחרו בהצלחה."
+  },
   "bulkRecUpldTooltipText": "באפשרותך להעלות עד 600,000 נמענים בבת אחת",
   "reactiveUnsubscriber": "הפעל נמען מוסר",
   "advanceOptions": "אפשרויות הסרה מתקדמות",
@@ -85,7 +92,7 @@
   "emailOnly": "הסר רק דואר אלקטרוני",
   "phoneOnly": "הסר רק סלולרי",
   "rowsUpdated": "שורות עודכנו",
-  "rowUpdated": "רשומה עודכנה",
+  "rowUpdated": "רשומה אחת עודכנה",
   "deleteConfirm": "האם אתה בטוח שברצונך למחוק את הלקוחות מהקבוצות שבחרת?",
   "email_cell_notProvided": "דואר אלקטרוני/סלולרי לא סופקו"
 }
