@@ -200,7 +200,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     try {
       editorRef.current.setMergeTags(mergeData);
       editorRef.current.editor.setSpecialLinks(specialLinks);
-      //editorRef.current.props.options.appearance.panels.tools.dock = isRTL ? 'left' : 'right';
 
       if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
         setLoader(false);
@@ -405,26 +404,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   }
   /* #endregion */
   const renderEditor = () => {
-    if (dataReady) {
-      // Init custom tools
-      options.tools['custom#CompanyDetails'] = {
-        data: {
-          emailTitle: t("common.Mail"),
-          phoneTitle: t("common.phone"),
-          faxTitle: t("common.Fax"),
-          CompanyNameTitle: t("common.CompanyName"),
-          addressTitle: t("common.address"),
-          cityTitle: t("common.city"),
-          countryTitle: t("common.country"),
-          email: 'ido@pulseem.com',
-          phone: '',
-          fax: '',
-          city: 'Tel-Aviv',
-          company: 'Pulseem LTD',
-          address: '9 Taberski',
-          country: 'Israel'
-        }
-      }
+    if (dataLoaded) {
       return <React.StrictMode>
         <EmailEditor
           onReady={onReady}

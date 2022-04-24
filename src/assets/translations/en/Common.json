@@ -553,5 +553,6 @@
   "exit": "Exit",
   "phone": "Phone",
   "companyName": "Company Name",
-  "Fax": "Fax"
+  "Fax": "Fax",
+  "alignCenter": "Center"
 }

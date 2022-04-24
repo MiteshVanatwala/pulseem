@@ -1,3 +1,17 @@
+import i18n from 'i18next';
+export const properties = {
+  alignment: {
+    editor: {
+      data:{
+        options: [
+          { label: i18n.t("common.AlignLeft"), value: "left" },
+          { label: i18n.t("common.alignCenter"), value: "center" },
+          { label: i18n.t("common.AlignRight"), value: "right" }
+        ]
+      }
+    }
+  }
+}
 export const options = {
   amp: true,
   appearance:
@@ -429,53 +443,37 @@ export const options = {
       enabled: true
     },
     video: {
-      enabled: false
-    },
-    form: {
-      enabled: true,
-      usageLimit: 1,
-      properties: {
-        fields: { // Put pulseem defaults here
-          editor: {
-            data: {
-              defaultFields: [
-                { name: "birthday", label: "Birthday", type: "date" },
-                { name: "company", label: "Company", type: "text" },
-                { name: "email", label: "Email", type: "email" },
-                { name: "first_name", label: "First Name", type: "text" },
-                { name: "last_name", label: "Last Name", type: "text" },
-                { name: "phone_number", label: "Phone Number", type: "text" },
-                { name: "website", label: "Website", type: "text" },
-                { name: "zip_code", label: "Zip Code", type: "text" }
-              ]
-            }
-          }
-        },
-        action: {
-          editor: {
-            data: {
-              actions: [
-                {
-                  label: 'Marketing',
-                  method: 'POST',
-                  url: 'http://whatever.com/marketing-form-submission',
-                },
-                {
-                  label: 'Sales',
-                  method: 'POST',
-                  target: '_blank',
-                  url: 'http://whatever.com/sales-form-submission',
-                }
-              ]
-            }
-          }
-        }
-      }
+      enabled: true
     },
     image: {
       position: 1,
       enabled: true
-    }
+    },
+    // Custom Tools
+    'custom#Header': {
+      data: {
+        emailTitle: i18n.t("common.Mail"),
+        phoneTitle: i18n.t("common.phone"),
+        faxTitle: i18n.t("common.Fax"),
+        CompanyNameTitle: i18n.t("common.CompanyName"),
+        addressTitle: i18n.t("common.address"),
+        cityTitle: i18n.t("common.city"),
+        countryTitle: i18n.t("common.country")
+      },
+      properties: properties
+    },
+    'custom#Footer': {
+      data: {
+        emailTitle: i18n.t("common.Mail"),
+        phoneTitle: i18n.t("common.phone"),
+        faxTitle: i18n.t("common.Fax"),
+        CompanyNameTitle: i18n.t("common.CompanyName"),
+        addressTitle: i18n.t("common.address"),
+        cityTitle: i18n.t("common.city"),
+        countryTitle: i18n.t("common.country")
+      },
+      properties: properties
+    }    
   },
   features: {
     imageEditor: true,
@@ -615,6 +613,6 @@ export const options = {
       }
     ]
   },
-  customJS: [`https://pulseemdev.co.il/Pulseem/CompanyDetails.js`],
-  customCSS: ["body { background-color: black } .beMelL { background-image: none; background-color: #fff; overflow-x: hidden}"]
+  customJS: [`https://pulseemdev.co.il/Pulseem/custom_tools.js`],
+  customCSS: ["body { background-color: black } .beMelL, .blockbuilder-preview { background-image: none; background-color: #fff !important; overflow-x: hidden}"]
 }
