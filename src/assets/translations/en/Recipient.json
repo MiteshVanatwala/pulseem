@@ -40,7 +40,7 @@
   "dates": "Dates",
   "addRecipientSuccess": "Recipient successfully added",
   "incorrectRecipientInput": "None of the clients have either valid email or valid cellphone",
-  "addRecTextareaPlaceholder": "Drag & Drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values: FirstName, LastName, Cellphone and Email. You are able to enter hundreds of thousands of recipients to this box",
+  "addRecTextareaPlaceholder": "Drag & Drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding a comma between values. You are able to enter hundreds of thousands of recipients to this box",
   "unsubRecipients": "Remove recipients from account",
   "unsubTextareaPlaceholder": "Drag & Drop an XLS/CSV file or copy and paste the details directly into this box. You may also enter manually, by adding the number or email that you want to unsubscribe on each line. You are able to enter hundreds of thousands of recipients to this box.",
   "deleteRecipients": "Delete recipient/s from group",

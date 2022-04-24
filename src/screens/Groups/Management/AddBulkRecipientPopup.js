@@ -84,18 +84,18 @@ const AddBulkRecipientPopup = ({ classes,
             showDivider={true}
             onClose={onClose}
             renderButtons={() => (<></>)}
-            paperStyle={classes.addRecipientDialog}
+            customContainerStyle={classes.addRecipientDialog}
         >
-            <Box>
-                <UploadXL
-                    classes={classes}
-                    onDone={onAddRecipient}
-                    settings={UploadSettings.GROUPS}
-                    uploadToGroups={selectedGroups}
-                    setToastMessage={setToastMessage}
-                    placeHolder={"recipient.addRecTextareaPlaceholder"}
-                />
-            </Box>
+            {/* <Box> */}
+            <UploadXL
+                classes={classes}
+                onDone={onAddRecipient}
+                settings={UploadSettings.GROUPS}
+                uploadToGroups={selectedGroups}
+                setToastMessage={setToastMessage}
+                placeHolder={"recipient.addRecTextareaPlaceholder"}
+            />
+            {/* </Box> */}
         </Dialog>
     );
 };
