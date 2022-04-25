@@ -44,7 +44,7 @@ const AddBulkRecipientPopup = ({ classes,
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
                         {t('recipient.bulkImportTitle')}
-                        <CustomTooltip
+                        {/* <CustomTooltip
                             isSimpleTooltip={false}
                             interactive={true}
                             classes={{
@@ -60,7 +60,7 @@ const AddBulkRecipientPopup = ({ classes,
                             <span >
                                 <BsInfoCircleFill className={classes.plr10} size={24} style={{ color: '#000' }} />
                             </span>
-                        </CustomTooltip>
+                        </CustomTooltip> */}
                     </Box>
                     <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">

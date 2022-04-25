@@ -93,7 +93,7 @@ const AddRecipientPopup = ({ classes,
             }
         }
         if (e.target.name === "Cellphone") {
-            if (e.target.value.length > 15 || e.target.value.length < 10) {
+            if (e.target.value.length > 16 || e.target.value.length < 9) {
                 setErrors({ ...errors, Cellphone: t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength) })
             }
             else if (!ValidateNumber(e.target.value)) {
@@ -153,7 +153,7 @@ const AddRecipientPopup = ({ classes,
             if (!data.ClientsData.Email || !ValidateEmail(data.ClientsData.Email)) {
                 tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
             }
-            if (data.ClientsData.Cellphone.length < 10 || data.ClientsData.Cellphone.length > 15) {
+            if (data.ClientsData.Cellphone.length < 9 || data.ClientsData.Cellphone.length > 16) {
                 tempError.Cellphone = t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength)
             }
 
@@ -358,7 +358,7 @@ const AddRecipientPopup = ({ classes,
                                     handleChange(e)
                                 }
                             }}
-                            inputProps={{ maxlength: 15 }}
+                            inputProps={{ maxlength: 16 }}
                             error={errors.Cellphone}
                             helperText={errors.Cellphone}
                             onBlur={handleBlur}
@@ -387,6 +387,7 @@ const AddRecipientPopup = ({ classes,
                             error={errors.Email}
                             helperText={errors.Email}
                             onBlur={handleBlur}
+                            maxlength={100}
                         />,
                         gridSize: { xs: 12, sm: 9 }
                     }

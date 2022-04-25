@@ -290,7 +290,7 @@ const UnSubRecPopup = ({ classes,
                 spellCheck="false"
                 autoComplete="off"
                 className={
-                    highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
+                    clsx(highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon), classes.customScroll)
                 }
                 value={areaData}
                 onDragEnter={() => {

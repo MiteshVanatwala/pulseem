@@ -1658,8 +1658,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   addRecipientDialog: {
 
-    "& .MuiBackdrop-root": {
-      "& .MuiDialog-container": {
+    "& .MuiDialog-scrollPaper": {
+      "& .MuiDialog-paperScrollPaper ": {
         width: '640px !important',
         "@media screen and (max-width: 768px)": {
           width: '80% !important'
