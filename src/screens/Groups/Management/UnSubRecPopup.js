@@ -353,9 +353,11 @@ const UnSubRecPopup = ({ classes,
             onClose={onClose}
             onCancel={onClose}
             onConfirm={handleSubmit}
-            customContainerStyle={{}}
+            customContainerStyle={classes.addRecipientDialog}
         >
-            <Box style={{ minWidth: 600 }}>
+            <Box
+            // style={{ minWidth: 600 }}
+            >
                 {DropBox(classes)}
                 <FormControlLabel
                     control={

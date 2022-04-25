@@ -387,6 +387,7 @@ const AddRecipientPopup = ({ classes,
                             error={errors.Email}
                             helperText={errors.Email}
                             onBlur={handleBlur}
+                            style={{ textAlign: 'left' }}
                             maxlength={100}
                         />,
                         gridSize: { xs: 12, sm: 9 }

@@ -325,7 +325,7 @@ const DeleteRecPopup = ({ classes,
             onClose={onClose}
             onCancel={onClose}
             onConfirm={() => setConfirm(true)}
-            customContainerStyle=""
+            customContainerStyle={classes.addRecipientDialog}
         >
             <Box style={{ minWidth: 500 }}>
                 {DropBox(classes)}
