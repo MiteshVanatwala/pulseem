@@ -51,8 +51,8 @@ const UploadXL = ({
     const [areaData, setareaData] = useState("");
     const [dropClick, setdropClick] = useState(false);
     const [typedData, settypedData] = useState([]);
-    const [initialheadstate, setinitialheadstate] = useState([]);
-    const [headers, setheaders] = useState(initialheadstate);
+    // const [initialheadstate, setinitialheadstate] = useState([]);
+    const [headers, setheaders] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
     const [highlighted, setHighlighted] = React.useState(false);
     const [contacts, setContacts] = React.useState([]);
@@ -177,8 +177,7 @@ const UploadXL = ({
         for (let i = 0; i < cols; i++) {
             dummyArr.push(t("sms.adjustTitle"));
         }
-        setinitialheadstate(dummyArr);
-        setheaders(dummyArr)
+        setheaders(dummyArr);
         setDialogType({ type: "manualUpload" });
     };
 
@@ -188,14 +187,13 @@ const UploadXL = ({
         const file = e.dataTransfer?.files[0] || e.target.files[0];;
         const reader = new FileReader();
         setFileToUpload(file);
-        var p = new Promise((resolve, reject) => {
-            try {
-                if (file.name.toLowerCase().indexOf("xls") > -1) {
-                    // setLoader(true);
-
-                    reader.onload = function (e) {
-                        var data = new Uint8Array(e.target.result);
-                        setTimeout(() => {
+        setLoader(true);
+        setTimeout(() => {
+            return new Promise((resolve, reject) => {
+                try {
+                    if (file.name.toLowerCase().indexOf("xls") > -1) {
+                        reader.onload = function (e) {
+                            var data = new Uint8Array(e.target.result);
                             var workbook = XLSX.read(data, { type: "array" });
                             var csv = XLSX.utils.sheet_to_csv(
                                 workbook.Sheets[workbook.SheetNames[0]]
@@ -211,115 +209,121 @@ const UploadXL = ({
                             settypedData(b);
                             settotalRecords(b.length)
 
-                            setareaData(b);
                             let dummyArr = [];
                             for (let i = 0; i < b[0].length; i++) {
                                 dummyArr.push(t("sms.adjustTitle"));
                             }
-                            setinitialheadstate(dummyArr);
                             setheaders(dummyArr)
-
-                            setLoader(false);
                             if (dummyArr !== 0) {
                                 setDialogType({ type: "manualUpload" });
                             }
-
-                        }, 0);
-                    };
-                    reader.readAsArrayBuffer(file, "utf-8")
-                }
-
-                else if (file.name.toLowerCase().indexOf("csv") > -1) {
-                    setLoader(true);
-                    reader.onload = function () {
-                        var config = {
-                            delimiter: "", // auto-detect
-                            newline: "", // auto-detect
-                            quoteChar: "",
-                            escapeChar: "",
-                            header: false,
-                            trimHeader: false,
-                            dynamicTyping: true,
-                            preview: 0,
-                            encoding: "utf-8",
-                            worker: true,
-                            comments: false,
-                            step: undefined,
-                            complete: undefined,
-                            error: undefined,
-                            download: false,
-                            skipEmptyLines: true,
-                            chunk: function (c) {
-                                var final = c["data"]
-                                    .filter(function (el) {
-                                        return (
-                                            typeof el != "object" ||
-                                            Array.isArray(el) ||
-                                            Object.keys(el).length > 0
-                                        );
-                                    })
-                                    .map((finalResult) => {
-                                        const fr = [...finalResult];
-                                        let fixedItem = [];
-                                        fr.forEach((item) => {
-                                            if (
-                                                item &&
-                                                String(item).startsWith("5") &&
-                                                String(item).length == 9
-                                            ) {
-                                                item = "0" + item;
-                                            }
-                                            if (item && String(item).indexOf("9.72") > -1) {
-                                                item = parseFloat(item);
-                                            }
-                                            fixedItem.push(String(item).trim());
-                                        });
-                                        return fixedItem;
-                                    });
-                                var conf = {
-                                    quotes: false,
-                                    quoteChar: '"',
-                                    escapeChar: '"',
-                                    delimiter: ",",
-                                    newline: "\r\n",
-                                    skipEmptyLines: true,
-                                    columns: null,
-                                    worker: true,
-                                };
-                                const csvResults = Papa.unparse(final, conf);
-                                resolve(csvResults)
-                            },
-                            fastMode: true,
-                            beforeFirstChunk: undefined,
-                            withCredentials: undefined,
+                            setLoader(false);
                         };
+                        reader.readAsArrayBuffer(file, "utf-8")
+                    }
 
-                        Papa.parse(reader.result, {
-                            config,
-                            complete: results => {
-                                settotalRecords(results.data.length)
-                                const resultCsv = results.data;
-                                let ddc = [];
-                                for (let i in resultCsv[0]) {
-                                    ddc.push(t("sms.adjustTitle"))
-                                }
-                            },
+                    else if (file.name.toLowerCase().indexOf("csv") > -1) {
+                        setLoader(true);
+                        reader.onload = function () {
+                            var config = {
+                                delimiter: "", // auto-detect
+                                newline: "", // auto-detect
+                                quoteChar: "",
+                                escapeChar: "",
+                                header: false,
+                                trimHeader: false,
+                                dynamicTyping: true,
+                                preview: 0,
+                                encoding: "utf-8",
+                                worker: true,
+                                comments: false,
+                                step: undefined,
+                                complete: undefined,
+                                error: undefined,
+                                download: false,
+                                skipEmptyLines: true,
+                                chunk: function (c) {
+                                    var final = c["data"]
+                                        .filter(function (el) {
+                                            return (
+                                                typeof el != "object" ||
+                                                Array.isArray(el) ||
+                                                Object.keys(el).length > 0
+                                            );
+                                        })
+                                        .map((finalResult) => {
+                                            const fr = [...finalResult];
+                                            let fixedItem = [];
+                                            fr.forEach((item) => {
+                                                if (
+                                                    item &&
+                                                    String(item).startsWith("5") &&
+                                                    String(item).length == 9
+                                                ) {
+                                                    item = "0" + item;
+                                                }
+                                                if (item && String(item).indexOf("9.72") > -1) {
+                                                    item = parseFloat(item);
+                                                }
+                                                fixedItem.push(String(item).trim());
+                                            });
+                                            return fixedItem;
+                                        });
+                                    var conf = {
+                                        quotes: false,
+                                        quoteChar: '"',
+                                        escapeChar: '"',
+                                        delimiter: ",",
+                                        newline: "\r\n",
+                                        skipEmptyLines: true,
+                                        columns: null,
+                                        worker: true,
+                                    };
+                                    const csvResults = Papa.unparse(final, conf);
+                                    resolve(csvResults)
+                                },
+                                fastMode: true,
+                                beforeFirstChunk: undefined,
+                                withCredentials: undefined,
+                            };
 
-                        });
+                            Papa.parse(reader.result, {
+                                config,
+                                complete: results => {
+                                    settotalRecords(results.data.length);
+                                    const resultCsv = results.data;
+                                    let b = [];
+                                    for (let i = 0; i < resultCsv.length; i++) {
+                                        b.push(resultCsv[i]);
+                                    }
+                                    b.pop();
+                                    settypedData(b);
 
-                        setareaData(reader.result.substring(0, 1500));
-                    };
-                    reader.readAsText(file, "ISO-8859-8");
+                                    let ddc = [];
+                                    for (let i in resultCsv[0]) {
+                                        ddc.push(t("sms.adjustTitle"))
+                                    }
+                                    if (ddc !== 0) {
+                                        setheaders(ddc);
+                                        setDialogType({ type: "manualUpload" });
+                                        setLoader(false);
+                                    }
+                                },
+
+                            });
+                        };
+                        reader.readAsText(file, "ISO-8859-8");
+                    }
+                    else {
+                        return false;
+                    }
                 }
-                else {
-                    return false;
+                catch (error) {
+                    reject(error);
                 }
-                setLoader(false)
-            }
-            catch (error) {
-                reject(error);
-            }
-        });
+            });
+        }, 100);
+
     }
     const translateHebrewColumns = (key) => {
         if (key === 'שםפרטי') {
