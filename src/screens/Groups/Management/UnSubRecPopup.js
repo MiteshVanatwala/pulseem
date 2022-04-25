@@ -228,7 +228,7 @@ const UnSubRecPopup = ({ classes,
             },
             'S_401': {
                 code: 401,
-                message: 'recipient.responses.unautorized',
+                message: 'group.invalidApi',
                 Func: () => null
             },
             'S_404': {
@@ -242,7 +242,7 @@ const UnSubRecPopup = ({ classes,
                 Func: () => null
             },
             'default': {
-                message: '',
+                message: 'common.ErrorOccured',
                 Func: () => null
             },
         })
@@ -260,7 +260,7 @@ const UnSubRecPopup = ({ classes,
             <Dialog
                 classes={classes}
                 open={isSubmitted}
-                title={"System Notice"}
+                title={t("common.systemNotice")}
                 icon={<div className={classes.dialogIconContent}>
                     {'\uE0D5'}
                 </div>}
@@ -271,8 +271,7 @@ const UnSubRecPopup = ({ classes,
             >
 
                 <Box className={classes.flex}>
-                    <Box><VscCircleFilled /></Box>
-                    <Box>{summaryCount} {summaryCount === 1 ? t('recipient.rowUpdated') : t('recipient.rowsUpdated')}</Box>
+                    <Box>{summaryCount === 1 ? null : summaryCount} {summaryCount === 1 ? t('recipient.rowUpdated') : t('recipient.rowsUpdated')}</Box>
                 </Box>
             </Dialog>
         )

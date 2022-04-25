@@ -78,6 +78,13 @@
     "duplicateCellphoneInFile": "Duplicate cellphone in file:",
     "totalCellularExistingInAccount": "Total cellular existing in account:"
   },
+  "responses": {
+    "serverFoundWithNoResponse": "The request accepted by server, but no response has been sent. Please contact support",
+    "notFound": "No recipients has been found for unsubscribe"
+  },
+  "unsubscribed": {
+    "succeeded": "The recipients successfully unsubscribed from the selected groups"
+  },
   "bulkRecUpldTooltipText": "You are able to upload up to 600,000 recipients at once",
   "reactiveUnsubscriber": "Reactivate removed recipient",
   "advanceOptions": "Advanced Options",

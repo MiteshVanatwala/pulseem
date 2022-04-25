@@ -279,7 +279,7 @@ const GroupsManagement = ({ classes }) => {
       }
       case 500: {
         actions?.S_500?.Func?.();
-        setToastMessage(actions?.S_422?.message);
+        setToastMessage(actions?.S_500?.message);
         break;
       }
       default: {
