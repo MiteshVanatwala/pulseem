@@ -42,6 +42,7 @@ const NameValueGridStructure = ({ gridArr = [],
                                     target="_blank"
                                     align={align}
                                     variant={variant}
+                                    style={{ cursor: obj.onClick ? 'pointer' : null }}
                                     onClick={obj.onClick ?? (() => null)}
                                 >
                                     {obj?.value}
@@ -53,7 +54,12 @@ const NameValueGridStructure = ({ gridArr = [],
                                         </Box> : ''
                                 }
                                 {!reverse &&
-                                    <Typography className={obj.classes?.name ?? classes?.name ?? ''} align={align} variant={variant}>
+                                    <Typography
+                                        className={obj.classes?.name ?? classes?.name ?? ''}
+                                        align={align}
+                                        variant={variant}
+                                        style={{ cursor: obj.onClick ? 'pointer' : null }}
+                                        onClick={obj.onClick ?? (() => null)}>
                                         {obj?.name}
                                     </Typography>
                                 }

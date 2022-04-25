@@ -28,8 +28,6 @@ import { setRowsPerPage } from "../../../redux/reducers/coreSlice";
 import { setCookie } from "../../../helpers/cookies";
 import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import DataTable from "../../../components/Table/DataTable";
-import { exportFile } from "../../../helpers/exportFromJson";
-import { preferredOrder } from "../../../helpers/exportHelper";
 import RenderRow from "./RenderRow";
 import RenderPhoneRow from "./RenderPhoneRow";
 import AddGroupPopUp from "./AddGroupPopUp";
@@ -48,6 +46,7 @@ import UnSubRecPopup from "./UnSubRecPopup";
 import DeleteRecPopup from "./DeleteRecPopup";
 import EditGroupPopup from "./EditGroupPopup";
 import ResetGroupPopup from "./ResetGroupPopup";
+import { Dialog } from '../../../components/managment/index';
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -72,6 +71,7 @@ const GroupsManagement = ({ classes }) => {
     SearchTerm: "",
   });
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const renderHtml = (html) => {
     function createMarkup() {
@@ -116,7 +116,9 @@ const GroupsManagement = ({ classes }) => {
     DELETE_RECIPIENT: "delete recipients",
     RESET_GROUP: 'reset group',
     MESSAGE: "message",
-    SUMMARY: "summary"
+    SUMMARY: "summary",
+    EXPORT_ALL: "exportAll",
+    EXPORT_SELECTED: "exportSelected"
   };
 
   const TABLE_HEAD = [
@@ -162,42 +164,6 @@ const GroupsManagement = ({ classes }) => {
   }, [dispatch, serachData, page]);
 
   //  HANDLERS  //
-
-  const exportColumnHeader = {
-    SMSStatus: t("smsStatus"),
-    CreationDate: t("creationDate"),
-    FirstName: t("firstName"),
-    Name: t("name"),
-    Email: t("email"),
-    Telephone: t("telephone"),
-    Cellphone: t("cellphone"),
-    Address: t("address"),
-    BirthdayDate: t("birthdayDate"),
-    City: t("city"),
-    State: t("state"),
-    Country: t("country"),
-    Zip: t("zip"),
-    Company: t("company"),
-    ReminderDate: t("reminderDate"),
-    ErrorMessage: t("errorMessage"),
-  };
-
-  const handleDownloadCsv = async () => {
-    let orderList = preferredOrder(
-      groupData.Groups,
-      Object.keys(exportColumnHeader)
-    );
-    // orderList = await statusNumberToString(t, orderList, MMSReportStatus);
-    // orderList = await formatDateTime(orderList, t);
-    // orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-    exportFile({
-      data: orderList,
-      fileName: "mmsReport",
-      exportType: "csv",
-      fields: exportColumnHeader,
-    });
-  };
-
   const handleResponses = (response, actions = {
     'S_201': {
       code: 201,
@@ -289,7 +255,6 @@ const GroupsManagement = ({ classes }) => {
       }
     }
   }
-
   const renderToast = () => {
     if (toastMessage) {
 
@@ -302,14 +267,12 @@ const GroupsManagement = ({ classes }) => {
     }
     return null;
   }
-
   const handleDeleteGroup = async () => {
     await dispatch(deleteGroups(selectedGroups));
     setSelectedGroups([]);
     setDialog(null);
     getData();
   };
-
   const handleSelected = (id) => {
     const index = selectedGroups.indexOf(id);
     if (index !== -1) {
@@ -318,9 +281,7 @@ const GroupsManagement = ({ classes }) => {
       setSelectedGroups([...temp]);
     } else setSelectedGroups([...selectedGroups, id]);
   };
-
   //  COMPONENTS  //
-
   const renderHeader = () => {
     return (
       <>
@@ -331,7 +292,6 @@ const GroupsManagement = ({ classes }) => {
       </>
     );
   };
-
   // DONE
   const renderSearchLine = () => {
     const handleKeyDown = (event) => {
@@ -427,7 +387,6 @@ const GroupsManagement = ({ classes }) => {
       </Grid>
     );
   };
-
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={classes.linePadding}>
@@ -488,7 +447,7 @@ const GroupsManagement = ({ classes }) => {
               classes.actionButtonGreen
               //   smsReport.length > 0 ? null : classes.disabled
             )}
-            onClick={handleDownloadCsv}
+            onClick={() => setShowConfirmDialog(true)}
             // onClick={() => true}
             startIcon={<ExportIcon />}
           >
@@ -523,7 +482,6 @@ const GroupsManagement = ({ classes }) => {
       </Grid>
     );
   };
-
   const handleRowsPerPageChange = async (val) => {
     await dispatch(setRowsPerPage(val));
     setSearchData({
@@ -532,7 +490,6 @@ const GroupsManagement = ({ classes }) => {
     })
     setCookie("rpp", val, { maxAge: 2147483647 });
   };
-
   const renderNameCell = (row, fullwidth) => {
     let date = null;
     const { GroupName } = row;
@@ -580,7 +537,6 @@ const GroupsManagement = ({ classes }) => {
       </>
     );
   };
-
   const renderTableBody = useMemo(() => {
     let sortData = groupData ? groupData.Groups : []; // BUG: UNCOMMENT THIS
     // let sortData = [StaticData[0]]; // BUG: COMMENT THIS
@@ -627,9 +583,7 @@ const GroupsManagement = ({ classes }) => {
       </TableBody>
     );
   }, [groupData, rowsPerPage, page, classes, selectedGroups]);
-
   const groupsLength = (groupData && groupData.RecordCount) || 0;
-
   const handleAddRecipientResponse = (res) => {
     switch (res.payload.StatusCode) {
       case 201: {
@@ -656,6 +610,46 @@ const GroupsManagement = ({ classes }) => {
         setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
         setDialog(DialogType.MESSAGE);
       }
+    }
+  }
+  const handleConfirmExport = () => {
+    let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+    if (selectedGroups && selectedGroups.length > 0) {
+      queryString += `&Groups=${selectedGroups.join(',')}`;
+    }
+    if (selectedGroups.length === 1) {
+      const groupName = groupData.Groups.find((g) => { return g.GroupID === selectedGroups[0] }).GroupName;
+      queryString += `&GroupName=${groupName.replace(' ', '-')}`;
+    }
+    window.open(`https://www.pulseemdev.co.il/Pulseem/ClientExport.csv?${queryString}`);
+    setShowConfirmDialog(false);
+  }
+  const renderConfirmDialog = () => {
+    if (showConfirmDialog) {
+      let dialog = {
+        showDivider: true,
+        icon: <ExportIcon />,
+        title: t("common.ExportGroups"),
+        content: (
+          <Typography style={{ marginBottom: 20 }}>
+            {!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportGroups') : t("common.IsExportGroup")}
+          </Typography>
+        )
+      }
+      return (
+        <Dialog
+          cancelText="common.Cancel"
+          confirmText="common.Yes"
+          disableBackdropClick={true}
+          classes={classes}
+          open={showConfirmDialog}
+          onCancel={() => setShowConfirmDialog(false)}
+          onClose={() => setShowConfirmDialog(false)}
+          onConfirm={() => handleConfirmExport()}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
     }
   }
 
@@ -813,6 +807,7 @@ const GroupsManagement = ({ classes }) => {
         message={responseMessage.message}
         summary={responseMessage.summary}
       />
+      {renderConfirmDialog()}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );
