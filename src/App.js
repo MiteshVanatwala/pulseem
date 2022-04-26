@@ -14,7 +14,7 @@ import i18n from './i18n'
 import { BrowserRouter, useParams, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures, setSmsOldVersion } from './redux/reducers/coreSlice'
-import { isClalAccount, getAccountFeatures } from './redux/reducers/commonSlice';
+import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
 import { useClasses } from './style/classes/index'
@@ -388,10 +388,10 @@ const App = ({ screenSize }) => {
     const initFeatures = async () => {
       const response = await dispatch(isClalAccount());
       dispatch(setIsClal(response.payload));
-      const features = await dispatch(getAccountFeatures());
-      dispatch(setAccountFeatures(features.payload));
       const smsOldVersion = getCookie('OldVersion')
       dispatch(setSmsOldVersion(smsOldVersion))
+      const subAccountSettings = await dispatch(getCommonFeatures());
+      dispatch(setAccountFeatures(subAccountSettings.payload.Account.AccountFeatures));
     }
 
     const updateToken = () => {
