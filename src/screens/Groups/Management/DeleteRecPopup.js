@@ -303,6 +303,7 @@ const DeleteRecPopup = ({ classes,
         <Dialog
             classes={classes}
             open={isOpen}
+            childrenStyle={classes.h50v}
             title={
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
@@ -325,7 +326,7 @@ const DeleteRecPopup = ({ classes,
             onClose={onClose}
             onCancel={onClose}
             onConfirm={() => setConfirm(true)}
-            customContainerStyle=""
+            customContainerStyle={classes.addRecipientDialog}
         >
             <Box style={{ minWidth: 500 }}>
                 {DropBox(classes)}

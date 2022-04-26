@@ -331,6 +331,7 @@ const UnSubRecPopup = ({ classes,
         <Dialog
             classes={classes}
             open={isOpen}
+            childrenStyle={classes.h50v}
             title={
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
@@ -353,7 +354,7 @@ const UnSubRecPopup = ({ classes,
             onClose={onClose}
             onCancel={onClose}
             onConfirm={handleSubmit}
-            customContainerStyle={{}}
+            customContainerStyle={classes.addRecipientDialog}
         >
             <Box style={{ minWidth: 600 }}>
                 {DropBox(classes)}
