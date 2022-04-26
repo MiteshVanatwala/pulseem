@@ -279,7 +279,7 @@ AddGroupPopUp.propTypes = {
     classes: PropTypes.object,
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    onCreateGroupResponse: PropTypes.func.isRequired,
+    //onCreateGroupResponse: PropTypes.func.isRequired,
     windowSize: PropTypes.string.isRequired,
     ToastMessages: PropTypes.object.isRequired,
     setToastMessage: PropTypes.func.isRequired,
