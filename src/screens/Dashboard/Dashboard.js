@@ -10,7 +10,6 @@ import RecipientChart from '../../components/Charts/RecipientChart';
 import PulseemTips from '../../components/Tips/PulseemTips';
 import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
-import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { getCookie } from '../../helpers/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
 
@@ -22,8 +21,7 @@ const DashboardScreen = ({ classes }) => {
 
   useEffect(() => {
     const initialize = async () => {
-      await dispatch(getCommonFeatures());
-      if (accountFeatures && document.referrer.toLocaleLowerCase().includes('login.aspx')) {
+      if (document.referrer.toLocaleLowerCase().includes('login.aspx')) {
         init2FA();
       }
     }
@@ -32,7 +30,7 @@ const DashboardScreen = ({ classes }) => {
 
   const init2FA = () => {
     let subAccountSettings = getCookie("subAccountSettings");
-    if (subAccountSettings && subAccountSettings.TwoFactorAuthEnabled === null && accountFeatures.includes('40')) {
+    if (subAccountSettings && subAccountSettings.TwoFactorAuthEnabled === null) {
       let userSelection = getCookie("2faPopup");
       if (!userSelection && userSelection !== false) {
         setShowTFA(true);
