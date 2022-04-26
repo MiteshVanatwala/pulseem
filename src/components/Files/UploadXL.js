@@ -207,7 +207,6 @@ const UploadXL = ({
                             }
                             b.pop();
                             settypedData(b);
-                            setareaData(b)
                             settotalRecords(b.length)
 
                             let dummyArr = [];
@@ -299,7 +298,6 @@ const UploadXL = ({
                                     }
                                     b.pop();
                                     settypedData(b);
-                                    setareaData(b)
 
                                     let ddc = [];
                                     for (let i in resultCsv[0]) {
