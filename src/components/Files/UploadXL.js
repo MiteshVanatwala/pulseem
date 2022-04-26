@@ -129,26 +129,35 @@ const UploadXL = ({
         }
     };
     const areaChange = (e) => {
-        let enteredValue = e.target.value.split("\n")
+        var clipboardData, pastedData;
+        // Stop data actually being pasted into div
+        e.stopPropagation();
+        e.preventDefault();
+        // Get pasted data via clipboard API
+        clipboardData = e.clipboardData || window.clipboardData;
+        if (clipboardData) {
+            pastedData = clipboardData.getData('Text');
+        }
+        else {
+            pastedData = e.target.value;
+        }
+
+        let enteredValue = pastedData.split("\n")
         const records = enteredValue.filter((r) => { return r !== "" });
-        settotalRecords(records.length)
-        setareaData(e.target.value);
-        setdropClick(false);
-    };
-    const handleUploadClick = () => {
-        hiddenFileInput.current.click();
-    };
-    const changeHandler = (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        setFileToUpload(event.target.files[0]);
-        setIsFilePicked(true);
-        handleFiles(event);
-        return false;
+        settotalRecords(records.length);
+        settypedData(records);
+        if (records.length < 100) {
+            setareaData(pastedData);
+            setdropClick(false);
+        }
+        else {
+            handlePasted(pastedData);
+            setdropClick(true);
+        }
     };
 
-    const handlePasted = () => {
-        let temp = areaData;
+    const handlePasted = (value) => {
+        let temp = value ?? areaData;
         let a = temp.split("\n").filter(empty => empty);
         let b = [];
         let cols = 0;
