@@ -131,6 +131,7 @@ const AddRecipientPopup = ({ classes,
             else {
                 if (e.target.name === "Email") {
                     e.target.value = e.target.value.replace(/ /g, "")
+                    // e.target.value = e.target.value.split('').reverse().join('')
                 }
                 setAddRecipientData({
                     ...addRecipientData, [e.target.name]: e.target.value
@@ -388,6 +389,13 @@ const AddRecipientPopup = ({ classes,
                             helperText={errors.Email}
                             onBlur={handleBlur}
                             maxlength={100}
+                            inputProps={{
+                                type: "email",
+                                style: {
+                                    direction: 'ltr',
+                                    textAlign: isRTL ? 'right' : 'left'
+                                }
+                            }}
                         />,
                         gridSize: { xs: 12, sm: 9 }
                     }
