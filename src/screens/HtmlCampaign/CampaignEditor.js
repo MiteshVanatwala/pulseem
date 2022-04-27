@@ -377,6 +377,7 @@ const CampaignEditor = ({ classes, ...props }) => {
           break;
         }
         case 406: {
+          setDialog(null);
           setToastMessage(ToastMessages.RECIPIENT_BLOCKED);
           break;
         }
