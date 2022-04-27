@@ -28,6 +28,12 @@ const TestSend = ({
 
     const handleRecipient = (e) => {
         setRecipient(e.target.value);
+        if(e.target.value === '') {
+          e.target.style.direction = null;
+        }
+        else{
+          e.target.style.direction = "ltr";
+        }
     }
     const validateEmail = () => {
       emailRef.current.classList.remove('error');
@@ -65,7 +71,14 @@ const TestSend = ({
                 value={recipient}
                 onChange={handleRecipient}
                 className={clsx(classes.textField, classes.emailField)}
-                style={{ width: '100%' }}
+                onBlur={(e) => {
+                  if(e.target.value === ''){
+                    e.target.style.direction = null;
+                  }
+                  else{
+                    e.target.style.direction = "ltr";
+                  }
+                }}
                 placeholder={t('common.Email')}
                 autoFocus
                 ref={emailRef}
