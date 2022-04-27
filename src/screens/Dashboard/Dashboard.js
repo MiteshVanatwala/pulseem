@@ -12,6 +12,7 @@ import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
 import { getCookie } from '../../helpers/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
+import { getCommonFeatures } from '../../redux/reducers/commonSlice'
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL, accountFeatures } = useSelector(state => state.core);
@@ -28,8 +29,12 @@ const DashboardScreen = ({ classes }) => {
     initialize();
   }, [dispatch, accountFeatures])
 
-  const init2FA = () => {
-    let subAccountSettings = getCookie("subAccountSettings");
+  const init2FA = async () => {
+    let subAccountSettings = getCookie('subAccountSettings');
+    if(!subAccountSettings) {
+      let res = await dispatch(getCommonFeatures());
+      subAccountSettings = res.payload.SubAccountSettings;
+    }
     if (subAccountSettings && subAccountSettings.TwoFactorAuthEnabled === null) {
       let userSelection = getCookie("2faPopup");
       if (!userSelection && userSelection !== false) {
