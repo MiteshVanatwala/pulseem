@@ -55,6 +55,15 @@ export const isClalAccount = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
+  export const getAccountFeatures = createAsyncThunk(
+    '/GetAccountFeatures', async (_, thunkAPI) => {
+      try {
+        const response = await instence.get(`/GetAccountFeatures`);
+        return response.data
+      } catch (error) {
+        return thunkAPI.rejectWithValue({ error: error.message });
+      }
+    });
 export const getCommonFeatures = createAsyncThunk(
   'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
     try {
