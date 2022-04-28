@@ -235,11 +235,9 @@ const CampaignEditor = ({ classes, ...props }) => {
       contentWidth: "600px",
       preheaderText: ""
     });
-    editorRef.current.exportHtml(async (data) => {
-      if (!campaign.JsonData && !campaign.HtmlData) {
-        saveDesign(false, null, false);
-      }
-    });
+    if (!campaign.JsonData && !campaign.HtmlData) {
+      saveDesign(false, null, false);
+    }
   }
   const onLoad = () => {
     try {
