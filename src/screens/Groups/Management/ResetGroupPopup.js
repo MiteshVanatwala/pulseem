@@ -29,6 +29,7 @@ const ResetGroupPopup = ({
                 message: '',
                 Func: new Promise(async (resolutionFunc, rejectionFunc) => {
                     await resolutionFunc(getData());
+                    onClose();
                 })
             },
             'S_400': {

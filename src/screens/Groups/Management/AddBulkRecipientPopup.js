@@ -32,28 +32,11 @@ const AddBulkRecipientPopup = ({ classes,
         <Dialog
             classes={classes}
             open={isOpen}
-
+            childrenStyle={classes.h50v}
             title={
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
                         {t('recipient.bulkImportTitle')}
-                        {/* <CustomTooltip
-                            isSimpleTooltip={false}
-                            interactive={true}
-                            classes={{
-                                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-                                arrow: classes.fBlack,
-                            }}
-                            arrow={true}
-                            // style={{ fontSize: 18 }}
-                            placement={"top"}
-                            title={<Typography noWrap={false}>{t('recipient.bulkRecUpldTooltipText')}</Typography>}
-                            text={t('recipient.bulkRecUpldTooltipText')}
-                        >
-                            <span >
-                                <BsInfoCircleFill className={classes.plr10} size={24} style={{ color: '#000' }} />
-                            </span>
-                        </CustomTooltip> */}
                     </Box>
                     <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">

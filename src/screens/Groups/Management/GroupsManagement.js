@@ -774,10 +774,6 @@ const GroupsManagement = ({ classes }) => {
         classes={classes}
         isOpen={dialog === DialogType.UNSUB_RECIPIENT}
         onClose={() => { setDialog(null); setSelectedGroups([]); }}
-        setLoader={setLoader}
-        windowSize={windowSize}
-        ToastMessages={ToastMessages}
-        setToastMessage={setToastMessage}
         handleResponses={(response, actions) => handleResponses(response, actions)}
       />}
       {dialog === DialogType.DELETE_RECIPIENT && <DeleteRecPopup

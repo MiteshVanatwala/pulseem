@@ -331,6 +331,7 @@ const UnSubRecPopup = ({ classes,
         <Dialog
             classes={classes}
             open={isOpen}
+            childrenStyle={classes.h50v}
             title={
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
