@@ -47,6 +47,7 @@ import DeleteRecPopup from "./DeleteRecPopup";
 import EditGroupPopup from "./EditGroupPopup";
 import ResetGroupPopup from "./ResetGroupPopup";
 import { Dialog } from '../../../components/managment/index';
+import SimplyClubPupup from "./SimplyClubPupup";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -118,7 +119,8 @@ const GroupsManagement = ({ classes }) => {
     MESSAGE: "message",
     SUMMARY: "summary",
     EXPORT_ALL: "exportAll",
-    EXPORT_SELECTED: "exportSelected"
+    EXPORT_SELECTED: "exportSelected",
+    SIMPLY_CLUB: "simplyclub"
   };
 
   const TABLE_HEAD = [
@@ -437,6 +439,17 @@ const GroupsManagement = ({ classes }) => {
             {t("recipient.unsubscribe")}
           </Button>
         </Grid>
+        {/* <Grid item xs={windowSize === "xs" && 12}>
+          <Button
+            variant="contained"
+            size="medium"
+            className={clsx(classes.actionButton, classes.actionButtonRed)}
+            onClick={() => setDialog(DialogType.SIMPLY_CLUB)}
+          >
+            {t("recipient.externalImport")}
+          </Button>
+        </Grid> */}
+
         {/* <Grid item xs={windowSize === 'xs' && 12}> */}
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
@@ -798,6 +811,15 @@ const GroupsManagement = ({ classes }) => {
         classes={classes}
         isOpen={dialog === DialogType.MESSAGE}
         onClose={() => { setDialog(null); setSelectedGroups([]); getData(); }}
+        windowSize={windowSize}
+        title={responseMessage.title}
+        message={responseMessage.message}
+        summary={responseMessage.summary}
+      />
+      <SimplyClubPupup
+        classes={classes}
+        isOpen={dialog === DialogType.SIMPLY_CLUB}
+        onClose={() => setDialog(null)}
         windowSize={windowSize}
         title={responseMessage.title}
         message={responseMessage.message}
