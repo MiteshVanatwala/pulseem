@@ -553,7 +553,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           scope="row"
           classes={{ root: classes.tableCellRoot }}
           className={classes.flex12}>
-          {renderCellIcons(row)}
+          {accountFeatures && renderCellIcons(row)}
 
         </TableCell>
       </TableRow>
@@ -777,7 +777,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderHeader()}
       {renderSearchLine()}
       {renderManagmentLine()}
-      {accountFeatures && renderTable()}
+      {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
       <Loader isOpen={showLoader} />
