@@ -28,9 +28,10 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { getCookie } from '../../../helpers/cookies'
 
 const NewsletterManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage, accountFeatures } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage } = useSelector(state => state.core);
   const { newslettersData, newslettersDataError, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -49,7 +50,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const history = useCtrlHistory()
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const accountFeatures = getCookie("accountFeatures")
   moment.locale(language)
 
   const getData = async () => {
