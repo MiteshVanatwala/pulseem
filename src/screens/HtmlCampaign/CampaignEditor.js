@@ -76,7 +76,6 @@ const CampaignEditor = ({ classes, ...props }) => {
         setDataLoaded(true);
       })
     }
-
   }, [dataReady]);
   useEffect(() => {
     if (dataLoaded) {
@@ -235,6 +234,11 @@ const CampaignEditor = ({ classes, ...props }) => {
       backgroundColor: "#e7e7e7",
       contentWidth: "600px",
       preheaderText: ""
+    });
+    editorRef.current.exportHtml(async (data) => {
+      if (!campaign.JsonData && !campaign.HtmlData) {
+        saveDesign(false, null, false);
+      }
     });
   }
   const onLoad = () => {
