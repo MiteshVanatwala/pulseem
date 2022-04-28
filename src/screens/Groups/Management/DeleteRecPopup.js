@@ -269,7 +269,7 @@ const DeleteRecPopup = ({ classes,
                 spellCheck="false"
                 autoComplete="off"
                 className={
-                    clsx(highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon), classes.customScroll)
+                    clsx(highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon), classes.customScroll, classes.sidebar)
                 }
                 value={areaData}
                 onDragEnter={() => {

@@ -85,7 +85,7 @@
   "unsubscribed": {
     "succeeded": "The recipients successfully unsubscribed from the selected groups"
   },
-  "bulkRecUpldTooltipText": "You are able to upload up to 600,000 recipients at once",
+  "bulkRecUpldTooltipText": "To upload your recipients to our system, add titles to the columns below. Please note: you must add a title for either email or cellphone",
   "reactiveUnsubscriber": "Reactivate removed recipient",
   "advanceOptions": "Advanced Options",
   "phone&email": "Phone number & email",

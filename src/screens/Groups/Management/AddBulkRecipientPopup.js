@@ -1,10 +1,12 @@
-import { Box, makeStyles } from "@material-ui/core";
+import { Box, makeStyles, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../components/managment/Dialog";
 import { UploadSettings } from "../tempConstants";
 import UploadXL from '../../../components/Files/UploadXL'
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import clsx from 'clsx';
+import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
+import { BsFillInfoCircleFill } from "react-icons/bs";
 
 const useStyles = makeStyles({
     contentBox: {
@@ -37,6 +39,23 @@ const AddBulkRecipientPopup = ({ classes,
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
                         {t('recipient.bulkImportTitle')}
+                        <CustomTooltip
+                            isSimpleTooltip={false}
+                            interactive={true}
+                            classes={{
+                                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                                arrow: classes.fBlack,
+                            }}
+                            arrow={true}
+                            // style={{ fontSize: 18 }}
+                            placement={"top"}
+                            title={<Typography noWrap={false}>{t('recipient.bulkRecUpldTooltipText')}</Typography>}
+                            text={t('recipient.bulkRecUpldTooltipText')}
+                        >
+                            <span >
+                                <BsFillInfoCircleFill className={classes.plr10} size={24} style={{ color: '#000' }} />
+                            </span>
+                        </CustomTooltip>
                     </Box>
                     <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
