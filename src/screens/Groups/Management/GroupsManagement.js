@@ -439,7 +439,7 @@ const GroupsManagement = ({ classes }) => {
             {t("recipient.unsubscribe")}
           </Button>
         </Grid>
-        {/* <Grid item xs={windowSize === "xs" && 12}>
+        <Grid item xs={windowSize === "xs" && 12}>
           <Button
             variant="contained"
             size="medium"
@@ -448,7 +448,7 @@ const GroupsManagement = ({ classes }) => {
           >
             {t("recipient.externalImport")}
           </Button>
-        </Grid> */}
+        </Grid>
 
         {/* <Grid item xs={windowSize === 'xs' && 12}> */}
         <Grid item xs={windowSize === "xs" && 12}>

@@ -22,5 +22,8 @@
   "autoResponderConnected": "לקבוצה זו משוייך Autoresponder",
   "webformConnected": "לקבוצה זו משוייך דף נחיתה",
   "invalidGroupId": "מספר המזהה של הקבוצה אינו תקין",
-  "noGroupFound": "לא נמצאו קבוצות"
+  "noGroupFound": "לא נמצאו קבוצות",
+  "simplyClubLoginTitle": "Third Party Login",
+  "externalImportTitle": "Import External Groups",
+  "externalImportDesc": "Select groups to import into pulseem system"
 }

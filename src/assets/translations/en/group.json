@@ -22,5 +22,8 @@
   "autoResponderConnected": "Autoresponder attached to this group",
   "webformConnected": "Landing page atteched to this group",
   "invalidGroupId": "Invalid Group ID",
-  "noGroupFound": "No groups found"
+  "noGroupFound": "No groups found",
+  "simplyClubLoginTitle": "Third Party Login",
+  "externalImportTitle": "Import External Groups",
+  "externalImportDesc": "Select groups to import into pulseem system"
 }

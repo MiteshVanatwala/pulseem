@@ -89,9 +89,18 @@ export const unsubRecipients = createAsyncThunk(
         }
     });
 export const deleteRecipients = createAsyncThunk(
-    'Client//DeleteRecipientsFromGroups', async (payload, thunkAPI) => {
+    'Client/DeleteRecipientsFromGroups', async (payload, thunkAPI) => {
         try {
             const response = await instence.delete(`Client/DeleteRecipientsFromGroups`, { data: payload });
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+export const getGroupsForSimplyClub = createAsyncThunk(
+    'Group/GetExternalGroups', async (payload, thunkAPI) => {
+        try {
+            const response = await instence.post(`Group/GetExternalGroups`, { ...payload });
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });

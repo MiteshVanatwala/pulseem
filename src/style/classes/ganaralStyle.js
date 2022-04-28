@@ -440,6 +440,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   line1: {
     lineHeight: 1,
   },
+  bgWhite: {
+    backgroundColor: "#ffffff !important",
+  },
   bgBrown: {
     backgroundColor: "#636363",
   },

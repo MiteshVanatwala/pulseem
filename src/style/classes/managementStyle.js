@@ -172,6 +172,30 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       },
     },
   },
+
+  noBorderTableHead: {
+    backgroundColor: "#ffffff",
+    // border: 'none'
+    // borderColor: "transparent",
+  },
+  tableCollapseHead: {
+    fontWeight: "bold",
+    borderLeft: "unset",
+    borderRight: "unset",
+    borderTop: "unset",
+    // borderBottom: "unset",
+    fontSize: 16,
+    paddingBottom: 0,
+  },
+  tableRowCollapse: {
+    "&.directEmailRowCollapse": {
+      "&:nth-of-type(4n+4)": {
+        backgroundColor: "#E3E9F0",
+      },
+    },
+  },
+
+
   cellExpand: {
     width: 30,
     padding: "8px 0px",
