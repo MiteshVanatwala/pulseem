@@ -61,6 +61,7 @@ const GroupsManagement = ({ classes }) => {
   } = useSelector((state) => state.core);
 
   const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
+  const { accountFeatures } = useSelector(state => state.core)
   const { t } = useTranslation();
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [searchStr, setSearchStr] = useState("");
@@ -439,16 +440,16 @@ const GroupsManagement = ({ classes }) => {
             {t("recipient.unsubscribe")}
           </Button>
         </Grid>
-        <Grid item xs={windowSize === "xs" && 12}>
+        {accountFeatures.includes('15') && (<Grid item xs={windowSize === "xs" && 12}>
           <Button
             variant="contained"
             size="medium"
-            className={clsx(classes.actionButton, classes.actionButtonRed)}
+            className={clsx(classes.actionButton, classes.actionButtonLightGreen)}
             onClick={() => setDialog(DialogType.SIMPLY_CLUB)}
           >
             {t("recipient.externalImport")}
           </Button>
-        </Grid>
+        </Grid>)}
 
         {/* <Grid item xs={windowSize === 'xs' && 12}> */}
         <Grid item xs={windowSize === "xs" && 12}>
@@ -816,7 +817,7 @@ const GroupsManagement = ({ classes }) => {
         message={responseMessage.message}
         summary={responseMessage.summary}
       />
-      <SimplyClubPupup
+      {accountFeatures.includes('15') && (<SimplyClubPupup
         classes={classes}
         isOpen={dialog === DialogType.SIMPLY_CLUB}
         onClose={() => setDialog(null)}
@@ -824,7 +825,8 @@ const GroupsManagement = ({ classes }) => {
         title={responseMessage.title}
         message={responseMessage.message}
         summary={responseMessage.summary}
-      />
+        setToastMessage={setToastMessage}
+      />)}
       {renderConfirmDialog()}
       <Loader isOpen={showLoader} />
     </DefaultScreen>

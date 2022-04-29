@@ -106,6 +106,15 @@ export const getGroupsForSimplyClub = createAsyncThunk(
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
+export const getExternalClientsByGroups = createAsyncThunk(
+    'Group/GetExternalClientsByGroups', async (payload, thunkAPI) => {
+        try {
+            const response = await instence.post(`Group/GetExternalClientsByGroups`, { ...payload });
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
 
 
 export const groupSlice = createSlice({
@@ -159,6 +168,12 @@ export const groupSlice = createSlice({
             state.error = error.message;
         })
         builder.addCase(resetGroups.rejected, (state, { error }) => {
+            state.error = error.message;
+        })
+        builder.addCase(getGroupsForSimplyClub.rejected, (state, { error }) => {
+            state.error = error.message;
+        })
+        builder.addCase(getExternalClientsByGroups.rejected, (state, { error }) => {
             state.error = error.message;
         })
     }

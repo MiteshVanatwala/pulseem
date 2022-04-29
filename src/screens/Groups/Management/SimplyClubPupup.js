@@ -1,13 +1,19 @@
-import { Box, Typography, TextField, InputAdornment, IconButton, makeStyles, TableRow, TableCell, Checkbox, FormControlLabel, Grid } from '@material-ui/core'
+import { Box, Typography, TextField, InputAdornment, IconButton, makeStyles, TableRow, TableCell, Checkbox, FormControlLabel, Grid, Tooltip } from '@material-ui/core'
 import { Visibility, VisibilityOff } from '@material-ui/icons'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { AiOutlineCloudUpload } from 'react-icons/ai';
+import { AiOutlineClose, AiOutlineCloudUpload } from 'react-icons/ai';
 import { Dialog } from "../../../components/managment/Dialog";
-import { getGroupsForSimplyClub, resetGroups } from '../../../redux/reducers/groupSlice';
+import { getExternalClientsByGroups, getGroupsForSimplyClub, resetGroups } from '../../../redux/reducers/groupSlice';
 import { useDispatch } from 'react-redux';
 import DataTable from '../../../components/Table/DataTable';
+import { simplyCLubClientData, UploadSettings } from '../tempConstants';
+import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
+import ColumnAdjustmentDialog from '../../../components/Files/ColumnAdjustmentDialog';
+import {
+    createGroup, addRecipients
+} from "../../../redux/reducers/groupSlice";
 
 
 
@@ -31,6 +37,18 @@ const useStyles = makeStyles({
     },
     mb45: {
         marginBottom: 45
+    },
+    customWidth: {
+        maxWidth: 200,
+        backgroundColor: "black",
+        fontSize: "14px",
+        textAlign: 'center'
+    },
+    noMaxWidth: {
+        maxWidth: "none",
+    },
+    h100: {
+        height: 100
     }
 });
 
@@ -41,7 +59,7 @@ const SimplyClubPupup = ({
     isOpen,
     windowSize,
     getData,
-    // selectedGroup = { GroupID: null },
+    setToastMessage,
     handleResponses = (response, actions) => null
 }) => {
 
@@ -62,6 +80,7 @@ const SimplyClubPupup = ({
         Password: ''
     })
     const [showGroups, setShowGroups] = useState(false)
+    const [showClients, setShowClients] = useState(false)
     const [groups, setGroups] = useState([
         {
             GroupID: 1,
@@ -118,6 +137,43 @@ const SimplyClubPupup = ({
     ])
     const [selectedGroups, setSelectedGroups] = useState([])
 
+    const [ClientData, setClientData] = useState([...simplyCLubClientData])
+    const [contacts, setContacts] = useState([])
+    const [headers, setheaders] = useState([]);
+    const [dropIndex, setdropIndex] = useState(-1);
+    const [selectArray, setSelectArray] = useState([]);
+    const [filteredDAta, setFilteredData] = useState([]);
+    const [columnValidate, setcolumnValidate] = useState(false);
+
+
+    useEffect(() => {
+        const preload = () => {
+            let totalFields = 5;
+            const data = ClientData.reduce((prev, next) => {
+                let restELementsLen = 5 - prev.length
+                let restElements = Object.values(next)[0];
+                let tempFields = restElements.reduce((prev, next) => Object.keys(next).length, 0)
+                if (totalFields < tempFields) {
+                    totalFields = tempFields
+                }
+                if (restElements.length < restELementsLen) {
+                    restELementsLen = restElements.length
+                }
+                let finalArr = restElements.slice(0, restELementsLen);
+                return [...prev, ...finalArr]
+            }, [])
+
+            setFilteredData(data)
+
+            let tempHeaders = Array.from({ length: totalFields }, (v, i) => t("sms.adjustTitle"))
+
+            setheaders(tempHeaders)
+        }
+        preload()
+    }, [])
+
+
+
     const TABLE_HEAD = [
         {
             label: t("siteTracking.selectGroups"),
@@ -150,55 +206,194 @@ const SimplyClubPupup = ({
         }
     }
 
-    const handleSubmit = async () => {
-        setShowGroups(true)
+    const handleLogin = async () => {
         console.log("USER:", user)
         const response = await dispatch(getGroupsForSimplyClub(user))
-        console.log("Groups:", response)
+        handleResponses(response, {
+            'S_200': {
+                code: 200,
+                message: 'group.responses.serverFoundWithNoResponse',
+                Func: () => null
+            },
+            'S_201': {
+                code: 201,
+                message: 'group.responses.SuccessTitle',
+                Func: () => {
+                    setGroups(response?.Groups)
+                    setShowGroups(true)
+                }
+            },
+            'S_401': {
+                code: 401,
+                message: 'group.responses.featureNotAllowed',
+                Func: () => null
+            },
+            'S_404': {
+                code: 404,
+                message: 'recipient.responses.notFound',
+                Func: () => null
+            },
+            'S_500': {
+                code: 500,
+                message: 'common.ErrorOccured',
+                Func: () => null
+            },
+            'default': {
+                message: '',
+                Func: () => null
+            },
+        })
     }
 
-    // const handleSubmit = async () => {
-    //     const response = await new Promise((resolve, reject) => resolve(dispatch(resetGroups(selectedGroup))))
+    const handleGetClients = async () => {
+        const response = await dispatch(getExternalClientsByGroups({ ...user, Groups: [...selectedGroups] }))
+        handleResponses(response, {
+            'S_200': {
+                code: 200,
+                message: 'group.responses.serverFoundWithNoResponse',
+                Func: () => null
+            },
+            'S_201': {
+                code: 201,
+                message: 'group.responses.SuccessTitle',
+                Func: () => {
+                    setClientData(response?.Clients)
+                    setShowClients(true)
+                }
+            },
+            'S_401': {
+                code: 401,
+                message: 'group.responses.featureNotAllowed',
+                Func: () => null
+            },
+            'S_404': {
+                code: 404,
+                message: 'recipient.responses.notFound',
+                Func: () => null
+            },
+            'S_500': {
+                code: 500,
+                message: 'common.ErrorOccured',
+                Func: () => null
+            },
+            'default': {
+                message: '',
+                Func: () => null
+            },
+        })
+    }
 
-    //     handleResponses(response, {
-    //         'S_201': {
-    //             code: 201,
-    //             message: '',
-    //             Func: new Promise(async (resolutionFunc, rejectionFunc) => {
-    //                 await resolutionFunc(getData());
-    //                 onClose();
-    //             })
-    //         },
-    //         'S_400': {
-    //             code: 400,
-    //             message: '',
-    //             Func: () => null
-    //         },
-    //         'S_401': {
-    //             code: 401,
-    //             message: '',
-    //             Func: () => null
-    //         },
-    //         'S_405': {
-    //             code: 405,
-    //             message: '',
-    //             Func: () => null
-    //         },
-    //         'S_422': {
-    //             code: 422,
-    //             message: '',
-    //             Func: () => null
-    //         },
-    //         'default': {
-    //             message: '',
-    //             Func: () => null
-    //         },
-    //     })
+    // const handleDataManual = async () => {
+    //     if (manualUploadValidationscheck()) {
+    //         let requestPayload = [];
+
+    //         if (typedData.length !== 0) {
+    //             for (let j = 0; j < typedData.length; j++) {
+    //                 requestPayload.push({});
+    //                 for (let k = 0; k < typedData[j].length; k++) {
+    //                     if (headers[k] && headers[k] !== t("sms.adjustTitle")) {
+    //                         let key = translateHebrewColumns(headers[k].toLocaleString().replaceAll(" ", ""));
+    //                         let obj = requestPayload[j];
+    //                         obj[key] = typedData[j][k].trim();
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //         else {
+    //             for (let j = 0; j < contacts.length; j++) {
+    //                 requestPayload.push({});
+    //                 let i = 0;
+
+    //                 for (let k in contacts[j]) {
+    //                     if (headers[i] && headers[i] !== t("sms.adjustTitle")) {
+    //                         let key = translateHebrewColumns(headers[i].toLocaleString().replaceAll(" ", ""));
+    //                         let obj = requestPayload[j];
+    //                         obj[key] = contacts[j][k].trim();
+    //                     }
+    //                     i++;
+    //                 }
+    //             }
+    //         }
+
+    //         // Set mapping
+    //         const mapping = headers.map((h, idx) => {
+    //             if (h != t("sms.adjustTitle")) { return { Index: idx, Title: translateHebrewColumns(h.toLocaleString().replaceAll(' ', '')) } }
+    //         }).filter(function (x) {
+    //             return x !== undefined;
+    //         });
+
+    //         setDialogType(null);
+    //         setLoader(true);
+    //         let r = null;
+
+    //         if (fileToUpload !== null && requestPayload.length >= 5000) {
+    //             const formData = new FormData();
+    //             formData.append("file", fileToUpload);
+    //             formData.append("groupids", uploadToGroups);
+    //             formData.append("mapping", JSON.stringify(mapping));
+    //             r = await dispatch(addRecipients(formData))
+    //         }
+    //         else {
+    //             const finalPayload = {
+    //                 ClientsData: requestPayload,
+    //                 GroupIds: uploadToGroups,
+    //                 Mapping: mapping
+    //             }
+    //             r = await dispatch(addRecipient(finalPayload))
+    //         }
+
+    //         setLoader(false);
+    //         setFileToUpload(null);
+    //         onDone(r);
+    //     }
     // }
 
+    const manualUploadValidationscheck = () => {
+        let isValid = true;
+        let groupNameExist = false;
+        let columnHasValue = false;
+        headers.forEach((value) => {
+            if (value == t("common.cellphone") || value == 'Cellphone' || value == t("common.email") || value == 'Email') {
+                columnHasValue = true
+            }
+        });
 
+        if (columnHasValue === false) {
+            isValid = false;
+            setToastMessage({ severity: 'error', color: 'error', message: t('recipient.email_cell_notProvided'), showAnimtionCheck: false })
+            setcolumnValidate(true);
+        }
 
+        return isValid
+    }
 
+    const handleImportRecipients = () => {
+
+        if (manualUploadValidationscheck()) {
+            selectedGroups.forEach(element => {
+                new Promise((resolve, reject) => resolve(dispatch(createGroup({ GroupName: element.GroupName })))).then((res) => {
+                    if (res.Message) {
+                        let tempClients = ClientData.find(obj => {
+
+                            let tempGrpKey = Object.keys(obj)[0]
+                            let tempGrpVal = Object.values(obj)[0]
+
+                            if (tempGrpKey === element.GroupName) {
+                                return tempGrpVal || []
+                            }
+                        })
+                        const Payload = {
+                            ClientsData: tempClients || [],
+                            GroupIds: [res.Message],
+                            // Mapping: mapping
+                        }
+
+                        new Promise((resolve, reject) => resolve(dispatch(addRecipients(Payload))))
+                    }
+                })
+            })
+        }
+    }
 
     const GroupDialog = () => {
 
@@ -208,15 +403,11 @@ const SimplyClubPupup = ({
                 open={showGroups}
                 onClose={() => setShowGroups(false)}
                 onCancel={() => setShowGroups(false)}
-                onConfirm={() => setShowGroups(false)}
+                onConfirm={() => handleGetClients()}
                 icon={< div className={classes.dialogIconContent} >
                     {'\uE0D5'}
                 </div >}
-                // onConfirm={onClose}
-
-                // customContainerStyle={clsx(localClasses.dialogContainer)}
                 childrenStyle={{ margin: 0 }}
-
                 title={
                     <>
                         <Typography className={clsx(classes.reducedTitle, classes.resetDialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} style={{ fontWeight: 400 }}>
@@ -273,6 +464,22 @@ const SimplyClubPupup = ({
         )
     }
 
+    const ColumnAdjustmentPopup = () => {
+        return (
+            <ColumnAdjustmentDialog
+                classes={classes}
+                isOpen={showClients}
+                settings={UploadSettings.GROUPS}
+                onClose={() => setShowClients(false)}
+                onCancel={() => setShowClients(false)}
+                onConfirm={() => handleImportRecipients()}
+                data={filteredDAta}
+                headers={headers}
+                setheaders={setheaders}
+            />
+        )
+    }
+
     return (
         <>
             <Dialog
@@ -280,18 +487,17 @@ const SimplyClubPupup = ({
                 open={isOpen}
                 onClose={onClose}
                 onCancel={onClose}
-                onConfirm={handleSubmit}
+                onConfirm={handleLogin}
                 // onConfirm={onClose}
-                customContainerStyle={{}}
+                // customContainerStyle={localClasse}
                 icon={< div className={classes.dialogIconContent} >
                     {'\uE0D5'}
                 </div >}
-                childrenStyle={localClasses.mb45}
             >
                 <Typography className={clsx(classes.reducedTitle, classes.resetDialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} style={{ fontWeight: 400 }}>
                     {t("group.simplyClubLoginTitle")}
                 </Typography>
-                <Box className={clsx(classes.flex, classes.mt4)}>
+                <Box className={clsx(classes.flex, classes.mt4, localClasses.h100)}>
                     <Box
                         className={clsx(
                             classes.customDialogContentBox,
@@ -301,7 +507,7 @@ const SimplyClubPupup = ({
                         style={{ marginInline: 10 }}
                     >
                         <Box className={classes.flex1} >
-                            <Typography>Username:</Typography>
+                            <Typography>{t("common.username")}:</Typography>
                         </Box>
                         <Box className={classes.flex2} >
                             <TextField
@@ -326,7 +532,7 @@ const SimplyClubPupup = ({
                         style={{ marginInline: 10 }}
                     >
                         <Box className={classes.flex1} >
-                            <Typography>Password:</Typography>
+                            <Typography>{t("common.password")}:</Typography>
                         </Box>
                         <Box className={classes.flex2} >
                             <TextField
@@ -357,6 +563,7 @@ const SimplyClubPupup = ({
                 </Box>
             </Dialog>
             {showGroups && GroupDialog()}
+            {showClients && ColumnAdjustmentPopup()}
         </>
     )
 }

@@ -306,6 +306,8 @@
   "SendAutomaticallyWinningCampaign": "שליחת קמפיין מנצח אוטומטית",
   "ClickForResults": "לחץ/י לתוצאות",
   "EnterUsernameAndPassword": "הקלד את שם המשתמש והסיסמא",
+  "userName": "Username",
+  "password": "Password",
   "FileUploadedDesc": "הקובץ נטען אל הקבוצות הבאות",
   "Login": "כניסה למערכת",
   "String1": "סיכום כללי",
