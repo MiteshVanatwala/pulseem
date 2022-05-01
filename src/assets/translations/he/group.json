@@ -23,12 +23,12 @@
   "webformConnected": "לקבוצה זו משוייך דף נחיתה",
   "invalidGroupId": "מספר המזהה של הקבוצה אינו תקין",
   "noGroupFound": "לא נמצאו קבוצות",
-  "simplyClubLoginTitle": "Third Party Login",
-  "externalImportTitle": "Import External Groups",
-  "externalImportDesc": "Select groups to import into pulseem system",
+  "simplyClubLoginTitle": "הכנס את פרטי ההזדהות שלך",
+  "externalImportTitle": "ייבא קבוצות חיצוניות",
+  "externalImportDesc": "בחר קבוצות לייבוא למערכת פולסים",
   "responses": {
-    "success": "Success",
-    "featureNotAllowed": "Feature not allowed / Invalid Api key",
-    "serverFoundWithNoResponse": "Server got the request"
+    "success": "הקבוצות והלקוחות נוספו בהצלחה",
+    "featureNotAllowed": "פיצ'ר לא קיים בחשבון / מפתח API לא תקין",
+    "serverFoundWithNoResponse": "השרת קיבל את הפנייה אך לא החזיר תשובה. נא לפנות לתמיכה."
   }
 }

@@ -3,13 +3,11 @@ import { Visibility, VisibilityOff } from '@material-ui/icons'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { AiOutlineClose, AiOutlineCloudUpload } from 'react-icons/ai';
 import { Dialog } from "../../../components/managment/Dialog";
-import { getExternalClientsByGroups, getGroupsForSimplyClub, resetGroups } from '../../../redux/reducers/groupSlice';
+import { getExternalClientsByGroups, getGroupsForSimplyClub } from '../../../redux/reducers/groupSlice';
 import { useDispatch } from 'react-redux';
 import DataTable from '../../../components/Table/DataTable';
-import { simplyCLubClientData, UploadSettings } from '../tempConstants';
-import { BsChevronDown, BsChevronUp } from 'react-icons/bs';
+import { UploadSettings } from '../tempConstants';
 import ColumnAdjustmentDialog from '../../../components/Files/ColumnAdjustmentDialog';
 import {
     createGroup, addRecipients
@@ -81,69 +79,12 @@ const SimplyClubPupup = ({
     })
     const [showGroups, setShowGroups] = useState(false)
     const [showClients, setShowClients] = useState(false)
-    const [groups, setGroups] = useState([
-        {
-            GroupID: 1,
-            GroupName: 'Group 1'
-        },
-        {
-            GroupID: 2,
-            GroupName: 'Group 2'
-        },
-        {
-            GroupID: 3,
-            GroupName: 'Group 3'
-        },
-        {
-            GroupID: 4,
-            GroupName: 'Group 4'
-        },
-        {
-            GroupID: 5,
-            GroupName: 'Group 5'
-        },
-        {
-            GroupID: 6,
-            GroupName: 'Group 6'
-        },
-        {
-            GroupID: 7,
-            GroupName: 'Group 7'
-        },
-        {
-            GroupID: 8,
-            GroupName: 'Group 8'
-        },
-        {
-            GroupID: 9,
-            GroupName: 'Group 9'
-        },
-        {
-            GroupID: 10,
-            GroupName: 'Group 10'
-        },
-        {
-            GroupID: 11,
-            GroupName: 'Group 11'
-        },
-        {
-            GroupID: 12,
-            GroupName: 'Group 12'
-        },
-        {
-            GroupID: 13,
-            GroupName: 'Group 13'
-        },
-    ])
+    const [groups, setGroups] = useState([])
     const [selectedGroups, setSelectedGroups] = useState([])
 
-    const [ClientData, setClientData] = useState([...simplyCLubClientData])
-    const [contacts, setContacts] = useState([])
+    const [ClientData, setClientData] = useState([]);
     const [headers, setheaders] = useState([]);
-    const [dropIndex, setdropIndex] = useState(-1);
-    const [selectArray, setSelectArray] = useState([]);
     const [filteredDAta, setFilteredData] = useState([]);
-    const [columnValidate, setcolumnValidate] = useState(false);
 
 
     useEffect(() => {
@@ -283,77 +224,11 @@ const SimplyClubPupup = ({
         })
     }
 
-    // const handleDataManual = async () => {
-    //     if (manualUploadValidationscheck()) {
-    //         let requestPayload = [];
-
-    //         if (typedData.length !== 0) {
-    //             for (let j = 0; j < typedData.length; j++) {
-    //                 requestPayload.push({});
-    //                 for (let k = 0; k < typedData[j].length; k++) {
-    //                     if (headers[k] && headers[k] !== t("sms.adjustTitle")) {
-    //                         let key = translateHebrewColumns(headers[k].toLocaleString().replaceAll(" ", ""));
-    //                         let obj = requestPayload[j];
-    //                         obj[key] = typedData[j][k].trim();
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         else {
-    //             for (let j = 0; j < contacts.length; j++) {
-    //                 requestPayload.push({});
-    //                 let i = 0;
-
-    //                 for (let k in contacts[j]) {
-    //                     if (headers[i] && headers[i] !== t("sms.adjustTitle")) {
-    //                         let key = translateHebrewColumns(headers[i].toLocaleString().replaceAll(" ", ""));
-    //                         let obj = requestPayload[j];
-    //                         obj[key] = contacts[j][k].trim();
-    //                     }
-    //                     i++;
-    //                 }
-    //             }
-    //         }
-
-    //         // Set mapping
-    //         const mapping = headers.map((h, idx) => {
-    //             if (h != t("sms.adjustTitle")) { return { Index: idx, Title: translateHebrewColumns(h.toLocaleString().replaceAll(' ', '')) } }
-    //         }).filter(function (x) {
-    //             return x !== undefined;
-    //         });
-
-    //         setDialogType(null);
-    //         setLoader(true);
-    //         let r = null;
-
-    //         if (fileToUpload !== null && requestPayload.length >= 5000) {
-    //             const formData = new FormData();
-    //             formData.append("file", fileToUpload);
-    //             formData.append("groupids", uploadToGroups);
-    //             formData.append("mapping", JSON.stringify(mapping));
-    //             r = await dispatch(addRecipients(formData))
-    //         }
-    //         else {
-    //             const finalPayload = {
-    //                 ClientsData: requestPayload,
-    //                 GroupIds: uploadToGroups,
-    //                 Mapping: mapping
-    //             }
-    //             r = await dispatch(addRecipient(finalPayload))
-    //         }
-
-    //         setLoader(false);
-    //         setFileToUpload(null);
-    //         onDone(r);
-    //     }
-    // }
-
     const manualUploadValidationscheck = () => {
         let isValid = true;
-        let groupNameExist = false;
         let columnHasValue = false;
         headers.forEach((value) => {
-            if (value == t("common.cellphone") || value == 'Cellphone' || value == t("common.email") || value == 'Email') {
+            if (value === t("common.cellphone") || value === 'Cellphone' || value === t("common.email") || value === 'Email') {
                 columnHasValue = true
             }
         });
@@ -361,7 +236,6 @@ const SimplyClubPupup = ({
         if (columnHasValue === false) {
             isValid = false;
             setToastMessage({ severity: 'error', color: 'error', message: t('recipient.email_cell_notProvided'), showAnimtionCheck: false })
-            setcolumnValidate(true);
         }
 
         return isValid
@@ -374,18 +248,17 @@ const SimplyClubPupup = ({
                 new Promise((resolve, reject) => resolve(dispatch(createGroup({ GroupName: element.GroupName })))).then((res) => {
                     if (res.Message) {
                         let tempClients = ClientData.find(obj => {
-
                             let tempGrpKey = Object.keys(obj)[0]
                             let tempGrpVal = Object.values(obj)[0]
 
                             if (tempGrpKey === element.GroupName) {
                                 return tempGrpVal || []
                             }
+                            return [];
                         })
                         const Payload = {
                             ClientsData: tempClients || [],
-                            GroupIds: [res.Message],
-                            // Mapping: mapping
+                            GroupIds: [res.Message]
                         }
 
                         new Promise((resolve, reject) => resolve(dispatch(addRecipients(Payload))))
