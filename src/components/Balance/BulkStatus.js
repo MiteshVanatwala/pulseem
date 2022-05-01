@@ -11,9 +11,8 @@ import { CgShoppingCart } from 'react-icons/cg';
 import CustomTooltip from '../Tooltip/CustomTooltip';
 
 const BulkStatus = ({ classes }) => {
-  const { billingTypeId, accountFeatures } = useSelector(state => state.core)
+  const { billingTypeId, accountFeatures, accountSettings } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
-  const { accountSettings } = useSelector(state => state.common);
   const { username } = useSelector(state => state.user);
   const [isShowSmsPackage, showSmsPackage] = useState(false);
   const [isShowEmailPackage, showEmailPackage] = useState(false);

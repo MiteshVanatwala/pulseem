@@ -380,14 +380,16 @@ const renderRoutes = (classes, history) => {
 
 const App = ({ screenSize }) => {
   const dispatch = useDispatch()
-  const { language, isRTL, windowSize } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
   screenSize && dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
 
     const initFeatures = async () => {
-      const settings = await dispatch(getCommonFeatures());
-      dispatch(setAccountFeatures(settings.payload.Account.AccountFeatures.map(String)));
+      if (!accountSettings) {
+        const settings = await dispatch(getCommonFeatures());
+        dispatch(setAccountFeatures(settings.payload));
+      }
       const response = await dispatch(isClalAccount());
       dispatch(setIsClal(response.payload));
       const smsOldVersion = getCookie('OldVersion')

@@ -84,15 +84,7 @@ export const getCommonFeatures = createAsyncThunk(
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
-    Folders: [],
-    accountSettings: null
-  },
-  extraReducers: builder => {
-    builder
-      .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
-        state.accountSettings = payload;
-        setCookie("accountSettings", payload);
-      })
+    Folders: []
   }
 })
 

@@ -14,8 +14,7 @@ import { getCookie } from '../../helpers/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL } = useSelector(state => state.core);
-  const { accountSettings } = useSelector(state => state.common);
+  const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
   const [showTFA, setShowTFA] = useState(false);
 
