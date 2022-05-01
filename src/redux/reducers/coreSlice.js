@@ -30,10 +30,11 @@ export const coreSlice=createSlice({
       setCookie("isClal", action.payload);
     },
     setAccountFeatures: (state, action) => {
-      state.accountSettings = action.payload;
+      const data=action.payload;
+      state.accountSettings=data;
+      state.accountFeatures=data.Account.AccountFeatures.map(String);
       setCookie("accountSettings", action.payload)
-      state.accountFeatures = action.payload.Account.AccountFeatures.map(String);
-      setCookie("accountFeatures", action.payload.Account.AccountFeatures.map(String));
+      setCookie("accountFeatures", data.Account.AccountFeatures.map(String));
     },
     setLanguage: (state,action) => {
       state.language=action.payload
