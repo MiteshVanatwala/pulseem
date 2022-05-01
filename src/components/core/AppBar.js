@@ -389,7 +389,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
               alt='Logo'
               className={classes.appBarLogo} />
           </Box>
-          {renderAppBar()}
+          {accountSettings !== '' && renderAppBar()}
           <AppBarItem
             classes={classes}
             item={{ title: t('appBar.logout') }}
