@@ -55,20 +55,27 @@ export const isClalAccount = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
-  export const getAccountFeatures = createAsyncThunk(
-    '/GetAccountFeatures', async (_, thunkAPI) => {
-      try {
-        const response = await instence.get(`/GetAccountFeatures`);
-        return response.data
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
-    });
+export const getAccountFeatures = createAsyncThunk(
+  '/GetAccountFeatures', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`/GetAccountFeatures`);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 export const getCommonFeatures = createAsyncThunk(
   'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
     try {
-      const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
-      return JSON.parse(response.data)
+      const settings = getCookie('accountSettings');
+      if (!settings) {
+        const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
+        return JSON.parse(response.data)
+      }
+      else {
+        return settings
+      }
+
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -78,17 +85,16 @@ export const commonSlice = createSlice({
   name: 'common',
   initialState: {
     Folders: [],
-    subAccountSettings: null
+    accountSettings: null
   },
   extraReducers: builder => {
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
-        state.subAccountSettings = payload ?? getCookie('subAccountSettings');
-        setCookie("subAccountSettings", payload.SubAccountSettings);
+        state.accountSettings = payload;
+        setCookie("accountSettings", payload);
       })
   }
 })
-
 
 
 export default commonSlice.reducer

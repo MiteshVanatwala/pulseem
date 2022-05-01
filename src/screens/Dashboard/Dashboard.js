@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
@@ -12,12 +12,11 @@ import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
 import { getCookie } from '../../helpers/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
-import { getCommonFeatures } from '../../redux/reducers/commonSlice'
 
 const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL } = useSelector(state => state.core);
+  const { accountSettings } = useSelector(state => state.common);
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const [showTFA, setShowTFA] = useState(false);
 
   useEffect(() => {
@@ -26,15 +25,14 @@ const DashboardScreen = ({ classes }) => {
         init2FA();
       }
     }
-    initialize();
-  }, [dispatch])
+    if (accountSettings) {
+      initialize();
+    }
+  }, [accountSettings])
 
   const init2FA = async () => {
-    let subAccountSettings = {};
     try {
-      let res = await dispatch(getCommonFeatures())
-      subAccountSettings = res.payload.SubAccountSettings;
-      if (subAccountSettings && subAccountSettings.TwoFactorAuthEnabled === null) {
+      if (accountSettings && accountSettings.TwoFactorAuthEnabled === null) {
         const userSelection = getCookie("2faPopup");
         if (!userSelection && userSelection !== false) {
           setShowTFA(true);

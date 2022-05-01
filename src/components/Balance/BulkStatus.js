@@ -13,7 +13,7 @@ import CustomTooltip from '../Tooltip/CustomTooltip';
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, accountFeatures } = useSelector(state => state.core)
   const { packagesDetails, accountAvailablePackages } = useSelector(state => state.dashboard);
-  const { subAccountSettings } = useSelector(state => state.common);
+  const { accountSettings } = useSelector(state => state.common);
   const { username } = useSelector(state => state.user);
   const [isShowSmsPackage, showSmsPackage] = useState(false);
   const [isShowEmailPackage, showEmailPackage] = useState(false);
@@ -71,11 +71,11 @@ const BulkStatus = ({ classes }) => {
   }
 
   const renderPackagesDialog = () => {
-    if (isOpenPackageDialog === true && subAccountSettings !== null) {
+    if (isOpenPackageDialog === true && accountSettings !== null) {
       let dialog = {};
       let availablePack = null;
 
-      if (subAccountSettings.Account.IsBillingAccount === false) {
+      if (accountSettings.Account.IsBillingAccount === false) {
         dialog = renderBillingSupportDialog();
       }
       else {

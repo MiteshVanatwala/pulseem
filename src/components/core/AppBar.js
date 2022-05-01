@@ -100,7 +100,7 @@ const AppBarItem = ({
                         className={classes.appBarItemMenuItem}
                       >
                         {option.isFaIcon ?
-                          <option.iconSrc style={{padding: '0 5px'}} />
+                          <option.iconSrc style={{ padding: '0 5px' }} />
                           :
                           <img
                             src={option.iconSrc || DoubleArrowIcon}
@@ -172,7 +172,8 @@ const LanguageSelector = ({ windowSize, classes }) => {
 
 export const TopAppBar = ({ classes, currentPage = '' }) => {
   let cookieFeature = getCookie("accountFeatures");
-  let subAccountSettings = getCookie("subAccountSettings");
+  let accountSettings = getCookie("accountSettings");
+  let subAccountSettings = accountSettings.SubAccountSettings;
   const cookieIsClal = getCookie("isClal");
 
   if (cookieFeature && cookieFeature.constructor.name !== 'Array') {

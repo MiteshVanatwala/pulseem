@@ -14,6 +14,7 @@ import i18n from './i18n'
 import { BrowserRouter, useParams, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures, setSmsOldVersion } from './redux/reducers/coreSlice'
+import { getCommonFeatures } from './redux/reducers/commonSlice';
 import { isClalAccount, getAccountFeatures } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
@@ -392,6 +393,7 @@ const App = ({ screenSize }) => {
       dispatch(setAccountFeatures(features.payload));
       const smsOldVersion = getCookie('OldVersion')
       dispatch(setSmsOldVersion(smsOldVersion))
+      await dispatch(getCommonFeatures());
     }
 
     const updateToken = () => {
