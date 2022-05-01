@@ -1,5 +1,5 @@
 import { instence } from '../../helpers/api'
-import { setCookie } from '../../helpers/cookies'
+import { getCookie, setCookie } from '../../helpers/cookies'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 
@@ -83,7 +83,7 @@ export const commonSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
-        state.subAccountSettings = payload
+        state.subAccountSettings = payload ?? getCookie('subAccountSettings');
         setCookie("subAccountSettings", payload.SubAccountSettings);
       })
   }

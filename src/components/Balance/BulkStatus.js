@@ -70,65 +70,65 @@ const BulkStatus = ({ classes }) => {
     );
   }
 
-  // const renderPackagesDialog = () => {
-  //   if (isOpenPackageDialog === true && subAccountSettings !== null) {
-  //     let dialog = {};
-  //     let availablePack = null;
+  const renderPackagesDialog = () => {
+    if (isOpenPackageDialog === true && subAccountSettings !== null) {
+      let dialog = {};
+      let availablePack = null;
 
-  //     if (subAccountSettings.Account.IsBillingAccount === false) {
-  //       dialog = renderBillingSupportDialog();
-  //     }
-  //     else {
-  //       dialog = renderPackagesListDialog();
-  //       availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType });
-  //     }
+      if (subAccountSettings.Account.IsBillingAccount === false) {
+        dialog = renderBillingSupportDialog();
+      }
+      else {
+        dialog = renderPackagesListDialog();
+        availablePack = accountAvailablePackages.filter((aa) => { return aa.CampaignType === selectedPackageType });
+      }
 
-  //     return (
-  //       <Dialog
-  //         classes={classes}
-  //         open={isOpenPackageDialog}
-  //         onClose={handleDialogClose}
-  //         onConfirm={handleDialogClose}
-  //         showDefaultButtons={false}
-  //         style={availablePack && availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null}
-  //         {...dialog}>
-  //         {dialog.content}
-  //       </Dialog>
-  //     );
-  //   }
-  // }
+      return (
+        <Dialog
+          classes={classes}
+          open={isOpenPackageDialog}
+          onClose={handleDialogClose}
+          onConfirm={handleDialogClose}
+          showDefaultButtons={false}
+          style={availablePack && availablePack.length < 3 ? { maxWidth: 600, margin: '0 auto' } : null}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
+    }
+  }
 
-  // const renderBillingSupportDialog = () => {
-  //   return {
-  //     showDivider: false,
-  //     icon: (
-  //       <GoPackage style={{ fontSize: 35, padding: 5 }} />
-  //     ),
-  //     content: (
-  //       <Grid item xs={12} style={{ paddingBottom: 25 }}>
-  //         <Typography className={classes.f20}>
-  //           {renderHtml(t("common.contactSupportForBilling"))}
-  //         </Typography>
-  //       </Grid >
-  //     ),
-  //     showDefaultButtons: true,
-  //     onConfirm: () => handleDialogClose()
-  //   };
-  // }
+  const renderBillingSupportDialog = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <GoPackage style={{ fontSize: 35, padding: 5 }} />
+      ),
+      content: (
+        <Grid item xs={12} style={{ paddingBottom: 25 }}>
+          <Typography className={classes.f20}>
+            {renderHtml(t("common.contactSupportForBilling"))}
+          </Typography>
+        </Grid >
+      ),
+      showDefaultButtons: true,
+      onConfirm: () => handleDialogClose()
+    };
+  }
 
-  // const renderPackagesListDialog = () => {
-  //   return {
-  //     showDivider: false,
-  //     icon: (
-  //       <GoPackage style={{ fontSize: 35, padding: 5 }} />
-  //     ),
-  //     content: (
-  //       <Grid item xs={12} style={{ paddingBottom: 25 }}>
-  //         <PricePackages classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType} />
-  //       </Grid >
-  //     )
-  //   };
-  // }
+  const renderPackagesListDialog = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <GoPackage style={{ fontSize: 35, padding: 5 }} />
+      ),
+      content: (
+        <Grid item xs={12} style={{ paddingBottom: 25 }}>
+          <PricePackages classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType} />
+        </Grid >
+      )
+    };
+  }
 
   const isAllowSms = () => {
     return billingTypeId !== "1" && Sms.eBillingType === 0 && accountAvailablePackages.length > 0;
@@ -144,7 +144,7 @@ const BulkStatus = ({ classes }) => {
 
   return (
     <>
-      {/* {renderPackagesDialog()} */}
+      {renderPackagesDialog()}
       <Paper
         className={clsx(classes.dashboardTopPaper, classes.bulkMargin)}
         elevation={3}>
@@ -173,8 +173,8 @@ const BulkStatus = ({ classes }) => {
             item xs={9}
             className={getBillingTypeText(Sms) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
             justifyContent='space-between'
-            // onMouseEnter={() => showSmsPackage(true)}
-            // onMouseLeave={() => showSmsPackage(false)}
+            onMouseEnter={() => showSmsPackage(true)}
+            onMouseLeave={() => showSmsPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             {isShowSmsPackage && isAllowSms() ? (
@@ -188,7 +188,7 @@ const BulkStatus = ({ classes }) => {
             )
               :
               (<Typography className={classes.bulkTitle}>
-                {/* {Sms.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />} {getBillingTypeText(Sms)} */}
+                {Sms.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />} 
                 {getBillingTypeText(Sms)}
               </Typography>)
             }
@@ -199,8 +199,8 @@ const BulkStatus = ({ classes }) => {
             item xs={9}
             className={getBillingTypeText(Newsletters) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
             justifyContent='space-between'
-            // onMouseEnter={() => showEmailPackage(true)}
-            // onMouseLeave={() => showEmailPackage(false)}
+            onMouseEnter={() => showEmailPackage(true)}
+            onMouseLeave={() => showEmailPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             {isShowEmailPackage && isAllowNewsletter() ? (
@@ -214,7 +214,7 @@ const BulkStatus = ({ classes }) => {
             )
               :
               (<Typography className={classes.bulkTitle}>
-                {/* {accountFeatures && accountFeatures.includes('37') && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />} */}
+                {accountFeatures && accountFeatures.includes('37') && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />}
                 {getBillingTypeText(Newsletters)}
               </Typography>)
             }
