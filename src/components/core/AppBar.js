@@ -220,6 +220,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     }
   }
   const returnToAdmin = () => {
+    setCookie('accountSettings', '');
     window.location = '/Pulseem/ReactRedirect.aspx';
   }
 

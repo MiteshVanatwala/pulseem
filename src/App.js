@@ -15,7 +15,7 @@ import { BrowserRouter, useParams, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures, setSmsOldVersion } from './redux/reducers/coreSlice'
 import { getCommonFeatures } from './redux/reducers/commonSlice';
-import { isClalAccount, getAccountFeatures } from './redux/reducers/commonSlice';
+import { isClalAccount } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
 import { useClasses } from './style/classes/index'
@@ -35,7 +35,6 @@ import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
-import { siteTrackingScriptUrl } from './config/index';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 
 
@@ -431,13 +430,6 @@ const App = ({ screenSize }) => {
 
     const cookieFunctionObj = {
       jtoken: updateToken
-    }
-
-    const insertScript = () => {
-      const script = document.createElement("script");
-      script.src = `${siteTrackingScriptUrl}`; //?v=` + Math.floor(Date.now() / 1000);
-      script.async = false;
-      document.head.appendChild(script);
     }
 
     // window.addEventListener('resize',setWindowWidth)
