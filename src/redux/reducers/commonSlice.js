@@ -68,7 +68,7 @@ export const getCommonFeatures = createAsyncThunk(
   'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
     try {
       const settings = getCookie('accountSettings');
-      if (!settings) {
+      if (!settings || document.referrer.toLocaleLowerCase().includes('accountsmanage.aspx')) {
         const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
         return JSON.parse(response.data)
       }
