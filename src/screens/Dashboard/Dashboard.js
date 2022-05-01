@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import DefaultScreen from '../DefaultScreen'
 import { useTranslation } from 'react-i18next'
-import { useDispatch, useSelector } from 'react-redux'
-import { Grid, Box } from '@material-ui/core';
+import { useSelector } from 'react-redux'
+import { Grid } from '@material-ui/core';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import Shortcut from '../../components/Shortcuts/Shortcut';
 import BulkStatus from '../../components/Balance/BulkStatus';
@@ -12,34 +12,33 @@ import LatestReports from '../../components/Reports/LatestReports';
 import clsx from 'clsx';
 import { getCookie } from '../../helpers/cookies'
 import TFA from '../../components/DialogTemplates/TFA'
-import { getCommonFeatures } from '../../redux/reducers/commonSlice'
 
 const DashboardScreen = ({ classes }) => {
-  const { windowSize, isRTL, accountFeatures } = useSelector(state => state.core);
+  const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const [showTFA, setShowTFA] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
-      if (document.referrer.toLocaleLowerCase().includes('login.aspx')) {
+      if (document.referrer.toLocaleLowerCase().includes('login.aspx') || document.referrer.toLocaleLowerCase().includes('accountsmanage.aspx')) {
         init2FA();
       }
     }
-    initialize();
-  }, [dispatch, accountFeatures])
+    if (accountSettings) {
+      initialize();
+    }
+  }, [accountSettings])
 
   const init2FA = async () => {
-    let subAccountSettings = getCookie('subAccountSettings');
-    if(!subAccountSettings) {
-      let res = await dispatch(getCommonFeatures());
-      subAccountSettings = res.payload.SubAccountSettings;
-    }
-    if (subAccountSettings && subAccountSettings.TwoFactorAuthEnabled === null) {
-      let userSelection = getCookie("2faPopup");
-      if (!userSelection && userSelection !== false) {
-        setShowTFA(true);
+    try {
+      if (accountSettings && accountSettings.TwoFactorAuthEnabled === null) {
+        const userSelection = getCookie("2faPopup");
+        if (!userSelection && userSelection !== false) {
+          setShowTFA(true);
+        }
       }
+    } catch (e) {
+      console.error(e);
     }
   }
 
