@@ -2,11 +2,18 @@ import clsx from "clsx";
 import { Box, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { AiOutlineExclamationCircle } from "react-icons/ai";
-import { RiSendPlaneFill } from 'react-icons/ri'
 import "moment/locale/he";
 import { Dialog } from "../../../components/managment/Dialog";
 import { FaExclamationCircle } from 'react-icons/fa'
-import { renderHtml } from '../../../helpers/functions'
+
+const renderHtml = (html) => {
+  function createMarkup() {
+    return { __html: html };
+  }
+  return (
+    <label dangerouslySetInnerHTML={createMarkup()}></label>
+  );
+}
 
 const NoCreditsModal = ({
   classes,

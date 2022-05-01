@@ -1,10 +1,8 @@
-import clsx from "clsx";
-import { Box, Typography, Button } from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { AiOutlineExclamationCircle } from "react-icons/ai";
-import { RiSendPlaneFill } from 'react-icons/ri'
 import "moment/locale/he";
 import { Dialog } from "../../../components/managment/Dialog";
+import { renderHtml } from '../../../helpers/functions';
 
 const GenericModal = ({
   classes,
@@ -30,10 +28,11 @@ const GenericModal = ({
       onCancel={modalData.onCancel}
       onConfirm={modalData.onConfirm}
       reduceTitle
-      showDefaultButtons={true}
+      showDefaultButtons={modalData.showDefaultButtons}
+      renderButtons={modalData.renderButtons}
     >
       <Box className={classes.dialogBox}>
-        <Typography>{t(modalData.message)}</Typography>
+        <Typography>{renderHtml(t(modalData.message))}</Typography>
       </Box>
     </Dialog>
   );

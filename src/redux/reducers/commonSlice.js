@@ -31,17 +31,34 @@ export const getCommonFeatures = createAsyncThunk(
     }
   })
 
+export const isAlive = createAsyncThunk(
+  'IsAlive', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`IsAlive`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
-    subAccountSettings: null
+    subAccountSettings: null,
+    tokenAlive: true
   },
   extraReducers: builder => {
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
         state.subAccountSettings = payload
         setCookie("subAccountSettings", payload.SubAccountSettings);
+      })
+      .addCase(isAlive.fulfilled, (state, { payload }) => {
+        state.tokenAlive = payload;
+      })
+    builder
+      .addCase(isAlive.rejected, (state, { payload }) => {
+        state.tokenAlive = payload;
       })
   }
 })

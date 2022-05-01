@@ -443,13 +443,6 @@ const App = ({ screenSize }) => {
       jtoken: updateToken
     }
 
-    const insertScript = () => {
-      const script = document.createElement("script");
-      script.src = `${siteTrackingScriptUrl}`; //?v=` + Math.floor(Date.now() / 1000);
-      script.async = false;
-      document.head.appendChild(script);
-    }
-
     // window.addEventListener('resize',setWindowWidth)
     cookieListener(({ name }) => {
       const cookieFunction = cookieFunctionObj[name] || null

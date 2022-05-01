@@ -1,5 +1,6 @@
-import { Button, Box } from '@material-ui/core'
-import React, { useRef, useState, useEffect, useCallback } from 'react'
+import clsx from 'clsx';
+import { Box, Button } from '@material-ui/core'
+import React, { useRef, useState, useEffect } from 'react'
 import EmailEditor from 'react-email-editor'
 import DefaultScreen from '../DefaultScreen'
 import { useSelector, useDispatch } from 'react-redux';
@@ -30,8 +31,8 @@ import { BsTrash } from "react-icons/bs";
 import { deleteCampaign } from '../../redux/reducers/newsletterSlice';
 import Gallery from '../../components/Gallery/Gallery.component';
 import { Dialog } from '../../components/managment/index';
-import { save, update, remove } from '../../redux/reducers/campaignEditorSlice';
-import { getCommonFeatures } from '../../redux/reducers/commonSlice';
+import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
+import { AiOutlineExclamationCircle } from "react-icons/ai";
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -46,6 +47,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const { campaign, userBlocks, ToastMessages } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
   const { language, isRTL } = useSelector(state => state.core)
+  const { tokenAlive } = useSelector(state => state.common)
   const [iframeKey, setIframeKey] = useState(0);
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
@@ -54,6 +56,7 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [isResponseModal, setIsResponseModal] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
   const [isGalleryConfirmed, setIsFileSelected] = useState(false);
+  const [alertLogout, setAlertLogout] = useState(false);
   const [genericModalData, setGenericModalData] = useState({
     title: "",
     message: ""
@@ -97,6 +100,29 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
     }, 0);
   }, [language]);
+
+
+  useEffect(() => {
+    setInterval(() => {
+      if (tokenAlive) {
+        dispatch(isAlive());
+      }
+    }, 30000);
+    try {
+      document.removeEventListener('setAlert');
+    }
+    catch (e) {
+      console.error(e);
+    }
+    if (alertLogout === true) {
+      onLogoutAlert();
+    }
+  }, [alertLogout]);
+
+  document.addEventListener('setAlert', () => {
+    setAlertLogout(true);
+  });
+
 
   const getData = async () => {
     setLoader(true);
@@ -161,7 +187,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     });
   }
   const initOptions = async () => {
-    if(!subAccountSettings.UnlayerUniqueID){
+    if (!subAccountSettings.UnlayerUniqueID) {
       subAccountSettings = await dispatch(getCommonFeatures());
     }
     options.locale = language === 'he' ? 'he-IL' : 'en-US';
@@ -320,6 +346,36 @@ const CampaignEditor = ({ classes, ...props }) => {
       onConfirm: () => deleteNewsletter(),
       onCancel: () => setDialog(null),
       onClose: () => setDialog(null)
+    });
+    setDialog(DialogType.GENERIC);
+  }
+  const onLogoutAlert = () => {
+    setIsResponseModal(false);
+    setGenericModalData({
+      title: t('common.systemNotice'),
+      message: t("common.autoLogoutMessage"),
+      icon: (
+        <AiOutlineExclamationCircle
+          style={{ fontSize: 30, color: "#fff" }}
+        />
+      ),
+      showDefaultButtons: false,
+      renderButtons: () =>
+      (<Button
+        size='small'
+        variant='contained'
+        className={clsx(
+          classes.confirmButton,
+          classes.dialogConfirmButton,
+          classes.dialogButtonCenter
+        )}
+        onClick={() => { window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true' }}
+      >
+        {t('common.confirm')}
+      </Button>
+      ),
+      onCancel: () => { window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true' },
+      onClose: () => { window.location.href = '/Pulseem/Login.aspx?ReturnUrl=/Pulseem/HomePageMiddleware.aspx?fromreact=true' }
     });
     setDialog(DialogType.GENERIC);
   }
