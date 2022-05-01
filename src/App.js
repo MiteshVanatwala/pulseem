@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import NewsletterManagment from './screens/Newsletter/Management/NewsletterManagment';
+import CampaignEditor from './screens/HtmlCampaign/CampaignEditor';
 import ArchiveManagement from './screens/Newsletter/Management/ArchiveManagement';
 import AutomationManagment from './screens/Automations/Management/AutomationsManagment';
 import LandingPagesesManagment from './screens/LandingPages/Management/LandingPagesManagment'
@@ -127,6 +128,15 @@ const renderRoutes = (classes, history) => {
         exact
         path="/Campaigns"
         render={props => <NewsletterManagment {...props} classes={classes} />}
+      />
+      <Route
+        exact
+        path="/Campaigns/editor"
+        render={props => <CampaignEditor {...props} classes={classes} />}
+      />
+      <Route
+        path="/Campaigns/editor/:id"
+        render={props => <CampaignEditor {...props} classes={classes} />}
       />
       <Route
         exact
@@ -381,8 +391,9 @@ const renderRoutes = (classes, history) => {
 const App = ({ screenSize }) => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize } = useSelector(state => state.core)
-  screenSize && dispatch(setWindowSize(screenSize))
-
+  useEffect(() => {
+    dispatch(setWindowSize(screenSize))
+  }, [screenSize])
   useEffect(() => {
 
     const initFeatures = async () => {
@@ -430,13 +441,6 @@ const App = ({ screenSize }) => {
 
     const cookieFunctionObj = {
       jtoken: updateToken
-    }
-
-    const insertScript = () => {
-      const script = document.createElement("script");
-      script.src = `${siteTrackingScriptUrl}`; //?v=` + Math.floor(Date.now() / 1000);
-      script.async = false;
-      document.head.appendChild(script);
     }
 
     // window.addEventListener('resize',setWindowWidth)

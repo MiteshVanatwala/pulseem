@@ -472,5 +472,14 @@
   "restorecampaignTitle": "בחר את הקמפיינים שברצונך לשחזר",
   "dialogDuplicateTitle": "שיכפול קמפיין",
   "dialogDuplicateContent": "האם ברצונך לשכפל את הקמפיין?",
-  "newsletters": "ניוזלטרים"
+  "newsletters": "ניוזלטרים",
+  "sendToContact": "שלח לאיש קשר אחד",
+  "successSent": "נשלח בהצלחה",
+  "missingApi": "מפתח API לא נכון או לא תקין",
+  "campaignNotFound": "לא נמצא קמפיין, או נכשל בשכפול קמפיין לצורך שליחה",
+  "cannotCreateGroup": "לא ניתן ליצור קבוצה לשליחת נסיון",
+  "errorOccured": "אירעה שגיאה",
+  "noneActiveRecipientsFound":"לא נמצאו לקוחות פעילים",
+  "recipientBlocked": "הנמען חסום לקבלת ניוזלטר",
+  "campaignSaved": "הקמפיין נשמר בהצלחה!"
 }

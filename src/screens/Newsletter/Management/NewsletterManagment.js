@@ -28,9 +28,10 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { getCookie } from '../../../helpers/cookies'
 
 const NewsletterManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, rowsPerPage } = useSelector(state => state.core);
   const { newslettersData, newslettersDataError, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -49,7 +50,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const history = useCtrlHistory()
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const accountFeatures = getCookie("accountFeatures")
   moment.locale(language)
 
   const getData = async () => {
@@ -332,7 +334,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
+        href: row.IsNewEditor && accountFeatures.includes('41') ? `/react/Campaigns/editor/${CampaignID}?fromreact=true` : `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -553,7 +555,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           scope="row"
           classes={{ root: classes.tableCellRoot }}
           className={classes.flex12}>
-          {renderCellIcons(row)}
+          {accountFeatures && renderCellIcons(row)}
 
         </TableCell>
       </TableRow>

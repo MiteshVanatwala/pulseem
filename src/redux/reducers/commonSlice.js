@@ -2,50 +2,6 @@ import { instence } from '../../helpers/api'
 import { setCookie } from '../../helpers/cookies'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-
-export const getFileGallery = createAsyncThunk(
-  '/GetFileGallery', async (_, thunkAPI) => {
-    try {
-      const response = await instence.get(`/GetFileGallery`);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
-export const createFolder = createAsyncThunk(
-  '/CreateFolder', async (folderName, thunkAPI) => {
-    try {
-      const response = await instence.post(`/CreateFolder`, { FolderName: folderName }
-      );
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
-export const postImage = createAsyncThunk(
-  '/PostImageFile', async (fileGallery, thunkAPI) => {
-    try {
-      const response = await instence.post(`/PostImageFile`, fileGallery
-      );
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
-export const deleteGalleryFile = createAsyncThunk(
-  '/DeleteGalleryFile', async (fileGallery, thunkAPI) => {
-    try {
-      const response = await instence.post(`/DeleteGalleryFile`, fileGallery
-      );
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
-  });
-
 export const isClalAccount = createAsyncThunk(
   '/IsClalAccount', async (_, thunkAPI) => {
     try {
@@ -72,19 +28,36 @@ export const getCommonFeatures = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  });
+  })
+
+export const isAlive = createAsyncThunk(
+  'IsAlive', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`IsAlive`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
 
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
-    Folders: [],
-    subAccountSettings: null
+    subAccountSettings: null,
+    tokenAlive: true
   },
   extraReducers: builder => {
     builder
       .addCase(getCommonFeatures.fulfilled, (state, { payload }) => {
         state.subAccountSettings = payload
         setCookie("subAccountSettings", payload.SubAccountSettings);
+      })
+      .addCase(isAlive.fulfilled, (state, { payload }) => {
+        state.tokenAlive = payload;
+      })
+    builder
+      .addCase(isAlive.rejected, (state, { payload }) => {
+        state.tokenAlive = payload;
       })
   }
 })
