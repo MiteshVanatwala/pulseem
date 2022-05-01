@@ -387,13 +387,12 @@ const App = ({ screenSize }) => {
   useEffect(() => {
 
     const initFeatures = async () => {
+      const settings = await dispatch(getCommonFeatures());
+      dispatch(setAccountFeatures(settings.payload.Account.AccountFeatures.map(String)));
       const response = await dispatch(isClalAccount());
       dispatch(setIsClal(response.payload));
-      const features = await dispatch(getAccountFeatures());
-      dispatch(setAccountFeatures(features.payload));
       const smsOldVersion = getCookie('OldVersion')
       dispatch(setSmsOldVersion(smsOldVersion))
-      await dispatch(getCommonFeatures());
     }
 
     const updateToken = () => {
