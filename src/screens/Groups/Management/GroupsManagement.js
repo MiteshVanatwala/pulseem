@@ -440,7 +440,7 @@ const GroupsManagement = ({ classes }) => {
             {t("recipient.unsubscribe")}
           </Button>
         </Grid>
-        {accountFeatures.includes('15') && (<Grid item xs={windowSize === "xs" && 12}>
+        {accountFeatures && accountFeatures.includes('15') && (<Grid item xs={windowSize === "xs" && 12}>
           <Button
             variant="contained"
             size="medium"
@@ -817,7 +817,7 @@ const GroupsManagement = ({ classes }) => {
         message={responseMessage.message}
         summary={responseMessage.summary}
       />
-      {accountFeatures.includes('15') && (<SimplyClubPupup
+      {accountFeatures && accountFeatures.includes('15') && (<SimplyClubPupup
         classes={classes}
         isOpen={dialog === DialogType.SIMPLY_CLUB}
         onClose={() => setDialog(null)}
@@ -826,6 +826,7 @@ const GroupsManagement = ({ classes }) => {
         message={responseMessage.message}
         summary={responseMessage.summary}
         setToastMessage={setToastMessage}
+        handleResponses={(response, actions) => handleResponses(response, actions)}
       />)}
       {renderConfirmDialog()}
       <Loader isOpen={showLoader} />

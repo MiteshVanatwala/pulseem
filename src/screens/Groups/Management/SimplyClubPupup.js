@@ -361,16 +361,15 @@ const SimplyClubPupup = ({
                 onClose={onClose}
                 onCancel={onClose}
                 onConfirm={handleLogin}
-                // onConfirm={onClose}
-                // customContainerStyle={localClasse}
-                icon={< div className={classes.dialogIconContent} >
+                icon={<div className={classes.dialogIconContent} >
                     {'\uE0D5'}
                 </div >}
             >
-                <Typography className={clsx(classes.reducedTitle, classes.resetDialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} style={{ fontWeight: 400 }}>
+                <Typography className={clsx(classes.reducedTitle, classes.resetDialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)}
+                    style={{ fontWeight: 400 }}>
                     {t("group.simplyClubLoginTitle")}
                 </Typography>
-                <Box className={clsx(classes.flex, classes.mt4, localClasses.h100)}>
+                <Box className={clsx(classes.flex, classes.mt4, localClasses.h100)} style={{ paddingBottom: 15 }}>
                     <Box
                         className={clsx(
                             classes.customDialogContentBox,
@@ -390,7 +389,7 @@ const SimplyClubPupup = ({
                                 label=""
                                 variant="outlined"
                                 value={user.Username}
-                                className={clsx(classes.textField, classes.minWidth252)}
+                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
                                 onChange={handleChange}
                             />
@@ -415,11 +414,11 @@ const SimplyClubPupup = ({
                                 label=""
                                 variant="outlined"
                                 value={user.Password}
-                                className={clsx(classes.textField, classes.minWidth252)}
+                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
                                 onChange={handleChange}
                                 InputProps={{
-                                    endAdornment: <InputAdornment position="end" style={{ width: 25 }}>
+                                    endAdornment: <InputAdornment position="end" style={{ width: 25, paddingInlineEnd: 15 }}>
                                         <IconButton
                                             aria-label="toggle password visibility"
                                             onClick={() => setShowPassword(!showPassword)}
