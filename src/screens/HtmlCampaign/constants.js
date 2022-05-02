@@ -120,7 +120,7 @@ export const options = {
       "content_tools.html": "HTML",
       "content_tools.image": "תמונה",
       "content_tools.menu": "תפריט",
-      "content_tools.social": "רשתות חברתיות",
+      "content_tools.social": "רשת חברתית",
       "content_tools.text": "טקסט",
       "content_tools.timer": "שעון עצר",
       "content_tools.video": "וידאו",
@@ -433,6 +433,22 @@ export const options = {
     },
   },
   tools: {
+    heading: {
+      position: 0,
+      enabled: true,
+      properties: {
+        textAlign: {
+          value: 'right'
+        },
+        direction: {
+          value: 'rtl'
+        }
+      }
+    },
+    text: {
+      position: 1,
+      enabled: true
+    },
     html: {
       enabled: false
     },
@@ -446,7 +462,7 @@ export const options = {
       enabled: true
     },
     image: {
-      position: 1,
+      position: 3,
       enabled: true
     },
     // Custom Tools
