@@ -96,6 +96,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       overflowX: "hidden",
     },
     "& .MuiDialog-scrollPaper": {
+      "@media screen and (max-width: 450px)": {
+        zoom: '85%'
+      },
       "@media screen and (max-width: 330px)": {
         zoom: '70%'
       }
