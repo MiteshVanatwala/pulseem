@@ -434,7 +434,7 @@ export const options = {
   },
   tools: {
     html: {
-      enabled: true
+      enabled: false
     },
     social: {
       enabled: true
