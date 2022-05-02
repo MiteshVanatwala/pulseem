@@ -109,7 +109,7 @@ const CampaignEditor = ({ classes, ...props }) => {
       }
     }, 30000);
     try {
-      document.removeEventListener('setAlert');
+      document.removeEventListener('setAlert', null);
     }
     catch (e) {
       console.error(e);
@@ -248,6 +248,17 @@ const CampaignEditor = ({ classes, ...props }) => {
         unlayer.editor.registerProvider('blocks', async function (params, done) {
           done(userBlocks);
         });
+        // unlayer.addEventListener('design:updated', function (data) {
+        //   var type = data.type; // body, row, content
+        //   var item = data.item;
+        //   var changes = data.changes;
+        //   //const heading = editorRef.current.editor.frame.iframe.getElementsByClassName("u_content_heading");
+        //   if (changes.name === 'textAlign') {
+        //     console.log(isRTL);
+        //     item.values.direction = "rtl";
+        //   }
+        //   console.log('design:updated', type, item, changes);
+        // });
         unlayer.editor.reloadProvider('blocks');
       }
       catch (e) {
@@ -507,6 +518,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (dataLoaded) {
       return <React.StrictMode>
         <EmailEditor
+          style={{ direction: isRTL ? 'rtl' : 'ltr' }}
           onReady={onReady}
           editorId="campaign-editor"
           ref={editorRef}
