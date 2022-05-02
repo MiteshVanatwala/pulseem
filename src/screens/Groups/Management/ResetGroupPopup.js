@@ -67,10 +67,11 @@ const ResetGroupPopup = ({
             onCancel={onClose}
             onConfirm={handleSubmit}
             customContainerStyle={{}}
-        >
-            <Typography className={clsx(classes.reducedTitle, classes.resetDialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} style={{ fontWeight: 400 }}>
+            title={<span className={clsx(classes.textCapitalize, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} >
                 {t("group.resetTitle")}
-            </Typography>
+            </span>}
+            showDivider
+        >
             <Typography className={clsx(windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} >
                 {t("group.resetConfirm")}
             </Typography>
