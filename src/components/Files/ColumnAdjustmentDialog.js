@@ -156,116 +156,117 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                 {'\u0056'}
             </div>}
         >
-            <Box className={classes.dialogBox}>
-                {settings.ShowGroupName && <div className={classes.manualModal}>
-                    <Typography className={classes.inputLabel}>
-                        {t("common.GroupName")}:
-                    </Typography>
-                    <div className={clsx(classes.buttonForm, classes.fullWidth)}>
-                        <TextField
-                            type="text"
-                            placeholder={t("common.GroupName")}
-                            className={groupTextError ? clsx(classes.textInput, classes.error) : clsx(classes.textInput, classes.success)}
-                            onChange={handleManualDialog}
-                            value={groupNameInput}
-                        ></TextField>
-                        {groupTextError ? <span className={classes.errorLabel}>{GroupNameValidationMessage}</span> : null}
-                    </div>
-                </div>}
-                <Box
-                    className={clsx(classes.commonFieldPulse, classes.mb3)}>
-                    <Typography style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
-                        {t("sms.totalRecipients")}:
-                    </Typography>
-                    <Typography
-                        style={{
-                            fontSize: "20px",
-                            marginInlineEnd: "10px",
-                            fontWeight: "600",
-                        }}
-                    >
-                        {contacts.length !== 0 ? contacts.length : typedData.length}
-                    </Typography>
-                    <Tooltip
-                        disableFocusListener
-                        title={t("smsReport.manualTotalTooltip")}
-                        classes={{ tooltip: styles.customWidth }}
-                        sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
-                    >
-                        <Typography className={classes.bodyInfo}>i</Typography>
-                    </Tooltip>
-                </Box>
-                <Box className={classes.sidebar} style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
-                    <table
-                        style={{
-                            borderCollapse: "collapse",
-                            overflowX: "auto",
-                            minWidth: "100px",
-                        }}
-                    >
-                        {data.length > 0
-                            ? headers.map((item, idx) => {
-                                return (
-                                    <th
-                                        key={idx}
-                                        className={classes.manualHeader}
-                                    >
-                                        <div
-                                            onClick={() => {
-                                                handleChangeId(idx);
-                                            }}
-                                            className={classes.adjustP}
-                                            style={{ textAlign: "center", cursor: "pointer" }}
+            {data.length > 0 ?
+                (<Box className={classes.dialogBox}>
+                    {settings.ShowGroupName && <div className={classes.manualModal}>
+                        <Typography className={classes.inputLabel}>
+                            {t("common.GroupName")}:
+                        </Typography>
+                        <div className={clsx(classes.buttonForm, classes.fullWidth)}>
+                            <TextField
+                                type="text"
+                                placeholder={t("common.GroupName")}
+                                className={groupTextError ? clsx(classes.textInput, classes.error) : clsx(classes.textInput, classes.success)}
+                                onChange={handleManualDialog}
+                                value={groupNameInput}
+                            ></TextField>
+                            {groupTextError ? <span className={classes.errorLabel}>{GroupNameValidationMessage}</span> : null}
+                        </div>
+                    </div>}
+                    <Box
+                        className={clsx(classes.commonFieldPulse, classes.mb3)}>
+                        <Typography style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
+                            {t("sms.totalRecipients")}:
+                        </Typography>
+                        <Typography
+                            style={{
+                                fontSize: "20px",
+                                marginInlineEnd: "10px",
+                                fontWeight: "600",
+                            }}
+                        >
+                            {contacts.length !== 0 ? contacts.length : typedData.length}
+                        </Typography>
+                        <Tooltip
+                            disableFocusListener
+                            title={t("smsReport.manualTotalTooltip")}
+                            classes={{ tooltip: styles.customWidth }}
+                            sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
+                        >
+                            <Typography className={classes.bodyInfo}>i</Typography>
+                        </Tooltip>
+                    </Box>
+                    <Box className={classes.sidebar} style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
+                        <table
+                            style={{
+                                borderCollapse: "collapse",
+                                overflowX: "auto",
+                                minWidth: "100px",
+                            }}
+                        >
+                            {data.length > 0
+                                ? headers.map((item, idx) => {
+                                    return (
+                                        <th
+                                            key={idx}
+                                            className={classes.manualHeader}
                                         >
-                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{headers[idx]}</Typography>
+                                            <div
+                                                onClick={() => {
+                                                    handleChangeId(idx);
+                                                }}
+                                                className={classes.adjustP}
+                                                style={{ textAlign: "center", cursor: "pointer" }}
+                                            >
+                                                <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                    <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{headers[idx]}</Typography>
 
-                                                {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
-                                                {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
-                                            {dropIndex == idx ? (
-                                                <div className={clsx(classes.adjustC, classes.scrollY, classes.customScroll)} style={{ maxHeight: 175 }}>
-                                                    {selectArray.map((item, id) => {
+                                                    {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
+                                                    {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
+                                                {dropIndex == idx ? (
+                                                    <div className={clsx(classes.adjustC, classes.scrollY, classes.customScroll)} style={{ maxHeight: 175 }}>
+                                                        {selectArray.map((item, id) => {
 
-                                                        return (
-                                                            <span
-                                                                className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.textEllipses)}
-                                                                onClick={() => {
-                                                                    handleSelectFirst(item, id, idx);
-                                                                }}
-                                                            >
-                                                                {item.label}
-                                                            </span>
-                                                        )
-                                                    })}
-                                                </div>
-                                            ) : null}
-                                        </div>
-                                    </th>
+                                                            return (
+                                                                <span
+                                                                    className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.textEllipses)}
+                                                                    onClick={() => {
+                                                                        handleSelectFirst(item, id, idx);
+                                                                    }}
+                                                                >
+                                                                    {item.label}
+                                                                </span>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                ) : null}
+                                            </div>
+                                        </th>
 
+                                    );
+                                })
+                                : null}
+                            {data.map((item, id) => {
+                                // if (id > data.length - 6) {
+                                return (
+                                    <tbody>
+                                        <tr key={id}>
+                                            {headers.map((data, idx) => {
+                                                return (
+                                                    <td key={idx} className={classes.tableColumn}
+                                                    >
+                                                        {Object.values(item)[idx]}
+                                                    </td>
+                                                );
+                                            })}
+                                        </tr>
+                                    </tbody>
                                 );
-                            })
-                            : null}
-                        {data.map((item, id) => {
-                            // if (id > data.length - 6) {
-                            return (
-                                <tbody>
-                                    <tr key={id}>
-                                        {headers.map((data, idx) => {
-                                            return (
-                                                <td key={idx} className={classes.tableColumn}
-                                                >
-                                                    {Object.values(item)[idx]}
-                                                </td>
-                                            );
-                                        })}
-                                    </tr>
-                                </tbody>
-                            );
-                            // }
-                        })}
-                    </table>
-                </Box>
-            </Box>
+                                // }
+                            })}
+                        </table>
+                    </Box>
+                </Box>) : <Typography variant="body1">{t("common.NoData")}</Typography>}
 
         </Dialog>
     )

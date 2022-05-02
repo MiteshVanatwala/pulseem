@@ -12,6 +12,7 @@ import ColumnAdjustmentDialog from '../../../components/Files/ColumnAdjustmentDi
 import {
     createGroup, addRecipients
 } from "../../../redux/reducers/groupSlice";
+import { Loader } from '../../../components/Loader/Loader';
 
 
 
@@ -28,7 +29,8 @@ const useStyles = makeStyles({
     textRow: {
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        maxWidth: '66.667%'
     },
     recordBoxMaxHeight: {
         maxHeight: '420px'
@@ -85,6 +87,7 @@ const SimplyClubPupup = ({
     const [ClientData, setClientData] = useState([]);
     const [headers, setheaders] = useState([]);
     const [filteredDAta, setFilteredData] = useState([]);
+    const [showLoader, setShowLoader] = useState(false)
 
 
     useEffect(() => {
@@ -148,77 +151,81 @@ const SimplyClubPupup = ({
     }
 
     const handleLogin = async () => {
-        console.log("USER:", user)
+        setShowLoader(true)
         const response = await dispatch(getGroupsForSimplyClub(user))
+        setShowLoader(false)
         handleResponses(response, {
             'S_200': {
                 code: 200,
-                message: 'group.responses.serverFoundWithNoResponse',
-                Func: () => null
-            },
-            'S_201': {
-                code: 201,
-                message: 'group.responses.SuccessTitle',
+                // message: 'group.responses.serverFoundWithNoResponse',
+                message: t('group.responses.success'),
                 Func: () => {
-                    setGroups(response?.Groups)
+                    setGroups(response?.payload?.Groups || [])
                     setShowGroups(true)
                 }
             },
+            'S_201': {
+                code: 201,
+                message: t('group.responses.success'),
+                Func: () => null
+            },
             'S_401': {
                 code: 401,
-                message: 'group.responses.featureNotAllowed',
+                message: t('group.responses.featureNotAllowed'),
                 Func: () => null
             },
             'S_404': {
                 code: 404,
-                message: 'recipient.responses.notFound',
+                message: t('recipient.responses.notFound'),
                 Func: () => null
             },
             'S_500': {
                 code: 500,
-                message: 'common.ErrorOccured',
+                message: t('common.ErrorOccured'),
                 Func: () => null
             },
             'default': {
-                message: '',
+                message: t(''),
                 Func: () => null
             },
         })
     }
 
     const handleGetClients = async () => {
+        setShowLoader(true)
         const response = await dispatch(getExternalClientsByGroups({ ...user, Groups: [...selectedGroups] }))
+        setShowLoader(false)
         handleResponses(response, {
             'S_200': {
                 code: 200,
-                message: 'group.responses.serverFoundWithNoResponse',
-                Func: () => null
-            },
-            'S_201': {
-                code: 201,
-                message: 'group.responses.SuccessTitle',
+                message: t('group.responses.success'),
                 Func: () => {
-                    setClientData(response?.Clients)
+                    setClientData(response?.payload?.Clients)
                     setShowClients(true)
                 }
             },
+            'S_201': {
+                code: 201,
+                message: t('group.responses.success'),
+                Func: () => null
+            },
             'S_401': {
                 code: 401,
-                message: 'group.responses.featureNotAllowed',
+                message: t('group.responses.featureNotAllowed'),
                 Func: () => null
             },
             'S_404': {
                 code: 404,
-                message: 'recipient.responses.notFound',
+                message: t('recipient.responses.notFound'),
                 Func: () => null
             },
             'S_500': {
                 code: 500,
-                message: 'common.ErrorOccured',
+                message: t('common.ErrorOccured'),
                 Func: () => null
             },
             'default': {
-                message: '',
+                message: t(''),
                 Func: () => null
             },
         })
@@ -326,7 +333,9 @@ const SimplyClubPupup = ({
                                         />
                                     </Grid>
                                     <Grid className={clsx(classes.flex, classes.flex2, localClasses.textRow)}>
-                                        {obj.GroupName}
+                                        <Typography variant="body1" className={classes.textEllipses}>
+                                            {obj.GroupName}
+                                        </Typography>
                                     </Grid>
                                 </Grid>
                             </TableCell>
@@ -345,10 +354,11 @@ const SimplyClubPupup = ({
                 settings={UploadSettings.GROUPS}
                 onClose={() => setShowClients(false)}
                 onCancel={() => setShowClients(false)}
-                onConfirm={() => handleImportRecipients()}
+                onConfirm={() => ClientData.length > 0 && handleImportRecipients()}
                 data={filteredDAta}
                 headers={headers}
                 setheaders={setheaders}
+
             />
         )
     }
@@ -365,6 +375,7 @@ const SimplyClubPupup = ({
                     {'\uE0D5'}
                 </div >}
             >
+
                 <Typography className={clsx(classes.reducedTitle, classes.resetDialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)}
                     style={{ fontWeight: 400 }}>
                     {t("group.simplyClubLoginTitle")}
@@ -433,9 +444,11 @@ const SimplyClubPupup = ({
                         </Box>
                     </Box>
                 </Box>
+                {showGroups && GroupDialog()}
+                {showClients && ColumnAdjustmentPopup()}
+
             </Dialog>
-            {showGroups && GroupDialog()}
-            {showClients && ColumnAdjustmentPopup()}
+            <Loader isOpen={showLoader} zIndex={1500} />
         </>
     )
 }

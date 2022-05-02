@@ -168,6 +168,11 @@ const GroupsManagement = ({ classes }) => {
 
   //  HANDLERS  //
   const handleResponses = (response, actions = {
+    'S_200': {
+      code: 200,
+      message: '',
+      Func: () => null
+    },
     'S_201': {
       code: 201,
       message: '',
@@ -212,48 +217,48 @@ const GroupsManagement = ({ classes }) => {
       case 200: {
         // getData();
         actions?.S_200?.Func?.();
-        setToastMessage(actions?.S_200?.message);
+        setToastMessage({ title: '', message: actions?.S_200?.message, summary: '' });
         break;
       }
       case 201: {
         // getData();
         actions?.S_201?.Func?.();
-        setToastMessage(actions?.S_201?.message);
+        setToastMessage({ title: '', message: actions?.S_201?.message, summary: '' });
         break;
       }
       case 400: {
         actions?.S_400?.Func?.();
-        setToastMessage(actions?.S_400?.message);
+        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_400?.message, summary: '' });
         break;
       }
       case 401: {
         actions?.S_401?.Func?.();
-        setToastMessage(actions?.S_401?.message);
+        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_401?.message, summary: '' });
         break;
       }
       case 405: {
         actions?.S_405?.Func?.();
-        setToastMessage(actions?.S_405?.message);
+        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_405?.message, summary: '' });
         break;
       }
       case 406: {
         actions?.S_406?.Func?.();
-        setToastMessage(actions?.S_406?.message);
+        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_406?.message, summary: '' });
         break;
       }
       case 422: {
         actions?.S_422?.Func?.();
-        setToastMessage(actions?.S_422?.message);
+        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_422?.message, summary: '' });
         break;
       }
       case 500: {
         actions?.S_500?.Func?.();
-        setToastMessage(actions?.S_500?.message);
+        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_500?.message, summary: '' });
         break;
       }
       default: {
         actions?.default?.Func?.();
-        setToastMessage(actions?.default?.message);
+        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.default?.message, summary: '' });
         setDialog(null);
       }
     }
@@ -826,6 +831,7 @@ const GroupsManagement = ({ classes }) => {
         message={responseMessage.message}
         summary={responseMessage.summary}
         setToastMessage={setToastMessage}
+        handleResponses={handleResponses}
       />)}
       {renderConfirmDialog()}
       <Loader isOpen={showLoader} />
