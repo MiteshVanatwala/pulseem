@@ -482,5 +482,7 @@
   "noneActiveRecipientsFound":"לא נמצאו לקוחות פעילים",
   "recipientBlocked": "הנמען חסום לקבלת ניוזלטר",
   "campaignSaved": "הקמפיין נשמר בהצלחה!",
-  "sendTest": "שליחת ניסיון"
+  "sendTest": "שליחת ניסיון",
+  "rightToLeft": "ימין לשמאל",
+  "leftToRight": "שמאל לימין"
 }

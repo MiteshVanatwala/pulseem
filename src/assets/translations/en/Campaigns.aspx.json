@@ -488,8 +488,10 @@
   "campaignNotFound": "Campaign was not found or cannot duplicated for sending",
   "cannotCreateGroup": "Cannot create default group for test send",
   "errorOccured": "Error Occured",
-  "noneActiveRecipientsFound":"None active recipients were found",
+  "noneActiveRecipientsFound": "None active recipients were found",
   "recipientBlocked": "Recipient is blocked for Newsletters",
   "campaignSaved": "Campaign successfully saved!",
-  "sendTest": "Send Test"
+  "sendTest": "Send Test",
+  "rightToLeft": "Right to left",
+  "leftToRight": "Left to right"
 }

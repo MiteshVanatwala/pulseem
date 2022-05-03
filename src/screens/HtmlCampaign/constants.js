@@ -2,11 +2,21 @@ import i18n from 'i18next';
 export const properties = {
   alignment: {
     editor: {
-      data:{
+      data: {
         options: [
           { label: i18n.t("common.AlignLeft"), value: "left" },
           { label: i18n.t("common.alignCenter"), value: "center" },
           { label: i18n.t("common.AlignRight"), value: "right" }
+        ]
+      }
+    }
+  },
+  direction: {
+    editor: {
+      data: {
+        options: [
+          { label: i18n.t("campaigns.rightToLeft"), value: "rtl" },
+          { label: i18n.t("campaigns.leftToRight"), value: "ltr" }
         ]
       }
     }
@@ -489,7 +499,7 @@ export const options = {
         countryTitle: i18n.t("common.country")
       },
       properties: properties
-    }    
+    }
   },
   features: {
     imageEditor: true,
