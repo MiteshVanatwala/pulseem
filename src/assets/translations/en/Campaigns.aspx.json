@@ -490,5 +490,6 @@
   "errorOccured": "Error Occured",
   "noneActiveRecipientsFound":"None active recipients were found",
   "recipientBlocked": "Recipient is blocked for Newsletters",
-  "campaignSaved": "Campaign successfully saved!"
+  "campaignSaved": "Campaign successfully saved!",
+  "sendTest": "Send Test"
 }
