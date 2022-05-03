@@ -114,7 +114,7 @@ const SimplyClubPupup = ({
             setheaders(tempHeaders)
         }
         preload()
-    }, [])
+    }, [ClientData])
 
 
 
@@ -193,7 +193,7 @@ const SimplyClubPupup = ({
 
     const handleGetClients = async () => {
         setShowLoader(true)
-        const response = await dispatch(getExternalClientsByGroups({ ...user, Groups: [...selectedGroups] }))
+        const response = await dispatch(getExternalClientsByGroups({ ...user, GroupIds: [...selectedGroups] }))
         setShowLoader(false)
         handleResponses(response, {
             'S_200': {
