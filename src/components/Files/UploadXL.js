@@ -36,7 +36,8 @@ const UploadXL = ({
     onDone = () => null,
     uploadToGroups = [],
     setToastMessage,
-    settings = null
+    settings = null,
+    tooltipText = "smsReport.manualTotalTooltip"
 }) => {
     const { t } = useTranslation();
     const { ToastMessages, extraData } = useSelector((state) => state.sms);
@@ -496,7 +497,7 @@ const UploadXL = ({
                         </Typography>
                         <Tooltip
                             disableFocusListener
-                            title={t("smsReport.manualTotalTooltip")}
+                            title={t(tooltipText)}
                             classes={{ tooltip: styles.customWidth }}
                             sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
                         >
