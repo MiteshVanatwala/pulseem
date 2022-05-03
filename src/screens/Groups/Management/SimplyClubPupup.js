@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { Dialog } from "../../../components/managment/Dialog";
-import { getExternalClientsByGroups, getGroupsForSimplyClub } from '../../../redux/reducers/groupSlice';
+import { addRecipient, getExternalClientsByGroups, getGroupsForSimplyClub } from '../../../redux/reducers/groupSlice';
 import { useDispatch } from 'react-redux';
 import DataTable from '../../../components/Table/DataTable';
 import { simplyCLubClientData, UploadSettings } from '../tempConstants';
@@ -13,6 +13,8 @@ import {
     createGroup, addRecipients
 } from "../../../redux/reducers/groupSlice";
 import { Loader } from '../../../components/Loader/Loader';
+import { useMemo } from 'react';
+import AddRecipientResponse from './AddRecipientResponse';
 
 
 
@@ -84,18 +86,19 @@ const SimplyClubPupup = ({
     const [groups, setGroups] = useState([])
     const [selectedGroups, setSelectedGroups] = useState([])
 
-    const [ClientData, setClientData] = useState([]);
+    const [ClientData, setClientData] = useState({});
     const [headers, setheaders] = useState([]);
     const [filteredDAta, setFilteredData] = useState([]);
     const [showLoader, setShowLoader] = useState(false)
+    const [summary, setSummary] = useState(null)
 
 
     useEffect(() => {
         const preload = () => {
             let totalFields = 5;
-            const data = Object.values(ClientData).reduce((prev, next) => {
+            const data = Object.entries(ClientData).reduce((prev, [key, value]) => {
                 let restELementsLen = 5 - prev.length
-                let restElements = Object.values(next)[0];
+                let restElements = value //Object.values(value)[0];
                 let tempFields = restElements.reduce((prev, next) => Object.keys(next).length, 0)
                 if (totalFields < tempFields) {
                     totalFields = tempFields
@@ -107,15 +110,63 @@ const SimplyClubPupup = ({
                 return [...prev, ...finalArr]
             }, [])
 
-            setFilteredData(data)
-
             let tempHeaders = Array.from({ length: totalFields }, (v, i) => t("sms.adjustTitle"))
 
+            setFilteredData(data)
             setheaders(tempHeaders)
         }
         preload()
     }, [ClientData])
 
+
+    useEffect(() => {
+        selectedGroups.length > 0 && handleGetClients()
+
+    }, [selectedGroups])
+
+
+
+    const handleGetClients = async (id) => {
+        setShowLoader(true)
+        const response = await dispatch(getExternalClientsByGroups({ ...user, GroupIds: selectedGroups }))
+        setShowLoader(false)
+        handleResponses(response, {
+            'S_200': {
+                code: 200,
+                message: '',
+                Func: () => {
+                    setClientData(response?.payload?.Clients || [])
+                    setShowClients(true)
+                }
+            },
+            'S_201': {
+                code: 201,
+                message: '',
+                Func: () => null
+            },
+            'S_401': {
+                code: 401,
+                message: t('group.responses.featureNotAllowed'),
+                Func: () => null
+            },
+            'S_404': {
+                code: 404,
+                message: t('recipient.responses.notFound'),
+                Func: () => null
+            },
+            'S_500': {
+                code: 500,
+                message: t('common.ErrorOccured'),
+                Func: () => null
+            },
+            'default': {
+                message: t(''),
+                Func: () => null
+            },
+        })
+
+        // setClientData(simplyCLubClientData)
+    }
 
 
     const TABLE_HEAD = [
@@ -141,7 +192,7 @@ const SimplyClubPupup = ({
     const handleSelected = (id) => {
         const tempIndex = selectedGroups.indexOf(id)
         if (tempIndex === -1) {
-            setSelectedGroups([...selectedGroups, id])
+            setSelectedGroups([id])
         }
         else {
             let tempArray = [...selectedGroups]
@@ -165,47 +216,7 @@ const SimplyClubPupup = ({
             },
             'S_201': {
                 code: 201,
-                message: t('group.responses.success'),
-                Func: () => null
-            },
-            'S_401': {
-                code: 401,
-                message: t('group.responses.featureNotAllowed'),
-                Func: () => null
-            },
-            'S_404': {
-                code: 404,
-                message: t('recipient.responses.notFound'),
-                Func: () => null
-            },
-            'S_500': {
-                code: 500,
-                message: t('common.ErrorOccured'),
-                Func: () => null
-            },
-            'default': {
-                message: t(''),
-                Func: () => null
-            },
-        })
-    }
-
-    const handleGetClients = async () => {
-        setShowLoader(true)
-        const response = await dispatch(getExternalClientsByGroups({ ...user, GroupIds: [...selectedGroups] }))
-        setShowLoader(false)
-        handleResponses(response, {
-            'S_200': {
-                code: 200,
                 message: '',
-                Func: () => {
-                    setClientData(response?.payload?.Clients || [])
-                    setShowClients(true)
-                }
-            },
-            'S_201': {
-                code: 201,
-                message: t('group.responses.success'),
                 Func: () => null
             },
             'S_401': {
@@ -228,8 +239,6 @@ const SimplyClubPupup = ({
                 Func: () => null
             },
         })
-
-        setClientData(simplyCLubClientData)
     }
 
     const manualUploadValidationscheck = () => {
@@ -249,30 +258,118 @@ const SimplyClubPupup = ({
         return isValid
     }
 
+    const handleAddClients = (id) => {
+        setShowLoader(true)
+        let tempClients = Object.values(ClientData)[0]
+        const Payload = {
+            ClientsData: tempClients || [],
+            GroupIds: [id]
+        }
+        new Promise((resolve, reject) => resolve(dispatch(addRecipient(Payload)))).then((response) => {
+            handleResponses(response, {
+                'S_200': {
+                    code: 200,
+                    message: '',
+                    Func: () => null
+                },
+                'S_201': {
+                    code: 201,
+                    message: t('group.responses.success'),
+                    Func: () => {
+                        setShowClients(false);
+                        setShowLoader(false)
+                        setClientData({})
+                        setSelectedGroups([]);
+                        setSummary({ title: t("recipient.summary.summaryImportTitle"), message: '', data: response.payload.Summary })
+                    }
+                },
+                'S_401': {
+                    code: 401,
+                    message: t('group.responses.featureNotAllowed'),
+                    Func: () => null
+                },
+                'S_404': {
+                    code: 404,
+                    message: t('recipient.responses.notFound'),
+                    Func: () => null
+                },
+                'S_500': {
+                    code: 500,
+                    message: t('common.ErrorOccured'),
+                    Func: () => null
+                },
+                'default': {
+                    message: t(''),
+                    Func: () => null
+                },
+            })
+        })
+        setShowLoader(false)
+    }
+
     const handleImportRecipients = () => {
 
+        setShowLoader(true)
         if (manualUploadValidationscheck()) {
-            selectedGroups.forEach(element => {
-                new Promise((resolve, reject) => resolve(dispatch(createGroup({ GroupName: element.GroupName })))).then((res) => {
-                    if (res.Message) {
-                        let tempClients = ClientData.find(obj => {
-                            let tempGrpKey = Object.keys(obj)[0]
-                            let tempGrpVal = Object.values(obj)[0]
-
-                            if (tempGrpKey === element.GroupName) {
-                                return tempGrpVal || []
-                            }
-                            return [];
-                        })
-                        const Payload = {
-                            ClientsData: tempClients || [],
-                            GroupIds: [res.Message]
+            let GroupObj = groups.find((obj) => obj.GroupID === selectedGroups[0])
+            new Promise((resolve, reject) => resolve(dispatch(createGroup({ GroupName: GroupObj.GroupName })))).then((res) => {
+                handleResponses(res, {
+                    'S_200': {
+                        code: 200,
+                        message: '',
+                        Func: () => null
+                    },
+                    'S_201': {
+                        code: 201,
+                        message: '',
+                        Func: () => {
+                            setShowLoader(false)
+                            handleAddClients(res.payload.Message)
                         }
-
-                        new Promise((resolve, reject) => resolve(dispatch(addRecipients(Payload))))
-                    }
+                    },
+                    'S_401': {
+                        code: 401,
+                        message: t('group.responses.featureNotAllowed'),
+                        Func: () => null
+                    },
+                    'S_404': {
+                        code: 404,
+                        message: t('recipient.responses.notFound'),
+                        Func: () => null
+                    },
+                    'S_500': {
+                        code: 500,
+                        message: t('common.ErrorOccured'),
+                        Func: () => null
+                    },
+                    'default': {
+                        message: t(''),
+                        Func: () => null
+                    },
                 })
+                setShowLoader(false)
             })
+            // selectedGroups.forEach(element => {
+            //     new Promise((resolve, reject) => resolve(dispatch(createGroup({ GroupName: element.GroupName })))).then((res) => {
+            //         if (res.Message) {
+            //             let tempClients = ClientData.find(obj => {
+            //                 let tempGrpKey = Object.keys(obj)[0]
+            //                 let tempGrpVal = Object.values(obj)[0]
+
+            //                 if (tempGrpKey === element.GroupName) {
+            //                     return tempGrpVal || []
+            //                 }
+            //                 return [];
+            //             })
+            //             const Payload = {
+            //                 ClientsData: tempClients || [],
+            //                 GroupIds: [res.Message]
+            //             }
+
+            //             new Promise((resolve, reject) => resolve(dispatch(addRecipients(Payload))))
+            //         }
+            //     })
+            // })
         }
     }
 
@@ -284,7 +381,7 @@ const SimplyClubPupup = ({
                 open={showGroups}
                 onClose={() => setShowGroups(false)}
                 onCancel={() => setShowGroups(false)}
-                onConfirm={() => handleGetClients()}
+                onConfirm={() => setShowGroups(false)}
                 icon={< div className={classes.dialogIconContent} >
                     {'\uE0D5'}
                 </div >}
@@ -353,9 +450,15 @@ const SimplyClubPupup = ({
                 classes={classes}
                 isOpen={showClients}
                 settings={UploadSettings.GROUPS}
-                onClose={() => setShowClients(false)}
-                onCancel={() => setShowClients(false)}
-                onConfirm={() => ClientData.length > 0 && handleImportRecipients()}
+                onClose={() => {
+                    setSelectedGroups([])
+                    setShowClients(false)
+                }}
+                onCancel={() => {
+                    setSelectedGroups([])
+                    setShowClients(false)
+                }}
+                onConfirm={() => filteredDAta.length > 0 && handleImportRecipients()}
                 data={filteredDAta}
                 headers={headers}
                 setheaders={setheaders}
@@ -447,6 +550,15 @@ const SimplyClubPupup = ({
                 </Box>
                 {showGroups && GroupDialog()}
                 {showClients && ColumnAdjustmentPopup()}
+                {summary && <AddRecipientResponse
+                    classes={classes}
+                    isOpen={!!summary}
+                    onClose={() => { setSummary(null); setSelectedGroups([]); }}
+                    windowSize={windowSize}
+                    title={summary.title}
+                    message={summary.message}
+                    summary={summary.data}
+                />}
 
             </Dialog>
             <Loader isOpen={showLoader} zIndex={1500} />

@@ -217,13 +217,13 @@ const GroupsManagement = ({ classes }) => {
       case 200: {
         // getData();
         actions?.S_200?.Func?.();
-        setToastMessage({ title: '', message: actions?.S_200?.message, summary: '' });
+        actions?.S_200?.message && setToastMessage({ title: '', message: actions?.S_200?.message, summary: '' });
         break;
       }
       case 201: {
         // getData();
         actions?.S_201?.Func?.();
-        setToastMessage({ title: '', message: actions?.S_201?.message, summary: '' });
+        actions?.S_201?.message && setToastMessage({ title: '', message: actions?.S_201?.message, summary: '' });
         break;
       }
       case 400: {
@@ -832,6 +832,7 @@ const GroupsManagement = ({ classes }) => {
         summary={responseMessage.summary}
         setToastMessage={setToastMessage}
         handleResponses={handleResponses}
+      // handleAddRecipientResponse={handleAddRecipientResponse}
       />)}
       {renderConfirmDialog()}
       <Loader isOpen={showLoader} />
