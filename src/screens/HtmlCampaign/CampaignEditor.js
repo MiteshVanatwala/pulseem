@@ -248,17 +248,18 @@ const CampaignEditor = ({ classes, ...props }) => {
         unlayer.editor.registerProvider('blocks', async function (params, done) {
           done(userBlocks);
         });
-        // unlayer.addEventListener('design:updated', function (data) {
-        //   var type = data.type; // body, row, content
-        //   var item = data.item;
-        //   var changes = data.changes;
-        //   //const heading = editorRef.current.editor.frame.iframe.getElementsByClassName("u_content_heading");
-        //   if (changes.name === 'textAlign') {
-        //     console.log(isRTL);
-        //     item.values.direction = "rtl";
-        //   }
-        //   console.log('design:updated', type, item, changes);
-        // });
+        unlayer.addEventListener('design:updated', function (data) {
+          // var type = data.type; // body, row, content
+          // var item = data.item;
+          // var changes = data.changes;
+          // //const heading = editorRef.current.editor.frame.iframe.getElementsByClassName("u_content_heading");
+          // if (changes.name === 'textAlign') {
+          //   console.log(isRTL);
+          //   item.values.direction = "rtl";
+          // }
+          // console.log('design:updated', type, item, changes);
+          saveDesign(false, null, false);
+        });
         unlayer.editor.reloadProvider('blocks');
       }
       catch (e) {

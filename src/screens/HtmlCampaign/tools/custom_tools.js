@@ -4,7 +4,7 @@ function getCookie(cname) {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
     let ca = decodedCookie.split(';');
-    for(let i = 0; i <ca.length; i++) {
+    for (let i = 0; i < ca.length; i++) {
       let c = ca[i];
       while (c.charAt(0) == ' ') {
         c = c.substring(1);
@@ -18,6 +18,44 @@ function getCookie(cname) {
     return "";
   }
 }
+
+// Widgets
+unlayer.registerPropertyEditor({
+  name: 'radio',
+  Widget: unlayer.createWidget({
+    render(value, updateValue, data) {
+      return `
+      <div style="text-align: ${getCookie("Culture") === 'en-US' ? "left" : "right"}">
+      <div class="blockbuilder-widget-label mb-2">
+        <label class="blockbuilder-label-primary">
+          <div class="">
+            <span class="has-value same-value">${getCookie("Culture") === "en-US" ? "Direction" : "כיוון טקסט"}</span>
+          </div>
+        </label>
+      </div>
+      <div style="display: flex; justify-content: space-evenly">
+        <div>
+          <label for="custon_ltr">${getCookie("Culture") === "en-US" ? "Left to right" : "שמאל לימין"}</label>  <input type="radio" id="custon_ltr" name="direction" value="ltr" ${value === 'ltr' ? 'checked' : null}>
+        </div>  
+        <div>
+          <label for="custon_rtl">${getCookie("Culture") === "en-US" ? "Right to left" : "ימין לשמאל"}</label> <input type="radio" id="custon_rtl" name="direction" value="rtl" ${value === 'rtl' ? 'checked' : null}>
+        </div>
+      </div>
+      </div>`
+    },
+    mount(node, value, updateValue, data) {
+      var rtl = node.querySelector('#custon_rtl');
+      var ltr = node.querySelector('#custon_ltr');
+
+      rtl.onchange = function (event) {
+        updateValue(event.target.value)
+      }
+      ltr.onchange = function (event) {
+        updateValue(event.target.value)
+      }
+    }
+  })
+});
 //Header
 unlayer.registerTool({
   name: 'Header',
@@ -183,6 +221,11 @@ unlayer.registerTool({
           "defaultValue": "center",
           "widget": "dropdown"
         },
+        "direction": {
+          "label": getCookie("Culture") === 'en-US' ? "Text Direction" : "כיוון טקסט",
+          "defaultValue": "rtl",
+          "widget": "radio"
+        }
       }
     }
   },
@@ -190,7 +233,7 @@ unlayer.registerTool({
   renderer: {
     Viewer: unlayer.createViewer({
       render(values) {
-        return `<div style="font-weight: bold; text-align: ${values.alignment};">
+        return `<div style="font-weight: bold; text-align: ${values.alignment}; direction: ${values.direction};">
         <span style="display: ${values.phone !== '' ? 'inline-block' : 'none'}">${values.data.phoneTitle}: ${values.phone} | </span>
         <span style="display: ${values.fax !== '' ? 'inline-block' : 'none'}">${values.data.faxTitle}: ${values.fax} | </span>
         <span style="display: ${values.email !== '' ? 'inline-block' : 'none'}">${values.data.emailTitle}: <a href="mailto:${values.email}">${values.email}</a></span>
@@ -204,7 +247,7 @@ unlayer.registerTool({
     }), // our React Viewer
     exporters: {
       web: function (values) {
-        return `<div style="font-weight: bold; text-align: ${values.alignment};">
+        return `<div style="font-weight: bold; text-align: ${values.alignment}; direction: ${values.direction};">
         <span style="display: ${values.phone !== '' ? 'inline-block' : 'none'}">${values.data.phoneTitle}: ${values.phone} | </span>
         <span style="display: ${values.fax !== '' ? 'inline-block' : 'none'}">${values.data.faxTitle}: ${values.fax} | </span>
         <span style="display: ${values.email !== '' ? 'inline-block' : 'none'}">${values.data.emailTitle}: <a href="mailto:${values.email}">${values.email}</a></span>
@@ -216,7 +259,7 @@ unlayer.registerTool({
     </div>`
       },
       email: function (values) {
-        return `<div style="font-weight: bold; text-align: ${values.alignment};">
+        return `<div style="font-weight: bold; text-align: ${values.alignment}; direction: ${values.direction};">
         <span style="display: ${values.phone !== '' ? 'inline-block' : 'none'}">${values.data.phoneTitle}: ${values.phone} | </span>
         <span style="display: ${values.fax !== '' ? 'inline-block' : 'none'}">${values.data.faxTitle}: ${values.fax} | </span>
         <span style="display: ${values.email !== '' ? 'inline-block' : 'none'}">${values.data.emailTitle}: <a href="mailto:${values.email}">${values.email}</a></span>
@@ -234,3 +277,5 @@ unlayer.registerTool({
     }
   }
 });
+
+

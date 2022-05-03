@@ -557,5 +557,6 @@
   "companyName": "Company Name",
   "Fax": "Fax",
   "alignCenter": "Center",
-  "autoLogoutMessage": "Please note: due to inactivity on our site, you have been logged out of our system.<br/>Please click on the Confirm button below to sign in."
+  "autoLogoutMessage": "Please note: due to inactivity on our site, you have been logged out of our system.<br/>Please click on the Confirm button below to sign in.",
+  "invalidEmail": "Invalid Email address"
 }

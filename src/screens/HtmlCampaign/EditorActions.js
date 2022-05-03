@@ -51,10 +51,11 @@ const EditorActions = ({
               variant='contained'
               size='medium'
               onClick={() => onTestSend()}
-              style={{ margin: '8px', padding: '9px 0' }}
+              style={{ marginInline: 8, paddingInline: 10 }}
               className={clsx(classes.actionButton,
                 classes.actionButtonOutlinedBlue)}>
               <RiSendPlaneFill style={{ fontSize: "25" }} />
+              {t("campaigns.sendTest")}
             </Button>
             <Button
               onClick={() =>
