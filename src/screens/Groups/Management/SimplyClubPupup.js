@@ -7,7 +7,7 @@ import { Dialog } from "../../../components/managment/Dialog";
 import { getExternalClientsByGroups, getGroupsForSimplyClub } from '../../../redux/reducers/groupSlice';
 import { useDispatch } from 'react-redux';
 import DataTable from '../../../components/Table/DataTable';
-import { UploadSettings } from '../tempConstants';
+import { simplyCLubClientData, UploadSettings } from '../tempConstants';
 import ColumnAdjustmentDialog from '../../../components/Files/ColumnAdjustmentDialog';
 import {
     createGroup, addRecipients
@@ -93,7 +93,7 @@ const SimplyClubPupup = ({
     useEffect(() => {
         const preload = () => {
             let totalFields = 5;
-            const data = ClientData.reduce((prev, next) => {
+            const data = Object.values(ClientData).reduce((prev, next) => {
                 let restELementsLen = 5 - prev.length
                 let restElements = Object.values(next)[0];
                 let tempFields = restElements.reduce((prev, next) => Object.keys(next).length, 0)
@@ -114,7 +114,7 @@ const SimplyClubPupup = ({
             setheaders(tempHeaders)
         }
         preload()
-    }, [])
+    }, [ClientData])
 
 
 
@@ -157,8 +157,7 @@ const SimplyClubPupup = ({
         handleResponses(response, {
             'S_200': {
                 code: 200,
-                // message: 'group.responses.serverFoundWithNoResponse',
-                message: t('group.responses.success'),
+                message: '',
                 Func: () => {
                     setGroups(response?.payload?.Groups || [])
                     setShowGroups(true)
@@ -198,9 +197,9 @@ const SimplyClubPupup = ({
         handleResponses(response, {
             'S_200': {
                 code: 200,
-                message: t('group.responses.success'),
+                message: '',
                 Func: () => {
-                    setClientData(response?.payload?.Clients)
+                    setClientData(response?.payload?.Clients || [])
                     setShowClients(true)
                 }
             },
@@ -229,6 +228,8 @@ const SimplyClubPupup = ({
                 Func: () => null
             },
         })
+
+        setClientData(simplyCLubClientData)
     }
 
     const manualUploadValidationscheck = () => {

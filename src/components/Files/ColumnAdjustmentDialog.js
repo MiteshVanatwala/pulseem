@@ -37,26 +37,26 @@ const useStyles = makeStyles((theme) => ({
 const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, settings, data, headers = [], setheaders }) => {
     const { t } = useTranslation();
     const { ToastMessages, extraData } = useSelector((state) => state.sms);
-    const { isRTL } = useSelector((state) => state.core);
-    const dispatch = useDispatch();
+    // const { isRTL } = useSelector((state) => state.core);
+    // const dispatch = useDispatch();
     const styles = useStyles();
-    const [fileToUpload, setFileToUpload] = useState(null);
-    const [isFilePicked, setIsFilePicked] = useState(false);
-    const [showLoader, setLoader] = useState(false);
-    const hiddenFileInput = React.useRef(null);
-    const [totalRecords, settotalRecords] = useState(0);
-    const [areaData, setareaData] = useState("");
-    const [dropClick, setdropClick] = useState(false);
+    // const [fileToUpload, setFileToUpload] = useState(null);
+    // const [isFilePicked, setIsFilePicked] = useState(false);
+    // const [showLoader, setLoader] = useState(false);
+    // const hiddenFileInput = React.useRef(null);
+    // const [totalRecords, settotalRecords] = useState(0);
+    // const [areaData, setareaData] = useState("");
+    // const [dropClick, setdropClick] = useState(false);
     const [typedData, settypedData] = useState([]);
     // const [initialheadstate, setinitialheadstate] = useState([]);
     // const [headers, setheaders] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
-    const [highlighted, setHighlighted] = React.useState(false);
+    // const [highlighted, setHighlighted] = React.useState(false);
     const [contacts, setContacts] = React.useState([]);
     const [groupNameInput, setgroupNameInput] = useState("");
     // const [toastMessage, setToastMessage] = useState(null);
-    const [groupList, setGroupList] = useState([]);
-    const [selectedGroups, setSelected] = useState([]);
+    // const [groupList, setGroupList] = useState([]);
+    // const [selectedGroups, setSelected] = useState([]);
     const [selectArray, setselectArray] = useState([]);
     const [groupTextError, setGroupTextError] = useState(false);
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
@@ -89,7 +89,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
             }
         });
         setselectArray(fields);
-    }, [dialogType]);
+    }, []);
 
 
     // console.log("Data:", data)
@@ -173,7 +173,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                             {groupTextError ? <span className={classes.errorLabel}>{GroupNameValidationMessage}</span> : null}
                         </div>
                     </div>}
-                    <Box
+                    {/* <Box
                         className={clsx(classes.commonFieldPulse, classes.mb3)}>
                         <Typography style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
                             {t("sms.totalRecipients")}:
@@ -195,7 +195,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                         >
                             <Typography className={classes.bodyInfo}>i</Typography>
                         </Tooltip>
-                    </Box>
+                    </Box> */}
                     <Box className={classes.sidebar} style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
                         <table
                             style={{
