@@ -1,22 +1,12 @@
-import React, { useState, useEffect, useMemo } from "react";
-import ReactDOM from 'react-dom';
-import { useSelector, useDispatch } from "react-redux";
-import { Typography, Grid, Button, Box, TextField } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Typography, TextField, Box } from "@material-ui/core";
 import { Dialog } from "../managment/index";
-import * as XLSX from 'xlsx';
 import clsx from "clsx";
-import Papa from 'papaparse';
-import {
-    addRecipient,
-    addRecipients
-} from "../../redux/reducers/groupSlice";
-import { Tooltip } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
-import { Loader } from '../Loader/Loader';
 import { useTranslation } from "react-i18next";
-import { renderHtml } from "../../helpers/utils";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -37,26 +27,9 @@ const useStyles = makeStyles((theme) => ({
 const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, settings, data, headers = [], setheaders }) => {
     const { t } = useTranslation();
     const { ToastMessages, extraData } = useSelector((state) => state.sms);
-    // const { isRTL } = useSelector((state) => state.core);
-    // const dispatch = useDispatch();
     const styles = useStyles();
-    // const [fileToUpload, setFileToUpload] = useState(null);
-    // const [isFilePicked, setIsFilePicked] = useState(false);
-    // const [showLoader, setLoader] = useState(false);
-    // const hiddenFileInput = React.useRef(null);
-    // const [totalRecords, settotalRecords] = useState(0);
-    // const [areaData, setareaData] = useState("");
-    // const [dropClick, setdropClick] = useState(false);
-    const [typedData, settypedData] = useState([]);
-    // const [initialheadstate, setinitialheadstate] = useState([]);
-    // const [headers, setheaders] = useState([]);
-    const [dialogType, setDialogType] = useState({ type: null });
-    // const [highlighted, setHighlighted] = React.useState(false);
-    const [contacts, setContacts] = React.useState([]);
     const [groupNameInput, setgroupNameInput] = useState("");
-    // const [toastMessage, setToastMessage] = useState(null);
-    // const [groupList, setGroupList] = useState([]);
-    // const [selectedGroups, setSelected] = useState([]);
+
     const [selectArray, setselectArray] = useState([]);
     const [groupTextError, setGroupTextError] = useState(false);
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
@@ -92,7 +65,6 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
     }, []);
 
 
-    // console.log("Data:", data)
 
     const handleManualDialog = (e) => {
         setgroupNameInput(e.target.value);
@@ -111,7 +83,6 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
         let h = headers;
 
         headers[id] = t("sms.adjustTitle");
-        // h[id] = initialheadstate[id];
 
         setheaders(h);
 
@@ -127,8 +98,6 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
     }
 
     const handleSelectFirst = (name, id, idx, e) => {
-        // id -  index of select array
-        // idx - header index
         let h = headers;
         h[idx] = name.label;
         selectArray.forEach((value, index) => {
@@ -173,29 +142,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                             {groupTextError ? <span className={classes.errorLabel}>{GroupNameValidationMessage}</span> : null}
                         </div>
                     </div>}
-                    {/* <Box
-                        className={clsx(classes.commonFieldPulse, classes.mb3)}>
-                        <Typography style={{ fontSize: "20px", marginInlineEnd: "10px" }}>
-                            {t("sms.totalRecipients")}:
-                        </Typography>
-                        <Typography
-                            style={{
-                                fontSize: "20px",
-                                marginInlineEnd: "10px",
-                                fontWeight: "600",
-                            }}
-                        >
-                            {contacts.length !== 0 ? contacts.length : typedData.length}
-                        </Typography>
-                        <Tooltip
-                            disableFocusListener
-                            title={t("smsReport.manualTotalTooltip")}
-                            classes={{ tooltip: styles.customWidth }}
-                            sx={{ justifyContent: 'center', zIndex: 9999999999999 }}
-                        >
-                            <Typography className={classes.bodyInfo}>i</Typography>
-                        </Tooltip>
-                    </Box> */}
+
                     <Box className={classes.sidebar} style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
                         <table
                             style={{
@@ -247,7 +194,6 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                                 })
                                 : null}
                             {data.map((item, id) => {
-                                // if (id > data.length - 6) {
                                 return (
                                     <tbody>
                                         <tr key={id}>

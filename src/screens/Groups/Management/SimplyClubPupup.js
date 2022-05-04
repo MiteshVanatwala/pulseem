@@ -62,7 +62,8 @@ const SimplyClubPupup = ({
     windowSize,
     getData,
     setToastMessage,
-    handleResponses = (response, actions) => null
+    handleResponses = (response, actions) => null,
+    ToastMessages
 }) => {
 
     const { t } = useTranslation();
@@ -98,7 +99,7 @@ const SimplyClubPupup = ({
             let totalFields = 5;
             const data = Object.entries(ClientData).reduce((prev, [key, value]) => {
                 let restELementsLen = 5 - prev.length
-                let restElements = value //Object.values(value)[0];
+                let restElements = value;
                 let tempFields = restElements.reduce((prev, next) => Object.keys(next).length, 0)
                 if (totalFields < tempFields) {
                     totalFields = tempFields
@@ -121,7 +122,6 @@ const SimplyClubPupup = ({
 
     useEffect(() => {
         selectedGroups.length > 0 && handleGetClients()
-
     }, [selectedGroups])
 
 
@@ -164,8 +164,6 @@ const SimplyClubPupup = ({
                 Func: () => null
             },
         })
-
-        // setClientData(simplyCLubClientData)
     }
 
 
@@ -254,7 +252,6 @@ const SimplyClubPupup = ({
             isValid = false;
             setToastMessage({ severity: 'error', color: 'error', message: t('recipient.email_cell_notProvided'), showAnimtionCheck: false })
         }
-
         return isValid
     }
 
@@ -283,6 +280,11 @@ const SimplyClubPupup = ({
                         setSummary({ title: t("recipient.summary.summaryImportTitle"), message: '', data: response.payload.Summary })
                     }
                 },
+                'S_400': {
+                    code: 400,
+                    message: t("recipient.importResponses.listEmptyOrClientInvalid"),
+                    Func: () => null
+                },
                 'S_401': {
                     code: 401,
                     message: t('group.responses.featureNotAllowed'),
@@ -290,7 +292,7 @@ const SimplyClubPupup = ({
                 },
                 'S_404': {
                     code: 404,
-                    message: t('recipient.responses.notFound'),
+                    message: t("recipient.importResponses.noFolderFound"),
                     Func: () => null
                 },
                 'S_500': {
@@ -299,7 +301,7 @@ const SimplyClubPupup = ({
                     Func: () => null
                 },
                 'default': {
-                    message: t(''),
+                    message: t("recipient.importResponses.genericError"),
                     Func: () => null
                 },
             })
@@ -329,12 +331,22 @@ const SimplyClubPupup = ({
                     },
                     'S_401': {
                         code: 401,
-                        message: t('group.responses.featureNotAllowed'),
+                        message: ToastMessages.GROUP_INVALID_API,
                         Func: () => null
                     },
                     'S_404': {
                         code: 404,
                         message: t('recipient.responses.notFound'),
+                        Func: () => null
+                    },
+                    'S_405': {
+                        code: 405,
+                        message: ToastMessages.GROUP_ERROR,
+                        Func: () => null
+                    },
+                    'S_422': {
+                        code: 422,
+                        message: ToastMessages.GROUP_ALREADY_EXIST,
                         Func: () => null
                     },
                     'S_500': {
@@ -343,33 +355,12 @@ const SimplyClubPupup = ({
                         Func: () => null
                     },
                     'default': {
-                        message: t(''),
+                        message: ToastMessages.GROUP_ERROR,
                         Func: () => null
                     },
                 })
                 setShowLoader(false)
             })
-            // selectedGroups.forEach(element => {
-            //     new Promise((resolve, reject) => resolve(dispatch(createGroup({ GroupName: element.GroupName })))).then((res) => {
-            //         if (res.Message) {
-            //             let tempClients = ClientData.find(obj => {
-            //                 let tempGrpKey = Object.keys(obj)[0]
-            //                 let tempGrpVal = Object.values(obj)[0]
-
-            //                 if (tempGrpKey === element.GroupName) {
-            //                     return tempGrpVal || []
-            //                 }
-            //                 return [];
-            //             })
-            //             const Payload = {
-            //                 ClientsData: tempClients || [],
-            //                 GroupIds: [res.Message]
-            //             }
-
-            //             new Promise((resolve, reject) => resolve(dispatch(addRecipients(Payload))))
-            //         }
-            //     })
-            // })
         }
     }
 
@@ -537,7 +528,6 @@ const SimplyClubPupup = ({
                                         <IconButton
                                             aria-label="toggle password visibility"
                                             onClick={() => setShowPassword(!showPassword)}
-                                        // onMouseDown={handleMouseDownPassword}
                                         >
                                             {showPassword ? <VisibilityOff style={{ fontSize: 15 }} /> : <Visibility style={{ fontSize: 15 }} />}
                                         </IconButton>

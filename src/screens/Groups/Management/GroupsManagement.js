@@ -832,7 +832,7 @@ const GroupsManagement = ({ classes }) => {
         summary={responseMessage.summary}
         setToastMessage={setToastMessage}
         handleResponses={handleResponses}
-      // handleAddRecipientResponse={handleAddRecipientResponse}
+        ToastMessages={ToastMessages}
       />)}
       {renderConfirmDialog()}
       <Loader isOpen={showLoader} />

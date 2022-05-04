@@ -141,6 +141,16 @@ const AddRecipientPopup = ({ classes,
 
     }
 
+    const handleEmailValue = (e) => {
+        if (!!e.target.value && (e.target.style.direction === null || !e.target.style.direction)) {
+            e.target.style.direction = 'ltr'
+        } else if (!e.target.value && e.target.style.direction === 'ltr') {
+            e.target.style.direction = null
+        }
+
+        handleChange(e)
+    }
+
     const handleSubmit = async (callback) => {
         const data = {
             ClientsData: addRecipientData,
@@ -348,7 +358,7 @@ const AddRecipientPopup = ({ classes,
                             className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                             autoComplete="off"
                             onChange={(e) => {
-                                if (e.target.value.length === 1 && e.target.value == "-") {
+                                if (e.target.value.length === 1 && e.target.value === "-") {
                                     return;
                                 }
                                 let tempVal = e.target.value
@@ -384,15 +394,7 @@ const AddRecipientPopup = ({ classes,
                             value={addRecipientData.Email}
                             className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                             autoComplete="off"
-                            onChange={(e) => {
-                                if (!!e.target.value && (e.target.style.direction === null || !e.target.style.direction)) {
-                                    e.target.style.direction = 'ltr'
-                                } else if (!e.target.value && e.target.style.direction === 'ltr') {
-                                    e.target.style.direction = null
-                                }
-
-                                handleChange(e)
-                            }}
+                            onChange={handleEmailValue}
                             error={errors.Email}
                             helperText={errors.Email}
                             onBlur={handleBlur}
