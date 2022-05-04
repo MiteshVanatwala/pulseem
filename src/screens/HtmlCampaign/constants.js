@@ -640,5 +640,17 @@ export const options = {
     ]
   },
   customJS: [`https://www.dgpul.site/UnlayerTools/custom_tools.js`],
-  customCSS: ["body { background-color: black } .beMelL, .blockbuilder-preview { background-image: none; background-color: #fff !important; overflow-x: hidden}"]
+  customCSS: [`body { background-color: black } .beMelL, .blockbuilder-preview { background-image: none; background-color: #fff !important; overflow-x: hidden}
+               .editor-desktop::-webkit-scrollbar, .blockbuilder-options-content::-webkit-scrollbar {
+                 width: 6px; height: 6px; display: block !important;
+                } 
+                .editor-desktop::-webkit-scrollbar-thumb, .blockbuilder-options-content::-webkit-scrollbar-thumb {
+                  background: #ccc; border-radius: 10px;
+                }
+                .editor-desktop::-webkit-scrollbar-track, .blockbuilder-options-content::-webkit-scrollbar-track{ 
+                  box-shadow: inset 0 0 0px;
+                  border-radius: 10px;
+                  background-color: #fff !important;
+                }
+                `]
 }
