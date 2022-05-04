@@ -9,8 +9,9 @@
   "resetConfirm": "Would you like to reset the group ?",
   "createNew": "Create New Group",
   "testGroupInfo": "Test Groups allow you to send a test directly from the campaign editor",
-  "created": "Group created successfuly",
-  "updated": "Group updated successfuly",
+  "created": "Group created successfully",
+  "updated": "Group updated successfully",
+  "deleted": "Group deleted successfully",
   "zeroSelected": "No Group Selected",
   "inputIncorrect": "The input is in incorrect format, missing GroupName",
   "invalidApi": "Invalid or missing API KEY",
@@ -29,6 +30,7 @@
   "responses": {
     "success": "Success",
     "featureNotAllowed": "Feature not allowed / Invalid Api key",
+    "notFound": "Invalid username password",
     "serverFoundWithNoResponse": "Server got the request"
   }
 }

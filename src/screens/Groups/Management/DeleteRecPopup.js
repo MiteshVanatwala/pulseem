@@ -24,6 +24,7 @@ const DeleteRecPopup = ({ classes,
     selectedGroups,
     placeHolder = "recipient.deleteTextareaPlaceholder",
     handleResponses = (response, actions) => null,
+    ToastMessages
 }) => {
     const { t } = useTranslation();
     const [highlighted, setHighlighted] = useState(false);
@@ -204,31 +205,31 @@ const DeleteRecPopup = ({ classes,
         handleResponses(response, {
             'S_200': {
                 code: 200,
-                message: 'recipient.responses.serverFoundWithNoResponse',
+                message: ToastMessages.SERVER_FOUND_NO_RESPONSE,
                 Func: () => null
             },
             'S_201': {
                 code: 201,
-                message: 'recipient.delete.succeeded',
+                message: ToastMessages.GROUP_DELETED,
                 Func: onClose()
             },
             'S_401': {
                 code: 401,
-                message: 'recipient.responses.unautorized',
+                message: ToastMessages.UNAUTORIZED_RESPONSE,
                 Func: () => null
             },
             'S_404': {
                 code: 404,
-                message: 'recipient.responses.notFound',
+                message: ToastMessages.RECIPIENTS_NOT_FOUND,
                 Func: () => null
             },
             'S_500': {
                 code: 500,
-                message: 'common.ErrorOccured',
+                message: ToastMessages.ERROR_OCCURED,
                 Func: () => null
             },
             'default': {
-                message: '',
+                message: ToastMessages.ERROR_OCCURED,
                 Func: () => null
             },
         })

@@ -146,21 +146,21 @@ const SimplyClubPupup = ({
             },
             'S_401': {
                 code: 401,
-                message: t('group.responses.featureNotAllowed'),
+                message: ToastMessages.FEATURE_NOT_ALLOWED,
                 Func: () => null
             },
             'S_404': {
                 code: 404,
-                message: t('recipient.responses.notFound'),
+                message: ToastMessages.ERROR_OCCURED,
                 Func: () => null
             },
             'S_500': {
                 code: 500,
-                message: t('common.ErrorOccured'),
+                message: ToastMessages.ERROR_OCCURED,
                 Func: () => null
             },
             'default': {
-                message: t(''),
+                message: ToastMessages.ERROR_OCCURED,
                 Func: () => null
             },
         })
@@ -219,21 +219,21 @@ const SimplyClubPupup = ({
             },
             'S_401': {
                 code: 401,
-                message: t('group.responses.featureNotAllowed'),
+                message: ToastMessages.FEATURE_NOT_ALLOWED,
                 Func: () => null
             },
             'S_404': {
                 code: 404,
-                message: t('recipient.responses.notFound'),
+                message: ToastMessages.SIMPLY_NOT_FOUND,
                 Func: () => null
             },
             'S_500': {
                 code: 500,
-                message: t('common.ErrorOccured'),
+                message: ToastMessages.ERROR_OCCURED,
                 Func: () => null
             },
             'default': {
-                message: t(''),
+                message: ToastMessages.ERROR_OCCURED,
                 Func: () => null
             },
         })
@@ -271,7 +271,7 @@ const SimplyClubPupup = ({
                 },
                 'S_201': {
                     code: 201,
-                    message: t('group.responses.success'),
+                    message: '',
                     Func: () => {
                         setShowClients(false);
                         setShowLoader(false)
@@ -282,26 +282,21 @@ const SimplyClubPupup = ({
                 },
                 'S_400': {
                     code: 400,
-                    message: t("recipient.importResponses.listEmptyOrClientInvalid"),
-                    Func: () => null
-                },
-                'S_401': {
-                    code: 401,
-                    message: t('group.responses.featureNotAllowed'),
+                    message: ToastMessages.IMPORT_EMPTYLIST_INVALID_CLIENT,
                     Func: () => null
                 },
                 'S_404': {
                     code: 404,
-                    message: t("recipient.importResponses.noFolderFound"),
+                    message: ToastMessages.IMPORT_NO_FOLDER_FOUND,
                     Func: () => null
                 },
                 'S_500': {
                     code: 500,
-                    message: t('common.ErrorOccured'),
+                    message: ToastMessages.ERROR_OCCURED,
                     Func: () => null
                 },
                 'default': {
-                    message: t("recipient.importResponses.genericError"),
+                    message: ToastMessages.IMPORT_GENERIC_ERROR,
                     Func: () => null
                 },
             })
@@ -336,7 +331,7 @@ const SimplyClubPupup = ({
                     },
                     'S_404': {
                         code: 404,
-                        message: t('recipient.responses.notFound'),
+                        message: ToastMessages.RECIPIENTS_NOT_FOUND,
                         Func: () => null
                     },
                     'S_405': {
@@ -351,7 +346,7 @@ const SimplyClubPupup = ({
                     },
                     'S_500': {
                         code: 500,
-                        message: t('common.ErrorOccured'),
+                        message: ToastMessages.ERROR_OCCURED,
                         Func: () => null
                     },
                     'default': {

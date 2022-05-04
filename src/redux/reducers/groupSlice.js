@@ -127,6 +127,8 @@ export const groupSlice = createSlice({
         ToastMessages: {
             GROUP_CREATED: { severity: 'success', color: 'success', message: 'group.created', showAnimtionCheck: false },
             GROUP_UPDATED: { severity: 'success', color: 'success', message: 'group.updated', showAnimtionCheck: false },
+            GROUP_DELETED: { severity: 'success', color: 'success', message: 'group.deleted', showAnimtionCheck: false },
+            UNSUBSCRIBE_SUCCESS: { severity: 'success', color: 'success', message: 'recipient.unsubscribed.succeeded', showAnimtionCheck: false },
             GROUP_ZERO_SELECT: { severity: 'error', color: 'error', message: 'group.zeroSelected', showAnimtionCheck: false },
             GROUP_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'group.inputIncorrect', showAnimtionCheck: false },
             GROUP_INVALID_API: { severity: 'error', color: 'error', message: 'group.invalidApi', showAnimtionCheck: false },
@@ -137,6 +139,15 @@ export const groupSlice = createSlice({
             RECIPIENT_ADDED: { severity: 'success', color: 'success', message: 'recipient.addRecipientSuccess', showAnimtionCheck: false },
             RECIPIENT_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'recipient.incorrectRecipientInput', showAnimtionCheck: false },
             GROUP_INVALID_ID: { severity: 'error', color: 'error', message: 'group.invalidGroupId', showAnimtionCheck: false },
+            FEATURE_NOT_ALLOWED: { severity: 'error', color: 'error', message: 'group.responses.featureNotAllowed', showAnimtionCheck: false },
+            SIMPLY_NOT_FOUND: { severity: 'error', color: 'error', message: 'group.responses.notFound', showAnimtionCheck: false },
+            RECIPIENTS_NOT_FOUND: { severity: 'error', color: 'error', message: "recipient.responses.notFound", showAnimtionCheck: false },
+            ERROR_OCCURED: { severity: 'error', color: 'error', message: 'common.ErrorOccured', showAnimtionCheck: false },
+            IMPORT_EMPTYLIST_INVALID_CLIENT: { severity: 'error', color: 'error', message: "recipient.importResponses.listEmptyOrClientInvalid", showAnimtionCheck: false },
+            IMPORT_NO_FOLDER_FOUND: { severity: 'error', color: 'error', message: "recipient.importResponses.noFolderFound", showAnimtionCheck: false },
+            IMPORT_GENERIC_ERROR: { severity: 'error', color: 'error', message: "recipient.importResponses.genericError", showAnimtionCheck: false },
+            SERVER_FOUND_NO_RESPONSE: { severity: 'error', color: 'error', message: "recipient.responses.serverFoundWithNoResponse", showAnimtionCheck: false },
+            UNAUTORIZED_RESPONSE: { severity: 'error', color: 'error', message: "'recipient.responses.unautorized'", showAnimtionCheck: false },
         }
     },
     reducers: {

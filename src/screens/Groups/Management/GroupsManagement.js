@@ -215,54 +215,53 @@ const GroupsManagement = ({ classes }) => {
   }) => {
     switch (response.payload.StatusCode || response.payload.Message.StatusCode) {
       case 200: {
-        // getData();
         actions?.S_200?.Func?.();
-        actions?.S_200?.message && setToastMessage({ title: '', message: actions?.S_200?.message, summary: '' });
+        actions?.S_200?.message && setToastMessage(actions?.S_200?.message);
         break;
       }
       case 201: {
-        // getData();
         actions?.S_201?.Func?.();
-        actions?.S_201?.message && setToastMessage({ title: '', message: actions?.S_201?.message, summary: '' });
+        actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
         break;
       }
       case 400: {
         actions?.S_400?.Func?.();
-        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_400?.message, summary: '' });
+        actions?.S_400?.message && setToastMessage(actions?.S_400?.message);
         break;
       }
       case 401: {
         actions?.S_401?.Func?.();
-        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_401?.message, summary: '' });
+        actions?.S_401?.message && setToastMessage(actions?.S_401?.message);
         break;
       }
       case 405: {
         actions?.S_405?.Func?.();
-        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_405?.message, summary: '' });
+        actions?.S_405?.message && setToastMessage(actions?.S_405?.message);
         break;
       }
       case 406: {
         actions?.S_406?.Func?.();
-        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_406?.message, summary: '' });
+        actions?.S_406?.message && setToastMessage(actions?.S_406?.message);
         break;
       }
       case 422: {
         actions?.S_422?.Func?.();
-        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_422?.message, summary: '' });
+        actions?.S_422?.message && setToastMessage(actions?.S_422?.message);
         break;
       }
       case 500: {
         actions?.S_500?.Func?.();
-        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.S_500?.message, summary: '' });
+        actions?.S_500?.message && setToastMessage(actions?.S_500?.message);
         break;
       }
       default: {
         actions?.default?.Func?.();
-        setToastMessage({ severity: 'error', color: 'error', title: '', message: actions?.default?.message, summary: '' });
+        actions?.default?.message && setToastMessage(actions?.default?.message);
         setDialog(null);
       }
     }
   }
+
   const renderToast = () => {
     if (toastMessage) {
 
@@ -289,6 +288,8 @@ const GroupsManagement = ({ classes }) => {
       setSelectedGroups([...temp]);
     } else setSelectedGroups([...selectedGroups, id]);
   };
+
+
   //  COMPONENTS  //
   const renderHeader = () => {
     return (
@@ -456,7 +457,6 @@ const GroupsManagement = ({ classes }) => {
           </Button>
         </Grid>)}
 
-        {/* <Grid item xs={windowSize === 'xs' && 12}> */}
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
             variant="contained"
@@ -464,16 +464,13 @@ const GroupsManagement = ({ classes }) => {
             className={clsx(
               classes.actionButton,
               classes.actionButtonGreen
-              //   smsReport.length > 0 ? null : classes.disabled
             )}
             onClick={() => setShowConfirmDialog(true)}
-            // onClick={() => true}
             startIcon={<ExportIcon />}
           >
             {t("campaigns.exportFile")}
           </Button>
           <CSVLink
-            // data={csvData ?? null}
             data={[
               ["firstname", "lastname", "email"],
               ["Ahmed", "Tomi", "ah@smthing.co.com"],
@@ -482,12 +479,10 @@ const GroupsManagement = ({ classes }) => {
             ]}
             filename="report.csv"
             className="hidden"
-            // ref={csvLinkRef ?? null}
             ref={null}
             target="_blank"
           />
         </Grid>
-        {/* </Grid> */}
 
         <Grid
           item
@@ -557,14 +552,11 @@ const GroupsManagement = ({ classes }) => {
     );
   };
   const renderTableBody = useMemo(() => {
-    let sortData = groupData ? groupData.Groups : []; // BUG: UNCOMMENT THIS
-    // let sortData = [StaticData[0]]; // BUG: COMMENT THIS
+    let sortData = groupData ? groupData.Groups : [];
     if (sortData.length <= 0) {
       return <></>;
     }
 
-    //let rpp = parseInt(rowsPerPage);
-    //sortData = sortData.slice((page - 1) * rpp, (page - 1) * rpp + rpp);
     return (
       <TableBody>
         {sortData.map((obj, idx) =>
@@ -602,7 +594,9 @@ const GroupsManagement = ({ classes }) => {
       </TableBody>
     );
   }, [groupData, rowsPerPage, page, classes, selectedGroups]);
+
   const groupsLength = (groupData && groupData.RecordCount) || 0;
+
   const handleAddRecipientResponse = (res) => {
     switch (res.payload.StatusCode) {
       case 201: {
@@ -631,6 +625,7 @@ const GroupsManagement = ({ classes }) => {
       }
     }
   }
+
   const handleConfirmExport = () => {
     let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}`;
     if (selectedGroups && selectedGroups.length > 0) {
@@ -643,6 +638,7 @@ const GroupsManagement = ({ classes }) => {
     window.open(`https://www.pulseemdev.co.il/Pulseem/ClientExport.csv?${queryString}`);
     setShowConfirmDialog(false);
   }
+
   const renderConfirmDialog = () => {
     if (showConfirmDialog) {
       let dialog = {
@@ -717,7 +713,6 @@ const GroupsManagement = ({ classes }) => {
         page={page}
         onPageChange={(val) => {
           setPage(val);
-          // setSearchData({ ...serachData, PageIndex: val });
         }}
       />
 
@@ -752,11 +747,9 @@ const GroupsManagement = ({ classes }) => {
         onClose={() => setDialog(null)}
         setLoader={setLoader}
         windowSize={windowSize}
-        // ToastMessages={ToastMessages}
+        ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
         selectedGroup={{ GroupID: selectedGroups[0] }}
-        // openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
-        // getData={getData}
         getData={getData}
         handleResponses={(response, actions) => handleResponses(response, actions)}
       />}
@@ -794,6 +787,7 @@ const GroupsManagement = ({ classes }) => {
         isOpen={dialog === DialogType.UNSUB_RECIPIENT}
         onClose={() => { setDialog(null); setSelectedGroups([]); }}
         handleResponses={(response, actions) => handleResponses(response, actions)}
+        ToastMessages={ToastMessages}
       />}
       {dialog === DialogType.DELETE_RECIPIENT && <DeleteRecPopup
         classes={classes}

@@ -27,6 +27,7 @@ const UnSubRecPopup = ({ classes,
     onClose,
     placeHolder = "recipient.unsubTextareaPlaceholder",
     handleResponses = (response, actions) => null,
+    ToastMessages
 }) => {
     const { t } = useTranslation();
     const [highlighted, setHighlighted] = useState(false);
@@ -218,31 +219,31 @@ const UnSubRecPopup = ({ classes,
         handleResponses(response, {
             'S_200': {
                 code: 200,
-                message: 'recipient.responses.serverFoundWithNoResponse',
+                message: ToastMessages.SERVER_FOUND_NO_RESPONSE,
                 Func: () => null
             },
             'S_201': {
                 code: 201,
-                message: 'recipient.unsubscribed.succeeded',
+                message: ToastMessages.UNSUBSCRIBE_SUCCESS,
                 Func: () => setIsSubmitted(true)
             },
             'S_401': {
                 code: 401,
-                message: 'group.invalidApi',
+                message: ToastMessages.GROUP_INVALID_ID,
                 Func: () => null
             },
             'S_404': {
                 code: 404,
-                message: 'recipient.responses.notFound',
+                message: ToastMessages.RECIPIENTS_NOT_FOUND,
                 Func: () => null
             },
             'S_500': {
                 code: 500,
-                message: 'common.ErrorOccured',
+                message: ToastMessages.ERROR_OCCURED,
                 Func: () => null
             },
             'default': {
-                message: 'common.ErrorOccured',
+                message: ToastMessages.ERROR_OCCURED,
                 Func: () => null
             },
         })
