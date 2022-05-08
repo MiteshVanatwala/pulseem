@@ -14,10 +14,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
-import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
+import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
-import { editGroup, } from "../../../redux/reducers/groupSlice";
-import { Dialog } from "../../../components/managment/Dialog";
+import { editGroup, } from "../../../../redux/reducers/groupSlice";
+import { Dialog } from "../../../../components/managment/Dialog";
 
 const EditGroupPopup = ({ classes,
     isOpen = false,

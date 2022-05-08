@@ -3,17 +3,16 @@ import { Visibility, VisibilityOff } from '@material-ui/icons'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
-import { Dialog } from "../../../components/managment/Dialog";
-import { addRecipient, getExternalClientsByGroups, getGroupsForSimplyClub } from '../../../redux/reducers/groupSlice';
+import { Dialog } from "../../../../components/managment/Dialog";
+import { addRecipient, getExternalClientsByGroups, getGroupsForSimplyClub } from '../../../../redux/reducers/groupSlice';
 import { useDispatch } from 'react-redux';
-import DataTable from '../../../components/Table/DataTable';
-import { simplyCLubClientData, UploadSettings } from '../tempConstants';
-import ColumnAdjustmentDialog from '../../../components/Files/ColumnAdjustmentDialog';
+import DataTable from '../../../../components/Table/DataTable';
+import { UploadSettings } from '../../tempConstants';
+import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import {
-    createGroup, addRecipients
-} from "../../../redux/reducers/groupSlice";
-import { Loader } from '../../../components/Loader/Loader';
-import { useMemo } from 'react';
+    createGroup
+} from "../../../../redux/reducers/groupSlice";
+import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
 
 

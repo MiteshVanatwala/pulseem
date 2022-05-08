@@ -13,23 +13,23 @@ import {
     makeStyles,
 
 } from "@material-ui/core";
-import { DateField } from '../../../components/managment/index'
+import { DateField } from '../../../../components/managment/index'
 
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
 import { GrFormAdd } from "react-icons/gr";
-import { addRecipient } from "../../../redux/reducers/groupSlice";
-import { Dialog } from "../../../components/managment/Dialog";
-import SimpleGrid from "../../../components/Grids/SimpleGrid";
-import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../model/Groups/Contants";
-import GroupTags from "../../../components/Groups/GroupTags";
+import { addRecipient } from "../../../../redux/reducers/groupSlice";
+import { Dialog } from "../../../../components/managment/Dialog";
+import SimpleGrid from "../../../../components/Grids/SimpleGrid";
+import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
+import GroupTags from "../../../../components/Groups/GroupTags";
 
-import { ValidateEmail, ValidateNumber } from "../../../helpers/utils";
+import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
 
 
-import { Loader } from "../../../components/Loader/Loader";
+import { Loader } from "../../../../components/Loader/Loader";
 
 
 const useStyles = makeStyles({

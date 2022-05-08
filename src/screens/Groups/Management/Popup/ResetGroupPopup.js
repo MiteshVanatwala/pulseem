@@ -3,8 +3,8 @@ import React from 'react'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
-import { Dialog } from "../../../components/managment/Dialog";
-import { resetGroups } from '../../../redux/reducers/groupSlice';
+import { Dialog } from "../../../../components/managment/Dialog";
+import { resetGroups } from '../../../../redux/reducers/groupSlice';
 import { useDispatch } from 'react-redux';
 
 const ResetGroupPopup = ({

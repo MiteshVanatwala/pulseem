@@ -30,9 +30,9 @@ import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
 import DataTable from "../../../components/Table/DataTable";
 import RenderRow from "./RenderRow";
 import RenderPhoneRow from "./RenderPhoneRow";
-import AddGroupPopUp from "./AddGroupPopUp";
-import AddRecipientPopup from "./AddRecipientPopup";
-import ConfirmDeletePopUp from "./ConfirmDeletePopUp";
+import AddGroupPopUp from "./Popup/AddGroupPopUp";
+import AddRecipientPopup from "./Popup/AddRecipientPopup";
+import ConfirmDeletePopUp from "./Popup/ConfirmDeletePopUp";
 import Toast from '../../../components/Toast/Toast.component';
 import {
   getGroups,
@@ -40,14 +40,14 @@ import {
   getGroupsBySubAccountId
 } from "../../../redux/reducers/groupSlice";
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
-import AddBulkRecipientPopup from "./AddBulkRecipientPopup";
-import AddRecipientResponse from "./AddRecipientResponse";
-import UnSubRecPopup from "./UnSubRecPopup";
-import DeleteRecPopup from "./DeleteRecPopup";
-import EditGroupPopup from "./EditGroupPopup";
-import ResetGroupPopup from "./ResetGroupPopup";
+import AddBulkRecipientPopup from "./Popup/AddBulkRecipientPopup";
+import AddRecipientResponse from "./Popup/AddRecipientResponse";
+import UnSubRecPopup from "./Popup/UnSubRecPopup";
+import DeleteRecPopup from "./Popup/DeleteRecPopup";
+import EditGroupPopup from "./Popup/EditGroupPopup";
+import ResetGroupPopup from "./Popup/ResetGroupPopup";
 import { Dialog } from '../../../components/managment/index';
-import SimplyClubPupup from "./SimplyClubPupup";
+import SimplyClubPupup from "./Popup/SimplyClubPupup";
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -724,7 +724,7 @@ const GroupsManagement = ({ classes }) => {
         windowSize={windowSize}
         ToastMessages={ToastMessages}
         setToastMessage={setToastMessage}
-        openARDialog={() => setDialog(DialogType.ADD_RECIPIENTS)}
+        openARDialog={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
         getData={getData}
         handleResponses={(response, actions) => handleResponses(response, actions)}
       />

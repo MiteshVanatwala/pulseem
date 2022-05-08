@@ -5,7 +5,7 @@ import {
     Box
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../components/managment/Dialog";
+import { Dialog } from "../../../../components/managment/Dialog";
 
 const ConfirmDeletePopUp = ({ classes, isOpen = false, onClose, windowSize, handleDeleteGroup }) => {
 

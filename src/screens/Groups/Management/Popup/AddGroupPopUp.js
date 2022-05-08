@@ -13,12 +13,12 @@ import {
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import "moment/locale/he";
-import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
+import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
 import {
     createGroup,
-} from "../../../redux/reducers/groupSlice";
-import { Dialog } from "../../../components/managment/Dialog";
+} from "../../../../redux/reducers/groupSlice";
+import { Dialog } from "../../../../components/managment/Dialog";
 
 const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, openARDialog, getData, handleResponses = (response, actions) => null }) => {
     const { t } = useTranslation();
@@ -68,7 +68,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                     Func: new Promise(async (resolutionFunc, rejectionFunc) => {
                         await resolutionFunc(getData());
                     }).then((res) => {
-                        callback?.()
+                        callback?.(response.payload.Message)
                     }),
                 },
                 'S_400': {

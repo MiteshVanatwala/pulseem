@@ -4,18 +4,16 @@ import {
     Typography
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../components/managment/Dialog";
+import { Dialog } from "../../../../components/managment/Dialog";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import clsx from 'clsx';
-import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
-import { BsInfoCircleFill } from "react-icons/bs";
 import { useState } from "react";
-import { deleteRecipients } from "../../../redux/reducers/groupSlice";
+import { deleteRecipients } from "../../../../redux/reducers/groupSlice";
 import { useDispatch } from "react-redux";
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
-import { Loader } from "../../../components/Loader/Loader";
-import { ValidateEmail, ValidateNumber } from "../../../helpers/utils";
+import { Loader } from "../../../../components/Loader/Loader";
+import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
 
 
 const DeleteRecPopup = ({ classes,

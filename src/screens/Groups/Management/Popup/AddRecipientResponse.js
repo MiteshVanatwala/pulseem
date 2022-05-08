@@ -7,7 +7,7 @@ import {
 } from "@material-ui/core";
 
 import { useTranslation } from "react-i18next";
-import { Dialog } from "../../../components/managment/Dialog";
+import { Dialog } from "../../../../components/managment/Dialog";
 
 const AddRecipientResponse = ({ classes, isOpen = false, onClose, windowSize, title, message, summary = null }) => {
 
