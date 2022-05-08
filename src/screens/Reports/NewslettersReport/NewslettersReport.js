@@ -25,7 +25,7 @@ import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFro
 import { Loader } from '../../../components/Loader/Loader';
 
 const NewslettersReport = ({ classes }) => {
-  const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, rowsPerPage, accountSettings } = useSelector(state => state.core)
   const { newslettersReports } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -120,6 +120,10 @@ const NewslettersReport = ({ classes }) => {
       title: t("mainReport.locRemovedReason.HeaderText"),
       href: `/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`,
       icon: '\uE15D'
+    },
+    Revenue: {
+      title: windowSize === 'xs' ? '' : t('common.revenue'),
+      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     }
   })
 
@@ -440,6 +444,7 @@ const NewslettersReport = ({ classes }) => {
           <TableCell classes={cell50wStyle} className={classes.flex4} align='center'></TableCell>
           <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen)} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} ></TableCell>
+          {accountSettings && accountSettings.SubAccountSettings.DomainAddress && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
         </TableRow>
       </TableHead>
     )
@@ -629,7 +634,8 @@ const NewslettersReport = ({ classes }) => {
       Status,
       PercentageOpens,
       PercetangeClicks,
-      NotOpened
+      NotOpened,
+      Revenue = 0
     } = row
     const hrefs = getHrefs(CampaignID)
     return (
@@ -727,10 +733,16 @@ const NewslettersReport = ({ classes }) => {
         <TableCell
           component="th"
           scope="row"
-          classes={{ root: clsx(classes.tableCellRoot, classes.paddingRightLeft10) }}
+          classes={borderCellStyle}
           className={classes.flex1}>
           {renderCellIcons(row)}
         </TableCell>
+        {accountSettings && accountSettings.SubAccountSettings.DomainAddress && <TableCell
+          classes={noBorderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          {renderIntData(Revenue, 'green', hrefs.Revenue, true, t('common.revenue'))}
+        </TableCell>}
       </TableRow>
     )
   }
@@ -745,7 +757,8 @@ const NewslettersReport = ({ classes }) => {
       ClickCountUnique,
       RemovedClients,
       SendError,
-      NotOpened
+      NotOpened,
+      Revenue = 0
     } = row
     const hrefs = getHrefs(CampaignID)
     return (
@@ -815,6 +828,16 @@ const NewslettersReport = ({ classes }) => {
                 {t("mainReport.GridButtonColumnResource3.HeaderText")}
               </Typography>
               {renderIntData(NotOpened, 'red', hrefs.NotOpened, false)}
+            </Grid>
+            <Grid item xs={3}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("common.revenue")}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {renderIntData(Revenue, 'green', hrefs.Revenue, true)}
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </TableCell>

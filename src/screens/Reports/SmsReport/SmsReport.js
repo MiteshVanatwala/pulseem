@@ -25,7 +25,7 @@ import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, 
 import GraphReport from '../../../components/Reports/GraphReport';
 
 const SmsReport = ({ classes }) => {
-  const { language, windowSize, isRTL } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, accountSettings } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -85,6 +85,10 @@ const SmsReport = ({ classes }) => {
     },
     DLR: {
       title: windowSize === 'xs' ? '' : t('common.DLR'),
+      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+    },
+    Revenue: {
+      title: windowSize === 'xs' ? '' : t('common.revenue'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     }
   })
@@ -363,6 +367,7 @@ const SmsReport = ({ classes }) => {
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("smsReport.credits")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.DLR")}</TableCell>
+          {accountSettings && accountSettings.SubAccountSettings.DomainAddress && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
         </TableRow>
       </TableHead>
     )
@@ -442,7 +447,8 @@ const SmsReport = ({ classes }) => {
       failure,
       TotalSendPlan,
       totalSent,
-      Status
+      Status,
+      Revenue = 0
     } = row
     const hrefs = getHrefs(SMSCampaignID)
     return (
@@ -512,11 +518,17 @@ const SmsReport = ({ classes }) => {
           </Grid>
         </TableCell>
         <TableCell
-          classes={noBorderCellStyle}
+          classes={borderCellStyle}
           align='center'
           className={classes.flex1}>
           {renderIntData(success, '', hrefs.DLR)}
         </TableCell>
+        {accountSettings && accountSettings.SubAccountSettings.DomainAddress && <TableCell
+          classes={noBorderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          {renderIntData(success, '', hrefs.Revenue)}
+        </TableCell>}
       </TableRow>
     )
   }
@@ -532,7 +544,8 @@ const SmsReport = ({ classes }) => {
       removed,
       failure,
       totalSent,
-      success
+      success,
+      Revenue = 0
     } = row
     const hrefs = getHrefs(SMSCampaignID)
     return (
@@ -597,6 +610,16 @@ const SmsReport = ({ classes }) => {
               <Grid container spacing={2}>
                 <Grid item>
                   {renderIntData(success, '', hrefs.DLR)}
+                </Grid>
+              </Grid>
+            </Grid>
+            <Grid item xs={3}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("common.revenue")}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {renderIntData(success, '', hrefs.Revenue)}
                 </Grid>
               </Grid>
             </Grid>
