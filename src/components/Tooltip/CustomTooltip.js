@@ -47,7 +47,7 @@ const CustomTooltip = ({ children, classes, text, title, placement = 'top', arro
       interactive={interactive}
       arrow={arrow}
       placement={placement}
-      style={{ ...style }}
+      style={{ ...style, maxWidth: '100%', textOverflow: 'ellipsis', overflow: 'hidden' }}
       title={
         <React.Fragment>
           <span style={{ direction: isRTL ? 'rtl' : 'ltr', textAlign: textAlign, ...titleStyle }}>{title}</span>

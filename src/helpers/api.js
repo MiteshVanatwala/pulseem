@@ -16,6 +16,7 @@ export const logout = async () => {
     await axios.get(logoutURL)
     setCookie('jtoken', '')
     setCookie('accountFeatures', '');
+    setCookie('accountSettings', '');
     setCookie('isClal', '');
     redirectToLogin()
   } catch (err) {
