@@ -409,31 +409,35 @@ const SiteTrackingEditor = ({ classes }) => {
                         </Typography>
                     </Box>
                     <Box>
-                      <Box className={clsx(classes.f18)} style={{ display: 'inline' }}>
-                        {t('siteTracking.scriptPurchaseInstruction')}
-                        <CustomTooltip
-                          isSimpleTooltip={false}
-                          arrow={true}
-                          style={{ fontSize: 14 }}
-                          nameEllipsis={false}
-                          classes={classes}
-                          interactive={true}
-                          placement={'top'}
-                          title={t("siteTracking.purchaseInstructionTooltip")}
-                          text={<span className={classes.bodyInfo}>i</span>}
-                        />
-                      </Box>
-                      <ul>
-                        {purchaseObject.map((item, idx) => {
-                          return <li key={idx}>{item}</li>
-                        })}
-                      </ul>
+                        <Box className={clsx(classes.f18)}>
+                            <Typography className={classes.f18} style={{ display: 'inline-block' }}>{t('siteTracking.scriptPurchaseInstruction')}
+                                <Typography style={{ marginInlineStart: 5, display: 'inline-block', transform: 'translateY(3px)' }}>
+                                    <CustomTooltip
+                                        isSimpleTooltip={false}
+                                        arrow={true}
+                                        style={{ fontSize: 14 }}
+                                        nameEllipsis={false}
+                                        classes={classes}
+                                        interactive={true}
+                                        placement={'top'}
+                                        titleStyle={{ fontSize: 13, textAlign: 'center' }}
+                                        title={t("siteTracking.purchaseInstructionTooltip")}
+                                        text={<span className={classes.bodyInfo}>i</span>}
+                                    />
+                                </Typography>
+                            </Typography>
+                        </Box>
+                        <ul>
+                            {purchaseObject.map((item, idx) => {
+                                return <li key={idx}>{item}</li>
+                            })}
+                        </ul>
                     </Box>
                     <Box>
-                      <Typography className={clsx(classes.f20)}>{t("siteTracking.javscriptFunction")}
-                        <pre>
-                            <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
-                              {`trackPixel("purchase", {
+                        <Typography className={clsx(classes.f20)}>{t("siteTracking.javscriptFunction")}
+                            <pre>
+                                <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
+                                    {`trackPixel("purchase", {
     "orderId": 10,
     "grandTotal": "100.00$",
     "shipping": "10.00$",
@@ -446,9 +450,9 @@ const SiteTrackingEditor = ({ classes }) => {
         "price": 2000
       }
 ]});`}
-                            </div>
-                        </pre>
-                      </Typography>
+                                </div>
+                            </pre>
+                        </Typography>
                     </Box>
                 </Box>
             ),
