@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { Dialog } from "../../../../components/managment/Dialog";
-import { addRecipient, getExternalClientsByGroups, getGroupsForSimplyClub } from '../../../../redux/reducers/groupSlice';
+import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub } from '../../../../redux/reducers/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
 import { UploadSettings } from '../../tempConstants';
@@ -62,7 +62,9 @@ const SimplyClubPupup = ({
     getData,
     setToastMessage,
     handleResponses = (response, actions) => null,
-    ToastMessages
+    ToastMessages,
+    SelectedGroupIds = [],
+    setSelectedGroupIds
 }) => {
     const { isRTL } = useSelector((state) => state.core);
     const { t } = useTranslation();
@@ -112,8 +114,10 @@ const SimplyClubPupup = ({
 
             let tempHeaders = Array.from({ length: totalFields }, (v, i) => t("sms.adjustTitle"))
 
+
+
             setFilteredData(data)
-            setheaders(tempHeaders)
+            setheaders([...tempHeaders])
         }
         preload()
     }, [ClientData])
@@ -208,8 +212,9 @@ const SimplyClubPupup = ({
         handleResponses(response, {
             'S_200': {
                 code: 200,
-                message: '',
+                message: !response?.payload?.Groups ? ToastMessages.ERROR_OCCURED : '',
                 Func: () => {
+
                     setGroups(response?.payload?.Groups || [])
                     setShowGroups(true)
                 }
@@ -257,12 +262,12 @@ const SimplyClubPupup = ({
         return isValid
     }
 
-    const handleAddClients = (id) => {
+    const handleAddClients = (ids) => {
         setShowLoader(true)
         let tempClients = Object.values(ClientData)[0]
         const Payload = {
             ClientsData: tempClients || [],
-            GroupIds: [id]
+            GroupIds: ids
         }
         new Promise((resolve, reject) => resolve(dispatch(addRecipient(Payload)))).then((response) => {
             handleResponses(response, {
@@ -279,6 +284,7 @@ const SimplyClubPupup = ({
                         setShowLoader(false)
                         setClientData({})
                         setSelectedGroups([]);
+                        setSelectedGroupIds([])
                         setSummary({ title: t("recipient.summary.summaryImportTitle"), message: '', data: response.payload.Summary })
                     }
                 },
@@ -302,7 +308,20 @@ const SimplyClubPupup = ({
                     Func: () => null
                 },
             })
+            setShowLoader(false)
         })
+    }
+
+    const searchGroupAndModify = async (groupName) => {
+        setShowLoader(true)
+        const response = await dispatch(getGroups({ SearchTerm: groupName, PageSize: 6, PageIndex: 1 }))
+        console.log("response.payload:", response.payload)
+
+        if (response?.payload?.Groups && response?.payload?.RecordCount === 1) {
+            handleAddClients([response.payload.Groups[0].GroupID])
+        }
+
+
         setShowLoader(false)
     }
 
@@ -323,7 +342,7 @@ const SimplyClubPupup = ({
                         message: '',
                         Func: () => {
                             setShowLoader(false)
-                            handleAddClients(res.payload.Message)
+                            handleAddClients([res.payload.Message])
                         }
                     },
                     'S_401': {
@@ -343,8 +362,9 @@ const SimplyClubPupup = ({
                     },
                     'S_422': {
                         code: 422,
-                        message: ToastMessages.GROUP_ALREADY_EXIST,
-                        Func: () => null
+                        // message: ToastMessages.GROUP_ALREADY_EXIST,
+                        message: '',
+                        Func: () => searchGroupAndModify(GroupObj.GroupName)
                     },
                     'S_500': {
                         code: 500,
@@ -483,7 +503,7 @@ const SimplyClubPupup = ({
                     setSelectedGroups([])
                     setShowClients(false)
                 }}
-                onConfirm={() => filteredDAta.length > 0 && handleImportRecipients()}
+                onConfirm={() => filteredDAta.length > 0 && (SelectedGroupIds.length > 0 ? handleAddClients(SelectedGroupIds) : handleImportRecipients())}
                 data={filteredDAta}
                 headers={headers}
                 setheaders={setheaders}
@@ -570,7 +590,7 @@ const SimplyClubPupup = ({
                         </Box>
                     </Box>
                 </Box>
-                {showGroups && GroupDialog()}
+                {showGroups && groups.length > 0 && GroupDialog()}
                 {showClients && ColumnAdjustmentPopup()}
                 {summary && <AddRecipientResponse
                     classes={classes}

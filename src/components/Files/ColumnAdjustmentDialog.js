@@ -36,6 +36,18 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
     const [columnValidate, setcolumnValidate] = useState(false);
     const [dropIndex, setdropIndex] = useState(-1);
 
+    const headersOrder = [
+        "Email",
+        "FirstName",
+        "LastName",
+        "Cellphone",
+        "Telephone",
+        "Address",
+        "City",
+        "Zip",
+        "Birthday",
+    ]
+
 
 
     useEffect(() => {
@@ -53,15 +65,22 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                 });
             }
         });
+
+
+        let tempHeaders = [...headersOrder, ...headers.splice(headersOrder.length - 1, headersOrder.length)]
+
         const fields = settings.Fields.map((e) => {
+            let tempIndex = tempHeaders.indexOf(e.value)
             return {
-                eisdisabled: e.isdisabled,
-                idx: e.idx,
+                isdisabled: tempIndex === -1 ? e.isdisabled : true,
+                idx: tempIndex === -1 ? e.idx : tempIndex,
                 value: e.value,
                 label: t(e.label)
             }
         });
         setselectArray(fields);
+        setheaders(tempHeaders);
+
     }, []);
 
 
@@ -197,7 +216,8 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                                                             <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{headers[idx]}</Typography>
 
                                                             {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
-                                                            {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
+                                                            {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}
+                                                        </div>
                                                         {dropIndex == idx ? (
                                                             <div className={clsx(classes.adjustC, classes.scrollY, classes.customScroll)} style={{ maxHeight: 175 }}>
                                                                 {selectArray.map((item, id) => {

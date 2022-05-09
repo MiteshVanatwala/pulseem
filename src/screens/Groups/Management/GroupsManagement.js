@@ -827,6 +827,8 @@ const GroupsManagement = ({ classes }) => {
         setToastMessage={setToastMessage}
         handleResponses={handleResponses}
         ToastMessages={ToastMessages}
+        SelectedGroupIds={[...selectedGroups]}
+        setSelectedGroupIds={() => setSelectedGroups([])}
       />)}
       {renderConfirmDialog()}
       <Loader isOpen={showLoader} />
