@@ -741,7 +741,7 @@ const NewslettersReport = ({ classes }) => {
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(Revenue, 'green', hrefs.Revenue, true, t('common.revenue'))}
+          {renderIntData(Revenue, 'black', hrefs.Revenue, true, t('common.revenue'))}
         </TableCell>}
       </TableRow>
     )
@@ -835,7 +835,7 @@ const NewslettersReport = ({ classes }) => {
               </Typography>
               <Grid container spacing={2}>
                 <Grid item>
-                  {renderIntData(Revenue, 'green', hrefs.Revenue, true)}
+                  {renderIntData(Revenue, 'black', hrefs.Revenue, true)}
                 </Grid>
               </Grid>
             </Grid>
