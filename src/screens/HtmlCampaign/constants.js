@@ -24,6 +24,7 @@ export const properties = {
 }
 export const options = {
   amp: true,
+  safeHtml: true,
   appearance:
   {
     panels:
@@ -460,7 +461,7 @@ export const options = {
       enabled: true
     },
     html: {
-      enabled: false
+      enabled: true
     },
     social: {
       enabled: true
