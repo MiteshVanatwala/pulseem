@@ -31,7 +31,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { getCookie } from '../../../helpers/cookies'
 
 const NewsletterManagnentScreen = ({ classes }) => {
-  const { language, windowSize, rowsPerPage } = useSelector(state => state.core);
+  const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core);
   const { newslettersData, newslettersDataError, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -236,7 +236,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/Editor/CampaignInfo?new=1&fromreact=true'
+            href={`/Pulseem/Editor/CampaignInfo?new=1&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -316,7 +316,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`
+        href: `/Pulseem/SendCampaign.aspx?CampaignID=${CampaignID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
       },
       {
         key: 'preview',
@@ -325,7 +325,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         remove: windowSize === 'xs',
         rootClass: classes.paddingIcon,
         onClick: () => {
-          pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true`)
+          pulseemNewTab(`PreviewCampaign.aspx?CampaignID=${CampaignID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
         }
       },
       {
@@ -334,7 +334,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         remove: windowSize === 'xs',
-        href: row.IsNewEditor && accountFeatures.includes('41') ? `/react/Campaigns/editor/${CampaignID}?fromreact=true` : `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true`,
+        href: row.IsNewEditor && accountFeatures.includes('41') ? `/react/Campaigns/editor/${CampaignID}?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/Pulseem/Editor/CampaignEdit/${CampaignID}?fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -384,7 +384,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         disable: Status === 1,
         lable: t('campaigns.Reports'),
         remove: windowSize === 'xs',
-        href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true`,
+        href: `/Pulseem/CampaignStatistics.aspx?CampaignID=${CampaignID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
         rootClass: classes.paddingIcon,
       },
       {
@@ -394,7 +394,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         lable: t('campaigns.automation'),
         remove: windowSize === 'xs',
         onClick: () => {
-          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`)
+          pulseemNewTab(`CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
         },
         rootClass: classes.paddingIcon,
       },
