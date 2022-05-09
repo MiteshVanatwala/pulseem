@@ -15,7 +15,7 @@ import i18n from './i18n'
 import { BrowserRouter, useParams, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures, setSmsOldVersion } from './redux/reducers/coreSlice'
-import { isClalAccount, getAccountFeatures } from './redux/reducers/commonSlice';
+import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
 import { useClasses } from './style/classes/index'
@@ -35,7 +35,6 @@ import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
-import { siteTrackingScriptUrl } from './config/index';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 
 
@@ -390,17 +389,19 @@ const renderRoutes = (classes, history) => {
 
 const App = ({ screenSize }) => {
   const dispatch = useDispatch()
-  const { language, isRTL, windowSize } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
   useEffect(() => {
     dispatch(setWindowSize(screenSize))
   }, [screenSize])
   useEffect(() => {
 
     const initFeatures = async () => {
+      if (!accountSettings) {
+        const settings = await dispatch(getCommonFeatures());
+        dispatch(setAccountFeatures(settings.payload));
+      }
       const response = await dispatch(isClalAccount());
       dispatch(setIsClal(response.payload));
-      const features = await dispatch(getAccountFeatures());
-      dispatch(setAccountFeatures(features.payload));
       const smsOldVersion = getCookie('OldVersion')
       dispatch(setSmsOldVersion(smsOldVersion))
     }

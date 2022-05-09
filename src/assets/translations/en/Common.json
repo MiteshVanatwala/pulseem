@@ -550,6 +550,7 @@
   "maximalDateRequired": "Date should not be after maximal date",
   "systemNotice": "System Notice",
   "showTen": "Show 10",
+  "notNow": "Not now",
   "saveTemplate": "Save template",
   "exit": "Exit",
   "phone": "Phone",
