@@ -450,7 +450,7 @@ const GroupsManagement = ({ classes }) => {
           <Button
             variant="contained"
             size="medium"
-            className={clsx(classes.actionButton, classes.actionButtonLightGreen)}
+            className={clsx(classes.actionButton, classes.createButton)}
             onClick={() => setDialog(DialogType.SIMPLY_CLUB)}
           >
             {t("recipient.externalImport")}

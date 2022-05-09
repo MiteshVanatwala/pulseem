@@ -1,11 +1,11 @@
-import { Box, Typography, TextField, InputAdornment, IconButton, makeStyles, TableRow, TableCell, Checkbox, FormControlLabel, Grid, Tooltip } from '@material-ui/core'
+import { Box, Typography, TextField, InputAdornment, IconButton, makeStyles, TableRow, TableCell, Checkbox, FormControlLabel, Grid, Tooltip, Button } from '@material-ui/core'
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { Dialog } from "../../../../components/managment/Dialog";
 import { addRecipient, getExternalClientsByGroups, getGroupsForSimplyClub } from '../../../../redux/reducers/groupSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
 import { UploadSettings } from '../../tempConstants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
@@ -19,7 +19,7 @@ import AddRecipientResponse from './AddRecipientResponse';
 
 const useStyles = makeStyles({
     dialogContainer: {
-        width: 560
+        width: '100%'
     },
     tableHead: {
         borderBottom: '2px solid #000000 !important'
@@ -64,7 +64,7 @@ const SimplyClubPupup = ({
     handleResponses = (response, actions) => null,
     ToastMessages
 }) => {
-
+    const { isRTL } = useSelector((state) => state.core);
     const { t } = useTranslation();
     const dispatch = useDispatch()
     const localClasses = useStyles()
@@ -120,12 +120,14 @@ const SimplyClubPupup = ({
 
 
     useEffect(() => {
+        console.log("LENGTH:", selectedGroups)
         selectedGroups.length > 0 && handleGetClients()
     }, [selectedGroups])
 
 
 
     const handleGetClients = async (id) => {
+
         setShowLoader(true)
         const response = await dispatch(getExternalClientsByGroups({ ...user, GroupIds: selectedGroups }))
         setShowLoader(false)
@@ -183,6 +185,7 @@ const SimplyClubPupup = ({
 
 
     const handleChange = (e) => {
+        console.log("event:", e)
         setUser({ ...user, [e.target.name]: e.target.value })
     }
 
@@ -365,22 +368,59 @@ const SimplyClubPupup = ({
                 classes={classes}
                 open={showGroups}
                 onClose={() => setShowGroups(false)}
-                onCancel={() => setShowGroups(false)}
-                onConfirm={() => setShowGroups(false)}
+                // onCancel={() => setShowGroups(false)}
+                // onConfirm={() => setShowGroups(false)}
+                // onConfirm={() => handleGetClients()} //BUG (PR-356): Confirm The Action on this Button
                 icon={< div className={classes.dialogIconContent} >
                     {'\uE0D5'}
                 </div >}
                 childrenStyle={{ margin: 0 }}
+                // customContainerStyle={ }
+                className={classes.sidebar}
+
+                renderButtons={
+                    () => (<Grid
+                        container
+                        spacing={4}
+                        className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
+                        <Grid item>
+                            <Button
+                                variant='contained'
+                                size='small'
+                                onClick={handleGetClients}
+                                className={clsx(
+                                    classes.dialogButton,
+                                    classes.dialogConfirmButton,
+                                    selectedGroups.length === 0 ? classes.disabled : ''
+                                )}>
+                                {t('common.Ok')}
+                            </Button>
+                        </Grid>
+                        <Grid item>
+                            <Button
+                                variant='contained'
+                                size='small'
+                                onClick={() => setShowGroups(false)}
+                                className={clsx(
+                                    classes.dialogButton,
+                                    classes.dialogCancelButton
+                                )}>
+                                {t('common.Cancel')}
+                            </Button>
+                        </Grid>
+                    </Grid>)
+                }
                 title={
                     <>
-                        <Typography className={clsx(classes.reducedTitle, classes.resetDialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} style={{ fontWeight: 400 }}>
-                            {t("group.externalImportTitle")}
-                        </Typography>
+                        {/* <Typography className={clsx(classes.reducedTitle, classes.resetDialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} style={{ fontWeight: 400 }}> */}
+                        {t("group.externalImportTitle")}
+                        {/* </Typography> */}
                         <Typography className={clsx(windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} style={{ fontWeight: 400, color: "#000" }}>
                             {t("group.externalImportDesc")}
                         </Typography>
                     </>
                 }
+                showDivider={true}
             >
                 <Box className={clsx(localClasses.dialogContainer, classes.sidebar)}>
                     <DataTable
@@ -447,7 +487,7 @@ const SimplyClubPupup = ({
                 data={filteredDAta}
                 headers={headers}
                 setheaders={setheaders}
-
+                tooltipText="Place the tooltip text here"
             />
         )
     }
@@ -463,12 +503,9 @@ const SimplyClubPupup = ({
                 icon={<div className={classes.dialogIconContent} >
                     {'\uE0D5'}
                 </div >}
+                title={t("group.simplyClubLoginTitle")}
+                showDivider={true}
             >
-
-                <Typography className={clsx(classes.reducedTitle, classes.resetDialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)}
-                    style={{ fontWeight: 400 }}>
-                    {t("group.simplyClubLoginTitle")}
-                </Typography>
                 <Box className={clsx(classes.flex, classes.mt4, localClasses.h100)} style={{ paddingBottom: 15 }}>
                     <Box
                         className={clsx(
@@ -492,6 +529,7 @@ const SimplyClubPupup = ({
                                 className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                 autoComplete="off"
                                 onChange={handleChange}
+
                             />
                         </Box>
                     </Box>
@@ -525,7 +563,7 @@ const SimplyClubPupup = ({
                                         >
                                             {showPassword ? <VisibilityOff style={{ fontSize: 15 }} /> : <Visibility style={{ fontSize: 15 }} />}
                                         </IconButton>
-                                    </InputAdornment>
+                                    </InputAdornment>,
                                 }}
 
                             />
