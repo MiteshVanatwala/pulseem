@@ -46,12 +46,11 @@ const CampaignEditor = ({ classes, ...props }) => {
   const [specialLinks, setSpecialLinks] = useState([]);
   const { campaign, userBlocks, ToastMessages } = useSelector(state => state.campaignEditor);
   const { extraData, previousLandingData } = useSelector(state => state.sms);
-  const { language, isRTL } = useSelector(state => state.core)
+  const { language, isRTL, accountSettings } = useSelector(state => state.core)
   const { tokenAlive } = useSelector(state => state.common)
   const [iframeKey, setIframeKey] = useState(0);
   const [dialog, setDialog] = useState(null);
   const [summaryData, setSummaryData] = useState(null);
-  let subAccountSettings = getCookie("subAccountSettings");
   const [toastMessage, setToastMessage] = useState(null);
   const [isResponseModal, setIsResponseModal] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
@@ -187,12 +186,12 @@ const CampaignEditor = ({ classes, ...props }) => {
     });
   }
   const initOptions = async () => {
-    if (!subAccountSettings.UnlayerUniqueID) {
-      subAccountSettings = await dispatch(getCommonFeatures());
+    if (!accountSettings || accountSettings.SubAccountSettings) {
+      await dispatch(getCommonFeatures());
     }
     options.locale = language === 'he' ? 'he-IL' : 'en-US';
     options.user = {
-      id: subAccountSettings.UnlayerUniqueID
+      id: accountSettings?.SubAccountSettings.UnlayerUniqueID
     }
     setIframeKey(iframeKey + 1);
   }
