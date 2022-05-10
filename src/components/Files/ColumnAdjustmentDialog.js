@@ -45,7 +45,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
         "Address",
         "City",
         "Zip",
-        "Birthday",
+        "BirthDate",
     ]
 
 
@@ -66,8 +66,10 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
             }
         });
 
+        let restHeader = headers.splice(headersOrder.length - 1, headers.length - headersOrder.length)
+        let tempHeaders = [...headersOrder, ...restHeader]
 
-        let tempHeaders = [...headersOrder, ...headers.splice(headersOrder.length - 1, headersOrder.length)]
+        console.log("HEADERS:", headers, tempHeaders, restHeader)
 
         const fields = settings.Fields.map((e) => {
             let tempIndex = tempHeaders.indexOf(e.value)
@@ -242,14 +244,24 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                                         })
                                         : null}
                                     {data.map((item, id) => {
+                                        let restObj = { ...item };
+
                                         return (
                                             <tbody>
                                                 <tr key={id}>
                                                     {headers.map((data, idx) => {
+                                                        let dispData = restObj[data] || Object.values(restObj)[0];
+                                                        console.log("DATTTAATAATATAAT:", data, { ...restObj })
+                                                        delete restObj[data === t("sms.adjustTitle") ? Object.keys(restObj)[0] : data];
+                                                        // if (dispData !== false && !dispData) {
+                                                        //     return false
+                                                        // }
+
                                                         return (
                                                             <td key={idx} className={classes.tableColumn}
                                                             >
-                                                                {Object.values(item)[idx]}
+                                                                {id === 0 && console.log("DATA:", data, "  ", "ITEM:", item)}
+                                                                {dispData}
                                                             </td>
                                                         );
                                                     })}

@@ -27,6 +27,8 @@
   "simplyClubLoginTitle": "הכנס את פרטי ההזדהות שלך",
   "externalImportTitle": "ייבא קבוצות חיצוניות",
   "externalImportDesc": "בחר קבוצות לייבוא למערכת פולסים",
+  "enterValidUserPwd": "Enter valid username and password",
+  "incorrectUsrPwd": "שם משתמש או סיסמא אנם נכונים",
   "responses": {
     "success": "הקבוצות והלקוחות נוספו בהצלחה",
     "featureNotAllowed": "פיצ'ר לא קיים בחשבון / מפתח API לא תקין",

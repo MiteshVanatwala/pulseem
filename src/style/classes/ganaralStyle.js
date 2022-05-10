@@ -2396,5 +2396,13 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
 
+  textFieldError: {
+    "& .MuiInputBase-root": {
+      "& input": {
+        borderBottom: '2px solid red'
+      }
+    }
+  }
+
 
 });

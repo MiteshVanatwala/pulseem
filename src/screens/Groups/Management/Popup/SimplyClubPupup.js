@@ -7,7 +7,7 @@ import { Dialog } from "../../../../components/managment/Dialog";
 import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub } from '../../../../redux/reducers/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
-import { UploadSettings } from '../../tempConstants';
+import { simplyCLubClientData, UploadSettings } from '../../tempConstants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import {
     createGroup
@@ -50,6 +50,11 @@ const useStyles = makeStyles({
     },
     h100: {
         height: 100
+    },
+    errortext: {
+        fontSize: '.9em',
+        color: 'red',
+        marginInline: '10px'
     }
 });
 
@@ -93,6 +98,7 @@ const SimplyClubPupup = ({
     const [filteredDAta, setFilteredData] = useState([]);
     const [showLoader, setShowLoader] = useState(false)
     const [summary, setSummary] = useState(null)
+    const [error, setError] = useState(null)
 
 
     useEffect(() => {
@@ -101,7 +107,7 @@ const SimplyClubPupup = ({
             const data = Object.entries(ClientData).reduce((prev, [key, value]) => {
                 let restELementsLen = 5 - prev.length
                 let restElements = value;
-                let tempFields = restElements.reduce((prev, next) => Object.keys(next).length, 0)
+                let tempFields = restElements.reduce((prev, next) => Object.values(next).filter(obj => !!obj || obj === false).length, 0)
                 if (totalFields < tempFields) {
                     totalFields = tempFields
                 }
@@ -112,6 +118,7 @@ const SimplyClubPupup = ({
                 return [...prev, ...finalArr]
             }, [])
 
+            // console.log(totalFields)
             let tempHeaders = Array.from({ length: totalFields }, (v, i) => t("sms.adjustTitle"))
 
 
@@ -124,7 +131,6 @@ const SimplyClubPupup = ({
 
 
     useEffect(() => {
-        console.log("LENGTH:", selectedGroups)
         selectedGroups.length > 0 && handleGetClients()
     }, [selectedGroups])
 
@@ -141,6 +147,7 @@ const SimplyClubPupup = ({
                 message: '',
                 Func: () => {
                     setClientData(response?.payload?.Clients || [])
+                    // setClientData(simplyCLubClientData || [])
                     setShowClients(true)
                 }
             },
@@ -189,7 +196,9 @@ const SimplyClubPupup = ({
 
 
     const handleChange = (e) => {
-        console.log("event:", e)
+        if (error) {
+            setError(null);
+        }
         setUser({ ...user, [e.target.name]: e.target.value })
     }
 
@@ -206,15 +215,23 @@ const SimplyClubPupup = ({
     }
 
     const handleLogin = async () => {
+
+        if (!user.Username || !user.Password) {
+            setError(t("group.enterValidUserPwd"));
+            return
+        }
+
         setShowLoader(true)
         const response = await dispatch(getGroupsForSimplyClub(user))
         setShowLoader(false)
         handleResponses(response, {
             'S_200': {
                 code: 200,
-                message: !response?.payload?.Groups ? ToastMessages.ERROR_OCCURED : '',
+                // message: !response?.payload?.Groups ? ToastMessages.ERROR_OCCURED : '',
                 Func: () => {
-
+                    if (!response?.payload?.Groups) {
+                        setError(t("group.incorrectUsrPwd"));
+                    }
                     setGroups(response?.payload?.Groups || [])
                     setShowGroups(true)
                 }
@@ -308,27 +325,21 @@ const SimplyClubPupup = ({
                     Func: () => null
                 },
             })
-            setShowLoader(false)
-        })
+        }).finally(() => setShowLoader(false))
     }
 
     const searchGroupAndModify = async (groupName) => {
         setShowLoader(true)
         const response = await dispatch(getGroups({ SearchTerm: groupName, PageSize: 6, PageIndex: 1 }))
-        console.log("response.payload:", response.payload)
-
         if (response?.payload?.Groups && response?.payload?.RecordCount === 1) {
             handleAddClients([response.payload.Groups[0].GroupID])
         }
-
-
         setShowLoader(false)
     }
 
     const handleImportRecipients = () => {
-
-        setShowLoader(true)
         if (manualUploadValidationscheck()) {
+            setShowLoader(true)
             let GroupObj = groups.find((obj) => obj.GroupID === selectedGroups[0])
             new Promise((resolve, reject) => resolve(dispatch(createGroup({ GroupName: GroupObj.GroupName })))).then((res) => {
                 handleResponses(res, {
@@ -376,9 +387,9 @@ const SimplyClubPupup = ({
                         Func: () => null
                     },
                 })
-                setShowLoader(false)
-            })
+            }).finally(() => setShowLoader(false))
         }
+
     }
 
     const GroupDialog = () => {
@@ -388,8 +399,6 @@ const SimplyClubPupup = ({
                 classes={classes}
                 open={showGroups}
                 onClose={() => setShowGroups(false)}
-                // onCancel={() => setShowGroups(false)}
-                // onConfirm={() => setShowGroups(false)}
                 // onConfirm={() => handleGetClients()} //BUG (PR-356): Confirm The Action on this Button
                 icon={< div className={classes.dialogIconContent} >
                     {'\uE0D5'}
@@ -507,7 +516,7 @@ const SimplyClubPupup = ({
                 data={filteredDAta}
                 headers={headers}
                 setheaders={setheaders}
-                tooltipText="Place the tooltip text here"
+                tooltipText="recipient.bulkRecUpldTooltipText"
             />
         )
     }
@@ -526,7 +535,7 @@ const SimplyClubPupup = ({
                 title={t("group.simplyClubLoginTitle")}
                 showDivider={true}
             >
-                <Box className={clsx(classes.flex, classes.mt4, localClasses.h100)} style={{ paddingBottom: 15 }}>
+                <Box className={clsx(classes.flex, classes.mt4, localClasses.h100)} style={{ paddingBottom: error ? 0 : 15 }}>
                     <Box
                         className={clsx(
                             classes.customDialogContentBox,
@@ -546,10 +555,9 @@ const SimplyClubPupup = ({
                                 label=""
                                 variant="outlined"
                                 value={user.Username}
-                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252, error ? classes.textFieldError : '')}
                                 autoComplete="off"
                                 onChange={handleChange}
-
                             />
                         </Box>
                     </Box>
@@ -572,7 +580,7 @@ const SimplyClubPupup = ({
                                 label=""
                                 variant="outlined"
                                 value={user.Password}
-                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252, error ? classes.textFieldError : '')}
                                 autoComplete="off"
                                 onChange={handleChange}
                                 InputProps={{
@@ -590,6 +598,7 @@ const SimplyClubPupup = ({
                         </Box>
                     </Box>
                 </Box>
+                {error && <span className={localClasses.errortext}>{error}</span>}
                 {showGroups && groups.length > 0 && GroupDialog()}
                 {showClients && ColumnAdjustmentPopup()}
                 {summary && <AddRecipientResponse
