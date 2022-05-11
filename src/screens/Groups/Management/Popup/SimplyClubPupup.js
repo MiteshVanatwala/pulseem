@@ -55,6 +55,12 @@ const useStyles = makeStyles({
         fontSize: '.9em',
         color: 'red',
         marginInline: '10px'
+    },
+    pwdEveButton: {
+        width: 25,
+        padding: 5,
+        minWidth: 10,
+        marginRight: 5
     }
 });
 
@@ -107,10 +113,17 @@ const SimplyClubPupup = ({
             const data = Object.entries(ClientData).reduce((prev, [key, value]) => {
                 let restELementsLen = 5 - prev.length
                 let restElements = value;
-                let tempFields = restElements.reduce((prev, next) => Object.values(next).filter(obj => !!obj || obj === false).length, 0)
-                if (totalFields < tempFields) {
-                    totalFields = tempFields
-                }
+                // let tempFields = restElements.reduce((prev, next) => Object.values(next).filter(obj => !!obj || obj === false).length, 0)
+                let tempFields = restElements.reduce(
+                    (prev, next) => {
+                        // let tempLength = Object.values(next).filter(obj => obj !== null && obj !== undefined).length
+                        let tempLength = Object.values(next).length
+                        if (totalFields < tempLength) {
+                            totalFields = tempLength
+                        }
+                    }
+                    , 0)
+
                 if (restElements.length < restELementsLen) {
                     restELementsLen = restElements.length
                 }
@@ -120,9 +133,6 @@ const SimplyClubPupup = ({
 
             // console.log(totalFields)
             let tempHeaders = Array.from({ length: totalFields }, (v, i) => t("sms.adjustTitle"))
-
-
-
             setFilteredData(data)
             setheaders([...tempHeaders])
         }
@@ -556,7 +566,7 @@ const SimplyClubPupup = ({
                                 variant="outlined"
                                 value={user.Username}
                                 className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252, error ? classes.textFieldError : '')}
-                                autoComplete="off"
+                                inputProps={{ autocomplete: "new-password" }}
                                 onChange={handleChange}
                             />
                         </Box>
@@ -581,17 +591,10 @@ const SimplyClubPupup = ({
                                 variant="outlined"
                                 value={user.Password}
                                 className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252, error ? classes.textFieldError : '')}
-                                autoComplete="off"
+                                inputProps={{ autocomplete: "new-password" }}
                                 onChange={handleChange}
                                 InputProps={{
-                                    endAdornment: <InputAdornment position="end" style={{ width: 25, paddingInlineEnd: 15 }}>
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={() => setShowPassword(!showPassword)}
-                                        >
-                                            {showPassword ? <VisibilityOff style={{ fontSize: 15 }} /> : <Visibility style={{ fontSize: 15 }} />}
-                                        </IconButton>
-                                    </InputAdornment>,
+                                    endAdornment: <Button onClick={() => setShowPassword(!showPassword)} className={localClasses.pwdEveButton} > {showPassword ? <VisibilityOff style={{ fontSize: 15 }} /> : <Visibility style={{ fontSize: 15 }} />}</Button>,
                                 }}
 
                             />

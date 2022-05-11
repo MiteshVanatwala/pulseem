@@ -35,6 +35,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
     const [columnValidate, setcolumnValidate] = useState(false);
     const [dropIndex, setdropIndex] = useState(-1);
+    const [selectOptions, setSelectOptions] = useState([]);
 
     const headersOrder = [
         "Email",
@@ -45,19 +46,31 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
         "Address",
         "City",
         "Zip",
-        "BirthDate",
+        "Birthday",
     ]
+
+
+    useEffect(() => {
+        let tempSetting = [...settings.Fields]
+        tempSetting.splice(11, 1, {
+            isdisabled: false,
+            idx: -1,
+            value: "BirthDate",
+            label: "mainReport.birthday"
+        }) //COMMENT: Replace seetings.Fields with this modified array
+        setSelectOptions(tempSetting)
+    }, [])
 
 
 
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
-            const exist = settings.Fields.filter((e) => {
+            const exist = selectOptions.filter((e) => {
                 return e.value === ed;
             });
 
             if (exist <= 0 && extraData[ed] !== '') {
-                settings.Fields.push({
+                selectOptions.push({
                     eisdisabled: false,
                     idx: -1,
                     value: ed,
@@ -66,13 +79,13 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
             }
         });
 
-        let restHeader = headers.splice(headersOrder.length - 1, headers.length - headersOrder.length)
+        let restHeader = headers.splice(headersOrder.length, headers.length - headersOrder.length)
         let tempHeaders = [...headersOrder, ...restHeader]
 
-        console.log("HEADERS:", headers, tempHeaders, restHeader)
+        // console.log("ExtraData:", extraData)
 
-        const fields = settings.Fields.map((e) => {
-            let tempIndex = tempHeaders.indexOf(e.value)
+        const fields = selectOptions.map((e) => {
+            let tempIndex = tempHeaders.indexOf(e.value === "BirthDate" ? "Birthday" : e.value)
             return {
                 isdisabled: tempIndex === -1 ? e.isdisabled : true,
                 idx: tempIndex === -1 ? e.idx : tempIndex,
@@ -83,7 +96,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
         setselectArray(fields);
         setheaders(tempHeaders);
 
-    }, []);
+    }, [selectOptions]);
 
 
 
@@ -215,7 +228,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                                                         style={{ textAlign: "center", cursor: "pointer" }}
                                                     >
                                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                            <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{headers[idx]}</Typography>
+                                                            <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{t(selectOptions.find(obj => obj.value === headers[idx])?.label || headers[idx])}</Typography>
 
                                                             {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
                                                             {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}
@@ -250,8 +263,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                                             <tbody>
                                                 <tr key={id}>
                                                     {headers.map((data, idx) => {
-                                                        let dispData = restObj[data] || Object.values(restObj)[0];
-                                                        console.log("DATTTAATAATATAAT:", data, { ...restObj })
+                                                        let dispData = restObj[data] ?? Object.values(restObj)[0];
                                                         delete restObj[data === t("sms.adjustTitle") ? Object.keys(restObj)[0] : data];
                                                         // if (dispData !== false && !dispData) {
                                                         //     return false
