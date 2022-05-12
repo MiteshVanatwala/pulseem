@@ -1499,18 +1499,18 @@ const SmsCreator = ({ classes, ...props }) => {
       </div>
     );
   }
-  const switchToOldVersion = () => {
-    setCookie("OldVersion", true);
-    setIsNewVersion(false);
-    setTimeout(() => {
-      if (smsModel.SMSCampaignID && smsModel.SMSCampaignID > 0) {
-        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}&SMSCampaignID=${smsModel.SMSCampaignID}${isFromAutomation ? "&FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`;
-      }
-      else {
-        window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
-      }
-    }, 500)
-  }
+  // const switchToOldVersion = () => {
+  //   setCookie("OldVersion", true);
+  //   setIsNewVersion(false);
+  //   setTimeout(() => {
+  //     if (smsModel.SMSCampaignID && smsModel.SMSCampaignID > 0) {
+  //       window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}&SMSCampaignID=${smsModel.SMSCampaignID}${isFromAutomation ? "&FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`;
+  //     }
+  //     else {
+  //       window.location = `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+  //     }
+  //   }, 500)
+  // }
   //#region Dialogs
   const lpDialog = () => {
     return {
@@ -1944,51 +1944,54 @@ const SmsCreator = ({ classes, ...props }) => {
   }
 
   //#endregion
-  const SwitchOldVersion = () => {
-    return (<Grid item={true} xs={12} style={{ paddingTop: 20 }}>
-      <PulseemSwitch
-        switchType={'ios'}
-        checked={isNewVersion}
-        onChange={switchToOldVersion}
-        name="checkedB"
-        handleDiameter={30}
-        height={20}
-        width={48}
-        id="ios-switch"
-      />
-      <Typography className={clsx(classes.dInlineBlock, classes.buttonHead)}>{t("sms.switchToOldeVersion")}</Typography>
-    </Grid>);
-  }
+  // const SwitchOldVersion = () => {
+  //   return (<Grid item={true} xs={12} style={{ paddingTop: 20 }}>
+  //     <PulseemSwitch
+  //       switchType={'ios'}
+  //       checked={isNewVersion}
+  //       onChange={switchToOldVersion}
+  //       name="checkedB"
+  //       handleDiameter={30}
+  //       height={20}
+  //       width={48}
+  //       id="ios-switch"
+  //     />
+  //     <Typography className={clsx(classes.dInlineBlock, classes.buttonHead)}>{t("sms.switchToOldeVersion")}</Typography>
+  //   </Grid>);
+  // }
   return (
     <DefaultScreen subPage={"create"} currentPage="sms" classes={classes} customPadding={true}>
       {renderToast()}
-      <Grid container className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}>
+      {/* <Grid container className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}>
         <SwitchOldVersion />
+      </Grid> */}
+      <Grid container
+        spacing={windowSize === "xs" ? 0 : 3}
+        className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}
+        style={{ height: windowSize !== "xs" ? 'calc(100vh - 75px)' : null }}>
+      <Grid item sm={12} md={12} lg={8}>
+        <Title title={t("mainReport.smsCampaign")}
+          classes={classes}
+          tooltip={t("mainReport.toolTip1")}
+          stepNumber={1}
+          subTitle={t("mainReport.createContent")}
+          topZero={false}
+        />
+        {renderFields()}
+        {renderMsg()}
       </Grid>
-      <Grid container spacing={windowSize === "xs" ? 0 : 3} className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}>
-        <Grid item sm={12} md={12} lg={8}>
-          <Title title={t("mainReport.smsCampaign")}
-            classes={classes}
-            tooltip={t("mainReport.toolTip1")}
-            stepNumber={1}
-            subTitle={t("mainReport.createContent")}
-            topZero={true}
-          />
-          {renderFields()}
-          {renderMsg()}
-        </Grid>
-        <Grid item xs={12} sm={12} md={12} lg={4}>
-          <Box style={{ maxWidth: 420 }}>
-            {renderPhone()}
-          </Box>
-        </Grid>
-        {renderButtons()}
+      <Grid item xs={12} sm={12} md={12} lg={4}>
+        <Box style={{ maxWidth: 420, marginTop: 20 }}>
+          {renderPhone()}
+        </Box>
       </Grid>
-      {renderDialog()}
-      {renderSummary()}
-      {otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
-      <Loader isOpen={showLoader} />
-    </DefaultScreen>
+      {renderButtons()}
+    </Grid>
+      { renderDialog() }
+  { renderSummary() }
+  { otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} /> }
+  <Loader isOpen={showLoader} />
+    </DefaultScreen >
   );
 };
 export default SmsCreator;
