@@ -527,7 +527,7 @@ const SmsReport = ({ classes }) => {
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(success, '', hrefs.Revenue)}
+          {renderIntData(Revenue, '', hrefs.Revenue)}
         </TableCell>}
       </TableRow>
     )
@@ -619,7 +619,7 @@ const SmsReport = ({ classes }) => {
               </Typography>
               <Grid container spacing={2}>
                 <Grid item>
-                  {renderIntData(success, '', hrefs.Revenue)}
+                  {renderIntData(Revenue, '', hrefs.Revenue)}
                 </Grid>
               </Grid>
             </Grid>
