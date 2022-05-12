@@ -95,5 +95,6 @@
   "rowUpdated": "Row updated",
   "deleteConfirm": "Are you sure you want to delete recipients from the following groups",
   "email_cell_notProvided": "Email/Cellphone not provided",
-  "externalImport": "External Import"
+  "externalImport": "External Import",
+  "recipientsDeletedSuccessfuly": "Recipients deleted successfuly"
 }
