@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { instence } from '../../helpers/api';
+import { ClientSearchResultData } from '../../screens/ClientSearch/tempContants';
 
 export const deleteFromGroups = createAsyncThunk(
   'client/DeleteFromGroups', async (id, thunkAPI) => {
@@ -51,17 +52,35 @@ export const reactivateSms = createAsyncThunk(
     }
   })
 
+export const searchAllClients = createAsyncThunk(
+  'client/Get', async (payload, thunkAPI) => {
+    try {
+      const response = await instence.get(`client/Get`, payload);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 
 export const clientSlice = createSlice({
   name: 'client',
   initialState: {
+    ClientData: [],
+    TotalCount: 0,
+    error: "",
+    ToastMessages: {
 
+    }
   },
   extraReducers: builder => {
-    // builder
-    //   .addCase(x.fulfilled, (state, { payload }) => {
-    //     state.x = payload
-    //   })
+    // builder.addCase(searchAllClients.fulfilled, (state, { payload }) => {
+    //   state.ClientData = ClientSearchResultData.Clients;
+    //   state.TotalCount = ClientSearchResultData.TotalCount;
+    // })
+    builder.addCase(searchAllClients.rejected, (state, { error }) => {
+      state.error = error.message;
+    })
   }
 })
 

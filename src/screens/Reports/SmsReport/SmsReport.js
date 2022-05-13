@@ -87,9 +87,13 @@ const SmsReport = ({ classes }) => {
       title: windowSize === 'xs' ? '' : t('common.DLR'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
+    // Revenue: {
+    //   title: windowSize === 'xs' ? '' : t('common.revenue'),
+    //   href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+    // }
     Revenue: {
       title: windowSize === 'xs' ? '' : t('common.revenue'),
-      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/react/ClientSearchResult/${id}`
     }
   })
 
@@ -418,7 +422,8 @@ const SmsReport = ({ classes }) => {
     const innerRef = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        <Typography component={innerRef && value > 0 ? 'a' : 'p'}
+        {/* <Typography component={innerRef && value > 0 ? 'a' : 'p'} */}
+        <Typography component='a'
           href={innerRef}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           target="_blank">

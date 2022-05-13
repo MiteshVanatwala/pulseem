@@ -11,11 +11,11 @@ import ShareIcon from './share.png'
 import CopyIcon from './copy.png'
 import EmbedCodeIcon from './embed_code.png'
 import SurveryResultsIcon from './survery_results.png'
-import {ReactComponent as ExportIcon} from './export.svg'
-import {ReactComponent as SelectArrowIcon} from './select_arrow.svg'
-import {ReactComponent as CalendarIcon} from './calendar.svg'
-import {ReactComponent as SearchIcon} from './search.svg'
-import {ReactComponent as PageArrowIcon} from './page_arrow.svg'
+import { ReactComponent as ExportIcon } from './export.svg'
+import { ReactComponent as SelectArrowIcon } from './select_arrow.svg'
+import { ReactComponent as CalendarIcon } from './calendar.svg'
+import { ReactComponent as SearchIcon } from './search.svg'
+import { ReactComponent as PageArrowIcon } from './page_arrow.svg'
 import CloseIcon from './x.png'
 
 export {
@@ -37,5 +37,5 @@ export {
   CopyIcon,
   EmbedCodeIcon,
   SurveryResultsIcon,
-  CloseIcon
+  CloseIcon,
 }
