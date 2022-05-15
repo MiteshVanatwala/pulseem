@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import DefaultScreen from "../DefaultScreen";
+import { useParams } from 'react-router-dom'
 import clsx from "clsx";
 import {
   Typography,
@@ -60,6 +61,7 @@ const ClientSearchResult = ({ classes }) => {
     rowsPerPage,
     smsOldVersion,
     isRTL,
+    ...props
   } = useSelector((state) => state.core);
 
   // const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
@@ -80,20 +82,20 @@ const ClientSearchResult = ({ classes }) => {
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue } = useSelector(state => state.client);
-
+  const { id } = useParams();
   const [initialValues, setInitialValues] = useState({
-    "PageSize": 6,
-    "PageIndex": 0,
-    "SearchTerm": "",
-    "Status": 0,
-    "PageType": 15,
-    "ReportType": 20,
-    "IsSmsCampaign": false,
-    "CampaignID": 136704,
-    "Switch": "",
-    "CountryOrRegion": "",
-    "GroupIds": [],
-    "NodeID": ""
+    PageSize: 6,
+    PageIndex: 0,
+    SearchTerm: "",
+    Status: 0,
+    PageType: 15,
+    ReportType: 20,
+    IsSmsCampaign: false,
+    CampaignID: id,
+    Switch: "",
+    CountryOrRegion: "",
+    GroupIds: [],
+    NodeID: ""
   })
 
   const renderHtml = (html) => {
@@ -180,15 +182,15 @@ const ClientSearchResult = ({ classes }) => {
 
   const getData = async () => {
     setLoader(true);
-    await dispatch(searchAllClients(initialValues));
-    //setClientData(ClientSearchResultData.Clients || [])
-    //setTotalCount(ClientSearchResultData.TotalCount || 0)
+    if (initialValues.CampaignID > -1) {
+      await dispatch(searchAllClients(initialValues));
+    }
     setLoader(false);
   };
 
   useEffect(() => {
     getData(); // BUG: UNCOMMENT THIS
-  }, [dispatch, serachData, page]);
+  }, [dispatch, serachData]);
 
   //  HANDLERS  //
   const handleResponses = (response, actions = {
@@ -516,7 +518,7 @@ const ClientSearchResult = ({ classes }) => {
         >
           <Box>
             <Typography className={classes.groupsLable}>
-              {`${t("client.avaregeIncome")} ${ClientData && TotalRevenue !== 0 ? TotalRevenue.toLocaleString() : 0}`}
+              {`${t("client.avaregeIncome")} ${ClientData && TotalRevenue !== 0 ? TotalRevenue?.toLocaleString() : 0}`}
             </Typography>
             <Typography className={classes.groupsLable}>
               {`${ClientData && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
