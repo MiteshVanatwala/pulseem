@@ -550,5 +550,7 @@
   "maximalDateRequired": "Date should not be after maximal date",
   "showTen": "Show 10",
   "notNow": "Not now",
-  "revenue": "Revenue"
+  "revenue": "Revenue",
+  "edit": "Edit",
+  "campaignRevenue": "Campaign Revenue"
 }

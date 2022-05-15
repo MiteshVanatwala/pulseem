@@ -125,14 +125,8 @@ const RenderWebRow = ({
   const renderNameCell = (row, fullwidth) => {
     let date = null;
     const { FirstName, LastName, CreationDate } = row;
-    let text = "";
-    if (!row.UpdateDate) {
-      date = moment(CreationDate, dateFormat);
-      text = t("common.CreatedOn");
-    } else {
-      date = moment(row.UpdateDate, dateFormat);
-      text = t("common.UpdatedOn");
-    }
+    let text = t("common.UpdatedOn");
+    date = moment(row.CreationDate, dateFormat);
 
     return (
       <>
@@ -205,9 +199,9 @@ const RenderWebRow = ({
               // onClick: () => {
               //   window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=0&GroupID=${GroupID}`)
               // },
-              label: t("recipient.preview"),
+              label: t("common.edit"),
               component: (
-                <IconWrapper iconName="preview" className={classes.mxAuto} />
+                <IconWrapper iconName="edit" className={classes.mxAuto} />
               ),
               classes: { text: localClasses.noWrap },
             },
@@ -216,9 +210,9 @@ const RenderWebRow = ({
               //   setSelectedGroups(GroupID)
               //   setDialog(DialogType.EDIT_GROUP)
               // },
-              label: t("recipient.settings"),
+              label: t("recipient.deleteFromGroups"),
               component: (
-                <IconWrapper iconName="settings" className={classes.mxAuto}
+                <IconWrapper iconName="deleteRecipient" className={classes.mxAuto}
 
                 />
 
@@ -227,9 +221,9 @@ const RenderWebRow = ({
             },
             //TODO: Disable if !== null
             {
-              label: t("recipient.automation"),
+              label: t("recipient.deleteEmail"),
               component: (
-                <IconWrapper iconName="automation"
+                <IconWrapper iconName="deleteEmail"
                 // className={!AutomationID ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
                 // onClick={() => {
                 //   if (AutomationID)
@@ -248,10 +242,10 @@ const RenderWebRow = ({
               //     setDialog(DialogType.DELETE_GROUP)
               //   }
               // },
-              label: t("recipient.delete"),
+              label: t("recipient.deletePhone"),
               component: (
                 <IconWrapper
-                  iconName="delete"
+                  iconName="deletePhone"
                 // className={(AutomationID || IsConnectedToWebForm || IsAutoResponder) ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
 
                 />
@@ -264,22 +258,23 @@ const RenderWebRow = ({
           align="center"
         />
       </TableCell>
-      <TableCell classes={cellStyle} align="center" className={classes.flex1}>
+      <TableCell classes={cellStyle} align="center" className={clsx(classes.bold, classes.flex1)}>
         {Revenue}
       </TableCell>
       <TableCell classes={cellStyle} align="center" className={classes.flex3}>
         <FlexGrid
+          customStyle={{ justifyContent: 'space-between' }}
           gridArr={[
             {
               label: t(""),
               component: (
-                <Typography>{Email}</Typography>
+                <Typography className={classes.bold}>{Email}</Typography>
               ),
               classes: { text: localClasses.noWrap },
             },
             {
               label: "",
-              component: <Typography>{Status}</Typography>,
+              component: <Typography className={clsx(classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>,
               classes: { text: localClasses.noWrap },
             }
           ]}
@@ -287,19 +282,21 @@ const RenderWebRow = ({
           align="center"
         />
       </TableCell>
-      <TableCell classes={cellStyle} align="center" className={classes.flex2}>
+      <TableCell classes={cellStyle} align="center" className={classes.flex2} style={{ border: 'none' }}>
         <FlexGrid
+          customStyle={{ justifyContent: 'space-between' }}
           gridArr={[
             {
               label: t(""),
               component: (
-                <Typography>{Cellphone}</Typography>
+                <Typography className={classes.bold}>{Cellphone}</Typography>
               ),
               classes: { text: localClasses.noWrap },
             },
             {
               label: "",
-              component: <Typography>{SmsStatus}</Typography>,
+
+              component: <Typography className={clsx(classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{SmsStatus === 0 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>,
               classes: { text: localClasses.noWrap },
             }
           ]}

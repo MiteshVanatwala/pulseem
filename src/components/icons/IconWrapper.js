@@ -8,6 +8,10 @@ import {
     // AddRecipients,
     // Reset,
     SettingsIcon,
+    EditIcon,
+    DeleteRecipient,
+    DeleteEmail,
+    DeletePhone
 } from "../../assets/images/managment/index";
 // import NotAvailable from "../../assets/images/notAvailable.png";
 
@@ -31,6 +35,22 @@ const Icons = {
     preview: {
         type: 1,
         url: PreviewIcon,
+    },
+    edit: {
+        type: 1,
+        url: EditIcon
+    },
+    deleteRecipient: {
+        type: 1,
+        url: DeleteRecipient
+    },
+    deleteEmail: {
+        type: 1,
+        url: DeleteEmail
+    },
+    deletePhone: {
+        type: 1,
+        url: DeletePhone
     },
     // addRecipient: {
     //     type: 1,

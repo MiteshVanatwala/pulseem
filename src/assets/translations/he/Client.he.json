@@ -6,6 +6,8 @@
   "removeClientFromSmsTitle": "הסרת לקוח משירותי SMS",
   "removeClientFromSmsDescription": "האם אתה בטוח שברצונך להסיר לקוח משירותי SMS?",
   "logPageHeaderResource1": {
-    "Text": "Recipient search result"
-  }
+    "Text": "תוצאות חיפוש לקוחות"
+  },
+  "avaregeIncome": "הכנסה ממוצעת:",
+  "makeInvalid": "הפוך לשגויים"
 }

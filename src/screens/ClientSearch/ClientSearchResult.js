@@ -64,8 +64,8 @@ const ClientSearchResult = ({ classes }) => {
 
   // const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
   // const { ClientData, ToastMessages, TotalCount } = useSelector((state) => state.client);
-  const [ClientData, setClientData] = useState([])
-  const [TotalCount, setTotalCount] = useState(0)
+  // const [ClientData, setClientData] = useState([])
+  // const [TotalCount, setTotalCount] = useState(0)
   const { accountFeatures } = useSelector(state => state.core)
   const { t } = useTranslation();
   const [selectedClients, setSelectedClients] = useState([]);
@@ -79,6 +79,7 @@ const ClientSearchResult = ({ classes }) => {
   });
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const { ClientData, TotalCount, TotalRevenue } = useSelector(state => state.client);
 
   const [initialValues, setInitialValues] = useState({
     "PageSize": 6,
@@ -146,7 +147,7 @@ const ClientSearchResult = ({ classes }) => {
 
   const TABLE_HEAD = [
     {
-      label: t("Name"),
+      label: t("common.RecipientsName"),
       classes: cellStyle,
       className: classes.flex2,
       align: "center",
@@ -158,19 +159,19 @@ const ClientSearchResult = ({ classes }) => {
       align: "center",
     },
     {
-      label: t("Revenue from this campaign"),
+      label: t("common.campaignRevenue"),
       classes: cellStyle,
       className: clsx(classes.flex1, classes.textUppercase),
       align: "center",
     },
     {
-      label: "Email",
+      label: t("common.Mail"),
       classes: cellStyle,
       className: classes.flex3,
       align: "center",
     },
     {
-      label: "Cellphone",
+      label: t("common.Cellphone"),
       classes: cellStyle,
       className: classes.flex2,
       align: "center",
@@ -180,8 +181,8 @@ const ClientSearchResult = ({ classes }) => {
   const getData = async () => {
     setLoader(true);
     await dispatch(searchAllClients(initialValues));
-    setClientData(ClientSearchResultData.Clients || [])
-    setTotalCount(ClientSearchResultData.TotalCount || 0)
+    //setClientData(ClientSearchResultData.Clients || [])
+    //setTotalCount(ClientSearchResultData.TotalCount || 0)
     setLoader(false);
   };
 
@@ -435,6 +436,16 @@ const ClientSearchResult = ({ classes }) => {
             {t("group.new")}
           </Button>
         </Grid>
+        <Grid item xs={windowSize === "xs" && 12}>
+          <Button
+            variant="contained"
+            size="medium"
+            className={clsx(classes.actionButton, classes.actionButtonRed)}
+            onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
+          >
+            {t("recipient.unsubscribe")}
+          </Button>
+        </Grid>
         {windowSize !== "xs" && (
           <Grid item>
             <Button
@@ -445,7 +456,7 @@ const ClientSearchResult = ({ classes }) => {
             //   selectedClients.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_GROUP)
             // }}
             >
-              {t("Make Invalid")}
+              {t("client.makeInvalid")}
             </Button>
           </Grid>
         )}
@@ -459,16 +470,7 @@ const ClientSearchResult = ({ classes }) => {
             {t("recipient.deleteRecipient")}
           </Button>
         </Grid> */}
-        <Grid item xs={windowSize === "xs" && 12}>
-          <Button
-            variant="contained"
-            size="medium"
-            className={clsx(classes.actionButton, classes.actionButtonRed)}
-            onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
-          >
-            {t("recipient.unsubscribe")}
-          </Button>
-        </Grid>
+
         {/* {accountFeatures && accountFeatures.includes('15') && (<Grid item xs={windowSize === "xs" && 12}>
           <Button
             variant="contained"
@@ -512,9 +514,14 @@ const ClientSearchResult = ({ classes }) => {
           xs={windowSize === "xs" && 12}
           className={classes.groupsLableContainer}
         >
-          <Typography className={classes.groupsLable}>
-            {`${ClientData && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
-          </Typography>
+          <Box>
+            <Typography className={classes.groupsLable}>
+              {`${t("client.avaregeIncome")} ${ClientData && TotalRevenue !== 0 ? TotalRevenue.toLocaleString() : 0}`}
+            </Typography>
+            <Typography className={classes.groupsLable}>
+              {`${ClientData && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
+            </Typography>
+          </Box>
         </Grid>
       </Grid>
     );
@@ -530,15 +537,8 @@ const ClientSearchResult = ({ classes }) => {
   const renderNameCell = (row, fullwidth) => {
     let date = null;
     const { FirstName, LastName } = row;
-    let text = "";
-    if (!row.UpdateDate) {
-      date = moment(row.CreationDate, dateFormat);
-      text = t("common.CreatedOn");
-    } else {
-      date = moment(row.UpdateDate, dateFormat);
-      text = t("common.UpdatedOn");
-    }
-
+    let text = t("common.UpdatedOn");
+    date = moment(row.CreationDate, dateFormat);
 
     return (
       <>
@@ -576,7 +576,8 @@ const ClientSearchResult = ({ classes }) => {
   };
   const renderTableBody = useMemo(() => {
     let sortData = ClientData ? ClientData : [];
-    // let sortData = ClientSearchResultData.Clients;
+    let rpp = parseInt(rowsPerPage)
+    sortData = ClientData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     if (sortData.length <= 0) {
       return <></>;
     }
@@ -741,13 +742,8 @@ const ClientSearchResult = ({ classes }) => {
           setPage(val);
         }}
       />
-
-
       {renderConfirmDialog()}
       <Loader isOpen={showLoader} />
-      {console.log("DATA", ClientData)}
-      {console.log("Count", TotalCount)}
-      {/* {console.log("state", state.client)} */}
     </DefaultScreen>
   );
 };

@@ -96,5 +96,8 @@
   "deleteConfirm": "האם אתה בטוח שברצונך למחוק את הלקוחות מהקבוצות שבחרת?",
   "email_cell_notProvided": "דואר אלקטרוני/סלולרי לא סופקו",
   "externalImport": "ייבוא קבוצות חיצוניות",
-  "recipientsDeletedSuccessfuly": "הלקוחות נמחקו בהצלחה"
+  "recipientsDeletedSuccessfuly": "הלקוחות נמחקו בהצלחה",
+  "deleteFromGroups": "מחק מקבוצות",
+  "deleteEmail": "הסר מייל",
+  "deletePhone": "הסר טלפון"
 }

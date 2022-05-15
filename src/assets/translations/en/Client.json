@@ -7,5 +7,7 @@
   "removeClientFromSmsDescription": "Are you sure you want to remove recipient from SMS?",
   "logPageHeaderResource1": {
     "Text": "Recipient search result"
-  }
+  },
+  "avaregeIncome": "Average income:",
+  "makeInvalid": "Make invalid"
 }

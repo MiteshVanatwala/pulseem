@@ -40,7 +40,7 @@ const FlexGrid = ({ gridArr = [],
     const localClasses = useStyles({ direction: direction, textVariant: textVariant })
     return (
         <>
-            <Box className={localClasses.flexBox} >
+            <Box className={localClasses.flexBox} style={props.customStyle}>
                 {
                     gridArr.map((obj, idx) => {
                         return (

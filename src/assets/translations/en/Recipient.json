@@ -96,5 +96,8 @@
   "deleteConfirm": "Are you sure you want to delete recipients from the following groups",
   "email_cell_notProvided": "Email/Cellphone not provided",
   "externalImport": "External Import",
-  "recipientsDeletedSuccessfuly": "Recipients deleted successfuly"
+  "recipientsDeletedSuccessfuly": "Recipients deleted successfuly",
+  "deleteFromGroups": "Delete from groups",
+  "deleteEmail": "Remove email",
+  "deletePhone": "Remove phone"
 }

@@ -55,8 +55,8 @@ export const reactivateSms = createAsyncThunk(
 export const searchAllClients = createAsyncThunk(
   'client/Get', async (payload, thunkAPI) => {
     try {
-      const response = await instence.get(`client/Get`, payload);
-      return response.data
+      const response = await instence.post(`client/Get`, payload);
+      return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -68,16 +68,18 @@ export const clientSlice = createSlice({
   initialState: {
     ClientData: [],
     TotalCount: 0,
+    TotalRevenue: 0,
     error: "",
     ToastMessages: {
 
     }
   },
   extraReducers: builder => {
-    // builder.addCase(searchAllClients.fulfilled, (state, { payload }) => {
-    //   state.ClientData = ClientSearchResultData.Clients;
-    //   state.TotalCount = ClientSearchResultData.TotalCount;
-    // })
+    builder.addCase(searchAllClients.fulfilled, (state, { payload }) => {
+      state.ClientData = payload.Clients;
+      state.TotalCount = payload.TotalCount;
+      state.TotalRevenue = payload.TotalRevenue;
+    })
     builder.addCase(searchAllClients.rejected, (state, { error }) => {
       state.error = error.message;
     })
