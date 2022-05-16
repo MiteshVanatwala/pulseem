@@ -24,6 +24,13 @@ import IconWrapper from "../../../components/icons/IconWrapper";
 import FlexGrid from "../../../components/Grids/FlexGrid";
 // import FlexGrid from "../../../components/";
 import { useSelector } from 'react-redux';
+import { ManagmentIcon } from '../../../components/managment';
+import {
+  EditIcon,
+  DeleteRecipient,
+  DeleteEmail,
+  DeletePhone
+} from "../../../assets/images/managment/index";
 
 const useStyles = makeStyles({
   groupName: {
@@ -63,7 +70,8 @@ const RenderWebRow = ({
   DialogType = {},
   noBorderCellStyle,
   colorTextStyle,
-  setSelectedGroups
+  setSelectedGroups,
+  windowSize
 }) => {
   //TODO: Translation left, confirm keys
   const { t } = useTranslation();
@@ -122,6 +130,77 @@ const RenderWebRow = ({
     ShowSmsErrored: 23
   }
 
+
+  const renderCellIcons = () => {
+    // const { Status, Groups, AutomationID, Id, AutomationTriggerInActive } = row
+
+    const iconsMap = [
+      {
+        key: 'edit',
+        icon: EditIcon,
+        lable: t("common.edit"),
+        // remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
+        rootClass: classes.paddingIcon,
+        // textClass: classes.sendIconText,
+        // href: smsOldVersion === "true" ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/send/${Id}`
+      },
+
+      {
+        key: 'deleteFromGroups',
+        icon: DeleteRecipient,
+        // disable: Status !== 1 || AutomationID !== 0,
+        lable: t("recipient.deleteFromGroups"),
+        // href: smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/edit/${Id}`,
+        rootClass: classes.paddingIcon
+      },
+      {
+        key: 'deleteFromEmail',
+        icon: DeleteEmail,
+        lable: t("recipient.deleteEmail"),
+        rootClass: classes.paddingIcon,
+        // onClick: () => {
+        //   setDialogType({
+        //     type: 'duplicate',
+        //     data: Id
+        //   })
+        // }
+      },
+      {
+        key: 'deleteFromPhone',
+        icon: DeletePhone,
+        // disable: Groups && Groups.length === 0,
+        lable: t("recipient.deletePhone"),
+        remove: windowSize === 'xs',
+        rootClass: classes.paddingIcon,
+        // onClick: () => {
+        //   setDialogType({
+        //     type: 'groups',
+        //     data: row.Groups
+        //   })
+        // }
+      },
+
+    ]
+    return (
+      <Grid
+        container
+        direction='row'
+        justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
+        {iconsMap.map(icon => (
+          <Grid
+            className={icon.disable && classes.disabledCursor}
+            key={icon.key}
+            item >
+            <ManagmentIcon
+              classes={classes}
+              {...icon}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    )
+  }
+
   const renderNameCell = (row, fullwidth) => {
     let date = null;
     const { FirstName, LastName, CreationDate } = row;
@@ -135,37 +214,29 @@ const RenderWebRow = ({
           interactive={true}
           classes={{
             tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
-            arrow: classes.fBlack,
+            arrow: classes.fBlack
           }}
           arrow={true}
-          style={{ fontSize: 18 }}
-          placement={"top"}
+          style={{ fontSize: 18, fontWeight: 'bold' }}
+          placement={'top'}
           title={<Typography noWrap={false}>{FirstName}{LastName}</Typography>}
           text={`${FirstName} ${LastName}`}
+
         >
-          {fullwidth ? (
-            <Typography
-              className={clsx(classes.nameEllipsis, localClasses.groupName)}
-              style={{ maxWidth: "100%" }}
-            >
-              {FirstName}{LastName}
-            </Typography>
-          ) : (
-            <Typography className={clsx(classes.nameEllipsis, localClasses.groupName)}>
-              {FirstName}{LastName}
-            </Typography>
-          )}
+          <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName}{LastName}</Typography>
         </CustomTooltip>
-        <Typography className={clsx(classes.grayTextCell, localClasses.date)}>
-          {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
+        <Typography
+          className={classes.grayTextCell}>
+          {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
         </Typography>
       </>
+
     );
   };
 
   return (
     <TableRow key={Math.round(Math.random() * 999999999)} classes={rowStyle}>
-      <TableCell classes={cellStyle} align="center" className={classes.flex2}>
+      <TableCell classes={cellStyle} align="center" className={classes.flex4}>
         <Grid container direction="row">
           <Grid item sm={2}>
             <FormControlLabel
@@ -191,77 +262,14 @@ const RenderWebRow = ({
       <TableCell
         classes={cellStyle}
         align="center"
-        className={classes.flex3}
+        className={classes.flex6}
       >
-        <FlexGrid
-          gridArr={[
-            {
-              // onClick: () => {
-              //   window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=0&GroupID=${GroupID}`)
-              // },
-              label: t("common.edit"),
-              component: (
-                <IconWrapper iconName="edit" className={classes.mxAuto} />
-              ),
-              classes: { text: localClasses.noWrap },
-            },
-            {
-              // onClick: () => {
-              //   setSelectedGroups(GroupID)
-              //   setDialog(DialogType.EDIT_GROUP)
-              // },
-              label: t("recipient.deleteFromGroups"),
-              component: (
-                <IconWrapper iconName="deleteRecipient" className={classes.mxAuto}
-
-                />
-
-              ),
-              classes: { text: localClasses.noWrap },
-            },
-            //TODO: Disable if !== null
-            {
-              label: t("recipient.deleteEmail"),
-              component: (
-                <IconWrapper iconName="deleteEmail"
-                // className={!AutomationID ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
-                // onClick={() => {
-                //   if (AutomationID)
-                //     window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
-                // }}
-                />
-              ),
-              classes: { text: clsx(localClasses.noWrap) },
-              // isDisabled: !AutomationID
-            },
-            //TODO: Disable if (IsConnectedToWebForm === true || IsConnectedToWebForm === true)
-            {
-              // onClick: () => {
-              //   if (!(AutomationID || IsConnectedToWebForm || IsAutoResponder)) {
-              //     setSelectedGroups(GroupID)
-              //     setDialog(DialogType.DELETE_GROUP)
-              //   }
-              // },
-              label: t("recipient.deletePhone"),
-              component: (
-                <IconWrapper
-                  iconName="deletePhone"
-                // className={(AutomationID || IsConnectedToWebForm || IsAutoResponder) ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
-
-                />
-              ),
-              classes: { text: clsx(localClasses.noWrap) },
-              // isDisabled: (AutomationID || IsConnectedToWebForm || IsAutoResponder)
-            },
-          ]}
-          variant="body1"
-          align="center"
-        />
+        {renderCellIcons()}
       </TableCell>
-      <TableCell classes={cellStyle} align="center" className={clsx(classes.bold, classes.flex1)}>
+      <TableCell classes={cellStyle} align="center" className={clsx(classes.bold, classes.flex2)}>
         {Revenue}
       </TableCell>
-      <TableCell classes={cellStyle} align="center" className={classes.flex3}>
+      <TableCell classes={cellStyle} align="center" className={classes.flex4}>
         <FlexGrid
           customStyle={{ justifyContent: 'space-between' }}
           gridArr={[
@@ -282,7 +290,7 @@ const RenderWebRow = ({
           align="center"
         />
       </TableCell>
-      <TableCell classes={cellStyle} align="center" className={classes.flex2} style={{ border: 'none' }}>
+      <TableCell classes={cellStyle} align="center" className={classes.flex3} style={{ border: 'none' }}>
         <FlexGrid
           customStyle={{ justifyContent: 'space-between' }}
           gridArr={[

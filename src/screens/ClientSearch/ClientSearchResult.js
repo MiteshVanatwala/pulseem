@@ -31,9 +31,6 @@ import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
 import RenderRow from "./SubComp/RenderRow";
 import RenderPhoneRow from "./SubComp/RenderPhoneRow";
-// import AddGroupPopUp from "./Popup/AddGroupPopUp";
-// import AddRecipientPopup from "./Popup/AddRecipientPopup";
-// import ConfirmDeletePopUp from "./Popup/ConfirmDeletePopUp";
 import Toast from '../../components/Toast/Toast.component';
 import {
   getGroups,
@@ -41,16 +38,10 @@ import {
   getGroupsBySubAccountId
 } from "../../redux/reducers/groupSlice";
 import { getAccountExtraData } from "../../redux/reducers/smsSlice";
-// import AddBulkRecipientPopup from "./Popup/AddBulkRecipientPopup";
-// import AddRecipientResponse from "./Popup/AddRecipientResponse";
-// import UnSubRecPopup from "./Popup/UnSubRecPopup";
-// import DeleteRecPopup from "./Popup/DeleteRecPopup";
-// import EditGroupPopup from "./Popup/EditGroupPopup";
-// import ResetGroupPopup from "./Popup/ResetGroupPopup";
 import { Dialog } from '../../components/managment/index';
 import { ClientSearchResultData } from "./tempContants";
 import { searchAllClients } from "../../redux/reducers/clientSlice";
-// import SimplyClubPupup from "./Popup/SimplyClubPupup";
+import { BiSortAlt2 } from "react-icons/bi";
 
 const ClientSearchResult = ({ classes }) => {
   const {
@@ -64,26 +55,18 @@ const ClientSearchResult = ({ classes }) => {
     ...props
   } = useSelector((state) => state.core);
 
-  // const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
-  // const { ClientData, ToastMessages, TotalCount } = useSelector((state) => state.client);
-  // const [ClientData, setClientData] = useState([])
-  // const [TotalCount, setTotalCount] = useState(0)
   const { accountFeatures } = useSelector(state => state.core)
   const { t } = useTranslation();
   const [selectedClients, setSelectedClients] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
-  const [serachData, setSearchData] = useState({
-    PageIndex: 1,
-    PageSize: rowsPerPage,
-    SearchTerm: "",
-  });
+
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue } = useSelector(state => state.client);
   const { id } = useParams();
-  const [initialValues, setInitialValues] = useState({
+  const [serachData, setSearchData] = useState({
     PageSize: 6,
     PageIndex: 0,
     SearchTerm: "",
@@ -96,7 +79,8 @@ const ClientSearchResult = ({ classes }) => {
     CountryOrRegion: "",
     GroupIds: [],
     NodeID: ""
-  })
+  });
+
 
   const renderHtml = (html) => {
     function createMarkup() {
@@ -151,39 +135,39 @@ const ClientSearchResult = ({ classes }) => {
     {
       label: t("common.RecipientsName"),
       classes: cellStyle,
-      className: classes.flex2,
+      className: classes.flex4,
       align: "center",
     },
     {
       label: t(""),
       classes: cellStyle,
-      className: classes.flex3,
+      className: classes.flex6,
       align: "center",
     },
     {
-      label: t("common.campaignRevenue"),
+      label: <div className={classes.flex}><div className={classes.flex4}>{t("common.campaignRevenue")}</div> <div className={classes.flex1}><BiSortAlt2 /></div></div>,
       classes: cellStyle,
-      className: clsx(classes.flex1, classes.textUppercase),
+      className: clsx(classes.flex2, classes.textUppercase),
       align: "center",
     },
     {
       label: t("common.Mail"),
       classes: cellStyle,
-      className: classes.flex3,
+      className: classes.flex4,
       align: "center",
     },
     {
       label: t("common.Cellphone"),
       classes: cellStyle,
-      className: classes.flex2,
+      className: classes.flex3,
       align: "center",
     },
   ];
 
   const getData = async () => {
     setLoader(true);
-    if (initialValues.CampaignID > -1) {
-      await dispatch(searchAllClients(initialValues));
+    if (serachData.CampaignID > -1) {
+      await dispatch(searchAllClients(serachData));
     }
     setLoader(false);
   };
@@ -300,12 +284,7 @@ const ClientSearchResult = ({ classes }) => {
     }
     return null;
   }
-  // const handleDeleteGroup = async () => {
-  //   await dispatch(deleteGroups(selectedClients));
-  //   setSelectedClients([]);
-  //   setDialog(null);
-  //   getData();
-  // };
+
   const handleSelected = (id) => {
     const index = selectedClients.indexOf(id);
     if (index !== -1) {
@@ -462,27 +441,6 @@ const ClientSearchResult = ({ classes }) => {
             </Button>
           </Grid>
         )}
-        {/* <Grid item xs={windowSize === "xs" && 12}>
-          <Button
-            variant="contained"
-            size="medium"
-            className={clsx(classes.actionButton, classes.actionButtonRed)}
-            onClick={() => selectedClients.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_RECIPIENT)}
-          >
-            {t("recipient.deleteRecipient")}
-          </Button>
-        </Grid> */}
-
-        {/* {accountFeatures && accountFeatures.includes('15') && (<Grid item xs={windowSize === "xs" && 12}>
-          <Button
-            variant="contained"
-            size="medium"
-            className={clsx(classes.actionButton, classes.createButton)}
-            onClick={() => setDialog(DialogType.SIMPLY_CLUB)}
-          >
-            {t("recipient.externalImport")}
-          </Button>
-        </Grid>)} */}
 
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
@@ -611,6 +569,7 @@ const ClientSearchResult = ({ classes }) => {
                 selectedClients={selectedClients}
                 setSelectedClients={(id) => setSelectedClients([id])}
                 // DialogType={DialogType}
+                windowSize={windowSize}
                 dateFormat={dateFormat}
                 rowStyle={rowStyle}
                 cellStyle={cellStyle}
@@ -751,122 +710,3 @@ const ClientSearchResult = ({ classes }) => {
 };
 
 export default ClientSearchResult;
-
-
-
-
-
-{/* <AddGroupPopUp
-        classes={classes}
-        isOpen={dialog === DialogType.ADD_GROUP}
-        onClose={() => setDialog(null)}
-        setLoader={setLoader}
-        windowSize={windowSize}
-        ToastMessages={ToastMessages}
-        setToastMessage={setToastMessage}
-        openARDialog={(groupId) => { setSelectedClients([...selectedClients, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
-        getData={getData}
-        handleResponses={(response, actions) => handleResponses(response, actions)}
-      />
-      {dialog === DialogType.EDIT_GROUP && selectedClients.length !== 0 && <EditGroupPopup
-        classes={classes}
-        isOpen={dialog === DialogType.EDIT_GROUP}
-        onClose={() => setDialog(null)}
-        setLoader={setLoader}
-        windowSize={windowSize}
-        ToastMessages={ToastMessages}
-        setToastMessage={setToastMessage}
-        selectedGroup={selectedClients[0]}
-        openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
-        getData={getData}
-        handleResponses={(response, actions) => handleResponses(response, actions)}
-      />}
-      {dialog === DialogType.RESET_GROUP && selectedClients.length === 1 && <ResetGroupPopup
-        classes={classes}
-        isOpen={dialog === DialogType.RESET_GROUP}
-        onClose={() => setDialog(null)}
-        setLoader={setLoader}
-        windowSize={windowSize}
-        ToastMessages={ToastMessages}
-        setToastMessage={setToastMessage}
-        selectedGroup={{ GroupID: selectedClients[0] }}
-        getData={getData}
-        handleResponses={(response, actions) => handleResponses(response, actions)}
-      />}
-      {dialog === DialogType.ADD_RECIPIENT && <AddRecipientPopup
-        classes={classes}
-        isOpen={dialog === DialogType.ADD_RECIPIENT}
-        onClose={() => { setDialog(null); setSelectedClients([]); }}
-        setLoader={setLoader}
-        windowSize={windowSize}
-        ToastMessages={ToastMessages}
-        setToastMessage={setToastMessage}
-        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
-        selectedClients={selectedClients}
-        selectGroup={(idArr) => setSelectedClients(idArr)}
-        DialogType={DialogType}
-        setDialog={setDialog}
-        handleResponses={(response, actions) => handleResponses(response, actions)}
-        onAddRecipient={getData}
-      />}
-      {dialog === DialogType.ADD_RECIPIENTS && <AddBulkRecipientPopup
-        classes={classes}
-        isOpen={dialog === DialogType.ADD_RECIPIENTS}
-        onClose={() => { setDialog(null); setSelectedClients([]); }}
-        setLoader={setLoader}
-        windowSize={windowSize}
-        ToastMessages={ToastMessages}
-        setToastMessage={setToastMessage}
-        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
-        selectedClients={selectedClients}
-        selectGroup={(idArr) => setSelectedClients(idArr)}
-        onAddRecipient={handleAddRecipientResponse}
-      />}
-      {dialog === DialogType.UNSUB_RECIPIENT && <UnSubRecPopup
-        classes={classes}
-        isOpen={dialog === DialogType.UNSUB_RECIPIENT}
-        onClose={() => { setDialog(null); setSelectedClients([]); }}
-        handleResponses={(response, actions) => handleResponses(response, actions)}
-        ToastMessages={ToastMessages}
-      />}
-      {dialog === DialogType.DELETE_RECIPIENT && <DeleteRecPopup
-        classes={classes}
-        isOpen={dialog === DialogType.DELETE_RECIPIENT}
-        onClose={() => { setDialog(null); setSelectedClients([]); }}
-        setLoader={setLoader}
-        windowSize={windowSize}
-        ToastMessages={ToastMessages}
-        setToastMessage={setToastMessage}
-        selectedClients={selectedClients}
-        handleResponses={(response, actions) => handleResponses(response, actions)}
-      />}
-      <ConfirmDeletePopUp
-        classes={classes}
-        isOpen={dialog === DialogType.DELETE_GROUP}
-        onClose={() => { setDialog(null); setSelectedClients([]); }}
-        windowSize={windowSize}
-        handleDeleteGroup={() => handleDeleteGroup()}
-      />
-      <AddRecipientResponse
-        classes={classes}
-        isOpen={dialog === DialogType.MESSAGE}
-        onClose={() => { setDialog(null); setSelectedClients([]); getData(); }}
-        windowSize={windowSize}
-        title={responseMessage.title}
-        message={responseMessage.message}
-        summary={responseMessage.summary}
-      />
-      {accountFeatures && accountFeatures.includes('15') && (<SimplyClubPupup
-        classes={classes}
-        isOpen={dialog === DialogType.SIMPLY_CLUB}
-        onClose={() => setDialog(null)}
-        windowSize={windowSize}
-        title={responseMessage.title}
-        message={responseMessage.message}
-        summary={responseMessage.summary}
-        setToastMessage={setToastMessage}
-        handleResponses={handleResponses}
-        ToastMessages={ToastMessages}
-        SelectedGroupIds={[...selectedClients]}
-        setSelectedGroupIds={() => setSelectedClients([])}
-      />)} */}
