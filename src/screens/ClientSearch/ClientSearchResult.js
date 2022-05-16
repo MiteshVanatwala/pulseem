@@ -534,6 +534,8 @@ const ClientSearchResult = ({ classes }) => {
       </>
     );
   };
+
+
   const renderTableBody = useMemo(() => {
     let sortData = ClientData ? ClientData : [];
     let rpp = parseInt(rowsPerPage)
@@ -545,20 +547,20 @@ const ClientSearchResult = ({ classes }) => {
     return (
       <TableBody>
         {sortData.map((obj, idx) =>
-          windowSize === "xs" ? ""
-            // (
-            //   <RenderPhoneRow
-            //     key={idx}
-            //     row={obj}
-            //     rowStyle={rowStyle}
-            //     name={renderNameCell(obj, true)}
-            //     classes={classes}
-            //     colorTextStyle={colorTextStyle}
-            //     setSelectedClients={(id) => setSelectedClients([id])}
-            //     DialogType={DialogType}
-            //     setDialog={(val) => setDialog(val)}
-            //   />
-            // )
+          windowSize === "xs" ?
+            (
+              <RenderPhoneRow
+                key={idx}
+                row={obj}
+                rowStyle={rowStyle}
+                name={renderNameCell(obj, true)}
+                classes={classes}
+                colorTextStyle={colorTextStyle}
+              // setSelectedClients={(id) => setSelectedClients([id])}
+              // DialogType={DialogType}
+              // setDialog={(val) => setDialog(val)}
+              />
+            )
             : (
               <RenderRow
                 key={idx}
