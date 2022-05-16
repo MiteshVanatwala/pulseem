@@ -501,6 +501,7 @@ const SimplyClubPupup = ({
     const ColumnAdjustmentPopup = () => {
         return (
             <ColumnAdjustmentDialog
+                t={t}
                 classes={classes}
                 isOpen={showClients}
                 settings={UploadSettings.GROUPS}

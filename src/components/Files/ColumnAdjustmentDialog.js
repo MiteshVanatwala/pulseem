@@ -6,8 +6,7 @@ import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
-import { useTranslation } from "react-i18next";
-
+import { translateKeys } from '../../helpers/languageHelper';
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -21,12 +20,8 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-
-
-
-const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, settings, data, headers = [], setheaders, tooltipText = "smsReport.manualTotalTooltip" }) => {
-    const { t } = useTranslation();
-    const { ToastMessages, extraData } = useSelector((state) => state.sms);
+const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, settings, data, headers = [], setheaders, tooltipText = "smsReport.manualTotalTooltip", t }) => {
+    const { extraData } = useSelector((state) => state.sms);
     const styles = useStyles();
     const [groupNameInput, setgroupNameInput] = useState("");
 
@@ -37,18 +32,16 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
     const [dropIndex, setdropIndex] = useState(-1);
 
     const headersOrder = [
-        "Email",
-        "FirstName",
-        "LastName",
-        "Cellphone",
-        "Telephone",
-        "Address",
-        "City",
-        "Zip",
-        "BirthDate",
+        t("common.email"),
+        t("smsReport.firstName"),
+        t("smsReport.lastName"),
+        t("common.cellphone"),
+        t("common.telephone"),
+        t("common.address"),
+        t("common.city"),
+        t("common.zip"),
+        t("common.birthDate")
     ]
-
-
 
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
@@ -69,8 +62,6 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
         let restHeader = headers.splice(headersOrder.length - 1, headers.length - headersOrder.length)
         let tempHeaders = [...headersOrder, ...restHeader]
 
-        console.log("HEADERS:", headers, tempHeaders, restHeader)
-
         const fields = settings.Fields.map((e) => {
             let tempIndex = tempHeaders.indexOf(e.value)
             return {
@@ -80,6 +71,8 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                 label: t(e.label)
             }
         });
+        console.log(fields);
+        console.log(tempHeaders);
         setselectArray(fields);
         setheaders(tempHeaders);
 
@@ -250,17 +243,12 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                                             <tbody>
                                                 <tr key={id}>
                                                     {headers.map((data, idx) => {
-                                                        let dispData = restObj[data] || Object.values(restObj)[0];
-                                                        console.log("DATTTAATAATATAAT:", data, { ...restObj })
-                                                        delete restObj[data === t("sms.adjustTitle") ? Object.keys(restObj)[0] : data];
-                                                        // if (dispData !== false && !dispData) {
-                                                        //     return false
-                                                        // }
+                                                        let dispData = restObj[translateKeys(data, t).key] || Object.values(restObj)[0];
+                                                        delete restObj[translateKeys(data, t).value === t("sms.adjustTitle") ? Object.keys(restObj)[0] : translateKeys(data, t).value];
 
                                                         return (
                                                             <td key={idx} className={classes.tableColumn}
                                                             >
-                                                                {id === 0 && console.log("DATA:", data, "  ", "ITEM:", item)}
                                                                 {dispData}
                                                             </td>
                                                         );
@@ -268,7 +256,6 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                                                 </tr>
                                             </tbody>
                                         );
-                                        // }
                                     })}
                                 </table>
                             </Box>
