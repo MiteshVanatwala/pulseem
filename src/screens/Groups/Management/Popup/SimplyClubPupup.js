@@ -4,14 +4,11 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { Dialog } from "../../../../components/managment/Dialog";
-import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub } from '../../../../redux/reducers/groupSlice';
+import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub, createGroup } from '../../../../redux/reducers/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
 import { simplyCLubClientData, UploadSettings } from '../../tempConstants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
-import {
-    createGroup
-} from "../../../../redux/reducers/groupSlice";
 import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
 
@@ -280,13 +277,25 @@ const SimplyClubPupup = ({
     }
 
     const handleAddClients = (ids) => {
-        setShowLoader(true)
         let tempClients = Object.values(ClientData)[0]
         const Payload = {
             ClientsData: tempClients || [],
             GroupIds: ids
         }
-        new Promise((resolve, reject) => resolve(dispatch(addRecipient(Payload)))).then((response) => {
+
+        const pr = new Promise(async (resolve, reject) => {
+            try {
+                setShowLoader(true)
+                const response = await dispatch(addRecipient(Payload));
+                resolve(response);
+            } catch (e) {
+                console.error(e);
+                reject(null);
+            }
+        });
+
+        pr.then((response) => {
+            setShowLoader(false);
             handleResponses(response, {
                 'S_200': {
                     code: 200,
@@ -298,7 +307,6 @@ const SimplyClubPupup = ({
                     message: '',
                     Func: () => {
                         setShowClients(false);
-                        setShowLoader(false)
                         setClientData({})
                         setSelectedGroups([]);
                         setSelectedGroupIds([])
@@ -324,22 +332,19 @@ const SimplyClubPupup = ({
                     message: ToastMessages.IMPORT_GENERIC_ERROR,
                     Func: () => null
                 },
-            })
-        }).finally(() => setShowLoader(false))
+            });
+        });
     }
 
     const searchGroupAndModify = async (groupName) => {
-        setShowLoader(true)
         const response = await dispatch(getGroups({ SearchTerm: groupName, PageSize: 6, PageIndex: 1 }))
         if (response?.payload?.Groups && response?.payload?.RecordCount === 1) {
             handleAddClients([response.payload.Groups[0].GroupID])
         }
-        setShowLoader(false)
     }
 
     const handleImportRecipients = () => {
         if (manualUploadValidationscheck()) {
-            setShowLoader(true)
             let GroupObj = groups.find((obj) => obj.GroupID === selectedGroups[0])
             new Promise((resolve, reject) => resolve(dispatch(createGroup({ GroupName: GroupObj.GroupName })))).then((res) => {
                 handleResponses(res, {
@@ -352,7 +357,6 @@ const SimplyClubPupup = ({
                         code: 201,
                         message: '',
                         Func: () => {
-                            setShowLoader(false)
                             handleAddClients([res.payload.Message])
                         }
                     },
@@ -387,7 +391,7 @@ const SimplyClubPupup = ({
                         Func: () => null
                     },
                 })
-            }).finally(() => setShowLoader(false))
+            });
         }
 
     }

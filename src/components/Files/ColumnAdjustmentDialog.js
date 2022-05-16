@@ -249,7 +249,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                                                         return (
                                                             <td key={idx} className={classes.tableColumn}
                                                             >
-                                                                {dispData}
+                                                                {dispData === 0 ? '' : dispData}
                                                             </td>
                                                         );
                                                     })}
