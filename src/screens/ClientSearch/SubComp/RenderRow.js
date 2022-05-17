@@ -284,8 +284,10 @@ const RenderWebRow = ({
       >
         {renderCellIcons()}
       </TableCell>
-      <TableCell classes={cellStyle} align="center" className={clsx(classes.bold, classes.flex2)}>
-        {Revenue} {t("common.NIS")}
+      <TableCell classes={cellStyle} align="center" className={classes.flex2}>
+        <Typography className={clsx(classes.bold, classes.f16)}>
+          {Revenue} {t("common.NIS")}
+        </Typography>
       </TableCell>
       <TableCell classes={cellStyle} align="center" className={classes.flex4}>
         <FlexGrid

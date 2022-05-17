@@ -160,7 +160,7 @@ const ClientSearchResult = ({ classes }) => {
     {
       label: <div className={classes.flex}>
         <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
-        <div className={classes.flex1}><Button onClick={sortData}><BiSortAlt2 /></Button>
+        <div className={classes.flex1}><Button onClick={sortData} className={clsx(classes.f18, classes.noHoverBg)}><BiSortAlt2 /></Button>
         </div>
       </div>,
       classes: cellStyle,

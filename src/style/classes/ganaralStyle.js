@@ -2318,5 +2318,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   mb50: {
     marginBottom: 50
+  },
+  noHoverBg: {
+    '&:hover': {
+      backgroundColor: 'transparent'
+    }
   }
 });
