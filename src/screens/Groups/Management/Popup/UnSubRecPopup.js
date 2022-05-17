@@ -49,7 +49,7 @@ const UnSubRecPopup = ({ classes,
         // setFileToUpload(file);
         var p = new Promise((resolve, reject) => {
             try {
-                if (file.name.toLowerCase().indexOf("xls") > -1) {
+                if (file.name.toLowerCase().indexOf("xls") > -1 || file.name.toLowerCase().indexOf("csv") > -1) {
                     // setLoader(true);
 
                     reader.onload = function (e) {
@@ -64,7 +64,7 @@ const UnSubRecPopup = ({ classes,
                             let a = temp.split("\n");
                             let b = [];
                             for (let i = 0; i < a.length; i++) {
-                                const tempData = a[i].split(",")
+                                const tempData = a[i].split(",")?.filter(n => n);
                                 b.push(...tempData);
                             }
                             b.pop();
@@ -76,91 +76,6 @@ const UnSubRecPopup = ({ classes,
                         }, 0);
                     };
                     reader.readAsArrayBuffer(file, "utf-8")
-                }
-
-                else if (file.name.toLowerCase().indexOf("csv") > -1) {
-                    setLoader(true);
-                    reader.onload = function () {
-                        var config = {
-                            delimiter: "", // auto-detect
-                            newline: "", // auto-detect
-                            quoteChar: "",
-                            escapeChar: "",
-                            header: false,
-                            trimHeader: false,
-                            dynamicTyping: true,
-                            preview: 0,
-                            encoding: "utf-8",
-                            worker: true,
-                            comments: false,
-                            step: undefined,
-                            complete: undefined,
-                            error: undefined,
-                            download: false,
-                            skipEmptyLines: true,
-                            chunk: function (c) {
-                                var final = c["data"]
-                                    .filter(function (el) {
-                                        return (
-                                            typeof el != "object" ||
-                                            Array.isArray(el) ||
-                                            Object.keys(el).length > 0
-                                        );
-                                    })
-                                    .map((finalResult) => {
-                                        const fr = [...finalResult];
-                                        let fixedItem = [];
-                                        fr.forEach((item) => {
-                                            if (
-                                                item &&
-                                                String(item).startsWith("5") &&
-                                                String(item).length == 9
-                                            ) {
-                                                item = "0" + item;
-                                            }
-                                            if (item && String(item).indexOf("9.72") > -1) {
-                                                item = parseFloat(item);
-                                            }
-                                            fixedItem.push(String(item).trim());
-                                        });
-                                        return fixedItem;
-                                    });
-                                var conf = {
-                                    quotes: false,
-                                    quoteChar: '"',
-                                    escapeChar: '"',
-                                    delimiter: ",",
-                                    newline: "\r\n",
-                                    skipEmptyLines: true,
-                                    columns: null,
-                                    worker: true,
-                                };
-                                const csvResults = Papa.unparse(final, conf);
-                                resolve(csvResults)
-                            },
-                            fastMode: true,
-                            beforeFirstChunk: undefined,
-                            withCredentials: undefined,
-                        };
-
-                        Papa.parse(reader.result, {
-                            config,
-                            complete: results => {
-                                settotalRecords(results.data.length)
-                                const resultCsv = results.data;
-                                let ddc = [];
-                                for (let i in resultCsv[0]) {
-                                    ddc.push(t("sms.adjustTitle"))
-                                }
-                                resolve(resultCsv);
-                            },
-
-                        });
-
-                        setareaData(reader.result.substring(0, 1500));
-                    };
-                    reader.readAsText(file, "ISO-8859-8");
-                    setLoader(false);
                 }
                 else {
                     setLoader(false);
@@ -179,20 +94,6 @@ const UnSubRecPopup = ({ classes,
     }
 
     const handleFinalData = (data) => {
-        if (Array.isArray(data)) {
-            const cols = [];
-            data.map((row) => {
-                if (row.indexOf('\t') > -1) {
-                    row = row.trim().split('\t');
-                    row.forEach((col) => {
-                        cols.push(col);
-                    });
-                }
-            });
-            if (cols.length > 0)
-                data = cols;
-        }
-
         if (data.length === 0)
             return;
 
