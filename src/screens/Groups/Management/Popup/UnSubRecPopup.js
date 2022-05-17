@@ -37,8 +37,8 @@ const UnSubRecPopup = ({ classes,
     const [activeTab, setActiveTab] = useState(0)
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [summaryCount, setSummaryCount] = useState(0);
     const [finalData, setFinalData] = useState(null);
+    const [updatedRows, setUpdatedRows] = useState(-1);
 
 
     const handleFiles = (e) => {
@@ -215,7 +215,6 @@ const UnSubRecPopup = ({ classes,
         const cellPhoneData = filteredData.filter(obj => ValidateNumber(obj))
         const EmailData = filteredData.filter(obj => ValidateEmail(obj))
         let tempCount = (activeTab === 0 && (cellPhoneData.length + EmailData.length)) || (activeTab === 1 && EmailData.length) || (activeTab === 2 && cellPhoneData.length)
-        setSummaryCount(tempCount);
         setFinalData(filteredData);
     }
 
@@ -241,6 +240,7 @@ const UnSubRecPopup = ({ classes,
             }
 
             const response = await dispatch(unsubRecipients(payload))
+            setUpdatedRows(response.payload?.Summary?.TotalRecords ?? -1);
             settotalRecords(finalData.length)
             setLoader(false)
             handleResponses(response, {
@@ -301,9 +301,9 @@ const UnSubRecPopup = ({ classes,
                 onCancel={() => { setIsSubmitted(false); onClose() }}
                 onConfirm={() => { setIsSubmitted(false); onClose() }}
             >
-
                 <Box className={classes.flex}>
-                    <Box>{summaryCount === 1 ? null : summaryCount} {summaryCount === 1 ? t('recipient.rowUpdated') : t('recipient.rowsUpdated')}</Box>
+                    {updatedRows <= 0 && <Box>{t("recipient.noRecordsFound")}</Box>}
+                    {updatedRows > 0 && <Box>{updatedRows === 1 ? null : updatedRows} {updatedRows === 1 ? t('recipient.rowUpdated') : t('recipient.rowsUpdated')}</Box>}
                 </Box>
             </Dialog>
         )
