@@ -54,7 +54,8 @@
     "cellPhone": "יש להזין מספר סלולרי חוקי",
     "cellphoneLength": "יש להזין מספר סלולרי בעל 10-12 ספרות",
     "groupLength": "יש לבחור מהרשימה קבוצה אחת לפחות",
-    "noData": "No data found"
+    "noData": "No data found",
+    "noDeleteRecFound": "לא נמצאו רשומות למחיקה"
   },
   "bulkImportTitle": "העלאת נמענים",
   "importResponses": {
