@@ -22,12 +22,14 @@
   "smsStatus": "SMSStatus",
   "creationDate": "Creation Date",
   "firstName": "FirstName",
+  "lastName": "LastName",
   "name": "Name",
   "email": "Email",
   "telephone": "Telephone",
   "cellphone": "Cellphone",
   "address": "Address",
   "birthdayDate": "BirthdayDate",
+  "birthDate": "BirthDate",
   "city": "City",
   "state": "State",
   "country": "Country",
@@ -52,7 +54,8 @@
     "cellPhone": "Invalid cellphone",
     "cellphoneLength": "Cellphone should be between 10-12 digits",
     "groupLength": "Please select at least 1 group",
-    "noData": "No data found"
+    "noData": "No data found",
+    "noDeleteRecFound": "no records found to delete"
   },
   "bulkImportTitle": "Recipient Import",
   "importResponses": {

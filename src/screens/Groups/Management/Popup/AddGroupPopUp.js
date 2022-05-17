@@ -47,6 +47,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
         CreatedDate: new Date(),
     };
     const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP);
+    const [error, setError] = useState(null)
 
 
 
@@ -62,36 +63,38 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
             setLoader(false);
             console.log("response:", response.payload.Message)
             handleResponses(response, {
-                'S_201': {
+                S_201: {
                     code: 201,
                     message: ToastMessages.GROUP_UPDATED,
-                    Func: new Promise(async (resolutionFunc, rejectionFunc) => {
-                        await resolutionFunc(getData());
-                    }).then((res) => {
-                        callback?.(response.payload.Message)
-                    }),
+                    Func: () => {
+                        new Promise(async (resolutionFunc, rejectionFunc) => {
+                            await resolutionFunc(getData());
+                        }).then((res) => {
+                            callback?.(response.payload.Message)
+                        })
+                    }
                 },
-                'S_400': {
+                S_400: {
                     code: 400,
                     message: ToastMessages.GROUP_INPUT_INCORRECT,
                     Func: () => null
                 },
-                'S_401': {
+                S_401: {
                     code: 401,
                     message: ToastMessages.GROUP_INVALID_API,
                     Func: () => null
                 },
-                'S_405': {
+                S_405: {
                     code: 405,
                     message: ToastMessages.GROUP_ERROR,
                     Func: () => null
                 },
-                'S_422': {
+                S_422: {
                     code: 422,
                     message: ToastMessages.GROUP_ALREADY_EXIST,
                     Func: () => null
                 },
-                'default': {
+                default: {
                     message: ToastMessages.GROUP_ERROR,
                     Func: () => null
                 },

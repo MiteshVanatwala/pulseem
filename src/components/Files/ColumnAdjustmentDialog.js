@@ -30,6 +30,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
     const [columnValidate, setcolumnValidate] = useState(false);
     const [dropIndex, setdropIndex] = useState(-1);
+    const [selectOptions, setSelectOptions] = useState([]);
 
     const headersOrder = [
         t("common.email"),
@@ -45,12 +46,12 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
 
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
-            const exist = settings.Fields.filter((e) => {
+            const exist = selectOptions.filter((e) => {
                 return e.value === ed;
             });
 
             if (exist <= 0 && extraData[ed] !== '') {
-                settings.Fields.push({
+                selectOptions.push({
                     eisdisabled: false,
                     idx: -1,
                     value: ed,
@@ -59,7 +60,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
             }
         });
 
-        let restHeader = headers.splice(headersOrder.length - 1, headers.length - headersOrder.length)
+        let restHeader = headers.splice(headersOrder.length, headers.length - headersOrder.length)
         let tempHeaders = [...headersOrder, ...restHeader]
 
         const fields = settings.Fields.map((e) => {
@@ -76,7 +77,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
         setselectArray(fields);
         setheaders(tempHeaders);
 
-    }, []);
+    }, [selectOptions]);
 
 
 
@@ -208,7 +209,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                                                         style={{ textAlign: "center", cursor: "pointer" }}
                                                     >
                                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                            <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{headers[idx]}</Typography>
+                                                            <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{t(selectOptions.find(obj => obj.value === headers[idx])?.label || headers[idx])}</Typography>
 
                                                             {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
                                                             {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}

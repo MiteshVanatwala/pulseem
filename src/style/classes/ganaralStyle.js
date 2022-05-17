@@ -396,7 +396,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: 15,
   },
   f16: {
-    fontSize: 16,
+    fontSize: '16px !important',
   },
   f18: {
     fontSize: 18,
@@ -794,6 +794,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   error: {
     borderBottom: "2px solid red !important",
+  },
+  errorFullBorder: {
+    border: "3px solid red !important",
   },
   valid: {
     borderBottom: "2px solid #008000 !important",

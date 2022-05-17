@@ -34,6 +34,7 @@ const DeleteRecPopup = ({ classes,
     const [typedData, settypedData] = useState([]);
     const [confirm, setConfirm] = useState(false);
     const [finalData, setFinalData] = useState(null);
+    const [error, setError] = useState(null)
 
     const handleFiles = (e) => {
         e.preventDefault();
@@ -109,6 +110,9 @@ const DeleteRecPopup = ({ classes,
     }
 
     const areaChange = (e) => {
+        if (error) {
+            setError(null)
+        }
         let enteredValue = e.target.value.split("\n")
         const records = enteredValue.filter((r) => { return r !== "" });
         settotalRecords(records.length)
@@ -185,11 +189,7 @@ const DeleteRecPopup = ({ classes,
     }
 
     const DropBox = (classes) => (<Grid container>
-        <Grid item md={12} xs={12} className={
-            highlighted
-                ? clsx(classes.greenManual)
-                : clsx(classes.areaManual)
-        }>
+        <Grid item md={12} xs={12} className={clsx(error ? classes.errorFullBorder : '', highlighted ? classes.greenManual : classes.areaManual)}>
             {RenderSummaryDialog()}
             <textarea
                 placeholder={t(placeHolder)}
@@ -215,6 +215,7 @@ const DeleteRecPopup = ({ classes,
                     setHighlighted(false);
                     handleFiles(e)
                 }}
+                onBlur={() => { (!finalData || finalData.length < 10) && setError(t("recipient.errors.noDeleteRecFound")) }}
             />
             <input
                 onChange={handleFiles}
@@ -222,6 +223,7 @@ const DeleteRecPopup = ({ classes,
                 id="uploadxl"
                 type="file"
             />
+            {error && <Typography className={clsx(classes.bold, classes.errorLabel, classes.f16, classes.ml10)}>{error}</Typography>}
         </Grid>
         <Loader isOpen={showLoader} />
     </Grid>)
@@ -252,7 +254,15 @@ const DeleteRecPopup = ({ classes,
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}
-            onConfirm={() => setConfirm(true)}
+            onConfirm={() => {
+                if (!finalData || finalData.length < 10) {
+                    setError(t("recipient.errors.noDeleteRecFound"))
+                }
+                else {
+                    setConfirm(true)
+                }
+            }
+            }
             customContainerStyle={classes.addRecipientDialog}
         >
             <Box style={{ minWidth: 500 }}>

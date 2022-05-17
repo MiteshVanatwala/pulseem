@@ -22,12 +22,14 @@
   "smaStatus": "סטאטוס סמס ",
   "creationDate": "תאריך יצירה",
   "firstName": "שם פרטיlast ",
+  "lastName": "שם משפחה",
   "name": "שם משפחה",
   "email": "מייל",
   "telephone": "מספר טלפון",
   "cellphone": "מספר סלולרי",
   "address": "כתובת",
   "birthdayDate": "תאריך יום הולדת",
+  "birthDate": "BirthDate",
   "city": "עיר",
   "state": "מדינה",
   "country": "ארץ",
@@ -52,7 +54,8 @@
     "cellPhone": "יש להזין מספר סלולרי חוקי",
     "cellphoneLength": "יש להזין מספר סלולרי בעל 10-12 ספרות",
     "groupLength": "יש לבחור מהרשימה קבוצה אחת לפחות",
-    "noData": "No data found"
+    "noData": "No data found",
+    "noDeleteRecFound": "לא נמצאו רשומות למחיקה"
   },
   "bulkImportTitle": "העלאת נמענים",
   "importResponses": {
