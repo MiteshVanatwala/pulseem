@@ -491,9 +491,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     width: "100%",
     border: "1px solid #7F7F7F",
   },
-  flex7: {
-    flex: 7,
-  },
   flex2: {
     flex: 2,
   },
