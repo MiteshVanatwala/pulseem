@@ -50,7 +50,7 @@ const UnSubRecPopup = ({ classes,
         var p = new Promise((resolve, reject) => {
             try {
                 if (file.name.toLowerCase().indexOf("xls") > -1 || file.name.toLowerCase().indexOf("csv") > -1) {
-                    // setLoader(true);
+                    setLoader(true);
 
                     reader.onload = function (e) {
                         var data = new Uint8Array(e.target.result);
@@ -70,7 +70,6 @@ const UnSubRecPopup = ({ classes,
                             b.pop();
                             settypedData(b);
                             settotalRecords(b.length)
-                            setareaData(b);
                             setLoader(false);
                             resolve(b);
                         }, 0);
@@ -115,8 +114,9 @@ const UnSubRecPopup = ({ classes,
 
         const cellPhoneData = filteredData.filter(obj => ValidateNumber(obj))
         const EmailData = filteredData.filter(obj => ValidateEmail(obj))
-        let tempCount = (activeTab === 0 && (cellPhoneData.length + EmailData.length)) || (activeTab === 1 && EmailData.length) || (activeTab === 2 && cellPhoneData.length)
+        //let tempCount = (activeTab === 0 && (cellPhoneData.length + EmailData.length)) || (activeTab === 1 && EmailData.length) || (activeTab === 2 && cellPhoneData.length)
         setFinalData(filteredData);
+        setareaData(filteredData.slice(0, 1000).join(',').replaceAll(',', "\n") + "\n...");
     }
 
     const areaChange = (e) => {

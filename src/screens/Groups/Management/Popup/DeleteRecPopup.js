@@ -44,7 +44,7 @@ const DeleteRecPopup = ({ classes,
         var p = new Promise((resolve, reject) => {
             try {
                 if (file.name.toLowerCase().indexOf("xls") > -1 || file.name.toLowerCase().indexOf("csv") > -1) {
-                    // setLoader(true);
+                    setLoader(true);
 
                     reader.onload = function (e) {
                         var data = new Uint8Array(e.target.result);
@@ -64,7 +64,6 @@ const DeleteRecPopup = ({ classes,
                             b.pop();
                             settypedData(b);
                             settotalRecords(b.length)
-                            setareaData(b);
                             setLoader(false);
                             resolve(b);
                         }, 0);
@@ -72,8 +71,8 @@ const DeleteRecPopup = ({ classes,
                     reader.readAsArrayBuffer(file, "utf-8")
                 }
                 else {
-                    return false;
                     setLoader(false);
+                    return false;
                 }
             }
             catch (error) {
@@ -107,6 +106,7 @@ const DeleteRecPopup = ({ classes,
             return;
         }
         setFinalData(filteredData);
+        setareaData(filteredData.slice(0, 1000).join(',').replaceAll(',', "\n") + "\n...");
     }
 
     const areaChange = (e) => {
