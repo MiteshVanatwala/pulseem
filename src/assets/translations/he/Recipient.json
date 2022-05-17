@@ -94,10 +94,11 @@
   "phone&email": "הסר דואר אלקטרוני וסלולרי",
   "emailOnly": "הסר רק דואר אלקטרוני",
   "phoneOnly": "הסר רק סלולרי",
-  "rowsUpdated": "שורות עודכנו",
+  "rowsUpdated": "רשומות עודכנו",
   "rowUpdated": "רשומה אחת עודכנה",
   "deleteConfirm": "האם אתה בטוח שברצונך למחוק את הלקוחות מהקבוצות שבחרת?",
   "email_cell_notProvided": "דואר אלקטרוני/סלולרי לא סופקו",
   "externalImport": "ייבוא קבוצות חיצוניות",
-  "recipientsDeletedSuccessfuly": "הלקוחות נמחקו בהצלחה"
+  "recipientsDeletedSuccessfuly": "הלקוחות נמחקו בהצלחה",
+  "noRecordsFound": "לא נמצאו/עודכנו רשומות"
 }
