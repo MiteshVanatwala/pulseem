@@ -185,7 +185,7 @@ const RenderWebRow = ({
       <Grid
         container
         direction='row'
-        justifyContent={windowSize === 'xs' ? 'flex-start' : 'flex-end'}>
+        justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}>
         {iconsMap.map(icon => (
           <Grid
             className={icon.disable && classes.disabledCursor}
@@ -234,6 +234,24 @@ const RenderWebRow = ({
     );
   };
 
+  const switchStatus = (isEmail) => {
+    if (Email && isEmail && Email !== '') {
+      return Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")
+    }
+    else if (Cellphone && !isEmail && Cellphone !== '') {
+      return SmsStatus === 0 ? t("common.statusActive") : t("common.Unsubscribed")
+    }
+    return t("emailStatus.noStatus")
+  }
+  const cssClasses = (isEmail) => {
+    if (isEmail) {
+      return Status === 1 ? classes.sendIconText : Email ? classes.textColorRed : classes.textColorBlue;
+    }
+    else {
+      return SmsStatus === 0 ? classes.sendIconText : Cellphone ? classes.textColorRed : classes.textColorBlue
+    }
+  }
+
   return (
     <TableRow key={Math.round(Math.random() * 999999999)} classes={rowStyle}>
       <TableCell classes={cellStyle} align="center" className={classes.flex4}>
@@ -267,7 +285,7 @@ const RenderWebRow = ({
         {renderCellIcons()}
       </TableCell>
       <TableCell classes={cellStyle} align="center" className={clsx(classes.bold, classes.flex2)}>
-        {Revenue}
+        {Revenue} {t("common.NIS")}
       </TableCell>
       <TableCell classes={cellStyle} align="center" className={classes.flex4}>
         <FlexGrid
@@ -282,7 +300,7 @@ const RenderWebRow = ({
             },
             {
               label: "",
-              component: <Typography className={clsx(classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>,
+              component: <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>,
               classes: { text: localClasses.noWrap },
             }
           ]}
@@ -304,7 +322,7 @@ const RenderWebRow = ({
             {
               label: "",
 
-              component: <Typography className={clsx(classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{SmsStatus === 0 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>,
+              component: <Typography className={clsx(classes.bold, cssClasses(false))}>{switchStatus(false)}</Typography>,
               classes: { text: localClasses.noWrap },
             }
           ]}

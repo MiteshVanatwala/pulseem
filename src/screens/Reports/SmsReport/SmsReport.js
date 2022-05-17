@@ -422,7 +422,7 @@ const SmsReport = ({ classes }) => {
     const innerRef = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        {/* <Typography component={innerRef && value > 0 ? 'a' : 'p'} */} // BUG: Uncomment this
+        {/* <Typography component={innerRef && value > 0 ? 'a' : 'p'} */}
         <Typography component='a' // BUG: Remove this 
           href={innerRef}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}

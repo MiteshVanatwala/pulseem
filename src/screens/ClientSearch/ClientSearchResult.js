@@ -66,6 +66,8 @@ const ClientSearchResult = ({ classes }) => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue } = useSelector(state => state.client);
   const { id } = useParams();
+  const [data, setData] = useState([]);
+  const [descSortDirection, setSortDirection] = useState(true);
   const [serachData, setSearchData] = useState({
     PageSize: 6,
     PageIndex: 0,
@@ -131,6 +133,17 @@ const ClientSearchResult = ({ classes }) => {
     SIMPLY_CLUB: "simplyclub"
   };
 
+  const sortData = () => {
+    let tempData = [...data].sort((a, b) => {
+      return a.Revenue !== null && b.Revenue !== null
+        ? (descSortDirection ? (b.Revenue - a.Revenue) : (a.Revenue - b.Revenue))
+        : -1
+    }
+    );
+    setData(tempData);
+    setSortDirection(!descSortDirection);
+  }
+
   const TABLE_HEAD = [
     {
       label: t("common.RecipientsName"),
@@ -145,7 +158,11 @@ const ClientSearchResult = ({ classes }) => {
       align: "center",
     },
     {
-      label: <div className={classes.flex}><div className={classes.flex4}>{t("common.campaignRevenue")}</div> <div className={classes.flex1}><BiSortAlt2 /></div></div>,
+      label: <div className={classes.flex}>
+        <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
+        <div className={classes.flex1}><Button onClick={sortData}><BiSortAlt2 /></Button>
+        </div>
+      </div>,
       classes: cellStyle,
       className: clsx(classes.flex2, classes.textUppercase),
       align: "center",
@@ -476,10 +493,10 @@ const ClientSearchResult = ({ classes }) => {
         >
           <Box>
             <Typography className={classes.groupsLable}>
-              {`${t("client.avaregeIncome")} ${ClientData && TotalRevenue !== 0 ? TotalRevenue?.toLocaleString() : 0}`}
+              {`${t("client.avaregeIncome")} ${data && TotalRevenue !== 0 ? `${TotalRevenue?.toLocaleString()} ${t("common.NIS")}` : 0}`}
             </Typography>
             <Typography className={clsx(classes.groupsLable)}>
-              {`${ClientData && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
+              {`${data && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
             </Typography>
           </Box>
 
@@ -536,18 +553,21 @@ const ClientSearchResult = ({ classes }) => {
     );
   };
 
+  useEffect(() => {
+    setData(ClientData);
+  }, [ClientData]);
 
   const renderTableBody = useMemo(() => {
-    let sortData = ClientData ? ClientData : [];
+    let sortedData = data ? data : [];
     let rpp = parseInt(rowsPerPage)
-    sortData = ClientData.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
-    if (sortData.length <= 0) {
+    sortedData = data.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+    if (sortedData.length <= 0) {
       return <></>;
     }
 
     return (
       <TableBody>
-        {sortData.map((obj, idx) =>
+        {sortedData.map((obj, idx) =>
           windowSize === "xs" ?
             (
               <RenderPhoneRow
@@ -584,9 +604,9 @@ const ClientSearchResult = ({ classes }) => {
         )}
       </TableBody>
     );
-  }, [ClientData, rowsPerPage, page, classes, selectedClients]);
+  }, [data, rowsPerPage, page, classes, selectedClients]);
 
-  const clientLength = ClientData && TotalCount !== 0 ? TotalCount : 0;
+  const clientLength = data && TotalCount !== 0 ? TotalCount : 0;
 
   const handleAddRecipientResponse = (res) => {
     switch (res.payload.StatusCode) {
@@ -676,7 +696,7 @@ const ClientSearchResult = ({ classes }) => {
             className={clsx(classes.groupsLableContainer, (windowSize === "xs" || windowSize === "sm") ? classes.mt15 : '')}
           >
             <Typography className={classes.groupsLable}>
-              {`${ClientData && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
+              {`${data && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
             </Typography>
           </Box>
           <Box className={clsx(classes.middle, classes.plr10)}>

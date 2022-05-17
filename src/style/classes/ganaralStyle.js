@@ -2315,5 +2315,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   roundedBorder: {
     borderRadius: 50
+  },
+  mb50: {
+    marginBottom: 50
   }
 });
