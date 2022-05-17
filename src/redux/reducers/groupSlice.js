@@ -148,6 +148,7 @@ export const groupSlice = createSlice({
             IMPORT_GENERIC_ERROR: { severity: 'error', color: 'error', message: "recipient.importResponses.genericError", showAnimtionCheck: false },
             SERVER_FOUND_NO_RESPONSE: { severity: 'error', color: 'error', message: "recipient.responses.serverFoundWithNoResponse", showAnimtionCheck: false },
             UNAUTORIZED_RESPONSE: { severity: 'error', color: 'error', message: "'recipient.responses.unautorized'", showAnimtionCheck: false },
+            RECIPIENTS_DELETED_FROM_GROUP: { severity: 'success', color: 'success', message: 'recipient.recipientsDeletedSuccessfuly', showAnimtionCheck: false }
         }
     },
     reducers: {

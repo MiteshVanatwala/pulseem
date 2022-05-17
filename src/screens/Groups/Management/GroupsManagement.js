@@ -785,14 +785,14 @@ const GroupsManagement = ({ classes }) => {
       {dialog === DialogType.UNSUB_RECIPIENT && <UnSubRecPopup
         classes={classes}
         isOpen={dialog === DialogType.UNSUB_RECIPIENT}
-        onClose={() => { setDialog(null); setSelectedGroups([]); }}
+        onClose={() => { setDialog(null); setSelectedGroups([]); getData(); }}
         handleResponses={(response, actions) => handleResponses(response, actions)}
         ToastMessages={ToastMessages}
       />}
       {dialog === DialogType.DELETE_RECIPIENT && <DeleteRecPopup
         classes={classes}
         isOpen={dialog === DialogType.DELETE_RECIPIENT}
-        onClose={() => { setDialog(null); setSelectedGroups([]); }}
+        onClose={() => { setDialog(null); setSelectedGroups([]); getData(); }}
         setLoader={setLoader}
         windowSize={windowSize}
         ToastMessages={ToastMessages}

@@ -37,7 +37,8 @@ const UnSubRecPopup = ({ classes,
     const [activeTab, setActiveTab] = useState(0)
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
-    const [summaryCount, setSummaryCount] = useState(0)
+    const [summaryCount, setSummaryCount] = useState(0);
+    const [finalData, setFinalData] = useState(null);
 
 
     const handleFiles = (e) => {
@@ -71,6 +72,7 @@ const UnSubRecPopup = ({ classes,
                             settotalRecords(b.length)
                             setareaData(b);
                             setLoader(false);
+                            resolve(b);
                         }, 0);
                     };
                     reader.readAsArrayBuffer(file, "utf-8")
@@ -150,6 +152,7 @@ const UnSubRecPopup = ({ classes,
                                 for (let i in resultCsv[0]) {
                                     ddc.push(t("sms.adjustTitle"))
                                 }
+                                resolve(resultCsv);
                             },
 
                         });
@@ -169,6 +172,51 @@ const UnSubRecPopup = ({ classes,
                 reject(error);
             }
         });
+
+        p.then((data) => {
+            handleFinalData(data);
+        });
+    }
+
+    const handleFinalData = (data) => {
+        if (Array.isArray(data)) {
+            const cols = [];
+            data.map((row) => {
+                if (row.indexOf('\t') > -1) {
+                    row = row.trim().split('\t');
+                    row.forEach((col) => {
+                        cols.push(col);
+                    });
+                }
+            });
+            if (cols.length > 0)
+                data = cols;
+        }
+
+        if (data.length === 0)
+            return;
+
+        let filteredData = data.filter((m) => {
+            if (ValidateNumber(m)) {
+                if (m.length >= 9 && m.length <= 13) {
+                    return m;
+                }
+            }
+            if (ValidateEmail(m)) {
+                return m;
+            }
+
+            return null;
+        });
+        if (filteredData.length === 0) {
+            return;
+        }
+
+        const cellPhoneData = filteredData.filter(obj => ValidateNumber(obj))
+        const EmailData = filteredData.filter(obj => ValidateEmail(obj))
+        let tempCount = (activeTab === 0 && (cellPhoneData.length + EmailData.length)) || (activeTab === 1 && EmailData.length) || (activeTab === 2 && cellPhoneData.length)
+        setSummaryCount(tempCount);
+        setFinalData(filteredData);
     }
 
     const areaChange = (e) => {
@@ -177,73 +225,60 @@ const UnSubRecPopup = ({ classes,
         }
 
         let enteredValue = e.target.value.split("\n")
-        // enteredValue = enteredValue.split(",")
         const records = enteredValue.filter((r) => { return r !== "" });
         settotalRecords(records.length)
         setareaData(e.target.value);
         setdropClick(false);
+        handleFinalData(enteredValue);
     };
 
     const handleSubmit = async () => {
         setLoader(true)
-        let tempData = areaData;
-        let tempDataArr = tempData.split('\n')
-        let tempArr3 = [];
-        let tempArr2 = tempDataArr.map((obj) => {
-            const childArr = obj.split(',')
-            childArr.map((cObj) => {
-                const rObj = cObj.replace(/ /g, '')
-                tempArr3 = [...tempArr3, rObj]
+        try {
+            const payload = {
+                ListOfValues: finalData,
+                RemovingOption: activeTab
+            }
+
+            const response = await dispatch(unsubRecipients(payload))
+            settotalRecords(finalData.length)
+            setLoader(false)
+            handleResponses(response, {
+                'S_200': {
+                    code: 200,
+                    message: ToastMessages.SERVER_FOUND_NO_RESPONSE,
+                    Func: () => null
+                },
+                'S_201': {
+                    code: 201,
+                    message: ToastMessages.UNSUBSCRIBE_SUCCESS,
+                    Func: () => setIsSubmitted(true)
+                },
+                'S_401': {
+                    code: 401,
+                    message: ToastMessages.GROUP_INVALID_ID,
+                    Func: () => null
+                },
+                'S_404': {
+                    code: 404,
+                    message: ToastMessages.RECIPIENTS_NOT_FOUND,
+                    Func: () => null
+                },
+                'S_500': {
+                    code: 500,
+                    message: ToastMessages.ERROR_OCCURED,
+                    Func: () => null
+                },
+                'default': {
+                    message: ToastMessages.ERROR_OCCURED,
+                    Func: () => null
+                },
             })
-        })
-        const filteredData = tempArr3.filter(obj => !!obj && obj !== '""')
-        if (filteredData.length == 0) {
-            return;
         }
-        const cellPhoneData = filteredData.filter(obj => ValidateNumber(obj))
-        const EmailData = filteredData.filter(obj => ValidateEmail(obj))
-        let tempCount = activeTab === 0 && (cellPhoneData.length + EmailData.length) || activeTab === 1 && EmailData.length || activeTab === 2 && cellPhoneData.length
-        setSummaryCount(tempCount)
-        const payload = {
-            ListOfValues: filteredData,
-            RemovingOption: activeTab
+        catch (e) {
+            //TODO: Something went wrong
+            setLoader(false);
         }
-
-        const response = await dispatch(unsubRecipients(payload))
-        settotalRecords(filteredData.length)
-        setLoader(false)
-        handleResponses(response, {
-            'S_200': {
-                code: 200,
-                message: ToastMessages.SERVER_FOUND_NO_RESPONSE,
-                Func: () => null
-            },
-            'S_201': {
-                code: 201,
-                message: ToastMessages.UNSUBSCRIBE_SUCCESS,
-                Func: () => setIsSubmitted(true)
-            },
-            'S_401': {
-                code: 401,
-                message: ToastMessages.GROUP_INVALID_ID,
-                Func: () => null
-            },
-            'S_404': {
-                code: 404,
-                message: ToastMessages.RECIPIENTS_NOT_FOUND,
-                Func: () => null
-            },
-            'S_500': {
-                code: 500,
-                message: ToastMessages.ERROR_OCCURED,
-                Func: () => null
-            },
-            'default': {
-                message: ToastMessages.ERROR_OCCURED,
-                Func: () => null
-            },
-        })
-
     }
 
     const handlePasted = () => {

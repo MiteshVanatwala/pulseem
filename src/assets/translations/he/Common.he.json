@@ -550,5 +550,6 @@
   "invalidDate": "יש לבחור תאריך",
   "minimalDateRequired": "התאריך לא יכול להיות גדול מהתאריך המינימלי",
   "maximalDateRequired": "התאריך לא יכול להיות קטן מהתאריך המקסימלי",
-  "systemNotice": "הודעת מערכת"
+  "systemNotice": "הודעת מערכת",
+  "birthDate": "תאריך לידה"
 }

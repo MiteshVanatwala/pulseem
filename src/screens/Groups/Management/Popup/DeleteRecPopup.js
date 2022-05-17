@@ -32,7 +32,8 @@ const DeleteRecPopup = ({ classes,
     const [areaData, setareaData] = useState("");
     const [dropClick, setdropClick] = useState(false);
     const [typedData, settypedData] = useState([]);
-    const [confirm, setConfirm] = useState(false)
+    const [confirm, setConfirm] = useState(false);
+    const [finalData, setFinalData] = useState(null);
 
     const handleFiles = (e) => {
         e.preventDefault();
@@ -64,6 +65,7 @@ const DeleteRecPopup = ({ classes,
                             settotalRecords(b.length)
                             setareaData(b);
                             setLoader(false);
+                            resolve(b);
                         }, 0);
                     };
                     reader.readAsArrayBuffer(file, "utf-8")
@@ -143,6 +145,7 @@ const DeleteRecPopup = ({ classes,
                                 for (let i in resultCsv[0]) {
                                     ddc.push(t("sms.adjustTitle"))
                                 }
+                                resolve(resultCsv);
                             },
 
                         });
@@ -162,6 +165,46 @@ const DeleteRecPopup = ({ classes,
                 reject(error);
             }
         });
+
+        p.then((data) => {
+            handleFinalData(data);
+        });
+    }
+
+    const handleFinalData = (data) => {
+        if (Array.isArray(data)) {
+            const cols = [];
+            data.map((row) => {
+                if (row.indexOf('\t') > -1) {
+                    row = row.trim().split('\t');
+                    row.forEach((col) => {
+                        cols.push(col);
+                    });
+                }
+            });
+            if (cols.length > 0)
+                data = cols;
+        }
+
+        if (data.length === 0)
+            return;
+            
+        let filteredData = data.filter((m) => {
+            if (ValidateNumber(m)) {
+                if (m.length >= 9 && m.length <= 13) {
+                    return m;
+                }
+            }
+            if (ValidateEmail(m)) {
+                return m;
+            }
+
+            return null;
+        });
+        if (filteredData.length === 0) {
+            return;
+        }
+        setFinalData(filteredData);
     }
 
     const areaChange = (e) => {
@@ -170,70 +213,56 @@ const DeleteRecPopup = ({ classes,
         settotalRecords(records.length)
         setareaData(e.target.value);
         setdropClick(false);
+        handleFinalData(enteredValue);
     };
 
     const handleSubmit = async () => {
         setLoader(true)
-        let tempData = areaData;
-        let tempDataArr = tempData.split('\n')
-        let tempArr3 = [];
-        let tempArr2 = tempDataArr.map((obj) => {
-            const childArr = obj.split(',')
-            childArr.map((cObj) => {
-                const rObj = cObj.replace(/ /g, '')
-                tempArr3 = [...tempArr3, rObj]
+        try {
+            const payload = {
+                GroupIDs: selectedGroups,
+                ListOfValues: finalData
+            }
+
+            const response = await dispatch(deleteRecipients(payload))
+            settotalRecords(finalData.length)
+            setLoader(false)
+            handleResponses(response, {
+                'S_200': {
+                    code: 200,
+                    message: ToastMessages.SERVER_FOUND_NO_RESPONSE,
+                    Func: () => null
+                },
+                'S_201': {
+                    code: 201,
+                    message: ToastMessages.RECIPIENTS_DELETED_FROM_GROUP,
+                    Func: onClose()
+                },
+                'S_401': {
+                    code: 401,
+                    message: ToastMessages.UNAUTORIZED_RESPONSE,
+                    Func: () => null
+                },
+                'S_404': {
+                    code: 404,
+                    message: ToastMessages.RECIPIENTS_NOT_FOUND,
+                    Func: () => null
+                },
+                'S_500': {
+                    code: 500,
+                    message: ToastMessages.ERROR_OCCURED,
+                    Func: () => null
+                },
+                'default': {
+                    message: ToastMessages.ERROR_OCCURED,
+                    Func: () => null
+                },
             })
-        })
-        const filteredData = tempArr3.filter(obj => !!obj && obj !== '""')
-        if (filteredData.length == 0) {
-            return;
         }
-
-        const cellPhoneData = filteredData.filter(obj => ValidateNumber(obj))
-        const EmailData = filteredData.filter(obj => ValidateEmail(obj))
-
-        const payload = {
-            GroupIDs: selectedGroups,
-            ListOfValues: cellPhoneData.concat(EmailData)
+        catch (e) {
+            setLoader(false);
         }
-
-        const response = await dispatch(deleteRecipients(payload))
-        settotalRecords(filteredData.length)
-        setLoader(false)
-        handleResponses(response, {
-            'S_200': {
-                code: 200,
-                message: ToastMessages.SERVER_FOUND_NO_RESPONSE,
-                Func: () => null
-            },
-            'S_201': {
-                code: 201,
-                message: ToastMessages.GROUP_DELETED,
-                Func: onClose()
-            },
-            'S_401': {
-                code: 401,
-                message: ToastMessages.UNAUTORIZED_RESPONSE,
-                Func: () => null
-            },
-            'S_404': {
-                code: 404,
-                message: ToastMessages.RECIPIENTS_NOT_FOUND,
-                Func: () => null
-            },
-            'S_500': {
-                code: 500,
-                message: ToastMessages.ERROR_OCCURED,
-                Func: () => null
-            },
-            'default': {
-                message: ToastMessages.ERROR_OCCURED,
-                Func: () => null
-            },
-        })
-
     }
-
 
     const RenderSummaryDialog = () => {
         return (
@@ -249,12 +278,10 @@ const DeleteRecPopup = ({ classes,
                 onCancel={() => { setConfirm(false) }}
                 onConfirm={() => { handleSubmit(); setConfirm(false) }}
             >
-
                 <Typography>{t('recipient.deleteConfirm')}</Typography>
             </Dialog>
         )
     }
-
 
     const DropBox = (classes) => (<Grid container>
         <Grid item md={12} xs={12} className={
