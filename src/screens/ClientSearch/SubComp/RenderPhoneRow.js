@@ -54,7 +54,7 @@ const RenderPhoneRow = ({ name = '', classes, rowStyle, row, colorTextStyle, set
                 classes={{ root: classes.tableCellRoot }}
                 className={classes.p20}
             >
-                <Box className={classes.justifyBetween}>
+                <Box className={classes.spaceBetween}>
                     <Box className={classes.inlineGrid}>
                         {name}
                     </Box>
@@ -70,26 +70,26 @@ const RenderPhoneRow = ({ name = '', classes, rowStyle, row, colorTextStyle, set
                     </Box>
                 </Box>
                 <Box className={clsx(classes.mt5)} style={{ maxWidth: '90%' }}>
-                    <Box className={classes.justifyBetween}>
-                        <Box className={classes.inlineGrid}>
+                    <Box className={classes.flex}>
+                        <Box className={clsx(classes.flex6)}>
                             <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
                             <Typography >{Email}</Typography>
                         </Box>
-                        <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
-                            <Typography align='left' className={clsx(classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
+                        <Box className={clsx(classes.flex4)}>
+                            <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
                         </Box>
                     </Box>
 
                 </Box>
                 <Box className={clsx(classes.mt2)} style={{ maxWidth: '90%' }}>
 
-                    <Box className={classes.justifyBetween}>
-                        <Box className={classes.inlineGrid}>
+                    <Box className={classes.flex}>
+                        <Box className={clsx(classes.flex6)}>
                             <Typography className={classes.bold}>{t("common.Cellphone")}</Typography>
                             <Typography >{Cellphone}</Typography>
                         </Box>
-                        <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
-                            <Typography align='left' className={clsx(classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{SmsStatus === 0 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
+                        <Box className={clsx(classes.flex4)}>
+                            <Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{SmsStatus === 0 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
                         </Box>
                     </Box>
                 </Box>

@@ -472,16 +472,17 @@ const ClientSearchResult = ({ classes }) => {
         <Grid
           item
           xs={windowSize === "xs" && 12}
-          className={classes.groupsLableContainer}
+          className={clsx(classes.groupsLableContainer)}
         >
           <Box>
             <Typography className={classes.groupsLable}>
               {`${t("client.avaregeIncome")} ${ClientData && TotalRevenue !== 0 ? TotalRevenue?.toLocaleString() : 0}`}
             </Typography>
-            <Typography className={classes.groupsLable}>
+            <Typography className={clsx(classes.groupsLable)}>
               {`${ClientData && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
             </Typography>
           </Box>
+
         </Grid>
       </Grid>
     );
@@ -518,12 +519,12 @@ const ClientSearchResult = ({ classes }) => {
           {fullwidth ? (
             <Typography
               className={clsx(classes.nameEllipsis, classes.fullWidth)}
-              style={{ maxWidth: "100%" }}
+              style={{ maxWidth: "100%", minHeight: 28 }}
             >
               {FirstName}{LastName}
             </Typography>
           ) : (
-            <Typography className={classes.nameEllipsis}>
+            <Typography className={classes.nameEllipsis} style={{ minHeight: 28 }}>
               {FirstName}{LastName}
             </Typography>
           )}
@@ -668,14 +669,19 @@ const ClientSearchResult = ({ classes }) => {
       {renderHeader()}
       {renderSearchLine()}
       {windowSize !== "xs" ? renderManagmentLine() :
-        <Box
-          item
-          xs={windowSize === "xs" && 12}
-          className={classes.groupsLableContainer}
-        >
-          <Typography className={classes.groupsLable}>
-            {`${ClientData && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
-          </Typography>
+        <Box className={clsx(classes.flex, classes.spaceBetween)}>
+          <Box
+            item
+            xs={windowSize === "xs" && 12}
+            className={clsx(classes.groupsLableContainer, (windowSize === "xs" || windowSize === "sm") ? classes.mt15 : '')}
+          >
+            <Typography className={classes.groupsLable}>
+              {`${ClientData && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
+            </Typography>
+          </Box>
+          <Box className={clsx(classes.middle, classes.plr10)}>
+            <BiSortAlt2 className={classes.f22} />
+          </Box>
         </Box>
       }
       <DataTable
