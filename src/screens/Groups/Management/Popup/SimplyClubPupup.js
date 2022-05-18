@@ -499,7 +499,7 @@ const SimplyClubPupup = ({
                                         />
                                     </Grid>
                                     <Grid className={clsx(classes.flex, classes.flex2, localClasses.textRow)}>
-                                        <Typography variant="body1" className={classes.textEllipses}>
+                                        <Typography variant="body1" className={classes.ellipsisText}>
                                             {obj.GroupName}
                                         </Typography>
                                     </Grid>
@@ -601,7 +601,12 @@ const SimplyClubPupup = ({
                                 InputProps={{
                                     endAdornment: <Button onClick={() => setShowPassword(!showPassword)} className={localClasses.pwdEveButton} > {showPassword ? <VisibilityOff style={{ fontSize: 15 }} /> : <Visibility style={{ fontSize: 15 }} />}</Button>,
                                 }}
-
+                                onKeyDown={(ev) => {
+                                    if (ev.key === "Enter") {
+                                        ev.preventDefault();
+                                        handleLogin();
+                                    }
+                                }}
                             />
                         </Box>
                     </Box>

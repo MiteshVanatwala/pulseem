@@ -159,7 +159,7 @@ export const Dialog = ({
         }
       }
       }>
-      <Paper className={clsx(classes.posRelative, paperStyle)}>
+      <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
         {renderExitButton()}
         {renderContent()}
         {renderIcon()}

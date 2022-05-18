@@ -856,7 +856,7 @@ const AddRecipientPopup = ({ classes,
                     content: <SimpleGrid
                         gridArr={[
                             {
-                                content: <Typography title={extraData[ef]} align="right" className={clsx(classes.pl5, classes.pr10, classes.textEllipses, classes.alignDir)}>{extraData[ef]}</Typography>,
+                                content: <Typography title={extraData[ef]} align="right" className={clsx(classes.pl5, classes.pr10, classes.ellipsisText, classes.alignDir)}>{extraData[ef]}</Typography>,
                                 gridSize: { xs: 12, sm: 3 }
                             },
                             {

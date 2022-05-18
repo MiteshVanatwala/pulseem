@@ -220,7 +220,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
 
                                                                     return (
                                                                         <span
-                                                                            className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.textEllipses)}
+                                                                            className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.ellipsisText)}
                                                                             onClick={() => {
                                                                                 handleSelectFirst(item, id, idx);
                                                                             }}
