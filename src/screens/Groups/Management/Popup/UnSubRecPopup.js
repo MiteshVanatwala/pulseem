@@ -96,6 +96,7 @@ const UnSubRecPopup = ({ classes,
         if (data.length === 0)
             return;
 
+        setError(null);
         let filteredData = data.filter((m) => {
             m = m.replaceAll('\t', '').replaceAll(' ', '');
             if (ValidateNumber(m)) {
@@ -117,7 +118,7 @@ const UnSubRecPopup = ({ classes,
         // const EmailData = filteredData.filter(obj => ValidateEmail(obj))
         //let tempCount = (activeTab === 0 && (cellPhoneData.length + EmailData.length)) || (activeTab === 1 && EmailData.length) || (activeTab === 2 && cellPhoneData.length)
         setFinalData(filteredData);
-        setareaData(filteredData.slice(0, 1000).join(',').replaceAll(',', "\n") + "\n...");
+        setareaData(filteredData.slice(0, 1000).join(',').replaceAll(',', "\n") + (filteredData.length > 1000 ? "\n..." : ""));
     }
 
     const areaChange = (e) => {
@@ -130,6 +131,11 @@ const UnSubRecPopup = ({ classes,
         settotalRecords(records.length)
         setareaData(e.target.value);
         setdropClick(false);
+        if (e.target.value === '') {
+            setFinalData(null);
+            setError(t("recipient.errors.noData"));
+            return;
+        }
         handleFinalData(enteredValue);
     };
 

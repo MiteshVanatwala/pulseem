@@ -90,6 +90,7 @@ const DeleteRecPopup = ({ classes,
         if (data.length === 0)
             return;
 
+        setError(null);
         let filteredData = data.filter((m) => {
             m = m.replaceAll('\t', '').replaceAll(' ', '');
             if (ValidateNumber(m)) {
@@ -107,7 +108,7 @@ const DeleteRecPopup = ({ classes,
             return;
         }
         setFinalData(filteredData);
-        setareaData(filteredData.slice(0, 1000).join(',').replaceAll(',', "\n") + "\n...");
+        setareaData(filteredData.slice(0, 1000).join(',').replaceAll(',', "\n") + (filteredData.length > 1000 ? "\n..." : ""));
     }
 
     const areaChange = (e) => {
@@ -119,6 +120,11 @@ const DeleteRecPopup = ({ classes,
         settotalRecords(records.length)
         setareaData(e.target.value);
         setdropClick(false);
+        if (e.target.value === '') {
+            setFinalData(null);
+            setError(t("recipient.errors.noDeleteRecFound"));
+            return;
+        }
         handleFinalData(enteredValue);
     };
 
@@ -256,7 +262,7 @@ const DeleteRecPopup = ({ classes,
             onClose={onClose}
             onCancel={onClose}
             onConfirm={() => {
-                if (!finalData || finalData.length < 10) {
+                if (!finalData || finalData.length === 0) {
                     setError(t("recipient.errors.noDeleteRecFound"))
                 }
                 else {
