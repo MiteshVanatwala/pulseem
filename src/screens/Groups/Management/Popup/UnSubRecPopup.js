@@ -97,6 +97,7 @@ const UnSubRecPopup = ({ classes,
             return;
 
         let filteredData = data.filter((m) => {
+            m = m.replaceAll('\t', '').replaceAll(' ', '');
             if (ValidateNumber(m)) {
                 if (m.length >= 9 && m.length <= 13) {
                     return m;
@@ -112,8 +113,8 @@ const UnSubRecPopup = ({ classes,
             return;
         }
 
-        const cellPhoneData = filteredData.filter(obj => ValidateNumber(obj))
-        const EmailData = filteredData.filter(obj => ValidateEmail(obj))
+        // const cellPhoneData = filteredData.filter(obj => ValidateNumber(obj))
+        // const EmailData = filteredData.filter(obj => ValidateEmail(obj))
         //let tempCount = (activeTab === 0 && (cellPhoneData.length + EmailData.length)) || (activeTab === 1 && EmailData.length) || (activeTab === 2 && cellPhoneData.length)
         setFinalData(filteredData);
         setareaData(filteredData.slice(0, 1000).join(',').replaceAll(',', "\n") + "\n...");
@@ -181,10 +182,6 @@ const UnSubRecPopup = ({ classes,
             setLoader(false);
         }
     }
-
-    const handlePasted = () => {
-
-    };
 
     const RenderSummaryDialog = () => {
 

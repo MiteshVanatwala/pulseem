@@ -91,6 +91,7 @@ const DeleteRecPopup = ({ classes,
             return;
 
         let filteredData = data.filter((m) => {
+            m = m.replaceAll('\t', '').replaceAll(' ', '');
             if (ValidateNumber(m)) {
                 if (m.length >= 9 && m.length <= 13) {
                     return m;
