@@ -154,7 +154,7 @@ const ClientSearchResult = ({ classes }) => {
   const handleFilter = () => {
     if (filterMin !== '' || filterMax !== '') {
       const sortedData = [...ClientData].filter((f) => {
-        return f.Revenue >= parseInt(filterMin ?? 0) && f.Revenue <= parseInt(filterMax ?? 1000000)
+        return f.Revenue >= parseInt(filterMin !== "" ? filterMin : 0) && f.Revenue <= parseInt(filterMax !== "" ? filterMax : 1000000)
       });
 
       if (sortedData && sortedData.length > 0) {
