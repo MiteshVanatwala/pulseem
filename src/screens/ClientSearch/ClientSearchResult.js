@@ -69,10 +69,12 @@ const ClientSearchResult = ({ classes }) => {
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
-  const [filterMin, setFilterMin] = useState(null);
-  const [filterMax, setFilterMax] = useState(null);
+  const [filterMin, setFilterMin] = useState("");
+  const [filterMax, setFilterMax] = useState("");
+  const [filterSearch, setFilterSearch] = useState(false);
   const [totalClients, setTotalClients] = useState(TotalCount);
   const [avaregeRevenue, setAvaregeRevenue] = useState(TotalRevenue);
+  const [isSearching, setIsSearching] = useState(false);
   const [serachData, setSearchData] = useState({
     PageSize: 6,
     PageIndex: 0,
@@ -111,7 +113,6 @@ const ClientSearchResult = ({ classes }) => {
   };
   const [dialog, setDialog] = useState(null);
   const [showLoader, setLoader] = useState(false);
-  const [filterSearch, setFilterSearch] = useState(false);
   const dateFormat = "YYYY-MM-DD HH:mm:ss.FFF";
   const dispatch = useDispatch();
   moment.locale(language);
@@ -151,17 +152,24 @@ const ClientSearchResult = ({ classes }) => {
   }
 
   const handleFilter = () => {
-    if (filterMin || filterMax) {
+    if (filterMin !== '' || filterMax !== '') {
       const sortedData = [...ClientData].filter((f) => {
         return f.Revenue >= parseInt(filterMin ?? 0) && f.Revenue <= parseInt(filterMax ?? 1000000)
       });
 
+      if (sortedData && sortedData.length > 0) {
+        const totalR = sortedData.map((item) => item.Revenue).reduce((a, b) =>
+          a + b
+        );
+        setAvaregeRevenue(totalR);
+      }
+      else {
+        setAvaregeRevenue(0);
+      }
+
       setData(sortedData);
       setTotalClients(sortedData.length);
-      const totalR = sortedData.map((item) => item.Revenue).reduce((a, b) =>
-        a + b
-      );
-      setAvaregeRevenue(totalR);
+      setIsSearching(true);
     }
     else {
       resetSearch();
@@ -170,6 +178,9 @@ const ClientSearchResult = ({ classes }) => {
 
   const resetSearch = () => {
     setData(ClientData);
+    setFilterMin("");
+    setFilterMax("");
+    setIsSearching(false);
     setTotalClients(TotalCount);
     setAvaregeRevenue(TotalRevenue);
   }
@@ -434,6 +445,7 @@ const ClientSearchResult = ({ classes }) => {
               onChange={(e) => setFilterMin(e.target.value)}
               className={clsx(classes.textField, classes.minWidth252)}
               placeholder={t("siteTracking.minimumRevenue")}
+              type="number"
             />
           </Grid>
           <Grid item>
@@ -444,6 +456,7 @@ const ClientSearchResult = ({ classes }) => {
               onChange={(e) => setFilterMax(e.target.value)}
               className={clsx(classes.textField, classes.minWidth252)}
               placeholder={t("siteTracking.maximumRevenue")}
+              type="number"
             />
           </Grid>
         </>}
@@ -471,10 +484,10 @@ const ClientSearchResult = ({ classes }) => {
             underline='none'
             onClick={() => setFilterSearch(!filterSearch)}
             className={clsx(classes.dBlock, classes.mt5, filterSearch && windowSize === 'lg' ? classes.mb15 : null)}>
-            {t(!filterSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
+            {t(!filterSearch ? 'report.filterSearch' : 'report.closeFilterSearch')}
           </Link>
         </Grid>
-        {filterSearch && <Grid item>
+        {isSearching && <Grid item>
           <Button
             size='large'
             variant='contained'

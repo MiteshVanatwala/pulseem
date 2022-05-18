@@ -95,5 +95,7 @@
   "ArchiveDirectSendReport": "DirectSend Report Archive",
   "Reactivate": "Reactivate / Cancel removal",
   "ExportLimitation": "Exported docs cannot contain more than 600K results",
-  "clientName": "Client Name"
+  "clientName": "Client Name",
+  "filterSearch": "Apply filter",
+  "closeFilterSearch": "Close filter"
 }

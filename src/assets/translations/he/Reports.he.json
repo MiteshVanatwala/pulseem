@@ -95,5 +95,7 @@
   "ArchiveDirectSendReport": "ארכיון שליחה ישירה",
   "Reactivate": "Reactivate / בטל הסרה",
   "ExportLimitation": "לא ניתן להוריד קובץ שמכיל מעל 600 אלף רשומות",
-  "clientName": "שם לקוח"
+  "clientName": "שם לקוח",
+  "filterSearch": "החל סינון",
+  "closeFilterSearch": "סגור סינון"
 }
