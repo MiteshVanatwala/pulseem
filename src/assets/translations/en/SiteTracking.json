@@ -49,5 +49,7 @@
     "deleteDialogMessage": "Are you sure?<br />Clicking on \"OK\" will stop all tracking on your site.",
     "NoticeLinkStatistics": "Your account is set up for Site Tracking<br/>Removing link tracking will disable site tracking for this domain",
     "invalidDomainAddress": "Domain must be a valid domain name",
-    "addEvent": "Add Event"
+    "addEvent": "Add Event",
+    "minimumRevenue": "Min Revenue",
+    "maximumRevenue": "Max Revenue"
 }

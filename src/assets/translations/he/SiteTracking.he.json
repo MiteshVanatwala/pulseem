@@ -49,5 +49,7 @@
     "deleteDialogMessage": "האם אתה בטוח?<br />לחיצה על אישור תעצור את כל המעקבים באתר שלך.",
     "NoticeLinkStatistics": "החשבון שלך מוגדר למעקב התנהגות באתר (site tracking)<br />ביטול 'מעקב אחר הקלקות קישורים' לא יאפשר מעקב אחר דומיין זה.",
     "invalidDomainAddress": "כתובת דומיין אינה תקינה",
-    "addEvent": "הוסף אירוע"
+    "addEvent": "הוסף אירוע",
+    "minimumRevenue": "מינימום הכנסה",
+    "maximumRevenue": "מקסימום הכנסה"
 }

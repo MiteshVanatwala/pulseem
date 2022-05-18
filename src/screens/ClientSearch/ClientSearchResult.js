@@ -11,6 +11,7 @@ import {
   TextField,
   Box,
   useTheme,
+  Link
 } from "@material-ui/core";
 import { SearchIcon, ExportIcon } from "../../assets/images/managment/index";
 import { CSVLink } from "react-csv";
@@ -41,7 +42,7 @@ import { getAccountExtraData } from "../../redux/reducers/smsSlice";
 import { Dialog } from '../../components/managment/index';
 import { ClientSearchResultData } from "./tempContants";
 import { searchAllClients } from "../../redux/reducers/clientSlice";
-import { BiSortAlt2 } from "react-icons/bi";
+import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
 
 const ClientSearchResult = ({ classes }) => {
   const {
@@ -68,6 +69,10 @@ const ClientSearchResult = ({ classes }) => {
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
+  const [filterMin, setFilterMin] = useState(null);
+  const [filterMax, setFilterMax] = useState(null);
+  const [totalClients, setTotalClients] = useState(TotalCount);
+  const [avaregeRevenue, setAvaregeRevenue] = useState(TotalRevenue);
   const [serachData, setSearchData] = useState({
     PageSize: 6,
     PageIndex: 0,
@@ -106,6 +111,7 @@ const ClientSearchResult = ({ classes }) => {
   };
   const [dialog, setDialog] = useState(null);
   const [showLoader, setLoader] = useState(false);
+  const [filterSearch, setFilterSearch] = useState(false);
   const dateFormat = "YYYY-MM-DD HH:mm:ss.FFF";
   const dispatch = useDispatch();
   moment.locale(language);
@@ -144,6 +150,30 @@ const ClientSearchResult = ({ classes }) => {
     setSortDirection(!descSortDirection);
   }
 
+  const handleFilter = () => {
+    if (filterMin || filterMax) {
+      const sortedData = [...ClientData].filter((f) => {
+        return f.Revenue >= parseInt(filterMin ?? 0) && f.Revenue <= parseInt(filterMax ?? 1000000)
+      });
+
+      setData(sortedData);
+      setTotalClients(sortedData.length);
+      const totalR = sortedData.map((item) => item.Revenue).reduce((a, b) =>
+        a + b
+      );
+      setAvaregeRevenue(totalR);
+    }
+    else {
+      resetSearch();
+    }
+  }
+
+  const resetSearch = () => {
+    setData(ClientData);
+    setTotalClients(TotalCount);
+    setAvaregeRevenue(TotalRevenue);
+  }
+
   const TABLE_HEAD = [
     {
       label: t("common.RecipientsName"),
@@ -160,7 +190,12 @@ const ClientSearchResult = ({ classes }) => {
     {
       label: <div className={classes.flex}>
         <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
-        <div className={classes.flex1}><Button onClick={sortData} className={clsx(classes.f18, classes.noHoverBg)}><BiSortAlt2 /></Button>
+        <div className={classes.flex1}>
+          <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
+            onClick={() => { sortData() }}
+            style={{ minWidth: 40 }}>
+            {descSortDirection ? <BiSortDown /> : <BiSortUp />}
+          </Button>
         </div>
       </div>,
       classes: cellStyle,
@@ -192,6 +227,10 @@ const ClientSearchResult = ({ classes }) => {
   useEffect(() => {
     getData(); // BUG: UNCOMMENT THIS
   }, [dispatch, serachData]);
+
+  useEffect(() => {
+    handleFilter();
+  }, [ClientData]);
 
   //  HANDLERS  //
   const handleResponses = (response, actions = {
@@ -333,6 +372,7 @@ const ClientSearchResult = ({ classes }) => {
           SearchTerm: searchStr,
         });
         setPage(1);
+        handleFilter();
       }
     };
 
@@ -344,6 +384,7 @@ const ClientSearchResult = ({ classes }) => {
           SearchTerm: searchStr,
         });
         setPage(1);
+        handleFilter();
       }
     };
 
@@ -367,6 +408,10 @@ const ClientSearchResult = ({ classes }) => {
       );
     }
 
+    // const handleFilterSearch = () => {
+    //   setFilterSearch(!filterSearch);
+    // }
+
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -377,9 +422,31 @@ const ClientSearchResult = ({ classes }) => {
             onKeyPress={handleKeyDown}
             onChange={(e) => setSearchStr(e.target.value)}
             className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t("common.GroupName")}
+            placeholder={t("report.clientName")}
           />
         </Grid>
+        {filterSearch && <>
+          <Grid item>
+            <TextField
+              variant="outlined"
+              size="small"
+              value={filterMin}
+              onChange={(e) => setFilterMin(e.target.value)}
+              className={clsx(classes.textField, classes.minWidth252)}
+              placeholder={t("siteTracking.minimumRevenue")}
+            />
+          </Grid>
+          <Grid item>
+            <TextField
+              variant="outlined"
+              size="small"
+              value={filterMax}
+              onChange={(e) => setFilterMax(e.target.value)}
+              className={clsx(classes.textField, classes.minWidth252)}
+              placeholder={t("siteTracking.maximumRevenue")}
+            />
+          </Grid>
+        </>}
         <Grid item>
           <Button
             size="large"
@@ -391,31 +458,55 @@ const ClientSearchResult = ({ classes }) => {
                 SearchTerm: searchStr,
               });
               setPage(1);
+              handleFilter();
             }}
             className={classes.searchButton}
             endIcon={<SearchIcon />}
           >
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
+          <Link
+            color='initial'
+            component='button'
+            underline='none'
+            onClick={() => setFilterSearch(!filterSearch)}
+            className={clsx(classes.dBlock, classes.mt5, filterSearch && windowSize === 'lg' ? classes.mb15 : null)}>
+            {t(!filterSearch ? 'report.AdvanceSearch' : 'report.closeAdvanceSearch')}
+          </Link>
         </Grid>
-        {serachData.SearchTerm && (
-          <Grid item>
-            <Button
-              size="large"
-              variant="contained"
-              onClick={() => {
-                setSearchData({ ...serachData, SearchTerm: "" });
-                setSearchStr("");
-                setPage(1);
-              }}
-              className={classes.searchButton}
-              endIcon={<ClearIcon />}
-            >
-              {t("common.clear")}
-            </Button>
-          </Grid>
-        )}
-      </Grid>
+        {filterSearch && <Grid item>
+          <Button
+            size='large'
+            variant='contained'
+            onClick={() => {
+              resetSearch();
+            }}
+            className={classes.searchButton}
+            endIcon={<ClearIcon />}>
+            {t('common.clear')}
+          </Button>
+        </Grid>}
+        {
+          serachData.SearchTerm && (
+            <Grid item>
+              <Button
+                size="large"
+                variant="contained"
+                onClick={() => {
+                  setSearchData({ ...serachData, SearchTerm: "" });
+                  setSearchStr("");
+                  setPage(1);
+                  handleFilter();
+                }}
+                className={classes.searchButton}
+                endIcon={<ClearIcon />}
+              >
+                {t("common.clear")}
+              </Button>
+            </Grid>
+          )
+        }
+      </Grid >
     );
   };
   const renderManagmentLine = () => {
@@ -492,11 +583,8 @@ const ClientSearchResult = ({ classes }) => {
           className={clsx(classes.groupsLableContainer)}
         >
           <Box>
-            <Typography className={classes.groupsLable}>
-              {`${t("client.avaregeIncome")} ${data && TotalRevenue !== 0 ? `${TotalRevenue?.toLocaleString()} ${t("common.NIS")}` : 0}`}
-            </Typography>
-            <Typography className={clsx(classes.groupsLable)}>
-              {`${data && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
+            <Typography className={clsx(classes.groupsLable, classes.f28, classes.bold)}>
+              {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`} | {`${t("client.avaregeIncome")} ${data && avaregeRevenue !== 0 ? `${(avaregeRevenue / totalClients)?.toLocaleString()} ${t("common.NIS")}` : 0}`}
             </Typography>
           </Box>
 
@@ -606,49 +694,7 @@ const ClientSearchResult = ({ classes }) => {
     );
   }, [data, rowsPerPage, page, classes, selectedClients]);
 
-  const clientLength = data && TotalCount !== 0 ? TotalCount : 0;
-
-  const handleAddRecipientResponse = (res) => {
-    switch (res.payload.StatusCode) {
-      case 201: {
-        setResponseMessage({ title: t("recipient.summary.summaryImportTitle"), message: '', summary: res.payload.Summary })
-        setDialog(DialogType.MESSAGE);
-        break;
-      }
-      case 202: {
-        setResponseMessage({ title: t("recipient.bulkImportTitle"), message: renderHtml(t("recipient.importResponses.fileUploaded")) })
-        setDialog(DialogType.MESSAGE);
-        break;
-      }
-      case 404: {
-        setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound") })
-        setDialog(DialogType.MESSAGE);
-        break;
-      }
-      case 400: {
-        setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.listEmptyOrClientInvalid") })
-        setDialog(DialogType.MESSAGE);
-        break;
-      }
-      default: {
-        setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
-        setDialog(DialogType.MESSAGE);
-      }
-    }
-  }
-
-  // const handleConfirmExport = () => {
-  //   let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}`;
-  //   if (selectedClients && selectedClients.length > 0) {
-  //     queryString += `&Groups=${selectedClients.join(',')}`;
-  //   }
-  //   if (selectedClients.length === 1) {
-  //     const groupName = groupData.Groups.find((g) => { return g.GroupID === selectedClients[0] }).GroupName;
-  //     queryString += `&GroupName=${groupName.replace(' ', '-')}`;
-  //   }
-  //   window.open(`https://www.pulseemdev.co.il/Pulseem/ClientExport.csv?${queryString}`);
-  //   setShowConfirmDialog(false);
-  // }
+  const clientLength = totalClients !== 0 ? totalClients : 0;
 
   const renderConfirmDialog = () => {
     if (showConfirmDialog) {
@@ -696,7 +742,7 @@ const ClientSearchResult = ({ classes }) => {
             className={clsx(classes.groupsLableContainer, (windowSize === "xs" || windowSize === "sm") ? classes.mt15 : '')}
           >
             <Typography className={classes.groupsLable}>
-              {`${data && TotalCount !== 0 ? TotalCount : 0} ${t("common.Clients")}`}
+              {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`}
             </Typography>
           </Box>
           <Box className={clsx(classes.middle, classes.plr10)}>

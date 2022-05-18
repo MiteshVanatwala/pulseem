@@ -87,13 +87,10 @@ const SmsReport = ({ classes }) => {
       title: windowSize === 'xs' ? '' : t('common.DLR'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
-    // Revenue: {
-    //   title: windowSize === 'xs' ? '' : t('common.revenue'),
-    //   href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
-    // }
     Revenue: {
-      title: windowSize === 'xs' ? '' : t('common.revenue'),
-      href: `/react/ClientSearchResult/${id}`
+      title: '',
+      href: `/react/ClientSearchResult/${id}`,
+      textStyle: { fontWeight: 900 }
     }
   })
 
@@ -418,7 +415,7 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}, clickable = true) => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '' } = data
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null } = data
     const innerRef = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
@@ -426,10 +423,11 @@ const SmsReport = ({ classes }) => {
         <Typography component='a' // BUG: Remove this 
           href={innerRef}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
+          style={textStyle}
           target="_blank">
           {value && value.toLocaleString() || '0'}
         </Typography>
-        <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
+        <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])} style={textStyle}>
           {title}
         </Typography>
       </Box>
@@ -532,7 +530,7 @@ const SmsReport = ({ classes }) => {
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(Revenue, '', hrefs.Revenue)}
+          {renderIntData(`${Revenue.toLocaleString()} ${t("common.NIS")}`, '', hrefs.Revenue)}
         </TableCell>}
       </TableRow>
     )
