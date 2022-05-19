@@ -64,7 +64,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
         let tempHeaders = [...headersOrder, ...restHeader]
 
         const fields = settings.Fields.map((e) => {
-            let tempIndex = tempHeaders.indexOf(e.value)
+            let tempIndex = tempHeaders.map(e => { return e.replace(' ','').toLowerCase()}).indexOf(e.value.replace(' ', '').toLowerCase())
             return {
                 isdisabled: tempIndex === -1 ? e.isdisabled : true,
                 idx: tempIndex === -1 ? e.idx : tempIndex,
@@ -220,7 +220,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
 
                                                                     return (
                                                                         <span
-                                                                            className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.ellipsisText)}
+                                                                            className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.textEllipses)}
                                                                             onClick={() => {
                                                                                 handleSelectFirst(item, id, idx);
                                                                             }}
