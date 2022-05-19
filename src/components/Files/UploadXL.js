@@ -123,7 +123,7 @@ const UploadXL = ({
         setheaders(h);
     };
     const handleChangeId = (id) => {
-        if (dropIndex == -1) {
+        if (dropIndex === -1) {
             setdropIndex(id);
         } else {
             setdropIndex(-1);
@@ -268,7 +268,7 @@ const UploadXL = ({
                                                 if (
                                                     item &&
                                                     String(item).startsWith("5") &&
-                                                    String(item).length == 9
+                                                    String(item).length === 9
                                                 ) {
                                                     item = "0" + item;
                                                 }
@@ -441,7 +441,7 @@ const UploadXL = ({
 
         let columnHasValue = false;
         headers.forEach((value) => {
-            if (value == t("common.cellphone") || value == 'Cellphone' || value == t("common.email") || value == 'Email') {
+            if (value === t("common.cellphone") || value === 'Cellphone' || value === t("common.email") || value === 'Email') {
                 columnHasValue = true
             }
         });
@@ -530,14 +530,14 @@ const UploadXL = ({
                                                     <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{headers[idx]}</Typography>
 
                                                     {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
-                                                    {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
-                                                {dropIndex == idx ? (
+                                                    {dropIndex === idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}  </div>
+                                                {dropIndex === idx ? (
                                                     <div className={clsx(classes.adjustC, classes.scrollY, classes.customScroll)} style={{ maxHeight: 175 }}>
                                                         {selectArray.map((item, id) => {
 
                                                             return (
                                                                 <span
-                                                                    className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.ellipsisText)}
+                                                                    className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.textEllipses)}
                                                                     onClick={() => {
                                                                         handleSelectFirst(item, id, idx);
                                                                     }}
