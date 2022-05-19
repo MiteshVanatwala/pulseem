@@ -222,7 +222,7 @@ const DeleteRecPopup = ({ classes,
                     setHighlighted(false);
                     handleFiles(e)
                 }}
-                onBlur={() => { (!finalData || finalData.length < 10) && setError(t("recipient.errors.noDeleteRecFound")) }}
+                //onBlur={() => { (!finalData || finalData.length < 10) && setError(t("recipient.errors.noDeleteRecFound")) }}
             />
             <input
                 onChange={handleFiles}
