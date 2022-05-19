@@ -9,7 +9,6 @@ import {
   Button,
   TextField,
   Box,
-  useTheme,
 } from "@material-ui/core";
 import { SearchIcon, ExportIcon } from "../../../assets/images/managment/index";
 import { CSVLink } from "react-csv";
@@ -53,10 +52,7 @@ const GroupsManagement = ({ classes }) => {
   const {
     language,
     windowSize,
-    email,
-    phone,
     rowsPerPage,
-    smsOldVersion,
     isRTL,
   } = useSelector((state) => state.core);
 
@@ -100,7 +96,6 @@ const GroupsManagement = ({ classes }) => {
   const dateFormat = "YYYY-MM-DD HH:mm:ss.FFF";
   const dispatch = useDispatch();
   moment.locale(language);
-  const theme = useTheme();
 
   const colorTextStyle = {
     red: classes.textColorRed,
@@ -450,8 +445,9 @@ const GroupsManagement = ({ classes }) => {
           <Button
             variant="contained"
             size="medium"
-            className={clsx(classes.actionButton, classes.createButton)}
+            className={clsx(classes.actionButton, classes.importButtonBlue)}
             onClick={() => setDialog(DialogType.SIMPLY_CLUB)}
+            
           >
             {t("recipient.externalImport")}
           </Button>
@@ -829,6 +825,7 @@ const GroupsManagement = ({ classes }) => {
         ToastMessages={ToastMessages}
         SelectedGroupIds={[...selectedGroups]}
         setSelectedGroupIds={() => setSelectedGroups([])}
+        getData={() => { setDialog(null); getData(); }}
       />)}
       {renderConfirmDialog()}
       <Loader isOpen={showLoader} />

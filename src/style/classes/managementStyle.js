@@ -1672,5 +1672,11 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
 
 
-  }
+  },
+  importButtonBlue: {
+    backgroundColor: '#3498DB',
+    '&:hover': {
+      backgroundColor: '#3291d1'
+    }
+  },
 });

@@ -9,7 +9,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../../components/managment/Dialog";
 
-const AddRecipientResponse = ({ classes, isOpen = false, onClose, windowSize, title, message, summary = null }) => {
+const AddRecipientResponse = ({ classes, isOpen = false, onClose, title, message, summary = null }) => {
 
   const { t } = useTranslation();
 

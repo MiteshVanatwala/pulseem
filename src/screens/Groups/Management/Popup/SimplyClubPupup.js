@@ -413,12 +413,10 @@ const SimplyClubPupup = ({
                 classes={classes}
                 open={showGroups}
                 onClose={() => setShowGroups(false)}
-                // onConfirm={() => handleGetClients()} //BUG (PR-356): Confirm The Action on this Button
                 icon={< div className={classes.dialogIconContent} >
                     {'\uE0D5'}
                 </div >}
                 childrenStyle={{ margin: 0 }}
-                // customContainerStyle={ }
                 className={classes.sidebar}
 
                 renderButtons={
@@ -426,19 +424,6 @@ const SimplyClubPupup = ({
                         container
                         spacing={4}
                         className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
-                        <Grid item>
-                            <Button
-                                variant='contained'
-                                size='small'
-                                onClick={handleGetClients}
-                                className={clsx(
-                                    classes.dialogButton,
-                                    classes.dialogConfirmButton,
-                                    selectedGroups.length === 0 ? classes.disabled : ''
-                                )}>
-                                {t('common.Ok')}
-                            </Button>
-                        </Grid>
                         <Grid item>
                             <Button
                                 variant='contained'
@@ -455,9 +440,7 @@ const SimplyClubPupup = ({
                 }
                 title={
                     <>
-                        {/* <Typography className={clsx(classes.reducedTitle, classes.resetDialogTitle, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} style={{ fontWeight: 400 }}> */}
                         {t("group.externalImportTitle")}
-                        {/* </Typography> */}
                         <Typography className={clsx(windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} style={{ fontWeight: 400, color: "#000" }}>
                             {t("group.externalImportDesc")}
                         </Typography>
@@ -617,7 +600,7 @@ const SimplyClubPupup = ({
                 {summary && <AddRecipientResponse
                     classes={classes}
                     isOpen={!!summary}
-                    onClose={() => { setSummary(null); setSelectedGroups([]); }}
+                    onClose={() => { setSummary(null); setSelectedGroups([]); getData(); }}
                     windowSize={windowSize}
                     title={summary.title}
                     message={summary.message}

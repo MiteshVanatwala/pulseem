@@ -12,7 +12,7 @@ import { useState } from "react";
 import { unsubRecipients } from "../../../../redux/reducers/groupSlice";
 import { useDispatch } from "react-redux";
 import * as XLSX from 'xlsx';
-import Papa from 'papaparse';
+// import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
 import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
 
@@ -29,10 +29,10 @@ const UnSubRecPopup = ({ classes,
     const [highlighted, setHighlighted] = useState(false);
     const dispatch = useDispatch();
     const [showLoader, setLoader] = useState(false);
-    const [totalRecords, settotalRecords] = useState(0);
+    // const [totalRecords, settotalRecords] = useState(0);
     const [areaData, setareaData] = useState("");
-    const [dropClick, setdropClick] = useState(false);
-    const [typedData, settypedData] = useState([]);
+    // const [dropClick, setdropClick] = useState(false);
+    // const [typedData, settypedData] = useState([]);
     const [advanceOpt, setAdvanceOpt] = useState(false)
     const [activeTab, setActiveTab] = useState(0)
     const [error, setError] = useState('')
@@ -43,7 +43,7 @@ const UnSubRecPopup = ({ classes,
 
     const handleFiles = (e) => {
         e.preventDefault();
-        setdropClick(true);
+        // setdropClick(true);
         const file = e.dataTransfer?.files[0] || e.target.files[0];;
         const reader = new FileReader();
         // setFileToUpload(file);
@@ -68,8 +68,8 @@ const UnSubRecPopup = ({ classes,
                                 b.push(...tempData);
                             }
                             b.pop();
-                            settypedData(b);
-                            settotalRecords(b.length)
+                            // settypedData(b);
+                            // settotalRecords(b.length)
                             setLoader(false);
                             resolve(b);
                         }, 0);
@@ -127,10 +127,10 @@ const UnSubRecPopup = ({ classes,
         }
 
         let enteredValue = e.target.value.split("\n")
-        const records = enteredValue.filter((r) => { return r !== "" });
-        settotalRecords(records.length)
+        // const records = enteredValue.filter((r) => { return r !== "" });
+        // settotalRecords(records.length)
         setareaData(e.target.value);
-        setdropClick(false);
+        // setdropClick(false);
         if (e.target.value === '') {
             setFinalData(null);
             setError(t("recipient.errors.noData"));
@@ -149,7 +149,7 @@ const UnSubRecPopup = ({ classes,
 
             const response = await dispatch(unsubRecipients(payload))
             setUpdatedRows(response.payload?.Summary?.TotalRecords ?? -1);
-            settotalRecords(finalData.length)
+            // settotalRecords(finalData.length)
             setLoader(false)
             handleResponses(response, {
                 'S_200': {
