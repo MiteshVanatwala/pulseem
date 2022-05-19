@@ -72,8 +72,6 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                 label: t(e.label)
             }
         });
-        console.log(fields);
-        console.log(tempHeaders);
         setselectArray(fields);
         setheaders(tempHeaders);
 
