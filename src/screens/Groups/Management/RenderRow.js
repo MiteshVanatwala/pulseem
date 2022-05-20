@@ -58,11 +58,12 @@ const RenderWebRow = ({
   dateFormat,
   rowStyle,
   cellStyle,
-  selectedGroups = [],
+  // selectedGroups = [],
   DialogType = {},
   noBorderCellStyle,
   colorTextStyle,
-  setSelectedGroups
+  setSelectedGroups,
+  isSelected
 }) => {
   //TODO: Translation left, confirm keys
   const { t } = useTranslation();
@@ -156,11 +157,10 @@ const RenderWebRow = ({
               control={
                 <Checkbox
                   color="primary"
-                  checked={selectedGroups?.indexOf(GroupID) !== -1}
+                  // checked={selectedGroups?.indexOf(GroupID) !== -1}
+                  checked={isSelected}
                   // indeterminate={}
-                  onClick={() => {
-                    handleSelected(GroupID);
-                  }}
+                  onClick={handleSelected}
                 />
               }
             />
@@ -321,7 +321,7 @@ const RenderWebRow = ({
             },
             {
               onClick: () => {
-                setSelectedGroups(GroupID)
+                setSelectedGroups()
                 setDialog(DialogType.ADD_RECIPIENT)
               },
               label: t("recipient.addRecipient"),
@@ -336,7 +336,7 @@ const RenderWebRow = ({
             },
             {
               onClick: () => {
-                setSelectedGroups(GroupID)
+                setSelectedGroups()
                 setDialog(DialogType.ADD_RECIPIENTS)
               },
               label: t("recipient.addRecipients"),
@@ -350,7 +350,7 @@ const RenderWebRow = ({
             },
             {
               onClick: () => {
-                setSelectedGroups(GroupID)
+                setSelectedGroups()
                 setDialog(DialogType.RESET_GROUP)
               },
               label: t("recipient.reset"),
@@ -361,7 +361,7 @@ const RenderWebRow = ({
             },
             {
               onClick: () => {
-                setSelectedGroups(GroupID)
+                setSelectedGroups()
                 setDialog(DialogType.EDIT_GROUP)
               },
               label: t("recipient.settings"),
@@ -391,7 +391,7 @@ const RenderWebRow = ({
             {
               onClick: () => {
                 if (!(AutomationID || IsConnectedToWebForm || IsAutoResponder)) {
-                  setSelectedGroups(GroupID)
+                  setSelectedGroups()
                   setDialog(DialogType.DELETE_GROUP)
                 }
               },
@@ -424,7 +424,7 @@ RenderWebRow.propTypes = {
   dateFormat: PropTypes.string,
   rowStyle: PropTypes.object,
   cellStyle: PropTypes.object,
-  selectedGroups: PropTypes.array,
+  // selectedGroups: PropTypes.array,
   DialogType: PropTypes.object,
   noBorderCellStyle: PropTypes.object,
   colorTextStyle: PropTypes.object

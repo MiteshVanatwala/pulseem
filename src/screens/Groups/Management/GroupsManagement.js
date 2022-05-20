@@ -45,8 +45,11 @@ import UnSubRecPopup from "./Popup/UnSubRecPopup";
 import DeleteRecPopup from "./Popup/DeleteRecPopup";
 import EditGroupPopup from "./Popup/EditGroupPopup";
 import ResetGroupPopup from "./Popup/ResetGroupPopup";
+import UnSub_Del_Popup from "./Popup/UnSub_Del_Popup";
 import { Dialog } from '../../../components/managment/index';
 import SimplyClubPupup from "./Popup/SimplyClubPupup";
+
+
 
 const GroupsManagement = ({ classes }) => {
   const {
@@ -104,19 +107,19 @@ const GroupsManagement = ({ classes }) => {
   };
 
   const DialogType = {
-    ADD_GROUP: "addGroup",
-    EDIT_GROUP: "editGroup",
-    DELETE_GROUP: "delete group",
-    ADD_RECIPIENT: "add recipient",
-    ADD_RECIPIENTS: "add recipients",
-    UNSUB_RECIPIENT: "unsubscribe recipients",
-    DELETE_RECIPIENT: "delete recipients",
-    RESET_GROUP: 'reset group',
-    MESSAGE: "message",
-    SUMMARY: "summary",
-    EXPORT_ALL: "exportAll",
-    EXPORT_SELECTED: "exportSelected",
-    SIMPLY_CLUB: "simplyclub"
+    ADD_GROUP: "ADD_GROUP",
+    EDIT_GROUP: "EDIT_GROUP",
+    DELETE_GROUP: "DELETE_GROUP",
+    ADD_RECIPIENT: "ADD_RECIPIENT",
+    ADD_RECIPIENTS: "ADD_RECIPIENTS",
+    UNSUB_RECIPIENT: "UNSUB_RECIPIENT",
+    DELETE_RECIPIENT: "DELETE_RECIPIENT",
+    RESET_GROUP: "RESET_GROUP",
+    MESSAGE: "MESSAGE",
+    SUMMARY: "SUMMARY",
+    EXPORT_ALL: "EXPORT_ALL",
+    EXPORT_SELECTED: "EXPORT_SELECTED",
+    SIMPLY_CLUB: "SIMPLY_CLUB"
   };
 
   const TABLE_HEAD = [
@@ -275,13 +278,11 @@ const GroupsManagement = ({ classes }) => {
     setDialog(null);
     getData();
   };
+
+
+
   const handleSelected = (id) => {
-    const index = selectedGroups.indexOf(id);
-    if (index !== -1) {
-      let temp = [...selectedGroups];
-      temp.splice(index, 1);
-      setSelectedGroups([...temp]);
-    } else setSelectedGroups([...selectedGroups, id]);
+    setSelectedGroups(selectedGroups.indexOf(id) === -1 ? [...selectedGroups, id] : selectedGroups.filter(obj => obj !== id))
   };
 
 
@@ -547,6 +548,7 @@ const GroupsManagement = ({ classes }) => {
       </>
     );
   };
+
   const renderTableBody = useMemo(() => {
     let sortData = groupData ? groupData.Groups : [];
     if (sortData.length <= 0) {
@@ -574,9 +576,9 @@ const GroupsManagement = ({ classes }) => {
               row={obj}
               classes={classes}
               setDialog={(val) => setDialog(val)}
-              handleSelected={(id) => handleSelected(id)}
-              selectedGroups={selectedGroups}
-              setSelectedGroups={(id) => setSelectedGroups([id])}
+              handleSelected={() => handleSelected(obj.GroupID)}
+              // selectedGroups={selectedGroups}
+              setSelectedGroups={() => setSelectedGroups([obj])}
               DialogType={DialogType}
               dateFormat={dateFormat}
               rowStyle={rowStyle}
@@ -584,12 +586,17 @@ const GroupsManagement = ({ classes }) => {
               noBorderCellStyle={noBorderCellStyle}
               colorTextStyle={colorTextStyle}
               handleDeleteGroup={handleDeleteGroup}
+              isSelected={selectedGroups.indexOf(obj.GroupID) !== -1}
             />
           )
         )}
       </TableBody>
     );
-  }, [groupData, rowsPerPage, page, classes, selectedGroups]);
+  }
+    , [groupData, rowsPerPage, page, classes]);
+
+
+
 
   const groupsLength = (groupData && groupData.RecordCount) || 0;
 
@@ -664,6 +671,9 @@ const GroupsManagement = ({ classes }) => {
     }
   }
 
+
+
+
   return (
     <DefaultScreen
       currentPage="groups"
@@ -711,6 +721,8 @@ const GroupsManagement = ({ classes }) => {
           setPage(val);
         }}
       />
+
+
 
       <AddGroupPopUp
         classes={classes}
@@ -778,24 +790,17 @@ const GroupsManagement = ({ classes }) => {
         selectGroup={(idArr) => setSelectedGroups(idArr)}
         onAddRecipient={handleAddRecipientResponse}
       />}
-      {dialog === DialogType.UNSUB_RECIPIENT && <UnSubRecPopup
-        classes={classes}
-        isOpen={dialog === DialogType.UNSUB_RECIPIENT}
-        onClose={() => { setDialog(null); setSelectedGroups([]); getData(); }}
-        handleResponses={(response, actions) => handleResponses(response, actions)}
-        ToastMessages={ToastMessages}
-      />}
-      {dialog === DialogType.DELETE_RECIPIENT && <DeleteRecPopup
-        classes={classes}
-        isOpen={dialog === DialogType.DELETE_RECIPIENT}
-        onClose={() => { setDialog(null); setSelectedGroups([]); getData(); }}
-        setLoader={setLoader}
-        windowSize={windowSize}
-        ToastMessages={ToastMessages}
-        setToastMessage={setToastMessage}
-        selectedGroups={selectedGroups}
-        handleResponses={(response, actions) => handleResponses(response, actions)}
-      />}
+
+      {
+        (dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT) && <UnSub_Del_Popup
+          classes={classes}
+          dialogType={dialog}
+          onClose={() => { setDialog(null); setSelectedGroups([]); }}
+          selectedGroups={[...selectedGroups]}
+          handleResponses={handleResponses}
+          ToastMessages
+        />
+      }
       <ConfirmDeletePopUp
         classes={classes}
         isOpen={dialog === DialogType.DELETE_GROUP}
