@@ -381,7 +381,7 @@ const UnSub_Del_Popup = ({
             title: t('recipient.deleteRecipients'),
             onClose: onClose,
             onConfirm: openConfirmDialog,
-            summaryOnClose: setConfirm(false),
+            summaryOnClose: () => setConfirm(false),
             onSummaryConfirm: () => {
                 handleDeleteSubmit();
                 setConfirm(false)
@@ -443,7 +443,8 @@ const UnSub_Del_Popup = ({
                 }}
                 // onBlur={() => { (!finalData || finalData.length < 10) && setError(t("recipient.errors.noDeleteRecFound")) }}
                 onBlur={(e) => {
-                    if (!e.target.value) {
+                    if (!e.target.value?.trim()) {
+                        setareaData(e.target.value?.trim())
                         setError(t('recipient.errors.noData'))
                     }
                 }}

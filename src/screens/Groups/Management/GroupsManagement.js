@@ -67,7 +67,6 @@ const GroupsManagement = ({ classes }) => {
   const { accountFeatures } = useSelector(state => state.core)
   const { t } = useTranslation();
   const [selectedGroups, setSelectedGroups] = useState([]);
-  const [selectedGroups123, setSelectedGroups123] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
@@ -284,33 +283,12 @@ const GroupsManagement = ({ classes }) => {
     setDialog(null);
     getData();
   };
-  const handleSelected123 = (obj) => {
-    console.log('Clicked check:', obj)
-    const index = selectedGroups123.find((group) => group.GroupID === obj.GroupID);
-    let tempGrp = { ...selectedGroups123[index] }
-    if (tempGrp.selected) {
-      let temp = [...selectedGroups123];
-      tempGrp.selected = true
-      temp[index] = tempGrp
-      setSelectedGroups123([...temp]);
-    } else setSelectedGroups123([...selectedGroups123, { ...obj, selected: true }]);
-  };
 
-  const IsSelected = (obj) => {
-    console.log('Selected check111111:', selectedGroups123)
-    console.log('Selected check:', obj)
-    let index = selectedGroups123.findIndex((group) => group.GroupID === obj.GroupID);
-    let tempGrp = { ...selectedGroups123[index] }
-    return tempGrp.selected
-  }
-  // const handleSelected = (id) => {
-  //   const index = selectedGroups.indexOf(id);
-  //   if (index !== -1) {
-  //     let temp = [...selectedGroups];
-  //     temp.splice(index, 1);
-  //     setSelectedGroups([...temp]);
-  //   } else setSelectedGroups([...selectedGroups, id]);
-  // };
+
+
+  const handleSelected = (id) => {
+    setSelectedGroups(selectedGroups.indexOf(id) === -1 ? [...selectedGroups, id] : selectedGroups.filter(obj => obj !== id))
+  };
 
 
   //  COMPONENTS  //
@@ -602,11 +580,9 @@ const GroupsManagement = ({ classes }) => {
               row={obj}
               classes={classes}
               setDialog={(val) => setDialog(val)}
-              // handleSelected={() => handleSelected(obj.GroupID)}
-              handleSelected={() => handleSelected123(obj)}
+              handleSelected={() => handleSelected(obj.GroupID)}
               // selectedGroups={selectedGroups}
-              // setSelectedGroups={() => setSelectedGroups([obj])}
-              setSelectedGroups={() => setSelectedGroups123([obj])}
+              setSelectedGroups={() => setSelectedGroups([obj])}
               DialogType={DialogType}
               dateFormat={dateFormat}
               rowStyle={rowStyle}
@@ -614,13 +590,14 @@ const GroupsManagement = ({ classes }) => {
               noBorderCellStyle={noBorderCellStyle}
               colorTextStyle={colorTextStyle}
               handleDeleteGroup={handleDeleteGroup}
-              isSelected={IsSelected(obj)}
+              isSelected={selectedGroups.indexOf(obj.GroupID) !== -1}
             />
           )
         )}
       </TableBody>
     );
-  }, [groupData, rowsPerPage, page, classes, selectedGroups, selectedGroups123]);
+  }
+    , [groupData, rowsPerPage, page, classes]);
 
 
 
@@ -817,24 +794,7 @@ const GroupsManagement = ({ classes }) => {
         selectGroup={(idArr) => setSelectedGroups(idArr)}
         onAddRecipient={handleAddRecipientResponse}
       />}
-      {/* {dialog === DialogType.UNSUB_RECIPIENT && <UnSubRecPopup
-        classes={classes}
-        isOpen={dialog === DialogType.UNSUB_RECIPIENT}
-        onClose={() => { setDialog(null); setSelectedGroups([]); getData(); }}
-        handleResponses={(response, actions) => handleResponses(response, actions)}
-        ToastMessages={ToastMessages}
-      />}
-      {dialog === DialogType.DELETE_RECIPIENT && <DeleteRecPopup
-        classes={classes}
-        isOpen={dialog === DialogType.DELETE_RECIPIENT}
-        onClose={() => { setDialog(null); setSelectedGroups([]); getData(); }}
-        setLoader={setLoader}
-        windowSize={windowSize}
-        ToastMessages={ToastMessages}
-        setToastMessage={setToastMessage}
-        selectedGroups={selectedGroups}
-        handleResponses={(response, actions) => handleResponses(response, actions)}
-      />} */}
+
       {
         (dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT) && <UnSub_Del_Popup
           classes={classes}
