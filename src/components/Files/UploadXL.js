@@ -384,7 +384,8 @@ const UploadXL = ({
 
             // Set mapping
             const mapping = headers.map((h, idx) => {
-                if (h != t("sms.adjustTitle")) { return { Index: idx, Title: translateHebrewColumns(h.toLocaleString().replaceAll(' ', '')) } }
+                if (h !== t("sms.adjustTitle")) { return { Index: idx + 1, Title: translateHebrewColumns(h.toLocaleString().replaceAll(' ', '')) } }
+                return undefined;
             }).filter(function (x) {
                 return x !== undefined;
             });
