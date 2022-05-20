@@ -448,7 +448,7 @@ const GroupsManagement = ({ classes }) => {
             size="medium"
             className={clsx(classes.actionButton, classes.importButtonBlue)}
             onClick={() => setDialog(DialogType.SIMPLY_CLUB)}
-            
+
           >
             {t("recipient.externalImport")}
           </Button>
@@ -593,7 +593,7 @@ const GroupsManagement = ({ classes }) => {
       </TableBody>
     );
   }
-    , [groupData, rowsPerPage, page, classes]);
+    , [groupData, rowsPerPage, page, classes, selectedGroups]);
 
 
 
