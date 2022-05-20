@@ -348,6 +348,9 @@ const UploadXL = ({
         if (key === 'דואראלקטרוני') {
             return "Email";
         }
+        if (key === 'תאריךלידה') {
+            return 'BirthDate';
+        }
         return key;
     }
     const handleDataManual = async () => {
