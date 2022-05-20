@@ -474,6 +474,7 @@
   "recipients": "Recipients",
   "automation": "Automation",
   "create": "Create New Newsletter",
+  "createNewsLetterHeader": "Create New Newsletter Campaign",
   "restoreDeleted": "Restore Deleted",
   "exportFile": "Export File",
   "lastUpdate": "Last update",
@@ -482,6 +483,14 @@
   "dialogDuplicateTitle": "Duplicate campaign",
   "dialogDuplicateContent": "Do you want to duplicate the campaign?",
   "newsletters": "Newsletters",
+  "newsLetterEditor": {
+    "helpTexts": {
+      "Name": "Used to identify the campaign in the system. Recipients will not see this name",
+      "FromName": "This field is mandatory",
+      "FromEmail": "This field is mandatory",
+      "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability."
+    }
+  },
   "sendToContact": "Send to one contact",
   "successSent": "Sent Successfully",
   "missingApi": "Missing api key",

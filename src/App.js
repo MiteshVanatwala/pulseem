@@ -36,6 +36,7 @@ import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
+import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
 
 
 const renderRoutes = (classes, history) => {
@@ -127,6 +128,11 @@ const renderRoutes = (classes, history) => {
         exact
         path="/Campaigns"
         render={props => <NewsletterManagment {...props} classes={classes} />}
+      />
+      <Route
+        exact
+        path="/newsletterwizard"
+        render={props => <NewsLetterWizard {...props} classes={classes} />}
       />
       <Route
         exact
