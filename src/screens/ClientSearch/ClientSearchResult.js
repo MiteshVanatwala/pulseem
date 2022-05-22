@@ -212,6 +212,7 @@ const ClientSearchResult = ({ classes }) => {
 
   useEffect(() => {
     handleFilter();
+    setData(ClientData);
 
     if (TotalRevenue) {
       setRevenueSummary([
@@ -640,10 +641,6 @@ const ClientSearchResult = ({ classes }) => {
       </>
     );
   };
-
-  useEffect(() => {
-    setData(ClientData);
-  }, [ClientData]);
 
   const renderTableBody = useMemo(() => {
     let sortedData = data ? data : [];
