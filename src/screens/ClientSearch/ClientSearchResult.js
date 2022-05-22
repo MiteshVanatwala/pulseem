@@ -50,7 +50,7 @@ const ClientSearchResult = ({ classes }) => {
     ...props
   } = useSelector((state) => state.core);
 
-    const { t } = useTranslation();
+  const { t } = useTranslation();
   const [selectedClients, setSelectedClients] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
@@ -215,13 +215,13 @@ const ClientSearchResult = ({ classes }) => {
 
     if (TotalRevenue) {
       setRevenueSummary([
-        { title: 'Purchase', value: TotalCount },
-        { title: 'Total Income', value: `${TotalRevenue?.toLocaleString()} ${t('common.NIS')}` },
-        { title: 'Avg. order revenue', value: `${(TotalRevenue / TotalCount)?.toLocaleString()} ${t('common.NIS')}` },
-        { title: 'Conversion rate', value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(2)} %` }
+        { title: t('client.Purchased'), value: TotalCount },
+        { title: t('client.totalRevenue'), value: `${TotalRevenue?.toLocaleString()} ${t('common.NIS')}` },
+        { title: t('client.avgOrderRevenue'), value: `${(TotalRevenue / TotalCount)?.toFixed(0).toLocaleString()} ${t('common.NIS')}` },
+        { title: t('client.conversionRate'), value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(1)}%`, style: { direction: isRTL ? 'rtl' : 'ltr' } }
       ]);
     }
-  }, [ClientData]);
+  }, [ClientData, isRTL]);
 
   //  HANDLERS  //
   const handleResponses = (response, actions = {
@@ -580,7 +580,7 @@ const ClientSearchResult = ({ classes }) => {
           item
           xs={windowSize === "xs" && 12}
           className={clsx(classes.groupsLableContainer)}
-          style={{alignItems: 'center'}}
+          style={{ alignItems: 'center' }}
         >
           <Box>
             <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>

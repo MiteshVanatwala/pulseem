@@ -9,5 +9,9 @@
     "Text": "תוצאות חיפוש לקוחות"
   },
   "avaregeIncome": "הכנסה ממוצעת:",
-  "makeInvalid": "הפוך לשגויים"
+  "makeInvalid": "הפוך לשגויים",
+  "Purchased": "רכישות",
+  "totalRevenue": "הכנסה כוללת",
+  "avgOrderRevenue": "סכום רכישה ממוצע",
+  "conversionRate": "יחס המרה"
 }

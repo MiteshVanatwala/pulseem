@@ -9,5 +9,9 @@
     "Text": "Recipient search result"
   },
   "avaregeIncome": "Average income:",
-  "makeInvalid": "Make invalid"
+  "makeInvalid": "Make invalid",
+  "Purchased": "Purchased",
+  "totalRevenue": "Total revenue",
+  "avgOrderRevenue": "Avg. order revenue",
+  "conversionRate": "Conversion rate"
 }
