@@ -1604,7 +1604,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     fontSize: "16px",
     fontFamily: "Sans-serif",
     resize: "none",
-    height: 396,
+    height: 315,
     backgroundColor: "white !important",
     padding: "10px",
     "&::placeholder": {
@@ -1613,12 +1613,10 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       fontFamily: "inherit",
     },
     "@media screen and (max-width: 965px)": {
-
       maxHeight: 275
     },
     "@media screen and (max-width: 768px)": {
       width: "90%",
-
     },
   },
   greenCon: {
@@ -1627,7 +1625,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     border: "none",
     fontFamily: "Sans-serif",
     resize: "none",
-    height: "330px",
+    height: 315,
     backgroundColor: "#CCFFE5",
     padding: "10px",
     "&::placeholder": {

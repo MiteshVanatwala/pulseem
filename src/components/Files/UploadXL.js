@@ -562,8 +562,8 @@ const UploadXL = ({
                                 ? contacts.map((item, idx) => {
                                     if (idx > contacts.length - 6) {
                                         return (
-                                            <tbody>
-                                                <tr id={idx} key={idx}>
+                                            <tbody key={idx}>
+                                                <tr id={idx}>
                                                     {item.map((temp, idx) => {
                                                         return (
                                                             <td
@@ -582,7 +582,7 @@ const UploadXL = ({
                                 : typedData.map((item, id) => {
                                     if (id > typedData.length - 6) {
                                         return (
-                                            <tbody>
+                                            <tbody key={id}>
                                                 <tr key={id}>
                                                     {headers.map((data, idx) => {
                                                         return (

@@ -47,9 +47,6 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
         CreatedDate: new Date(),
     };
     const [newGroupData, setNewGroupData] = useState(DEFAULT_NEW_GROUP);
-    const [error, setError] = useState(null)
-
-
 
     const handleAddGroup = async (data, callback) => {
         if (!newGroupData.GroupName) {
@@ -61,7 +58,6 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
             setLoader(true);
             const response = await dispatch(createGroup(data));
             setLoader(false);
-            console.log("response:", response.payload.Message)
             handleResponses(response, {
                 S_201: {
                     code: 201,
@@ -233,15 +229,13 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                                     setToastMessage(ToastMessages.GROUP_NAME_MAXLENGTH)
                                 }
                                 e.preventDefault();
-
                             }}
                         />
                     </Box>
                     <Box
                         className={clsx(
                             classes.flex1,
-                            classes.flex,
-                            // classes.responsiveFlex
+                            classes.flex
                         )}
                     >
                         <FormControlLabel
@@ -282,7 +276,6 @@ AddGroupPopUp.propTypes = {
     classes: PropTypes.object,
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    //onCreateGroupResponse: PropTypes.func.isRequired,
     windowSize: PropTypes.string.isRequired,
     ToastMessages: PropTypes.object.isRequired,
     setToastMessage: PropTypes.func.isRequired,

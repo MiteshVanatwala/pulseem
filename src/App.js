@@ -35,7 +35,7 @@ import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import { siteTrackingScriptUrl } from './config/index';
-import GroupsManagement from './screens/Groups/Management/GroupsManagement';
+import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 
 
@@ -108,7 +108,7 @@ const renderRoutes = (classes, history) => {
       /> */}
       <Route
         path={'/Groups'}
-        render={props => <GroupsManagement props={props} classes={classes} />}
+        render={props => <Groups props={props} classes={classes} />}
       />
       <Route
         path={`/ClientSearch`}

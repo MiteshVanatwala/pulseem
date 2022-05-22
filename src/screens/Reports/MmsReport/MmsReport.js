@@ -153,7 +153,6 @@ const MmsReport = ({ classes }) => {
 
     const handleRowsPerPageSearching = (val) => {
         dispatch(setRowsPerPage(val))
-        setCookie('rpp', val, { maxAge: 2147483647 })
     }
     const handlePageChange = (val) => {
         setPage(val);

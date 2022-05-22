@@ -26,6 +26,7 @@ const SimpleGrid = ({ gridArr = [],
                     gridArr.map((obj, idx) => {
                         return (
                             <Grid className={localClasses.contentBox}
+                                key={idx}
                                 item
                                 xs={obj.gridSize?.xs ?? 12}
                                 sm={obj.gridSize?.sm ?? 6}

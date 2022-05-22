@@ -41,6 +41,7 @@ export const coreSlice=createSlice({
     },
     setRowsPerPage: (state,action) => {
       state.rowsPerPage=action.payload
+      setCookie('rpp', action.payload, { maxAge: 2147483647 })
     },
     setCoreData: (state,{payload}) => {
       state.basename=payload.basename

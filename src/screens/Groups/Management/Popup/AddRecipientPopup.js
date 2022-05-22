@@ -369,7 +369,7 @@ const AddRecipientPopup = ({ classes,
                                     handleChange(e)
                                 }
                             }}
-                            inputProps={{ maxlength: 16 }}
+                            inputProps={{ maxLength: 16 }}
                             error={errors.Cellphone}
                             helperText={errors.Cellphone}
                             onBlur={handleBlur}
@@ -399,7 +399,7 @@ const AddRecipientPopup = ({ classes,
                             helperText={errors.Email}
                             onBlur={handleBlur}
                             style={{ textAlign: 'left' }}
-                            maxlength={100}
+                            maxLength={100}
                         />,
                         gridSize: { xs: 12, sm: 9 }
                     }
@@ -498,7 +498,7 @@ const AddRecipientPopup = ({ classes,
                                 handleChange(e)
                             }
                         }}
-                        inputProps={{ maxlength: 12 }}
+                        inputProps={{ maxLength: 12 }}
                         error={errors.Cellphone}
                         helperText={errors.Cellphone}
                         onBlur={handleBlur}
