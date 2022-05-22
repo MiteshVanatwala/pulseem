@@ -63,11 +63,19 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
         let restHeader = headers.splice(headersOrder.length, headers.length - headersOrder.length)
         let tempHeaders = [...headersOrder, ...restHeader]
 
-        const fields = settings.Fields.map((e) => {
-            let tempIndex = tempHeaders.map(e => { return e.replace(' ','').toLowerCase()}).indexOf(e.value.replace(' ', '').toLowerCase())
+        const fields = settings.Fields.map((e, index) => {
+            let retVal = {};
+            tempHeaders.forEach((el, index) => {
+                let item = translateKeys(e.value.replace(' ', '').toLowerCase(), t);
+                let comparer = translateKeys(el.replace(' ', ''), t);
+                if (item.key === comparer.key) {
+                    retVal = { isdisabled: true, idx: index };
+                }
+            });
+
             return {
-                isdisabled: tempIndex === -1 ? e.isdisabled : true,
-                idx: tempIndex === -1 ? e.idx : tempIndex,
+                isdisabled: retVal.idx === -1 ? e.isdisabled : true,
+                idx: retVal.idx === -1 ? e.idx : retVal.idx,
                 value: e.value,
                 label: t(e.label)
             }
