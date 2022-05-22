@@ -69,6 +69,7 @@ export const clientSlice = createSlice({
     ClientData: [],
     TotalCount: 0,
     TotalRevenue: 0,
+    CampaignClicks: 0,
     error: "",
     ToastMessages: {
 
@@ -79,6 +80,7 @@ export const clientSlice = createSlice({
       state.ClientData = payload.Clients;
       state.TotalCount = payload.TotalCount;
       state.TotalRevenue = payload.TotalRevenue;
+      state.CampaignClicks = payload.CampaignClicks ?? 0;
     })
     builder.addCase(searchAllClients.rejected, (state, { error }) => {
       state.error = error.message;

@@ -2323,5 +2323,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     '&:hover': {
       backgroundColor: 'transparent'
     }
+  },
+  p5: {
+    padding: 5
+  },
+  p15: {
+    padding: 10
   }
 });

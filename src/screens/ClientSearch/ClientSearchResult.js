@@ -33,16 +33,10 @@ import DataTable from "../../components/Table/DataTable";
 import RenderRow from "./SubComp/RenderRow";
 import RenderPhoneRow from "./SubComp/RenderPhoneRow";
 import Toast from '../../components/Toast/Toast.component';
-import {
-  getGroups,
-  deleteGroups,
-  getGroupsBySubAccountId
-} from "../../redux/reducers/groupSlice";
-import { getAccountExtraData } from "../../redux/reducers/smsSlice";
 import { Dialog } from '../../components/managment/index';
-import { ClientSearchResultData } from "./tempContants";
 import { searchAllClients } from "../../redux/reducers/clientSlice";
 import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
+import SummaryRow from '../../components/Grids/SummaryRow';
 
 const ClientSearchResult = ({ classes }) => {
   const {
@@ -56,8 +50,7 @@ const ClientSearchResult = ({ classes }) => {
     ...props
   } = useSelector((state) => state.core);
 
-  const { accountFeatures } = useSelector(state => state.core)
-  const { t } = useTranslation();
+    const { t } = useTranslation();
   const [selectedClients, setSelectedClients] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
@@ -65,7 +58,7 @@ const ClientSearchResult = ({ classes }) => {
 
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const { ClientData, TotalCount, TotalRevenue } = useSelector(state => state.client);
+  const { ClientData, TotalCount, TotalRevenue, CampaignClicks } = useSelector(state => state.client);
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
@@ -73,8 +66,9 @@ const ClientSearchResult = ({ classes }) => {
   const [filterMax, setFilterMax] = useState("");
   const [filterSearch, setFilterSearch] = useState(false);
   const [totalClients, setTotalClients] = useState(TotalCount);
-  const [avaregeRevenue, setAvaregeRevenue] = useState(TotalRevenue);
+  // const [avaregeRevenue, setAvaregeRevenue] = useState(TotalRevenue);
   const [isSearching, setIsSearching] = useState(false);
+  const [revenueSummary, setRevenueSummary] = useState(null);
   const [serachData, setSearchData] = useState({
     PageSize: 6,
     PageIndex: 0,
@@ -89,17 +83,6 @@ const ClientSearchResult = ({ classes }) => {
     GroupIds: [],
     NodeID: ""
   });
-
-
-  const renderHtml = (html) => {
-    function createMarkup() {
-      return { __html: html };
-    }
-    return (
-      <label dangerouslySetInnerHTML={createMarkup()}></label>
-    );
-  }
-
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
@@ -156,17 +139,6 @@ const ClientSearchResult = ({ classes }) => {
       const sortedData = [...ClientData].filter((f) => {
         return f.Revenue >= parseInt(filterMin !== "" ? filterMin : 0) && f.Revenue <= parseInt(filterMax !== "" ? filterMax : 1000000)
       });
-
-      if (sortedData && sortedData.length > 0) {
-        const totalR = sortedData.map((item) => item.Revenue).reduce((a, b) =>
-          a + b
-        );
-        setAvaregeRevenue(totalR);
-      }
-      else {
-        setAvaregeRevenue(0);
-      }
-
       setData(sortedData);
       setTotalClients(sortedData.length);
       setIsSearching(true);
@@ -181,8 +153,7 @@ const ClientSearchResult = ({ classes }) => {
     setFilterMin("");
     setFilterMax("");
     setIsSearching(false);
-    setTotalClients(TotalCount);
-    setAvaregeRevenue(TotalRevenue);
+    setTotalClients(ClientData.length);
   }
 
   const TABLE_HEAD = [
@@ -241,6 +212,15 @@ const ClientSearchResult = ({ classes }) => {
 
   useEffect(() => {
     handleFilter();
+
+    if (TotalRevenue) {
+      setRevenueSummary([
+        { title: 'Purchase', value: TotalCount },
+        { title: 'Total Income', value: `${TotalRevenue?.toLocaleString()} ${t('common.NIS')}` },
+        { title: 'Avg. order revenue', value: `${(TotalRevenue / TotalCount)?.toLocaleString()} ${t('common.NIS')}` },
+        { title: 'Conversion rate', value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(2)} %` }
+      ]);
+    }
   }, [ClientData]);
 
   //  HANDLERS  //
@@ -589,15 +569,22 @@ const ClientSearchResult = ({ classes }) => {
             target="_blank"
           />
         </Grid>
+        <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
+          {revenueSummary && <SummaryRow
+            data={revenueSummary}
+            classes={classes} />
+          }
+        </Grid>
 
         <Grid
           item
           xs={windowSize === "xs" && 12}
           className={clsx(classes.groupsLableContainer)}
+          style={{alignItems: 'center'}}
         >
           <Box>
-            <Typography className={clsx(classes.groupsLable, classes.f28, classes.bold)}>
-              {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`} | {`${t("client.avaregeIncome")} ${data && avaregeRevenue !== 0 ? `${(avaregeRevenue / totalClients)?.toLocaleString()} ${t("common.NIS")}` : 0}`}
+            <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
+              {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`}
             </Typography>
           </Box>
 
