@@ -77,7 +77,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   tableCellHead: {
     fontFamily: 'Assistant',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 18,
     marginBlock: 0,
     borderBottom: 0,
     padding: '16px 10px!important'

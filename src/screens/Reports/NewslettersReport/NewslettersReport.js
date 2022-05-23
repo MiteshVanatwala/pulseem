@@ -25,7 +25,7 @@ import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFro
 import { Loader } from '../../../components/Loader/Loader';
 
 const NewslettersReport = ({ classes }) => {
-  const { language, windowSize, isRTL, rowsPerPage, accountSettings } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, rowsPerPage, accountSettings, accountFeatures } = useSelector(state => state.core)
   const { newslettersReports } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -48,6 +48,7 @@ const NewslettersReport = ({ classes }) => {
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const csvLinkRef = useRef(null);
   const [showLoader, setLoader] = useState(true);
+  const [hasRevenue, setHasRevenue] = useState(false);
 
   moment.locale(language)
 
@@ -81,7 +82,7 @@ const NewslettersReport = ({ classes }) => {
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemovedClients: {
-      title: windowSize === 'xs' ? '' : t('mainReport.removedClients'),
+      title: windowSize === 'xs' ? '' : t('common.Removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
@@ -122,8 +123,10 @@ const NewslettersReport = ({ classes }) => {
       icon: '\uE15D'
     },
     Revenue: {
-      title: windowSize === 'xs' ? '' : t('common.revenue'),
-      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      title: '',
+      href: `/react/ClientSearchResult/${id}`,
+      textStyle: { fontWeight: 900 },
+      isRevenueCol: true
     }
   })
 
@@ -152,6 +155,12 @@ const NewslettersReport = ({ classes }) => {
     await dispatch(getNewsletterReports(isDemoSend));
     setLoader(false);
   }
+
+  useEffect(() => {
+    if (accountFeatures && accountFeatures.includes('42')) {
+      setHasRevenue(true);
+    }
+  }, [accountFeatures])
 
   useEffect(() => {
     getData();
@@ -441,10 +450,10 @@ const NewslettersReport = ({ classes }) => {
           <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.ToalSent")}</span> </TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'></TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex3} align='center'></TableCell>
           <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen)} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} ></TableCell>
-          {accountSettings && accountSettings.SubAccountSettings.DomainAddress && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
+          {hasRevenue && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
         </TableRow>
       </TableHead>
     )
@@ -600,17 +609,18 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '' } = data
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null, isRevenueCol = false } = data
     return (
       <Box className={classes.cellText}>
-        <Typography component={href !== '' && clickable && value > 0 ? 'a' : 'p'}
-          href={href ? href : ''}
+        <Typography component={href !== '' && clickable && (value > 0 || isRevenueCol) ? 'a' : 'p'}
+          href={href !== '' ? href : ''}
+          style={textStyle}
           className={clsx(classes.middleTxt, colorTextStyle[type] || '')}
           target="_blank">
           {value && value.toLocaleString() || '0'}
         </Typography>
         <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
-          <span className={classes.hideInMiddleScreen}>{title}</span> {innerTitle !== '' ? <span className={classes.showTitleInline}>{innerTitle}</span> : null}
+          <span className={classes.hideInMiddleScreen} style={textStyle}>{title}</span> {innerTitle !== '' ? <span className={classes.showTitleInline}>{innerTitle}</span> : null}
         </Typography>
       </Box>
     )
@@ -700,7 +710,7 @@ const NewslettersReport = ({ classes }) => {
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex4}>
+          className={classes.flex3}>
           <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
               {renderIntData(SendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'))}
@@ -737,11 +747,11 @@ const NewslettersReport = ({ classes }) => {
           className={classes.flex1}>
           {renderCellIcons(row)}
         </TableCell>
-        {accountSettings && accountSettings.SubAccountSettings.DomainAddress && <TableCell
+        {hasRevenue && <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(Revenue, 'black', hrefs.Revenue, true, t('common.revenue'))}
+          {renderIntData(`${Revenue.toLocaleString()} ${t("common.NIS")}`, 'black', hrefs.Revenue, true, '')}
         </TableCell>}
       </TableRow>
     )
@@ -829,7 +839,7 @@ const NewslettersReport = ({ classes }) => {
               </Typography>
               {renderIntData(NotOpened, 'red', hrefs.NotOpened, false)}
             </Grid>
-            <Grid item xs={3}>
+            {hasRevenue && <Grid item xs={3}>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("common.revenue")}
               </Typography>
@@ -838,7 +848,7 @@ const NewslettersReport = ({ classes }) => {
                   {renderIntData(Revenue, 'black', hrefs.Revenue, true)}
                 </Grid>
               </Grid>
-            </Grid>
+            </Grid>}
           </Grid>
         </TableCell>
       </TableRow>
