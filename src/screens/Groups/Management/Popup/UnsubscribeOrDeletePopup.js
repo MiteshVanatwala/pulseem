@@ -146,7 +146,7 @@ const UnsubscribeOrDeletePopup = ({
         }
 
         setFinalData(filteredData);
-        setareaData(filteredData.slice(0, 1000).join(',').replaceAll(',', "\n") + (filteredData.length > 1000 ? "\n..." : ""));
+        setareaData(data.slice(0, 1000).join(',').replaceAll(',', "\n") + (data.length > 1000 ? "\n..." : ""));
     }
 
     const areaChange = (e) => {
