@@ -117,7 +117,7 @@ const DirectSMSReportTab = ({
     }
 
     return (
-      <Typography style={{ wordBreak: dataType === 'content' ? 'break-word' : null}}>{text}</Typography>
+      <Typography style={{ wordBreak: dataType === 'content' ? 'break-word' : null }}>{text}</Typography>
     );
   }
 
@@ -514,10 +514,8 @@ const DirectSMSReportTab = ({
 
   const renderNameCell = (row) => {
     const { DATE } = row
-
-    const date = DATE ? moment(DATE) : ''
-    const showDate = DATE ? date.format('L') : ''
-    const showTime = DATE ? date.format('LT') : ''
+    let d = moment(DATE);
+    d = `${d.format('DD/MM/YYYY HH:mm')}`
 
     return (
       <>
@@ -525,7 +523,7 @@ const DirectSMSReportTab = ({
           {t('report.SendDate')}
         </Typography>
         <Typography className={classes.grayTextCell}>
-          {t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${moment(showTime).format("HH:mm")}`}
+          {t("common.SentOn")} {d}
         </Typography>
       </>
     )
