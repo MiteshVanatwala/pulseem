@@ -75,7 +75,7 @@ const ClientSearchResult = ({ classes }) => {
     SearchTerm: "",
     Status: 0,
     PageType: 15,
-    ReportType: 20,
+    ReportType: document.referrer.toLowerCase().includes('smsmainreport') ? 20 : 10,
     IsSmsCampaign: false,
     CampaignID: id,
     Switch: "",
@@ -124,14 +124,17 @@ const ClientSearchResult = ({ classes }) => {
   };
 
   const sortData = () => {
-    let tempData = [...data].sort((a, b) => {
-      return a.Revenue !== null && b.Revenue !== null
-        ? (descSortDirection ? (b.Revenue - a.Revenue) : (a.Revenue - b.Revenue))
-        : -1
+    if (data && data.length > 0) {
+      let tempData = [...data].sort((a, b) => {
+        return a.Revenue !== null && b.Revenue !== null
+          ? (descSortDirection ? (b.Revenue - a.Revenue) : (a.Revenue - b.Revenue))
+          : -1
+      }
+      );
+      setData(tempData);
+      setSortDirection(!descSortDirection);
     }
-    );
-    setData(tempData);
-    setSortDirection(!descSortDirection);
+    return;
   }
 
   const handleFilter = () => {
@@ -153,7 +156,7 @@ const ClientSearchResult = ({ classes }) => {
     setFilterMin("");
     setFilterMax("");
     setIsSearching(false);
-    setTotalClients(ClientData.length);
+    setTotalClients(ClientData ? ClientData.length : 0);
   }
 
   const TABLE_HEAD = [
@@ -212,6 +215,7 @@ const ClientSearchResult = ({ classes }) => {
 
   useEffect(() => {
     handleFilter();
+    setData(ClientData);
 
     if (TotalRevenue) {
       setRevenueSummary([
@@ -576,7 +580,7 @@ const ClientSearchResult = ({ classes }) => {
           }
         </Grid>
 
-        <Grid
+        {/* <Grid
           item
           xs={windowSize === "xs" && 12}
           className={clsx(classes.groupsLableContainer)}
@@ -588,7 +592,7 @@ const ClientSearchResult = ({ classes }) => {
             </Typography>
           </Box>
 
-        </Grid>
+        </Grid> */}
       </Grid>
     );
   };
@@ -641,17 +645,14 @@ const ClientSearchResult = ({ classes }) => {
     );
   };
 
-  useEffect(() => {
-    setData(ClientData);
-  }, [ClientData]);
-
   const renderTableBody = useMemo(() => {
     let sortedData = data ? data : [];
     let rpp = parseInt(rowsPerPage)
-    sortedData = data.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
     if (sortedData.length <= 0) {
       return <></>;
     }
+
+    sortedData = data.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
 
     return (
       <TableBody>
@@ -734,21 +735,21 @@ const ClientSearchResult = ({ classes }) => {
       {renderToast()}
       {renderHeader()}
       {renderSearchLine()}
-      {windowSize !== "xs" ? renderManagmentLine() :
-        <Box className={clsx(classes.flex, classes.spaceBetween)}>
-          <Box
-            item
-            xs={windowSize === "xs" && 12}
-            className={clsx(classes.groupsLableContainer, (windowSize === "xs" || windowSize === "sm") ? classes.mt15 : '')}
-          >
-            <Typography className={classes.groupsLable}>
-              {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`}
-            </Typography>
-          </Box>
-          <Box className={clsx(classes.middle, classes.plr10)}>
-            <BiSortAlt2 className={classes.f22} />
-          </Box>
-        </Box>
+      {windowSize !== "xs" ? renderManagmentLine() : null
+        // <Box className={clsx(classes.flex, classes.spaceBetween)}>
+        //   <Box
+        //     item
+        //     xs={windowSize === "xs" && 12}
+        //     className={clsx(classes.groupsLableContainer, (windowSize === "xs" || windowSize === "sm") ? classes.mt15 : '')}
+        //   >
+        //     <Typography className={classes.groupsLable}>
+        //       {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`}
+        //     </Typography>
+        //   </Box>
+        //   <Box className={clsx(classes.middle, classes.plr10)}>
+        //     <BiSortAlt2 className={classes.f22} />
+        //   </Box>
+        // </Box>
       }
       <DataTable
         tableContainer={{

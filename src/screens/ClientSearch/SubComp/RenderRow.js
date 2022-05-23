@@ -296,7 +296,7 @@ const RenderWebRow = ({
             {
               label: t(""),
               component: (
-                <Typography className={classes.bold}>{Email}</Typography>
+                <Typography title={Email} className={classes.bold}>{`${Email.length > 18 ? Email.substring(0, 18) + '...' : Email}`}</Typography>
               ),
               classes: { text: localClasses.noWrap },
             },

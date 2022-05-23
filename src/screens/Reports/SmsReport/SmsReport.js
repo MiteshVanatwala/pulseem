@@ -25,7 +25,7 @@ import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, 
 import GraphReport from '../../../components/Reports/GraphReport';
 
 const SmsReport = ({ classes }) => {
-  const { language, windowSize, isRTL, accountSettings } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, accountSettings, accountFeatures } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -49,6 +49,7 @@ const SmsReport = ({ classes }) => {
   const csvLinkRef = useRef(null)
   const [showLoader, setLoader] = useState(true);
   const [smsQuery, setSmsQuery] = useState({ SerachTxt: '', From: null, To: null, ShowTestCampaigns: false, SmsCampaignID: null })
+  const [hasRevenue, setHasRevenue] = useState(false);
 
   moment.locale(language)
 
@@ -100,6 +101,12 @@ const SmsReport = ({ classes }) => {
     setLoader(false);
     await dispatch(getSmsGraph());
   }
+
+  useEffect(() => {
+    if (accountFeatures && accountFeatures.includes('42')) {
+      setHasRevenue(true);
+    }
+  }, [accountFeatures])
 
   useEffect(() => {
     getData();
@@ -368,7 +375,7 @@ const SmsReport = ({ classes }) => {
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("smsReport.credits")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.DLR")}</TableCell>
-          {accountSettings && accountSettings.SubAccountSettings.DomainAddress && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
+          {hasRevenue && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
         </TableRow>
       </TableHead>
     )
@@ -419,7 +426,6 @@ const SmsReport = ({ classes }) => {
     const innerRef = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        {/* <Typography component={innerRef && value > 0 ? 'a' : 'p'} */}
         <Typography component='a' // BUG: Remove this 
           href={innerRef}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
@@ -521,12 +527,12 @@ const SmsReport = ({ classes }) => {
           </Grid>
         </TableCell>
         <TableCell
-          classes={borderCellStyle}
+          classes={hasRevenue ? borderCellStyle : noBorderCellStyle}
           align='center'
           className={classes.flex1}>
           {renderIntData(success, '', hrefs.DLR)}
         </TableCell>
-        {accountSettings && accountSettings.SubAccountSettings.DomainAddress && <TableCell
+        {hasRevenue && <TableCell
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
@@ -616,7 +622,7 @@ const SmsReport = ({ classes }) => {
                 </Grid>
               </Grid>
             </Grid>
-            <Grid item xs={3}>
+            {hasRevenue && <Grid item xs={3}>
               <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
                 {t("common.revenue")}
               </Typography>
@@ -625,7 +631,7 @@ const SmsReport = ({ classes }) => {
                   {renderIntData(Revenue, '', hrefs.Revenue)}
                 </Grid>
               </Grid>
-            </Grid>
+            </Grid>}
           </Grid>
 
         </TableCell>
