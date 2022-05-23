@@ -475,6 +475,10 @@
   "dialogDuplicateContent": "האם ברצונך לשכפל את הקמפיין?",
   "newsletters": "ניוזלטרים",
   "newsLetterEditor": {
+    "fromName": "שם השולח",
+    "fromEmail": "כתובת אימייל השולח",
+    "campaignSubject": "נושא הקמפיין",
+    "personalization": "מידע אישי בשורת הנושא",
     "helpTexts": {
       "Name": "משמש לזיהוי הקמפיין במערכת. הנמענים לא יראו שם זה",
       "FromName": "This field is mandatory",

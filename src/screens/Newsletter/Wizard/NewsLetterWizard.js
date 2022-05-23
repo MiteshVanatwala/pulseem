@@ -13,6 +13,9 @@ import { campaignData, countries } from '../tempConstants';
 // import IconWrapper from '../../../components/icons/IconWrapper';
 import { ManagmentIcon } from '../../../components/managment';
 import SmileIcon from '../../../assets/images/smile.png'
+import { Delete } from '@material-ui/icons';
+import { Dialog } from "../../../components/managment/Dialog";
+
 
 
 const useStyles = makeStyles({
@@ -37,15 +40,16 @@ const useStyles = makeStyles({
     },
     autocomplete: {
         '& .MuiInputBase-root': {
-            // '& .MuiOutlinedInput-input': {
             padding: '9px 40px 9px 10px !important'
-            // }
         },
         '& .MuiAutocomplete-endAdornment': {
             display: 'flex',
             justifyContent: 'flex-end'
         }
 
+    },
+    btnP20: {
+        padding: '20px !important'
     }
 })
 
@@ -74,7 +78,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [errors, setErrors] = useState({
         Name: "",
         Subject: "",
-        personalDatatoSubject: "",
+        // personalDatatoSubject: [],
         FromName: "",
         FromEmail: ""
     })
@@ -90,6 +94,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
 
     const [selectedRadio, setSelectedRadio] = useState(null)
     const [selectedCheck, setSelectedCheck] = useState([])
+    const [confirmDelete, setConfirmDelete] = useState(false)
 
     const handleGetNewsletterResponse = (res) => {
         switch (res?.payload?.StatusCode || 201) {
@@ -126,7 +131,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     useEffect(() => {
         const preload = () => {
             const response = dispatch(getNewsletterReportsByIds(1))
-            handleGetNewsletterResponse(response)
+            // handleGetNewsletterResponse(response)
         }
 
         preload()
@@ -135,7 +140,9 @@ const NewsLetterWizard = ({ classes, ...props }) => {
 
 
     const handleChange = (e) => {
-        console.log("VALUES:", e.target.name, e.target.value)
+        // console.log("VALUES:", e.target.name, e.target.value)
+
+        e.preventDefault();
         setCampaingnValues({ ...campaingnValues, [e.target.name]: e.target.value })
     }
 
@@ -154,19 +161,22 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             console.log("VALUES:", campaingnValues)
         }
     }
+    const handleDelete = () => {
+        setConfirmDelete(false)
+    }
+
 
     const handleValidations = () => {
         const tempError = { ...errors }
         const data = { ...campaingnValues }
         let isError = false;
 
-        Object.entries(data).forEach(([key, value]) => {
-            if (!value) {
+        Object.keys(tempError).forEach((key) => {
+            if (!data[key]) {
                 tempError[key] = "Null values not allowed";
-                isError = !value
+                isError = !data[key]
             }
         })
-
         setErrors({ ...tempError })
         return isError
     }
@@ -220,7 +230,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content: <Typography title={t("From Name")} className={classes.alignDir}>{t("From Name")}</Typography>,
+                                    content: <Typography title={t("campaigns.newsLetterEditor.fromName")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.fromName")}</Typography>,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
@@ -245,7 +255,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content: <Typography title={t("From Email")} className={classes.alignDir}>{t("From Email")}</Typography>,
+                                    content: <Typography title={t("campaigns.newsLetterEditor.fromEmail")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.fromEmail")}</Typography>,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
@@ -256,7 +266,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                             options={['abc@123.com', 'bca@321.com', 'gvc@nbc.com']}
                                             className={localClasses.autocomplete}
                                             name="FromEmail"
-                                            value={campaingnValues.FromEmail}
+                                            value={campaingnValues?.FromEmail}
                                             autoHighlight
                                             getOptionLabel={(option) => option}
                                             renderOption={(option) => (
@@ -264,7 +274,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                     {option}
                                                 </React.Fragment>
                                             )}
-                                            onInputChange={(event, val) => {
+                                            onChange={(event, val) => {
                                                 setCampaingnValues({ ...campaingnValues, FromEmail: val });
                                             }}
                                             renderInput={(params) => (
@@ -295,7 +305,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content: <Typography title={t("Campaign Subject")} className={classes.alignDir}>{t("Campaign Subject")}</Typography>,
+                                    content: <Typography title={t("campaigns.newsLetterEditor.campaignSubject")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.campaignSubject")}</Typography>,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
@@ -318,9 +328,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                             >
                                                 <img src={SmileIcon} alt="smile" />
                                             </Box>
-                                        </Box>
-
-                                    ,
+                                        </Box>,
                                     gridSize: { xs: 12, sm: 12 }
                                 }
                                 ]}
@@ -330,16 +338,18 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content: <Typography title={t("Add Personal Data To The Subject")} className={classes.alignDir}>{t("Add Personal Data To The Subject")}</Typography>,
+                                    content: <Typography title={t("campaigns.newsLetterEditor.personalization")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.personalization")}</Typography>,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
                                     content:
                                         <Autocomplete
                                             id="country-select-demo"
+                                            // multiple
                                             style={{ width: 300 }}
-                                            options={['abc', 'xyz', 'rst', 'uvw', 'axy']}
+                                            options={['FirstName', 'LastName', 'Email', 'Mobile', 'Other']}
                                             className={localClasses.autocomplete}
+                                            value={campaingnValues?.personalDatatoSubject}
                                             autoHighlight
                                             getOptionLabel={(option) => option}
                                             renderOption={(option) => (
@@ -347,6 +357,15 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                     {option}
                                                 </React.Fragment>
                                             )}
+                                            onChange={(event, val) => {
+                                                // console.log("VALUE:", val, new RegExp(`##${removed}##`, 'g'))
+                                                // const removed = campaingnValues.personalDatatoSubject.filter(obj => val.indexOf(obj) === -1)[0]
+                                                // console.log("removed:", removed)
+                                                // const currentVal = val[val.length - 1 || 0]
+                                                // setCampaingnValues({ ...campaingnValues, personalDatatoSubject: val, Subject: removed ? campaingnValues.Subject.replace(new RegExp(`##${removed}##`, 'g'), '') : `${campaingnValues.Subject} ##${currentVal}##` })
+                                                setCampaingnValues({ ...campaingnValues, personalDatatoSubject: val, Subject: `${campaingnValues.Subject} ##${val}##` })
+                                            }}
+
                                             renderInput={(params) => (
                                                 <TextField
                                                     {...params}
@@ -448,10 +467,10 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                             label=""
                                             variant="outlined"
                                             name="Subject"
-                                            // // value={campaingnValues.Subject}
+                                            // value={campaingnValues.Subject}
                                             className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                             autoComplete="off"
-                                        // onChange={handleChange}
+                                            onChange={handleChange}
                                         // error={errors.Subject}
                                         // helperText={ErrorTexts.Subject}
                                         />,
@@ -691,6 +710,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         </Box>
     )
 
+
     return (
         <DefaultScreen
             currentPage="Campaingn Settings"
@@ -702,9 +722,9 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                 {t("campaigns.createNewsLetterHeader")}
             </Typography>
             <Divider />
-            <CampaignBox1 />
+            {CampaignBox1()}
             <Divider />
-            <SimpleGrid
+            {/* <SimpleGrid
                 spacing={3}
                 centerlize={true}
                 gridArr={[
@@ -717,36 +737,69 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                         gridSize: { xs: 12, sm: 5 }
                     },
                 ]}
-            />
+            /> */}
 
             <Box className={classes.flex}>
 
                 <Button
                     variant='contained'
                     size='small'
-                    className={clsx(classes.m10, classes.confirmButton)}
+                    className={clsx(localClasses.btnP20, classes.mlr10, classes.confirmButton)}
                 // onClick={onConfirm}
                 // className={clsx(
                 //   classes.dialogButton,
                 //   classes.dialogConfirmButton
                 // )}
                 >
-                    Confirm
+                    {t('common.continue')}
                 </Button>
                 <Button
                     variant='contained'
                     size='small'
-                    className={clsx(classes.m10, classes.confirmButton)}
-                // onClick={onClose}
+                    className={clsx(localClasses.btnP20, classes.mlr10, classes.saveButton)}
+                    onClick={handleSubmit}
                 // className={clsx(
                 //   classes.dialogButton,
                 //   classes.dialogCancelButton
                 // )}
 
                 >
-                    Save
+                    {t('common.Save')}
+                </Button>
+                <Button
+                    variant='contained'
+                    size='small'
+                    className={clsx(localClasses.btnP20, classes.mlr10, classes.cancelBtn)}
+                    onClick={() => setConfirmDelete(true)}
+                // className={clsx(
+                //   classes.dialogButton,
+                //   classes.dialogCancelButton
+                // )}
+
+                >
+                    <Delete />
                 </Button>
             </Box>
+            <Dialog
+                classes={classes}
+                open={confirmDelete}
+                title={t("campaigns.GridButtonColumnResource2.ConfirmTitle")}
+                icon={<Box className={classes.dialogAlertIcon}>
+                    !
+                </Box>}
+                showDivider={true}
+                onClose={() => setConfirmDelete(false)}
+                onCancel={() => setConfirmDelete(false)}
+                onConfirm={() => handleDelete()}
+                cancelText="common.Cancel"
+                confirmText="common.Ok"
+            >
+                <Box>
+                    <Typography variant="subtitle1">
+                        {t("campaigns.GridButtonColumnResource2.ConfirmText")}
+                    </Typography>
+                </Box>
+            </Dialog>
         </DefaultScreen>
     )
 }

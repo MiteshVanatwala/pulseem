@@ -484,6 +484,10 @@
   "dialogDuplicateContent": "Do you want to duplicate the campaign?",
   "newsletters": "Newsletters",
   "newsLetterEditor": {
+    "fromName": "From Name",
+    "fromEmail": "From Email",
+    "campaignSubject": "Campaign Subject",
+    "personalization": "Personalization",
     "helpTexts": {
       "Name": "Used to identify the campaign in the system. Recipients will not see this name",
       "FromName": "This field is mandatory",
