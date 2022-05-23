@@ -438,7 +438,6 @@ const SmsCreator = ({ classes, ...props }) => {
 
     let arr = t.split("\n");
     setsplittedMsg(arr);
-    totalCount += (arr.length - 1);
 
     if (t && t.length > 0) {
       const res = t.replace('\r\n', ' ');
