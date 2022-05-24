@@ -52,7 +52,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
 
             if (exist <= 0 && extraData[ed] !== '') {
                 selectOptions.push({
-                    eisdisabled: false,
+                    isdisabled: false,
                     idx: -1,
                     value: ed,
                     label: extraData[ed]
@@ -80,7 +80,8 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                 label: t(e.label)
             }
         });
-        setselectArray(fields);
+        const withED = [...fields, ...selectOptions];
+        setselectArray(withED);
         setheaders(tempHeaders);
 
     }, [selectOptions]);
