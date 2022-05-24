@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { instence } from '../../helpers/api';
-import { ClientSearchResultData } from '../../screens/ClientSearch/tempContants';
 
 export const deleteFromGroups = createAsyncThunk(
   'client/DeleteFromGroups', async (id, thunkAPI) => {
