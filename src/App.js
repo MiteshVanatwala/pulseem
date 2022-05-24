@@ -35,6 +35,7 @@ import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
+import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 
 
 const renderRoutes = (classes, history) => {
@@ -210,9 +211,13 @@ const renderRoutes = (classes, history) => {
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
       />
 
-      <Route
+      {/* <Route
         path="/ClientSearchResult/:id"
         component={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=', 'id')}
+      /> */}
+      <Route
+        path="/ClientSearchResult/:id"
+        render={props => <ClientSearchResult {...props} classes={classes} />}
       />
 
       <Route

@@ -4,9 +4,8 @@ import DefaultScreen from '../DefaultScreen'
 import { Loader } from '../../components/Loader/Loader'
 import { useTranslation } from 'react-i18next';
 import Title from '../../components/Wizard/Title'
-import {
-    Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox
-} from '@material-ui/core'
+import CustomTooltip from '../../components/Tooltip/CustomTooltip';
+import { Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel } from '../../model/SiteTracking/SiteTrackingModel';
@@ -20,7 +19,8 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import EventTabs from './EventTabs';
 import { isValidUrl } from '../../helpers/UrlHelper';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider, makeStyles, useTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles'
 
 const renderHtml = (html) => {
     function createMarkup() {
@@ -30,7 +30,6 @@ const renderHtml = (html) => {
         <label dangerouslySetInnerHTML={createMarkup()}></label>
     );
 }
-
 
 const SiteTrackingEditor = ({ classes }) => {
     // const { subAccountGroups } = useSelector((state) => state.sms);
@@ -47,7 +46,7 @@ const SiteTrackingEditor = ({ classes }) => {
     const [scriptDialog, handleScriptDialogCheck] = useState(false);
     const [isValidDomain, setIsValidDomain] = useState(null);
 
-    const theme = createMuiTheme({
+    const theme = createTheme({
         palette: {
             text: {
                 disabled: '#000'
@@ -366,6 +365,7 @@ const SiteTrackingEditor = ({ classes }) => {
         }
     }
     const scriptImplementationDialog = () => {
+        const purchaseObject = ["Order ID", "Grand Total", "Shipping", "Tax", "Name", "Item Code", "Price"];
         return {
             title: null,
             showDivider: false,
@@ -412,6 +412,52 @@ const SiteTrackingEditor = ({ classes }) => {
                         </pre>
                         <Typography className={clsx(classes.bold, classes.f16)}>
                             {t('notifications.headTagClosesText')} {'</head>'}
+                        </Typography>
+                    </Box>
+                    <Box>
+                        <Box className={clsx(classes.f18)}>
+                            <Typography className={classes.f18} style={{ display: 'inline-block' }}>{t('siteTracking.scriptPurchaseInstruction')}
+                                <Typography style={{ marginInlineStart: 5, display: 'inline-block', transform: 'translateY(3px)' }}>
+                                    <CustomTooltip
+                                        isSimpleTooltip={false}
+                                        arrow={true}
+                                        style={{ fontSize: 14 }}
+                                        nameEllipsis={false}
+                                        classes={classes}
+                                        interactive={true}
+                                        placement={'top'}
+                                        titleStyle={{ fontSize: 13, textAlign: 'center' }}
+                                        title={t("siteTracking.purchaseInstructionTooltip")}
+                                        text={<span className={classes.bodyInfo}>i</span>}
+                                    />
+                                </Typography>
+                            </Typography>
+                        </Box>
+                        <ul>
+                            {purchaseObject.map((item, idx) => {
+                                return <li key={idx}>{item}</li>
+                            })}
+                        </ul>
+                    </Box>
+                    <Box>
+                        <Typography className={clsx(classes.f20)}>{t("siteTracking.javscriptFunction")}
+                            <pre>
+                                <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
+                                    {`trackPixel("purchase", {
+    "orderId": 10,
+    "grandTotal": "100.00$",
+    "shipping": "10.00$",
+    "tax": "10.00$"
+    "items": [
+      {
+        "name": "IPhone 10",
+        "quantity": 2,
+        "itemCode": "P5123",
+        "price": 2000
+      }
+]});`}
+                                </div>
+                            </pre>
                         </Typography>
                     </Box>
                 </Box>

@@ -13,7 +13,6 @@ import {
   TablePagination, ManagmentIcon, DateField, Dialog, RestorDialogContent, SearchField
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-import useCtrlHistory from '../../../helpers/useCtrlHistory';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -22,7 +21,7 @@ import 'moment/locale/he';
 import {
   getNotificationById, getNotificationGroups, getNotificationData, getDeletedNotifications,
   duplicateNotification, deleteNotification, getNotificationGroupsById, restoreNotifications,
-  getScriptPath, getSubAccountApiKey, updateScriptPath, getNotificationPublicKey, getSubAccountRegistrations
+  getScriptPath, getSubAccountApiKey, updateScriptPath, getSubAccountRegistrations
 } from '../../../redux/reducers/notificationSlice';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Preview } from '../../../components/Notifications/Preview/Preview';
@@ -292,7 +291,6 @@ const NotificationManagement = ({ classes }) => {
           onKeyPress={handleSearch}
           onChange={handleNotificationNameChange}
           onClick={handleSearch}
-          onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
         />
       )
@@ -773,7 +771,6 @@ const NotificationManagement = ({ classes }) => {
             ShowRedirectButton={data.RedirectButtonText && data.RedirectButtonText != ''}
             showID={true}
             showTitle={false}
-            showID={true}
             showOSScreen={false}
           />
         </Box>

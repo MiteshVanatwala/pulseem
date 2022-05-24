@@ -1,8 +1,17 @@
 {
-    "removeClientFromGroupTitle": "מחק לקוח מקבוצות",
-    "removeClientFromGroupDescription": "האם ברצונך למחוק את הלקוח מכל הקבוצות?",
-    "removeClientFromAccountTitle": "הסרת לקוח מהחשבון",
-    "removeClientFromAccountDescription": "האם ברצונך להסיר את הלקוח מהחשבון?",
-    "removeClientFromSmsTitle": "הסרת לקוח משירותי SMS",
-    "removeClientFromSmsDescription": "האם אתה בטוח שברצונך להסיר לקוח משירותי SMS?"
+  "removeClientFromGroupTitle": "מחק לקוח מקבוצות",
+  "removeClientFromGroupDescription": "האם ברצונך למחוק את הלקוח מכל הקבוצות?",
+  "removeClientFromAccountTitle": "הסרת לקוח מהחשבון",
+  "removeClientFromAccountDescription": "האם ברצונך להסיר את הלקוח מהחשבון?",
+  "removeClientFromSmsTitle": "הסרת לקוח משירותי SMS",
+  "removeClientFromSmsDescription": "האם אתה בטוח שברצונך להסיר לקוח משירותי SMS?",
+  "logPageHeaderResource1": {
+    "Text": "תוצאות חיפוש לקוחות"
+  },
+  "avaregeIncome": "הכנסה ממוצעת:",
+  "makeInvalid": "הפוך לשגויים",
+  "Purchased": "רכישות",
+  "totalRevenue": "הכנסה כוללת",
+  "avgOrderRevenue": "סכום רכישה ממוצע",
+  "conversionRate": "יחס המרה"
 }

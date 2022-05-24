@@ -544,5 +544,9 @@
   "minimalDateRequired": "התאריך לא יכול להיות גדול מהתאריך המינימלי",
   "maximalDateRequired": "התאריך לא יכול להיות קטן מהתאריך המקסימלי",
   "showTen": "הצג 10",
-  "notNow": "לא כרגע"
+  "notNow": "לא כרגע",
+  "revenue": "הכנסות",
+  "edit": "ערוך",
+  "campaignRevenue": "הכנסה",
+  "NIS": "₪"
 }

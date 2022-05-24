@@ -549,5 +549,9 @@
   "minimalDateRequired": "Date should not be before minimal date",
   "maximalDateRequired": "Date should not be after maximal date",
   "showTen": "Show 10",
-  "notNow": "Not now"
+  "notNow": "Not now",
+  "revenue": "Revenue",
+  "edit": "Edit",
+  "campaignRevenue": "Revenue",
+  "NIS": "₪"
 }

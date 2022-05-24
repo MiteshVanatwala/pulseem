@@ -25,7 +25,7 @@ import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, 
 import GraphReport from '../../../components/Reports/GraphReport';
 
 const SmsReport = ({ classes }) => {
-  const { language, windowSize, isRTL } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, accountSettings, accountFeatures } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -49,6 +49,7 @@ const SmsReport = ({ classes }) => {
   const csvLinkRef = useRef(null)
   const [showLoader, setLoader] = useState(true);
   const [smsQuery, setSmsQuery] = useState({ SerachTxt: '', From: null, To: null, ShowTestCampaigns: false, SmsCampaignID: null })
+  const [hasRevenue, setHasRevenue] = useState(false);
 
   moment.locale(language)
 
@@ -86,6 +87,11 @@ const SmsReport = ({ classes }) => {
     DLR: {
       title: windowSize === 'xs' ? '' : t('common.DLR'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+    },
+    Revenue: {
+      title: '',
+      href: `/react/ClientSearchResult/${id}`,
+      textStyle: { fontWeight: 900 }
     }
   })
 
@@ -95,6 +101,12 @@ const SmsReport = ({ classes }) => {
     setLoader(false);
     await dispatch(getSmsGraph());
   }
+
+  useEffect(() => {
+    if (accountFeatures && accountFeatures.includes('42')) {
+      setHasRevenue(true);
+    }
+  }, [accountFeatures])
 
   useEffect(() => {
     getData();
@@ -363,6 +375,7 @@ const SmsReport = ({ classes }) => {
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex3} align='center'>{t("smsReport.credits")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.DLR")}</TableCell>
+          {hasRevenue && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
         </TableRow>
       </TableHead>
     )
@@ -409,17 +422,18 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}, clickable = true) => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '' } = data
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null } = data
     const innerRef = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        <Typography component={innerRef && value > 0 ? 'a' : 'p'}
+        <Typography component='a' // BUG: Remove this 
           href={innerRef}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
+          style={textStyle}
           target="_blank">
           {value && value.toLocaleString() || '0'}
         </Typography>
-        <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
+        <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])} style={textStyle}>
           {title}
         </Typography>
       </Box>
@@ -442,7 +456,8 @@ const SmsReport = ({ classes }) => {
       failure,
       TotalSendPlan,
       totalSent,
-      Status
+      Status,
+      Revenue = 0
     } = row
     const hrefs = getHrefs(SMSCampaignID)
     return (
@@ -512,11 +527,17 @@ const SmsReport = ({ classes }) => {
           </Grid>
         </TableCell>
         <TableCell
-          classes={noBorderCellStyle}
+          classes={hasRevenue ? borderCellStyle : noBorderCellStyle}
           align='center'
           className={classes.flex1}>
           {renderIntData(success, '', hrefs.DLR)}
         </TableCell>
+        {hasRevenue && <TableCell
+          classes={noBorderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          {renderIntData(`${Revenue.toLocaleString()} ${t("common.NIS")}`, '', hrefs.Revenue)}
+        </TableCell>}
       </TableRow>
     )
   }
@@ -532,7 +553,8 @@ const SmsReport = ({ classes }) => {
       removed,
       failure,
       totalSent,
-      success
+      success,
+      Revenue = 0
     } = row
     const hrefs = getHrefs(SMSCampaignID)
     return (
@@ -600,6 +622,16 @@ const SmsReport = ({ classes }) => {
                 </Grid>
               </Grid>
             </Grid>
+            {hasRevenue && <Grid item xs={3}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("common.revenue")}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {renderIntData(Revenue, '', hrefs.Revenue)}
+                </Grid>
+              </Grid>
+            </Grid>}
           </Grid>
 
         </TableCell>
