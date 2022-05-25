@@ -241,7 +241,7 @@ const UnsubscribeOrDeletePopup = ({
                 },
                 'S_201': {
                     code: 201,
-                    message: ToastMessages.UNSUBSCRIBE_SUCCESS,
+                    message: '',
                     Func: () => setIsSubmitted(true)
                 },
                 'S_401': {
