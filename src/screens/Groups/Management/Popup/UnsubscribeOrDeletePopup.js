@@ -66,7 +66,7 @@ const UnsubscribeOrDeletePopup = ({
     }
 
     const openConfirmDialog = () => {
-        if (!finalData || finalData.length < 10) {
+        if (!finalData || finalData.length === 0) {
             setError(t("recipient.errors.noDeleteRecFound"))
         }
         else {
