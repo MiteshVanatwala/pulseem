@@ -102,35 +102,14 @@ const SimplyClubPupup = ({
     const [showLoader, setShowLoader] = useState(false)
     const [summary, setSummary] = useState(null)
     const [error, setError] = useState(null)
+    const [updatedClients, setUpdatedClients] = useState(null);
 
 
     useEffect(() => {
         const preload = () => {
-            let totalFields = 5;
-            const data = Object.entries(ClientData).reduce((prev, [key, value]) => {
-                let restELementsLen = 5 - prev.length
-                let restElements = value;
-                // let tempFields = restElements.reduce((prev, next) => Object.values(next).filter(obj => !!obj || obj === false).length, 0)
-                let tempFields = restElements.reduce(
-                    (prev, next) => {
-                        // let tempLength = Object.values(next).filter(obj => obj !== null && obj !== undefined).length
-                        let tempLength = Object.values(next).length
-                        if (totalFields < tempLength) {
-                            totalFields = tempLength
-                        }
-                    }
-                    , 0)
-
-                if (restElements.length < restELementsLen) {
-                    restELementsLen = restElements.length
-                }
-                let finalArr = restElements.slice(0, restELementsLen);
-                return [...prev, ...finalArr]
-            }, [])
-
-            // console.log(totalFields)
+            let totalFields = Object.values(ClientData).length > 0 ? Object.keys(Object.values(ClientData)[0][0]).length : 0;
             let tempHeaders = Array.from({ length: totalFields }, (v, i) => t("sms.adjustTitle"))
-            setFilteredData(data)
+            setFilteredData(Object.values(ClientData)[0]);
             setheaders([...tempHeaders])
         }
         preload()
@@ -287,7 +266,7 @@ const SimplyClubPupup = ({
     }
 
     const handleAddClients = (ids) => {
-        let tempClients = Object.values(ClientData)[0]
+        let tempClients = Object.values(updatedClients ?? ClientData)[0]
         const Payload = {
             ClientsData: tempClients || [],
             GroupIds: ids
@@ -495,6 +474,12 @@ const SimplyClubPupup = ({
         )
     }
 
+    const handleUpdateClientFields = (c) => {
+        const cData = { ...ClientData };
+        cData[Object.keys(cData)[0]] = c;
+        setUpdatedClients(cData);
+    }
+
     const ColumnAdjustmentPopup = () => {
         return (
             <ColumnAdjustmentDialog
@@ -515,6 +500,7 @@ const SimplyClubPupup = ({
                 headers={headers}
                 setheaders={setheaders}
                 tooltipText="recipient.bulkRecUpldTooltipText"
+                onUpdateClientFields={handleUpdateClientFields}
             />
         )
     }

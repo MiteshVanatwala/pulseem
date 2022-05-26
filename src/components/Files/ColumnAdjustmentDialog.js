@@ -20,7 +20,20 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, settings, data, headers = [], setheaders, tooltipText = "smsReport.manualTotalTooltip", t }) => {
+const ColumnAdjustmentDialog = ({
+    t,
+    classes,
+    isOpen,
+    title,
+    onClose,
+    onConfirm,
+    settings,
+    data,
+    headers = [],
+    setheaders,
+    tooltipText = "smsReport.manualTotalTooltip",
+    onUpdateClientFields = () => null }) => {
+
     const { extraData } = useSelector((state) => state.sms);
     const styles = useStyles();
     const [groupNameInput, setgroupNameInput] = useState("");
@@ -63,25 +76,15 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
         let restHeader = headers.splice(headersOrder.length, headers.length - headersOrder.length)
         let tempHeaders = [...headersOrder, ...restHeader]
 
-        const fields = settings.Fields.map((e, index) => {
-            let retVal = {};
-            tempHeaders.forEach((el, index) => {
-                let item = translateKeys(e.value.replace(' ', '').toLowerCase(), t);
-                let comparer = translateKeys(el.replace(' ', ''), t);
-                if (item.key === comparer.key) {
-                    retVal = { isdisabled: true, idx: index };
-                }
-            });
-
+        const fields = settings.Fields.map((e, idx) => {
             return {
-                isdisabled: retVal.idx === -1 ? e.isdisabled : true,
-                idx: retVal.idx === -1 ? e.idx : retVal.idx,
+                isdisabled: idx === -1 ? e.isdisabled : true,
+                idx: idx,
                 value: e.value,
                 label: t(e.label)
             }
         });
-        const withED = [...fields, ...selectOptions];
-        setselectArray(withED);
+        setselectArray([...fields, ...selectOptions]);
         setheaders(tempHeaders);
 
     }, [selectOptions]);
@@ -94,7 +97,7 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
     }
 
     const handleChangeId = (id) => {
-        if (dropIndex == -1) {
+        if (dropIndex === -1) {
             setdropIndex(id);
         } else {
             setdropIndex(-1);
@@ -103,34 +106,44 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
 
     const handleCloseSpan = (id, name) => {
         let h = headers;
-
-        headers[id] = t("sms.adjustTitle");
-
+        h[id] = t("sms.adjustTitle");
         setheaders(h);
 
-        for (let i = 0; i < selectArray.length; i++) {
+        const isExtraField = name.toLowerCase().indexOf('extra') > -1;
+        const deletedItem = selectArray.find((sa) => {
+            const conditionVal = isExtraField ? sa.value : sa.label;
+            return name === conditionVal;
+        });
 
-            if (selectArray[i].label === name) {
-                selectArray[i].isdisabled = false;
-                selectArray[i].idx = -1;
-                break;
-            }
-        }
+        data.forEach((d) => {
+            d[deletedItem.value] = '';
+        });
 
+        deletedItem.isdisabled = false;
+        deletedItem.idx = -1;
+
+        onUpdateClientFields(data);
     }
 
-    const handleSelectFirst = (name, id, idx, e) => {
+    const handleSelectFirst = (item, idx) => {
         let h = headers;
-        h[idx] = name.label;
-        selectArray.forEach((value, index) => {
-            if (value.idx === idx) {
-                selectArray[index].isdisabled = false
-                selectArray[index].idx = -1
-            }
-        })
-        selectArray[id].isdisabled = true;
-        selectArray[id].idx = idx;
+        const headerArrays = [...selectArray];
+        const selectedItem = headerArrays.find((sa) => { return sa.value === item.value });
+        if (selectedItem.isdisabled === true) return;
+
+        h[idx] = item.value.toLowerCase().indexOf('extra') > -1 ? item.value : item.label;
+
+        selectedItem.isdisabled = true;
+        selectedItem.idx = idx;
+        headerArrays[idx] = selectedItem;
+
         setheaders(h);
+        data.forEach((d) => {
+            const index = (idx + 10 - headers.length);
+            d[item.value] = d.AdditionalData[index];
+        });
+
+        onUpdateClientFields(data);
     };
 
 
@@ -201,58 +214,67 @@ const ColumnAdjustmentDialog = ({ classes, isOpen, title, onClose, onConfirm, se
                                         minWidth: "100px",
                                     }}
                                 >
-                                    {data.length > 0
-                                        ? headers.map((item, idx) => {
-                                            return (
-                                                <th
-                                                    key={idx}
-                                                    className={classes.manualHeader}
+                                    {headers.map((_, idx) => {
+                                        return (
+                                            <th
+                                                key={idx}
+                                                className={classes.manualHeader}
+                                            >
+                                                <div
+                                                    onClick={() => {
+                                                        handleChangeId(idx);
+                                                    }}
+                                                    className={classes.adjustP}
+                                                    style={{ textAlign: "center", cursor: "pointer" }}
                                                 >
-                                                    <div
-                                                        onClick={() => {
-                                                            handleChangeId(idx);
-                                                        }}
-                                                        className={classes.adjustP}
-                                                        style={{ textAlign: "center", cursor: "pointer" }}
-                                                    >
-                                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                            <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{t(selectOptions.find(obj => obj.value === headers[idx])?.label || headers[idx])}</Typography>
+                                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                        <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{t(selectOptions.find(obj => obj.value === headers[idx])?.label || headers[idx])}</Typography>
 
-                                                            {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
-                                                            {dropIndex == idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}
-                                                        </div>
-                                                        {dropIndex == idx ? (
-                                                            <div className={clsx(classes.adjustC, classes.scrollY, classes.customScroll)} style={{ maxHeight: 175 }}>
-                                                                {selectArray.map((item, id) => {
-
-                                                                    return (
-                                                                        <span
-                                                                            className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.textEllipses)}
-                                                                            onClick={() => {
-                                                                                handleSelectFirst(item, id, idx);
-                                                                            }}
-                                                                        >
-                                                                            {item.label}
-                                                                        </span>
-                                                                    )
-                                                                })}
-                                                            </div>
-                                                        ) : null}
+                                                        {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
+                                                        {dropIndex === idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}
                                                     </div>
-                                                </th>
+                                                    {dropIndex === idx ? (
+                                                        <div className={clsx(classes.adjustC, classes.scrollY, classes.customScroll)} style={{ maxHeight: 175 }}>
+                                                            {selectArray.map((item) => {
 
-                                            );
-                                        })
-                                        : null}
-                                    {data.map((item, id) => {
+                                                                return (
+                                                                    <span
+                                                                        className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.textEllipses)}
+                                                                        onClick={() => {
+                                                                            handleSelectFirst(item, idx);
+                                                                        }}
+                                                                    >
+                                                                        {item.label}
+                                                                    </span>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    ) : null}
+                                                </div>
+                                            </th>
+
+                                        );
+                                    })}
+                                    {data.slice(0, 5).map((item, id) => {
                                         let restObj = { ...item };
+                                        let additionalIndex = 0;
 
                                         return (
                                             <tbody>
                                                 <tr key={id}>
-                                                    {headers.map((data, idx) => {
-                                                        let dispData = restObj[translateKeys(data, t).key] || Object.values(restObj)[0];
-                                                        delete restObj[translateKeys(data, t).value === t("sms.adjustTitle") ? Object.keys(restObj)[0] : translateKeys(data, t).value];
+                                                    {headers.map((headerKey, idx) => {
+                                                        let dispData = '';
+                                                        if (headers.length <= (idx + 10)) {
+                                                            if (restObj["AdditionalData"]) {
+                                                                dispData = restObj["AdditionalData"][additionalIndex];
+                                                                additionalIndex++;
+                                                            }
+                                                        }
+                                                        else {
+                                                            const translatedKey = translateKeys(headerKey, t).key;
+                                                            dispData = restObj[translatedKey];
+                                                            delete restObj[translateKeys(headerKey, t).value === t("sms.adjustTitle") ? Object.keys(restObj)[0] : translateKeys(headerKey, t).value];
+                                                        }
 
                                                         return (
                                                             <td key={idx} className={classes.tableColumn}

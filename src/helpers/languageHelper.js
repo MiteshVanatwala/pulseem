@@ -24,11 +24,21 @@ export const translateKeys = (key, t) => {
             { return { key: "City", value: t("common.city") }; }
         case 'מיקוד':
         case 'zip':
+        case 'zipcode':
             { return { key: "Zip", value: t("common.zip") }; }
         case 'תאריךלידה':
         case 'birthdate':
         case 'birthday':
             { return { key: "BirthDate", value: t("common.birthDate") }; }
+        case 'ארץ':
+        case 'country':
+            { return { key: "Country", value: t("common.country") }; }
+        case 'חברה':
+        case 'company':
+            { return { key: "Company", value: t("common.company") }; }
+        case 'תאריךתזכורת':
+        case 'reminderdate':
+            { return { key: "ReminderDate", value: t("recipient.reminderDate") }; }
         default: { return { key: 'adjustTitle', value: t("sms.adjustTitle") } }
     }
 }
