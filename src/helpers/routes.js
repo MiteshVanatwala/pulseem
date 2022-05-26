@@ -57,7 +57,7 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
       alt='Groups'
       src={GroupsIcon} />,
     options: [
-      { title: t('master.RadMenuItemResource6.Text'), href: '/react/groups', isShow: true },
+      { key: 'groupManagement', title: t('master.RadMenuItemResource6.Text'), href: '/react/groups', isShow: true },
       { title: t('master.RadMenuItemResource7.Text'), href: '/Pulseem/ClientSearch.aspx?fromreact=true', isShow: true },
       { title: t('master.RadMenuItemResource37.Text'), href: '/Pulseem/ClientAdvancedSearch.aspx?fromreact=true', isShow: true },
       { title: t('master.RadMenuItemResourceDynamicGroups.Text'), href: '/Pulseem/DynamicGroups.aspx?fromreact=true', isShow: true },

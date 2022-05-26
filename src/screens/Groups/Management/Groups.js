@@ -1192,7 +1192,8 @@ const Groups = ({ classes }) => {
 
     return (
         <DefaultScreen
-            currentPage='reports'
+            currentPage='groups'
+            subPage='groupManagement'
             classes={classes}
             containerClass={classes.management}>
             {toastMessage && renderToast()}
