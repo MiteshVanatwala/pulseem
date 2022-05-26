@@ -78,7 +78,7 @@ const ColumnAdjustmentDialog = ({
 
         const fields = settings.Fields.map((e, idx) => {
             return {
-                isdisabled: idx === -1 ? e.isdisabled : true,
+                isdisabled: e.value.toLowerCase().indexOf('extra') > - 1 ? (idx === -1) : true,
                 idx: idx,
                 value: e.value,
                 label: t(e.label)

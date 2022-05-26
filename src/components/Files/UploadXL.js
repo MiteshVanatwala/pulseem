@@ -17,6 +17,7 @@ import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { Loader } from '../Loader/Loader';
 import { useTranslation } from "react-i18next";
 import { renderHtml } from "../../helpers/utils";
+import { translateKeys } from '../../helpers/languageHelper';
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -75,17 +76,17 @@ const UploadXL = ({
 
             if (exist <= 0 && extraData[ed] !== '') {
                 settings.Fields.push({
-                    eisdisabled: false,
+                    isdisabled: false,
                     idx: -1,
                     value: ed,
                     label: extraData[ed]
                 });
             }
         });
-        const fields = settings.Fields.map((e) => {
+        const fields = settings.Fields.map((e, idx) => {
             return {
-                eisdisabled: e.isdisabled,
-                idx: e.idx,
+                isdisabled: false,
+                idx: idx,
                 value: e.value,
                 label: t(e.label)
             }
@@ -107,17 +108,14 @@ const UploadXL = ({
             setcolumnValidate(false);
         }
     };
-    const handleSelectFirst = (name, id, idx, e) => {
+    const handleSelectFirst = (item, id, idx) => {
         // id -  index of select array
         // idx - header index
         let h = headers;
-        h[idx] = name.label;
-        selectArray.forEach((value, index) => {
-            if (value.idx === idx) {
-                selectArray[index].isdisabled = false
-                selectArray[index].idx = -1
-            }
-        })
+        const selectedItem = selectArray.find((sa) => { return sa.value === item.value });
+        if (selectedItem.isdisabled === true) return;
+
+        h[idx] = item.value.toLowerCase().indexOf('extra') > -1 ? item.label : item.value;
         selectArray[id].isdisabled = true;
         selectArray[id].idx = idx;
         setheaders(h);
@@ -335,59 +333,41 @@ const UploadXL = ({
         }, 100);
 
     }
-    const translateHebrewColumns = (key) => {
-        if (key === 'שםפרטי') {
-            return "FirstName";
-        }
-        if (key === 'שםמשפחה') {
-            return "LastName";
-        }
-        if (key === 'סלולרי') {
-            return "Cellphone";
-        }
-        if (key === 'דואראלקטרוני') {
-            return "Email";
-        }
-        if (key === 'תאריךלידה') {
-            return 'BirthDate';
-        }
-        return key;
-    }
+
     const handleDataManual = async () => {
         if (manualUploadValidationscheck()) {
             let requestPayload = [];
 
-            if (typedData.length !== 0) {
-                for (let j = 0; j < typedData.length; j++) {
-                    requestPayload.push({});
-                    for (let k = 0; k < typedData[j].length; k++) {
-                        if (headers[k] && headers[k] !== t("sms.adjustTitle")) {
-                            let key = translateHebrewColumns(headers[k].toLocaleString().replaceAll(" ", ""));
-                            let obj = requestPayload[j];
-                            obj[key] = typedData[j][k].trim();
-                        }
-                    }
-                }
-            }
-            else {
-                for (let j = 0; j < contacts.length; j++) {
-                    requestPayload.push({});
-                    let i = 0;
+            const dataToUpload = typedData.length !== 0 ? typedData : contacts;
 
-                    for (let k in contacts[j]) {
-                        if (headers[i] && headers[i] !== t("sms.adjustTitle")) {
-                            let key = translateHebrewColumns(headers[i].toLocaleString().replaceAll(" ", ""));
-                            let obj = requestPayload[j];
-                            obj[key] = contacts[j][k].trim();
-                        }
-                        i++;
+            for (let j = 0; j < dataToUpload.length; j++) {
+                requestPayload.push({});
+                for (let k = 0; k < dataToUpload[j].length; k++) {
+                    if (headers[k] && headers[k].replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
+                        let item = selectArray.find((sa) => {
+                            return headers[k] === sa.value || headers[k] === sa.label;
+                        });
+
+                        let obj = requestPayload[j];
+                        obj[item.value] = dataToUpload[j][k].trim();
                     }
                 }
             }
 
             // Set mapping
             const mapping = headers.map((h, idx) => {
-                if (h !== t("sms.adjustTitle")) { return { Index: idx + 1, Title: translateHebrewColumns(h.toLocaleString().replaceAll(' ', '')) } }
+                if (h.replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
+                    const isExtraField = h.toLowerCase().indexOf('extra') > -1;
+                    let item = selectArray.find((sa) => {
+                        const conditionVal = isExtraField ? sa.value : sa.label;
+                        return h.replaceAll(' ', '').toLowerCase() === conditionVal.replaceAll(' ', '').toLowerCase();
+                    });
+
+                    return {
+                        Index: idx + 1,
+                        Title: item.value
+                    }
+                }
                 return undefined;
             }).filter(function (x) {
                 return x !== undefined;
@@ -541,6 +521,7 @@ const UploadXL = ({
 
                                                             return (
                                                                 <span
+                                                                    key={id}
                                                                     className={clsx(item.isdisabled ? classes.grayGroup : classes.grouping, classes.textEllipses)}
                                                                     onClick={() => {
                                                                         handleSelectFirst(item, id, idx);
@@ -567,6 +548,7 @@ const UploadXL = ({
                                                     {item.map((temp, idx) => {
                                                         return (
                                                             <td
+                                                                key={idx}
                                                                 id={idx}
                                                                 className={classes.tableColumn}
                                                             >
