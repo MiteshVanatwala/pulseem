@@ -112,10 +112,12 @@ const UploadXL = ({
         // id -  index of select array
         // idx - header index
         let h = headers;
-        const selectedItem = selectArray.find((sa) => { return sa.value === item.value });
+        const selectedItem = selectArray.find((sa) => {
+            return sa.value === item.value
+        });
         if (selectedItem.isdisabled === true) return;
 
-        h[idx] = item.value.toLowerCase().indexOf('extra') > -1 ? item.label : item.value;
+        h[idx] = item.label;
         selectArray[id].isdisabled = true;
         selectArray[id].idx = idx;
         setheaders(h);
@@ -357,9 +359,9 @@ const UploadXL = ({
             // Set mapping
             const mapping = headers.map((h, idx) => {
                 if (h.replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
-                    const isExtraField = h.toLowerCase().indexOf('extra') > -1;
                     let item = selectArray.find((sa) => {
-                        const conditionVal = isExtraField ? sa.value : sa.label;
+                        const isExtraField = sa.label === h;
+                        const conditionVal = !isExtraField ? sa.value : sa.label;
                         return h.replaceAll(' ', '').toLowerCase() === conditionVal.replaceAll(' ', '').toLowerCase();
                     });
 
