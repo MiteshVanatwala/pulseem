@@ -15,6 +15,8 @@ import { ManagmentIcon } from '../../../components/managment';
 import SmileIcon from '../../../assets/images/smile.png'
 import { Delete } from '@material-ui/icons';
 import { Dialog } from "../../../components/managment/Dialog";
+import { BiUpload } from 'react-icons/bi';
+import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 
 
@@ -50,6 +52,49 @@ const useStyles = makeStyles({
     },
     btnP20: {
         padding: '20px !important'
+    },
+    fileUploadBox: {
+        background: "rgb(215, 215, 215)",
+        border: "solid 1px #58585838",
+        borderRadius: "3px",
+        marginTop: "-2px",
+        width: "100%",
+        height: "39px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        '& svg': {
+            fontSize: 30,
+            color: '#707070'
+        },
+        '& input': {
+            display: 'none'
+        },
+        '& label': {
+            cursor: 'pointer'
+        }
+    },
+    helperText: {
+        marginLeft: 14,
+        marginRight: 14,
+        color: "rgba(0, 0, 0, 0.54)",
+        margin: "0",
+        fontSize: "0.75rem",
+        marginTop: 3,
+        textAlign: "left",
+        fontFamily: "Assistant",
+        fontWeight: 400,
+        lineHeight: 1.66,
+    },
+    suHeading: {
+        fontSize: 25,
+        fontWeight: 700,
+        paddingBottom: 10
+    },
+    contentCenter: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
     }
 })
 
@@ -196,7 +241,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     }
 
     const CampaignBox1 = () => (
-        <Box p={5}>
+        <Box py={3}>
             <SimpleGrid
                 spacing={3}
                 centerlize={true}
@@ -397,7 +442,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     )
 
     const CampaignBox2 = () => (
-        <Box p={5}>
+        <Box pt={3}>
+            <Typography className={localClasses.suHeading}>Heading</Typography>
             <SimpleGrid
                 spacing={3}
                 centerlize={true}
@@ -406,7 +452,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content: <Typography title={t("Field1")} className={classes.alignDir}>{t("Field1")}</Typography>,
+                                    content: <Typography title={t("Field1")} className={classes.alignDir}>{t("Introductory text")}</Typography>,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
@@ -418,13 +464,15 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         // value={campaingnValues.Name}
                                         className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, localClasses.textbox)}
                                         autoComplete="off"
-                                    // onChange={handleChange}
-                                    // error={errors.Name}
-                                    // helperText={ErrorTexts.Name}
+                                        // onChange={handleChange}
+                                        // error={errors.Name}
+                                        helperText={t("The text will appear in the display bar in the email, before it opens")}
                                     />,
-                                    gridSize: { xs: 12, sm: 12 }
+                                    gridSize: { xs: 12, sm: 12 },
                                 }
                                 ]}
+                                spacing={1}
+                                gridStyles={localClasses.contentCenter}
                             />,
                             gridSize: { xs: 12, sm: 6 }
                         },
@@ -435,21 +483,46 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
-                                    content: <TextField
-                                        id="outlined-basic"
-                                        label=""
-                                        variant="outlined"
-                                        name="FromName"
-                                        // // value={campaingnValues.FromName}
-                                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, localClasses.textbox)}
-                                        autoComplete="off"
-                                    // onChange={handleChange}
-                                    // error={errors.FromName}
-                                    // helperText={ErrorTexts.FromName}
+                                    content: <Autocomplete
+                                        id="country-select-demo"
+                                        // multiple
+                                        style={{ width: 300 }}
+                                        options={['Option1', 'Option2', 'Option3', 'Option4', 'Option5']}
+                                        className={localClasses.autocomplete}
+                                        // value={campaingnValues?.personalDatatoSubject}
+                                        autoHighlight
+                                        getOptionLabel={(option) => option}
+                                        renderOption={(option) => (
+                                            <React.Fragment>
+                                                {option}
+                                            </React.Fragment>
+                                        )}
+                                        // onChange={(event, val) => {
+
+                                        //     setCampaingnValues({ ...campaingnValues, personalDatatoSubject: val, Subject: `${campaingnValues.Subject} ##${val}##` })
+                                        // }}
+
+                                        renderInput={(params) => (
+                                            <TextField
+                                                {...params}
+                                                variant="outlined"
+                                                style={{ padding: '1.5px 6px !important' }}
+                                                inputProps={{
+                                                    ...params.inputProps,
+                                                    autoComplete: 'new-password',
+                                                    style: { padding: '2px 4px' }
+                                                }}
+                                            />
+                                        )}
+                                        PaperComponent={({ children }) => (
+                                            <Paper className={classes.groupsAutoComplete}>{children}</Paper>
+                                        )}
                                     />,
-                                    gridSize: { xs: 12, sm: 12 }
+                                    gridSize: { xs: 12, sm: 12 },
                                 }
                                 ]}
+                                spacing={1}
+                                gridStyles={localClasses.contentCenter}
                             />,
                             gridSize: { xs: 12, sm: 6 }
                         },
@@ -457,52 +530,84 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content: <Typography title={t("Field2")} className={classes.alignDir}>{t("Field2")}</Typography>,
+                                    content:
+                                        <CustomTooltip
+                                            isSimpleTooltip={false}
+                                            classes={classes}
+                                            interactive={true}
+                                            arrow={true}
+                                            placement={'top'}
+                                            title={<Typography noWrap={false}>{t("Upload File")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt</Typography>}
+                                            text={t("Upload File - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt")}
+                                        />,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
-                                    content:
-                                        <TextField
-                                            id="outlined-basic"
-                                            label=""
-                                            variant="outlined"
-                                            name="Subject"
-                                            // value={campaingnValues.Subject}
-                                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                            autoComplete="off"
-                                            onChange={handleChange}
-                                        // error={errors.Subject}
-                                        // helperText={ErrorTexts.Subject}
-                                        />,
-                                    gridSize: { xs: 12, sm: 12 }
+                                    content: <>
+                                        <Box className={localClasses.fileUploadBox}>
+                                            <input type='file' id='upldNLFile' />
+                                            <label htmlFor='upldNLFile'><BiUpload /></label>
+                                        </Box>
+                                        <label className={localClasses.helperText}>Popped up and attachment in the email you send</label>
+                                    </>
+                                    ,
+                                    gridSize: { xs: 12, sm: 12 },
                                 }
                                 ]}
+                                spacing={1}
+                                gridStyles={localClasses.contentCenter}
                             />,
                             gridSize: { xs: 12, sm: 6 }
                         },
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content: <Typography title={t("Field4")} className={classes.alignDir}>{t("Field4")}</Typography>,
+                                    content: <Typography title={t("Field4")} className={classes.alignDir}>{t("Mailing Language")}</Typography>,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
                                     content:
-                                        <TextField
-                                            id="outlined-basic"
-                                            label=""
-                                            variant="outlined"
-                                            name="Subject"
-                                            // // value={campaingnValues.Subject}
-                                            className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                            autoComplete="off"
-                                        // onChange={handleChange}
-                                        // error={errors.Subject}
-                                        // helperText={ErrorTexts.Subject}
+                                        <Autocomplete
+                                            id="country-select-demo"
+                                            // multiple
+                                            style={{ width: 300 }}
+                                            options={['Option1', 'Option2', 'Option3', 'Option4', 'Option5']}
+                                            className={localClasses.autocomplete}
+                                            // value={campaingnValues?.personalDatatoSubject}
+                                            autoHighlight
+                                            getOptionLabel={(option) => option}
+                                            renderOption={(option) => (
+                                                <React.Fragment>
+                                                    {option}
+                                                </React.Fragment>
+                                            )}
+                                            // onChange={(event, val) => {
+
+                                            //     setCampaingnValues({ ...campaingnValues, personalDatatoSubject: val, Subject: `${campaingnValues.Subject} ##${val}##` })
+                                            // }}
+
+                                            renderInput={(params) => (
+                                                <TextField
+                                                    {...params}
+                                                    variant="outlined"
+                                                    style={{ padding: '1.5px 6px !important' }}
+                                                    inputProps={{
+                                                        ...params.inputProps,
+                                                        autoComplete: 'new-password',
+                                                        style: { padding: '2px 4px' }
+                                                    }}
+                                                />
+                                            )}
+                                            PaperComponent={({ children }) => (
+                                                <Paper className={classes.groupsAutoComplete}>{children}</Paper>
+                                            )}
                                         />,
-                                    gridSize: { xs: 12, sm: 12 }
+                                    gridSize: { xs: 12, sm: 12 },
+
                                 }
                                 ]}
+                                spacing={1}
+                                gridStyles={localClasses.contentCenter}
                             />,
                             gridSize: { xs: 12, sm: 6 }
                         },
@@ -515,100 +620,219 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     )
 
     const CampaignBox3 = () => (
-        <Box p={5}>
+        <Box pt={3}>
+            <Typography className={localClasses.suHeading}>Text Inserts</Typography>
 
             <SimpleGrid
-                spacing={3}
+                spacing={2}
                 centerlize={true}
                 gridArr={
                     [
                         {
                             content: <SimpleGrid
-                                spacing={3}
+                                spacing={2}
                                 centerlize={true}
                                 gridArr={
                                     [
                                         {
                                             content: <SimpleGrid
-                                                gridArr={[{
-                                                    content: <Typography title={t("Field1")} align="right">{t("Field1")}</Typography>,
-                                                    gridSize: { xs: 12, sm: 10 }
-                                                },
-                                                {
-                                                    content: <Radio
-                                                        checked={selectedRadio === 'a'}
-                                                        onChange={(e) => setSelectedRadio(e.target.value)}
-                                                        value="a"
-                                                        name="radio-button-demo"
-                                                        inputProps={{ 'aria-label': 'A' }}
-                                                    />,
-                                                    gridSize: { xs: 12, sm: 2 }
-                                                }
+                                                gridArr={[
+                                                    {
+                                                        content: <Checkbox
+
+                                                            defaultChecked
+                                                            color="primary"
+                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                        />,
+                                                        gridSize: { xs: 6, sm: 2 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("If you do not see this email, click here")} align="left">{t("If you do not see this email, click here")}</Typography>,
+                                                        gridSize: { xs: 6, sm: 10 }
+                                                    },
+
                                                 ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
+                                            />,
+                                            gridSize: { xs: 12, sm: 12 },
+                                        },
+                                        {
+                                            content: <SimpleGrid
+                                                gridArr={[
+                                                    {
+                                                        content: <Checkbox
+
+                                                            defaultChecked
+                                                            color="primary"
+                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                        />,
+                                                        gridSize: { xs: 6, sm: 2 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("Print mail")} align="left">{t("Print mail")}</Typography>,
+                                                        gridSize: { xs: 6, sm: 10 }
+                                                    },
+
+                                                ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
                                             />,
                                             gridSize: { xs: 12, sm: 12 }
                                         },
 
                                         {
                                             content: <SimpleGrid
-                                                gridArr={[{
-                                                    content: <Typography title={t("Field2")} align="right">{t("Field2")}</Typography>,
-                                                    gridSize: { xs: 12, sm: 10 }
-                                                },
-                                                {
-                                                    content: <Radio
-                                                        checked={selectedRadio === 'b'}
-                                                        onChange={(e) => setSelectedRadio(e.target.value)}
-                                                        value="b"
-                                                        name="radio-button-demo"
-                                                        inputProps={{ 'aria-label': 'A' }}
-                                                    />,
-                                                    gridSize: { xs: 12, sm: 2 }
-                                                }
+                                                gridArr={[
+                                                    {
+                                                        content: <Checkbox
+
+                                                            defaultChecked
+                                                            color="primary"
+                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                        />,
+                                                        gridSize: { xs: 6, sm: 2 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("Remove cunstomer from mail list")} align="left">{t("Remove cunstomer from mail list")}</Typography>,
+                                                        gridSize: { xs: 6, sm: 10 }
+                                                    },
+
                                                 ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
+                                            />,
+                                            gridSize: { xs: 12, sm: 12 }
+                                        },
+                                        {
+                                            content: <SimpleGrid
+                                                gridArr={[
+                                                    {
+                                                        content: <Checkbox
+
+                                                            defaultChecked
+                                                            color="primary"
+                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                        />,
+                                                        gridSize: { xs: 6, sm: 2 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("Update customer information")} align="left">{t("Update customer information")}</Typography>,
+                                                        gridSize: { xs: 6, sm: 10 }
+                                                    },
+
+                                                ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
+                                            />,
+                                            gridSize: { xs: 12, sm: 12 }
+                                        },
+                                    ]
+                                }
+                            />,
+                            gridSize: { xs: 12, sm: 6 }
+                        },
+                        {
+                            content: <SimpleGrid
+                                spacing={2}
+                                centerlize={true}
+                                gridArr={
+                                    [
+                                        {
+                                            content: <SimpleGrid
+                                                gridArr={[
+                                                    {
+                                                        content: <Radio
+                                                            checked={selectedRadio === 'a'}
+                                                            onChange={(e) => setSelectedRadio(e.target.value)}
+                                                            value="a"
+                                                            name="radio-button-demo"
+                                                            inputProps={{ 'aria-label': 'A' }}
+                                                        />,
+                                                        gridSize: { xs: 12, sm: 3 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("At the beginning")} align="left">{t("At the beginning")}</Typography>,
+                                                        gridSize: { xs: 12, sm: 9 }
+                                                    },
+
+                                                ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
                                             />,
                                             gridSize: { xs: 12, sm: 12 }
                                         },
 
                                         {
                                             content: <SimpleGrid
-                                                gridArr={[{
-                                                    content: <Typography title={t("Field2")} align="right">{t("Field2")}</Typography>,
-                                                    gridSize: { xs: 12, sm: 10 }
-                                                },
-                                                {
-                                                    content:
-                                                        <Radio
+                                                gridArr={[
+                                                    {
+                                                        content: <Radio
+                                                            checked={selectedRadio === 'b'}
+                                                            onChange={(e) => setSelectedRadio(e.target.value)}
+                                                            value="b"
+                                                            name="radio-button-demo"
+                                                            inputProps={{ 'aria-label': 'A' }}
+                                                        />,
+                                                        gridSize: { xs: 12, sm: 3 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("At the beginning")} align="left">{t("At the beginning")}</Typography>,
+                                                        gridSize: { xs: 12, sm: 9 }
+                                                    },
+
+                                                ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
+                                            />,
+                                            gridSize: { xs: 12, sm: 12 }
+                                        },
+
+                                        {
+                                            content: <SimpleGrid
+                                                gridArr={[
+                                                    {
+                                                        content: <Radio
                                                             checked={selectedRadio === 'c'}
                                                             onChange={(e) => setSelectedRadio(e.target.value)}
                                                             value="c"
                                                             name="radio-button-demo"
                                                             inputProps={{ 'aria-label': 'A' }}
                                                         />,
-                                                    gridSize: { xs: 12, sm: 2 }
-                                                }
+                                                        gridSize: { xs: 12, sm: 3 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("At the beginning")} align="left">{t("At the beginning")}</Typography>,
+                                                        gridSize: { xs: 12, sm: 9 }
+                                                    },
+
                                                 ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
                                             />,
                                             gridSize: { xs: 12, sm: 12 }
                                         },
                                         {
                                             content: <SimpleGrid
-                                                gridArr={[{
-                                                    content: <Typography title={t("Field4")} align="right">{t("Field4")}</Typography>,
-                                                    gridSize: { xs: 12, sm: 10 }
-                                                },
-                                                {
-                                                    content:
-                                                        <Radio
+                                                gridArr={[
+                                                    {
+                                                        content: <Radio
                                                             checked={selectedRadio === 'd'}
                                                             onChange={(e) => setSelectedRadio(e.target.value)}
                                                             value="d"
                                                             name="radio-button-demo"
                                                             inputProps={{ 'aria-label': 'A' }}
                                                         />,
-                                                    gridSize: { xs: 12, sm: 2 }
-                                                }
+                                                        gridSize: { xs: 12, sm: 3 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("At the beginning")} align="left">{t("At the beginning")}</Typography>,
+                                                        gridSize: { xs: 12, sm: 9 }
+                                                    },
+
                                                 ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
                                             />,
                                             gridSize: { xs: 12, sm: 12 }
                                         },
@@ -616,94 +840,119 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                 }
 
                             />,
-                            gridSize: { xs: 12, sm: 6 }
+                            gridSize: { xs: 12, sm: 3 }
                         },
                         {
                             content: <SimpleGrid
-                                spacing={3}
+                                spacing={2}
                                 centerlize={true}
                                 gridArr={
                                     [
                                         {
                                             content: <SimpleGrid
-                                                gridArr={[{
-                                                    content: <Typography title={t("Field1")} align="right">{t("Field1")}</Typography>,
-                                                    gridSize: { xs: 6, sm: 10 }
-                                                },
-                                                {
-                                                    content: <Checkbox
-                                                        defaultChecked
-                                                        color="primary"
-                                                        inputProps={{ 'aria-label': 'secondary checkbox' }}
-                                                    />,
-                                                    gridSize: { xs: 6, sm: 2 }
-                                                }
+                                                gridArr={[
+                                                    {
+                                                        content: <Radio
+                                                            checked={selectedRadio === 'a'}
+                                                            onChange={(e) => setSelectedRadio(e.target.value)}
+                                                            value="a"
+                                                            name="radio-button-demo"
+                                                            inputProps={{ 'aria-label': 'A' }}
+                                                        />,
+                                                        gridSize: { xs: 12, sm: 3 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("At the bottom")} align="left">{t("At the bottom")}</Typography>,
+                                                        gridSize: { xs: 12, sm: 9 }
+                                                    },
+
                                                 ]}
-                                            />,
-                                            gridSize: { xs: 12, sm: 12 }
-                                        },
-                                        {
-                                            content: <SimpleGrid
-                                                gridArr={[{
-                                                    content: <Typography title={t("Field2")} align="right">{t("Field2")}</Typography>,
-                                                    gridSize: { xs: 6, sm: 10 }
-                                                },
-                                                {
-                                                    content: <Checkbox
-                                                        defaultChecked
-                                                        color="primary"
-                                                        inputProps={{ 'aria-label': 'secondary checkbox' }}
-                                                    />,
-                                                    gridSize: { xs: 6, sm: 2 }
-                                                }
-                                                ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
                                             />,
                                             gridSize: { xs: 12, sm: 12 }
                                         },
 
                                         {
                                             content: <SimpleGrid
-                                                gridArr={[{
-                                                    content: <Typography title={t("Field2")} align="right">{t("Field2")}</Typography>,
-                                                    gridSize: { xs: 6, sm: 10 }
-                                                },
-                                                {
-                                                    content:
-                                                        <Checkbox
-                                                            defaultChecked
-                                                            color="primary"
-                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                gridArr={[
+                                                    {
+                                                        content: <Radio
+                                                            checked={selectedRadio === 'b'}
+                                                            onChange={(e) => setSelectedRadio(e.target.value)}
+                                                            value="b"
+                                                            name="radio-button-demo"
+                                                            inputProps={{ 'aria-label': 'A' }}
                                                         />,
-                                                    gridSize: { xs: 6, sm: 2 }
-                                                }
+                                                        gridSize: { xs: 12, sm: 3 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("At the bottom")} align="left">{t("At the bottom")}</Typography>,
+                                                        gridSize: { xs: 12, sm: 9 }
+                                                    },
+
                                                 ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
+                                            />,
+                                            gridSize: { xs: 12, sm: 12 }
+                                        },
+
+                                        {
+                                            content: <SimpleGrid
+                                                gridArr={[
+                                                    {
+                                                        content: <Radio
+                                                            checked={selectedRadio === 'c'}
+                                                            onChange={(e) => setSelectedRadio(e.target.value)}
+                                                            value="c"
+                                                            name="radio-button-demo"
+                                                            inputProps={{ 'aria-label': 'A' }}
+                                                        />,
+                                                        gridSize: { xs: 12, sm: 3 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("At the bottom")} align="left">{t("At the bottom")}</Typography>,
+                                                        gridSize: { xs: 12, sm: 9 }
+                                                    },
+
+                                                ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
                                             />,
                                             gridSize: { xs: 12, sm: 12 }
                                         },
                                         {
                                             content: <SimpleGrid
-                                                gridArr={[{
-                                                    content: <Typography title={t("Field4")} align="right">{t("Field4")}</Typography>,
-                                                    gridSize: { xs: 6, sm: 10 }
-                                                },
-                                                {
-                                                    content:
-                                                        <Checkbox
-                                                            defaultChecked
-                                                            color="primary"
-                                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                gridArr={[
+                                                    {
+                                                        content: <Radio
+                                                            checked={selectedRadio === 'd'}
+                                                            onChange={(e) => setSelectedRadio(e.target.value)}
+                                                            value="d"
+                                                            name="radio-button-demo"
+                                                            inputProps={{ 'aria-label': 'A' }}
                                                         />,
-                                                    gridSize: { xs: 6, sm: 2 }
-                                                }
+                                                        gridSize: { xs: 12, sm: 3 }
+                                                    },
+                                                    {
+                                                        content: <Typography className={classes.f14} title={t("At the bottom")} align="left">{t("At the bottom")}</Typography>,
+                                                        gridSize: { xs: 12, sm: 9 }
+                                                    },
+
                                                 ]}
+                                                spacing={1}
+                                                gridStyles={localClasses.contentCenter}
                                             />,
                                             gridSize: { xs: 12, sm: 12 }
                                         },
                                     ]
                                 }
+
                             />,
-                            gridSize: { xs: 12, sm: 6 }
-                        }
+                            gridSize: { xs: 12, sm: 3 }
+                        },
+
                     ]}
 
             />
@@ -724,23 +973,22 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             <Divider />
             {CampaignBox1()}
             <Divider />
-            {/* <SimpleGrid
+            <SimpleGrid
                 spacing={3}
                 centerlize={true}
                 gridArr={[
                     {
-                        content: <CampaignBox2 />,
-                        gridSize: { xs: 12, sm: 7 }
-                    },
-                    {
                         content: <CampaignBox3 />,
                         gridSize: { xs: 12, sm: 5 }
                     },
+                    {
+                        content: <CampaignBox2 />,
+                        gridSize: { xs: 12, sm: 7 }
+                    },
                 ]}
-            /> */}
+            />
 
-            <Box className={classes.flex}>
-
+            <Box className={classes.flex} style={{ justifyContent: 'end' }}>
                 <Button
                     variant='contained'
                     size='small'
