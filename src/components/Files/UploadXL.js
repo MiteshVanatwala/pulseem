@@ -18,6 +18,8 @@ import { Loader } from '../Loader/Loader';
 import { useTranslation } from "react-i18next";
 import { renderHtml } from "../../helpers/utils";
 import { translateKeys } from '../../helpers/languageHelper';
+import moment from 'moment';
+import 'moment/locale/he';
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -42,7 +44,7 @@ const UploadXL = ({
 }) => {
     const { t } = useTranslation();
     const { ToastMessages, extraData } = useSelector((state) => state.sms);
-    const { isRTL } = useSelector((state) => state.core);
+    const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
     const dispatch = useDispatch();
     const styles = useStyles();
     const [fileToUpload, setFileToUpload] = useState(null);
@@ -67,6 +69,8 @@ const UploadXL = ({
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
     const [columnValidate, setcolumnValidate] = useState(false);
     const [dropIndex, setdropIndex] = useState(-1);
+    moment.locale(language);
+    const dateFormat = 'DD-MM-YYYY HH:mm:ss';
 
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
@@ -216,6 +220,23 @@ const UploadXL = ({
                                 b.push(a[i].split(","));
                             }
                             b.pop();
+                            b = b.map((row) => {
+                                return row.map((col) => {
+                                    try {
+                                        const slashSeperator = col.split('/');
+                                        if (slashSeperator.length > 1) {
+                                            let validDate = moment(col).format(dateFormat);
+                                            if (validDate.replace(' ', '').toLowerCase() !== 'invaliddate') {
+                                                col = moment(col).format(dateFormat);
+                                            }
+                                        }
+                                    }
+                                    catch (e) {
+                                        console.error(col);
+                                    }
+                                    return col;
+                                });
+                            })
                             settypedData(b);
                             settotalRecords(b.length)
 
@@ -274,6 +295,18 @@ const UploadXL = ({
                                                 }
                                                 if (item && String(item).indexOf("9.72") > -1) {
                                                     item = parseFloat(item);
+                                                }
+                                                const slashSeperator = item.split('/');
+                                                if (slashSeperator.length > 1) {
+                                                    try {
+                                                        let validDate = moment(item).format(dateFormat);
+                                                        if (validDate.replace(' ', '').toLowerCase() !== 'invaliddate') {
+                                                            item = moment(item).format(dateFormat);
+                                                        }
+                                                    }
+                                                    catch (e) {
+                                                        console.error(item);
+                                                    }
                                                 }
                                                 fixedItem.push(String(item).trim());
                                             });
@@ -553,6 +586,7 @@ const UploadXL = ({
                                                                 key={idx}
                                                                 id={idx}
                                                                 className={classes.tableColumn}
+                                                                style={{ direction: moment(temp, dateFormat, true).isValid() ? "ltr" : null }}
                                                             >
                                                                 {temp}
                                                             </td>
@@ -570,7 +604,9 @@ const UploadXL = ({
                                                 <tr key={id}>
                                                     {headers.map((data, idx) => {
                                                         return (
-                                                            <td key={idx} className={classes.tableColumn}
+                                                            <td key={idx}
+                                                                className={classes.tableColumn}
+                                                                style={{ direction: moment(item[idx], dateFormat, true).isValid() ? "ltr" : null }}
                                                             >
                                                                 {item[idx]}
                                                             </td>
@@ -596,6 +632,7 @@ const UploadXL = ({
         return {
             title: t('sms.columnAdjustment'),
             content: renderHtml(t('sms.reset_manual_upload_notice')),
+            disableBackdropClick: true,
             onClose: () => setDialogType('manualUpload'),
             onCancel: () => setDialogType(null),
             onConfirm: () => {
