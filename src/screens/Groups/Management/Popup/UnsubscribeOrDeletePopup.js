@@ -189,13 +189,18 @@ const UnsubscribeOrDeletePopup = ({
                 },
                 'S_201': {
                     code: 201,
-                    message: ToastMessages.RECIPIENTS_DELETED_FROM_GROUP,
+                    message: response.payload?.Summary?.TotalRecords < 1 ? ToastMessages.RECIPIENTS_DELETED_NOT_FOUND_RECORDS : ToastMessages.RECIPIENTS_DELETED_FROM_GROUP,
                     Func: () => {
-                        new Promise(async (resolutionFunc, rejectionFunc) => {
-                            await resolutionFunc(getData());
-                        }).then((res) => {
-                            onClose()
-                        })
+                        if (response.payload?.Summary?.TotalRecords < 1) {
+                            onClose();
+                        }
+                        else {
+                            new Promise(async (resolutionFunc, rejectionFunc) => {
+                                await resolutionFunc(getData());
+                            }).then((res) => {
+                                onClose()
+                            })
+                        }
                     }
                 },
                 'S_401': {
