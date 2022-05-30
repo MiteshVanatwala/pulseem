@@ -9,6 +9,7 @@ import { BiCreditCard } from 'react-icons/bi';
 import { Dialog } from '../../managment/index';
 import PurchaseSummary from './Dialogs/PurchaseSummary';
 import PackagesList from './Dialogs/PackagesList';
+import TranzilaIframe from './Dialogs/TranzilaIframe';
 import Pay from './Dialogs/Pay';
 import { MdNotificationsActive } from 'react-icons/md';
 import { FaExclamationCircle } from 'react-icons/fa';
@@ -92,23 +93,30 @@ const PricePackages = ({ classes,
                     smsBulkData={smsBulkData}
                     newsletterBulkData={newsletterBulkData}
                 />
-            case 2:
-                return <PurchaseSummary data={data}
+            case 2: {
+                return <TranzilaIframe
+                    data={data}
                     classes={classes}
                     isRTL={isRTL}
-                    packageId={packageId}
-                    onConfirm={onConfirm}
-                    onComplete={onComplete} />;
-            case 3: {
-                return <Pay
-                    classes={classes}
-                    isRTL={isRTL}
-                    onSetAddCredit={() => setAddNewCard(!addNewCard)}
-                    addNewCard={addNewCard}
-                    creditCards={creditCards}
-                    onConfirmPayment={onConfirmPayment}
-                    onComplete={onComplete} />;
+                    packageId={packageId} />
             }
+            // case 2:
+            //     return <PurchaseSummary data={data}
+            //         classes={classes}
+            //         isRTL={isRTL}
+            //         packageId={packageId}
+            //         onConfirm={onConfirm}
+            //         onComplete={onComplete} />;
+            // case 3: {
+            //     return <Pay
+            //         classes={classes}
+            //         isRTL={isRTL}
+            //         onSetAddCredit={() => setAddNewCard(!addNewCard)}
+            //         addNewCard={addNewCard}
+            //         creditCards={creditCards}
+            //         onConfirmPayment={onConfirmPayment}
+            //         onComplete={onComplete} />;
+            // }
         }
     }
 
