@@ -1109,7 +1109,7 @@ const Groups = ({ classes }) => {
                         DialogType={DialogType}
                         setDialog={setDialog}
                         handleResponses={(response, actions) => handleResponses(response, actions)}
-                        onAddRecipient={getData}
+                        onRecipientAdded={() => { setDialog(null); getData(); }}
                     />;
                 }
                 case DialogType.ADD_RECIPIENTS: {
@@ -1139,6 +1139,7 @@ const Groups = ({ classes }) => {
                         setToastMessage={setToastMessage}
                         selectedGroups={selectedGroups}
                         dialogType={dialog}
+                        getData={getData}
                         handleResponses={(response, actions) => handleResponses(response, actions)}
                     />;
                 }

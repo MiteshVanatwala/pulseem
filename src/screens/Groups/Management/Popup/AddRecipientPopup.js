@@ -61,7 +61,7 @@ const AddRecipientPopup = ({ classes,
     selectedGroups,
     selectGroup,
     ToastMessages,
-    onAddRecipient = () => null,
+    onRecipientAdded = () => null,
     handleResponses = (response, actions) => null
 }) => {
     const { t } = useTranslation();
@@ -198,11 +198,7 @@ const AddRecipientPopup = ({ classes,
                 'S_201': {
                     code: 201,
                     message: ToastMessages.RECIPIENT_ADDED,
-                    Func: new Promise(async (resolutionFunc, rejectionFunc) => {
-                        resolutionFunc(onAddRecipient());
-                    }).then((res) => {
-                        callback?.()
-                    }),
+                    Func: onRecipientAdded()
                 },
                 'S_400': {
                     code: 400,

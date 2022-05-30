@@ -24,7 +24,8 @@ const UnsubscribeOrDeletePopup = ({
     onClose,
     selectedGroups,
     handleResponses = (response, actions) => null,
-    ToastMessages
+    ToastMessages,
+    getData
 }) => {
     const { t } = useTranslation();
     const [highlighted, setHighlighted] = useState(false);
@@ -189,7 +190,13 @@ const UnsubscribeOrDeletePopup = ({
                 'S_201': {
                     code: 201,
                     message: ToastMessages.RECIPIENTS_DELETED_FROM_GROUP,
-                    Func: onClose()
+                    Func: () => {
+                        new Promise(async (resolutionFunc, rejectionFunc) => {
+                            await resolutionFunc(getData());
+                        }).then((res) => {
+                            onClose()
+                        })
+                    }
                 },
                 'S_401': {
                     code: 401,
