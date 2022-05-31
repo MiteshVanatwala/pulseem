@@ -248,7 +248,7 @@
   "AddSmsBulk": "Add Sms Bulk",
   "Pulished": "Published",
   "Recipients": "Recipients",
-  "SeeAll": "See All",
+  "SeeAll": "Show All",
   "Send": "Sent",
   "UserGuides": "User Guides",
   "CreateFacebookPost": "Create Facebook Post",
@@ -257,7 +257,7 @@
   "CreateSMS": "New SMS Campaign",
   "NewsletterReports": "Newsletter Reports",
   "SMSReports": "SMS Reports",
-  "MMSReports": "MMS Reports",
+  "MMSReports": "MMS Report",
   "Ok": "OK",
   "AddAnotherRecipient": "Add Another Recipient",
   "CreateGroup": "Create a group",
@@ -557,5 +557,7 @@
   "minimalDateRequired": "Date should not be before minimal date",
   "maximalDateRequired": "Date should not be after maximal date",
   "systemNotice": "System Notice",
-  "birthDate": "Birth Date"
+  "birthDate": "Birth Date",
+  "showTen": "Show 10",
+  "notNow": "Not now"
 }

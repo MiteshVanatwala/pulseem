@@ -21,7 +21,8 @@ export const coreSlice=createSlice({
     isAdmin: null,
     isAllowSwitchAccount: null,
     billingTypeId: null,
-    smsOldVersion: false
+    smsOldVersion: false,
+    accountSettings: null
   },
   reducers: {
     setIsClal: (state, action) => {
@@ -29,8 +30,11 @@ export const coreSlice=createSlice({
       setCookie("isClal", action.payload);
     },
     setAccountFeatures: (state, action) => {
-      state.accountFeatures = action.payload;
-      setCookie("accountFeatures", action.payload);
+      const data=action.payload;
+      state.accountSettings=data;
+      state.accountFeatures=data.Account.AccountFeatures.map(String);
+      setCookie("accountSettings", action.payload)
+      setCookie("accountFeatures", data.Account.AccountFeatures.map(String));
     },
     setLanguage: (state,action) => {
       state.language=action.payload
@@ -61,6 +65,6 @@ export const coreSlice=createSlice({
   }
 })
 
-export const {setLanguage,setWindowSize,setCoreData,setRowsPerPage,setIsClal,setAccountFeatures,setSmsOldVersion}=coreSlice.actions
+export const {setLanguage,setWindowSize,setCoreData,setRowsPerPage,setIsClal,setAccountFeatures,setSmsOldVersion,setAccountSettings}=coreSlice.actions
 
 export default coreSlice.reducer

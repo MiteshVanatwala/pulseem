@@ -78,7 +78,7 @@ export const mmsSlice = createSlice({
     mmsDeletedData: [],
     mmsDataError: '',
     mmsReport: [],
-    mmsGraph: [],
+    mmsGraph: null,
     mmsReportError: ''
   },
   reducers: {},
@@ -102,7 +102,7 @@ export const mmsSlice = createSlice({
     builder.addCase(duplicteMms.rejected, (_, action) => console.log('Error - api duplicteMms: ' + action.error))
     builder.addCase(deleteMms.rejected, (_, action) => console.log('Error - api deleteMms: ' + action.error))
     builder.addCase(restoreMms.rejected, (_, action) => console.log('Error - api restoreMms: ' + action.error))
-    builder.addCase(getMmsReport.rejected, (state, action) => ({ ...state, mmsReport: [] }))
+    builder.addCase(getMmsReport.rejected, (state, action) => ({ ...state, mmsReport: null }))
     builder.addCase(getMmsGraph.rejected, (state, action) => {
       state.mmsReportError = "No Data Found";
     })

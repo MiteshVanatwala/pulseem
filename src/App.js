@@ -14,7 +14,7 @@ import i18n from './i18n'
 import { BrowserRouter, useParams, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures, setSmsOldVersion } from './redux/reducers/coreSlice'
-import { isClalAccount, getAccountFeatures } from './redux/reducers/commonSlice';
+import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
 import { useClasses } from './style/classes/index'
@@ -384,16 +384,18 @@ const renderRoutes = (classes, history) => {
 
 const App = ({ screenSize }) => {
   const dispatch = useDispatch()
-  const { language, isRTL, windowSize } = useSelector(state => state.core)
+  const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
   screenSize && dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
 
     const initFeatures = async () => {
+      if (!accountSettings) {
+        const settings = await dispatch(getCommonFeatures());
+        dispatch(setAccountFeatures(settings.payload));
+      }
       const response = await dispatch(isClalAccount());
       dispatch(setIsClal(response.payload));
-      const features = await dispatch(getAccountFeatures());
-      dispatch(setAccountFeatures(features.payload));
       const smsOldVersion = getCookie('OldVersion')
       dispatch(setSmsOldVersion(smsOldVersion))
     }
@@ -434,13 +436,6 @@ const App = ({ screenSize }) => {
 
     const cookieFunctionObj = {
       jtoken: updateToken
-    }
-
-    const insertScript = () => {
-      const script = document.createElement("script");
-      script.src = `${siteTrackingScriptUrl}`; //?v=` + Math.floor(Date.now() / 1000);
-      script.async = false;
-      document.head.appendChild(script);
     }
 
     // window.addEventListener('resize',setWindowWidth)

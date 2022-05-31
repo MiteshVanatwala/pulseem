@@ -660,7 +660,7 @@ const SmsReport = ({ classes }) => {
       {renderManagmentLine()}
       {renderTable()}
       {renderTablePagination()}
-      <GraphReport classes={classes} showLoader={!smsGraph || smsGraph.length <= 0} reportData={smsGraph} />
+      <GraphReport classes={classes} showLoader={!smsGraph} reportData={smsGraph} />
       <Loader isOpen={showLoader} showBackdrop={true} />
     </DefaultScreen>
   )

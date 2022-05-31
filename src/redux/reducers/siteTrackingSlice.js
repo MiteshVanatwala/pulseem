@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { eventsInstance, instence } from '../../helpers/api';
 import { verifyGetUrl } from '../../helpers/functions';
 import { siteTrackingScriptUrl } from '../../config/index';
@@ -27,7 +27,7 @@ export const update = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
       const response = await eventsInstance.patch(`events/${data.id}`, data);
-      return response;
+      return { status: response.status, data: response.data };
     } catch (error) {
       return thunkAPI.rejectWithValue({ status: error.statusCode });
     }
@@ -88,35 +88,117 @@ export const setDomain = createAsyncThunk(
   }
 )
 
+export const makeId = () => {
+  let ID = "";
+  let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  for (var i = 0; i < 12; i++) {
+    ID += characters.charAt(Math.floor(Math.random() * 36));
+  }
+  return ID;
+}
+
+
 export const siteTrackingSlice = createSlice({
   name: 'siteTracking',
   initialState: {
     event: null,
+    eventError: null,
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'siteTracking.saved', showAnimtionCheck: true }
     },
     siteScript: null
   },
-  // middleware: [
-  //   ...getDefaultMiddleware({
-  //     serializableCheck: false
-  //   })
-  // ],
-  // reducers: {
-  //   updateEvent(state, action) {
-  //     state.event = action.payload;
-  //   }
-  // },
+  reducers: {
+    updateEventModel: (state, action) => {
+      try {
+        const newModel = {
+          id: '',
+          eventName: 'PAGE_VIEW',
+          domain: '',
+          actionType: 'ADD_CLIENTS_TO_GROUP',
+          metadata: [{
+            operatorKey: 'CONTAINS',
+            operatorValue: '',
+            groupIds: [],
+            id: makeId()
+          }]
+        };
+        if (action.payload.type === 'model') {
+          state.event = action.payload.model;
+          if (state.event.metadata) {
+            state.event.metadata.map((mt) => {
+              if (!mt.id || mt.id === '') {
+                mt.id = makeId();
+              }
+              return mt;
+            });
+          }
+        }
+        else if (action.payload.type === 'new') {
+          state.event = newModel;
+        }
+        else {
+          state.event[action.payload.prop] = action.payload.value;
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    updateMetaData: (state, action) => {
+      state.event.metadata.map((item) => {
+        if (item.id === action.payload.id) {
+          item[action.payload.key] = action.payload.value;
+        }
+        return item;
+      });
+    },
+    deleteMetaData: (state, action) => {
+      state.event.metadata = state.event.metadata.filter((item, idx) => item.id !== action.payload);
+    },
+    addMetaData: (state, action) => {
+      const newMetaData = action.payload;
+      newMetaData.id = makeId();
+      state.event.metadata = [...state.event.metadata, newMetaData];
+    },
+    resetEventModel: (state, action) => {
+      state.event = null;
+    },
+    getCurrentEventGroups: (state, action) => {
+      const currentEvent = state.event.metadata.filter((item) => item.id === action.payload);
+      return currentEvent.groupIds;
+    }
+  },
   extraReducers: builder => {
     builder
       .addCase(getScript.fulfilled, (state, { payload }) => {
         state.siteScript = payload.data;
       })
+      .addCase(get.fulfilled, (state, { payload }) => {
+        const eventResults = payload[0] ?? payload.data;
+        if (eventResults) {
+          state.event = payload[0] ?? payload.data;
+          if (state.event.metadata) {
+            state.event.metadata.map((mt) => {
+              if (!mt.id || mt.id === '') {
+                mt.id = makeId();
+              }
+              return mt;
+            });
+          }
+        }
+      })
       .addCase(get.rejected, (state, action) => {
-        state.event = action.error.message
+        state.eventError = action.error.message
       })
   }
 })
 
-// export const { updateEvent } = siteTrackingSlice.actions
+export const {
+  addMetaData,
+  updateMetaData,
+  deleteMetaData,
+  resetEventModel,
+  updateEventModel,
+  getCurrentEventGroups
+} = siteTrackingSlice.actions
 export default siteTrackingSlice.reducer

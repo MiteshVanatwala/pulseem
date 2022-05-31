@@ -100,7 +100,7 @@ const AppBarItem = ({
                         className={classes.appBarItemMenuItem}
                       >
                         {option.isFaIcon ?
-                          <option.iconSrc style={{padding: '0 5px'}} />
+                          <option.iconSrc style={{ padding: '0 5px' }} />
                           :
                           <img
                             src={option.iconSrc || DoubleArrowIcon}
@@ -172,17 +172,17 @@ const LanguageSelector = ({ windowSize, classes }) => {
 
 export const TopAppBar = ({ classes, currentPage = '' }) => {
   let cookieFeature = getCookie("accountFeatures");
-  let subAccountSettings = getCookie("subAccountSettings");
   const cookieIsClal = getCookie("isClal");
 
   if (cookieFeature && cookieFeature.constructor.name !== 'Array') {
     cookieFeature = null;
   }
 
-  const { companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, smsOldVersion } = useSelector(state => state.core)
+  const { accountSettings, companyName, windowSize, isRTL, imageURL, cameFromSubAccount, isAdmin, isAllowSwitchAccount, smsOldVersion } = useSelector(state => state.core)
   const phoneMenuButtonRef = useRef(null)
   const [open, setOpen] = useState(false)
   const [windowWidth, setWindowWidth] = useState(window.innerWidth)
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
   const topNavRef = useRef(null)
   const dispatch = useDispatch();
 
@@ -204,11 +204,17 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     }
   }, [])
 
+  useEffect(() => {
+    if (accountSettings && accountSettings !== '') {
+      setSettingsLoaded(true);
+    }
+  }, [accountSettings])
+
   const handleOpen = () => {
     setOpen(!open)
   }
   const { t } = useTranslation();
-  const routes = getRoutes(t, cookieIsClal, cookieFeature, subAccountSettings, windowSize, smsOldVersion, isRTL)
+  const routes = getRoutes(t, cookieIsClal, cookieFeature, accountSettings?.SubAccountSettings, windowSize, smsOldVersion, isRTL)
   const settings = getSettingsItem(t, classes.appBarSettingIcon, (isAllowSwitchAccount && (isAllowSwitchAccount.toLowerCase() === 'true' || isAdmin !== '')))
 
   const navigate = ({ uri }) => {
@@ -219,6 +225,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     }
   }
   const returnToAdmin = () => {
+    setCookie('accountSettings', '');
     window.location = '/Pulseem/ReactRedirect.aspx';
   }
 
@@ -283,10 +290,10 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
       routes[4],
       { title: t('mms.logPageHeaderResource1.Text'), iconUnicode: '\ue11b', href: '/react/MmsCampaigns', isShow: true },
       routes[6],
-      { title: t('master.Automations'), iconUnicode: '\ue087', href: '/react/Automations', isShow: subAccountSettings && subAccountSettings.IsDirectAccount !== true },
+      { title: t('master.Automations'), iconUnicode: '\ue087', href: '/react/Automations', isShow: accountSettings?.SubAccountSettings && accountSettings?.SubAccountSettings?.IsDirectAccount !== true },
       { title: t('appBar.reports.newsletterReports'), iconUnicode: '\ue049', href: reportsOptions[1].href, isShow: true },
       { title: t('appBar.reports.smsReports'), iconUnicode: '\ue04c', href: reportsOptions[2].href, isShow: true },
-      { title: t('report.DirectSendReport'), key: 'directSendReport', href: '/react/Reports/DirectSendReport', isShow: subAccountSettings && subAccountSettings.IsDirectAccount === true }      //routes[1]
+      { title: t('report.DirectSendReport'), key: 'directSendReport', href: '/react/Reports/DirectSendReport', isShow: accountSettings?.SubAccountSettings && accountSettings?.SubAccountSettings?.IsDirectAccount === true }      //routes[1]
     ]
     return (
       <>
@@ -387,12 +394,15 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
               alt='Logo'
               className={classes.appBarLogo} />
           </Box>
-          {renderAppBar()}
-          <AppBarItem
-            classes={classes}
-            item={{ title: t('appBar.logout') }}
-            onMainClick={logout}
-          />
+          {settingsLoaded && <>
+            {renderAppBar()}
+            <AppBarItem
+              classes={classes}
+              item={{ title: t('appBar.logout') }}
+              onMainClick={logout}
+            />
+          </>
+          }
         </Toolbar>
       </AppBar>
       <Box className={classes.appBarBorder} />

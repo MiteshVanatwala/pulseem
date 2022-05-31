@@ -21,9 +21,8 @@ import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { exportFile } from '../../../helpers/exportFromJson';
 import { MMSReportStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, setTotalSent } from '../../../helpers/exportHelper';
+import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
-import NameValueGridStructure from '../../../components/Grids/NameValueGridStructure';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import DataTable from '../../../components/Table/DataTable';
@@ -124,11 +123,12 @@ const MmsReport = ({ classes }) => {
         "UpdateDate": t("common.UpdateDate"),
         "SendDate": t('common.SendDate'),
         "CreditsPerMms": t('mmsreport.postCredits'),
-        "TotalSent": t('mmsreport.amount'),
         "Failure": t('common.failedStatus'),
-        "Removed": t('common.Removed'),
-        "TotalCredits": t('mmsreport.totalCreditsSent'),
+        "Removed": t('mmsreport.removal'),
+        // "TotalCredits": t('mmsreport.totalCreditsSent'),
+        "TotalSent": t('mmsreport.sent'),
         "FutureSends": t('mmsreport.futureSends'),
+        "Amount": t('mmsreport.sendAmout'),
     }
 
     const handleDownloadCsv = async () => {
@@ -136,7 +136,14 @@ const MmsReport = ({ classes }) => {
         orderList = await statusNumberToString(t, orderList, MMSReportStatus);
         orderList = await formatDateTime(orderList, t);
         orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-
+        orderList = orderList.reduce(
+            (previousValue, currentValue) => {
+                currentValue.Amount = currentValue.TotalSent + currentValue.FutureSends
+                return [...previousValue, currentValue]
+            },
+            []
+        );
+        console.log("OrderLIST: ", orderList)
         exportFile({
             data: orderList,
             fileName: 'mmsReport',
@@ -160,11 +167,10 @@ const MmsReport = ({ classes }) => {
 
     const handleSearch = (values) => {
         const rowData = mmsReport;
-        console.log("FilterVAlues:", filterValues)
         const filteredReports =
             rowData.filter((obj) => {
                 if (
-                    (values.campaignName ? obj.Name.includes(values.campaignName) : obj)
+                    (values.campaignName ? obj.Name.toLowerCase().includes(values.campaignName.toLowerCase()) : obj)
                 ) {
                     return true
                 }
@@ -180,13 +186,16 @@ const MmsReport = ({ classes }) => {
             })
         setFilteredResults(filteredReports)
         setPage(1);
+
+        if (values.fromDate || values.toDate || values.campaignName) {
+            setFilter(true);
+        }
+        else {
+            setFilter(false);
+        }
     }
 
-
-
-
     //  COMPONENTS  //
-
     const renderFilter = () => {
         if (windowSize === 'xs') {
             return (
@@ -226,6 +235,7 @@ const MmsReport = ({ classes }) => {
                 {windowSize !== 'xs' ?
                     <Grid item>
                         <DateField
+                            toolbarDisabled={false}
                             classes={classes}
                             value={filterValues.fromDate}
                             onChange={(value) => setFilterValues({
@@ -241,6 +251,7 @@ const MmsReport = ({ classes }) => {
                 {windowSize !== 'xs' ?
                     <Grid item>
                         <DateField
+                            toolbarDisabled={false}
                             classes={classes}
                             value={filterValues.toDate}
                             onChange={(value) => {
@@ -280,7 +291,6 @@ const MmsReport = ({ classes }) => {
                         variant='contained'
                         onClick={() => {
                             handleSearch(filterValues)
-                            setFilter(true);
                         }}
                         className={classes.searchButton}
                         endIcon={<SearchIcon />}
@@ -289,7 +299,7 @@ const MmsReport = ({ classes }) => {
                     </Button>
                 </Grid>
                 {
-                    (filterValues.campaignName || filterValues.fromDate || filterValues.toDate) && <Grid item>
+                    filter && <Grid item>
                         <Button
                             size='large'
                             variant='contained'
@@ -326,10 +336,8 @@ const MmsReport = ({ classes }) => {
                         onClick={() => handleDownloadCsv()}
                         startIcon={<ExportIcon />}
                     >
-                        {/* <ExportIcon /> */}
-                        <Typography variant="button" >
-                            {t('campaigns.exportFile')}
-                        </Typography>
+
+                        {t('campaigns.exportFile')}
                     </Button>
                     <CSVLink
                         data={csvData}
@@ -369,10 +377,11 @@ const MmsReport = ({ classes }) => {
                         arrow: classes.fBlack
                     }}
                     arrow={true}
-                    style={{ fontSize: 18, fontWeight: 'bold' }}
+                    style={{ fontSize: 18, fontWeight: 'bold', textAlign: 'center' }}
                     placement={'top'}
-                    title={<Typography noWrap={false}>{Name}</Typography>}
+                    title={<Typography noWrap={false} align="center">{Name}</Typography>}
                     text={Name}
+                    textAlign={'center'}
 
                 >
                     {
@@ -469,6 +478,7 @@ const MmsReport = ({ classes }) => {
             TotalSent,
             SendDate,
             UpdateDate,
+            Success,
             FutureSends,
             TotalSendPlan,
             Failure,
@@ -497,7 +507,7 @@ const MmsReport = ({ classes }) => {
                     className={classes.flex2}>
                     <Grid container direction={'row'} className={classes.justifyEvenly}>
                         <Grid item className={classes.plr10}>
-                            {renderIntData(TotalSendPlan, '', hrefs.TotalSendTo)}
+                            {renderIntData(TotalSent, '', hrefs.TotalSendTo)}
                         </Grid>
                         <Grid item className={classes.plr10}>
                             {renderIntData(FutureSends, '', hrefs.FutureSends)}
@@ -508,7 +518,7 @@ const MmsReport = ({ classes }) => {
                     classes={borderCellStyle}
                     align='center'
                     className={classes.flex1}>
-                    {renderIntData(TotalSent, '', hrefs.TotalSent)}
+                    {renderIntData(Success, '', hrefs.TotalSent)}
                 </TableCell>
                 <TableCell
                     classes={borderCellStyle}
@@ -563,7 +573,7 @@ const MmsReport = ({ classes }) => {
                 classes={rowStyle}>
                 <TableCell classes={{ root: clsx(classes.tableCellRoot, classes.flex1, classes.tabelCellPadding) }}>
                     <Box className={classes.inlineGrid} style={{ paddingInlineStart: 10 }}>
-                        {renderNameCell({ MmsCampaignID, Name, SendDate, UpdateDate }, true)}
+                        {renderNameCell({ MmsCampaignID, Name, SendDate, UpdateDate, Status }, true)}
                     </Box>
 
                     <Grid container spacing={2} style={{ paddingInlineStart: 10 }}>
@@ -620,7 +630,9 @@ const MmsReport = ({ classes }) => {
                 </TableBody>
             )
         }
-        return <Typography className={classes.flexCenter}>{t("common.NoData")}</Typography>
+        return <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+            <Typography>{t("common.NoDataTryFilter")}</Typography>
+        </Box>
     }
 
 
@@ -652,7 +664,7 @@ const MmsReport = ({ classes }) => {
                 page={page}
                 onPageChange={handlePageChange}
             />
-            <GraphReport classes={classes} showLoader={!mmsGraph || mmsGraph.length <= 0} reportData={mmsGraph} />
+            <GraphReport classes={classes} showLoader={!mmsGraph} reportData={mmsGraph} />
             <Loader isOpen={showLoader} showBackdrop={true} />
         </DefaultScreen>
     )

@@ -35,5 +35,7 @@
     "chartTooltip": "Click on any section of the graph to see a list of your recipients",
     "createFirstNewsletter": "Create your first Newsletter",
     "createFirstSms": "Create your first SMS",
-    "tooltipPurchaseNewFeature": "Purchase directly from the dashboard by clicking on the SMS or Newsletter options below. Have questions? Call support at 03-5240290"
+    "tooltipPurchaseNewFeature": "Purchase directly from the dashboard by clicking on the SMS or Newsletter options below. Have questions? Call support at 03-5240290",
+    "2faTitle": "Hey",
+    "2faDescription": "Would you like to add 2-factor authentication to your account?<br /><br />2-factor authentication will send a one-time password to your email <br/>when you log in and increase the security of your account with Pulseem.<br /><br />You can always add or remove this feature later in the Account Details section of your account"
   }

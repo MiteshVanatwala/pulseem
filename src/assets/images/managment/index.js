@@ -19,6 +19,7 @@ import { ReactComponent as PageArrowIcon } from './page_arrow.svg'
 import AddRecipient from './addRecipient.png'
 import AddRecipients from './addRecipients.png'
 import Reset from './reset.png'
+import CloseIcon from './x.png'
 
 
 export {
@@ -42,5 +43,6 @@ export {
   SurveryResultsIcon,
   AddRecipient,
   AddRecipients,
-  Reset
+  Reset,
+  CloseIcon
 }

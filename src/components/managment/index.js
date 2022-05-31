@@ -6,4 +6,4 @@ export {PopMassage} from './PopMassage'
 export {SearchField} from './SearchField'
 export {RestorDialogContent} from './RestorDialogContent'
 export {Switch} from './Switch'
-
+export {SolidDialog} from './SolidDialog'

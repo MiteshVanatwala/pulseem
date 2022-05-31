@@ -8,8 +8,8 @@ import {
     Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox
 } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
-import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking } from '../../redux/reducers/siteTrackingSlice';
-import { EventRequestModel, SiteTrackingModel } from '../../model/SiteTracking/SiteTrackingModel';
+import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel } from '../../redux/reducers/siteTrackingSlice';
+import { EventRequestModel } from '../../model/SiteTracking/SiteTrackingModel';
 import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
 import Toast from '../../components/Toast/Toast.component';
@@ -17,7 +17,6 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getCookie, setCookie } from '../../helpers/cookies';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { AiOutlineExclamationCircle } from "react-icons/ai";
-import { GroupDialog } from '../../components/Groups/GroupDialog';
 import EventTabs from './EventTabs';
 import { isValidUrl } from '../../helpers/UrlHelper';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
@@ -36,11 +35,9 @@ const renderHtml = (html) => {
 const SiteTrackingEditor = ({ classes }) => {
     // const { subAccountGroups } = useSelector((state) => state.sms);
     const { isRTL, windowSize } = useSelector(state => state.core);
-    const { selectedGroups, subAccountAllGroups } = useSelector((state) => state.group);
-    const { ToastMessages, siteScript } = useSelector((state) => state.siteTracking);
+    const { ToastMessages, siteScript, event } = useSelector((state) => state.siteTracking);
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
-    const [model, setModel] = useState(new SiteTrackingModel());
     const [validationError, setValidationError] = useState([]);
     const [dialogType, setDialogType] = useState({ type: null });
     const { t } = useTranslation();
@@ -64,31 +61,24 @@ const SiteTrackingEditor = ({ classes }) => {
     }, [dispatch]);
 
     useEffect(() => {
-        if (isValidDomain !== null || model.domain !== '') {
-            setIsValidDomain(isValidUrl(model.domain));
+        if (event && (isValidDomain !== null || event.domain !== '')) {
+            setIsValidDomain(isValidUrl(event.domain));
         }
-    }, [model.domain])
+    }, [event]);
 
     const getData = async () => {
         await dispatch(getScript());
-        const pGroups = await dispatch(getGroupsBySubAccountId());
+        await dispatch(getGroupsBySubAccountId());
         const response = await dispatch(get(EventRequestModel.PageView));
         const retModel = response.payload;
         if (!response.error && retModel.length !== 0) {
             const eventObject = retModel[0];
-            if (eventObject.metadata && eventObject.metadata.groupIds) {
-                setModel(eventObject);
-                let gs = eventObject.metadata.groupIds.map((gid) => {
-                    return pGroups.payload.find((g) => { return g.GroupID === gid });
-                });
-                dispatch(setSelectedGroups(gs));
-            }
-            else {
-                setModel(new SiteTrackingModel());
+            if (!eventObject.metadata) {
+                dispatch(updateEventModel({ type: 'new' }));
             }
         }
         else {
-            setModel(new SiteTrackingModel());
+            dispatch(updateEventModel({ type: 'new' }));
         }
         setShowLoader(false);
         const hideScriptIntro = getCookie("hideScriptSiteEventDialog");
@@ -97,47 +87,38 @@ const SiteTrackingEditor = ({ classes }) => {
         }
     }
 
-    const handleModelChange = (name, value) => {
-        setModel(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    }
-    const deepUpdate = (keys, value) => {
-        let e = { ...model };
-        if (e[keys[0]] && e[keys[0]][keys[1]]) {
-            e[keys[0]][keys[1]] = value;
-        }
-        else {
-            e[keys] = value;
-        }
-        setModel(e);
+    const handleModelChange = async (name, value) => {
+        await dispatch(updateEventModel({ prop: name, value: value }))
     }
     const validateForm = () => {
         let isValid = true;
 
-        if (model.domain === '') {
+        if (event.domain === '') {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainRequired')])
             isValid = false;
         }
-        if (model.domain !== '' && !isValidUrl(model.domain)) {
+        if (event.domain !== '' && !isValidUrl(event.domain)) {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainNotValid')])
             isValid = false;
         }
-        if (model.metadata.groupIds.length === 0) {
-            setValidationError(oldArray => [...oldArray, t('siteTracking.validation.groupsRequired')])
-            isValid = false;
-        }
-        if (model.metadata.operatorValue === '') {
-            setValidationError(oldArray => [...oldArray, t('siteTracking.validation.pageUrlRequired')])
-            isValid = false;
-        }
+        event.metadata.forEach((mt) => {
+            if (mt.groupIds.length === 0) {
+                setValidationError(oldArray => [...oldArray, t('siteTracking.validation.groupsRequired')])
+                isValid = false;
+            }
+            if (mt.operatorValue === '') {
+                setValidationError(oldArray => [...oldArray, t('siteTracking.validation.pageUrlRequired')])
+                isValid = false;
+                const el = document.getElementById(`input${mt.id}`);
+                el.classList.add('error');
+            }
+        });
         return isValid;
     }
     const onSave = async () => {
         setShowLoader(true);
         if (validateForm()) {
-            const request = { ...model };
+            const request = { ...event };
             const setDomainResponse = await dispatch(setDomain({ DomainAddress: request.domain }));
             if (setDomainResponse.payload.Result === 1) {
                 let response = null;
@@ -147,7 +128,8 @@ const SiteTrackingEditor = ({ classes }) => {
                 else {
                     response = await dispatch(post(request));
                     if (response.payload && response.payload.data) {
-                        handleModelChange('id', response.payload.data.id);
+                        const id = response.payload.data.id;
+                        dispatch(updateEventModel({ prop: 'id', id }));
                     }
                 }
                 onSaveReponse(response.payload);
@@ -175,33 +157,40 @@ const SiteTrackingEditor = ({ classes }) => {
         }
     }
     const onSaveReponse = (response) => {
-        switch (response.status) {
-            case 200:
-            case 201: {
-                setToastMessage(ToastMessages.SUCCESS);
-                break;
+        try {
+            let statusCode = response.statusCode ? response.statusCode : response.status
+            switch (statusCode) {
+                case 200:
+                case 201: {
+                    setToastMessage(ToastMessages.SUCCESS);
+                    break;
+                }
+                case 401: {
+                    setDialogType({ type: "notAutorized" });
+                    break;
+                }
+                case 422: {
+                    setDialogType({ type: 'missingMandatoryAction' })
+                    break;
+                }
+                case 409: {
+                    setDialogType({ type: 'domainAlreadyExist' })
+                    break;
+                }
+                case 400: {
+                    setDialogType({ type: 'invalidDomain' })
+                    break
+                }
+                default:
+                case 500: {
+                    setDialogType({ type: 'serverNotAble' })
+                    break;
+                }
             }
-            case 401: {
-                setDialogType({ type: "notAutorized" });
-                break;
-            }
-            case 422: {
-                setDialogType({ type: 'missingMandatoryAction' })
-                break;
-            }
-            case 409: {
-                setDialogType({ type: 'domainAlreadyExist' })
-                break;
-            }
-            case 400: {
-                setDialogType({ type: 'invalidDomain' })
-                break
-            }
-            default:
-            case 500: {
-                setDialogType({ type: 'serverNotAble' })
-                break;
-            }
+        }
+        catch (e) {
+            console.log(e);
+            setDialogType({ type: 'serverNotAble' })
         }
     }
 
@@ -216,7 +205,6 @@ const SiteTrackingEditor = ({ classes }) => {
             validationError: validationErrorDialog(),
             scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog(),
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
-            showGroups: renderGroupsDialog(),
             deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), renderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
             invalidDomain: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), t('siteTracking.invalidDomainAddress')),
         }
@@ -316,12 +304,12 @@ const SiteTrackingEditor = ({ classes }) => {
     const handleDeleteEvent = async () => {
         setShowLoader(true);
         setDialogType(null);
-        if (model.id && model.id !== '') {
+        if (event.id && event.id !== '') {
             const pResponse = await dispatch(deletePulseemSiteTracking())
-            await dispatch(deleteSiteTrackingEvent(model.id))
+            await dispatch(deleteSiteTrackingEvent(event.id))
             handleModelChange('id', null);
         }
-        setModel(new SiteTrackingModel());
+        dispatch(updateEventModel({ type: "new" }));
         dispatch(setSelectedGroups([]));
         setShowLoader(false);
     }
@@ -466,26 +454,6 @@ const SiteTrackingEditor = ({ classes }) => {
         }
         return null;
     }
-    const handleGroupSelection = () => {
-        setDialogType(null);
-    }
-
-    useEffect(() => {
-        model.metadata.groupIds = selectedGroups.map((g) => { return g.GroupID });
-        deepUpdate(['metadata', 'groupIds'], model.metadata.groupIds);
-    }, [selectedGroups]);
-
-    const renderGroupsDialog = () => {
-        return GroupDialog({
-            classes: classes,
-            title: t('siteTracking.selectGroups'),
-            groups: subAccountAllGroups,
-            allowSelectAll: true,
-            groupsSelected: selectedGroups,
-            onConfirm: () => { handleGroupSelection() },
-            onClose: () => { setDialogType(null) }
-        });
-    }
     //#endregion Dialogs
 
     const PageHeader = () => {
@@ -563,7 +531,7 @@ const SiteTrackingEditor = ({ classes }) => {
             {PageHeader()}
             {renderToast()}
             {renderDialog()}
-            {model && <Box style={{ marginBottom: 'auto' }}>
+            {event && <Box style={{ marginBottom: 'auto' }}>
                 <form className={classes.root} noValidate autoComplete="off">
                     <Grid container alignItems="center">
                         <Grid item lg={12} xs={12}>
@@ -608,13 +576,13 @@ const SiteTrackingEditor = ({ classes }) => {
                                 onPaste={handleDomainAddress}
                                 variant="outlined"
                                 onChange={handleOnDomainChange}
-                                value={model.domain}
+                                value={event.domain}
                                 style={{ marginTop: isValidDomain === false || isValidDomain === true ? 2 : 0 }}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <Typography className={clsx(classes.marginBlock20, classes.font24)}>{t("siteTracking.eventToTrack")}</Typography>
-                            <EventTabs classes={classes} model={model} deepUpdate={deepUpdate} setDialog={setDialogType} />
+                            <EventTabs classes={classes} setDialog={setDialogType} />
                         </Grid>
                     </Grid>
                 </form>
