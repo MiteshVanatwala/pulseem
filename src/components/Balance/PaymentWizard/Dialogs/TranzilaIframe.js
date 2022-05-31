@@ -1,20 +1,21 @@
 import clsx from 'clsx';
-import { useTranslation } from 'react-i18next'
 import { Button, Grid, Typography, Divider, FormControlLabel, FormControl, FormGroup, Radio, Link, Box } from '@material-ui/core';
-import { useSelector } from 'react-redux'
 import PurchaseSummary from './PurchaseSummary'
+import { Loader } from '../../../Loader/Loader';
 
 const TranzilaIframe = ({
+    t,
     classes,
     data,
     isRTL,
     packageId,
     windowSize,
+    paymentUrl = null,
     onComplete = () => null
 }) => {
     return <Grid container>
         <Grid item xs={12}>
-            <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>Add credit card</Typography>
+            <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{t("payment.updateCreditCard")}</Typography>
             <Divider />
         </Grid>
         <Grid item className={clsx(classes.mt25, classes.fullFlexItem)}>
@@ -26,11 +27,12 @@ const TranzilaIframe = ({
                 showButtons={false} />
 
         </Grid>
-        <Grid item xs={12} className={clsx(classes.mt25, classes.mb25)}>
+        <Grid item xs={12} className={clsx(classes.mb25)}>
             <Divider />
         </Grid>
         <Grid item xs={12} className={clsx(classes.fullFlexItem)}>
-            <Typography>Heelo tranzilla</Typography>
+            <Loader isOpen={paymentUrl === null} showBackdrop={false} />
+            <iframe title="Tranzila Url" src={`${paymentUrl}`} width={windowSize !== 'xs' ? 400 : 250} height="420" border="no" frameBorder="0" style={{ border: "none !important" }} />
         </Grid>
     </Grid>
 }

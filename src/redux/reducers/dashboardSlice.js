@@ -64,7 +64,7 @@ export const dashboardSlice = createSlice({
     packagesDetailsError: '',
     tipsError: '',
     shortcutsError: '',
-    purchaseLogs: []
+    // purchaseLogs: []
     // packagesList: [],
     // packagesListError: ''
   },
@@ -89,12 +89,12 @@ export const dashboardSlice = createSlice({
       .addCase(getTips.rejected, (state, action) => {
         state.tipsError = action.error.message
       })
-      .addCase(getPurchaseLog.fulfilled, (state, { payload }) => {
-        state.purchaseLogs = payload;
-      })
-      .addCase(getPurchaseLog.rejected, (state, action) => {
-        state.purchaseLogs = action.error.message
-      })
+    // .addCase(getPurchaseLog.fulfilled, (state, { payload }) => {
+    //   state.purchaseLogs = payload;
+    // })
+    // .addCase(getPurchaseLog.rejected, (state, action) => {
+    //   state.purchaseLogs = action.error.message
+    // })
 
   }
 })

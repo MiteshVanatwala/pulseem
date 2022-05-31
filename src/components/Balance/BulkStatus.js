@@ -4,7 +4,7 @@ import PricePackages from './PaymentWizard/PricePackages';
 import { GoPackage } from 'react-icons/go/index';
 import { Dialog } from '../managment/index';
 import { Grid, Paper, Typography } from '@material-ui/core';
-import { getPackagesDetails, getPurchaseLog } from '../../redux/reducers/dashboardSlice';
+import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { CgShoppingCart } from 'react-icons/cg';
@@ -49,7 +49,6 @@ const BulkStatus = ({ classes }) => {
   useEffect(() => {
     const initPackages = async () => {
       await dispatch(getPackagesDetails());
-      await dispatch(getPurchaseLog());
     }
 
     initPackages();
@@ -172,8 +171,8 @@ const BulkStatus = ({ classes }) => {
             item xs={9}
             className={getBillingTypeText(Sms) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
             justifyContent='space-between'
-          onMouseEnter={() => showSmsPackage(true)}
-          onMouseLeave={() => showSmsPackage(false)}
+            onMouseEnter={() => showSmsPackage(true)}
+            onMouseLeave={() => showSmsPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.sms.title')}</Typography>
             {isShowSmsPackage && isAllowSms() ? (
@@ -187,7 +186,7 @@ const BulkStatus = ({ classes }) => {
             )
               :
               (<Typography className={classes.bulkTitle}>
-                {Sms.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />} 
+                {Sms.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />}
                 {getBillingTypeText(Sms)}
               </Typography>)
             }
@@ -198,8 +197,8 @@ const BulkStatus = ({ classes }) => {
             item xs={9}
             className={getBillingTypeText(Newsletters) === 0 ? classes.bulkOutline : classes.bulkStatusBlue}
             justifyContent='space-between'
-          onMouseEnter={() => showEmailPackage(true)}
-          onMouseLeave={() => showEmailPackage(false)}
+            onMouseEnter={() => showEmailPackage(true)}
+            onMouseLeave={() => showEmailPackage(false)}
           >
             <Typography className={classes.bulkTitle}>{t('appBar.newsletter.title')}</Typography>
             {isShowEmailPackage && isAllowNewsletter() ? (
