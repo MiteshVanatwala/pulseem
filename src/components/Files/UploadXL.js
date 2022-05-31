@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useMemo } from "react";
-import ReactDOM from 'react-dom';
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Typography, Grid, Button, Box, TextField } from "@material-ui/core";
+import { Typography, Grid, Box, TextField } from "@material-ui/core";
 import { Dialog } from "../managment/index";
 import * as XLSX from 'xlsx';
 import clsx from "clsx";
@@ -17,7 +16,6 @@ import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { Loader } from '../Loader/Loader';
 import { useTranslation } from "react-i18next";
 import { renderHtml } from "../../helpers/utils";
-import { translateKeys } from '../../helpers/languageHelper';
 import moment from 'moment';
 import 'moment/locale/he';
 
@@ -43,14 +41,12 @@ const UploadXL = ({
     tooltipText = "smsReport.manualTotalTooltip"
 }) => {
     const { t } = useTranslation();
-    const { ToastMessages, extraData } = useSelector((state) => state.sms);
-    const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
+    const { extraData } = useSelector((state) => state.sms);
+    const { language } = useSelector(state => state.core)
     const dispatch = useDispatch();
     const styles = useStyles();
     const [fileToUpload, setFileToUpload] = useState(null);
-    const [isFilePicked, setIsFilePicked] = useState(false);
     const [showLoader, setLoader] = useState(false);
-    const hiddenFileInput = React.useRef(null);
     const [totalRecords, settotalRecords] = useState(0);
     const [areaData, setareaData] = useState("");
     const [dropClick, setdropClick] = useState(false);
@@ -63,7 +59,6 @@ const UploadXL = ({
     const [groupNameInput, setgroupNameInput] = useState("");
     // const [toastMessage, setToastMessage] = useState(null);
     const [groupList, setGroupList] = useState([]);
-    const [selectedGroups, setSelected] = useState([]);
     const [selectArray, setselectArray] = useState([]);
     const [groupTextError, setGroupTextError] = useState(false);
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
