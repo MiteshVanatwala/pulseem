@@ -30,6 +30,7 @@ export const Loader = ({
   thickness = 3.6,
   variant = 'indeterminate',
   showBackdrop = true,
+  zIndex = 1300,
   ...props
 }) => {
   const classes = useStyles();
@@ -37,7 +38,7 @@ export const Loader = ({
     <>
       {
         props.contained ?
-          <div style={{ width: '100%', minHeight: '100px', display: 'flex', justifyContent: 'center' }}>
+          <div style={{ width: '100%', minHeight: '100px', display: 'flex', justifyContent: 'center', zIndex: zIndex }}>
             <CircularProgress
               style={{ textAlign: 'center', margin: '0 auto', alignSelf: 'center' }}
               color="#fff"
@@ -49,7 +50,7 @@ export const Loader = ({
           :
           <div>
             {
-              showBackdrop ? (<Backdrop className={classes.backdrop} open={isOpen} >
+              showBackdrop ? (<Backdrop className={classes.backdrop} open={isOpen} style={{ zIndex: zIndex }}>
                 <CircularProgress
                   style={{ position: 'absolute', right: 0, left: 0, textAlign: 'center', margin: '0 auto' }}
                   color={color}

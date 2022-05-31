@@ -4,7 +4,8 @@ export const appBarStyle = (windowSize, isRTL, theme) => ({
   appBarItemContainer: {
     display: 'flex',
     flexDirection: 'column',
-    textDecoration: 'none'
+    textDecoration: 'none',
+    zIndex: 1300
   },
   appBarHrefContainer: {
     display: 'flex',

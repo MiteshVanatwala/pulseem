@@ -727,7 +727,6 @@ const NotificationManagement = ({ classes }) => {
   const renderTablePagination = () => {
     const handleRowsPerPageChange = (val) => {
       dispatch(setRowsPerPage(val))
-      setCookie('rpp', val, { maxAge: 2147483647 })
     }
     return (
       <TablePagination

@@ -522,6 +522,7 @@ export const getSmsStyle = (windowSize, isRTL, theme) => ({
         borderBottom: "1px solid #ddd",
         zIndex: "9",
         cursor: "pointer",
+        borderTop: "1px solid #ddd",
 
         '&:hover':
         {

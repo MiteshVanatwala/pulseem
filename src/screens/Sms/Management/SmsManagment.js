@@ -14,7 +14,7 @@ import {
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
-  getSmsData, restoreSms, deleteSms, duplicteSms, getSmsAuthorizationData, getAuthorizeNumbers, sendVerificationCode, verifyCode, getSmsByID
+  getSmsData, restoreSms, deleteSms, duplicteSms, getAuthorizeNumbers, sendVerificationCode, verifyCode, getSmsByID
 } from '../../../redux/reducers/smsSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -29,8 +29,8 @@ import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 const SmsManagnentScreen = ({ classes }) => {
-  const { language, windowSize, email, phone, rowsPerPage, isRTL } = useSelector(state => state.core) // smsOldVersion
-  const { smsData, smsDataError, smsDeletedData, authorizationData } = useSelector(state => state.sms)
+  const { language, windowSize, rowsPerPage, smsOldVersion, isRTL } = useSelector(state => state.core)
+  const { smsData, smsDeletedData } = useSelector(state => state.sms)
   const { username } = useSelector(state => state.user)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -106,8 +106,8 @@ const SmsManagnentScreen = ({ classes }) => {
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
             : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) || null
+          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) || null
 
           if (!values)
             return true
@@ -584,7 +584,6 @@ const SmsManagnentScreen = ({ classes }) => {
   const renderTablePagination = () => {
     const handleRowsPerPageChange = (val) => {
       dispatch(setRowsPerPage(val))
-      setCookie('rpp', val, { maxAge: 2147483647 })
     }
     return (
       <TablePagination

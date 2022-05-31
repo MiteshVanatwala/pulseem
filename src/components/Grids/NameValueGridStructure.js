@@ -1,21 +1,36 @@
-import { Grid, Typography } from "@material-ui/core"
+import { Box, Grid, makeStyles, Typography } from "@material-ui/core"
+import clsx from "clsx";
+
+const useStyles = makeStyles({
+    dataBox: {
+        "@media screen and (max-width: 1160px)": {
+            '& p': {
+                fontSize: '1em'
+            }
+        }
+    }
+});
 
 const NameValueGridStructure = ({ gridArr = [],
     gridSize = { xs: 12, sm: 6 },
     classes = { name: {}, value: {}, href: {} },
     variant = "subtitle2",
     align = "center",
+    direction = "row",
     reverse,
+    rootClass,
     ...props
 }) => {
 
+    const localClasses = useStyles();
+
     return (
         <>
-            <Grid container direction="row" >
+            <Grid container direction={direction} className={rootClass}>
                 {
                     gridArr.map((obj, idx) => {
                         return (
-                            <Grid item xs={gridSize?.xs} sm={gridSize?.sm} md={gridSize?.md ?? ''} lg={gridSize?.lg ?? ''} key={idx}>
+                            <Grid className={localClasses.dataBox} item xs={gridSize?.xs} sm={gridSize?.sm} md={gridSize?.md ?? ''} lg={gridSize?.lg ?? ''} key={idx}>
                                 {reverse &&
                                     <Typography className={obj.classes?.name ?? classes?.name ?? ''} align={align} variant={variant}>
                                         {obj?.name}
@@ -26,11 +41,25 @@ const NameValueGridStructure = ({ gridArr = [],
                                     href={classes.href ?? ''}
                                     target="_blank"
                                     align={align}
-                                    variant={variant}>
+                                    variant={variant}
+                                    style={{ cursor: obj.onClick ? 'pointer' : null }}
+                                    onClick={obj.onClick ?? (() => null)}
+                                >
                                     {obj?.value}
                                 </Typography>
+                                {
+                                    obj.component ?
+                                        <Box style={{ display: 'flex', justifyContent: 'center' }}>
+                                            {obj.component}
+                                        </Box> : ''
+                                }
                                 {!reverse &&
-                                    <Typography className={obj.classes?.name ?? classes?.name ?? ''} align={align} variant={variant}>
+                                    <Typography
+                                        className={obj.classes?.name ?? classes?.name ?? ''}
+                                        align={align}
+                                        variant={variant}
+                                        style={{ cursor: obj.onClick ? 'pointer' : null }}
+                                        onClick={obj.onClick ?? (() => null)}>
                                         {obj?.name}
                                     </Typography>
                                 }
