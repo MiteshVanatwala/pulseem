@@ -100,5 +100,6 @@
   "email_cell_notProvided": "Email/Cellphone not provided",
   "externalImport": "External Import",
   "recipientsDeletedSuccessfuly": "Recipients deleted successfuly",
-  "noRecordsFound": "No records found/updated"
+  "noRecordsFound": "No records found/updated",
+  "uploadLimitation": "You are able to upload up to 600,000 recipients at once"
 }

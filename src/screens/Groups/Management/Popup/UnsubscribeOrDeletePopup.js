@@ -387,6 +387,7 @@ const UnsubscribeOrDeletePopup = ({
 
     return (
         <Dialog
+            maxHeight={dialogType === "UNSUB_RECIPIENT" ? null : "45vh"}
             classes={classes}
             open={dialogType}
             childrenStyle={classes.h50v}

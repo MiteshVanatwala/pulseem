@@ -100,5 +100,6 @@
   "email_cell_notProvided": "דואר אלקטרוני/סלולרי לא סופקו",
   "externalImport": "ייבוא קבוצות חיצוניות",
   "recipientsDeletedSuccessfuly": "הלקוחות נמחקו בהצלחה",
-  "noRecordsFound": "לא נמצאו/עודכנו רשומות"
+  "noRecordsFound": "לא נמצאו/עודכנו רשומות",
+  "uploadLimitation": "באפשרותך להעלות עד 600,000 נמענים בבת אחת"
 }
