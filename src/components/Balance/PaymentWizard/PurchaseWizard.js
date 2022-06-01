@@ -81,6 +81,10 @@ const PurchaseWizard = ({ classes,
         switch (step) {
             case 1:
             default:
+                var dialogElement = document.getElementsByClassName("MuiDialog-paper")[0];
+                if (dialogElement) {
+                    dialogElement.style = "max-width: 1050px";
+                }
                 return <PackagesList data={data}
                     classes={classes}
                     onSelect={selectPackage}
@@ -98,6 +102,7 @@ const PurchaseWizard = ({ classes,
                     packageId={packageId}
                     onComplete={onPaymentResult}
                     paymentUrl={paymentUrl}
+                    onStepBack={onStepBack}
                     t={t}
                 />
             }

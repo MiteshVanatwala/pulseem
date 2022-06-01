@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Grid, Typography, Divider } from '@material-ui/core';
+import { Grid, Box, Typography, Divider, Link } from '@material-ui/core';
 import PurchaseSummary from './PurchaseSummary'
 import { Loader } from '../../../Loader/Loader';
 import { useEffect } from 'react';
@@ -12,6 +12,7 @@ const TranzilaIframe = ({
     packageId,
     windowSize,
     paymentUrl = null,
+    onStepBack = () => null,
     onComplete = () => null
 }) => {
     useEffect(() => {
@@ -32,7 +33,10 @@ const TranzilaIframe = ({
 
     return <Grid container>
         <Grid item xs={12}>
-            <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{t("payment.updateCreditCard")}</Typography>
+            <Box className={classes.justifyBetween} style={{alignItems: 'center'}}>
+                <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{t("payment.updateCreditCard")}</Typography>
+                <Link onClick={onStepBack} style={{ cursor: 'pointer' }}>{t("smsReport.back")}</Link>
+            </Box>
             <Divider />
         </Grid>
         <Grid item className={clsx(classes.mt25, classes.fullFlexItem)}>
