@@ -116,6 +116,13 @@ const UploadXL = ({
         });
         if (selectedItem.isdisabled === true) return;
 
+        if (h[idx] !== t("sms.adjustTitle")) {
+            const updateItem = selectArray.find((sa) => {
+                return sa.label === h[idx]
+            });
+            updateItem.isdisabled = false;
+        }
+        
         h[idx] = item.label;
         selectArray[id].isdisabled = true;
         selectArray[id].idx = idx;
