@@ -11,9 +11,15 @@ import {
   TextField,
   Box,
   useTheme,
-  Link
+  Link,
+  TableRow,
+  TableCell,
+  Checkbox,
+  makeStyles,
+  FormControlLabel
 } from "@material-ui/core";
-import { SearchIcon, ExportIcon } from "../../assets/images/managment/index";
+import { SearchIcon, ExportIcon, EditIcon, DeleteRecipient, DeleteEmail, DeletePhone } from "../../assets/images/managment/index";
+import { ManagmentIcon } from "../../components/managment/index";
 import { CSVLink } from "react-csv";
 import {
   TablePagination,
@@ -30,13 +36,45 @@ import { setRowsPerPage } from "../../redux/reducers/coreSlice";
 import { setCookie } from "../../helpers/cookies";
 import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
-import RenderRow from "./SubComp/RenderRow";
-import RenderPhoneRow from "./SubComp/RenderPhoneRow";
 import Toast from '../../components/Toast/Toast.component';
 import { Dialog } from '../../components/managment/index';
-import { searchAllClients } from "../../redux/reducers/clientSlice";
+import { deleteFromGroups, makeInvalidClients, removeEmailClient, removeSmsClient, searchAllClients } from "../../redux/reducers/clientSlice";
 import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
+import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
+import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
+// import { Static_CSR_Data } from "./tempConstants";
+import FlexGrid from "../../components/Grids/FlexGrid";
+import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
+
+
+
+
+const useStyles = makeStyles({
+  groupName: {
+    "@media screen and (max-width: 1160px)": {
+      fontSize: '16px'
+    }
+  },
+  noWrap: {
+    whiteSpace: 'nowrap',
+    '& p': {
+      whiteSpace: 'nowrap',
+    }
+  },
+  dataBox: {
+    whiteSpaces: 'nowrap',
+    "@media screen and (max-width: 1350px)": {
+      fontSize: '14px'
+    }
+  },
+  date: {
+    "@media screen and (max-width: 1160px)": {
+      fontSize: '13px'
+    }
+  }
+});
+
 
 const ClientSearchResult = ({ classes }) => {
   const {
@@ -51,14 +89,15 @@ const ClientSearchResult = ({ classes }) => {
   } = useSelector((state) => state.core);
 
   const { t } = useTranslation();
+  const localClasses = useStyles();
+  // const { groupData, ToastMessages } = useSelector((state) => state.group);
   const [selectedClients, setSelectedClients] = useState([]);
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
-
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const { ClientData, TotalCount, TotalRevenue, CampaignClicks } = useSelector(state => state.client);
+  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
@@ -108,19 +147,13 @@ const ClientSearchResult = ({ classes }) => {
   };
 
   const DialogType = {
-    ADD_GROUP: "addGroup",
-    EDIT_GROUP: "editGroup",
-    DELETE_GROUP: "delete group",
-    ADD_RECIPIENT: "add recipient",
-    ADD_RECIPIENTS: "add recipients",
-    UNSUB_RECIPIENT: "unsubscribe recipients",
-    DELETE_RECIPIENT: "delete recipients",
-    RESET_GROUP: 'reset group',
-    MESSAGE: "message",
-    SUMMARY: "summary",
-    EXPORT_ALL: "exportAll",
-    EXPORT_SELECTED: "exportSelected",
-    SIMPLY_CLUB: "simplyclub"
+    ADD_GROUP: "ADD_GROUP",
+    EDIT_RECIPIENT: "EDIT_RECIPIENT",
+    CONFIRM_DELETE_FROM_GROUPS: "CONFIRM_DELETE_FROM_GROUPS",
+    CONFIRM_REMOVE_EMAIL: "CONFIRM_REMOVE_EMAIL",
+    CONFIRM_REMOVE_PHONE: "CONFIRM_REMOVE_PHONE",
+    UNSUB_RECIPIENT: "UNSUB_RECIPIENT",
+    CONFIRM_INVALID: "CONFIRM_INVALID"
   };
 
   const sortData = () => {
@@ -216,6 +249,7 @@ const ClientSearchResult = ({ classes }) => {
   useEffect(() => {
     handleFilter();
     setData(ClientData);
+    // setData(Static_CSR_Data);
 
     if (TotalRevenue) {
       setRevenueSummary([
@@ -345,8 +379,23 @@ const ClientSearchResult = ({ classes }) => {
     } else setSelectedClients([...selectedClients, id]);
   };
 
+  const makeInvalid = () => {
+    dispatch(makeInvalidClients(selectedClients))
+  }
+
+  const removeRecipientFromAllGroups = () => {
+    dispatch(deleteFromGroups)
+  }
+  const removeEmailRecipient = () => {
+    dispatch(removeEmailClient)
+  }
+  const removeSMSRecipient = () => {
+    dispatch(removeSmsClient)
+  }
+
 
   //  COMPONENTS  //
+
   const renderHeader = () => {
     return (
       <>
@@ -538,9 +587,7 @@ const ClientSearchResult = ({ classes }) => {
               variant="contained"
               size="medium"
               className={clsx(classes.actionButton, classes.actionButtonRed)}
-            // onClick={() => {
-            //   selectedClients.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_GROUP)
-            // }}
+              onClick={() => selectedClients.length === 0 ? setToastMessage(ToastMessages.CLIENT_ZERO_SELECT) : setDialog(DialogType.CONFIRM_INVALID)}
             >
               {t("client.makeInvalid")}
             </Button>
@@ -604,7 +651,7 @@ const ClientSearchResult = ({ classes }) => {
     })
     setCookie("rpp", val, { maxAge: 2147483647 });
   };
-  const renderNameCell = (row, fullwidth) => {
+  const renderPhoneNameCell = (row, fullwidth) => {
     let date = null;
     const { FirstName, LastName } = row;
     let text = t("common.UpdatedOn");
@@ -644,8 +691,398 @@ const ClientSearchResult = ({ classes }) => {
       </>
     );
   };
+  const renderWebNameCell = (row, fullwidth) => {
+    let date = null;
+    const { FirstName, LastName, CreationDate, ClientID } = row;
+    let text = t("common.UpdatedOn");
+    date = moment(row.CreationDate, dateFormat);
 
-  const renderTableBody = useMemo(() => {
+    return (
+      <Grid container wrap="nowrap" spacing={1} alignItems='center'>
+        <Grid item sm={2}>
+          <Checkbox
+            color="primary"
+            checked={selectedClients && selectedClients.indexOf(ClientID) !== -1}
+            // indeterminate={}
+            onClick={() => {
+              if (selectedClients.indexOf(ClientID) !== -1) {
+                setSelectedClients(selectedClients.filter(item => item !== ClientID))
+              } else {
+                setSelectedClients([...selectedClients, ClientID])
+              }
+            }}
+          />
+
+        </Grid>
+        <Grid item sm={10}>
+          <CustomTooltip
+            isSimpleTooltip={false}
+            interactive={true}
+            classes={{
+              tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+              arrow: classes.fBlack
+            }}
+            arrow={true}
+            style={{ fontSize: 18, fontWeight: 'bold' }}
+            placement={'top'}
+            title={<Typography noWrap={false}>{FirstName}{LastName}</Typography>}
+            text={`${FirstName} ${LastName}`}
+
+          >
+            <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName}{LastName}</Typography>
+          </CustomTooltip>
+          <Typography
+            className={classes.grayTextCell}>
+            {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+          </Typography>
+        </Grid>
+      </Grid>
+
+    );
+  };
+
+
+  const RenderWebRow = (row) => {
+    //TODO: Translation left, confirm keys
+    // const { t } = useTranslation();
+    const {
+      Revenue,
+      ClientID,
+      Email,
+      Status,
+      SmsStatus,
+      Cellphone,
+      FirstName,
+      LastName,
+      UpdateDate,
+      CreationDate
+    } = row;
+
+    let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
+      return e === true
+    }).length;
+
+    const REDIRECT_OPTIONS = {
+      ShowGroup: 0,
+      ShowMails: 10,
+      ShowMailsActive: 11,
+      ShowMailsRemoved: 12,
+      ShowMailsErrored: 13,
+      ShowSms: 20,
+      ShowSmsActive: 21,
+      ShowSmsRemoved: 22,
+      ShowSmsErrored: 23
+    }
+
+
+    const renderCellIcons = () => {
+
+      const iconsMap = [
+        {
+          key: 'edit',
+          icon: EditIcon,
+          lable: t("common.edit"),
+          rootClass: classes.paddingIcon,
+          onClick: () => {
+            setSelectedClients([ClientID])
+            setDialog(DialogType.EDIT_RECIPIENT)
+          }
+        },
+
+        {
+          key: 'deleteFromGroups',
+          icon: DeleteRecipient,
+          lable: t("recipient.deleteFromGroups"),
+          rootClass: classes.paddingIcon,
+          onClick: () => {
+            setSelectedClients([ClientID])
+            setDialog(DialogType.CONFIRM_DELETE_FROM_GROUPS)
+          }
+        },
+        {
+          key: 'deleteFromEmail',
+          icon: DeleteEmail,
+          lable: t("recipient.deleteEmail"),
+          rootClass: classes.paddingIcon,
+          onClick: () => {
+            setSelectedClients([ClientID])
+            setDialog(DialogType.CONFIRM_REMOVE_EMAIL)
+          }
+        },
+        {
+          key: 'deleteFromPhone',
+          icon: DeletePhone,
+          lable: t("recipient.deletePhone"),
+          remove: windowSize === 'xs',
+          rootClass: classes.paddingIcon,
+          onClick: () => {
+            setSelectedClients([ClientID])
+            setDialog(DialogType.CONFIRM_REMOVE_PHONE)
+          }
+        },
+
+      ]
+      return (
+        <Grid
+          container
+          direction='row'
+          justifyContent={windowSize === 'xs' ? 'flex-start' : 'space-evenly'}>
+          {iconsMap.map(icon => (
+            <Grid
+              className={icon.disable && classes.disabledCursor}
+              key={icon.key}
+              item >
+              <ManagmentIcon
+                classes={classes}
+                {...icon}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )
+    }
+
+
+
+    const switchStatus = (isEmail) => {
+      if (Email && isEmail && Email !== '') {
+        return Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")
+      }
+      else if (Cellphone && !isEmail && Cellphone !== '') {
+        return SmsStatus === 0 ? t("common.statusActive") : t("common.Unsubscribed")
+      }
+      return t("emailStatus.noStatus")
+    }
+    const cssClasses = (isEmail) => {
+      if (isEmail) {
+        return Status === 1 ? classes.sendIconText : Email ? classes.textColorRed : classes.textColorBlue;
+      }
+      else {
+        return SmsStatus === 0 ? classes.sendIconText : Cellphone ? classes.textColorRed : classes.textColorBlue
+      }
+    }
+
+    return (
+      <TableRow key={Math.round(Math.random() * 999999999)} classes={rowStyle}>
+        <TableCell classes={cellStyle} align="center" className={classes.flex4}>
+          <Grid container direction="row">
+            <Grid item sm={12 - iconsCells}>
+              {/* {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate })} */}
+              {renderWebNameCell({ ClientID, FirstName, LastName, isChecked: true, CreationDate, UpdateDate })}
+            </Grid>
+
+          </Grid>
+        </TableCell>
+        <TableCell
+          classes={cellStyle}
+          align="center"
+          className={classes.flex6}
+        >
+          {renderCellIcons()}
+        </TableCell>
+        <TableCell classes={cellStyle} align="center" className={classes.flex2}>
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        </TableCell>
+        <TableCell classes={cellStyle} align="center" className={classes.flex4}>
+          <FlexGrid
+            customStyle={{ justifyContent: 'space-between' }}
+            gridArr={[
+              {
+                label: t(""),
+                component: (
+                  <Typography title={Email} className={classes.bold}>{`${Email && Email.length > 18 ? Email.substring(0, 18) + '...' : Email}`}</Typography>
+                ),
+                classes: { text: localClasses.noWrap },
+              },
+              {
+                label: "",
+                component: <Typography className={clsx(classes.bold, cssClasses(true))}>{switchStatus(true)}</Typography>,
+                classes: { text: localClasses.noWrap },
+              }
+            ]}
+            variant="body1"
+            align="center"
+          />
+        </TableCell>
+        <TableCell classes={cellStyle} align="center" className={classes.flex3} style={{ border: 'none' }}>
+          <FlexGrid
+            customStyle={{ justifyContent: 'space-between' }}
+            gridArr={[
+              {
+                label: t(""),
+                component: (
+                  <Typography className={classes.bold}>{Cellphone}</Typography>
+                ),
+                classes: { text: localClasses.noWrap },
+              },
+              {
+                label: "",
+
+                component: <Typography className={clsx(classes.bold, cssClasses(false))}>{switchStatus(false)}</Typography>,
+                classes: { text: localClasses.noWrap },
+              }
+            ]}
+            variant="body1"
+            align="center"
+          />
+        </TableCell>
+
+      </TableRow>
+    );
+  };
+
+  const RenderPhoneRow = (row) => {
+    const {
+      Revenue,
+      ClientID,
+      Email,
+      Status,
+      SmsStatus,
+      Cellphone,
+
+    } = row;
+    return (
+      <TableRow key={ClientID} component="div" classes={rowStyle}>
+        <TableCell
+          style={{ flex: 1 }}
+          classes={{ root: classes.tableCellRoot }}
+          className={classes.p20}
+        >
+          <Box className={classes.spaceBetween}>
+            <Box className={classes.inlineGrid}>
+              {renderPhoneNameCell(row)}
+            </Box>
+            <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
+
+              <Typography className={classes.bold}>
+                {t("common.campaignRevenue")}
+              </Typography>
+              <Typography>
+                {Revenue}
+              </Typography>
+
+            </Box>
+          </Box>
+          <Box className={clsx(classes.mt5)} style={{ maxWidth: '90%' }}>
+            <Box className={classes.flex}>
+              <Box className={clsx(classes.flex6)}>
+                <Typography className={classes.bold}>{t("recipient.emails")}</Typography>
+                <Typography >{Email}</Typography>
+              </Box>
+              <Box className={clsx(classes.flex4)}>
+                <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
+              </Box>
+            </Box>
+
+          </Box>
+          <Box className={clsx(classes.mt2)} style={{ maxWidth: '90%' }}>
+
+            <Box className={classes.flex}>
+              <Box className={clsx(classes.flex6)}>
+                <Typography className={classes.bold}>{t("common.Cellphone")}</Typography>
+                <Typography >{Cellphone}</Typography>
+              </Box>
+              <Box className={clsx(classes.flex4)}>
+                <Typography align='left' className={clsx(classes.middle, classes.bold, SmsStatus === 0 ? classes.sendIconText : classes.textColorRed)}>{SmsStatus === 0 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
+              </Box>
+            </Box>
+          </Box>
+        </TableCell>
+      </TableRow>
+    )
+  }
+
+  const ConfirmInvalidDialog = () => (<Dialog
+    classes={classes}
+    open={dialog === DialogType.CONFIRM_INVALID}
+    // title={t("group.delete")}
+    title={t("client.confirmMakeInvalidTitle")}
+    icon={<Box className={classes.dialogAlertIcon}>
+      !
+    </Box>}
+    showDivider={true}
+    onClose={() => setDialog(null)}
+    onCancel={() => setDialog(null)}
+    onConfirm={makeInvalid}
+    cancelText="common.Cancel"
+    confirmText="common.Ok"
+  >
+    <Box>
+      <Typography variant="subtitle1">
+        {t("client.confirmMakeInvalidText")}
+
+      </Typography>
+    </Box>
+  </Dialog>)
+
+
+
+
+
+  const ConfirmDialog = () => {
+
+    const DialogObject = {
+      "CONFIRM_INVALID": {
+        title: t("client.confirmMakeInvalidTitle"),
+        bodyText: t("client.confirmMakeInvalidText"),
+        onClose: () => setDialog(null),
+        onConfirm: makeInvalid,
+      },
+      "CONFIRM_DELETE_FROM_GROUPS": {
+        title: t('recipient.deleteRecipientFromGroup'),
+        bodyText: t('client.confirmDeleteFromAllGroups'),
+        onClose: () => setDialog(null),
+        onConfirm: removeRecipientFromAllGroups,
+      },
+      "CONFIRM_REMOVE_EMAIL": {
+        title: t('recipient.removeRecipientEmail'),
+        bodyText: t('client.confirmRemoveEmail'),
+        onClose: () => setDialog(null),
+        onConfirm: removeEmailRecipient,
+      },
+      "CONFIRM_REMOVE_PHONE": {
+        title: t('recipient.removeRecipientPhone'),
+        bodyText: t('client.confirmRemovePhone'),
+        onClose: () => setDialog(null),
+        onConfirm: removeSMSRecipient,
+      },
+    };
+
+    return (
+      <Dialog
+        classes={classes}
+        open={
+          dialog === DialogType.CONFIRM_INVALID ||
+          dialog === DialogType.CONFIRM_DELETE_FROM_GROUPS ||
+          dialog === DialogType.CONFIRM_REMOVE_EMAIL ||
+          dialog === DialogType.CONFIRM_REMOVE_PHONE
+        }
+
+        // title={t("group.delete")}
+        title={DialogObject[dialog]?.title || ''}
+        icon={<Box className={classes.dialogAlertIcon}>
+          !
+        </Box>}
+        showDivider={true}
+        onClose={DialogObject[dialog]?.onClose || ''}
+        onCancel={DialogObject[dialog]?.onClose || ''}
+        onConfirm={DialogObject[dialog]?.onConfirm || null}
+        cancelText="common.Cancel"
+        confirmText="common.Ok"
+      >
+        <Box>
+          <Typography variant="subtitle1">
+            {DialogObject[dialog]?.bodyText || ''}
+          </Typography>
+        </Box>
+      </Dialog>
+    )
+  }
+
+
+  const renderTableBody = () => {
     let sortedData = data ? data : [];
     let rpp = parseInt(rowsPerPage)
     if (sortedData.length <= 0) {
@@ -655,45 +1092,39 @@ const ClientSearchResult = ({ classes }) => {
     sortedData = data.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
 
     return (
-      <TableBody>
-        {sortedData.map((obj, idx) =>
-          windowSize === "xs" ?
-            (
-              <RenderPhoneRow
-                key={idx}
-                row={obj}
-                rowStyle={rowStyle}
-                name={renderNameCell(obj, true)}
-                classes={classes}
-                colorTextStyle={colorTextStyle}
-              // setSelectedClients={(id) => setSelectedClients([id])}
-              // DialogType={DialogType}
-              // setDialog={(val) => setDialog(val)}
-              />
-            )
-            : (
-              <RenderRow
-                key={idx}
-                row={obj}
-                classes={classes}
-                // setDialog={(val) => setDialog(val)}
-                handleSelected={(id) => handleSelected(id)}
-                selectedClients={selectedClients}
-                setSelectedClients={(id) => setSelectedClients([id])}
-                // DialogType={DialogType}
-                windowSize={windowSize}
-                dateFormat={dateFormat}
-                rowStyle={rowStyle}
-                cellStyle={cellStyle}
-                noBorderCellStyle={noBorderCellStyle}
-                colorTextStyle={colorTextStyle}
-              // handleDeleteGroup={handleDeleteGroup}
-              />
-            )
-        )}
-      </TableBody>
+      <>
+        <DataTable
+          tableContainer={{
+            className:
+              windowSize === "xs"
+                ? clsx(classes.mt3, classes.tableStyle)
+                : classes.tableStyle,
+          }}
+          table={{ className: classes.tableContainer }}
+          tableHead={{
+            tableHeadCells: TABLE_HEAD,
+            classes: rowStyle,
+            className: windowSize === "xs" && classes.dNone,
+          }}
+        >
+          <TableBody>
+            {sortedData.map((obj, idx) => windowSize === "xs" ? RenderPhoneRow(obj) : RenderWebRow(obj))}
+          </TableBody>
+        </DataTable>
+        <TablePagination
+          classes={classes}
+          rows={clientLength}
+          rowsPerPage={rowsPerPage}
+          onRowsPerPageChange={handleRowsPerPageChange}
+          rowsPerPageOptions={[6, 10, 20, 50]}
+          page={page}
+          onPageChange={(val) => {
+            setPage(val);
+          }}
+        />
+      </>
     );
-  }, [data, rowsPerPage, page, classes, selectedClients]);
+  };
 
   const clientLength = totalClients !== 0 ? totalClients : 0;
 
@@ -709,6 +1140,7 @@ const ClientSearchResult = ({ classes }) => {
           </Typography>
         )
       }
+
       return (
         <Dialog
           cancelText="common.Cancel"
@@ -726,59 +1158,86 @@ const ClientSearchResult = ({ classes }) => {
     }
   }
 
+
+  const showDialog = () => {
+    if (dialog !== null) {
+      switch (dialog) {
+        case DialogType.ADD_GROUP: {
+          return <AddGroupPopUp
+            classes={classes}
+            isOpen={dialog === DialogType.ADD_GROUP}
+            onClose={() => setDialog(null)}
+            setLoader={setLoader}
+            windowSize={windowSize}
+            ToastMessages={ToastMessages}
+            setToastMessage={setToastMessage}
+            // openARDialog={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
+            getData={getData}
+            handleResponses={(response, actions) => handleResponses(response, actions)}
+          />
+        }
+        case DialogType.EDIT_RECIPIENT: {
+          return <AddRecipientPopup
+            classes={classes}
+            isOpen={selectedClients.length === 1 && dialog === DialogType.EDIT_RECIPIENT}
+            onClose={() => { setDialog(null); setSelectedClients([]); }}
+            setLoader={setLoader}
+            windowSize={windowSize}
+            ToastMessages={ToastMessages}
+            setToastMessage={setToastMessage}
+            DialogType={DialogType}
+            setDialog={setDialog}
+            handleResponses={(response, actions) => handleResponses(response, actions)}
+            onRecipientAdded={() => { setDialog(null); getData(); }}
+            recipientData={
+              selectedClients[0] && (data.find((obj) => obj.ClientID === selectedClients[0]))
+            }
+          />
+        }
+        case DialogType.UNSUB_RECIPIENT: {
+          return <UnsubscribeOrDeletePopup
+            classes={classes}
+            isOpen={dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT}
+            onClose={() => { setDialog(null); }}
+            setLoader={setLoader}
+            windowSize={windowSize}
+            ToastMessages={ToastMessages}
+            setToastMessage={setToastMessage}
+            // selectedGroups={selectedGroups}
+            dialogType={dialog}
+            getData={getData}
+            handleResponses={(response, actions) => handleResponses(response, actions)}
+          />;
+        }
+        case DialogType.CONFIRM_INVALID:
+        case DialogType.CONFIRM_DELETE_FROM_GROUPS:
+        case DialogType.CONFIRM_REMOVE_EMAIL:
+        case DialogType.CONFIRM_REMOVE_PHONE:
+          {
+            return ConfirmDialog()
+          }
+
+        default: {
+          return <></>
+        }
+      }
+    }
+    return <></>;
+  }
+
   return (
     <DefaultScreen
       currentPage="groups"
       classes={classes}
       containerClass={clsx(classes.management, classes.mb50)}
     >
-      {renderToast()}
+      {toastMessage && renderToast()}
       {renderHeader()}
       {renderSearchLine()}
-      {windowSize !== "xs" ? renderManagmentLine() : null
-        // <Box className={clsx(classes.flex, classes.spaceBetween)}>
-        //   <Box
-        //     item
-        //     xs={windowSize === "xs" && 12}
-        //     className={clsx(classes.groupsLableContainer, (windowSize === "xs" || windowSize === "sm") ? classes.mt15 : '')}
-        //   >
-        //     <Typography className={classes.groupsLable}>
-        //       {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`}
-        //     </Typography>
-        //   </Box>
-        //   <Box className={clsx(classes.middle, classes.plr10)}>
-        //     <BiSortAlt2 className={classes.f22} />
-        //   </Box>
-        // </Box>
-      }
-      <DataTable
-        tableContainer={{
-          className:
-            windowSize === "xs"
-              ? clsx(classes.mt3, classes.tableStyle)
-              : classes.tableStyle,
-        }}
-        table={{ className: classes.tableContainer }}
-        tableHead={{
-          tableHeadCells: TABLE_HEAD,
-          classes: rowStyle,
-          className: windowSize === "xs" && classes.dNone,
-        }}
-      >
-        {renderTableBody}
-      </DataTable>
-      <TablePagination
-        classes={classes}
-        rows={clientLength}
-        rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleRowsPerPageChange}
-        rowsPerPageOptions={[6, 10, 20, 50]}
-        page={page}
-        onPageChange={(val) => {
-          setPage(val);
-        }}
-      />
+      {windowSize !== "xs" ? renderManagmentLine() : null}
+      {renderTableBody()}
       {renderConfirmDialog()}
+      {showDialog()}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   );

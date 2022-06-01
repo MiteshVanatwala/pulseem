@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import {
     Grid,
@@ -62,7 +62,8 @@ const AddRecipientPopup = ({ classes,
     selectGroup,
     ToastMessages,
     onRecipientAdded = () => null,
-    handleResponses = (response, actions) => null
+    handleResponses = (response, actions) => null,
+    recipientData = null
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
@@ -81,6 +82,11 @@ const AddRecipientPopup = ({ classes,
     })
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
 
+    useEffect(() => {
+        if (recipientData) {
+            setAddRecipientData({ ...addRecipientData, ...recipientData })
+        }
+    }, [])
 
 
     const handleBlur = (e) => {
@@ -149,6 +155,11 @@ const AddRecipientPopup = ({ classes,
         }
 
         handleChange(e)
+    }
+
+    const handleEditRecipient = () => {
+        //TODO: Edit CODE HERE 
+        onClose();
     }
 
     const handleSubmit = async (callback) => {
@@ -958,14 +969,14 @@ const AddRecipientPopup = ({ classes,
         <Dialog
             classes={classes}
             open={isOpen}
-            title={t('recipient.recipientAddPopUpTitle')}
+            title={recipientData ? t('recipient.recipientEditPopUpTitle') : t('recipient.recipientAddPopUpTitle')}
             icon={<div className={classes.dialogIconContent}>
                 {'\uE0D5'}
             </div>}
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}
-            onConfirm={handleSubmit}
+            onConfirm={recipientData ? handleEditRecipient : handleSubmit}
             reduceTitle
             style={{ minWidth: 240 }}
             renderButtons={() => (
@@ -1013,7 +1024,7 @@ const AddRecipientPopup = ({ classes,
                             {t("group.ok")}
                         </Button>
                     </Box>
-                    {windowSize !== "xs" && <Box
+                    {windowSize !== "xs" && !recipientData && <Box
                         item
                         xs={windowSize === "xs" && 12}
                         sm={4}

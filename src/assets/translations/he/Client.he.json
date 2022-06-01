@@ -5,6 +5,14 @@
   "removeClientFromAccountDescription": "האם ברצונך להסיר את הלקוח מהחשבון?",
   "removeClientFromSmsTitle": "הסרת לקוח משירותי SMS",
   "removeClientFromSmsDescription": "האם אתה בטוח שברצונך להסיר לקוח משירותי SMS?",
+  "confirmMakeInvalidTitle": "Make Invalid",
+  "confirmMakeInvalidText": "Are you Sure you want to make this client invalid ?",
+  "confirmDeleteFromAllGroups": "Are you Sure you want to remove clients from all groups ?",
+  "confirmRemoveEmail": "Are you sure you want to remove the recipient from the account ?",
+  "confirmRemovePhone": "Are you sure you want to remove this SMS recipient ?",
+  "errors": {
+    "zeroSelected": "No Client Selected"
+  },
   "logPageHeaderResource1": {
     "Text": "תוצאות חיפוש לקוחות"
   },

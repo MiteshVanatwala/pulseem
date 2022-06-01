@@ -51,6 +51,16 @@ export const reactivateSms = createAsyncThunk(
     }
   })
 
+export const makeInvalidClients = createAsyncThunk(
+  'client/makeInvalidClients', async (payload, thunkAPI) => {
+    try {
+      const response = await instence.post(`client/makeInvalidClients`, payload);
+      return JSON.parse(response.data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 export const searchAllClients = createAsyncThunk(
   'client/Get', async (payload, thunkAPI) => {
     try {
@@ -71,7 +81,7 @@ export const clientSlice = createSlice({
     CampaignClicks: 0,
     error: "",
     ToastMessages: {
-
+      CLIENT_ZERO_SELECT: { severity: 'error', color: 'error', message: 'client.errors.zeroSelected', showAnimtionCheck: false },
     }
   },
   extraReducers: builder => {
