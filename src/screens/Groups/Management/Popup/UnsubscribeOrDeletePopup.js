@@ -255,17 +255,10 @@ const UnsubscribeOrDeletePopup = ({
                     code: 201,
                     message: '',
                     Func: () => {
-                        setIsSubmitted(true)
-                        if (response.payload?.Summary?.TotalRecords < 1) {
-                            onClose();
-                        }
-                        else {
-                            new Promise(async (resolutionFunc, rejectionFunc) => {
-                                await resolutionFunc(getData());
-                            }).then((res) => {
-                                onClose()
-                            })
-                        }
+                        setIsSubmitted(true);
+                        new Promise(async (resolutionFunc, rejectionFunc) => {
+                            await resolutionFunc(getData());
+                        });
                     }
                 },
                 'S_401': {
