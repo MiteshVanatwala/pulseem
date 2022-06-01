@@ -63,10 +63,7 @@ export const dashboardSlice = createSlice({
     lastCampaignReportError: '',
     packagesDetailsError: '',
     tipsError: '',
-    shortcutsError: '',
-    // purchaseLogs: []
-    // packagesList: [],
-    // packagesListError: ''
+    shortcutsError: ''
   },
   extraReducers: builder => {
     builder

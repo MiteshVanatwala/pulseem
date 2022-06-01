@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import PricePackages from './PaymentWizard/PricePackages';
+import PurchaseWizard from './PaymentWizard/PurchaseWizard';
 import { GoPackage } from 'react-icons/go/index';
 import { Dialog } from '../managment/index';
 import { Grid, Paper, Typography } from '@material-ui/core';
@@ -122,7 +122,7 @@ const BulkStatus = ({ classes }) => {
       ),
       content: (
         <Grid item xs={12} style={{ paddingBottom: 25 }}>
-          <PricePackages classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType} />
+          <PurchaseWizard classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType} />
         </Grid >
       )
     };

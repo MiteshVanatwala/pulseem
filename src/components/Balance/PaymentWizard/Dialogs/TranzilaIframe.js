@@ -1,7 +1,8 @@
 import clsx from 'clsx';
-import { Button, Grid, Typography, Divider, FormControlLabel, FormControl, FormGroup, Radio, Link, Box } from '@material-ui/core';
+import { Grid, Typography, Divider } from '@material-ui/core';
 import PurchaseSummary from './PurchaseSummary'
 import { Loader } from '../../../Loader/Loader';
+import { useEffect } from 'react';
 
 const TranzilaIframe = ({
     t,
@@ -13,6 +14,22 @@ const TranzilaIframe = ({
     paymentUrl = null,
     onComplete = () => null
 }) => {
+    useEffect(() => {
+        window.addEventListener('message', (e) => {
+            if (e.data) {
+                try {
+                    const message = JSON.parse(e.data);
+                    if (message["result"] !== null) {
+                        onComplete(message);
+                    }
+                }
+                catch (e) {
+                    return false;
+                }
+            }
+        })
+    }, []);
+
     return <Grid container>
         <Grid item xs={12}>
             <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{t("payment.updateCreditCard")}</Typography>

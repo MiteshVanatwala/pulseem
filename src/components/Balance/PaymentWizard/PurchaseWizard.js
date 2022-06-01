@@ -1,25 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import clsx from 'clsx';
 import { useTranslation } from 'react-i18next'
-import { Button, Grid, Box, Typography } from '@material-ui/core';
+import { Grid, } from '@material-ui/core';
 import { Loader } from '../../Loader/Loader';
 import { getPaymentURL, getAccountCards } from '../../../redux/reducers/paymentSlice';
-import { BiCreditCard } from 'react-icons/bi';
-import { Dialog } from '../../managment/index';
-import PurchaseSummary from './Dialogs/PurchaseSummary';
 import PackagesList from './Dialogs/PackagesList';
 import TranzilaIframe from './Dialogs/TranzilaIframe';
-import Pay from './Dialogs/Pay';
-import { MdNotificationsActive } from 'react-icons/md';
-import { FaExclamationCircle } from 'react-icons/fa';
-import { getPackagesDetails } from '../../../redux/reducers/dashboardSlice';
-import {
-    CheckAnimation
-} from '../../../assets/images/settings/index'
+import PaymentResult from './Dialogs/PaymentResult';
 
-const PricePackages = ({ classes,
-    onComplete = () => null,
+const PurchaseWizard = ({ classes,
     packageType
 }) => {
     const { isRTL } = useSelector(state => state.core);
@@ -34,6 +23,7 @@ const PricePackages = ({ classes,
     const [showLoader, setLoader] = useState(true);
     const [packageId, setPackageId] = useState(null);
     const [step, setStep] = useState(1);
+    const [paymentResult, setPaymentResult] = useState(null);
     const [chargeDetails, setChargeDetails] = useState({
         CreditNumber: "",
         CVV: "",
@@ -69,15 +59,22 @@ const PricePackages = ({ classes,
     const selectPackage = (packageId) => {
         const pack = data.find((p) => { return p.ID === packageId });
         setPackageId(packageId);
-        setStep(step + 1);
+        setStep(2);
 
         const packageName = `${pack.CampaignType === 3 ? t('common.smsBulk') : t('common.newsletterBulk')} ${pack.Quantity}`;
 
         setChargeDetails({ ...chargeDetails, Price: pack.Price, PackageName: packageName, PackageType: pack.CampaignType, Quantity: pack.Quantity });
     }
 
-    const onConfirm = () => {
+    const onPaymentResult = (results) => {
+        setPaymentResult(results);
+        onStepNext();
+    }
+    const onStepNext = () => {
         setStep(step + 1);
+    }
+    const onStepBack = () => {
+        setStep(step - 1);
     }
 
     const purchaseWizard = () => {
@@ -99,9 +96,18 @@ const PricePackages = ({ classes,
                     classes={classes}
                     isRTL={isRTL}
                     packageId={packageId}
-                    onConfirm={onConfirm}
+                    onComplete={onPaymentResult}
                     paymentUrl={paymentUrl}
                     t={t}
+                />
+            }
+            case 3: {
+                return <PaymentResult
+                    t={t}
+                    isRTL={isRTL}
+                    classes={classes}
+                    paymentObject={paymentResult}
+                    onStepBack={onStepBack}
                 />
             }
         }
@@ -115,4 +121,4 @@ const PricePackages = ({ classes,
     );
 }
 
-export default PricePackages;
+export default PurchaseWizard;
