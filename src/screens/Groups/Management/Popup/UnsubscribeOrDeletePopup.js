@@ -254,7 +254,19 @@ const UnsubscribeOrDeletePopup = ({
                 'S_201': {
                     code: 201,
                     message: '',
-                    Func: () => setIsSubmitted(true)
+                    Func: () => {
+                        setIsSubmitted(true)
+                        if (response.payload?.Summary?.TotalRecords < 1) {
+                            onClose();
+                        }
+                        else {
+                            new Promise(async (resolutionFunc, rejectionFunc) => {
+                                await resolutionFunc(getData());
+                            }).then((res) => {
+                                onClose()
+                            })
+                        }
+                    }
                 },
                 'S_401': {
                     code: 401,
