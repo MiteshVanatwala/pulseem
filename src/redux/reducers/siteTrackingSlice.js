@@ -102,6 +102,7 @@ export const siteTrackingSlice = createSlice({
   name: 'siteTracking',
   initialState: {
     event: null,
+    purchaseEvent: null,
     eventError: null,
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'siteTracking.saved', showAnimtionCheck: true }
@@ -166,6 +167,9 @@ export const siteTrackingSlice = createSlice({
     getCurrentEventGroups: (state, action) => {
       const currentEvent = state.event.metadata.filter((item) => item.id === action.payload);
       return currentEvent.groupIds;
+    },
+    setPurchase: (state, action) => {
+      state.purchaseEvent = action.payload;
     }
   },
   extraReducers: builder => {
@@ -174,17 +178,29 @@ export const siteTrackingSlice = createSlice({
         state.siteScript = payload.data;
       })
       .addCase(get.fulfilled, (state, { payload }) => {
-        const eventResults = payload[0] ?? payload.data;
-        if (eventResults) {
-          state.event = payload[0] ?? payload.data;
-          if (state.event.metadata) {
-            state.event.metadata.map((mt) => {
-              if (!mt.id || mt.id === '') {
-                mt.id = makeId();
-              }
-              return mt;
-            });
+        try {
+          const response = payload.data ?? payload;
+          if (!Array.isArray(response)) {
+            return;
           }
+          const pageViewEvent = response?.find((e) => { return e.eventName === 'PAGE_VIEW' }) ?? null;
+          const purchaseEvent = response?.find((e) => { return e.eventName === 'PURCHASE' }) ?? null;
+          state.purchaseEvent = purchaseEvent ?? null;
+
+          if (pageViewEvent) {
+            state.event = pageViewEvent;
+
+            if (state.event.metadata) {
+              state.event.metadata.map((mt) => {
+                if (!mt.id || mt.id === '') {
+                  mt.id = makeId();
+                }
+                return mt;
+              });
+            }
+          }
+        } catch (e) {
+          console.info(e);
         }
       })
       .addCase(get.rejected, (state, action) => {
@@ -199,6 +215,7 @@ export const {
   deleteMetaData,
   resetEventModel,
   updateEventModel,
-  getCurrentEventGroups
+  getCurrentEventGroups,
+  setPurchase
 } = siteTrackingSlice.actions
 export default siteTrackingSlice.reducer

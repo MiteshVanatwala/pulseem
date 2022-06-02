@@ -31,7 +31,8 @@
     "addToGroups": "Add to Groups",
     "events": {
         "pageLoad": "Page Load",
-        "pageView": "Page View"
+        "pageView": "Page View",
+        "purchase": "Purchase"
     },
     "validation": {
         "domainRequired": "Domain - Required field",

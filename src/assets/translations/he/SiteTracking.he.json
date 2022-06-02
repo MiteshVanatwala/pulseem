@@ -31,7 +31,8 @@
     "addToGroups": "הוסף לקבוצות",
     "events": {
         "pageLoad": "טעינת עמוד",
-        "pageView": "צפייה בעמוד"
+        "pageView": "צפייה בעמוד",
+        "purchase": "רכישות"
     },
     "validation": {
         "domainRequired": "דומיין - שדה חובה",

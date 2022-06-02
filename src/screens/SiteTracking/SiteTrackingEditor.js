@@ -7,7 +7,7 @@ import Title from '../../components/Wizard/Title'
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import { Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
-import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel } from '../../redux/reducers/siteTrackingSlice';
+import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel, setPurchase } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel } from '../../model/SiteTracking/SiteTrackingModel';
 import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
@@ -34,7 +34,7 @@ const renderHtml = (html) => {
 const SiteTrackingEditor = ({ classes }) => {
     // const { subAccountGroups } = useSelector((state) => state.sms);
     const { isRTL, windowSize } = useSelector(state => state.core);
-    const { ToastMessages, siteScript, event } = useSelector((state) => state.siteTracking);
+    const { ToastMessages, siteScript, event, purchaseEvent } = useSelector((state) => state.siteTracking);
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [validationError, setValidationError] = useState([]);
@@ -45,6 +45,7 @@ const SiteTrackingEditor = ({ classes }) => {
     const refScriptCode = useRef(null);
     const [scriptDialog, handleScriptDialogCheck] = useState(false);
     const [isValidDomain, setIsValidDomain] = useState(null);
+    const [showActions, setShowActions] = useState(true);
 
     const theme = createTheme({
         palette: {
@@ -113,6 +114,23 @@ const SiteTrackingEditor = ({ classes }) => {
             }
         });
         return isValid;
+    }
+    const handlePurchase = async (isEnable) => {
+        if (isEnable) {
+            const request = {
+                domain: event?.domain,
+                eventName: "PURCHASE",
+                actionType: "TRACK_PURCHASE_EVENT",
+                metadata: []
+            }
+            const response = await dispatch(post(request));
+            request.id = response?.payload?.data?.id;
+            dispatch(setPurchase(request));
+
+        }
+        else {
+            await dispatch(deleteSiteTrackingEvent(purchaseEvent.id));
+        }
     }
     const onSave = async () => {
         setShowLoader(true);
@@ -622,18 +640,23 @@ const SiteTrackingEditor = ({ classes }) => {
                                 onPaste={handleDomainAddress}
                                 variant="outlined"
                                 onChange={handleOnDomainChange}
-                                value={event.domain}
+                                value={event?.domain}
                                 style={{ marginTop: isValidDomain === false || isValidDomain === true ? 2 : 0 }}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <Typography className={clsx(classes.marginBlock20, classes.font24)}>{t("siteTracking.eventToTrack")}</Typography>
-                            <EventTabs classes={classes} setDialog={setDialogType} />
+                            <EventTabs
+                                classes={classes}
+                                setDialog={setDialogType}
+                                showButtons={setShowActions}
+                                domain={event?.domain}
+                                onPurchase={handlePurchase} />
                         </Grid>
                     </Grid>
                 </form>
             </Box>}
-            {PageFooter()}
+            {showActions && PageFooter()}
         </Box>
         <Loader isOpen={showLoader} />
     </DefaultScreen>
