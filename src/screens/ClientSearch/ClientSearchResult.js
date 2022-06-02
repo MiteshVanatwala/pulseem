@@ -38,14 +38,17 @@ import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
 import Toast from '../../components/Toast/Toast.component';
 import { Dialog } from '../../components/managment/index';
-import { deleteFromGroups, makeInvalidClients, removeEmailClient, removeSmsClient, searchAllClients } from "../../redux/reducers/clientSlice";
+import { addClientsToNewGroup, deleteFromGroups, makeInvalidClients, removeEmailClient, removeSmsClient, searchAllClients } from "../../redux/reducers/clientSlice";
 import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
 import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
-// import { Static_CSR_Data } from "./tempConstants";
+import { Static_CSR_Data } from "./tempConstants";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
+import { exportFile } from '../../helpers/exportFromJson';
+import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../helpers/exportHelper';
+import { ClientStatus } from "../../helpers/PulseemArrays";
 
 
 
@@ -156,6 +159,37 @@ const ClientSearchResult = ({ classes }) => {
     CONFIRM_INVALID: "CONFIRM_INVALID"
   };
 
+  const exportColumnHeader = {
+    "FirstName": t('smsReport.firstName'),
+    "LastName": t('smsReport.lastName'),
+    "Revenue": t('common.campaignRevenue'),
+    "Email": t("common.Mail"),
+    "Status": t('common.Status'),
+    "Cellphone": t('common.Cellphone'),
+    "SmsStatus": t('common.smsStatus'),
+    "CreationDate": t('common.CreationDate'),
+    "UpdateDate": t('common.UpdateDate'),
+  }
+
+  const handleDownloadCsv = async () => {
+    let orderList = await data.reduce((prev, next) => {
+      let tempStatus = ClientStatus.Email.find((status) => status.id === next.Status)
+      let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === next.SmsStatus)
+      return [...prev, { ...next, Status: t(tempStatus.value), SmsStatus: t(tempSmsStatus.value) }]
+    }, []);
+    console.log("ORDERLIST: ", orderList)
+    orderList = preferredOrder(orderList, Object.keys(exportColumnHeader));
+    // orderList = await statusNumberToString(t, orderList, ClientStatus);
+    // orderList = await formatDateTime(orderList, t);
+    // orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
+    exportFile({
+      data: orderList,
+      fileName: 'ClientSearchResult',
+      exportType: 'csv',
+      fields: exportColumnHeader
+    });
+  }
+
   const sortData = () => {
     if (data && data.length > 0) {
       let tempData = [...data].sort((a, b) => {
@@ -248,8 +282,8 @@ const ClientSearchResult = ({ classes }) => {
 
   useEffect(() => {
     handleFilter();
-    setData(ClientData);
-    // setData(Static_CSR_Data);
+    // setData(ClientData);
+    setData(Static_CSR_Data);
 
     if (TotalRevenue) {
       setRevenueSummary([
@@ -370,14 +404,14 @@ const ClientSearchResult = ({ classes }) => {
     return null;
   }
 
-  const handleSelected = (id) => {
-    const index = selectedClients.indexOf(id);
-    if (index !== -1) {
-      let temp = [...selectedClients];
-      temp.splice(index, 1);
-      setSelectedClients([...temp]);
-    } else setSelectedClients([...selectedClients, id]);
-  };
+  // const handleSelected = (id) => {
+  //   const index = selectedClients.indexOf(id);
+  //   if (index !== -1) {
+  //     let temp = [...selectedClients];
+  //     temp.splice(index, 1);
+  //     setSelectedClients([...temp]);
+  //   } else setSelectedClients([...selectedClients, id]);
+  // };
 
   const makeInvalid = () => {
     dispatch(makeInvalidClients(selectedClients))
@@ -391,6 +425,21 @@ const ClientSearchResult = ({ classes }) => {
   }
   const removeSMSRecipient = () => {
     dispatch(removeSmsClient)
+  }
+
+  const handleAddRecipients = async (groupId) => {
+
+    const tempClientIds = await new Promise((resolve, reject) => {
+      let allClientIds = data.reduce((prev, next) => [...prev, next.ClientID], [])
+      resolve(allClientIds)
+    })
+
+    const tempData = {
+      GroupId: '',
+      ClientIds: [...tempClientIds]
+    }
+
+    dispatch(addClientsToNewGroup(tempData))
   }
 
 
@@ -587,7 +636,8 @@ const ClientSearchResult = ({ classes }) => {
               variant="contained"
               size="medium"
               className={clsx(classes.actionButton, classes.actionButtonRed)}
-              onClick={() => selectedClients.length === 0 ? setToastMessage(ToastMessages.CLIENT_ZERO_SELECT) : setDialog(DialogType.CONFIRM_INVALID)}
+              // onClick={() => selectedClients.length === 0 ? setToastMessage(ToastMessages.CLIENT_ZERO_SELECT) : setDialog(DialogType.CONFIRM_INVALID)}
+              onClick={() => setDialog(DialogType.CONFIRM_INVALID)}
             >
               {t("client.makeInvalid")}
             </Button>
@@ -602,7 +652,7 @@ const ClientSearchResult = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonGreen
             )}
-            onClick={() => setShowConfirmDialog(true)}
+            onClick={handleDownloadCsv}
             startIcon={<ExportIcon />}
           >
             {t("campaigns.exportFile")}
@@ -699,7 +749,7 @@ const ClientSearchResult = ({ classes }) => {
 
     return (
       <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-        <Grid item sm={2}>
+        {/* <Grid item sm={2}>
           <Checkbox
             color="primary"
             checked={selectedClients && selectedClients.indexOf(ClientID) !== -1}
@@ -713,8 +763,9 @@ const ClientSearchResult = ({ classes }) => {
             }}
           />
 
-        </Grid>
-        <Grid item sm={10}>
+        </Grid> */}
+        {/* <Grid item sm={10}> */}
+        <Grid item sm={12}>
           <CustomTooltip
             isSimpleTooltip={false}
             interactive={true}
@@ -761,18 +812,6 @@ const ClientSearchResult = ({ classes }) => {
     let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
       return e === true
     }).length;
-
-    const REDIRECT_OPTIONS = {
-      ShowGroup: 0,
-      ShowMails: 10,
-      ShowMailsActive: 11,
-      ShowMailsRemoved: 12,
-      ShowMailsErrored: 13,
-      ShowSms: 20,
-      ShowSmsActive: 21,
-      ShowSmsRemoved: 22,
-      ShowSmsErrored: 23
-    }
 
 
     const renderCellIcons = () => {
@@ -994,33 +1033,6 @@ const ClientSearchResult = ({ classes }) => {
     )
   }
 
-  const ConfirmInvalidDialog = () => (<Dialog
-    classes={classes}
-    open={dialog === DialogType.CONFIRM_INVALID}
-    // title={t("group.delete")}
-    title={t("client.confirmMakeInvalidTitle")}
-    icon={<Box className={classes.dialogAlertIcon}>
-      !
-    </Box>}
-    showDivider={true}
-    onClose={() => setDialog(null)}
-    onCancel={() => setDialog(null)}
-    onConfirm={makeInvalid}
-    cancelText="common.Cancel"
-    confirmText="common.Ok"
-  >
-    <Box>
-      <Typography variant="subtitle1">
-        {t("client.confirmMakeInvalidText")}
-
-      </Typography>
-    </Box>
-  </Dialog>)
-
-
-
-
-
   const ConfirmDialog = () => {
 
     const DialogObject = {
@@ -1171,7 +1183,7 @@ const ClientSearchResult = ({ classes }) => {
             windowSize={windowSize}
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
-            // openARDialog={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
+            createGroupCallback={(groupId) => { handleAddRecipients(groupId); setDialog(null) }}
             getData={getData}
             handleResponses={(response, actions) => handleResponses(response, actions)}
           />

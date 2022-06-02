@@ -20,7 +20,7 @@ import {
 } from "../../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../../components/managment/Dialog";
 
-const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, openARDialog, getData, handleResponses = (response, actions) => null }) => {
+const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, createGroupCallback = () => null, addAnotherRecCallback = () => null, getData, handleResponses = (response, actions) => null }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -158,7 +158,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                                     classes.whiteSpaceNoWrap,
                                     !newGroupData.GroupName ? classes.disabled : ''
                                 )}
-                                onClick={() => handleAddGroup(newGroupData, openARDialog)}
+                                onClick={() => handleAddGroup(newGroupData, addAnotherRecCallback)}
                             >
                                 {t("recipient.addRecipients")}
                             </Button>
@@ -180,7 +180,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                                     classes.textUppercase
                                 )}
                                 onClick={() => {
-                                    const result = handleAddGroup(newGroupData);
+                                    const result = handleAddGroup(newGroupData, createGroupCallback);
                                     if (result) {
                                         setNewGroupData(DEFAULT_NEW_GROUP);
                                     }
