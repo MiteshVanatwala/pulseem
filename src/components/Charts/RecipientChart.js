@@ -11,6 +11,7 @@ import { getRecipientsReport } from '../../redux/reducers/recipientsReportSlice'
 import { BsInfoCircleFill } from 'react-icons/bs';
 import clsx from 'clsx';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle';
+import { clientSearchQueryString } from '../../screens/ClientSearch/tempConstants';
 
 
 const RecipientChart = ({ classes, }) => {
@@ -259,9 +260,11 @@ const RecipientChart = ({ classes, }) => {
             qReportType = 100;
             if (productType === 0) {
                 window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
+                // window.open(`/react/ClientSearchResult/${clientSearchQueryString({ ClientStatus: qReportType })}`, '_blank', 'noopener,noreferrer'); //COMMENT: UNComment after clientsearchResult API integration
             }
             if (productType === 1) {
                 window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
+                // window.open(`/react/ClientSearchResult/${clientSearchQueryString({ ClientStatus: qReportType, smsStatus: true })}`, '_blank', 'noopener,noreferrer'); //COMMENT: UNComment after clientsearchResult API integration
             }
         }
         if (productType === "0") {
@@ -280,6 +283,7 @@ const RecipientChart = ({ classes, }) => {
                 }
             }
             window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
+            // window.open(`/react/ClientSearchResult/${clientSearchQueryString({ ClientStatus: qReportType })}`, '_blank', 'noopener,noreferrer'); //COMMENT: UNComment after clientsearchResult API integration
         }
         if (productType === "1") {
             switch (reportType) {
@@ -297,6 +301,7 @@ const RecipientChart = ({ classes, }) => {
                 }
             }
             window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
+            // window.open(`/react/ClientSearchResult/${clientSearchQueryString({ ClientStatus: qReportType, smsStatus: true })}`, '_blank', 'noopener,noreferrer'); //COMMENT: UNComment after clientsearchResult API integration
         }
 
     }

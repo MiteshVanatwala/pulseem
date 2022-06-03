@@ -23,6 +23,7 @@ import { exportFile } from '../../../helpers/exportFromJson';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import { Loader } from '../../../components/Loader/Loader';
+import { clientSearchQueryString } from '../../ClientSearch/tempConstants';
 
 const NewslettersReport = ({ classes }) => {
   const { language, windowSize, isRTL, rowsPerPage, accountSettings, accountFeatures } = useSelector(state => state.core)
@@ -55,6 +56,7 @@ const NewslettersReport = ({ classes }) => {
   const getHrefs = (id) => ({
     TotalSendCompleted: {
       href: `/Pulseem/ClientSearchResult.aspx?SentToCampaignID=${id}&fromreact=true`
+      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({SentToCampaignID:id})}`
       //href: `/CampaignStatistics/${id}`
     },
     OpenCount: {
@@ -66,6 +68,7 @@ const NewslettersReport = ({ classes }) => {
     OpenCountUnique: {
       title: t('common.Unique'),
       href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
+      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({OpenedCampaignID:id})}`,
       clickable: true
       //href: `/CampaignStatistics/${id}?tab=2`
     },
@@ -84,6 +87,7 @@ const NewslettersReport = ({ classes }) => {
     RemovedClients: {
       title: windowSize === 'xs' ? '' : t('common.Removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`
+      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({RemovedClientsCampaignID:id})}`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     SendError: {
@@ -101,8 +105,8 @@ const NewslettersReport = ({ classes }) => {
     PercentageOpens: {
       title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
       href: ``,
-      //href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
-      clickable: false,
+      href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
+      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({OpenedCampaignID:id})}`,
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     PercetangeClicks: {
@@ -115,6 +119,7 @@ const NewslettersReport = ({ classes }) => {
     NotOpened: {
       title: windowSize === 'xs' ? '' : t("mainReport.GridButtonColumnResource3.HeaderText"),
       href: `/Pulseem/ClientSearchResult.aspx?NotOpenedCampaignID=${id}&fromreact=true`
+      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({NotOpenedCampaignID:id})}`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemoveReasons: {
@@ -125,6 +130,7 @@ const NewslettersReport = ({ classes }) => {
     Revenue: {
       title: '',
       href: `/react/ClientSearchResult/${id}`,
+      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({revenue:true})}`,
       textStyle: { fontWeight: 900 },
       isRevenueCol: true
     }

@@ -23,6 +23,7 @@ import { exportFile } from '../../../helpers/exportFromJson';
 import { smsReportStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
+import { clientSearchQueryString } from '../../ClientSearch/tempConstants';
 
 const SmsReport = ({ classes }) => {
   const { language, windowSize, isRTL, accountSettings, accountFeatures } = useSelector(state => state.core)
@@ -56,6 +57,7 @@ const SmsReport = ({ classes }) => {
   const getHrefs = (id) => ({
     TotalSendTo: {
       href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({TotalCountSMSCampaignID:id, Culture:isRTL ? 'he-IL' : 'en-US'})}`
     },
     ClickCountUnique: {
       title: t('common.Unique'),
@@ -74,10 +76,12 @@ const SmsReport = ({ classes }) => {
     Failed: {
       title: windowSize === 'xs' ? '' : t("common.failedStatus"),
       href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({FailureCountSMSCampaignID:id, Culture:isRTL ? 'he-IL' : 'en-US'})}`
     },
     Removed: {
       title: windowSize === 'xs' ? '' : t('mainReport.removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({RemovedCountSMSCampaignID:id, Culture:isRTL ? 'he-IL' : 'en-US'})}`
     },
     Replies: {
       title: t('common.Total'),
@@ -87,6 +91,7 @@ const SmsReport = ({ classes }) => {
     DLR: {
       title: windowSize === 'xs' ? '' : t('common.DLR'),
       href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({SuccessCountSMSCampaignID:id, Culture:isRTL ? 'he-IL' : 'en-US'})}`
     },
     Revenue: {
       title: '',

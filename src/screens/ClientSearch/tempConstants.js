@@ -3030,3 +3030,19 @@ export const Static_CSR_Data = [
         "BestEmailOpenTime": null
     }
 ]
+
+
+
+export const clientSearchQueryString = (props = {
+    smsStatus: null,
+    emailStatus: null,
+    revenue: false,
+    dlr: 0
+}) => {
+    return Object.entries(props).reduce((prev, [key, val]) => {
+        if (val ?? null) {
+            prev = `${prev}${prev === '?' ? '' : '&'}${key}=${val}`
+        }
+        return prev
+    }, '?')
+}

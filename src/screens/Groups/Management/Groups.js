@@ -511,6 +511,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.blue,
                                 },
                                 onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
+                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({ Src: 1, ReportType: REDIRECT_OPTIONS.ShowMails, GroupID: GroupID })}`)
                             },
                             {
                                 name: t("recipient.Active"),
@@ -520,6 +521,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.green,
                                 },
                                 onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsActive}&GroupID=${GroupID}`)
+                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({ Src: 1, ReportType: REDIRECT_OPTIONS.ShowMailsActive, GroupID: GroupID })}`)
                             },
                             {
                                 name: t("recipient.Removed"),
@@ -529,6 +531,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.red,
                                 },
                                 onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsRemoved}&GroupID=${GroupID}`)
+                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({ Src: 1, ReportType: REDIRECT_OPTIONS.ShowMailsRemoved, GroupID: GroupID })}`)
                             },
                             {
                                 name: t("recipient.Bounced"),
@@ -538,6 +541,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.red,
                                 },
                                 onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsErrored}&GroupID=${GroupID}`)
+                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({ Src: 1, ReportType: REDIRECT_OPTIONS.ShowMailsErrored, GroupID: GroupID })}`)
                             },
                         ]}
                         gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
@@ -556,6 +560,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.blue,
                                 },
                                 onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSms}&GroupID=${GroupID}`)
+                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1,ReportType:REDIRECT_OPTIONS.ShowSms, GroupID:GroupID})}`)
                             },
                             {
                                 name: t("recipient.Active"),
@@ -565,6 +570,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.green,
                                 },
                                 onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsActive}&GroupID=${GroupID}`)
+                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1,ReportType:REDIRECT_OPTIONS.ShowSmsActive, GroupID:GroupID})}`)
                             },
                             {
                                 name: t("recipient.Removed"),
@@ -574,6 +580,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.red,
                                 },
                                 onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsRemoved}&GroupID=${GroupID}`)
+                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1,ReportType:REDIRECT_OPTIONS.ShowSmsRemoved, GroupID:GroupID})}`)
                             },
                             {
                                 name: t("recipient.Bounced"),
@@ -583,6 +590,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.red,
                                 },
                                 onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsErrored}&GroupID=${GroupID}`)
+                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1,ReportType:REDIRECT_OPTIONS.ShowSmsErrored, GroupID:GroupID})}`)
                             },
                         ]}
                         gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
@@ -600,6 +608,7 @@ const Groups = ({ classes }) => {
                             {
                                 onClick: () => {
                                     window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=0&GroupID=${GroupID}`)
+                                    //COMMENT: UNComment after clientsearchResult API integration. window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1, ReportType:0, GroupID:GroupID})}`)
                                 },
                                 label: t("recipient.preview"),
                                 component: (

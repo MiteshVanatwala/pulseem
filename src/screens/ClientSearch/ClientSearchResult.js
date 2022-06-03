@@ -43,11 +43,12 @@ import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
 import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
-import { Static_CSR_Data } from "./tempConstants";
+import { clientSearchQueryString, Static_CSR_Data } from "./tempConstants";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportFile } from '../../helpers/exportFromJson';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../helpers/exportHelper';
+import { getQueryParams } from '../../helpers/utils';
 import { ClientStatus } from "../../helpers/PulseemArrays";
 
 
@@ -142,6 +143,8 @@ const ClientSearchResult = ({ classes }) => {
   const dispatch = useDispatch();
   moment.locale(language);
   const theme = useTheme();
+
+  const queryParams = getQueryParams()
 
   const colorTextStyle = {
     red: classes.textColorRed,
@@ -277,6 +280,8 @@ const ClientSearchResult = ({ classes }) => {
   };
 
   useEffect(() => {
+    // console.log("QUERY STRING:", clientSearchQueryString({ smsStatus: 'active', dlr: 2 }))
+
     getData(); // BUG: UNCOMMENT THIS
   }, [dispatch, serachData]);
 
