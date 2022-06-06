@@ -280,15 +280,13 @@ const ClientSearchResult = ({ classes }) => {
   };
 
   useEffect(() => {
-    // console.log("QUERY STRING:", clientSearchQueryString({ smsStatus: 'active', dlr: 2 }))
-
-    getData(); // BUG: UNCOMMENT THIS
+    getData();
   }, [dispatch, serachData]);
 
   useEffect(() => {
     handleFilter();
-    // setData(ClientData);
-    setData(Static_CSR_Data);
+    // setData(ClientData); // BUG: UNCOMMENT THIS
+    setData((ClientData && ClientData.length > 0) ? ClientData : Static_CSR_Data); // BUG: COMMENT THIS
 
     if (TotalRevenue) {
       setRevenueSummary([
@@ -453,13 +451,17 @@ const ClientSearchResult = ({ classes }) => {
   const renderHeader = () => {
     return (
       <>
-        <Typography className={classes.managementTitle}>
-          {t("client.logPageHeaderResource1.Text")}
-        </Typography>
+        <Box className={clsx(classes.flex, classes.spaceBetween)}>
+          <Typography className={classes.managementTitle}>
+            {t("client.logPageHeaderResource1.Text")}
+          </Typography>
+          <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => window.history.back()}> {t("Back")}</Typography>
+        </Box>
         <Divider />
       </>
     );
   };
+
   // DONE
   const renderSearchLine = () => {
     const handleKeyDown = (event) => {

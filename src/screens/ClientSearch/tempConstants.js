@@ -3034,6 +3034,7 @@ export const Static_CSR_Data = [
 
 
 export const clientSearchQueryString = (props = {
+    pageType: 1,
     smsStatus: null,
     emailStatus: null,
     revenue: false,
