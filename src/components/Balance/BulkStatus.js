@@ -129,10 +129,10 @@ const BulkStatus = ({ classes }) => {
   }
 
   const isAllowSms = () => {
-    return billingTypeId !== "1" && Sms.eBillingType === 0 && accountAvailablePackages.length > 0;
+    return billingTypeId !== "0" && Sms.eBillingType === 0 && accountAvailablePackages.length > 0;
   }
   const isAllowNewsletter = () => {
-    return accountFeatures && accountFeatures.includes('37') && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0;
+    return accountFeatures && accountFeatures.includes('37') && billingTypeId !== "0" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0;
   }
 
   const showPackageDialogType = (packageType) => {
