@@ -11,14 +11,19 @@ import { addMetaData } from '../../redux/reducers/siteTrackingSlice'
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
 
-const EventTabs = ({ classes, setDialog, domain, showButtons = () => null, onPurchase = () => null }) => {
+const EventTabs = ({ classes,
+    setDialog,
+    domain,
+    purchaseToggleDisabled = false,
+    showButtons = () => null,
+    onPurchaseChanged = () => null }) => {
     const { t } = useTranslation();
     const [tabValue, setTabValue] = useState('PAGE_VIEW');
-    const { event, purchaseEvent } = useSelector((state) => state.siteTracking);
+    const { event, purchaseEnabled } = useSelector((state) => state.siteTracking);
     const { windowSize, isRTL } = useSelector((state) => state.core);
-    const [purchaseEnabled, setPurchaseEnabled] = useState(false);
     const dispatch = useDispatch();
     const [metadataToShow, setMetadataToShow] = useState(10);
+    const [togglePurchase, setTogglePurchase] = useState(false);
 
     const emptyMetaData = {
         operatorKey: "CONTAINS",
@@ -31,13 +36,12 @@ const EventTabs = ({ classes, setDialog, domain, showButtons = () => null, onPur
     }
     const onAddEvent = () => {
         dispatch(addMetaData(emptyMetaData));
-        //dispatch(addMetaData({ metadata: emptyMetaData, eventType: 'PAGE_VIEW' }));
         setMetadataToShow(event.metadata.length + 1);
     }
 
     useEffect(() => {
-        setPurchaseEnabled(purchaseEvent !== null);
-    }, []);
+        setTogglePurchase(purchaseEnabled);
+    }, [purchaseEnabled]);
 
     const renderPageView = () => {
         return <>
@@ -73,18 +77,19 @@ const EventTabs = ({ classes, setDialog, domain, showButtons = () => null, onPur
         </>;
     }
     const renderPurchase = () => {
-        return <Box style={{ marginBlock: 20 }}><PulseemSwitch
-            classes={classes}
-            id="enablePurchase"
-            onChange={() => {
-                onPurchase(!purchaseEnabled);
-                setPurchaseEnabled(!purchaseEnabled);
-            }}
-            checked={purchaseEnabled}
-            isRTL={isRTL}
-            switchType="ios"
-        />
-            Purchase enabled
+        return <Box style={{ marginBlock: 20 }}>
+            <PulseemSwitch
+                classes={classes}
+                id="enablePurchase"
+                onChange={async () => {
+                    await onPurchaseChanged(!togglePurchase);
+                }}
+                checked={togglePurchase}
+                isRTL={isRTL}
+                switchType="ios"
+                props={{ disabled: purchaseToggleDisabled }}
+            />
+            {t('siteTracking.enablePurchase')}
         </Box>
     }
 

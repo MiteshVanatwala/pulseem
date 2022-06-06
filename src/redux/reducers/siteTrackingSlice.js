@@ -17,6 +17,9 @@ export const post = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
       const response = await eventsInstance.post(`events`, data);
+      if (data?.actionType === 'TRACK_PURCHASE_EVENT') {
+        return { status: response?.status, data: response?.data };
+      }
       return response;
     } catch (error) {
       return thunkAPI.rejectWithValue({ status: error.statusCode });
@@ -37,9 +40,12 @@ export const deleteSiteTrackingEvent = createAsyncThunk(
   'events', async (eventId, thunkAPI) => {
     try {
       const response = await eventsInstance.delete(`events/${eventId}`);
-      return JSON.parse(response.data);
+      if (response?.data === '') {
+        return { event: "deleteEvent", eventId };
+      }
+      return JSON.parse(response.data)
     } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
+      return thunkAPI.rejectWithValue({ error: error.message, eventId });
     }
   }
 )
@@ -103,6 +109,7 @@ export const siteTrackingSlice = createSlice({
   initialState: {
     event: null,
     purchaseEvent: null,
+    purchaseEnabled: false,
     eventError: null,
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'siteTracking.saved', showAnimtionCheck: true }
@@ -170,6 +177,7 @@ export const siteTrackingSlice = createSlice({
     },
     setPurchase: (state, action) => {
       state.purchaseEvent = action.payload;
+      state.purchaseEnabled = true;
     }
   },
   extraReducers: builder => {
@@ -181,11 +189,16 @@ export const siteTrackingSlice = createSlice({
         try {
           const response = payload.data ?? payload;
           if (!Array.isArray(response)) {
+            if (response?.event === 'deleteEvent') {
+              state.purchaseEnabled = false;
+              state.purchaseEvent = null;
+            }
             return;
           }
           const pageViewEvent = response?.find((e) => { return e.eventName === 'PAGE_VIEW' }) ?? null;
           const purchaseEvent = response?.find((e) => { return e.eventName === 'PURCHASE' }) ?? null;
           state.purchaseEvent = purchaseEvent ?? null;
+          state.purchaseEnabled = purchaseEvent !== null;
 
           if (pageViewEvent) {
             state.event = pageViewEvent;
@@ -202,9 +215,6 @@ export const siteTrackingSlice = createSlice({
         } catch (e) {
           console.info(e);
         }
-      })
-      .addCase(get.rejected, (state, action) => {
-        state.eventError = action.error.message
       })
   }
 })

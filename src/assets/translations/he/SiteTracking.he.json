@@ -52,5 +52,6 @@
     "invalidDomainAddress": "כתובת דומיין אינה תקינה",
     "addEvent": "הוסף אירוע",
     "minimumRevenue": "מינימום הכנסה",
-    "maximumRevenue": "מקסימום הכנסה"
+    "maximumRevenue": "מקסימום הכנסה",
+    "enablePurchase": "אפשר מעקב רכישות"
 }

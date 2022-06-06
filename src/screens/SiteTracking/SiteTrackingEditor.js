@@ -46,6 +46,7 @@ const SiteTrackingEditor = ({ classes }) => {
     const [scriptDialog, handleScriptDialogCheck] = useState(false);
     const [isValidDomain, setIsValidDomain] = useState(null);
     const [showActions, setShowActions] = useState(true);
+    const [purchaseToggleDisabled, setPurchaseToggleDisabled] = useState(false);
 
     const theme = createTheme({
         palette: {
@@ -116,6 +117,7 @@ const SiteTrackingEditor = ({ classes }) => {
         return isValid;
     }
     const handlePurchase = async (isEnable) => {
+        setPurchaseToggleDisabled(true);
         if (isEnable) {
             const request = {
                 domain: event?.domain,
@@ -124,13 +126,19 @@ const SiteTrackingEditor = ({ classes }) => {
                 metadata: []
             }
             const response = await dispatch(post(request));
-            request.id = response?.payload?.data?.id;
-            dispatch(setPurchase(request));
-
+            if (response.payload.status !== 200 && response.payload.status !== 201) {
+                onSaveReponse(response?.payload);
+            }
+            else {
+                request.id = response?.payload?.data?.id;
+                dispatch(setPurchase(request));
+            }
         }
         else {
-            await dispatch(deleteSiteTrackingEvent(purchaseEvent.id));
+            const response = await dispatch(deleteSiteTrackingEvent(purchaseEvent.id));
+            setPurchase(response?.payload?.data);
         }
+        setPurchaseToggleDisabled(false);
     }
     const onSave = async () => {
         setShowLoader(true);
@@ -223,7 +231,7 @@ const SiteTrackingEditor = ({ classes }) => {
             scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog(),
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
             deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), renderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
-            invalidDomain: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), t('siteTracking.invalidDomainAddress')),
+            invalidDomain: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.invalidDomainAddress')),
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -651,7 +659,8 @@ const SiteTrackingEditor = ({ classes }) => {
                                 setDialog={setDialogType}
                                 showButtons={setShowActions}
                                 domain={event?.domain}
-                                onPurchase={handlePurchase} />
+                                onPurchaseChanged={handlePurchase}
+                                purchaseToggleDisabled={purchaseToggleDisabled} />
                         </Grid>
                     </Grid>
                 </form>
