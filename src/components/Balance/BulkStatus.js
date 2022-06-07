@@ -73,7 +73,7 @@ const BulkStatus = ({ classes }) => {
       let dialog = {};
       let availablePack = null;
 
-      if (accountSettings.Account.IsBillingAccount === true) {
+      if (accountSettings.Account.IsBillingAccount === false) {
         dialog = renderBillingSupportDialog();
       }
       else {
