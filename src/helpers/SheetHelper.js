@@ -25,23 +25,9 @@ export const jsonToCSV = async (data) => {
     }
 }
 
-export const createCSV = async (data) => {
-    const promise = new Promise((resolve, reject) => {
-        try {
-            var workbook = XLSX.read(data, { type: "array" });
-            var csv = XLSX.utils.sheet_to_csv(
-                workbook.Sheets[workbook.SheetNames[0]]
-                , { header: 1 });
-            resolve(csv);
-        } catch (e) {
-            console.error('createCSV', e);
-            reject(null);
-        }
-    });
-    promise.then((csvOutput) => {
-        return csvOutput;
-    })
-
+export const createFile = (data, type) => {
+    const f = new File([data], `${Date.now()}.${type}`, { type: `text/${type}` });
+    return f;
 }
 
 export const stringToArrayBuffer = (str) => {
@@ -57,3 +43,22 @@ export const stringToArrayBuffer = (str) => {
         return null;
     }
 }
+
+// export const createCSV = async (data) => {
+//     const promise = new Promise((resolve, reject) => {
+//         try {
+//             var workbook = XLSX.read(data, { type: "array" });
+//             var csv = XLSX.utils.sheet_to_csv(
+//                 workbook.Sheets[workbook.SheetNames[0]]
+//                 , { header: 1 });
+//             resolve(csv);
+//         } catch (e) {
+//             console.error('createCSV', e);
+//             reject(null);
+//         }
+//     });
+//     promise.then((csvOutput) => {
+//         return csvOutput;
+//     })
+
+// }

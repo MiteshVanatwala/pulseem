@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { renderHtml } from "../../helpers/utils";
 import moment from 'moment';
 import 'moment/locale/he';
-import { jsonToCSV } from '../../helpers/SheetHelper';
+import { jsonToCSV, createFile } from '../../helpers/SheetHelper';
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -188,7 +188,6 @@ const UploadXL = ({
                 }
             }
         }
-        //settypedData(b);
 
         let dummyArr = [];
         for (let i = 0; i < cols; i++) {
@@ -196,6 +195,8 @@ const UploadXL = ({
         }
         setheaders(dummyArr);
         jsonToCSV({ array: b }).then((csvOutput) => {
+            const file = createFile(csvOutput, 'csv');
+            setFileToUpload(file);
             parseFile(csvOutput);
         });
     };
