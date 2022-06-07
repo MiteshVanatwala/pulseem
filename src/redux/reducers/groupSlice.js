@@ -73,7 +73,13 @@ export const addRecipient = createAsyncThunk(
 export const addRecipients = createAsyncThunk(
     'Client/Upload', async (payload, thunkAPI) => {
         try {
-            const response = await uploaderInstance.post(`Client/Upload`, payload);
+            const response = await uploaderInstance.put(`Client/Upload`, payload, {
+                onUploadProgress: (progressEvent) => {
+                    const { loaded, total } = progressEvent
+                    let percent = Math.floor(loaded * 100 / total)
+                    console.log(percent);
+                }
+            });
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
