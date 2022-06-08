@@ -73,15 +73,16 @@ export const addRecipient = createAsyncThunk(
 export const addRecipients = createAsyncThunk(
     'Client/Upload', async (payload, thunkAPI) => {
         try {
-            const response = await uploaderInstance.put(`Client/Upload`, payload);
-            // ,
-            // {
-            //     onUploadProgress: (progressEvent) => {
-            //         const { loaded, total } = progressEvent
-            //         let percent = Math.floor(loaded * 100 / total)
-            //         console.log(percent);
-            //     }
-            // }
+            //const dispatch = useDispatch()
+            const response = await uploaderInstance.put(`Client/Upload`, payload
+                ,
+                {
+                    onUploadProgress: (progressEvent) => {
+                        const { loaded, total } = progressEvent
+                        let percent = Math.floor(loaded * 100 / total);
+                        thunkAPI.dispatch(setUploadProgress(percent));
+                    }
+                });
 
             return JSON.parse(response.data)
         } catch (error) {
@@ -133,6 +134,7 @@ export const groupSlice = createSlice({
         subAccountAllGroups: [],
         groupData: null,
         error: "",
+        uploadProgress: null,
         ToastMessages: {
             GROUP_CREATED: { severity: 'success', color: 'success', message: 'group.created', showAnimtionCheck: false },
             GROUP_UPDATED: { severity: 'success', color: 'success', message: 'group.updated', showAnimtionCheck: false },
@@ -164,6 +166,10 @@ export const groupSlice = createSlice({
     reducers: {
         setSelectedGroups: (state, action) => {
             state.selectedGroups = action.payload;
+        },
+        setUploadProgress: (state, action) => {
+            state.uploadProgress = action.payload;
+
         }
     },
     extraReducers: builder => {
@@ -198,9 +204,12 @@ export const groupSlice = createSlice({
         builder.addCase(getExternalClientsByGroups.rejected, (state, { error }) => {
             state.error = error.message;
         })
+        builder.addCase(addRecipients.fulfilled, (state, { payload }) => {
+            state.uploadProgress = null;
+        })
     }
 })
 
-export const { setSelectedGroups } = groupSlice.actions
+export const { setSelectedGroups, setUploadProgress } = groupSlice.actions
 
 export default groupSlice.reducer

@@ -44,6 +44,7 @@ const UploadXL = ({
     const { t } = useTranslation();
     const { extraData } = useSelector((state) => state.sms);
     const { language } = useSelector(state => state.core)
+    const { uploadProgress } = useSelector((state) => state.group);
     const dispatch = useDispatch();
     const styles = useStyles();
     const [fileToUpload, setFileToUpload] = useState(null);
@@ -482,7 +483,9 @@ const UploadXL = ({
 
             setFileToUpload(null);
             onDone(r);
-            setLoader(false);
+            setTimeout(() => {
+                setLoader(false);
+            }, 1000);
         }
     }
     const handleManualDialog = (e) => {
@@ -806,7 +809,7 @@ const UploadXL = ({
                 <span>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
         </Grid>
-        <Loader isOpen={showLoader} />
+        <Loader isOpen={showLoader} progress={uploadProgress} />
     </Grid>
 }
 
