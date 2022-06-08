@@ -254,7 +254,12 @@ const UnsubscribeOrDeletePopup = ({
                 'S_201': {
                     code: 201,
                     message: '',
-                    Func: () => setIsSubmitted(true)
+                    Func: () => {
+                        setIsSubmitted(true);
+                        new Promise(async (resolutionFunc, rejectionFunc) => {
+                            await resolutionFunc(getData());
+                        });
+                    }
                 },
                 'S_401': {
                     code: 401,
@@ -382,6 +387,7 @@ const UnsubscribeOrDeletePopup = ({
 
     return (
         <Dialog
+            maxHeight={dialogType === "UNSUB_RECIPIENT" ? null : "45vh"}
             classes={classes}
             open={dialogType}
             childrenStyle={classes.h50v}

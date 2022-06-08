@@ -107,5 +107,6 @@
   "deleteFromGroups": "Delete from groups",
   "deleteEmail": "Remove email",
   "deletePhone": "Remove phone",
-  "noRecordsFound": "No records found/updated"
+  "noRecordsFound": "No records found/updated",
+  "uploadLimitation": "You are able to upload up to 600,000 recipients at once"
 }

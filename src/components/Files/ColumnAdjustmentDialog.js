@@ -133,6 +133,13 @@ const ColumnAdjustmentDialog = ({
 
         h[idx] = item.value.toLowerCase().indexOf('extra') > -1 ? item.value : item.label;
 
+        if (h[idx] !== t("sms.adjustTitle")) {
+            const updateItem = headerArrays.find((sa) => {
+                return sa.label === h[idx]
+            });
+            updateItem.isdisabled = false;
+        }
+
         selectedItem.isdisabled = true;
         selectedItem.idx = idx;
         headerArrays[idx] = selectedItem;

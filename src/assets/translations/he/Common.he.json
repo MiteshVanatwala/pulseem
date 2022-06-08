@@ -557,5 +557,6 @@
   "revenue": "הכנסות",
   "edit": "ערוך",
   "campaignRevenue": "הכנסה",
-  "NIS": "₪"
+  "NIS": "₪",
+  "uploadInProgress": "הקובץ בתהליך טעינה..."
 }

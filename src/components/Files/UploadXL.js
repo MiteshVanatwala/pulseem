@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { renderHtml } from "../../helpers/utils";
 import moment from 'moment';
 import 'moment/locale/he';
+import { jsonToCSV, createFile } from '../../helpers/SheetHelper';
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -43,6 +44,7 @@ const UploadXL = ({
     const { t } = useTranslation();
     const { extraData } = useSelector((state) => state.sms);
     const { language } = useSelector(state => state.core)
+    const { uploadProgress } = useSelector((state) => state.group);
     const dispatch = useDispatch();
     const styles = useStyles();
     const [fileToUpload, setFileToUpload] = useState(null);
@@ -116,6 +118,13 @@ const UploadXL = ({
         });
         if (selectedItem.isdisabled === true) return;
 
+        if (h[idx] !== t("sms.adjustTitle")) {
+            const updateItem = selectArray.find((sa) => {
+                return sa.label === h[idx]
+            });
+            updateItem.isdisabled = false;
+        }
+
         h[idx] = item.label;
         selectArray[id].isdisabled = true;
         selectArray[id].idx = idx;
@@ -180,14 +189,17 @@ const UploadXL = ({
                 }
             }
         }
-        settypedData(b);
 
         let dummyArr = [];
         for (let i = 0; i < cols; i++) {
             dummyArr.push(t("sms.adjustTitle"));
         }
         setheaders(dummyArr);
-        setDialogType({ type: "manualUpload" });
+        jsonToCSV({ array: b }).then((csvOutput) => {
+            const file = createFile(csvOutput, 'csv');
+            setFileToUpload(file);
+            parseFile(csvOutput);
+        });
     };
 
     const handleFiles = (e) => {
@@ -364,22 +376,72 @@ const UploadXL = ({
 
     }
 
+    const parseFile = (data) => {
+        var workbook = XLSX.read(data, { type: "array" });
+        var csv = XLSX.utils.sheet_to_csv(
+            workbook.Sheets[workbook.SheetNames[0]]
+            , { header: 1 });
+
+        let temp = csv;
+        let a = temp.split("\n");
+        let b = [];
+        for (let i = 0; i < a.length; i++) {
+            b.push(a[i].split(","));
+        }
+        b.pop();
+        b = b.map((row) => {
+            return row.map((col) => {
+                try {
+                    const slashSeperator = col.split('/');
+                    if (slashSeperator.length > 1) {
+                        let validDate = moment(col).format(dateFormat);
+                        if (validDate.replace(' ', '').toLowerCase() !== 'invaliddate') {
+                            col = moment(col).format(dateFormat);
+                        }
+                    }
+                }
+                catch (e) {
+                    console.error(col);
+                }
+                return col;
+            });
+        })
+        settypedData(b);
+        settotalRecords(b.length)
+
+        let dummyArr = [];
+        for (let i = 0; i < b[0].length; i++) {
+            dummyArr.push(t("sms.adjustTitle"));
+        }
+        setheaders(dummyArr)
+        if (dummyArr !== 0) {
+            setDialogType({ type: "manualUpload" });
+        }
+        setLoader(false);
+    };
+
+
     const handleDataManual = async () => {
         if (manualUploadValidationscheck()) {
+            setLoader(true);
+            let r = null;
             let requestPayload = [];
+            setDialogType(null);
 
             const dataToUpload = typedData.length !== 0 ? typedData : contacts;
 
-            for (let j = 0; j < dataToUpload.length; j++) {
-                requestPayload.push({});
-                for (let k = 0; k < dataToUpload[j].length; k++) {
-                    if (headers[k] && headers[k].replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
-                        let item = selectArray.find((sa) => {
-                            return headers[k] === sa.value || headers[k] === sa.label;
-                        });
+            if (dataToUpload.length <= 5000) {
+                for (let j = 0; j < dataToUpload.length; j++) {
+                    requestPayload.push({});
+                    for (let k = 0; k < dataToUpload[j].length; k++) {
+                        if (headers[k] && headers[k].replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
+                            let item = selectArray.find((sa) => {
+                                return headers[k] === sa.value || headers[k] === sa.label;
+                            });
 
-                        let obj = requestPayload[j];
-                        obj[item.value] = dataToUpload[j][k].trim();
+                            let obj = requestPayload[j];
+                            obj[item.value] = dataToUpload[j][k].trim();
+                        }
                     }
                 }
             }
@@ -403,11 +465,7 @@ const UploadXL = ({
                 return x !== undefined;
             });
 
-            setDialogType(null);
-            setLoader(true);
-            let r = null;
-
-            if (fileToUpload !== null && requestPayload.length >= 5000) {
+            if (fileToUpload !== null && dataToUpload.length >= 5000) {
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
                 formData.append("groupids", uploadToGroups);
@@ -423,9 +481,11 @@ const UploadXL = ({
                 r = await dispatch(addRecipient(finalPayload))
             }
 
-            setLoader(false);
             setFileToUpload(null);
             onDone(r);
+            setTimeout(() => {
+                setLoader(false);
+            }, 1000);
         }
     }
     const handleManualDialog = (e) => {
@@ -749,7 +809,7 @@ const UploadXL = ({
                 <span>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
         </Grid>
-        <Loader isOpen={showLoader} />
+        <Loader isOpen={showLoader} progress={uploadProgress} message={t("common.uploadInProgress")} />
     </Grid>
 }
 
