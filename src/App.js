@@ -222,7 +222,7 @@ const renderRoutes = (classes, history) => {
       /> */}
       <Route
         path="/ClientSearchResult/:id?"
-        render={props => <ClientSearchResult {...props} classes={classes} />}
+        render={props => <ClientSearchResult props={props} classes={classes} />}
       />
 
       <Route

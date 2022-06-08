@@ -48,8 +48,8 @@ import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportFile } from '../../helpers/exportFromJson';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../helpers/exportHelper';
-import { getQueryParams } from '../../helpers/utils';
 import { ClientStatus } from "../../helpers/PulseemArrays";
+import queryString from 'query-string';
 
 
 
@@ -80,7 +80,7 @@ const useStyles = makeStyles({
 });
 
 
-const ClientSearchResult = ({ classes }) => {
+const ClientSearchResult = ({ props, classes }) => {
   const {
     language,
     windowSize,
@@ -88,9 +88,9 @@ const ClientSearchResult = ({ classes }) => {
     phone,
     rowsPerPage,
     smsOldVersion,
-    isRTL,
-    ...props
+    isRTL
   } = useSelector((state) => state.core);
+  const qs = queryString.parse(props.location.search);
 
   const { t } = useTranslation();
   const localClasses = useStyles();
@@ -102,6 +102,7 @@ const ClientSearchResult = ({ classes }) => {
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
+
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
@@ -112,20 +113,7 @@ const ClientSearchResult = ({ classes }) => {
   // const [avaregeRevenue, setAvaregeRevenue] = useState(TotalRevenue);
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
-  const [serachData, setSearchData] = useState({
-    PageSize: 6,
-    PageIndex: 0,
-    SearchTerm: "",
-    Status: 0,
-    PageType: 15,
-    ReportType: document.referrer.toLowerCase().includes('smsmainreport') ? 20 : 10,
-    IsSmsCampaign: false,
-    CampaignID: id,
-    Switch: "",
-    CountryOrRegion: "",
-    GroupIds: [],
-    NodeID: ""
-  });
+  const [serachData, setSearchData] = useState();
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
@@ -143,8 +131,6 @@ const ClientSearchResult = ({ classes }) => {
   const dispatch = useDispatch();
   moment.locale(language);
   const theme = useTheme();
-
-  const queryParams = getQueryParams()
 
   const colorTextStyle = {
     red: classes.textColorRed,
@@ -173,6 +159,31 @@ const ClientSearchResult = ({ classes }) => {
     "CreationDate": t('common.CreationDate'),
     "UpdateDate": t('common.UpdateDate'),
   }
+
+  useEffect(() => {
+    // On load
+    let initSearchData = {
+      PageSize: rowsPerPage,
+      PageIndex: page,
+      SearchTerm: "",
+      Status: 0,
+      PageType: 15,
+      ReportType: document.referrer.toLowerCase().includes('smsmainreport') ? 20 : 10,
+      IsSmsCampaign: false,
+      CampaignID: id,
+      Switch: "",
+      CountryOrRegion: "",
+      GroupIds: [],
+      NodeID: ""
+    };
+    if (qs.GroupID) {
+      initSearchData['GroupIds'] = [qs.GroupID];
+    }
+    if (qs.PageType) {
+      initSearchData['PageType'] = qs.PageType;
+    }
+    setSearchData(initSearchData);
+  }, []);
 
   const handleDownloadCsv = async () => {
     let orderList = await data.reduce((prev, next) => {
@@ -273,15 +284,15 @@ const ClientSearchResult = ({ classes }) => {
 
   const getData = async () => {
     setLoader(true);
-    if (serachData.CampaignID > -1) {
-      await dispatch(searchAllClients(serachData));
-    }
+    await dispatch(searchAllClients(serachData));
     setLoader(false);
   };
 
   useEffect(() => {
-    getData();
-  }, [dispatch, serachData]);
+    if (serachData) {
+      getData();
+    }
+  }, [serachData]);
 
   useEffect(() => {
     handleFilter();

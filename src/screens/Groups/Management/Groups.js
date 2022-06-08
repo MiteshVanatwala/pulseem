@@ -607,7 +607,7 @@ const Groups = ({ classes }) => {
                         gridArr={[
                             {
                                 onClick: () => {
-                                    window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=0&GroupID=${GroupID}`)
+                                    window.open(`/react/ClientSearchResult?Src=1&ReportType=0&PageType=16&GroupID=${GroupID}`)
                                     //COMMENT: UNComment after clientsearchResult API integration. window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1, ReportType:0, GroupID:GroupID})}`)
                                 },
                                 label: t("recipient.preview"),
