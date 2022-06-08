@@ -21,26 +21,48 @@ export const getTranzillaURL = createAsyncThunk(
     }
   });
 
-  export const buyPackage = createAsyncThunk(
-    'Payment/BuyPackage', async (data, thunkAPI) => {
-      try {
-        const response = await instence.post(`Payment/BuyPackage`, data);
-        return JSON.parse(response.data)
-      } catch (error) {
-        return thunkAPI.rejectWithValue({ error: error.message });
-      }
-    });
+export const buyPackage = createAsyncThunk(
+  'Payment/BuyPackage', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`Payment/BuyPackage`, data);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
+export const getPaymentURL = createAsyncThunk(
+  'Payment/GetPaymentURL', async (data, thunkAPI) => {
+    try {
+      const response = await instence.post(`Payment/GetPaymentURL`, data);
+      return response.data
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 export const paymentSlice = createSlice({
   name: 'payment',
   initialState: {
     tranzillaUrl: null,
+    paymentUrl: null,
     creditCards: null,
-    paymentConfirmation: null
+    paymentConfirmation: null,
+    dialogMaxWidth: null
+  },
+  reducers: {
+    setDialogWidth: (state, action) => {
+      state.dialogMaxWidth = action.payload;
+    },
   },
   extraReducers: builder => {
     builder
+      .addCase(getPaymentURL.fulfilled, (state, { payload }) => {
+        state.paymentUrl = payload
+      })
+      .addCase(getPaymentURL.rejected, (state, action) => {
+        state.paymentUrl = action.error.message
+      })
       .addCase(getTranzillaURL.fulfilled, (state, { payload }) => {
         state.tranzillaUrl = payload
       })
@@ -62,5 +84,5 @@ export const paymentSlice = createSlice({
   }
 })
 
-
+export const { setDialogWidth } = paymentSlice.actions
 export default paymentSlice.reducer
