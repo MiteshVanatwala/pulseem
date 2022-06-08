@@ -31,6 +31,11 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     backgroundColor: '#fff',
     padding: 15
+  },
+  message: {
+    color: '#000',
+    textAlign: 'center',
+    width: '100%'
   }
 }));
 
@@ -44,6 +49,7 @@ export const Loader = ({
   showBackdrop = true,
   zIndex = 1300,
   progress = null,
+  message = null,
   ...props
 }) => {
   const classes = useStyles();
@@ -51,16 +57,22 @@ export const Loader = ({
   if (progress) {
     return (
       <Backdrop className={classes.backdrop} open={isOpen} style={{ zIndex: zIndex }}>
-        <Box display="flex"
-          alignItems="center"
-          className={classes.progressBar}>
-          <Box width="100%" mr={1} style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
-            <LinearProgress variant="determinate" {...props} style={{ width: `${progress}%` }} />
-          </Box>
-          <Box minWidth={35}>
-            <Typography variant="body2" color="textPrimary">{`${Math.round(
-              progress,
-            )}%`}</Typography>
+        <Box className={classes.progressBar}>
+          {message && <Box
+            display="flex"
+            alignItems="center">
+            <Typography className={classes.message}>{message}</Typography>
+          </Box>}
+          <Box display="flex"
+            alignItems="center">
+            <Box width="100%" mr={1} style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}>
+              <LinearProgress variant="determinate" {...props} style={{ width: `${progress}%` }} />
+            </Box>
+            <Box minWidth={35}>
+              <Typography variant="body2" color="textPrimary">{`${Math.round(
+                progress,
+              )}%`}</Typography>
+            </Box>
           </Box>
         </Box>
       </Backdrop>

@@ -557,5 +557,6 @@
   "minimalDateRequired": "Date should not be before minimal date",
   "maximalDateRequired": "Date should not be after maximal date",
   "systemNotice": "System Notice",
-  "birthDate": "Birth Date"
+  "birthDate": "Birth Date",
+  "uploadInProgress": "Upload in progress..."
 }

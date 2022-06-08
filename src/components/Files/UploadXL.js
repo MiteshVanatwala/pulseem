@@ -809,7 +809,7 @@ const UploadXL = ({
                 <span>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
         </Grid>
-        <Loader isOpen={showLoader} progress={uploadProgress} />
+        <Loader isOpen={showLoader} progress={uploadProgress} message={t("common.uploadInProgress")} />
     </Grid>
 }
 
