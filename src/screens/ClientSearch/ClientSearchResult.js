@@ -422,8 +422,15 @@ const ClientSearchResult = ({ props, classes }) => {
     dispatch(makeInvalidClients(selectedClients))
   }
 
-  const removeRecipientFromAllGroups = () => {
-    dispatch(deleteFromGroups)
+  const removeRecipientFromAllGroups = async () => {
+    const deleteResponse = await dispatch(deleteFromGroups(selectedClients))
+    if (deleteResponse && deleteResponse.payload === 'true') {
+      // show delete success message
+      setDialog(null);
+    }
+    else {
+      // show delete failed message
+    }
   }
   const removeEmailRecipient = () => {
     dispatch(removeEmailClient)

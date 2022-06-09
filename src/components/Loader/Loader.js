@@ -53,7 +53,7 @@ export const Loader = ({
   ...props
 }) => {
   const classes = useStyles();
-  console.log('loader', progress);
+  
   if (progress) {
     return (
       <Backdrop className={classes.backdrop} open={isOpen} style={{ zIndex: zIndex }}>
