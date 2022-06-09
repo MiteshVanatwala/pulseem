@@ -71,10 +71,10 @@ export const searchAllClients = createAsyncThunk(
     }
   })
 
-export const addClientsToNewGroup = createAsyncThunk(
-  'client/addClientsToNewGroup', async (payload, thunkAPI) => {
+export const addClientsToGroup = createAsyncThunk(
+  'client/AddClientsToGroup', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/addClientsToNewGroup`, payload);
+      const response = await instence.post(`client/AddClientsToGroup`, payload);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -85,7 +85,7 @@ export const addClientsToNewGroup = createAsyncThunk(
 export const clientSlice = createSlice({
   name: 'client',
   initialState: {
-    ClientData: [],
+    ClientData: null,
     TotalCount: 0,
     TotalRevenue: 0,
     CampaignClicks: 0,

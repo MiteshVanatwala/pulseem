@@ -38,7 +38,7 @@ import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
 import Toast from '../../components/Toast/Toast.component';
 import { Dialog } from '../../components/managment/index';
-import { addClientsToNewGroup, deleteFromGroups, makeInvalidClients, removeEmailClient, removeSmsClient, searchAllClients } from "../../redux/reducers/clientSlice";
+import { addClientsToGroup, deleteFromGroups, makeInvalidClients, removeEmailClient, removeSmsClient, searchAllClients } from "../../redux/reducers/clientSlice";
 import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
 import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
@@ -113,7 +113,7 @@ const ClientSearchResult = ({ props, classes }) => {
   // const [avaregeRevenue, setAvaregeRevenue] = useState(TotalRevenue);
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
-  const [serachData, setSearchData] = useState();
+  const [serachData, setSearchData] = useState(null);
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
@@ -184,6 +184,12 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     setSearchData(initSearchData);
   }, []);
+
+  useEffect(() => {
+    if (serachData) {
+      getData();
+    }
+  }, [serachData]);
 
   const handleDownloadCsv = async () => {
     let orderList = await data.reduce((prev, next) => {
@@ -289,23 +295,17 @@ const ClientSearchResult = ({ props, classes }) => {
   };
 
   useEffect(() => {
-    if (serachData) {
-      getData();
-    }
-  }, [serachData]);
-
-  useEffect(() => {
-    handleFilter();
-    // setData(ClientData); // BUG: UNCOMMENT THIS
-    setData((ClientData && ClientData.length > 0) ? ClientData : Static_CSR_Data); // BUG: COMMENT THIS
-
-    if (TotalRevenue) {
-      setRevenueSummary([
-        { title: t('client.Purchased'), value: TotalCount },
-        { title: t('client.totalRevenue'), value: `${TotalRevenue?.toLocaleString()} ${t('common.NIS')}` },
-        { title: t('client.avgOrderRevenue'), value: `${(TotalRevenue / TotalCount)?.toFixed(0).toLocaleString()} ${t('common.NIS')}` },
-        { title: t('client.conversionRate'), value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(1)}%`, style: { direction: isRTL ? 'rtl' : 'ltr' } }
-      ]);
+    if (ClientData) {
+      setData(ClientData);
+      handleFilter();
+      if (TotalRevenue) {
+        setRevenueSummary([
+          { title: t('client.Purchased'), value: TotalCount },
+          { title: t('client.totalRevenue'), value: `${TotalRevenue?.toLocaleString()} ${t('common.NIS')}` },
+          { title: t('client.avgOrderRevenue'), value: `${(TotalRevenue / TotalCount)?.toFixed(0).toLocaleString()} ${t('common.NIS')}` },
+          { title: t('client.conversionRate'), value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(1)}%`, style: { direction: isRTL ? 'rtl' : 'ltr' } }
+        ]);
+      }
     }
   }, [ClientData, isRTL]);
 
@@ -418,15 +418,6 @@ const ClientSearchResult = ({ props, classes }) => {
     return null;
   }
 
-  // const handleSelected = (id) => {
-  //   const index = selectedClients.indexOf(id);
-  //   if (index !== -1) {
-  //     let temp = [...selectedClients];
-  //     temp.splice(index, 1);
-  //     setSelectedClients([...temp]);
-  //   } else setSelectedClients([...selectedClients, id]);
-  // };
-
   const makeInvalid = () => {
     dispatch(makeInvalidClients(selectedClients))
   }
@@ -449,11 +440,11 @@ const ClientSearchResult = ({ props, classes }) => {
     })
 
     const tempData = {
-      GroupId: '',
+      GroupId: groupId,
       ClientIds: [...tempClientIds]
     }
 
-    dispatch(addClientsToNewGroup(tempData))
+    dispatch(addClientsToGroup(tempData))
   }
 
 
@@ -1202,7 +1193,7 @@ const ClientSearchResult = ({ props, classes }) => {
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
             createGroupCallback={(groupId) => { handleAddRecipients(groupId); setDialog(null) }}
-            getData={getData}
+            getData={() => null}
             handleResponses={(response, actions) => handleResponses(response, actions)}
           />
         }
