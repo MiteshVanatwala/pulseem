@@ -425,14 +425,43 @@ const ClientSearchResult = ({ props, classes }) => {
     dispatch(makeInvalidClients(selectedClients))
   }
 
-  const removeRecipientFromAllGroups = () => {
-    dispatch(deleteFromGroups)
+  const removeRecipientFromAllGroups = async () => {
+    setDialog(null);
+    setLoader(true);
+    const response = await dispatch(deleteFromGroups(selectedClients))
+    if (response && response.payload === 'true') {
+      // show delete success message
+    }
+    else {
+      // show delete failed message
+    }
+    setLoader(false);
   }
-  const removeEmailRecipient = () => {
-    dispatch(removeEmailClient)
+  const removeEmailRecipient = async () => {
+    setDialog(null);
+    setLoader(true);
+    const response = await dispatch(removeEmailClient)
+
+    if (response && response.payload === 'true') {
+      // show delete success message
+    }
+    else {
+      // show delete failed message
+    }
+    setLoader(false);
   }
-  const removeSMSRecipient = () => {
-    dispatch(removeSmsClient)
+  const removeSMSRecipient = async () => {
+    setDialog(null);
+    setLoader(true);
+    const response = await dispatch(removeSmsClient)
+    if (response && response.payload === 'true') {
+      // show delete success message
+      setDialog(null);
+    }
+    else {
+      // show delete failed message
+    }
+    setLoader(false);
   }
 
   const handleAddRecipients = async (groupId) => {
