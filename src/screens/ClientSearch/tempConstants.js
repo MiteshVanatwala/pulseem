@@ -3047,3 +3047,370 @@ export const clientSearchQueryString = (props = {
         return prev
     }, '?')
 }
+
+const ClientSearchPageTypes = {
+    Undefined: 0,
+    OpenedCampaignID: 1,
+    LandingPageID: 2,
+    FormID: 3,
+    SentToCampaignID: 4,
+    RemovedClientsCampaignID: 5,
+    NotOpenedCampaignID: 6,
+    ClientStatus: 7, // (Conditions * )
+    TotalCountSMSCampaignID: 8,
+    SuccessCountSMSCampaignID: 9,
+    FailureCountSMSCampaignID: 10,
+    RemovedCountSMSCampaignID: 11,
+    MmsCountCampaignID: 12,
+    StatCountryRegion: 13,
+    StatCity: 14,
+    Revenue: 15,
+    ShowGroup: 16,
+}
+
+
+const ConditionObj = {
+    FirstName: {
+        label: 'FirstName',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    LastName: {
+        label: 'LastName',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    Email: {
+        label: 'Email',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    Address: {
+        label: 'Address',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    City: {
+        label: 'City',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    Country: {
+        label: 'Country',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    State: {
+        label: 'State',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    Zip: {
+        label: 'Zip',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    Telephone: {
+        label: 'Telephone',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    Cellphone: {
+        label: 'Cellphone',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    Company: {
+        label: 'Company',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField1: {
+        label: 'ExtraField1',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    Status: {
+        label: 'Status',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    SmsStatus: {
+        label: 'SmsStatus',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField2: {
+        label: 'ExtraField2',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField3: {
+        label: 'ExtraField3',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField4: {
+        label: 'ExtraField4',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField5: {
+        label: 'ExtraField5',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField6: {
+        label: 'ExtraField6',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField7: {
+        label: 'ExtraField7',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField8: {
+        label: 'ExtraField8',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField9: {
+        label: 'ExtraField9',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField10: {
+        label: 'ExtraField10',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField11: {
+        label: 'ExtraField11',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField12: {
+        label: 'ExtraField12',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    ExtraField13: {
+        label: 'ExtraField13',
+        condTypes: {
+            Undefined: 0,
+            Equal: 1,
+            Like: 2,
+            NotEqual: 3,
+            StartsWith: 4,
+            NoValue: 5
+        }
+    },
+    BirthDate: {
+        label: 'BirthDate',
+        condTypes: {
+            from: '',
+            to: ''
+        }
+    },
+    BirthDateWithoutYear: {
+        label: 'BirthDateWithoutYear',
+        condTypes: {
+            from: '',
+            to: ''
+        }
+    },
+    Reminder: {
+        label: 'Reminder',
+        condTypes:
+        {
+            from: '',
+            to: ''
+        }
+    },
+    Created: {
+        label: 'Created',
+        condTypes: {
+            from: '',
+            to: ''
+        }
+    },
+    ExtraDate1: {
+        label: 'ExtraDate1',
+        condTypes: {
+            from: '',
+            to: ''
+        }
+    },
+    ExtraDate2: {
+        label: 'ExtraDate2',
+        condTypes: {
+            from: '',
+            to: ''
+        }
+    },
+    ExtraDate3: {
+        label: 'ExtraDate3',
+        condTypes: {
+            from: '',
+            to: ''
+        }
+    },
+    ExtraDate4: {
+        label: 'ExtraDate4',
+        condTypes: {
+            from: '',
+            to: ''
+        }
+    },
+}

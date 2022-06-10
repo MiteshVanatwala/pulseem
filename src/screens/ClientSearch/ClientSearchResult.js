@@ -38,7 +38,7 @@ import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
 import Toast from '../../components/Toast/Toast.component';
 import { Dialog } from '../../components/managment/index';
-import { addClientsToGroup, deleteFromGroups, makeInvalidClients, removeEmailClient, removeSmsClient, searchAllClients } from "../../redux/reducers/clientSlice";
+import { AddClientsToGroup, deleteFromGroups, makeInvalidClients, removeEmailClient, removeSmsClient, searchAllClients } from "../../redux/reducers/clientSlice";
 import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
 import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
@@ -50,6 +50,7 @@ import { exportFile } from '../../helpers/exportFromJson';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import queryString from 'query-string';
+import { useLocation } from "react-router";
 
 
 
@@ -94,6 +95,7 @@ const ClientSearchResult = ({ props, classes }) => {
 
   const { t } = useTranslation();
   const localClasses = useStyles();
+  const location = useLocation()
   // const { groupData, ToastMessages } = useSelector((state) => state.group);
   const [selectedClients, setSelectedClients] = useState([]);
   const [searchStr, setSearchStr] = useState("");
@@ -186,6 +188,7 @@ const ClientSearchResult = ({ props, classes }) => {
   }, []);
 
   useEffect(() => {
+    console.log("STATE:", location)
     if (serachData) {
       getData();
     }
@@ -444,7 +447,7 @@ const ClientSearchResult = ({ props, classes }) => {
       ClientIds: [...tempClientIds]
     }
 
-    dispatch(addClientsToGroup(tempData))
+    dispatch(AddClientsToGroup(tempData))
   }
 
 

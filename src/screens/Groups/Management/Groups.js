@@ -40,6 +40,7 @@ import { Dialog } from '../../../components/managment/index';
 import SimplyClubPupup from "./Popup/SimplyClubPupup";
 import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
+// import { useNavigate } from 'react-router';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -67,6 +68,7 @@ const Groups = ({ classes }) => {
         PageSize: rowsPerPage,
         SearchTerm: "",
     });
+    // const navigate = useNavigate()
     moment.locale(language);
 
     const DialogType = {
@@ -609,6 +611,9 @@ const Groups = ({ classes }) => {
                                 onClick: () => {
                                     window.open(`/react/ClientSearchResult?Src=1&ReportType=0&PageType=16&GroupID=${GroupID}`)
                                     //COMMENT: UNComment after clientsearchResult API integration. window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1, ReportType:0, GroupID:GroupID})}`)
+
+                                    // navigate("/ClientSearchResult", { state: { page: 1, user: 'test', groupId: GroupID } }); //TODO: Trying Navigation with props
+
                                 },
                                 label: t("recipient.preview"),
                                 component: (

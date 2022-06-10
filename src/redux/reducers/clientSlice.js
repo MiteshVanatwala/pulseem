@@ -71,7 +71,7 @@ export const searchAllClients = createAsyncThunk(
     }
   })
 
-export const addClientsToGroup = createAsyncThunk(
+export const AddClientsToGroup = createAsyncThunk(
   'client/AddClientsToGroup', async (payload, thunkAPI) => {
     try {
       const response = await instence.post(`client/AddClientsToGroup`, payload);
