@@ -31,7 +31,6 @@ const UnsubscribeOrDeletePopup = ({
     const [highlighted, setHighlighted] = useState(false);
     const dispatch = useDispatch();
     const [showLoader, setLoader] = useState(false);
-    const [totalRecords, settotalRecords] = useState(0);
     const [areaData, setareaData] = useState("");
     const [finalData, setFinalData] = useState(null);
     const [updatedRows, setUpdatedRows] = useState(-1);
@@ -83,7 +82,7 @@ const UnsubscribeOrDeletePopup = ({
         // setFileToUpload(file);
         var p = new Promise((resolve, reject) => {
             try {
-                if (file.name.toLowerCase().indexOf("xls") > -1 || file.name.toLowerCase().indexOf("csv") > -1) {
+                if (file.name.toLowerCase().indexOf("xls") > -1) {
                     setLoader(true);
 
                     reader.onload = function (e) {
@@ -108,6 +107,43 @@ const UnsubscribeOrDeletePopup = ({
                     };
                     reader.readAsArrayBuffer(file, "utf-8")
                 }
+                else if (file.name.toLowerCase().indexOf("csv") > -1) {
+                    setLoader(true);
+                    reader.onload = function () {
+                        const finalData = [];
+                        Papa.parse(reader.result, {
+                            delimiter: ",", // auto-detect
+                            newline: "", // auto-detect
+                            quoteChar: "",
+                            escapeChar: "",
+                            preview: 0,
+                            worker: true,
+                            skipEmptyLines: true,
+                            fastMode: true,
+                            chunkSize: 500000,
+                            chunk: async (chunkRows) => {
+                                if (chunkRows.data) {
+                                    const tempRows = chunkRows.data.flat();
+                                    tempRows.pop();
+                                    let flatData = tempRows.flat();
+                                    let validData = clearInvalidData(flatData.flat())
+                                    finalData.push(validData);
+                                }
+                            },
+                            complete: () => {
+                                setFinalData(finalData.flat());
+                                const tempData = [...finalData];
+                                const flatData = tempData.flat();
+                                const sliceData = flatData.slice(0, 1000)
+                                setareaData(sliceData.join(',').replaceAll(',', "\n") + (flatData.length > 1000 ? "\n..." : ""));
+                                setLoader(false);
+                                resolve(null);
+                            },
+
+                        });
+                    };
+                    reader.readAsText(file, "ISO-8859-8");
+                }
                 else {
                     setLoader(false);
                     return false;
@@ -120,17 +156,20 @@ const UnsubscribeOrDeletePopup = ({
         });
 
         p.then((data) => {
-            handleFinalData(data);
+            if (data) {
+                handleFinalData(data);
+            }
         });
     }
 
-    const handleFinalData = (data) => {
-        if (data.length === 0)
-            return;
-
-        setError(null);
+    const clearInvalidData = (data) => {
         let filteredData = data.filter((m) => {
             m = m.replaceAll('\t', '').replaceAll(' ', '');
+            const isDate = m.split('-').length > 2;
+            if (isDate) {
+                return null;
+            }
+
             if (ValidateNumber(m)) {
                 if (m.length >= 9 && m.length <= 13) {
                     return m;
@@ -142,12 +181,24 @@ const UnsubscribeOrDeletePopup = ({
 
             return null;
         });
+
+        return filteredData;
+    }
+
+    const handleFinalData = (data) => {
+        if (data.length === 0)
+            return;
+
+        setError(null);
+        let filteredData = clearInvalidData(data);
         if (filteredData.length === 0) {
             return;
         }
 
         setFinalData(filteredData);
-        setareaData(data.slice(0, 1000).join(',').replaceAll(',', "\n") + (data.length > 1000 ? "\n..." : ""));
+        const tempData = [...filteredData];
+        setareaData(tempData.slice(0, 1000).join(',').replaceAll(',', "\n") + (tempData.length > 1000 ? "\n..." : ""));
+        setLoader(false);
     }
 
     const areaChange = (e) => {
@@ -179,7 +230,7 @@ const UnsubscribeOrDeletePopup = ({
 
             const response = await dispatch(deleteRecipients(payload))
             setUpdatedRows(response.payload?.Summary?.TotalRecords ?? -1);
-            settotalRecords(finalData.length)
+            //settotalRecords(finalData.length)
             setLoader(false)
             handleResponses(response, {
                 'S_200': {
@@ -243,7 +294,7 @@ const UnsubscribeOrDeletePopup = ({
 
             const response = await dispatch(unsubRecipients(payload))
             setUpdatedRows(response.payload?.Summary?.TotalRecords ?? -1);
-            settotalRecords(finalData.length)
+            //settotalRecords(finalData.length)
             setLoader(false)
             handleResponses(response, {
                 'S_200': {
