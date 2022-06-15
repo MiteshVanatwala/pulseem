@@ -3,11 +3,13 @@ import {
     Grid,
     Typography,
     FormControlLabel,
-    Switch
+    Switch,
+    Button
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../../components/managment/Dialog";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
+import { BsInfoCircleFill } from "react-icons/bs";
 import clsx from 'clsx';
 import { useState } from "react";
 import { deleteRecipients, unsubRecipients } from "../../../../redux/reducers/groupSlice";
@@ -16,6 +18,7 @@ import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
 import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
+import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 
 
 const UnsubscribeOrDeletePopup = ({
@@ -39,6 +42,7 @@ const UnsubscribeOrDeletePopup = ({
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [confirm, setConfirm] = useState(false);
+    const [limitationWarning, setLimitationWarning] = useState(false);
 
     const AdvanceOptions = () => {
         return (
@@ -95,14 +99,22 @@ const UnsubscribeOrDeletePopup = ({
 
                             let temp = csv;
                             let a = temp.split("\n");
-                            let b = [];
-                            for (let i = 0; i < a.length; i++) {
-                                const tempData = a[i].split(",")?.filter(n => n);
-                                b.push(...tempData);
+
+                            if (a.length > 1000) {
+                                setLimitationWarning(true);
+                                setLoader(false);
+                                resolve(null);
                             }
-                            b.pop();
-                            setLoader(false);
-                            resolve(b);
+                            else {
+                                let b = [];
+                                for (let i = 0; i < a.length; i++) {
+                                    const tempData = a[i].split(",")?.filter(n => n);
+                                    b.push(...tempData);
+                                }
+                                b.pop();
+                                setLoader(false);
+                                resolve(b);
+                            }
                         }, 0);
                     };
                     reader.readAsArrayBuffer(file, "utf-8")
@@ -120,24 +132,35 @@ const UnsubscribeOrDeletePopup = ({
                             worker: true,
                             skipEmptyLines: true,
                             fastMode: true,
-                            chunkSize: 500000,
-                            chunk: async (chunkRows) => {
-                                if (chunkRows.data) {
+                            chunkSize: 10000,
+                            chunk: async (chunkRows, action) => {
+                                if (finalData && finalData.flat().length > 1000) {
+                                    setLimitationWarning(true);
+                                    setLoader(false);
+                                    resolve(null);
+                                    action.abort();
+                                }
+                                else if (chunkRows.data) {
                                     const tempRows = chunkRows.data.flat();
                                     tempRows.pop();
                                     let flatData = tempRows.flat();
                                     let validData = clearInvalidData(flatData.flat())
-                                    finalData.push(validData);
+                                    if (validData && validData.length > 0) {
+                                        finalData.push(validData);
+                                    }
                                 }
                             },
                             complete: () => {
-                                setFinalData(finalData.flat());
-                                const tempData = [...finalData];
-                                const flatData = tempData.flat();
-                                const sliceData = flatData.slice(0, 1000)
-                                setareaData(sliceData.join(',').replaceAll(',', "\n") + (flatData.length > 1000 ? "\n..." : ""));
-                                setLoader(false);
-                                resolve(null);
+                                if (finalData.flat().length < 1000) {
+                                    setError(null);
+                                    setFinalData(finalData.flat());
+                                    const tempData = [...finalData];
+                                    const flatData = tempData.flat();
+                                    const sliceData = flatData.slice(0, 1000)
+                                    setareaData(sliceData.join(',').replaceAll(',', "\n") + (flatData.length > 1000 ? "\n..." : ""));
+                                    setLoader(false);
+                                    resolve(null);
+                                }
                             },
 
                         });
@@ -165,7 +188,7 @@ const UnsubscribeOrDeletePopup = ({
     const clearInvalidData = (data) => {
         let filteredData = data.filter((m) => {
             m = m.replaceAll('\t', '').replaceAll(' ', '');
-            const isDate = m.split('-').length > 2;
+            let isDate = ((m.split('-').length > 2) || (m.split('\'').length > 2) || (m.split('/').length > 2));
             if (isDate) {
                 return null;
             }
@@ -188,6 +211,9 @@ const UnsubscribeOrDeletePopup = ({
     const handleFinalData = (data) => {
         if (data.length === 0)
             return;
+        else if (data.length > 1000) {
+            setLimitationWarning(true);
+        }
 
         setError(null);
         let filteredData = clearInvalidData(data);
@@ -197,8 +223,9 @@ const UnsubscribeOrDeletePopup = ({
 
         setFinalData(filteredData);
         const tempData = [...filteredData];
-        setareaData(tempData.slice(0, 1000).join(',').replaceAll(',', "\n") + (tempData.length > 1000 ? "\n..." : ""));
+        setareaData(tempData.join(',').replaceAll(',', "\n"));
         setLoader(false);
+        //setareaData(tempData.slice(0, 1000).join(',').replaceAll(',', "\n") + (tempData.length > 1000 ? "\n..." : ""));
     }
 
     const areaChange = (e) => {
@@ -263,6 +290,10 @@ const UnsubscribeOrDeletePopup = ({
                     code: 404,
                     message: ToastMessages.RECIPIENTS_NOT_FOUND,
                     Func: () => null
+                }, 'S_405': {
+                    code: 405,
+                    message: ToastMessages.UNSUBSCRIBE_LIMIT,
+                    Func: () => null
                 },
                 'S_500': {
                     code: 500,
@@ -322,6 +353,11 @@ const UnsubscribeOrDeletePopup = ({
                     message: ToastMessages.RECIPIENTS_NOT_FOUND,
                     Func: () => null
                 },
+                'S_405': {
+                    code: 405,
+                    message: ToastMessages.UNSUBSCRIBE_LIMIT,
+                    Func: () => null
+                },
                 'S_500': {
                     code: 500,
                     message: ToastMessages.ERROR_OCCURED,
@@ -364,7 +400,7 @@ const UnsubscribeOrDeletePopup = ({
             },
             placeHolder: "recipient.deleteTextareaPlaceholder",
             component: null
-        },
+        }
     };
 
     const RenderSummaryDialog = () => {
@@ -390,8 +426,40 @@ const UnsubscribeOrDeletePopup = ({
         )
     }
 
+    const RenderMaximumLimitationRequest = () => {
+        return (
+            <Dialog
+                classes={classes}
+                open={limitationWarning}
+                title={t("common.systemNotice")}
+                icon={<div className={classes.dialogIconContent}>
+                    {'\uE0D5'}
+                </div>}
+                showDefaultButtons={false}
+                showDivider={true}
+                onClose={() => { setLimitationWarning(false) }}
+                onCancel={() => { setLimitationWarning(false) }}
+                renderButtons={() => {
+                    return <Button
+                        variant='contained'
+                        style={{ margin: '0 auto' }}
+                        onClick={() => { setLimitationWarning(false) }}
+                        className={clsx(
+                            classes.dialogButton,
+                            classes.dialogConfirmButton
+                        )}>
+                        {t('common.Ok')}
+                    </Button>
+                }}
+            >
+                <Typography>{t('recipient.maximumRecordLimitation')}</Typography>
+            </Dialog>
+        )
+    }
+
     const DropBox = (classes) => (<Grid container>
         <Grid item md={12} xs={12} className={clsx(error ? classes.errorFullBorder : '', highlighted ? classes.greenManual : classes.areaManual)}>
+            {RenderMaximumLimitationRequest()}
             {RenderSummaryDialog()}
             <textarea
                 placeholder={t(DialogObject[dialogType].placeHolder)}
@@ -446,19 +514,40 @@ const UnsubscribeOrDeletePopup = ({
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
                         {DialogObject[dialogType].title}
+                        <CustomTooltip
+                            isSimpleTooltip={false}
+                            interactive={true}
+                            classes={{
+                                tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                                arrow: classes.fBlack,
+                            }}
+                            arrow={true}
+                            style={{ fontSize: 18, fontWeight: "bold", color: '#000', marginInline: 10 }}
+                            placement={"top"}
+                            title={
+                                <Typography noWrap={false}>
+                                    {t("recipient.maximumRecordLimitation")}
+                                </Typography>
+                            }
+                            text={t("recipient.maximumRecordLimitation")}
+                        >
+                            <span>
+                                <BsInfoCircleFill />
+                            </span>
+                        </CustomTooltip>
                     </Box>
                     <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
                             <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
                         </label>
                     </Box>
-                </Box>
+                </Box >
 
 
             }
-            icon={<div className={classes.dialogIconContent}>
+            icon={< div className={classes.dialogIconContent} >
                 {'\uE0D5'}
-            </div>}
+            </div >}
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}
@@ -469,7 +558,7 @@ const UnsubscribeOrDeletePopup = ({
                 {DropBox(classes)}
                 {DialogObject[dialogType].component && AdvanceOptions()}
             </Box>
-        </Dialog>
+        </Dialog >
     )
 }
 

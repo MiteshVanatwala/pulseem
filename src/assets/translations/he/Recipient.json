@@ -101,5 +101,6 @@
   "externalImport": "ייבוא קבוצות חיצוניות",
   "recipientsDeletedSuccessfuly": "הלקוחות נמחקו בהצלחה",
   "noRecordsFound": "לא נמצאו/עודכנו רשומות",
-  "uploadLimitation": "באפשרותך להעלות עד 600,000 נמענים בבת אחת"
+  "uploadLimitation": "באפשרותך להעלות עד 600,000 נמענים בבת אחת",
+  "maximumRecordLimitation": "שגיאה: באפשרותך לבצע הסרה/מחיקה של מקסימום 1,000 נמענים בכל בקשה"
 }
