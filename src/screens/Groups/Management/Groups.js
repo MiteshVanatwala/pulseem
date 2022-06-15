@@ -926,7 +926,7 @@ const Groups = ({ classes }) => {
             title: t("common.ExportGroups"),
             content: (
                 <Typography style={{ marginBottom: 20 }}>
-                    {!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportGroups') : t("common.IsExportGroup")}
+                    {!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") :  t("common.IsExportGroups")}
                 </Typography>
             )
         }
