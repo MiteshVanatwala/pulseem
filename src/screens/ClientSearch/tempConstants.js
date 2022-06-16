@@ -3048,25 +3048,6 @@ export const clientSearchQueryString = (props = {
     }, '?')
 }
 
-const ClientSearchPageTypes = {
-    Undefined: 0,
-    OpenedCampaignID: 1,
-    LandingPageID: 2,
-    FormID: 3,
-    SentToCampaignID: 4,
-    RemovedClientsCampaignID: 5,
-    NotOpenedCampaignID: 6,
-    ClientStatus: 7, // (Conditions * )
-    TotalCountSMSCampaignID: 8,
-    SuccessCountSMSCampaignID: 9,
-    FailureCountSMSCampaignID: 10,
-    RemovedCountSMSCampaignID: 11,
-    MmsCountCampaignID: 12,
-    StatCountryRegion: 13,
-    StatCity: 14,
-    Revenue: 15,
-    ShowGroup: 16,
-}
 
 
 const ConditionObj = {

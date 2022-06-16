@@ -12,9 +12,12 @@ import { BsInfoCircleFill } from 'react-icons/bs';
 import clsx from 'clsx';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle';
 import { clientSearchQueryString } from '../../screens/ClientSearch/tempConstants';
+import CLIENT_CONSTANTS from '../../model/Clients/Contants';
+import { useNavigate } from 'react-router';
 
 
 const RecipientChart = ({ classes, }) => {
+    const navigate = useNavigate()
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
@@ -243,10 +246,14 @@ const RecipientChart = ({ classes, }) => {
                 className={classes.doughnutGrid}>
                 <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
                 <Box className={classes.doughnutBox}>
-                    <Link
+                    {/* <Link
                         href="#!"
                         className={classes.chartLabel}
-                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link>
+                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link> */}
+                    <Typography
+                        href="#!"
+                        className={classes.chartLabel}
+                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Typography>
                     <Doughnut data={innerData} options={options} style={{ cursor: 'pointer' }} />
                 </Box>
             </Grid>
@@ -259,12 +266,14 @@ const RecipientChart = ({ classes, }) => {
         if (reportType === "total") {
             qReportType = 100;
             if (productType === 0) {
-                window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
-                // window.open(`/react/ClientSearchResult/${clientSearchQueryString({ ClientStatus: qReportType })}`, '_blank', 'noopener,noreferrer'); //COMMENT: UNComment after clientsearchResult API integration
+                // window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
+                navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, TestStatusOfEmailElseSms: 1, Status: qReportType } })
+                //TODO: UnComment OnCLick, Comment Href 
             }
             if (productType === 1) {
-                window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
-                // window.open(`/react/ClientSearchResult/${clientSearchQueryString({ ClientStatus: qReportType, smsStatus: true })}`, '_blank', 'noopener,noreferrer'); //COMMENT: UNComment after clientsearchResult API integration
+                // window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
+                navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, Status: qReportType } })
+                //TODO: UnComment OnCLick, Comment Href 
             }
         }
         if (productType === "0") {
@@ -282,8 +291,9 @@ const RecipientChart = ({ classes, }) => {
                     break;
                 }
             }
-            window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
-            // window.open(`/react/ClientSearchResult/${clientSearchQueryString({ ClientStatus: qReportType })}`, '_blank', 'noopener,noreferrer'); //COMMENT: UNComment after clientsearchResult API integration
+            // window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
+            navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, Status: qReportType } })
+            //TODO: UnComment OnCLick, Comment Href 
         }
         if (productType === "1") {
             switch (reportType) {
@@ -300,8 +310,9 @@ const RecipientChart = ({ classes, }) => {
                     break;
                 }
             }
-            window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
-            // window.open(`/react/ClientSearchResult/${clientSearchQueryString({ ClientStatus: qReportType, smsStatus: true })}`, '_blank', 'noopener,noreferrer'); //COMMENT: UNComment after clientsearchResult API integration
+            // window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
+            navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, TestStatusOfEmailElseSms: 1, Status: qReportType } })
+            //TODO: UnComment OnCLick, Comment Href 
         }
 
     }

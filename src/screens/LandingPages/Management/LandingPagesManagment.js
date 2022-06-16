@@ -18,7 +18,7 @@ import {
 } from '../../../redux/reducers/landingPagesSlice'
 import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { openInNewTab } from '../../../helpers/functions'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import Ellipsis from 'react-ellipsis-pjs';
@@ -27,8 +27,10 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
+import CLIENT_CONSTANTS from '../../../model/Clients/Contants';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
+  const navigate = useNavigate()
   const { windowSize, rowsPerPage } = useSelector(state => state.core)
   const { landingPagesData, landingPagesDataError, landingPagesDeletedData } = useSelector(state => state.landingPages)
   const { t } = useTranslation()
@@ -461,6 +463,12 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
             className={clsx(classes.middleText, classes.pt2)}>
             {t('landingPages.SubmitsResource1.HeaderText')}
           </a>
+          // : <p
+          //   onClick={() => navigate(CLIENT_CONSTANTS.BASEURL, { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: ID, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID})}
+          //   className={clsx(classes.middleText, classes.pt2)}>
+          //   {t('landingPages.SubmitsResource1.HeaderText')}
+          // </p>
+          //TODO: UnComment OnCLick, Comment Href 
         }
       </>
     )

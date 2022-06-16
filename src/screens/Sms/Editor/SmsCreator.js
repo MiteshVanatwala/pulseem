@@ -23,7 +23,7 @@ import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
 import { setCookie } from '../../../helpers/cookies'
 import { FaExclamationCircle } from 'react-icons/fa'
 
-import { useHistory } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import {
   getPreviousCampaignData,
   getPreviousLandingData,
@@ -111,7 +111,7 @@ const SmsCreator = ({ classes, ...props }) => {
     maxLength: "13"
   }
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, accountFeatures } = useSelector(
     (state) => state.core
@@ -246,6 +246,8 @@ const SmsCreator = ({ classes, ...props }) => {
       setShowRemovalLink(!accountFeatures.includes('39'))
     }
   }, [isPageLoaded || accountFeatures]);
+
+  const params = useParams()
 
   const qs = queryString.parse(props.location.search);
 
@@ -1247,13 +1249,13 @@ const SmsCreator = ({ classes, ...props }) => {
       if (isSave) {
         setToastMessage(ToastMessages.SUCCESS);
         setTimeout(() => {
-          history.push(`/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
+          navigate(`/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
           setToastMessage(null);
         }, 1500);
       } else if (returnToAutomation) {
         window.location = getAutomationReturnUrl(campaignId);
       } else {
-        history.push(`/sms/send/${campaignId}`);
+        navigate(`/sms/send/${campaignId}`);
       }
     }
     else if (r.payload.Status === 3) {
@@ -1307,13 +1309,13 @@ const SmsCreator = ({ classes, ...props }) => {
       if (response) {
         dispatch(deleteSms(response.payload.SMSCampaignID));
         handleClose();
-        history.push("/SMSCampaigns");
+        navigate("/SMSCampaigns");
       }
     }
     else {
       dispatch(deleteSms(-1));
       handleClose();
-      history.push("/SMSCampaigns");
+      navigate("/SMSCampaigns");
     }
   };
 
@@ -1369,7 +1371,7 @@ const SmsCreator = ({ classes, ...props }) => {
         }
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
-          history.push("/SMSCampaigns");
+          navigate("/SMSCampaigns");
 
         }
         else {
@@ -1383,7 +1385,7 @@ const SmsCreator = ({ classes, ...props }) => {
       }
     }
     else if (saveBeforeExit === false) {
-      history.push("/SMSCampaigns");
+      navigate("/SMSCampaigns");
       setDialogType(null);
     }
   };
@@ -1968,28 +1970,28 @@ const SmsCreator = ({ classes, ...props }) => {
         spacing={windowSize === "xs" ? 0 : 3}
         className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}
         style={{ height: windowSize !== "xs" ? 'calc(100vh - 75px)' : null }}>
-      <Grid item sm={12} md={12} lg={8}>
-        <Title title={t("mainReport.smsCampaign")}
-          classes={classes}
-          tooltip={t("mainReport.toolTip1")}
-          stepNumber={1}
-          subTitle={t("mainReport.createContent")}
-          topZero={false}
-        />
-        {renderFields()}
-        {renderMsg()}
+        <Grid item sm={12} md={12} lg={8}>
+          <Title title={t("mainReport.smsCampaign")}
+            classes={classes}
+            tooltip={t("mainReport.toolTip1")}
+            stepNumber={1}
+            subTitle={t("mainReport.createContent")}
+            topZero={false}
+          />
+          {renderFields()}
+          {renderMsg()}
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={4}>
+          <Box style={{ maxWidth: 420, marginTop: 20 }}>
+            {renderPhone()}
+          </Box>
+        </Grid>
+        {renderButtons()}
       </Grid>
-      <Grid item xs={12} sm={12} md={12} lg={4}>
-        <Box style={{ maxWidth: 420, marginTop: 20 }}>
-          {renderPhone()}
-        </Box>
-      </Grid>
-      {renderButtons()}
-    </Grid>
-      { renderDialog() }
-  { renderSummary() }
-  { otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} /> }
-  <Loader isOpen={showLoader} />
+      {renderDialog()}
+      {renderSummary()}
+      {otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
+      <Loader isOpen={showLoader} />
     </DefaultScreen >
   );
 };

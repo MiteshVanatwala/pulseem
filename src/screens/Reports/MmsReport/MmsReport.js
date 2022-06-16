@@ -27,6 +27,8 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import DataTable from '../../../components/Table/DataTable';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { useNavigate } from 'react-router';
+import CLIENT_CONSTANTS from '../../../model/Clients/Contants';
 
 const DEFAULT_FILTER = {
     fromDate: null,
@@ -35,6 +37,7 @@ const DEFAULT_FILTER = {
 }
 
 const MmsReport = ({ classes }) => {
+    const navigate = useNavigate()
     const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
     const { mmsReport, mmsGraph } = useSelector(state => state.mms)
     const { t } = useTranslation()
@@ -88,31 +91,43 @@ const MmsReport = ({ classes }) => {
     const getHrefs = (id) => ({
         TotalSendTo: {
             title: t('mmsreport.amountToSend'),
-            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+            onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID }),
+            //TODO: UnComment OnCLick, Comment Href 
+
         },
         TotalSent: {
             title: t('common.Total'),
-            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=3&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=3&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+            onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID, Status: 3 }),
+            //TODO: UnComment OnCLick, Comment Href 
         },
         FutureSends: {
             title: t('mmsreport.futureSends'),
-            href: ''
+            href: '',
+            onClick: () => null
         },
         Failed: {
             title: windowSize === 'xs' ? '' : t("common.failedStatus"),
-            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=4&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=4&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+            onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID, Status: 4 }),
+            //TODO: UnComment OnCLick, Comment Href 
         },
         Removed: {
             title: windowSize === 'xs' ? '' : t('mmsreport.removal'),
-            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=5&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+            href: `/Pulseem/ClientSearchResult.aspx?MmsCountCampaignID=${id}&Status=5&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+            onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.MmsCountCampaignID, Status: 5 }),
+            //TODO: UnComment OnCLick, Comment Href 
         },
         CreditsPerMms: {
             title: t('mmsreport.creditsPerMms'),
-            href: ''
+            href: '',
+            onClick: () => null
         },
         TotalCredits: {
             title: t('mmsreport.totalCreditsSent'),
-            href: ''
+            href: '',
+            onClick: () => null
         }
     })
 
@@ -422,12 +437,14 @@ const MmsReport = ({ classes }) => {
     }
 
     const renderIntData = (value, type, data = {}, clickable = true) => {
-        const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '' } = data
+        const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', onClick = () => null } = data
         const innerRef = clickable ? href : '';
         return (
             <Box style={{ display: 'flex', flexDirection: 'column' }} >
                 <Typography component={innerRef && value > 0 ? 'a' : 'p'}
                     href={innerRef}
+                    // onClick={onClick}
+                    //TODO: UnComment OnCLick, Comment Href 
                     className={clsx(classes.middleText, colorTextStyle[type] || '')}
                     target="_blank">
                     {value && value.toLocaleString() || '0'}

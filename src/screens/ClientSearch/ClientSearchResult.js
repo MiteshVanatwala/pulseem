@@ -91,7 +91,7 @@ const ClientSearchResult = ({ props, classes }) => {
     smsOldVersion,
     isRTL
   } = useSelector((state) => state.core);
-  const qs = queryString.parse(props.location.search);
+  const qs = queryString.parse(window.location.search);
 
   const { t } = useTranslation();
   const localClasses = useStyles();
@@ -189,10 +189,13 @@ const ClientSearchResult = ({ props, classes }) => {
 
   useEffect(() => {
     console.log("STATE:", location)
-    if (serachData) {
+    if (location) {
       getData();
     }
-  }, [serachData]);
+    // if (serachData) {
+    //   getData();
+    // }
+  }, [serachData, location]);
 
   const handleDownloadCsv = async () => {
     let orderList = await data.reduce((prev, next) => {
@@ -293,7 +296,8 @@ const ClientSearchResult = ({ props, classes }) => {
 
   const getData = async () => {
     setLoader(true);
-    await dispatch(searchAllClients(serachData));
+    // await dispatch(searchAllClients(serachData));
+    await dispatch(searchAllClients({ ...location.state, serachData }));
     setLoader(false);
   };
 
@@ -422,13 +426,13 @@ const ClientSearchResult = ({ props, classes }) => {
   }
 
   const makeInvalid = () => {
-    dispatch(makeInvalidClients(selectedClients))
+    dispatch(makeInvalidClients(selectedClients[0]))
   }
 
   const removeRecipientFromAllGroups = async () => {
     setDialog(null);
     setLoader(true);
-    const response = await dispatch(deleteFromGroups(selectedClients))
+    const response = await dispatch(deleteFromGroups(selectedClients[0]))
     if (response && response.payload === 'true') {
       // show delete success message
     }
@@ -623,7 +627,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Button>
         </Grid>}
         {
-          serachData.SearchTerm && (
+          serachData?.SearchTerm && (
             <Grid item>
               <Button
                 size="large"

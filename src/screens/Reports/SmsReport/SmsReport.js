@@ -24,8 +24,11 @@ import { smsReportStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { clientSearchQueryString } from '../../ClientSearch/tempConstants';
+import { useNavigate } from 'react-router';
+import CLIENT_CONSTANTS from '../../../model/Clients/Contants';
 
 const SmsReport = ({ classes }) => {
+  const navigate = useNavigate()
   const { language, windowSize, isRTL, accountSettings, accountFeatures } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
@@ -56,46 +59,52 @@ const SmsReport = ({ classes }) => {
 
   const getHrefs = (id) => ({
     TotalSendTo: {
-      href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
-      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({TotalCountSMSCampaignID:id, Culture:isRTL ? 'he-IL' : 'en-US'})}`
+      href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID }),
+      //TODO: UnComment OnCLick, Comment Href 
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
-      //href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      // onClick:()=>navigate(this.href)
     },
     ClickCount: {
       title: windowSize === 'xs' ? t('common.Total') : t('common.Clicks'),
-      href: ``
-      //href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      // href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      // onClick:()=>navigate(this.href)
     },
     PercetangeClicks: {
       title: t('mainReport.locUniqueClicksPercents.HeaderText'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      // onClick:()=>navigate(this.href)
     },
     Failed: {
       title: windowSize === 'xs' ? '' : t("common.failedStatus"),
-      href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
-      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({FailureCountSMSCampaignID:id, Culture:isRTL ? 'he-IL' : 'en-US'})}`
+      href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID })
+      //TODO: UnComment OnCLick, Comment Href 
     },
     Removed: {
       title: windowSize === 'xs' ? '' : t('mainReport.removed'),
-      href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
-      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({RemovedCountSMSCampaignID:id, Culture:isRTL ? 'he-IL' : 'en-US'})}`
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID })
+      //TODO: UnComment OnCLick, Comment Href 
     },
     Replies: {
       title: t('common.Total'),
-      //href: `/react/reports/SmsReplies/${id}`
-      href: `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      // onClick:()=>navigate(this.href)
     },
     DLR: {
       title: windowSize === 'xs' ? '' : t('common.DLR'),
-      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
-      //COMMENT: UNComment after clientsearchResult API integration. href: `/react/ClientSearchResult/${clientSearchQueryString({SuccessCountSMSCampaignID:id, Culture:isRTL ? 'he-IL' : 'en-US'})}`
+      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.SuccessCountSMSCampaignID }),
+      //TODO: UnComment OnCLick, Comment Href 
     },
     Revenue: {
       title: '',
       href: `/react/ClientSearchResult/${id}`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue }),
+      //TODO: UnComment OnCLick, Comment Href 
       textStyle: { fontWeight: 900 }
     }
   })
@@ -427,12 +436,14 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}, clickable = true) => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null } = data
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null, onClick = () => null } = data
     const innerRef = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
         <Typography component='a' // BUG: Remove this 
           href={innerRef}
+          // onClick={onClick}
+          //TODO: UnComment OnCLick, Comment Href 
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           style={textStyle}
           target="_blank">
