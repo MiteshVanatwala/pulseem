@@ -41,6 +41,7 @@ import SimplyClubPupup from "./Popup/SimplyClubPupup";
 import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
 import { useNavigate } from 'react-router';
+import CLIENT_CONSTANTS from '../../../model/Clients/Contants';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -727,25 +728,7 @@ const Groups = ({ classes }) => {
                         gridArr={[
                             {
                                 onClick: () => {
-                                    window.open(`/react/ClientSearchResult?Src=1&ReportType=0&PageType=16&GroupID=${GroupID}`)
-                                    //COMMENT: UNComment after clientsearchResult API integration. window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1, ReportType:0, GroupID:GroupID})}`)
-
-                                    // navigate("/ClientSearchResult", {
-                                    //     state: {
-                                    //         "PageSize": "6",
-                                    //         "PageIndex": 1,
-                                    //         "SearchTerm": "",
-                                    //         "Status": 0,  // The client status
-                                    //         "PageType": "16",
-                                    //         "ReportType": 0,
-                                    //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                    //         "Switch": "",
-                                    //         "CountryOrRegion": "",
-                                    //         "GroupIds": [GroupID] // Could be null
-                                    //     }
-                                    // });
-                                    //TODO: Trying Navigation with props
-
+                                    navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup, GroupIds: [GroupID] } })
                                 },
                                 label: t("recipient.preview"),
                                 component: (

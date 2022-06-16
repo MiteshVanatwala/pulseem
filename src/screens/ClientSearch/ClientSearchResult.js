@@ -49,11 +49,8 @@ import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportFile } from '../../helpers/exportFromJson';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
-import queryString from 'query-string';
 import { useLocation } from "react-router";
-
-
-
+import CLIENT_CONSTANTS from '../../model/Clients/Contants';
 
 const useStyles = makeStyles({
   groupName: {
@@ -80,7 +77,6 @@ const useStyles = makeStyles({
   }
 });
 
-
 const ClientSearchResult = ({ props, classes }) => {
   const {
     language,
@@ -91,7 +87,6 @@ const ClientSearchResult = ({ props, classes }) => {
     smsOldVersion,
     isRTL
   } = useSelector((state) => state.core);
-  const qs = queryString.parse(window.location.search);
 
   const { t } = useTranslation();
   const localClasses = useStyles();
@@ -104,15 +99,12 @@ const ClientSearchResult = ({ props, classes }) => {
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
-
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
   const [filterMin, setFilterMin] = useState("");
   const [filterMax, setFilterMax] = useState("");
   const [filterSearch, setFilterSearch] = useState(false);
-  const [totalClients, setTotalClients] = useState(TotalCount);
-  // const [avaregeRevenue, setAvaregeRevenue] = useState(TotalRevenue);
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [searchData, setSearchData] = useState(null);
@@ -168,22 +160,16 @@ const ClientSearchResult = ({ props, classes }) => {
       PageSize: rowsPerPage,
       PageIndex: page,
       SearchTerm: "",
-      Status: 0,
-      PageType: 15,
+      Status: location?.state?.Status ?? null,
+      PageType: location?.state?.PageType ?? null,
       ReportType: document.referrer.toLowerCase().includes('smsmainreport') ? 20 : 10,
-      IsSmsCampaign: false,
+      TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? null,
       CampaignID: id,
       Switch: "",
       CountryOrRegion: "",
-      GroupIds: [],
-      NodeID: ""
+      GroupIds: location?.state?.GroupIds ?? []
     };
-    if (qs.GroupID) {
-      initSearchData['GroupIds'] = [qs.GroupID];
-    }
-    if (qs.PageType) {
-      initSearchData['PageType'] = qs.PageType;
-    }
+
     setSearchData(initSearchData);
   }, []);
 
@@ -193,17 +179,19 @@ const ClientSearchResult = ({ props, classes }) => {
     }
   }, [searchData]);
 
+
+  const handlePageChange = (val) => {
+    setSearchData({ ...searchData, PageIndex: val });
+    setPage(val);
+  }
+
   const handleDownloadCsv = async () => {
     let orderList = await data.reduce((prev, next) => {
       let tempStatus = ClientStatus.Email.find((status) => status.id === next.Status)
       let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === next.SmsStatus)
       return [...prev, { ...next, Status: t(tempStatus.value), SmsStatus: t(tempSmsStatus.value) }]
     }, []);
-    console.log("ORDERLIST: ", orderList)
     orderList = preferredOrder(orderList, Object.keys(exportColumnHeader));
-    // orderList = await statusNumberToString(t, orderList, ClientStatus);
-    // orderList = await formatDateTime(orderList, t);
-    // orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
     exportFile({
       data: orderList,
       fileName: 'ClientSearchResult',
@@ -232,7 +220,6 @@ const ClientSearchResult = ({ props, classes }) => {
         return f.Revenue >= parseInt(filterMin !== "" ? filterMin : 0) && f.Revenue <= parseInt(filterMax !== "" ? filterMax : 1000000)
       });
       setData(sortedData);
-      setTotalClients(sortedData.length);
       setIsSearching(true);
     }
     else {
@@ -245,7 +232,6 @@ const ClientSearchResult = ({ props, classes }) => {
     setFilterMin("");
     setFilterMax("");
     setIsSearching(false);
-    setTotalClients(ClientData ? ClientData.length : 0);
   }
 
   const TABLE_HEAD = [
@@ -261,7 +247,7 @@ const ClientSearchResult = ({ props, classes }) => {
       className: classes.flex6,
       align: "center",
     },
-    {
+    location.state.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && {
       label: <div className={classes.flex}>
         <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
         <div className={classes.flex1}>
@@ -292,7 +278,7 @@ const ClientSearchResult = ({ props, classes }) => {
 
   const getData = async () => {
     setLoader(true);
-    await dispatch(searchAllClients({ ...location.state, searchData }));
+    await dispatch(searchAllClients(searchData));
     setLoader(false);
   };
 
@@ -600,7 +586,7 @@ const ClientSearchResult = ({ props, classes }) => {
           >
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
-          <Link
+          {location.state.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Link
             color='initial'
             component='button'
             underline='none'
@@ -608,6 +594,7 @@ const ClientSearchResult = ({ props, classes }) => {
             className={clsx(classes.dBlock, classes.mt5, filterSearch && windowSize === 'lg' ? classes.mb15 : null)}>
             {t(!filterSearch ? 'report.filterSearch' : 'report.closeFilterSearch')}
           </Link>
+          }
         </Grid>
         {isSearching && <Grid item>
           <Button
@@ -646,7 +633,7 @@ const ClientSearchResult = ({ props, classes }) => {
   };
   const renderManagmentLine = () => {
     return (
-      <Grid container spacing={2} className={classes.linePadding}>
+      <Grid container spacing={2} className={classes.linePadding} style={{ width: '100%' }}>
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
             variant="contained"
@@ -710,26 +697,21 @@ const ClientSearchResult = ({ props, classes }) => {
             target="_blank"
           />
         </Grid>
-        <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
+        {location.state.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+          <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
+            <Box>
+              <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
+                {`${TotalCount} ${t("common.Clients")}`}
+              </Typography>
+            </Box>
+          </Grid>
+        }
+        {location.state.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
           {revenueSummary && <SummaryRow
             data={revenueSummary}
             classes={classes} />
           }
-        </Grid>
-
-        {/* <Grid
-          item
-          xs={windowSize === "xs" && 12}
-          className={clsx(classes.groupsLableContainer)}
-          style={{ alignItems: 'center' }}
-        >
-          <Box>
-            <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
-              {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`}
-            </Typography>
-          </Box>
-
-        </Grid> */}
+        </Grid>}
       </Grid>
     );
   };
@@ -959,11 +941,12 @@ const ClientSearchResult = ({ props, classes }) => {
         >
           {renderCellIcons()}
         </TableCell>
-        <TableCell classes={cellStyle} align="center" className={classes.flex2}>
+        {location.state.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <TableCell classes={cellStyle} align="center" className={classes.flex2}>
           <Typography className={clsx(classes.bold, classes.f16)}>
             {Revenue} {t("common.NIS")}
           </Typography>
         </TableCell>
+        }
         <TableCell classes={cellStyle} align="center" className={classes.flex4}>
           <FlexGrid
             customStyle={{ justifyContent: 'space-between' }}
@@ -1165,20 +1148,19 @@ const ClientSearchResult = ({ props, classes }) => {
         </DataTable>
         <TablePagination
           classes={classes}
-          rows={clientLength}
+          rows={TotalCount}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleRowsPerPageChange}
           rowsPerPageOptions={[6, 10, 20, 50]}
           page={page}
           onPageChange={(val) => {
-            setPage(val);
+            handlePageChange(val);
           }}
         />
       </>
     );
   };
 
-  const clientLength = totalClients !== 0 ? totalClients : 0;
 
   const renderConfirmDialog = () => {
     if (showConfirmDialog) {
