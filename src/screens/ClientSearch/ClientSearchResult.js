@@ -115,7 +115,7 @@ const ClientSearchResult = ({ props, classes }) => {
   // const [avaregeRevenue, setAvaregeRevenue] = useState(TotalRevenue);
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
-  const [serachData, setSearchData] = useState(null);
+  const [searchData, setSearchData] = useState(null);
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
@@ -188,14 +188,10 @@ const ClientSearchResult = ({ props, classes }) => {
   }, []);
 
   useEffect(() => {
-    console.log("STATE:", location)
-    if (location) {
+    if (searchData) {
       getData();
     }
-    // if (serachData) {
-    //   getData();
-    // }
-  }, [serachData, location]);
+  }, [searchData]);
 
   const handleDownloadCsv = async () => {
     let orderList = await data.reduce((prev, next) => {
@@ -296,8 +292,7 @@ const ClientSearchResult = ({ props, classes }) => {
 
   const getData = async () => {
     setLoader(true);
-    // await dispatch(searchAllClients(serachData));
-    await dispatch(searchAllClients({ ...location.state, serachData }));
+    await dispatch(searchAllClients({ ...location.state, searchData }));
     setLoader(false);
   };
 
@@ -627,13 +622,13 @@ const ClientSearchResult = ({ props, classes }) => {
           </Button>
         </Grid>}
         {
-          serachData?.SearchTerm && (
+          searchData?.SearchTerm && (
             <Grid item>
               <Button
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  setSearchData({ ...serachData, SearchTerm: "" });
+                  setSearchData({ ...searchData, SearchTerm: "" });
                   setSearchStr("");
                   setPage(1);
                   handleFilter();
@@ -741,7 +736,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const handleRowsPerPageChange = async (val) => {
     await dispatch(setRowsPerPage(val));
     setSearchData({
-      ...serachData,
+      ...searchData,
       PageSize: val
     })
     setCookie("rpp", val, { maxAge: 2147483647 });
