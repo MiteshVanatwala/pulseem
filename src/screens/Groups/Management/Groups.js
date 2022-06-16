@@ -47,7 +47,7 @@ const Groups = ({ classes }) => {
     const { t } = useTranslation();
     const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
     const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
-    const { groupData, ToastMessages } = useSelector((state) => state.group);
+    const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
     const { extraData } = useSelector(state => state.sms);
     const rowsOptions = [6, 10, 20, 50];
     const [page, setPage] = useState(1);
@@ -138,6 +138,9 @@ const Groups = ({ classes }) => {
             <Toast data={toastMessage} />
         );
     }
+    const getSubAccountGroups = async () => {
+        dispatch(getGroupsBySubAccountId());
+    }
     const getData = async () => {
         setLoader(true);
         await dispatch(getGroups({ ...serachData, PageSize: rowsPerPage, PageIndex: page }));
@@ -145,6 +148,9 @@ const Groups = ({ classes }) => {
             await dispatch(getAccountExtraData());
         }
         setLoader(false);
+        if (subAccountAllGroups.length === 0) {
+            getSubAccountGroups();
+        }
     };
     useEffect(() => {
         getData();
@@ -1178,7 +1184,7 @@ const Groups = ({ classes }) => {
             title: t("common.ExportGroups"),
             content: (
                 <Typography style={{ marginBottom: 20 }}>
-                    {!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportGroups') : t("common.IsExportGroup")}
+                    {!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") : t("common.IsExportGroups")}
                 </Typography>
             )
         }

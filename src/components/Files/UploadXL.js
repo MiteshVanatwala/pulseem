@@ -195,11 +195,21 @@ const UploadXL = ({
             dummyArr.push(t("sms.adjustTitle"));
         }
         setheaders(dummyArr);
-        jsonToCSV({ array: b }).then((csvOutput) => {
-            const file = createFile(csvOutput, 'csv');
-            setFileToUpload(file);
-            parseFile(csvOutput);
-        });
+        if (typedData.length > 1000) {
+            jsonToCSV({ array: b }).then((csvOutput) => {
+                const file = createFile(csvOutput, 'csv');
+                setFileToUpload(file);
+                parseFile(csvOutput);
+            });
+        }
+        else {
+            let d = typedData.map((td) => {
+                return td.split('\t');
+            });
+            settypedData(d)
+            setDialogType({ type: "manualUpload" });
+        }
+
     };
 
     const handleFiles = (e) => {

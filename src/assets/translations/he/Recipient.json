@@ -108,5 +108,6 @@
   "deleteEmail": "הסר מייל",
   "deletePhone": "הסר טלפון",
   "noRecordsFound": "לא נמצאו/עודכנו רשומות",
-  "uploadLimitation": "באפשרותך להעלות עד 600,000 נמענים בבת אחת"
+  "uploadLimitation": "באפשרותך להעלות עד 600,000 נמענים בבת אחת",
+  "maximumRecordLimitation": "באפשרותך לבצע הסרה/מחיקה של מקסימום 1,000 נמענים בכל בקשה"
 }
