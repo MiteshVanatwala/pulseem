@@ -90,7 +90,6 @@ const GroupTags = ({ classes,
             multiple
             noOptionsText={t("group.noGroupFound")}
             id="tags-outlined"
-            // style={{ height: 100 }}
             debug={true}
             className={classes.autoCompleteTag}
             disableCloseOnSelect

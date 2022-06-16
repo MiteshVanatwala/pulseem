@@ -108,5 +108,6 @@
   "deleteEmail": "Remove email",
   "deletePhone": "Remove phone",
   "noRecordsFound": "No records found/updated",
-  "uploadLimitation": "You are able to upload up to 600,000 recipients at once"
+  "uploadLimitation": "You are able to upload up to 600,000 recipients at once",
+  "maximumRecordLimitation": "You can unsubscribe/delete up to 1,000 recipients per request."
 }
