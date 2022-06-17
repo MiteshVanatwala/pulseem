@@ -458,16 +458,16 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
         </Typography>
         {windowSize === 'xs' ?
           <Typography className={clsx(classes.middleText)}>{t('landingPages.SubmitsResource1.HeaderText')}</Typography>
-          : <a
-            href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
-            className={clsx(classes.middleText, classes.pt2)}>
-            {t('landingPages.SubmitsResource1.HeaderText')}
-          </a>
-          // : <p
-          //   onClick={() => navigate(CLIENT_CONSTANTS.BASEURL, { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: ID, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID})}
+          // : <a
+          //   href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
           //   className={clsx(classes.middleText, classes.pt2)}>
           //   {t('landingPages.SubmitsResource1.HeaderText')}
-          // </p>
+          // </a>
+          : <p
+            onClick={() => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: ID, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID } })}
+            className={clsx(classes.middleText, classes.pt2)}>
+            {t('landingPages.SubmitsResource1.HeaderText')}
+          </p>
           //TODO: UnComment OnCLick, Comment Href 
         }
       </>

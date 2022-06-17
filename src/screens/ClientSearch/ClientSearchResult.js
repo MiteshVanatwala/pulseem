@@ -51,6 +51,7 @@ import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber }
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import queryString from 'query-string';
 import { useLocation } from "react-router";
+import CLIENT_CONSTANTS from "../../model/Clients/Contants";
 
 
 
@@ -176,7 +177,9 @@ const ClientSearchResult = ({ props, classes }) => {
       Switch: "",
       CountryOrRegion: "",
       GroupIds: [],
-      NodeID: ""
+      NodeID: "",
+      ...location?.state,
+      PageType: 15
     };
     if (qs.GroupID) {
       initSearchData['GroupIds'] = [qs.GroupID];
@@ -184,18 +187,15 @@ const ClientSearchResult = ({ props, classes }) => {
     if (qs.PageType) {
       initSearchData['PageType'] = qs.PageType;
     }
+
     setSearchData(initSearchData);
   }, []);
 
   useEffect(() => {
-    console.log("STATE:", location)
-    if (location) {
+    if (serachData) {
       getData();
     }
-    // if (serachData) {
-    //   getData();
-    // }
-  }, [serachData, location]);
+  }, [serachData]);
 
   const handleDownloadCsv = async () => {
     let orderList = await data.reduce((prev, next) => {
@@ -216,7 +216,7 @@ const ClientSearchResult = ({ props, classes }) => {
     });
   }
 
-  const sortData = () => {
+  const sortData = (key) => {
     if (data && data.length > 0) {
       let tempData = [...data].sort((a, b) => {
         return a.Revenue !== null && b.Revenue !== null
@@ -252,6 +252,52 @@ const ClientSearchResult = ({ props, classes }) => {
     setTotalClients(ClientData ? ClientData.length : 0);
   }
 
+
+  const PageTypeObject = {
+    '3': {
+      title: t("notifications.subscribers"),
+      sortKey: 'Number',
+      conmponent: ''
+    },
+    '1': {
+      title: t("common.OpenTime"),
+      sortKey: 'Date',
+      conmponent: ({ snt_OpeningDate = null, ...rest }) => (
+        <Typography className={clsx(classes.bold, classes.f16)}>
+          {snt_OpeningDate}
+        </Typography>
+      )
+    },
+    '15': {
+      title: t("common.campaignRevenue"),
+      sortKey: 'Number',
+      conmponent: ({ Revenue = 0, ...rest }) => (
+        <Typography className={clsx(classes.bold, classes.f16)}>
+          {Revenue} {t("common.NIS")}
+        </Typography>
+      )
+    },
+
+    '8': {
+      title: t("sms.sendingTime"),
+      sortKey: 'Date',
+      conmponent: ({ LastSendDate = null, ...rest }) => (
+        <Typography className={clsx(classes.bold, classes.f16)}>
+          {LastSendDate}
+        </Typography>
+      )
+    },
+    '10': {
+      title: t("common.ErrorEmail"),
+      sortKey: '',
+      conmponent: ({ LogSms_ErrorType = '', ...rest }) => (
+        <Typography className={clsx(classes.bold, classes.f16)}>
+          {LogSms_ErrorType}
+        </Typography>
+      )
+    },
+  }
+
   const TABLE_HEAD = [
     {
       label: t("common.RecipientsName"),
@@ -265,16 +311,21 @@ const ClientSearchResult = ({ props, classes }) => {
       className: classes.flex6,
       align: "center",
     },
-    {
+    `${serachData?.PageType || 15}` && {
       label: <div className={classes.flex}>
-        <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
-        <div className={classes.flex1}>
-          <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
-            onClick={() => { sortData() }}
-            style={{ minWidth: 40 }}>
-            {descSortDirection ? <BiSortDown /> : <BiSortUp />}
-          </Button>
+        <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>
+          {PageTypeObject[`${serachData?.PageType || 15}`]?.title}
         </div>
+        {!!PageTypeObject[`${serachData?.PageType || 15}`]?.sortKey &&
+          //TODO: SORTING is left for multiple sort keys
+          <div className={classes.flex1}>
+            <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
+              onClick={() => { sortData(PageTypeObject[`${serachData?.PageType || 15}`]?.sortKey) }}
+              style={{ minWidth: 40 }}>
+              {descSortDirection ? <BiSortDown /> : <BiSortUp />}
+            </Button>
+          </div>
+        }
       </div>,
       classes: cellStyle,
       className: clsx(classes.flex2, classes.textUppercase),
@@ -296,8 +347,8 @@ const ClientSearchResult = ({ props, classes }) => {
 
   const getData = async () => {
     setLoader(true);
-    // await dispatch(searchAllClients(serachData));
-    await dispatch(searchAllClients({ ...location.state, serachData }));
+    await dispatch(searchAllClients(serachData));
+    // await dispatch(searchAllClients({ ...location.state, serachData }));
     setLoader(false);
   };
 
@@ -851,7 +902,10 @@ const ClientSearchResult = ({ props, classes }) => {
       FirstName,
       LastName,
       UpdateDate,
-      CreationDate
+      CreationDate,
+      LogSms_ErrorType,
+      LastSendDate,
+      snt_OpeningDate
     } = row;
 
     let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
@@ -964,11 +1018,17 @@ const ClientSearchResult = ({ props, classes }) => {
         >
           {renderCellIcons()}
         </TableCell>
-        <TableCell classes={cellStyle} align="center" className={classes.flex2}>
+        {PageTypeObject[`${serachData?.PageType || 15}`]?.component &&
+          <TableCell classes={cellStyle} align="center" className={classes.flex2}>
+            {PageTypeObject[`${serachData?.PageType || 15}`]?.component && PageTypeObject[`${serachData?.PageType || 15}`]?.component({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
+          </TableCell>}
+
+
+        {/* <TableCell classes={cellStyle} align="center" className={classes.flex2}>
           <Typography className={clsx(classes.bold, classes.f16)}>
             {Revenue} {t("common.NIS")}
           </Typography>
-        </TableCell>
+        </TableCell> */}
         <TableCell classes={cellStyle} align="center" className={classes.flex4}>
           <FlexGrid
             customStyle={{ justifyContent: 'space-between' }}
