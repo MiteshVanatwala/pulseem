@@ -56,7 +56,7 @@ const CLIENT_CONSTANTS = {
         CountryOrRegion: null,
         GroupIds: null, // List of 1 groupId
         NodeID: '', // Not in use for now
-        CampaignID: 309787,
+        CampaignID: null,
         FromDate: null,
         ToDate: null,
     }

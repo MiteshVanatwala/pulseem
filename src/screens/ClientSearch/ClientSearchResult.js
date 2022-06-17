@@ -49,7 +49,6 @@ import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportFile } from '../../helpers/exportFromJson';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
-import queryString from 'query-string';
 import { useLocation } from "react-router";
 import CLIENT_CONSTANTS from "../../model/Clients/Contants";
 
@@ -81,7 +80,6 @@ const useStyles = makeStyles({
   }
 });
 
-
 const ClientSearchResult = ({ props, classes }) => {
   const {
     language,
@@ -92,7 +90,6 @@ const ClientSearchResult = ({ props, classes }) => {
     smsOldVersion,
     isRTL
   } = useSelector((state) => state.core);
-  const qs = queryString.parse(window.location.search);
 
   const { t } = useTranslation();
   const localClasses = useStyles();
@@ -105,18 +102,15 @@ const ClientSearchResult = ({ props, classes }) => {
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
-
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
   const [filterMin, setFilterMin] = useState("");
   const [filterMax, setFilterMax] = useState("");
   const [filterSearch, setFilterSearch] = useState(false);
-  const [totalClients, setTotalClients] = useState(TotalCount);
-  // const [avaregeRevenue, setAvaregeRevenue] = useState(TotalRevenue);
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
-  const [serachData, setSearchData] = useState(null);
+  const [searchData, setSearchData] = useState(null);
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
@@ -169,33 +163,33 @@ const ClientSearchResult = ({ props, classes }) => {
       PageSize: rowsPerPage,
       PageIndex: page,
       SearchTerm: "",
-      Status: 0,
-      PageType: 15,
+      Status: location?.state?.Status ?? null,
+      PageType: location?.state?.PageType ?? null,
       ReportType: document.referrer.toLowerCase().includes('smsmainreport') ? 20 : 10,
-      IsSmsCampaign: false,
+      TestStatusOfEmailElseSms: location?.state?.TestStatusOfEmailElseSms ?? null,
       CampaignID: id,
       Switch: "",
       CountryOrRegion: "",
       GroupIds: [],
       NodeID: "",
       ...location?.state,
-      PageType: 15
+      // PageType: 15
     };
-    if (qs.GroupID) {
-      initSearchData['GroupIds'] = [qs.GroupID];
-    }
-    if (qs.PageType) {
-      initSearchData['PageType'] = qs.PageType;
-    }
+    // if (qs.GroupID) {
+    //   initSearchData['GroupIds'] = [qs.GroupID];
+    // }
+    // if (qs.PageType) {
+    //   initSearchData['PageType'] = qs.PageType;
+    // }
 
     setSearchData(initSearchData);
   }, []);
 
   useEffect(() => {
-    if (serachData) {
+    if (searchData) {
       getData();
     }
-  }, [serachData]);
+  }, [searchData]);
 
   const handleDownloadCsv = async () => {
     let orderList = await data.reduce((prev, next) => {
@@ -203,11 +197,7 @@ const ClientSearchResult = ({ props, classes }) => {
       let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === next.SmsStatus)
       return [...prev, { ...next, Status: t(tempStatus.value), SmsStatus: t(tempSmsStatus.value) }]
     }, []);
-    console.log("ORDERLIST: ", orderList)
     orderList = preferredOrder(orderList, Object.keys(exportColumnHeader));
-    // orderList = await statusNumberToString(t, orderList, ClientStatus);
-    // orderList = await formatDateTime(orderList, t);
-    // orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
     exportFile({
       data: orderList,
       fileName: 'ClientSearchResult',
@@ -236,12 +226,14 @@ const ClientSearchResult = ({ props, classes }) => {
         return f.Revenue >= parseInt(filterMin !== "" ? filterMin : 0) && f.Revenue <= parseInt(filterMax !== "" ? filterMax : 1000000)
       });
       setData(sortedData);
-      setTotalClients(sortedData.length);
       setIsSearching(true);
     }
     else {
       resetSearch();
     }
+  }
+  const handlePageChange = (val) => {
+    setPage(val);
   }
 
   const resetSearch = () => {
@@ -249,7 +241,6 @@ const ClientSearchResult = ({ props, classes }) => {
     setFilterMin("");
     setFilterMax("");
     setIsSearching(false);
-    setTotalClients(ClientData ? ClientData.length : 0);
   }
 
 
@@ -311,16 +302,16 @@ const ClientSearchResult = ({ props, classes }) => {
       className: classes.flex6,
       align: "center",
     },
-    `${serachData?.PageType || 15}` && {
+    {
       label: <div className={classes.flex}>
         <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>
-          {PageTypeObject[`${serachData?.PageType || 15}`]?.title}
+          {PageTypeObject[`${searchData?.PageType || 15}`]?.title}
         </div>
-        {!!PageTypeObject[`${serachData?.PageType || 15}`]?.sortKey &&
+        {!!PageTypeObject[`${searchData?.PageType || 15}`]?.sortKey &&
           //TODO: SORTING is left for multiple sort keys
           <div className={classes.flex1}>
             <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
-              onClick={() => { sortData(PageTypeObject[`${serachData?.PageType || 15}`]?.sortKey) }}
+              onClick={() => { sortData(PageTypeObject[`${searchData?.PageType || 15}`]?.sortKey) }}
               style={{ minWidth: 40 }}>
               {descSortDirection ? <BiSortDown /> : <BiSortUp />}
             </Button>
@@ -347,8 +338,7 @@ const ClientSearchResult = ({ props, classes }) => {
 
   const getData = async () => {
     setLoader(true);
-    await dispatch(searchAllClients(serachData));
-    // await dispatch(searchAllClients({ ...location.state, serachData }));
+    await dispatch(searchAllClients(searchData));
     setLoader(false);
   };
 
@@ -656,7 +646,7 @@ const ClientSearchResult = ({ props, classes }) => {
           >
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
-          <Link
+          {location.state.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Link
             color='initial'
             component='button'
             underline='none'
@@ -664,6 +654,7 @@ const ClientSearchResult = ({ props, classes }) => {
             className={clsx(classes.dBlock, classes.mt5, filterSearch && windowSize === 'lg' ? classes.mb15 : null)}>
             {t(!filterSearch ? 'report.filterSearch' : 'report.closeFilterSearch')}
           </Link>
+          }
         </Grid>
         {isSearching && <Grid item>
           <Button
@@ -678,13 +669,13 @@ const ClientSearchResult = ({ props, classes }) => {
           </Button>
         </Grid>}
         {
-          serachData?.SearchTerm && (
+          searchData?.SearchTerm && (
             <Grid item>
               <Button
                 size="large"
                 variant="contained"
                 onClick={() => {
-                  setSearchData({ ...serachData, SearchTerm: "" });
+                  setSearchData({ ...searchData, SearchTerm: "" });
                   setSearchStr("");
                   setPage(1);
                   handleFilter();
@@ -702,7 +693,7 @@ const ClientSearchResult = ({ props, classes }) => {
   };
   const renderManagmentLine = () => {
     return (
-      <Grid container spacing={2} className={classes.linePadding}>
+      <Grid container spacing={2} className={classes.linePadding} style={{ width: '100%' }}>
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
             variant="contained"
@@ -766,33 +757,28 @@ const ClientSearchResult = ({ props, classes }) => {
             target="_blank"
           />
         </Grid>
-        <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
+        {location.state.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+          <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
+            <Box>
+              <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
+                {`${TotalCount} ${t("common.Clients")}`}
+              </Typography>
+            </Box>
+          </Grid>
+        }
+        {location.state.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
           {revenueSummary && <SummaryRow
             data={revenueSummary}
             classes={classes} />
           }
-        </Grid>
-
-        {/* <Grid
-          item
-          xs={windowSize === "xs" && 12}
-          className={clsx(classes.groupsLableContainer)}
-          style={{ alignItems: 'center' }}
-        >
-          <Box>
-            <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
-              {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`}
-            </Typography>
-          </Box>
-
-        </Grid> */}
+        </Grid>}
       </Grid>
     );
   };
   const handleRowsPerPageChange = async (val) => {
     await dispatch(setRowsPerPage(val));
     setSearchData({
-      ...serachData,
+      ...searchData,
       PageSize: val
     })
     setCookie("rpp", val, { maxAge: 2147483647 });
@@ -1018,9 +1004,9 @@ const ClientSearchResult = ({ props, classes }) => {
         >
           {renderCellIcons()}
         </TableCell>
-        {PageTypeObject[`${serachData?.PageType || 15}`]?.component &&
+        {PageTypeObject[`${searchData?.PageType || 15}`]?.component &&
           <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-            {PageTypeObject[`${serachData?.PageType || 15}`]?.component && PageTypeObject[`${serachData?.PageType || 15}`]?.component({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
+            {PageTypeObject[`${searchData?.PageType || 15}`]?.component && PageTypeObject[`${searchData?.PageType || 15}`]?.component({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
           </TableCell>}
 
 
@@ -1230,20 +1216,19 @@ const ClientSearchResult = ({ props, classes }) => {
         </DataTable>
         <TablePagination
           classes={classes}
-          rows={clientLength}
+          rows={TotalCount}
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleRowsPerPageChange}
           rowsPerPageOptions={[6, 10, 20, 50]}
           page={page}
           onPageChange={(val) => {
-            setPage(val);
+            handlePageChange(val);
           }}
         />
       </>
     );
   };
 
-  const clientLength = totalClients !== 0 ? totalClients : 0;
 
   const renderConfirmDialog = () => {
     if (showConfirmDialog) {

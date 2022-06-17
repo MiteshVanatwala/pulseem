@@ -57,7 +57,7 @@ const NewslettersReport = ({ classes }) => {
 
   moment.locale(language)
 
-  const getHrefs = (id) => ({
+  const getHrefs = (id, revenue = 0) => ({
     TotalSendCompleted: {
       href: `/Pulseem/ClientSearchResult.aspx?SentToCampaignID=${id}&fromreact=true`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID } }),
@@ -106,7 +106,6 @@ const NewslettersReport = ({ classes }) => {
     },
     PercentageOpens: {
       title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
-      href: ``,
       href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID, TestStatusOfEmailElseSms: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Active } }),
       //TODO: UnComment OnCLick, Comment Href 
@@ -135,7 +134,7 @@ const NewslettersReport = ({ classes }) => {
       onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue } }),
       //TODO: UnComment OnCLick, Comment Href 
       textStyle: { fontWeight: 900 },
-      isRevenueCol: true
+      isRevenueCol: revenue > 0
     }
   })
 
@@ -624,18 +623,24 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null, isRevenueCol = false, onClick } = data
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', onClick, textStyle = null, isRevenueCol = false } = data
+    const isLink = href !== '' && clickable && (value > 0 || isRevenueCol);
     return (
       <Box className={classes.cellText}>
-        {/* <Typography component={href !== '' && clickable && (value > 0 || isRevenueCol) ? 'a' : 'p'} */}
-        <Typography component={'p'}
-          // href={href !== '' ? href : ''}
-          onClick={onClick}
-          //TODO: UnComment OnCLick, Comment Href 
+        <Typography component={isLink ? 'a' : 'p'}
+          onClick={() => {
+            if (isLink && onClick) {
+              onClick();
+            }
+            else {
+              return false;
+            }
+          }
+          }
           style={textStyle}
           className={clsx(classes.middleTxt, colorTextStyle[type] || '')}
           target="_blank">
-          {value && value.toLocaleString() || '0'}
+          {(value && value.toLocaleString()) || '0'}
         </Typography>
         <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
           <span className={classes.hideInMiddleScreen} style={textStyle}>{title}</span> {innerTitle !== '' ? <span className={classes.showTitleInline}>{innerTitle}</span> : null}
@@ -665,7 +670,7 @@ const NewslettersReport = ({ classes }) => {
       NotOpened,
       Revenue = 0
     } = row
-    const hrefs = getHrefs(CampaignID)
+    const hrefs = getHrefs(CampaignID, Revenue)
     return (
       <TableRow
         key={CampaignID}
