@@ -6,10 +6,10 @@
   "removeClientFromSmsTitle": "Remove recipient from SMS",
   "removeClientFromSmsDescription": "Are you sure you want to remove recipient from SMS?",
   "confirmMakeInvalidTitle": "Make Invalid",
-  "confirmMakeInvalidText": "Are you Sure you want to make this client invalid ?",
-  "confirmDeleteFromAllGroups": "Are you Sure you want to remove clients from all groups ?",
-  "confirmRemoveEmail": "Are you sure you want to remove the recipient from the account ?",
-  "confirmRemovePhone": "Are you sure you want to remove this SMS recipient ?",
+  "confirmMakeInvalidText": "Are you Sure you want to make this clients invalid?",
+  "confirmDeleteFromAllGroups": "Are you Sure you want to remove clients from all groups?",
+  "confirmRemoveEmail": "Are you sure you want to remove the recipient from the account?",
+  "confirmRemovePhone": "Are you sure you want to remove this SMS recipient?",
   "errors": {
     "zeroSelected": "No Client Selected"
   },

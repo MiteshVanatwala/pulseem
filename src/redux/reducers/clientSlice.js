@@ -97,6 +97,8 @@ export const clientSlice = createSlice({
       GROUP_INVALID_API: { severity: 'error', color: 'error', message: 'group.invalidApi', showAnimtionCheck: false },
       GROUP_ERROR: { severity: 'error', color: 'error', message: 'group.error', showAnimtionCheck: false },
       GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
+      RECIPIENT_DELETED_FROM_GROUP: { severity: 'success', color: 'success', message: 'recipient.recipientDeletedSuccessfuly', showAnimtionCheck: false },
+      RECIPIENTS_DELETED_FROM_GROUP: { severity: 'success', color: 'success', message: 'recipient.recipientsDeletedSuccessfuly', showAnimtionCheck: false },
     }
   },
   extraReducers: builder => {

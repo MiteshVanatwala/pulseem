@@ -485,8 +485,10 @@ const ClientSearchResult = ({ props, classes }) => {
     setDialog(null);
     setLoader(true);
     const response = await dispatch(deleteFromGroups(selectedClients[0]))
+    //TODO: (Rishabh) add handle response for delete responses
     if (response && response.payload === 'true') {
-      // show delete success message
+      setToastMessage(ToastMessages.RECIPIENT_DELETED_FROM_GROUP);
+      getData();
     }
     else {
       // show delete failed message
