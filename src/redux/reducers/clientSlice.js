@@ -52,9 +52,9 @@ export const reactivateSms = createAsyncThunk(
   })
 
 export const makeInvalidClients = createAsyncThunk(
-  'client/makeInvalidClients', async (payload, thunkAPI) => {
+  'client/SetInvalidClients', async (payload, thunkAPI) => {
     try {
-      const response = await instence.post(`client/makeInvalidClients`, payload);
+      const response = await instence.post(`client/SetInvalidClients`, payload);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
