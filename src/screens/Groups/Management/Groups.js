@@ -519,22 +519,17 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.blue, classes.dataBox),
                                     value: colorTextStyle.blue,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
-                                // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                //     state: {
-                                //         "PageSize": "6",
-                                //         "PageIndex": 1,
-                                //         "SearchTerm": "",
-                                //         "Status": 0,  // The client status
-                                //         "PageType": "16",
-                                //         "ReportType": 0,
-                                //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                //         "Switch": "",
-                                //         "CountryOrRegion": "",
-                                //         "GroupIds": [GroupID] // Could be null
-                                //     }
-                                //})
-                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({ Src: 1, ReportType: REDIRECT_OPTIONS.ShowMails, GroupID: GroupID })}`)
+                                //onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
+                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        GroupIds: [GroupID],
+                                        Status: 100,
+                                        TestStatusOfEmailElseSms: 1
+                                    }
+                                })
                             },
                             {
                                 name: t("recipient.Active"),
@@ -543,22 +538,16 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.green, classes.dataBox),
                                     value: colorTextStyle.green,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsActive}&GroupID=${GroupID}`)
-                                // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                //     state: {
-                                //         "PageSize": "6",
-                                //         "PageIndex": 1,
-                                //         "SearchTerm": "",
-                                //         "Status": 0,  // The client status
-                                //         "PageType": "16",
-                                //         "ReportType": 0,
-                                //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                //         "Switch": "",
-                                //         "CountryOrRegion": "",
-                                //         "GroupIds": [GroupID] // Could be null
-                                //     }
-                                //})
-                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({ Src: 1, ReportType: REDIRECT_OPTIONS.ShowMailsActive, GroupID: GroupID })}`)
+                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        GroupIds: [GroupID],
+                                        Status: 1,
+                                        TestStatusOfEmailElseSms: 1
+                                    }
+                                })
                             },
                             {
                                 name: t("recipient.Removed"),
@@ -567,22 +556,16 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsRemoved}&GroupID=${GroupID}`)
-                                // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                //     state: {
-                                //         "PageSize": "6",
-                                //         "PageIndex": 1,
-                                //         "SearchTerm": "",
-                                //         "Status": 0,  // The client status
-                                //         "PageType": "16",
-                                //         "ReportType": 0,
-                                //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                //         "Switch": "",
-                                //         "CountryOrRegion": "",
-                                //         "GroupIds": [GroupID] // Could be null
-                                //     }
-                                //})
-                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({ Src: 1, ReportType: REDIRECT_OPTIONS.ShowMailsRemoved, GroupID: GroupID })}`)
+                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        GroupIds: [GroupID],
+                                        Status: 2,
+                                        TestStatusOfEmailElseSms: 1
+                                    }
+                                })
                             },
                             {
                                 name: t("recipient.Bounced"),
@@ -591,22 +574,16 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsErrored}&GroupID=${GroupID}`)
-                                // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                //     state: {
-                                //         "PageSize": "6",
-                                //         "PageIndex": 1,
-                                //         "SearchTerm": "",
-                                //         "Status": 0,  // The client status
-                                //         "PageType": "16",
-                                //         "ReportType": 0,
-                                //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                //         "Switch": "",
-                                //         "CountryOrRegion": "",
-                                //         "GroupIds": [GroupID] // Could be null
-                                //     }
-                                //})
-                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({ Src: 1, ReportType: REDIRECT_OPTIONS.ShowMailsErrored, GroupID: GroupID })}`)
+                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        GroupIds: [GroupID],
+                                        Status: 4,
+                                        TestStatusOfEmailElseSms: 1
+                                    }
+                                })
                             },
                         ]}
                         gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
@@ -624,22 +601,16 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.blue, classes.dataBox),
                                     value: colorTextStyle.blue,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSms}&GroupID=${GroupID}`)
-                                // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                //     state: {
-                                //         "PageSize": "6",
-                                //         "PageIndex": 1,
-                                //         "SearchTerm": "",
-                                //         "Status": 0,  // The client status
-                                //         "PageType": "16",
-                                //         "ReportType": 0,
-                                //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                //         "Switch": "",
-                                //         "CountryOrRegion": "",
-                                //         "GroupIds": [GroupID] // Could be null
-                                //     }
-                                //})
-                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1,ReportType:REDIRECT_OPTIONS.ShowSms, GroupID:GroupID})}`)
+                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        GroupIds: [GroupID],
+                                        Status: 100,
+                                        TestStatusOfEmailElseSms: 0
+                                    }
+                                })
                             },
                             {
                                 name: t("recipient.Active"),
@@ -648,22 +619,16 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.green, classes.dataBox),
                                     value: colorTextStyle.green,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsActive}&GroupID=${GroupID}`)
-                                // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                //     state: {
-                                //         "PageSize": "6",
-                                //         "PageIndex": 1,
-                                //         "SearchTerm": "",
-                                //         "Status": 0,  // The client status
-                                //         "PageType": "16",
-                                //         "ReportType": 0,
-                                //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                //         "Switch": "",
-                                //         "CountryOrRegion": "",
-                                //         "GroupIds": [GroupID] // Could be null
-                                //     }
-                                //})
-                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1,ReportType:REDIRECT_OPTIONS.ShowSmsActive, GroupID:GroupID})}`)
+                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        GroupIds: [GroupID],
+                                        Status: 0,
+                                        TestStatusOfEmailElseSms: 0
+                                    }
+                                })
                             },
                             {
                                 name: t("recipient.Removed"),
@@ -672,22 +637,16 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsRemoved}&GroupID=${GroupID}`)
-                                // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                //     state: {
-                                //         "PageSize": "6",
-                                //         "PageIndex": 1,
-                                //         "SearchTerm": "",
-                                //         "Status": 0,  // The client status
-                                //         "PageType": "16",
-                                //         "ReportType": 0,
-                                //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                //         "Switch": "",
-                                //         "CountryOrRegion": "",
-                                //         "GroupIds": [GroupID] // Could be null
-                                //     }
-                                //})
-                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1,ReportType:REDIRECT_OPTIONS.ShowSmsRemoved, GroupID:GroupID})}`)
+                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        GroupIds: [GroupID],
+                                        Status: 1,
+                                        TestStatusOfEmailElseSms: 0
+                                    }
+                                })
                             },
                             {
                                 name: t("recipient.Bounced"),
@@ -696,22 +655,16 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsErrored}&GroupID=${GroupID}`)
-                                // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                //     state: {
-                                //         "PageSize": "6",
-                                //         "PageIndex": 1,
-                                //         "SearchTerm": "",
-                                //         "Status": 0,  // The client status
-                                //         "PageType": "16",
-                                //         "ReportType": 0,
-                                //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                //         "Switch": "",
-                                //         "CountryOrRegion": "",
-                                //         "GroupIds": [GroupID] // Could be null
-                                //     }
-                                //})
-                                //COMMENT: UNComment after clientsearchResult API integration. onClick: () => window.open(`/react/ClientSearchResult/${clientSearchQueryString({Src:1,ReportType:REDIRECT_OPTIONS.ShowSmsErrored, GroupID:GroupID})}`)
+                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        GroupIds: [GroupID],
+                                        Status: 4,
+                                        TestStatusOfEmailElseSms: 0
+                                    }
+                                })
                             },
                         ]}
                         gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
@@ -1298,6 +1251,7 @@ const Groups = ({ classes }) => {
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
+                        addClientByQuery={false}
                         addAnotherRecCallback={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
                         getData={getData}
                         handleResponses={(response, actions) => handleResponses(response, actions)}

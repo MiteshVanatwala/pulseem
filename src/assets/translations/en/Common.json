@@ -565,5 +565,6 @@
   "edit": "Edit",
   "campaignRevenue": "Revenue",
   "NIS": "₪",
-  "uploadInProgress": "Upload in progress..."
+  "uploadInProgress": "Upload in progress...",
+  "back": "Back"
 }

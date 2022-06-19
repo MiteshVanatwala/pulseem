@@ -20,7 +20,18 @@ import {
 } from "../../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../../components/managment/Dialog";
 
-const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGroupResponse, windowSize, ToastMessages, setToastMessage, createGroupCallback = () => null, addAnotherRecCallback = () => null, getData, handleResponses = (response, actions) => null }) => {
+const AddGroupPopUp = ({
+    classes,
+    isOpen = false,
+    onClose,
+    setLoader,
+    windowSize,
+    ToastMessages,
+    setToastMessage,
+    addClientByQuery = false,
+    createGroupCallback = () => null,
+    addAnotherRecCallback = () => null,
+    getData, handleResponses = (response, actions) => null }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
 
@@ -120,7 +131,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                     }
                 }}
                 renderButtons={() => (
-                    <Grid container spacing={2} className={classes.linePadding}>
+                    <Grid container spacing={2} className={classes.linePadding} justifyContent='center'>
                         <Grid
                             item
                             xs={windowSize === "xs" && 12}
@@ -141,7 +152,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                                 {t("group.cancel")}
                             </Button>
                         </Grid>
-                        <Grid
+                        {!addClientByQuery && <Grid
                             item
                             xs={windowSize === "xs" && 12}
                             sm={4}
@@ -163,6 +174,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                                 {t("recipient.addRecipients")}
                             </Button>
                         </Grid>
+                        }
                         <Grid
                             item
                             xs={windowSize === "xs" && 12}
@@ -180,9 +192,14 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                                     classes.textUppercase
                                 )}
                                 onClick={() => {
-                                    const result = handleAddGroup(newGroupData, createGroupCallback);
-                                    if (result) {
-                                        setNewGroupData(DEFAULT_NEW_GROUP);
+                                    if (addClientByQuery === true) {
+                                        createGroupCallback(newGroupData.GroupName);
+                                    }
+                                    else {
+                                        const result = handleAddGroup(newGroupData, createGroupCallback);
+                                        if (result) {
+                                            setNewGroupData(DEFAULT_NEW_GROUP);
+                                        }
                                     }
                                 }}
                             >

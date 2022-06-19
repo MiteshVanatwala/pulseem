@@ -43,7 +43,6 @@ import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
 import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
-import { clientSearchQueryString, Static_CSR_Data } from "./tempConstants";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportFile } from '../../helpers/exportFromJson';
@@ -51,9 +50,6 @@ import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber }
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import { useLocation } from "react-router";
 import CLIENT_CONSTANTS from "../../model/Clients/Contants";
-
-
-
 
 const useStyles = makeStyles({
   groupName: {
@@ -99,7 +95,6 @@ const ClientSearchResult = ({ props, classes }) => {
   const [searchStr, setSearchStr] = useState("");
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
-  const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
   const { id } = useParams();
@@ -111,6 +106,38 @@ const ClientSearchResult = ({ props, classes }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [searchData, setSearchData] = useState(null);
+  const assignClientsActions =
+  {
+    S_201: {
+      code: 201,
+      message: ToastMessages.RECIPIENT_ADDED_TO_GROUP,
+      Func: () => null
+    },
+    S_400: {
+      code: 400,
+      message: ToastMessages.GROUP_INPUT_INCORRECT,
+      Func: () => null
+    },
+    S_401: {
+      code: 401,
+      message: ToastMessages.GROUP_INVALID_API,
+      Func: () => null
+    },
+    S_405: {
+      code: 405,
+      message: ToastMessages.GROUP_ERROR,
+      Func: () => null
+    },
+    S_422: {
+      code: 422,
+      message: ToastMessages.GROUP_ALREADY_EXIST,
+      Func: () => null
+    },
+    default: {
+      message: ToastMessages.GROUP_ERROR,
+      Func: () => null
+    },
+  };
 
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
@@ -118,22 +145,12 @@ const ClientSearchResult = ({ props, classes }) => {
     body: classes.tableCellBody,
     root: classes.tableCellRoot,
   };
-  const noBorderCellStyle = {
-    body: classes.tableCellBodyNoBorder,
-    root: clsx(classes.tableCellRoot, classes.minWidth50),
-  };
+
   const [dialog, setDialog] = useState(null);
   const [showLoader, setLoader] = useState(false);
   const dateFormat = "YYYY-MM-DD HH:mm:ss.FFF";
   const dispatch = useDispatch();
   moment.locale(language);
-  const theme = useTheme();
-
-  const colorTextStyle = {
-    red: classes.textColorRed,
-    blue: classes.textColorBlue,
-    green: classes.sendIconText,
-  };
 
   const DialogType = {
     ADD_GROUP: "ADD_GROUP",
@@ -173,14 +190,7 @@ const ClientSearchResult = ({ props, classes }) => {
       GroupIds: [],
       NodeID: "",
       ...location?.state,
-      // PageType: 15
     };
-    // if (qs.GroupID) {
-    //   initSearchData['GroupIds'] = [qs.GroupID];
-    // }
-    // if (qs.PageType) {
-    //   initSearchData['PageType'] = qs.PageType;
-    // }
 
     setSearchData(initSearchData);
   }, []);
@@ -234,6 +244,7 @@ const ClientSearchResult = ({ props, classes }) => {
   }
   const handlePageChange = (val) => {
     setPage(val);
+    setSearchData({ ...searchData, PageIndex: val });
   }
 
   const resetSearch = () => {
@@ -345,8 +356,8 @@ const ClientSearchResult = ({ props, classes }) => {
   useEffect(() => {
     if (ClientData) {
       setData(ClientData);
-      handleFilter();
       if (TotalRevenue) {
+        handleFilter();
         setRevenueSummary([
           { title: t('client.Purchased'), value: TotalCount },
           { title: t('client.totalRevenue'), value: `${TotalRevenue?.toLocaleString()} ${t('common.NIS')}` },
@@ -509,19 +520,12 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(false);
   }
 
-  const handleAddRecipients = async (groupId) => {
-
-    const tempClientIds = await new Promise((resolve, reject) => {
-      let allClientIds = data.reduce((prev, next) => [...prev, next.ClientID], [])
-      resolve(allClientIds)
-    })
-
-    const tempData = {
-      GroupId: groupId,
-      ClientIds: [...tempClientIds]
-    }
-
-    dispatch(AddClientsToGroup(tempData))
+  const handleAssignClientsToGroup = async (groupName) => {
+    setLoader(true);
+    const response = await dispatch(AddClientsToGroup({ ...searchData, GroupName: groupName }));
+    handleResponses(response, assignClientsActions);
+    setLoader(false);
+    setDialog(null);
   }
 
 
@@ -534,7 +538,7 @@ const ClientSearchResult = ({ props, classes }) => {
           <Typography className={classes.managementTitle}>
             {t("client.logPageHeaderResource1.Text")}
           </Typography>
-          <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => window.history.back()}> {t("Back")}</Typography>
+          <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => window.history.back()}> {t("common.back")}</Typography>
         </Box>
         <Divider />
       </>
@@ -1192,7 +1196,7 @@ const ClientSearchResult = ({ props, classes }) => {
       return <></>;
     }
 
-    sortedData = data.slice((page - 1) * rpp, (page - 1) * rpp + rpp)
+    sortedData = searchData?.PageType === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
 
     return (
       <>
@@ -1273,9 +1277,9 @@ const ClientSearchResult = ({ props, classes }) => {
             windowSize={windowSize}
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
-            createGroupCallback={(groupId) => { handleAddRecipients(groupId); setDialog(null) }}
+            addClientByQuery={true}
+            createGroupCallback={(groupName) => { handleAssignClientsToGroup(groupName); }}
             getData={() => null}
-            handleResponses={(response, actions) => handleResponses(response, actions)}
           />
         }
         case DialogType.EDIT_RECIPIENT: {

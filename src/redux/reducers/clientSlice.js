@@ -92,6 +92,11 @@ export const clientSlice = createSlice({
     error: "",
     ToastMessages: {
       CLIENT_ZERO_SELECT: { severity: 'error', color: 'error', message: 'client.errors.zeroSelected', showAnimtionCheck: false },
+      RECIPIENT_ADDED_TO_GROUP: { severity: 'success', color: 'success', message: 'recipient.addRecipientsToGroupSucceeded', showAnimtionCheck: false },
+      GROUP_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'group.inputIncorrect', showAnimtionCheck: false },
+      GROUP_INVALID_API: { severity: 'error', color: 'error', message: 'group.invalidApi', showAnimtionCheck: false },
+      GROUP_ERROR: { severity: 'error', color: 'error', message: 'group.error', showAnimtionCheck: false },
+      GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
     }
   },
   extraReducers: builder => {
