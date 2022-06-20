@@ -27,7 +27,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip'
-import CLIENT_CONSTANTS from '../../../model/Clients/Contants';
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 
 const LandingPagesesManagmentScreen = ({ classes }) => {
   const navigate = useNavigate()

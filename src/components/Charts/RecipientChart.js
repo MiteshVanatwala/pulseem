@@ -12,7 +12,7 @@ import { BsInfoCircleFill } from 'react-icons/bs';
 import clsx from 'clsx';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle';
 import { clientSearchQueryString } from '../../screens/ClientSearch/tempConstants';
-import CLIENT_CONSTANTS from '../../model/Clients/Contants';
+import { CLIENT_CONSTANTS } from '../../model/Clients/Contants';
 import { useNavigate } from 'react-router';
 
 

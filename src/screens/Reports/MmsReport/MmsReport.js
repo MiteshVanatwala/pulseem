@@ -28,7 +28,7 @@ import { setCookie } from '../../../helpers/cookies';
 import DataTable from '../../../components/Table/DataTable';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { useNavigate } from 'react-router';
-import CLIENT_CONSTANTS from '../../../model/Clients/Contants';
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 
 const DEFAULT_FILTER = {
     fromDate: null,

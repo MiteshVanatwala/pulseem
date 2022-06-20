@@ -49,7 +49,7 @@ import { exportFile } from '../../helpers/exportFromJson';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import { useLocation } from "react-router";
-import CLIENT_CONSTANTS from "../../model/Clients/Contants";
+import { CLIENT_CONSTANTS, Static_CSR_Data } from "../../model/Clients/Contants";
 
 const useStyles = makeStyles({
   groupName: {
@@ -97,6 +97,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [toastMessage, setToastMessage] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
+  const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
@@ -314,26 +315,6 @@ const ClientSearchResult = ({ props, classes }) => {
       align: "center",
     },
     {
-      label: <div className={classes.flex}>
-        <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>
-          {PageTypeObject[`${searchData?.PageType || 15}`]?.title}
-        </div>
-        {!!PageTypeObject[`${searchData?.PageType || 15}`]?.sortKey &&
-          //TODO: SORTING is left for multiple sort keys
-          <div className={classes.flex1}>
-            <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
-              onClick={() => { sortData(PageTypeObject[`${searchData?.PageType || 15}`]?.sortKey) }}
-              style={{ minWidth: 40 }}>
-              {descSortDirection ? <BiSortDown /> : <BiSortUp />}
-            </Button>
-          </div>
-        }
-      </div>,
-      classes: cellStyle,
-      className: clsx(classes.flex2, classes.textUppercase),
-      align: "center",
-    },
-    {
       label: t("common.Mail"),
       classes: cellStyle,
       className: classes.flex4,
@@ -354,8 +335,10 @@ const ClientSearchResult = ({ props, classes }) => {
   };
 
   useEffect(() => {
+    // setData(Static_CSR_Data)
     if (ClientData) {
       setData(ClientData);
+      // BUG: Uncomment 359 Remove 360 
       if (TotalRevenue) {
         handleFilter();
         setRevenueSummary([
@@ -652,7 +635,7 @@ const ClientSearchResult = ({ props, classes }) => {
           >
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
-          {location.state.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Link
+          {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Link
             color='initial'
             component='button'
             underline='none'
@@ -763,7 +746,7 @@ const ClientSearchResult = ({ props, classes }) => {
             target="_blank"
           />
         </Grid>
-        {location.state.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
+        {location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
               <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
@@ -772,7 +755,7 @@ const ClientSearchResult = ({ props, classes }) => {
             </Box>
           </Grid>
         }
-        {location.state.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
+        {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Grid item xs={windowSize === "xs" && 12} style={{ paddingTop: 0, margin: '0 auto' }}>
           {revenueSummary && <SummaryRow
             data={revenueSummary}
             classes={classes} />
@@ -1200,6 +1183,29 @@ const ClientSearchResult = ({ props, classes }) => {
 
     sortedData = searchData?.PageType === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
 
+    if (PageTypeObject[`${searchData?.PageType || 15}`]?.title) {
+      TABLE_HEAD.splice(2, 0, {
+        label: <div className={classes.flex}>
+          <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>
+            {PageTypeObject[`${searchData?.PageType || 15}`]?.title}
+          </div>
+          {!!PageTypeObject[`${searchData?.PageType || 15}`]?.sortKey &&
+            //TODO: SORTING is left for multiple sort keys
+            <div className={classes.flex1}>
+              <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
+                onClick={() => { sortData(PageTypeObject[`${searchData?.PageType || 15}`]?.sortKey) }}
+                style={{ minWidth: 40 }}>
+                {descSortDirection ? <BiSortDown /> : <BiSortUp />}
+              </Button>
+            </div>
+          }
+        </div>,
+        classes: cellStyle,
+        className: clsx(classes.flex2, classes.textUppercase),
+        align: "center",
+      })
+    }
+
     return (
       <>
         <DataTable
@@ -1293,6 +1299,7 @@ const ClientSearchResult = ({ props, classes }) => {
             windowSize={windowSize}
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
+            Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
             DialogType={DialogType}
             setDialog={setDialog}
             handleResponses={(response, actions) => handleResponses(response, actions)}
@@ -1315,6 +1322,7 @@ const ClientSearchResult = ({ props, classes }) => {
             dialogType={dialog}
             getData={getData}
             handleResponses={(response, actions) => handleResponses(response, actions)}
+            showDropBox={false}
           />;
         }
         case DialogType.CONFIRM_INVALID:

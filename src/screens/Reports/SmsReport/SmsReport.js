@@ -25,7 +25,7 @@ import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, 
 import GraphReport from '../../../components/Reports/GraphReport';
 import { clientSearchQueryString } from '../../ClientSearch/tempConstants';
 import { useNavigate } from 'react-router';
-import CLIENT_CONSTANTS from '../../../model/Clients/Contants';
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
 
 const SmsReport = ({ classes }) => {
   const navigate = useNavigate()

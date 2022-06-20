@@ -28,7 +28,8 @@ const UnsubscribeOrDeletePopup = ({
     selectedGroups,
     handleResponses = (response, actions) => null,
     ToastMessages,
-    getData
+    getData,
+    showDropBox = true
 }) => {
     const { t } = useTranslation();
     const [highlighted, setHighlighted] = useState(false);
@@ -504,7 +505,7 @@ const UnsubscribeOrDeletePopup = ({
             maxHeight={dialogType === "UNSUB_RECIPIENT" ? null : "45vh"}
             classes={classes}
             open={dialogType}
-            childrenStyle={classes.h50v}
+            childrenStyle={showDropBox ? classes.h50v : classes.h10v}
             title={
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
@@ -550,7 +551,7 @@ const UnsubscribeOrDeletePopup = ({
             customContainerStyle={classes.addRecipientDialog}
         >
             <Box style={{ minWidth: 500 }}>
-                {DropBox(classes)}
+                {showDropBox && DropBox(classes)}
                 {DialogObject[dialogType].component && AdvanceOptions()}
             </Box>
         </Dialog>
