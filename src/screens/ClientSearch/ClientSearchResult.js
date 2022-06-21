@@ -461,7 +461,7 @@ const ClientSearchResult = ({ props, classes }) => {
   }
 
   const makeInvalid = () => {
-    dispatch(makeInvalidClients(selectedClients[0]))
+    dispatch(makeInvalidClients(searchData))
   }
 
   const removeRecipientFromAllGroups = async () => {
