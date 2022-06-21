@@ -29,10 +29,10 @@ const TFA = ({ classes,
     const handleHideThisMessage = (e) => {
         setHideThisMessage(e);
         if (e === true) {
-            setCookie("2faPopup", "false");
+            setCookie("2faPopupv2", "false");
         }
         else {
-            setCookie("2faPopup", "true");
+            setCookie("2faPopupv2", "true");
         }
     }
 
