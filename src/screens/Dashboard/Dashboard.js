@@ -32,11 +32,10 @@ const DashboardScreen = ({ classes }) => {
   const init2FA = async () => {
     try {
       if (accountSettings && !accountSettings.TwoFactorAuthEnabled === true) {
-        setShowTFA(true);
-        // const userSelection = getCookie("2faPopup");
-        // if (!userSelection && userSelection !== false) {
-        //   setShowTFA(true);
-        // }
+        const userSelection = getCookie("2faPopupv2");
+        if (!userSelection && userSelection !== false) {
+          setShowTFA(true);
+        }
       }
     } catch (e) {
       console.error(e);
