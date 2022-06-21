@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
 import { GrFormAdd } from "react-icons/gr";
-import { addRecipient } from "../../../../redux/reducers/groupSlice";
+import { addRecipient, getGroups, getGroupsBySubAccountId } from "../../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../../components/managment/Dialog";
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
@@ -30,6 +30,7 @@ import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
 
 
 import { Loader } from "../../../../components/Loader/Loader";
+import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
 
 
 const useStyles = makeStyles({
@@ -70,6 +71,7 @@ const AddRecipientPopup = ({ classes,
     const localClasses = useStyles()
 
     const { extraData } = useSelector((state) => state.sms);
+    const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
     const { isRTL } = useSelector((state) => state.core);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [showLaoder, setLoader] = useState(false)
@@ -80,11 +82,28 @@ const AddRecipientPopup = ({ classes,
         Cellphone: '',
         Groups: ''
     })
+
+    const [selectedLocalGroups, setSelectedLocalGroups] = useState([]);
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
 
+    const getData = async () => {
+        setLoader(true);
+        await dispatch(getGroups());
+        if (!extraData || extraData.length === 0) {
+            await dispatch(getAccountExtraData());
+        }
+        setLoader(false);
+        if (subAccountAllGroups.length === 0) {
+            dispatch(getGroupsBySubAccountId());
+        }
+    };
+
     useEffect(() => {
+        console.log("GROUPS ADD:", groupData)
+        getData()
         if (recipientData) {
             setAddRecipientData({ ...addRecipientData, ...recipientData })
+            setSelectedLocalGroups([...selectedLocalGroups, ...selectedGroups])
         }
     }, [])
 
@@ -157,15 +176,13 @@ const AddRecipientPopup = ({ classes,
         handleChange(e)
     }
 
-    const handleEditRecipient = () => {
-        //TODO: Edit CODE HERE 
-        onClose();
-    }
 
-    const handleSubmit = async (callback) => {
+
+    const handleSubmit = async (callback, id) => {
+        const groupIds = recipientData ? selectedLocalGroups : selectedGroups
         const data = {
-            ClientsData: addRecipientData,
-            GroupIds: [...selectedGroups]
+            ClientsData: id ? { ClientID: id, ...addRecipientData } : addRecipientData,
+            GroupIds: groupIds || []
         }
 
         const tempError = { ...errors }
@@ -905,12 +922,14 @@ const AddRecipientPopup = ({ classes,
                 dropDownProps={{
                     onChange: (e, val) => {
                         const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
-                        selectGroup(idArr)
+                        // selectGroup(idArr)
+                        recipientData ? setSelectedLocalGroups(idArr) : selectGroup(idArr)
                         if (idArr.length > 0) {
                             setErrors({ ...errors, Groups: '' })
                         }
                     },
-                    selectedGroups: selectedGroups
+                    // selectedGroups: selectedGroups
+                    selectedGroups: recipientData ? selectedLocalGroups : selectedGroups
                 }
                 }
                 error={errors.Groups}
@@ -976,7 +995,7 @@ const AddRecipientPopup = ({ classes,
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}
-            onConfirm={recipientData ? handleEditRecipient : handleSubmit}
+            onConfirm={handleSubmit(() => null, recipientData?.ClientID)}
             reduceTitle
             style={{ minWidth: 240 }}
             renderButtons={() => (

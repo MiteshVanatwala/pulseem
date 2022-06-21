@@ -26,7 +26,7 @@ const GroupTags = ({ classes,
 }) => {
     const { t } = useTranslation();
     const [groups, setGroups] = useState([]);
-    const { selectedGroups, subAccountAllGroups } = useSelector((state) => state.group);
+    const { selectedGroups, subAccountAllGroups, groupData } = useSelector((state) => state.group);
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     const dispatch = useDispatch();
@@ -93,9 +93,9 @@ const GroupTags = ({ classes,
             debug={true}
             className={classes.autoCompleteTag}
             disableCloseOnSelect
-            options={subAccountAllGroups ?? []}
+            options={(groupData?.Groups ? [...subAccountAllGroups, ...groupData?.Groups] : subAccountAllGroups) ?? []}
             getOptionLabel={(option) => option?.GroupName}
-            defaultValue={subAccountAllGroups.reduce((prevVal, newVal) => {
+            defaultValue={(groupData?.Groups ? [...subAccountAllGroups, ...groupData?.Groups] : subAccountAllGroups).reduce((prevVal, newVal) => {
                 if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
                     return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
                 }

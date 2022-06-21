@@ -107,6 +107,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [searchData, setSearchData] = useState(null);
+
   const assignClientsActions =
   {
     S_201: {
@@ -176,6 +177,7 @@ const ClientSearchResult = ({ props, classes }) => {
   }
 
   useEffect(() => {
+    // console.log("GROUPS:", groupData)
     // On load
     let initSearchData = {
       PageSize: rowsPerPage,
@@ -257,47 +259,89 @@ const ClientSearchResult = ({ props, classes }) => {
 
 
   const PageTypeObject = {
-    '3': {
-      title: t("notifications.subscribers"),
-      sortKey: 'Number',
-      conmponent: ''
-    },
     '1': {
       title: t("common.OpenTime"),
       sortKey: 'Date',
-      conmponent: ({ snt_OpeningDate = null, ...rest }) => (
-        <Typography className={clsx(classes.bold, classes.f16)}>
-          {snt_OpeningDate}
-        </Typography>
-      )
+      component: {
+        mobile: ({ snt_OpeningDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.OpenTime")}
+          </Typography>
+          <Typography>
+            {snt_OpeningDate}
+          </Typography>
+        </>),
+        web: ({ snt_OpeningDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {snt_OpeningDate}
+          </Typography>
+        )
+      },
     },
-    '15': {
-      title: t("common.campaignRevenue"),
+    '3': {
+      title: t("notifications.subscribers"),
       sortKey: 'Number',
-      conmponent: ({ Revenue = 0, ...rest }) => (
-        <Typography className={clsx(classes.bold, classes.f16)}>
-          {Revenue} {t("common.NIS")}
-        </Typography>
-      )
+      component: {
+        mobile: '',
+        web: ''
+      }
     },
-
     '8': {
       title: t("sms.sendingTime"),
       sortKey: 'Date',
-      conmponent: ({ LastSendDate = null, ...rest }) => (
-        <Typography className={clsx(classes.bold, classes.f16)}>
-          {LastSendDate}
-        </Typography>
-      )
+      component: {
+        mobile: ({ LastSendDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("sms.sendingTime")}
+          </Typography>
+          <Typography>
+            {LastSendDate}
+          </Typography>
+        </>),
+        web: ({ LastSendDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {LastSendDate}
+          </Typography>
+        )
+      },
     },
     '10': {
       title: t("common.ErrorEmail"),
       sortKey: '',
-      conmponent: ({ LogSms_ErrorType = '', ...rest }) => (
-        <Typography className={clsx(classes.bold, classes.f16)}>
-          {LogSms_ErrorType}
-        </Typography>
-      )
+      component: {
+        mobile: ({ LogSms_ErrorType = '', ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.ErrorEmail")}
+          </Typography>
+          <Typography>
+            {LogSms_ErrorType}
+          </Typography>
+        </>),
+        web: ({ LogSms_ErrorType = '', ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {LogSms_ErrorType}
+          </Typography>
+        )
+      },
+    },
+    '15': {
+      title: t("common.campaignRevenue"),
+      sortKey: 'Number',
+      component: {
+        mobile: ({ Revenue = 0, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.campaignRevenue")}
+          </Typography>
+          <Typography>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        </>),
+        web: ({ Revenue = 0, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        )
+      },
     },
   }
 
@@ -993,9 +1037,9 @@ const ClientSearchResult = ({ props, classes }) => {
         >
           {renderCellIcons()}
         </TableCell>
-        {PageTypeObject[`${searchData?.PageType || 15}`]?.component &&
+        {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web &&
           <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-            {PageTypeObject[`${searchData?.PageType || 15}`]?.component && PageTypeObject[`${searchData?.PageType || 15}`]?.component({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
           </TableCell>}
 
 
@@ -1060,7 +1104,9 @@ const ClientSearchResult = ({ props, classes }) => {
       Status,
       SmsStatus,
       Cellphone,
-
+      LogSms_ErrorType,
+      LastSendDate,
+      snt_OpeningDate
     } = row;
     return (
       <TableRow key={ClientID} component="div" classes={rowStyle}>
@@ -1074,13 +1120,14 @@ const ClientSearchResult = ({ props, classes }) => {
               {renderPhoneNameCell(row)}
             </Box>
             <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
+              {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
 
-              <Typography className={classes.bold}>
+              {/* <Typography className={classes.bold}>
                 {t("common.campaignRevenue")}
               </Typography>
               <Typography>
                 {Revenue}
-              </Typography>
+              </Typography> */}
 
             </Box>
           </Box>
@@ -1183,17 +1230,17 @@ const ClientSearchResult = ({ props, classes }) => {
 
     sortedData = searchData?.PageType === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
 
-    if (PageTypeObject[`${searchData?.PageType || 15}`]?.title) {
+    if (PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.title) {
       TABLE_HEAD.splice(2, 0, {
         label: <div className={classes.flex}>
           <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>
-            {PageTypeObject[`${searchData?.PageType || 15}`]?.title}
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.title}
           </div>
-          {!!PageTypeObject[`${searchData?.PageType || 15}`]?.sortKey &&
+          {!!PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.sortKey &&
             //TODO: SORTING is left for multiple sort keys
             <div className={classes.flex1}>
               <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
-                onClick={() => { sortData(PageTypeObject[`${searchData?.PageType || 15}`]?.sortKey) }}
+                onClick={() => { sortData(PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.sortKey) }}
                 style={{ minWidth: 40 }}>
                 {descSortDirection ? <BiSortDown /> : <BiSortUp />}
               </Button>
@@ -1299,8 +1346,10 @@ const ClientSearchResult = ({ props, classes }) => {
             windowSize={windowSize}
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
-            Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
+            Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
+            // selectGroup={(idArr) => setSelectedGroups(idArr)}
             DialogType={DialogType}
+            selectedGroups={selectedClients?.GroupIds || []}
             setDialog={setDialog}
             handleResponses={(response, actions) => handleResponses(response, actions)}
             onRecipientAdded={() => { setDialog(null); getData(); }}
