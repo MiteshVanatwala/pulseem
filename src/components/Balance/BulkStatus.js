@@ -9,6 +9,8 @@ import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { CgShoppingCart } from 'react-icons/cg';
 import CustomTooltip from '../Tooltip/CustomTooltip';
+import { getCommonFeatures } from '../../redux/reducers/commonSlice';
+import { setAccountFeatures } from '../../redux/reducers/coreSlice'
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, accountFeatures, accountSettings } = useSelector(state => state.core)
@@ -73,7 +75,7 @@ const BulkStatus = ({ classes }) => {
       let dialog = {};
       let availablePack = null;
 
-      if (accountSettings.Account.IsBillingAccount === false) {
+      if (accountSettings.Account.IsBillingAccount === false || selectedPackageType == -1) {
         dialog = renderBillingSupportDialog();
       }
       else {
@@ -135,8 +137,15 @@ const BulkStatus = ({ classes }) => {
     return accountFeatures && accountFeatures.includes('37') && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0;
   }
 
-  const showPackageDialogType = (packageType) => {
-    setPackageType(packageType);
+  const showPackageDialogType = async (packageType) => {
+    const settings = await dispatch(getCommonFeatures());
+    dispatch(setAccountFeatures(settings.payload));
+    if (!settings.payload.Account.IsPaying) {
+      setPackageType(-1);
+    }
+    else {
+      setPackageType(packageType);
+    }
     setIsOpenPackageDialog(true);
   }
 
