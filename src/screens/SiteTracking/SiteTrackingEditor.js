@@ -469,19 +469,18 @@ const SiteTrackingEditor = ({ classes }) => {
                         <Typography className={clsx(classes.f20)}>{t("siteTracking.javscriptFunction")}
                             <pre>
                                 <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
-                                    {`trackPixel("purchase", {
-    "orderId": 10,
-    "grandTotal": "100.00$",
-    "shipping": "10.00$",
-    "tax": "10.00$"
-    "items": [
-      {
-        "name": "IPhone 10",
-        "quantity": 2,
-        "itemCode": "P5123",
-        "price": 2000
-      }
-]});`}
+                                    {`  
+    const orderId = 'order1';
+    const grandTotal = 100.00;
+    const shipping = 10.00;
+    const tax = 10.00;
+    const orderItems = [{ itemCode: 'item1', name: 'item', price: 80.00, quantity: 1 }];
+                                    `}
+                                    <b>
+                                        {`
+    window.trackPurchase(orderId, grandTotal, shipping, tax, orderItems);
+    `}
+                                    </b>
                                 </div>
                             </pre>
                         </Typography>
