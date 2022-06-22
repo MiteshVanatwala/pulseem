@@ -470,6 +470,7 @@ const SiteTrackingEditor = ({ classes }) => {
                             <pre>
                                 <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
                                     {`  
+    const eventName = 'PURCHASE';
     const orderId = 'order1';
     const grandTotal = 100.00;
     const shipping = 10.00;
