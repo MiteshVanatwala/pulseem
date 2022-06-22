@@ -38,7 +38,7 @@ import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
 import Toast from '../../components/Toast/Toast.component';
 import { Dialog } from '../../components/managment/index';
-import { AddClientsToGroup, deleteFromGroups, makeInvalidClients, removeEmailClient, removeSmsClient, searchAllClients } from "../../redux/reducers/clientSlice";
+import { AddClientsToGroup, deleteFromGroups, makeInvalidClients, removeEmailClient, removeSmsClient, searchAllClients, setUnsubscribedClients } from "../../redux/reducers/clientSlice";
 import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
 import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
@@ -417,6 +417,11 @@ const ClientSearchResult = ({ props, classes }) => {
       message: '',
       Func: () => null
     },
+    'S_404': {
+      code: 404,
+      message: '',
+      Func: () => null
+    },
     'S_405': {
       code: 405,
       message: '',
@@ -463,6 +468,11 @@ const ClientSearchResult = ({ props, classes }) => {
         actions?.S_401?.message && setToastMessage(actions?.S_401?.message);
         break;
       }
+      case 404: {
+        actions?.S_404?.Func?.();
+        actions?.S_404?.message && setToastMessage(actions?.S_404?.message);
+        break;
+      }
       case 405: {
         actions?.S_405?.Func?.();
         actions?.S_405?.message && setToastMessage(actions?.S_405?.message);
@@ -504,8 +514,40 @@ const ClientSearchResult = ({ props, classes }) => {
     return null;
   }
 
-  const makeInvalid = () => {
-    dispatch(makeInvalidClients(selectedClients[0]))
+  const makeInvalid = async () => {
+    await dispatch(makeInvalidClients(searchData)).then((res) => {
+      handleResponses(res, {
+        'S_200': {
+          code: 200,
+          message: ToastMessages.SUCCESS,
+          Func: () => setDialog(null)
+        },
+        'S_201': {
+          code: 201,
+          message: ToastMessages.AUTOMATION_CLIENTS_UPDATED,
+          Func: () => {
+            setDialog(null)
+            getData()
+          }
+        },
+        'S_401': {
+          code: 401,
+          message: ToastMessages.GROUP_INVALID_API,
+          Func: () => null
+        },
+        'S_404': {
+          code: 404,
+          message: ToastMessages.NO_CLIENTS_FOUND,
+          Func: () => null
+        },
+        'S_500': {
+          code: 500,
+          message: ToastMessages.GROUP_ERROR,
+          Func: () => null
+        },
+      })
+    })
+
   }
 
   const removeRecipientFromAllGroups = async () => {
@@ -528,10 +570,10 @@ const ClientSearchResult = ({ props, classes }) => {
     const response = await dispatch(removeEmailClient)
 
     if (response && response.payload === 'true') {
-      // show delete success message
+      //TODO: show delete success message
     }
     else {
-      // show delete failed message
+      //TODO: show delete failed message
     }
     setLoader(false);
   }
@@ -540,11 +582,11 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(true);
     const response = await dispatch(removeSmsClient)
     if (response && response.payload === 'true') {
-      // show delete success message
+      //TODO: show delete success message
       setDialog(null);
     }
     else {
-      // show delete failed message
+      //TODO: show delete failed message
     }
     setLoader(false);
   }
@@ -557,6 +599,40 @@ const ClientSearchResult = ({ props, classes }) => {
     setDialog(null);
   }
 
+  const handleUnSubscribe = async (opt) => {
+    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt })).then(res => {
+      handleResponses(res, {
+        'S_200': {
+          code: 200,
+          message: ToastMessages.SUCCESS,
+          Func: () => setDialog(null)
+        },
+        'S_201': {
+          code: 201,
+          message: ToastMessages.AUTOMATION_CLIENTS_UPDATED,
+          Func: () => {
+            setDialog(null)
+            getData()
+          }
+        },
+        'S_401': {
+          code: 401,
+          message: ToastMessages.GROUP_INVALID_API,
+          Func: () => null
+        },
+        'S_404': {
+          code: 404,
+          message: ToastMessages.NO_CLIENTS_FOUND,
+          Func: () => null
+        },
+        'S_500': {
+          code: 500,
+          message: ToastMessages.GROUP_ERROR,
+          Func: () => null
+        },
+      })
+    })
+  }
 
   //  COMPONENTS  //
 
@@ -1321,6 +1397,8 @@ const ClientSearchResult = ({ props, classes }) => {
 
 
   const showDialog = () => {
+
+
     if (dialog !== null) {
       switch (dialog) {
         case DialogType.ADD_GROUP: {
@@ -1349,10 +1427,10 @@ const ClientSearchResult = ({ props, classes }) => {
             Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
             // selectGroup={(idArr) => setSelectedGroups(idArr)}
             DialogType={DialogType}
-            selectedGroups={selectedClients?.GroupIds || []}
+            selectedGroups={data.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds || searchData?.GroupIds || []}
             setDialog={setDialog}
             handleResponses={(response, actions) => handleResponses(response, actions)}
-            onRecipientAdded={() => { setDialog(null); getData(); }}
+            onAddRecipient={() => { setDialog(null); getData(); }}
             recipientData={
               selectedClients[0] && (data.find((obj) => obj.ClientID === selectedClients[0]))
             }
@@ -1368,6 +1446,8 @@ const ClientSearchResult = ({ props, classes }) => {
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
             // selectedGroups={selectedGroups}
+            onSubmit={(opt) => handleUnSubscribe(opt)}
+            clientData={{ ...searchData }}
             dialogType={dialog}
             getData={getData}
             handleResponses={(response, actions) => handleResponses(response, actions)}

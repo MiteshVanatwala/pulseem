@@ -81,6 +81,16 @@ export const AddClientsToGroup = createAsyncThunk(
     }
   })
 
+export const setUnsubscribedClients = createAsyncThunk(
+  'client/SetUnsubscribedClients', async (payload, thunkAPI) => {
+    try {
+      const response = await instence.post(`client/SetUnsubscribedClients`, { ...payload });
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
+
 
 export const clientSlice = createSlice({
   name: 'client',
@@ -91,6 +101,7 @@ export const clientSlice = createSlice({
     CampaignClicks: 0,
     error: "",
     ToastMessages: {
+      SUCCESS: { severity: 'success', color: 'success', message: 'common.Success', showAnimtionCheck: false },
       CLIENT_ZERO_SELECT: { severity: 'error', color: 'error', message: 'client.errors.zeroSelected', showAnimtionCheck: false },
       RECIPIENT_ADDED_TO_GROUP: { severity: 'success', color: 'success', message: 'recipient.addRecipientsToGroupSucceeded', showAnimtionCheck: false },
       GROUP_INPUT_INCORRECT: { severity: 'error', color: 'error', message: 'group.inputIncorrect', showAnimtionCheck: false },
@@ -99,6 +110,8 @@ export const clientSlice = createSlice({
       GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
       RECIPIENT_DELETED_FROM_GROUP: { severity: 'success', color: 'success', message: 'recipient.recipientDeletedSuccessfuly', showAnimtionCheck: false },
       RECIPIENTS_DELETED_FROM_GROUP: { severity: 'success', color: 'success', message: 'recipient.recipientsDeletedSuccessfuly', showAnimtionCheck: false },
+      AUTOMATION_CLIENTS_UPDATED: { severity: 'success', color: 'success', message: 'client.automationClientsUpdated', showAnimtionCheck: false },
+      NO_CLIENTS_FOUND: { severity: 'success', color: 'success', message: 'client.noClientsFound', showAnimtionCheck: false },
     }
   },
   extraReducers: builder => {

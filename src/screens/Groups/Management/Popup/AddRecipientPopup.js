@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import moment from "moment";
 import "moment/locale/he";
 import { GrFormAdd } from "react-icons/gr";
-import { addRecipient, getGroups, getGroupsBySubAccountId } from "../../../../redux/reducers/groupSlice";
+import { addRecipient, getGroupsBySubAccountId } from "../../../../redux/reducers/groupSlice";
 import { Dialog } from "../../../../components/managment/Dialog";
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
@@ -59,19 +59,18 @@ const AddRecipientPopup = ({ classes,
     isOpen = false,
     onClose,
     windowSize,
-    selectedGroups,
+    selectedGroups = [],
     selectGroup,
     ToastMessages,
-    onRecipientAdded = () => null,
+    onAddRecipient = () => null,
     handleResponses = (response, actions) => null,
     recipientData = null
 }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const localClasses = useStyles()
-
-    const { extraData } = useSelector((state) => state.sms);
     const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
+    const { extraData } = useSelector((state) => state.sms);
     const { isRTL } = useSelector((state) => state.core);
     const [addRecipientData, setAddRecipientData] = useState(DEFAULT_RECIPIENT_DATA);
     const [showLaoder, setLoader] = useState(false)
@@ -82,24 +81,24 @@ const AddRecipientPopup = ({ classes,
         Cellphone: '',
         Groups: ''
     })
+    const [selectedLocalGroups, setSelectedLocalGroups] = useState([])
 
-    const [selectedLocalGroups, setSelectedLocalGroups] = useState([]);
+
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
 
     const getData = async () => {
+
         setLoader(true);
-        await dispatch(getGroups());
         if (!extraData || extraData.length === 0) {
             await dispatch(getAccountExtraData());
         }
-        setLoader(false);
         if (subAccountAllGroups.length === 0) {
-            dispatch(getGroupsBySubAccountId());
+            await dispatch(getGroupsBySubAccountId());
         }
+        setLoader(false)
     };
 
     useEffect(() => {
-        console.log("GROUPS ADD:", groupData)
         getData()
         if (recipientData) {
             setAddRecipientData({ ...addRecipientData, ...recipientData })
@@ -176,13 +175,10 @@ const AddRecipientPopup = ({ classes,
         handleChange(e)
     }
 
-
-
-    const handleSubmit = async (callback, id) => {
-        const groupIds = recipientData ? selectedLocalGroups : selectedGroups
+    const handleSubmit = async (callback) => {
         const data = {
-            ClientsData: id ? { ClientID: id, ...addRecipientData } : addRecipientData,
-            GroupIds: groupIds || []
+            ClientsData: addRecipientData,
+            GroupIds: [...selectedGroups]
         }
 
         const tempError = { ...errors }
@@ -226,7 +222,11 @@ const AddRecipientPopup = ({ classes,
                 'S_201': {
                     code: 201,
                     message: ToastMessages.RECIPIENT_ADDED,
-                    Func: onRecipientAdded()
+                    Func: new Promise(async (resolutionFunc, rejectionFunc) => {
+                        resolutionFunc(onAddRecipient());
+                    }).then((res) => {
+                        callback?.()
+                    }),
                 },
                 'S_400': {
                     code: 400,
@@ -393,7 +393,7 @@ const AddRecipientPopup = ({ classes,
                                     handleChange(e)
                                 }
                             }}
-                            inputProps={{ maxLength: 16 }}
+                            inputProps={{ maxlength: 16 }}
                             error={errors.Cellphone}
                             helperText={errors.Cellphone}
                             onBlur={handleBlur}
@@ -423,7 +423,7 @@ const AddRecipientPopup = ({ classes,
                             helperText={errors.Email}
                             onBlur={handleBlur}
                             style={{ textAlign: 'left' }}
-                            maxLength={100}
+                            maxlength={100}
                         />,
                         gridSize: { xs: 12, sm: 9 }
                     }
@@ -522,7 +522,7 @@ const AddRecipientPopup = ({ classes,
                                 handleChange(e)
                             }
                         }}
-                        inputProps={{ maxLength: 12 }}
+                        inputProps={{ maxlength: 12 }}
                         error={errors.Cellphone}
                         helperText={errors.Cellphone}
                         onBlur={handleBlur}
@@ -880,7 +880,7 @@ const AddRecipientPopup = ({ classes,
                     content: <SimpleGrid
                         gridArr={[
                             {
-                                content: <Typography title={extraData[ef]} align="right" className={clsx(classes.pl5, classes.pr10, classes.ellipsisText, classes.alignDir)}>{extraData[ef]}</Typography>,
+                                content: <Typography title={extraData[ef]} align="right" className={clsx(classes.pl5, classes.pr10, classes.textEllipses, classes.alignDir)}>{extraData[ef]}</Typography>,
                                 gridSize: { xs: 12, sm: 3 }
                             },
                             {
@@ -922,13 +922,11 @@ const AddRecipientPopup = ({ classes,
                 dropDownProps={{
                     onChange: (e, val) => {
                         const idArr = val.reduce((prevVal, newVal) => [...prevVal, newVal.GroupID], [])
-                        // selectGroup(idArr)
                         recipientData ? setSelectedLocalGroups(idArr) : selectGroup(idArr)
                         if (idArr.length > 0) {
                             setErrors({ ...errors, Groups: '' })
                         }
                     },
-                    // selectedGroups: selectedGroups
                     selectedGroups: recipientData ? selectedLocalGroups : selectedGroups
                 }
                 }
@@ -988,14 +986,14 @@ const AddRecipientPopup = ({ classes,
         <Dialog
             classes={classes}
             open={isOpen}
-            title={recipientData ? t('recipient.recipientEditPopUpTitle') : t('recipient.recipientAddPopUpTitle')}
+            title={t('recipient.recipientAddPopUpTitle')}
             icon={<div className={classes.dialogIconContent}>
                 {'\uE0D5'}
             </div>}
             showDivider={true}
             onClose={onClose}
             onCancel={onClose}
-            onConfirm={handleSubmit(() => null, recipientData?.ClientID)}
+            onConfirm={handleSubmit}
             reduceTitle
             style={{ minWidth: 240 }}
             renderButtons={() => (
@@ -1043,7 +1041,7 @@ const AddRecipientPopup = ({ classes,
                             {t("group.ok")}
                         </Button>
                     </Box>
-                    {windowSize !== "xs" && !recipientData && <Box
+                    {!recipientData && windowSize !== "xs" && <Box
                         item
                         xs={windowSize === "xs" && 12}
                         sm={4}
