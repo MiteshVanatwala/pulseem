@@ -63,7 +63,7 @@ export const ClientStatus = {
 };
 export const EventsOptions = [
     { key: 'PAGE_VIEW', value: 'siteTracking.events.pageView' },
-    { key: 'PURCHASE', value: 'siteTracking.events.purchase' }
+    // { key: 'PURCHASE', value: 'siteTracking.events.purchase' }
     // { key: 'PAGE_LOAD', value: 'siteTracking.events.pageLoad' }
 ];
 
