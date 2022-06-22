@@ -38,7 +38,15 @@ import CustomTooltip from "../../components/Tooltip/CustomTooltip";
 import DataTable from "../../components/Table/DataTable";
 import Toast from '../../components/Toast/Toast.component';
 import { Dialog } from '../../components/managment/index';
-import { AddClientsToGroup, deleteFromGroups, makeInvalidClients, removeEmailClient, removeSmsClient, searchAllClients } from "../../redux/reducers/clientSlice";
+import {
+  AddClientsToGroup,
+  deleteFromGroups,
+  makeInvalidClients,
+  removeEmailClient,
+  removeSmsClient,
+  searchAllClients,
+  getExportData
+} from "../../redux/reducers/clientSlice";
 import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
 import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
@@ -164,15 +172,41 @@ const ClientSearchResult = ({ props, classes }) => {
   };
 
   const exportColumnHeader = {
+    "Status": t('common.Status'),
+    "SmsStatus": t('common.smsStatus'),
+    "CreatedDate": t('common.CreationDate'),
     "FirstName": t('smsReport.firstName'),
     "LastName": t('smsReport.lastName'),
-    "Revenue": t('common.campaignRevenue'),
     "Email": t("common.Mail"),
-    "Status": t('common.Status'),
+    "Telephone": t('common.Telephone'),
     "Cellphone": t('common.Cellphone'),
-    "SmsStatus": t('common.smsStatus'),
-    "CreationDate": t('common.CreationDate'),
-    "UpdateDate": t('common.UpdateDate'),
+    "Address": t('common.address'),
+    "BirthDate": t('common.birthDate'),
+    "City": t('common.city'),
+    "State": t('common.state'),
+    "Country": t('common.country'),
+    "Zip": t('common.zip'),
+    "Company": t('common.company'),
+    "ReminderDate": t('common.reminderDate'),
+    "ErrorMessages": t('recipient.errorMessage'),
+    "Revenue": t('common.campaignRevenue'),
+    "ExtraDate1": "Extra Date 1",
+    "ExtraDate2": "Extra Date 2",
+    "ExtraDate3": "Extra Date 3",
+    "ExtraDate4": "Extra Date 4",
+    "ExtraField1": "Extra Field 1",
+    "ExtraField2": "Extra Field 2",
+    "ExtraField3": "Extra Field 3",
+    "ExtraField4": "Extra Field 4",
+    "ExtraField5": "Extra Field 5",
+    "ExtraField6": "Extra Field 6",
+    "ExtraField7": "Extra Field 7",
+    "ExtraField8": "Extra Field 8",
+    "ExtraField9": "Extra Field 9",
+    "ExtraField10": "Extra Field 10",
+    "ExtraField11": "Extra Field 11",
+    "ExtraField12": "Extra Field 12",
+    "ExtraField13": "Extra Field 13",
   }
 
   useEffect(() => {
@@ -203,18 +237,29 @@ const ClientSearchResult = ({ props, classes }) => {
   }, [searchData]);
 
   const handleDownloadCsv = async () => {
-    let orderList = await data.reduce((prev, next) => {
-      let tempStatus = ClientStatus.Email.find((status) => status.id === next.Status)
-      let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === next.SmsStatus)
-      return [...prev, { ...next, Status: t(tempStatus.value), SmsStatus: t(tempSmsStatus.value) }]
-    }, []);
-    orderList = preferredOrder(orderList, Object.keys(exportColumnHeader));
-    exportFile({
-      data: orderList,
-      fileName: 'ClientSearchResult',
-      exportType: 'csv',
-      fields: exportColumnHeader
-    });
+    const response = await dispatch(getExportData(searchData));
+    if (response && response.payload) {
+      const data = response.payload;
+      if (data.StatusCode === 201) {
+        let orderList = await data.Clients.reduce((prev, next) => {
+          let tempStatus = ClientStatus.Email.find((status) => status.id === next.Status)
+          let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === next.SmsStatus)
+          return [...prev, { ...next, Status: t(tempStatus.value), SmsStatus: t(tempSmsStatus.value) }]
+        }, []);
+
+        orderList = preferredOrder(orderList, Object.keys(exportColumnHeader));
+
+        exportFile({
+          data: orderList,
+          fileName: 'ClientSearchResult',
+          exportType: 'csv',
+          fields: exportColumnHeader
+        });
+      }
+      else {
+        setToastMessage(t('common.errorOccured'));
+      }
+    }
   }
 
   const sortData = (key) => {
