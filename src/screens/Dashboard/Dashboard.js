@@ -17,6 +17,7 @@ const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
   const [showTFA, setShowTFA] = useState(false);
+  const [TFAInit, setTFAInit] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
@@ -24,8 +25,9 @@ const DashboardScreen = ({ classes }) => {
         init2FA();
       }
     }
-    if (accountSettings) {
+    if (accountSettings && !TFAInit) {
       initialize();
+      setTFAInit(true);
     }
   }, [accountSettings])
 
