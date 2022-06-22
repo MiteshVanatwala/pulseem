@@ -11,7 +11,7 @@ import { Dialog } from "../../../../components/managment/Dialog";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { BsInfoCircleFill } from "react-icons/bs";
 import clsx from 'clsx';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { deleteRecipients, unsubRecipients } from "../../../../redux/reducers/groupSlice";
 import { useDispatch } from "react-redux";
 import * as XLSX from 'xlsx';
@@ -29,7 +29,8 @@ const UnsubscribeOrDeletePopup = ({
     handleResponses = (response, actions) => null,
     ToastMessages,
     getData,
-    showDropBox = true
+    showDropBox = true,
+    onSubmit = null
 }) => {
     const { t } = useTranslation();
     const [highlighted, setHighlighted] = useState(false);
@@ -45,6 +46,7 @@ const UnsubscribeOrDeletePopup = ({
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [confirm, setConfirm] = useState(false);
     const [limitationWarning, setLimitationWarning] = useState(false);
+
 
     const AdvanceOptions = () => {
         return (
@@ -314,6 +316,9 @@ const UnsubscribeOrDeletePopup = ({
     }
 
     const handleUnsubSubmit = async () => {
+        if (onSubmit) {
+            return onSubmit(activeTab);
+        }
         if (!finalData || finalData.length === 0) {
             setError(t("recipient.errors.noDeleteRecFound"))
             return;
@@ -532,11 +537,11 @@ const UnsubscribeOrDeletePopup = ({
                             </span>
                         </CustomTooltip>
                     </Box>
-                    <Box style={{ cursor: 'pointer' }}>
+                    {showDropBox && <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
                             <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
                         </label>
-                    </Box>
+                    </Box>}
                 </Box>
 
 

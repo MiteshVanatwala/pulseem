@@ -45,7 +45,8 @@ import {
   removeEmailClient,
   removeSmsClient,
   searchAllClients,
-  getExportData
+  getExportData,
+  setUnsubscribedClients
 } from "../../redux/reducers/clientSlice";
 import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
@@ -115,6 +116,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [searchData, setSearchData] = useState(null);
+
   const assignClientsActions =
   {
     S_201: {
@@ -210,6 +212,7 @@ const ClientSearchResult = ({ props, classes }) => {
   }
 
   useEffect(() => {
+    // console.log("GROUPS:", groupData)
     // On load
     let initSearchData = {
       PageSize: rowsPerPage,
@@ -302,47 +305,89 @@ const ClientSearchResult = ({ props, classes }) => {
 
 
   const PageTypeObject = {
-    '3': {
-      title: t("notifications.subscribers"),
-      sortKey: 'Number',
-      conmponent: ''
-    },
     '1': {
       title: t("common.OpenTime"),
       sortKey: 'Date',
-      conmponent: ({ snt_OpeningDate = null, ...rest }) => (
-        <Typography className={clsx(classes.bold, classes.f16)}>
-          {snt_OpeningDate}
-        </Typography>
-      )
+      component: {
+        mobile: ({ snt_OpeningDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.OpenTime")}
+          </Typography>
+          <Typography>
+            {snt_OpeningDate}
+          </Typography>
+        </>),
+        web: ({ snt_OpeningDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {snt_OpeningDate}
+          </Typography>
+        )
+      },
     },
-    '15': {
-      title: t("common.campaignRevenue"),
+    '3': {
+      title: t("notifications.subscribers"),
       sortKey: 'Number',
-      conmponent: ({ Revenue = 0, ...rest }) => (
-        <Typography className={clsx(classes.bold, classes.f16)}>
-          {Revenue} {t("common.NIS")}
-        </Typography>
-      )
+      component: {
+        mobile: '',
+        web: ''
+      }
     },
-
     '8': {
       title: t("sms.sendingTime"),
       sortKey: 'Date',
-      conmponent: ({ LastSendDate = null, ...rest }) => (
-        <Typography className={clsx(classes.bold, classes.f16)}>
-          {LastSendDate}
-        </Typography>
-      )
+      component: {
+        mobile: ({ LastSendDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("sms.sendingTime")}
+          </Typography>
+          <Typography>
+            {LastSendDate}
+          </Typography>
+        </>),
+        web: ({ LastSendDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {LastSendDate}
+          </Typography>
+        )
+      },
     },
     '10': {
       title: t("common.ErrorEmail"),
       sortKey: '',
-      conmponent: ({ LogSms_ErrorType = '', ...rest }) => (
-        <Typography className={clsx(classes.bold, classes.f16)}>
-          {LogSms_ErrorType}
-        </Typography>
-      )
+      component: {
+        mobile: ({ LogSms_ErrorType = '', ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.ErrorEmail")}
+          </Typography>
+          <Typography>
+            {LogSms_ErrorType}
+          </Typography>
+        </>),
+        web: ({ LogSms_ErrorType = '', ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {LogSms_ErrorType}
+          </Typography>
+        )
+      },
+    },
+    '15': {
+      title: t("common.campaignRevenue"),
+      sortKey: 'Number',
+      component: {
+        mobile: ({ Revenue = 0, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.campaignRevenue")}
+          </Typography>
+          <Typography>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        </>),
+        web: ({ Revenue = 0, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {Revenue} {t("common.NIS")}
+          </Typography>
+        )
+      },
     },
   }
 
@@ -418,6 +463,11 @@ const ClientSearchResult = ({ props, classes }) => {
       message: '',
       Func: () => null
     },
+    'S_404': {
+      code: 404,
+      message: '',
+      Func: () => null
+    },
     'S_405': {
       code: 405,
       message: '',
@@ -464,6 +514,11 @@ const ClientSearchResult = ({ props, classes }) => {
         actions?.S_401?.message && setToastMessage(actions?.S_401?.message);
         break;
       }
+      case 404: {
+        actions?.S_404?.Func?.();
+        actions?.S_404?.message && setToastMessage(actions?.S_404?.message);
+        break;
+      }
       case 405: {
         actions?.S_405?.Func?.();
         actions?.S_405?.message && setToastMessage(actions?.S_405?.message);
@@ -505,8 +560,40 @@ const ClientSearchResult = ({ props, classes }) => {
     return null;
   }
 
-  const makeInvalid = () => {
-    dispatch(makeInvalidClients(searchData))
+  const makeInvalid = async () => {
+    await dispatch(makeInvalidClients(searchData)).then((res) => {
+      handleResponses(res, {
+        'S_200': {
+          code: 200,
+          message: ToastMessages.SUCCESS,
+          Func: () => setDialog(null)
+        },
+        'S_201': {
+          code: 201,
+          message: ToastMessages.AUTOMATION_CLIENTS_UPDATED,
+          Func: () => {
+            setDialog(null)
+            getData()
+          }
+        },
+        'S_401': {
+          code: 401,
+          message: ToastMessages.GROUP_INVALID_API,
+          Func: () => null
+        },
+        'S_404': {
+          code: 404,
+          message: ToastMessages.NO_CLIENTS_FOUND,
+          Func: () => null
+        },
+        'S_500': {
+          code: 500,
+          message: ToastMessages.GROUP_ERROR,
+          Func: () => null
+        },
+      })
+    })
+
   }
 
   const removeRecipientFromAllGroups = async () => {
@@ -529,10 +616,10 @@ const ClientSearchResult = ({ props, classes }) => {
     const response = await dispatch(removeEmailClient)
 
     if (response && response.payload === 'true') {
-      // show delete success message
+      //TODO: show delete success message
     }
     else {
-      // show delete failed message
+      //TODO: show delete failed message
     }
     setLoader(false);
   }
@@ -541,11 +628,11 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(true);
     const response = await dispatch(removeSmsClient)
     if (response && response.payload === 'true') {
-      // show delete success message
+      //TODO: show delete success message
       setDialog(null);
     }
     else {
-      // show delete failed message
+      //TODO: show delete failed message
     }
     setLoader(false);
   }
@@ -558,6 +645,40 @@ const ClientSearchResult = ({ props, classes }) => {
     setDialog(null);
   }
 
+  const handleUnSubscribe = async (opt) => {
+    await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt })).then(res => {
+      handleResponses(res, {
+        'S_200': {
+          code: 200,
+          message: ToastMessages.SUCCESS,
+          Func: () => setDialog(null)
+        },
+        'S_201': {
+          code: 201,
+          message: ToastMessages.AUTOMATION_CLIENTS_UPDATED,
+          Func: () => {
+            setDialog(null)
+            getData()
+          }
+        },
+        'S_401': {
+          code: 401,
+          message: ToastMessages.GROUP_INVALID_API,
+          Func: () => null
+        },
+        'S_404': {
+          code: 404,
+          message: ToastMessages.NO_CLIENTS_FOUND,
+          Func: () => null
+        },
+        'S_500': {
+          code: 500,
+          message: ToastMessages.GROUP_ERROR,
+          Func: () => null
+        },
+      })
+    })
+  }
 
   //  COMPONENTS  //
 
@@ -1038,9 +1159,9 @@ const ClientSearchResult = ({ props, classes }) => {
         >
           {renderCellIcons()}
         </TableCell>
-        {PageTypeObject[`${searchData?.PageType || 15}`]?.component &&
+        {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web &&
           <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-            {PageTypeObject[`${searchData?.PageType || 15}`]?.component && PageTypeObject[`${searchData?.PageType || 15}`]?.component({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
           </TableCell>}
 
 
@@ -1105,7 +1226,9 @@ const ClientSearchResult = ({ props, classes }) => {
       Status,
       SmsStatus,
       Cellphone,
-
+      LogSms_ErrorType,
+      LastSendDate,
+      snt_OpeningDate
     } = row;
     return (
       <TableRow key={ClientID} component="div" classes={rowStyle}>
@@ -1119,13 +1242,14 @@ const ClientSearchResult = ({ props, classes }) => {
               {renderPhoneNameCell(row)}
             </Box>
             <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
+              {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
 
-              <Typography className={classes.bold}>
+              {/* <Typography className={classes.bold}>
                 {t("common.campaignRevenue")}
               </Typography>
               <Typography>
                 {Revenue}
-              </Typography>
+              </Typography> */}
 
             </Box>
           </Box>
@@ -1228,17 +1352,17 @@ const ClientSearchResult = ({ props, classes }) => {
 
     sortedData = searchData?.PageType === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
 
-    if (PageTypeObject[`${searchData?.PageType || 15}`]?.title) {
+    if (PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.title) {
       TABLE_HEAD.splice(2, 0, {
         label: <div className={classes.flex}>
           <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>
-            {PageTypeObject[`${searchData?.PageType || 15}`]?.title}
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.title}
           </div>
-          {!!PageTypeObject[`${searchData?.PageType || 15}`]?.sortKey &&
+          {!!PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.sortKey &&
             //TODO: SORTING is left for multiple sort keys
             <div className={classes.flex1}>
               <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
-                onClick={() => { sortData(PageTypeObject[`${searchData?.PageType || 15}`]?.sortKey) }}
+                onClick={() => { sortData(PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.sortKey) }}
                 style={{ minWidth: 40 }}>
                 {descSortDirection ? <BiSortDown /> : <BiSortUp />}
               </Button>
@@ -1319,6 +1443,8 @@ const ClientSearchResult = ({ props, classes }) => {
 
 
   const showDialog = () => {
+
+
     if (dialog !== null) {
       switch (dialog) {
         case DialogType.ADD_GROUP: {
@@ -1344,11 +1470,13 @@ const ClientSearchResult = ({ props, classes }) => {
             windowSize={windowSize}
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
-            Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
+            Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
+            // selectGroup={(idArr) => setSelectedGroups(idArr)}
             DialogType={DialogType}
+            selectedGroups={data.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds || searchData?.GroupIds || []}
             setDialog={setDialog}
             handleResponses={(response, actions) => handleResponses(response, actions)}
-            onRecipientAdded={() => { setDialog(null); getData(); }}
+            onAddRecipient={() => { setDialog(null); getData(); }}
             recipientData={
               selectedClients[0] && (data.find((obj) => obj.ClientID === selectedClients[0]))
             }
@@ -1364,6 +1492,8 @@ const ClientSearchResult = ({ props, classes }) => {
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
             // selectedGroups={selectedGroups}
+            onSubmit={(opt) => handleUnSubscribe(opt)}
+            clientData={{ ...searchData }}
             dialogType={dialog}
             getData={getData}
             handleResponses={(response, actions) => handleResponses(response, actions)}

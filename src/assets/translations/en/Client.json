@@ -10,8 +10,10 @@
   "confirmDeleteFromAllGroups": "Are you Sure you want to remove clients from all groups?",
   "confirmRemoveEmail": "Are you sure you want to remove the recipient from the account?",
   "confirmRemovePhone": "Are you sure you want to remove this SMS recipient?",
+  "automationClientsUpdated": "Automation clients were updated",
   "errors": {
-    "zeroSelected": "No Client Selected"
+    "zeroSelected": "No Client Selected",
+    "noClientsFound": "No clients for update were found"
   },
   "logPageHeaderResource1": {
     "Text": "Recipient search result"
