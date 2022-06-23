@@ -253,6 +253,7 @@ const ClientSearchResult = ({ props, classes }) => {
   }, [searchData]);
 
   const handleDownloadCsv = async () => {
+    setLoader(true);
     const response = await dispatch(getExportData(searchData));
     if (response && response.payload) {
       const data = response.payload;
@@ -278,6 +279,7 @@ const ClientSearchResult = ({ props, classes }) => {
         setToastMessage(t('common.errorOccured'));
       }
     }
+    setLoader(false);
   }
 
   const sortData = (key) => {
