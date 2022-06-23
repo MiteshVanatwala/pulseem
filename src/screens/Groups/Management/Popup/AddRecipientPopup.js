@@ -25,6 +25,7 @@ import { Dialog } from "../../../../components/managment/Dialog";
 import SimpleGrid from "../../../../components/Grids/SimpleGrid";
 import { DEFAULT_RECIPIENT_DATA, ADD_RECIPIENT_TABS, ADD_RECIPIENT_REQUIRED_ERRORS } from "../../../../model/Groups/Contants";
 import GroupTags from "../../../../components/Groups/GroupTags";
+import { replaceExtraFieldHeader } from '../../../../helpers/exportHelper';
 
 import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
 
@@ -82,7 +83,25 @@ const AddRecipientPopup = ({ classes,
         Groups: ''
     })
     const [selectedLocalGroups, setSelectedLocalGroups] = useState([])
-
+    const extraFieldsTemp = {
+        "ExtraField1": t('common.ExtraField1'),
+        "ExtraField2": t('common.ExtraField2'),
+        "ExtraField3": t('common.ExtraField3'),
+        "ExtraField4": t('common.ExtraField4'),
+        "ExtraField5": t('common.ExtraField5'),
+        "ExtraField6": t('common.ExtraField6'),
+        "ExtraField7": t('common.ExtraField7'),
+        "ExtraField8": t('common.ExtraField8'),
+        "ExtraField9": t('common.ExtraField9'),
+        "ExtraField10": t('common.ExtraField10'),
+        "ExtraField11": t('common.ExtraField11'),
+        "ExtraField12": t('common.ExtraField12'),
+        "ExtraField13": t('common.ExtraField13'),
+        "ExtraDate1": t('common.ExtraDate1'),
+        "ExtraDate2": t('common.ExtraDate2'),
+        "ExtraDate3": t('common.ExtraDate3'),
+        "ExtraDate4": t('common.ExtraDate4')
+    }
 
     const dateFormat = "yyyy-MM-dd HH:mm:ss";
 
@@ -851,7 +870,7 @@ const AddRecipientPopup = ({ classes,
         temp = temp.forEach((t) => {
             tempp[t.key] = t.value
         });
-        let extraFields = Object.keys(tempp).filter((key, index) => { return Object.values(tempp)[index] && Object.values(tempp)[index] !== '' });
+        let extraFields = Object.keys(replaceExtraFieldHeader(extraFieldsTemp, extraData));
         const json = windowSize === 'xs' ?
             extraFields.map((ef) => {
                 return {
@@ -864,10 +883,10 @@ const AddRecipientPopup = ({ classes,
                     /> : <TextField
                         id="outlined-basic"
                         label=""
-                        placeholder={extraData[ef]}
+                        placeholder={extraFieldsTemp[ef]}
                         variant="outlined"
                         name={ef}
-                        value={addRecipientData[extraData[ef]]}
+                        value={addRecipientData[ef]}
                         className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={e => handleChange(e, null, true)}
@@ -880,7 +899,11 @@ const AddRecipientPopup = ({ classes,
                     content: <SimpleGrid
                         gridArr={[
                             {
-                                content: <Typography title={extraData[ef]} align="right" className={clsx(classes.pl5, classes.pr10, classes.textEllipses, classes.alignDir)}>{extraData[ef]}</Typography>,
+                                content: <Typography
+                                    title={extraFieldsTemp[ef]}
+                                    align="right"
+                                    className={clsx(classes.pl5, classes.pr10, classes.textEllipses, classes.alignDir)}
+                                >{extraFieldsTemp[ef]}</Typography>,
                                 gridSize: { xs: 12, sm: 3 }
                             },
                             {
@@ -894,7 +917,7 @@ const AddRecipientPopup = ({ classes,
                                     label=""
                                     variant="outlined"
                                     name={ef}
-                                    value={addRecipientData[extraData[ef]]}
+                                    value={addRecipientData[extraFieldsTemp[ef]]}
                                     className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                     autoComplete="off"
                                     onChange={e => handleChange(e, null, true)}
