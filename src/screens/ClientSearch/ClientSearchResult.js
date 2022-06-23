@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import DefaultScreen from "../DefaultScreen";
 import { useParams } from 'react-router-dom'
 import clsx from "clsx";
@@ -48,6 +48,7 @@ import {
   getExportData,
   setUnsubscribedClients
 } from "../../redux/reducers/clientSlice";
+import { getAccountExtraData } from '../../redux/reducers/smsSlice';
 import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
 import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
@@ -55,7 +56,7 @@ import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDe
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportFile } from '../../helpers/exportFromJson';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../helpers/exportHelper';
+import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS, Static_CSR_Data } from "../../model/Clients/Contants";
@@ -95,8 +96,10 @@ const ClientSearchResult = ({ props, classes }) => {
     smsOldVersion,
     isRTL
   } = useSelector((state) => state.core);
-
   const { t } = useTranslation();
+  const { extraData } = useSelector(state => state.sms);
+  const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
+  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
   const localClasses = useStyles();
   const location = useLocation()
   // const { groupData, ToastMessages } = useSelector((state) => state.group);
@@ -105,8 +108,6 @@ const ClientSearchResult = ({ props, classes }) => {
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
-  const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
   const { id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
@@ -116,6 +117,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [searchData, setSearchData] = useState(null);
+  const exportColumnHeader = useRef(null);
 
   const assignClientsActions =
   {
@@ -173,45 +175,10 @@ const ClientSearchResult = ({ props, classes }) => {
     CONFIRM_INVALID: "CONFIRM_INVALID"
   };
 
-  const exportColumnHeader = {
-    "Status": t('common.Status'),
-    "SmsStatus": t('common.smsStatus'),
-    "CreatedDate": t('common.CreationDate'),
-    "FirstName": t('smsReport.firstName'),
-    "LastName": t('smsReport.lastName'),
-    "Email": t("common.Mail"),
-    "Telephone": t('common.Telephone'),
-    "Cellphone": t('common.Cellphone'),
-    "Address": t('common.address'),
-    "BirthDate": t('common.birthDate'),
-    "City": t('common.city'),
-    "State": t('common.state'),
-    "Country": t('common.country'),
-    "Zip": t('common.zip'),
-    "Company": t('common.company'),
-    "ReminderDate": t('common.reminderDate'),
-    "ErrorMessages": t('recipient.errorMessage'),
-    "Revenue": t('common.campaignRevenue'),
-    "ExtraDate1": "Extra Date 1",
-    "ExtraDate2": "Extra Date 2",
-    "ExtraDate3": "Extra Date 3",
-    "ExtraDate4": "Extra Date 4",
-    "ExtraField1": "Extra Field 1",
-    "ExtraField2": "Extra Field 2",
-    "ExtraField3": "Extra Field 3",
-    "ExtraField4": "Extra Field 4",
-    "ExtraField5": "Extra Field 5",
-    "ExtraField6": "Extra Field 6",
-    "ExtraField7": "Extra Field 7",
-    "ExtraField8": "Extra Field 8",
-    "ExtraField9": "Extra Field 9",
-    "ExtraField10": "Extra Field 10",
-    "ExtraField11": "Extra Field 11",
-    "ExtraField12": "Extra Field 12",
-    "ExtraField13": "Extra Field 13",
-  }
-
   useEffect(() => {
+    const initExtraFields = async () => {
+      await dispatch(getAccountExtraData());
+    }
     // console.log("GROUPS:", groupData)
     // On load
     let initSearchData = {
@@ -231,7 +198,53 @@ const ClientSearchResult = ({ props, classes }) => {
     };
 
     setSearchData(initSearchData);
+    initExtraFields();
+
   }, []);
+
+  useEffect(() => {
+    if (extraData && Object.entries(extraData).length > 0) {
+      let updatingObject = {
+        "Status": t('common.Status'),
+        "SmsStatus": t('common.smsStatus'),
+        "CreatedDate": t('common.CreationDate'),
+        "FirstName": t('smsReport.firstName'),
+        "LastName": t('smsReport.lastName'),
+        "Email": t("common.Mail"),
+        "Telephone": t('common.Telephone'),
+        "Cellphone": t('common.Cellphone'),
+        "Address": t('common.address'),
+        "BirthDate": t('common.birthDate'),
+        "City": t('common.city'),
+        "State": t('common.state'),
+        "Country": t('common.country'),
+        "Zip": t('common.zip'),
+        "Company": t('common.company'),
+        "ReminderDate": t('common.reminderDate'),
+        "ErrorMessages": t('recipient.errorMessage'),
+        "Revenue": t('common.campaignRevenue'),
+        "ExtraDate1": t('common.ExtraDate1'),
+        "ExtraDate2": t('common.ExtraDate2'),
+        "ExtraDate3": t('common.ExtraDate3'),
+        "ExtraDate4": t('common.ExtraDate4'),
+        "ExtraField1": t('common.ExtraField1'),
+        "ExtraField2": t('common.ExtraField2'),
+        "ExtraField3": t('common.ExtraField3'),
+        "ExtraField4": t('common.ExtraField4'),
+        "ExtraField5": t('common.ExtraField5'),
+        "ExtraField6": t('common.ExtraField6'),
+        "ExtraField7": t('common.ExtraField7'),
+        "ExtraField8": t('common.ExtraField8'),
+        "ExtraField9": t('common.ExtraField9'),
+        "ExtraField10": t('common.ExtraField10'),
+        "ExtraField11": t('common.ExtraField11'),
+        "ExtraField12": t('common.ExtraField12'),
+        "ExtraField13": t('common.ExtraField13'),
+      };
+      updatingObject = replaceExtraFieldHeader(updatingObject, extraData);
+      exportColumnHeader.current = updatingObject;
+    }
+  }, [extraData])
 
   useEffect(() => {
     if (searchData) {
@@ -250,13 +263,15 @@ const ClientSearchResult = ({ props, classes }) => {
           return [...prev, { ...next, Status: t(tempStatus.value), SmsStatus: t(tempSmsStatus.value) }]
         }, []);
 
-        orderList = preferredOrder(orderList, Object.keys(exportColumnHeader));
+        orderList = orderList.map((ol) => { return flatObject(ol) });
+        orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
+        orderList = formatDateTime(orderList, t);
 
         exportFile({
           data: orderList,
           fileName: 'ClientSearchResult',
           exportType: 'csv',
-          fields: exportColumnHeader
+          fields: exportColumnHeader.current
         });
       }
       else {
