@@ -1680,4 +1680,12 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: '#3291d1'
     }
   },
+  removedPaddingAutoComplete: {
+    minWidth: 200,
+    '& .MuiTextField-root': {
+      '& .MuiAutocomplete-inputRoot': {
+        padding: '0 65px 0 0', margin: 9,
+      }
+    }
+  }
 });

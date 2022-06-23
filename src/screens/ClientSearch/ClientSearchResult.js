@@ -59,7 +59,7 @@ import { exportFile } from '../../helpers/exportFromJson';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import { useLocation } from "react-router";
-import { CLIENT_CONSTANTS, Static_CSR_Data } from "../../model/Clients/Contants";
+import { CLIENT_CONSTANTS, CSR_FILTER_ERRORS, Static_CSR_Data } from "../../model/Clients/Contants";
 import { Autocomplete } from "@material-ui/lab";
 
 const useStyles = makeStyles({
@@ -233,7 +233,6 @@ const ClientSearchResult = ({ props, classes }) => {
       CountryOrRegion: "",
       GroupIds: [],
       NodeID: "",
-      errors: [],
       ...location?.state,
     };
 
@@ -779,7 +778,7 @@ const ClientSearchResult = ({ props, classes }) => {
         </Grid>
         {/* // COMMENT: CONDITIONS APPLIED */}
 
-        {windowSize !== 'xs' ?
+        {/* {windowSize !== 'xs' ?
           <Grid item>
             <DateField
               toolbarDisabled={false}
@@ -809,10 +808,11 @@ const ClientSearchResult = ({ props, classes }) => {
           noOptionsText={t("group.noGroupFound")}
           id="tags-outlined"
           debug={true}
-          className={classes.autoCompleteTag}
+          style={{}}
+          className={clsx(classes.autoCompleteTag, classes.removedPaddingAutoComplete)}
           disableCloseOnSelect
-          options={["1", "2", "3", "4", "5"]}
-          getOptionLabel={(option) => option}
+          options={[...CSR_FILTER_ERRORS]}
+          getOptionLabel={(option) => option?.errorText}
           // defaultValue={subAccountAllGroups.reduce((prevVal, newVal) => {
           //     if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
           //         return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
@@ -830,7 +830,7 @@ const ClientSearchResult = ({ props, classes }) => {
                 checked={selected}
                 color="primary"
               />
-              {option.GroupName}
+              {option?.errorText}
             </React.Fragment>
           )}
           // onChange={dropDownProps?.onChange}
@@ -838,8 +838,8 @@ const ClientSearchResult = ({ props, classes }) => {
             <TextField
               {...params}
               variant="outlined"
-              label={t("common.Groups")}
-              placeholder={t("siteTracking.selectGroups")}
+              label={t("common.ErrorType")}
+              placeholder={t("common.ErrorType")}
             // error={error}
             // helperText={helperText}
             />
@@ -847,7 +847,7 @@ const ClientSearchResult = ({ props, classes }) => {
           PaperComponent={({ children }) => (
             <Paper className={classes.groupsAutoComplete}>{children}</Paper>
           )}
-        />
+        /> */}
 
         {/* //COMMENT: CONDITIONS APPLIED */}
 

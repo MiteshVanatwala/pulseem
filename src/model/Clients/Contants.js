@@ -3095,30 +3095,30 @@ const Static_CSR_Data = [
     }
 ]
 
-const ERRORS = [
+const CSR_FILTER_ERRORS = [
     {
         id: 1,
-        error: 'ERROR1'
+        errorText: 'ERROR1'
     },
     {
         id: 2,
-        error: 'ERROR2'
+        errorText: 'ERROR2'
     },
     {
         id: 3,
-        error: 'ERROR3'
+        errorText: 'ERROR3'
     },
     {
         id: 4,
-        error: 'ERROR4'
+        errorText: 'ERROR4'
     },
     {
         id: 5,
-        error: 'ERROR5'
+        errorText: 'ERROR5'
     },
 ]
 
 
 
-export { CLIENT_CONSTANTS, Static_CSR_Data }
+export { CLIENT_CONSTANTS, Static_CSR_Data, CSR_FILTER_ERRORS }
 
