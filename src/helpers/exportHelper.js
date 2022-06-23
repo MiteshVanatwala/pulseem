@@ -137,3 +137,14 @@ export const replaceClientStatus = (obj) => {
     });
     return obj;
 }
+
+export const replaceExtraFieldHeader = (obj, accountExtraFields) => {
+    Object.entries(accountExtraFields).forEach((ef) => {
+        const key = ef[0];
+        const val = ef[1];
+        if (val && val !== '') {
+            obj[key] = val;
+        }
+    });
+    return obj;
+}
