@@ -81,6 +81,16 @@ export const AddClientsToGroup = createAsyncThunk(
     }
   })
 
+export const getExportData = createAsyncThunk(
+  'client/GetExportData', async (payload, thunkAPI) => {
+    try {
+      const response = await instence.post('client/GetExportData', payload);
+      return JSON.parse(response.data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+)
 export const setUnsubscribedClients = createAsyncThunk(
   'client/SetUnsubscribedClients', async (payload, thunkAPI) => {
     try {
