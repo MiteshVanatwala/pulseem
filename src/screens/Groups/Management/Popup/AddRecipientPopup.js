@@ -104,7 +104,7 @@ const AddRecipientPopup = ({ classes,
             setAddRecipientData({ ...addRecipientData, ...recipientData })
             setSelectedLocalGroups([...selectedLocalGroups, ...selectedGroups])
         }
-    }, [])
+    }, [recipientData])
 
 
     const handleBlur = (e) => {
@@ -178,9 +178,9 @@ const AddRecipientPopup = ({ classes,
     const handleSubmit = async (callback) => {
         const data = {
             ClientsData: addRecipientData,
-            GroupIds: [...selectedGroups]
+            // ClientsData: recipientData ? [recipientData] : addRecipientData,
+            GroupIds: recipientData ? [...selectedLocalGroups] : [...selectedGroups]
         }
-
         const tempError = { ...errors }
 
         if (!data.ClientsData.Email &&
@@ -214,8 +214,10 @@ const AddRecipientPopup = ({ classes,
             clientsData.push({ ...addRecipientData, ...accountExtraFields });
 
             const request = {
-                ClientsData: clientsData,
-                GroupIds: [...selectedGroups]
+                // ClientsData: [addRecipientData],
+                ClientsData: recipientData ? [recipientData] : [addRecipientData],
+                GroupIds: recipientData ? [...selectedLocalGroups] : [...selectedGroups]
+                //BUG: INITIALLY when dialog opens local selected groups is empty, this will result in removal of clients from selected groups 
             }
             const response = await dispatch(addRecipient(request))
             handleResponses(response, {

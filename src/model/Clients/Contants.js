@@ -3095,6 +3095,29 @@ const Static_CSR_Data = [
     }
 ]
 
+const ERRORS = [
+    {
+        id: 1,
+        error: 'ERROR1'
+    },
+    {
+        id: 2,
+        error: 'ERROR2'
+    },
+    {
+        id: 3,
+        error: 'ERROR3'
+    },
+    {
+        id: 4,
+        error: 'ERROR4'
+    },
+    {
+        id: 5,
+        error: 'ERROR5'
+    },
+]
+
 
 
 export { CLIENT_CONSTANTS, Static_CSR_Data }

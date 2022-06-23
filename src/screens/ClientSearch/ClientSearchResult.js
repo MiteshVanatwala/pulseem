@@ -16,10 +16,11 @@ import {
   TableCell,
   Checkbox,
   makeStyles,
-  FormControlLabel
+  FormControlLabel,
+  Paper
 } from "@material-ui/core";
 import { SearchIcon, ExportIcon, EditIcon, DeleteRecipient, DeleteEmail, DeletePhone } from "../../assets/images/managment/index";
-import { ManagmentIcon } from "../../components/managment/index";
+import { DateField, ManagmentIcon } from "../../components/managment/index";
 import { CSVLink } from "react-csv";
 import {
   TablePagination,
@@ -50,6 +51,7 @@ import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber }
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS, Static_CSR_Data } from "../../model/Clients/Contants";
+import { Autocomplete } from "@material-ui/lab";
 
 const useStyles = makeStyles({
   groupName: {
@@ -107,6 +109,10 @@ const ClientSearchResult = ({ props, classes }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [searchData, setSearchData] = useState(null);
+  const [date, setDate] = useState({
+    FromDate: null,
+    ToDate: null,
+  })
 
   const assignClientsActions =
   {
@@ -192,6 +198,7 @@ const ClientSearchResult = ({ props, classes }) => {
       CountryOrRegion: "",
       GroupIds: [],
       NodeID: "",
+      errors: [],
       ...location?.state,
     };
 
@@ -652,9 +659,18 @@ const ClientSearchResult = ({ props, classes }) => {
 
   // DONE
   const renderSearchLine = () => {
+
+    const handleFromDateChange = (value) => {
+      if (value > date.ToDate) {
+        setDate({ ...date, ToDate: null });
+      }
+      setDate({ ...date, FromDate: value });
+    }
+
     const handleKeyDown = (event) => {
       if (event.keyCode === 13 || event.code === "Enter") {
         setSearchData({
+          ...searchData,
           PageIndex: 1,
           PageSize: rowsPerPage,
           SearchTerm: searchStr,
@@ -667,6 +683,7 @@ const ClientSearchResult = ({ props, classes }) => {
     const handleKeyPress = (e) => {
       if (e.charCode === 13 || e.code === "Enter") {
         setSearchData({
+          ...searchData,
           PageIndex: 1,
           PageSize: rowsPerPage,
           SearchTerm: searchStr,
@@ -684,6 +701,7 @@ const ClientSearchResult = ({ props, classes }) => {
           onChange={(e) => setSearchStr(e.target.value)}
           onClick={() => {
             setSearchData({
+              ...searchData,
               PageIndex: 1,
               PageSize: rowsPerPage,
               SearchTerm: searchStr,
@@ -713,6 +731,81 @@ const ClientSearchResult = ({ props, classes }) => {
             placeholder={t("report.clientName")}
           />
         </Grid>
+        {/* // COMMENT: CONDITIONS APPLIED */}
+
+        {windowSize !== 'xs' ?
+          <Grid item>
+            <DateField
+              toolbarDisabled={false}
+              classes={classes}
+              value={date.FromDate}
+              onChange={handleFromDateChange}
+              placeholder={t('mms.locFromDateResource1.Text')}
+            />
+          </Grid>
+          : null}
+        {windowSize !== 'xs' ?
+          <Grid item>
+            <DateField
+              toolbarDisabled={false}
+              classes={classes}
+              value={date.ToDate}
+              onChange={(value) => setDate({ ...date, ToDate: value })}
+              placeholder={t('mms.locToDateResource1.Text')}
+              minDate={date.FromDate ? date.FromDate : undefined}
+            />
+          </Grid>
+          : null}
+
+
+        <Autocomplete
+          multiple
+          noOptionsText={t("group.noGroupFound")}
+          id="tags-outlined"
+          debug={true}
+          className={classes.autoCompleteTag}
+          disableCloseOnSelect
+          options={["1", "2", "3", "4", "5"]}
+          getOptionLabel={(option) => option}
+          // defaultValue={subAccountAllGroups.reduce((prevVal, newVal) => {
+          //     if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
+          //         return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
+          //     }
+          //     else {
+          //         return [...prevVal]
+          //     }
+          // }, [])}
+          renderOption={(option, { selected }) => (
+            <React.Fragment>
+              <Checkbox
+                // icon={icon}
+                // checkedIcon={checkedIcon}
+                style={{ marginRight: 8 }}
+                checked={selected}
+                color="primary"
+              />
+              {option.GroupName}
+            </React.Fragment>
+          )}
+          // onChange={dropDownProps?.onChange}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+              label={t("common.Groups")}
+              placeholder={t("siteTracking.selectGroups")}
+            // error={error}
+            // helperText={helperText}
+            />
+          )}
+          PaperComponent={({ children }) => (
+            <Paper className={classes.groupsAutoComplete}>{children}</Paper>
+          )}
+        />
+
+        {/* //COMMENT: CONDITIONS APPLIED */}
+
+
         {filterSearch && <>
           <Grid item>
             <TextField
@@ -743,6 +836,7 @@ const ClientSearchResult = ({ props, classes }) => {
             variant="contained"
             onClick={() => {
               setSearchData({
+                ...searchData,
                 PageIndex: 1,
                 PageSize: rowsPerPage,
                 SearchTerm: searchStr,

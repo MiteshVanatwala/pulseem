@@ -521,7 +521,7 @@ const Groups = ({ classes }) => {
                                 },
                                 //onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
                                 onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                    replace: true,
+
                                     state:
                                     {
                                         ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -540,7 +540,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.green,
                                 },
                                 onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                    replace: true,
+
                                     state:
                                     {
                                         ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -559,7 +559,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.red,
                                 },
                                 onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                    replace: true,
+
                                     state:
                                     {
                                         ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -578,7 +578,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.red,
                                 },
                                 onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                    replace: true,
+
                                     state:
                                     {
                                         ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -606,7 +606,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.blue,
                                 },
                                 onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                    replace: true,
+
                                     state:
                                     {
                                         ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -625,7 +625,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.green,
                                 },
                                 onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                    replace: true,
+
                                     state:
                                     {
                                         ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -644,7 +644,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.red,
                                 },
                                 onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                    replace: true,
+
                                     state:
                                     {
                                         ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -663,7 +663,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.red,
                                 },
                                 onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-                                    replace: true,
+
                                     state:
                                     {
                                         ...CLIENT_CONSTANTS.QUERY_PARAMS,
@@ -689,7 +689,7 @@ const Groups = ({ classes }) => {
                         gridArr={[
                             {
                                 onClick: () => {
-                                    navigate(CLIENT_CONSTANTS.BASEURL, { replace: true, state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup, GroupIds: [GroupID] } })
+                                    navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup, GroupIds: [GroupID] } })
                                 },
                                 label: t("recipient.preview"),
                                 component: (
