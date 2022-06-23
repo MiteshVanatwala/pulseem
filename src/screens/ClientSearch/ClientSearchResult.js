@@ -57,7 +57,7 @@ import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDe
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportFile } from '../../helpers/exportFromJson';
-import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader } from '../../helpers/exportHelper';
+import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader, deletePropertyFromArrayObject } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS, CSR_FILTER_ERRORS, Static_CSR_Data } from "../../model/Clients/Contants";
@@ -271,6 +271,9 @@ const ClientSearchResult = ({ props, classes }) => {
         }, []);
 
         orderList = orderList.map((ol) => { return flatObject(ol) });
+        if (searchData.PageType !== 15) {
+          orderList = deletePropertyFromArrayObject(orderList, "Revenue");
+        }
         orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
         orderList = formatDateTime(orderList, t);
 
