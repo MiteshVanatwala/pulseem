@@ -1160,7 +1160,9 @@ const ClientSearchResult = ({ props, classes }) => {
       CreationDate,
       LogSms_ErrorType,
       LastSendDate,
-      snt_OpeningDate
+      snt_OpeningDate,
+      ErrorTypeText
+
     } = row;
 
     let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
@@ -1275,7 +1277,7 @@ const ClientSearchResult = ({ props, classes }) => {
         </TableCell>
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web &&
           <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: ErrorTypeText })}
           </TableCell>}
 
 
