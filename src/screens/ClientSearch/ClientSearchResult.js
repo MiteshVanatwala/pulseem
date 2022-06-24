@@ -258,6 +258,41 @@ const ClientSearchResult = ({ props, classes }) => {
     }
   }, [searchData]);
 
+
+  const handleFromDateChange = (value) => {
+    if (value > date.ToDate) {
+      setDate({ ...date, ToDate: null });
+    }
+    setDate({ ...date, FromDate: value });
+  }
+
+  const handleKeyDown = (event) => {
+    if (event.keyCode === 13 || event.code === "Enter") {
+      setSearchData({
+        ...searchData,
+        PageIndex: 1,
+        PageSize: rowsPerPage,
+        SearchTerm: searchStr,
+      });
+      setPage(1);
+      handleFilter();
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.charCode === 13 || e.code === "Enter") {
+      setSearchData({
+        ...searchData,
+        PageIndex: 1,
+        PageSize: rowsPerPage,
+        SearchTerm: searchStr,
+      });
+      setPage(1);
+      handleFilter();
+    }
+  };
+
+
   const handleDownloadCsv = async () => {
     setLoader(true);
     const response = await dispatch(getExportData(searchData));
@@ -327,6 +362,104 @@ const ClientSearchResult = ({ props, classes }) => {
   }
 
 
+  const Min = () => <Grid item>
+    <TextField
+      variant="outlined"
+      size="small"
+      value={filterMin}
+      onChange={(e) => setFilterMin(e.target.value)}
+      className={clsx(classes.textField, classes.minWidth252)}
+      placeholder={t("siteTracking.minimumRevenue")}
+      type="number"
+    />
+  </Grid>
+
+  const Max = () => <Grid item>
+    <TextField
+      variant="outlined"
+      size="small"
+      value={filterMax}
+      onChange={(e) => setFilterMax(e.target.value)}
+      className={clsx(classes.textField, classes.minWidth252)}
+      placeholder={t("siteTracking.maximumRevenue")}
+      type="number"
+    />
+  </Grid>
+
+  const ErrorDropDown = () =>
+  (
+    <Autocomplete
+      multiple
+      noOptionsText={t("group.noGroupFound")}
+      id="tags-outlined"
+      debug={true}
+      style={{}}
+      className={clsx(classes.autoCompleteTag, classes.removedPaddingAutoComplete)}
+      disableCloseOnSelect
+      options={[...CSR_FILTER_ERRORS]}
+      getOptionLabel={(option) => option?.errorText}
+      // defaultValue={subAccountAllGroups.reduce((prevVal, newVal) => {
+      //     if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
+      //         return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
+      //     }
+      //     else {
+      //         return [...prevVal]
+      //     }
+      // }, [])}
+      renderOption={(option, { selected }) => (
+        <React.Fragment>
+          <Checkbox
+            // icon={icon}
+            // checkedIcon={checkedIcon}
+            style={{ marginRight: 8 }}
+            checked={selected}
+            color="primary"
+          />
+          {option?.errorText}
+        </React.Fragment>
+      )}
+      // onChange={dropDownProps?.onChange}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          variant="outlined"
+          label={t("common.ErrorType")}
+          placeholder={t("common.ErrorType")}
+        // error={error}
+        // helperText={helperText}
+        />
+      )}
+      PaperComponent={({ children }) => (
+        <Paper className={classes.groupsAutoComplete}>{children}</Paper>
+      )}
+    />
+  )
+
+  const FromDate = () => windowSize !== 'xs' ?
+    <Grid item>
+      <DateField
+        toolbarDisabled={false}
+        classes={classes}
+        value={date.FromDate}
+        onChange={handleFromDateChange}
+        placeholder={t('mms.locFromDateResource1.Text')}
+      />
+    </Grid>
+    : null
+
+  const ToDate = () => windowSize !== 'xs' ?
+    <Grid item>
+      <DateField
+        toolbarDisabled={false}
+        classes={classes}
+        value={date.ToDate}
+        onChange={(value) => setDate({ ...date, ToDate: value })}
+        placeholder={t('mms.locToDateResource1.Text')}
+        minDate={date.FromDate ? date.FromDate : undefined}
+      />
+    </Grid>
+    : null
+
   const PageTypeObject = {
     '1': {
       title: t("common.OpenTime"),
@@ -346,6 +479,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
+      filterComponents: [FromDate, ToDate]
     },
     '3': {
       title: t("notifications.subscribers"),
@@ -373,6 +507,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
+      filterComponents: [FromDate, ToDate]
     },
     '10': {
       title: t("common.ErrorEmail"),
@@ -392,6 +527,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
+      filterComponents: [ErrorDropDown]
     },
     '15': {
       title: t("common.campaignRevenue"),
@@ -411,6 +547,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
+      filterComponents: [Min, Max]
     },
   }
 
@@ -719,41 +856,11 @@ const ClientSearchResult = ({ props, classes }) => {
     );
   };
 
+  // console.log("HELLO:", PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.()))
+
   // DONE
   const renderSearchLine = () => {
 
-    const handleFromDateChange = (value) => {
-      if (value > date.ToDate) {
-        setDate({ ...date, ToDate: null });
-      }
-      setDate({ ...date, FromDate: value });
-    }
-
-    const handleKeyDown = (event) => {
-      if (event.keyCode === 13 || event.code === "Enter") {
-        setSearchData({
-          ...searchData,
-          PageIndex: 1,
-          PageSize: rowsPerPage,
-          SearchTerm: searchStr,
-        });
-        setPage(1);
-        handleFilter();
-      }
-    };
-
-    const handleKeyPress = (e) => {
-      if (e.charCode === 13 || e.code === "Enter") {
-        setSearchData({
-          ...searchData,
-          PageIndex: 1,
-          PageSize: rowsPerPage,
-          SearchTerm: searchStr,
-        });
-        setPage(1);
-        handleFilter();
-      }
-    };
 
     if (windowSize === "xs") {
       return (
@@ -869,30 +976,35 @@ const ClientSearchResult = ({ props, classes }) => {
         {/* //COMMENT: CONDITIONS APPLIED */}
 
 
-        {filterSearch && <>
-          <Grid item>
-            <TextField
-              variant="outlined"
-              size="small"
-              value={filterMin}
-              onChange={(e) => setFilterMin(e.target.value)}
-              className={clsx(classes.textField, classes.minWidth252)}
-              placeholder={t("siteTracking.minimumRevenue")}
-              type="number"
-            />
-          </Grid>
-          <Grid item>
-            <TextField
-              variant="outlined"
-              size="small"
-              value={filterMax}
-              onChange={(e) => setFilterMax(e.target.value)}
-              className={clsx(classes.textField, classes.minWidth252)}
-              placeholder={t("siteTracking.maximumRevenue")}
-              type="number"
-            />
-          </Grid>
-        </>}
+        {
+          // PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponent?.length > 0 &&
+          //   <>
+          //   <Grid item>
+          //     <TextField
+          //       variant="outlined"
+          //       size="small"
+          //       value={filterMin}
+          //       onChange={(e) => setFilterMin(e.target.value)}
+          //       className={clsx(classes.textField, classes.minWidth252)}
+          //       placeholder={t("siteTracking.minimumRevenue")}
+          //       type="number"
+          //     />
+          //   </Grid>
+          //   <Grid item>
+          //     <TextField
+          //       variant="outlined"
+          //       size="small"
+          //       value={filterMax}
+          //       onChange={(e) => setFilterMax(e.target.value)}
+          //       className={clsx(classes.textField, classes.minWidth252)}
+          //       placeholder={t("siteTracking.maximumRevenue")}
+          //       type="number"
+          //     />
+          //   </Grid>
+          // </>
+        }
+        {filterSearch && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.())}
+        {/* {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponent?.map(comp => comp?.())} */}
         <Grid item>
           <Button
             size="large"
@@ -912,14 +1024,21 @@ const ClientSearchResult = ({ props, classes }) => {
           >
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
-          {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Link
-            color='initial'
-            component='button'
-            underline='none'
-            onClick={() => setFilterSearch(!filterSearch)}
-            className={clsx(classes.dBlock, classes.mt5, filterSearch && windowSize === 'lg' ? classes.mb15 : null)}>
-            {t(!filterSearch ? 'report.filterSearch' : 'report.closeFilterSearch')}
-          </Link>
+          {
+            [
+              CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
+              CLIENT_CONSTANTS.FailureCountSMSCampaignID,
+              CLIENT_CONSTANTS.TotalCountSMSCampaignID,
+              CLIENT_CONSTANTS.OpenedCampaignID
+            ].indexOf(location?.state?.PageType) !== -1 && <Link
+              // {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Link
+              color='initial'
+              component='button'
+              underline='none'
+              onClick={() => setFilterSearch(!filterSearch)}
+              className={clsx(classes.dBlock, classes.mt5, filterSearch && windowSize === 'lg' ? classes.mb15 : null)}>
+              {t(!filterSearch ? 'report.filterSearch' : 'report.closeFilterSearch')}
+            </Link>
           }
         </Grid>
         {isSearching && <Grid item>
