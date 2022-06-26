@@ -194,7 +194,7 @@ const RecipientChart = ({ classes, }) => {
                 const chart = e.chart;
                 if (chart) {
                     const activeChart = e.chart._active[0];
-                    openReports(chart.data.productType, activeChart.index);
+                    openReports(report.ReportSection, activeChart.index);
                 }
             },
             plugins: {
@@ -266,17 +266,13 @@ const RecipientChart = ({ classes, }) => {
         if (reportType === "total") {
             qReportType = 100;
             if (productType === 0) {
-                // window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
                 navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, TestStatusOfEmailElseSms: 1, Status: qReportType } })
-                //TODO: UnComment OnCLick, Comment Href 
             }
             if (productType === 1) {
-                // window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
                 navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, Status: qReportType } })
-                //TODO: UnComment OnCLick, Comment Href 
             }
         }
-        if (productType === "0") {
+        if (productType === 0) {
             switch (reportType) {
                 case 0: {
                     qReportType = 1;
@@ -290,12 +286,19 @@ const RecipientChart = ({ classes, }) => {
                     qReportType = 2;
                     break;
                 }
+                default: { return; }
             }
-            // window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
-            navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, Status: qReportType } })
-            //TODO: UnComment OnCLick, Comment Href 
+
+            navigate(CLIENT_CONSTANTS.BASEURL, {
+                state: {
+                    ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                    PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                    Status: qReportType,
+                    TestStatusOfEmailElseSms: 1
+                }
+            })
         }
-        if (productType === "1") {
+        if (productType === 1) {
             switch (reportType) {
                 case 0: {
                     qReportType = 0;
@@ -309,10 +312,16 @@ const RecipientChart = ({ classes, }) => {
                     qReportType = 1;
                     break;
                 }
+                default: { return; }
             }
-            // window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
-            navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, TestStatusOfEmailElseSms: 1, Status: qReportType } })
-            //TODO: UnComment OnCLick, Comment Href 
+            navigate(CLIENT_CONSTANTS.BASEURL, {
+                state: {
+                    ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                    PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                    TestStatusOfEmailElseSms: 0,
+                    Status: qReportType
+                }
+            })
         }
 
     }
