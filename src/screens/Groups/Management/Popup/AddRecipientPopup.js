@@ -231,10 +231,11 @@ const AddRecipientPopup = ({ classes,
             setLoader(true)
             const clientsData = [];
             clientsData.push({ ...addRecipientData, ...accountExtraFields });
+            const finalData = { ...recipientData, ...addRecipientData, ...accountExtraFields };
 
             const request = {
                 // ClientsData: [addRecipientData],
-                ClientsData: recipientData ? [recipientData] : [addRecipientData],
+                ClientsData: [finalData], // ? [recipientData] : [addRecipientData],
                 GroupIds: recipientData ? [...selectedLocalGroups] : [...selectedGroups]
                 //BUG: INITIALLY when dialog opens local selected groups is empty, this will result in removal of clients from selected groups 
             }
@@ -888,7 +889,7 @@ const AddRecipientPopup = ({ classes,
                         placeholder={extraFieldsTemp[ef]}
                         variant="outlined"
                         name={ef}
-                        value={addRecipientData[ef]}
+                        value={addRecipientData["ExtraFields"] && addRecipientData["ExtraFields"][ef]}
                         className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={e => handleChange(e, null, true)}
@@ -919,7 +920,7 @@ const AddRecipientPopup = ({ classes,
                                     label=""
                                     variant="outlined"
                                     name={ef}
-                                    value={addRecipientData[extraFieldsTemp[ef]]}
+                                    value={addRecipientData["ExtraFields"] && addRecipientData["ExtraFields"][ef]}
                                     className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                     autoComplete="off"
                                     onChange={e => handleChange(e, null, true)}
