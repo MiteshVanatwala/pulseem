@@ -36,6 +36,7 @@ import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
+import PurchasePage from './screens/Tests/PurchasePage';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -377,6 +378,11 @@ const renderRoutes = (classes, history) => {
         path={`/SiteTracking`}
         render={props => <SiteTrackingEditor props={props} classes={classes} />}
       />
+      <Route
+        exact
+        path={`/SiteTracking/Purchase`}
+        render={props => <PurchasePage props={props} classes={classes} />}
+      />
     </>
   )
 }
@@ -443,8 +449,21 @@ const App = ({ screenSize }) => {
       if (!!cookieFunction)
         cookieFunction()
     })
+    const initSiteTracking = () => {
+      const s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.async = true;
+      s.innerHTML = `(function(d, t) {
+              var g = d.createElement(t),
+              s = d.getElementsByTagName(t)[0];
+              g.src="https://webscript.stg.services.pulseem.com/main.js?v=" + ${Math.floor(Date.now() / 1000)};
+              s.parentNode.insertBefore(g, s);
+              }(document, "script"))`;
+      document.head.appendChild(s);
+    }
     updateToken()
     initFeatures()
+    initSiteTracking()
   }, [dispatch])
 
 
