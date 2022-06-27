@@ -34,10 +34,10 @@ const CLIENT_CONSTANTS = {
     NEWSlETTER_STATUS: {
         NoEmail: -1,
         Active: 1,
+        Removed: 2,
         Restricted: 3,
-        Removed2: 2,
-        Removed5: 5,
-        Invalid: 4
+        Invalid: 4,
+        Pending: 5
     },
     REPORT_TYPE: {
         ShowGroup: 0,

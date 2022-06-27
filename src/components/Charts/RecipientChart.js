@@ -262,28 +262,49 @@ const RecipientChart = ({ classes, }) => {
 
     const openReports = (productType, reportType) => {
         let qReportType = null;
+        let resultTitle = null;
 
         if (reportType === "total") {
             qReportType = 100;
             if (productType === 0) {
-                navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, TestStatusOfEmailElseSms: 1, Status: qReportType } })
+                resultTitle = t('client.titles.searchResult.newsletter.total');
+                navigate(CLIENT_CONSTANTS.BASEURL, {
+                    state: {
+                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                        TestStatusOfEmailElseSms: 1,
+                        Status: qReportType,
+                        ResultTitle: resultTitle
+                    }
+                })
             }
             if (productType === 1) {
-                navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, Status: qReportType } })
+                resultTitle = t('client.titles.searchResult.sms.total');
+                navigate(CLIENT_CONSTANTS.BASEURL, {
+                    state: {
+                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                        Status: qReportType,
+                        ResultTitle: resultTitle
+                    }
+                })
             }
         }
         if (productType === 0) {
             switch (reportType) {
                 case 0: {
                     qReportType = 1;
+                    resultTitle = t('client.titles.searchResult.newsletter.active');
                     break;
                 }
                 case 1: {
                     qReportType = 4;
+                    resultTitle = t('client.titles.searchResult.newsletter.error');
                     break;
                 }
                 case 2: {
                     qReportType = 2;
+                    resultTitle = t('client.titles.searchResult.newsletter.removed');
                     break;
                 }
                 default: { return; }
@@ -294,6 +315,7 @@ const RecipientChart = ({ classes, }) => {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                     Status: qReportType,
+                    ResultTitle: resultTitle,
                     TestStatusOfEmailElseSms: 1
                 }
             })
@@ -302,14 +324,17 @@ const RecipientChart = ({ classes, }) => {
             switch (reportType) {
                 case 0: {
                     qReportType = 0;
+                    resultTitle = t('client.titles.searchResult.sms.active');
                     break;
                 }
                 case 1: {
                     qReportType = 4;
+                    resultTitle = t('client.titles.searchResult.sms.error');
                     break;
                 }
                 case 2: {
                     qReportType = 1;
+                    resultTitle = t('client.titles.searchResult.sms.removed');
                     break;
                 }
                 default: { return; }
@@ -319,6 +344,7 @@ const RecipientChart = ({ classes, }) => {
                     ...CLIENT_CONSTANTS.QUERY_PARAMS,
                     PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                     TestStatusOfEmailElseSms: 0,
+                    ResultTitle: resultTitle,
                     Status: qReportType
                 }
             })
