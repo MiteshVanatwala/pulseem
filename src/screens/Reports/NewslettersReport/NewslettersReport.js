@@ -89,7 +89,7 @@ const NewslettersReport = ({ classes }) => {
     RemovedClients: {
       title: windowSize === 'xs' ? '' : t('common.Removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, TestStatusOfEmailElseSms: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Active, Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Removed2 } }),
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, TestStatusOfEmailElseSms: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Active, Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Removed } }),
       //TODO: UnComment OnCLick, Comment Href 
     },
     SendError: {
