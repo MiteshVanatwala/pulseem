@@ -446,17 +446,17 @@ const ClientSearchResult = ({ props, classes }) => {
       title: t("sms.sendingTime"),
       sortKey: 'Date',
       component: {
-        mobile: ({ LastSendDate = null, ...rest }) => (<>
+        mobile: ({ SentDate = null, ...rest }) => (<>
           <Typography className={classes.bold}>
             {t("sms.sendingTime")}
           </Typography>
           <Typography>
-            {LastSendDate}
+          {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         </>),
-        web: ({ LastSendDate = null, ...rest }) => (
+        web: ({ SentDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {LastSendDate}
+            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         )
       },
@@ -1106,6 +1106,7 @@ const ClientSearchResult = ({ props, classes }) => {
       UpdateDate,
       CreationDate,
       LogSms_ErrorType,
+      SentDate,
       LastSendDate,
       snt_OpeningDate,
       ErrorTypeText
@@ -1224,7 +1225,7 @@ const ClientSearchResult = ({ props, classes }) => {
         </TableCell>
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web &&
           <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: ErrorTypeText })}
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, SentDate: SentDate, LogSms_ErrorType: ErrorTypeText })}
           </TableCell>}
 
 
@@ -1291,6 +1292,7 @@ const ClientSearchResult = ({ props, classes }) => {
       Cellphone,
       LogSms_ErrorType,
       LastSendDate,
+      SentDate,
       snt_OpeningDate
     } = row;
     return (
@@ -1433,7 +1435,7 @@ const ClientSearchResult = ({ props, classes }) => {
           }
         </div>,
         classes: cellStyle,
-        className: clsx(classes.flex2, classes.textUppercase),
+        className: clsx(classes.flex2),
         align: "center",
       })
     }
