@@ -528,7 +528,8 @@ const Groups = ({ classes }) => {
                                         PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                                         GroupIds: [GroupID],
                                         Status: 100,
-                                        TestStatusOfEmailElseSms: 1
+                                        TestStatusOfEmailElseSms: 1,
+                                        ResultTitle: GroupName
                                     }
                                 })
                             },
@@ -547,7 +548,8 @@ const Groups = ({ classes }) => {
                                         PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                                         GroupIds: [GroupID],
                                         Status: 1,
-                                        TestStatusOfEmailElseSms: 1
+                                        TestStatusOfEmailElseSms: 1,
+                                        ResultTitle: GroupName
                                     }
                                 })
                             },
@@ -566,7 +568,8 @@ const Groups = ({ classes }) => {
                                         PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                                         GroupIds: [GroupID],
                                         Status: 2,
-                                        TestStatusOfEmailElseSms: 1
+                                        TestStatusOfEmailElseSms: 1,
+                                        ResultTitle: GroupName
                                     }
                                 })
                             },
@@ -585,7 +588,8 @@ const Groups = ({ classes }) => {
                                         PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                                         GroupIds: [GroupID],
                                         Status: 4,
-                                        TestStatusOfEmailElseSms: 1
+                                        TestStatusOfEmailElseSms: 1,
+                                        ResultTitle: GroupName
                                     }
                                 })
                             },
@@ -613,7 +617,8 @@ const Groups = ({ classes }) => {
                                         PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                                         GroupIds: [GroupID],
                                         Status: 100,
-                                        TestStatusOfEmailElseSms: 0
+                                        TestStatusOfEmailElseSms: 0,
+                                        ResultTitle: GroupName
                                     }
                                 })
                             },
@@ -632,7 +637,8 @@ const Groups = ({ classes }) => {
                                         PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                                         GroupIds: [GroupID],
                                         Status: 0,
-                                        TestStatusOfEmailElseSms: 0
+                                        TestStatusOfEmailElseSms: 0,
+                                        ResultTitle: GroupName
                                     }
                                 })
                             },
@@ -651,7 +657,8 @@ const Groups = ({ classes }) => {
                                         PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                                         GroupIds: [GroupID],
                                         Status: 1,
-                                        TestStatusOfEmailElseSms: 0
+                                        TestStatusOfEmailElseSms: 0,
+                                        ResultTitle: GroupName
                                     }
                                 })
                             },
@@ -670,7 +677,8 @@ const Groups = ({ classes }) => {
                                         PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                                         GroupIds: [GroupID],
                                         Status: 4,
-                                        TestStatusOfEmailElseSms: 0
+                                        TestStatusOfEmailElseSms: 0,
+                                        ResultTitle: GroupName
                                     }
                                 })
                             },
@@ -689,7 +697,14 @@ const Groups = ({ classes }) => {
                         gridArr={[
                             {
                                 onClick: () => {
-                                    navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup, GroupIds: [GroupID] } })
+                                    navigate(CLIENT_CONSTANTS.BASEURL, {
+                                        state: {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
+                                            GroupIds: [GroupID],
+                                            ResultTitle: GroupName
+                                        }
+                                    })
                                 },
                                 label: t("recipient.preview"),
                                 component: (

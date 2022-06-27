@@ -23,5 +23,21 @@
   "Purchased": "רכישות",
   "totalRevenue": "הכנסה כוללת",
   "avgOrderRevenue": "סכום רכישה ממוצע",
-  "conversionRate": "יחס המרה"
+  "conversionRate": "יחס המרה",
+  "titles": {
+    "searchResult": {
+      "newsletter": {
+        "total": "כל נמעני ניוזלטר",
+        "error": "נמעני ניוזלטר שגויים",
+        "active": "נמעני ניוזלטר פעילים",
+        "removed": "נמעני ניוזלטר מוסרים"
+      },
+      "sms": {
+        "total": "כל נמעני SMS/MMS",
+        "error": "נמעני SMS/MMS שגויים",
+        "active": "נמעני SMS/MMS פעילים",
+        "removed": "נמעני SMS/MMS מוסרים"
+      }
+    }
+  }
 }

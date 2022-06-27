@@ -314,7 +314,7 @@ const ClientSearchResult = ({ props, classes }) => {
 
         exportFile({
           data: orderList,
-          fileName: 'ClientSearchResult',
+          fileName: (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult',
           exportType: 'csv',
           fields: exportColumnHeader.current
         });
@@ -850,7 +850,7 @@ const ClientSearchResult = ({ props, classes }) => {
       <>
         <Box className={clsx(classes.flex, classes.spaceBetween)}>
           <Typography className={classes.managementTitle}>
-            {t("client.logPageHeaderResource1.Text")}
+            {t("client.logPageHeaderResource1.Text")} {location?.state && location?.state?.ResultTitle ? " - " : ""} {location?.state?.ResultTitle}
           </Typography>
           <Typography style={{ cursor: 'pointer', alignSelf: 'flex-end' }} onClick={() => window.history.back()}> {t("common.back")}</Typography>
         </Box>

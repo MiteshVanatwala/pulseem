@@ -23,5 +23,21 @@
   "Purchased": "Purchased",
   "totalRevenue": "Total revenue",
   "avgOrderRevenue": "Avg. order revenue",
-  "conversionRate": "Conversion rate"
+  "conversionRate": "Conversion rate",
+  "titles": {
+    "searchResult": {
+      "newsletter": {
+        "total": "Newsletters Total Clients",
+        "error": "Newsletters Error Clients",
+        "active": "Newsletters Active Clients",
+        "removed": "Newsletters Removed Clients"
+      },
+      "sms": {
+        "total": "SMS/MMS Total Clients",
+        "error": "SMS/MMS Error Clients",
+        "active": "SMS/MMS Active Clients",
+        "removed": "SMS/MMS Removed Clients"
+      }
+    }
+  }
 }
