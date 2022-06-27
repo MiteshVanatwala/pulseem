@@ -40,5 +40,6 @@
       }
     }
   },
-  "setInvalidSucceeded": "הנמענים עודכנו כשגויים."
+  "setInvalidSucceeded": "הנמענים עודכנו כשגויים.",
+  "subscribedOn": "תאריך הרשמה"
 }

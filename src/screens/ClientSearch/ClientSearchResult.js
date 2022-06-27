@@ -435,28 +435,39 @@ const ClientSearchResult = ({ props, classes }) => {
       filterComponents: [FromDate, ToDate]
     },
     '3': {
-      title: t("notifications.subscribers"),
+      title: t("client.subscribedOn"),
       sortKey: 'Number',
       component: {
-        mobile: '',
-        web: ''
+        mobile: ({ CreationDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("sms.sendingTime")}
+          </Typography>
+          <Typography>
+          {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        </>),
+        web: ({ CreationDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        )
       }
     },
     '8': {
       title: t("sms.sendingTime"),
       sortKey: 'Date',
       component: {
-        mobile: ({ SentDate = null, ...rest }) => (<>
+        mobile: ({ CreationDate = null, ...rest }) => (<>
           <Typography className={classes.bold}>
             {t("sms.sendingTime")}
           </Typography>
           <Typography>
-          {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+          {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         </>),
-        web: ({ SentDate = null, ...rest }) => (
+        web: ({ CreationDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         )
       },
@@ -1104,9 +1115,9 @@ const ClientSearchResult = ({ props, classes }) => {
       FirstName,
       LastName,
       UpdateDate,
-      CreationDate,
       LogSms_ErrorType,
       SentDate,
+      CreationDate,
       LastSendDate,
       snt_OpeningDate,
       ErrorTypeText
@@ -1225,7 +1236,7 @@ const ClientSearchResult = ({ props, classes }) => {
         </TableCell>
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web &&
           <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, SentDate: SentDate, LogSms_ErrorType: ErrorTypeText })}
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, SentDate: SentDate, CreationDate: CreationDate, LogSms_ErrorType: ErrorTypeText })}
           </TableCell>}
 
 
@@ -1292,7 +1303,6 @@ const ClientSearchResult = ({ props, classes }) => {
       Cellphone,
       LogSms_ErrorType,
       LastSendDate,
-      SentDate,
       snt_OpeningDate
     } = row;
     return (
