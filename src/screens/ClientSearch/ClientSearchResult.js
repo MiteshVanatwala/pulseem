@@ -1218,24 +1218,8 @@ const ClientSearchResult = ({ props, classes }) => {
     date = moment(row.CreationDate, dateFormat);
 
     return (
-      <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-        {/* <Grid item sm={2}>
-          <Checkbox
-            color="primary"
-            checked={selectedClients && selectedClients.indexOf(ClientID) !== -1}
-            // indeterminate={}
-            onClick={() => {
-              if (selectedClients.indexOf(ClientID) !== -1) {
-                setSelectedClients(selectedClients.filter(item => item !== ClientID))
-              } else {
-                setSelectedClients([...selectedClients, ClientID])
-              }
-            }}
-          />
-
-        </Grid> */}
-        {/* <Grid item sm={10}> */}
-        <Grid item sm={12}>
+      <Grid container spacing={1}>
+        <Grid item sm={12} style={{ textAlign: 'start' }}>
           <CustomTooltip
             isSimpleTooltip={false}
             interactive={true}
@@ -1246,11 +1230,11 @@ const ClientSearchResult = ({ props, classes }) => {
             arrow={true}
             style={{ fontSize: 18, fontWeight: 'bold' }}
             placement={'top'}
-            title={<Typography noWrap={false}>{FirstName}{LastName}</Typography>}
+            title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
             text={`${FirstName} ${LastName}`}
 
           >
-            <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName}{LastName}</Typography>
+            <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName} {LastName}</Typography>
           </CustomTooltip>
           <Typography
             className={classes.grayTextCell}>
