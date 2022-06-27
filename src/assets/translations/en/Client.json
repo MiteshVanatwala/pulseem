@@ -39,5 +39,6 @@
         "removed": "SMS/MMS Removed Clients"
       }
     }
-  }
+  },
+  "setInvalidSucceeded": "The clients were setted as Invalid"
 }

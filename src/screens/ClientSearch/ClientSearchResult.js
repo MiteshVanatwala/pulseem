@@ -683,7 +683,7 @@ const ClientSearchResult = ({ props, classes }) => {
         },
         'S_201': {
           code: 201,
-          message: ToastMessages.AUTOMATION_CLIENTS_UPDATED,
+          message: ToastMessages.SET_INVALID_SUCCESS,
           Func: () => {
             setDialog(null)
             getData()
@@ -768,7 +768,7 @@ const ClientSearchResult = ({ props, classes }) => {
         },
         'S_201': {
           code: 201,
-          message: ToastMessages.AUTOMATION_CLIENTS_UPDATED,
+          message: ToastMessages.UNSUBSCRIBED_SUCCESS,
           Func: () => {
             setDialog(null)
             getData()

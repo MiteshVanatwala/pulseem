@@ -39,5 +39,6 @@
         "removed": "נמעני SMS/MMS מוסרים"
       }
     }
-  }
+  },
+  "setInvalidSucceeded": "הנמענים עודכנו כשגויים."
 }
