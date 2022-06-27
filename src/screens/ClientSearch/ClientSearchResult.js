@@ -185,7 +185,6 @@ const ClientSearchResult = ({ props, classes }) => {
     const initExtraFields = async () => {
       await dispatch(getAccountExtraData());
     }
-    // console.log("GROUPS:", groupData)
     // On load
     let initSearchData = {
       PageSize: rowsPerPage,
@@ -389,55 +388,6 @@ const ClientSearchResult = ({ props, classes }) => {
     />
   </Grid>
 
-  const ErrorDropDown = () =>
-  (
-    <Autocomplete
-      multiple
-      noOptionsText={t("group.noGroupFound")}
-      id="tags-outlined"
-      debug={true}
-      style={{}}
-      className={clsx(classes.autoCompleteTag, classes.removedPaddingAutoComplete)}
-      disableCloseOnSelect
-      options={[...CSR_FILTER_ERRORS]}
-      getOptionLabel={(option) => option?.errorText}
-      // defaultValue={subAccountAllGroups.reduce((prevVal, newVal) => {
-      //     if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
-      //         return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
-      //     }
-      //     else {
-      //         return [...prevVal]
-      //     }
-      // }, [])}
-      renderOption={(option, { selected }) => (
-        <React.Fragment>
-          <Checkbox
-            // icon={icon}
-            // checkedIcon={checkedIcon}
-            style={{ marginRight: 8 }}
-            checked={selected}
-            color="primary"
-          />
-          {option?.errorText}
-        </React.Fragment>
-      )}
-      // onChange={dropDownProps?.onChange}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          variant="outlined"
-          label={t("common.ErrorType")}
-          placeholder={t("common.ErrorType")}
-        // error={error}
-        // helperText={helperText}
-        />
-      )}
-      PaperComponent={({ children }) => (
-        <Paper className={classes.groupsAutoComplete}>{children}</Paper>
-      )}
-    />
-  )
-
   const FromDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
@@ -530,7 +480,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
-      filterComponents: [ErrorDropDown]
+      // filterComponents: [ErrorDropDown]
     },
     '15': {
       title: t("common.campaignRevenue"),
@@ -859,7 +809,6 @@ const ClientSearchResult = ({ props, classes }) => {
     );
   };
 
-  // console.log("HELLO:", PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.()))
 
   // DONE
   const renderSearchLine = () => {
@@ -886,9 +835,7 @@ const ClientSearchResult = ({ props, classes }) => {
       );
     }
 
-    // const handleFilterSearch = () => {
-    //   setFilterSearch(!filterSearch);
-    // }
+
 
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
@@ -903,111 +850,8 @@ const ClientSearchResult = ({ props, classes }) => {
             placeholder={t("report.clientName")}
           />
         </Grid>
-        {/* // COMMENT: CONDITIONS APPLIED */}
 
-        {/* {windowSize !== 'xs' ?
-          <Grid item>
-            <DateField
-              toolbarDisabled={false}
-              classes={classes}
-              value={date.FromDate}
-              onChange={handleFromDateChange}
-              placeholder={t('mms.locFromDateResource1.Text')}
-            />
-          </Grid>
-          : null}
-        {windowSize !== 'xs' ?
-          <Grid item>
-            <DateField
-              toolbarDisabled={false}
-              classes={classes}
-              value={date.ToDate}
-              onChange={(value) => setDate({ ...date, ToDate: value })}
-              placeholder={t('mms.locToDateResource1.Text')}
-              minDate={date.FromDate ? date.FromDate : undefined}
-            />
-          </Grid>
-          : null}
-
-
-        <Autocomplete
-          multiple
-          noOptionsText={t("group.noGroupFound")}
-          id="tags-outlined"
-          debug={true}
-          style={{}}
-          className={clsx(classes.autoCompleteTag, classes.removedPaddingAutoComplete)}
-          disableCloseOnSelect
-          options={[...CSR_FILTER_ERRORS]}
-          getOptionLabel={(option) => option?.errorText}
-          // defaultValue={subAccountAllGroups.reduce((prevVal, newVal) => {
-          //     if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
-          //         return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
-          //     }
-          //     else {
-          //         return [...prevVal]
-          //     }
-          // }, [])}
-          renderOption={(option, { selected }) => (
-            <React.Fragment>
-              <Checkbox
-                // icon={icon}
-                // checkedIcon={checkedIcon}
-                style={{ marginRight: 8 }}
-                checked={selected}
-                color="primary"
-              />
-              {option?.errorText}
-            </React.Fragment>
-          )}
-          // onChange={dropDownProps?.onChange}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              variant="outlined"
-              label={t("common.ErrorType")}
-              placeholder={t("common.ErrorType")}
-            // error={error}
-            // helperText={helperText}
-            />
-          )}
-          PaperComponent={({ children }) => (
-            <Paper className={classes.groupsAutoComplete}>{children}</Paper>
-          )}
-        /> */}
-
-        {/* //COMMENT: CONDITIONS APPLIED */}
-
-
-        {
-          // PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponent?.length > 0 &&
-          //   <>
-          //   <Grid item>
-          //     <TextField
-          //       variant="outlined"
-          //       size="small"
-          //       value={filterMin}
-          //       onChange={(e) => setFilterMin(e.target.value)}
-          //       className={clsx(classes.textField, classes.minWidth252)}
-          //       placeholder={t("siteTracking.minimumRevenue")}
-          //       type="number"
-          //     />
-          //   </Grid>
-          //   <Grid item>
-          //     <TextField
-          //       variant="outlined"
-          //       size="small"
-          //       value={filterMax}
-          //       onChange={(e) => setFilterMax(e.target.value)}
-          //       className={clsx(classes.textField, classes.minWidth252)}
-          //       placeholder={t("siteTracking.maximumRevenue")}
-          //       type="number"
-          //     />
-          //   </Grid>
-          // </>
-        }
         {filterSearch && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.())}
-        {/* {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponent?.map(comp => comp?.())} */}
         <Grid item>
           <Button
             size="large"
@@ -1030,7 +874,7 @@ const ClientSearchResult = ({ props, classes }) => {
           {
             [
               CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
-              CLIENT_CONSTANTS.FailureCountSMSCampaignID,
+              // CLIENT_CONSTANTS.FailureCountSMSCampaignID,
               CLIENT_CONSTANTS.TotalCountSMSCampaignID,
               CLIENT_CONSTANTS.OpenedCampaignID
             ].indexOf(location?.state?.PageType) !== -1 && <Link

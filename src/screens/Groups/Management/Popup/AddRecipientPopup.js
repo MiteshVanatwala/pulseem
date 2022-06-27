@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import {
     Grid,
@@ -11,6 +11,8 @@ import {
     AccordionSummary,
     AccordionDetails,
     makeStyles,
+    Checkbox,
+    Paper,
 
 } from "@material-ui/core";
 import { DateField } from '../../../../components/managment/index'
@@ -32,6 +34,8 @@ import { ValidateEmail, ValidateNumber } from "../../../../helpers/utils";
 
 import { Loader } from "../../../../components/Loader/Loader";
 import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
+import { Autocomplete } from "@material-ui/lab";
+import { CLIENT_CONSTANTS } from "../../../../model/Clients/Contants";
 
 
 const useStyles = makeStyles({
@@ -145,9 +149,60 @@ const AddRecipientPopup = ({ classes,
         }
     }
 
+    const StatusDropdown = ({ data = [], onSelect = () => null }) => {
+        return (<Autocomplete
+            multiple
+            noOptionsText={t("group.noGroupFound")}
+            id="tags-outlined"
+            debug={true}
+            className={clsx(classes.autoCompleteTag, classes.removedPaddingAutoComplete)}
+            disableCloseOnSelect
+            // options={Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj)}
+            options={data}
+            getOptionLabel={data.map((obj) => obj?.text || '')}
+            // defaultValue={subAccountAllGroups.reduce((prevVal, newVal) => {
+            //     if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
+            //         return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
+            //     }
+            //     else {
+            //         return [...prevVal]
+            //     }
+            // }, [])}
+            renderOption={(option, { selected }) => (
+                <React.Fragment>
+                    <Checkbox
+                        // icon={icon}
+                        // checkedIcon={checkedIcon}
+                        style={{ marginRight: 8 }}
+                        checked={selected}
+                        color="primary"
+                    />
+                    {option}
+                </React.Fragment>
+            )}
+            onChange={onSelect}
+            renderInput={(params) => (
+                <TextField
+                    {...params}
+                    variant="outlined"
+                    label={t("common.ErrorType")}
+                    placeholder={t("common.ErrorType")}
+                // error={error}
+                // helperText={helperText}
+                />
+            )}
+            PaperComponent={({ children }) => (
+                <Paper className={classes.groupsAutoComplete}>{children}</Paper>
+            )}
+        />
+
+        )
+    }
 
 
     const handleChange = (e, dateField = null, isExtraData = false, customValue = null) => {
+
+        console.log("EXTRADATA:", accountExtraFields)
         if (dateField) {
             const { date, field } = dateField;
             if (isExtraData) {
@@ -170,6 +225,9 @@ const AddRecipientPopup = ({ classes,
                 setAccountExtraFields({
                     ...accountExtraFields, [e.target.name]: e.target.value
                 });
+                setAddRecipientData({
+                    ...addRecipientData, [e.target.name]: e.target.value
+                })
             }
             else {
                 if (e.target.name === "Email") {
@@ -879,7 +937,8 @@ const AddRecipientPopup = ({ classes,
                 return {
                     content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
                         classes={classes}
-                        value={accountExtraFields && accountExtraFields[ef] ? accountExtraFields[ef] : null}
+                        // value={accountExtraFields && accountExtraFields[ef] ? accountExtraFields[ef] : null}
+                        value={accountExtraFields?.[ef] || ''}
                         onChange={e => handleChange(e, { date: e, field: ef }, true)}
                         toolbarDisabled={false}
                         removePadding
@@ -889,7 +948,8 @@ const AddRecipientPopup = ({ classes,
                         placeholder={extraFieldsTemp[ef]}
                         variant="outlined"
                         name={ef}
-                        value={addRecipientData["ExtraFields"] && addRecipientData["ExtraFields"][ef]}
+                        // value={addRecipientData["ExtraFields"] && addRecipientData["ExtraFields"][ef]}
+                        value={accountExtraFields?.[ef] || ''}
                         className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={e => handleChange(e, null, true)}
@@ -912,7 +972,8 @@ const AddRecipientPopup = ({ classes,
                             {
                                 content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
                                     classes={classes}
-                                    value={accountExtraFields && accountExtraFields[ef] ? accountExtraFields[ef] : null}
+                                    // value={accountExtraFields && accountExtraFields[ef] ? accountExtraFields[ef] : null}
+                                    value={accountExtraFields?.[ef] || null}
                                     onChange={e => handleChange(e, { date: e, field: ef }, true)}
                                     toolbarDisabled={false}
                                 /> : <TextField
@@ -920,7 +981,8 @@ const AddRecipientPopup = ({ classes,
                                     label=""
                                     variant="outlined"
                                     name={ef}
-                                    value={addRecipientData["ExtraFields"] && addRecipientData["ExtraFields"][ef]}
+                                    // value={addRecipientData["ExtraFields"] && addRecipientData["ExtraFields"][ef]}
+                                    value={accountExtraFields?.[ef] || ''}
                                     className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                     autoComplete="off"
                                     onChange={e => handleChange(e, null, true)}
@@ -961,7 +1023,51 @@ const AddRecipientPopup = ({ classes,
             />
         </div>)
 
+    const STATUS_FORM = () => (
+        <SimpleGrid
+            spacing={3}
+            gridArr={[
+                {
+                    content: <SimpleGrid
+                        gridArr={[
+                            {
+                                content: <Typography title={t("common.birth_date")} align="right" className={classes.alignDir}>{t("Email Status")}</Typography>,
+                                gridSize: { xs: 12, sm: 3 }
+                            },
+                            {
+                                content: StatusDropdown({
+                                    data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj), onSelect: (val) => {
+                                        console.log('Email Status:', val)
+                                    }
+                                }),
+                                gridSize: { xs: 12, sm: 9 }
+                            }
+                        ]}
 
+                    />
+                },
+                {
+                    content: <SimpleGrid
+                        gridArr={[
+                            {
+                                content: <Typography title={t("common.birth_date")} align="right" className={classes.alignDir}>{t("SMS Status")}</Typography>,
+                                gridSize: { xs: 12, sm: 3 }
+                            },
+                            {
+                                content: StatusDropdown({
+                                    data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj), onSelect: (val) => {
+                                        console.log('SMS Status:', val)
+                                    }
+                                }),
+                                gridSize: { xs: 12, sm: 9 }
+                            }
+                        ]}
+
+                    />
+                },
+            ]}
+        />
+    )
 
     const ActiveForm = (label, index) => {
         return (
@@ -998,6 +1104,7 @@ const AddRecipientPopup = ({ classes,
                     {index === 2 && DATES_FORM()}
                     {index === 3 && EXTRA_DETAILS_FORM()}
                     {index === 4 && GROUPS_FORM()}
+                    {recipientData && index === 5 && STATUS_FORM()}
                 </AccordionDetails>
             </Accordion>
         )
@@ -1008,11 +1115,13 @@ const AddRecipientPopup = ({ classes,
 
 
 
+
+
     return (
         <Dialog
             classes={classes}
             open={isOpen}
-            title={t('recipient.recipientAddPopUpTitle')}
+            title={recipientData ? t('recipient.recipientEditPopUpTitle') : t('recipient.recipientAddPopUpTitle')}
             icon={<div className={classes.dialogIconContent}>
                 {'\uE0D5'}
             </div>}
@@ -1099,6 +1208,9 @@ const AddRecipientPopup = ({ classes,
             <Box className={clsx(localClasses.contentBox, classes.mt10)}>
                 {
                     ADD_RECIPIENT_TABS.map((label, index) => ActiveForm(label, index))
+                }
+                {
+                    recipientData && ActiveForm('STATUS', 5)
                 }
             </Box>
             <Loader isOpen={showLaoder} />
