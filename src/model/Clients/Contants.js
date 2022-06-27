@@ -59,6 +59,20 @@ const CLIENT_CONSTANTS = {
         CampaignID: null,
         FromDate: null,
         ToDate: null,
+    },
+    STATUSES: {
+        active: {
+            text: 'Active',
+            status: 1
+        },
+        inactive: {
+            text: 'Inactive',
+            status: 1
+        },
+        removed: {
+            text: 'Removed',
+            status: 1
+        },
     }
 }
 
@@ -3117,6 +3131,7 @@ const CSR_FILTER_ERRORS = [
         errorText: 'ERROR5'
     },
 ]
+
 
 
 
