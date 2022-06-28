@@ -566,5 +566,6 @@
   "campaignRevenue": "Revenue",
   "NIS": "₪",
   "uploadInProgress": "Upload in progress...",
-  "back": "Back"
+  "back": "Back",
+  "clientSubscriptionResultTitle": "Subscription by Campaign ID "
 }

@@ -122,7 +122,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [date, setDate] = useState({
     FromDate: null,
     ToDate: null,
-  })
+  });
   const exportColumnHeader = useRef(null);
 
   const assignClientsActions =
@@ -326,15 +326,24 @@ const ClientSearchResult = ({ props, classes }) => {
   }
 
   const sortData = (key) => {
-    if (data && data.length > 0) {
-      let tempData = [...data].sort((a, b) => {
-        return a.Revenue !== null && b.Revenue !== null
-          ? (descSortDirection ? (b.Revenue - a.Revenue) : (a.Revenue - b.Revenue))
-          : -1
-      }
-      );
-      setData(tempData);
+    if (key === 'CreationDate') {
+      setSearchData({
+        ...searchData,
+        OrderBy: descSortDirection ? 0 : 1
+      });
       setSortDirection(!descSortDirection);
+    }
+    else {
+      if (data && data.length > 0) {
+        let tempData = [...data].sort((a, b) => {
+          return a.Revenue !== null && b.Revenue !== null
+            ? (descSortDirection ? (b.Revenue - a.Revenue) : (a.Revenue - b.Revenue))
+            : -1
+        }
+        );
+        setData(tempData);
+        setSortDirection(!descSortDirection);
+      }
     }
     return;
   }
@@ -436,14 +445,14 @@ const ClientSearchResult = ({ props, classes }) => {
     },
     '3': {
       title: t("client.subscribedOn"),
-      sortKey: 'Number',
+      sortKey: 'CreationDate',
       component: {
         mobile: ({ CreationDate = null, ...rest }) => (<>
           <Typography className={classes.bold}>
             {t("sms.sendingTime")}
           </Typography>
           <Typography>
-          {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         </>),
         web: ({ CreationDate = null, ...rest }) => (
@@ -451,7 +460,7 @@ const ClientSearchResult = ({ props, classes }) => {
             {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         )
-      }
+      },
     },
     '8': {
       title: t("sms.sendingTime"),
@@ -462,7 +471,7 @@ const ClientSearchResult = ({ props, classes }) => {
             {t("sms.sendingTime")}
           </Typography>
           <Typography>
-          {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         </>),
         web: ({ CreationDate = null, ...rest }) => (
