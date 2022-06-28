@@ -450,26 +450,31 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   }
 
   const renderSubscribersCell = ({ ID, Submits }) => {
+    const subscribtions = Submits && Submits > 0;
     return (
       <>
-        <Typography
-          className={classes.middleText}>
-          {(Submits && Submits.toLocaleString()) || 0}
-        </Typography>
-        {windowSize === 'xs' ?
-          <Typography className={clsx(classes.middleText)}>{t('landingPages.SubmitsResource1.HeaderText')}</Typography>
-          // : <a
-          //   href={`/Pulseem/ClientSearchResult.aspx?FormID=${ID}&fromreact=true`}
-          //   className={clsx(classes.middleText, classes.pt2)}>
-          //   {t('landingPages.SubmitsResource1.HeaderText')}
-          // </a>
-          : <p
-            onClick={() => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: ID, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID } })}
-            className={clsx(classes.middleText, classes.pt2)}>
-            {t('landingPages.SubmitsResource1.HeaderText')}
-          </p>
-          //TODO: UnComment OnCLick, Comment Href 
-        }
+        <a
+          style={{ cursor: subscribtions ? 'pointer' : null, textDecoration: subscribtions ? 'underline' : null }}
+          onClick={() => {
+            if (Submits && Submits > 0) {
+              navigate(CLIENT_CONSTANTS.BASEURL, {
+                state: {
+                  ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                  CampaignID: ID,
+                  PageType: CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+                  ResultTitle: t("common.clientSubscriptionResultTitle") + ' ' + ID
+                }
+              })
+            } else { return false }
+          }
+          }
+          className={clsx(classes.middleText, classes.pt2)}>
+          <Typography
+            className={classes.middleText}>
+            {(Submits && Submits.toLocaleString()) || 0}
+          </Typography>
+          {t('landingPages.SubmitsResource1.HeaderText')}
+        </a>
       </>
     )
   }
