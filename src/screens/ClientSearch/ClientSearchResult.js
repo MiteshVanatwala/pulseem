@@ -443,7 +443,7 @@ const ClientSearchResult = ({ props, classes }) => {
             {t("sms.sendingTime")}
           </Typography>
           <Typography>
-          {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         </>),
         web: ({ CreationDate = null, ...rest }) => (
@@ -462,7 +462,7 @@ const ClientSearchResult = ({ props, classes }) => {
             {t("sms.sendingTime")}
           </Typography>
           <Typography>
-          {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         </>),
         web: ({ CreationDate = null, ...rest }) => (
@@ -735,9 +735,10 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(false);
   }
   const removeEmailRecipient = async () => {
+    console.log("REMOVE EMAIL")
     setDialog(null);
     setLoader(true);
-    const response = await dispatch(removeEmailClient)
+    const response = await dispatch(removeEmailClient(selectedClients[0]))
 
     if (response && response.payload === 'true') {
       //TODO: show delete success message
@@ -748,9 +749,10 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(false);
   }
   const removeSMSRecipient = async () => {
+    console.log("REMOVE SMS")
     setDialog(null);
     setLoader(true);
-    const response = await dispatch(removeSmsClient)
+    const response = await dispatch(removeSmsClient(selectedClients[0]))
     if (response && response.payload === 'true') {
       //TODO: show delete success message
       setDialog(null);
@@ -1196,8 +1198,6 @@ const ClientSearchResult = ({ props, classes }) => {
       )
     }
 
-
-
     const switchStatus = (isEmail) => {
       if (Email && isEmail && Email !== '') {
         return Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")
@@ -1207,6 +1207,7 @@ const ClientSearchResult = ({ props, classes }) => {
       }
       return t("emailStatus.noStatus")
     }
+
     const cssClasses = (isEmail) => {
       if (isEmail) {
         return Status === 1 ? classes.sendIconText : Email ? classes.textColorRed : classes.textColorBlue;
