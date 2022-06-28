@@ -60,8 +60,14 @@ const NewslettersReport = ({ classes }) => {
   const getHrefs = (id, revenue = 0) => ({
     TotalSendCompleted: {
       href: `/Pulseem/ClientSearchResult.aspx?SentToCampaignID=${id}&fromreact=true`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID } }),
-      //TODO: UnComment OnCLick, Comment Href 
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID,
+          ResultTitle: t('common.Sent') + ' - ' + t('common.campaignID') + ' ' + id
+        }
+      }),
     },
     OpenCount: {
       title: windowSize === 'xs' ? t('common.Total') : t('mainReport.GridButtonColumnResource1.HeaderText'),
@@ -71,8 +77,15 @@ const NewslettersReport = ({ classes }) => {
     OpenCountUnique: {
       title: t('common.Unique'),
       href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID, TestStatusOfEmailElseSms: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Active } }),
-      //TODO: UnComment OnCLick, Comment Href 
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID,
+          TestStatusOfEmailElseSms: 1,
+          ResultTitle: t('common.OpensUnique') + ' - ' + t('common.campaignID') + ' ' + id
+        }
+      }),
       clickable: true
     },
     ClickCount: {
@@ -89,14 +102,30 @@ const NewslettersReport = ({ classes }) => {
     RemovedClients: {
       title: windowSize === 'xs' ? '' : t('common.Removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, TestStatusOfEmailElseSms: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Active, Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Removed } }),
-      //TODO: UnComment OnCLick, Comment Href 
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+          TestStatusOfEmailElseSms: 1,
+          Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Removed,
+          ResultTitle: t('common.Removed') + ' - ' + t('common.campaignID') + ' ' + id
+        }
+      }),
     },
     SendError: {
       title: windowSize === 'xs' ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
       href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus, TestStatusOfEmailElseSms: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Active, Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Invalid } }),
-      //TODO: UnComment OnCLick, Comment Href 
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+          TestStatusOfEmailElseSms: 1,
+          Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Invalid,
+          ResultTitle: t('common.charStatus.error') + ' - ' + t('common.campaignID') + ' ' + id
+        }
+      }),
     },
     PercetangeRemovedClients: {
       title: t('mainReport.removedPercents'),
@@ -107,8 +136,15 @@ const NewslettersReport = ({ classes }) => {
     PercentageOpens: {
       title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
       href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID, TestStatusOfEmailElseSms: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Active } }),
-      //TODO: UnComment OnCLick, Comment Href 
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID,
+          TestStatusOfEmailElseSms: 1,
+          ResultTitle: t('common.charStatus.Opened') + ' - ' + t('common.campaignID') + ' ' + id
+        }
+      }),
     },
     PercetangeClicks: {
       title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
@@ -119,8 +155,15 @@ const NewslettersReport = ({ classes }) => {
     NotOpened: {
       title: windowSize === 'xs' ? '' : t("mainReport.GridButtonColumnResource3.HeaderText"),
       href: `/Pulseem/ClientSearchResult.aspx?NotOpenedCampaignID=${id}&fromreact=true`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.NotOpenedCampaignID, TestStatusOfEmailElseSms: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Active } }),
-      //TODO: UnComment OnCLick, Comment Href 
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.NotOpenedCampaignID,
+          TestStatusOfEmailElseSms: 1,
+          ResultTitle: t('common.NoOpened') + ' - ' + t('common.campaignID') + ' ' + id
+        }
+      }),
     },
     RemoveReasons: {
       title: t("mainReport.locRemovedReason.HeaderText"),
@@ -131,8 +174,13 @@ const NewslettersReport = ({ classes }) => {
     Revenue: {
       title: '',
       href: `/react/ClientSearchResult/${id}`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue } }),
-      //TODO: UnComment OnCLick, Comment Href 
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state: {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue
+        }
+      }),
       textStyle: { fontWeight: 900 },
       isRevenueCol: revenue > 0
     }
@@ -594,7 +642,8 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderDataTooltip = (value, type, data = {}, tooltip) => {
-    const { title = t("notifications.tblBody.total"), href = '', clickable = false, onClick } = data
+    const { title = t("notifications.tblBody.total"), href = '', textStyle = null, clickable = false, onClick } = data
+    const isLink = onClick && onClick !== null;
     return (
       <Tooltip
         title={`${t(tooltip)}`}
@@ -604,12 +653,13 @@ const NewslettersReport = ({ classes }) => {
           tooltip: classes.tooltipBlack,
           arrow: classes.fBlack
         }}>
-        <Box className={classes.cellText}>
+        <Box className={classes.cellText}
+          style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}
+          onClick={onClick}>
           <Typography
             // component={clickable && value > 0 ? 'a' : 'p'}
             component={'p'}
             // href={href}
-            onClick={onClick}
             className={clsx(classes.middleText, colorTextStyle[type] || '')}
             target="_blank">
             {value && value.toLocaleString() || '0'}
@@ -626,18 +676,18 @@ const NewslettersReport = ({ classes }) => {
     const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', onClick, textStyle = null, isRevenueCol = false } = data
     const isLink = href !== '' && clickable && (value > 0 || isRevenueCol);
     return (
-      <Box className={classes.cellText}>
+      <Box className={classes.cellText}
+        onClick={() => {
+          if (isLink && onClick) {
+            onClick();
+          }
+          else {
+            return false;
+          }
+        }
+        }
+        style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}>
         <Typography component={isLink ? 'a' : 'p'}
-          onClick={() => {
-            if (isLink && onClick) {
-              onClick();
-            }
-            else {
-              return false;
-            }
-          }
-          }
-          style={textStyle}
           className={clsx(classes.middleTxt, colorTextStyle[type] || '')}
           target="_blank">
           {(value && value.toLocaleString()) || '0'}
