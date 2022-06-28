@@ -432,12 +432,12 @@ const ClientSearchResult = ({ props, classes }) => {
             {t("common.OpenTime")}
           </Typography>
           <Typography>
-            {snt_OpeningDate}
+            {snt_OpeningDate ? moment(snt_OpeningDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         </>),
         web: ({ snt_OpeningDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {snt_OpeningDate}
+            {snt_OpeningDate ? moment(snt_OpeningDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         )
       },
