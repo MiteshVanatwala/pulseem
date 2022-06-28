@@ -63,16 +63,16 @@ const CLIENT_CONSTANTS = {
     STATUSES: {
         active: {
             text: 'Active',
-            status: 1
+            status: 0
         },
         inactive: {
             text: 'Inactive',
-            status: 1
+            status: -1
         },
         removed: {
             text: 'Removed',
             status: 1
-        },
+        }
     }
 }
 

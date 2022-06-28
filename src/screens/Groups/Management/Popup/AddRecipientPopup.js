@@ -149,51 +149,27 @@ const AddRecipientPopup = ({ classes,
         }
     }
 
-    const StatusDropdown = ({ data = [], onSelect = () => null }) => {
+    const StatusDropdown = ({ data = [], onSelect = () => null, label = '', value = null }) => {
+        console.log("VALUE:", value)
         return (<Autocomplete
-            multiple
             noOptionsText={t("group.noGroupFound")}
             id="tags-outlined"
             debug={true}
             className={clsx(classes.autoCompleteTag, classes.removedPaddingAutoComplete)}
-            disableCloseOnSelect
-            // options={Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj)}
+            value={value}
+            inputValue={value?.text || ''}
             options={data}
-            getOptionLabel={data.map((obj) => obj?.text || '')}
-            // defaultValue={subAccountAllGroups.reduce((prevVal, newVal) => {
-            //     if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
-            //         return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
-            //     }
-            //     else {
-            //         return [...prevVal]
-            //     }
-            // }, [])}
-            renderOption={(option, { selected }) => (
-                <React.Fragment>
-                    <Checkbox
-                        // icon={icon}
-                        // checkedIcon={checkedIcon}
-                        style={{ marginRight: 8 }}
-                        checked={selected}
-                        color="primary"
-                    />
-                    {option}
-                </React.Fragment>
-            )}
-            onChange={onSelect}
+            getOptionLabel={(option) => option.text}
+            onChange={(e, val) => onSelect(val)}
             renderInput={(params) => (
                 <TextField
                     {...params}
                     variant="outlined"
-                    label={t("common.ErrorType")}
-                    placeholder={t("common.ErrorType")}
-                // error={error}
-                // helperText={helperText}
+                    label={t(label)}
+                    placeholder={t(label)}
                 />
             )}
-            PaperComponent={({ children }) => (
-                <Paper className={classes.groupsAutoComplete}>{children}</Paper>
-            )}
+
         />
 
         )
@@ -1028,43 +1004,27 @@ const AddRecipientPopup = ({ classes,
             spacing={3}
             gridArr={[
                 {
-                    content: <SimpleGrid
-                        gridArr={[
-                            {
-                                content: <Typography title={t("common.birth_date")} align="right" className={classes.alignDir}>{t("Email Status")}</Typography>,
-                                gridSize: { xs: 12, sm: 3 }
-                            },
-                            {
-                                content: StatusDropdown({
-                                    data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj), onSelect: (val) => {
-                                        console.log('Email Status:', val)
-                                    }
-                                }),
-                                gridSize: { xs: 12, sm: 9 }
-                            }
-                        ]}
-
-                    />
+                    content: StatusDropdown({
+                        data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj),
+                        onSelect: (val) => {
+                            setAddRecipientData({ ...addRecipientData, Status: val?.status })
+                        },
+                        value: Object.values(CLIENT_CONSTANTS.STATUSES).filter(obj => obj.status === addRecipientData.Status)[0] || CLIENT_CONSTANTS.STATUSES.inactive,
+                        label: 'common.emailStatus'
+                    }),
+                    grstuatusSize: { xs: 12, sm: 6 }
                 },
                 {
-                    content: <SimpleGrid
-                        gridArr={[
-                            {
-                                content: <Typography title={t("common.birth_date")} align="right" className={classes.alignDir}>{t("SMS Status")}</Typography>,
-                                gridSize: { xs: 12, sm: 3 }
-                            },
-                            {
-                                content: StatusDropdown({
-                                    data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj), onSelect: (val) => {
-                                        console.log('SMS Status:', val)
-                                    }
-                                }),
-                                gridSize: { xs: 12, sm: 9 }
-                            }
-                        ]}
-
-                    />
-                },
+                    content: StatusDropdown({
+                        data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj),
+                        onSelect: (val) => {
+                            setAddRecipientData({ ...addRecipientData, SmsStatus: val?.status })
+                        },
+                        value: Object.values(CLIENT_CONSTANTS.STATUSES).filter(obj => obj.status === addRecipientData.SmsStatus)[0] || CLIENT_CONSTANTS.STATUSES.inactive,
+                        label: 'common.smsStatus',
+                    }),
+                    gridSize: { xs: 12, sm: 6 }
+                }
             ]}
         />
     )
@@ -1109,12 +1069,6 @@ const AddRecipientPopup = ({ classes,
             </Accordion>
         )
     }
-
-
-
-
-
-
 
 
     return (
@@ -1210,7 +1164,7 @@ const AddRecipientPopup = ({ classes,
                     ADD_RECIPIENT_TABS.map((label, index) => ActiveForm(label, index))
                 }
                 {
-                    recipientData && ActiveForm('STATUS', 5)
+                    recipientData && ActiveForm('common.Status', 5)
                 }
             </Box>
             <Loader isOpen={showLaoder} />
