@@ -435,28 +435,39 @@ const ClientSearchResult = ({ props, classes }) => {
       filterComponents: [FromDate, ToDate]
     },
     '3': {
-      title: t("notifications.subscribers"),
+      title: t("client.subscribedOn"),
       sortKey: 'Number',
       component: {
-        mobile: '',
-        web: ''
+        mobile: ({ CreationDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("sms.sendingTime")}
+          </Typography>
+          <Typography>
+          {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        </>),
+        web: ({ CreationDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        )
       }
     },
     '8': {
       title: t("sms.sendingTime"),
       sortKey: 'Date',
       component: {
-        mobile: ({ LastSendDate = null, ...rest }) => (<>
+        mobile: ({ CreationDate = null, ...rest }) => (<>
           <Typography className={classes.bold}>
             {t("sms.sendingTime")}
           </Typography>
           <Typography>
-            {LastSendDate}
+          {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         </>),
-        web: ({ LastSendDate = null, ...rest }) => (
+        web: ({ CreationDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
-            {LastSendDate}
+            {CreationDate ? moment(CreationDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         )
       },
@@ -683,7 +694,7 @@ const ClientSearchResult = ({ props, classes }) => {
         },
         'S_201': {
           code: 201,
-          message: ToastMessages.AUTOMATION_CLIENTS_UPDATED,
+          message: ToastMessages.SET_INVALID_SUCCESS,
           Func: () => {
             setDialog(null)
             getData()
@@ -768,7 +779,7 @@ const ClientSearchResult = ({ props, classes }) => {
         },
         'S_201': {
           code: 201,
-          message: ToastMessages.AUTOMATION_CLIENTS_UPDATED,
+          message: ToastMessages.UNSUBSCRIBED_SUCCESS,
           Func: () => {
             setDialog(null)
             getData()
@@ -1062,24 +1073,8 @@ const ClientSearchResult = ({ props, classes }) => {
     date = moment(row.CreationDate, dateFormat);
 
     return (
-      <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-        {/* <Grid item sm={2}>
-          <Checkbox
-            color="primary"
-            checked={selectedClients && selectedClients.indexOf(ClientID) !== -1}
-            // indeterminate={}
-            onClick={() => {
-              if (selectedClients.indexOf(ClientID) !== -1) {
-                setSelectedClients(selectedClients.filter(item => item !== ClientID))
-              } else {
-                setSelectedClients([...selectedClients, ClientID])
-              }
-            }}
-          />
-
-        </Grid> */}
-        {/* <Grid item sm={10}> */}
-        <Grid item sm={12}>
+      <Grid container spacing={1}>
+        <Grid item sm={12} style={{ textAlign: 'start' }}>
           <CustomTooltip
             isSimpleTooltip={false}
             interactive={true}
@@ -1090,11 +1085,11 @@ const ClientSearchResult = ({ props, classes }) => {
             arrow={true}
             style={{ fontSize: 18, fontWeight: 'bold' }}
             placement={'top'}
-            title={<Typography noWrap={false}>{FirstName}{LastName}</Typography>}
+            title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
             text={`${FirstName} ${LastName}`}
 
           >
-            <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName}{LastName}</Typography>
+            <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName} {LastName}</Typography>
           </CustomTooltip>
           <Typography
             className={classes.grayTextCell}>
@@ -1120,8 +1115,9 @@ const ClientSearchResult = ({ props, classes }) => {
       FirstName,
       LastName,
       UpdateDate,
-      CreationDate,
       LogSms_ErrorType,
+      SentDate,
+      CreationDate,
       LastSendDate,
       snt_OpeningDate,
       ErrorTypeText
@@ -1240,7 +1236,7 @@ const ClientSearchResult = ({ props, classes }) => {
         </TableCell>
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web &&
           <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: ErrorTypeText })}
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, SentDate: SentDate, CreationDate: CreationDate, LogSms_ErrorType: ErrorTypeText })}
           </TableCell>}
 
 
@@ -1449,7 +1445,7 @@ const ClientSearchResult = ({ props, classes }) => {
           }
         </div>,
         classes: cellStyle,
-        className: clsx(classes.flex2, classes.textUppercase),
+        className: clsx(classes.flex2),
         align: "center",
       })
     }
