@@ -755,33 +755,29 @@ const ClientSearchResult = ({ props, classes }) => {
         {
           S_201: {
             code: 201,
-            message: '',
+            message: ToastMessages.SUCCESS,
             Func: () => null
           },
           S_400: {
             code: 400,
-            message: '',
+            message: ToastMessages.SOMETHING_WENT_WRONG,
             Func: () => null
           },
-          S_401: {
+          'S_401': {
             code: 401,
-            message: '',
+            message: ToastMessages.GROUP_INVALID_API,
             Func: () => null
           },
-          S_405: {
-            code: 405,
-            message: '',
+          'S_404': {
+            code: 404,
+            message: ToastMessages.NO_CLIENTS_FOUND,
             Func: () => null
           },
-          S_422: {
-            code: 422,
-            message: '',
+          'S_500': {
+            code: 500,
+            message: ToastMessages.GROUP_ERROR,
             Func: () => null
           },
-          default: {
-            message: '',
-            Func: () => null
-          }
         }
       );
       getData();
@@ -798,37 +794,34 @@ const ClientSearchResult = ({ props, classes }) => {
     const response = await dispatch(removeSmsClient(selectedClients[0]))
     if (response && response.payload === 'true') {
       //TODO: show delete success message
-      handleResponses(response, {
-        S_201: {
-          code: 201,
-          message: '',
-          Func: () => null
-        },
-        S_400: {
-          code: 400,
-          message: '',
-          Func: () => null
-        },
-        S_401: {
-          code: 401,
-          message: '',
-          Func: () => null
-        },
-        S_405: {
-          code: 405,
-          message: '',
-          Func: () => null
-        },
-        S_422: {
-          code: 422,
-          message: '',
-          Func: () => null
-        },
-        default: {
-          message: '',
-          Func: () => null
+      handleResponses(response,
+        {
+          S_201: {
+            code: 201,
+            message: ToastMessages.SUCCESS,
+            Func: () => null
+          },
+          S_400: {
+            code: 400,
+            message: ToastMessages.SOMETHING_WENT_WRONG,
+            Func: () => null
+          },
+          'S_401': {
+            code: 401,
+            message: ToastMessages.GROUP_INVALID_API,
+            Func: () => null
+          },
+          'S_404': {
+            code: 404,
+            message: ToastMessages.NO_CLIENTS_FOUND,
+            Func: () => null
+          },
+          'S_500': {
+            code: 500,
+            message: ToastMessages.GROUP_ERROR,
+            Func: () => null
+          },
         }
-      }
       );
       getData()
       setDialog(null);

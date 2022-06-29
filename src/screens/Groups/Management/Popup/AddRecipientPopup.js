@@ -154,34 +154,8 @@ const AddRecipientPopup = ({ classes,
         }
     }
 
+
     const StatusDropdown = ({ data = [], onSelect = () => null, label = '', value = null }) => {
-        console.log("VALUE:", value)
-        return (<Autocomplete
-            noOptionsText={t("group.noGroupFound")}
-            id="tags-outlined"
-            debug={true}
-            className={clsx(classes.autoCompleteTag, classes.removedPaddingAutoComplete)}
-            value={value}
-            inputValue={value?.text || ''}
-            options={data}
-            getOptionLabel={(option) => option.text}
-            onChange={(e, val) => onSelect(val)}
-            renderInput={(params) => (
-
-                <TextField
-                    {...params}
-                    variant="outlined"
-                    label={t(label)}
-                    placeholder={t(label)}
-                    disabled
-                />
-            )}
-
-        />
-
-        )
-    }
-    const StatusDropdownS = ({ data = [], onSelect = () => null, label = '', value = null }) => {
         return (
             <FormControl variant="standard" className={classes.selectInputFormControl}>
                 <Select
@@ -1108,7 +1082,7 @@ const AddRecipientPopup = ({ classes,
                             },
                             {
 
-                                content: StatusDropdownS({
+                                content: StatusDropdown({
                                     data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj),
                                     onSelect: (val) => {
                                         handleEmailStatus(val)
@@ -1134,7 +1108,7 @@ const AddRecipientPopup = ({ classes,
 
                             },
                             {
-                                content: StatusDropdownS({
+                                content: StatusDropdown({
                                     data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj),
                                     onSelect: (val) => {
                                         handleSmsStatus(val)
