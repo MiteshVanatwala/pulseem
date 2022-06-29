@@ -435,15 +435,14 @@ const SmsReport = ({ classes }) => {
     green: classes.sendIconText
   }
 
-  const renderIntData = (value, type, data = {}, clickable = true) => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null, onClick = () => null } = data
-    const innerRef = clickable ? href : '';
+  const renderIntData = (value, type, data = {}) => {
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null, onClick = null } = data
+    const isLink = onClick && onClick !== null && value > 0;
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        <Typography component='a' // BUG: Remove this 
-          // href={innerRef}
-          onClick={onClick}
-          //TODO: UnComment OnCLick, Comment Href 
+      <Box style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
+        onClick={onClick}>
+        <Typography
+          component={'a'}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           style={textStyle}
           target="_blank">

@@ -694,6 +694,8 @@ const ClientSearchResult = ({ props, classes }) => {
   }
 
   const makeInvalid = async () => {
+    setLoader(true);
+    setDialog(null);
     await dispatch(makeInvalidClients(searchData)).then((res) => {
       handleResponses(res, {
         'S_200': {
@@ -705,7 +707,6 @@ const ClientSearchResult = ({ props, classes }) => {
           code: 201,
           message: ToastMessages.SET_INVALID_SUCCESS,
           Func: () => {
-            setDialog(null)
             getData()
           }
         },
