@@ -744,13 +744,47 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(false);
   }
   const removeEmailRecipient = async () => {
-    console.log("REMOVE EMAIL")
     setDialog(null);
     setLoader(true);
     const response = await dispatch(removeEmailClient(selectedClients[0]))
 
     if (response && response.payload === 'true') {
       //TODO: show delete success message
+      handleResponses(response,
+        {
+          S_201: {
+            code: 201,
+            message: '',
+            Func: () => null
+          },
+          S_400: {
+            code: 400,
+            message: '',
+            Func: () => null
+          },
+          S_401: {
+            code: 401,
+            message: '',
+            Func: () => null
+          },
+          S_405: {
+            code: 405,
+            message: '',
+            Func: () => null
+          },
+          S_422: {
+            code: 422,
+            message: '',
+            Func: () => null
+          },
+          default: {
+            message: '',
+            Func: () => null
+          }
+        }
+      );
+      getData();
+      setDialog(null);
     }
     else {
       //TODO: show delete failed message
@@ -758,12 +792,44 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(false);
   }
   const removeSMSRecipient = async () => {
-    console.log("REMOVE SMS")
     setDialog(null);
     setLoader(true);
     const response = await dispatch(removeSmsClient(selectedClients[0]))
     if (response && response.payload === 'true') {
       //TODO: show delete success message
+      handleResponses(response, {
+        S_201: {
+          code: 201,
+          message: '',
+          Func: () => null
+        },
+        S_400: {
+          code: 400,
+          message: '',
+          Func: () => null
+        },
+        S_401: {
+          code: 401,
+          message: '',
+          Func: () => null
+        },
+        S_405: {
+          code: 405,
+          message: '',
+          Func: () => null
+        },
+        S_422: {
+          code: 422,
+          message: '',
+          Func: () => null
+        },
+        default: {
+          message: '',
+          Func: () => null
+        }
+      }
+      );
+      getData()
       setDialog(null);
     }
     else {

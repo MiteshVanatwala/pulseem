@@ -2447,6 +2447,22 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         borderBottom: '2px solid red'
       }
     }
+  },
+
+  selectInputFormControl: {
+    '&.MuiFormControl-root': {
+      marginInline: 3,
+      '& label': {
+        marginInline: 5
+      },
+      '& .MuiSelect-select': {
+        minWidth: 200,
+        maxWidth: '100%',
+        border: '1px solid #c4c4c4',
+        borderRadius: 4,
+        paddingLeft: 4
+      }
+    }
   }
 
 

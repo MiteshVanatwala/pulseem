@@ -22,23 +22,6 @@ export const DEFAULT_RECIPIENT_DATA = {
     LastEmailOpened: '',
     LastEmailClicked: '',
     BestEmailOpenTime: null,
-    ExtraDate1: null,
-    ExtraDate2: null,
-    ExtraDate3: null,
-    ExtraDate4: null,
-    ExtraField1: '',
-    ExtraField2: '',
-    ExtraField3: '',
-    ExtraField4: '',
-    ExtraField5: '',
-    ExtraField6: '',
-    ExtraField7: '',
-    ExtraField8: '',
-    ExtraField9: '',
-    ExtraField10: '',
-    ExtraField11: '',
-    ExtraField12: '',
-    ExtraField13: '',
 }
 
 export const ADD_RECIPIENT_TABS = ['common.PersonalDetails', 'common.Location', 'recipient.dates', 'common.extraFields', 'recipient.addRecipientToGroups']

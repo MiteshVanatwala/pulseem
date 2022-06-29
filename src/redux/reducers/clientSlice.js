@@ -100,6 +100,15 @@ export const setUnsubscribedClients = createAsyncThunk(
       return thunkAPI.rejectWithValue({ error: error.message });
     }
   });
+export const changeClientStatus = createAsyncThunk(
+  'client/ChangeClientStatus', async (payload, thunkAPI) => {
+    try {
+      const response = await instence.put(`client/ChangeClientStatus`, { ...payload });
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  });
 
 
 export const clientSlice = createSlice({
@@ -118,12 +127,16 @@ export const clientSlice = createSlice({
       GROUP_INVALID_API: { severity: 'error', color: 'error', message: 'group.invalidApi', showAnimtionCheck: false },
       GROUP_ERROR: { severity: 'error', color: 'error', message: 'group.error', showAnimtionCheck: false },
       GROUP_ALREADY_EXIST: { severity: 'error', color: 'error', message: 'group.alreadyExist', showAnimtionCheck: false },
+      SOMETHING_WENT_WRONG: { severity: 'error', color: 'error', message: 'client.errors.somethingWentWrong', showAnimtionCheck: false },
+      GENERIC_ERROR: { severity: 'error', color: 'error', message: 'client.errors.genericError', showAnimtionCheck: false },
       RECIPIENT_DELETED_FROM_GROUP: { severity: 'success', color: 'success', message: 'recipient.recipientDeletedSuccessfuly', showAnimtionCheck: false },
       RECIPIENTS_DELETED_FROM_GROUP: { severity: 'success', color: 'success', message: 'recipient.recipientsDeletedSuccessfuly', showAnimtionCheck: false },
       AUTOMATION_CLIENTS_UPDATED: { severity: 'success', color: 'success', message: 'client.automationClientsUpdated', showAnimtionCheck: false },
       NO_CLIENTS_FOUND: { severity: 'success', color: 'success', message: 'client.noClientsFound', showAnimtionCheck: false },
       UNSUBSCRIBED_SUCCESS: { severity: 'success', color: 'success', message: 'recipient.unsubscribed.succeeded', showAnimtionCheck: false },
-      SET_INVALID_SUCCESS:  { severity: 'success', color: 'success', message: 'client.setInvalidSucceeded', showAnimtionCheck: false }
+      SET_INVALID_SUCCESS: { severity: 'success', color: 'success', message: 'client.setInvalidSucceeded', showAnimtionCheck: false },
+      STATUS_UPDATED: { severity: 'success', color: 'success', message: 'client.statusUpdated', showAnimtionCheck: false },
+      INVALID_CLIENT_ID: { severity: 'error', color: 'error', message: 'client.errors.invalidClientId', showAnimtionCheck: false }
     }
   },
   extraReducers: builder => {
