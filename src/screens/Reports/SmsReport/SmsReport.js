@@ -456,9 +456,6 @@ const SmsReport = ({ classes }) => {
   const renderRow = (row) => {
     const {
       SMSCampaignID,
-      Name,
-      SendDate,
-      UpdateDate,
       success,
       ClicksCount,
       UniqueClicksCount,
@@ -468,7 +465,6 @@ const SmsReport = ({ classes }) => {
       failure,
       TotalSendPlan,
       totalSent,
-      Status,
       Revenue = 0
     } = row
     const hrefs = getHrefs(SMSCampaignID)
