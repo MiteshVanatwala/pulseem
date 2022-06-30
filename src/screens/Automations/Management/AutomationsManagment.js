@@ -24,7 +24,6 @@ import 'moment/locale/he'
 import { pulseemNewTab } from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 
@@ -556,7 +555,6 @@ const AutomationsManagnentScreen = ({ classes }) => {
   const renderTablePadington = () => {
     const handleRowsPerPageChange = (val) => {
       dispatch(setRowsPerPage(val))
-      setCookie('rpp', val, { maxAge: 2147483647 })
     }
     return (
       <TablePagination

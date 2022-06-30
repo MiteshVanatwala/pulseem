@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { Dialog } from "../../../components/managment/index";
 import { FaMobileAlt } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
@@ -55,13 +55,13 @@ const SmsSummary = ({ classes,
 
               <Box className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("sms.smsDialogWhen")}:</span>
-                <span className={classes.bodySum}>{props.sendType == "3" ? `${props.days} ${t("mainReport.days")} ${props.after ? t("mainReport.after") : t("mainReport.before")} ${props.specialVal} at ${props.time.format('h:mm a')}  ` : props.sendType == "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : t("sms.SendNow")}</span>
+                <span className={classes.bodySum}>{props.sendType === "3" ? `${props.days} ${t("mainReport.days")} ${props.after ? t("mainReport.after") : t("mainReport.before")} ${props.specialVal} at ${props.time.format('h:mm a')}  ` : props.sendType === "2" ? `${props.sendDateTime.format('dddd , MMMM Do YYYY, h:mm a')}` : t("sms.SendNow")}</span>
               </Box>
 
               {props.pulseTrue || props.toggleRandom ? <Box className={classes.sumChild}>
                 <span className={classes.spanSum}>{t("mainReport.pulseSend")}</span>
-                {props.pulseTrue ? <span className={classes.smsSummaryText}>  {t("smsReport.packetSend")} - {props.pulseInput1} {props.pulsePer == "" || props.pulsePer == "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
-                  {t("sms.every")} {props.pulseInput2} {props.hourName == "" ? t("common.minutes") : t("common.hours")}</span> : null}
+                {props.pulseTrue ? <span className={classes.smsSummaryText}>  {t("smsReport.packetSend")} - {props.pulseInput1} {props.pulsePer === "" || props.pulsePer === "recipients" ? t("sms.recipients") : t("common.Percent")} {" "}
+                  {t("sms.every")} {props.pulseInput2} {props.hourName === "" ? t("common.minutes") : t("common.hours")}</span> : null}
                 {props.toggleRandom ? <span className={classes.smsSummaryText}>{t("smsReport.randomSend")} - {props.random} {t("smsReport.randomRecipients")}</span> : null}
                 {props.pulseTrue ? <span className={classes.smsSummaryText}>{t("sms.estimatedDelivery")}: <span style={{ color: "#1D82B3" }}>{props.estimationDate}</span></span> : null}
               </Box>
@@ -133,7 +133,7 @@ const SmsSummary = ({ classes,
             flexDirection: "column",
             justifyContent: "center",
           }}>
-            {summaryPayload.DuplicateCellphoneSharedWithClienCount == 0 ? null : <span
+            {summaryPayload.DuplicateCellphoneSharedWithClienCount === 0 ? null : <span
               className={classes.summaryDetailsSpan}
             >
               {t("sms.duplicateRecipients")}:
@@ -143,7 +143,7 @@ const SmsSummary = ({ classes,
               </span>
             </span>}
 
-            {summaryPayload.Removed == 0 ? null : <span
+            {summaryPayload.Removed === 0 ? null : <span
               className={classes.summaryDetailsSpan}
             >
               {t("sms.removedRecipients")} :
@@ -152,7 +152,7 @@ const SmsSummary = ({ classes,
                 {summaryPayload.Removed}
               </span>
             </span>}
-            {summaryPayload.EmptyCellphoneCount == 0 ? null : <span
+            {summaryPayload.EmptyCellphoneCount === 0 ? null : <span
               className={classes.summaryDetailsSpan}
             >
               {t("sms.emptyNumbers")} :
@@ -161,7 +161,7 @@ const SmsSummary = ({ classes,
                 {summaryPayload.EmptyCellphoneCount}
               </span>
             </span>}
-            {summaryPayload.Invalid == 0 ? null : <span
+            {summaryPayload.Invalid === 0 ? null : <span
               className={classes.summaryDetailsSpan}
             >
               {t("sms.invalidRecipients")} :
