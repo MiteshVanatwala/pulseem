@@ -31,7 +31,8 @@
     "addToGroups": "Add to Groups",
     "events": {
         "pageLoad": "Page Load",
-        "pageView": "Page View"
+        "pageView": "Page View",
+        "purchase": "Purchase"
     },
     "validation": {
         "domainRequired": "Domain - Required field",
@@ -51,5 +52,6 @@
     "invalidDomainAddress": "Domain must be a valid domain name",
     "addEvent": "Add Event",
     "minimumRevenue": "Min Revenue",
-    "maximumRevenue": "Max Revenue"
+    "maximumRevenue": "Max Revenue",
+    "enablePurchase": "Enable Purchase's Tracking"
 }
