@@ -366,7 +366,7 @@ const Groups = ({ classes }) => {
 
         return (
             <Grid container wrap="nowrap" spacing={1} alignItems='center'>
-                <Grid item sm={2}>
+                {windowSize !== 'xs' && <Grid item sm={2}>
                     <Checkbox
                         color="primary"
                         checked={selectedGroups && selectedGroups.includes(GroupID)}
@@ -380,7 +380,7 @@ const Groups = ({ classes }) => {
                         }}
                     />
 
-                </Grid>
+                </Grid>}
                 <Grid item sm={10}>
                     <CustomTooltip
                         isSimpleTooltip={false}
@@ -729,14 +729,15 @@ const Groups = ({ classes }) => {
                     className={classes.p10}
                 >
                     <Box className={classes.justifyBetween}>
-                        <Box className={classes.inlineGrid}>{GroupName}</Box>
+                        {/* <Box className={classes.inlineGrid}>{GroupName}</Box> */}
+                        {renderNameCell(row)}
                         <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
                             <IconWrapper
-                                iconName="addRecipient"
+                                iconName="delete"
                                 className={classes.mxAuto}
                                 onClick={() => {
-                                    setSelectedGroups(GroupID)
-                                    setDialog(DialogType.ADD_RECIPIENT)
+                                    setSelectedGroups([GroupID])
+                                    setDialog(DialogType.DELETE_GROUP)
                                 }}
                             />
                         </Box>
@@ -1206,7 +1207,7 @@ const Groups = ({ classes }) => {
             {toastMessage && renderToast()}
             {renderHeader()}
             {renderSearchSection()}
-            {renderManagmentLine()}
+            {windowSize !== 'xs' && renderManagmentLine()}
             {renderTableBody()}
             {renderTablePagination()}
             {showConfirmDialog && renderConfirmDialog()}
