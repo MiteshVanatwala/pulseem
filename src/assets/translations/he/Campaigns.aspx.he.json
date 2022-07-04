@@ -479,6 +479,12 @@
     "fromEmail": "כתובת אימייל השולח",
     "campaignSubject": "נושא הקמפיין",
     "personalization": "מידע אישי בשורת הנושא",
+    "dontSee_clickHere_mail": "אם אינך רואה מייל זה לחץ כאן",
+    "printMail": "הדפס דיוור",
+    "removeCustomerFromMail": "הסרת לקוח מרשימת התפוצה",
+    "updateCustomerInfo": "עדכון פרטי לקוח",
+    "atBeginning": "בראשית המייל",
+    "atBottom": "בתחתית המייל",
     "helpTexts": {
       "Name": "משמש לזיהוי הקמפיין במערכת. הנמענים לא יראו שם זה",
       "FromName": "This field is mandatory",

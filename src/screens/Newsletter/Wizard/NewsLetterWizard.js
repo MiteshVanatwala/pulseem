@@ -51,9 +51,10 @@ const useStyles = makeStyles({
 
     },
     select: {
+        width: '100%',
         '& .MuiSelect-select': {
             padding: '12px 24px 12px 24px',
-            width: 252
+            width: '100%'
         }
     },
     btnP20: {
@@ -313,7 +314,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     content:
                                         <Autocomplete
                                             id="fromEmailSelect"
-                                            style={{ width: 300 }}
+                                            // style={{ width: 300 }}
                                             options={['abc@123.com', 'bca@321.com', 'gvc@nbc.com']}
                                             className={localClasses.autocomplete}
                                             name="FromEmail"
@@ -495,7 +496,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     content: <Autocomplete
                                         id="country-select-demo"
                                         // multiple
-                                        style={{ width: 300 }}
+                                        // style={{ width: 300 }}
                                         options={['Option1', 'Option2', 'Option3', 'Option4', 'Option5']}
                                         className={localClasses.autocomplete}
                                         // value={campaingnValues?.personalDatatoSubject}
@@ -579,7 +580,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         <Autocomplete
                                             id="country-select-demo"
                                             // multiple
-                                            style={{ width: 300 }}
+                                            // style={{ width: 300 }}
                                             options={['Option1', 'Option2', 'Option3', 'Option4', 'Option5']}
                                             className={localClasses.autocomplete}
                                             // value={campaingnValues?.personalDatatoSubject}
@@ -656,7 +657,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 6, sm: 2 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("If you do not see this email, click here")} align="left">{t("If you do not see this email, click here")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.dontSee_clickHere_mail")} align="left">{t("campaigns.newsLetterEditor.dontSee_clickHere_mail")}</Typography>,
                                                         gridSize: { xs: 6, sm: 10 }
                                                     },
 
@@ -679,7 +680,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 6, sm: 2 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("Print mail")} align="left">{t("Print mail")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.printMail")} align="left">{t("campaigns.newsLetterEditor.printMail")}</Typography>,
                                                         gridSize: { xs: 6, sm: 10 }
                                                     },
 
@@ -703,7 +704,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 6, sm: 2 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("Remove cunstomer from mail list")} align="left">{t("Remove cunstomer from mail list")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.removeCustomerFromMail")} align="left">{t("campaigns.newsLetterEditor.removeCustomerFromMail")}</Typography>,
                                                         gridSize: { xs: 6, sm: 10 }
                                                     },
 
@@ -726,7 +727,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 6, sm: 2 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("Update customer information")} align="left">{t("Update customer information")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.updateCustomerInfo")} align="left">{t("campaigns.newsLetterEditor.updateCustomerInfo")}</Typography>,
                                                         gridSize: { xs: 6, sm: 10 }
                                                     },
 
@@ -761,7 +762,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 12, sm: 3 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("At the beginning")} align="left">{t("At the beginning")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBeginning")} align="left">{t("campaigns.newsLetterEditor.atBeginning")}</Typography>,
                                                         gridSize: { xs: 12, sm: 9 }
                                                     },
 
@@ -786,7 +787,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 12, sm: 3 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("At the beginning")} align="left">{t("At the beginning")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBeginning")} align="left">{t("campaigns.newsLetterEditor.atBeginning")}</Typography>,
                                                         gridSize: { xs: 12, sm: 9 }
                                                     },
 
@@ -811,7 +812,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 12, sm: 3 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("At the beginning")} align="left">{t("At the beginning")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBeginning")} align="left">{t("campaigns.newsLetterEditor.atBeginning")}</Typography>,
                                                         gridSize: { xs: 12, sm: 9 }
                                                     },
 
@@ -835,7 +836,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 12, sm: 3 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("At the beginning")} align="left">{t("At the beginning")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBeginning")} align="left">{t("campaigns.newsLetterEditor.atBeginning")}</Typography>,
                                                         gridSize: { xs: 12, sm: 9 }
                                                     },
 
@@ -871,7 +872,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 12, sm: 3 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("At the bottom")} align="left">{t("At the bottom")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBottom")} align="left">{t("campaigns.newsLetterEditor.atBottom")}</Typography>,
                                                         gridSize: { xs: 12, sm: 9 }
                                                     },
 
@@ -896,7 +897,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 12, sm: 3 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("At the bottom")} align="left">{t("At the bottom")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBottom")} align="left">{t("campaigns.newsLetterEditor.atBottom")}</Typography>,
                                                         gridSize: { xs: 12, sm: 9 }
                                                     },
 
@@ -921,7 +922,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 12, sm: 3 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("At the bottom")} align="left">{t("At the bottom")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBottom")} align="left">{t("campaigns.newsLetterEditor.atBottom")}</Typography>,
                                                         gridSize: { xs: 12, sm: 9 }
                                                     },
 
@@ -945,7 +946,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                         gridSize: { xs: 12, sm: 3 }
                                                     },
                                                     {
-                                                        content: <Typography className={classes.f14} title={t("At the bottom")} align="left">{t("At the bottom")}</Typography>,
+                                                        content: <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.atBottom")} align="left">{t("campaigns.newsLetterEditor.atBottom")}</Typography>,
                                                         gridSize: { xs: 12, sm: 9 }
                                                     },
 
