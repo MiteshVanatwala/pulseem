@@ -393,14 +393,45 @@ const renderRoutes = (classes, history) => {
   )
 }
 
-const App = ({ screenSize }) => {
+
+const App = ({ isRTL, classes, theme, language }) => {
+  return (
+    <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
+      <MuiThemeProvider theme={theme}>
+        <div dir={isRTL ? 'rtl' : 'ltr'}>
+          {renderRoutes(classes)}
+        </div>
+      </MuiThemeProvider>
+    </MuiPickersUtilsProvider>
+
+  )
+}
+
+function useWidth() {
+  const { language } = useSelector(state => state.core)
+  const theme = getTheme(language);
+  const keys = [...theme.breakpoints.keys].reverse();
+  return (
+    keys.reduce((output, key) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const matches = useMediaQuery(theme.breakpoints.up(key));
+      return !output && matches ? key : output;
+    }, null) || 'xs'
+  );
+}
+
+const AppContainer = () => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
-  useEffect(() => {
-    dispatch(setWindowSize(screenSize))
-  }, [screenSize])
-  useEffect(() => {
+  const classes = useClasses(windowSize, isRTL)()
+  const theme = getTheme(language)
+  // const navigate = useNavigate()
+  const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
+  const width = useWidth();
+  dispatch(setWindowSize(width))
+  // screenSize && dispatch(setWindowSize(screenSize))
 
+  useEffect(() => {
     const initFeatures = async () => {
       if (!accountSettings) {
         const settings = await dispatch(getCommonFeatures());
@@ -408,9 +439,11 @@ const App = ({ screenSize }) => {
       }
       const response = await dispatch(isClalAccount());
       dispatch(setIsClal(response.payload));
-      const smsOldVersion = getCookie('OldVersion')
-      dispatch(setSmsOldVersion(smsOldVersion))
+      // const smsOldVersion = getCookie('OldVersion')
+      // dispatch(setSmsOldVersion(smsOldVersion))
+      setCookie('OldVersion', false);
     }
+
 
     const updateToken = () => {
       const culture = getCookie('Culture')
@@ -461,47 +494,21 @@ const App = ({ screenSize }) => {
   }, [dispatch])
 
 
-  const classes = useClasses(windowSize, isRTL)()
-  const theme = getTheme(language)
-  const history = useHistory()
   document.body.classList.add(classes.sidebar);
 
   if (isRTL) document.body.classList.add('rtl');
   else document.body.classList.remove('rtl');
 
   return (
-    <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
-      <MuiThemeProvider theme={theme}>
-        <div dir={isRTL ? 'rtl' : 'ltr'}>
-          {renderRoutes(classes, history)}
-        </div>
-      </MuiThemeProvider>
-    </MuiPickersUtilsProvider>
-
-  )
-}
-
-function useWidth() {
-  const { language } = useSelector(state => state.core)
-  const theme = getTheme(language);
-  const keys = [...theme.breakpoints.keys].reverse();
-  return (
-    keys.reduce((output, key) => {
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      const matches = useMediaQuery(theme.breakpoints.up(key));
-      return !output && matches ? key : output;
-    }, null) || 'xs'
-  );
-}
-
-const AppContainer = () => {
-  const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
-  const width = useWidth();
-
-  return (
     <StylesProvider jss={jss}>
       <BrowserRouter basename='/react'>
-        <App screenSize={width} />
+
+        <App isRTL={isRTL}
+          classes={classes}
+          // navigate={navigate}
+          theme={theme}
+          language={language} />
+
       </BrowserRouter>
     </StylesProvider>
   )

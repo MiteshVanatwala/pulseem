@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
-import { Box, Divider, Typography, TextField, Button, Paper, InputAdornment, Checkbox, Radio, Grid, makeStyles } from '@material-ui/core'
+import { Box, Divider, Typography, TextField, Button, Paper, InputAdornment, Checkbox, Radio, Grid, makeStyles, FormControl, Select, OutlinedInput, MenuItem } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
@@ -49,6 +49,12 @@ const useStyles = makeStyles({
             justifyContent: 'flex-end'
         }
 
+    },
+    select: {
+        '& .MuiSelect-select': {
+            padding: '12px 24px 12px 24px',
+            width: 252
+        }
     },
     btnP20: {
         padding: '20px !important'
@@ -387,47 +393,50 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
-                                    content:
-                                        <Autocomplete
-                                            id="country-select-demo"
-                                            // multiple
-                                            style={{ width: 300 }}
-                                            options={['FirstName', 'LastName', 'Email', 'Mobile', 'Other']}
-                                            className={localClasses.autocomplete}
-                                            value={campaingnValues?.personalDatatoSubject}
-                                            autoHighlight
-                                            getOptionLabel={(option) => option}
-                                            renderOption={(option) => (
-                                                <React.Fragment>
-                                                    {option}
-                                                </React.Fragment>
-                                            )}
-                                            onChange={(event, val) => {
-                                                // console.log("VALUE:", val, new RegExp(`##${removed}##`, 'g'))
-                                                // const removed = campaingnValues.personalDatatoSubject.filter(obj => val.indexOf(obj) === -1)[0]
-                                                // console.log("removed:", removed)
-                                                // const currentVal = val[val.length - 1 || 0]
-                                                // setCampaingnValues({ ...campaingnValues, personalDatatoSubject: val, Subject: removed ? campaingnValues.Subject.replace(new RegExp(`##${removed}##`, 'g'), '') : `${campaingnValues.Subject} ##${currentVal}##` })
-                                                setCampaingnValues({ ...campaingnValues, personalDatatoSubject: val, Subject: `${campaingnValues.Subject} ##${val}##` })
-                                            }}
+                                    content: <>
+                                        <FormControl className={localClasses.select}>
+                                            <Select
+                                                displayEmpty
+                                                // value={campaingnValues?.personalDatatoSubject}
+                                                value={''}
+                                                onChange={(event) => {
+                                                    setCampaingnValues({ ...campaingnValues, personalDatatoSubject: event.target.value, Subject: `${campaingnValues.Subject} ##${event.target.value}##` })
+                                                }}
+                                                input={<OutlinedInput />}
+                                                renderValue={(selected) => {
+                                                    if (!selected) {
+                                                        return <em>Select</em>;
+                                                    }
 
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    variant="outlined"
-                                                    style={{ padding: '1.5px 6px !important' }}
-                                                    inputProps={{
-                                                        ...params.inputProps,
-                                                        autoComplete: 'new-password',
-                                                        style: { padding: '2px 4px' }
-                                                    }}
-                                                />
-                                            )}
-                                            PaperComponent={({ children }) => (
-                                                <Paper className={classes.groupsAutoComplete}>{children}</Paper>
-                                            )}
-                                        />
-                                    ,
+                                                    return selected;
+                                                }}
+                                                MenuProps={{
+                                                    PaperProps: {
+                                                        style: {
+                                                            maxHeight: 48 * 4.5 + 8,
+                                                            width: 250,
+                                                        },
+                                                    },
+                                                }}
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                            >
+                                                <MenuItem disabled value="">
+                                                    <em>Select</em>
+                                                </MenuItem>
+                                                {['FirstName', 'LastName', 'Email', 'Mobile', 'Other'].map((item) => (
+                                                    <MenuItem
+                                                        key={item}
+                                                        value={item}
+                                                    // style={getStyles(item, personitem, theme)}
+                                                    >
+                                                        {item}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>
+
+
+                                    </>,
                                     gridSize: { xs: 12, sm: 12 }
                                 }
                                 ]}
