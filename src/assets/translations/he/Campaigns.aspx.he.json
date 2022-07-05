@@ -485,11 +485,18 @@
     "updateCustomerInfo": "עדכון פרטי לקוח",
     "atBeginning": "בראשית המייל",
     "atBottom": "בתחתית המייל",
+    "mobileSupport": "תמיכה בסלולר",
+    "language": "שפת דיוור",
+    "pre_text": "טקסט מקדים",
+    "gAnalytics": "גוגל אנליטיקס",
+    "textAdditions": "תוספות טקסט",
     "helpTexts": {
       "Name": "משמש לזיהוי הקמפיין במערכת. הנמענים לא יראו שם זה",
       "FromName": "This field is mandatory",
       "FromEmail": "This field is mandatory",
-      "Subject": "במקרים של שילוב אימוגים בכותרת, מומלץ להגביל את השימוש באימוגים לשניים בלבד. שימוש באימוגים מרובים עלול עלול לפגוע בעבירות."
+      "Subject": "במקרים של שילוב אימוגים בכותרת, מומלץ להגביל את השימוש באימוגים לשניים בלבד. שימוש באימוגים מרובים עלול עלול לפגוע בעבירות.",
+      "pre_helper_text": "הטקסט יופיע בשורת התצוגה במייל, טרם פתיחתו",
+      "upload": "Popped up and attachment in the email you send"
     }
   },
   "sendToContact": "שלח לאיש קשר אחד",

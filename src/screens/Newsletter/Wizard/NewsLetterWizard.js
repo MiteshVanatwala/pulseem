@@ -17,6 +17,8 @@ import { Delete } from '@material-ui/icons';
 import { Dialog } from "../../../components/managment/Dialog";
 import { BiUpload } from 'react-icons/bi';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import axios from 'axios';
+import { FaGoogle } from 'react-icons/fa';
 
 
 
@@ -55,6 +57,17 @@ const useStyles = makeStyles({
         '& .MuiSelect-select': {
             padding: '12px 24px 12px 24px',
             width: '100%'
+        }
+    },
+    googleCheck: {
+        '& span': {
+            padding: '9px 0px'
+        },
+        '& svg': {
+            marginInline: 2
+        },
+        '& p': {
+            marginInline: 3
         }
     },
     btnP20: {
@@ -144,8 +157,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         FromEmail: ""
     })
 
-    const [selectedRadio, setSelectedRadio] = useState(null)
-    const [selectedCheck, setSelectedCheck] = useState([])
+    const [selectedRadio, setSelectedRadio] = useState({ a: null, b: null, c: null, d: null })
+    const [selectedCheck, setSelectedCheck] = useState({ a: false, b: false, c: false, d: false })
     const [confirmDelete, setConfirmDelete] = useState(false)
 
     const handleGetNewsletterResponse = (res) => {
@@ -190,6 +203,15 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     }, [])
 
 
+    const handleSelectionRadio = (e) => {
+        setSelectedRadio({ ...selectedRadio, [e.target.name]: e.target.value })
+    }
+    const handleChangeCheckbox = (e) => {
+        if (selectedCheck[e.target.name]) {
+            setSelectedRadio({ ...selectedRadio, [e.target.name]: null })
+        }
+        setSelectedCheck({ ...selectedCheck, [e.target.name]: !selectedCheck[e.target.name] })
+    }
 
     const handleChange = (e) => {
         // console.log("VALUES:", e.target.name, e.target.value)
@@ -406,7 +428,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 input={<OutlinedInput />}
                                                 renderValue={(selected) => {
                                                     if (!selected) {
-                                                        return <em>Select</em>;
+                                                        return <em>{t("common.select")}</em>;
                                                     }
 
                                                     return selected;
@@ -453,7 +475,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
 
     const CampaignBox2 = () => (
         <Box pt={3}>
-            <Typography className={localClasses.suHeading}>Heading</Typography>
+            <Typography className={localClasses.suHeading}>{t("common.AdvancedSettings")}</Typography>
             <SimpleGrid
                 spacing={3}
                 centerlize={true}
@@ -462,34 +484,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content: <Typography title={t("Field1")} className={classes.alignDir}>{t("Introductory text")}</Typography>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                },
-                                {
-                                    content: <TextField
-                                        id="outlined-basic"
-                                        label=""
-                                        variant="outlined"
-                                        name="Name"
-                                        // value={campaingnValues.Name}
-                                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, localClasses.textbox)}
-                                        autoComplete="off"
-                                        // onChange={handleChange}
-                                        // error={errors.Name}
-                                        helperText={t("The text will appear in the display bar in the email, before it opens")}
-                                    />,
-                                    gridSize: { xs: 12, sm: 12 },
-                                }
-                                ]}
-                                spacing={1}
-                                gridStyles={localClasses.contentCenter}
-                            />,
-                            gridSize: { xs: 12, sm: 6 }
-                        },
-                        {
-                            content: <SimpleGrid
-                                gridArr={[{
-                                    content: <Typography title={t("Field2")} className={classes.alignDir}>{t("Field2")}</Typography>,
+                                    content: <Typography title={t("campaigns.newsLetterEditor.mobileSupport")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.mobileSupport")}</Typography>,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
@@ -536,31 +531,25 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                             />,
                             gridSize: { xs: 12, sm: 6 }
                         },
-
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content:
-                                        <CustomTooltip
-                                            isSimpleTooltip={false}
-                                            classes={classes}
-                                            interactive={true}
-                                            arrow={true}
-                                            placement={'top'}
-                                            title={<Typography noWrap={false}>{t("Upload File")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt</Typography>}
-                                            text={t("Upload File - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt")}
-                                        />,
+                                    content: <Typography title={t("campaigns.newsLetterEditor.pre_text")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.pre_text")}</Typography>,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
-                                    content: <>
-                                        <Box className={localClasses.fileUploadBox}>
-                                            <input type='file' id='upldNLFile' />
-                                            <label htmlFor='upldNLFile'><BiUpload /></label>
-                                        </Box>
-                                        <label className={localClasses.helperText}>Popped up and attachment in the email you send</label>
-                                    </>
-                                    ,
+                                    content: <TextField
+                                        id="outlined-basic"
+                                        label=""
+                                        variant="outlined"
+                                        name="Name"
+                                        // value={campaingnValues.Name}
+                                        className={clsx(classes.pl5, classes.pr10, classes.NoPaddingtextField, classes.textField, classes.minWidth252, localClasses.textbox)}
+                                        autoComplete="off"
+                                        // onChange={handleChange}
+                                        // error={errors.Name}
+                                        helperText={t("campaigns.newsLetterEditor.helpTexts.pre_helper_text")}
+                                    />,
                                     gridSize: { xs: 12, sm: 12 },
                                 }
                                 ]}
@@ -569,10 +558,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                             />,
                             gridSize: { xs: 12, sm: 6 }
                         },
+
                         {
                             content: <SimpleGrid
                                 gridArr={[{
-                                    content: <Typography title={t("Field4")} className={classes.alignDir}>{t("Mailing Language")}</Typography>,
+                                    content: <Typography title={t("campaigns.newsLetterEditor.language")} className={classes.alignDir}>{t("campaigns.newsLetterEditor.language")}</Typography>,
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
@@ -622,16 +612,62 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                             gridSize: { xs: 12, sm: 6 }
                         },
 
+                        {
+                            content: <SimpleGrid
+                                gridArr={[{
+                                    content:
+                                        <CustomTooltip
+                                            isSimpleTooltip={false}
+                                            classes={classes}
+                                            interactive={true}
+                                            arrow={true}
+                                            placement={'top'}
+                                            title={<Typography noWrap={false}>{t("Upload File")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt</Typography>}
+                                            text={t("Upload File - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt")}
+                                        >
+                                            <Typography noWrap={false}>{t("common.UploadFile")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt</Typography>
+                                        </CustomTooltip>,
+                                    gridSize: { xs: 12, sm: 12 }
+                                },
+                                {
+                                    content: <>
+                                        <Box className={localClasses.fileUploadBox}>
+                                            <input type='file' id='upldNLFile' />
+                                            <label htmlFor='upldNLFile'><BiUpload /></label>
+                                        </Box>
+                                        <label className={localClasses.helperText}>{t("campaigns.newsLetterEditor.helpTexts.upload")}</label>
+                                    </>
+                                    ,
+                                    gridSize: { xs: 12, sm: 12 },
+                                }
+                                ]}
+                                spacing={1}
+                                gridStyles={localClasses.contentCenter}
+                            />,
+                            gridSize: { xs: 12, sm: 6 }
+                        },
                     ]
                 }
 
             />
+            <Box className={clsx(classes.flex, localClasses.googleCheck)}>
+                <Checkbox
+                    color="primary"
+                    inputProps={{ 'aria-label': 'secondary checkbox' }}
+                    name='googleAnalytics'
+                // className={ }
+                // checked={!!selectedCheck['a']}
+                // onClick={handleChangeCheckbox}
+                />
+                <FaGoogle />
+                <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.gAnalytics")} align="left">{t("campaigns.newsLetterEditor.gAnalytics")}</Typography>
+            </Box>
         </Box>
     )
 
     const CampaignBox3 = () => (
         <Box pt={3}>
-            <Typography className={localClasses.suHeading}>Text Inserts</Typography>
+            <Typography className={localClasses.suHeading}>{t("campaigns.newsLetterEditor.textAdditions")}</Typography>
 
             <SimpleGrid
                 spacing={2}
@@ -650,9 +686,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                     {
                                                         content: <Checkbox
 
-                                                            defaultChecked
                                                             color="primary"
                                                             inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                            name='a'
+                                                            checked={!!selectedCheck['a']}
+                                                            onClick={handleChangeCheckbox}
                                                         />,
                                                         gridSize: { xs: 6, sm: 2 }
                                                     },
@@ -673,9 +711,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                     {
                                                         content: <Checkbox
 
-                                                            defaultChecked
                                                             color="primary"
                                                             inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                            name='b'
+                                                            checked={!!selectedCheck['b']}
+                                                            onClick={handleChangeCheckbox}
                                                         />,
                                                         gridSize: { xs: 6, sm: 2 }
                                                     },
@@ -697,9 +737,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                     {
                                                         content: <Checkbox
 
-                                                            defaultChecked
                                                             color="primary"
                                                             inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                            name='c'
+                                                            checked={!!selectedCheck['c']}
+                                                            onClick={handleChangeCheckbox}
                                                         />,
                                                         gridSize: { xs: 6, sm: 2 }
                                                     },
@@ -720,9 +762,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                     {
                                                         content: <Checkbox
 
-                                                            defaultChecked
                                                             color="primary"
                                                             inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                                            name='d'
+                                                            checked={!!selectedCheck['d']}
+                                                            onClick={handleChangeCheckbox}
                                                         />,
                                                         gridSize: { xs: 6, sm: 2 }
                                                     },
@@ -753,10 +797,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
-                                                            checked={selectedRadio === 'a'}
-                                                            onChange={(e) => setSelectedRadio(e.target.value)}
-                                                            value="a"
-                                                            name="radio-button-demo"
+                                                            checked={selectedRadio.a === 'a1'}
+                                                            onChange={handleSelectionRadio}
+                                                            disabled={!!!selectedCheck.a}
+                                                            value="a1"
+                                                            name="a"
                                                             inputProps={{ 'aria-label': 'A' }}
                                                         />,
                                                         gridSize: { xs: 12, sm: 3 }
@@ -778,10 +823,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
-                                                            checked={selectedRadio === 'b'}
-                                                            onChange={(e) => setSelectedRadio(e.target.value)}
-                                                            value="b"
-                                                            name="radio-button-demo"
+                                                            checked={selectedRadio.b === 'b1'}
+                                                            onChange={handleSelectionRadio}
+                                                            disabled={!!!selectedCheck.b}
+                                                            value="b1"
+                                                            name="b"
                                                             inputProps={{ 'aria-label': 'A' }}
                                                         />,
                                                         gridSize: { xs: 12, sm: 3 }
@@ -803,10 +849,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
-                                                            checked={selectedRadio === 'c'}
-                                                            onChange={(e) => setSelectedRadio(e.target.value)}
-                                                            value="c"
-                                                            name="radio-button-demo"
+                                                            checked={selectedRadio.c === 'c1'}
+                                                            onChange={handleSelectionRadio}
+                                                            disabled={!!!selectedCheck.c}
+                                                            value="c1"
+                                                            name="c"
                                                             inputProps={{ 'aria-label': 'A' }}
                                                         />,
                                                         gridSize: { xs: 12, sm: 3 }
@@ -827,10 +874,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
-                                                            checked={selectedRadio === 'd'}
-                                                            onChange={(e) => setSelectedRadio(e.target.value)}
-                                                            value="d"
-                                                            name="radio-button-demo"
+                                                            checked={selectedRadio.d === 'd1'}
+                                                            onChange={handleSelectionRadio}
+                                                            disabled={!!!selectedCheck.d}
+                                                            value="d1"
+                                                            name="d"
                                                             inputProps={{ 'aria-label': 'A' }}
                                                         />,
                                                         gridSize: { xs: 12, sm: 3 }
@@ -863,10 +911,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
-                                                            checked={selectedRadio === 'a'}
-                                                            onChange={(e) => setSelectedRadio(e.target.value)}
-                                                            value="a"
-                                                            name="radio-button-demo"
+                                                            checked={selectedRadio.a === 'a2'}
+                                                            onChange={handleSelectionRadio}
+                                                            disabled={!!!selectedCheck.a}
+                                                            value="a2"
+                                                            name="a"
                                                             inputProps={{ 'aria-label': 'A' }}
                                                         />,
                                                         gridSize: { xs: 12, sm: 3 }
@@ -888,10 +937,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
-                                                            checked={selectedRadio === 'b'}
-                                                            onChange={(e) => setSelectedRadio(e.target.value)}
-                                                            value="b"
-                                                            name="radio-button-demo"
+                                                            checked={selectedRadio.b === 'b2'}
+                                                            onChange={handleSelectionRadio}
+                                                            disabled={!!!selectedCheck.b}
+                                                            value="b2"
+                                                            name="b"
                                                             inputProps={{ 'aria-label': 'A' }}
                                                         />,
                                                         gridSize: { xs: 12, sm: 3 }
@@ -913,10 +963,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
-                                                            checked={selectedRadio === 'c'}
-                                                            onChange={(e) => setSelectedRadio(e.target.value)}
-                                                            value="c"
-                                                            name="radio-button-demo"
+                                                            checked={selectedRadio.c === 'c2'}
+                                                            onChange={handleSelectionRadio}
+                                                            disabled={!!!selectedCheck.c}
+                                                            value="c2"
+                                                            name="c"
                                                             inputProps={{ 'aria-label': 'A' }}
                                                         />,
                                                         gridSize: { xs: 12, sm: 3 }
@@ -937,10 +988,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 gridArr={[
                                                     {
                                                         content: <Radio
-                                                            checked={selectedRadio === 'd'}
-                                                            onChange={(e) => setSelectedRadio(e.target.value)}
-                                                            value="d"
-                                                            name="radio-button-demo"
+                                                            checked={selectedRadio.d === 'd2'}
+                                                            onChange={handleSelectionRadio}
+                                                            disabled={!!!selectedCheck.d}
+                                                            value="d2"
+                                                            name="d"
                                                             inputProps={{ 'aria-label': 'A' }}
                                                         />,
                                                         gridSize: { xs: 12, sm: 3 }
