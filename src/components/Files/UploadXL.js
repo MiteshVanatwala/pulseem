@@ -154,7 +154,7 @@ const UploadXL = ({
         let enteredValue = pastedData.split("\n")
         const records = enteredValue.filter((r) => { return r !== "" });
         settotalRecords(records.length);
-        settypedData(records);
+        //settypedData(records);
         if (records.length < 100) {
             setareaData(pastedData);
             setdropClick(false);
@@ -203,10 +203,7 @@ const UploadXL = ({
             });
         }
         else {
-            let d = typedData.map((td) => {
-                return td.split('\t');
-            });
-            settypedData(d)
+            settypedData(b)
             setDialogType({ type: "manualUpload" });
         }
 
