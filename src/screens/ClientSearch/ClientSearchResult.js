@@ -47,7 +47,8 @@ import {
   removeSmsClient,
   searchAllClients,
   getExportData,
-  setUnsubscribedClients
+  setUnsubscribedClients,
+  searchAdvancedClients
 } from "../../redux/reducers/clientSlice";
 import { getAccountExtraData } from '../../redux/reducers/smsSlice';
 import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
@@ -187,6 +188,7 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     // On load
     let initSearchData = {
+      IsAdvanced: false,
       PageSize: rowsPerPage,
       PageIndex: page,
       SearchTerm: "",
@@ -253,7 +255,12 @@ const ClientSearchResult = ({ props, classes }) => {
 
   useEffect(() => {
     if (searchData) {
-      getData();
+      if (searchData.IsAdvanced) {
+        getSearchData();
+      }
+      else {
+        getData();
+      }
     }
   }, [searchData]);
 
@@ -556,6 +563,12 @@ const ClientSearchResult = ({ props, classes }) => {
     await dispatch(searchAllClients(searchData));
     setLoader(false);
   };
+
+  const getSearchData = async () => {
+    setLoader(true);
+    await dispatch(searchAdvancedClients(searchData));
+    setLoader(false);
+  }
 
   useEffect(() => {
     // setData(Static_CSR_Data)
