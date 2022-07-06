@@ -71,6 +71,16 @@ export const searchAllClients = createAsyncThunk(
     }
   })
 
+export const searchAdvancedClients = createAsyncThunk(
+  'client/Search', async (payload, thunkAPI) => {
+    try {
+      const response = await instence.post(`client/Search`, payload);
+      return JSON.parse(response.data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 export const AddClientsToGroup = createAsyncThunk(
   'client/AddClientsToGroup', async (payload, thunkAPI) => {
     try {
@@ -146,7 +156,16 @@ export const clientSlice = createSlice({
       state.TotalRevenue = payload.TotalRevenue;
       state.CampaignClicks = payload.CampaignClicks ?? 0;
     })
+    builder.addCase(searchAdvancedClients.fulfilled, (state, { payload }) => {
+      state.ClientData = payload.Clients;
+      state.TotalCount = payload.TotalCount;
+      state.TotalRevenue = payload.TotalRevenue;
+      state.CampaignClicks = payload.CampaignClicks ?? 0;
+    })
     builder.addCase(searchAllClients.rejected, (state, { error }) => {
+      state.error = error.message;
+    })
+    builder.addCase(searchAdvancedClients.rejected, (state, { error }) => {
       state.error = error.message;
     })
   }
