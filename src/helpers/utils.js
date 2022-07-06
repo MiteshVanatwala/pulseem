@@ -24,3 +24,5 @@ export const getQueryParams = async () => {
     })));
     return queryParams
 }
+
+export const voidFunction = () => null

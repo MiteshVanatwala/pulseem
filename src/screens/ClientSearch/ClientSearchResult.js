@@ -431,7 +431,7 @@ const ClientSearchResult = ({ props, classes }) => {
 
   const PageTypeObject = {
     '1': {
-      title: t("common.OpenTime"),
+      title: t("common.SendTime") / t("common.SendDate"),
       sortKey: 'Date',
       component: {
         mobile: ({ snt_OpeningDate = null, ...rest }) => (<>
@@ -452,7 +452,7 @@ const ClientSearchResult = ({ props, classes }) => {
     },
     '3': {
       title: t("client.subscribedOn"),
-      sortKey: 'CreationDate',
+      sortKey: 'Date',
       component: {
         mobile: ({ CreationDate = null, ...rest }) => (<>
           <Typography className={classes.bold}>
@@ -468,6 +468,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       },
+      filterComponents: [FromDate, ToDate]
     },
     '8': {
       title: t("sms.sendingTime"),
@@ -762,7 +763,10 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(true);
     const response = await dispatch(removeEmailClient(selectedClients[0]))
 
-    if (response && response.payload === 'true') {
+    if (response) {
+      if (response.payload === 'true') {
+        response.payload = { ...response.payload, StatusCode: 201 }
+      }
       //TODO: show delete success message
       handleResponses(response,
         {
@@ -796,16 +800,17 @@ const ClientSearchResult = ({ props, classes }) => {
       getData();
       setDialog(null);
     }
-    else {
-      //TODO: show delete failed message
-    }
+
     setLoader(false);
   }
   const removeSMSRecipient = async () => {
     setDialog(null);
     setLoader(true);
     const response = await dispatch(removeSmsClient(selectedClients[0]))
-    if (response && response.payload === 'true') {
+    if (response) {
+      if (response.payload === 'true') {
+        response.payload = { ...response.payload, StatusCode: 201 }
+      }
       //TODO: show delete success message
       handleResponses(response,
         {
@@ -838,9 +843,6 @@ const ClientSearchResult = ({ props, classes }) => {
       );
       getData()
       setDialog(null);
-    }
-    else {
-      //TODO: show delete failed message
     }
     setLoader(false);
   }
@@ -966,12 +968,13 @@ const ClientSearchResult = ({ props, classes }) => {
           >
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
+
           {
             [
               CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
-              // CLIENT_CONSTANTS.FailureCountSMSCampaignID,
-              CLIENT_CONSTANTS.TotalCountSMSCampaignID,
-              CLIENT_CONSTANTS.OpenedCampaignID
+              CLIENT_CONSTANTS.PAGE_TYPES.FormID,
+              CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID,
+              CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID
             ].indexOf(location?.state?.PageType) !== -1 && <Link
               // {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Link
               color='initial'
@@ -1634,7 +1637,7 @@ const ClientSearchResult = ({ props, classes }) => {
             selectedGroups={data.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds || searchData?.GroupIds || []}
             setDialog={setDialog}
             handleResponses={(response, actions) => handleResponses(response, actions)}
-            onAddRecipient={() => { setDialog(null); getData(); }}
+            onAddRecipient={() => { getData(); }}
             recipientData={
               selectedClients[0] && (data.find((obj) => obj.ClientID === selectedClients[0]))
             }

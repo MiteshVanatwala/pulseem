@@ -42,6 +42,7 @@ import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { voidFunction } from '../../../helpers/utils';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -520,7 +521,7 @@ const Groups = ({ classes }) => {
                                     value: colorTextStyle.blue,
                                 },
                                 //onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
-                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                     state:
                                     {
@@ -531,7 +532,7 @@ const Groups = ({ classes }) => {
                                         TestStatusOfEmailElseSms: 1,
                                         ResultTitle: GroupName
                                     }
-                                })
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Active"),
@@ -540,7 +541,7 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.green, classes.dataBox),
                                     value: colorTextStyle.green,
                                 },
-                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                onClick: (ActiveEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                     state:
                                     {
@@ -551,7 +552,7 @@ const Groups = ({ classes }) => {
                                         TestStatusOfEmailElseSms: 1,
                                         ResultTitle: GroupName
                                     }
-                                })
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Removed"),
@@ -560,7 +561,7 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                onClick: (RemovedEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                     state:
                                     {
@@ -571,7 +572,7 @@ const Groups = ({ classes }) => {
                                         TestStatusOfEmailElseSms: 1,
                                         ResultTitle: GroupName
                                     }
-                                })
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Bounced"),
@@ -580,7 +581,7 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                onClick: (InvalidEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                     state:
                                     {
@@ -591,7 +592,7 @@ const Groups = ({ classes }) => {
                                         TestStatusOfEmailElseSms: 1,
                                         ResultTitle: GroupName
                                     }
-                                })
+                                }) : voidFunction
                             },
                         ]}
                         gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
@@ -609,7 +610,7 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.blue, classes.dataBox),
                                     value: colorTextStyle.blue,
                                 },
-                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                     state:
                                     {
@@ -620,7 +621,7 @@ const Groups = ({ classes }) => {
                                         TestStatusOfEmailElseSms: 0,
                                         ResultTitle: GroupName
                                     }
-                                })
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Active"),
@@ -629,7 +630,7 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.green, classes.dataBox),
                                     value: colorTextStyle.green,
                                 },
-                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                onClick: (ActiveCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                     state:
                                     {
@@ -640,7 +641,7 @@ const Groups = ({ classes }) => {
                                         TestStatusOfEmailElseSms: 0,
                                         ResultTitle: GroupName
                                     }
-                                })
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Removed"),
@@ -649,7 +650,7 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                onClick: (RemovedCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                     state:
                                     {
@@ -660,7 +661,7 @@ const Groups = ({ classes }) => {
                                         TestStatusOfEmailElseSms: 0,
                                         ResultTitle: GroupName
                                     }
-                                })
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Bounced"),
@@ -669,7 +670,7 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                onClick: (InvalidCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                     state:
                                     {
@@ -680,7 +681,7 @@ const Groups = ({ classes }) => {
                                         TestStatusOfEmailElseSms: 0,
                                         ResultTitle: GroupName
                                     }
-                                })
+                                }) : voidFunction
                             },
                         ]}
                         gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
@@ -696,16 +697,27 @@ const Groups = ({ classes }) => {
                     <FlexGrid
                         gridArr={[
                             {
-                                onClick: () => {
-                                    navigate(CLIENT_CONSTANTS.BASEURL, {
-                                        state: {
-                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
-                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
-                                            GroupIds: [GroupID],
-                                            ResultTitle: GroupName
-                                        }
-                                    })
-                                },
+                                onClick:
+                                    (
+                                        (ActiveEmails || 0) +
+                                        (RemovedEmails || 0) +
+                                        (RestrictedEmails || 0) +
+                                        (InvalidEmails || 0)
+                                    ) > 0
+                                        ||
+                                        (
+                                            (ActiveCell || 0) +
+                                            (RemovedCell || 0) +
+                                            (InvalidCell || 0)
+                                        ) > 0 ?
+                                        () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                            state: {
+                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
+                                                GroupIds: [GroupID],
+                                                ResultTitle: GroupName
+                                            }
+                                        }) : voidFunction,
                                 label: t("recipient.preview"),
                                 component: (
                                     <IconWrapper iconName="preview" className={classes.mxAuto} />

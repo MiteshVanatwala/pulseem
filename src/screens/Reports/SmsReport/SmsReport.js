@@ -26,6 +26,7 @@ import GraphReport from '../../../components/Reports/GraphReport';
 import { clientSearchQueryString } from '../../ClientSearch/tempConstants';
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { voidFunction } from '../../../helpers/utils';
 
 const SmsReport = ({ classes }) => {
   const navigate = useNavigate()
@@ -432,10 +433,10 @@ const SmsReport = ({ classes }) => {
 
   const renderIntData = (value, type, data = {}) => {
     const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), textStyle = null, onClick = null } = data
-    const isLink = onClick && onClick !== null && value > 0;
+    const isLink = value > 0 && !!onClick;
     return (
       <Box style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
-        onClick={onClick}>
+        onClick={isLink ? onClick : voidFunction}>
         <Typography
           component={'a'}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}

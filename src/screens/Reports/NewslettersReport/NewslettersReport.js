@@ -26,6 +26,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { clientSearchQueryString } from '../../ClientSearch/tempConstants';
 import { useNavigate } from 'react-router';
 import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { voidFunction } from '../../../helpers/utils';
 
 
 const NewslettersReport = ({ classes }) => {
@@ -674,18 +675,10 @@ const NewslettersReport = ({ classes }) => {
 
   const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
     const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', onClick, textStyle = null, isRevenueCol = false } = data
-    const isLink = href !== '' && clickable && (value > 0 || isRevenueCol);
+    const isLink = !!href && clickable && (value > 0 || isRevenueCol);
     return (
       <Box className={classes.cellText}
-        onClick={() => {
-          if (isLink && onClick) {
-            onClick();
-          }
-          else {
-            return false;
-          }
-        }
-        }
+        onClick={isLink ? onClick : voidFunction}
         style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}>
         <Typography component={isLink ? 'a' : 'p'}
           className={clsx(classes.middleTxt, colorTextStyle[type] || '')}
