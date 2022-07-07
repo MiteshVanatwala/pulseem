@@ -186,8 +186,17 @@ const ClientSearchResult = ({ props, classes }) => {
     const initExtraFields = async () => {
       await dispatch(getAccountExtraData());
     }
-    const isSessionStorageData = document.referrer?.toLowerCase().indexOf('automation') > -1 || document.referrer?.toLowerCase().indexOf('clientsearch') > -1
-    const overwriteObject = isSessionStorageData ? JSON.parse(window.sessionStorage?.getItem('searchData')) : location?.state
+    let isSessionStorageData, overwriteObject = null;
+    const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
+    if (referrer && referrer !== '') {
+      isSessionStorageData = referrer.toLowerCase().includes('automationreport') || (referrer.toLowerCase().includes('clientsearch') && !referrer.toLowerCase().includes('result'))
+      if (isSessionStorageData) {
+        overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
+      }
+    }
+    else {
+      overwriteObject = location?.state;
+    }
     // On load
     let initSearchData = {
       IsAdvanced: false,
