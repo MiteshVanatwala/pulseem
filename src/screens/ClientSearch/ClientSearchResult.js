@@ -209,9 +209,9 @@ const ClientSearchResult = ({ props, classes }) => {
     setSearchData(initSearchData);
     initExtraFields();
     
-    if (isSessionStorageData) {
-      window.sessionStorage.removeItem('searchData');
-    }
+    // if (isSessionStorageData) {
+    //   window.sessionStorage.removeItem('searchData');
+    // }
   }, []);
 
   useEffect(() => {
