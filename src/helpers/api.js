@@ -18,6 +18,7 @@ export const logout = async () => {
     setCookie('accountFeatures', '');
     setCookie('accountSettings', '');
     setCookie('isClal', '');
+    window.sessionStorage.removeItem('searchData')
     redirectToLogin()
   } catch (err) {
     console.log("logout error", err)

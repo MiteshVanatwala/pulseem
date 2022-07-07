@@ -186,6 +186,17 @@ const ClientSearchResult = ({ props, classes }) => {
     const initExtraFields = async () => {
       await dispatch(getAccountExtraData());
     }
+    let isSessionStorageData, overwriteObject = null;
+    const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
+    if (referrer && referrer !== '') {
+      isSessionStorageData = referrer.toLowerCase().includes('automationreport') || (referrer.toLowerCase().includes('clientsearch') && !referrer.toLowerCase().includes('result'))
+      if (isSessionStorageData) {
+        overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
+      }
+    }
+    else {
+      overwriteObject = location?.state;
+    }
     // On load
     let initSearchData = {
       IsAdvanced: false,
@@ -201,12 +212,11 @@ const ClientSearchResult = ({ props, classes }) => {
       CountryOrRegion: "",
       GroupIds: [],
       NodeID: "",
-      ...location?.state,
+      ...overwriteObject,
     };
 
     setSearchData(initSearchData);
     initExtraFields();
-
   }, []);
 
   useEffect(() => {
@@ -227,8 +237,8 @@ const ClientSearchResult = ({ props, classes }) => {
         "Country": t('common.country'),
         "Zip": t('common.zip'),
         "Company": t('common.company'),
-        "ReminderDate": t('common.reminderDate'),
-        "ErrorMessages": t('recipient.errorMessage'),
+        "ReminderDate": t('recipient.reminderDate'),
+        "ErrorTypeText": t('recipient.errorMessage'),
         "Revenue": t('common.campaignRevenue'),
         "ExtraDate1": t('common.ExtraDate1'),
         "ExtraDate2": t('common.ExtraDate2'),
