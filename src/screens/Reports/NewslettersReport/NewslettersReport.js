@@ -138,15 +138,7 @@ const NewslettersReport = ({ classes }) => {
     PercentageOpens: {
       title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
       href: `/Pulseem/ClientSearchResult.aspx?OpenedCampaignID=${id}&fromreact=true`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-        state: {
-          ...CLIENT_CONSTANTS.QUERY_PARAMS,
-          CampaignID: id,
-          PageType: CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID,
-          TestStatusOfEmailElseSms: 1,
-          ResultTitle: t('common.charStatus.Opened') + ' - ' + t('common.campaignID') + ' ' + id
-        }
-      }),
+      onClick: () => null,
     },
     PercetangeClicks: {
       title: t('mainReport.GridButtonColumnResource1.UniquePercentage'),
@@ -644,8 +636,8 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderDataTooltip = (value, type, data = {}, tooltip) => {
-    const { title = t("notifications.tblBody.total"), href = '', textStyle = null, clickable = false, onClick } = data
-    const isLink = onClick && onClick !== null;
+    const { title = t("notifications.tblBody.total"), textStyle = null, onClick } = data
+    const isLink = onClick && onClick !== null && value > 0;
     return (
       <Tooltip
         title={`${t(tooltip)}`}
@@ -657,16 +649,18 @@ const NewslettersReport = ({ classes }) => {
         }}>
         <Box className={classes.cellText}
           style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}
-          onClick={onClick}>
+          onClick={isLink ? onClick : voidFunction}>
           <Typography
             // component={clickable && value > 0 ? 'a' : 'p'}
             component={'p'}
+            style={{ textDecoration: isLink ? 'underline' : null }}
             // href={href}
             className={clsx(classes.middleText, colorTextStyle[type] || '')}
             target="_blank">
-            {value && value.toLocaleString() || '0'}
+            {(value && value.toLocaleString()) || '0'}
           </Typography>
-          <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
+          <Typography style={{ textDecoration: isLink ? 'underline' : null }}
+            className={clsx(classes.middleWrapText, colorTextStyle[type])}>
             {title}
           </Typography>
         </Box>
@@ -675,8 +669,8 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', onClick, textStyle = null, isRevenueCol = false } = data
-    const isLink = !!href && clickable && (value > 0 || isRevenueCol);
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), onClick, textStyle = null, isRevenueCol = false } = data
+    const isLink = (value > 0 && clickable) || isRevenueCol;
     return (
       <Box className={classes.cellText}
         onClick={isLink ? onClick : voidFunction}
