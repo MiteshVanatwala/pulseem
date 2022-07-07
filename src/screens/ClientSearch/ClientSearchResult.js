@@ -186,6 +186,8 @@ const ClientSearchResult = ({ props, classes }) => {
     const initExtraFields = async () => {
       await dispatch(getAccountExtraData());
     }
+    const isSessionStorageData = document.referrer?.toLowerCase().indexOf('automation') > -1 || document.referrer?.toLowerCase().indexOf('clientsearch') > -1
+    const overwriteObject = isSessionStorageData ? window.sessionStorage?.getItem('searchData') : location?.state
     // On load
     let initSearchData = {
       IsAdvanced: false,
@@ -201,12 +203,15 @@ const ClientSearchResult = ({ props, classes }) => {
       CountryOrRegion: "",
       GroupIds: [],
       NodeID: "",
-      ...location?.state,
+      ...overwriteObject,
     };
 
     setSearchData(initSearchData);
     initExtraFields();
-
+    
+    if (isSessionStorageData) {
+      window.sessionStorage.removeItem('searchData');
+    }
   }, []);
 
   useEffect(() => {
