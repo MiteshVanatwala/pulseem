@@ -130,7 +130,8 @@ const AddRecipientPopup = ({ classes,
     useEffect(() => {
         getData()
         if (recipientData) {
-            setAddRecipientData({ ...addRecipientData, ...recipientData })
+            let { ExtraFields, ...restData } = { ...addRecipientData, ...recipientData }
+            setAddRecipientData({ ...restData, ...ExtraFields })
             setSelectedLocalGroups([...selectedLocalGroups, ...selectedGroups])
         }
     }, [recipientData])
@@ -263,7 +264,7 @@ const AddRecipientPopup = ({ classes,
             setLoader(true)
             const clientsData = [];
             clientsData.push({ ...addRecipientData, ...accountExtraFields });
-            const finalData = recipientData ? { ...recipientData, ...addRecipientData } : { ...recipientData, ...addRecipientData, ...accountExtraFields };
+            const finalData = recipientData ? { ...addRecipientData, ...accountExtraFields, Overwrite: true } : { ...addRecipientData, ...accountExtraFields };
 
             const request = {
                 ClientsData: [finalData],
@@ -910,7 +911,7 @@ const AddRecipientPopup = ({ classes,
                 return {
                     content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
                         classes={classes}
-                        value={accountExtraFields?.[ef] || ''}
+                        value={accountExtraFields?.[ef] || addRecipientData?.[ef]}
                         onChange={e => handleChange(e, { date: e, field: ef }, true)}
                         toolbarDisabled={false}
                         removePadding
@@ -920,7 +921,7 @@ const AddRecipientPopup = ({ classes,
                         placeholder={extraFieldsTemp[ef]}
                         variant="outlined"
                         name={ef}
-                        value={accountExtraFields?.[ef] || ''}
+                        value={accountExtraFields?.[ef] || addRecipientData?.[ef]}
                         className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={e => handleChange(e, null, true)}
@@ -943,7 +944,7 @@ const AddRecipientPopup = ({ classes,
                             {
                                 content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
                                     classes={classes}
-                                    value={accountExtraFields?.[ef] || null}
+                                    value={accountExtraFields?.[ef] || addRecipientData?.[ef]}
                                     onChange={e => handleChange(e, { date: e, field: ef }, true)}
                                     toolbarDisabled={false}
                                 /> : <TextField
@@ -951,7 +952,7 @@ const AddRecipientPopup = ({ classes,
                                     label=""
                                     variant="outlined"
                                     name={ef}
-                                    value={accountExtraFields?.[ef] || ''}
+                                    value={accountExtraFields?.[ef] || addRecipientData?.[ef]}
                                     className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                     autoComplete="off"
                                     onChange={e => handleChange(e, null, true)}
