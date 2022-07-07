@@ -99,7 +99,8 @@ const NewslettersReport = ({ classes }) => {
       title: t('common.Unique'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`,
       clickable: true,
-      onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`)
+      onClick: () => window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`
+      // onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true`)
     },
     RemovedClients: {
       title: windowSize === 'xs' ? '' : t('common.Removed'),
@@ -761,13 +762,13 @@ const NewslettersReport = ({ classes }) => {
           className={classes.flex4}>
           <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(ClickCount, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
+              {renderDataTooltip(ClickCount + 1, 'blue', hrefs.ClickCount, 'mainReport.ClicksTotalTooltip.Text')}
             </Grid>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderDataTooltip(ClickCountUnique, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
+              {renderDataTooltip(ClickCountUnique + 1, 'blue', hrefs.ClickCountUnique, 'mainReport.ClicksUniqueTooltip.Text')}
             </Grid>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
-              {renderPercetangeData(PercetangeClicks, 'blue', hrefs.PercetangeClicks)}
+              {renderPercetangeData(PercetangeClicks + 1, 'blue', hrefs.PercetangeClicks)}
             </Grid>
           </Grid>
         </TableCell>
