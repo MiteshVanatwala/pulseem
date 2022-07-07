@@ -441,7 +441,7 @@ const ClientSearchResult = ({ props, classes }) => {
 
   const PageTypeObject = {
     '1': {
-      title: t("common.SendTime") / t("common.SendDate"),
+      title: t("common.SendDate"),
       sortKey: 'Date',
       component: {
         mobile: ({ snt_OpeningDate = null, ...rest }) => (<>
@@ -455,6 +455,26 @@ const ClientSearchResult = ({ props, classes }) => {
         web: ({ snt_OpeningDate = null, ...rest }) => (
           <Typography className={clsx(classes.bold, classes.f16)}>
             {snt_OpeningDate ? moment(snt_OpeningDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        )
+      },
+      filterComponents: [FromDate, ToDate]
+    },
+    '4': {
+      title: t("common.SendDate"),
+      sortKey: 'Date',
+      component: {
+        mobile: ({ SentDate = null, ...rest }) => (<>
+          <Typography className={classes.bold}>
+            {t("common.OpenTime")}
+          </Typography>
+          <Typography>
+            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
+          </Typography>
+        </>),
+        web: ({ SentDate = null, ...rest }) => (
+          <Typography className={clsx(classes.bold, classes.f16)}>
+            {SentDate ? moment(SentDate).format('DD/MM/YYYY HH:mm') : ''}
           </Typography>
         )
       },
@@ -1332,7 +1352,14 @@ const ClientSearchResult = ({ props, classes }) => {
         </TableCell>
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web &&
           <TableCell classes={cellStyle} align="center" className={classes.flex2}>
-            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, SentDate: SentDate, CreationDate: CreationDate, LogSms_ErrorType: ErrorTypeText })}
+            {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.web({
+              Revenue: Revenue,
+              snt_OpeningDate: snt_OpeningDate,
+              LastSendDate: LastSendDate,
+              SentDate: SentDate,
+              CreationDate: CreationDate,
+              LogSms_ErrorType: ErrorTypeText
+            })}
           </TableCell>}
 
 

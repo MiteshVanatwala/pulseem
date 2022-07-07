@@ -42,7 +42,13 @@ const CLIENT_CONSTANTS = {
     REPORT_TYPE: {
         ShowGroup: 0,
         ShowMails: 10,
+        ShowMailsActive: 11,
+        ShowMailsRemoved: 12,
+        ShowMailsErrored: 13,
         ShowSms: 20,
+        ShowSmsActive: 21,
+        ShowSmsRemoved: 22,
+        ShowSmsErrored: 23
     },
     QUERY_PARAMS: {
         PageSize: "6",
