@@ -23,7 +23,7 @@ import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
 import { setCookie } from '../../../helpers/cookies'
 import { FaExclamationCircle } from 'react-icons/fa'
 
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import {
   getPreviousCampaignData,
   getPreviousLandingData,
@@ -127,6 +127,7 @@ const SmsCreator = ({ classes, ...props }) => {
     testGroups,
     ToastMessages
   } = useSelector((state) => state.sms);
+  const location = useLocation();
   const [dialogType, setDialogType] = useState(null)
   const [alignment, setAlignment] = useState('right');
   const [showEmoji, setShowEmoji] = useState(false);
@@ -249,7 +250,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const params = useParams()
 
-  const qs = queryString.parse(props.location.search);
+  const qs = (props.location.search && queryString.parse(props.location.search)) || location?.state;
 
   const renderHtml = (html) => {
     function createMarkup() {
@@ -1078,7 +1079,7 @@ const SmsCreator = ({ classes, ...props }) => {
               width={48}
               boxShadow="0px 1px 5px rgba(0, 0, 0, 0.6)"
               activeBoxShadow="0px 0px 1px 10px rgba(0, 0, 0, 0.2)"
-              className="react-switch"
+              // className="react-switch"
               id="material-switch"
               className={isRTL ? classes.reactSwitchHe : classes.reactSwitch}
             />

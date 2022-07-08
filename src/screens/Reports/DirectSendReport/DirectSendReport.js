@@ -19,9 +19,10 @@ import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
 import { ExportIcon } from '../../../assets/images/managment/index'
 import queryString from 'query-string';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { useLocation } from 'react-router';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
-  const qs = queryString.parse(props.location.search);
+  const location = useLocation();
   const { showContent } = useSelector(state => state.report);
   const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
@@ -39,6 +40,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const MAX_EXPORT_RECORDS = 600000;
+
+  const qs = (props.location.search && queryString.parse(props.location.search)) || location?.state;
 
   const defaultsDates = {
     archive: {
