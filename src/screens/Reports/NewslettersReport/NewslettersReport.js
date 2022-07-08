@@ -65,6 +65,7 @@ const NewslettersReport = ({ classes }) => {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS,
           CampaignID: id,
+          ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
           PageType: CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID,
           ResultTitle: t('common.Sent') + ' - ' + t('common.campaignID') + ' ' + id
         }
@@ -118,16 +119,17 @@ const NewslettersReport = ({ classes }) => {
     SendError: {
       title: windowSize === 'xs' ? '' : t('mainReport.GridButtonColumnResource4.HeaderText'),
       href: `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
-        state: {
-          ...CLIENT_CONSTANTS.QUERY_PARAMS,
-          CampaignID: id,
-          PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
-          TestStatusOfEmailElseSms: 1,
-          Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Invalid,
-          ResultTitle: t('common.charStatus.error') + ' - ' + t('common.campaignID') + ' ' + id
-        }
-      }),
+      onClick: () => { window.location = `/Pulseem/CampaignErrorReport.aspx?CampaignID=${id}&fromreact=true` }
+      // onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+      //   state: {
+      //     ...CLIENT_CONSTANTS.QUERY_PARAMS,
+      //     CampaignID: id,
+      //     PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+      //     TestStatusOfEmailElseSms: 1,
+      //     Status: CLIENT_CONSTANTS.NEWSlETTER_STATUS.Invalid,
+      //     ResultTitle: t('common.charStatus.error') + ' - ' + t('common.campaignID') + ' ' + id
+      //   }
+      // }),
     },
     PercetangeRemovedClients: {
       title: t('mainReport.removedPercents'),
@@ -676,11 +678,14 @@ const NewslettersReport = ({ classes }) => {
         onClick={isLink ? onClick : voidFunction}
         style={{ ...textStyle, cursor: isLink ? 'pointer' : null }}>
         <Typography component={isLink ? 'a' : 'p'}
+          style={{ textDecoration: isLink ? 'underline' : null }}
           className={clsx(classes.middleTxt, colorTextStyle[type] || '')}
           target="_blank">
           {(value && value.toLocaleString()) || '0'}
         </Typography>
-        <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
+        <Typography
+          className={clsx(classes.middleWrapText, colorTextStyle[type])}
+          style={{ textDecoration: isLink ? 'underline' : null }}>
           <span className={classes.hideInMiddleScreen} style={textStyle}>{title}</span> {innerTitle !== '' ? <span className={classes.showTitleInline}>{innerTitle}</span> : null}
         </Typography>
       </Box>
@@ -725,7 +730,7 @@ const NewslettersReport = ({ classes }) => {
           align='center'
           classes={noBorderCellStyle}
           className={classes.flex1}>
-          {renderIntData(TotalSendPlan, '', row, windowSize !== 'xs', t("mainReport.totalSendPlan"))}
+          {renderIntData(TotalSendPlan, '', row, false, t("mainReport.totalSendPlan"))}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
