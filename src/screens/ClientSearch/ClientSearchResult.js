@@ -229,7 +229,7 @@ const ClientSearchResult = ({ props, classes }) => {
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
         "Email": t("common.Mail"),
-        "Telephone": t('common.Telephone'),
+        "Telephone": t('common.telephone'),
         "Cellphone": t('common.Cellphone'),
         "Address": t('common.address'),
         "BirthDate": t('common.birthDate'),
