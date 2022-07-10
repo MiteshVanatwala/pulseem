@@ -344,7 +344,7 @@ const ClientSearchResult = ({ props, classes }) => {
   }
 
   const sortData = (key) => {
-    if (key === 'CreationDate') {
+    if (key === 'CreationDate' || key === 'Date') {
       setSearchData({
         ...searchData,
         OrderBy: descSortDirection ? 0 : 1
