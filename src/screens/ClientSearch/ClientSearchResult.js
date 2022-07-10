@@ -957,7 +957,7 @@ const ClientSearchResult = ({ props, classes }) => {
             setPage(1);
           }}
           onKeyPress={handleKeyPress}
-          placeholder={t("common.CampaignName")}
+          placeholder={t("report.clientName")}
         />
       );
     }

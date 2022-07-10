@@ -196,7 +196,7 @@ const Groups = ({ classes }) => {
                         setPage(1);
                     }}
                     onKeyPress={handleKeyPress}
-                    placeholder={t("common.CampaignName")}
+                    placeholder={t("common.GroupName")}
                 />
             );
         }
@@ -830,6 +830,7 @@ const Groups = ({ classes }) => {
             RemovedCell,
             RemovedEmails,
             TotalRecipients,
+            RestrictedEmails,
             GroupName
         } = row;
         return (
@@ -865,21 +866,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.blue,
                                         value: colorTextStyle.blue,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
-                                    // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                    //     state: {
-                                    //         "PageSize": "6",
-                                    //         "PageIndex": 1,
-                                    //         "SearchTerm": "",
-                                    //         "Status": 0,  // The client status
-                                    //         "PageType": "16",
-                                    //         "ReportType": 0,
-                                    //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                    //         "Switch": "",
-                                    //         "CountryOrRegion": "",
-                                    //         "GroupIds": [GroupID] // Could be null
-                                    //     }
-                                    //})
+                                    onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            GroupIds: [GroupID],
+                                            Status: 100,
+                                            TestStatusOfEmailElseSms: 1,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Active"),
@@ -888,21 +886,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.green,
                                         value: colorTextStyle.green,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
-                                    // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                    //     state: {
-                                    //         "PageSize": "6",
-                                    //         "PageIndex": 1,
-                                    //         "SearchTerm": "",
-                                    //         "Status": 0,  // The client status
-                                    //         "PageType": "16",
-                                    //         "ReportType": 0,
-                                    //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                    //         "Switch": "",
-                                    //         "CountryOrRegion": "",
-                                    //         "GroupIds": [GroupID] // Could be null
-                                    //     }
-                                    //})
+                                    onClick: (ActiveEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            GroupIds: [GroupID],
+                                            Status: 1,
+                                            TestStatusOfEmailElseSms: 1,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Removed"),
@@ -911,21 +906,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
-                                    // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                    //     state: {
-                                    //         "PageSize": "6",
-                                    //         "PageIndex": 1,
-                                    //         "SearchTerm": "",
-                                    //         "Status": 0,  // The client status
-                                    //         "PageType": "16",
-                                    //         "ReportType": 0,
-                                    //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                    //         "Switch": "",
-                                    //         "CountryOrRegion": "",
-                                    //         "GroupIds": [GroupID] // Could be null
-                                    //     }
-                                    //})
+                                    onClick: (RemovedEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            GroupIds: [GroupID],
+                                            Status: 2,
+                                            TestStatusOfEmailElseSms: 1,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Bounced"),
@@ -934,21 +926,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
-                                    // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                    //     state: {
-                                    //         "PageSize": "6",
-                                    //         "PageIndex": 1,
-                                    //         "SearchTerm": "",
-                                    //         "Status": 0,  // The client status
-                                    //         "PageType": "16",
-                                    //         "ReportType": 0,
-                                    //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                    //         "Switch": "",
-                                    //         "CountryOrRegion": "",
-                                    //         "GroupIds": [GroupID] // Could be null
-                                    //     }
-                                    //})
+                                    onClick: (InvalidEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            GroupIds: [GroupID],
+                                            Status: 4,
+                                            TestStatusOfEmailElseSms: 1,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                             ]}
 
@@ -968,21 +957,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.blue,
                                         value: colorTextStyle.blue,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
-                                    // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                    //     state: {
-                                    //         "PageSize": "6",
-                                    //         "PageIndex": 1,
-                                    //         "SearchTerm": "",
-                                    //         "Status": 0,  // The client status
-                                    //         "PageType": "16",
-                                    //         "ReportType": 0,
-                                    //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                    //         "Switch": "",
-                                    //         "CountryOrRegion": "",
-                                    //         "GroupIds": [GroupID] // Could be null
-                                    //     }
-                                    //})
+                                    onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            GroupIds: [GroupID],
+                                            Status: 100,
+                                            TestStatusOfEmailElseSms: 0,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Active"),
@@ -991,21 +977,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.green,
                                         value: colorTextStyle.green,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
-                                    // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                    //     state: {
-                                    //         "PageSize": "6",
-                                    //         "PageIndex": 1,
-                                    //         "SearchTerm": "",
-                                    //         "Status": 0,  // The client status
-                                    //         "PageType": "16",
-                                    //         "ReportType": 0,
-                                    //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                    //         "Switch": "",
-                                    //         "CountryOrRegion": "",
-                                    //         "GroupIds": [GroupID] // Could be null
-                                    //     }
-                                    //})
+                                    onClick: () => (ActiveCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            GroupIds: [GroupID],
+                                            Status: 0,
+                                            TestStatusOfEmailElseSms: 0,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Removed"),
@@ -1014,21 +997,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
-                                    // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                    //     state: {
-                                    //         "PageSize": "6",
-                                    //         "PageIndex": 1,
-                                    //         "SearchTerm": "",
-                                    //         "Status": 0,  // The client status
-                                    //         "PageType": "16",
-                                    //         "ReportType": 0,
-                                    //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                    //         "Switch": "",
-                                    //         "CountryOrRegion": "",
-                                    //         "GroupIds": [GroupID] // Could be null
-                                    //     }
-                                    //})
+                                    onClick: () => (RemovedCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            GroupIds: [GroupID],
+                                            Status: 1,
+                                            TestStatusOfEmailElseSms: 0,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Bounced"),
@@ -1037,21 +1017,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
-                                    // onClick: () => navigate('/Pulseem/ClientSearchResult.aspx',{
-                                    //     state: {
-                                    //         "PageSize": "6",
-                                    //         "PageIndex": 1,
-                                    //         "SearchTerm": "",
-                                    //         "Status": 0,  // The client status
-                                    //         "PageType": "16",
-                                    //         "ReportType": 0,
-                                    //         "TestStatusOfEmailElseSms": 0, // 0 = Newsletter, 1 = SMS
-                                    //         "Switch": "",
-                                    //         "CountryOrRegion": "",
-                                    //         "GroupIds": [GroupID] // Could be null
-                                    //     }
-                                    //})
+                                    onClick: () => (InvalidCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            GroupIds: [GroupID],
+                                            Status: 4,
+                                            TestStatusOfEmailElseSms: 0,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                             ]}
                             variant="body1"

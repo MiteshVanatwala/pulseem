@@ -69,6 +69,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     fontFamily: "Assistant",
     fontWeight: "bold",
     marginTop: 20,
+    whiteSpace: windowSize === "xs" ? "break-spaces" : null,
   },
   tableRow: {
     marginBox: 20,
