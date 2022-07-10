@@ -225,7 +225,7 @@ const ClientSearchResult = ({ props, classes }) => {
       let updatingObject = {
         "Status": t('common.Status'),
         "SmsStatus": t('common.smsStatus'),
-        "CreatedDate": t('common.CreationDate'),
+        "CreationDate": location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FormID ? t('client.subscribedOn') : t('common.CreationDate'),
         "FirstName": t('smsReport.firstName'),
         "LastName": t('smsReport.lastName'),
         "Email": t("common.Mail"),
@@ -259,6 +259,9 @@ const ClientSearchResult = ({ props, classes }) => {
         "ExtraField12": t('common.ExtraField12'),
         "ExtraField13": t('common.ExtraField13'),
       };
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+        updatingObject["snt_OpeningDate"] = t('common.OpenTime');
+      }
       updatingObject = replaceExtraFieldHeader(updatingObject, extraData);
       exportColumnHeader.current = updatingObject;
     }
@@ -323,7 +326,7 @@ const ClientSearchResult = ({ props, classes }) => {
         }, []);
 
         orderList = orderList.map((ol) => { return flatObject(ol) });
-        if (searchData.PageType !== 15) {
+        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
           orderList = deletePropertyFromArrayObject(orderList, "Revenue");
         }
         orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
