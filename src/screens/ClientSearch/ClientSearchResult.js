@@ -60,6 +60,7 @@ import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
 import { exportFile } from '../../helpers/exportFromJson';
 import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader, deletePropertyFromArrayObject } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
+import { switchClientStatus } from '../../helpers/functions';
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS, CSR_FILTER_ERRORS, Static_CSR_Data } from "../../model/Clients/Contants";
 import { Autocomplete } from "@material-ui/lab";
@@ -1315,10 +1316,10 @@ const ClientSearchResult = ({ props, classes }) => {
 
     const switchStatus = (isEmail) => {
       if (Email && isEmail && Email !== '') {
-        return Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")
+        return t(switchClientStatus('email', Status))
       }
       else if (Cellphone && !isEmail && Cellphone !== '') {
-        return SmsStatus === 0 ? t("common.statusActive") : t("common.Unsubscribed")
+        return t(switchClientStatus('sms', SmsStatus))
       }
       return t("emailStatus.noStatus")
     }

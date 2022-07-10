@@ -45,5 +45,22 @@
     }
   },
   "setInvalidSucceeded": "The clients were setted as Invalid",
-  "subscribedOn": "Subscription Date"
+  "subscribedOn": "Subscription Date",
+  "clientStatus": {
+    "email": {
+      "NoEmail": "No Status",
+      "Active": "Active",
+      "Removed": "Unsubscribed",
+      "Restricted": "Restricted",
+      "Invalid": "Invalid",
+      "Pending": "Pending"
+    },
+    "sms": {
+      "NoSms": "No Status", 
+      "Active": "Active",
+      "Removed": "Removed",
+      "Invalid": "Invalid" 
+
+    }
+  }
 }

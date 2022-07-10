@@ -45,5 +45,21 @@
     }
   },
   "setInvalidSucceeded": "הנמענים עודכנו כשגויים.",
-  "subscribedOn": "תאריך הרשמה"
+  "subscribedOn": "תאריך הרשמה",
+  "clientStatus": {
+    "email": {
+      "NoEmail": "אין סטטוס",
+      "Active": "פעיל",
+      "Removed": "מוסר",
+      "Restricted": "חסום",
+      "Invalid": "שגוי",
+      "Pending": "ממתין לאישור"
+    },
+    "sms": {
+      "NoSms": "אין סטטוס",
+      "Active": "פעיל",
+      "Removed": "מוסר",
+      "Invalid": "שגוי"
+    }
+  }
 }
