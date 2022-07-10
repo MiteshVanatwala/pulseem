@@ -292,6 +292,8 @@ const ClientSearchResult = ({ props, classes }) => {
         ...searchData,
         PageIndex: 1,
         PageSize: rowsPerPage,
+        FromDate: date.FromDate,
+        ToDate: date.ToDate,
         SearchTerm: searchStr,
       });
       setPage(1);
@@ -305,6 +307,8 @@ const ClientSearchResult = ({ props, classes }) => {
         ...searchData,
         PageIndex: 1,
         PageSize: rowsPerPage,
+        FromDate: date.FromDate,
+        ToDate: date.ToDate,
         SearchTerm: searchStr,
       });
       setPage(1);
@@ -992,6 +996,8 @@ const ClientSearchResult = ({ props, classes }) => {
                 ...searchData,
                 PageIndex: 1,
                 PageSize: rowsPerPage,
+                FromDate: date.FromDate,
+                ToDate: date.ToDate,
                 SearchTerm: searchStr,
               });
               setPage(1);
@@ -1108,18 +1114,6 @@ const ClientSearchResult = ({ props, classes }) => {
           >
             {t("campaigns.exportFile")}
           </Button>
-          <CSVLink
-            data={[
-              ["firstname", "lastname", "email"],
-              ["Ahmed", "Tomi", "ah@smthing.co.com"],
-              ["Raed", "Labes", "rl@smthing.co.com"],
-              ["Yezzi", "Min l3b", "ymin@cocococo.com"],
-            ]}
-            filename="report.csv"
-            className="hidden"
-            ref={null}
-            target="_blank"
-          />
         </Grid>
         {location?.state?.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue &&
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
