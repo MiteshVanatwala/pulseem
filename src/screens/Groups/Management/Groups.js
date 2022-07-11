@@ -755,7 +755,7 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.blue,
                                         value: colorTextStyle.blue,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
                                 },
                                 {
                                     name: t("recipient.Active"),
@@ -764,7 +764,7 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.green,
                                         value: colorTextStyle.green,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsActive}&GroupID=${GroupID}`)
                                 },
                                 {
                                     name: t("recipient.Removed"),
@@ -773,7 +773,7 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsRemoved}&GroupID=${GroupID}`)
                                 },
                                 {
                                     name: t("recipient.Bounced"),
@@ -782,7 +782,7 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsErrored}&GroupID=${GroupID}`)
                                 },
                             ]}
 
@@ -802,7 +802,7 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.blue,
                                         value: colorTextStyle.blue,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSms}&GroupID=${GroupID}`)
                                 },
                                 {
                                     name: t("recipient.Active"),
@@ -811,7 +811,7 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.green,
                                         value: colorTextStyle.green,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsActive}&GroupID=${GroupID}`)
                                 },
                                 {
                                     name: t("recipient.Removed"),
@@ -820,7 +820,7 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsRemoved}&GroupID=${GroupID}`)
                                 },
                                 {
                                     name: t("recipient.Bounced"),
@@ -829,7 +829,7 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open('https://www.pulseem.co.il/Pulseem/ClientSearchResult.aspx')
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsErrored}&GroupID=${GroupID}`)
                                 },
                             ]}
                             variant="body1"
