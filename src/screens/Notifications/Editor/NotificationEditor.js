@@ -193,9 +193,9 @@ const NotificationEditor = ({ props, classes }) => {
   useEffect(() => {
     const body = document.querySelector('#root');
     body.scrollIntoView({}, 100);
-    
+
     handlePublicKey();
-    if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
+    if (props?.match?.params?.id != null && parseInt(props?.match?.params?.id) > 0) {
       getData();
       if (props.match.params.send || props.match.url.toLowerCase().indexOf('send') > -1) {
         getSubAccountGroups();
@@ -326,7 +326,7 @@ const NotificationEditor = ({ props, classes }) => {
       else {
         model.sendDate = null;
       }
-      const data = { NotificationId: parseInt(props.match.params.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
+      const data = { NotificationId: parseInt(props?.match?.params?.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
       const result = await dispatch(saveNotificationSettings(data));
       if (result.payload == true) {
         if (!isExit && isSummary === false) {
@@ -347,7 +347,7 @@ const NotificationEditor = ({ props, classes }) => {
   }
   const insertNotificationForSend = async (e) => {
     e.preventDefault();
-    const data = { NotificationId: parseInt(props.match.params.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
+    const data = { NotificationId: parseInt(props?.match?.params?.id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
     const result = await dispatch(SendNotification(data));
 
     if (result && result.payload === true) {
@@ -356,7 +356,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
   const getData = async () => {
-    const notificationPayload = await dispatch(getNotificationById(props.match.params.id));
+    const notificationPayload = await dispatch(getNotificationById(props?.match?.params?.id));
     setModel(notificationPayload.payload);
     setSourceModel(notificationPayload.payload);
     setPublicKey(notificationPayload.payload.PublicKey);
@@ -369,7 +369,7 @@ const NotificationEditor = ({ props, classes }) => {
     setGroupList(list.payload);
   }
   const getNotificationSettings = async () => {
-    const list = await dispatch(getSettings(props.match.params.id));
+    const list = await dispatch(getSettings(props?.match?.params?.id));
     const selectedList = [];
     if (list.payload.length > 0) {
       const sendDate = list.payload[0].SendDate;
@@ -894,7 +894,7 @@ const NotificationEditor = ({ props, classes }) => {
           </Box>
         </Grid>
         <div className={classes.notification} id={model.ID}>
-          <div style={{ marginBottom: 5 }} className={clsx(
+          <div style={{ marginBottom: 5, backgroundImage: `url(${model.Image})` }} className={clsx(
             classes.flexJustifyCenter,
             classes.dashed,
             classes.notificationTop,
@@ -903,9 +903,6 @@ const NotificationEditor = ({ props, classes }) => {
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             onClick={openGallery(false)}
-            style={{
-              backgroundImage: `url(${model.Image})`
-            }}
           >
             {model == null || !model.Image ? chooseImage() : ""
             }

@@ -254,7 +254,7 @@ const AddRecipientPopup = ({ classes,
             setActiveTab(0);
             return
         }
-        else if (selectedGroups.length === 0) {
+        else if (selectedGroups.length === 0 && selectedLocalGroups.length === 0) {
             tempError.Groups = t(ADD_RECIPIENT_REQUIRED_ERRORS.Groups)
             setErrors({ ...tempError })
             setActiveTab(4);

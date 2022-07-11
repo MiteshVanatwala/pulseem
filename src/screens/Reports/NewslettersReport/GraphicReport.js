@@ -26,7 +26,7 @@ const GraphicReport = ({ props, classes }) => {
   //const [campaignPreviewImage, setCampaignPreviewImage] = useState(null);
   const { t } = useTranslation()
   const dispatch = useDispatch()
-  const qs = (props.location.search && queryString.parse(props.location.search)) || location?.state;
+  const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
 
   const getData = async () => {
     const newsletterReport = await dispatch(getNewsletterReportsByIds(props.match.params.campaignID));

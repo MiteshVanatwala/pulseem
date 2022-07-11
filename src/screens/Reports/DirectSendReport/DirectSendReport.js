@@ -41,7 +41,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const dispatch = useDispatch();
   const MAX_EXPORT_RECORDS = 600000;
 
-  const qs = (props.location.search && queryString.parse(props.location.search)) || location?.state;
+  const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
 
   const defaultsDates = {
     archive: {

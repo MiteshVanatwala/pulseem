@@ -291,10 +291,10 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const getData = async () => {
     setLoader(true);
-    if (props && props.match.params.id) {
+    if (props && props?.match?.params?.id) {
       const finishedCampaigns = await dispatch(getFinishedCampaigns());
       const subAccountGroups = await dispatch(getGroupsBySubAccountId());
-      const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id));
+      const campaignSettings = await dispatch(getCampaignSettings(props?.match?.params?.id));
       await dispatch(getTestGroups());
 
       if (campaignSettings.payload.error) {
@@ -417,14 +417,14 @@ const SmsSend = ({ classes, ...props }) => {
   };
 
   useEffect(() => {
-    if (props && props.match.params.id) {
+    if (props && props?.match?.params?.id) {
       getSavedData();
     }
   }, []);
 
   const getSavedData = async () => {
-    if (props && props.match.params.id) {
-      let response = await dispatch(getSmsByID(props.match.params.id))
+    if (props && props?.match?.params?.id) {
+      let response = await dispatch(getSmsByID(props?.match?.params?.id))
       setLoader(false)
       if (response) {
         setdataSaved({ ...dataSaved, campaignName: response.payload.Name, fromNumber: response.payload.FromNumber, msg: response.payload.Text, CreditPerSms: response.payload.CreditsPerSms })
@@ -1428,7 +1428,7 @@ const SmsSend = ({ classes, ...props }) => {
         ExceptionalDays: exceptionalDays
       },
       SendTypeID: sendType,
-      SmsCampaignID: props.match.params.id,
+      SmsCampaignID: props?.match?.params?.id,
       SourceTimeZone: "Asia/Calcutta",
       SpecialSettings: {
         Type: "",
@@ -1562,7 +1562,7 @@ const SmsSend = ({ classes, ...props }) => {
 
   const onApiCall = async () => {
     let payload = {
-      "SmsCampaignID": props.match.params.id,
+      "SmsCampaignID": props?.match?.params?.id,
       "SubAccountID": -1,
       "AccountID": -1,
       "Credits": dataSaved.CreditPerSms,
@@ -1766,8 +1766,8 @@ const SmsSend = ({ classes, ...props }) => {
   }
 
   const handleDelete = () => {
-    if (props && props.match.params.id) {
-      dispatch(deleteSms(props.match.params.id));
+    if (props && props?.match?.params?.id) {
+      dispatch(deleteSms(props?.match?.params?.id));
       setDialogType(null);
       navigate("/SMSCampaigns");
     }
@@ -1797,7 +1797,7 @@ const SmsSend = ({ classes, ...props }) => {
     settypedData([]);
   };
   const handlePreviousPage = () => {
-    window.location = `/react/sms/edit/${props.match.params.id}`;
+    window.location = `/react/sms/edit/${props?.match?.params?.id}`;
   }
   const renderHtml = (html) => {
     function createMarkup() {

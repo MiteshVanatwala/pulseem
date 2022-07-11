@@ -250,7 +250,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const params = useParams()
 
-  const qs = (props.location.search && queryString.parse(props.location.search)) || location?.state;
+  const qs = (window.location.search && queryString.parse(window.location.search)) || location?.state;
 
   const renderHtml = (html) => {
     function createMarkup() {
@@ -350,7 +350,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const initDispatch = async () => {
     setLoader(true);
-    setCampaignId(props && props.match.params.id ? props.match.params.id : -1);
+    setCampaignId(props && params?.id ? params?.id : -1);
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
     await dispatch(getPreviousCampaignData());
@@ -410,8 +410,8 @@ const SmsCreator = ({ classes, ...props }) => {
     return `/pulseem/CreateAutomations.aspx?AutomationID=${qs.FromAutomation}&NodeToEdit=${nodeToEdit}&SMSCampaignID=${campaignId}`;
   }
   const getSavedData = async () => {
-    if (props && props.match.params.id) {
-      let response = await dispatch(getSmsByID(props.match.params.id))
+    if (props && params?.id) {
+      let response = await dispatch(getSmsByID(params?.id))
       if (response && !response.error) {
         setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
@@ -535,10 +535,10 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const handleSend = async () => {
     if (phone !== "") {
-      if (props && props.match.params.id) {
+      if (props && params?.id) {
         const smsQuickSendData = {
-          ...quickSendPayload, SmsCampaignID: props.match.params.id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-            SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: props.match.params.id, Credits: messageCount,
+          ...quickSendPayload, SmsCampaignID: params?.id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+            SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: params?.id, Credits: messageCount,
             TotalRecipients: 1
           }
         }
@@ -1305,8 +1305,8 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleDelete = async () => {
-    if (props && props.match.params.id) {
-      let response = await dispatch(getSmsByID(props.match.params.id))
+    if (props && params?.id) {
+      let response = await dispatch(getSmsByID(params?.id))
       if (response) {
         dispatch(deleteSms(response.payload.SMSCampaignID));
         handleClose();
