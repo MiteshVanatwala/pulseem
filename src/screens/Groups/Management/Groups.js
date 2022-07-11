@@ -415,6 +415,19 @@ const Groups = ({ classes }) => {
             </Grid>
         );
     };
+
+    const REDIRECT_OPTIONS = {
+        ShowGroup: 0,
+        ShowMails: 10,
+        ShowMailsActive: 11,
+        ShowMailsRemoved: 12,
+        ShowMailsErrored: 13,
+        ShowSms: 20,
+        ShowSmsActive: 21,
+        ShowSmsRemoved: 22,
+        ShowSmsErrored: 23
+    };
+    
     const renderRow = (row) => {
         const {
             ActiveCell,
@@ -435,18 +448,6 @@ const Groups = ({ classes }) => {
         let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
             return e === true
         }).length;
-
-        const REDIRECT_OPTIONS = {
-            ShowGroup: 0,
-            ShowMails: 10,
-            ShowMailsActive: 11,
-            ShowMailsRemoved: 12,
-            ShowMailsErrored: 13,
-            ShowSms: 20,
-            ShowSmsActive: 21,
-            ShowSmsRemoved: 22,
-            ShowSmsErrored: 23
-        };
 
         return (
             <TableRow
