@@ -31,7 +31,7 @@ const GroupTags = ({ classes,
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     const dispatch = useDispatch();
-    const groupsToShow = dropDownProps.groups !== null ? dropDownProps.groups : subAccountAllGroups;
+    const groupsToShow = dropDownProps.selectedGroups !== null ? dropDownProps.selectedGroups : subAccountAllGroups;
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();
         e.preventDefault();
