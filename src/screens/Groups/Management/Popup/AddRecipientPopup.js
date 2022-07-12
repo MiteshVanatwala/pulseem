@@ -167,13 +167,16 @@ const AddRecipientPopup = ({ classes,
                     value={value}
                     onChange={(e) => onSelect(e.target.value)}
                 >
-
-                    <MenuItem value=""><em>None</em></MenuItem>
                     {
-                        data.map(obj => <MenuItem value={obj.status}>{obj.text}</MenuItem>)
+                        data.map(obj => <MenuItem
+                            className={classes.test}
+                            style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left' }}
+                            disabled={obj.status === -1}
+                            value={obj.status}>{t(obj.text)}</MenuItem>
+                        )
                     }
                 </Select>
-            </FormControl>
+            </FormControl >
         )
     }
 
@@ -1089,7 +1092,7 @@ const AddRecipientPopup = ({ classes,
                                     onSelect: (val) => {
                                         handleEmailStatus(val)
                                     },
-                                    value: addRecipientData.Status ?? CLIENT_CONSTANTS.STATUSES.inactive.status,
+                                    value: addRecipientData.Status ?? CLIENT_CONSTANTS.STATUSES.active.status,
                                     label: t('common.emailStatus')
                                 }),
                                 gridSize: { xs: 12, sm: 9 }
@@ -1116,7 +1119,7 @@ const AddRecipientPopup = ({ classes,
                                         handleSmsStatus(val)
 
                                     },
-                                    value: addRecipientData.SmsStatus ?? CLIENT_CONSTANTS.STATUSES.inactive.status,
+                                    value: addRecipientData.SmsStatus ?? CLIENT_CONSTANTS.SMS_STATUSES.noStatus.status,
                                     label: t('common.smsStatus'),
                                 }),
                                 gridSize: { xs: 12, sm: 6 }
