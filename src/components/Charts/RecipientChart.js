@@ -214,27 +214,31 @@ const RecipientChart = ({ classes, }) => {
                 '#67B7DC',
                 '#648FD5',
                 '#6771DC',
+                '#c5caff'
             ],
             hoverBackgroundColor: [
                 '#67B7DC',
                 '#648FD5',
                 '#6771DC',
+                '#c5caff'
             ],
             hoverBorderColor: [
                 '#67B7DC',
                 '#648FD5',
                 '#6771DC',
+                '#c5caff'
             ]
         };
 
         let innerData = {
             productType: `${report.ReportSection}`,
-            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
+            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('common.charStatus.pending')],
             datasets: [{
                 data: [
                     report.Active,
                     report.Error,
-                    report.Removed
+                    report.Removed,
+                    report?.Pending || 0
                 ],
                 borderWidth: 0,
             }],

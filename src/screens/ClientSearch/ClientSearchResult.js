@@ -394,6 +394,10 @@ const ClientSearchResult = ({ props, classes }) => {
     setData(ClientData);
     setFilterMin("");
     setFilterMax("");
+    setDate({
+      FromDate: null,
+      ToDate: null,
+    })
     setIsSearching(false);
   }
 
@@ -613,7 +617,6 @@ const ClientSearchResult = ({ props, classes }) => {
     // setData(Static_CSR_Data)
     if (ClientData) {
       setData(ClientData);
-      // BUG: Uncomment 359 Remove 360 
       if (TotalRevenue) {
         handleFilter();
         setRevenueSummary([
