@@ -62,6 +62,7 @@ const AddRecipientPopup = ({ classes,
     selectGroup,
     ToastMessages,
     onRecipientAdded = () => null,
+    onAnotherRecipientAdded = () => null,
     handleResponses = (response, actions) => null
 }) => {
     const { t } = useTranslation();
@@ -198,7 +199,7 @@ const AddRecipientPopup = ({ classes,
                 'S_201': {
                     code: 201,
                     message: ToastMessages.RECIPIENT_ADDED,
-                    Func: onRecipientAdded()
+                    Func: callback?.()
                 },
                 'S_400': {
                     code: 400,
@@ -1008,7 +1009,7 @@ const AddRecipientPopup = ({ classes,
                                 classes.textCapitalize
                             )}
 
-                            onClick={() => handleSubmit(onClose)}
+                            onClick={() => handleSubmit(onRecipientAdded)}
                         >
                             {t("group.ok")}
                         </Button>
@@ -1029,7 +1030,10 @@ const AddRecipientPopup = ({ classes,
                                 classes.dialogButtonResponive,
                                 classes.dialogConfirmButton
                             )}
-                            onClick={() => handleSubmit(setAddRecipientData(DEFAULT_RECIPIENT_DATA))}
+                            onClick={() => handleSubmit(() => {
+                                setAddRecipientData(DEFAULT_RECIPIENT_DATA);
+                                onAnotherRecipientAdded()
+                            })}
                         >
                             {t("recipient.addAnotherRecipient")}
                         </Button>
