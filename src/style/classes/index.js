@@ -8,6 +8,7 @@ import { getDashboardStyle } from './dashboardStyles';
 import { getSmsStyle } from './smsStyles';
 import { getSiteTrackingStyle } from './siteTrackingStyles'
 import { getGroupStyle } from './groupStyle'
+import { getCampaignEditorStyle } from './campaignEditorStyles';
 
 export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getDrawerStyle(windowSize, isRTL, theme),
@@ -18,5 +19,6 @@ export const useClasses = (windowSize, isRTL = false) => makeStyles(theme => ({
   ...getDashboardStyle(windowSize, isRTL, theme),
   ...getSmsStyle(windowSize, isRTL, theme),
   ...getSiteTrackingStyle(windowSize, isRTL),
-  ...getGroupStyle(windowSize, isRTL, theme)
+  ...getGroupStyle(windowSize, isRTL, theme),
+  ...getCampaignEditorStyle(windowSize, isRTL)
 }))

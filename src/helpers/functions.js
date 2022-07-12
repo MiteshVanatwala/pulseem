@@ -202,3 +202,12 @@ export const makeId = () => {
   }
   return ID;
 }
+
+export const renderHtml = (html) => {
+  function createMarkup() {
+    return { __html: html };
+  }
+  return (
+    <label dangerouslySetInnerHTML={createMarkup()}></label>
+  );
+}

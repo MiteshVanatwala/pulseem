@@ -557,13 +557,21 @@
   "invalidDate": "Date is required",
   "minimalDateRequired": "Date should not be before minimal date",
   "maximalDateRequired": "Date should not be after maximal date",
+  "systemNotice": "System Notice",
   "showTen": "Show 10",
   "notNow": "Not now",
   "revenue": "Revenue",
   "edit": "Edit",
   "campaignRevenue": "Revenue",
   "NIS": "₪",
-  "systemNotice": "System Notice",
   "birthDate": "Birth Date",
-  "uploadInProgress": "Upload in progress..."
+  "uploadInProgress": "Upload in progress...",
+  "saveTemplate": "Save template",
+  "exit": "Exit",
+  "phone": "Phone",
+  "companyName": "Company Name",
+  "Fax": "Fax",
+  "alignCenter": "Center",
+  "autoLogoutMessage": "Please note: Due to inactivity on our site, you have been logged out of our system.<br/>Please click on the Confirm button below to sign in.",
+  "invalidEmail": "Invalid Email address"
 }

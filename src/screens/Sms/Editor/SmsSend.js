@@ -2566,7 +2566,7 @@ const SmsSend = ({ classes, ...props }) => {
       content: (
         <Box>
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-            <img src={Gif} style={{ width: "150px", height: "150px" }} />
+            <img src={Gif} style={{ width: "150px", height: "150px" }} alt="Success" />
             <span style={{ marginTop: "10px", fontSize: "22px", fontWeight: "700" }}>{t("sms.sent")}</span>
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
               {t("sms.campaignIsOnItsWay")}

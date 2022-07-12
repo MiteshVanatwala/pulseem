@@ -408,7 +408,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       backgroundColor: "#ae2a27",
     },
   },
-
   addGroupTextField: {
     textTransform: "capitalize",
     "& .MuiOutlinedInput-input": {
@@ -426,7 +425,24 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       },
     },
   },
-
+  actionButtonOutlinedRed: {
+    backgroundColor: '#fff',
+    border: '1px solid #c9302c',
+    color: '#c9302c',
+    '&:hover': {
+      backgroundColor: '#c9302c',
+      color: '#fff'
+    }
+  },
+  actionButtonOutlinedBlue: {
+    backgroundColor: '#fff',
+    border: '1px solid #3498DB',
+    color: '#3498DB',
+    '&:hover': {
+      backgroundColor: '#3498DB',
+      color: '#fff'
+    }
+  },
   textField: {
     width: 180,
     textTransform: "capitalize",
@@ -1671,8 +1687,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         },
       }
     }
-
-
   },
   importButtonBlue: {
     backgroundColor: '#3498DB',

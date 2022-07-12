@@ -17,6 +17,7 @@ const GroupTags = ({ classes,
     onRemoveGroup = () => null,
     style = null,
     dropDownProps = {
+        groups: null,
         selectedGroups: [],
         onChange: () => false
     },
@@ -30,7 +31,7 @@ const GroupTags = ({ classes,
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     const dispatch = useDispatch();
-
+    const groupsToShow = dropDownProps.groups !== null ? dropDownProps.groups : subAccountAllGroups;
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();
         e.preventDefault();
@@ -40,10 +41,10 @@ const GroupTags = ({ classes,
     }
 
     useEffect(() => {
-        if (groupSelected && subAccountAllGroups) {
+        if (groupSelected && groupsToShow) {
             let tmpGroups = [];
             groupSelected.forEach((grp) => {
-                const findGroup = subAccountAllGroups.find((g) => { return g.GroupID === grp });
+                const findGroup = groupsToShow.find((g) => { return g.GroupID === grp });
                 if (findGroup) {
                     tmpGroups.push(findGroup)
                 }
@@ -93,9 +94,9 @@ const GroupTags = ({ classes,
             debug={true}
             className={classes.autoCompleteTag}
             disableCloseOnSelect
-            options={subAccountAllGroups ?? []}
+            options={groupsToShow ?? []}
             getOptionLabel={(option) => option?.GroupName}
-            defaultValue={subAccountAllGroups.reduce((prevVal, newVal) => {
+            defaultValue={groupsToShow.reduce((prevVal, newVal) => {
                 if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
                     return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
                 }
@@ -127,7 +128,7 @@ const GroupTags = ({ classes,
                 />
             )}
             PaperComponent={({ children }) => (
-                <Paper className={classes.groupsAutoComplete}>{children}</Paper>
+                <Paper className={classes.groupsAutoComplete} style={{ zIndex: 9000 }}>{children}</Paper>
             )}
         />
 

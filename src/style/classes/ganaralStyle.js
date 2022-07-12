@@ -2322,7 +2322,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   marginBlock20: {
     marginBlock: 20,
   },
-
   MuiChipRoot: {
     backgroundColor: "#1c82b2 !important",
     "& span": {
@@ -2350,12 +2349,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         fill: '#fff'
       }
     }
-  },
-  roundedBorder: {
-    borderRadius: 50
-  },
-  mb50: {
-    marginBottom: 50
   },
   mt50: {
     marginTop: 50
@@ -2411,7 +2404,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflowY: 'scroll',
 
   },
-
   switchButton: {
     background: '#e4e4e4',
     padding: '2px 10px 3px 10px',
@@ -2444,5 +2436,15 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         borderBottom: '2px solid red'
       }
     }
+  },
+  dialogZindex: {
+    zIndex: '1000 !important'
+  },
+  testSendDialog: {
+    width: 440,
+    maxWidth: 440
+  },
+  containerFullHeight: {
+    minHeight: 'calc(100vh - 120px)'
   }
 });
