@@ -65,7 +65,7 @@ const AddGroupPopUp = ({
             return false;
         }
         try {
-            onClose()
+            // 
             setLoader(true);
             const response = await dispatch(createGroup(data));
             setLoader(false);
@@ -76,6 +76,8 @@ const AddGroupPopUp = ({
                     Func: () => {
                         new Promise(async (resolutionFunc, rejectionFunc) => {
                             await resolutionFunc(getData());
+                            setNewGroupData(DEFAULT_NEW_GROUP);
+                            onClose()
                         }).then((res) => {
                             callback?.(response.payload.Message)
                         })
@@ -194,12 +196,11 @@ const AddGroupPopUp = ({
                                 onClick={() => {
                                     if (addClientByQuery === true) {
                                         createGroupCallback(newGroupData.GroupName);
+                                        // handleAddGroup(newGroupData, createGroupCallback);
+
                                     }
                                     else {
-                                        const result = handleAddGroup(newGroupData, createGroupCallback);
-                                        if (result) {
-                                            setNewGroupData(DEFAULT_NEW_GROUP);
-                                        }
+                                        handleAddGroup(newGroupData, createGroupCallback);
                                     }
                                 }}
                             >

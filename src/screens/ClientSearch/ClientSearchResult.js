@@ -732,7 +732,7 @@ const ClientSearchResult = ({ props, classes }) => {
         actions?.default?.message && setToastMessage(actions?.default?.message);
         setDialog(null);
       }
-      setLoader(false);
+        setLoader(false);
     }
   }
 
@@ -1660,6 +1660,7 @@ const ClientSearchResult = ({ props, classes }) => {
             setToastMessage={setToastMessage}
             addClientByQuery={true}
             createGroupCallback={(groupName) => { handleAssignClientsToGroup(groupName); }}
+            handleResponses={(response, actions) => handleResponses(response, actions)}
             getData={() => null}
           />
         }
