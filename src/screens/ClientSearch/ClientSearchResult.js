@@ -732,6 +732,7 @@ const ClientSearchResult = ({ props, classes }) => {
         actions?.default?.message && setToastMessage(actions?.default?.message);
         setDialog(null);
       }
+      setLoader(false);
     }
   }
 
@@ -897,6 +898,8 @@ const ClientSearchResult = ({ props, classes }) => {
   }
 
   const handleUnSubscribe = async (opt) => {
+    setDialog(null);
+    setLoader(true);
     await dispatch(setUnsubscribedClients({ ...searchData, RemovingOption: opt })).then(res => {
       handleResponses(res, {
         'S_200': {

@@ -66,18 +66,50 @@ const CLIENT_CONSTANTS = {
         FromDate: null,
         ToDate: null,
     },
-    STATUSES: {
-        active: {
-            text: 'Active',
-            status: 0
-        },
-        inactive: {
-            text: 'Inactive',
+    SMS_STATUSES: {
+        noStatus: {
+            disabled: true,
+            text: 'client.clientStatus.sms.NoSms',
             status: -1
         },
+        active: {
+            text: 'client.clientStatus.sms.Active',
+            status: 0
+        },
         removed: {
-            text: 'Removed',
+            text: 'client.clientStatus.sms.Removed',
             status: 1
+        },
+        invalid: {
+            text: 'client.clientStatus.sms.Invalid',
+            status: 4
+        },
+        pending: {
+            text: 'common.Pending',
+            status: 5
+        }
+    },
+    STATUSES: {
+        noStatus: {
+            disabled: true,
+            text: 'client.clientStatus.email.NoEmail',
+            status: -1
+        },
+        active: {
+            text: 'client.clientStatus.email.Active',
+            status: 1
+        },
+        removed: {
+            text: 'client.clientStatus.email.Removed',
+            status: 2
+        },
+        invalid: {
+            text: 'client.clientStatus.email.Invalid',
+            status: 4
+        },
+        pending: {
+            text: 'common.Pending',
+            status: 5
         }
     }
 }
