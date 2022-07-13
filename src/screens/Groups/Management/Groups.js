@@ -1059,7 +1059,7 @@ const Groups = ({ classes }) => {
                     return <AddGroupPopUp
                         classes={classes}
                         isOpen={dialog === DialogType.ADD_GROUP}
-                        onClose={() => setDialog(null)}
+                        onClose={() => { setDialog(null); setSelectedGroups([]) }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -1073,7 +1073,7 @@ const Groups = ({ classes }) => {
                     return <EditGroupPopup
                         classes={classes}
                         isOpen={dialog === DialogType.EDIT_GROUP}
-                        onClose={() => setDialog(null)}
+                        onClose={() => { setDialog(null); setSelectedGroups([]) }}
                         setLoader={setLoader}
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
@@ -1089,7 +1089,7 @@ const Groups = ({ classes }) => {
                         return <ResetGroupPopup
                             classes={classes}
                             isOpen={dialog === DialogType.RESET_GROUP}
-                            onClose={() => setDialog(null)}
+                            onClose={() => { setDialog(null); setSelectedGroups([]) }}
                             setLoader={setLoader}
                             windowSize={windowSize}
                             ToastMessages={ToastMessages}
@@ -1175,7 +1175,7 @@ const Groups = ({ classes }) => {
                         return <SimplyClubPupup
                             classes={classes}
                             isOpen={dialog === DialogType.SIMPLY_CLUB}
-                            onClose={() => setDialog(null)}
+                            onClose={() => { setDialog(null); setSelectedGroups([]) }}
                             windowSize={windowSize}
                             title={responseMessage.title}
                             message={responseMessage.message}
