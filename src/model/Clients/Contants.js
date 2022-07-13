@@ -83,6 +83,10 @@ const CLIENT_CONSTANTS = {
         invalid: {
             text: 'client.clientStatus.sms.Invalid',
             status: 4
+        },
+        pending: {
+            text: 'common.Pending',
+            status: 5
         }
     },
     STATUSES: {
@@ -102,6 +106,10 @@ const CLIENT_CONSTANTS = {
         invalid: {
             text: 'client.clientStatus.email.Invalid',
             status: 4
+        },
+        pending: {
+            text: 'common.Pending',
+            status: 5
         }
     }
 }

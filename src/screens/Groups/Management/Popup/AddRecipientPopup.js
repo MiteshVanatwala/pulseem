@@ -1114,7 +1114,7 @@ const AddRecipientPopup = ({ classes,
                             },
                             {
                                 content: StatusDropdown({
-                                    data: Object.values(CLIENT_CONSTANTS.STATUSES).map((obj) => obj),
+                                    data: Object.values(CLIENT_CONSTANTS.SMS_STATUSES).map((obj) => obj),
                                     onSelect: (val) => {
                                         handleSmsStatus(val)
 
