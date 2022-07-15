@@ -154,6 +154,11 @@ const ClientSearchResult = ({ props, classes }) => {
       message: ToastMessages.GROUP_ALREADY_EXIST,
       Func: () => null
     },
+    S_406: {
+      code: 406,
+      message: ToastMessages.GROUP_ERROR,
+      Func: () => null
+    },
     default: {
       message: ToastMessages.GROUP_ERROR,
       Func: () => null
