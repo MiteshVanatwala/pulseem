@@ -878,6 +878,7 @@ const Groups = ({ classes }) => {
                                         {
                                             ...CLIENT_CONSTANTS.QUERY_PARAMS,
                                             PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
                                             GroupIds: [GroupID],
                                             Status: 100,
                                             TestStatusOfEmailElseSms: 1,
@@ -898,6 +899,7 @@ const Groups = ({ classes }) => {
                                         {
                                             ...CLIENT_CONSTANTS.QUERY_PARAMS,
                                             PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
                                             GroupIds: [GroupID],
                                             Status: 1,
                                             TestStatusOfEmailElseSms: 1,
@@ -918,6 +920,7 @@ const Groups = ({ classes }) => {
                                         {
                                             ...CLIENT_CONSTANTS.QUERY_PARAMS,
                                             PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
                                             GroupIds: [GroupID],
                                             Status: 2,
                                             TestStatusOfEmailElseSms: 1,
@@ -938,6 +941,7 @@ const Groups = ({ classes }) => {
                                         {
                                             ...CLIENT_CONSTANTS.QUERY_PARAMS,
                                             PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
                                             GroupIds: [GroupID],
                                             Status: 4,
                                             TestStatusOfEmailElseSms: 1,
@@ -969,6 +973,7 @@ const Groups = ({ classes }) => {
                                         {
                                             ...CLIENT_CONSTANTS.QUERY_PARAMS,
                                             PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
                                             GroupIds: [GroupID],
                                             Status: 100,
                                             TestStatusOfEmailElseSms: 0,
@@ -989,6 +994,7 @@ const Groups = ({ classes }) => {
                                         {
                                             ...CLIENT_CONSTANTS.QUERY_PARAMS,
                                             PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
                                             GroupIds: [GroupID],
                                             Status: 0,
                                             TestStatusOfEmailElseSms: 0,
@@ -1009,6 +1015,7 @@ const Groups = ({ classes }) => {
                                         {
                                             ...CLIENT_CONSTANTS.QUERY_PARAMS,
                                             PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
                                             GroupIds: [GroupID],
                                             Status: 1,
                                             TestStatusOfEmailElseSms: 0,
@@ -1029,6 +1036,7 @@ const Groups = ({ classes }) => {
                                         {
                                             ...CLIENT_CONSTANTS.QUERY_PARAMS,
                                             PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
                                             GroupIds: [GroupID],
                                             Status: 4,
                                             TestStatusOfEmailElseSms: 0,
