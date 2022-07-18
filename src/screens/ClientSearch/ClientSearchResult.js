@@ -917,7 +917,10 @@ const ClientSearchResult = ({ props, classes }) => {
           message: ToastMessages.UNSUBSCRIBED_SUCCESS,
           Func: () => {
             setDialog(null)
-            getData()
+            setTimeout(() => {
+              window.history.back();
+            }, 4000);
+            //getData()
           }
         },
         'S_401': {
