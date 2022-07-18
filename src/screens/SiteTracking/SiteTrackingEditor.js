@@ -470,6 +470,7 @@ const SiteTrackingEditor = ({ classes }) => {
                             <pre>
                                 <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
                                     {`  
+window.addEventListener('load', function(event) {
     const eventName = 'PURCHASE';
     const orderId = 'order1';
     const grandTotal = 100.00;
@@ -482,6 +483,8 @@ const SiteTrackingEditor = ({ classes }) => {
     window.trackPurchase(orderId, grandTotal, shipping, tax, orderItems);
     `}
                                     </b>
+{`
+});`}
                                 </div>
                             </pre>
                         </Typography>
