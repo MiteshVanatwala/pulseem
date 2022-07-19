@@ -36,7 +36,6 @@ import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
-import PurchasePage from './screens/Tests/PurchasePage';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -377,11 +376,6 @@ const renderRoutes = (classes, history) => {
         exact
         path={`/SiteTracking`}
         render={props => <SiteTrackingEditor props={props} classes={classes} />}
-      />
-      <Route
-        exact
-        path={`/SiteTracking/Purchase`}
-        render={props => <PurchasePage props={props} classes={classes} />}
       />
     </>
   )
