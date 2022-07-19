@@ -443,21 +443,8 @@ const App = ({ screenSize }) => {
       if (!!cookieFunction)
         cookieFunction()
     })
-    const initSiteTracking = () => {
-      const s = document.createElement('script');
-      s.type = 'text/javascript';
-      s.async = true;
-      s.innerHTML = `(function(d, t) {
-              var g = d.createElement(t),
-              s = d.getElementsByTagName(t)[0];
-              g.src="https://webscript.stg.services.pulseem.com/main.js?v=" + ${Math.floor(Date.now() / 1000)};
-              s.parentNode.insertBefore(g, s);
-              }(document, "script"))`;
-      document.head.appendChild(s);
-    }
     updateToken()
     initFeatures()
-    initSiteTracking()
   }, [dispatch])
 
 
