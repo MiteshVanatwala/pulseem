@@ -100,7 +100,15 @@ const SmsReport = ({ classes }) => {
     Revenue: {
       title: '',
       href: `/react/ClientSearchResult/${id}`,
-      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue } }),
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state:
+        {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
+          ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms
+        }
+      }),
       textStyle: { fontWeight: 900 }
     }
   })

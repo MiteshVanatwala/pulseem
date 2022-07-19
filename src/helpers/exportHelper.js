@@ -91,6 +91,9 @@ export const formatDateTime = (arr, t) => {
         if (a.DATE) {
             a.DATE = moment(a.DATE).format("DD/MM/YYYY HH:mm");
         }
+        if (a.SentDate) {
+            a.SentDate = moment(a.SentDate).format("DD/MM/YYYY HH:mm");
+        }
         if (a.snt_OpeningDate) {
             a.snt_OpeningDate = moment(a.snt_OpeningDate).format("DD/MM/YYYY HH:mm");
         }
