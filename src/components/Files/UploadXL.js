@@ -203,7 +203,10 @@ const UploadXL = ({
             });
         }
         else {
-            settypedData(b)
+            let d = a.map((td) => {
+                return td.split('\t');
+            });
+            settypedData(d)
             setDialogType({ type: "manualUpload" });
         }
 
