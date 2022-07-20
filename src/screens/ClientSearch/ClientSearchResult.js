@@ -997,7 +997,7 @@ const ClientSearchResult = ({ props, classes }) => {
           />
         </Grid>
 
-        {filterSearch && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.())}
+        {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.())}
         <Grid item>
           <Button
             size="large"
@@ -1020,22 +1020,6 @@ const ClientSearchResult = ({ props, classes }) => {
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
 
-          {
-            [
-              CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
-              CLIENT_CONSTANTS.PAGE_TYPES.FormID,
-              CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID,
-              CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID
-            ].indexOf(location?.state?.PageType) !== -1 && <Link
-              // {location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <Link
-              color='initial'
-              component='button'
-              underline='none'
-              onClick={() => setFilterSearch(!filterSearch)}
-              className={clsx(classes.dBlock, classes.mt5, filterSearch && windowSize === 'lg' ? classes.mb15 : null)}>
-              {t(!filterSearch ? 'report.filterSearch' : 'report.closeFilterSearch')}
-            </Link>
-          }
         </Grid>
         {isSearching && <Grid item>
           <Button

@@ -914,7 +914,7 @@ const AddRecipientPopup = ({ classes,
                 return {
                     content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
                         classes={classes}
-                        value={accountExtraFields?.[ef] || addRecipientData?.[ef]}
+                        value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
                         onChange={e => handleChange(e, { date: e, field: ef }, true)}
                         toolbarDisabled={false}
                         removePadding
@@ -924,7 +924,7 @@ const AddRecipientPopup = ({ classes,
                         placeholder={extraFieldsTemp[ef]}
                         variant="outlined"
                         name={ef}
-                        value={accountExtraFields?.[ef] || addRecipientData?.[ef]}
+                        value={accountExtraFields?.[ef] || addRecipientData?.[ef] || ''}
                         className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                         autoComplete="off"
                         onChange={e => handleChange(e, null, true)}
@@ -947,7 +947,7 @@ const AddRecipientPopup = ({ classes,
                             {
                                 content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
                                     classes={classes}
-                                    value={accountExtraFields?.[ef] || addRecipientData?.[ef]}
+                                    value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
                                     onChange={e => handleChange(e, { date: e, field: ef }, true)}
                                     toolbarDisabled={false}
                                 /> : <TextField
@@ -955,7 +955,7 @@ const AddRecipientPopup = ({ classes,
                                     label=""
                                     variant="outlined"
                                     name={ef}
-                                    value={accountExtraFields?.[ef] || addRecipientData?.[ef]}
+                                    value={accountExtraFields?.[ef] || addRecipientData?.[ef] || ''}
                                     className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
                                     autoComplete="off"
                                     onChange={e => handleChange(e, null, true)}
@@ -1252,7 +1252,10 @@ const AddRecipientPopup = ({ classes,
                                     classes.dialogButtonResponive,
                                     classes.dialogConfirmButton
                                 )}
-                                onClick={() => handleSubmit(setAddRecipientData(DEFAULT_RECIPIENT_DATA))}
+                                onClick={() => handleSubmit(() => {
+                                    setAccountExtraFields(null)
+                                    setAddRecipientData(DEFAULT_RECIPIENT_DATA)
+                                })}
                             >
                                 {t("recipient.addAnotherRecipient")}
                             </Button>
