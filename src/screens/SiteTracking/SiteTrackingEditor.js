@@ -19,7 +19,7 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import EventTabs from './EventTabs';
 import { isValidUrl } from '../../helpers/UrlHelper';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
-import { ThemeProvider, makeStyles, useTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
 
 const renderHtml = (html) => {
@@ -606,7 +606,7 @@ window.addEventListener('load', function(event) {
             {PageHeader()}
             {renderToast()}
             {renderDialog()}
-            {event && <Box style={{ marginBottom: 'auto' }}>
+            <Box style={{ marginBottom: 'auto' }}>
                 <form className={classes.root} noValidate autoComplete="off">
                     <Grid container alignItems="center">
                         <Grid item lg={12} xs={12}>
@@ -667,7 +667,7 @@ window.addEventListener('load', function(event) {
                         </Grid>
                     </Grid>
                 </form>
-            </Box>}
+            </Box>
             {showActions && PageFooter()}
         </Box>
         <Loader isOpen={showLoader} />

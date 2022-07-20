@@ -146,7 +146,7 @@ export const siteTrackingSlice = createSlice({
           state.event = newModel;
         }
         else {
-          state.event[action.payload.prop] = action.payload.value;
+          state.event[action.payload.prop] = action.payload.value ?? action.payload[action.payload.prop];
         }
       } catch (err) {
         console.error(err);
