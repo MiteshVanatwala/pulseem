@@ -131,7 +131,7 @@ const AddRecipientPopup = ({ classes,
             }
             else {
                 if (e.target.name === "Email") {
-                    e.target.value = e.target.value.replace(/ /g, "")
+                    e.target.value = e.target.value.trim().replace(/ /g, "")
                     // e.target.value = e.target.value.split('').reverse().join('')
                 }
                 setAddRecipientData({
