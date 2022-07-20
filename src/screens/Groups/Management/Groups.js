@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import DataTable from "../../../components/Table/DataTable";
 import {
     Box, Typography, Divider, TableBody, TableRow, TableCell,
-    Grid, Button, TextField, Checkbox, makeStyles
+    Grid, Button, TextField, Checkbox
 } from '@material-ui/core'
 import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination, SearchField } from '../../../components/managment/index'
@@ -15,8 +15,6 @@ import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import { CSVLink } from 'react-csv'
-import { setCookie, getCookie } from "../../../helpers/cookies";
 import {
     getGroups,
     deleteGroups,
@@ -290,7 +288,7 @@ const Groups = ({ classes }) => {
                         {t("recipient.deleteRecipient")}
                     </Button>
                 </Grid>
-                <Grid item xs={colSize}>
+                {/* <Grid item xs={colSize}>
                     <Button
                         variant="contained"
                         size="medium"
@@ -299,7 +297,7 @@ const Groups = ({ classes }) => {
                     >
                         {t("recipient.unsubscribe")}
                     </Button>
-                </Grid>
+                </Grid> */}
                 {accountFeatures && accountFeatures.includes('15') && (<Grid item xs={colSize}>
                     <Button
                         variant="contained"
@@ -325,18 +323,6 @@ const Groups = ({ classes }) => {
                     >
                         {t("campaigns.exportFile")}
                     </Button>
-                    <CSVLink
-                        data={[
-                            ["firstname", "lastname", "email"],
-                            ["Ahmed", "Tomi", "ah@smthing.co.com"],
-                            ["Raed", "Labes", "rl@smthing.co.com"],
-                            ["Yezzi", "Min l3b", "ymin@cocococo.com"],
-                        ]}
-                        filename="report.csv"
-                        className="hidden"
-                        ref={null}
-                        target="_blank"
-                    />
                 </Grid>
 
                 <Grid
@@ -427,7 +413,7 @@ const Groups = ({ classes }) => {
         ShowSmsRemoved: 22,
         ShowSmsErrored: 23
     };
-    
+
     const renderRow = (row) => {
         const {
             ActiveCell,
@@ -1206,16 +1192,18 @@ const Groups = ({ classes }) => {
             subPage='groupManagement'
             classes={classes}
             containerClass={classes.management}>
-            {toastMessage && renderToast()}
-            {renderHeader()}
-            {renderSearchSection()}
-            {windowSize !== 'xs' && renderManagmentLine()}
-            {renderTableBody()}
-            {renderTablePagination()}
-            {showConfirmDialog && renderConfirmDialog()}
-            {dialog !== null && showDialog()}
-            <Loader isOpen={showLoader} showBackdrop={true} />
-        </DefaultScreen>
+            <Box className={classes.mb50}>
+                {toastMessage && renderToast()}
+                {renderHeader()}
+                {renderSearchSection()}
+                {windowSize !== 'xs' && renderManagmentLine()}
+                {renderTableBody()}
+                {renderTablePagination()}
+                {showConfirmDialog && renderConfirmDialog()}
+                {dialog !== null && showDialog()}
+                <Loader isOpen={showLoader} showBackdrop={true} />
+            </Box>
+        </DefaultScreen >
     )
 }
 
