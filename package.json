@@ -2,7 +2,7 @@
   "name": "pulseem-react-app",
   "version": "0.4.1",
   "private": true,
-  "homepage": "https://www.reactstage.club/react/",
+  "homepage": "https://www.pulseem.co.il/react/",
   "dependencies": {
     "@amcharts/amcharts4": "^4.10.21",
     "@date-io/moment": "1.x",
