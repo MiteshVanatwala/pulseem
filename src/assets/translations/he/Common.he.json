@@ -561,5 +561,6 @@
   "NIS": "₪",
   "uploadInProgress": "הקובץ בתהליך טעינה...",
   "back": "חזור",
-  "clientSubscriptionResultTitle": "הרשמות לפי קמפיין מספר"
+  "clientSubscriptionResultTitle": "הרשמות לפי קמפיין מספר",
+  "OpenTime": "זמן פתיחה"
 }

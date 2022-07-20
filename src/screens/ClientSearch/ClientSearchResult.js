@@ -244,8 +244,24 @@ const ClientSearchResult = ({ props, classes }) => {
         "Zip": t('common.zip'),
         "Company": t('common.company'),
         "ReminderDate": t('recipient.reminderDate'),
-        "ErrorTypeText": t('recipient.errorMessage'),
-        "Revenue": t('common.campaignRevenue'),
+      };
+
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
+        updatingObject["Revenue"] = t('common.campaignRevenue');
+      }
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID) {
+        updatingObject["ErrorTypeText"] = t('recipient.errorMessage');
+      }
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+        updatingObject["snt_OpeningDate"] = t('common.OpenTime');
+      }
+      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID ||
+        location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID) {
+        updatingObject["SentDate"] = t('sms.sendingTime');
+      }
+
+      updatingObject = {
+        ...updatingObject,
         "ExtraDate1": t('common.ExtraDate1'),
         "ExtraDate2": t('common.ExtraDate2'),
         "ExtraDate3": t('common.ExtraDate3'),
@@ -263,10 +279,8 @@ const ClientSearchResult = ({ props, classes }) => {
         "ExtraField11": t('common.ExtraField11'),
         "ExtraField12": t('common.ExtraField12'),
         "ExtraField13": t('common.ExtraField13'),
-      };
-      if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
-        updatingObject["snt_OpeningDate"] = t('common.OpenTime');
       }
+
       updatingObject = replaceExtraFieldHeader(updatingObject, extraData);
       exportColumnHeader.current = updatingObject;
     }
@@ -379,15 +393,12 @@ const ClientSearchResult = ({ props, classes }) => {
   }
 
   const handleFilter = () => {
+    setIsSearching(true);
     if (filterMin !== '' || filterMax !== '') {
       const sortedData = [...ClientData].filter((f) => {
         return f.Revenue >= parseInt(filterMin !== "" ? filterMin : 0) && f.Revenue <= parseInt(filterMax !== "" ? filterMax : 1000000)
       });
       setData(sortedData);
-      setIsSearching(true);
-    }
-    else {
-      resetSearch();
     }
   }
   const handlePageChange = (val) => {
@@ -404,6 +415,7 @@ const ClientSearchResult = ({ props, classes }) => {
       ToDate: null,
     })
     setIsSearching(false);
+    setSearchData({ ...searchData, FromDate: null, ToDate: null });
   }
 
 
@@ -620,17 +632,15 @@ const ClientSearchResult = ({ props, classes }) => {
 
   useEffect(() => {
     // setData(Static_CSR_Data)
-    if (ClientData) {
-      setData(ClientData);
-      if (TotalRevenue) {
-        handleFilter();
-        setRevenueSummary([
-          { title: t('client.Purchased'), value: TotalCount },
-          { title: t('client.totalRevenue'), value: `${TotalRevenue?.toLocaleString()} ${t('common.NIS')}` },
-          { title: t('client.avgOrderRevenue'), value: `${(TotalRevenue / TotalCount)?.toFixed(0).toLocaleString()} ${t('common.NIS')}` },
-          { title: t('client.conversionRate'), value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(1)}%`, style: { direction: isRTL ? 'rtl' : 'ltr' } }
-        ]);
-      }
+    setData(ClientData);
+    if (TotalRevenue) {
+      handleFilter();
+      setRevenueSummary([
+        { title: t('client.Purchased'), value: TotalCount },
+        { title: t('client.totalRevenue'), value: `${TotalRevenue?.toLocaleString()} ${t('common.NIS')}` },
+        { title: t('client.avgOrderRevenue'), value: `${(TotalRevenue / TotalCount)?.toFixed(0).toLocaleString()} ${t('common.NIS')}` },
+        { title: t('client.conversionRate'), value: `${((TotalCount / CampaignClicks) * 100)?.toFixed(1)}%`, style: { direction: isRTL ? 'rtl' : 'ltr' } }
+      ]);
     }
   }, [ClientData, isRTL]);
 
@@ -917,7 +927,10 @@ const ClientSearchResult = ({ props, classes }) => {
           message: ToastMessages.UNSUBSCRIBED_SUCCESS,
           Func: () => {
             setDialog(null)
-            getData()
+            setTimeout(() => {
+              window.history.back();
+            }, 4000);
+            //getData()
           }
         },
         'S_401': {
@@ -1535,13 +1548,11 @@ const ClientSearchResult = ({ props, classes }) => {
 
 
   const renderTableBody = () => {
-    let sortedData = data ? data : [];
+    let sortedData = data ?? null; // data : [];
     let rpp = parseInt(rowsPerPage)
-    if (sortedData.length <= 0) {
-      return <></>;
+    if (sortedData && sortData.length > 0) {
+      sortedData = searchData?.PageType === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
     }
-
-    sortedData = searchData?.PageType === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
 
     if (PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.title) {
       TABLE_HEAD.splice(2, 0, {
@@ -1583,7 +1594,11 @@ const ClientSearchResult = ({ props, classes }) => {
           }}
         >
           <TableBody>
-            {sortedData.map((obj, idx) => windowSize === "xs" ? RenderPhoneRow(obj) : RenderWebRow(obj))}
+            {!sortedData || sortedData.length === 0 ?
+              <Box className={clsx(classes.flex, classes.justifyCenterOfCenter)} style={{ height: 50 }}>
+                <Typography>{t("common.NoDataTryFilter")}</Typography>
+              </Box> :
+              sortedData.map((obj, idx) => windowSize === "xs" ? RenderPhoneRow(obj) : RenderWebRow(obj))}
           </TableBody>
         </DataTable>
         <TablePagination

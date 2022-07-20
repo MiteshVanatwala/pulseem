@@ -174,7 +174,8 @@ const NewslettersReport = ({ classes }) => {
         state: {
           ...CLIENT_CONSTANTS.QUERY_PARAMS,
           CampaignID: id,
-          PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
+          ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails
         }
       }),
       textStyle: { fontWeight: 900 },
