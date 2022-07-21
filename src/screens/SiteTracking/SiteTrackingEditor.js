@@ -132,6 +132,7 @@ const SiteTrackingEditor = ({ classes }) => {
             else {
                 request.id = response?.payload?.data?.id;
                 dispatch(setPurchase(request));
+                await dispatch(setDomain({ DomainAddress: event?.domain }));
             }
         }
         else {
@@ -483,7 +484,7 @@ window.addEventListener('load', function(event) {
     window.trackPurchase(orderId, grandTotal, shipping, tax, orderItems);
     `}
                                     </b>
-{`
+                                    {`
 });`}
                                 </div>
                             </pre>
