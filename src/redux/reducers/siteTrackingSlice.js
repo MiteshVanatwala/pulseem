@@ -114,23 +114,23 @@ export const siteTrackingSlice = createSlice({
     ToastMessages: {
       SUCCESS: { severity: 'success', color: 'success', message: 'siteTracking.saved', showAnimtionCheck: true }
     },
-    siteScript: null
+    siteScript: null,
+    eventModel: {
+      id: '',
+      eventName: 'PAGE_VIEW',
+      domain: '',
+      actionType: 'ADD_CLIENTS_TO_GROUP',
+      metadata: [{
+        operatorKey: 'CONTAINS',
+        operatorValue: '',
+        groupIds: [],
+        id: makeId()
+      }]
+    }
   },
   reducers: {
     updateEventModel: (state, action) => {
       try {
-        const newModel = {
-          id: '',
-          eventName: 'PAGE_VIEW',
-          domain: '',
-          actionType: 'ADD_CLIENTS_TO_GROUP',
-          metadata: [{
-            operatorKey: 'CONTAINS',
-            operatorValue: '',
-            groupIds: [],
-            id: makeId()
-          }]
-        };
         if (action.payload.type === 'model') {
           state.event = action.payload.model;
           if (state.event.metadata) {
@@ -143,7 +143,7 @@ export const siteTrackingSlice = createSlice({
           }
         }
         else if (action.payload.type === 'new') {
-          state.event = newModel;
+          state.event = state.eventModel;
         }
         else {
           state.event[action.payload.prop] = action.payload.value ?? action.payload[action.payload.prop];
@@ -210,6 +210,12 @@ export const siteTrackingSlice = createSlice({
                 }
                 return mt;
               });
+            }
+          }
+          else {
+            state.event = state.eventModel;
+            if (purchaseEvent) {
+              state.event.domain = purchaseEvent.domain;
             }
           }
         } catch (e) {

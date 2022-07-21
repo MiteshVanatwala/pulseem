@@ -13,7 +13,6 @@ import PulseemSwitch from '../../components/Controlls/PulseemSwitch';
 
 const EventTabs = ({ classes,
     setDialog,
-    domain,
     purchaseToggleDisabled = false,
     showButtons = () => null,
     onPurchaseChanged = () => null }) => {
