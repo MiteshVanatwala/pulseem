@@ -184,7 +184,7 @@ const ClientSearchResult = ({ classes }) => {
         </div>
       </div>,
       classes: cellStyle,
-      className: clsx(classes.flex2, classes.textUppercase),
+      className: clsx(classes.flex2),
       align: "center",
     },
     {
