@@ -267,7 +267,7 @@ const AddRecipientPopup = ({ classes,
             setLoader(true)
             const clientsData = [];
             clientsData.push({ ...addRecipientData, ...accountExtraFields });
-            const finalData = recipientData ? { ...addRecipientData, ...accountExtraFields, Overwrite: true } : { ...addRecipientData, ...accountExtraFields };
+            const finalData = recipientData ? { ...addRecipientData, ...accountExtraFields, Overwrite: true, OverwriteOption: 1 } : { ...addRecipientData, ...accountExtraFields };
 
             const request = {
                 ClientsData: [finalData],
