@@ -29,6 +29,11 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { getCookie } from '../../../helpers/cookies'
+import { GiTick } from 'react-icons/gi';
+import { FaCheckCircle } from 'react-icons/fa';
+import { RiCheckboxCircleFill, RiCloseCircleFill } from 'react-icons/ri';
+import { IoMdCloseCircle } from 'react-icons/io';
+import { AiFillCloseCircle } from 'react-icons/ai';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core);
@@ -52,6 +57,24 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch();
   const accountFeatures = getCookie("accountFeatures")
+  const [emails, setEmails] = useState([
+    {
+      email: 'Rishabh@gmail.com',
+      verified: true,
+    },
+    {
+      email: 'Rish@gmail.com',
+      verified: true,
+    },
+    {
+      email: 'Ido@gmail.com',
+      verified: false,
+    },
+    {
+      email: 'RishRathore@gmail.com',
+      verified: true,
+    },
+  ])
   moment.locale(language)
 
   const getData = async () => {
@@ -270,6 +293,22 @@ const NewsletterManagnentScreen = ({ classes }) => {
             onClick={redirctToArchive}
           >
             {t('master.redirectToArchive')}
+          </Button>
+        </Grid>
+        <Grid item xs={windowSize === 'xs' && 12}>
+          <Button
+            variant='contained'
+            size='medium'
+            className={clsx(
+              classes.actionButton,
+              classes.actionButtonDarkBlue
+            )}
+            onClick={() => setDialogType({
+              type: 'emailVerification',
+              data: ''
+            })}
+          >
+            {t('Email Verification')}
           </Button>
         </Grid>
         <Grid item xs={windowSize === 'xs' && 12} className={classes.groupsLableContainer} >
@@ -749,6 +788,67 @@ const NewsletterManagnentScreen = ({ classes }) => {
       getData()
     }
   })
+
+
+  const EmailVerificationDialog = (data = '') => ({
+    title: <Box pb={1}>
+      {t('Verification of email to send')}
+      <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
+        {t('To ensure the security of your account, we need to verify this email address belongs to you. This is 2 one-time process for each email you send from.')}
+      </Typography>
+    </Box>,
+    showDivider: true,
+    icon: (
+      <Box className={classes.dialogAlertIcon}>
+        !
+      </Box>
+    ),
+    content: (
+      <Box style={{ position: "relative" }}>
+        {
+          emails.map((obj) => (
+            <Box className={classes.flex}>
+              <span style={{ paddingInline: 2, fontSize: 18, marginTop: 2 }}>{obj.verified ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}</span>
+              <Typography style={{ paddingInline: 3, maxWidth: 250, minWidth: 160 }}>{obj.email} </Typography>
+              {!obj.verified && <Typography style={{ paddingInline: 3 }} className={classes.link}>verify email address</Typography>}
+            </Box>
+          ))
+        }
+        <Button className={clsx(
+          classes.actionButton,
+          classes.actionButtonDarkBlue
+        )} style={{ position: "absolute", top: 0, right: 0 }}>Verify Another Email</Button>
+      </Box>
+    ),
+    renderButtons: () => (<Box className={classes.textCenter}>
+      <Button
+        name="btnConfirm"
+        variant='contained'
+        size='small'
+        onClick={() => {
+          // clearSearch()
+          handleClose()
+          // setPage(1)
+          // await dispatch(duplicteCampaign(data))
+          // getData()
+        }}
+        className={clsx(
+          classes.dialogButton,
+          classes.dialogConfirmButton
+        )}>
+        {t('ok')}
+      </Button>
+    </Box>)
+    // onConfirm: async () => {
+    //   // clearSearch()
+    //   handleClose()
+    //   // setPage(1)
+    //   // await dispatch(duplicteCampaign(data))
+    //   // getData()
+    // }
+  })
+
+
   const renderDialog = () => {
     const { data, type } = dialogType || {}
 
@@ -756,7 +856,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
       restore: getRestorDialog(data),
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
-      duplicate: getDuplicateDialog(data)
+      duplicate: getDuplicateDialog(data),
+      emailVerification: EmailVerificationDialog(),
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -765,6 +866,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         classes={classes}
         open={dialogType}
         onClose={handleClose}
+        renderButtons={currentDialog.renderButtons || null}
         {...currentDialog}>
         {currentDialog.content}
       </Dialog>
