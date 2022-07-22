@@ -29,11 +29,7 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { getCookie } from '../../../helpers/cookies'
-import { GiTick } from 'react-icons/gi';
-import { FaCheckCircle } from 'react-icons/fa';
 import { RiCheckboxCircleFill, RiCloseCircleFill } from 'react-icons/ri';
-import { IoMdCloseCircle } from 'react-icons/io';
-import { AiFillCloseCircle } from 'react-icons/ai';
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core);
@@ -75,6 +71,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       verified: true,
     },
   ])
+  const [emailVerificationStep, setEmailVerificationStep] = useState(1)
   moment.locale(language)
 
   const getData = async () => {
@@ -790,20 +787,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
   })
 
 
-  const EmailVerificationDialog = (data = '') => ({
-    title: <Box pb={1}>
-      {t('Verification of email to send')}
-      <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
-        {t('To ensure the security of your account, we need to verify this email address belongs to you. This is 2 one-time process for each email you send from.')}
-      </Typography>
-    </Box>,
-    showDivider: true,
-    icon: (
-      <Box className={classes.dialogAlertIcon}>
-        !
-      </Box>
-    ),
-    content: (
+  const EmailVerificationModule = () => {
+
+    const FirstStep = () => (
       <Box style={{ position: "relative" }}>
         {
           emails.map((obj) => (
@@ -819,6 +805,76 @@ const NewsletterManagnentScreen = ({ classes }) => {
           classes.actionButtonDarkBlue
         )} style={{ position: "absolute", top: 0, right: 0 }}>Verify Another Email</Button>
       </Box>
+    )
+
+    const SecondStep = () => (
+      <Box style={{ position: "relative" }}>
+        <h1>2</h1>
+      </Box>
+    )
+
+    const ThirdStep = () => (
+      <Box style={{ position: "relative" }}>
+        <h1>3</h1>
+      </Box>
+    )
+
+    const FourthStep = () => (
+      <Box style={{ position: "relative" }}>
+        <h1>4</h1>
+      </Box>
+    )
+
+    const FifthStep = () => (
+      <Box style={{ position: "relative" }}>
+        <h1>5</h1>
+      </Box>
+    )
+
+    return (
+      <>
+        {emailVerificationStep === 1 && FirstStep()}
+        {emailVerificationStep === 2 && SecondStep()}
+        {emailVerificationStep === 3 && ThirdStep()}
+        {emailVerificationStep === 4 && FourthStep()}
+        {emailVerificationStep === 5 && FifthStep()}
+      </>
+    )
+
+  }
+
+
+  const EmailVerificationDialog = (data = '') => ({
+    title: <Box pb={1}>
+      {t('Verification of email to send')}
+      <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
+        {t('To ensure the security of your account, we need to verify this email address belongs to you. This is 2 one-time process for each email you send from.')}
+      </Typography>
+    </Box>,
+    showDivider: true,
+    icon: (
+      <Box className={classes.dialogAlertIcon}>
+        !
+      </Box>
+    ),
+    content: (<>
+      {EmailVerificationModule()}
+    </>
+      // <Box style={{ position: "relative" }}>
+      //   {
+      //     emails.map((obj) => (
+      //       <Box className={classes.flex}>
+      //         <span style={{ paddingInline: 2, fontSize: 18, marginTop: 2 }}>{obj.verified ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}</span>
+      //         <Typography style={{ paddingInline: 3, maxWidth: 250, minWidth: 160 }}>{obj.email} </Typography>
+      //         {!obj.verified && <Typography style={{ paddingInline: 3 }} className={classes.link}>verify email address</Typography>}
+      //       </Box>
+      //     ))
+      //   }
+      //   <Button className={clsx(
+      //     classes.actionButton,
+      //     classes.actionButtonDarkBlue
+      //   )} style={{ position: "absolute", top: 0, right: 0 }}>Verify Another Email</Button>
+      // </Box>
     ),
     renderButtons: () => (<Box className={classes.textCenter}>
       <Button
@@ -827,8 +883,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
         size='small'
         onClick={() => {
           // clearSearch()
-          handleClose()
-          // setPage(1)
+          // handleClose()
+          emailVerificationStep < 5 && setEmailVerificationStep(emailVerificationStep + 1)
           // await dispatch(duplicteCampaign(data))
           // getData()
         }}
@@ -838,6 +894,17 @@ const NewsletterManagnentScreen = ({ classes }) => {
         )}>
         {t('ok')}
       </Button>
+      {emailVerificationStep > 1 && <Button
+        name="btnConfirm"
+        variant='contained'
+        size='small'
+        onClick={() => emailVerificationStep > 1 && setEmailVerificationStep(emailVerificationStep - 1)}
+        className={clsx(
+          classes.dialogButton,
+          classes.dialogConfirmButton
+        )}>
+        {t('back')}
+      </Button>}
     </Box>)
     // onConfirm: async () => {
     //   // clearSearch()
