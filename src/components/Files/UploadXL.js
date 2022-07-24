@@ -43,7 +43,7 @@ const UploadXL = ({
 }) => {
     const { t } = useTranslation();
     const { extraData } = useSelector((state) => state.sms);
-    const { language } = useSelector(state => state.core)
+    const { language, isRTL } = useSelector(state => state.core)
     const { uploadProgress } = useSelector((state) => state.group);
     const dispatch = useDispatch();
     const styles = useStyles();
@@ -773,6 +773,9 @@ const UploadXL = ({
                     highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
                 )
                 }
+                style={{
+                    direction: areaData !== '' && isRTL ? 'ltr' : isRTL ? 'rtl' : 'ltr'
+                }}
                 value={areaData}
                 onDragEnter={() => {
                     setHighlighted(true);

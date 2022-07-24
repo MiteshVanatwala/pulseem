@@ -2438,5 +2438,8 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         borderBottom: '2px solid red'
       }
     }
+  },
+  ltr: {
+    direction: 'ltr'
   }
 });
