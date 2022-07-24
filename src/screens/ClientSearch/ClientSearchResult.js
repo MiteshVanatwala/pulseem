@@ -59,7 +59,7 @@ const ClientSearchResult = ({ classes }) => {
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks } = useSelector(state => state.client);
-  const { id } = useParams();
+  const { referrer, id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
   const [filterMin, setFilterMin] = useState("");
@@ -75,7 +75,7 @@ const ClientSearchResult = ({ classes }) => {
     SearchTerm: "",
     Status: 0,
     PageType: 15,
-    ReportType: document.referrer.toLowerCase().includes('smsmainreport') ? 20 : 10,
+    ReportType: referrer === 'sms' ? 20 : 10,
     IsSmsCampaign: false,
     CampaignID: id,
     Switch: "",
