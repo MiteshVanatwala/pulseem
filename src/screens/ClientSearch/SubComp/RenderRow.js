@@ -205,7 +205,7 @@ const RenderWebRow = ({
     let date = null;
     const { FirstName, LastName, CreationDate } = row;
     let text = t("common.UpdatedOn");
-    date = moment(row.CreationDate, dateFormat);
+    date = moment(CreationDate, dateFormat);
 
     return (
       <>
@@ -223,7 +223,7 @@ const RenderWebRow = ({
           text={`${FirstName} ${LastName}`}
 
         >
-          <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName}{LastName}</Typography>
+          <Typography noWrap={false} style={{ minHeight: 28, maxWidth: '100%' }} className={classes.nameEllipsis}>{FirstName}{LastName}</Typography>
         </CustomTooltip>
         <Typography
           className={classes.grayTextCell}>
@@ -256,7 +256,7 @@ const RenderWebRow = ({
     <TableRow key={Math.round(Math.random() * 999999999)} classes={rowStyle}>
       <TableCell classes={cellStyle} align="center" className={classes.flex4}>
         <Grid container direction="row">
-          <Grid item sm={2}>
+          {/* <Grid item sm={2}>
             <FormControlLabel
               label=""
               control={
@@ -270,20 +270,20 @@ const RenderWebRow = ({
                 />
               }
             />
-          </Grid>
-          <Grid item sm={10 - iconsCells}>
+          </Grid> */}
+          <Grid item sm={12}>
             {renderNameCell(row)}
           </Grid>
 
         </Grid>
       </TableCell>
-      <TableCell
+      {/* <TableCell
         classes={cellStyle}
         align="center"
         className={classes.flex6}
       >
         {renderCellIcons()}
-      </TableCell>
+      </TableCell> */}
       <TableCell classes={cellStyle} align="center" className={classes.flex2}>
         <Typography className={clsx(classes.bold, classes.f16)}>
           {Revenue} {t("common.NIS")}
