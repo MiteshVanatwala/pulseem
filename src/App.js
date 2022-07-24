@@ -220,7 +220,7 @@ const renderRoutes = (classes, history) => {
         component={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=', 'id')}
       /> */}
       <Route
-        path="/ClientSearchResult/:id"
+        path="/ClientSearchResult/:referrer/:id"
         render={props => <ClientSearchResult {...props} classes={classes} />}
       />
 
