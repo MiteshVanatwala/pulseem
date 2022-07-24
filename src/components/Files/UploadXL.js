@@ -234,9 +234,11 @@ const UploadXL = ({
                             let a = temp.split("\n");
                             let b = [];
                             for (let i = 0; i < a.length; i++) {
-                                b.push(a[i].split(","));
+                                const rowHasData = a[i].split(",").find((row) => { return row !== '' })
+                                if (rowHasData) {
+                                    b.push(a[i].split(","));
+                                }
                             }
-                            b.pop();
                             b = b.map((row) => {
                                 return row.map((col) => {
                                     try {
