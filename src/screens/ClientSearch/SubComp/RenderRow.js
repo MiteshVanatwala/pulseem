@@ -205,7 +205,7 @@ const RenderWebRow = ({
     let date = null;
     const { FirstName, LastName, CreationDate } = row;
     let text = t("common.UpdatedOn");
-    date = moment(row.CreationDate, dateFormat);
+    date = moment(CreationDate, dateFormat);
 
     return (
       <>
@@ -254,9 +254,9 @@ const RenderWebRow = ({
 
   return (
     <TableRow key={Math.round(Math.random() * 999999999)} classes={rowStyle}>
-      <TableCell classes={cellStyle} align="center" className={classes.flex4}>
+      <TableCell classes={cellStyle} className={classes.flex4}>
         <Grid container direction="row">
-          <Grid item sm={2}>
+          {/* <Grid item sm={2}>
             <FormControlLabel
               label=""
               control={
@@ -270,20 +270,20 @@ const RenderWebRow = ({
                 />
               }
             />
-          </Grid>
-          <Grid item sm={10 - iconsCells}>
-            {renderNameCell(row)}
-          </Grid>
+          </Grid> */}
+
+          {renderNameCell(row)}
+
 
         </Grid>
       </TableCell>
-      <TableCell
+      {/* <TableCell
         classes={cellStyle}
         align="center"
         className={classes.flex6}
       >
         {renderCellIcons()}
-      </TableCell>
+      </TableCell> */}
       <TableCell classes={cellStyle} align="center" className={classes.flex2}>
         <Typography className={clsx(classes.bold, classes.f16)}>
           {Revenue} {t("common.NIS")}

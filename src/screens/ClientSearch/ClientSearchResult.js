@@ -166,12 +166,12 @@ const ClientSearchResult = ({ classes }) => {
       className: classes.flex4,
       align: "center",
     },
-    {
-      label: t(""),
-      classes: cellStyle,
-      className: classes.flex6,
-      align: "center",
-    },
+    // {
+    //   label: t(""),
+    //   classes: cellStyle,
+    //   className: classes.flex6,
+    //   align: "center",
+    // },
     {
       label: <div className={classes.flex}>
         <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
@@ -734,8 +734,14 @@ const ClientSearchResult = ({ classes }) => {
     >
       {renderToast()}
       {renderHeader()}
-      {renderSearchLine()}
+      {/* {renderSearchLine()} */}
       {/* {windowSize !== "xs" ? renderManagmentLine() : null} */}
+      <Grid item lg={8} xs={windowSize === "xs" && 12} style={{ paddingTop: 40, margin: '0 auto' }}>
+        {revenueSummary && <SummaryRow
+          data={revenueSummary}
+          classes={classes} />
+        }
+      </Grid>
       <DataTable
         tableContainer={{
           className:
