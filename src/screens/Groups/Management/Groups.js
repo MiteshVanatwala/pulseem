@@ -190,7 +190,7 @@ const Groups = ({ classes }) => {
                         setPage(1);
                     }}
                     onKeyPress={handleKeyPress}
-                    placeholder={t("common.CampaignName")}
+                    placeholder={t("common.GroupName")}
                 />
             );
         }
@@ -384,7 +384,7 @@ const Groups = ({ classes }) => {
                         {fullwidth ? (
                             <Typography
                                 className={clsx(classes.nameEllipsis, classes.groupName)}
-                                style={{ maxWidth: "100%" }}
+                                style={{ maxWidth: "200px" }}
                             >
                                 {GroupName}
                             </Typography>
@@ -1196,7 +1196,17 @@ const Groups = ({ classes }) => {
                 {toastMessage && renderToast()}
                 {renderHeader()}
                 {renderSearchSection()}
-                {windowSize !== 'xs' && renderManagmentLine()}
+                {windowSize !== 'xs' ? renderManagmentLine() :
+                    <Box
+                        item
+                        xs={windowSize === "xs" && 12}
+                        className={clsx(classes.groupsLableContainer, classes.mt20)}
+                    >
+                        <Typography className={classes.groupsLable}>
+                            {`${groupData ? groupData.RecordCount : 0} ${t("common.Groups")}`}
+                        </Typography>
+                    </Box>
+                }
                 {renderTableBody()}
                 {renderTablePagination()}
                 {showConfirmDialog && renderConfirmDialog()}

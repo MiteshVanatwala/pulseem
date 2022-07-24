@@ -82,7 +82,7 @@ const AddGroupPopUp = ({ classes, isOpen = false, onClose, setLoader, onCreateGr
                 },
                 S_405: {
                     code: 405,
-                    message: ToastMessages.GROUP_ERROR,
+                    message: ToastMessages.MAX_GROUPS_EXCEEDED,
                     Func: () => null
                 },
                 S_422: {

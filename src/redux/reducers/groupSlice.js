@@ -161,7 +161,8 @@ export const groupSlice = createSlice({
             UNAUTORIZED_RESPONSE: { severity: 'error', color: 'error', message: "'recipient.responses.unautorized'", showAnimtionCheck: false },
             RECIPIENTS_DELETED_FROM_GROUP: { severity: 'success', color: 'success', message: 'recipient.recipientsDeletedSuccessfuly', showAnimtionCheck: false },
             RECIPIENTS_DELETED_NOT_FOUND_RECORDS: { severity: 'error', color: 'error', message: 'recipient.noRecordsFound', showAnimtionCheck: false },
-            UNSUBSCRIBE_LIMIT: { severity: 'error', color: 'error', message: 'recipient.maximumRecordLimitation', showAnimtionCheck: false }
+            UNSUBSCRIBE_LIMIT: { severity: 'error', color: 'error', message: 'recipient.maximumRecordLimitation', showAnimtionCheck: false },
+            MAX_GROUPS_EXCEEDED: { severity: 'error', color: 'error', message: 'group.maxGroupsExceeded', showAnimtionCheck: false }
         }
     },
     reducers: {
