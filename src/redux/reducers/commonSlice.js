@@ -65,10 +65,12 @@ export const getAccountFeatures = createAsyncThunk(
     }
   });
 export const getCommonFeatures = createAsyncThunk(
-  'GetSubAccountWithFeatureAndSettings', async (_, thunkAPI) => {
+  'GetSubAccountWithFeatureAndSettings', async (req = null, thunkAPI) => {
     try {
       const settings = getCookie('accountSettings');
-      if (!settings || settings === '' || document.referrer.toLocaleLowerCase().includes('accountsmanage.aspx')) {
+      if ((!settings || settings === '') || (req && req.forceRequest === true) ||
+        document.referrer.toLocaleLowerCase().includes('accountsmanage.aspx') ||
+        document.referrer.toLocaleLowerCase().includes('login')) {
         const response = await instence.get(`GetSubAccountWithFeatureAndSettings`);
         return JSON.parse(response.data)
       }

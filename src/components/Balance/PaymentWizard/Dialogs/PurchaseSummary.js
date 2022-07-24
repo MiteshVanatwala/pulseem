@@ -9,6 +9,8 @@ const PurchaseSummary = ({
     classes,
     isRTL,
     packageId,
+    showTitle = true,
+    showButtons = true,
     onConfirm = () => null,
     onComplete = () => null }) => {
     const { t } = useTranslation();
@@ -19,10 +21,10 @@ const PurchaseSummary = ({
     const { windowSize } = useSelector(state => state.core);
     return (
         <Grid container spacing={1} className={classes.paymentDialog}>
-            <Grid item xs={12} className={clsx(classes.mb4)}>
+            {showTitle && <Grid item xs={12} className={clsx(classes.mb4)}>
                 <Typography className={classes.dialogTitle} style={{ marginInline: windowSize !== 'xs' ? 0 : 25 }}>{t('payment.purchaseSummary')}</Typography>
                 <Divider />
-            </Grid>
+            </Grid>}
             <Grid item xs={6}>
                 <Typography className={clsx(classes.blue, classes.subTitle, classes.line1, classes.font20)}>{t('common.productName')}</Typography>
             </Grid>
@@ -61,7 +63,7 @@ const PurchaseSummary = ({
                 <Typography className={clsx(classes.bold, classes.blue, classes.subTitle, classes.line1, classes.font20)}><NumberFormat className={classes.f20} style={{ direction: isRTL ? 'rtl' : 'ltr' }} value={totalPrice.toFixed(2)} displayType={'text'} thousandSeparator={true} prefix={'₪'} /></Typography>
             </Grid>
 
-            <Grid
+            {showButtons && <Grid
                 container
                 spacing={4}
                 className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}>
@@ -89,7 +91,7 @@ const PurchaseSummary = ({
                         {t('common.cancel')}
                     </Button>
                 </Grid>
-            </Grid>
+            </Grid>}
         </Grid>
     )
 }

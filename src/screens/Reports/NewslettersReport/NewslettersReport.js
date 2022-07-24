@@ -743,7 +743,7 @@ const NewslettersReport = ({ classes }) => {
         <TableCell
           component="th"
           scope="row"
-          classes={borderCellStyle}
+          classes={hasRevenue ? borderCellStyle : noBorderCellStyle}
           className={classes.flex1}>
           {renderCellIcons(row)}
         </TableCell>

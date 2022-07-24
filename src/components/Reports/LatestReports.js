@@ -224,7 +224,7 @@ const LatestReports = ({ classes, windowSize, t, isRTL }) => {
                     classes={classes}
                     title={tabType === 'newsletter' ? t("dashboard.createFirstNewsletter") : t("dashboard.createFirstSms")}
                     buttonText={tabType === 'newsletter' ? t('common.CreateNewsletter') : t('sms.create')}
-                    redirect={tabType === 'newsletter' ? `/Pulseem/Editor/CampaignInfo?new=1&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/Pulseem/SMSCampaignEdit.aspx?action=edit&t=create&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
+                    redirect={tabType === 'newsletter' ? `/Pulseem/Editor/CampaignInfo?new=1&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/create`}
                     buttonClass={classes.createButton} />
                 )
             }
