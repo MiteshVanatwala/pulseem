@@ -415,8 +415,8 @@ const SiteTrackingEditor = ({ classes }) => {
                         {t('notifications.implementDialog.beforeYouStarted')}
                     </Typography>
                     <Typography
-                        className={clsx(classes.f20, classes.pb10)}>
-                        {t('siteTracking.scriptDescription')}
+                        className={clsx(classes.f18, classes.pb10)}>
+                        {renderHtml(t('siteTracking.scriptDescription'))}
                     </Typography>
                     <hr />
                     <Typography className={classes.f18}>
@@ -449,7 +449,15 @@ const SiteTrackingEditor = ({ classes }) => {
                         </Typography>
                     </Box>
                     <Box>
+                        <Typography className={clsx(classes.f18, classes.mt15, classes.mb15)}>
+                            {t('siteTracking.scriptPageviewImplemented')}
+                        </Typography>
+                    </Box>
+                    <Box>
                         <Box className={clsx(classes.f18)}>
+                            <Typography className={clsx(classes.bold, classes.f18)}>
+                                {t('siteTracking.purchaseActivating')}
+                            </Typography>
                             <Typography className={classes.f18} style={{ display: 'inline-block' }}>{t('siteTracking.scriptPurchaseInstruction')}
                                 <Typography style={{ marginInlineStart: 5, display: 'inline-block', transform: 'translateY(3px)' }}>
                                     <CustomTooltip
@@ -474,11 +482,11 @@ const SiteTrackingEditor = ({ classes }) => {
                         </ul>
                     </Box>
                     <Box>
-                        <Typography className={clsx(classes.f20)}>{t("siteTracking.javscriptFunction")}
-                            <pre>
-                                <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
-                                    {`  
-window.addEventListener('load', function(event) {
+                        <Typography className={clsx(classes.f18, classes.mb10)}>{t("siteTracking.scriptPurchaseIstructionForComplete")}</Typography>
+                        <Typography className={clsx(classes.f18, classes.mb10)}>{t("siteTracking.javscriptFunction")}</Typography>                        
+                        <pre>
+                            <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
+                                {`window.addEventListener('load', function(event) {
     const eventName = 'PURCHASE';
     const orderId = 'order1';
     const grandTotal = 100.00;
@@ -486,17 +494,18 @@ window.addEventListener('load', function(event) {
     const tax = 10.00;
     const orderItems = [{ itemCode: 'item1', name: 'item', price: 80.00, quantity: 1 }];
                                     `}
-                                    <b>
-                                        {`
+                                <b>
+                                    {`
     window.trackPurchase(orderId, grandTotal, shipping, tax, orderItems);
     `}
-                                    </b>
-                                    {`
+                                </b>
+                                {`
 });`}
-                                </div>
-                            </pre>
-                        </Typography>
+                            </div>
+                        </pre>
+
                     </Box>
+                    <Typography className={clsx(classes.f18, classes.mt10)}>{t("siteTracking.scriptInstructionEndText")}</Typography>
                 </Box>
             ),
             renderButtons: () => (
