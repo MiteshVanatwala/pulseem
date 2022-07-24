@@ -735,28 +735,13 @@ const ClientSearchResult = ({ classes }) => {
       {renderToast()}
       {renderHeader()}
       {renderSearchLine()}
-      {windowSize !== "xs" ? renderManagmentLine() : null
-        // <Box className={clsx(classes.flex, classes.spaceBetween)}>
-        //   <Box
-        //     item
-        //     xs={windowSize === "xs" && 12}
-        //     className={clsx(classes.groupsLableContainer, (windowSize === "xs" || windowSize === "sm") ? classes.mt15 : '')}
-        //   >
-        //     <Typography className={classes.groupsLable}>
-        //       {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`}
-        //     </Typography>
-        //   </Box>
-        //   <Box className={clsx(classes.middle, classes.plr10)}>
-        //     <BiSortAlt2 className={classes.f22} />
-        //   </Box>
-        // </Box>
-      }
+      {/* {windowSize !== "xs" ? renderManagmentLine() : null} */}
       <DataTable
         tableContainer={{
           className:
             windowSize === "xs"
               ? clsx(classes.mt3, classes.tableStyle)
-              : classes.tableStyle,
+              : clsx(classes.tableStyle, classes.mt25),
         }}
         table={{ className: classes.tableContainer }}
         tableHead={{
