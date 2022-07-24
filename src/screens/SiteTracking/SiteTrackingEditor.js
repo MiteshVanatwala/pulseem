@@ -138,6 +138,13 @@ const SiteTrackingEditor = ({ classes }) => {
         else {
             const response = await dispatch(deleteSiteTrackingEvent(purchaseEvent.id));
             setPurchase(response?.payload?.data);
+            if (event && event.id !== '') {
+                return;
+            }
+            else {
+                await dispatch(deletePulseemSiteTracking());
+                dispatch(updateEventModel({ type: 'new' }));
+            }
         }
         setPurchaseToggleDisabled(false);
     }
