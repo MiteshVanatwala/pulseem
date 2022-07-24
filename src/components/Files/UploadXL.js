@@ -204,8 +204,13 @@ const UploadXL = ({
         }
         else {
             let d = a.map((td) => {
-                return td.split('\t');
-            });
+                if (td.indexOf('\t') > -1) {
+                    return td.split('\t');
+                }
+                else if (td.indexOf(',') > -1) {
+                    return td.split(',');
+                }
+            })
             settypedData(d)
             setDialogType({ type: "manualUpload" });
         }
