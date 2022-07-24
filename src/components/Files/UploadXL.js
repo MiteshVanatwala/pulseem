@@ -698,8 +698,8 @@ const UploadXL = ({
             title: t('sms.columnAdjustment'),
             content: renderHtml(t('sms.reset_manual_upload_notice')),
             disableBackdropClick: true,
-            onClose: () => setDialogType('manualUpload'),
-            onCancel: () => setDialogType(null),
+            onClose: () => setDialogType({ type: "manualUpload" }),
+            onCancel: () => setDialogType({ type: "manualUpload" }),
             onConfirm: () => {
                 setareaData('');
                 settypedData([]);
