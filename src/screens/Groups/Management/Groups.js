@@ -1104,7 +1104,7 @@ const Groups = ({ classes }) => {
                         setDialog={setDialog}
                         handleResponses={(response, actions) => handleResponses(response, actions)}
                         onRecipientAdded={() => { setDialog(null); getData(); }}
-                        onAnotherRecipientAdded={() => { getData(); }}
+                        onAnotherRecipientAdded={() => { setDialog(null); getData(); setDialog(DialogType.ADD_RECIPIENT); }}
                     />;
                 }
                 case DialogType.ADD_RECIPIENTS: {
