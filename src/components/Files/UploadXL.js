@@ -770,12 +770,10 @@ const UploadXL = ({
                 autoComplete="off"
                 className={clsx(
                     classes.customScroll,
+                    areaData !== '' && isRTL ? classes.ltr : isRTL ? null : classes.ltr,
                     highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon)
                 )
                 }
-                style={{
-                    direction: areaData !== '' && isRTL ? 'ltr' : isRTL ? 'rtl' : 'ltr'
-                }}
                 value={areaData}
                 onDragEnter={() => {
                     setHighlighted(true);
