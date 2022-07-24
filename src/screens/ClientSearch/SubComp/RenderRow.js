@@ -223,7 +223,7 @@ const RenderWebRow = ({
           text={`${FirstName} ${LastName}`}
 
         >
-          <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName}{LastName}</Typography>
+          <Typography noWrap={false} style={{ minHeight: 28, maxWidth: '100%' }} className={classes.nameEllipsis}>{FirstName}{LastName}</Typography>
         </CustomTooltip>
         <Typography
           className={classes.grayTextCell}>
@@ -254,7 +254,7 @@ const RenderWebRow = ({
 
   return (
     <TableRow key={Math.round(Math.random() * 999999999)} classes={rowStyle}>
-      <TableCell classes={cellStyle} className={classes.flex4}>
+      <TableCell classes={cellStyle} align="center" className={classes.flex4}>
         <Grid container direction="row">
           {/* <Grid item sm={2}>
             <FormControlLabel
@@ -271,9 +271,9 @@ const RenderWebRow = ({
               }
             />
           </Grid> */}
-
-          {renderNameCell(row)}
-
+          <Grid item sm={12}>
+            {renderNameCell(row)}
+          </Grid>
 
         </Grid>
       </TableCell>
