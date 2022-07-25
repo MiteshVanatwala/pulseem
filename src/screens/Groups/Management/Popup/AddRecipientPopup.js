@@ -41,6 +41,8 @@ import { getAccountExtraData } from "../../../../redux/reducers/smsSlice";
 import { Autocomplete } from "@material-ui/lab";
 import { CLIENT_CONSTANTS } from "../../../../model/Clients/Contants";
 import { changeClientStatus } from "../../../../redux/reducers/clientSlice";
+import { Close } from "@material-ui/icons";
+import { IoMdClose } from "react-icons/io";
 
 
 const useStyles = makeStyles({
@@ -61,6 +63,24 @@ const useStyles = makeStyles({
         },
         '& .MuiAccordionSummary-content': {
             margin: 0
+        }
+    },
+    dateBox: {
+        position: 'relative',
+        '& .resetDate': {
+            fontSize: 19,
+            position: 'absolute',
+            right: 40,
+            top: 8.5,
+            opacity: 0.6,
+            cursor: 'pointer',
+            width: 26,
+            textAlign: 'center',
+            '&:hover': {
+                opacity: 0.8,
+                background: '#f5f5f5',
+                borderRadius: '50%'
+            }
         }
     }
 });
@@ -834,13 +854,18 @@ const AddRecipientPopup = ({ classes,
                             gridSize: { xs: 12, sm: 3 }
                         },
                         {
-                            content: <DateField
-                                name="BirthDate"
-                                classes={classes}
-                                value={addRecipientData.BirthDate}
-                                onChange={e => handleChange(e, { date: e, field: 'BirthDate' }, false)}
-                                toolbarDisabled={false}
-                            />,
+                            content: <Box className={localClasses.dateBox}>
+                                <DateField
+                                    name="BirthDate"
+                                    classes={classes}
+                                    value={addRecipientData.BirthDate}
+                                    onChange={e => handleChange(e, { date: e, field: 'BirthDate' }, false)}
+                                    toolbarDisabled={false}
+                                />
+                                {addRecipientData.BirthDate && <span className="resetDate"
+                                    onClick={(e) => setAddRecipientData({ ...addRecipientData, BirthDate: null })}
+                                ><IoMdClose /></span>}
+                            </Box>,
                             gridSize: { xs: 12, sm: 9 }
                         }
                     ]}
@@ -855,13 +880,20 @@ const AddRecipientPopup = ({ classes,
                             gridSize: { xs: 12, sm: 3 }
                         },
                         {
-                            content: <DateField
-                                name="ReminderDate"
-                                classes={classes}
-                                value={addRecipientData.ReminderDate}
-                                onChange={e => handleChange(e, { date: e, field: 'ReminderDate' }, false)}
-                                toolbarDisabled={false}
-                            />,
+                            content:
+                                <Box className={localClasses.dateBox}>
+                                    <DateField
+                                        name="ReminderDate"
+                                        classes={classes}
+                                        value={addRecipientData.ReminderDate}
+                                        onChange={e => handleChange(e, { date: e, field: 'ReminderDate' }, false)}
+                                        toolbarDisabled={false}
+                                    />
+                                    {addRecipientData.ReminderDate && <span className="resetDate"
+                                        onClick={(e) => setAddRecipientData({ ...addRecipientData, ReminderDate: null })}
+                                    ><IoMdClose /></span>}
+                                </Box>
+                            ,
                             gridSize: { xs: 12, sm: 9 }
                         }
                     ]}
@@ -912,23 +944,31 @@ const AddRecipientPopup = ({ classes,
         const json = windowSize === 'xs' ?
             extraFields.map((ef) => {
                 return {
-                    content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
-                        classes={classes}
-                        value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
-                        onChange={e => handleChange(e, { date: e, field: ef }, true)}
-                        toolbarDisabled={false}
-                        removePadding
-                    /> : <TextField
-                        id="outlined-basic"
-                        label=""
-                        placeholder={extraFieldsTemp[ef]}
-                        variant="outlined"
-                        name={ef}
-                        value={accountExtraFields?.[ef] || addRecipientData?.[ef] || ''}
-                        className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                        autoComplete="off"
-                        onChange={e => handleChange(e, null, true)}
-                    />
+                    content: ef.toLowerCase().indexOf('date') > -1 ?
+                        <Box className={localClasses.dateBox}>
+                            <DateField
+                                classes={classes}
+                                value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
+                                onChange={e => handleChange(e, { date: e, field: ef }, true)}
+                                toolbarDisabled={false}
+                                removePadding
+                            />
+                            {accountExtraFields?.[ef] && <span className="resetDate"
+                                onClick={(e) => setAccountExtraFields({ ...accountExtraFields, [ef]: null })}
+                            ><IoMdClose /></span>}
+                        </Box>
+
+                        : <TextField
+                            id="outlined-basic"
+                            label=""
+                            placeholder={extraFieldsTemp[ef]}
+                            variant="outlined"
+                            name={ef}
+                            value={accountExtraFields?.[ef] || addRecipientData?.[ef] || ''}
+                            className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                            autoComplete="off"
+                            onChange={e => handleChange(e, null, true)}
+                        />
                 }
             })
             :
@@ -945,21 +985,28 @@ const AddRecipientPopup = ({ classes,
                                 gridSize: { xs: 12, sm: 3 }
                             },
                             {
-                                content: ef.toLowerCase().indexOf('date') > -1 ? <DateField
-                                    classes={classes}
-                                    value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
-                                    onChange={e => handleChange(e, { date: e, field: ef }, true)}
-                                    toolbarDisabled={false}
-                                /> : <TextField
-                                    id="outlined-basic"
-                                    label=""
-                                    variant="outlined"
-                                    name={ef}
-                                    value={accountExtraFields?.[ef] || addRecipientData?.[ef] || ''}
-                                    className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
-                                    autoComplete="off"
-                                    onChange={e => handleChange(e, null, true)}
-                                />,
+                                content: ef.toLowerCase().indexOf('date') > -1 ?
+                                    <Box className={localClasses.dateBox}>
+                                        <DateField
+                                            classes={classes}
+                                            value={accountExtraFields?.[ef] || addRecipientData?.[ef] || null}
+                                            onChange={e => handleChange(e, { date: e, field: ef }, true)}
+                                            toolbarDisabled={false}
+                                        />
+                                        {accountExtraFields?.[ef] && <span className="resetDate"
+                                            onClick={(e) => setAccountExtraFields({ ...accountExtraFields, [ef]: null })}
+                                        ><IoMdClose /></span>}
+                                    </Box>
+                                    : <TextField
+                                        id="outlined-basic"
+                                        label=""
+                                        variant="outlined"
+                                        name={ef}
+                                        value={accountExtraFields?.[ef] || addRecipientData?.[ef] || ''}
+                                        className={clsx(classes.NoPaddingtextField, classes.textField, classes.minWidth252)}
+                                        autoComplete="off"
+                                        onChange={e => handleChange(e, null, true)}
+                                    />,
                                 gridSize: { xs: 12, sm: 9 }
                             }
                         ]}
