@@ -209,11 +209,6 @@ const renderRoutes = (classes, history) => {
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
       />
-
-      {/* <Route
-        path="/ClientSearchResult/:id"
-        component={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=', 'id')}
-      /> */}
       <Route
         path="/ClientSearchResult/:referrer/:id"
         render={props => <ClientSearchResult {...props} classes={classes} />}
@@ -234,7 +229,6 @@ const renderRoutes = (classes, history) => {
       {/* Reports */}
       <Route
         path={`/Reports/NewsletterReports`}
-        //component={transferUrl('/Pulseem/MainReport.aspx')}
         render={props => <NewslettersReport {...props} classes={classes} />}
       />
       <Route
