@@ -124,7 +124,7 @@ const NewslettersReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      href: `/react/ClientSearchResult/${id}`,
+      href: `/react/ClientSearchResult/email/${id}`,
       textStyle: { fontWeight: 900 },
       isRevenueCol: true
     }

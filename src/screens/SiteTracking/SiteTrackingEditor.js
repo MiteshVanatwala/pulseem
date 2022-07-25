@@ -7,7 +7,7 @@ import Title from '../../components/Wizard/Title'
 import CustomTooltip from '../../components/Tooltip/CustomTooltip';
 import { Typography, Button, TextField, Grid, Box, FormControlLabel, FormControl, Checkbox } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
-import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel } from '../../redux/reducers/siteTrackingSlice';
+import { get, post, update, getScript, setDomain, deleteSiteTrackingEvent, deletePulseemSiteTracking, updateEventModel, setPurchase } from '../../redux/reducers/siteTrackingSlice';
 import { EventRequestModel } from '../../model/SiteTracking/SiteTrackingModel';
 import { MdErrorOutline } from 'react-icons/md';
 import { Dialog } from '../../components/managment/index';
@@ -19,7 +19,7 @@ import { AiOutlineExclamationCircle } from "react-icons/ai";
 import EventTabs from './EventTabs';
 import { isValidUrl } from '../../helpers/UrlHelper';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
-import { ThemeProvider, makeStyles, useTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
 
 const renderHtml = (html) => {
@@ -34,7 +34,7 @@ const renderHtml = (html) => {
 const SiteTrackingEditor = ({ classes }) => {
     // const { subAccountGroups } = useSelector((state) => state.sms);
     const { isRTL, windowSize } = useSelector(state => state.core);
-    const { ToastMessages, siteScript, event } = useSelector((state) => state.siteTracking);
+    const { ToastMessages, siteScript, event, purchaseEvent } = useSelector((state) => state.siteTracking);
     const [showLoader, setShowLoader] = useState(true);
     const [toastMessage, setToastMessage] = useState(null);
     const [validationError, setValidationError] = useState([]);
@@ -45,6 +45,8 @@ const SiteTrackingEditor = ({ classes }) => {
     const refScriptCode = useRef(null);
     const [scriptDialog, handleScriptDialogCheck] = useState(false);
     const [isValidDomain, setIsValidDomain] = useState(null);
+    const [showActions, setShowActions] = useState(true);
+    const [purchaseToggleDisabled, setPurchaseToggleDisabled] = useState(false);
 
     const theme = createTheme({
         palette: {
@@ -113,6 +115,38 @@ const SiteTrackingEditor = ({ classes }) => {
             }
         });
         return isValid;
+    }
+    const handlePurchase = async (isEnable) => {
+        setPurchaseToggleDisabled(true);
+        if (isEnable) {
+            const request = {
+                domain: event?.domain,
+                eventName: "PURCHASE",
+                actionType: "TRACK_PURCHASE_EVENT",
+                metadata: []
+            }
+            const response = await dispatch(post(request));
+            if (response.payload.status !== 200 && response.payload.status !== 201) {
+                onSaveReponse(response?.payload);
+            }
+            else {
+                request.id = response?.payload?.data?.id;
+                dispatch(setPurchase(request));
+                await dispatch(setDomain({ DomainAddress: event?.domain }));
+            }
+        }
+        else {
+            const response = await dispatch(deleteSiteTrackingEvent(purchaseEvent.id));
+            setPurchase(response?.payload?.data);
+            if (event && event.id !== '') {
+                return;
+            }
+            else {
+                await dispatch(deletePulseemSiteTracking());
+                dispatch(updateEventModel({ type: 'new' }));
+            }
+        }
+        setPurchaseToggleDisabled(false);
     }
     const onSave = async () => {
         setShowLoader(true);
@@ -205,7 +239,7 @@ const SiteTrackingEditor = ({ classes }) => {
             scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog(),
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
             deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), renderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
-            invalidDomain: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), t('siteTracking.invalidDomainAddress')),
+            invalidDomain: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.invalidDomainAddress')),
         }
 
         const currentDialog = dialogContent[type] || {}
@@ -381,8 +415,8 @@ const SiteTrackingEditor = ({ classes }) => {
                         {t('notifications.implementDialog.beforeYouStarted')}
                     </Typography>
                     <Typography
-                        className={clsx(classes.f20, classes.pb10)}>
-                        {t('siteTracking.scriptDescription')}
+                        className={clsx(classes.f18, classes.pb10)}>
+                        {renderHtml(t('siteTracking.scriptDescription'))}
                     </Typography>
                     <hr />
                     <Typography className={classes.f18}>
@@ -415,7 +449,15 @@ const SiteTrackingEditor = ({ classes }) => {
                         </Typography>
                     </Box>
                     <Box>
+                        <Typography className={clsx(classes.f18, classes.mt15, classes.mb15)}>
+                            {t('siteTracking.scriptPageviewImplemented')}
+                        </Typography>
+                    </Box>
+                    <Box>
                         <Box className={clsx(classes.f18)}>
+                            <Typography className={clsx(classes.bold, classes.f18)}>
+                                {t('siteTracking.purchaseActivating')}
+                            </Typography>
                             <Typography className={classes.f18} style={{ display: 'inline-block' }}>{t('siteTracking.scriptPurchaseInstruction')}
                                 <Typography style={{ marginInlineStart: 5, display: 'inline-block', transform: 'translateY(3px)' }}>
                                     <CustomTooltip
@@ -440,26 +482,30 @@ const SiteTrackingEditor = ({ classes }) => {
                         </ul>
                     </Box>
                     <Box>
-                        <Typography className={clsx(classes.f20)}>{t("siteTracking.javscriptFunction")}
-                            <pre>
-                                <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
-                                    {`trackPixel("purchase", {
-    "orderId": 10,
-    "grandTotal": "100.00$",
-    "shipping": "10.00$",
-    "tax": "10.00$"
-    "items": [
-      {
-        "name": "IPhone 10",
-        "quantity": 2,
-        "itemCode": "P5123",
-        "price": 2000
-      }
-]});`}
-                                </div>
-                            </pre>
-                        </Typography>
+                        <Typography className={clsx(classes.f18, classes.mb10)}>{t("siteTracking.scriptPurchaseIstructionForComplete")}</Typography>
+                        <Typography className={clsx(classes.f18, classes.mb10)}>{t("siteTracking.javscriptFunction")}</Typography>                        
+                        <pre>
+                            <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
+                                {`window.addEventListener('load', function(event) {
+    const eventName = 'PURCHASE';
+    const orderId = 'order1';
+    const grandTotal = 100.00;
+    const shipping = 10.00;
+    const tax = 10.00;
+    const orderItems = [{ itemCode: 'item1', name: 'item', price: 80.00, quantity: 1 }];
+                                    `}
+                                <b>
+                                    {`
+    window.trackPurchase(orderId, grandTotal, shipping, tax, orderItems);
+    `}
+                                </b>
+                                {`
+});`}
+                            </div>
+                        </pre>
+
                     </Box>
+                    <Typography className={clsx(classes.f18, classes.mt10)}>{t("siteTracking.scriptInstructionEndText")}</Typography>
                 </Box>
             ),
             renderButtons: () => (
@@ -577,7 +623,7 @@ const SiteTrackingEditor = ({ classes }) => {
             {PageHeader()}
             {renderToast()}
             {renderDialog()}
-            {event && <Box style={{ marginBottom: 'auto' }}>
+            <Box style={{ marginBottom: 'auto' }}>
                 <form className={classes.root} noValidate autoComplete="off">
                     <Grid container alignItems="center">
                         <Grid item lg={12} xs={12}>
@@ -622,18 +668,24 @@ const SiteTrackingEditor = ({ classes }) => {
                                 onPaste={handleDomainAddress}
                                 variant="outlined"
                                 onChange={handleOnDomainChange}
-                                value={event.domain}
+                                value={event?.domain}
                                 style={{ marginTop: isValidDomain === false || isValidDomain === true ? 2 : 0 }}
                             />
                         </Grid>
                         <Grid item xs={12}>
                             <Typography className={clsx(classes.marginBlock20, classes.font24)}>{t("siteTracking.eventToTrack")}</Typography>
-                            <EventTabs classes={classes} setDialog={setDialogType} />
+                            <EventTabs
+                                classes={classes}
+                                setDialog={setDialogType}
+                                showButtons={setShowActions}
+                                domain={event?.domain}
+                                onPurchaseChanged={handlePurchase}
+                                purchaseToggleDisabled={purchaseToggleDisabled} />
                         </Grid>
                     </Grid>
                 </form>
-            </Box>}
-            {PageFooter()}
+            </Box>
+            {showActions && PageFooter()}
         </Box>
         <Loader isOpen={showLoader} />
     </DefaultScreen>

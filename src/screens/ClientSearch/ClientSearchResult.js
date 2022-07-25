@@ -59,7 +59,7 @@ const ClientSearchResult = ({ classes }) => {
   const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks } = useSelector(state => state.client);
-  const { id } = useParams();
+  const { referrer, id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
   const [filterMin, setFilterMin] = useState("");
@@ -75,7 +75,7 @@ const ClientSearchResult = ({ classes }) => {
     SearchTerm: "",
     Status: 0,
     PageType: 15,
-    ReportType: document.referrer.toLowerCase().includes('smsmainreport') ? 20 : 10,
+    ReportType: referrer === 'sms' ? 20 : 10,
     IsSmsCampaign: false,
     CampaignID: id,
     Switch: "",
@@ -166,12 +166,12 @@ const ClientSearchResult = ({ classes }) => {
       className: classes.flex4,
       align: "center",
     },
-    {
-      label: t(""),
-      classes: cellStyle,
-      className: classes.flex6,
-      align: "center",
-    },
+    // {
+    //   label: t(""),
+    //   classes: cellStyle,
+    //   className: classes.flex6,
+    //   align: "center",
+    // },
     {
       label: <div className={classes.flex}>
         <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
@@ -184,7 +184,7 @@ const ClientSearchResult = ({ classes }) => {
         </div>
       </div>,
       classes: cellStyle,
-      className: clsx(classes.flex2, classes.textUppercase),
+      className: clsx(classes.flex2),
       align: "center",
     },
     {
@@ -734,29 +734,20 @@ const ClientSearchResult = ({ classes }) => {
     >
       {renderToast()}
       {renderHeader()}
-      {renderSearchLine()}
-      {windowSize !== "xs" ? renderManagmentLine() : null
-        // <Box className={clsx(classes.flex, classes.spaceBetween)}>
-        //   <Box
-        //     item
-        //     xs={windowSize === "xs" && 12}
-        //     className={clsx(classes.groupsLableContainer, (windowSize === "xs" || windowSize === "sm") ? classes.mt15 : '')}
-        //   >
-        //     <Typography className={classes.groupsLable}>
-        //       {`${data && totalClients !== 0 ? totalClients : 0} ${t("common.Clients")}`}
-        //     </Typography>
-        //   </Box>
-        //   <Box className={clsx(classes.middle, classes.plr10)}>
-        //     <BiSortAlt2 className={classes.f22} />
-        //   </Box>
-        // </Box>
-      }
+      {/* {renderSearchLine()} */}
+      {/* {windowSize !== "xs" ? renderManagmentLine() : null} */}
+      <Grid item lg={8} xs={windowSize === "xs" && 12} style={{ paddingTop: 40, margin: '0 auto' }}>
+        {revenueSummary && <SummaryRow
+          data={revenueSummary}
+          classes={classes} />
+        }
+      </Grid>
       <DataTable
         tableContainer={{
           className:
             windowSize === "xs"
               ? clsx(classes.mt3, classes.tableStyle)
-              : classes.tableStyle,
+              : clsx(classes.tableStyle, classes.mt25),
         }}
         table={{ className: classes.tableContainer }}
         tableHead={{

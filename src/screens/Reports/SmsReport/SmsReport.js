@@ -90,7 +90,7 @@ const SmsReport = ({ classes }) => {
     },
     Revenue: {
       title: '',
-      href: `/react/ClientSearchResult/${id}`,
+      href: `/react/ClientSearchResult/sms/${id}`,
       textStyle: { fontWeight: 900 }
     }
   })
