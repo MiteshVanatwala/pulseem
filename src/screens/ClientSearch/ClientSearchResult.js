@@ -1193,7 +1193,7 @@ const ClientSearchResult = ({ props, classes }) => {
     let date = null;
     const { FirstName, LastName, CreationDate, ClientID } = row;
     let text = t("common.UpdatedOn");
-    date = moment(row.CreationDate, dateFormat);
+    date = row.CreationDate ? moment(row.CreationDate, dateFormat) : null;
 
     return (
       <Grid container spacing={1}>
@@ -1216,7 +1216,7 @@ const ClientSearchResult = ({ props, classes }) => {
           </CustomTooltip>
           <Typography
             className={classes.grayTextCell}>
-            {`${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}`}
+            {date ? `${text} ${date.format('DD/MM/YYYY')} ${date.format('LT')}` : text}
           </Typography>
         </Grid>
       </Grid>
