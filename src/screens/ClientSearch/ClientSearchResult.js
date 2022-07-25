@@ -470,7 +470,7 @@ const ClientSearchResult = ({ props, classes }) => {
 
   const PageTypeObject = {
     '1': {
-      title: t("common.SendDate"),
+      title: t("common.OpenDate"),
       sortKey: 'Date',
       component: {
         mobile: ({ snt_OpeningDate = null, ...rest }) => (<>
