@@ -11,7 +11,7 @@ import { Dialog } from "../../../../components/managment/Dialog";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { BsInfoCircleFill } from "react-icons/bs";
 import clsx from 'clsx';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { deleteRecipients, unsubRecipients } from "../../../../redux/reducers/groupSlice";
 import { useDispatch } from "react-redux";
 import * as XLSX from 'xlsx';
@@ -43,6 +43,7 @@ const UnsubscribeOrDeletePopup = ({
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [confirm, setConfirm] = useState(false);
     const [limitationWarning, setLimitationWarning] = useState(false);
+    const [allData, setAllData] = useState(null);
 
     const AdvanceOptions = () => {
         return (
@@ -68,6 +69,45 @@ const UnsubscribeOrDeletePopup = ({
             </>
         )
     }
+
+    useEffect(() => {
+        const updateFinalData = () => {
+            if (!finalData || finalData.length === 0) {
+                return;
+            }
+
+
+            let tempData = null;
+            if (!allData) {
+                setAllData(finalData);
+            }
+
+            switch (activeTab) {
+                case 0:
+                default: {
+                    tempData = allData ?? finalData;
+                    break;
+                }
+                case 1: {
+                    tempData = allData?.filter((f) => {
+                        return f.indexOf('@') > -1;
+                    });
+                    break;
+                }
+                case 2: {
+                    tempData = allData?.filter((f) => {
+                        return f.indexOf('@') === -1;
+                    });
+                    break;
+                }
+            }
+
+            handleFinalData(tempData);
+        }
+
+        updateFinalData();
+
+    }, [areaData, activeTab])
 
     const openConfirmDialog = () => {
         if (!finalData || finalData.length === 0) {
@@ -209,7 +249,7 @@ const UnsubscribeOrDeletePopup = ({
     }
 
     const handleFinalData = (data) => {
-        if (data.length === 0)
+        if (!data || data.length === 0)
             return;
         else if (data.length > 1000) {
             setLimitationWarning(true);
