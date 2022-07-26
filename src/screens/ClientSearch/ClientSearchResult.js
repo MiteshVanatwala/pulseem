@@ -1683,7 +1683,7 @@ const ClientSearchResult = ({ props, classes }) => {
             DialogType={DialogType}
             selectedGroups={data.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds || searchData?.GroupIds || []}
             setDialog={setDialog}
-            handleResponses={(response, actions) => handleResponses(response, actions)}
+            handleResponses={(response, actions) => { setDialog(null); handleResponses(response, actions); }}
             onAddRecipient={() => { getData(); }}
             recipientData={
               selectedClients[0] && (data.find((obj) => obj.ClientID === selectedClients[0]))
