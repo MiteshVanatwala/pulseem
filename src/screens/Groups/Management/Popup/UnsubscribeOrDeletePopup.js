@@ -85,17 +85,17 @@ const UnsubscribeOrDeletePopup = ({
             switch (activeTab) {
                 case 0:
                 default: {
-                    tempData = allData ?? finalData;
+                    tempData = allData?.split("\n") ?? finalData;
                     break;
                 }
                 case 1: {
-                    tempData = allData?.filter((f) => {
+                    tempData = allData?.split("\n").filter((f) => {
                         return f.indexOf('@') > -1;
                     });
                     break;
                 }
                 case 2: {
-                    tempData = allData?.filter((f) => {
+                    tempData = allData?.split("\n").filter((f) => {
                         return f.indexOf('@') === -1;
                     });
                     break;
@@ -229,6 +229,9 @@ const UnsubscribeOrDeletePopup = ({
         let filteredData = data.filter((m) => {
             m = m.replaceAll('\t', '').replaceAll(' ', '');
             let isDate = ((m.split('-').length > 2) || (m.split('\'').length > 2) || (m.split('/').length > 2));
+            if (m === '') {
+                return {};
+            }
             if (isDate) {
                 return null;
             }
@@ -265,7 +268,6 @@ const UnsubscribeOrDeletePopup = ({
         const tempData = [...filteredData];
         setareaData(tempData.join(',').replaceAll(',', "\n"));
         setLoader(false);
-        //setareaData(tempData.slice(0, 1000).join(',').replaceAll(',', "\n") + (tempData.length > 1000 ? "\n..." : ""));
     }
 
     const areaChange = (e) => {
@@ -275,6 +277,7 @@ const UnsubscribeOrDeletePopup = ({
 
         let enteredValue = e.target.value.split("\n")
         setareaData(e.target.value);
+        setAllData(e.target.value);
         if (e.target.value === '') {
             setFinalData(null);
             setError(t("recipient.errors.noData"));
