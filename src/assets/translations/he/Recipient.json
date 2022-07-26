@@ -42,6 +42,7 @@
   "addRecipientToGroups": "שיוך לקוח לקבוצות",
   "dates": "תאריכים",
   "addRecipientSuccess": "נמען נוסף בהצלחה",
+  "updateRecipientSuccess": "הנמען עודכן בהצלחה",
   "addRecipientsToGroupSucceeded": "הנמענים נוספו לקבוצה שיצרת בהצלחה.",
   "incorrectRecipientInput": "מספר סלולארי או כתובת המייל שהוזנו לא תקינים",
   "unsubRecipients": "הסרה מחשבון",

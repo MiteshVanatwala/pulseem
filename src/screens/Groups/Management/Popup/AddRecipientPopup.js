@@ -298,12 +298,14 @@ const AddRecipientPopup = ({ classes,
             handleResponses(response, {
                 'S_201': {
                     code: 201,
-                    message: ToastMessages.RECIPIENT_ADDED,
-                    Func: new Promise(async (resolutionFunc, rejectionFunc) => {
-                        resolutionFunc(onAddRecipient());
-                    }).then((res) => {
-                        callback?.()
-                    }),
+                    message: recipientData ? ToastMessages.RECIPIENT_UPDATED : ToastMessages.RECIPIENT_ADDED,
+                    Func: () => {
+                        new Promise(async (resolutionFunc, rejectionFunc) => {
+                            resolutionFunc(onAddRecipient());
+                        }).then((res) => {
+                            callback?.()
+                        })
+                    },
                 },
                 'S_400': {
                     code: 400,
