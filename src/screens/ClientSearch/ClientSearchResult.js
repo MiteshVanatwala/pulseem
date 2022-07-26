@@ -1168,7 +1168,7 @@ const ClientSearchResult = ({ props, classes }) => {
           arrow={true}
           style={{ fontSize: 18, fontWeight: "bold", direction: isRTL ? 'rtl' : 'ltr' }}
           placement={"top"}
-          title={<Typography noWrap={false}>{FirstName}{LastName}</Typography>}
+          title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
           text={`${FirstName} ${LastName}`}
         >
           {fullwidth ? (
@@ -1176,11 +1176,11 @@ const ClientSearchResult = ({ props, classes }) => {
               className={clsx(classes.nameEllipsis, classes.fullWidth)}
               style={{ maxWidth: "100%", minHeight: 28 }}
             >
-              {FirstName}{LastName}
+              {FirstName} {LastName}
             </Typography>
           ) : (
             <Typography className={classes.nameEllipsis} style={{ minHeight: 28 }}>
-              {FirstName}{LastName}
+              {FirstName} {LastName}
             </Typography>
           )}
         </CustomTooltip>
