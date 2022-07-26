@@ -218,6 +218,7 @@ const ClientSearchResult = ({ props, classes }) => {
       CountryOrRegion: "",
       GroupIds: [],
       NodeID: "",
+      OrderBy: 0,
       ...overwriteObject,
     };
 
