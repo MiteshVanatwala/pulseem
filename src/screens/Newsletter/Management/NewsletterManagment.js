@@ -71,7 +71,10 @@ const NewsletterManagnentScreen = ({ classes }) => {
       verified: true,
     },
   ])
-  const [emailVerificationStep, setEmailVerificationStep] = useState(1)
+  const [emailVerificationStep, setEmailVerificationStep] = useState(0)
+  const [emailVerificationError, setEmailVerificationError] = useState(null)
+  const [selectedVerificationEmail, setSelectedVerificationEmail] = useState('')
+  const [verificationCode, setVerificationCode] = useState('')
   moment.locale(language)
 
   const getData = async () => {
@@ -787,59 +790,181 @@ const NewsletterManagnentScreen = ({ classes }) => {
   })
 
 
+
+
   const EmailVerificationModule = () => {
 
+    const verifyCode = () => {
+      return true
+    }
+
+    const NextSlide = () => {
+      if (emailVerificationStep === 4) {
+        return setEmailVerificationStep(0)
+      }
+      return setEmailVerificationStep(emailVerificationStep + 1)
+    }
+
+    const PrevSlide = () => {
+      if (emailVerificationStep === 0) {
+        return setEmailVerificationStep(5)
+      }
+      return setEmailVerificationStep(emailVerificationStep - 1)
+    }
+
     const FirstStep = () => (
-      <Box style={{ position: "relative" }}>
-        {
-          emails.map((obj) => (
-            <Box className={classes.flex}>
-              <span style={{ paddingInline: 2, fontSize: 18, marginTop: 2 }}>{obj.verified ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}</span>
-              <Typography style={{ paddingInline: 3, maxWidth: 250, minWidth: 160 }}>{obj.email} </Typography>
-              {!obj.verified && <Typography style={{ paddingInline: 3 }} className={classes.link}>verify email address</Typography>}
-            </Box>
-          ))
-        }
-        <Button className={clsx(
-          classes.actionButton,
-          classes.actionButtonDarkBlue
-        )} style={{ position: "absolute", top: 0, right: 0 }}>Verify Another Email</Button>
+      <Box className={clsx(classes.carouselItem, classes.T05S)} style={{ position: "relative", transform: `translate(-${emailVerificationStep * 100}%)` }}>
+        <Box style={{ width: "100%", height: '100%', position: "relative" }}>
+          {
+            emails.map((obj) => (
+              <Box className={classes.flex} style={{ height: "auto" }}>
+                <span style={{ paddingInline: 2, fontSize: 18, marginTop: 2 }}>{obj.verified ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}</span>
+                <Typography style={{ paddingInline: 3, maxWidth: 250, minWidth: 160 }}>{obj.email} </Typography>
+                {!obj.verified && <Typography style={{ paddingInline: 3 }} className={classes.link}
+                  onClick={() => {
+                    setSelectedVerificationEmail(obj.email);
+                    EmailVerificationModule().NextSlide()
+                  }}
+                >verify email address</Typography>}
+              </Box>
+            ))
+          }
+          <Button className={clsx(
+            classes.actionButton,
+            classes.actionButtonDarkBlue
+          )} style={{ position: "absolute", top: 0, right: 0 }} onClick={() => EmailVerificationModule().NextSlide()}>Verify Another Email</Button>
+        </Box>
       </Box>
     )
 
     const SecondStep = () => (
-      <Box style={{ position: "relative" }}>
-        <h1>2</h1>
+      <Box className={clsx(classes.carouselItem, classes.T05S)} style={{ transform: `translate(-${emailVerificationStep * 100}%)` }}>
+        <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: "100%", height: '100%', textAlign: 'center' }}>
+          <Box>
+            <Typography variant='h4'>Brief Verification before Proceeding</Typography>
+            <Typography variant='body1' style={{ marginTop: 20 }}>We'd like to make sure you own the email you've entered, Identify a one time process for each email to send <strong>{selectedVerificationEmail}</strong></Typography>
+          </Box>
+          <Box style={{ display: 'flex', flexDirection: 'column' }}>
+            <Box>
+              <TextField
+                variant='outlined'
+                size='small'
+                value={selectedVerificationEmail}
+                onChange={(e) => setSelectedVerificationEmail(e.target.value)}
+                className={clsx(classes.textField, classes.maxWidth400)}
+                placeholder={t('Enter Email')}
+                error={!!emailVerificationError?.email}
+                helperText={emailVerificationError?.email}
+              />
+            </Box>
+            <Box mt={2}>
+              <Button className={clsx(classes.actionButton, classes.actionButtonGreen)}
+                onClick={() => {
+                  if (selectedVerificationEmail)
+                    EmailVerificationModule().NextSlide();
+                  else
+                    setEmailVerificationError({ email: 'Invalid Email' })
+                }}
+              >Email me for verification</Button>
+            </Box>
+          </Box>
+          <Box>
+            <Typography variant='body1'>Do you have a problem? Contact us</Typography>
+            <Typography variant='body1'>Number 03-5240290 or email support@pulseem.com</Typography>
+          </Box>
+        </Box>
       </Box>
     )
 
     const ThirdStep = () => (
-      <Box style={{ position: "relative" }}>
-        <h1>3</h1>
+      <Box className={clsx(classes.carouselItem, classes.T05S)} style={{ transform: `translate(-${emailVerificationStep * 100}%)` }}>
+        <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: "100%", height: '100%', textAlign: 'center' }}>
+          <Box>
+            <Typography variant='h4'>We Did !</Typography>
+            <Typography variant='body1' style={{ marginTop: 20 }}>amir@pulseem.com. A verification code was sent successfully to your email. Mind you.</Typography>
+            <Typography variant='h5' mt={1}>it's valid for the next 10 minutes</Typography>
+          </Box>
+          <Box style={{ display: 'flex', flexDirection: 'column' }}>
+            <Box>
+              <TextField
+                variant='outlined'
+                size='small'
+                // value={campaineNameSearch}
+                // onChange={handleCampainNameChange}
+                className={clsx(classes.textField, classes.maxWidth400)}
+                placeholder={t('Verification Code')}
+                error={!!emailVerificationError?.code}
+                helperText={emailVerificationError?.code}
+              />
+            </Box>
+            <Box mt={2}>
+              <Button className={clsx(classes.actionButton, classes.actionButtonDarkBlue)}
+                onClick={() => {
+                  if (verificationCode) {
+                    if (verifyCode) {
+                      EmailVerificationModule().NextSlide();
+                    }
+                    else {
+                      setEmailVerificationError({ code: 'Invalid code, Please try again.' })
+                    }
+                  }
+                  else
+                    setEmailVerificationError({ code: 'Invalid code, Please try again.' })
+                }}
+              >Email me for verification</Button>
+            </Box>
+          </Box>
+          <Box>
+            <Typography variant='body1'>You didn't get it? Send again.</Typography>
+          </Box>
+        </Box>
       </Box>
     )
 
     const FourthStep = () => (
-      <Box style={{ position: "relative" }}>
-        <h1>4</h1>
+      <Box className={clsx(classes.carouselItem, classes.T05S)} style={{ transform: `translate(-${emailVerificationStep * 100}%)` }}>
+        <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: "100%", height: '100%', textAlign: 'center' }}>
+          <Box mt={4}>
+            <Typography variant='h4'>Too many tries</Typography>
+            <Typography variant='body1' style={{ marginTop: 20 }}>You've entered the wrong code too many times</Typography>
+          </Box>
+
+          <Box>
+            <Typography variant='body1'>Please contact support</Typography>
+            <Typography variant='body1'>CellPhone: 035240290</Typography>
+            <Typography variant='body1'>Email: support@pulseem.com</Typography>
+          </Box>
+        </Box>
       </Box>
     )
 
     const FifthStep = () => (
-      <Box style={{ position: "relative" }}>
-        <h1>5</h1>
+      <Box className={clsx(classes.carouselItem, classes.T05S)} style={{ transform: `translate(-${emailVerificationStep * 100}%)` }}>
+        <Box style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', width: "100%", height: '100%', textAlign: 'center' }}>
+          <Box>
+            <Typography variant='h4'>Number Successfully Verified</Typography>
+            <Typography variant='body1' style={{ marginTop: 20 }}>From now you can send through this number without the need for re-verification. </Typography>
+            <Button style={{ marginTop: 30 }} className={clsx(classes.actionButton, classes.actionButtonGreen)} >Continue to campaign</Button>
+          </Box>
+        </Box>
       </Box>
     )
 
-    return (
-      <>
-        {emailVerificationStep === 1 && FirstStep()}
-        {emailVerificationStep === 2 && SecondStep()}
-        {emailVerificationStep === 3 && ThirdStep()}
-        {emailVerificationStep === 4 && FourthStep()}
-        {emailVerificationStep === 5 && FifthStep()}
-      </>
+    const UIComp = () => (
+      <Box className={classes.carouselContainer}>
+        {FirstStep()}
+        {SecondStep()}
+        {ThirdStep()}
+        {FourthStep()}
+        {FifthStep()}
+      </Box>
     )
+
+    return {
+      NextSlide: NextSlide,
+      PrevSlide: PrevSlide,
+      UIComp: UIComp
+    }
 
   }
 
@@ -858,23 +983,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
       </Box>
     ),
     content: (<>
-      {EmailVerificationModule()}
+      {EmailVerificationModule().UIComp()}
     </>
-      // <Box style={{ position: "relative" }}>
-      //   {
-      //     emails.map((obj) => (
-      //       <Box className={classes.flex}>
-      //         <span style={{ paddingInline: 2, fontSize: 18, marginTop: 2 }}>{obj.verified ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}</span>
-      //         <Typography style={{ paddingInline: 3, maxWidth: 250, minWidth: 160 }}>{obj.email} </Typography>
-      //         {!obj.verified && <Typography style={{ paddingInline: 3 }} className={classes.link}>verify email address</Typography>}
-      //       </Box>
-      //     ))
-      //   }
-      //   <Button className={clsx(
-      //     classes.actionButton,
-      //     classes.actionButtonDarkBlue
-      //   )} style={{ position: "absolute", top: 0, right: 0 }}>Verify Another Email</Button>
-      // </Box>
+
     ),
     renderButtons: () => (<Box className={classes.textCenter}>
       <Button
@@ -882,11 +993,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
         variant='contained'
         size='small'
         onClick={() => {
-          // clearSearch()
-          // handleClose()
-          emailVerificationStep < 5 && setEmailVerificationStep(emailVerificationStep + 1)
-          // await dispatch(duplicteCampaign(data))
-          // getData()
+          handleClose()
         }}
         className={clsx(
           classes.dialogButton,
@@ -894,11 +1001,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
         )}>
         {t('ok')}
       </Button>
-      {emailVerificationStep > 1 && <Button
+      {emailVerificationStep > 0 && <Button
         name="btnConfirm"
         variant='contained'
         size='small'
-        onClick={() => emailVerificationStep > 1 && setEmailVerificationStep(emailVerificationStep - 1)}
+        onClick={EmailVerificationModule().PrevSlide}
         className={clsx(
           classes.dialogButton,
           classes.dialogConfirmButton

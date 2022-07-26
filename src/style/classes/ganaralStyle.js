@@ -2400,5 +2400,27 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   containerFullHeight: {
     minHeight: 'calc(100vh - 120px)'
+  },
+
+  // COMMENT: CAROUSEL STYLE
+
+  carouselContainer: {
+    display: 'flex',
+    flexWrap: 'nowrap',
+    overflow: 'hidden'
+  },
+  carouselItem: {
+    height: '20rem',
+    minWidth: '100%',
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  T05S: {
+    transition: '.5s cubic-bezier(0.39, 0.575, 0.565, 1)'
+  },
+  T10S: {
+    transition: '1s cubic-bezier(0.39, 0.575, 0.565, 1)'
   }
 });
