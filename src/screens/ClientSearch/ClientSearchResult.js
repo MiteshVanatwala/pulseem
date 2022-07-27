@@ -620,7 +620,7 @@ const ClientSearchResult = ({ classes }) => {
           arrow={true}
           style={{ fontSize: 18, fontWeight: "bold", direction: isRTL ? 'rtl' : 'ltr' }}
           placement={"top"}
-          title={<Typography noWrap={false}>{FirstName}{LastName}</Typography>}
+          title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
           text={`${FirstName} ${LastName}`}
         >
           {fullwidth ? (
