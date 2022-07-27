@@ -160,6 +160,7 @@ const UploadXL = ({
             setdropClick(false);
         }
         else {
+            setLoader(true);
             handlePasted(pastedData);
             setdropClick(true);
         }
@@ -172,7 +173,7 @@ const UploadXL = ({
         let cols = 0;
         if (temp.indexOf("\t") > -1) {
             for (let i = 0; i < a.length; i++) {
-                let splitted = a[i].split("\t").filter(obj => !!obj.replace(/ /g, ''));
+                let splitted = a[i].split("\t");//.filter(obj => !!obj.replace(/ /g, ''));
                 b.push(splitted);
                 if (splitted.length > cols) {
                     cols = splitted.length;
@@ -182,7 +183,7 @@ const UploadXL = ({
         else {
             const records = a.filter((r) => { return r !== "" });
             for (let i = 0; i < records.length; i++) {
-                let splitted = a[i].split(",").filter(obj => !!obj.replace(/ /g, ''));
+                let splitted = a[i].split(",");//.filter(obj => !!obj.replace(/ /g, ''));
                 b.push(splitted);
                 if (splitted.length > cols) {
                     cols = splitted.length;
@@ -214,7 +215,7 @@ const UploadXL = ({
             settypedData(d)
             setDialogType({ type: "manualUpload" });
         }
-
+        setLoader(false);
     };
 
     const handleFiles = (e) => {
