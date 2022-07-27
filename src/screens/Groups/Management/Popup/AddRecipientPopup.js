@@ -207,12 +207,12 @@ const AddRecipientPopup = ({ classes,
             const { date, field } = dateField;
             if (isExtraData) {
                 setAccountExtraFields({
-                    ...accountExtraFields, [field]: moment(date, dateFormat)
+                    ...accountExtraFields, [field]: moment(date, dateFormat).format()
                 });
             }
             else {
                 setAddRecipientData({
-                    ...addRecipientData, [field]: moment(date, dateFormat)
+                    ...addRecipientData, [field]: moment(date, dateFormat).format()
                 })
             }
         }
@@ -298,12 +298,14 @@ const AddRecipientPopup = ({ classes,
             handleResponses(response, {
                 'S_201': {
                     code: 201,
-                    message: ToastMessages.RECIPIENT_ADDED,
-                    Func: new Promise(async (resolutionFunc, rejectionFunc) => {
-                        resolutionFunc(onAddRecipient());
-                    }).then((res) => {
-                        callback?.()
-                    }),
+                    message: recipientData ? ToastMessages.RECIPIENT_UPDATED : ToastMessages.RECIPIENT_ADDED,
+                    Func: () => {
+                        new Promise(async (resolutionFunc, rejectionFunc) => {
+                            resolutionFunc(onAddRecipient());
+                        }).then((res) => {
+                            callback?.()
+                        })
+                    },
                 },
                 'S_400': {
                     code: 400,

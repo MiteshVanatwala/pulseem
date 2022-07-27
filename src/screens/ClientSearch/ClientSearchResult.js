@@ -218,6 +218,7 @@ const ClientSearchResult = ({ props, classes }) => {
       CountryOrRegion: "",
       GroupIds: [],
       NodeID: "",
+      OrderBy: 0,
       ...overwriteObject,
     };
 
@@ -1167,7 +1168,7 @@ const ClientSearchResult = ({ props, classes }) => {
           arrow={true}
           style={{ fontSize: 18, fontWeight: "bold", direction: isRTL ? 'rtl' : 'ltr' }}
           placement={"top"}
-          title={<Typography noWrap={false}>{FirstName}{LastName}</Typography>}
+          title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
           text={`${FirstName} ${LastName}`}
         >
           {fullwidth ? (
@@ -1175,11 +1176,11 @@ const ClientSearchResult = ({ props, classes }) => {
               className={clsx(classes.nameEllipsis, classes.fullWidth)}
               style={{ maxWidth: "100%", minHeight: 28 }}
             >
-              {FirstName}{LastName}
+              {FirstName} {LastName}
             </Typography>
           ) : (
             <Typography className={classes.nameEllipsis} style={{ minHeight: 28 }}>
-              {FirstName}{LastName}
+              {FirstName} {LastName}
             </Typography>
           )}
         </CustomTooltip>
@@ -1682,7 +1683,7 @@ const ClientSearchResult = ({ props, classes }) => {
             DialogType={DialogType}
             selectedGroups={data.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds || searchData?.GroupIds || []}
             setDialog={setDialog}
-            handleResponses={(response, actions) => handleResponses(response, actions)}
+            handleResponses={(response, actions) => { setDialog(null); handleResponses(response, actions); }}
             onAddRecipient={() => { getData(); }}
             recipientData={
               selectedClients[0] && (data.find((obj) => obj.ClientID === selectedClients[0]))
