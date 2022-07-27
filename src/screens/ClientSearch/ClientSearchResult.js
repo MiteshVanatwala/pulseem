@@ -307,7 +307,7 @@ const ClientSearchResult = ({ props, classes }) => {
   }
 
   const handleKeyDown = (event) => {
-    if (event.keyCode === 13 || event.code === "Enter") {
+    if (event.keyCode === 13 || event.code === "Enter" || event.code === 'NumpadEnter') {
       setSearchData({
         ...searchData,
         PageIndex: 1,
@@ -406,19 +406,6 @@ const ClientSearchResult = ({ props, classes }) => {
     setPage(val);
     setSearchData({ ...searchData, PageIndex: val });
   }
-
-  const resetSearch = () => {
-    setData(ClientData);
-    setFilterMin("");
-    setFilterMax("");
-    setDate({
-      FromDate: null,
-      ToDate: null,
-    })
-    setIsSearching(false);
-    setSearchData({ ...searchData, FromDate: null, ToDate: null });
-  }
-
 
   const Min = () => <Grid item>
     <TextField
@@ -1035,18 +1022,6 @@ const ClientSearchResult = ({ props, classes }) => {
           </Button>
 
         </Grid>
-        {isSearching && <Grid item>
-          <Button
-            size='large'
-            variant='contained'
-            onClick={() => {
-              resetSearch();
-            }}
-            className={classes.searchButton}
-            endIcon={<ClearIcon />}>
-            {t('common.clear')}
-          </Button>
-        </Grid>}
         {
           searchData?.SearchTerm && (
             <Grid item>
