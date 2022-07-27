@@ -277,6 +277,7 @@ const SimplyClubPupup = ({
     }
 
     const handleAddClients = (ids) => {
+        setShowLoader(true)
         let tempClients = Object.values(updatedClients ?? ClientData)[0]
         const Payload = {
             ClientsData: tempClients || [],
@@ -285,7 +286,6 @@ const SimplyClubPupup = ({
 
         const pr = new Promise(async (resolve, reject) => {
             try {
-                setShowLoader(true)
                 const response = await dispatch(addRecipient(Payload));
                 resolve(response);
             } catch (e) {
