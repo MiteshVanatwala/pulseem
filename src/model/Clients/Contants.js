@@ -51,7 +51,6 @@ const CLIENT_CONSTANTS = {
         ShowSmsErrored: 23
     },
     QUERY_PARAMS: {
-        PageSize: "6",
         PageIndex: 1,
         SearchTerm: '',
         Status: null,

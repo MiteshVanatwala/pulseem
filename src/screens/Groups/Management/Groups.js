@@ -1417,7 +1417,7 @@ const Groups = ({ classes }) => {
             currentPage='groups'
             subPage='groupManagement'
             classes={classes}
-            containerClass={classes.management}>
+            containerClass={clsx(classes.management, classes.mb50)}>
             {toastMessage && renderToast()}
             {renderHeader()}
             {renderSearchSection()}
