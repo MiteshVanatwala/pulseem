@@ -995,7 +995,8 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   },
   link: {
     textDecoration: 'underline',
-    margin: '0 5px'
+    margin: '0 5px',
+    cursor: 'pointer'
   },
   popperPaper: {
     padding: '5px 0',
@@ -1573,5 +1574,50 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         background: '#036297'
       }
     }
+  },
+  emailVerItemContainer: {
+    '& .cSlide': {
+      width: "100%",
+      height: '100%',
+      position: "relative",
+      '&.firstSlide': {
+        '& .emailBox': {
+          '& span': {
+            paddingInline: 2,
+            fontSize: 18,
+            marginTop: 2
+          },
+          '& .emailText': {
+            paddingInline: 3,
+            maxWidth: 250,
+            minWidth: 160
+          },
+          '& .emailVerLink': {
+            paddingInline: 3
+          }
+        }
+        ,
+        '& .btnVerifyNew': {
+          position: "absolute",
+          top: 0,
+          right: 0
+        }
+      }
+    },
+    '& .cFlexSlide': {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      width: "100%",
+      height: '100%',
+      textAlign: 'center',
+      '&.secondSlide':{
+        '& .titleDescBox':{
+          '& .desc':{
+            marginTop: 20
+          }
+        }
+      }
+    },
   }
 })

@@ -346,9 +346,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mbNeg10: {
     marginBottom: -10
   },
-  mt5: {
-    marginTop: 5,
-  },
   mt25: {
     marginTop: 25
   },
@@ -548,6 +545,12 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   mt4: {
     marginTop: 20,
   },
+  mt5: {
+    marginTop: 25,
+  },
+  mt6: {
+    marginTop: 30,
+  },
   mb1: {
     marginBottom: 5,
   },
@@ -587,6 +590,18 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   font30: {
     fontSize: 30,
+  },
+  w100: {
+    width: '100%'
+  },
+  h100: {
+    height: '100%'
+  },
+  hAuto: {
+    height: 'auto'
+  },
+  pRelative: {
+    position: 'ralative'
   },
   borderBox: {
     border: "3px solid #0371ad",
