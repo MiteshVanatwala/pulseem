@@ -96,7 +96,7 @@ const SimplyClubPupup = ({
     const [groups, setGroups] = useState([])
     const [selectedGroups, setSelectedGroups] = useState([])
 
-    const [ClientData, setClientData] = useState({});
+    const [ClientData, setClientData] = useState(null);
     const [headers, setheaders] = useState([]);
     const [filteredDAta, setFilteredData] = useState([]);
     const [showLoader, setShowLoader] = useState(false)
@@ -107,12 +107,18 @@ const SimplyClubPupup = ({
 
     useEffect(() => {
         const preload = () => {
-            let totalFields = Object.values(ClientData).length > 0 ? Object.keys(Object.values(ClientData)[0][0]).length : 0;
-            let tempHeaders = Array.from({ length: totalFields }, (v, i) => t("sms.adjustTitle"))
-            setFilteredData(Object.values(ClientData)[0]);
-            setheaders([...tempHeaders])
+            try {
+                let totalFields = Object.values(ClientData).length > 0 ? Object.keys(Object.values(ClientData)[0][0]).length : 0;
+                let tempHeaders = Array.from({ length: totalFields }, (v, i) => t("sms.adjustTitle"))
+                setFilteredData(Object.values(ClientData)[0]);
+                setheaders([...tempHeaders])
+            } catch (e) {
+                console.error(e);
+            }
         }
-        preload()
+        if (ClientData) {
+            preload()
+        }
     }, [ClientData])
 
 
@@ -130,11 +136,16 @@ const SimplyClubPupup = ({
         handleResponses(response, {
             'S_200': {
                 code: 200,
-                message: '',
+                message: Object.values(response?.payload?.Clients)[0] && Object.values(response?.payload?.Clients)[0][0] ? '' : ToastMessages.NO_RECIPIENTS_IN_GROUP,
                 Func: () => {
-                    setClientData(response?.payload?.Clients || [])
-                    // setClientData(simplyCLubClientData || [])
-                    setShowClients(true)
+                    if (Object.values(response?.payload?.Clients)[0] && Object.values(response?.payload?.Clients)[0][0]) {
+                        setClientData(response?.payload?.Clients || [])
+                        setShowClients(true)
+                    }
+                    else {
+                        setClientData(null);
+                        setSelectedGroups([]);
+                    }
                 }
             },
             'S_201': {

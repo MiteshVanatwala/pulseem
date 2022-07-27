@@ -153,6 +153,7 @@ export const groupSlice = createSlice({
             FEATURE_NOT_ALLOWED: { severity: 'error', color: 'error', message: 'group.responses.featureNotAllowed', showAnimtionCheck: false },
             SIMPLY_NOT_FOUND: { severity: 'error', color: 'error', message: 'group.responses.notFound', showAnimtionCheck: false },
             RECIPIENTS_NOT_FOUND: { severity: 'error', color: 'error', message: "recipient.responses.notFound", showAnimtionCheck: false },
+            NO_RECIPIENTS_IN_GROUP: { severity: 'error', color: 'error', message: "recipient.responses.noRecipientsInGroup", showAnimtionCheck: false },
             ERROR_OCCURED: { severity: 'error', color: 'error', message: 'common.ErrorOccured', showAnimtionCheck: false },
             IMPORT_EMPTYLIST_INVALID_CLIENT: { severity: 'error', color: 'error', message: "recipient.importResponses.listEmptyOrClientInvalid", showAnimtionCheck: false },
             IMPORT_NO_FOLDER_FOUND: { severity: 'error', color: 'error', message: "recipient.importResponses.noFolderFound", showAnimtionCheck: false },

@@ -83,7 +83,8 @@
   },
   "responses": {
     "serverFoundWithNoResponse": "The request accepted by server, but no response has been sent. Please contact support",
-    "notFound": "No recipients has been found for unsubscribe"
+    "notFound": "No recipients has been found for unsubscribe",
+    "noRecipientsInGroup": "No recipienets found in the selected group"
   },
   "unsubscribed": {
     "succeeded": "The recipients successfully unsubscribed from the selected groups"
