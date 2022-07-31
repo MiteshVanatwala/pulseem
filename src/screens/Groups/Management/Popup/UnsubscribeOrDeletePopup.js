@@ -84,24 +84,47 @@ const UnsubscribeOrDeletePopup = ({
             let tempData = null;
             if (!allData) {
                 setAllData(finalData);
+                setEnteredValues(finalData);
             }
+
+            let output = typeof allData == "string" ? 1 : 0;
+            if (output === 0) output = Array.isArray(allData) ? 2 : 0;
 
             switch (activeTab) {
                 case 0:
                 default: {
-                    tempData = allData?.split("\n") ?? finalData;
+                    if (allData && output === 1) {
+                        tempData = allData?.split("\n") ?? finalData;
+                    }
+                    else {
+                        tempData = finalData;
+                    }
                     break;
                 }
                 case 1: {
-                    tempData = allData?.split("\n").filter((f) => {
-                        return f.indexOf('@') > -1;
-                    });
+                    if (allData && output === 1) {
+                        tempData = allData?.split("\n").filter((f) => {
+                            return f.indexOf('@') > -1;
+                        });
+                    }
+                    else {
+                        tempData = allData.filter((f) => {
+                            return f.indexOf('@') > -1;
+                        });
+                    }
                     break;
                 }
                 case 2: {
-                    tempData = allData?.split("\n").filter((f) => {
-                        return f.indexOf('@') === -1;
-                    });
+                    if (allData && output === 1) {
+                        tempData = allData?.split("\n").filter((f) => {
+                            return f.indexOf('@') === -1;
+                        });
+                    }
+                    else {
+                        tempData = allData.filter((f) => {
+                            return f.indexOf('@') === -1;
+                        });
+                    }
                     break;
                 }
             }
@@ -111,7 +134,7 @@ const UnsubscribeOrDeletePopup = ({
 
         updateFinalData();
 
-    }, [areaData, activeTab])
+    }, [activeTab])
 
     useEffect(() => {
         if (confirmUnsubscsribe === true && finalData) {
@@ -241,33 +264,35 @@ const UnsubscribeOrDeletePopup = ({
     }
 
     const clearInvalidData = (data) => {
-        let filteredData = data.filter((m) => {
-            m = m.replaceAll('\t', '').replaceAll(' ', '');
+        const filteredData = data.filter((m) => {
+            m = m.replace('\t', '');
+            m = m.replace('\r', '');
+            m = m.replace(' ', '');
             let isDate = ((m.split('-').length > 2) || (m.split('\'').length > 2) || (m.split('/').length > 2));
-            if (m === '') {
-                return {};
-            }
             if (isDate) {
                 return null;
             }
 
             if (ValidateNumber(m)) {
                 if (m.length >= 9 && m.length <= 13) {
-                    return m;
+                    return m.trim();
                 }
             }
             if (ValidateEmail(m)) {
-                return m;
+                return m.trim();
             }
 
             return null;
         });
 
-        return filteredData;
+        return filteredData?.map((m) => {
+            m = m.replaceAll('\t', '').replaceAll('\r', '').replaceAll(' ', '');
+            return m.trim();
+        });
     }
 
     const handleFinalData = (data) => {
-        if (!data || data.length === 0)
+        if (!data && data.length === 0)
             return;
         else if (data.length > 1000) {
             setLimitationWarning(true);
@@ -278,11 +303,11 @@ const UnsubscribeOrDeletePopup = ({
         if (filteredData.length === 0) {
             return;
         }
+        setFinalData(filteredData);
         const tempData = [...filteredData];
         setareaData(tempData.join(',').replaceAll(',', "\n"));
         setLoader(false);
 
-        setFinalData(filteredData);
     }
 
     const areaChange = (e) => {
@@ -451,7 +476,7 @@ const UnsubscribeOrDeletePopup = ({
             title: t('recipient.unsubRecipients'),
             onClose: onClose,
             onConfirm: () => {
-                handleFinalData(enteredValue, handleUnsubSubmit);
+                handleFinalData(enteredValue);
                 setConfirmUnsubscsribe(true);
             },
             summaryOnClose: () => { setIsSubmitted(false); onClose(); setConfirmUnsubscsribe(false); },
