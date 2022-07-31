@@ -2460,10 +2460,14 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
         maxWidth: '100%',
         border: '1px solid #c4c4c4',
         borderRadius: 4,
-        paddingLeft: 4
+        paddingLeft: 10,
+        paddingRight: 10,
+      },
+      '& svg': {
+        left: isRTL ? 10 : 'auto',
+        right: isRTL ? 'auto' : 10,
       }
     }
   }
-
 
 });

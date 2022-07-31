@@ -189,8 +189,7 @@ const AddRecipientPopup = ({ classes,
                 >
                     {
                         data.map(obj => <MenuItem
-                            className={classes.test}
-                            style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left' }}
+                            style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}
                             disabled={obj.status === -1}
                             value={obj.status}>{t(obj.text)}</MenuItem>
                         )
