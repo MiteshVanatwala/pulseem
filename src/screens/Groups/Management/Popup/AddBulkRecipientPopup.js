@@ -79,7 +79,6 @@ const AddBulkRecipientPopup = ({ classes,
             renderButtons={() => (<></>)}
             customContainerStyle={classes.addRecipientDialog}
         >
-            {/* <Box> */}
             <UploadXL
                 classes={classes}
                 onDone={onAddRecipient}
@@ -89,7 +88,6 @@ const AddBulkRecipientPopup = ({ classes,
                 placeHolder={"recipient.addRecTextareaPlaceholder"}
                 tooltipText='recipient.bulkRecUpldTooltipText'
             />
-            {/* </Box> */}
         </Dialog>
     );
 };

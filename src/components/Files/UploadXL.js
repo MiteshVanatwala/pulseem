@@ -145,13 +145,13 @@ const UploadXL = ({
         // Get pasted data via clipboard API
         clipboardData = e.clipboardData || window.clipboardData;
         if (clipboardData) {
-            pastedData = clipboardData.getData('Text');
+            pastedData = e.target.value += clipboardData.getData('Text');
         }
         else {
             pastedData = e.target.value;
         }
 
-        let enteredValue = pastedData.split("\n")
+        let enteredValue = pastedData.trim().split("\n")
         const records = enteredValue.filter((r) => { return r !== "" });
         settotalRecords(records.length);
         //settypedData(records);
@@ -161,7 +161,6 @@ const UploadXL = ({
         }
         else {
             setLoader(true);
-            handlePasted(pastedData);
             setdropClick(true);
         }
     };
@@ -211,6 +210,7 @@ const UploadXL = ({
                 else if (td.indexOf(',') > -1) {
                     return td.split(',');
                 }
+                return td;
             })
             settypedData(d)
             setDialogType({ type: "manualUpload" });
@@ -672,16 +672,18 @@ const UploadXL = ({
                                 })
                                 : typedData.map((item, id) => {
                                     if (id > typedData.length - 6) {
+                                        let output = typeof item == "string" ? 1 : 0;
+                                        if (output === 0) output = Array.isArray(item) ? 2 : 0;
                                         return (
                                             <tbody key={id}>
                                                 <tr key={id}>
-                                                    {headers.map((data, idx) => {
+                                                    {headers.map((data, idx, i) => {
                                                         return (
                                                             <td key={idx}
                                                                 className={classes.tableColumn}
                                                                 style={{ direction: moment(item[idx], dateFormat, true).isValid() ? "ltr" : null }}
                                                             >
-                                                                {item[idx]}
+                                                                {(output === 1 && idx === 0) ? item : output === 2 ? item[idx] : ''}
                                                             </td>
                                                         );
                                                     })}
@@ -779,7 +781,7 @@ const UploadXL = ({
                 onDragEnter={() => {
                     setHighlighted(true);
                 }}
-                onChange={areaChange}
+                onChange={(e) => areaChange(e)}
                 onDragLeave={() => {
                     setHighlighted(false);
                 }}
@@ -807,7 +809,7 @@ const UploadXL = ({
                         <span
                             className={classes.addManualDiv}
                             onClick={() => {
-                                handlePasted();
+                                handlePasted(areaData);
                             }}
                         >
                             {t("sms.editFields")}

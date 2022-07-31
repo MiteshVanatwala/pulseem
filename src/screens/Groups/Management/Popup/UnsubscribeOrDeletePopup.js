@@ -13,7 +13,7 @@ import { BsInfoCircleFill } from "react-icons/bs";
 import clsx from 'clsx';
 import { useEffect, useState } from "react";
 import { deleteRecipients, unsubRecipients } from "../../../../redux/reducers/groupSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as XLSX from 'xlsx';
 import Papa from 'papaparse';
 import { Loader } from "../../../../components/Loader/Loader";
@@ -30,6 +30,7 @@ const UnsubscribeOrDeletePopup = ({
     ToastMessages,
     getData
 }) => {
+    const { isRTL } = useSelector(state => state.core);
     const { t } = useTranslation();
     const [highlighted, setHighlighted] = useState(false);
     const dispatch = useDispatch();
@@ -44,6 +45,9 @@ const UnsubscribeOrDeletePopup = ({
     const [confirm, setConfirm] = useState(false);
     const [limitationWarning, setLimitationWarning] = useState(false);
     const [allData, setAllData] = useState(null);
+    const [enteredValue, setEnteredValues] = useState(null);
+    const [confirmUnsubscsribe, setConfirmUnsubscsribe] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
 
     const AdvanceOptions = () => {
         return (
@@ -108,6 +112,17 @@ const UnsubscribeOrDeletePopup = ({
         updateFinalData();
 
     }, [areaData, activeTab])
+
+    useEffect(() => {
+        if (confirmUnsubscsribe === true && finalData) {
+            handleUnsubSubmit();
+        }
+    }, [confirmUnsubscsribe]);
+    useEffect(() => {
+        if (confirmDelete === true && finalData) {
+            openConfirmDialog();
+        }
+    }, [confirmDelete]);
 
     const openConfirmDialog = () => {
         if (!finalData || finalData.length === 0) {
@@ -263,27 +278,39 @@ const UnsubscribeOrDeletePopup = ({
         if (filteredData.length === 0) {
             return;
         }
-
-        setFinalData(filteredData);
         const tempData = [...filteredData];
         setareaData(tempData.join(',').replaceAll(',', "\n"));
         setLoader(false);
+
+        setFinalData(filteredData);
     }
 
     const areaChange = (e) => {
-        if (e.target.value.length > 0 && error) {
-            setError('')
+        var clipboardData, pastedData;
+        // Stop data actually being pasted into div
+        e.stopPropagation();
+        e.preventDefault();
+        // Get pasted data via clipboard API
+        clipboardData = e.clipboardData || window.clipboardData;
+        if (clipboardData) {
+            pastedData = e.target.value += clipboardData.getData('Text');
+        }
+        else {
+            pastedData = e.target.value;
         }
 
-        let enteredValue = e.target.value.split("\n")
-        setareaData(e.target.value);
-        setAllData(e.target.value);
+        let tempValues = pastedData.trim().split("\n")
+        const records = tempValues.filter((r) => { return r !== "" });
+
+        if (records.length < 100) {
+            setareaData(pastedData);
+            setEnteredValues(tempValues);
+        }
         if (e.target.value === '') {
             setFinalData(null);
             setError(t("recipient.errors.noData"));
             return;
         }
-        handleFinalData(enteredValue);
     };
 
     const handleDeleteSubmit = async () => {
@@ -423,10 +450,14 @@ const UnsubscribeOrDeletePopup = ({
         "UNSUB_RECIPIENT": {
             title: t('recipient.unsubRecipients'),
             onClose: onClose,
-            onConfirm: handleUnsubSubmit,
-            summaryOnClose: () => { setIsSubmitted(false); onClose() },
+            onConfirm: () => {
+                handleFinalData(enteredValue, handleUnsubSubmit);
+                setConfirmUnsubscsribe(true);
+            },
+            summaryOnClose: () => { setIsSubmitted(false); onClose(); setConfirmUnsubscsribe(false); },
             onSummaryConfirm: () => {
                 setConfirm(false);
+                setConfirmUnsubscsribe(false);
                 onClose();
             },
             placeHolder: "recipient.unsubTextareaPlaceholder",
@@ -435,11 +466,15 @@ const UnsubscribeOrDeletePopup = ({
         "DELETE_RECIPIENT": {
             title: t('recipient.deleteRecipients'),
             onClose: onClose,
-            onConfirm: openConfirmDialog,
-            summaryOnClose: () => setConfirm(false),
+            onConfirm: () => {
+                handleFinalData(enteredValue);
+                setConfirmDelete(true);
+            },
+            summaryOnClose: () => { setConfirm(false); setConfirmDelete(false); },
             onSummaryConfirm: () => {
                 confirm && handleDeleteSubmit();
-                setConfirm(false)
+                setConfirm(false);
+                setConfirmDelete(false);
             },
             placeHolder: "recipient.deleteTextareaPlaceholder",
             component: null
@@ -509,13 +544,15 @@ const UnsubscribeOrDeletePopup = ({
                 spellCheck="false"
                 autoComplete="off"
                 className={
-                    clsx(highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon), classes.customScroll, classes.sidebar)
+                    clsx(highlighted ? clsx(classes.greenCon) : clsx(classes.areaCon),
+                        areaData !== '' && isRTL ? classes.ltr : isRTL ? null : classes.ltr,
+                        classes.customScroll, classes.sidebar)
                 }
                 value={areaData}
                 onDragEnter={() => {
                     setHighlighted(true);
                 }}
-                onChange={areaChange}
+                onChange={(e) => areaChange(e)}
                 onDragLeave={() => {
                     setHighlighted(false);
                 }}
@@ -528,12 +565,6 @@ const UnsubscribeOrDeletePopup = ({
                     setHighlighted(false);
                     handleFiles(e)
                 }}
-            // onBlur={(e) => {
-            //     if (!e.target.value?.trim()) {
-            //         setareaData(e.target.value?.trim())
-            //         setError(t('recipient.errors.noData'))
-            //     }
-            // }}
             />
             <input
                 onChange={handleFiles}
