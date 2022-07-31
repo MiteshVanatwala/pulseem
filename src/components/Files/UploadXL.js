@@ -155,12 +155,12 @@ const UploadXL = ({
         const records = enteredValue.filter((r) => { return r !== "" });
         settotalRecords(records.length);
         //settypedData(records);
-        if (records.length < 100) {
+        if (records.length < 1000) {
             setareaData(pastedData);
             setdropClick(false);
         }
         else {
-            setLoader(true);
+            handlePasted(pastedData);
             setdropClick(true);
         }
     };
@@ -195,7 +195,7 @@ const UploadXL = ({
             dummyArr.push(t("sms.adjustTitle"));
         }
         setheaders(dummyArr);
-        if (typedData.length > 1000) {
+        if (b.length > 1000) {
             jsonToCSV({ array: b }).then((csvOutput) => {
                 const file = createFile(csvOutput, 'csv');
                 setFileToUpload(file);
@@ -458,7 +458,15 @@ const UploadXL = ({
                             });
 
                             let obj = requestPayload[j];
-                            obj[item.value] = dataToUpload[j][k].trim();
+                            let output = typeof dataToUpload[j] == "string" ? 1 : 0;
+                            if (output === 0) output = Array.isArray(dataToUpload[j]) ? 2 : 0;
+                            if (output === 1) {
+                                obj[item.value] = dataToUpload[j].trim();
+                                break;
+                            }
+                            else {
+                                obj[item.value] = dataToUpload[j][k].trim();
+                            }
                         }
                     }
                 }

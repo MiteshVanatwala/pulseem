@@ -563,7 +563,7 @@ const UnsubscribeOrDeletePopup = ({
     const DropBox = (classes) => (<Grid container>
         <Grid item md={12} xs={12} className={clsx(error ? classes.errorFullBorder : '', highlighted ? classes.greenManual : classes.areaManual)}>
             {RenderMaximumLimitationRequest()}
-            {RenderSummaryDialog()}
+            {finalData && finalData.length < 1000 && RenderSummaryDialog()}
             <textarea
                 placeholder={t(DialogObject[dialogType].placeHolder)}
                 spellCheck="false"
