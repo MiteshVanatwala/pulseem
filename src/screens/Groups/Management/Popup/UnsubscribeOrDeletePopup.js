@@ -300,12 +300,12 @@ const UnsubscribeOrDeletePopup = ({
         }
 
         let tempValues = pastedData.trim().split("\n")
-        const records = tempValues.filter((r) => { return r !== "" });
+        // const records = tempValues.filter((r) => { return r !== "" });
 
-        if (records.length < 100) {
-            setareaData(pastedData);
-            setEnteredValues(tempValues);
-        }
+        // if (records.length < 100) {
+        setareaData(pastedData);
+        setEnteredValues(tempValues);
+        // }
         if (e.target.value === '') {
             setFinalData(null);
             setError(t("recipient.errors.noData"));
