@@ -277,6 +277,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   p10: {
     padding: 10,
   },
+  pbt5: {
+    padding: "5px 0",
+  },
   p20: {
     padding: 20
   },

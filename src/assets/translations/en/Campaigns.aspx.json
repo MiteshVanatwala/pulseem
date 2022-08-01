@@ -508,6 +508,49 @@
       "upload": "Popped up and attachment in the email you send"
     }
   },
+  "newsLetterMgmt": {
+    "emailVerification": {
+      "popupTitle": "Verification of email to send",
+      "popupDesc": "To ensure the security of your account, we need to verify this email address belongs to you. This is 2 one-time process for each email you send from.",
+      "firstSlide": {
+        "verifiedEmails": "Verified emails",
+        "verifyEmailAddr": "Verify Email Address",
+        "addNewToVerify": "Verify Another Email"
+      },
+      "secondSlide": {
+        "title": "A short verification before we move on",
+        "desc1": "We want to ensure the email you submitted belongs to you",
+        "desc2": "This is a one-time process for each email address",
+        "btnText": "Send me a verification email",
+        "error1": "Email is required",
+        "error2": "Invalid Email",
+        "anyProblem": "Did you encounter a problem?",
+        "contactUs": "Contact us"
+      },
+      "thirdSlide": {
+        "title": "Sent!",
+        "desc1": "A verification code was sent successfully to",
+        "desc2": "This code will be valid for the next 10 minutes only",
+        "error1": "Please try again or click on resend below",
+        "error2": "Code is required",
+        "did_not_recieved": "Didn’t receive it?",
+        "resend": "Resend",
+        "resendSuccess": "Code Sent"
+      },
+      "ErrorSlide": {
+        "title": "Too many attempts",
+        "desc": "You entered an invalid code too many times",
+        "contactSupport": "Please contact support",
+        "phone": "Phone",
+        "email": "Email"
+      },
+      "successSlide": {
+        "title": "The email was verified successfully",
+        "desc": "From now on you will be able to send with this email without needing verification",
+        "btnTxt": "Continue to campaigns"
+      }
+    }
+  },
   "sendToContact": "Send to one contact",
   "successSent": "Sent Successfully",
   "missingApi": "Missing api key",
