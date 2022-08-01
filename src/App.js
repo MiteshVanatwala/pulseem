@@ -34,6 +34,8 @@ import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
+//import { siteTrackingScriptUrl } from './config/index';
+import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 
@@ -100,10 +102,13 @@ const renderRoutes = (classes, history) => {
         path={`/homepage`}
         component={transferUrl('/Pulseem/homepage.aspx')}
       />
-      {/* Groups */}
-      <Route
+      {/* <Route
         path={`/Groups`}
         component={transferUrl('/Pulseem/Groups.aspx')}
+      /> */}
+      <Route
+        path={'/Groups'}
+        render={props => <Groups props={props} classes={classes} />}
       />
       <Route
         path={`/ClientSearch`}

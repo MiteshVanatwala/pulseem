@@ -1,6 +1,6 @@
 {
   "logPageHeaderResource1": {
-    "Text": "Recipient Management"
+    "Text": "Groups Management"
   },
   "deleteRecipient": "Delete Recipients",
   "unsubscribe": "Unsubscribe Recipient",
@@ -22,12 +22,14 @@
   "smsStatus": "SMSStatus",
   "creationDate": "Creation Date",
   "firstName": "FirstName",
+  "lastName": "LastName",
   "name": "Name",
   "email": "Email",
   "telephone": "Telephone",
   "cellphone": "Cellphone",
   "address": "Address",
   "birthdayDate": "BirthdayDate",
+  "birthDate": "BirthDate",
   "city": "City",
   "state": "State",
   "country": "Country",
@@ -52,7 +54,8 @@
     "cellPhone": "Invalid cellphone",
     "cellphoneLength": "Cellphone should be between 10-12 digits",
     "groupLength": "Please select at least 1 group",
-    "noData": "No data found"
+    "noData": "No data found",
+    "noDeleteRecFound": "no records found to delete"
   },
   "bulkImportTitle": "Recipient Import",
   "importResponses": {
@@ -80,7 +83,8 @@
   },
   "responses": {
     "serverFoundWithNoResponse": "The request accepted by server, but no response has been sent. Please contact support",
-    "notFound": "No recipients has been found for unsubscribe"
+    "notFound": "No recipients has been found for unsubscribe",
+    "noRecipientsInGroup": "No recipienets found in the selected group"
   },
   "unsubscribed": {
     "succeeded": "The recipients successfully unsubscribed from the selected groups"
@@ -91,13 +95,16 @@
   "phone&email": "Phone number & email",
   "emailOnly": "Only Email",
   "phoneOnly": "Only Phone Number",
-  "rowsUpdated": "Rows updated",
-  "rowUpdated": "Row updated",
+  "rowsUpdated": "Records updated",
+  "rowUpdated": "One record updated",
   "deleteConfirm": "Are you sure you want to delete recipients from the following groups",
   "email_cell_notProvided": "Email/Cellphone not provided",
   "externalImport": "External Import",
   "recipientsDeletedSuccessfuly": "Recipients deleted successfuly",
   "deleteFromGroups": "Delete from groups",
   "deleteEmail": "Remove email",
-  "deletePhone": "Remove phone"
+  "deletePhone": "Remove phone",
+  "noRecordsFound": "No records found/updated",
+  "uploadLimitation": "You are able to upload up to 600,000 recipients at once",
+  "maximumRecordLimitation": "You can unsubscribe/delete up to 1,000 recipients per request."
 }

@@ -3,7 +3,7 @@
   "dashboard": "Dashboard",
   "groups": {
     "title": "Groups",
-    "manageRecipients": "Manage Recipients",
+    "manageRecipients": "Manage Groups",
     "search": "Search",
     "advencedSearch": "Advenced Search",
     "dynamicGroups": "Dynamic Groups",

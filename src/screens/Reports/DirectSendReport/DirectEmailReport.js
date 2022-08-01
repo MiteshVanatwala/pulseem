@@ -277,7 +277,6 @@ const DirectEmailReportTab = ({
 
   const handleRowsPerPageSearching = (val) => {
     dispatch(setRowsPerPage(val))
-    setCookie('rpp', val, { maxAge: 2147483647 })
     searchRequest(val, page);
   }
 

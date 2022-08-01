@@ -35,7 +35,6 @@ const FlexGrid = ({ gridArr = [],
     alignText = "center",
     direction,
     reverse,
-    style,
     ...props
 }) => {
     const localClasses = useStyles({ direction: direction, textVariant: textVariant })

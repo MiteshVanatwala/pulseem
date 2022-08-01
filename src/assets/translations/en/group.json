@@ -34,5 +34,6 @@
     "featureNotAllowed": "Feature not allowed / Invalid Api key",
     "notFound": "Invalid username password",
     "serverFoundWithNoResponse": "Server got the request"
-  }
+  },
+  "maxGroupsExceeded": "Maximum of group creation exceeded for this account"
 }
