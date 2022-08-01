@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import { Typography, Box } from '@material-ui/core'
+import { useSelector } from 'react-redux';
 
 // data = [{ title: "", value: "" }, ...]
 const SummaryRow = ({
@@ -8,10 +9,11 @@ const SummaryRow = ({
     showBorder = true,
     borderRadius = true
 }) => {
+    const { windowSize } = useSelector(state => state.core);
     if (data && data.length > 0) {
         return <Box style={{
             display: 'flex',
-            flexDirection: 'row',
+            flexDirection: windowSize !== 'xs' ? 'row' : 'column',
             border: showBorder ? '1px solid #ccc' : null,
             borderRadius: borderRadius ? 5 : null
         }}>
