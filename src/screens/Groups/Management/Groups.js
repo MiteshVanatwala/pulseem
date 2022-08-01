@@ -1,0 +1,1220 @@
+import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useEffect, memo } from 'react';
+import DefaultScreen from '../../DefaultScreen';
+import clsx from 'clsx';
+import DataTable from "../../../components/Table/DataTable";
+import {
+    Box, Typography, Divider, TableBody, TableRow, TableCell,
+    Grid, Button, TextField, Checkbox
+} from '@material-ui/core'
+import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
+import { TablePagination, SearchField } from '../../../components/managment/index'
+import FlexGrid from "../../../components/Grids/FlexGrid";
+import NameValueGridStructure from "../../../components/Grids/NameValueGridStructure";
+import { useTranslation } from 'react-i18next';
+import ClearIcon from '@material-ui/icons/Clear';
+import moment from 'moment';
+import 'moment/locale/he';
+import {
+    getGroups,
+    deleteGroups,
+    getGroupsBySubAccountId
+} from "../../../redux/reducers/groupSlice";
+import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
+import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
+import AddGroupPopUp from "./Popup/AddGroupPopUp";
+import AddRecipientPopup from "./Popup/AddRecipientPopup";
+import ConfirmDeletePopUp from "./Popup/ConfirmDeletePopUp";
+import CustomTooltip from "../../../components/Tooltip/CustomTooltip";
+import { Loader } from '../../../components/Loader/Loader';
+import { MdOutlineLockClock } from "react-icons/md"
+import { RiPagesLine } from "react-icons/ri"
+import IconWrapper from "../../../components/icons/IconWrapper";
+import AddBulkRecipientPopup from "./Popup/AddBulkRecipientPopup";
+import AddRecipientResponse from "./Popup/AddRecipientResponse";
+import EditGroupPopup from "./Popup/EditGroupPopup";
+import ResetGroupPopup from "./Popup/ResetGroupPopup";
+import { Dialog } from '../../../components/managment/index';
+import SimplyClubPupup from "./Popup/SimplyClubPupup";
+import Toast from '../../../components/Toast/Toast.component';
+import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
+
+const Groups = ({ classes }) => {
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
+    const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF';
+    const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
+    const { groupData, ToastMessages, subAccountAllGroups } = useSelector((state) => state.group);
+    const { extraData } = useSelector(state => state.sms);
+    const rowsOptions = [6, 10, 20, 50];
+    const [page, setPage] = useState(1);
+    const [selectedGroups, setSelectedGroups] = useState([]);
+    const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) };
+    const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: clsx(classes.tableCellRoot) };
+    const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.tableCellRootResponsive) };
+    const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) };
+    const colorTextStyle = { red: classes.textColorRed, blue: classes.textColorBlue, green: classes.sendIconText };
+    const [toastMessage, setToastMessage] = useState(null);
+    const [showLoader, setLoader] = useState(true);
+    const [responseMessage, setResponseMessage] = useState({ title: "", message: "" });
+    const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const [dialog, setDialog] = useState(null);
+    const [searchStr, setSearchStr] = useState("");
+    const [serachData, setSearchData] = useState({
+        PageIndex: 1,
+        PageSize: rowsPerPage,
+        SearchTerm: "",
+    });
+    moment.locale(language);
+
+    const DialogType = {
+        ADD_GROUP: "ADD_GROUP",
+        EDIT_GROUP: "EDIT_GROUP",
+        DELETE_GROUP: "DELETE_GROUP",
+        ADD_RECIPIENT: "ADD_RECIPIENT",
+        ADD_RECIPIENTS: "ADD_RECIPIENTS",
+        UNSUB_RECIPIENT: "UNSUB_RECIPIENT",
+        DELETE_RECIPIENT: "DELETE_RECIPIENT",
+        RESET_GROUP: "RESET_GROUP",
+        MESSAGE: "MESSAGE",
+        SUMMARY: "SUMMARY",
+        EXPORT_ALL: "EXPORT_ALL",
+        EXPORT_SELECTED: "EXPORT_SELECTED",
+        SIMPLY_CLUB: "SIMPLY_CLUB"
+    };
+    const TABLE_HEAD = [
+        {
+            label: t("common.GroupName"),
+            classes: cellStyle,
+            className: classes.flex2,
+            align: "center",
+        },
+        {
+            label: t("recipient.emails"),
+            classes: cellStyle,
+            className: classes.flex2,
+            align: "center",
+        },
+        {
+            label: t("recipient.sms/mms"),
+            classes: cellStyle,
+            className: clsx(classes.flex2, classes.textUppercase),
+            align: "center",
+        },
+        {
+            label: "",
+            classes: cellStyle,
+            className: classes.flex4,
+            align: "center",
+        },
+    ];
+    const renderHeader = () => {
+        return (
+            <>
+                <Typography className={classes.managementTitle}>
+                    {t("recipient.logPageHeaderResource1.Text")}
+                </Typography>
+                <Divider />
+            </>
+        );
+    };
+    const renderHtml = (html) => {
+        function createMarkup() {
+            return { __html: html };
+        }
+        return (
+            <label dangerouslySetInnerHTML={createMarkup()}></label>
+        );
+    }
+    const renderToast = () => {
+        setTimeout(() => {
+            setToastMessage(null);
+        }, 4000);
+        return (
+            <Toast data={toastMessage} />
+        );
+    }
+    const getSubAccountGroups = async () => {
+        dispatch(getGroupsBySubAccountId());
+    }
+    const getData = async () => {
+        setLoader(true);
+        await dispatch(getGroups({ ...serachData, PageSize: rowsPerPage, PageIndex: page }));
+        if (!extraData || extraData.length === 0) {
+            await dispatch(getAccountExtraData());
+        }
+        setLoader(false);
+        if (subAccountAllGroups.length === 0) {
+            getSubAccountGroups();
+        }
+    };
+    useEffect(() => {
+        getData();
+    }, [dispatch, serachData, page, rowsPerPage]);
+
+
+    const renderSearchSection = () => {
+        const handleKeyDown = (event) => {
+            if (event.keyCode === 13 || event.code === "Enter") {
+                setSearchData({
+                    PageIndex: 1,
+                    PageSize: rowsPerPage,
+                    SearchTerm: searchStr,
+                });
+                setPage(1);
+            }
+        };
+        const handleKeyPress = (e) => {
+            if (e.charCode === 13 || e.code === "Enter") {
+                setSearchData({
+                    PageIndex: 1,
+                    PageSize: rowsPerPage,
+                    SearchTerm: searchStr,
+                });
+                setPage(1);
+            }
+        };
+
+        if (windowSize === "xs") {
+            return (
+                <SearchField
+                    classes={classes}
+                    value={searchStr}
+                    onChange={(e) => setSearchStr(e.target.value)}
+                    onClick={() => {
+                        setSearchData({
+                            PageIndex: 1,
+                            PageSize: rowsPerPage,
+                            SearchTerm: searchStr,
+                        });
+                        setPage(1);
+                    }}
+                    onKeyPress={handleKeyPress}
+                    placeholder={t("common.GroupName")}
+                />
+            );
+        }
+
+        return (
+            <Grid container spacing={2} className={classes.lineTopMarging}>
+                <Grid item>
+                    <TextField
+                        variant="outlined"
+                        size="small"
+                        value={searchStr}
+                        onKeyPress={handleKeyDown}
+                        onChange={(e) => setSearchStr(e.target.value)}
+                        className={clsx(classes.textField, classes.minWidth252)}
+                        placeholder={t("common.GroupName")}
+                    />
+                </Grid>
+                <Grid item>
+                    <Button
+                        size="large"
+                        variant="contained"
+                        onClick={() => {
+                            setSearchData({
+                                PageIndex: 1,
+                                PageSize: rowsPerPage,
+                                SearchTerm: searchStr,
+                            });
+                            setPage(1);
+                        }}
+                        className={classes.searchButton}
+                        endIcon={<SearchIcon />}
+                    >
+                        {t("campaigns.btnSearchResource1.Text")}
+                    </Button>
+                </Grid>
+                {serachData.SearchTerm && (
+                    <Grid item>
+                        <Button
+                            size="large"
+                            variant="contained"
+                            onClick={() => {
+                                setSearchData({ ...serachData, SearchTerm: "" });
+                                setSearchStr("");
+                                setPage(1);
+                            }}
+                            className={classes.searchButton}
+                            endIcon={<ClearIcon />}
+                        >
+                            {t("common.clear")}
+                        </Button>
+                    </Grid>
+                )}
+            </Grid>
+        );
+    };
+
+    const renderManagmentLine = () => {
+        const colSize = windowSize === "xs" ? 12 : null;
+        return (
+            <Grid container spacing={2} className={classes.linePadding}>
+                <Grid item xs={colSize}>
+                    <Button
+                        variant="contained"
+                        size="medium"
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonLightGreen
+                        )}
+                        onClick={() => setDialog(DialogType.ADD_GROUP)}
+                    >
+                        {t("group.new")}
+                    </Button>
+                </Grid>
+                {windowSize !== "xs" && (
+                    <Grid item>
+                        <Button
+                            variant="contained"
+                            size="medium"
+                            className={clsx(classes.actionButton, classes.actionButtonRed)}
+                            onClick={() => {
+                                selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_GROUP)
+                            }}
+                        >
+                            {t("group.delete")}
+                        </Button>
+                    </Grid>
+                )}
+                <Grid item xs={colSize}>
+                    <Button
+                        variant="contained"
+                        size="medium"
+                        className={clsx(classes.actionButton, classes.actionButtonRed)}
+                        onClick={() => selectedGroups.length === 0 ? setToastMessage(ToastMessages.GROUP_ZERO_SELECT) : setDialog(DialogType.DELETE_RECIPIENT)}
+                    >
+                        {t("recipient.deleteRecipient")}
+                    </Button>
+                </Grid>
+                {/* <Grid item xs={colSize}>
+                    <Button
+                        variant="contained"
+                        size="medium"
+                        className={clsx(classes.actionButton, classes.actionButtonRed)}
+                        onClick={() => setDialog(DialogType.UNSUB_RECIPIENT)}
+                    >
+                        {t("recipient.unsubscribe")}
+                    </Button>
+                </Grid> */}
+                {accountFeatures && accountFeatures.includes('15') && (<Grid item xs={colSize}>
+                    <Button
+                        variant="contained"
+                        size="medium"
+                        className={clsx(classes.actionButton, classes.importButtonBlue)}
+                        onClick={() => setDialog(DialogType.SIMPLY_CLUB)}
+
+                    >
+                        {t("recipient.externalImport")}
+                    </Button>
+                </Grid>)}
+
+                <Grid item xs={colSize}>
+                    <Button
+                        variant="contained"
+                        size="medium"
+                        className={clsx(
+                            classes.actionButton,
+                            classes.actionButtonGreen
+                        )}
+                        onClick={() => setShowConfirmDialog(true)}
+                        startIcon={<ExportIcon />}
+                    >
+                        {t("campaigns.exportFile")}
+                    </Button>
+                </Grid>
+
+                <Grid
+                    item
+                    xs={colSize}
+                    className={classes.groupsLableContainer}
+                >
+                    <Typography className={classes.groupsLable}>
+                        {`${groupData ? groupData.RecordCount : 0} ${t("common.Groups")}`}
+                    </Typography>
+                </Grid>
+            </Grid>
+        );
+    };
+
+    const renderNameCell = (row, fullwidth) => {
+        let date = null;
+        const { GroupID, GroupName } = row;
+        let text = "";
+        if (!row.UpdateDate) {
+            date = moment(row.CreationDate, dateFormat);
+            text = t("common.CreatedOn");
+        } else {
+            date = moment(row.UpdateDate, dateFormat);
+            text = t("common.UpdatedOn");
+        }
+
+        return (
+            <Grid container wrap="nowrap" spacing={1} alignItems='center'>
+                {windowSize !== 'xs' && <Grid item sm={2}>
+                    <Checkbox
+                        color="primary"
+                        checked={selectedGroups && selectedGroups.includes(GroupID)}
+                        // indeterminate={}
+                        onClick={() => {
+                            if (selectedGroups.includes(GroupID)) {
+                                setSelectedGroups(selectedGroups.filter(item => item !== GroupID))
+                            } else {
+                                setSelectedGroups([...selectedGroups, GroupID])
+                            }
+                        }}
+                    />
+
+                </Grid>}
+                <Grid item sm={10}>
+                    <CustomTooltip
+                        isSimpleTooltip={false}
+                        interactive={true}
+                        classes={{
+                            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                            arrow: classes.fBlack,
+                        }}
+                        arrow={true}
+                        style={{ fontSize: 18 }}
+                        placement={"top"}
+                        title={<Typography noWrap={false}>{GroupName}</Typography>}
+                        text={GroupName}
+                    >
+                        {fullwidth ? (
+                            <Typography
+                                className={clsx(classes.nameEllipsis, classes.groupName)}
+                                style={{ maxWidth: "200px" }}
+                            >
+                                {GroupName}
+                            </Typography>
+                        ) : (
+                            <Typography className={clsx(classes.nameEllipsis, classes.groupName)}>
+                                {GroupName}
+                            </Typography>
+                        )}
+                    </CustomTooltip>
+                    <Typography className={clsx(classes.grayTextCell, classes.date)}>
+                        {`${text} ${date.format("DD/MM/YYYY")} ${date.format("LT")}`}
+                    </Typography>
+                </Grid>
+            </Grid>
+        );
+    };
+
+    const REDIRECT_OPTIONS = {
+        ShowGroup: 0,
+        ShowMails: 10,
+        ShowMailsActive: 11,
+        ShowMailsRemoved: 12,
+        ShowMailsErrored: 13,
+        ShowSms: 20,
+        ShowSmsActive: 21,
+        ShowSmsRemoved: 22,
+        ShowSmsErrored: 23
+    };
+
+    const renderRow = (row) => {
+        const {
+            ActiveCell,
+            ActiveEmails,
+            GroupID,
+            GroupName,
+            InvalidCell,
+            InvalidEmails,
+            RestrictedEmails,
+            RemovedCell,
+            RemovedEmails,
+            IsConnectedToWebForm,
+            AutomationID,
+            IsAutoResponder,
+            CreationDate,
+            UpdateDate
+        } = row;
+        let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
+            return e === true
+        }).length;
+
+        return (
+            <TableRow
+                key={GroupID}
+                classes={rowStyle}
+                className={clsx(classes.maxHeightReponsive)}
+            >
+                <TableCell
+                    classes={cellBodyStyle}
+                    align='center'
+                    className={clsx(classes.flex2)}>
+                    <Grid container direction="row">
+                        <Grid item sm={12 - iconsCells}>
+                            {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate })}
+                        </Grid>
+                        {
+                            row.IsAutoResponder === true ? (
+                                <Grid item sm={1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <CustomTooltip
+                                        isSimpleTooltip={true}
+                                        interactive={false}
+                                        classes={{
+                                            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                                            arrow: classes.fBlack,
+                                        }}
+                                        arrow={true}
+                                        style={{ fontSize: 18 }}
+                                        placement={"top"}
+                                        icon={<MdOutlineLockClock style={{ fontSize: 24 }} />}
+                                        text={
+                                            <Typography noWrap={false} className={classes.tooltipText}
+                                                style={{ direction: isRTL ? 'rtl' : 'ltr', color: '#fff' }}>{t("group.autoResponderConnected")}</Typography>}
+                                    ></CustomTooltip>
+                                </Grid>
+                            ) : null
+                        }
+                        {
+                            row.IsConnectedToWebForm === true ? (
+                                <Grid item sm={1} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <CustomTooltip
+                                        isSimpleTooltip={true}
+                                        iconStyle={{ color: '#000' }}
+                                        interactive={false}
+                                        classes={{
+                                            tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                                            arrow: classes.fBlack,
+                                        }}
+                                        arrow={true}
+                                        style={{ fontSize: 18 }}
+                                        placement={"top"}
+                                        icon={<RiPagesLine style={{ fontSize: 24 }} />}
+                                        text={
+                                            <Typography noWrap={false} className={classes.tooltipText}>{t("group.webformConnected")}</Typography>}
+                                    ></CustomTooltip>
+                                </Grid>
+                            ) : null
+                        }
+                    </Grid>
+                </TableCell>
+                <TableCell classes={cellStyle} align="center" className={classes.flex2}>
+                    <NameValueGridStructure
+                        gridArr={[
+                            {
+                                name: t("campaigns.recipients"),
+                                value: (ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0),
+                                classes: {
+                                    name: clsx(colorTextStyle.blue, classes.dataBox),
+                                    value: colorTextStyle.blue,
+                                },
+                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
+                            },
+                            {
+                                name: t("recipient.Active"),
+                                value: ActiveEmails,
+                                classes: {
+                                    name: clsx(colorTextStyle.green, classes.dataBox),
+                                    value: colorTextStyle.green,
+                                },
+                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsActive}&GroupID=${GroupID}`)
+                            },
+                            {
+                                name: t("recipient.Removed"),
+                                value: RemovedEmails,
+                                classes: {
+                                    name: clsx(colorTextStyle.red, classes.dataBox),
+                                    value: colorTextStyle.red,
+                                },
+                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsRemoved}&GroupID=${GroupID}`)
+                            },
+                            {
+                                name: t("recipient.Bounced"),
+                                value: InvalidEmails,
+                                classes: {
+                                    name: clsx(colorTextStyle.red, classes.dataBox),
+                                    value: colorTextStyle.red,
+                                },
+                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsErrored}&GroupID=${GroupID}`)
+                            },
+                        ]}
+                        gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
+                        variant="body1"
+                        align="center"
+                    />
+                </TableCell>
+                <TableCell classes={cellStyle} align="center" className={classes.flex2}>
+                    <NameValueGridStructure
+                        gridArr={[
+                            {
+                                name: t("campaigns.recipients"),
+                                value: (ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0),
+                                classes: {
+                                    name: clsx(colorTextStyle.blue, classes.dataBox),
+                                    value: colorTextStyle.blue,
+                                },
+                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSms}&GroupID=${GroupID}`)
+                            },
+                            {
+                                name: t("recipient.Active"),
+                                value: ActiveCell,
+                                classes: {
+                                    name: clsx(colorTextStyle.green, classes.dataBox),
+                                    value: colorTextStyle.green,
+                                },
+                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsActive}&GroupID=${GroupID}`)
+                            },
+                            {
+                                name: t("recipient.Removed"),
+                                value: RemovedCell,
+                                classes: {
+                                    name: clsx(colorTextStyle.red, classes.dataBox),
+                                    value: colorTextStyle.red,
+                                },
+                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsRemoved}&GroupID=${GroupID}`)
+                            },
+                            {
+                                name: t("recipient.Bounced"),
+                                value: InvalidCell,
+                                classes: {
+                                    name: clsx(colorTextStyle.red, classes.dataBox),
+                                    value: colorTextStyle.red,
+                                },
+                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsErrored}&GroupID=${GroupID}`)
+                            },
+                        ]}
+                        gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
+                        variant="body1"
+                        align="center"
+                    />
+                </TableCell>
+                <TableCell
+                    classes={noBorderCellStyle}
+                    align="center"
+                    className={classes.flex4}
+                >
+                    <FlexGrid
+                        gridArr={[
+                            {
+                                onClick: () => {
+                                    window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=0&GroupID=${GroupID}`)
+                                },
+                                label: t("recipient.preview"),
+                                component: (
+                                    <IconWrapper iconName="preview" className={classes.mxAuto} />
+                                ),
+                                classes: { text: classes.noWrap },
+                            },
+                            {
+                                onClick: () => {
+                                    setSelectedGroups([GroupID])
+                                    setDialog(DialogType.ADD_RECIPIENT)
+                                },
+                                label: t("recipient.addRecipient"),
+                                component: (
+                                    <IconWrapper
+                                        iconName="addRecipient"
+                                        className={classes.mxAuto}
+
+                                    />
+                                ),
+                                classes: { text: classes.noWrap },
+                            },
+                            {
+                                onClick: () => {
+                                    setSelectedGroups([GroupID])
+                                    setDialog(DialogType.ADD_RECIPIENTS)
+                                },
+                                label: t("recipient.addRecipients"),
+                                component: (
+                                    <IconWrapper
+                                        iconName="addRecipients"
+                                        className={classes.mxAuto}
+                                    />
+                                ),
+                                classes: { text: classes.noWrap },
+                            },
+                            {
+                                onClick: () => {
+                                    setSelectedGroups([GroupID])
+                                    setDialog(DialogType.RESET_GROUP)
+                                },
+                                label: t("recipient.reset"),
+                                component: (
+                                    <IconWrapper iconName="reset" className={classes.mxAuto} />
+                                ),
+                                classes: { text: classes.noWrap },
+                            },
+                            {
+                                onClick: () => {
+                                    setSelectedGroups([GroupID])
+                                    setDialog(DialogType.EDIT_GROUP)
+                                },
+                                label: t("recipient.settings"),
+                                component: (
+                                    <IconWrapper iconName="settings" className={classes.mxAuto}
+
+                                    />
+
+                                ),
+                                classes: { text: classes.noWrap },
+                            },
+                            //TODO: Disable if !== null
+                            {
+                                label: t("recipient.automation"),
+                                component: (
+                                    <IconWrapper iconName="automation" className={!AutomationID ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
+                                        onClick={() => {
+                                            if (AutomationID)
+                                                window.open(`/Pulseem/CreateAutomations.aspx?Mode=show&AutomationID=${AutomationID}&fromreact=true`, '_blank');
+                                        }}
+                                    />
+                                ),
+                                classes: { text: clsx(classes.noWrap, !AutomationID ? classes.disabled : null) },
+                                isDisabled: !AutomationID
+                            },
+                            //TODO: Disable if (IsConnectedToWebForm === true || IsConnectedToWebForm === true)
+                            {
+                                onClick: () => {
+                                    if (!(AutomationID || IsConnectedToWebForm || IsAutoResponder)) {
+                                        setSelectedGroups([GroupID])
+                                        setDialog(DialogType.DELETE_GROUP)
+                                    }
+                                },
+                                label: t("recipient.delete"),
+                                component: (
+                                    <IconWrapper
+                                        iconName="delete"
+                                        className={(AutomationID || IsConnectedToWebForm || IsAutoResponder) ? clsx(classes.mxAuto, classes.managmentIconDisable) : classes.mxAuto}
+
+                                    />
+                                ),
+                                classes: { text: clsx(classes.noWrap, (AutomationID || IsConnectedToWebForm || IsAutoResponder) ? classes.disabled : null) },
+                                isDisabled: (AutomationID || IsConnectedToWebForm || IsAutoResponder)
+                            },
+                        ]}
+                        variant="body1"
+                        align="center"
+                    />
+                </TableCell>
+            </TableRow>
+        )
+
+    }
+    const renderPhoneRow = (row) => {
+        const {
+            ActiveCell,
+            ActiveEmails,
+            GroupID,
+            InvalidCell,
+            InvalidEmails,
+            RemovedCell,
+            RemovedEmails,
+            TotalRecipients,
+            GroupName
+        } = row;
+        return (
+            <TableRow key={GroupID} component="div" classes={rowStyle}>
+                <TableCell
+                    style={{ flex: 1 }}
+                    classes={{ root: classes.tableCellRoot }}
+                    className={classes.p10}
+                >
+                    <Box className={classes.justifyBetween}>
+                        {/* <Box className={classes.inlineGrid}>{GroupName}</Box> */}
+                        {renderNameCell(row)}
+                        <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
+                            <IconWrapper
+                                iconName="delete"
+                                className={classes.mxAuto}
+                                onClick={() => {
+                                    setSelectedGroups([GroupID])
+                                    setDialog(DialogType.DELETE_GROUP)
+                                }}
+                            />
+                        </Box>
+                    </Box>
+                    <Box className={classes.mt3}>
+                        <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth)}>{t("recipient.emails")}</Typography>
+                        <NameValueGridStructure
+                            rootClass={classes.autoAlign}
+                            gridSize={{ xs: 3, sm: 3 }}
+                            gridArr={[
+                                {
+                                    name: t("campaigns.recipients"),
+                                    value: TotalRecipients,
+                                    classes: {
+                                        name: colorTextStyle.blue,
+                                        value: colorTextStyle.blue,
+                                    },
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
+                                },
+                                {
+                                    name: t("recipient.Active"),
+                                    value: ActiveEmails,
+                                    classes: {
+                                        name: colorTextStyle.green,
+                                        value: colorTextStyle.green,
+                                    },
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsActive}&GroupID=${GroupID}`)
+                                },
+                                {
+                                    name: t("recipient.Removed"),
+                                    value: RemovedEmails,
+                                    classes: {
+                                        name: colorTextStyle.red,
+                                        value: colorTextStyle.red,
+                                    },
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsRemoved}&GroupID=${GroupID}`)
+                                },
+                                {
+                                    name: t("recipient.Bounced"),
+                                    value: InvalidEmails,
+                                    classes: {
+                                        name: colorTextStyle.red,
+                                        value: colorTextStyle.red,
+                                    },
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsErrored}&GroupID=${GroupID}`)
+                                },
+                            ]}
+
+                            variant="body1"
+                        />
+                    </Box>
+                    <Box className={classes.mt2}>
+                        <Typography style={{ maxWidth: '100%' }} className={clsx(classes.nameEllipsis, classes.fullWidth, classes.textUppercase)}>{t("recipient.sms/mms")}</Typography>
+                        <NameValueGridStructure
+                            rootClass={classes.autoAlign}
+                            gridSize={{ xs: 3, sm: 3 }}
+                            gridArr={[
+                                {
+                                    name: t("campaigns.recipients"),
+                                    value: TotalRecipients,
+                                    classes: {
+                                        name: colorTextStyle.blue,
+                                        value: colorTextStyle.blue,
+                                    },
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSms}&GroupID=${GroupID}`)
+                                },
+                                {
+                                    name: t("recipient.Active"),
+                                    value: ActiveCell,
+                                    classes: {
+                                        name: colorTextStyle.green,
+                                        value: colorTextStyle.green,
+                                    },
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsActive}&GroupID=${GroupID}`)
+                                },
+                                {
+                                    name: t("recipient.Removed"),
+                                    value: RemovedCell,
+                                    classes: {
+                                        name: colorTextStyle.red,
+                                        value: colorTextStyle.red,
+                                    },
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsRemoved}&GroupID=${GroupID}`)
+                                },
+                                {
+                                    name: t("recipient.Bounced"),
+                                    value: InvalidCell,
+                                    classes: {
+                                        name: colorTextStyle.red,
+                                        value: colorTextStyle.red,
+                                    },
+                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsErrored}&GroupID=${GroupID}`)
+                                },
+                            ]}
+                            variant="body1"
+                            align="center"
+                        />
+                    </Box>
+                </TableCell>
+            </TableRow>
+        )
+    }
+    const renderTableBody = () => {
+        if (groupData && groupData.Groups) {
+            return (
+                <DataTable
+                    tableContainer={{
+                        className:
+                            windowSize === "xs"
+                                ? clsx(classes.mt3, classes.tableStyle)
+                                : classes.tableStyle,
+                    }}
+                    table={{ className: classes.tableContainer }}
+                    tableHead={{
+                        tableHeadCells: TABLE_HEAD,
+                        classes: rowStyle,
+                        className: windowSize === "xs" && classes.dNone,
+                    }}
+                >
+                    <TableBody>
+                        {groupData.Groups
+                            .map(windowSize === 'xs' ? renderPhoneRow : renderRow)}
+                    </TableBody>
+                </DataTable>
+            )
+        }
+        return <></>;
+
+    }
+    const handleRowsPerPageChange = (val) => {
+        dispatch(setRowsPerPage(val))
+    }
+    const handlePageChange = (val) => {
+        setPage(val);
+    }
+    const renderTablePagination = () => {
+        return (
+            <TablePagination
+                classes={classes}
+                rows={groupData ? groupData.RecordCount : 0}
+                rowsPerPage={rowsPerPage}
+                onRowsPerPageChange={handleRowsPerPageChange}
+                rowsPerPageOptions={rowsOptions}
+                page={page}
+                onPageChange={handlePageChange}
+            />
+        )
+    }
+    const handleAddRecipientResponse = (res) => {
+        switch (res.payload.StatusCode) {
+            case 201: {
+                setResponseMessage({ title: t("recipient.summary.summaryImportTitle"), message: '', summary: res.payload.Summary })
+                setDialog(DialogType.MESSAGE);
+                break;
+            }
+            case 202: {
+                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: renderHtml(t("recipient.importResponses.fileUploaded")) })
+                setDialog(DialogType.MESSAGE);
+                break;
+            }
+            case 404: {
+                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.noFolderFound") })
+                setDialog(DialogType.MESSAGE);
+                break;
+            }
+            case 400: {
+                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.listEmptyOrClientInvalid") })
+                setDialog(DialogType.MESSAGE);
+                break;
+            }
+            default: {
+                setResponseMessage({ title: t("common.ErrorOccured"), message: t("recipient.importResponses.genericError") })
+                setDialog(DialogType.MESSAGE);
+            }
+        }
+    }
+    const handleConfirmExport = () => {
+        let queryString = `Culture=${isRTL ? 'he-IL' : 'en-US'}`;
+        if (selectedGroups && selectedGroups.length > 0) {
+            queryString += `&Groups=${selectedGroups.join(',')}`;
+        }
+        if (selectedGroups.length === 1) {
+            const groupName = groupData.Groups.find((g) => { return g.GroupID === selectedGroups[0] }).GroupName;
+            queryString += `&GroupName=${groupName.replace(' ', '-')}`;
+        }
+        window.open(`/Pulseem/ClientExport.csv?${queryString}`);
+        setShowConfirmDialog(false);
+    }
+    const renderConfirmDialog = () => {
+        let dialog = {
+            showDivider: true,
+            icon: <ExportIcon />,
+            title: t("common.ExportGroups"),
+            content: (
+                <Typography style={{ marginBottom: 20 }}>
+                    {!selectedGroups || selectedGroups.length === 0 ? t('common.IsExportAllGroups') : selectedGroups.length === 1 ? t("common.IsExportGroup") : t("common.IsExportGroups")}
+                </Typography>
+            )
+        }
+        return (
+            <Dialog
+                cancelText="common.Cancel"
+                confirmText="common.Yes"
+                disableBackdropClick={true}
+                classes={classes}
+                open={showConfirmDialog}
+                onCancel={() => setShowConfirmDialog(false)}
+                onClose={() => setShowConfirmDialog(false)}
+                onConfirm={() => handleConfirmExport()}
+                {...dialog}>
+                {dialog.content}
+            </Dialog>
+        );
+    }
+    const handleResponses = (response, actions = {
+        'S_200': {
+            code: 200,
+            message: '',
+            Func: () => null
+        },
+        'S_201': {
+            code: 201,
+            message: '',
+            Func: () => getData()
+        },
+        'S_400': {
+            code: 400,
+            message: '',
+            Func: () => null
+        },
+        'S_401': {
+            code: 401,
+            message: '',
+            Func: () => null
+        },
+        'S_405': {
+            code: 405,
+            message: '',
+            Func: () => null
+        },
+        'S_406': {
+            code: 406,
+            message: '',
+            Func: () => null
+        },
+        'S_422': {
+            code: 422,
+            message: '',
+            Func: () => null
+        },
+        'S_500': {
+            code: 500,
+            message: '',
+            Func: () => null
+        },
+        'default': {
+            message: '',
+            Func: () => null
+        },
+    }) => {
+        switch (response.payload.StatusCode || response.payload.Message.StatusCode) {
+            case 200: {
+                actions?.S_200?.Func?.();
+                actions?.S_200?.message && setToastMessage(actions?.S_200?.message);
+                break;
+            }
+            case 201: {
+                actions?.S_201?.Func?.();
+                actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
+                break;
+            }
+            case 400: {
+                actions?.S_400?.Func?.();
+                actions?.S_400?.message && setToastMessage(actions?.S_400?.message);
+                break;
+            }
+            case 401: {
+                actions?.S_401?.Func?.();
+                actions?.S_401?.message && setToastMessage(actions?.S_401?.message);
+                break;
+            }
+            case 405: {
+                actions?.S_405?.Func?.();
+                actions?.S_405?.message && setToastMessage(actions?.S_405?.message);
+                break;
+            }
+            case 406: {
+                actions?.S_406?.Func?.();
+                actions?.S_406?.message && setToastMessage(actions?.S_406?.message);
+                break;
+            }
+            case 422: {
+                actions?.S_422?.Func?.();
+                actions?.S_422?.message && setToastMessage(actions?.S_422?.message);
+                break;
+            }
+            case 500: {
+                actions?.S_500?.Func?.();
+                actions?.S_500?.message && setToastMessage(actions?.S_500?.message);
+                break;
+            }
+            default: {
+                actions?.default?.Func?.();
+                actions?.default?.message && setToastMessage(actions?.default?.message);
+                setDialog(null);
+            }
+        }
+    }
+    const handleDeleteGroup = async () => {
+        await dispatch(deleteGroups(selectedGroups));
+        setSelectedGroups([]);
+        setDialog(null);
+        getData();
+    };
+    const showDialog = () => {
+        if (dialog !== null) {
+            switch (dialog) {
+                case DialogType.ADD_GROUP: {
+                    return <AddGroupPopUp
+                        classes={classes}
+                        isOpen={dialog === DialogType.ADD_GROUP}
+                        onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                        setLoader={setLoader}
+                        windowSize={windowSize}
+                        ToastMessages={ToastMessages}
+                        setToastMessage={setToastMessage}
+                        openARDialog={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
+                        getData={getData}
+                        handleResponses={(response, actions) => handleResponses(response, actions)}
+                    />
+                }
+                case DialogType.EDIT_GROUP: {
+                    return <EditGroupPopup
+                        classes={classes}
+                        isOpen={dialog === DialogType.EDIT_GROUP}
+                        onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                        setLoader={setLoader}
+                        windowSize={windowSize}
+                        ToastMessages={ToastMessages}
+                        setToastMessage={setToastMessage}
+                        selectedGroup={selectedGroups[0]}
+                        openARDialog={() => setDialog(DialogType.ADD_RECIPIENT)}
+                        getData={getData}
+                        handleResponses={(response, actions) => handleResponses(response, actions)}
+                    />
+                }
+                case DialogType.RESET_GROUP: {
+                    if (selectedGroups.length === 1) {
+                        return <ResetGroupPopup
+                            classes={classes}
+                            isOpen={dialog === DialogType.RESET_GROUP}
+                            onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                            setLoader={setLoader}
+                            windowSize={windowSize}
+                            ToastMessages={ToastMessages}
+                            setToastMessage={setToastMessage}
+                            selectedGroup={{ GroupID: selectedGroups[0] }}
+                            getData={getData}
+                            handleResponses={(response, actions) => handleResponses(response, actions)}
+                        />
+                    }
+                    return <></>
+                }
+                case DialogType.ADD_RECIPIENT: {
+                    return <AddRecipientPopup
+                        classes={classes}
+                        isOpen={dialog === DialogType.ADD_RECIPIENT}
+                        onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        setLoader={setLoader}
+                        windowSize={windowSize}
+                        ToastMessages={ToastMessages}
+                        setToastMessage={setToastMessage}
+                        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
+                        selectedGroups={selectedGroups}
+                        selectGroup={(idArr) => setSelectedGroups(idArr)}
+                        DialogType={DialogType}
+                        setDialog={setDialog}
+                        handleResponses={(response, actions) => handleResponses(response, actions)}
+                        onRecipientAdded={() => { setDialog(null); getData(); }}
+                        onAnotherRecipientAdded={() => { setDialog(null); getData(); setDialog(DialogType.ADD_RECIPIENT); }}
+                    />;
+                }
+                case DialogType.ADD_RECIPIENTS: {
+                    return <AddBulkRecipientPopup
+                        classes={classes}
+                        isOpen={dialog === DialogType.ADD_RECIPIENTS}
+                        onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        setLoader={setLoader}
+                        windowSize={windowSize}
+                        ToastMessages={ToastMessages}
+                        setToastMessage={setToastMessage}
+                        Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], [])}
+                        selectedGroups={selectedGroups}
+                        selectGroup={(idArr) => setSelectedGroups(idArr)}
+                        onAddRecipient={handleAddRecipientResponse}
+                    />
+                }
+                case DialogType.DELETE_RECIPIENT:
+                case DialogType.UNSUB_RECIPIENT: {
+                    return <UnsubscribeOrDeletePopup
+                        classes={classes}
+                        isOpen={dialog === DialogType.DELETE_RECIPIENT || dialog === DialogType.UNSUB_RECIPIENT}
+                        onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        setLoader={setLoader}
+                        windowSize={windowSize}
+                        ToastMessages={ToastMessages}
+                        setToastMessage={setToastMessage}
+                        selectedGroups={selectedGroups}
+                        dialogType={dialog}
+                        getData={getData}
+                        handleResponses={(response, actions) => handleResponses(response, actions)}
+                    />;
+                }
+                case DialogType.DELETE_GROUP: {
+                    return <ConfirmDeletePopUp
+                        classes={classes}
+                        isOpen={dialog === DialogType.DELETE_GROUP}
+                        onClose={() => { setDialog(null); setSelectedGroups([]); }}
+                        windowSize={windowSize}
+                        handleDeleteGroup={() => handleDeleteGroup()}
+                    />
+                }
+                case DialogType.MESSAGE: {
+                    return <AddRecipientResponse
+                        classes={classes}
+                        isOpen={dialog === DialogType.MESSAGE}
+                        onClose={() => { setDialog(null); setSelectedGroups([]); getData(); }}
+                        windowSize={windowSize}
+                        title={responseMessage.title}
+                        message={responseMessage.message}
+                        summary={responseMessage.summary}
+                    />
+                }
+                case DialogType.SIMPLY_CLUB: {
+                    if (accountFeatures && accountFeatures.includes('15')) {
+                        return <SimplyClubPupup
+                            classes={classes}
+                            isOpen={dialog === DialogType.SIMPLY_CLUB}
+                            onClose={() => { setDialog(null); setSelectedGroups([]) }}
+                            windowSize={windowSize}
+                            title={responseMessage.title}
+                            message={responseMessage.message}
+                            summary={responseMessage.summary}
+                            setToastMessage={setToastMessage}
+                            handleResponses={handleResponses}
+                            ToastMessages={ToastMessages}
+                            SelectedGroupIds={[...selectedGroups]}
+                            setSelectedGroupIds={() => setSelectedGroups([])}
+                            getData={() => { setDialog(null); getData(); }}
+                        />
+                    }
+                    return <></>
+                }
+                default: {
+                    return <></>
+                }
+            }
+        }
+        return <></>;
+    }
+
+    return (
+        <DefaultScreen
+            currentPage='groups'
+            subPage='groupManagement'
+            classes={classes}
+            containerClass={classes.management}>
+            <Box className={classes.mb50}>
+                {toastMessage && renderToast()}
+                {renderHeader()}
+                {renderSearchSection()}
+                {windowSize !== 'xs' ? renderManagmentLine() :
+                    <Box
+                        item
+                        xs={windowSize === "xs" && 12}
+                        className={clsx(classes.groupsLableContainer, classes.mt20)}
+                    >
+                        <Typography className={classes.groupsLable}>
+                            {`${groupData ? groupData.RecordCount : 0} ${t("common.Groups")}`}
+                        </Typography>
+                    </Box>
+                }
+                {renderTableBody()}
+                {renderTablePagination()}
+                {showConfirmDialog && renderConfirmDialog()}
+                {dialog !== null && showDialog()}
+                <Loader isOpen={showLoader} showBackdrop={true} />
+            </Box>
+        </DefaultScreen >
+    )
+}
+
+export default memo(Groups);

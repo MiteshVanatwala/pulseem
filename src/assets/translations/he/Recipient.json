@@ -22,6 +22,7 @@
   "smaStatus": "סטאטוס סמס ",
   "creationDate": "תאריך יצירה",
   "firstName": "שם פרטיlast ",
+  "lastName": "שם משפחה",
   "name": "שם משפחה",
   "email": "מייל",
   "telephone": "מספר טלפון",
@@ -52,7 +53,8 @@
     "cellPhone": "יש להזין מספר סלולרי חוקי",
     "cellphoneLength": "יש להזין מספר סלולרי בעל 10-12 ספרות",
     "groupLength": "יש לבחור מהרשימה קבוצה אחת לפחות",
-    "noData": "No data found"
+    "noData": "No data found",
+    "noDeleteRecFound": "לא נמצאו רשומות למחיקה"
   },
   "bulkImportTitle": "העלאת נמענים",
   "importResponses": {
@@ -80,7 +82,8 @@
   },
   "responses": {
     "serverFoundWithNoResponse": "הבקשה התקבלה בשרת, אך לא התקבלה תגובה. יש לפנות לתמיכה.",
-    "notFound": "לא נמצאו נמענים להסרה"
+    "notFound": "לא נמצאו נמענים להסרה",
+    "noRecipientsInGroup": "לא נמצאו נמענים בקבוצה שנבחרה"
   },
   "unsubscribed": {
     "succeeded": "הנמענים שהזנת הוסרו מהקבוצות שנבחרו בהצלחה."
@@ -91,7 +94,7 @@
   "phone&email": "הסר דואר אלקטרוני וסלולרי",
   "emailOnly": "הסר רק דואר אלקטרוני",
   "phoneOnly": "הסר רק סלולרי",
-  "rowsUpdated": "שורות עודכנו",
+  "rowsUpdated": "רשומות עודכנו",
   "rowUpdated": "רשומה אחת עודכנה",
   "deleteConfirm": "האם אתה בטוח שברצונך למחוק את הלקוחות מהקבוצות שבחרת?",
   "email_cell_notProvided": "דואר אלקטרוני/סלולרי לא סופקו",
@@ -99,5 +102,8 @@
   "recipientsDeletedSuccessfuly": "הלקוחות נמחקו בהצלחה",
   "deleteFromGroups": "מחק מקבוצות",
   "deleteEmail": "הסר מייל",
-  "deletePhone": "הסר טלפון"
+  "deletePhone": "הסר טלפון",
+  "noRecordsFound": "לא נמצאו/עודכנו רשומות",
+  "uploadLimitation": "באפשרותך להעלות עד 600,000 נמענים בבת אחת",
+  "maximumRecordLimitation": "שגיאה: באפשרותך לבצע הסרה/מחיקה של מקסימום 1,000 נמענים בכל בקשה"
 }

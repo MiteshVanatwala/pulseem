@@ -383,7 +383,7 @@ const RecipientChart = ({ classes, }) => {
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
                         redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
-                        buttonClass={classes.createButton} />
+                        buttonClass={classes.importButtonBlue} />
                 }
             </Grid>
         );

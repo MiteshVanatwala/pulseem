@@ -20,6 +20,10 @@ import { ReactComponent as CalendarIcon } from './calendar.svg'
 import { ReactComponent as SearchIcon } from './search.svg'
 import { ReactComponent as PageArrowIcon } from './page_arrow.svg'
 import CloseIcon from './x.png'
+import AddRecipient from './addRecipient.png'
+import AddRecipients from './addRecipients.png'
+import Reset from './reset.png'
+
 
 export {
   AutomationIcon,
@@ -43,5 +47,8 @@ export {
   CloseIcon,
   DeleteRecipient,
   DeleteEmail,
-  DeletePhone
+  DeletePhone,
+  AddRecipient,
+  AddRecipients,
+  Reset
 }

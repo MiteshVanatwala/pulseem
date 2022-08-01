@@ -9,7 +9,6 @@ import {
   Grid,
   Button,
   TextField,
-  Box,
   useTheme,
   Link
 } from "@material-ui/core";
@@ -35,7 +34,7 @@ import RenderPhoneRow from "./SubComp/RenderPhoneRow";
 import Toast from '../../components/Toast/Toast.component';
 import { Dialog } from '../../components/managment/index';
 import { searchAllClients } from "../../redux/reducers/clientSlice";
-import { BiSortDown, BiSortUp, BiSortAlt2 } from "react-icons/bi";
+import { BiSortDown, BiSortUp } from "react-icons/bi";
 import SummaryRow from '../../components/Grids/SummaryRow';
 
 const ClientSearchResult = ({ classes }) => {
@@ -66,7 +65,6 @@ const ClientSearchResult = ({ classes }) => {
   const [filterMax, setFilterMax] = useState("");
   const [filterSearch, setFilterSearch] = useState(false);
   const [totalClients, setTotalClients] = useState(TotalCount);
-  // const [avaregeRevenue, setAvaregeRevenue] = useState(TotalRevenue);
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [serachData, setSearchData] = useState({
@@ -630,11 +628,11 @@ const ClientSearchResult = ({ classes }) => {
               className={clsx(classes.nameEllipsis, classes.fullWidth)}
               style={{ maxWidth: "100%", minHeight: 28 }}
             >
-              {FirstName}{LastName}
+              {FirstName} {LastName}
             </Typography>
           ) : (
             <Typography className={classes.nameEllipsis} style={{ minHeight: 28 }}>
-              {FirstName}{LastName}
+              {FirstName} {LastName}
             </Typography>
           )}
         </CustomTooltip>

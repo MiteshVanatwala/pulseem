@@ -27,12 +27,13 @@
   "simplyClubLoginTitle": "הכנס את פרטי ההזדהות שלך",
   "externalImportTitle": "ייבא קבוצות חיצוניות",
   "externalImportDesc": "בחר קבוצות לייבוא למערכת פולסים",
-  "enterValidUserPwd": "Enter valid username and password",
-  "incorrectUsrPwd": "שם משתמש או סיסמא אנם נכונים",
+  "enterValidUserPwd": "הזן שם משתמש וסיסמא חוקיים",
+  "incorrectUsrPwd": "שם משתמש או סיסמא אינם נכונים",
   "responses": {
     "success": "הקבוצות והלקוחות נוספו בהצלחה",
     "featureNotAllowed": "פיצ'ר לא קיים בחשבון / מפתח API לא תקין",
-    "notFound": "Invalid username password",
+    "notFound": "שם משתמש או סיסמא שגויים",
     "serverFoundWithNoResponse": "השרת קיבל את הפנייה אך לא החזיר תשובה. נא לפנות לתמיכה."
-  }
+  },
+  "maxGroupsExceeded": "חשבון זה הגיע למקסימום קבוצות שניתן ליצור"
 }

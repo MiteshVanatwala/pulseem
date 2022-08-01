@@ -173,7 +173,9 @@ const BulkStatus = ({ classes }) => {
           style={{ position: 'absolute', fontSize: 14 }}
           placement={'top'}
           icon={<span className={classes.newIcn}>{t("mainReport.newFeature")}</span>}
-          text={t("dashboard.tooltipPurchaseNewFeature")}
+          text={
+            <Typography noWrap={false} className={classes.tooltipText}>{t("dashboard.tooltipPurchaseNewFeature")}</Typography>
+          }
         />
         <Grid container justifyContent='center'>
           <Grid item xs={9} className={classes.bulkStatusTitleSection}>

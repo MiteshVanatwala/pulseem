@@ -24,7 +24,8 @@ export const DateField = ({
   timeActive = null,
   dateActive = null,
   toolbarDisabled = true,
-  isRoundedOnMobile = false
+  isRoundedOnMobile = false,
+  ...props
 }) => {
   const { isRTL, language } = useSelector(state => state.core)
   moment.locale(language)
@@ -42,6 +43,7 @@ export const DateField = ({
       inputVariant="outlined"
       className={clsx(
         classes.textField,
+        props.removePadding ? classes.NoPaddingtextField : '',
         { [classes.textFieldPlaceholder]: !value }
       )}
       inputProps={{
@@ -84,6 +86,7 @@ export const DateField = ({
       inputVariant="outlined"
       className={clsx(
         classes.textField,
+        props.removePadding ? classes.NoPaddingtextField : '',
         { [classes.textFieldPlaceholder]: !value }
       )}
       inputProps={{
