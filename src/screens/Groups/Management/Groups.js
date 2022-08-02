@@ -38,6 +38,9 @@ import { Dialog } from '../../../components/managment/index';
 import SimplyClubPupup from "./Popup/SimplyClubPupup";
 import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
+import { useNavigate } from 'react-router';
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { voidFunction } from '../../../helpers/utils';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -65,6 +68,7 @@ const Groups = ({ classes }) => {
         PageSize: rowsPerPage,
         SearchTerm: "",
     });
+    const navigate = useNavigate()
     moment.locale(language);
 
     const DialogType = {
@@ -503,7 +507,19 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.blue, classes.dataBox),
                                     value: colorTextStyle.blue,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
+                                onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                        GroupIds: [GroupID],
+                                        Status: 100,
+                                        TestStatusOfEmailElseSms: 1,
+                                        ResultTitle: GroupName
+                                    }
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Active"),
@@ -512,7 +528,19 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.green, classes.dataBox),
                                     value: colorTextStyle.green,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsActive}&GroupID=${GroupID}`)
+                                onClick: (ActiveEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
+                                        GroupIds: [GroupID],
+                                        Status: 1,
+                                        TestStatusOfEmailElseSms: 1,
+                                        ResultTitle: GroupName
+                                    }
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Removed"),
@@ -521,7 +549,19 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsRemoved}&GroupID=${GroupID}`)
+                                onClick: (RemovedEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
+                                        GroupIds: [GroupID],
+                                        Status: 2,
+                                        TestStatusOfEmailElseSms: 1,
+                                        ResultTitle: GroupName
+                                    }
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Bounced"),
@@ -530,7 +570,19 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsErrored}&GroupID=${GroupID}`)
+                                onClick: (InvalidEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
+                                        GroupIds: [GroupID],
+                                        Status: 4,
+                                        TestStatusOfEmailElseSms: 1,
+                                        ResultTitle: GroupName
+                                    }
+                                }) : voidFunction
                             },
                         ]}
                         gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
@@ -548,7 +600,19 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.blue, classes.dataBox),
                                     value: colorTextStyle.blue,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSms}&GroupID=${GroupID}`)
+                                onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                        GroupIds: [GroupID],
+                                        Status: 100,
+                                        TestStatusOfEmailElseSms: 0,
+                                        ResultTitle: GroupName
+                                    }
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Active"),
@@ -557,7 +621,19 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.green, classes.dataBox),
                                     value: colorTextStyle.green,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsActive}&GroupID=${GroupID}`)
+                                onClick: (ActiveCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
+                                        GroupIds: [GroupID],
+                                        Status: 0,
+                                        TestStatusOfEmailElseSms: 0,
+                                        ResultTitle: GroupName
+                                    }
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Removed"),
@@ -566,7 +642,19 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsRemoved}&GroupID=${GroupID}`)
+                                onClick: (RemovedCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
+                                        GroupIds: [GroupID],
+                                        Status: 1,
+                                        TestStatusOfEmailElseSms: 0,
+                                        ResultTitle: GroupName
+                                    }
+                                }) : voidFunction
                             },
                             {
                                 name: t("recipient.Bounced"),
@@ -575,7 +663,19 @@ const Groups = ({ classes }) => {
                                     name: clsx(colorTextStyle.red, classes.dataBox),
                                     value: colorTextStyle.red,
                                 },
-                                onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsErrored}&GroupID=${GroupID}`)
+                                onClick: (InvalidCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+
+                                    state:
+                                    {
+                                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                        ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
+                                        GroupIds: [GroupID],
+                                        Status: 4,
+                                        TestStatusOfEmailElseSms: 0,
+                                        ResultTitle: GroupName
+                                    }
+                                }) : voidFunction
                             },
                         ]}
                         gridSize={{ xs: 12, sm: 12, md: 6, lg: 3 }}
@@ -591,9 +691,27 @@ const Groups = ({ classes }) => {
                     <FlexGrid
                         gridArr={[
                             {
-                                onClick: () => {
-                                    window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=0&GroupID=${GroupID}`)
-                                },
+                                onClick:
+                                    (
+                                        (ActiveEmails || 0) +
+                                        (RemovedEmails || 0) +
+                                        (RestrictedEmails || 0) +
+                                        (InvalidEmails || 0)
+                                    ) > 0
+                                        ||
+                                        (
+                                            (ActiveCell || 0) +
+                                            (RemovedCell || 0) +
+                                            (InvalidCell || 0)
+                                        ) > 0 ?
+                                        () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                            state: {
+                                                ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                                PageType: CLIENT_CONSTANTS.PAGE_TYPES.ShowGroup,
+                                                GroupIds: [GroupID],
+                                                ResultTitle: GroupName
+                                            }
+                                        }) : voidFunction,
                                 label: t("recipient.preview"),
                                 component: (
                                     <IconWrapper iconName="preview" className={classes.mxAuto} />
@@ -668,7 +786,6 @@ const Groups = ({ classes }) => {
                                 classes: { text: clsx(classes.noWrap, !AutomationID ? classes.disabled : null) },
                                 isDisabled: !AutomationID
                             },
-                            //TODO: Disable if (IsConnectedToWebForm === true || IsConnectedToWebForm === true)
                             {
                                 onClick: () => {
                                     if (!(AutomationID || IsConnectedToWebForm || IsAutoResponder)) {
@@ -706,6 +823,7 @@ const Groups = ({ classes }) => {
             RemovedCell,
             RemovedEmails,
             TotalRecipients,
+            RestrictedEmails,
             GroupName
         } = row;
         return (
@@ -742,7 +860,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.blue,
                                         value: colorTextStyle.blue,
                                     },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMails}&GroupID=${GroupID}`)
+                                    onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
+                                            GroupIds: [GroupID],
+                                            Status: 100,
+                                            TestStatusOfEmailElseSms: 1,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Active"),
@@ -751,7 +880,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.green,
                                         value: colorTextStyle.green,
                                     },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsActive}&GroupID=${GroupID}`)
+                                    onClick: (ActiveEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsActive,
+                                            GroupIds: [GroupID],
+                                            Status: 1,
+                                            TestStatusOfEmailElseSms: 1,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Removed"),
@@ -760,7 +900,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsRemoved}&GroupID=${GroupID}`)
+                                    onClick: (RemovedEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsRemoved,
+                                            GroupIds: [GroupID],
+                                            Status: 2,
+                                            TestStatusOfEmailElseSms: 1,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Bounced"),
@@ -769,7 +920,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowMailsErrored}&GroupID=${GroupID}`)
+                                    onClick: (InvalidEmails || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMailsErrored,
+                                            GroupIds: [GroupID],
+                                            Status: 4,
+                                            TestStatusOfEmailElseSms: 1,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                             ]}
 
@@ -789,7 +951,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.blue,
                                         value: colorTextStyle.blue,
                                     },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSms}&GroupID=${GroupID}`)
+                                    onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms,
+                                            GroupIds: [GroupID],
+                                            Status: 100,
+                                            TestStatusOfEmailElseSms: 0,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Active"),
@@ -798,7 +971,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.green,
                                         value: colorTextStyle.green,
                                     },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsActive}&GroupID=${GroupID}`)
+                                    onClick: () => (ActiveCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsActive,
+                                            GroupIds: [GroupID],
+                                            Status: 0,
+                                            TestStatusOfEmailElseSms: 0,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Removed"),
@@ -807,7 +991,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsRemoved}&GroupID=${GroupID}`)
+                                    onClick: () => (RemovedCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsRemoved,
+                                            GroupIds: [GroupID],
+                                            Status: 1,
+                                            TestStatusOfEmailElseSms: 0,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                                 {
                                     name: t("recipient.Bounced"),
@@ -816,7 +1011,18 @@ const Groups = ({ classes }) => {
                                         name: colorTextStyle.red,
                                         value: colorTextStyle.red,
                                     },
-                                    onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsErrored}&GroupID=${GroupID}`)
+                                    onClick: () => (InvalidCell || 0) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                        state:
+                                        {
+                                            ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                                            PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                                            ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSmsErrored,
+                                            GroupIds: [GroupID],
+                                            Status: 4,
+                                            TestStatusOfEmailElseSms: 0,
+                                            ResultTitle: GroupName
+                                        }
+                                    }) : voidFunction
                                 },
                             ]}
                             variant="body1"
@@ -1051,7 +1257,8 @@ const Groups = ({ classes }) => {
                         windowSize={windowSize}
                         ToastMessages={ToastMessages}
                         setToastMessage={setToastMessage}
-                        openARDialog={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
+                        addClientByQuery={false}
+                        addAnotherRecCallback={(groupId) => { setSelectedGroups([...selectedGroups, groupId]); setDialog(DialogType.ADD_RECIPIENTS) }}
                         getData={getData}
                         handleResponses={(response, actions) => handleResponses(response, actions)}
                     />

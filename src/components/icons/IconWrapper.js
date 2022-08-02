@@ -95,7 +95,7 @@ const IconWrapper = ({ iconName = "", onClick = () => false, ...props }) => {
       classes={props.classes}
       onClick={onClick}
     >
-      {icon.type === 1 ? <img src={icon.url} alt={icon.url} /> : icon.comp}
+      {icon?.type === 1 ? <img src={icon?.url} alt={icon?.url} /> : icon?.comp}
     </Box>
   );
 };

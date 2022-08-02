@@ -22,6 +22,7 @@
   "PulseemKosher": "מערכת שומרת שבת חגים יהודיים",
   "PulseemKosherMesage": "החשבון שלך מוגדר כשומר שבת וחגים יהודיים, אי אפשר לעבוד במערכת בימים אלו",
   "SendDate": "תאריך שליחה",
+  "OpenDate": "תאריך פתיחה",
   "SendOptions": "הגדרות שליחה",
   "SendTime": "זמן שליחה:",
   "SendTo": "שלח ל:",
@@ -559,5 +560,8 @@
   "NIS": "₪",
   "systemNotice": "הודעת מערכת",
   "birthDate": "תאריך לידה",
-  "uploadInProgress": "הקובץ בתהליך טעינה..."
+  "uploadInProgress": "הקובץ בתהליך טעינה...",
+  "back": "חזור",
+  "clientSubscriptionResultTitle": "הרשמות לפי קמפיין מספר",
+  "OpenTime": "זמן פתיחה"
 }

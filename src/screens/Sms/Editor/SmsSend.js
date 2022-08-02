@@ -16,7 +16,7 @@ import Papa from 'papaparse';
 import { AiOutlineExclamationCircle, AiOutlineClose } from "react-icons/ai";
 import Checkbox from "@material-ui/core/Checkbox";
 import Groups from "../../../components/Notifications/Groups/Groups";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { BsTrash, BsChevronDown, BsChevronUp } from "react-icons/bs";
 import Gif from "../../../assets/images/managment/check-circle.gif";
 import * as XLSX from 'xlsx';
@@ -126,7 +126,7 @@ const SmsSend = ({ classes, ...props }) => {
   //#region initialized states
   const { t } = useTranslation();
   const styles = useStyles();
-  const history = useHistory();
+  const navigate = useNavigate();
   const severe = useSnackSevere();
   const recipientSuccess = useSnackRecipients();
   const { OTPPassed, ToastMessages, extraData, getCampaignSum, testGroups } = useSelector((state) => state.sms);
@@ -218,7 +218,7 @@ const SmsSend = ({ classes, ...props }) => {
   const [otpOpen, setOTPOpen] = useState(null);
   const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
   const [sourcePulses, setSourcePulses] = useState({});
-  
+
   //#endregion
   useEffect(() => {
     setselectArray([
@@ -291,10 +291,10 @@ const SmsSend = ({ classes, ...props }) => {
   }
   const getData = async () => {
     setLoader(true);
-    if (props && props.match.params.id) {
+    if (props && props?.match?.params?.id) {
       const finishedCampaigns = await dispatch(getFinishedCampaigns());
       const subAccountGroups = await dispatch(getGroupsBySubAccountId());
-      const campaignSettings = await dispatch(getCampaignSettings(props.match.params.id));
+      const campaignSettings = await dispatch(getCampaignSettings(props?.match?.params?.id));
       await dispatch(getTestGroups());
 
       if (campaignSettings.payload.error) {
@@ -417,14 +417,14 @@ const SmsSend = ({ classes, ...props }) => {
   };
 
   useEffect(() => {
-    if (props && props.match.params.id) {
+    if (props && props?.match?.params?.id) {
       getSavedData();
     }
   }, []);
 
   const getSavedData = async () => {
-    if (props && props.match.params.id) {
-      let response = await dispatch(getSmsByID(props.match.params.id))
+    if (props && props?.match?.params?.id) {
+      let response = await dispatch(getSmsByID(props?.match?.params?.id))
       setLoader(false)
       if (response) {
         setdataSaved({ ...dataSaved, campaignName: response.payload.Name, fromNumber: response.payload.FromNumber, msg: response.payload.Text, CreditPerSms: response.payload.CreditsPerSms })
@@ -1428,7 +1428,7 @@ const SmsSend = ({ classes, ...props }) => {
         ExceptionalDays: exceptionalDays
       },
       SendTypeID: sendType,
-      SmsCampaignID: props.match.params.id,
+      SmsCampaignID: props?.match?.params?.id,
       SourceTimeZone: "Asia/Calcutta",
       SpecialSettings: {
         Type: "",
@@ -1473,7 +1473,7 @@ const SmsSend = ({ classes, ...props }) => {
         setToastMessage(ToastMessages.SUCCESS);
       }
       else if (toggle && exit == "exit") {
-        history.push("/SMSCampaigns");
+        navigate("/SMSCampaigns");
       }
       else {
         let response = await dispatch(getCampaignSumm(requestPayload.SmsCampaignID));
@@ -1562,7 +1562,7 @@ const SmsSend = ({ classes, ...props }) => {
 
   const onApiCall = async () => {
     let payload = {
-      "SmsCampaignID": props.match.params.id,
+      "SmsCampaignID": props?.match?.params?.id,
       "SubAccountID": -1,
       "AccountID": -1,
       "Credits": dataSaved.CreditPerSms,
@@ -1766,10 +1766,10 @@ const SmsSend = ({ classes, ...props }) => {
   }
 
   const handleDelete = () => {
-    if (props && props.match.params.id) {
-      dispatch(deleteSms(props.match.params.id));
+    if (props && props?.match?.params?.id) {
+      dispatch(deleteSms(props?.match?.params?.id));
       setDialogType(null);
-      history.push("/SMSCampaigns");
+      navigate("/SMSCampaigns");
     }
   };
   const renderToast = () => {
@@ -1797,7 +1797,7 @@ const SmsSend = ({ classes, ...props }) => {
     settypedData([]);
   };
   const handlePreviousPage = () => {
-    window.location = `/react/sms/edit/${props.match.params.id}`;
+    window.location = `/react/sms/edit/${props?.match?.params?.id}`;
   }
   const renderHtml = (html) => {
     function createMarkup() {
@@ -2554,7 +2554,7 @@ const SmsSend = ({ classes, ...props }) => {
       showDefaultButtons: true,
       confirmText: t("common.Yes"),
       cancelText: t("common.No"),
-      onClose: () => { history.push("/SMSCampaigns"); },
+      onClose: () => { navigate("/SMSCampaigns"); },
       onCancel: () => { setDialogType(null) },
       onConfirm: () => { onSaveSettings(true, "exit") }
     }
@@ -2571,7 +2571,7 @@ const SmsSend = ({ classes, ...props }) => {
             <p style={{ marginTop: "10px", fontSize: "18px", fontWeight: "600" }}>
               {t("sms.campaignIsOnItsWay")}
             </p>
-            <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { history.push("/SMSCampaigns") }}>{t("common.confirm")}</span>
+            <span style={{ padding: "12px", backgroundColor: "green", marginTop: "10px", cursor: "pointer", color: "#ffffff", borderRadius: "10px" }} onClick={() => { navigate("/SMSCampaigns") }}>{t("common.confirm")}</span>
           </div>
         </Box>
       ),

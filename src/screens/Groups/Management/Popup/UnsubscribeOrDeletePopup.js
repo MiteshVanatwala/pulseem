@@ -28,7 +28,9 @@ const UnsubscribeOrDeletePopup = ({
     selectedGroups,
     handleResponses = (response, actions) => null,
     ToastMessages,
-    getData
+    getData,
+    showDropBox = true,
+    onSubmit = null
 }) => {
     const { isRTL } = useSelector(state => state.core);
     const { t } = useTranslation();
@@ -307,7 +309,6 @@ const UnsubscribeOrDeletePopup = ({
         const tempData = [...filteredData];
         setareaData(tempData.join(',').replaceAll(',', "\n"));
         setLoader(false);
-
     }
 
     const areaChange = (e) => {
@@ -407,6 +408,9 @@ const UnsubscribeOrDeletePopup = ({
     }
 
     const handleUnsubSubmit = async () => {
+        if (onSubmit) {
+            return onSubmit(activeTab);
+        }
         if (!finalData || finalData.length === 0) {
             setError(t("recipient.errors.noDeleteRecFound"))
             return;
@@ -608,7 +612,7 @@ const UnsubscribeOrDeletePopup = ({
             maxHeight={dialogType === "UNSUB_RECIPIENT" ? null : "45vh"}
             classes={classes}
             open={dialogType}
-            childrenStyle={classes.h50v}
+            childrenStyle={showDropBox ? classes.h50v : classes.h10v}
             title={
                 <Box className={clsx(classes.flex, classes.justifyBetween)}>
                     <Box>
@@ -635,14 +639,12 @@ const UnsubscribeOrDeletePopup = ({
                             </span>
                         </CustomTooltip>
                     </Box>
-                    <Box style={{ cursor: 'pointer' }}>
+                    {showDropBox && <Box style={{ cursor: 'pointer' }}>
                         <label htmlFor="uploadxl">
                             <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
                         </label>
-                    </Box>
-                </Box >
-
-
+                    </Box>}
+                </Box>
             }
             icon={< div className={classes.dialogIconContent} >
                 {'\uE0D5'}
@@ -654,7 +656,7 @@ const UnsubscribeOrDeletePopup = ({
             customContainerStyle={classes.addRecipientDialog}
         >
             <Box style={{ minWidth: 500 }}>
-                {DropBox(classes)}
+                {showDropBox && DropBox(classes)}
                 {DialogObject[dialogType].component && AdvanceOptions()}
             </Box>
         </Dialog >

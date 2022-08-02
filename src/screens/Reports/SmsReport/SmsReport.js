@@ -23,8 +23,13 @@ import { exportFile } from '../../../helpers/exportFromJson';
 import { smsReportStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
+import { clientSearchQueryString } from '../../ClientSearch/tempConstants';
+import { useNavigate } from 'react-router';
+import { CLIENT_CONSTANTS } from '../../../model/Clients/Contants';
+import { voidFunction } from '../../../helpers/utils';
 
 const SmsReport = ({ classes }) => {
+  const navigate = useNavigate()
   const { language, windowSize, isRTL, accountSettings, accountFeatures } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
@@ -55,42 +60,55 @@ const SmsReport = ({ classes }) => {
 
   const getHrefs = (id) => ({
     TotalSendTo: {
-      href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/Pulseem/ClientSearchResult.aspx?TotalCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.TotalCountSMSCampaignID } }),
     },
     ClickCountUnique: {
       title: t('common.Unique'),
-      href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
-      //href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      onClick: () => navigate(`/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
     },
     ClickCount: {
       title: windowSize === 'xs' ? t('common.Total') : t('common.Clicks'),
-      href: ``
-      //href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: null,
+      onClick: null
     },
     PercetangeClicks: {
       title: t('mainReport.locUniqueClicksPercents.HeaderText'),
-      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
     },
     Failed: {
       title: windowSize === 'xs' ? '' : t("common.failedStatus"),
-      href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/Pulseem/ClientSearchResult.aspx?FailureCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID } })
     },
     Removed: {
       title: windowSize === 'xs' ? '' : t('mainReport.removed'),
-      href: `/Pulseem/ClientSearchResult.aspx?RemovedCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.RemovedCountSMSCampaignID } })
     },
     Replies: {
       title: t('common.Total'),
-      //href: `/react/reports/SmsReplies/${id}`
-      href: `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      onClick: () => navigate(`/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
     },
     DLR: {
       title: windowSize === 'xs' ? '' : t('common.DLR'),
-      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
+      href: `/Pulseem/ClientSearchResult.aspx?SuccessCountSMSCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, { state: { ...CLIENT_CONSTANTS.QUERY_PARAMS, CampaignID: id, PageType: CLIENT_CONSTANTS.PAGE_TYPES.SuccessCountSMSCampaignID } }),
     },
     Revenue: {
       title: '',
-      href: `/react/ClientSearchResult/sms/${id}`,
+      href: `/react/ClientSearchResult/${id}`,
+      onClick: () => navigate(CLIENT_CONSTANTS.BASEURL, {
+        state:
+        {
+          ...CLIENT_CONSTANTS.QUERY_PARAMS,
+          CampaignID: id,
+          PageType: CLIENT_CONSTANTS.PAGE_TYPES.Revenue,
+          ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowSms
+        }
+      }),
       textStyle: { fontWeight: 900 }
     }
   })
@@ -421,19 +439,22 @@ const SmsReport = ({ classes }) => {
     green: classes.sendIconText
   }
 
-  const renderIntData = (value, type, data = {}, clickable = true) => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null } = data
-    const innerRef = clickable ? href : '';
+  const renderIntData = (value, type, data = {}) => {
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), textStyle = null, onClick = null } = data
+    const isLink = value > 0 && !!onClick;
     return (
-      <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        <Typography component='a' // BUG: Remove this 
-          href={innerRef}
+      <Box style={{ display: 'flex', flexDirection: 'column', cursor: isLink ? 'pointer' : null }}
+        onClick={isLink ? onClick : voidFunction}>
+        <Typography
+          component={'a'}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
-          style={textStyle}
+          style={{ ...textStyle, textDecoration: isLink ? 'underline' : null }}
           target="_blank">
           {value && value.toLocaleString() || '0'}
         </Typography>
-        <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])} style={textStyle}>
+        <Typography
+          className={clsx(classes.middleWrapText, colorTextStyle[type])}
+          style={{ ...textStyle, textDecoration: isLink ? 'underline' : null }}>
           {title}
         </Typography>
       </Box>
@@ -444,9 +465,6 @@ const SmsReport = ({ classes }) => {
   const renderRow = (row) => {
     const {
       SMSCampaignID,
-      Name,
-      SendDate,
-      UpdateDate,
       success,
       ClicksCount,
       UniqueClicksCount,
@@ -456,7 +474,6 @@ const SmsReport = ({ classes }) => {
       failure,
       TotalSendPlan,
       totalSent,
-      Status,
       Revenue = 0
     } = row
     const hrefs = getHrefs(SMSCampaignID)

@@ -11,9 +11,13 @@ import { getRecipientsReport } from '../../redux/reducers/recipientsReportSlice'
 import { BsInfoCircleFill } from 'react-icons/bs';
 import clsx from 'clsx';
 import ButtonWithTitle from '../Buttons/ButtonWithTitle';
+import { clientSearchQueryString } from '../../screens/ClientSearch/tempConstants';
+import { CLIENT_CONSTANTS } from '../../model/Clients/Contants';
+import { useNavigate } from 'react-router';
 
 
 const RecipientChart = ({ classes, }) => {
+    const navigate = useNavigate()
     const { t } = useTranslation();
     const [carouselItem, setCarouselItem] = useState(0);
     const { recipientsReport } = useSelector(state => state.recipientReports);
@@ -190,7 +194,7 @@ const RecipientChart = ({ classes, }) => {
                 const chart = e.chart;
                 if (chart) {
                     const activeChart = e.chart._active[0];
-                    openReports(chart.data.productType, activeChart.index);
+                    openReports(report.ReportSection, activeChart.index);
                 }
             },
             plugins: {
@@ -210,27 +214,31 @@ const RecipientChart = ({ classes, }) => {
                 '#67B7DC',
                 '#648FD5',
                 '#6771DC',
+                '#c5caff'
             ],
             hoverBackgroundColor: [
                 '#67B7DC',
                 '#648FD5',
                 '#6771DC',
+                '#c5caff'
             ],
             hoverBorderColor: [
                 '#67B7DC',
                 '#648FD5',
                 '#6771DC',
+                '#c5caff'
             ]
         };
 
         let innerData = {
             productType: `${report.ReportSection}`,
-            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
+            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('common.charStatus.pending')],
             datasets: [{
                 data: [
                     report.Active,
                     report.Error,
-                    report.Removed
+                    report.Removed,
+                    report?.Pending || 0
                 ],
                 borderWidth: 0,
             }],
@@ -242,10 +250,14 @@ const RecipientChart = ({ classes, }) => {
                 className={classes.doughnutGrid}>
                 <Typography align='center' className={classes.f20}>{t(titles[index].mainTitle)}</Typography>
                 <Box className={classes.doughnutBox}>
-                    <Link
+                    {/* <Link
                         href="#!"
                         className={classes.chartLabel}
-                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link>
+                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Link> */}
+                    <Typography
+                        href="#!"
+                        className={classes.chartLabel}
+                        onClick={() => openReports(report.ReportSection, "total")}>{t('common.Total')}<br />{report.Total.toLocaleString()}</Typography>
                     <Doughnut data={innerData} options={options} style={{ cursor: 'pointer' }} />
                 </Box>
             </Grid>
@@ -254,49 +266,92 @@ const RecipientChart = ({ classes, }) => {
 
     const openReports = (productType, reportType) => {
         let qReportType = null;
+        let resultTitle = null;
 
         if (reportType === "total") {
             qReportType = 100;
             if (productType === 0) {
-                window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
+                resultTitle = t('client.titles.searchResult.newsletter.total');
+                navigate(CLIENT_CONSTANTS.BASEURL, {
+                    state: {
+                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                        TestStatusOfEmailElseSms: 1,
+                        Status: qReportType,
+                        ResultTitle: resultTitle
+                    }
+                })
             }
             if (productType === 1) {
-                window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
+                resultTitle = t('client.titles.searchResult.sms.total');
+                navigate(CLIENT_CONSTANTS.BASEURL, {
+                    state: {
+                        ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                        PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                        Status: qReportType,
+                        ResultTitle: resultTitle
+                    }
+                })
             }
         }
-        if (productType === "0") {
+        if (productType === 0) {
             switch (reportType) {
                 case 0: {
                     qReportType = 1;
+                    resultTitle = t('client.titles.searchResult.newsletter.active');
                     break;
                 }
                 case 1: {
                     qReportType = 4;
+                    resultTitle = t('client.titles.searchResult.newsletter.error');
                     break;
                 }
                 case 2: {
                     qReportType = 2;
+                    resultTitle = t('client.titles.searchResult.newsletter.removed');
                     break;
                 }
+                default: { return; }
             }
-            window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
+
+            navigate(CLIENT_CONSTANTS.BASEURL, {
+                state: {
+                    ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                    PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                    Status: qReportType,
+                    ResultTitle: resultTitle,
+                    TestStatusOfEmailElseSms: 1
+                }
+            })
         }
-        if (productType === "1") {
+        if (productType === 1) {
             switch (reportType) {
                 case 0: {
                     qReportType = 0;
+                    resultTitle = t('client.titles.searchResult.sms.active');
                     break;
                 }
                 case 1: {
                     qReportType = 4;
+                    resultTitle = t('client.titles.searchResult.sms.error');
                     break;
                 }
                 case 2: {
                     qReportType = 1;
+                    resultTitle = t('client.titles.searchResult.sms.removed');
                     break;
                 }
+                default: { return; }
             }
-            window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
+            navigate(CLIENT_CONSTANTS.BASEURL, {
+                state: {
+                    ...CLIENT_CONSTANTS.QUERY_PARAMS,
+                    PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
+                    TestStatusOfEmailElseSms: 0,
+                    ResultTitle: resultTitle,
+                    Status: qReportType
+                }
+            })
         }
 
     }

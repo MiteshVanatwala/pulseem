@@ -435,6 +435,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   h50v: {
     height: '50vh'
   },
+  h10v: {
+    height: '10vh'
+  },
   line1: {
     lineHeight: 1,
   },
@@ -2351,8 +2354,11 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
       }
     }
   },
-  mt50: {
-    marginTop: 50
+  roundedBorder: {
+    borderRadius: 50
+  },
+  mb50: {
+    marginBottom: 50
   },
   noHoverBg: {
     '&:hover': {
@@ -2361,6 +2367,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   p5: {
     padding: 5
+  },
+  p15: {
+    padding: 10
   },
   maxContent: {
     width: 'max-Content'
@@ -2441,5 +2450,25 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   ltr: {
     direction: 'ltr'
+  },
+  selectInputFormControl: {
+    '&.MuiFormControl-root': {
+      marginInline: 3,
+      '& label': {
+        marginInline: 5
+      },
+      '& .MuiSelect-select': {
+        minWidth: 200,
+        maxWidth: '100%',
+        border: '1px solid #c4c4c4',
+        borderRadius: 4,
+        paddingLeft: 10,
+        paddingRight: 10,
+      },
+      '& svg': {
+        left: isRTL ? 10 : 'auto',
+        right: isRTL ? 'auto' : 10,
+      }
+    }
   }
 });

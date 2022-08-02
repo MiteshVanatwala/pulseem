@@ -91,6 +91,12 @@ export const formatDateTime = (arr, t) => {
         if (a.DATE) {
             a.DATE = moment(a.DATE).format("DD/MM/YYYY HH:mm");
         }
+        if (a.SentDate) {
+            a.SentDate = moment(a.SentDate).format("DD/MM/YYYY HH:mm");
+        }
+        if (a.snt_OpeningDate) {
+            a.snt_OpeningDate = moment(a.snt_OpeningDate).format("DD/MM/YYYY HH:mm");
+        }
         if (a.SendDate === '' || !a.SendDate) {
             a.SendDate = t('common.notSent');
         }
@@ -137,3 +143,21 @@ export const replaceClientStatus = (obj) => {
     });
     return obj;
 }
+
+export const replaceExtraFieldHeader = (obj, accountExtraFields) => {
+    Object.entries(accountExtraFields).forEach((ef) => {
+        const key = ef[0];
+        const val = ef[1];
+        if (val && val !== '') {
+            obj[key] = val;
+        }
+    });
+    return obj;
+}
+
+export const flatObject = (obj = {}) => Object.keys(obj || {}).reduce((acc, cur) => {
+    if (typeof obj[cur] === 'object') {
+        acc = { ...acc, ...flatObject(obj[cur]) }
+    } else { acc[cur] = obj[cur] }
+    return acc
+}, {})

@@ -54,6 +54,8 @@ const GroupTags = ({ classes,
 
         }
     }, [groupSelected])
+
+
     const CheckBoxPanel = () => (
         <Box className={classes.rightForm} style={{ ...style }}>
             <Box

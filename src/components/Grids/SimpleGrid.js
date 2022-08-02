@@ -1,4 +1,5 @@
 import { Grid, makeStyles } from "@material-ui/core"
+import clsx from "clsx";
 
 const useStyles = makeStyles({
     contentBox: {
@@ -14,6 +15,7 @@ const SimpleGrid = ({ gridArr = [],
     classes,
     direction = "row",
     spacing = 1,
+    className = '',
     ...props
 }) => {
 
@@ -25,7 +27,8 @@ const SimpleGrid = ({ gridArr = [],
                 {
                     gridArr.map((obj, idx) => {
                         return (
-                            <Grid className={localClasses.contentBox}
+                            <Grid className={clsx(className, localClasses.contentBox)}
+                                key={idx}
                                 item
                                 xs={obj.gridSize?.xs ?? 12}
                                 sm={obj.gridSize?.sm ?? 6}

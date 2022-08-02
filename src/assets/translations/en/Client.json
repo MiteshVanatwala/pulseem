@@ -5,6 +5,20 @@
   "removeClientFromAccountDescription": "Are you sure you want to remove the recipient from the account?",
   "removeClientFromSmsTitle": "Remove recipient from SMS",
   "removeClientFromSmsDescription": "Are you sure you want to remove recipient from SMS?",
+  "confirmMakeInvalidTitle": "Make Invalid",
+  "confirmMakeInvalidText": "Are you Sure you want to make this clients invalid?",
+  "confirmDeleteFromAllGroups": "Are you Sure you want to remove clients from all groups?",
+  "confirmRemoveEmail": "Are you sure you want to remove the recipient from the account?",
+  "confirmRemovePhone": "Are you sure you want to remove this SMS recipient?",
+  "automationClientsUpdated": "Automation clients were updated",
+  "statusUpdated": "Status Updated",
+  "invalidClientId": "Invalid client id",
+  "errors": {
+    "zeroSelected": "No Client Selected",
+    "noClientsFound": "No clients for update were found",
+    "somethingWentWrong": "Something went wrong",
+    "genericError": "Generic error"
+  },
   "logPageHeaderResource1": {
     "Text": "Recipient search result"
   },
@@ -13,5 +27,40 @@
   "Purchased": "Purchased",
   "totalRevenue": "Total revenue",
   "avgOrderRevenue": "Avg. order revenue",
-  "conversionRate": "Conversion rate"
+  "conversionRate": "Conversion rate",
+  "titles": {
+    "searchResult": {
+      "newsletter": {
+        "total": "Newsletters Total Clients",
+        "error": "Newsletters Error Clients",
+        "active": "Newsletters Active Clients",
+        "removed": "Newsletters Removed Clients"
+      },
+      "sms": {
+        "total": "SMS/MMS Total Clients",
+        "error": "SMS/MMS Error Clients",
+        "active": "SMS/MMS Active Clients",
+        "removed": "SMS/MMS Removed Clients"
+      }
+    }
+  },
+  "setInvalidSucceeded": "The clients were setted as Invalid",
+  "subscribedOn": "Subscription Date",
+  "clientStatus": {
+    "email": {
+      "NoEmail": "No Status",
+      "Active": "Active",
+      "Removed": "Unsubscribed",
+      "Restricted": "Restricted",
+      "Invalid": "Invalid",
+      "Pending": "Pending"
+    },
+    "sms": {
+      "NoSms": "No Status", 
+      "Active": "Active",
+      "Removed": "Removed",
+      "Invalid": "Invalid" 
+
+    }
+  }
 }
