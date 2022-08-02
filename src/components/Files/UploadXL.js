@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Typography, Grid, Box, TextField } from "@material-ui/core";
 import { Dialog } from "../managment/index";
@@ -66,6 +66,7 @@ const UploadXL = ({
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
     const [columnValidate, setcolumnValidate] = useState(false);
     const [dropIndex, setdropIndex] = useState(-1);
+    const fileRef = useRef(null);
     moment.locale(language);
     const dateFormat = 'DD-MM-YYYY HH:mm:ss';
 
@@ -274,6 +275,7 @@ const UploadXL = ({
                                 setDialogType({ type: "manualUpload" });
                             }
                             setLoader(false);
+                            fileRef.current.value = "";
                         };
                         reader.readAsArrayBuffer(file, "utf-8")
                     }
@@ -376,6 +378,7 @@ const UploadXL = ({
                                         setDialogType({ type: "manualUpload" });
                                         setLoader(false);
                                     }
+                                    fileRef.current.value = "";
                                 },
 
                             });
@@ -804,6 +807,7 @@ const UploadXL = ({
                 }}
             />
             <input
+                ref={fileRef}
                 onChange={handleFiles}
                 style={{ display: 'none' }}
                 id="uploadxl"
