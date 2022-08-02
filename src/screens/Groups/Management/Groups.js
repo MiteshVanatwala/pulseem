@@ -292,7 +292,7 @@ const Groups = ({ classes }) => {
                         {t("recipient.deleteRecipient")}
                     </Button>
                 </Grid>
-                {/* <Grid item xs={colSize}>
+                <Grid item xs={colSize}>
                     <Button
                         variant="contained"
                         size="medium"
@@ -301,7 +301,7 @@ const Groups = ({ classes }) => {
                     >
                         {t("recipient.unsubscribe")}
                     </Button>
-                </Grid> */}
+                </Grid>
                 {accountFeatures && accountFeatures.includes('15') && (<Grid item xs={colSize}>
                     <Button
                         variant="contained"

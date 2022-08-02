@@ -4,7 +4,11 @@ import {
     Typography,
     FormControlLabel,
     Switch,
-    Button
+    Button,
+    FormControl,
+    FormLabel,
+    RadioGroup,
+    Radio
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../../components/managment/Dialog";
@@ -41,7 +45,7 @@ const UnsubscribeOrDeletePopup = ({
     const [finalData, setFinalData] = useState(null);
     const [updatedRows, setUpdatedRows] = useState(-1);
     const [advanceOpt, setAdvanceOpt] = useState(false)
-    const [activeTab, setActiveTab] = useState(0)
+    const [activeTab, setActiveTab] = useState(showDropBox ? '0' : 0)
     const [error, setError] = useState('')
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [confirm, setConfirm] = useState(false);
@@ -54,24 +58,29 @@ const UnsubscribeOrDeletePopup = ({
     const AdvanceOptions = () => {
         return (
             <>
-                <FormControlLabel
-                    control={
-                        <Switch checked={advanceOpt} onClick={() => {
-                            setActiveTab(0)
-                            setAdvanceOpt(!advanceOpt)
-                        }} className={classes.toggleSwitch} />
-                    }
-                    label={t("recipient.advanceOptions")}
-                />
-
-                <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} style={{ height: 26 }}>
-                    {advanceOpt && (<>
+                {!showDropBox ? (<>
+                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} style={{ height: 26 }}>
                         <Box className={activeTab === 0 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(0)}>{t("recipient.phone&email")}</Box>
                         <Box className={activeTab === 1 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(1)}>{t("recipient.emailOnly")}</Box>
                         <Box className={activeTab === 2 ? classes.switchButtonActive : classes.switchButton} onClick={() => setActiveTab(2)}>{t("recipient.phoneOnly")}</Box>
-                    </>
-                    )}
-                </Box>
+                    </Box>
+                </>) : (
+                    <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} >
+                        <FormControl>
+                            <FormLabel id="unsubRadio"><strong>Unsubscribe settings</strong></FormLabel>
+                            <RadioGroup
+                                aria-labelledby="unsubRadio"
+                                defaultValue="female"
+                                name="unsubRadio-group"
+                                value={`${activeTab}`}
+                                onChange={(e) => setActiveTab(e.target.value)}
+                            >
+                                <FormControlLabel value={'0'} control={<Radio />} label={t('recipient.removeDetailsFrmWndw')} />
+                                <FormControlLabel value={'1'} control={<Radio />} label={t('recipient.RemoveAllEmailandCellphones')} />
+                            </RadioGroup>
+                        </FormControl>
+                    </Box>
+                )}
             </>
         )
     }
@@ -140,9 +149,17 @@ const UnsubscribeOrDeletePopup = ({
 
     useEffect(() => {
         if (confirmUnsubscsribe === true && finalData) {
-            handleUnsubSubmit();
+            if (activeTab === '0' && showDropBox) {
+                setareaData('')
+                setFinalData(null)
+                setConfirmUnsubscsribe(false)
+            }
+            else {
+                handleUnsubSubmit();
+            }
         }
     }, [confirmUnsubscsribe]);
+
     useEffect(() => {
         if (confirmDelete === true && finalData) {
             openConfirmDialog();
@@ -408,6 +425,7 @@ const UnsubscribeOrDeletePopup = ({
     }
 
     const handleUnsubSubmit = async () => {
+
         if (onSubmit) {
             return onSubmit(activeTab);
         }
@@ -657,6 +675,7 @@ const UnsubscribeOrDeletePopup = ({
         >
             <Box style={{ minWidth: 500 }}>
                 {showDropBox && DropBox(classes)}
+                {/* {!showDropBox && } */}
                 {DialogObject[dialogType].component && AdvanceOptions()}
             </Box>
         </Dialog >
