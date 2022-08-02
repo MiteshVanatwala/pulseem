@@ -190,7 +190,7 @@ const RecipientChart = ({ classes, }) => {
                 const chart = e.chart;
                 if (chart) {
                     const activeChart = e.chart._active[0];
-                    openReports(chart.data.productType, activeChart.index);
+                    openReports(report.ReportSection, activeChart.index);
                 }
             },
             plugins: {
