@@ -224,7 +224,7 @@ const RecipientChart = ({ classes, }) => {
         };
 
         let innerData = {
-            productType: `${report.ReportSection}`,
+            productType: report.ReportSection,
             labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
             datasets: [{
                 data: [
@@ -264,7 +264,7 @@ const RecipientChart = ({ classes, }) => {
                 window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
             }
         }
-        if (productType === "0") {
+        if (productType === 0) {
             switch (reportType) {
                 case 0: {
                     qReportType = 1;
@@ -281,7 +281,7 @@ const RecipientChart = ({ classes, }) => {
             }
             window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
         }
-        if (productType === "1") {
+        if (productType === 1) {
             switch (reportType) {
                 case 0: {
                     qReportType = 0;
