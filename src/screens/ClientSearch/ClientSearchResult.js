@@ -583,15 +583,9 @@ const ClientSearchResult = ({ props, classes }) => {
     {
       label: t("common.RecipientsName"),
       classes: cellStyle,
-      className: classes.flex4,
+      className: classes.flex5,
       align: "center",
     },
-    // {
-    //   label: t(""),
-    //   classes: cellStyle,
-    //   className: classes.flex6,
-    //   align: "center",
-    // },
     {
       label: <div className={classes.flex}>
         {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue ?
@@ -610,7 +604,7 @@ const ClientSearchResult = ({ props, classes }) => {
         }
       </div>,
       classes: cellStyle,
-      className: clsx(classes.flex2),
+      className: classes.flex6,
       align: "center",
     },
     {
@@ -622,7 +616,22 @@ const ClientSearchResult = ({ props, classes }) => {
     {
       label: t("common.Cellphone"),
       classes: cellStyle,
-      className: classes.flex3,
+      className: classes.flex4,
+      align: "center",
+    },
+    {
+      label: searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <div className={classes.flex}>
+        <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
+        <div className={classes.flex1}>
+          <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
+            onClick={() => { sortData() }}
+            style={{ minWidth: 40 }}>
+            {descSortDirection ? <BiSortDown /> : <BiSortUp />}
+          </Button>
+        </div>
+      </div>,
+      classes: searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && cellStyle,
+      className: searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && clsx(classes.flex2),
       align: "center",
     },
   ];
@@ -1123,7 +1132,7 @@ const ClientSearchResult = ({ props, classes }) => {
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
               <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
-                {`${TotalCount} ${t("common.Clients")}`}
+                {`${TotalCount.toLocaleString()} ${t("common.Clients")}`}
               </Typography>
             </Box>
           </Grid>
@@ -1327,10 +1336,30 @@ const ClientSearchResult = ({ props, classes }) => {
 
     const cssClasses = (isEmail) => {
       if (isEmail) {
-        return Status === 1 ? classes.sendIconText : Email ? classes.textColorRed : classes.textColorBlue;
+        switch (Status) {
+          case 1: {
+            return classes.sendIconText;
+          }
+          case 5: {
+            return classes.grayTextCell;
+          }
+          default: {
+            return Email ? classes.textColorRed : classes.textColorBlue;
+          }
+        }
       }
       else {
-        return SmsStatus === 0 ? classes.sendIconText : Cellphone ? classes.textColorRed : classes.textColorBlue
+        switch (SmsStatus) {
+          case 0: {
+            return classes.sendIconText;
+          }
+          case 5: {
+            return classes.grayTextCell;
+          }
+          default: {
+            return Cellphone ? classes.textColorRed : classes.textColorBlue;
+          }
+        }
       }
     }
 

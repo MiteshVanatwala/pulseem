@@ -59,8 +59,8 @@
       "NoSms": "No Status", 
       "Active": "Active",
       "Removed": "Removed",
-      "Invalid": "Invalid" 
-
+      "Invalid": "Invalid",
+      "Pending": "Pending"
     }
   }
 }

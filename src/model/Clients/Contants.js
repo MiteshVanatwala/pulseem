@@ -84,7 +84,7 @@ const CLIENT_CONSTANTS = {
             status: 4
         },
         pending: {
-            text: 'common.Pending',
+            text: 'client.clientStatus.sms.Pending',
             status: 5
         }
     },
@@ -107,7 +107,7 @@ const CLIENT_CONSTANTS = {
             status: 4
         },
         pending: {
-            text: 'common.Pending',
+            text: 'client.clientStatus.sms.Pending',
             status: 5
         }
     }

@@ -193,7 +193,7 @@ const RecipientChart = ({ classes, }) => {
                 const chart = e.chart;
                 if (chart) {
                     const activeChart = e.chart._active[0];
-                    openReports(report.ReportSection, activeChart.index);
+                    openReports(report.ReportSection, activeChart?.index);
                 }
             },
             plugins: {
@@ -230,7 +230,7 @@ const RecipientChart = ({ classes, }) => {
         };
 
         let innerData = {
-            productType: `${report.ReportSection}`,
+            productType: report.ReportSection,
             labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('common.charStatus.pending')],
             datasets: [{
                 data: [

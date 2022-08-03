@@ -10,14 +10,14 @@
   "confirmDeleteFromAllGroups": "האם אתה בטוח שברצונך למחוק את לקוחות אלו מכל הקבוצות?",
   "confirmRemoveEmail": "האם אתה בטוח שברצונך להסיר את לקוחות מייל אלו מכל הקבוצות?",
   "confirmRemovePhone": "האם אתה בטוח שברצונך להסיר את לקוחות סמס אלו מכל הקבוצות?",
-  "automationClientsUpdated": "Automation clients were updated",
-  "statusUpdated": "Status Updated",
-  "invalidClientId": "Invalid client id",
+  "automationClientsUpdated": "לקוחות אוטומציה עודכנו בהצלחה",
+  "statusUpdated": "סטאטוס עודכן בהצלחה",
+  "invalidClientId": "מזהה לקוח שגוי",
   "errors": {
     "zeroSelected": "לא נבחרו לקוחות",
-    "noClientsFound": "No clients for update were found",
-    "somethingWentWrong": "Something went wrong",
-    "genericError": "Generic error"
+    "noClientsFound": "לא נמצאו לקוחות לעדכון",
+    "somethingWentWrong": "משהו השתבש בתהליך",
+    "genericError": "שגיאה כללית"
   },
   "logPageHeaderResource1": {
     "Text": "תוצאות חיפוש לקוחות"
@@ -59,7 +59,8 @@
       "NoSms": "אין סטטוס",
       "Active": "פעיל",
       "Removed": "מוסר",
-      "Invalid": "שגוי"
+      "Invalid": "שגוי",
+      "Pending": "ממתין לאישור"
     }
   }
 }
