@@ -583,28 +583,13 @@ const ClientSearchResult = ({ props, classes }) => {
     {
       label: t("common.RecipientsName"),
       classes: cellStyle,
-      className: classes.flex4,
+      className: classes.flex5,
       align: "center",
     },
-    // {
-    //   label: t(""),
-    //   classes: cellStyle,
-    //   className: classes.flex6,
-    //   align: "center",
-    // },
     {
-      label: <div className={classes.flex}>
-        <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
-        <div className={classes.flex1}>
-          <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
-            onClick={() => { sortData() }}
-            style={{ minWidth: 40 }}>
-            {descSortDirection ? <BiSortDown /> : <BiSortUp />}
-          </Button>
-        </div>
-      </div>,
+      label: t(""),
       classes: cellStyle,
-      className: clsx(classes.flex2),
+      className: classes.flex6,
       align: "center",
     },
     {
@@ -616,7 +601,22 @@ const ClientSearchResult = ({ props, classes }) => {
     {
       label: t("common.Cellphone"),
       classes: cellStyle,
-      className: classes.flex3,
+      className: classes.flex4,
+      align: "center",
+    },
+    {
+      label: searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <div className={classes.flex}>
+        <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
+        <div className={classes.flex1}>
+          <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
+            onClick={() => { sortData() }}
+            style={{ minWidth: 40 }}>
+            {descSortDirection ? <BiSortDown /> : <BiSortUp />}
+          </Button>
+        </div>
+      </div>,
+      classes: searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && cellStyle,
+      className: searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && clsx(classes.flex2),
       align: "center",
     },
   ];
