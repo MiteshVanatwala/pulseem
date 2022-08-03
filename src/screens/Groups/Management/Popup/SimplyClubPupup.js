@@ -313,6 +313,11 @@ const SimplyClubPupup = ({
                         setSummary({ title: t("recipient.summary.summaryImportTitle"), message: '', data: response.payload.Summary })
                     }
                 },
+                'S_202': {
+                    code: 202,
+                    message: ToastMessages.UPLOADING_RECIPIENT_AS_FILE,
+                    Func: () => null
+                },
                 'S_400': {
                     code: 400,
                     message: ToastMessages.IMPORT_EMPTYLIST_INVALID_CLIENT,
@@ -340,6 +345,10 @@ const SimplyClubPupup = ({
         const response = await dispatch(getGroups({ SearchTerm: groupName, PageSize: 6, PageIndex: 1 }))
         if (response?.payload?.Groups && response?.payload?.RecordCount === 1) {
             handleAddClients([response.payload.Groups[0].GroupID])
+        }
+        else if (response?.payload?.RecordCount > 1) {
+            const exactGroup = response?.payload.Groups.find((g) => { return g.GroupName.trim() === groupName.trim() });
+            handleAddClients([exactGroup.GroupID]);
         }
     }
 

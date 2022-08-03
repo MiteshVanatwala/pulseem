@@ -950,6 +950,11 @@ const Groups = ({ classes }) => {
             message: '',
             Func: () => getData()
         },
+        'S_202': {
+            code: 202,
+            message: '',
+            Func: () => getData()
+        },
         'S_400': {
             code: 400,
             message: '',
@@ -994,6 +999,13 @@ const Groups = ({ classes }) => {
             case 201: {
                 actions?.S_201?.Func?.();
                 actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
+                break;
+            }
+            case 202: {
+                actions?.S_202?.Func?.();
+                actions?.S_202?.message && setToastMessage(actions?.S_202?.message);
+                setDialog(null);
+                getData()
                 break;
             }
             case 400: {
