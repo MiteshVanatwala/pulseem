@@ -8,7 +8,8 @@ import {
     FormControl,
     FormLabel,
     RadioGroup,
-    Radio
+    Radio,
+    Tooltip
 } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../../components/managment/Dialog";
@@ -67,7 +68,7 @@ const UnsubscribeOrDeletePopup = ({
                 </>) : (
                     <Box className={clsx(classes.flex, classes.mt10, classes.mb20)} >
                         <FormControl>
-                            <FormLabel id="unsubRadio"><strong>Unsubscribe settings</strong></FormLabel>
+                            <FormLabel id="unsubRadio" className={clsx(classes.f20, classes.p5)}><strong>{t('recipient.unsubSettings')}</strong></FormLabel>
                             <RadioGroup
                                 aria-labelledby="unsubRadio"
                                 defaultValue="female"
@@ -75,8 +76,25 @@ const UnsubscribeOrDeletePopup = ({
                                 value={`${activeTab}`}
                                 onChange={(e) => setActiveTab(e.target.value)}
                             >
-                                <FormControlLabel value={'0'} control={<Radio />} label={t('recipient.removeDetailsFrmWndw')} />
-                                <FormControlLabel value={'1'} control={<Radio />} label={t('recipient.RemoveAllEmailandCellphones')} />
+                                <FormControlLabel value={'0'} className={classes.unSubAdvanceOptns} control={<Radio />} label={t('recipient.removeDetailsFrmWndw') + '.'} />
+                                <FormControlLabel value={'1'} className={classes.unSubAdvanceOptns} control={<Radio />} label={
+                                    <Box style={{ display: 'flex' }}>
+                                        {t('recipient.RemoveAllEmailandCellphones') + '.'}
+                                        <CustomTooltip
+                                            arrow
+                                            isSimpleTooltip={false}
+                                            // title={t('recipient.unsubSetting1Tooltip')}
+                                            classes={classes}
+                                            interactive={true}
+                                            // arrow={true}
+                                            placement={'top'}
+                                            title={<Typography noWrap={false}>{t('recipient.unsubSetting1Tooltip')}</Typography>}
+                                            text={<span>
+                                                <BsInfoCircleFill />
+                                            </span>}
+                                        />
+                                    </Box>
+                                } />
                             </RadioGroup>
                         </FormControl>
                     </Box>
@@ -671,7 +689,7 @@ const UnsubscribeOrDeletePopup = ({
             onClose={onClose}
             onCancel={onClose}
             onConfirm={DialogObject[dialogType].onConfirm}
-            customContainerStyle={classes.addRecipientDialog}
+        // customContainerStyle={classes.addRecipientDialog}
         >
             <Box style={{ minWidth: 500 }}>
                 {showDropBox && DropBox(classes)}

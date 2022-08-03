@@ -1688,5 +1688,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         padding: '0 65px 0 0', margin: 9,
       }
     }
+  },
+  unSubAdvanceOptns: {
+    '& span': {
+      padding: '2px 9px',
+      '&.Mui-checked': {
+        color: '#0371ad'
+      }
+    },
   }
 });

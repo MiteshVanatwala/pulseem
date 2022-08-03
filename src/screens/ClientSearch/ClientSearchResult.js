@@ -110,7 +110,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-    const { referrer, id } = useParams();
+  const { referrer, id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
   const [filterMin, setFilterMin] = useState("");
@@ -594,14 +594,20 @@ const ClientSearchResult = ({ props, classes }) => {
     // },
     {
       label: <div className={classes.flex}>
-        <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
-        <div className={classes.flex1}>
-          <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
-            onClick={() => { sortData() }}
-            style={{ minWidth: 40 }}>
-            {descSortDirection ? <BiSortDown /> : <BiSortUp />}
-          </Button>
-        </div>
+        {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue ?
+          (<>
+            <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
+            <div className={classes.flex1}>
+              <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
+                onClick={() => { sortData() }}
+                style={{ minWidth: 40 }}>
+                {descSortDirection ? <BiSortDown /> : <BiSortUp />}
+              </Button>
+            </div>
+          </>
+          ) :
+          <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
+        }
       </div>,
       classes: cellStyle,
       className: clsx(classes.flex2),
