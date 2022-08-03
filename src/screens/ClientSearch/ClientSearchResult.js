@@ -110,7 +110,7 @@ const ClientSearchResult = ({ props, classes }) => {
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-    const { referrer, id } = useParams();
+  const { referrer, id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
   const [filterMin, setFilterMin] = useState("");
@@ -1117,7 +1117,7 @@ const ClientSearchResult = ({ props, classes }) => {
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
               <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
-                {`${TotalCount} ${t("common.Clients")}`}
+                {`${TotalCount.toLocaleString()} ${t("common.Clients")}`}
               </Typography>
             </Box>
           </Grid>
@@ -1321,10 +1321,30 @@ const ClientSearchResult = ({ props, classes }) => {
 
     const cssClasses = (isEmail) => {
       if (isEmail) {
-        return Status === 1 ? classes.sendIconText : Email ? classes.textColorRed : classes.textColorBlue;
+        switch (Status) {
+          case 1: {
+            return classes.sendIconText;
+          }
+          case 5: {
+            return classes.grayTextCell;
+          }
+          default: {
+            return Email ? classes.textColorRed : classes.textColorBlue;
+          }
+        }
       }
       else {
-        return SmsStatus === 0 ? classes.sendIconText : Cellphone ? classes.textColorRed : classes.textColorBlue
+        switch (SmsStatus) {
+          case 0: {
+            return classes.sendIconText;
+          }
+          case 5: {
+            return classes.grayTextCell;
+          }
+          default: {
+            return Cellphone ? classes.textColorRed : classes.textColorBlue;
+          }
+        }
       }
     }
 

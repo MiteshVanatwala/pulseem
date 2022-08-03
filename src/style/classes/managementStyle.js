@@ -384,6 +384,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   textColorBlue: {
     color: "#3498DB",
   },
+  textColorGrey: {
+    color: "#959595",
+  },
   actionButtonLightBlue: {
     backgroundColor: "#3498DB",
     // marginInlineEnd: '10px',

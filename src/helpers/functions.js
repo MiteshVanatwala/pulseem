@@ -219,6 +219,9 @@ export const switchClientStatus = (statusType, statusId) => {
         case '4': {
           return 'client.clientStatus.sms.Invalid';
         }
+        case '5': {
+          return 'client.clientStatus.sms.Pending';
+        }
       }
     }
     default: {
