@@ -25,7 +25,7 @@ import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, 
 import GraphReport from '../../../components/Reports/GraphReport';
 
 const SmsReport = ({ classes }) => {
-  const { language, windowSize, isRTL, accountSettings, accountFeatures } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, accountFeatures } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -37,7 +37,6 @@ const SmsReport = ({ classes }) => {
   const [isSearching, setSearching] = useState(false)
   const [searchResults, setSearchResults] = useState(null)
   const [isDemoSend, setIsDemoSend] = useState(false)
-  const [csvData, setCsvData] = useState('')
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
@@ -46,7 +45,6 @@ const SmsReport = ({ classes }) => {
   const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
-  const csvLinkRef = useRef(null)
   const [showLoader, setLoader] = useState(true);
   const [smsQuery, setSmsQuery] = useState({ SerachTxt: '', From: null, To: null, ShowTestCampaigns: false, SmsCampaignID: null })
   const [hasRevenue, setHasRevenue] = useState(false);
@@ -91,7 +89,8 @@ const SmsReport = ({ classes }) => {
     Revenue: {
       title: '',
       href: `/react/ClientSearchResult/sms/${id}`,
-      textStyle: { fontWeight: 900 }
+      textStyle: { fontWeight: 900 },
+      isRevenueCol: true
     }
   })
 
@@ -345,13 +344,6 @@ const SmsReport = ({ classes }) => {
             startIcon={<ExportIcon />}>
             {t('campaigns.exportFile')}
           </Button>
-          <CSVLink
-            data={csvData}
-            filename='report.csv'
-            className='hidden'
-            ref={csvLinkRef}
-            target='_blank'
-          />
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
@@ -423,30 +415,43 @@ const SmsReport = ({ classes }) => {
 
   const renderIntData = (value, type, data = {}, clickable = true) => {
     const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null } = data
-    const innerRef = clickable ? href : '';
     return (
       <Box style={{ display: 'flex', flexDirection: 'column' }} >
-        <Typography component='a' // BUG: Remove this 
-          href={innerRef}
+        <Typography component={href !== '' && clickable && value > 0 ? 'a' : 'p'}
+          href={href !== '' ? href : ''}
           className={clsx(classes.middleText, colorTextStyle[type] || '')}
           style={textStyle}
           target="_blank">
-          {value && value.toLocaleString() || '0'}
+          {(value && value.toLocaleString()) || '0'}
         </Typography>
-        <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])} style={textStyle}>
+        <Typography component={href !== '' && clickable && value > 0 ? 'a' : 'p'}
+          href={href !== '' ? href : ''}
+          style={textStyle}
+          target="_blank"
+          className={clsx(classes.middleWrapText, colorTextStyle[type])}>
           {title}
         </Typography>
       </Box>
     )
-
+  }
+  const renderRevenueData = (value, type, data = {}) => {
+    const { href = '', textStyle = null, isRevenueCol = false } = data
+    return (
+      <Box style={{ display: 'flex', flexDirection: 'column' }} >
+        <Typography component={href !== '' && (value > 0 || (isRevenueCol && value > 0)) ? 'a' : 'p'}
+          href={href !== '' ? href : ''}
+          className={clsx(classes.middleText, colorTextStyle[type] || '')}
+          style={textStyle}
+          target="_blank">
+          {(value && value.toLocaleString()) || '0'} {t("common.NIS")}
+        </Typography>
+      </Box>
+    )
   }
 
   const renderRow = (row) => {
     const {
       SMSCampaignID,
-      Name,
-      SendDate,
-      UpdateDate,
       success,
       ClicksCount,
       UniqueClicksCount,
@@ -456,7 +461,6 @@ const SmsReport = ({ classes }) => {
       failure,
       TotalSendPlan,
       totalSent,
-      Status,
       Revenue = 0
     } = row
     const hrefs = getHrefs(SMSCampaignID)
@@ -474,7 +478,7 @@ const SmsReport = ({ classes }) => {
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(TotalSendPlan, '')}
+          {renderIntData(TotalSendPlan, '', { textDecoration: 'none' }, false)}
         </TableCell>
         <TableCell
           classes={borderCellStyle}
@@ -536,7 +540,7 @@ const SmsReport = ({ classes }) => {
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(`${Revenue.toLocaleString()} ${t("common.NIS")}`, '', hrefs.Revenue)}
+          {renderRevenueData(Revenue, '', hrefs.Revenue)}
         </TableCell>}
       </TableRow>
     )
