@@ -10,23 +10,16 @@ import {
   Grid,
   Button,
   TextField,
-  useTheme,
-  Link,
   TableRow,
   TableCell,
-  Checkbox,
-  makeStyles,
-  FormControlLabel,
-  Paper
+  makeStyles
 } from "@material-ui/core";
 import { SearchIcon, ExportIcon, EditIcon, DeleteRecipient, DeleteEmail, DeletePhone } from "../../assets/images/managment/index";
 import { DateField, ManagmentIcon } from "../../components/managment/index";
-import { CSVLink } from "react-csv";
 import {
   TablePagination,
   SearchField,
 } from "../../components/managment/index";
-
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import ClearIcon from "@material-ui/icons/Clear";
@@ -87,7 +80,6 @@ const useStyles = makeStyles({
     }
   }
 });
-
 const ClientSearchResult = ({ props, classes }) => {
   const {
     language,
@@ -110,23 +102,19 @@ const ClientSearchResult = ({ props, classes }) => {
   const [page, setPage] = useState(1);
   const [toastMessage, setToastMessage] = useState(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const { referrer, id } = useParams();
+  const { id } = useParams();
   const [data, setData] = useState([]);
   const [descSortDirection, setSortDirection] = useState(true);
   const [filterMin, setFilterMin] = useState("");
   const [filterMax, setFilterMax] = useState("");
-  // const [filterSearch, setFilterSearch] = useState(false);
-  // const [totalClients, setTotalClients] = useState(TotalCount);
   const [isSearching, setIsSearching] = useState(false);
   const [revenueSummary, setRevenueSummary] = useState(null);
   const [searchData, setSearchData] = useState(null);
   const [date, setDate] = useState({
     FromDate: null,
-    ToDate: null
+    ToDate: null,
   });
-
   const exportColumnHeader = useRef(null);
-
   const assignClientsActions =
   {
     S_201: {
@@ -164,20 +152,17 @@ const ClientSearchResult = ({ props, classes }) => {
       Func: () => null
     },
   };
-
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = {
     head: classes.tableCellHead,
     body: classes.tableCellBody,
     root: classes.tableCellRoot,
   };
-
   const [dialog, setDialog] = useState(null);
   const [showLoader, setLoader] = useState(false);
   const dateFormat = "YYYY-MM-DD HH:mm:ss.FFF";
   const dispatch = useDispatch();
   moment.locale(language);
-
   const DialogType = {
     ADD_GROUP: "ADD_GROUP",
     EDIT_RECIPIENT: "EDIT_RECIPIENT",
@@ -187,16 +172,13 @@ const ClientSearchResult = ({ props, classes }) => {
     UNSUB_RECIPIENT: "UNSUB_RECIPIENT",
     CONFIRM_INVALID: "CONFIRM_INVALID"
   };
-
   useEffect(() => {
     const initExtraFields = async () => {
       await dispatch(getAccountExtraData());
     }
     let isSessionStorageData = null;
     let overwriteObject = location?.state;
-
     const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
-
     if (referrer && referrer !== '') {
       isSessionStorageData = referrer.toLowerCase().includes('automationreport') || (referrer.toLowerCase().includes('clientsearch') && !referrer.toLowerCase().includes('result'))
       if (isSessionStorageData) {
@@ -221,11 +203,9 @@ const ClientSearchResult = ({ props, classes }) => {
       OrderBy: 0,
       ...overwriteObject,
     };
-
     setSearchData(initSearchData);
     initExtraFields();
   }, []);
-
   useEffect(() => {
     if (extraData && Object.entries(extraData).length > 0) {
       let updatingObject = {
@@ -246,7 +226,6 @@ const ClientSearchResult = ({ props, classes }) => {
         "Company": t('common.company'),
         "ReminderDate": t('recipient.reminderDate'),
       };
-
       if (location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
         updatingObject["Revenue"] = t('common.campaignRevenue');
       }
@@ -260,7 +239,6 @@ const ClientSearchResult = ({ props, classes }) => {
         location?.state?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID) {
         updatingObject["SentDate"] = t('sms.sendingTime');
       }
-
       updatingObject = {
         ...updatingObject,
         "ExtraDate1": t('common.ExtraDate1'),
@@ -281,12 +259,10 @@ const ClientSearchResult = ({ props, classes }) => {
         "ExtraField12": t('common.ExtraField12'),
         "ExtraField13": t('common.ExtraField13'),
       }
-
       updatingObject = replaceExtraFieldHeader(updatingObject, extraData);
       exportColumnHeader.current = updatingObject;
     }
   }, [extraData])
-
   useEffect(() => {
     if (searchData) {
       if (searchData.IsAdvanced) {
@@ -297,15 +273,12 @@ const ClientSearchResult = ({ props, classes }) => {
       }
     }
   }, [searchData]);
-
-
   const handleFromDateChange = (value) => {
     if (value > date.ToDate) {
       setDate({ ...date, ToDate: null });
     }
     setDate({ ...date, FromDate: value });
   }
-
   const handleKeyDown = (event) => {
     if (event.keyCode === 13 || event.code === "Enter" || event.code === 'NumpadEnter') {
       setSearchData({
@@ -320,7 +293,6 @@ const ClientSearchResult = ({ props, classes }) => {
       handleFilter();
     }
   };
-
   const handleKeyPress = (e) => {
     if (e.charCode === 13 || e.code === "Enter") {
       setSearchData({
@@ -335,8 +307,6 @@ const ClientSearchResult = ({ props, classes }) => {
       handleFilter();
     }
   };
-
-
   const handleDownloadCsv = async () => {
     setLoader(true);
     const response = await dispatch(getExportData(searchData));
@@ -348,14 +318,12 @@ const ClientSearchResult = ({ props, classes }) => {
           let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === next.SmsStatus)
           return [...prev, { ...next, Status: t(tempStatus.value), SmsStatus: t(tempSmsStatus.value) }]
         }, []);
-
         orderList = orderList.map((ol) => { return flatObject(ol) });
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
           orderList = deletePropertyFromArrayObject(orderList, "Revenue");
         }
         orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
         orderList = formatDateTime(orderList, t);
-
         exportFile({
           data: orderList,
           fileName: (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult',
@@ -369,7 +337,6 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     setLoader(false);
   }
-
   const sortData = (key) => {
     if (key === 'CreationDate' || key === 'Date') {
       setSearchData({
@@ -392,7 +359,6 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     return;
   }
-
   const handleFilter = () => {
     setIsSearching(true);
     if (filterMin !== '' || filterMax !== '') {
@@ -406,7 +372,6 @@ const ClientSearchResult = ({ props, classes }) => {
     setPage(val);
     setSearchData({ ...searchData, PageIndex: val });
   }
-
   const Min = () => <Grid item>
     <TextField
       variant="outlined"
@@ -418,7 +383,6 @@ const ClientSearchResult = ({ props, classes }) => {
       type="number"
     />
   </Grid>
-
   const Max = () => <Grid item>
     <TextField
       variant="outlined"
@@ -430,7 +394,6 @@ const ClientSearchResult = ({ props, classes }) => {
       type="number"
     />
   </Grid>
-
   const FromDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
@@ -442,7 +405,6 @@ const ClientSearchResult = ({ props, classes }) => {
       />
     </Grid>
     : null
-
   const ToDate = () => windowSize !== 'xs' ?
     <Grid item>
       <DateField
@@ -455,7 +417,6 @@ const ClientSearchResult = ({ props, classes }) => {
       />
     </Grid>
     : null
-
   const PageTypeObject = {
     '1': {
       title: t("common.OpenDate"),
@@ -578,31 +539,15 @@ const ClientSearchResult = ({ props, classes }) => {
       filterComponents: [Min, Max]
     },
   }
-
   const TABLE_HEAD = [
     {
       label: t("common.RecipientsName"),
       classes: cellStyle,
-      className: classes.flex5,
+      className: classes.flex4,
       align: "center",
     },
     {
-      label: <div className={classes.flex}>
-        {searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue ?
-          (<>
-            <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
-            <div className={classes.flex1}>
-              <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
-                onClick={() => { sortData() }}
-                style={{ minWidth: 40 }}>
-                {descSortDirection ? <BiSortDown /> : <BiSortUp />}
-              </Button>
-            </div>
-          </>
-          ) :
-          <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
-        }
-      </div>,
+      label: t(""),
       classes: cellStyle,
       className: classes.flex6,
       align: "center",
@@ -616,39 +561,22 @@ const ClientSearchResult = ({ props, classes }) => {
     {
       label: t("common.Cellphone"),
       classes: cellStyle,
-      className: classes.flex4,
-      align: "center",
-    },
-    {
-      label: searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && <div className={classes.flex}>
-        <div className={classes.flex4} style={{ whiteSpace: 'break-spaces' }}>{t("common.campaignRevenue")}</div>
-        <div className={classes.flex1}>
-          <Button className={clsx(classes.formControl, classes.dropDown, classes.controlField)}
-            onClick={() => { sortData() }}
-            style={{ minWidth: 40 }}>
-            {descSortDirection ? <BiSortDown /> : <BiSortUp />}
-          </Button>
-        </div>
-      </div>,
-      classes: searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && cellStyle,
-      className: searchData?.PageType === CLIENT_CONSTANTS.PAGE_TYPES.Revenue && clsx(classes.flex2),
+      className: classes.flex3,
       align: "center",
     },
   ];
-
   const getData = async () => {
     setLoader(true);
     await dispatch(searchAllClients(searchData));
     setLoader(false);
   };
-
   const getSearchData = async () => {
     setLoader(true);
     await dispatch(searchAdvancedClients(searchData));
     setLoader(false);
   }
-
   useEffect(() => {
+    // setData(Static_CSR_Data)
     setData(ClientData);
     if (TotalRevenue) {
       handleFilter();
@@ -660,7 +588,6 @@ const ClientSearchResult = ({ props, classes }) => {
       ]);
     }
   }, [ClientData, isRTL]);
-
   //  HANDLERS  //
   const handleResponses = (response, actions = {
     'S_200': {
@@ -767,10 +694,8 @@ const ClientSearchResult = ({ props, classes }) => {
         setLoader(false);
     }
   }
-
   const renderToast = () => {
     if (toastMessage) {
-
       setTimeout(() => {
         setToastMessage(null);
       }, 4000);
@@ -780,7 +705,6 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     return null;
   }
-
   const makeInvalid = async () => {
     setLoader(true);
     setDialog(null);
@@ -815,9 +739,7 @@ const ClientSearchResult = ({ props, classes }) => {
         },
       })
     })
-
   }
-
   const removeRecipientFromAllGroups = async () => {
     setDialog(null);
     setLoader(true);
@@ -836,7 +758,6 @@ const ClientSearchResult = ({ props, classes }) => {
     setDialog(null);
     setLoader(true);
     const response = await dispatch(removeEmailClient(selectedClients[0]))
-
     if (response) {
       if (response.payload === 'true') {
         response.payload = { ...response.payload, StatusCode: 201 }
@@ -874,7 +795,6 @@ const ClientSearchResult = ({ props, classes }) => {
       getData();
       setDialog(null);
     }
-
     setLoader(false);
   }
   const removeSMSRecipient = async () => {
@@ -920,7 +840,6 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     setLoader(false);
   }
-
   const handleAssignClientsToGroup = async (groupName) => {
     setLoader(true);
     const response = await dispatch(AddClientsToGroup({ ...searchData, GroupName: groupName }));
@@ -928,7 +847,6 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(false);
     setDialog(null);
   }
-
   const handleUnSubscribe = async (opt) => {
     setDialog(null);
     setLoader(true);
@@ -968,9 +886,7 @@ const ClientSearchResult = ({ props, classes }) => {
       })
     })
   }
-
   //  COMPONENTS  //
-
   const renderHeader = () => {
     return (
       <>
@@ -984,12 +900,8 @@ const ClientSearchResult = ({ props, classes }) => {
       </>
     );
   };
-
-
   // DONE
   const renderSearchLine = () => {
-
-
     if (windowSize === "xs") {
       return (
         <SearchField
@@ -1010,9 +922,6 @@ const ClientSearchResult = ({ props, classes }) => {
         />
       );
     }
-
-
-
     return (
       <Grid container spacing={2} className={classes.lineTopMarging}>
         <Grid item>
@@ -1026,7 +935,6 @@ const ClientSearchResult = ({ props, classes }) => {
             placeholder={t("report.clientName")}
           />
         </Grid>
-
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.())}
         <Grid item>
           <Button
@@ -1049,7 +957,6 @@ const ClientSearchResult = ({ props, classes }) => {
           >
             {t("campaigns.btnSearchResource1.Text")}
           </Button>
-
         </Grid>
         {
           searchData?.SearchTerm && (
@@ -1113,7 +1020,6 @@ const ClientSearchResult = ({ props, classes }) => {
             </Button>
           </Grid>
         )}
-
         <Grid item xs={windowSize === "xs" && 12}>
           <Button
             variant="contained"
@@ -1132,7 +1038,7 @@ const ClientSearchResult = ({ props, classes }) => {
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
               <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
-                {`${TotalCount.toLocaleString()} ${t("common.Clients")}`}
+              {`${TotalCount.toLocaleString()} ${t("common.Clients")}`}
               </Typography>
             </Box>
           </Grid>
@@ -1159,7 +1065,6 @@ const ClientSearchResult = ({ props, classes }) => {
     const { FirstName, LastName } = row;
     let text = t("common.UpdatedOn");
     date = moment(row.CreationDate, dateFormat);
-
     return (
       <>
         <CustomTooltip
@@ -1199,7 +1104,6 @@ const ClientSearchResult = ({ props, classes }) => {
     const { FirstName, LastName, CreationDate, ClientID } = row;
     let text = t("common.UpdatedOn");
     date = row.CreationDate ? moment(row.CreationDate, dateFormat) : null;
-
     return (
       <Grid container spacing={1}>
         <Grid item sm={12} style={{ textAlign: 'start' }}>
@@ -1215,7 +1119,6 @@ const ClientSearchResult = ({ props, classes }) => {
             placement={'top'}
             title={<Typography noWrap={false}>{FirstName} {LastName}</Typography>}
             text={`${FirstName} ${LastName}`}
-
           >
             <Typography noWrap={false} style={{ minHeight: 28 }} className={classes.nameEllipsis}>{FirstName} {LastName}</Typography>
           </CustomTooltip>
@@ -1225,11 +1128,8 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         </Grid>
       </Grid>
-
     );
   };
-
-
   const RenderWebRow = (row) => {
     //TODO: Translation left, confirm keys
     // const { t } = useTranslation();
@@ -1249,16 +1149,11 @@ const ClientSearchResult = ({ props, classes }) => {
       LastSendDate,
       snt_OpeningDate,
       ErrorTypeText
-
     } = row;
-
     let iconsCells = [row.IsAutoResponder, row.IsConnectedToWebForm].filter((e) => {
       return e === true
     }).length;
-
-
     const renderCellIcons = () => {
-
       const iconsMap = [
         {
           key: 'edit',
@@ -1270,7 +1165,6 @@ const ClientSearchResult = ({ props, classes }) => {
             setDialog(DialogType.EDIT_RECIPIENT)
           }
         },
-
         {
           key: 'deleteFromGroups',
           icon: DeleteRecipient,
@@ -1302,7 +1196,6 @@ const ClientSearchResult = ({ props, classes }) => {
             setDialog(DialogType.CONFIRM_REMOVE_PHONE)
           }
         },
-
       ]
       return (
         <Grid
@@ -1323,7 +1216,6 @@ const ClientSearchResult = ({ props, classes }) => {
         </Grid>
       )
     }
-
     const switchStatus = (isEmail) => {
       if (Email && isEmail && Email !== '') {
         return t(switchClientStatus('email', Status))
@@ -1333,7 +1225,6 @@ const ClientSearchResult = ({ props, classes }) => {
       }
       return t("emailStatus.noStatus")
     }
-
     const cssClasses = (isEmail) => {
       if (isEmail) {
         switch (Status) {
@@ -1362,7 +1253,6 @@ const ClientSearchResult = ({ props, classes }) => {
         }
       }
     }
-
     return (
       <TableRow key={Math.round(Math.random() * 999999999)} classes={rowStyle}>
         <TableCell classes={cellStyle} align="center" className={classes.flex4}>
@@ -1371,7 +1261,6 @@ const ClientSearchResult = ({ props, classes }) => {
               {/* {renderNameCell({ GroupID, GroupName, isChecked: true, CreationDate, UpdateDate })} */}
               {renderWebNameCell({ ClientID, FirstName, LastName, isChecked: true, CreationDate, UpdateDate })}
             </Grid>
-
           </Grid>
         </TableCell>
         <TableCell
@@ -1392,8 +1281,6 @@ const ClientSearchResult = ({ props, classes }) => {
               LogSms_ErrorType: ErrorTypeText
             })}
           </TableCell>}
-
-
         {/* <TableCell classes={cellStyle} align="center" className={classes.flex2}>
           <Typography className={clsx(classes.bold, classes.f16)}>
             {Revenue} {t("common.NIS")}
@@ -1433,7 +1320,6 @@ const ClientSearchResult = ({ props, classes }) => {
               },
               {
                 label: "",
-
                 component: <Typography className={clsx(classes.bold, cssClasses(false))}>{switchStatus(false)}</Typography>,
                 classes: { text: localClasses.noWrap },
               }
@@ -1442,11 +1328,9 @@ const ClientSearchResult = ({ props, classes }) => {
             align="center"
           />
         </TableCell>
-
       </TableRow>
     );
   };
-
   const RenderPhoneRow = (row) => {
     const {
       Revenue,
@@ -1472,14 +1356,12 @@ const ClientSearchResult = ({ props, classes }) => {
             </Box>
             <Box className={clsx(classes.inlineGrid, classes.textCenter)}>
               {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile && PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.component?.mobile({ Revenue: Revenue, snt_OpeningDate: snt_OpeningDate, LastSendDate: LastSendDate, LogSms_ErrorType: LogSms_ErrorType })}
-
               {/* <Typography className={classes.bold}>
                 {t("common.campaignRevenue")}
               </Typography>
               <Typography>
                 {Revenue}
               </Typography> */}
-
             </Box>
           </Box>
           <Box className={clsx(classes.mt5)} style={{ maxWidth: '90%' }}>
@@ -1492,10 +1374,8 @@ const ClientSearchResult = ({ props, classes }) => {
                 <Typography align='left' className={clsx(classes.middle, classes.bold, Status === 1 ? classes.sendIconText : classes.textColorRed)}>{Status === 1 ? t("common.statusActive") : t("common.Unsubscribed")}</Typography>
               </Box>
             </Box>
-
           </Box>
           <Box className={clsx(classes.mt2)} style={{ maxWidth: '90%' }}>
-
             <Box className={classes.flex}>
               <Box className={clsx(classes.flex6)}>
                 <Typography className={classes.bold}>{t("common.Cellphone")}</Typography>
@@ -1510,9 +1390,7 @@ const ClientSearchResult = ({ props, classes }) => {
       </TableRow>
     )
   }
-
   const ConfirmDialog = () => {
-
     const DialogObject = {
       "CONFIRM_INVALID": {
         title: t("client.confirmMakeInvalidTitle"),
@@ -1539,7 +1417,6 @@ const ClientSearchResult = ({ props, classes }) => {
         onConfirm: removeSMSRecipient,
       },
     };
-
     return (
       <Dialog
         classes={classes}
@@ -1549,7 +1426,6 @@ const ClientSearchResult = ({ props, classes }) => {
           dialog === DialogType.CONFIRM_REMOVE_EMAIL ||
           dialog === DialogType.CONFIRM_REMOVE_PHONE
         }
-
         // title={t("group.delete")}
         title={DialogObject[dialog]?.title || ''}
         icon={<Box className={classes.dialogAlertIcon}>
@@ -1570,15 +1446,12 @@ const ClientSearchResult = ({ props, classes }) => {
       </Dialog>
     )
   }
-
-
   const renderTableBody = () => {
     let sortedData = data ?? null; // data : [];
     let rpp = parseInt(rowsPerPage)
     if (sortedData && sortData.length > 0) {
       sortedData = searchData?.PageType === 15 ? data.slice((page - 1) * rpp, (page - 1) * rpp + rpp) : sortedData;
     }
-
     if (PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.title) {
       TABLE_HEAD.splice(2, 0, {
         label: <div className={classes.flex}>
@@ -1601,7 +1474,6 @@ const ClientSearchResult = ({ props, classes }) => {
         align: "center",
       })
     }
-
     return (
       <>
         <DataTable
@@ -1640,8 +1512,6 @@ const ClientSearchResult = ({ props, classes }) => {
       </>
     );
   };
-
-
   const renderConfirmDialog = () => {
     if (showConfirmDialog) {
       let dialog = {
@@ -1654,7 +1524,6 @@ const ClientSearchResult = ({ props, classes }) => {
           </Typography>
         )
       }
-
       return (
         <Dialog
           cancelText="common.Cancel"
@@ -1671,11 +1540,7 @@ const ClientSearchResult = ({ props, classes }) => {
       );
     }
   }
-
-
   const showDialog = () => {
-
-
     if (dialog !== null) {
       switch (dialog) {
         case DialogType.ADD_GROUP: {
@@ -1739,7 +1604,6 @@ const ClientSearchResult = ({ props, classes }) => {
           {
             return ConfirmDialog()
           }
-
         default: {
           return <></>
         }
@@ -1747,7 +1611,6 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     return <></>;
   }
-
   return (
     <DefaultScreen
       currentPage="groups"
@@ -1762,8 +1625,7 @@ const ClientSearchResult = ({ props, classes }) => {
       {renderConfirmDialog()}
       {showDialog()}
       <Loader isOpen={showLoader} />
-    </DefaultScreen >
+    </DefaultScreen>
   );
 };
-
 export default ClientSearchResult;

@@ -64,7 +64,7 @@ const RecipientChart = ({ classes, }) => {
             }
             else {
                 data.push({
-                    labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('client.clientStatus.sms.Pending'), t('client.clientStatus.email.Pending')],
+                    labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('common.Waiting'), t('common.Waiting')],
                     datasets: [{
                         data: [
                             report.Active,
@@ -232,7 +232,7 @@ const RecipientChart = ({ classes, }) => {
 
         let innerData = {
             productType: report.ReportSection,
-            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('client.clientStatus.sms.Pending'), t('client.clientStatus.email.Pending')],
+            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('common.Waiting'), t('common.Waiting')],
             datasets: [{
                 data: [
                     report.Active,
