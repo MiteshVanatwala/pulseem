@@ -96,7 +96,7 @@ const Groups = ({ classes }) => {
         {
             label: t("recipient.emails"),
             classes: cellStyle,
-            className: classes.flex2,
+            className: accountFeatures?.includes("6") ? classes.flex2 : classes.flex1,
             align: "center",
         },
         {
@@ -499,7 +499,7 @@ const Groups = ({ classes }) => {
                         }
                     </Grid>
                 </TableCell>
-                <TableCell classes={cellStyle} align="center" className={clsx(classes.flex3, classes.maxWidth325)}>
+                <TableCell classes={cellStyle} align="center" className={clsx(accountFeatures?.includes("6") ? classes.flex3 : classes.flex2, classes.maxWidth325)}>
                     <FlexGrid
                         gridArr={[
                             {
@@ -635,7 +635,7 @@ const Groups = ({ classes }) => {
                             {
 
                                 component: (
-                                    <NameValueGridStructure
+                                    accountFeatures?.includes("6") && <NameValueGridStructure
                                         gridArr={[
                                             {
                                                 name: t("common.Pending"),
@@ -1276,7 +1276,7 @@ const Groups = ({ classes }) => {
                                 {
 
                                     component: (
-                                        <NameValueGridStructure
+                                        accountFeatures.includes("6") && <NameValueGridStructure
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{

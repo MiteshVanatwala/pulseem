@@ -44,6 +44,9 @@ const FlexGrid = ({ gridArr = [],
             <Box className={localClasses.flexBox} style={props.customStyle}>
                 {
                     gridArr.map((obj, idx) => {
+                        if(!obj.component){
+                            return <></>
+                        }
                         return (
                             <Box className={localClasses.iconBox} key={idx} onClick={() => obj.onClick?.()} style={{ cursor: obj.isDisabled ? 'not-allowed' : 'pointer' }}>
                                 {reverse &&

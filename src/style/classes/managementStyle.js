@@ -532,7 +532,7 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     flex: 0.5,
   },
   flex5: {
-    flex: 4,
+    flex: 5,
     borderBottom: 0,
     justifyContent: "center",
   },
