@@ -990,7 +990,7 @@ const Groups = ({ classes }) => {
             Func: () => null
         },
     }) => {
-        switch (response.payload.StatusCode || response.payload.Message.StatusCode) {
+        switch (response?.payload?.StatusCode || response?.payload?.Message?.StatusCode) {
             case 200: {
                 actions?.S_200?.Func?.();
                 actions?.S_200?.message && setToastMessage(actions?.S_200?.message);
