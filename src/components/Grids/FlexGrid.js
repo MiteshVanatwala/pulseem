@@ -7,7 +7,7 @@ const useStyles = makeStyles({
         width: '100%',
         "@media screen and (max-width: 1320px)": {
             flexWrap: 'wrap',
-            justifyContent: 'right',
+            justifyContent: (props) => props.justifyContent || 'right',
             marginInline: 5
         }
     },
@@ -35,9 +35,10 @@ const FlexGrid = ({ gridArr = [],
     alignText = "center",
     direction,
     reverse,
+    justifyContent,
     ...props
 }) => {
-    const localClasses = useStyles({ direction: direction, textVariant: textVariant })
+    const localClasses = useStyles({ direction: direction, justifyContent: justifyContent, textVariant: textVariant })
     return (
         <>
             <Box className={localClasses.flexBox} style={props.customStyle}>

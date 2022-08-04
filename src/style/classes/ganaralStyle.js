@@ -432,6 +432,9 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   f30: {
     fontSize: 30,
   },
+  f09rem: {
+    fontSize: '0.9rem'
+  },
   h50v: {
     height: '50vh'
   },
