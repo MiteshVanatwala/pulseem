@@ -1554,7 +1554,8 @@ const Groups = ({ classes }) => {
             currentPage='groups'
             subPage='groupManagement'
             classes={classes}
-            containerClass={classes.management}>
+        // containerClass={classes.management}
+        >
             <Box className={classes.mb50}>
                 {toastMessage && renderToast()}
                 {renderHeader()}
