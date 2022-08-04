@@ -295,7 +295,8 @@ const RecipientChart = ({ classes, }) => {
                         ...CLIENT_CONSTANTS.QUERY_PARAMS,
                         PageType: CLIENT_CONSTANTS.PAGE_TYPES.ClientStatus,
                         Status: qReportType,
-                        ResultTitle: resultTitle
+                        ResultTitle: resultTitle,
+                        TestStatusOfEmailElseSms: 0
                     }
                 })
             }
