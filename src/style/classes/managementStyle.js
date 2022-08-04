@@ -114,6 +114,16 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   maxWidth75: {
     maxWidth: "75px!important",
   },
+  maxWidth275: {
+    maxWidth: '275px !important'
+  },
+  maxWidth325: {
+    maxWidth: '300px !important'
+  },
+  maxWidth450: {
+    maxWidth: '450px !important'
+  },
+
   paddingRightLeft10: {
     padding: "0 10px!important",
   },

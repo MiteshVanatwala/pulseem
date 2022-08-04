@@ -19,8 +19,9 @@ export const getGroupStyle = (windowSize, isRTL, theme) => ({
             whiteSpace: 'nowrap',
         }
     },
-    dataBox: {
-        whiteSpaces: 'nowrap',
+    grpDataBoxText: {
+        padding: '11px 0px',
+        fontSize: '0.9rem!important',
         "@media screen and (max-width: 1350px)": {
             fontSize: '14px'
         }
