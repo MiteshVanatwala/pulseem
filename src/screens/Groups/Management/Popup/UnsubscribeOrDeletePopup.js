@@ -55,6 +55,7 @@ const UnsubscribeOrDeletePopup = ({
     const [enteredValue, setEnteredValues] = useState(null);
     const [confirmUnsubscsribe, setConfirmUnsubscsribe] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const [unsubscribeOption, setUnsubscribeOption] = useState(0);
 
     const AdvanceOptions = () => {
         return (
@@ -73,8 +74,8 @@ const UnsubscribeOrDeletePopup = ({
                                 aria-labelledby="unsubRadio"
                                 defaultValue="female"
                                 name="unsubRadio-group"
-                                value={`${activeTab}`}
-                                onChange={(e) => setActiveTab(e.target.value)}
+                                value={`${unsubscribeOption}`}
+                                onChange={(e) => setUnsubscribeOption(e.target.value)}
                             >
                                 <FormControlLabel value={'0'} className={classes.unSubAdvanceOptns} control={<Radio />} label={t('recipient.removeDetailsFrmWndw') + '.'} />
                                 <FormControlLabel value={'1'} className={classes.unSubAdvanceOptns} control={<Radio />} label={
@@ -103,80 +104,73 @@ const UnsubscribeOrDeletePopup = ({
         )
     }
 
+    // useEffect(() => {
+    //     const updateFinalData = () => {
+    //         if (!finalData || finalData.length === 0) {
+    //             return;
+    //         }
+
+
+    //         let tempData = null;
+    //         if (!allData) {
+    //             setAllData(finalData);
+    //             setEnteredValues(finalData);
+    //         }
+
+    //         let output = typeof allData == "string" ? 1 : 0;
+    //         if (output === 0) output = Array.isArray(allData) ? 2 : 0;
+
+    //         switch (activeTab) {
+    //             case 0:
+    //             default: {
+    //                 if (allData && output === 1) {
+    //                     tempData = allData?.split("\n") ?? finalData;
+    //                 }
+    //                 else {
+    //                     tempData = finalData;
+    //                 }
+    //                 break;
+    //             }
+    //             case 1: {
+    //                 if (allData && output === 1) {
+    //                     tempData = allData?.split("\n").filter((f) => {
+    //                         return f.indexOf('@') > -1;
+    //                     });
+    //                 }
+    //                 else {
+    //                     tempData = allData.filter((f) => {
+    //                         return f.indexOf('@') > -1;
+    //                     });
+    //                 }
+    //                 break;
+    //             }
+    //             case 2: {
+    //                 if (allData && output === 1) {
+    //                     tempData = allData?.split("\n").filter((f) => {
+    //                         return f.indexOf('@') === -1;
+    //                     });
+    //                 }
+    //                 else {
+    //                     tempData = allData.filter((f) => {
+    //                         return f.indexOf('@') === -1;
+    //                     });
+    //                 }
+    //                 break;
+    //             }
+    //         }
+
+    //         handleFinalData(tempData);
+    //     }
+
+    //     updateFinalData();
+
+    // }, [activeTab])
+
     useEffect(() => {
-        const updateFinalData = () => {
-            if (!finalData || finalData.length === 0) {
-                return;
-            }
-
-
-            let tempData = null;
-            if (!allData) {
-                setAllData(finalData);
-                setEnteredValues(finalData);
-            }
-
-            let output = typeof allData == "string" ? 1 : 0;
-            if (output === 0) output = Array.isArray(allData) ? 2 : 0;
-
-            switch (activeTab) {
-                case 0:
-                default: {
-                    if (allData && output === 1) {
-                        tempData = allData?.split("\n") ?? finalData;
-                    }
-                    else {
-                        tempData = finalData;
-                    }
-                    break;
-                }
-                case 1: {
-                    if (allData && output === 1) {
-                        tempData = allData?.split("\n").filter((f) => {
-                            return f.indexOf('@') > -1;
-                        });
-                    }
-                    else {
-                        tempData = allData.filter((f) => {
-                            return f.indexOf('@') > -1;
-                        });
-                    }
-                    break;
-                }
-                case 2: {
-                    if (allData && output === 1) {
-                        tempData = allData?.split("\n").filter((f) => {
-                            return f.indexOf('@') === -1;
-                        });
-                    }
-                    else {
-                        tempData = allData.filter((f) => {
-                            return f.indexOf('@') === -1;
-                        });
-                    }
-                    break;
-                }
-            }
-
-            handleFinalData(tempData);
+        if (confirmUnsubscsribe === true) {
+            handleUnsubSubmit();
         }
-
-        updateFinalData();
-
-    }, [activeTab])
-
-    useEffect(() => {
-        if (confirmUnsubscsribe === true && finalData) {
-            if (activeTab === '0' && showDropBox) {
-                setareaData('')
-                setFinalData(null)
-                setConfirmUnsubscsribe(false)
-            }
-            else {
-                handleUnsubSubmit();
-            }
-        }
-    }, [confirmUnsubscsribe]);
+    }, [confirmUnsubscsribe, unsubscribeOption]);
 
     useEffect(() => {
         if (confirmDelete === true && finalData) {
@@ -455,7 +449,11 @@ const UnsubscribeOrDeletePopup = ({
         try {
             const payload = {
                 ListOfValues: finalData,
-                RemovingOption: activeTab
+                UnsubscribeOption: -1
+            }
+
+            if (showDropBox) {
+                payload.UnsubscribeOption = unsubscribeOption;
             }
 
             const response = await dispatch(unsubRecipients(payload))
@@ -516,7 +514,9 @@ const UnsubscribeOrDeletePopup = ({
             title: t('recipient.unsubRecipients'),
             onClose: onClose,
             onConfirm: () => {
-                handleFinalData(enteredValue);
+                if (enteredValue) {
+                    handleFinalData(enteredValue);
+                }
                 setConfirmUnsubscsribe(true);
             },
             summaryOnClose: () => { setIsSubmitted(false); onClose(); setConfirmUnsubscsribe(false); },
