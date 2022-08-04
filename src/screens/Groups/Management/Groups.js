@@ -638,7 +638,7 @@ const Groups = ({ classes }) => {
                                     <NameValueGridStructure
                                         gridArr={[
                                             {
-                                                name: t("client.clientStatus.sms.Pending"),
+                                                name: t("common.Pending"),
                                                 value: PendingClients || 0,
                                                 classes: {
                                                     name: clsx(colorTextStyle.grey, classes.dataBox),
@@ -809,7 +809,7 @@ const Groups = ({ classes }) => {
                                     <NameValueGridStructure
                                         gridArr={[
                                             {
-                                                name: t("client.clientStatus.sms.Pending"),
+                                                name: t("common.Pending"),
                                                 value: PendingSmsClients || 0,
                                                 classes: {
                                                     name: clsx(colorTextStyle.grey, classes.dataBox),
