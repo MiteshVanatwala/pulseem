@@ -509,12 +509,12 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("campaigns.recipients"),
-                                                value: (ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0),
+                                                value: (ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0),
                                                 classes: {
                                                     name: clsx(colorTextStyle.blue, classes.f09rem),
                                                     value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem),
                                                 },
-                                                onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                onClick: ((ActiveEmails || 0) + (RemovedEmails || 0) + (RestrictedEmails || 0) + (InvalidEmails || 0) + (PendingClients || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                                     state:
                                                     {
@@ -681,12 +681,12 @@ const Groups = ({ classes }) => {
                                         gridArr={[
                                             {
                                                 name: t("campaigns.recipients"),
-                                                value: (ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0),
+                                                value: (ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0),
                                                 classes: {
                                                     name: clsx(colorTextStyle.blue, classes.f09rem),
                                                     value: clsx(colorTextStyle.blue, classes.grpDataBoxText, classes.f09rem),
                                                 },
-                                                onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
+                                                onClick: ((ActiveCell || 0) + (RemovedCell || 0) + (InvalidCell || 0) + (PendingSmsClients || 0)) > 0 ? () => navigate(CLIENT_CONSTANTS.BASEURL, {
 
                                                     state:
                                                     {

@@ -1052,7 +1052,7 @@ const AddRecipientPopup = ({ classes,
         setLoader(true)
         let response = await dispatch(changeClientStatus({
             ClientID: recipientData.ClientID,
-            StatusType: 1, // Email
+            RemovingOption: 1, // Email
             EmailStatus: val
         }))
         handleResponses(response, {
@@ -1089,7 +1089,7 @@ const AddRecipientPopup = ({ classes,
         setLoader(true)
         let response = await dispatch(changeClientStatus({
             ClientID: recipientData.ClientID,
-            StatusType: 2, // Sms
+            RemovingOption: 2, // Sms
             SmsStatus: val
         }))
         handleResponses(response, {
