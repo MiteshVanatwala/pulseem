@@ -64,12 +64,13 @@ const RecipientChart = ({ classes, }) => {
             }
             else {
                 data.push({
-                    labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
+                    labels: [t('common.harStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('client.clientStatus.sms.Pending'), t('client.clientStatus.email.Pending')],
                     datasets: [{
                         data: [
                             report.Active,
                             report.Error,
-                            report.Removed
+                            report.Removed,
+                            (report.ReportSection === 0) ? report.PendingEmails : (report.ReportSection === 1) ? report.PendingSms : null
                         ],
                         borderWidth: 0,
                     }],
@@ -231,15 +232,21 @@ const RecipientChart = ({ classes, }) => {
 
         let innerData = {
             productType: report.ReportSection,
-            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('common.charStatus.pending')],
+            labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed'), t('client.clientStatus.sms.Pending'), t('client.clientStatus.email.Pending')],
             datasets: [{
                 data: [
                     report.Active,
                     report.Error,
                     report.Removed,
-                    report?.Pending || 0
+                    (report.ReportSection === 0) ? report.PendingEmails : (report.ReportSection === 1) ? report.PendingSms : null
                 ],
-                borderWidth: 0,
+                borderColor: [
+                    '#67B7DC',
+                    '#648FD5',
+                    '#6771DC',
+                    '#c5caff'
+                ],
+                borderWidth: 2
             }],
         }
         return (
@@ -310,6 +317,11 @@ const RecipientChart = ({ classes, }) => {
                     resultTitle = t('client.titles.searchResult.newsletter.removed');
                     break;
                 }
+                case 5: {
+                    qReportType = 5;
+                    resultTitle = t('client.clientStatus.sms.Pending');
+                    break;
+                }
                 default: { return; }
             }
 
@@ -338,6 +350,11 @@ const RecipientChart = ({ classes, }) => {
                 case 2: {
                     qReportType = 1;
                     resultTitle = t('client.titles.searchResult.sms.removed');
+                    break;
+                }
+                case 5: {
+                    qReportType = 5;
+                    resultTitle = t('client.clientStatus.email.Pending');
                     break;
                 }
                 default: { return; }
