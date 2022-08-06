@@ -96,19 +96,19 @@ const Groups = ({ classes }) => {
         {
             label: t("recipient.emails"),
             classes: cellStyle,
-            className: accountFeatures?.includes("6") ? classes.flex2 : classes.flex1,
+            className: clsx(accountFeatures?.includes("6") ? classes.flex2 : classes.flex1, classes.maxWidth325),
             align: "center",
         },
         {
             label: t("recipient.sms/mms"),
             classes: cellStyle,
-            className: clsx(classes.flex2, classes.textUppercase),
+            className: clsx(classes.flex2, classes.textUppercase, classes.maxWidth325),
             align: "center",
         },
         {
             label: "",
             classes: cellStyle,
-            className: classes.flex4,
+            className: clsx(classes.flex4, classes.maxWidth450),
             align: "center",
         },
     ];
