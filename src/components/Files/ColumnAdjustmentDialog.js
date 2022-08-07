@@ -31,6 +31,8 @@ const ColumnAdjustmentDialog = ({
     data,
     headers = [],
     setheaders,
+    setselectArray = () => null,
+    selectArray,
     tooltipText = "smsReport.manualTotalTooltip",
     onUpdateClientFields = () => null }) => {
 
@@ -38,7 +40,7 @@ const ColumnAdjustmentDialog = ({
     const styles = useStyles();
     const [groupNameInput, setgroupNameInput] = useState("");
 
-    const [selectArray, setselectArray] = useState([]);
+    // const [selectArray, setselectArray] = useState([]);
     const [groupTextError, setGroupTextError] = useState(false);
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
     const [columnValidate, setcolumnValidate] = useState(false);

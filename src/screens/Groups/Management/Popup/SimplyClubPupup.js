@@ -103,6 +103,7 @@ const SimplyClubPupup = ({
     const [summary, setSummary] = useState(null)
     const [error, setError] = useState(null)
     const [updatedClients, setUpdatedClients] = useState(null);
+    const [selectArray, setselectArray] = useState([]);
 
 
     useEffect(() => {
@@ -279,9 +280,29 @@ const SimplyClubPupup = ({
     const handleAddClients = (ids) => {
         setShowLoader(true)
         let tempClients = Object.values(updatedClients ?? ClientData)[0]
+
+        const mapping = headers.map((h, idx) => {
+            if (h.replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
+                let item = selectArray.find((sa) => {
+                    const isExtraField = sa.label === h;
+                    const conditionVal = !isExtraField ? sa.value : sa.label;
+                    return h?.replaceAll(' ', '').toLowerCase() === conditionVal?.replaceAll(' ', '').toLowerCase();
+                });
+
+                return {
+                    Index: idx + 1,
+                    Title: item.value
+                }
+            }
+            return undefined;
+        }).filter(function (x) {
+            return x !== undefined;
+        });
+
         const Payload = {
             ClientsData: tempClients || [],
-            GroupIds: ids
+            GroupIds: ids,
+            Mapping: mapping
         }
 
         const pr = new Promise(async (resolve, reject) => {
@@ -521,6 +542,8 @@ const SimplyClubPupup = ({
                 setheaders={setheaders}
                 tooltipText="recipient.bulkRecUpldTooltipText"
                 onUpdateClientFields={handleUpdateClientFields}
+                setselectArray={setselectArray}
+                selectArray={selectArray}
             />
         )
     }
