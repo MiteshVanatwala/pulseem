@@ -312,7 +312,7 @@ const SimplyClubPupup = ({
                 if (Payload.ClientsData.length >= 5000) {
                     const formData = new FormData();
                     jsonToCSV({ array: Payload.ClientsData }).then(async (csvOutput) => {
-                        const file = createFile(csvOutput, 'xlsx');
+                        const file = createFile(csvOutput, 'csv');
                         formData.append("file", file);
                         formData.append("groupids", ids);
                         formData.append("mapping", JSON.stringify(mapping));
