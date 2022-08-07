@@ -4,13 +4,14 @@ import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { Dialog } from "../../../../components/managment/Dialog";
-import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub, createGroup } from '../../../../redux/reducers/groupSlice';
+import { addRecipient, addRecipients, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub, createGroup } from '../../../../redux/reducers/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
-import { simplyCLubClientData, UploadSettings } from '../../tempConstants';
+import { UploadSettings } from '../../tempConstants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
+import { jsonToCSV, createFile } from '../../../../helpers/SheetHelper';
 
 
 
@@ -307,8 +308,22 @@ const SimplyClubPupup = ({
 
         const pr = new Promise(async (resolve, reject) => {
             try {
-                const response = await dispatch(addRecipient(Payload));
-                resolve(response);
+                let response = null;
+                if (Payload.ClientsData.length >= 5000) {
+                    const formData = new FormData();
+                    jsonToCSV({ array: Payload.ClientsData }).then(async (csvOutput) => {
+                        const file = createFile(csvOutput, 'xlsx');
+                        formData.append("file", file);
+                        formData.append("groupids", ids);
+                        formData.append("mapping", JSON.stringify(mapping));
+                        response = await dispatch(addRecipients(formData));
+                        resolve(response);
+                    });
+                }
+                else {
+                    response = await dispatch(addRecipient(Payload));
+                    resolve(response);
+                }
             } catch (e) {
                 console.error(e);
                 reject(null);
