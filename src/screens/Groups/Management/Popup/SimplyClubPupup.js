@@ -308,22 +308,8 @@ const SimplyClubPupup = ({
 
         const pr = new Promise(async (resolve, reject) => {
             try {
-                let response = null;
-                if (Payload.ClientsData.length >= 5000) {
-                    const formData = new FormData();
-                    jsonToCSV({ array: Payload.ClientsData }).then(async (csvOutput) => {
-                        const file = createFile(csvOutput, 'csv');
-                        formData.append("file", file);
-                        formData.append("groupids", ids);
-                        formData.append("mapping", JSON.stringify(mapping));
-                        response = await dispatch(addRecipients(formData));
-                        resolve(response);
-                    });
-                }
-                else {
-                    response = await dispatch(addRecipient(Payload));
-                    resolve(response);
-                }
+                const response = await dispatch(addRecipient(Payload));
+                resolve(response);
             } catch (e) {
                 console.error(e);
                 reject(null);

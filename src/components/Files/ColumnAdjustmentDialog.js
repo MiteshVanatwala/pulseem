@@ -158,6 +158,7 @@ const ColumnAdjustmentDialog = ({
 
     return (
         <Dialog
+            disableBackdropClick={true}
             classes={classes}
             title={title || t('sms.columnAdjustment')}
             open={isOpen}
