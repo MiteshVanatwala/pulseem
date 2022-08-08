@@ -291,7 +291,7 @@ const SimplyClubPupup = ({
                 });
 
                 return {
-                    Index: item.idx + 1,
+                    Index: item.idx,
                     Title: item.value
                 }
             }
