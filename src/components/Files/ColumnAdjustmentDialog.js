@@ -62,12 +62,12 @@ const ColumnAdjustmentDialog = ({
 
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
-            const exist = selectOptions.filter((e) => {
+            const exist = settings.Fields.filter((e) => {
                 return e.value === ed;
             });
 
             if (exist <= 0 && extraData[ed] !== '') {
-                selectOptions.push({
+                settings.Fields.push({
                     isdisabled: false,
                     idx: -1,
                     value: ed,
@@ -196,11 +196,11 @@ const ColumnAdjustmentDialog = ({
         const selectedItem = headerArrays.find((sa) => { return sa.value === item.value });
         if (selectedItem.isdisabled === true) return;
 
-        h[idx] = item.value.toLowerCase().indexOf('extra') > -1 ? item.value : item.label;
+        h[idx] = item.label;
 
         if (h[idx] !== t("sms.adjustTitle")) {
             const updateItem = headerArrays.find((sa) => {
-                return sa.label === h[idx]
+                return sa.label === h[idx] || sa.value === h[idx]
             });
             updateItem.isdisabled = false;
         }
