@@ -146,17 +146,22 @@ const UploadXL = ({
         // Get pasted data via clipboard API
         clipboardData = e.clipboardData || window.clipboardData;
         if (clipboardData) {
-            pastedData = e.target.value += clipboardData.getData('Text');
+            if (e.target.value !== '') {
+                pastedData = e.target.value + clipboardData.getData('Text');
+            }
+            else {
+                pastedData = clipboardData.getData('Text');
+            }            
         }
         else {
             pastedData = e.target.value;
         }
 
-        let enteredValue = pastedData.trim().split("\n")
-        const records = enteredValue.filter((r) => { return r !== "" });
-        settotalRecords(records.length);
-        //settypedData(records);
-        if (records.length < 1000) {
+        let enteredValue = pastedData?.trim().split("\n")
+        const records = enteredValue?.filter((r) => { return r !== "" });
+        settotalRecords(records?.length);
+        
+        if (records?.length < 100) {
             setareaData(pastedData);
             setdropClick(false);
         }
