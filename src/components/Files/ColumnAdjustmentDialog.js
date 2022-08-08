@@ -83,7 +83,7 @@ const ColumnAdjustmentDialog = ({
 
         if (isSimplyAccount === true) {
             fields = settings.Fields.map((e, idx) => {
-                let index = 1;
+                let index = idx;
                 switch (e.value.toLowerCase()) {
                     case t("common.email").toLowerCase(): {
                         index = 3;
