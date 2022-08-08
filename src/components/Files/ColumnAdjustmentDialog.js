@@ -33,6 +33,7 @@ const ColumnAdjustmentDialog = ({
     setheaders,
     setselectArray = () => null,
     selectArray,
+    isSimplyAccount = false,
     tooltipText = "smsReport.manualTotalTooltip",
     onUpdateClientFields = () => null }) => {
 
@@ -78,14 +79,67 @@ const ColumnAdjustmentDialog = ({
         let restHeader = headers.splice(headersOrder.length, headers.length - headersOrder.length)
         let tempHeaders = [...headersOrder, ...restHeader]
 
-        const fields = settings.Fields.map((e, idx) => {
-            return {
-                isdisabled: e.value.toLowerCase().indexOf('extra') > - 1 ? (idx === -1) : true,
-                idx: idx,
-                value: e.value,
-                label: t(e.label)
-            }
-        });
+        let fields = [];
+
+        if (isSimplyAccount === true) {
+            fields = settings.Fields.map((e, idx) => {
+                let index = 1;
+                switch (e.value.toLowerCase()) {
+                    case t("common.email").toLowerCase(): {
+                        index = 3;
+                        break;
+                    }
+                    case t("smsReport.firstName").toLowerCase(): {
+                        index = 6;
+                        break;
+                    }
+                    case t("smsReport.lastName").toLowerCase(): {
+                        index = 7;
+                        break;
+                    }
+                    case t("common.telephone").toLowerCase(): {
+                        index = 8;
+                        break;
+                    }
+                    case t("common.cellphone").toLowerCase(): {
+                        index = 9;
+                        break;
+                    }
+                    case t("common.address").toLowerCase(): {
+                        index = 11;
+                        break;
+                    }
+                    case t("common.city").toLowerCase(): {
+                        index = 12;
+                        break;
+                    }
+                    case t("common.zip").toLowerCase(): {
+                        index = 15;
+                        break;
+                    }
+                    case t("common.birthDate").toLowerCase(): {
+                        index = 17;
+                        break;
+                    }
+                }
+                return {
+                    isdisabled: e.value.toLowerCase().indexOf('extra') > - 1 ? (idx === -1) : true,
+                    idx: index,
+                    value: e.value,
+                    label: t(e.label)
+                }
+            });
+        }
+        else {
+            fields = settings.Fields.map((e, idx) => {
+                return {
+                    isdisabled: e.value.toLowerCase().indexOf('extra') > - 1 ? (idx === -1) : true,
+                    idx: idx,
+                    value: e.value,
+                    label: t(e.label)
+                }
+            });
+        }
         setselectArray([...fields, ...selectOptions]);
         setheaders(tempHeaders);
 

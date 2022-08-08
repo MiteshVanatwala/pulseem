@@ -529,6 +529,7 @@ const SimplyClubPupup = ({
                 classes={classes}
                 isOpen={showClients}
                 settings={UploadSettings.GROUPS}
+                isSimplyAccount={true}
                 onClose={() => {
                     setSelectedGroups([])
                     setShowClients(false)
