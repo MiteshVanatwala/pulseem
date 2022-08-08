@@ -85,38 +85,47 @@ const ColumnAdjustmentDialog = ({
             fields = settings.Fields.map((e, idx) => {
                 let index = idx;
                 switch (e.value.toLowerCase()) {
+                    case 'email':
                     case t("common.email").toLowerCase(): {
                         index = 3;
                         break;
                     }
+                    case 'firstname':
                     case t("smsReport.firstName").toLowerCase(): {
                         index = 6;
                         break;
                     }
+                    case 'lastname':
                     case t("smsReport.lastName").toLowerCase(): {
                         index = 7;
                         break;
                     }
+                    case 'telephone':
                     case t("common.telephone").toLowerCase(): {
                         index = 8;
                         break;
                     }
+                    case 'cellphone':
                     case t("common.cellphone").toLowerCase(): {
                         index = 9;
                         break;
                     }
+                    case 'address':
                     case t("common.address").toLowerCase(): {
                         index = 11;
                         break;
                     }
+                    case 'city':
                     case t("common.city").toLowerCase(): {
                         index = 12;
                         break;
                     }
+                    case 'zip':
                     case t("common.zip").toLowerCase(): {
                         index = 15;
                         break;
                     }
+                    case 'birthdate':
                     case t("common.birthDate").toLowerCase(): {
                         index = 17;
                         break;
