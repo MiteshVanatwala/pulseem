@@ -232,25 +232,29 @@ const ColumnAdjustmentDialog = ({
                                     }}
                                 >
                                     {headers.map((_, idx) => {
+                                        let cursorStyle = 'pointer';
+                                        if (isSimplyAccount === true) {
+                                            cursorStyle = idx > 9 ? 'pointer' : 'not-allowed'
+                                        }
+
                                         return (
                                             <th
                                                 key={idx}
                                                 className={classes.manualHeader}
-                                                style={{ cursor: idx > 8 ? null : 'not-allowed' }}
                                             >
                                                 <div
                                                     onClick={() => {
-                                                        idx > 8 && handleChangeId(idx);
+                                                        (idx > 9 || !isSimplyAccount) && handleChangeId(idx);
                                                     }}
                                                     className={classes.adjustP}
-                                                    style={{ textAlign: "center", cursor: idx > 8 ? 'pointer' : 'not-allowed' }}
+                                                    style={{ textAlign: "center", cursor: cursorStyle }}
                                                 >
                                                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                        <Typography style={{ fontWeight: "700", cursor: idx > 8 ? 'pointer' : 'not-allowed', marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{t(selectOptions.find(obj => obj.value === headers[idx])?.label || headers[idx])}</Typography>
+                                                        <Typography style={{ fontWeight: "700", cursor: cursorStyle, marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{t(selectOptions.find(obj => obj.value === headers[idx])?.label || headers[idx])}</Typography>
 
                                                         {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }}
                                                             onClick={() => {
-                                                                idx > 8 && handleCloseSpan(idx, headers[idx])
+                                                                (idx > 9 || !isSimplyAccount) && handleCloseSpan(idx, headers[idx])
                                                             }} /> : null}
                                                         {dropIndex === idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}
                                                     </div>
