@@ -280,28 +280,10 @@ const SimplyClubPupup = ({
         setShowLoader(true)
         let tempClients = Object.values(updatedClients ?? ClientData)[0]
 
-        const mapping = headers.map((h, idx) => {
-            if (h.replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
-                let item = selectArray.find((sa) => {
-                    const isExtraField = sa.label === h;
-                    const conditionVal = !isExtraField ? sa.value : sa.label;
-                    return h?.replaceAll(' ', '').toLowerCase() === conditionVal?.replaceAll(' ', '').toLowerCase();
-                });
-
-                return {
-                    Index: item.idx,
-                    Title: item.value
-                }
-            }
-            return undefined;
-        }).filter(function (x) {
-            return x !== undefined;
-        });
 
         const Payload = {
             ClientsData: tempClients || [],
-            GroupIds: ids,
-            Mapping: mapping
+            GroupIds: ids
         }
 
         const pr = new Promise(async (resolve, reject) => {

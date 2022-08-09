@@ -81,74 +81,14 @@ const ColumnAdjustmentDialog = ({
 
         let fields = [];
 
-        if (isSimplyAccount === true) {
-            fields = settings.Fields.map((e, idx) => {
-                let index = idx;
-                switch (e.value.toLowerCase()) {
-                    case 'email':
-                    case t("common.email").toLowerCase(): {
-                        index = 3;
-                        break;
-                    }
-                    case 'firstname':
-                    case t("smsReport.firstName").toLowerCase(): {
-                        index = 6;
-                        break;
-                    }
-                    case 'lastname':
-                    case t("smsReport.lastName").toLowerCase(): {
-                        index = 7;
-                        break;
-                    }
-                    case 'telephone':
-                    case t("common.telephone").toLowerCase(): {
-                        index = 8;
-                        break;
-                    }
-                    case 'cellphone':
-                    case t("common.cellphone").toLowerCase(): {
-                        index = 9;
-                        break;
-                    }
-                    case 'address':
-                    case t("common.address").toLowerCase(): {
-                        index = 11;
-                        break;
-                    }
-                    case 'city':
-                    case t("common.city").toLowerCase(): {
-                        index = 12;
-                        break;
-                    }
-                    case 'zip':
-                    case t("common.zip").toLowerCase(): {
-                        index = 15;
-                        break;
-                    }
-                    case 'birthdate':
-                    case t("common.birthDate").toLowerCase(): {
-                        index = 17;
-                        break;
-                    }
-                }
-                return {
-                    isdisabled: e.value.toLowerCase().indexOf('extra') > - 1 ? (idx === -1) : true,
-                    idx: index,
-                    value: e.value,
-                    label: t(e.label)
-                }
-            });
-        }
-        else {
-            fields = settings.Fields.map((e, idx) => {
-                return {
-                    isdisabled: e.value.toLowerCase().indexOf('extra') > - 1 ? (idx === -1) : true,
-                    idx: idx,
-                    value: e.value,
-                    label: t(e.label)
-                }
-            });
-        }
+        fields = settings.Fields.map((e, idx) => {
+            return {
+                isdisabled: e.value.toLowerCase().indexOf('extra') > - 1 ? (idx === -1) : true,
+                idx: idx,
+                value: e.value,
+                label: t(e.label)
+            }
+        });
         setselectArray([...fields, ...selectOptions]);
         setheaders(tempHeaders);
 
@@ -174,10 +114,8 @@ const ColumnAdjustmentDialog = ({
         h[id] = t("sms.adjustTitle");
         setheaders(h);
 
-        const isExtraField = name.toLowerCase().indexOf('extra') > -1;
         const deletedItem = selectArray.find((sa) => {
-            const conditionVal = isExtraField ? sa.value : sa.label;
-            return name === conditionVal;
+            return name === sa.label;
         });
 
         data.forEach((d) => {
@@ -292,16 +230,17 @@ const ColumnAdjustmentDialog = ({
                                             <th
                                                 key={idx}
                                                 className={classes.manualHeader}
+                                                style={{ cursor: idx > 8 ? null : 'not-allowed' }}
                                             >
                                                 <div
                                                     onClick={() => {
-                                                        handleChangeId(idx);
+                                                        idx > 8 && handleChangeId(idx);
                                                     }}
                                                     className={classes.adjustP}
-                                                    style={{ textAlign: "center", cursor: "pointer" }}
+                                                    style={{ textAlign: "center", cursor: idx > 8 ? 'pointer' : 'not-allowed' }}
                                                 >
                                                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                        <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{t(selectOptions.find(obj => obj.value === headers[idx])?.label || headers[idx])}</Typography>
+                                                        <Typography style={{ fontWeight: "700", cursor: idx > 8 ? 'pointer' : 'not-allowed', marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{t(selectOptions.find(obj => obj.value === headers[idx])?.label || headers[idx])}</Typography>
 
                                                         {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
                                                         {dropIndex === idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}
