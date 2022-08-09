@@ -57,7 +57,8 @@ const ColumnAdjustmentDialog = ({
         t("common.address"),
         t("common.city"),
         t("common.zip"),
-        t("common.birthDate")
+        t("common.birthDate"),
+        t("recipient.reminderDate")
     ]
 
     useEffect(() => {
