@@ -29,10 +29,12 @@ const ResetGroupPopup = ({
             'S_201': {
                 code: 201,
                 message: '',
-                Func: new Promise(async (resolutionFunc, rejectionFunc) => {
-                    await resolutionFunc(getData());
-                    onClose();
-                })
+                Func: () => {
+                    new Promise(async (resolutionFunc, rejectionFunc) => {
+                        await resolutionFunc(getData());
+                        onClose();
+                    })
+                }
             },
             'S_400': {
                 code: 400,
