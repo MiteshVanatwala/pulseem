@@ -82,13 +82,18 @@ const ColumnAdjustmentDialog = ({
         let fields = [];
 
         fields = settings.Fields.map((e, idx) => {
-            return {
-                isdisabled: e.value.toLowerCase().indexOf('extra') > - 1 ? (idx === -1) : true,
-                idx: idx,
-                value: e.value,
-                label: t(e.label)
+            if (e.label && e.label !== '') {
+                return {
+                    isdisabled: e.value.toLowerCase().indexOf('extra') > - 1 ? (idx === -1) : true,
+                    idx: idx,
+                    value: e.value,
+                    label: t(e.label)
+                }
             }
+            return null;
         });
+
+        fields = fields.filter((i) => i !== null && typeof i !== 'undefined');
         setselectArray([...fields, ...selectOptions]);
         setheaders(tempHeaders);
 
@@ -242,7 +247,10 @@ const ColumnAdjustmentDialog = ({
                                                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                                         <Typography style={{ fontWeight: "700", cursor: idx > 8 ? 'pointer' : 'not-allowed', marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{t(selectOptions.find(obj => obj.value === headers[idx])?.label || headers[idx])}</Typography>
 
-                                                        {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
+                                                        {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }}
+                                                            onClick={() => {
+                                                                idx > 8 && handleCloseSpan(idx, headers[idx])
+                                                            }} /> : null}
                                                         {dropIndex === idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}
                                                     </div>
                                                     {dropIndex === idx ? (
