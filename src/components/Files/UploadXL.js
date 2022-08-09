@@ -85,14 +85,19 @@ const UploadXL = ({
                 });
             }
         });
-        const fields = settings.Fields.map((e, idx) => {
-            return {
-                isdisabled: false,
-                idx: idx,
-                value: e.value,
-                label: t(e.label)
+        let fields = settings.Fields.map((e, idx) => {
+            if (e.label && e.label !== '') {
+                return {
+                    isdisabled: false,
+                    idx: idx,
+                    value: e.value,
+                    label: t(e.label)
+                }
             }
+            return null;
         });
+        fields = fields.filter((i) => i !== null && typeof i !== 'undefined');
+        
         setselectArray(fields);
     }, [dialogType]);
 
@@ -151,7 +156,7 @@ const UploadXL = ({
             }
             else {
                 pastedData = clipboardData.getData('Text');
-            }            
+            }
         }
         else {
             pastedData = e.target.value;
@@ -160,7 +165,7 @@ const UploadXL = ({
         let enteredValue = pastedData?.trim().split("\n")
         const records = enteredValue?.filter((r) => { return r !== "" });
         settotalRecords(records?.length);
-        
+
         if (records?.length < 100) {
             setareaData(pastedData);
             setdropClick(false);
