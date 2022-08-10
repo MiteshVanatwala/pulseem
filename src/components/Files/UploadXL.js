@@ -256,23 +256,6 @@ const UploadXL = ({
                                     b.push(a[i].split(","));
                                 }
                             }
-                            b = b.map((row) => {
-                                return row.map((col) => {
-                                    try {
-                                        const slashSeperator = col.split('/');
-                                        if (slashSeperator.length > 1) {
-                                            let validDate = moment(col).format(dateFormat);
-                                            if (validDate.replace(' ', '').toLowerCase() !== 'invaliddate') {
-                                                col = moment(col).format(dateFormat);
-                                            }
-                                        }
-                                    }
-                                    catch (e) {
-                                        console.error(col);
-                                    }
-                                    return col;
-                                });
-                            })
                             settypedData(b);
                             settotalRecords(b.length)
 
@@ -332,18 +315,6 @@ const UploadXL = ({
                                                 }
                                                 if (item && String(item).indexOf("9.72") > -1) {
                                                     item = parseFloat(item);
-                                                }
-                                                const slashSeperator = item.split('/');
-                                                if (slashSeperator.length > 1) {
-                                                    try {
-                                                        let validDate = moment(item).format(dateFormat);
-                                                        if (validDate.replace(' ', '').toLowerCase() !== 'invaliddate') {
-                                                            item = moment(item).format(dateFormat);
-                                                        }
-                                                    }
-                                                    catch (e) {
-                                                        console.error(item);
-                                                    }
                                                 }
                                                 fixedItem.push(String(item).trim());
                                             });
@@ -420,23 +391,6 @@ const UploadXL = ({
             b.push(a[i].split(","));
         }
         b.pop();
-        b = b.map((row) => {
-            return row.map((col) => {
-                try {
-                    const slashSeperator = col.split('/');
-                    if (slashSeperator.length > 1) {
-                        let validDate = moment(col).format(dateFormat);
-                        if (validDate.replace(' ', '').toLowerCase() !== 'invaliddate') {
-                            col = moment(col).format(dateFormat);
-                        }
-                    }
-                }
-                catch (e) {
-                    console.error(col);
-                }
-                return col;
-            });
-        })
         settypedData(b);
         settotalRecords(b.length)
 
