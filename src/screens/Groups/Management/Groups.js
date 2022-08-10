@@ -638,7 +638,7 @@ const Groups = ({ classes }) => {
                                     accountFeatures?.includes("6") && <NameValueGridStructure
                                         gridArr={[
                                             {
-                                                name: t("common.Pending"),
+                                                name: t("recipient.Pending"),
                                                 value: PendingClients || 0,
                                                 classes: {
                                                     name: clsx(colorTextStyle.grey, classes.f09rem),
@@ -809,7 +809,7 @@ const Groups = ({ classes }) => {
                                     <NameValueGridStructure
                                         gridArr={[
                                             {
-                                                name: t("common.Pending"),
+                                                name: t("recipient.Pending"),
                                                 value: PendingSmsClients || 0,
                                                 classes: {
                                                     name: clsx(colorTextStyle.grey, classes.f09rem),
@@ -1129,7 +1129,7 @@ const Groups = ({ classes }) => {
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
-                                                name: t("common.Pending"),
+                                                name: t("recipient.Pending"),
                                                 value: PendingSmsClients || 0,
                                                 classes: {
                                                     name: colorTextStyle.grey,
@@ -1280,7 +1280,7 @@ const Groups = ({ classes }) => {
                                             rootClass={classes.textCenter}
                                             gridSize={{ xs: 12, sm: 12 }}
                                             gridArr={[{
-                                                name: t("common.Pending"),
+                                                name: t("recipient.Pending"),
                                                 value: PendingClients || 0,
                                                 classes: {
                                                     name: colorTextStyle.grey,
