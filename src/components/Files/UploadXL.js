@@ -97,7 +97,7 @@ const UploadXL = ({
             return null;
         });
         fields = fields.filter((i) => i !== null && typeof i !== 'undefined');
-        
+
         setselectArray(fields);
     }, [dialogType]);
 
@@ -243,24 +243,31 @@ const UploadXL = ({
                         reader.onload = function (e) {
                             var data = new Uint8Array(e.target.result);
                             var workbook = XLSX.read(data, { type: "array" });
-                            var csv = XLSX.utils.sheet_to_csv(
-                                workbook.Sheets[workbook.SheetNames[0]]
-                                , { header: 1 });
 
-                            let temp = csv;
-                            let a = temp.split("\n");
-                            let b = [];
-                            for (let i = 0; i < a.length; i++) {
-                                const rowHasData = a[i].split(",").find((row) => { return row !== '' })
-                                if (rowHasData) {
-                                    b.push(a[i].split(","));
-                                }
+                            let json = [];
+                            for (let i = 0; i < workbook.SheetNames.length; i++) {
+                                let sheetName = workbook.SheetNames[i];
+                                let worksheet = workbook.Sheets[sheetName];
+                                var sheetToJson = XLSX.utils.sheet_to_json(worksheet, {
+                                    defval: '',
+                                    raw: false,
+                                    skipHeader: false,
+                                    range: -1
+                                })
+                                json.push(sheetToJson);
                             }
-                            settypedData(b);
-                            settotalRecords(b.length)
+
+                            const finalData = json.flat().map(function (obj) {
+                                return Object.keys(obj).sort().map(function (key) {
+                                    return obj[key];
+                                });
+                            });
+
+                            settypedData(finalData);
+                            settotalRecords(finalData.length)
 
                             let dummyArr = [];
-                            for (let i = 0; i < b[0].length; i++) {
+                            for (let i = 0; i < finalData[0].length; i++) {
                                 dummyArr.push(t("sms.adjustTitle"));
                             }
                             setheaders(dummyArr)
@@ -623,49 +630,45 @@ const UploadXL = ({
                                 })
                                 : null}
                             {contacts.length !== 0
-                                ? contacts.map((item, idx) => {
-                                    if (idx > contacts.length - 6) {
-                                        return (
-                                            <tbody key={idx}>
-                                                <tr id={idx}>
-                                                    {item.map((temp, idx) => {
-                                                        return (
-                                                            <td
-                                                                key={idx}
-                                                                id={idx}
-                                                                className={classes.tableColumn}
-                                                                style={{ direction: moment(temp, dateFormat, true).isValid() ? "ltr" : null }}
-                                                            >
-                                                                {temp}
-                                                            </td>
-                                                        );
-                                                    })}
-                                                </tr>
-                                            </tbody>
-                                        );
-                                    }
+                                ? [...contacts].splice(0, 5).map((item, idx) => {
+                                    return (
+                                        <tbody key={idx}>
+                                            <tr id={idx}>
+                                                {item.map((temp, idx) => {
+                                                    return (
+                                                        <td
+                                                            key={idx}
+                                                            id={idx}
+                                                            className={classes.tableColumn}
+                                                            style={{ direction: moment(temp, dateFormat, true).isValid() ? "ltr" : null }}
+                                                        >
+                                                            {temp}
+                                                        </td>
+                                                    );
+                                                })}
+                                            </tr>
+                                        </tbody>
+                                    );
                                 })
-                                : typedData.map((item, id) => {
-                                    if (id > typedData.length - 6) {
-                                        let output = typeof item == "string" ? 1 : 0;
-                                        if (output === 0) output = Array.isArray(item) ? 2 : 0;
-                                        return (
-                                            <tbody key={id}>
-                                                <tr key={id}>
-                                                    {headers.map((data, idx, i) => {
-                                                        return (
-                                                            <td key={idx}
-                                                                className={classes.tableColumn}
-                                                                style={{ direction: moment(item[idx], dateFormat, true).isValid() ? "ltr" : null }}
-                                                            >
-                                                                {(output === 1 && idx === 0) ? item : output === 2 ? item[idx] : ''}
-                                                            </td>
-                                                        );
-                                                    })}
-                                                </tr>
-                                            </tbody>
-                                        );
-                                    }
+                                : [...typedData].splice(0, 5).map((item, id) => {
+                                    let output = typeof item == "string" ? 1 : 0;
+                                    if (output === 0) output = Array.isArray(item) ? 2 : 0;
+                                    return (
+                                        <tbody key={id}>
+                                            <tr key={id}>
+                                                {headers.map((data, idx, i) => {
+                                                    return (
+                                                        <td key={idx}
+                                                            className={classes.tableColumn}
+                                                            style={{ direction: moment(item[idx], dateFormat, true).isValid() ? "ltr" : null }}
+                                                        >
+                                                            {(output === 1 && idx === 0) ? item : output === 2 ? item[idx] : ''}
+                                                        </td>
+                                                    );
+                                                })}
+                                            </tr>
+                                        </tbody>
+                                    );
                                 })}
                         </table>
                     </Box>
