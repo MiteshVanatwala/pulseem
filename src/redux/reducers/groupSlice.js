@@ -74,7 +74,7 @@ export const addRecipients = createAsyncThunk(
     'Client/Upload', async (payload, thunkAPI) => {
         try {
             //const dispatch = useDispatch()
-            const response = await uploaderInstance.put(`Client/Upload`, payload
+            const response = await uploaderInstance.post(`Client/Upload`, payload
                 ,
                 {
                     onUploadProgress: (progressEvent) => {
