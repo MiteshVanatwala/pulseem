@@ -1,4 +1,4 @@
-import { Box, Typography, TextField, makeStyles, TableRow, TableCell, Checkbox, FormControlLabel, Grid, Tooltip, Button } from '@material-ui/core'
+import { Box, Typography, TextField, makeStyles, TableRow, TableCell, Checkbox, FormControlLabel, Grid, Button } from '@material-ui/core'
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
@@ -7,11 +7,10 @@ import { Dialog } from "../../../../components/managment/Dialog";
 import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub, createGroup } from '../../../../redux/reducers/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
-import { simplyCLubClientData, UploadSettings } from '../../tempConstants';
+import { UploadSettings } from '../../tempConstants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
-
 
 
 const useStyles = makeStyles({
@@ -281,28 +280,10 @@ const SimplyClubPupup = ({
         setShowLoader(true)
         let tempClients = Object.values(updatedClients ?? ClientData)[0]
 
-        const mapping = headers.map((h, idx) => {
-            if (h.replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
-                let item = selectArray.find((sa) => {
-                    const isExtraField = sa.label === h;
-                    const conditionVal = !isExtraField ? sa.value : sa.label;
-                    return h?.replaceAll(' ', '').toLowerCase() === conditionVal?.replaceAll(' ', '').toLowerCase();
-                });
-
-                return {
-                    Index: idx + 1,
-                    Title: item.value
-                }
-            }
-            return undefined;
-        }).filter(function (x) {
-            return x !== undefined;
-        });
 
         const Payload = {
             ClientsData: tempClients || [],
-            GroupIds: ids,
-            Mapping: mapping
+            GroupIds: ids
         }
 
         const pr = new Promise(async (resolve, reject) => {
@@ -528,6 +509,7 @@ const SimplyClubPupup = ({
                 classes={classes}
                 isOpen={showClients}
                 settings={UploadSettings.GROUPS}
+                isSimplyAccount={true}
                 onClose={() => {
                     setSelectedGroups([])
                     setShowClients(false)

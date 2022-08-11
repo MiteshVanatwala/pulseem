@@ -85,14 +85,19 @@ const UploadXL = ({
                 });
             }
         });
-        const fields = settings.Fields.map((e, idx) => {
-            return {
-                isdisabled: false,
-                idx: idx,
-                value: e.value,
-                label: t(e.label)
+        let fields = settings.Fields.map((e, idx) => {
+            if (e.label && e.label !== '') {
+                return {
+                    isdisabled: false,
+                    idx: idx,
+                    value: e.value,
+                    label: t(e.label)
+                }
             }
+            return null;
         });
+        fields = fields.filter((i) => i !== null && typeof i !== 'undefined');
+
         setselectArray(fields);
     }, [dialogType]);
 
@@ -151,7 +156,7 @@ const UploadXL = ({
             }
             else {
                 pastedData = clipboardData.getData('Text');
-            }            
+            }
         }
         else {
             pastedData = e.target.value;
@@ -160,7 +165,7 @@ const UploadXL = ({
         let enteredValue = pastedData?.trim().split("\n")
         const records = enteredValue?.filter((r) => { return r !== "" });
         settotalRecords(records?.length);
-        
+
         if (records?.length < 100) {
             setareaData(pastedData);
             setdropClick(false);
@@ -238,41 +243,27 @@ const UploadXL = ({
                         reader.onload = function (e) {
                             var data = new Uint8Array(e.target.result);
                             var workbook = XLSX.read(data, { type: "array" });
-                            var csv = XLSX.utils.sheet_to_csv(
-                                workbook.Sheets[workbook.SheetNames[0]]
-                                , { header: 1 });
 
-                            let temp = csv;
-                            let a = temp.split("\n");
-                            let b = [];
-                            for (let i = 0; i < a.length; i++) {
-                                const rowHasData = a[i].split(",").find((row) => { return row !== '' })
-                                if (rowHasData) {
-                                    b.push(a[i].split(","));
-                                }
-                            }
-                            b = b.map((row) => {
-                                return row.map((col) => {
-                                    try {
-                                        const slashSeperator = col.split('/');
-                                        if (slashSeperator.length > 1) {
-                                            let validDate = moment(col).format(dateFormat);
-                                            if (validDate.replace(' ', '').toLowerCase() !== 'invaliddate') {
-                                                col = moment(col).format(dateFormat);
-                                            }
-                                        }
-                                    }
-                                    catch (e) {
-                                        console.error(col);
-                                    }
-                                    return col;
+                            let sheetName = workbook.SheetNames[0];
+                            let worksheet = workbook.Sheets[sheetName];
+                            var json = XLSX.utils.sheet_to_json(worksheet, {
+                                defval: '',
+                                raw: false,
+                                skipHeader: false,
+                                range: -1
+                            });
+
+                            const finalData = json.flat().map(function (obj) {
+                                return Object.keys(obj).sort().map(function (key) {
+                                    return obj[key];
                                 });
-                            })
-                            settypedData(b);
-                            settotalRecords(b.length)
+                            });
+
+                            settypedData(finalData);
+                            settotalRecords(finalData.length)
 
                             let dummyArr = [];
-                            for (let i = 0; i < b[0].length; i++) {
+                            for (let i = 0; i < finalData[0].length; i++) {
                                 dummyArr.push(t("sms.adjustTitle"));
                             }
                             setheaders(dummyArr)
@@ -327,18 +318,6 @@ const UploadXL = ({
                                                 }
                                                 if (item && String(item).indexOf("9.72") > -1) {
                                                     item = parseFloat(item);
-                                                }
-                                                const slashSeperator = item.split('/');
-                                                if (slashSeperator.length > 1) {
-                                                    try {
-                                                        let validDate = moment(item).format(dateFormat);
-                                                        if (validDate.replace(' ', '').toLowerCase() !== 'invaliddate') {
-                                                            item = moment(item).format(dateFormat);
-                                                        }
-                                                    }
-                                                    catch (e) {
-                                                        console.error(item);
-                                                    }
                                                 }
                                                 fixedItem.push(String(item).trim());
                                             });
@@ -415,23 +394,6 @@ const UploadXL = ({
             b.push(a[i].split(","));
         }
         b.pop();
-        b = b.map((row) => {
-            return row.map((col) => {
-                try {
-                    const slashSeperator = col.split('/');
-                    if (slashSeperator.length > 1) {
-                        let validDate = moment(col).format(dateFormat);
-                        if (validDate.replace(' ', '').toLowerCase() !== 'invaliddate') {
-                            col = moment(col).format(dateFormat);
-                        }
-                    }
-                }
-                catch (e) {
-                    console.error(col);
-                }
-                return col;
-            });
-        })
         settypedData(b);
         settotalRecords(b.length)
 
@@ -460,7 +422,7 @@ const UploadXL = ({
                 for (let j = 0; j < dataToUpload.length; j++) {
                     requestPayload.push({});
                     for (let k = 0; k < dataToUpload[j].length; k++) {
-                        if (headers[k] && headers[k].replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
+                        if (headers[k] && headers[k].trim().replace(' ', '').toLowerCase() !== t("sms.adjustTitle").trim().replace(' ', '').toLowerCase()) {
                             let item = selectArray.find((sa) => {
                                 return headers[k] === sa.value || headers[k] === sa.label;
                             });
@@ -482,11 +444,11 @@ const UploadXL = ({
 
             // Set mapping
             const mapping = headers.map((h, idx) => {
-                if (h.replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
+                if (h.trim().replace(' ', '').toLowerCase() !== t("sms.adjustTitle").trim().replace(' ', '').toLowerCase()) {
                     let item = selectArray.find((sa) => {
                         const isExtraField = sa.label === h;
                         const conditionVal = !isExtraField ? sa.value : sa.label;
-                        return h.replaceAll(' ', '').toLowerCase() === conditionVal.replaceAll(' ', '').toLowerCase();
+                        return h.trim().replace(' ', '').toLowerCase() === conditionVal.trim().replace(' ', '').toLowerCase();
                     });
 
                     return {
@@ -664,49 +626,45 @@ const UploadXL = ({
                                 })
                                 : null}
                             {contacts.length !== 0
-                                ? contacts.map((item, idx) => {
-                                    if (idx > contacts.length - 6) {
-                                        return (
-                                            <tbody key={idx}>
-                                                <tr id={idx}>
-                                                    {item.map((temp, idx) => {
-                                                        return (
-                                                            <td
-                                                                key={idx}
-                                                                id={idx}
-                                                                className={classes.tableColumn}
-                                                                style={{ direction: moment(temp, dateFormat, true).isValid() ? "ltr" : null }}
-                                                            >
-                                                                {temp}
-                                                            </td>
-                                                        );
-                                                    })}
-                                                </tr>
-                                            </tbody>
-                                        );
-                                    }
+                                ? [...contacts].splice(0, 5).map((item, idx) => {
+                                    return (
+                                        <tbody key={idx}>
+                                            <tr id={idx}>
+                                                {item.map((temp, idx) => {
+                                                    return (
+                                                        <td
+                                                            key={idx}
+                                                            id={idx}
+                                                            className={classes.tableColumn}
+                                                            style={{ direction: moment(temp, dateFormat, true).isValid() ? "ltr" : null }}
+                                                        >
+                                                            {temp}
+                                                        </td>
+                                                    );
+                                                })}
+                                            </tr>
+                                        </tbody>
+                                    );
                                 })
-                                : typedData.map((item, id) => {
-                                    if (id > typedData.length - 6) {
-                                        let output = typeof item == "string" ? 1 : 0;
-                                        if (output === 0) output = Array.isArray(item) ? 2 : 0;
-                                        return (
-                                            <tbody key={id}>
-                                                <tr key={id}>
-                                                    {headers.map((data, idx, i) => {
-                                                        return (
-                                                            <td key={idx}
-                                                                className={classes.tableColumn}
-                                                                style={{ direction: moment(item[idx], dateFormat, true).isValid() ? "ltr" : null }}
-                                                            >
-                                                                {(output === 1 && idx === 0) ? item : output === 2 ? item[idx] : ''}
-                                                            </td>
-                                                        );
-                                                    })}
-                                                </tr>
-                                            </tbody>
-                                        );
-                                    }
+                                : [...typedData].splice(0, 5).map((item, id) => {
+                                    let output = typeof item == "string" ? 1 : 0;
+                                    if (output === 0) output = Array.isArray(item) ? 2 : 0;
+                                    return (
+                                        <tbody key={id}>
+                                            <tr key={id}>
+                                                {headers.map((data, idx, i) => {
+                                                    return (
+                                                        <td key={idx}
+                                                            className={classes.tableColumn}
+                                                            style={{ direction: moment(item[idx], dateFormat, true).isValid() ? "ltr" : null }}
+                                                        >
+                                                            {(output === 1 && idx === 0) ? item : output === 2 ? item[idx] : ''}
+                                                        </td>
+                                                    );
+                                                })}
+                                            </tr>
+                                        </tbody>
+                                    );
                                 })}
                         </table>
                     </Box>
