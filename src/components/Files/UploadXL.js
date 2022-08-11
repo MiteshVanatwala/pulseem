@@ -447,36 +447,36 @@ const UploadXL = ({
             }
 
             // Set mapping
-            // const mapping = headers.map((h, idx) => {
-            //     if (h.replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
-            //         let item = selectArray.find((sa) => {
-            //             const isExtraField = sa.label === h;
-            //             const conditionVal = !isExtraField ? sa.value : sa.label;
-            //             return h.replaceAll(' ', '').toLowerCase() === conditionVal.replaceAll(' ', '').toLowerCase();
-            //         });
+            const mapping = headers.map((h, idx) => {
+                if (h.replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
+                    let item = selectArray.find((sa) => {
+                        const isExtraField = sa.label === h;
+                        const conditionVal = !isExtraField ? sa.value : sa.label;
+                        return h.replaceAll(' ', '').toLowerCase() === conditionVal.replaceAll(' ', '').toLowerCase();
+                    });
 
-            //         return {
-            //             Index: idx + 1,
-            //             Title: item.value
-            //         }
-            //     }
-            //     return undefined;
-            // }).filter(function (x) {
-            //     return x !== undefined;
-            // });
+                    return {
+                        Index: idx + 1,
+                        Title: item.value
+                    }
+                }
+                return undefined;
+            }).filter(function (x) {
+                return x !== undefined;
+            });
 
             if (fileToUpload !== null && dataToUpload.length >= 5000) {
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
                 formData.append("groupids", uploadToGroups);
-                //formData.append("mapping", JSON.stringify(mapping));
+                formData.append("mapping", JSON.stringify(mapping));
                 r = await dispatch(addRecipients(formData))
             }
             else {
                 const finalPayload = {
                     ClientsData: requestPayload,
                     GroupIds: uploadToGroups,
-                    //Mapping: mapping
+                    Mapping: mapping
                 }
                 r = await dispatch(addRecipient(finalPayload))
             }
