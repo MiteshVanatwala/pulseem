@@ -1047,6 +1047,7 @@ const Groups = ({ classes }) => {
     }
     const handleDeleteGroup = async () => {
         await dispatch(deleteGroups(selectedGroups));
+        await dispatch(getGroupsBySubAccountId())
         setSelectedGroups([]);
         setDialog(null);
         getData();

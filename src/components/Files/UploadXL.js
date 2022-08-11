@@ -244,18 +244,14 @@ const UploadXL = ({
                             var data = new Uint8Array(e.target.result);
                             var workbook = XLSX.read(data, { type: "array" });
 
-                            let json = [];
-                            for (let i = 0; i < workbook.SheetNames.length; i++) {
-                                let sheetName = workbook.SheetNames[i];
-                                let worksheet = workbook.Sheets[sheetName];
-                                var sheetToJson = XLSX.utils.sheet_to_json(worksheet, {
-                                    defval: '',
-                                    raw: false,
-                                    skipHeader: false,
-                                    range: -1
-                                })
-                                json.push(sheetToJson);
-                            }
+                            let sheetName = workbook.SheetNames[0];
+                            let worksheet = workbook.Sheets[sheetName];
+                            var json = XLSX.utils.sheet_to_json(worksheet, {
+                                defval: '',
+                                raw: false,
+                                skipHeader: false,
+                                range: -1
+                            });
 
                             const finalData = json.flat().map(function (obj) {
                                 return Object.keys(obj).sort().map(function (key) {
