@@ -1,5 +1,5 @@
 export const translateKeys = (key, t) => {
-    key = key.replaceAll(' ', '').trim().toLowerCase();
+    key = key.trim().replace(' ', '').toLowerCase();
     switch (key) {
         case 'שםפרטי':
         case 'firstname':

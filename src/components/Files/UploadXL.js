@@ -426,7 +426,7 @@ const UploadXL = ({
                 for (let j = 0; j < dataToUpload.length; j++) {
                     requestPayload.push({});
                     for (let k = 0; k < dataToUpload[j].length; k++) {
-                        if (headers[k] && headers[k].replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
+                        if (headers[k] && headers[k].trim().replace(' ', '').toLowerCase() !== t("sms.adjustTitle").trim().replace(' ', '').toLowerCase()) {
                             let item = selectArray.find((sa) => {
                                 return headers[k] === sa.value || headers[k] === sa.label;
                             });
@@ -448,11 +448,11 @@ const UploadXL = ({
 
             // Set mapping
             const mapping = headers.map((h, idx) => {
-                if (h.replaceAll(' ', '').toLowerCase() !== t("sms.adjustTitle").replaceAll(' ', '').toLowerCase()) {
+                if (h.trim().replace(' ', '').toLowerCase() !== t("sms.adjustTitle").trim().replace(' ', '').toLowerCase()) {
                     let item = selectArray.find((sa) => {
                         const isExtraField = sa.label === h;
                         const conditionVal = !isExtraField ? sa.value : sa.label;
-                        return h.replaceAll(' ', '').toLowerCase() === conditionVal.replaceAll(' ', '').toLowerCase();
+                        return h.trim().replace(' ', '').toLowerCase() === conditionVal.trim().replace(' ', '').toLowerCase();
                     });
 
                     return {
