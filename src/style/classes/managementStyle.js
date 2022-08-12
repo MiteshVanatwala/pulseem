@@ -1576,6 +1576,14 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     }
   },
   emailVerItemContainer: {
+    '& .error': {
+      marginTop: 20,
+      color: 'red'
+    },
+    '& .success': {
+      marginTop: 7,
+      color: 'green'
+    },
     '& .cSlide': {
       width: "100%",
       height: '100%',
@@ -1597,10 +1605,20 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
           }
         }
         ,
-        '& .btnVerifyNew': {
+        '& .btnVerifyNewLtr': {
           position: "absolute",
           top: 0,
           right: 0
+        },
+        '& .btnVerifyNewRTL': {
+          position: "absolute",
+          top: 0,
+          left: 0
+        },
+        '& .MuiDivider-root': {
+          marginTop: 6,
+          height: '1.3px',
+          backgroundColor: '#cdcdcd'
         }
       }
     },
@@ -1611,9 +1629,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       width: "100%",
       height: '100%',
       textAlign: 'center',
-      '&.secondSlide':{
-        '& .titleDescBox':{
-          '& .desc':{
+      '&.secondSlide': {
+        '& .titleDescBox': {
+          '& .desc': {
             marginTop: 20
           }
         }

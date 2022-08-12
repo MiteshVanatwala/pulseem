@@ -505,13 +505,15 @@
       "FromEmail": "This field is mandatory",
       "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
       "pre_helper_text": "The text will appear in the display bar in the email, before it opens",
-      "upload": "Popped up and attachment in the email you send"
+      "upload": "The file will appear as an attached file in your mail"
     }
   },
   "newsLetterMgmt": {
     "emailVerification": {
+      "emailVerificationBtnText": "Email Verification",
       "popupTitle": "Verification of email to send",
-      "popupDesc": "To ensure the security of your account, we need to verify this email address belongs to you. This is 2 one-time process for each email you send from.",
+      "popupDesc1": "To ensure the security of your account, we need to verify this email address belongs to you.",
+      "popupDesc2": "This is 2 one-time process for each email you send from.",
       "firstSlide": {
         "verifiedEmails": "Verified emails",
         "verifyEmailAddr": "Verify Email Address",
@@ -522,22 +524,25 @@
         "desc1": "We want to ensure the email you submitted belongs to you",
         "desc2": "This is a one-time process for each email address",
         "btnText": "Send me a verification email",
-        "error1": "Email is required",
-        "error2": "Invalid Email",
+        "error1": "Invalid Email",
+        "error2": "Email is required",
         "anyProblem": "Did you encounter a problem?",
-        "contactUs": "Contact us"
+        "contactUs": "Contact us",
+        "placeholder": "Enter email"
       },
       "thirdSlide": {
         "title": "Sent!",
         "desc1": "A verification code was sent successfully to",
         "desc2": "This code will be valid for the next 10 minutes only",
-        "error1": "Please try again or click on resend below",
+        "error1": "Incorrect code. Please try again or click on resend below",
         "error2": "Code is required",
         "did_not_recieved": "Didn’t receive it?",
         "resend": "Resend",
-        "resendSuccess": "Code Sent"
+        "resendSuccess": "Code Sent",
+        "placeholder": "Enter code",
+        "btnText": "Verify"
       },
-      "ErrorSlide": {
+      "errorSlide": {
         "title": "Too many attempts",
         "desc": "You entered an invalid code too many times",
         "contactSupport": "Please contact support",

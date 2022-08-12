@@ -40,6 +40,9 @@ const useStyles = makeStyles({
                 padding: '11.5px 14px !important'
             }
 
+        },
+        '& .MuiFormHelperText-contained': {
+            marginInline: 0
         }
     },
     autocomplete: {
@@ -49,6 +52,11 @@ const useStyles = makeStyles({
         '& .MuiAutocomplete-endAdornment': {
             display: 'flex',
             justifyContent: 'flex-end'
+        },
+        '& .MuiFormHelperText-contained': {
+            // marginLeft: 0,
+            // marginRight: 0
+            marginInline: 0
         }
 
     },
