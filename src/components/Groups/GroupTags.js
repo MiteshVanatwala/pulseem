@@ -31,7 +31,7 @@ const GroupTags = ({ classes,
     const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
     const checkedIcon = <CheckBoxIcon fontSize="small" />;
     const dispatch = useDispatch();
-    const groupsToShow = dropDownProps.groups !== null ? dropDownProps.groups : subAccountAllGroups;
+    const groupsToShow = dropDownProps?.groups !== null && dropDownProps?.groups?.length > 0 ? dropDownProps.groups : subAccountAllGroups;
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();
         e.preventDefault();
@@ -96,7 +96,7 @@ const GroupTags = ({ classes,
             disableCloseOnSelect
             options={groupsToShow ?? []}
             getOptionLabel={(option) => option?.GroupName}
-            defaultValue={groupsToShow.reduce((prevVal, newVal) => {
+            defaultValue={groupsToShow?.reduce((prevVal, newVal) => {
                 if (dropDownProps.selectedGroups.indexOf(newVal.GroupID) !== -1) {
                     return [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }]
                 }
