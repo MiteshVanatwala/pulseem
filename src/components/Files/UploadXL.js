@@ -254,7 +254,7 @@ const UploadXL = ({
                             });
 
                             const finalData = json.flat().map(function (obj) {
-                                return Object.keys(obj).sort().map(function (key) {
+                                return Object.keys(obj).map(function (key) {
                                     return obj[key];
                                 });
                             });
