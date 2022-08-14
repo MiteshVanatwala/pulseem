@@ -22,7 +22,7 @@ const Title = ({ classes, title, tooltip = null, stepNumber, subTitle, topZero =
                 {title}
             </Typography>
             {tooltip && <Tooltip
-                style={{ marginTop: 5, marginRight: 10, marginLeft: 10 }}
+                style={{ marginTop: topZero ? 5 : 20, marginRight: 10, marginLeft: 10 }}
                 disableFocusListener
                 title={tooltip}
                 classes={{ tooltip: styles.customWidth }}

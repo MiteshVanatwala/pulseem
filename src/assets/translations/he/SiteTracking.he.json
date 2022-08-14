@@ -9,9 +9,16 @@
     "pageUrl": "קישור לדף",
     "saved": "מעקב אתרים נשמר בהצלחה!",
     "scriptImplementation": "הצג סקריפט",
-    "scriptDescription": "על מנת להתחיל לעקוב אחר אינטראקציית הלקוחות עם האתר שלך, תחילה עליך להטמיע את הסקריפט המצורף מטה כדי שמבקרים באתר שלך יוכלו לקבל התראות.",
+    "scriptDescription": "על מנת להתחיל לעקוב אחר אינטראקציית הלקוחות עם האתר שלך, תחילה עליך להטמיע את הסקריפט המצורף מטה. <br />במידה והתקנת את הפלאגין שלנו ב-WooCommerce, סקריפטים אלה כבר מוטמעים בתוכו.",
     "scriptInstruction": "יש להעתיק את שורות הקוד הבאות ולהדביקן בשורה האחרונה לפני סגירת האלמנט \"head\" או ב Custom HTML Tag ב Google Tag Manager",
-    "scriptPayAttention": "* שימו לב. נוטיפקציות יעבדו רק באתרים עם תעודת SSL",
+    "scriptPurchaseInstruction": "לאחר הטמעת הסקריפט ב-header, יש לדווח את הפרמטרים הבאים באמצעות פונקציה בJavascript: ",
+    "scriptPurchaseIstructionForComplete":"יש להטמיע את קטע הקוד המצורף מיד לאחר הרכישה, בעמוד סיום הרכישה. ",    
+    "javscriptFunction": "מתודת Javascirpt:",
+    "purchaseInstructionTooltip": "* חשוב! אם אתה אוסף ושומר נתונים רגישים, אנו ממליצים מאוד לעדכן בכך את לקוחותייך",
+    "scriptPayAttention": "* שימו לב. מעקב אתרים יעבוד רק באתרים עם תעודת SSL",
+    "scriptPageviewImplemented": "כעת ניתן להגדיר מעקב צפיות באתר. ",
+    "purchaseActivating": "הפעלת מעקב רכישות",
+    "scriptInstructionEndText": "לאחר הטמעת מתודה זו , דו\"חות הקמפיינים יציגו נתונים על ההכנסות שלך מכל קמפיין. ",
     "addFeatureTooltip": "מעוניין להגדיר מעקב אחר כניסות לאתר שלך? דבר איתנו עוד היום ב-03-5240290!",
     "conditions": {
         "none": "ללא",
@@ -28,7 +35,8 @@
     "addToGroups": "הוסף לקבוצות",
     "events": {
         "pageLoad": "טעינת עמוד",
-        "pageView": "צפייה בעמוד"
+        "pageView": "צפייה בעמוד",
+        "purchase": "רכישות"
     },
     "validation": {
         "domainRequired": "דומיין - שדה חובה",
@@ -46,5 +54,8 @@
     "deleteDialogMessage": "האם אתה בטוח?<br />לחיצה על אישור תעצור את כל המעקבים באתר שלך.",
     "NoticeLinkStatistics": "החשבון שלך מוגדר למעקב התנהגות באתר (site tracking)<br />ביטול 'מעקב אחר הקלקות קישורים' לא יאפשר מעקב אחר דומיין זה.",
     "invalidDomainAddress": "כתובת דומיין אינה תקינה",
-    "addEvent": "הוסף אירוע"
+    "addEvent": "הוסף אירוע",
+    "minimumRevenue": "מינימום הכנסה",
+    "maximumRevenue": "מקסימום הכנסה",
+    "enablePurchase": "אפשר מעקב רכישות"
 }

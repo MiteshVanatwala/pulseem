@@ -21,7 +21,7 @@ export const coreSlice=createSlice({
     isAdmin: null,
     isAllowSwitchAccount: null,
     billingTypeId: null,
-    smsOldVersion: false,
+    // smsOldVersion: false,
     accountSettings: null
   },
   reducers: {
@@ -45,6 +45,7 @@ export const coreSlice=createSlice({
     },
     setRowsPerPage: (state,action) => {
       state.rowsPerPage=action.payload
+      setCookie('rpp', action.payload, { maxAge: 2147483647 })
     },
     setCoreData: (state,{payload}) => {
       state.basename=payload.basename
@@ -58,12 +59,12 @@ export const coreSlice=createSlice({
       state.isAllowSwitchAccount=payload.isAllowSwitchAccount
       state.billingTypeId=payload.billingTypeId
     },
-    setSmsOldVersion: (state, action) => {
-      state.smsOldVersion = action.payload
-    }
+    // setSmsOldVersion: (state, action) => {
+    //   state.smsOldVersion = action.payload
+    // }
   }
 })
 
-export const {setLanguage,setWindowSize,setCoreData,setRowsPerPage,setIsClal,setAccountFeatures,setSmsOldVersion,setAccountSettings}=coreSlice.actions
+export const {setLanguage,setWindowSize,setCoreData,setRowsPerPage,setIsClal,setAccountFeatures,setAccountSettings}=coreSlice.actions // setSmsOldVersion
 
 export default coreSlice.reducer

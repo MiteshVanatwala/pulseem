@@ -1,0 +1,86 @@
+import { Box, Typography } from '@material-ui/core'
+import React from 'react'
+import { useTranslation } from 'react-i18next';
+import clsx from 'clsx';
+import { AiOutlineCloudUpload } from 'react-icons/ai';
+import { Dialog } from "../../../../components/managment/Dialog";
+import { resetGroups } from '../../../../redux/reducers/groupSlice';
+import { useDispatch } from 'react-redux';
+
+const ResetGroupPopup = ({
+    onClose,
+    classes,
+    isOpen,
+    windowSize,
+    getData,
+    selectedGroup = { GroupID: null },
+    handleResponses = (response, actions) => null
+}) => {
+
+    const { t } = useTranslation();
+    const dispatch = useDispatch()
+
+    const handleSubmit = async () => {
+        const response = await new Promise((resolve, reject) => resolve(dispatch(resetGroups(selectedGroup))))
+
+
+        //TODO: RESPONSE MESSAGES LEFT 
+        handleResponses(response, {
+            'S_201': {
+                code: 201,
+                message: '',
+                Func: () => {
+                    new Promise(async (resolutionFunc, rejectionFunc) => {
+                        await resolutionFunc(getData());
+                        onClose();
+                    })
+                }
+            },
+            'S_400': {
+                code: 400,
+                message: '',
+                Func: () => null
+            },
+            'S_401': {
+                code: 401,
+                message: '',
+                Func: () => null
+            },
+            'S_405': {
+                code: 405,
+                message: '',
+                Func: () => null
+            },
+            'S_422': {
+                code: 422,
+                message: '',
+                Func: () => null
+            },
+            'default': {
+                message: '',
+                Func: () => null
+            },
+        })
+    }
+
+    return (
+        <Dialog
+            classes={classes}
+            open={isOpen}
+            onClose={onClose}
+            onCancel={onClose}
+            onConfirm={handleSubmit}
+            customContainerStyle={{}}
+            title={<span className={clsx(classes.textCapitalize, windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} >
+                {t("group.resetTitle")}
+            </span>}
+            showDivider
+        >
+            <Typography className={clsx(windowSize !== 'xs' && windowSize !== 'sm' ? classes.ellipsisText : null)} >
+                {t("group.resetConfirm")}
+            </Typography>
+        </Dialog>
+    )
+}
+
+export default ResetGroupPopup

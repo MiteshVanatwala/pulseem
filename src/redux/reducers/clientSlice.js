@@ -51,17 +51,39 @@ export const reactivateSms = createAsyncThunk(
     }
   })
 
+export const searchAllClients = createAsyncThunk(
+  'client/Get', async (payload, thunkAPI) => {
+    try {
+      const response = await instence.post(`client/Get`, payload);
+      return JSON.parse(response.data);
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
 
 export const clientSlice = createSlice({
   name: 'client',
   initialState: {
+    ClientData: [],
+    TotalCount: 0,
+    TotalRevenue: 0,
+    CampaignClicks: 0,
+    error: "",
+    ToastMessages: {
 
+    }
   },
   extraReducers: builder => {
-    // builder
-    //   .addCase(x.fulfilled, (state, { payload }) => {
-    //     state.x = payload
-    //   })
+    builder.addCase(searchAllClients.fulfilled, (state, { payload }) => {
+      state.ClientData = payload.Clients;
+      state.TotalCount = payload.TotalCount;
+      state.TotalRevenue = payload.TotalRevenue;
+      state.CampaignClicks = payload.CampaignClicks ?? 0;
+    })
+    builder.addCase(searchAllClients.rejected, (state, { error }) => {
+      state.error = error.message;
+    })
   }
 })
 

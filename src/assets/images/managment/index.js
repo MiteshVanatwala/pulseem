@@ -11,12 +11,19 @@ import ShareIcon from './share.png'
 import CopyIcon from './copy.png'
 import EmbedCodeIcon from './embed_code.png'
 import SurveryResultsIcon from './survery_results.png'
-import {ReactComponent as ExportIcon} from './export.svg'
-import {ReactComponent as SelectArrowIcon} from './select_arrow.svg'
-import {ReactComponent as CalendarIcon} from './calendar.svg'
-import {ReactComponent as SearchIcon} from './search.svg'
-import {ReactComponent as PageArrowIcon} from './page_arrow.svg'
+import DeleteRecipient from './deleteRecipient.png'
+import DeleteEmail from './deleteEmail.png'
+import DeletePhone from './deletePhone.png'
+import { ReactComponent as ExportIcon } from './export.svg'
+import { ReactComponent as SelectArrowIcon } from './select_arrow.svg'
+import { ReactComponent as CalendarIcon } from './calendar.svg'
+import { ReactComponent as SearchIcon } from './search.svg'
+import { ReactComponent as PageArrowIcon } from './page_arrow.svg'
 import CloseIcon from './x.png'
+import AddRecipient from './addRecipient.png'
+import AddRecipients from './addRecipients.png'
+import Reset from './reset.png'
+
 
 export {
   AutomationIcon,
@@ -37,5 +44,11 @@ export {
   CopyIcon,
   EmbedCodeIcon,
   SurveryResultsIcon,
-  CloseIcon
+  CloseIcon,
+  DeleteRecipient,
+  DeleteEmail,
+  DeletePhone,
+  AddRecipient,
+  AddRecipients,
+  Reset
 }

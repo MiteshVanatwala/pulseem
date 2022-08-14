@@ -17,6 +17,7 @@ const DashboardScreen = ({ classes }) => {
   const { windowSize, isRTL, accountSettings } = useSelector(state => state.core);
   const { t } = useTranslation();
   const [showTFA, setShowTFA] = useState(false);
+  const [TFAInit, setTFAInit] = useState(false);
 
   useEffect(() => {
     const initialize = async () => {
@@ -24,15 +25,16 @@ const DashboardScreen = ({ classes }) => {
         init2FA();
       }
     }
-    if (accountSettings) {
+    if (accountSettings && !TFAInit) {
       initialize();
+      setTFAInit(true);
     }
   }, [accountSettings])
 
   const init2FA = async () => {
     try {
-      if (accountSettings && accountSettings.TwoFactorAuthEnabled === null) {
-        const userSelection = getCookie("2faPopup");
+      if (accountSettings && accountSettings.SubAccountSettings.TwoFactorAuthEnabled !== true) {
+        const userSelection = getCookie("2faPopupv2");
         if (!userSelection && userSelection !== false) {
           setShowTFA(true);
         }

@@ -29,7 +29,7 @@ export const getSettingsItem = (t, style = '', isAllowSwitchAccount) => ({
 })
 
 
-export const getRoutes = (t = () => null, isClalAccount = false, features = null, subAccountSettings = null, windowSize = null, smsOldVersion, isRTL) => [
+export const getRoutes = (t = () => null, isClalAccount = false, features = null, subAccountSettings = null, windowSize = null, isRTL) => [ // smsOldVersion
   {
     key: 'dashboard',
     title: t('dashboard.pageTitle'),
@@ -48,16 +48,16 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
     icon: <FaHome style={{ color: "#fff" }} />
   },
   {
-    key: 'gruops',
-    title: t('master.RadMenuItemResource8.Text'),
+    key: 'groups',
+    title: t('appBar.groups.title'),
     iconUnicode: '\ue0d5',
-    href: '/Pulseem/Groups.aspx?fromreact=true',
+    href: '/react/groups',
     isShow: true,
     icon: <img
       alt='Groups'
       src={GroupsIcon} />,
     options: [
-      { title: t('master.RadMenuItemResource6.Text'), href: '/Pulseem/Groups.aspx?fromreact=true', isShow: true },
+      { key: 'groupManagement', title: t('master.RadMenuItemResource6.Text'), href: '/react/groups', isShow: true },
       { title: t('master.RadMenuItemResource7.Text'), href: '/Pulseem/ClientSearch.aspx?fromreact=true', isShow: true },
       { title: t('master.RadMenuItemResource37.Text'), href: '/Pulseem/ClientAdvancedSearch.aspx?fromreact=true', isShow: true },
       { title: t('master.RadMenuItemResourceDynamicGroups.Text'), href: '/Pulseem/DynamicGroups.aspx?fromreact=true', isShow: true },
@@ -96,7 +96,7 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
       alt='Sms'
       src={SmsIcon} />,
     options: [
-      { key: 'create', title: t('master.RadMenuItemResource101.Text'), href: smsOldVersion === 'true' ? `/Pulseem/SMSCampaignEdit.aspx?Culture=${isRTL ? 'he-IL' : 'en-US'}` : '/react/sms/create', isShow: true },
+      { key: 'create', title: t('master.RadMenuItemResource101.Text'), href: '/react/sms/create', isShow: true },
       { title: t('master.RadMenuItemResource102.Text'), href: '/react/SMSCampaigns', isShow: true },
       { title: t('master.chatbotSMS'), href: '/Pulseem/SMSSmartResponses.aspx?fromreact=true', isShow: true },
       { title: t('master.linkSMSResponsesReport.Text'), href: '/Pulseem/ResponsesReport.aspx?fromreact=true', isShow: true },

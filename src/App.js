@@ -14,7 +14,7 @@ import { StylesProvider, jssPreset, MuiThemeProvider, useTheme } from '@material
 import i18n from './i18n'
 import { BrowserRouter, useParams, Route } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures, setSmsOldVersion } from './redux/reducers/coreSlice'
+import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures } from './redux/reducers/coreSlice' //smsOldVersion
 import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
 import { setUsername } from './redux/reducers/userSlice'
 import { getTheme } from './style/theme'
@@ -35,9 +35,11 @@ import SmsCreator from './screens/Sms/Editor/SmsCreator';
 import SmsSend from './screens/Sms/Editor/SmsSend';
 import SiteTrackingEditor from './screens/SiteTracking/SiteTrackingEditor';
 import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
+//import { siteTrackingScriptUrl } from './config/index';
+import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import NewsLetterWizard from './screens/Newsletter/Wizard/NewsLetterWizard';
-
+import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 
 const renderRoutes = (classes, history) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -102,10 +104,13 @@ const renderRoutes = (classes, history) => {
         path={`/homepage`}
         component={transferUrl('/Pulseem/homepage.aspx')}
       />
-      {/* Groups */}
-      <Route
+      {/* <Route
         path={`/Groups`}
         component={transferUrl('/Pulseem/Groups.aspx')}
+      /> */}
+      <Route
+        path={'/Groups'}
+        render={props => <Groups props={props} classes={classes} />}
       />
       <Route
         path={`/ClientSearch`}
@@ -225,10 +230,9 @@ const renderRoutes = (classes, history) => {
         path='/NewWebForm/NewFormEdit/:id'
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
       />
-
       <Route
-        path="/ClientSearchResult/:id"
-        component={transferUrl('/Pulseem/ClientSearchResult.aspx?FormID=', 'id')}
+        path="/ClientSearchResult/:referrer/:id"
+        render={props => <ClientSearchResult {...props} classes={classes} />}
       />
 
       <Route
@@ -246,7 +250,6 @@ const renderRoutes = (classes, history) => {
       {/* Reports */}
       <Route
         path={`/Reports/NewsletterReports`}
-        //component={transferUrl('/Pulseem/MainReport.aspx')}
         render={props => <NewslettersReport {...props} classes={classes} />}
       />
       <Route
@@ -424,12 +427,11 @@ const AppContainer = () => {
   const dispatch = useDispatch()
   const { language, isRTL, windowSize, accountSettings } = useSelector(state => state.core)
   const classes = useClasses(windowSize, isRTL)()
-  const theme = getTheme(language)
+   const theme = getTheme(language)
   // const navigate = useNavigate()
   const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
   const width = useWidth();
   dispatch(setWindowSize(width))
-  // screenSize && dispatch(setWindowSize(screenSize))
 
   useEffect(() => {
     const initFeatures = async () => {
@@ -439,8 +441,6 @@ const AppContainer = () => {
       }
       const response = await dispatch(isClalAccount());
       dispatch(setIsClal(response.payload));
-      // const smsOldVersion = getCookie('OldVersion')
-      // dispatch(setSmsOldVersion(smsOldVersion))
       setCookie('OldVersion', false);
     }
 
@@ -502,13 +502,12 @@ const AppContainer = () => {
   return (
     <StylesProvider jss={jss}>
       <BrowserRouter basename='/react'>
-
         <App isRTL={isRTL}
           classes={classes}
           // navigate={navigate}
           theme={theme}
-          language={language} />
-
+          language={language}
+          screenSize={width} />
       </BrowserRouter>
     </StylesProvider>
   )

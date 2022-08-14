@@ -16,6 +16,8 @@ import emoji from './Emoji.he.json'
 import payment from './payment.he.json'
 import siteTracking from './SiteTracking.he.json'
 import client from './Client.he.json'
+import recipient from './Recipient.json'
+import group from './group.json'
 import mmsreport from './MMSReport.he.json'
 
 export const he = {
@@ -37,5 +39,7 @@ export const he = {
   payment,
   siteTracking,
   client,
+  recipient,
+  group,
   mmsreport
 }

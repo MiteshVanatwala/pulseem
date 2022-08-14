@@ -99,7 +99,6 @@ const DirectSMSReportTab = ({
 
   const handleRowsPerPageSearching = (val) => {
     dispatch(setRowsPerPage(val))
-    setCookie('rpp', val, { maxAge: 2147483647 })
     searchRequest(val, page);
   }
 
@@ -514,10 +513,8 @@ const DirectSMSReportTab = ({
 
   const renderNameCell = (row) => {
     const { DATE } = row
-
-    const date = DATE ? moment(DATE) : ''
-    const showDate = DATE ? date.format('L') : ''
-    const showTime = DATE ? date.format('LT') : ''
+    let d = moment(DATE);
+    d = `${d.format('DD/MM/YYYY HH:mm')}`
 
     return (
       <>
@@ -525,7 +522,7 @@ const DirectSMSReportTab = ({
           {t('report.SendDate')}
         </Typography>
         <Typography className={classes.grayTextCell}>
-          {t("common.SentOn")} {`${isRTL ? showDate : moment(showDate).format("DD/MM/YYYY")} ${moment(showTime).format("HH:mm")}`}
+          {t("common.SentOn")} {d}
         </Typography>
       </>
     )

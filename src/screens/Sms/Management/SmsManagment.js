@@ -14,7 +14,7 @@ import {
 } from '../../../components/managment/index'
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
-  getSmsData, restoreSms, deleteSms, duplicteSms, getSmsAuthorizationData, getAuthorizeNumbers, sendVerificationCode, verifyCode, getSmsByID
+  getSmsData, restoreSms, deleteSms, duplicteSms, getAuthorizeNumbers, sendVerificationCode, verifyCode, getSmsByID
 } from '../../../redux/reducers/smsSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -25,12 +25,12 @@ import { Preview } from '../../../components/Notifications/Preview/Preview';
 import { pulseemNewTab } from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
+//import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 const SmsManagnentScreen = ({ classes }) => {
-  const { language, windowSize, email, phone, rowsPerPage, smsOldVersion, isRTL } = useSelector(state => state.core)
-  const { smsData, smsDataError, smsDeletedData, authorizationData } = useSelector(state => state.sms)
+  const { language, windowSize, rowsPerPage } = useSelector(state => state.core) // smsOldVersion, isRTL
+  const { smsData, smsDeletedData } = useSelector(state => state.sms)
   const { username } = useSelector(state => state.user)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -106,8 +106,8 @@ const SmsManagnentScreen = ({ classes }) => {
           const lastUpdate = SendDate ?
             moment(SendDate, dateFormat).valueOf()
             : moment(UpdatedDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
+          const startFromDate = (values.fromDate && values.fromDate.hour(0).minute(0).valueOf()) || null
+          const endToDate = (values.toDate && values.toDate.hour(23).minute(59).valueOf()) || null
 
           if (!values)
             return true
@@ -237,7 +237,8 @@ const SmsManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href={smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : "/react/sms/create"}
+            href="/react/sms/create"
+            //href={smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : "/react/sms/create"}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -306,7 +307,8 @@ const SmsManagnentScreen = ({ classes }) => {
         remove: Status !== 1 || (AutomationID !== 0 && AutomationTriggerInActive === false),
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
-        href: smsOldVersion === "true" ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/send/${Id}`
+        href: `/react/sms/send/${Id}`
+        //href: smsOldVersion === "true" ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/send/${Id}`
       },
       {
         key: 'preview',
@@ -327,7 +329,8 @@ const SmsManagnentScreen = ({ classes }) => {
         icon: EditIcon,
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
-        href: smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/edit/${Id}`,
+        href: `/react/sms/edit/${Id}`,
+        //href: smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/edit/${Id}`,
         rootClass: classes.paddingIcon
       },
       {
@@ -581,7 +584,6 @@ const SmsManagnentScreen = ({ classes }) => {
   const renderTablePagination = () => {
     const handleRowsPerPageChange = (val) => {
       dispatch(setRowsPerPage(val))
-      setCookie('rpp', val, { maxAge: 2147483647 })
     }
     return (
       <TablePagination

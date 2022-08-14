@@ -190,7 +190,7 @@ const RecipientChart = ({ classes, }) => {
                 const chart = e.chart;
                 if (chart) {
                     const activeChart = e.chart._active[0];
-                    openReports(chart.data.productType, activeChart.index);
+                    openReports(report.ReportSection, activeChart.index);
                 }
             },
             plugins: {
@@ -224,7 +224,7 @@ const RecipientChart = ({ classes, }) => {
         };
 
         let innerData = {
-            productType: `${report.ReportSection}`,
+            productType: report.ReportSection,
             labels: [t('common.charStatus.active'), t('common.charStatus.error'), t('common.charStatus.removed')],
             datasets: [{
                 data: [
@@ -264,7 +264,7 @@ const RecipientChart = ({ classes, }) => {
                 window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}&IsSMS=true`, '_blank', 'noopener,noreferrer');
             }
         }
-        if (productType === "0") {
+        if (productType === 0) {
             switch (reportType) {
                 case 0: {
                     qReportType = 1;
@@ -281,7 +281,7 @@ const RecipientChart = ({ classes, }) => {
             }
             window.open(`/Pulseem/ClientSearchResult.aspx?ClientStatus=${qReportType}`, '_blank', 'noopener,noreferrer');
         }
-        if (productType === "1") {
+        if (productType === 1) {
             switch (reportType) {
                 case 0: {
                     qReportType = 0;
@@ -383,7 +383,7 @@ const RecipientChart = ({ classes, }) => {
                         title={t("common.createFirstGroup")}
                         buttonText={t("common.addRecipients")}
                         redirect={`/Pulseem/Groups.aspx?NewGroup=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`}
-                        buttonClass={classes.createButton} />
+                        buttonClass={classes.importButtonBlue} />
                 }
             </Grid>
         );

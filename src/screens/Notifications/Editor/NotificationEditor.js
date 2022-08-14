@@ -192,17 +192,15 @@ const NotificationEditor = ({ props, classes }) => {
 
   useEffect(() => {
     const body = document.querySelector('#root');
-
     body.scrollIntoView({}, 100);
+    
+    handlePublicKey();
     if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
       getData();
       if (props.match.params.send || props.match.url.toLowerCase().indexOf('send') > -1) {
         getSubAccountGroups();
         setActiveStep(activeStep + 1);
       }
-    }
-    else {
-      handlePublicKey();
     }
   }, [dispatch]);
 

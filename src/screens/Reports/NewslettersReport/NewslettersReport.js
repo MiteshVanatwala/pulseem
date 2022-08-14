@@ -25,7 +25,7 @@ import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFro
 import { Loader } from '../../../components/Loader/Loader';
 
 const NewslettersReport = ({ classes }) => {
-  const { language, windowSize, isRTL, rowsPerPage } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, rowsPerPage, accountSettings, accountFeatures } = useSelector(state => state.core)
   const { newslettersReports } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -48,6 +48,7 @@ const NewslettersReport = ({ classes }) => {
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const csvLinkRef = useRef(null);
   const [showLoader, setLoader] = useState(true);
+  const [hasRevenue, setHasRevenue] = useState(false);
 
   moment.locale(language)
 
@@ -81,7 +82,7 @@ const NewslettersReport = ({ classes }) => {
       //href: `/CampaignStatistics/${id}?tab=2`
     },
     RemovedClients: {
-      title: windowSize === 'xs' ? '' : t('mainReport.removedClients'),
+      title: windowSize === 'xs' ? '' : t('common.Removed'),
       href: `/Pulseem/ClientSearchResult.aspx?RemovedClientsCampaignID=${id}&fromreact=true`
       //href: `/CampaignStatistics/${id}?tab=2`
     },
@@ -120,6 +121,12 @@ const NewslettersReport = ({ classes }) => {
       title: t("mainReport.locRemovedReason.HeaderText"),
       href: `/Pulseem/RemovedStats.aspx?CampaignID=${id}&fromreact=true`,
       icon: '\uE15D'
+    },
+    Revenue: {
+      title: '',
+      href: `/react/ClientSearchResult/email/${id}`,
+      textStyle: { fontWeight: 900 },
+      isRevenueCol: true
     }
   })
 
@@ -148,6 +155,12 @@ const NewslettersReport = ({ classes }) => {
     await dispatch(getNewsletterReports(isDemoSend));
     setLoader(false);
   }
+
+  useEffect(() => {
+    if (accountFeatures && accountFeatures.includes('42')) {
+      setHasRevenue(true);
+    }
+  }, [accountFeatures])
 
   useEffect(() => {
     getData();
@@ -437,9 +450,10 @@ const NewslettersReport = ({ classes }) => {
           <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.noPonSmallScreen)} align='center'><span className={classes.hideOnSmallScreen}>{t("mainReport.ToalSent")}</span> </TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource1.HeaderText")}</TableCell>
           <TableCell classes={cell50wStyle} className={classes.flex4} align='center'>{t("mainReport.GridButtonColumnResource2.HeaderText")}</TableCell>
-          <TableCell classes={cell50wStyle} className={classes.flex4} align='center'></TableCell>
+          <TableCell classes={cell50wStyle} className={classes.flex3} align='center'></TableCell>
           <TableCell classes={cell50wStyle} className={clsx(classes.flex1, classes.hideOnSmallScreen)} align='center'></TableCell>
           <TableCell classes={cellStyle} className={classes.flex1} ></TableCell>
+          {hasRevenue && <TableCell classes={cell50wStyle} className={classes.flex1} align='center' >{t("common.revenue")}</TableCell>}
         </TableRow>
       </TableHead>
     )
@@ -586,7 +600,10 @@ const NewslettersReport = ({ classes }) => {
             target="_blank">
             {value && value.toLocaleString() || '0'}
           </Typography>
-          <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
+          <Typography component={clickable && value > 0 ? 'a' : 'p'}
+            href={href}
+            target="_blank"
+            className={clsx(classes.middleWrapText, colorTextStyle[type])}>
             {title}
           </Typography>
         </Box>
@@ -595,21 +612,40 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const renderIntData = (value, type, data = {}, clickable, innerTitle = '') => {
-    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '' } = data
+    const { title = windowSize === 'xs' ? '' : t("notifications.tblBody.total"), href = '', textStyle = null, isRevenueCol = false } = data
     return (
       <Box className={classes.cellText}>
-        <Typography component={href !== '' && clickable && value > 0 ? 'a' : 'p'}
-          href={href ? href : ''}
+        <Typography component={href !== '' && clickable && (value > 0 || isRevenueCol) ? 'a' : 'p'}
+          href={href !== '' ? href : ''}
+          style={textStyle}
           className={clsx(classes.middleTxt, colorTextStyle[type] || '')}
           target="_blank">
-          {value && value.toLocaleString() || '0'}
+          {(value && value.toLocaleString()) || '0'}
         </Typography>
-        <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
-          <span className={classes.hideInMiddleScreen}>{title}</span> {innerTitle !== '' ? <span className={classes.showTitleInline}>{innerTitle}</span> : null}
+        <Typography component={href !== '' && (value > 0 || isRevenueCol) ? 'a' : 'p'}
+          href={href !== '' ? href : ''}
+          style={textStyle}
+          target="_blank"
+          className={clsx(classes.middleWrapText, colorTextStyle[type])}>
+          <span className={classes.hideInMiddleScreen} style={textStyle}>{title}</span> {innerTitle !== '' ? <span className={classes.showTitleInline}>{innerTitle}</span> : null}
         </Typography>
       </Box>
     )
 
+  }
+  const renderRevenueData = (value, type, data = {}) => {
+    const { href = '', textStyle = null, isRevenueCol = false } = data
+    return (
+      <Box style={{ display: 'flex', flexDirection: 'column' }} >
+        <Typography component={href !== '' && (value > 0 || (isRevenueCol && value > 0)) ? 'a' : 'p'}
+          href={href !== '' ? href : ''}
+          className={clsx(classes.middleText, colorTextStyle[type] || '')}
+          style={textStyle}
+          target="_blank">
+          {(value && value.toLocaleString()) || '0'} {t("common.NIS")}
+        </Typography>
+      </Box>
+    )
   }
 
   const renderRow = (row) => {
@@ -629,7 +665,8 @@ const NewslettersReport = ({ classes }) => {
       Status,
       PercentageOpens,
       PercetangeClicks,
-      NotOpened
+      NotOpened,
+      Revenue = 0
     } = row
     const hrefs = getHrefs(CampaignID)
     return (
@@ -694,7 +731,7 @@ const NewslettersReport = ({ classes }) => {
         <TableCell
           classes={borderCellStyle}
           align='center'
-          className={classes.flex4}>
+          className={classes.flex3}>
           <Grid container className={clsx(classes.justifyEvenly, classes.responsiveFlex)}>
             <Grid item className={clsx(classes.plr10, classes.reponsivePB5)}>
               {renderIntData(SendError, 'red', hrefs.SendError, true, t('mainReport.GridButtonColumnResource4.HeaderText'))}
@@ -727,10 +764,16 @@ const NewslettersReport = ({ classes }) => {
         <TableCell
           component="th"
           scope="row"
-          classes={{ root: clsx(classes.tableCellRoot, classes.paddingRightLeft10) }}
+          classes={hasRevenue ? borderCellStyle : noBorderCellStyle}
           className={classes.flex1}>
           {renderCellIcons(row)}
         </TableCell>
+        {hasRevenue && <TableCell
+          classes={noBorderCellStyle}
+          align='center'
+          className={classes.flex1}>
+          {renderRevenueData(Revenue, '', hrefs.Revenue)}
+        </TableCell>}
       </TableRow>
     )
   }
@@ -745,7 +788,8 @@ const NewslettersReport = ({ classes }) => {
       ClickCountUnique,
       RemovedClients,
       SendError,
-      NotOpened
+      NotOpened,
+      Revenue = 0
     } = row
     const hrefs = getHrefs(CampaignID)
     return (
@@ -816,6 +860,16 @@ const NewslettersReport = ({ classes }) => {
               </Typography>
               {renderIntData(NotOpened, 'red', hrefs.NotOpened, false)}
             </Grid>
+            {hasRevenue && <Grid item xs={3}>
+              <Typography className={clsx(classes.mobileReportHead, classes.ml0)}>
+                {t("common.revenue")}
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item>
+                  {renderIntData(Revenue, 'black', hrefs.Revenue, true)}
+                </Grid>
+              </Grid>
+            </Grid>}
           </Grid>
         </TableCell>
       </TableRow>
@@ -849,7 +903,6 @@ const NewslettersReport = ({ classes }) => {
   const renderTablePagination = () => {
     const handleRowsPerPageChange = (val) => {
       dispatch(setRowsPerPage(val))
-      setCookie('rpp', val, { maxAge: 2147483647 })
     }
     const handlePageChange = (val) => {
       setPage(val);

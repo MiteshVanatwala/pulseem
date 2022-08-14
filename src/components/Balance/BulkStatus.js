@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import PricePackages from './PaymentWizard/PricePackages';
+import PurchaseWizard from './PaymentWizard/PurchaseWizard';
 import { GoPackage } from 'react-icons/go/index';
 import { Dialog } from '../managment/index';
-import { Grid, Paper, Typography } from '@material-ui/core';
-import { getPackagesDetails, getPurchaseLog } from '../../redux/reducers/dashboardSlice';
+import { Grid, Paper, Typography, Button, Box } from '@material-ui/core';
+import { getPackagesDetails } from '../../redux/reducers/dashboardSlice';
 import { useTranslation } from 'react-i18next';
 import clsx from 'clsx';
 import { CgShoppingCart } from 'react-icons/cg';
 import CustomTooltip from '../Tooltip/CustomTooltip';
+import { getCommonFeatures } from '../../redux/reducers/commonSlice';
+import { setAccountFeatures } from '../../redux/reducers/coreSlice'
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, accountFeatures, accountSettings } = useSelector(state => state.core)
@@ -49,7 +51,6 @@ const BulkStatus = ({ classes }) => {
   useEffect(() => {
     const initPackages = async () => {
       await dispatch(getPackagesDetails());
-      await dispatch(getPurchaseLog());
     }
 
     initPackages();
@@ -74,7 +75,7 @@ const BulkStatus = ({ classes }) => {
       let dialog = {};
       let availablePack = null;
 
-      if (accountSettings.Account.IsBillingAccount === false) {
+      if (accountSettings.Account.IsBillingAccount === false || selectedPackageType == -1 || !accountSettings.Account.IsPaying) {
         dialog = renderBillingSupportDialog();
       }
       else {
@@ -103,14 +104,23 @@ const BulkStatus = ({ classes }) => {
       icon: (
         <GoPackage style={{ fontSize: 35, padding: 5 }} />
       ),
+      showDefaultButtons: false,
       content: (
-        <Grid item xs={12} style={{ paddingBottom: 25 }}>
+        <Grid item xs={12} style={{ paddingBottom: 5 }}>
           <Typography className={classes.f20}>
             {renderHtml(t("common.contactSupportForBilling"))}
           </Typography>
+          <Box className={clsx(classes.mt25, classes.flexColCenter)}>
+            <Button
+              variant='contained'
+              size='small'
+              className={clsx(
+                classes.dialogButton,
+                classes.dialogConfirmButton
+              )} onClick={handleDialogClose}>{t("common.Ok")}</Button>
+          </Box>
         </Grid >
       ),
-      showDefaultButtons: true,
       onConfirm: () => handleDialogClose()
     };
   }
@@ -123,7 +133,7 @@ const BulkStatus = ({ classes }) => {
       ),
       content: (
         <Grid item xs={12} style={{ paddingBottom: 25 }}>
-          <PricePackages classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType} />
+          <PurchaseWizard classes={classes} onComplete={handleDialogClose} packageType={selectedPackageType} />
         </Grid >
       )
     };
@@ -136,8 +146,16 @@ const BulkStatus = ({ classes }) => {
     return accountFeatures && accountFeatures.includes('37') && billingTypeId !== "1" && Newsletters.eBillingType === 0 && accountAvailablePackages.length > 0;
   }
 
-  const showPackageDialogType = (packageType) => {
-    setPackageType(packageType);
+  const showPackageDialogType = async (packageType) => {
+    const settings = await dispatch(getCommonFeatures({ forceRequest: true }));
+    dispatch(setAccountFeatures(settings.payload));
+    if (!settings.payload.Account.IsPaying) {
+      packageType = -1;
+      setPackageType(-1);
+    }
+    else {
+      setPackageType(packageType);
+    }
     setIsOpenPackageDialog(true);
   }
 
@@ -155,7 +173,9 @@ const BulkStatus = ({ classes }) => {
           style={{ position: 'absolute', fontSize: 14 }}
           placement={'top'}
           icon={<span className={classes.newIcn}>{t("mainReport.newFeature")}</span>}
-          text={t("dashboard.tooltipPurchaseNewFeature")}
+          text={
+            <Typography noWrap={false} className={classes.tooltipText}>{t("dashboard.tooltipPurchaseNewFeature")}</Typography>
+          }
         />
         <Grid container justifyContent='center'>
           <Grid item xs={9} className={classes.bulkStatusTitleSection}>
@@ -187,7 +207,7 @@ const BulkStatus = ({ classes }) => {
             )
               :
               (<Typography className={classes.bulkTitle}>
-                {Sms.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />} 
+                {Sms.eBillingType === 0 && accountAvailablePackages.length > 0 && <CgShoppingCart className={classes.shoppingCartIcon} />}
                 {getBillingTypeText(Sms)}
               </Typography>)
             }

@@ -6,5 +6,6 @@
   "addCreditCard": "Add New",
   "noCreditFound": "No credit card found for this account. You can add a new one.",
   "useExistCard": "Use payment method ending in ",
-  "paymentSuceess": "Your payment has gone through successfully!"
+  "paymentSuceess": "Your payment has gone through successfully!",
+  "tryAgain": "Try again"
 }
