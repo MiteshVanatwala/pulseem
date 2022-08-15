@@ -81,7 +81,7 @@ export const testSend = createAsyncThunk(
 export const saveCampaignInfo = createAsyncThunk(
     'CampaignEditor/CreateOrUpdate', async (campaign, thunkAPI) => {
         try {
-            const response = await instence.post(`email/CloneArchiveCampaign`, campaign);
+            const response = await instence.post(`CampaignEditor/CreateOrUpdate`, campaign);
             return response.data
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -99,6 +99,16 @@ export const getCampaignInfo = createAsyncThunk(
         }
     });
 
+export const getVerifiedEmail = createAsyncThunk(
+    'CampaignEditor/GetVerifiedEmails', async (_, thunkAPI) => {
+        try {
+            const response = await instence.get(`CampaignEditor/GetVerifiedEmails`);
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
     initialState: {
@@ -110,7 +120,8 @@ export const campaignEditorSlice = createSlice({
             NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
             INVALID_EMAIL: { severity: 'error', color: 'error', message: "common.invalidEmail", showAnimtionCheck: false },
         },
-        campaignInfo: []
+        campaignInfo: [],
+        verifiedEmails: ['abc@123.com', 'bca@321.com', 'gvc@nbc.com']
     },
     extraReducers: builder => {
         builder
@@ -130,6 +141,9 @@ export const campaignEditorSlice = createSlice({
             })
             .addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
                 state.campaignInfo = payload;
+            })
+            .addCase(getVerifiedEmail.fulfilled, (state, { payload }) => {
+                state.verifiedEmails = payload;
             })
     },
     reducers: {

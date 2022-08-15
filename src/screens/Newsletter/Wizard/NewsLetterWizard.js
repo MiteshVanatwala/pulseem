@@ -6,7 +6,7 @@ import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
-import { getNewsletterReportsByIds } from '../../../redux/reducers/newsletterSlice';
+import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { campaignData, countries } from '../tempConstants';
@@ -16,13 +16,8 @@ import { BiUpload } from 'react-icons/bi';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { FaGoogle } from 'react-icons/fa';
 import WizardActions from '../../../components/Wizard/WizardActions';
-import { saveCampaignInfo, getCampaignInfo } from '../../../redux/reducers/campaignEditorSlice'
-import {
-    getPreviousCampaignData,
-    getPreviousLandingData,
-    getAccountExtraData,
-    getGroupsBySubAccountId
-} from "../../../redux/reducers/smsSlice";
+import { saveCampaignInfo, getCampaignInfo, getVerifiedEmail } from '../../../redux/reducers/campaignEditorSlice'
+import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import { ClientFields, LangugeCode } from "../../../model/PulseemFields/Fields";
 
 const useStyles = makeStyles({
@@ -145,7 +140,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
-    const { campaignInfo } = useSelector(state => state.campaignEditor);
+    const { campaignInfo, verifiedEmails } = useSelector(state => state.campaignEditor);
 
     const ErrorTexts = {
         Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
@@ -157,13 +152,12 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [errors, setErrors] = useState({
         Name: "",
         Subject: "",
-        // personalDatatoSubject: [],
         FromName: "",
         FromEmail: ""
     })
 
     const [campaingnValues, setCampaingnValues] = useState({
-        EmailLanguage: 0,
+        LanguageCode: 0,
         CampaignID: "",
         Name: "",
         Subject: "",
@@ -208,6 +202,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
 
     useEffect(() => {
         const preload = async () => {
+            await dispatch(getVerifiedEmail());
             if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
                 const campaignId = parseInt(props.match.params.id);
                 const response = await dispatch(getCampaignInfo(campaignId))
@@ -260,15 +255,28 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         handleChange(e)
     }
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (isContiue) => {
+        // TODO: [PR-570] Fix this validation
+        //if (handleValidations()) {
         setLoader(true);
-        if (handleValidations()) {
-            console.log("VALUES:", campaingnValues)
-            await dispatch(saveCampaignInfo(campaingnValues));
+        console.log("VALUES:", campaingnValues)
+        const response = await dispatch(saveCampaignInfo(campaingnValues));
+        setLoader(false);
+
+        if (isContiue) {
+            window.location = `/react/Campaigns/editor/${campaingnValues.CampaignID}`;
         }
+        else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
+            const savedCampaign = JSON.parse(response.payload);
+            const saveInfo = JSON.parse(savedCampaign.Message);
+            window.location = `/react/Campaigns/Create/${saveInfo.CampaignID}`
+        }
+        //}
     }
-    const handleDelete = () => {
+    const handleDelete = async () => {
+        await dispatch(deleteCampaign(campaingnValues.CampaignID));
         setConfirmDelete(false)
+        window.location = '/react/Campaigns'
     }
 
 
@@ -369,7 +377,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         <Autocomplete
                                             id="fromEmailSelect"
                                             // style={{ width: 300 }}
-                                            options={['abc@123.com', 'bca@321.com', 'gvc@nbc.com']}
+                                            options={verifiedEmails}
                                             className={localClasses.autocomplete}
                                             name="FromEmail"
                                             value={campaingnValues?.FromEmail}
@@ -475,14 +483,13 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 }}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                             >
-                                                <MenuItem disabled value="">
+                                                <MenuItem disabled value="" key="-1">
                                                     <em>Select</em>
                                                 </MenuItem>
-                                                {extraAccountDATA.map((item) => (
+                                                {extraAccountDATA.map((item, index) => (
                                                     <MenuItem
-                                                        key={item.value}
+                                                        key={`exd_${index}`}
                                                         value={item.value}
-                                                    // style={getStyles(item, personitem, theme)}
                                                     >
                                                         {t(item.label)}
                                                     </MenuItem>
@@ -603,9 +610,9 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                             <Select
                                                 displayEmpty
                                                 // value={campaingnValues?.personalDatatoSubject}
-                                                value={campaingnValues.EmailLanguage}
+                                                value={campaingnValues.LanguageCode}
                                                 onChange={(event) => {
-                                                    setCampaingnValues({ ...campaingnValues, EmailLanguage: event.target.value })
+                                                    setCampaingnValues({ ...campaingnValues, LanguageCode: event.target.value })
                                                 }}
                                                 input={<OutlinedInput />}
                                                 renderValue={(selected) => {

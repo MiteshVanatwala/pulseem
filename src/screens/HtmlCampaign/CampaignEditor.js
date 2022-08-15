@@ -410,7 +410,7 @@ const CampaignEditor = ({ classes, ...props }) => {
     setDialog(DialogType.GENERIC);
   }
   const onBack = () => {
-    saveDesign(true, `/Pulseem/Editor/CampaignInfo/${campaignId}`)
+    saveDesign(true, `/react/Campaigns/Create/${campaignId}`)
   }
   const onTestSendSubmit = (sendRequest) => {
     setLoader(true);
