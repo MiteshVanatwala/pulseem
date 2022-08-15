@@ -2495,45 +2495,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   ltr: {
     direction: 'ltr'
   },
-  tooltipText: {
-    ontWeight: 400,
-    fontSize: 16,
-    direction: isRTL ? 'rtl' : 'ltr',
-    color: '#fff'
-  },
-  autoCompleteTag: {
-    '& .MuiAutocomplete-tag': {
-      backgroundColor: '#0371ad',
-      color: '#fff',
-      '& .MuiChip-deleteIcon': {
-        fill: '#fff'
-      }
-    }
-  },
-  maxContent: {
-    width: 'max-Content'
-  },
-  alignDir: {
-    textAlign: isRTL ? "right" : "left"
-  },
-  '.MuiAccordion-root': {
-    '&::before': {
-      top: '-1px',
-      left: 0,
-      right: 0,
-      height: 1,
-      content: "",
-      opacity: 1,
-      position: 'absolute',
-      transition: 'opacity 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-      backgroundColor: 'rgba(0, 0, 0, 0.12)'
-    }
-  },
-  scrollY: {
-    overflowX: 'hidden',
-    overflowY: 'scroll',
-
-  },
   dialogZindex: {
     zIndex: '1000 !important'
   },

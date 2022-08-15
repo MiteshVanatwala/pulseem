@@ -10,17 +10,20 @@ import { getNewsletterReportsByIds } from '../../../redux/reducers/newsletterSli
 import Toast from '../../../components/Toast/Toast.component';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { campaignData, countries } from '../tempConstants';
-// import IconWrapper from '../../../components/icons/IconWrapper';
-import { ManagmentIcon } from '../../../components/managment';
 import SmileIcon from '../../../assets/images/smile.png'
-import { Delete } from '@material-ui/icons';
 import { Dialog } from "../../../components/managment/Dialog";
 import { BiUpload } from 'react-icons/bi';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import axios from 'axios';
 import { FaGoogle } from 'react-icons/fa';
-
-
+import WizardActions from '../../../components/Wizard/WizardActions';
+import { saveCampaignInfo, getCampaignInfo } from '../../../redux/reducers/campaignEditorSlice'
+import {
+    getPreviousCampaignData,
+    getPreviousLandingData,
+    getAccountExtraData,
+    getGroupsBySubAccountId
+} from "../../../redux/reducers/smsSlice";
+import { ClientFields, LangugeCode } from "../../../model/PulseemFields/Fields";
 
 const useStyles = makeStyles({
     iconbox: {
@@ -140,12 +143,15 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const localClasses = useStyles()
     const dispatch = useDispatch()
     const [toastMessage, setToastMessage] = useState(null);
+    const [showLoader, setLoader] = useState(true);
+    const [extraAccountDATA, setextraAccountDATA] = useState([]);
+    const { campaignInfo } = useSelector(state => state.campaignEditor);
 
     const ErrorTexts = {
         Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
         Subject: t('campaigns.newsLetterEditor.helpTexts.Subject'),
-        FromName: t('campaigns.newsLetterEditor.helpTexts.FromName'),
-        FromEmail: t('campaigns.newsLetterEditor.helpTexts.FromEmail'),
+        FromName: t('common.requiredField'),
+        FromEmail: t('common.requiredField'),
     }
 
     const [errors, setErrors] = useState({
@@ -170,31 +176,29 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [confirmDelete, setConfirmDelete] = useState(false)
 
     const handleGetNewsletterResponse = (res) => {
-        switch (res?.payload?.StatusCode || 201) {
+        switch (res?.StatusCode || 201) {
             case 200: {
-                setToastMessage(res.payload.message)
+                setToastMessage(res?.Message)
                 break;
             }
             case 201: {
-                // console.log(res.payload)
-                // setCampaingnValues({ ...campaingnValues, ...res.payload.campaign })
-                setCampaingnValues({ ...campaignData })
+                setCampaingnValues({ ...JSON.parse(res?.Message) })
                 break;
             }
             case 202: {
-                setToastMessage(res.payload.message)
+                setToastMessage(res?.Message)
                 break;
             }
             case 404: {
-                setToastMessage(res.payload.message)
+                setToastMessage(res?.Message)
                 break;
             }
             case 400: {
-                setToastMessage(res.payload.message)
+                setToastMessage(res?.Message)
                 break;
             }
             default: {
-                setToastMessage(res.payload.message)
+                setToastMessage(res?.Message)
             }
         }
     }
@@ -202,14 +206,31 @@ const NewsLetterWizard = ({ classes, ...props }) => {
 
 
     useEffect(() => {
-        const preload = () => {
-            const response = dispatch(getNewsletterReportsByIds(1))
-            // handleGetNewsletterResponse(response)
+        const preload = async () => {
+            if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
+                const campaignId = parseInt(props.match.params.id);
+                const response = await dispatch(getCampaignInfo(campaignId))
+                handleGetNewsletterResponse(JSON.parse(response.payload))
+            }
+            setLoader(false);
+        }
+        const initClientFields = async () => {
+            let resp = await dispatch(getAccountExtraData());
+            let _clientFields = [...ClientFields];
+            let arr = Object.keys(resp.payload)
+            let additionalExtraData = arr.map(function (key) {
+                return { [key]: resp.payload[key] };
+            })
+
+            for (let i = 0; i < additionalExtraData.length; i++) {
+                _clientFields.push({ ...additionalExtraData[i], selected: false })
+            }
+            setextraAccountDATA(_clientFields)
         }
 
-        preload()
+        initClientFields();
+        preload();
     }, [])
-
 
     const handleSelectionRadio = (e) => {
         setSelectedRadio({ ...selectedRadio, [e.target.name]: e.target.value })
@@ -238,9 +259,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         handleChange(e)
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
+        setLoader(true);
         if (handleValidations()) {
             console.log("VALUES:", campaingnValues)
+            await dispatch(saveCampaignInfo(campaingnValues));
         }
     }
     const handleDelete = () => {
@@ -292,7 +315,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                 },
                                 {
                                     content: <TextField
-                                        id="outlined-basic"
+                                        id="campaignName"
                                         label=""
                                         variant="outlined"
                                         name="Name"
@@ -454,13 +477,13 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 <MenuItem disabled value="">
                                                     <em>Select</em>
                                                 </MenuItem>
-                                                {['FirstName', 'LastName', 'Email', 'Mobile', 'Other'].map((item) => (
+                                                {extraAccountDATA.map((item) => (
                                                     <MenuItem
-                                                        key={item}
-                                                        value={item}
+                                                        key={item.value}
+                                                        value={item.value}
                                                     // style={getStyles(item, personitem, theme)}
                                                     >
-                                                        {item}
+                                                        {t(item.label)}
                                                     </MenuItem>
                                                 ))}
                                             </Select>
@@ -579,7 +602,9 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                             id="country-select-demo"
                                             // multiple
                                             // style={{ width: 300 }}
-                                            options={['Option1', 'Option2', 'Option3', 'Option4', 'Option5']}
+                                            options={[...LangugeCode.map((item, index) => {
+                                                return t(item.label)
+                                            })]}
                                             className={localClasses.autocomplete}
                                             // value={campaingnValues?.personalDatatoSubject}
                                             autoHighlight
@@ -1059,44 +1084,14 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             />
 
             <Box className={classes.flex} style={{ justifyContent: 'end' }}>
-                <Button
-                    variant='contained'
-                    size='small'
-                    className={clsx(localClasses.btnP20, classes.mlr10, classes.confirmButton)}
-                // onClick={onConfirm}
-                // className={clsx(
-                //   classes.dialogButton,
-                //   classes.dialogConfirmButton
-                // )}
-                >
-                    {t('common.continue')}
-                </Button>
-                <Button
-                    variant='contained'
-                    size='small'
-                    className={clsx(localClasses.btnP20, classes.mlr10, classes.saveButton)}
-                    onClick={handleSubmit}
-                // className={clsx(
-                //   classes.dialogButton,
-                //   classes.dialogCancelButton
-                // )}
-
-                >
-                    {t('common.Save')}
-                </Button>
-                <Button
-                    variant='contained'
-                    size='small'
-                    className={clsx(localClasses.btnP20, classes.mlr10, classes.cancelBtn)}
-                    onClick={() => setConfirmDelete(true)}
-                // className={clsx(
-                //   classes.dialogButton,
-                //   classes.dialogCancelButton
-                // )}
-
-                >
-                    <Delete />
-                </Button>
+                <WizardActions
+                    classes={classes}
+                    onSave={handleSubmit}
+                    onExit={null}
+                    onTestSend={null}
+                    onBack={() => { console.log('show return message') }}
+                    onDelete={() => { setConfirmDelete(true) }}
+                />
             </Box>
             <Dialog
                 classes={classes}
@@ -1118,6 +1113,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                     </Typography>
                 </Box>
             </Dialog>
+            <Loader isOpen={showLoader} />
         </DefaultScreen>
     )
 }

@@ -263,7 +263,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href='/Pulseem/Editor/CampaignInfo?new=1&fromreact=true'
+            href='/react/Campaigns/Create'
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen

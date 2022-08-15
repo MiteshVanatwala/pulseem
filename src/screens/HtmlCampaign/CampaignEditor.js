@@ -19,8 +19,6 @@ import { options } from './constants'
 import { ClientFields } from '../../model/PulseemFields/Fields'
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
-import { getCookie } from '../../helpers/cookies'
-import EditorActions from './EditorActions';
 import TestSend from './modals/TestSend'
 import ResponseModal from './modals/ResponseModal'
 import NoCreditsModal from './modals/NoCreditsModal'
@@ -33,6 +31,7 @@ import Gallery from '../../components/Gallery/Gallery.component';
 import { Dialog } from '../../components/managment/index';
 import { getCommonFeatures, isAlive } from '../../redux/reducers/commonSlice';
 import { AiOutlineExclamationCircle } from "react-icons/ai";
+import WizardActions from '../../components/Wizard/WizardActions';
 
 const CampaignEditor = ({ classes, ...props }) => {
   const { t } = useTranslation();
@@ -567,7 +566,8 @@ const CampaignEditor = ({ classes, ...props }) => {
       />
       {renderEditor()}
       {showGalleryModal()}
-      <EditorActions
+
+      <WizardActions
         campaignId={campaignId}
         innerStyle={{ paddingInline: 15 }}
         classes={classes}

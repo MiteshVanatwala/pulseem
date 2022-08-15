@@ -78,7 +78,26 @@ export const testSend = createAsyncThunk(
         }
     });
 
+export const saveCampaignInfo = createAsyncThunk(
+    'CampaignEditor/CreateOrUpdate', async (campaign, thunkAPI) => {
+        try {
+            const response = await instence.post(`email/CloneArchiveCampaign`, campaign);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    }
+)
 
+export const getCampaignInfo = createAsyncThunk(
+    'CampaignEditor/GetCampaignInfo', async (campaignId, thunkAPI) => {
+        try {
+            const response = await instence.get(`CampaignEditor/GetCampaignInfo/${campaignId}`);
+            return response.data
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
 
 export const campaignEditorSlice = createSlice({
     name: 'campaignEditor',
@@ -91,6 +110,7 @@ export const campaignEditorSlice = createSlice({
             NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
             INVALID_EMAIL: { severity: 'error', color: 'error', message: "common.invalidEmail", showAnimtionCheck: false },
         },
+        campaignInfo: []
     },
     extraReducers: builder => {
         builder
@@ -107,6 +127,9 @@ export const campaignEditorSlice = createSlice({
                     }
                 });
                 state.userBlocks = blocks
+            })
+            .addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
+                state.campaignInfo = payload;
             })
     },
     reducers: {
