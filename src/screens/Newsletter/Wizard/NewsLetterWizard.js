@@ -163,6 +163,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     })
 
     const [campaingnValues, setCampaingnValues] = useState({
+        EmailLanguage: 0,
         CampaignID: "",
         Name: "",
         Subject: "",
@@ -598,43 +599,39 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                 },
                                 {
                                     content:
-                                        <Autocomplete
-                                            id="country-select-demo"
-                                            // multiple
-                                            // style={{ width: 300 }}
-                                            options={[...LangugeCode.map((item, index) => {
-                                                return t(item.label)
-                                            })]}
-                                            className={localClasses.autocomplete}
-                                            // value={campaingnValues?.personalDatatoSubject}
-                                            autoHighlight
-                                            getOptionLabel={(option) => option}
-                                            renderOption={(option) => (
-                                                <React.Fragment>
-                                                    {option}
-                                                </React.Fragment>
-                                            )}
-                                            // onChange={(event, val) => {
-
-                                            //     setCampaingnValues({ ...campaingnValues, personalDatatoSubject: val, Subject: `${campaingnValues.Subject} ##${val}##` })
-                                            // }}
-
-                                            renderInput={(params) => (
-                                                <TextField
-                                                    {...params}
-                                                    variant="outlined"
-                                                    style={{ padding: '1.5px 6px !important' }}
-                                                    inputProps={{
-                                                        ...params.inputProps,
-                                                        autoComplete: 'new-password',
-                                                        style: { padding: '2px 4px' }
-                                                    }}
-                                                />
-                                            )}
-                                            PaperComponent={({ children }) => (
-                                                <Paper className={classes.groupsAutoComplete}>{children}</Paper>
-                                            )}
-                                        />,
+                                        <FormControl className={localClasses.select}>
+                                            <Select
+                                                displayEmpty
+                                                // value={campaingnValues?.personalDatatoSubject}
+                                                value={campaingnValues.EmailLanguage}
+                                                onChange={(event) => {
+                                                    setCampaingnValues({ ...campaingnValues, EmailLanguage: event.target.value })
+                                                }}
+                                                input={<OutlinedInput />}
+                                                renderValue={(selected) => {
+                                                    const lc = LangugeCode.find(e => { return e.value === selected });
+                                                    return t(lc.label);
+                                                }}
+                                                MenuProps={{
+                                                    PaperProps: {
+                                                        style: {
+                                                            maxHeight: 48 * 4.5 + 8,
+                                                            width: 250,
+                                                        },
+                                                    },
+                                                }}
+                                                inputProps={{ 'aria-label': 'Without label' }}
+                                            >
+                                                {LangugeCode.map((item) => (
+                                                    <MenuItem
+                                                        key={item.value}
+                                                        value={item.value}
+                                                    >
+                                                        {t(item.label)}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </FormControl>,
                                     gridSize: { xs: 12, sm: 12 },
 
                                 }

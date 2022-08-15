@@ -56,6 +56,10 @@ export const ClientFields = [
 
 export const LangugeCode = [
   {
+    value: -1,
+    label: "common.select"
+  },
+  {
     value: 0,
     label: "languages.langCodes.hebrew"
   },
