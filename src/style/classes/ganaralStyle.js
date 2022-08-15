@@ -2459,7 +2459,6 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     overflowY: 'scroll',
 
   },
-
   switchButton: {
     background: '#e4e4e4',
     padding: '2px 10px 3px 10px',
