@@ -112,3 +112,14 @@ export const LangugeCode = [
     label: "languages.langCodes.dutch"
   }
 ]
+
+export const MobileSupport = [
+  {
+      value: 0,
+      label: "common.adaptive"
+  },
+  {
+      value: 1,
+      label: "common.responsive"
+  }
+];

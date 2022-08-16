@@ -18,7 +18,7 @@ import { FaGoogle } from 'react-icons/fa';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { saveCampaignInfo, getCampaignInfo, getVerifiedEmail } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
-import { ClientFields, LangugeCode } from "../../../model/PulseemFields/Fields";
+import { ClientFields, LangugeCode, MobileSupport } from "../../../model/PulseemFields/Fields";
 
 const useStyles = makeStyles({
     iconbox: {
@@ -163,7 +163,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         Subject: "",
         personalDatatoSubject: "",
         FromName: "",
-        FromEmail: ""
+        FromEmail: "",
+        IsResponsive: 1
     })
 
     const [selectedRadio, setSelectedRadio] = useState({ a: null, b: null, c: null, d: null })
@@ -527,41 +528,41 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
-                                    content: <Autocomplete
-                                        id="country-select-demo"
-                                        // multiple
-                                        // style={{ width: 300 }}
-                                        options={['Option1', 'Option2', 'Option3', 'Option4', 'Option5']}
-                                        className={localClasses.autocomplete}
-                                        // value={campaingnValues?.personalDatatoSubject}
-                                        autoHighlight
-                                        getOptionLabel={(option) => option}
-                                        renderOption={(option) => (
-                                            <React.Fragment>
-                                                {option}
-                                            </React.Fragment>
-                                        )}
-                                        // onChange={(event, val) => {
-
-                                        //     setCampaingnValues({ ...campaingnValues, personalDatatoSubject: val, Subject: `${campaingnValues.Subject} ##${val}##` })
-                                        // }}
-
-                                        renderInput={(params) => (
-                                            <TextField
-                                                {...params}
-                                                variant="outlined"
-                                                style={{ padding: '1.5px 6px !important' }}
-                                                inputProps={{
-                                                    ...params.inputProps,
-                                                    autoComplete: 'new-password',
-                                                    style: { padding: '2px 4px' }
-                                                }}
-                                            />
-                                        )}
-                                        PaperComponent={({ children }) => (
-                                            <Paper className={classes.groupsAutoComplete}>{children}</Paper>
-                                        )}
-                                    />,
+                                    content: <FormControl className={localClasses.select}>
+                                        <Select
+                                            displayEmpty
+                                            value={campaingnValues?.IsResponsive ? 1 : 0}
+                                            onChange={(event) => {
+                                                setCampaingnValues({
+                                                    ...campaingnValues,
+                                                    IsResponsive: event.target.value === 1 ? true : false
+                                                })
+                                            }}
+                                            input={<OutlinedInput />}
+                                            renderValue={(selected) => {
+                                                const lc = MobileSupport.find(e => { return e.value === selected });
+                                                return t(lc.label);
+                                            }}
+                                            MenuProps={{
+                                                PaperProps: {
+                                                    style: {
+                                                        maxHeight: 48 * 4.5 + 8,
+                                                        width: 250,
+                                                    },
+                                                },
+                                            }}
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                        >
+                                            {MobileSupport.map((item) => (
+                                                <MenuItem
+                                                    key={item.value}
+                                                    value={item.value}
+                                                >
+                                                    {t(item.label)}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>,
                                     gridSize: { xs: 12, sm: 12 },
                                 }
                                 ]}
