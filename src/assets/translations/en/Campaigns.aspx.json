@@ -520,8 +520,8 @@
         "addNewToVerify": "Verify Another Email"
       },
       "secondSlide": {
-        "title": "A short verification before we move on",
-        "desc1": "We want to ensure the email you submitted belongs to you",
+        "title": "A short verification before we move on.",
+        "desc1": "We want to ensure the email you submitted belongs to you.",
         "desc2": "This is a one-time process for each email address",
         "btnText": "Send me a verification email",
         "error1": "Invalid Email",
