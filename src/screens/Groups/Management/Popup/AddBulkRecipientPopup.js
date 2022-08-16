@@ -62,10 +62,14 @@ const AddBulkRecipientPopup = ({ classes,
                             <Typography className={classes.bodyInfo} style={{ marginInline: 10 }}>i</Typography>
                         </Tooltip>
                     </Box>
-                    <Box style={{ cursor: 'pointer' }}>
-                        <Button htmlFor="uploadxl">
+                    <Box>
+                        <label
+                            htmlFor="uploadxl"
+                            style={{
+                                cursor: 'pointer', width: 35, height: 35, display: 'flex', alignItems: 'center'
+                            }}>
                             <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
-                        </Button>
+                        </label>
                     </Box>
                 </Box>
 

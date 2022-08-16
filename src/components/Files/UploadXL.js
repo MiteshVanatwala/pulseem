@@ -70,6 +70,7 @@ const UploadXL = ({
     const fileRef = useRef(null);
     moment.locale(language);
     const dateFormat = 'DD-MM-YYYY HH:mm:ss';
+    const temporaryTextArea = useRef(null);
 
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
@@ -178,11 +179,15 @@ const UploadXL = ({
     };
 
     const handlePasted = (value) => {
+        temporaryTextArea.current.value += "1. handlePasted\n";
         let temp = value ?? areaData;
+        temporaryTextArea.current.value += "2. temp\n";
         let a = temp.split("\n").filter(empty => empty);
+        temporaryTextArea.current.value += "3. a - after filter\n";
         let b = [];
         let cols = 0;
         if (temp.indexOf("\t") > -1) {
+            temporaryTextArea.current.value += "4. Excel\n";
             for (let i = 0; i < a.length; i++) {
                 let splitted = a[i].split("\t");//.filter(obj => !!obj.replace(/ /g, ''));
                 b.push(splitted);
@@ -190,9 +195,12 @@ const UploadXL = ({
                     cols = splitted.length;
                 }
             }
+            temporaryTextArea.current.value += "5. after for\n";
         }
         else {
+            temporaryTextArea.current.value += "6. else\n";
             const records = a.filter((r) => { return r !== "" });
+            temporaryTextArea.current.value += `7. records: ${records.length}\n`;
             for (let i = 0; i < records.length; i++) {
                 let splitted = a[i].split(",");//.filter(obj => !!obj.replace(/ /g, ''));
                 b.push(splitted);
@@ -200,21 +208,26 @@ const UploadXL = ({
                     cols = splitted.length;
                 }
             }
+            temporaryTextArea.current.value += `8. after for\n`;
         }
 
         let dummyArr = [];
         for (let i = 0; i < cols; i++) {
             dummyArr.push(t("sms.adjustTitle"));
         }
+        temporaryTextArea.current.value += `9. cols created\n`;
         setheaders(dummyArr);
         if (b.length > 1000) {
+            temporaryTextArea.current.value += `10. before JsonToCSV\n`;
             jsonToCSV({ array: b }).then((csvOutput) => {
                 const file = createFile(csvOutput, 'csv');
                 setFileToUpload(file);
                 parseFile(csvOutput);
             });
+            temporaryTextArea.current.value += `11. JsonToCSV created\n`;
         }
         else {
+            temporaryTextArea.current.value += `12. map the clients\n`;
             let d = a.map((td) => {
                 if (td.indexOf('\t') > -1) {
                     return td.split('\t');
@@ -224,6 +237,7 @@ const UploadXL = ({
                 }
                 return td;
             })
+            temporaryTextArea.current.value += `13. after mapping\n`;
             settypedData(d)
             setDialogType({ type: "manualUpload" });
         }
@@ -463,14 +477,11 @@ const UploadXL = ({
             });
 
             if (fileToUpload !== null && dataToUpload.length >= 5000) {
-                console.log("1");
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
                 formData.append("groupids", uploadToGroups);
                 formData.append("mapping", JSON.stringify(mapping));
-                console.log("2");
                 r = await dispatch(addRecipients(formData))
-                console.log("3", r);
             }
             else {
                 const finalPayload = {
@@ -478,17 +489,12 @@ const UploadXL = ({
                     GroupIds: uploadToGroups,
                     Mapping: mapping
                 }
-                console.log("4", finalPayload);
                 r = await dispatch(addRecipient(finalPayload))
-                console.log("5", r);
             }
 
             setFileToUpload(null);
-            console.log("6");
             onDone(r);
-            console.log("7");
             setTimeout(() => {
-                console.log("8");
                 setLoader(false);
             }, 1000);
         }
@@ -583,7 +589,7 @@ const UploadXL = ({
                             <Typography className={classes.bodyInfo}>i</Typography>
                         </Tooltip>
                     </Box>
-                    <Box className={classes.sidebar} style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
+                    <Box style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
                         <table
                             style={{
                                 borderCollapse: "collapse",
@@ -717,6 +723,7 @@ const UploadXL = ({
                 dialogType && <Dialog
                     classes={classes}
                     open={dialogType}
+                    childrenStyle={classes.mb25}
                     onClose={() => { setDialogType(null) }}
                     {...currentDialog}>
                     {currentDialog.content}
@@ -813,6 +820,7 @@ const UploadXL = ({
                 ) : null}
                 <span>{t("sms.totalRecords")}:  {totalRecords}</span>
             </div>
+            <textarea ref={temporaryTextArea} style={{ width: '100%', height: 100 }}></textarea>
         </Grid>
         <Loader isOpen={showLoader} progress={uploadProgress} message={t("common.uploadInProgress")} />
     </Grid>

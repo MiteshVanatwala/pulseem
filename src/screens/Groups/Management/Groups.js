@@ -874,7 +874,6 @@ const Groups = ({ classes }) => {
         )
     }
     const handleAddRecipientResponse = (res) => {
-        console.log(res.payload.StatusCode);
         switch (res.payload.StatusCode) {
             case 201: {
                 setResponseMessage({ title: t("recipient.summary.summaryImportTitle"), message: '', summary: res.payload.Summary })
