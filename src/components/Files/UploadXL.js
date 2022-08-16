@@ -19,6 +19,7 @@ import { renderHtml } from "../../helpers/utils";
 import moment from 'moment';
 import 'moment/locale/he';
 import { jsonToCSV, createFile } from '../../helpers/SheetHelper';
+import { Button } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -789,15 +790,15 @@ const UploadXL = ({
             <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
                 {areaData !== "" ? (
                     <div>
-                        <span
+                        <Button
                             className={classes.addManualDiv}
                             onClick={() => {
                                 handlePasted(areaData);
                             }}
                         >
                             {t("sms.editFields")}
-                        </span>
-                        <span
+                        </Button>
+                        <Button
                             className={classes.clearDiv}
                             onClick={() => {
                                 setareaData("");
@@ -807,7 +808,7 @@ const UploadXL = ({
                             }}
                         >
                             {t("sms.clearList")}
-                        </span>
+                        </Button>
                     </div>
                 ) : null}
                 <span>{t("sms.totalRecords")}:  {totalRecords}</span>

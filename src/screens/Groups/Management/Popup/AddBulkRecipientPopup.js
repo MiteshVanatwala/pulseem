@@ -63,9 +63,9 @@ const AddBulkRecipientPopup = ({ classes,
                         </Tooltip>
                     </Box>
                     <Box style={{ cursor: 'pointer' }}>
-                        <label htmlFor="uploadxl">
+                        <Button htmlFor="uploadxl">
                             <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
-                        </label>
+                        </Button>
                     </Box>
                 </Box>
 
