@@ -1092,8 +1092,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                 <WizardActions
                     classes={classes}
                     onSave={handleSubmit}
-                    onExit={null}
-                    onTestSend={null}
                     onBack={() => { console.log('show return message') }}
                     onDelete={() => { setConfirmDelete(true) }}
                 />
