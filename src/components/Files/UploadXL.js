@@ -462,11 +462,14 @@ const UploadXL = ({
             });
 
             if (fileToUpload !== null && dataToUpload.length >= 5000) {
+                console.log("1");
                 const formData = new FormData();
                 formData.append("file", fileToUpload);
                 formData.append("groupids", uploadToGroups);
                 formData.append("mapping", JSON.stringify(mapping));
+                console.log("2");
                 r = await dispatch(addRecipients(formData))
+                console.log("3", r);
             }
             else {
                 const finalPayload = {
@@ -474,12 +477,17 @@ const UploadXL = ({
                     GroupIds: uploadToGroups,
                     Mapping: mapping
                 }
+                console.log("4", finalPayload);
                 r = await dispatch(addRecipient(finalPayload))
+                console.log("5", r);
             }
 
             setFileToUpload(null);
+            console.log("6");
             onDone(r);
+            console.log("7");
             setTimeout(() => {
+                console.log("8");
                 setLoader(false);
             }, 1000);
         }
