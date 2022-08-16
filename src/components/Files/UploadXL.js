@@ -179,68 +179,74 @@ const UploadXL = ({
     };
 
     const handlePasted = (value) => {
-        temporaryTextArea.current.value += "1. handlePasted\n";
-        let temp = value ?? areaData;
-        temporaryTextArea.current.value += "2. temp\n";
-        let a = temp.split("\n").filter(empty => empty);
-        temporaryTextArea.current.value += "3. a - after filter\n";
-        let b = [];
-        let cols = 0;
-        if (temp.indexOf("\t") > -1) {
-            temporaryTextArea.current.value += "4. Excel\n";
-            for (let i = 0; i < a.length; i++) {
-                let splitted = a[i].split("\t");//.filter(obj => !!obj.replace(/ /g, ''));
-                b.push(splitted);
-                if (splitted.length > cols) {
-                    cols = splitted.length;
+        try {
+            temporaryTextArea.current.value += "1. handlePasted\n";
+            let temp = value ?? areaData;
+            temporaryTextArea.current.value += "2. temp\n";
+            let a = temp.split("\n").filter(empty => empty);
+            temporaryTextArea.current.value += "3. a - after filter\n";
+            let b = [];
+            let cols = 0;
+            if (temp.indexOf("\t") > -1) {
+                temporaryTextArea.current.value += "4. Excel\n";
+                for (let i = 0; i < a.length; i++) {
+                    let splitted = a[i].split("\t");//.filter(obj => !!obj.replace(/ /g, ''));
+                    b.push(splitted);
+                    if (splitted.length > cols) {
+                        cols = splitted.length;
+                    }
                 }
+                temporaryTextArea.current.value += "5. after for\n";
             }
-            temporaryTextArea.current.value += "5. after for\n";
+            else {
+                temporaryTextArea.current.value += "6. else\n";
+                const records = a.filter((r) => { return r !== "" });
+                temporaryTextArea.current.value += `7. records: ${records.length}\n`;
+                for (let i = 0; i < records.length; i++) {
+                    let splitted = a[i].split(",");//.filter(obj => !!obj.replace(/ /g, ''));
+                    b.push(splitted);
+                    if (splitted.length > cols) {
+                        cols = splitted.length;
+                    }
+                }
+                temporaryTextArea.current.value += `8. after for\n`;
+            }
+
+            let dummyArr = [];
+            for (let i = 0; i < cols; i++) {
+                dummyArr.push(t("sms.adjustTitle"));
+            }
+            temporaryTextArea.current.value += `9. cols created\n`;
+            setheaders(dummyArr);
+            if (b.length > 1000) {
+                temporaryTextArea.current.value += `10. before JsonToCSV\n`;
+                jsonToCSV({ array: b }).then((csvOutput) => {
+                    const file = createFile(csvOutput, 'csv');
+                    setFileToUpload(file);
+                    parseFile(csvOutput);
+                });
+                temporaryTextArea.current.value += `11. JsonToCSV created\n`;
+            }
+            else {
+                temporaryTextArea.current.value += `12. map the clients\n`;
+                let d = a.map((td) => {
+                    if (td.indexOf('\t') > -1) {
+                        return td.split('\t');
+                    }
+                    else if (td.indexOf(',') > -1) {
+                        return td.split(',');
+                    }
+                    return td;
+                })
+                temporaryTextArea.current.value += `13. after mapping\n`;
+                settypedData(d)
+                setDialogType({ type: "manualUpload" });
+            }
         }
-        else {
-            temporaryTextArea.current.value += "6. else\n";
-            const records = a.filter((r) => { return r !== "" });
-            temporaryTextArea.current.value += `7. records: ${records.length}\n`;
-            for (let i = 0; i < records.length; i++) {
-                let splitted = a[i].split(",");//.filter(obj => !!obj.replace(/ /g, ''));
-                b.push(splitted);
-                if (splitted.length > cols) {
-                    cols = splitted.length;
-                }
-            }
-            temporaryTextArea.current.value += `8. after for\n`;
+        catch (e) {
+            temporaryTextArea.current.value += `err: ${e}\n`;
         }
 
-        let dummyArr = [];
-        for (let i = 0; i < cols; i++) {
-            dummyArr.push(t("sms.adjustTitle"));
-        }
-        temporaryTextArea.current.value += `9. cols created\n`;
-        setheaders(dummyArr);
-        if (b.length > 1000) {
-            temporaryTextArea.current.value += `10. before JsonToCSV\n`;
-            jsonToCSV({ array: b }).then((csvOutput) => {
-                const file = createFile(csvOutput, 'csv');
-                setFileToUpload(file);
-                parseFile(csvOutput);
-            });
-            temporaryTextArea.current.value += `11. JsonToCSV created\n`;
-        }
-        else {
-            temporaryTextArea.current.value += `12. map the clients\n`;
-            let d = a.map((td) => {
-                if (td.indexOf('\t') > -1) {
-                    return td.split('\t');
-                }
-                else if (td.indexOf(',') > -1) {
-                    return td.split(',');
-                }
-                return td;
-            })
-            temporaryTextArea.current.value += `13. after mapping\n`;
-            settypedData(d)
-            setDialogType({ type: "manualUpload" });
-        }
         setLoader(false);
     };
 
