@@ -74,6 +74,20 @@ const CustomEmojiPicker = ({
             <EmojiPicker
                 className={clsx(styles.pickerBox, 'picker-box-root')}
                 onEmojiClick={onEmojiClick}
+                groupNames={{
+                    smileys_people: t("emoji.smiles"),
+                    animals_nature: t("emoji.nature"),
+                    food_drink: t("emoji.foodAndDrinks"),
+                    travel_places: t("emoji.places"),
+                    activities: t("emoji.activities"),
+                    objects: t("emoji.objects"),
+                    symbols: t("emoji.symbols"),
+                    recently_used: t("emoji.recently"),
+                }}
+                groupVisibility={{
+                    flags: false,
+                    recently_used: false
+                }}
             />
         </Box>
     )
