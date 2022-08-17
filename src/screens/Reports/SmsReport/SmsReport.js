@@ -65,7 +65,7 @@ const SmsReport = ({ classes }) => {
     ClickCountUnique: {
       title: t('common.Unique'),
       href: `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => navigate(`/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
+      onClick: () => window.location = `/Pulseem/SMSLinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     ClickCount: {
       title: windowSize === 'xs' ? t('common.Total') : t('common.Clicks'),
@@ -75,7 +75,7 @@ const SmsReport = ({ classes }) => {
     PercetangeClicks: {
       title: t('mainReport.locUniqueClicksPercents.HeaderText'),
       href: `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => navigate(`/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
+      onClick: () => window.location = `/Pulseem/LinksClicksReport.aspx?CampaignID=${id}&fromreact=true&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     Failed: {
       title: windowSize === 'xs' ? '' : t("common.failedStatus"),
@@ -89,7 +89,7 @@ const SmsReport = ({ classes }) => {
     Replies: {
       title: t('common.Total'),
       href: `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`,
-      onClick: () => navigate(`/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`)
+      onClick: () => window.location = `/Pulseem/ResponsesReport.aspx?SmsCampaignID=${id}&Culture=${isRTL ? 'he-IL' : 'en-US'}`
     },
     DLR: {
       title: windowSize === 'xs' ? '' : t('common.DLR'),
