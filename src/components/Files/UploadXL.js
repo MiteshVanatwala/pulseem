@@ -372,6 +372,7 @@ const UploadXL = ({
                         reader.readAsText(file, "ISO-8859-8");
                     }
                     else {
+                        setLoader(false);
                         return false;
                     }
                 }
