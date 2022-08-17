@@ -19,6 +19,7 @@ import { renderHtml } from "../../helpers/utils";
 import moment from 'moment';
 import 'moment/locale/he';
 import { jsonToCSV, createFile } from '../../helpers/SheetHelper';
+import { Button } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -226,6 +227,7 @@ const UploadXL = ({
             settypedData(d)
             setDialogType({ type: "manualUpload" });
         }
+
         setLoader(false);
     };
 
@@ -574,7 +576,7 @@ const UploadXL = ({
                             <Typography className={classes.bodyInfo}>i</Typography>
                         </Tooltip>
                     </Box>
-                    <Box className={classes.sidebar} style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
+                    <Box style={{ minHeight: "200px", maxWidth: "700px" }} key="columnAdjustment">
                         <table
                             style={{
                                 borderCollapse: "collapse",
@@ -708,6 +710,7 @@ const UploadXL = ({
                 dialogType && <Dialog
                     classes={classes}
                     open={dialogType}
+                    childrenStyle={classes.mb25}
                     onClose={() => { setDialogType(null) }}
                     {...currentDialog}>
                     {currentDialog.content}
@@ -781,15 +784,15 @@ const UploadXL = ({
             <div className={classes.manualChild} style={{ justifyContent: areaData === "" ? "flex-end" : "space-between" }}>
                 {areaData !== "" ? (
                     <div>
-                        <span
+                        <Button
                             className={classes.addManualDiv}
                             onClick={() => {
                                 handlePasted(areaData);
                             }}
                         >
                             {t("sms.editFields")}
-                        </span>
-                        <span
+                        </Button>
+                        <Button
                             className={classes.clearDiv}
                             onClick={() => {
                                 setareaData("");
@@ -799,7 +802,7 @@ const UploadXL = ({
                             }}
                         >
                             {t("sms.clearList")}
-                        </span>
+                        </Button>
                     </div>
                 ) : null}
                 <span>{t("sms.totalRecords")}:  {totalRecords}</span>

@@ -1,4 +1,4 @@
-import { Box, makeStyles, Typography } from "@material-ui/core";
+import { Box, makeStyles, Typography, Button } from "@material-ui/core";
 import { useTranslation } from "react-i18next";
 import { Dialog } from "../../../../components/managment/Dialog";
 import { UploadSettings } from "../../tempConstants";
@@ -62,8 +62,12 @@ const AddBulkRecipientPopup = ({ classes,
                             <Typography className={classes.bodyInfo} style={{ marginInline: 10 }}>i</Typography>
                         </Tooltip>
                     </Box>
-                    <Box style={{ cursor: 'pointer' }}>
-                        <label htmlFor="uploadxl">
+                    <Box>
+                        <label
+                            htmlFor="uploadxl"
+                            style={{
+                                cursor: 'pointer', width: 35, height: 35, display: 'flex', alignItems: 'center'
+                            }}>
                             <AiOutlineCloudUpload style={{ fontSize: 30, color: '#000' }} />
                         </label>
                     </Box>

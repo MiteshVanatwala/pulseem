@@ -13,9 +13,9 @@ const minDialogWidth = {
 };
 
 const maxDialogWidth = {
-  md: 1050,
-  lg: 1050,
-  xl: 1050,
+  md: 1070,
+  lg: 1070,
+  xl: 1070,
 };
 
 const summaryPadding = {
@@ -1651,25 +1651,25 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
     },
   },
   addManualDiv: {
-    padding: "8px",
-    backgroundColor: "#51AA51",
-    color: "#fff",
-    marginInlineEnd: "6px",
-    borderRadius: "6px",
-    cursor: "pointer",
+    padding: "8px !important",
+    backgroundColor: "#51AA51 !important",
+    color: "#fff !important",
+    marginInlineEnd: "6px !important",
+    borderRadius: "6px !important",
+    cursor: "pointer !important",
     "@media screen and (max-width: 768px)": {
-      fontSize: "10px",
+      fontSize: "10px !important",
     },
   },
   clearDiv: {
-    padding: "8px",
-    color: "#277BFF",
-    marginInlineEnd: "6px",
-    borderRadius: "6px",
-    cursor: "pointer",
-    border: "1px solid #277BFF",
+    padding: "8px !important",
+    color: "#277BFF !important",
+    marginInlineEnd: "6px !important",
+    borderRadius: "6px !important",
+    cursor: "pointer !important",
+    border: "1px solid #277BFF !important",
     "@media screen and (max-width: 768px)": {
-      fontSize: "10px",
+      fontSize: "10px !important",
     },
   },
   backBtn: {
