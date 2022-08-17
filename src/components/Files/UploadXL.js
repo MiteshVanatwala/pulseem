@@ -70,7 +70,7 @@ const UploadXL = ({
     const fileRef = useRef(null);
     moment.locale(language);
     const dateFormat = 'DD-MM-YYYY HH:mm:ss';
-    
+
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
             const exist = settings.Fields.filter((e) => {
@@ -178,59 +178,54 @@ const UploadXL = ({
     };
 
     const handlePasted = (value) => {
-        try {
-            let temp = value ?? areaData;
-            let a = temp.split("\n").filter(empty => empty);
-            let b = [];
-            let cols = 0;
-            if (temp.indexOf("\t") > -1) {
-                for (let i = 0; i < a.length; i++) {
-                    let splitted = a[i].split("\t");//.filter(obj => !!obj.replace(/ /g, ''));
-                    b.push(splitted);
-                    if (splitted.length > cols) {
-                        cols = splitted.length;
-                    }
+        let temp = value ?? areaData;
+        let a = temp.split("\n").filter(empty => empty);
+        let b = [];
+        let cols = 0;
+        if (temp.indexOf("\t") > -1) {
+            for (let i = 0; i < a.length; i++) {
+                let splitted = a[i].split("\t");//.filter(obj => !!obj.replace(/ /g, ''));
+                b.push(splitted);
+                if (splitted.length > cols) {
+                    cols = splitted.length;
                 }
-            }
-            else {
-                const records = a.filter((r) => { return r !== "" });
-                for (let i = 0; i < records.length; i++) {
-                    let splitted = a[i].split(",");//.filter(obj => !!obj.replace(/ /g, ''));
-                    b.push(splitted);
-                    if (splitted.length > cols) {
-                        cols = splitted.length;
-                    }
-                }
-            }
-
-            let dummyArr = [];
-            for (let i = 0; i < cols; i++) {
-                dummyArr.push(t("sms.adjustTitle"));
-            }
-            setheaders(dummyArr);
-            if (b.length > 1000) {
-                jsonToCSV({ array: b }).then((csvOutput) => {
-                    const file = createFile(csvOutput, 'csv');
-                    setFileToUpload(file);
-                    parseFile(csvOutput);
-                });
-            }
-            else {
-                let d = a.map((td) => {
-                    if (td.indexOf('\t') > -1) {
-                        return td.split('\t');
-                    }
-                    else if (td.indexOf(',') > -1) {
-                        return td.split(',');
-                    }
-                    return td;
-                })
-                settypedData(d)
-                setDialogType({ type: "manualUpload" });
             }
         }
-        catch (e) {
-            console.log(e);
+        else {
+            const records = a.filter((r) => { return r !== "" });
+            for (let i = 0; i < records.length; i++) {
+                let splitted = a[i].split(",");//.filter(obj => !!obj.replace(/ /g, ''));
+                b.push(splitted);
+                if (splitted.length > cols) {
+                    cols = splitted.length;
+                }
+            }
+        }
+
+        let dummyArr = [];
+        for (let i = 0; i < cols; i++) {
+            dummyArr.push(t("sms.adjustTitle"));
+        }
+        setheaders(dummyArr);
+        if (b.length > 1000) {
+            jsonToCSV({ array: b }).then((csvOutput) => {
+                const file = createFile(csvOutput, 'csv');
+                setFileToUpload(file);
+                parseFile(csvOutput);
+            });
+        }
+        else {
+            let d = a.map((td) => {
+                if (td.indexOf('\t') > -1) {
+                    return td.split('\t');
+                }
+                else if (td.indexOf(',') > -1) {
+                    return td.split(',');
+                }
+                return td;
+            })
+            settypedData(d)
+            setDialogType({ type: "manualUpload" });
         }
 
         setLoader(false);
