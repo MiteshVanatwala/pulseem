@@ -883,7 +883,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
         <Box className='cFlexSlide secondSlide' >
           <Box className='titleDescBox'>
             <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.title')}</Typography>
-            <Typography variant='body1' className='desc' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc1') + ' ' + t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc2')}</Typography>
+            <Typography variant='body1' className='desc' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc1')}</Typography>
+            <Typography variant='body1' className='desc' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc2')}</Typography>
           </Box>
           <Box className={classes.flexColumn}>
             <Box>

@@ -1753,6 +1753,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       textAlign: 'center',
       '&.secondSlide': {
         '& .titleDescBox': {
+          // '& :nthChild(2)': {
+          //   marginTop: 20
+          // }
           '& .desc': {
             marginTop: 20
           }
