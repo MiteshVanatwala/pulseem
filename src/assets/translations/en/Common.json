@@ -575,5 +575,6 @@
   "autoLogoutMessage": "Please note: Due to inactivity on our site, you have been logged out of our system.<br/>Please click on the Confirm button below to sign in.",
   "invalidEmail": "Invalid Email address",
   "adaptive": "Adaptive",
-  "responsive": "Responsive"
+  "responsive": "Responsive",
+  "chooseFile": "Upload File"
 }

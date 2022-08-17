@@ -4,10 +4,11 @@ import { Image } from './Image'
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { postFile, deleteGalleryFile } from '../../redux/reducers/gallerySlice';
+import { deleteGalleryFile, uploadFile } from '../../redux/reducers/gallerySlice';
 import { PulseemFolderType } from '../../model/PulseemFields/Fields';
+import { Loader } from '../Loader/Loader';
 
-export const GalleryImages = ({
+export const GalleryDocuments = ({
     classes,
     isRTL,
     folder,
@@ -20,8 +21,8 @@ export const GalleryImages = ({
     onReachToLimit = () => null,
 }) => {
 
-    const imagesPerScroll = 100;
-    const [images, setImages] = useState([]);
+    const documentsPerScroll = 100;
+    const [docs, setDocs] = useState([]);
     const dispatch = useDispatch();
     const { t } = useTranslation();
     const [fileToUpload, setFileToUpload] = useState(null);
@@ -29,37 +30,31 @@ export const GalleryImages = ({
     const [galleryReady, setGalleryReady] = useState(false);
     const [isReInit, setReinit] = useState(false);
     const hiddenFileInput = React.useRef(null);
+    const [showLoader, setLoader] = useState(false);
+    const { uploadProgress } = useSelector(state => state.gallery);
 
 
     useEffect(() => {
         if (fileToUpload != null && isFilePicked) {
+            setLoader(true);
             setIsFilePicked(false);
             setFileToUpload(null);
             const formData = new FormData();
             formData.append('File', fileToUpload);
             if (fileToUpload.size > 1048576) {
-                onToast({ severity: 'error', color: 'error', message: t('common.maxImageSize'), showAnimtionCheck: false })
+                onToast({ severity: 'error', color: 'error', message: t('common.maxDocumentSize'), showAnimtionCheck: false })
                 setFileToUpload(null);
                 return;
             }
             new Promise(resolve => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    var binaryData = e.target.result;
-                    var base64String = window.btoa(binaryData);
-                    const imgBase64 =
-                        "data:" + fileToUpload.type + ";base64," + base64String;
-                    resolve(imgBase64);
-                };
-                reader.readAsBinaryString(fileToUpload);
+                const formData = new FormData();
+                formData.append("file", fileToUpload);
+                formData.append("FolderName", selectedFolder);
+                formData.append("FolderType", PulseemFolderType.DOCUMENT);
+                resolve(formData);
             }).then(async (result) => {
-                const fileModel = {
-                    FileName: fileToUpload.name,
-                    Base64: result,
-                    FolderName: selectedFolder,
-                    FolderType: PulseemFolderType.CLIENT_IMAGES
-                }
-                await dispatch(postFile(fileModel));
+                await dispatch(uploadFile(result));
+                setLoader(false);
                 setReinit(true);
                 onReInitGallery();
             });
@@ -73,12 +68,13 @@ export const GalleryImages = ({
         setIsFilePicked(true);
         return false;
     };
-    const deleteImage = (fileModel) => async (event) => {
+    const deleteDocument = (fileModel) => async (event) => {
         event.preventDefault();
         event.stopPropagation();
-        fileModel.FolderName = fileModel.FolderName.replace('main\\', '');
-        fileModel.FolderType = PulseemFolderType.CLIENT_IMAGES;
-        await dispatch(deleteGalleryFile(fileModel));
+        const fModel = {...fileModel};
+        fModel.FolderName = fileModel.FolderName.replace('main\\', '');
+        fModel.FolderType = PulseemFolderType.DOCUMENT;
+        await dispatch(deleteGalleryFile(fModel));
         setReinit(true);
         onReInitGallery();
     }
@@ -90,24 +86,24 @@ export const GalleryImages = ({
     useEffect(() => {
         if (folder && folder.files) {
             if (folder.files.length === 0) {
-                setImages(null);
+                setDocs(null);
             }
             else {
-                const currentFeed = [...folder.files].slice(scrollIndex * imagesPerScroll, (scrollIndex + 1) * imagesPerScroll);
+                const currentFeed = [...folder.files].slice(scrollIndex * documentsPerScroll, (scrollIndex + 1) * documentsPerScroll);
                 if (folder.files.length < 100) {
-                    setImages(folder.files)
+                    setDocs(folder.files)
                 }
                 else {
                     if (scrollIndex > 0) {
-                        if (folder.files.length > images.length) {
-                            setImages([...images, ...currentFeed]);
+                        if (folder.files.length > docs.length) {
+                            setDocs([...docs, ...currentFeed]);
                         }
                         else {
                             onReachToLimit();
                         }
                     }
                     else {
-                        setImages(currentFeed);
+                        setDocs(currentFeed);
                     }
                 }
             }
@@ -130,32 +126,33 @@ export const GalleryImages = ({
                         ref={hiddenFileInput}
                         onChange={changeHandler}
                         hidden
-                        accept=".png,.jpg,.jpeg" />
+                        accept=".doc,.docx,.pdf,.rtf,.xls,.xlsv,.csv,.txt,.jpg,.jpeg,.ppt" />
                     <Box className="img-container drag-here">
                         <AiOutlineCloudUpload style={{ fontSize: 30 }} />
-                        {t('common.chooseImage')}
+                        {t('common.chooseFile')}
                     </Box>
                 </Button>
             </Grid>
             {
-                images && images.map((f, index) => {
-                    const imgKey = `${f.FolderName.replace('\\', '')}_${index}`;
-                    return (
-                        <Image
-                            classes={classes}
-                            onSelectFile={onSelectFile}
-                            onDelete={deleteImage}
-                            imgSrc={f.FileURL}
-                            imgKey={imgKey}
-                            fileIndex={index}
-                            selectedFile={selectedFile}
-                            imgFile={f}
-                            key={`g_${index}`}
-                        />
-
-                    )
+                docs && docs.map((f, index) => {
+                    const fileKey = `${f.FolderName.replace('\\', '')}_${index}`;
+                    const fileExtension = f.FileURL.split('.')[f.FileURL.split('.').length - 1];
+                    return <Image
+                        classes={classes}
+                        onSelectFile={onSelectFile}
+                        onDelete={deleteDocument}
+                        imgSrc={f.FileURL}
+                        imgKey={fileKey}
+                        fileIndex={index}
+                        selectedFile={selectedFile}
+                        imgFile={f}
+                        key={`g_${index}`}
+                        folderType={PulseemFolderType.DOCUMENT}
+                        fileExtension={fileExtension}
+                    />
                 })
             }
+            <Loader isOpen={showLoader} progress={uploadProgress} message={t("common.uploadInProgress")} />
         </Grid>)
     }
     return <></>

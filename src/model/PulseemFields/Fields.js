@@ -115,11 +115,16 @@ export const LangugeCode = [
 
 export const MobileSupport = [
   {
-      value: 0,
-      label: "common.adaptive"
+    value: 0,
+    label: "common.adaptive"
   },
   {
-      value: 1,
-      label: "common.responsive"
+    value: 1,
+    label: "common.responsive"
   }
 ];
+
+export const PulseemFolderType = {
+  CLIENT_IMAGES: 0,
+  DOCUMENT: 1
+}
