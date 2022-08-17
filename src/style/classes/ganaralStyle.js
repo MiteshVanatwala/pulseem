@@ -13,9 +13,9 @@ const minDialogWidth = {
 };
 
 const maxDialogWidth = {
-  md: 1050,
-  lg: 1050,
-  xl: 1050,
+  md: 1070,
+  lg: 1070,
+  xl: 1070,
 };
 
 const summaryPadding = {
