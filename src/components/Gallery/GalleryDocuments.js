@@ -71,9 +71,10 @@ export const GalleryDocuments = ({
     const deleteDocument = (fileModel) => async (event) => {
         event.preventDefault();
         event.stopPropagation();
-        fileModel.FolderName = fileModel.FolderName.replace('main\\', '');
-        fileModel.FolderType = PulseemFolderType.DOCUMENT;
-        await dispatch(deleteGalleryFile(fileModel));
+        const fModel = {...fileModel};
+        fModel.FolderName = fileModel.FolderName.replace('main\\', '');
+        fModel.FolderType = PulseemFolderType.DOCUMENT;
+        await dispatch(deleteGalleryFile(fModel));
         setReinit(true);
         onReInitGallery();
     }
