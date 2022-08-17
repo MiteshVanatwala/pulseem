@@ -15,8 +15,15 @@ const LazyBackground = (props) => {
         setImageLoaded(false);
     };
 
+    const bgObject = { backgroundImage: `url('${props.url}')` }
+    if (props?.style) {
+        Object.assign(bgObject, ...props?.style);
+    }
+    else {
+        bgObject["background-size"] = "cover";
+    }
     return imageLoaded ? (
-        <Box className="responsive-bg" style={{ backgroundImage: `url('${props.url}')` }}>{props.children}</Box>
+        <Box className="responsive-bg" style={bgObject}> {props.children}</Box >
     ) : (<Skeleton variant="rect" width="100%" height={130} />);
 }
 

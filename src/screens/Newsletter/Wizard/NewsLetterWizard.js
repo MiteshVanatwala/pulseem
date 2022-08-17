@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import DefaultScreen from "../../DefaultScreen";
 import clsx from "clsx";
+import { BiUpload } from 'react-icons/bi';
+import { FaGoogle } from 'react-icons/fa';
+import { IoMdImages } from 'react-icons/io';
 import { Box, Divider, Typography, TextField, Button, Paper, InputAdornment, Checkbox, Radio, Grid, makeStyles, FormControl, Select, OutlinedInput, MenuItem } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
@@ -9,16 +12,15 @@ import { useTranslation } from "react-i18next";
 import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { campaignData, countries } from '../tempConstants';
 import SmileIcon from '../../../assets/images/smile.png'
 import { Dialog } from "../../../components/managment/Dialog";
-import { BiUpload } from 'react-icons/bi';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { FaGoogle } from 'react-icons/fa';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { saveCampaignInfo, getCampaignInfo, getVerifiedEmail } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
-import { ClientFields, LangugeCode, MobileSupport } from "../../../model/PulseemFields/Fields";
+import Gallery from '../../../components/Gallery/Gallery.component';
+import { ClientFields, LangugeCode, MobileSupport, PulseemFolderType } from "../../../model/PulseemFields/Fields";
+
 
 const useStyles = makeStyles({
     iconbox: {
@@ -141,6 +143,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
     const { campaignInfo, verifiedEmails } = useSelector(state => state.campaignEditor);
+    const [showGallery, setShowGallery] = useState(false);
+    const [isGalleryConfirmed, setIsFileSelected] = useState(false);
 
     const ErrorTexts = {
         Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
@@ -670,8 +674,12 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                 {
                                     content: <>
                                         <Box className={localClasses.fileUploadBox}>
-                                            <input type='file' id='upldNLFile' />
-                                            <label htmlFor='upldNLFile'><BiUpload /></label>
+                                            <Button
+                                                onClick={() => {
+                                                    setShowGallery(true);
+                                                }}>
+                                                <label htmlFor='upldNLFile'><BiUpload /></label>
+                                            </Button>
                                         </Box>
                                         <label className={localClasses.helperText}>{t("campaigns.newsLetterEditor.helpTexts.upload")}</label>
                                     </>
@@ -693,9 +701,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
                     name='googleAnalytics'
-                // className={ }
-                // checked={!!selectedCheck['a']}
-                // onClick={handleChangeCheckbox}
+                    // className={ }
+                    checked={campaingnValues.GoogleAnalytics === true}
+                    onClick={() => {
+                        setCampaingnValues({ ...campaingnValues, GoogleAnalytics: !campaingnValues.GoogleAnalytics })
+                    }}
                 />
                 <FaGoogle />
                 <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.gAnalytics")} align="left">{t("campaigns.newsLetterEditor.gAnalytics")}</Typography>
@@ -1059,6 +1069,53 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         </Box>
     )
 
+    const getDeleteStatus = () => {
+        return setConfirmDelete(true)
+    }
+    const handleGalleryConfirm = () => {
+        setIsFileSelected(true);
+    }
+    const handleSelectedImage = (image) => {
+        setShowGallery(false);
+    }
+    const showGalleryModal = () => {
+        if (showGallery) {
+            let dialog = {};
+            dialog = renderGalleryDialog();
+
+            return (
+                <Dialog
+                    maxHeight="calc(70vh)"
+                    disableBackdropClick={true}
+                    style={{ minHeight: 400 }}
+                    showDivider={false}
+                    classes={classes}
+                    open={showGallery}
+                    onClose={() => { setShowGallery(false) }}
+                    onConfirm={handleGalleryConfirm}
+                    {...dialog}>
+                    {dialog.content}
+                </Dialog>
+            );
+        }
+    }
+    const renderGalleryDialog = () => {
+        return {
+            showDivider: false,
+            icon: (
+                <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
+            ),
+            title: t("common.imageGallery"),
+            content: (
+                <Gallery
+                    classes={classes}
+                    isConfirm={isGalleryConfirmed}
+                    callbackSelectFile={handleSelectedImage}
+                    style={{ minWidth: 400 }}
+                    folderType={PulseemFolderType.DOCUMENT} />
+            )
+        };
+    }
 
     return (
         <DefaultScreen
@@ -1066,6 +1123,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             classes={classes}
             containerClass={clsx(classes.management, classes.mb50)}
         >
+            {showGalleryModal()}
             {renderToast()}
             <Typography className={classes.managementTitle}>
                 {t("campaigns.createNewsLetterHeader")}
@@ -1093,7 +1151,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                     classes={classes}
                     onSave={handleSubmit}
                     onBack={() => { console.log('show return message') }}
-                    onDelete={() => { setConfirmDelete(true) }}
+                    onDelete={props.match.params.id > 0 && getDeleteStatus}
                 />
             </Box>
             <Dialog

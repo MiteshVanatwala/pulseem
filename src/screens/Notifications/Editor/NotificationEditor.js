@@ -33,6 +33,7 @@ import {
   CheckAnimation
 } from '../../../assets/images/settings/index'
 import { isValidUrl } from '../../../helpers/UrlHelper';
+import { PulseemFolderType } from '../../../model/PulseemFields/Fields';
 
 const useStylesBootstrap = makeStyles((theme) => ({
   arrow: {
@@ -1257,7 +1258,8 @@ const NotificationEditor = ({ props, classes }) => {
           classes={classes}
           isConfirm={isGalleryConfirmed}
           callbackSelectFile={handleSelectedImage}
-          style={{ minWidth: 400 }} />
+          style={{ minWidth: 400 }}
+          folderType={PulseemFolderType.CLIENT_IMAGES} />
       )
     };
   }

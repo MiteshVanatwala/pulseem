@@ -2,9 +2,9 @@ import { instence } from '../../helpers/api'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const getFileGallery = createAsyncThunk(
-    '/Gallery/GetFiles', async (_, thunkAPI) => {
+    '/Gallery/GetFiles', async (folderType, thunkAPI) => {
         try {
-            const response = await instence.get(`/Gallery/GetFiles`);
+            const response = await instence.get(`/Gallery/GetFiles/${folderType}`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -12,9 +12,9 @@ export const getFileGallery = createAsyncThunk(
     });
 
 export const createFolder = createAsyncThunk(
-    '/Gallery/CreateFolder', async (folderName, thunkAPI) => {
+    '/Gallery/CreateFolder', async (folderObject, thunkAPI) => {
         try {
-            const response = await instence.post(`/Gallery/CreateFolder`, { FolderName: folderName }
+            const response = await instence.post(`/Gallery/CreateFolder`, folderObject
             );
             return JSON.parse(response.data)
         } catch (error) {
@@ -22,22 +22,39 @@ export const createFolder = createAsyncThunk(
         }
     });
 
-export const postImage = createAsyncThunk(
+export const postFile = createAsyncThunk(
     '/Gallery/PostNewFile', async (fileGallery, thunkAPI) => {
         try {
-            const response = await instence.post(`/Gallery/PostNewFile`, fileGallery
-            );
+            const response = await instence.post(`/Gallery/PostNewFile`, fileGallery);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
     });
+
+export const uploadFile = createAsyncThunk(
+    '/gallery/UploadFile', async (fileGallery, thunkAPI) => {
+        try {
+            const response = await instence.put(`/gallery/UploadFile`, fileGallery,
+                {
+                    onUploadProgress: (progressEvent) => {
+                        const { loaded, total } = progressEvent
+                        let percent = Math.floor(loaded * 100 / total);
+                        thunkAPI.dispatch(setUploadProgress(percent));
+                    }
+                });
+            return JSON.parse(response.data)
+        } catch (error) {
+            return thunkAPI.rejectWithValue({ error: error.message });
+        }
+    });
+
+
 
 export const deleteGalleryFile = createAsyncThunk(
     '/Gallery/DeleteFile', async (fileGallery, thunkAPI) => {
         try {
-            const response = await instence.post(`/Gallery/DeleteFile`, fileGallery
-            );
+            const response = await instence.post(`/Gallery/DeleteFile`, fileGallery);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
@@ -50,7 +67,13 @@ export const gallerySlice = createSlice({
     initialState: {
         folders: [],
         images: [],
-        gallery: null
+        gallery: null,
+        uploadProgress: null
+    },
+    reducers: {
+        setUploadProgress: (state, action) => {
+            state.uploadProgress = action.payload;
+        }
     },
     extraReducers: builder => {
         builder
@@ -60,4 +83,5 @@ export const gallerySlice = createSlice({
     }
 })
 
+export const { setUploadProgress } = gallerySlice.actions
 export default gallerySlice.reducer
