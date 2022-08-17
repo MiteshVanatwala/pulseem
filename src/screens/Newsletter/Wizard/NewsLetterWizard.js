@@ -18,7 +18,7 @@ import { FaGoogle } from 'react-icons/fa';
 import WizardActions from '../../../components/Wizard/WizardActions';
 import { saveCampaignInfo, getCampaignInfo, getVerifiedEmail } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
-import { ClientFields, LangugeCode } from "../../../model/PulseemFields/Fields";
+import { ClientFields, LangugeCode, MobileSupport } from "../../../model/PulseemFields/Fields";
 import CustomEmojiPicker from '../../../components/icons/CustomEmojiPicker';
 
 const useStyles = makeStyles({
@@ -169,6 +169,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         PrintLocation: 0,
         UnsubscribeLocation: 0,
         UpdateClient: 0,
+        IsResponsive: 1
     })
 
     const [selectedRadio, setSelectedRadio] = useState({ a: null, b: null, c: null, d: null })
@@ -544,47 +545,41 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
-                                    content:
-                                        <FormControl className={localClasses.select}>
-                                            <Select
-                                                displayEmpty
-                                                // value={campaingnValues?.personalDatatoSubject}
-                                                value={''}
-                                                onChange={(event) => {
-                                                    console.log('event');
-                                                    // setCampaingnValues({ ...campaingnValues, personalDatatoSubject: event.target.value, Subject: `${campaingnValues.Subject} ##${event.target.value}##` })
-                                                }}
-                                                input={<OutlinedInput />}
-                                                renderValue={(selected) => {
-                                                    if (!selected) {
-                                                        return <em>{t("common.select")}</em>;
-                                                    }
-
-                                                    return selected;
-                                                }}
-                                                MenuProps={{
-                                                    PaperProps: {
-                                                        style: {
-                                                            maxHeight: 48 * 4.5 + 8,
-                                                            width: 250,
-                                                        },
+                                    content: <FormControl className={localClasses.select}>
+                                        <Select
+                                            displayEmpty
+                                            value={campaingnValues?.IsResponsive ? 1 : 0}
+                                            onChange={(event) => {
+                                                setCampaingnValues({
+                                                    ...campaingnValues,
+                                                    IsResponsive: event.target.value === 1 ? true : false
+                                                })
+                                            }}
+                                            input={<OutlinedInput />}
+                                            renderValue={(selected) => {
+                                                const lc = MobileSupport.find(e => { return e.value === selected });
+                                                return t(lc.label);
+                                            }}
+                                            MenuProps={{
+                                                PaperProps: {
+                                                    style: {
+                                                        maxHeight: 48 * 4.5 + 8,
+                                                        width: 250,
                                                     },
-                                                }}
-                                                inputProps={{ 'aria-label': 'Without label' }}
-                                            >
-                                                <MenuItem disabled value="" key="-1">
-                                                    <em>Select</em>
+                                                },
+                                            }}
+                                            inputProps={{ 'aria-label': 'Without label' }}
+                                        >
+                                            {MobileSupport.map((item) => (
+                                                <MenuItem
+                                                    key={item.value}
+                                                    value={item.value}
+                                                >
+                                                    {t(item.label)}
                                                 </MenuItem>
-                                                {['Option1', 'Option2', 'Option3', 'Option4', 'Option5'].map((item, index) => (
-                                                    <MenuItem
-                                                        key={`exd_${index}`}
-                                                        value={item}
-                                                    >
-                                                        {t(item)}
-                                                    </MenuItem>
-                                                ))}
-                                            </Select>
-                                        </FormControl>,
+                                            ))}
+                                        </Select>
+                                    </FormControl>,
                                     gridSize: { xs: 12, sm: 12 },
                                 }
                                 ]}
@@ -1125,8 +1120,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                 <WizardActions
                     classes={classes}
                     onSave={handleSubmit}
-                    onExit={null}
-                    onTestSend={null}
                     onBack={() => { console.log('show return message') }}
                     onDelete={() => { setConfirmDelete(true) }}
                 />

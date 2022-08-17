@@ -10,11 +10,11 @@ import { MdOutlineKeyboardArrowLeft, MdOutlineKeyboardArrowRight } from 'react-i
 const WizardActions = ({
     classes,
     innerStyle,
-    onSave = () => null,
-    onExit = () => null,
-    onBack = () => null,
-    onDelete = () => null,
-    onTestSend = () => null
+    onSave = null,
+    onExit = null,
+    onBack = null,
+    onDelete = null,
+    onTestSend = null
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
