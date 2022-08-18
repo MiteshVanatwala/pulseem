@@ -556,7 +556,7 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 1,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Active")}`
                                                     }
                                                 }) : voidFunction
                                             }]}
@@ -588,7 +588,7 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 2,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Removed")}`
                                                     }
                                                 }) : voidFunction
                                             }]}
@@ -621,7 +621,7 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 4,
                                                         TestStatusOfEmailElseSms: 1,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`
                                                     }
                                                 }) : voidFunction
                                             }]}
@@ -652,8 +652,8 @@ const Groups = ({ classes }) => {
                                                         ReportType: CLIENT_CONSTANTS.REPORT_TYPE.ShowMails,
                                                         GroupIds: [GroupID],
                                                         Status: 5,
-                                                        TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        TestStatusOfEmailElseSms: 1,
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Pending")}`
                                                     }
                                                 }) : voidFunction
                                             }]}
@@ -728,7 +728,7 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 0,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Active")}`
                                                     }
                                                 }) : voidFunction
                                             }]}
@@ -760,7 +760,7 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 1,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Removed")}`
                                                     }
                                                 }) : voidFunction
                                             }]}
@@ -792,7 +792,7 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 4,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Bounced")}`
                                                     }
                                                 }) : voidFunction
                                             }]}
@@ -824,7 +824,7 @@ const Groups = ({ classes }) => {
                                                         GroupIds: [GroupID],
                                                         Status: 5,
                                                         TestStatusOfEmailElseSms: 0,
-                                                        ResultTitle: GroupName
+                                                        ResultTitle: `${GroupName} - ${t("recipient.Pending")}`
                                                     }
                                                 }) : voidFunction
                                                 // onClick: () => window.open(`/Pulseem/ClientSearchResult.aspx?Src=1&ReportType=${REDIRECT_OPTIONS.ShowSmsPending}&GroupID=${GroupID}`)

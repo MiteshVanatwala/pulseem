@@ -180,7 +180,10 @@ const ClientSearchResult = ({ props, classes }) => {
     let overwriteObject = location?.state;
     const referrer = document.referrer.split('/')[document.referrer.split('/').length - 1];
     if (referrer && referrer !== '') {
-      isSessionStorageData = referrer.toLowerCase().includes('automationreport') || (referrer.toLowerCase().includes('clientsearch') && !referrer.toLowerCase().includes('result'))
+      isSessionStorageData =
+        referrer.toLowerCase().includes('automationreport') ||
+        referrer.toLowerCase().includes('createautomations') ||
+        (referrer.toLowerCase().includes('clientsearch') && !referrer.toLowerCase().includes('result'))
       if (isSessionStorageData) {
         overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
       }

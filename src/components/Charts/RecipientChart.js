@@ -70,7 +70,7 @@ const RecipientChart = ({ classes, }) => {
                             report.Active,
                             report.Error,
                             report.Removed,
-                            (report.ReportSection === 0) ? report.PendingEmails : (report.ReportSection === 1) ? report.PendingSms : null
+                            (report.ReportSection === 0) ? report.PendingClients : (report.ReportSection === 1) ? report.PendingSms : null
                         ],
                         borderWidth: 0,
                     }],
@@ -238,7 +238,7 @@ const RecipientChart = ({ classes, }) => {
                     report.Active,
                     report.Error,
                     report.Removed,
-                    (report.ReportSection === 0) ? report.PendingEmails : (report.ReportSection === 1) ? report.PendingSms : null
+                    (report.ReportSection === 0) ? report.PendingClients : (report.ReportSection === 1) ? report.PendingSms : null
                 ],
                 borderColor: [
                     '#67B7DC',

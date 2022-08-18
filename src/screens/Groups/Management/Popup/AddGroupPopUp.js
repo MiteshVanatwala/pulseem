@@ -48,7 +48,7 @@ const AddGroupPopUp = ({
         InvalidEmails: 0,
         IsDynamic: true,
         IsTestGroup: false,
-        PendingEmails: 0,
+        PendingClients: 0,
         Recipients: 0,
         RemovedCell: 0,
         RemovedEmails: 0,
