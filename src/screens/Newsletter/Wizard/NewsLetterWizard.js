@@ -19,7 +19,7 @@ import WizardActions from '../../../components/Wizard/WizardActions';
 import { saveCampaignInfo, getCampaignInfo, getVerifiedEmail } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
-import { ClientFields, LangugeCode, MobileSupport, PulseemFolderType } from "../../../model/PulseemFields/Fields";
+import { ClientFields, LangugeCode, MobileSupport, PulseemFolderType, PulseemFeatures } from "../../../model/PulseemFields/Fields";
 
 import CustomEmojiPicker from '../../../components/icons/CustomEmojiPicker';
 
@@ -129,6 +129,7 @@ const useStyles = makeStyles({
 
 const NewsLetterWizard = ({ classes, ...props }) => {
     const {
+        accountFeatures,
         language,
         windowSize,
         email,
@@ -709,7 +710,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                         },
 
                         {
-                            content: <SimpleGrid
+                            content: accountFeatures?.indexOf(PulseemFeatures.FILE_ATTACHMENT) > -1 && <SimpleGrid
                                 gridArr={[{
                                     content:
                                         <CustomTooltip
@@ -750,7 +751,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                 }
 
             />
-            <Box className={clsx(classes.flex, localClasses.googleCheck)}>
+            {accountFeatures?.indexOf(PulseemFeatures.GOOGLE_LINKS) > -1 && <Box className={clsx(classes.flex, localClasses.googleCheck)}>
                 <Checkbox
                     color="primary"
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
@@ -764,6 +765,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                 <FaGoogle />
                 <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.gAnalytics")} align="left">{t("campaigns.newsLetterEditor.gAnalytics")}</Typography>
             </Box>
+            }
         </Box>
     )
 
