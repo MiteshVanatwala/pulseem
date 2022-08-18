@@ -1282,7 +1282,7 @@ const AddRecipientPopup = ({ classes,
                                     classes.textCapitalize
                                 )}
 
-                                onClick={() => handleSubmit(onClose)}
+                                onClick={() => handleSubmit(onRecipientAdded)}
                             >
                                 {t("group.ok")}
                             </Button>

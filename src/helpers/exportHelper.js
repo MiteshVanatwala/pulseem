@@ -151,6 +151,9 @@ export const replaceExtraFieldHeader = (obj, accountExtraFields) => {
         if (val && val !== '') {
             obj[key] = val;
         }
+        else{
+            delete obj[key];
+        }
     });
     return obj;
 }
