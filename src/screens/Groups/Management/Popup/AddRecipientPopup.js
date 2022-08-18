@@ -202,8 +202,6 @@ const AddRecipientPopup = ({ classes,
     }
 
     const handleChange = (e, dateField = null, isExtraData = false, customValue = null) => {
-
-        console.log("EXTRADATA:", accountExtraFields)
         if (dateField) {
             const { date, field } = dateField;
             if (isExtraData) {
@@ -275,6 +273,13 @@ const AddRecipientPopup = ({ classes,
             return;
         } else if (data.ClientsData.Email && !ValidateEmail(data.ClientsData.Email)) {
             tempError.Email = t(ADD_RECIPIENT_REQUIRED_ERRORS.Email)
+            setErrors({ ...tempError })
+            setActiveTab(0);
+            return
+        }
+        else if (!data.ClientsData.Email && data.ClientsData.Cellphone &&
+            (data.ClientsData.Cellphone.length < 10 || data.ClientsData.Cellphone.length > 12)) {
+            tempError.Cellphone = t(ADD_RECIPIENT_REQUIRED_ERRORS.CellphoneLength)
             setErrors({ ...tempError })
             setActiveTab(0);
             return
