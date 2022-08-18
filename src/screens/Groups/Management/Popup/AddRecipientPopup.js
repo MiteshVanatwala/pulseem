@@ -1064,7 +1064,10 @@ const AddRecipientPopup = ({ classes,
             S_201: {
                 code: 201,
                 message: ToastMessages.STATUS_UPDATED,
-                Func: () => onAddRecipient()
+                Func: () => {
+                    onAddRecipient();
+                    setDialog('EDIT_RECIPIENT');
+                }
             },
             S_400: {
                 code: 400,
@@ -1101,7 +1104,10 @@ const AddRecipientPopup = ({ classes,
             S_201: {
                 code: 201,
                 message: ToastMessages.STATUS_UPDATED,
-                Func: () => onAddRecipient()
+                Func: () => {
+                    onAddRecipient();
+                    setDialog('EDIT_RECIPIENT');
+                }
             },
             S_400: {
                 code: 400,
