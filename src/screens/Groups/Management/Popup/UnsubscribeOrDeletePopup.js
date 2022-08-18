@@ -266,7 +266,7 @@ const UnsubscribeOrDeletePopup = ({
                                     const tempData = [...finalData];
                                     const flatData = tempData.flat();
                                     const sliceData = flatData.slice(0, 1000)
-                                    setareaData(sliceData.join(',').replaceAll(',', "\n") + (flatData.length > 1000 ? "\n..." : ""));
+                                    setareaData(sliceData.join(',').trim().replace(',', "\n") + (flatData.length > 1000 ? "\n..." : ""));
                                     setLoader(false);
                                     resolve(null);
                                 }
@@ -317,7 +317,7 @@ const UnsubscribeOrDeletePopup = ({
         });
 
         return filteredData?.map((m) => {
-            m = m.replaceAll('\t', '').replaceAll('\r', '').replaceAll(' ', '');
+            m = m.trim().replace('\t', '').replace('\r', '').replace(' ', '');
             return m.trim();
         });
     }
@@ -336,7 +336,7 @@ const UnsubscribeOrDeletePopup = ({
         }
         setFinalData(filteredData);
         const tempData = [...filteredData];
-        setareaData(tempData.join(',').replaceAll(',', "\n"));
+        setareaData(tempData.join(',').trim().replace(',', "\n"));
         setLoader(false);
     }
 

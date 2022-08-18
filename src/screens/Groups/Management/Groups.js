@@ -1434,6 +1434,11 @@ const Groups = ({ classes }) => {
             message: '',
             Func: () => getData()
         },
+        'S_202': {
+            code: 202,
+            message: '',
+            Func: () => getData()
+        },
         'S_400': {
             code: 400,
             message: '',
@@ -1469,7 +1474,7 @@ const Groups = ({ classes }) => {
             Func: () => null
         },
     }) => {
-        switch (response.payload.StatusCode || response.payload.Message.StatusCode) {
+        switch (response?.payload?.StatusCode || response?.payload?.Message?.StatusCode) {
             case 200: {
                 actions?.S_200?.Func?.();
                 actions?.S_200?.message && setToastMessage(actions?.S_200?.message);
@@ -1478,6 +1483,13 @@ const Groups = ({ classes }) => {
             case 201: {
                 actions?.S_201?.Func?.();
                 actions?.S_201?.message && setToastMessage(actions?.S_201?.message);
+                break;
+            }
+            case 202: {
+                actions?.S_202?.Func?.();
+                actions?.S_202?.message && setToastMessage(actions?.S_202?.message);
+                setDialog(null);
+                getData()
                 break;
             }
             case 400: {
@@ -1519,6 +1531,7 @@ const Groups = ({ classes }) => {
     }
     const handleDeleteGroup = async () => {
         await dispatch(deleteGroups(selectedGroups));
+        await dispatch(getGroupsBySubAccountId())
         setSelectedGroups([]);
         setDialog(null);
         getData();

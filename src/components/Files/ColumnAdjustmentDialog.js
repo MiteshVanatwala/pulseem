@@ -31,6 +31,9 @@ const ColumnAdjustmentDialog = ({
     data,
     headers = [],
     setheaders,
+    setselectArray = () => null,
+    selectArray,
+    isSimplyAccount = false,
     tooltipText = "smsReport.manualTotalTooltip",
     onUpdateClientFields = () => null }) => {
 
@@ -38,7 +41,7 @@ const ColumnAdjustmentDialog = ({
     const styles = useStyles();
     const [groupNameInput, setgroupNameInput] = useState("");
 
-    const [selectArray, setselectArray] = useState([]);
+    // const [selectArray, setselectArray] = useState([]);
     const [groupTextError, setGroupTextError] = useState(false);
     const [GroupNameValidationMessage, setGroupNameValidationMessage] = useState("");
     const [columnValidate, setcolumnValidate] = useState(false);
@@ -54,17 +57,18 @@ const ColumnAdjustmentDialog = ({
         t("common.address"),
         t("common.city"),
         t("common.zip"),
-        t("common.birthDate")
+        t("common.birthDate"),
+        t("recipient.reminderDate")
     ]
 
     useEffect(() => {
         Object.keys(extraData).forEach((ed) => {
-            const exist = selectOptions.filter((e) => {
+            const exist = settings.Fields.filter((e) => {
                 return e.value === ed;
             });
 
             if (exist <= 0 && extraData[ed] !== '') {
-                selectOptions.push({
+                settings.Fields.push({
                     isdisabled: false,
                     idx: -1,
                     value: ed,
@@ -76,14 +80,21 @@ const ColumnAdjustmentDialog = ({
         let restHeader = headers.splice(headersOrder.length, headers.length - headersOrder.length)
         let tempHeaders = [...headersOrder, ...restHeader]
 
-        const fields = settings.Fields.map((e, idx) => {
-            return {
-                isdisabled: e.value.toLowerCase().indexOf('extra') > - 1 ? (idx === -1) : true,
-                idx: idx,
-                value: e.value,
-                label: t(e.label)
+        let fields = [];
+
+        fields = settings.Fields.map((e, idx) => {
+            if (e.label && e.label !== '') {
+                return {
+                    isdisabled: e.value.toLowerCase().indexOf('extra') > - 1 ? (idx === -1) : true,
+                    idx: idx,
+                    value: e.value,
+                    label: t(e.label)
+                }
             }
+            return null;
         });
+
+        fields = fields.filter((i) => i !== null && typeof i !== 'undefined');
         setselectArray([...fields, ...selectOptions]);
         setheaders(tempHeaders);
 
@@ -109,10 +120,8 @@ const ColumnAdjustmentDialog = ({
         h[id] = t("sms.adjustTitle");
         setheaders(h);
 
-        const isExtraField = name.toLowerCase().indexOf('extra') > -1;
         const deletedItem = selectArray.find((sa) => {
-            const conditionVal = isExtraField ? sa.value : sa.label;
-            return name === conditionVal;
+            return name === sa.label;
         });
 
         data.forEach((d) => {
@@ -131,11 +140,11 @@ const ColumnAdjustmentDialog = ({
         const selectedItem = headerArrays.find((sa) => { return sa.value === item.value });
         if (selectedItem.isdisabled === true) return;
 
-        h[idx] = item.value.toLowerCase().indexOf('extra') > -1 ? item.value : item.label;
+        h[idx] = item.label;
 
         if (h[idx] !== t("sms.adjustTitle")) {
             const updateItem = headerArrays.find((sa) => {
-                return sa.label === h[idx]
+                return sa.label === h[idx] || sa.value === h[idx]
             });
             updateItem.isdisabled = false;
         }
@@ -156,6 +165,7 @@ const ColumnAdjustmentDialog = ({
 
     return (
         <Dialog
+            disableBackdropClick={true}
             classes={classes}
             title={title || t('sms.columnAdjustment')}
             open={isOpen}
@@ -222,6 +232,11 @@ const ColumnAdjustmentDialog = ({
                                     }}
                                 >
                                     {headers.map((_, idx) => {
+                                        let cursorStyle = 'pointer';
+                                        if (isSimplyAccount === true) {
+                                            cursorStyle = idx > 9 ? 'pointer' : 'not-allowed'
+                                        }
+
                                         return (
                                             <th
                                                 key={idx}
@@ -229,15 +244,18 @@ const ColumnAdjustmentDialog = ({
                                             >
                                                 <div
                                                     onClick={() => {
-                                                        handleChangeId(idx);
+                                                        (idx > 9 || !isSimplyAccount) && handleChangeId(idx);
                                                     }}
                                                     className={classes.adjustP}
-                                                    style={{ textAlign: "center", cursor: "pointer" }}
+                                                    style={{ textAlign: "center", cursor: cursorStyle }}
                                                 >
                                                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                                        <Typography style={{ fontWeight: "700", cursor: "pointer", marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{t(selectOptions.find(obj => obj.value === headers[idx])?.label || headers[idx])}</Typography>
+                                                        <Typography style={{ fontWeight: "700", cursor: cursorStyle, marginInlineEnd: "20px" }} className={columnValidate === true && headers[idx] === t("sms.adjustTitle") ? classes.columnError : null}>{t(selectOptions.find(obj => obj.value === headers[idx])?.label || headers[idx])}</Typography>
 
-                                                        {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }} onClick={() => { handleCloseSpan(idx, headers[idx]) }} /> : null}
+                                                        {headers[idx] !== t("sms.adjustTitle") ? <AiOutlineClose style={{ marginInlineEnd: "8px" }}
+                                                            onClick={() => {
+                                                                (idx > 9 || !isSimplyAccount) && handleCloseSpan(idx, headers[idx])
+                                                            }} /> : null}
                                                         {dropIndex === idx ? <BsChevronUp /> : <BsChevronDown style={{ marginInlineStart: "4px" }} />}
                                                     </div>
                                                     {dropIndex === idx ? (

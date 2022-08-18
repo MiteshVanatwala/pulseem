@@ -17,7 +17,9 @@ import CustomTooltip from "../../../../components/Tooltip/CustomTooltip";
 import { BsInfoCircleFill } from "react-icons/bs";
 import {
     createGroup,
+    getGroupsBySubAccountId
 } from "../../../../redux/reducers/groupSlice";
+
 import { Dialog } from "../../../../components/managment/Dialog";
 
 const AddGroupPopUp = ({
@@ -75,6 +77,7 @@ const AddGroupPopUp = ({
                     message: ToastMessages.GROUP_UPDATED,
                     Func: () => {
                         new Promise(async (resolutionFunc, rejectionFunc) => {
+                            await dispatch(getGroupsBySubAccountId())
                             await resolutionFunc(getData());
                             setNewGroupData(DEFAULT_NEW_GROUP);
                             onClose()

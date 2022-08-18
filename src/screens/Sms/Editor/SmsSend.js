@@ -1649,7 +1649,7 @@ const SmsSend = ({ classes, ...props }) => {
           requestPayload.push({});
           for (let k = 0; k < typedData[j].length; k++) {
             if (headers[k] && headers[k] !== t("sms.adjustTitle")) {
-              let key = translateHebrewColumns(headers[k].toLocaleString().replaceAll(" ", ""));
+              let key = translateHebrewColumns(headers[k].toLocaleString().trim().replace(" ", ""));
               let obj = requestPayload[j];
               obj[key] = typedData[j][k].trim();
             }
@@ -1663,7 +1663,7 @@ const SmsSend = ({ classes, ...props }) => {
 
           for (let k in contacts[j]) {
             if (headers[i] && headers[i] !== t("sms.adjustTitle")) {
-              let key = translateHebrewColumns(headers[i].toLocaleString().replaceAll(" ", ""));
+              let key = translateHebrewColumns(headers[i].toLocaleString().trim().replace(" ", ""));
               let obj = requestPayload[j];
               obj[key] = contacts[j][k].trim();
             }

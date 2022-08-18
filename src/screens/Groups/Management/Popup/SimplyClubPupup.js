@@ -1,4 +1,4 @@
-import { Box, Typography, TextField, makeStyles, TableRow, TableCell, Checkbox, FormControlLabel, Grid, Tooltip, Button } from '@material-ui/core'
+import { Box, Typography, TextField, makeStyles, TableRow, TableCell, Checkbox, FormControlLabel, Grid, Button } from '@material-ui/core'
 import { Visibility, VisibilityOff } from '@material-ui/icons'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next';
@@ -7,11 +7,10 @@ import { Dialog } from "../../../../components/managment/Dialog";
 import { addRecipient, getExternalClientsByGroups, getGroups, getGroupsForSimplyClub, createGroup } from '../../../../redux/reducers/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import DataTable from '../../../../components/Table/DataTable';
-import { simplyCLubClientData, UploadSettings } from '../../tempConstants';
+import { UploadSettings } from '../../tempConstants';
 import ColumnAdjustmentDialog from '../../../../components/Files/ColumnAdjustmentDialog';
 import { Loader } from '../../../../components/Loader/Loader';
 import AddRecipientResponse from './AddRecipientResponse';
-
 
 
 const useStyles = makeStyles({
@@ -103,6 +102,7 @@ const SimplyClubPupup = ({
     const [summary, setSummary] = useState(null)
     const [error, setError] = useState(null)
     const [updatedClients, setUpdatedClients] = useState(null);
+    const [selectArray, setselectArray] = useState([]);
 
 
     useEffect(() => {
@@ -279,6 +279,8 @@ const SimplyClubPupup = ({
     const handleAddClients = (ids) => {
         setShowLoader(true)
         let tempClients = Object.values(updatedClients ?? ClientData)[0]
+
+
         const Payload = {
             ClientsData: tempClients || [],
             GroupIds: ids
@@ -313,6 +315,11 @@ const SimplyClubPupup = ({
                         setSummary({ title: t("recipient.summary.summaryImportTitle"), message: '', data: response.payload.Summary })
                     }
                 },
+                'S_202': {
+                    code: 202,
+                    message: ToastMessages.UPLOADING_RECIPIENT_AS_FILE,
+                    Func: () => null
+                },
                 'S_400': {
                     code: 400,
                     message: ToastMessages.IMPORT_EMPTYLIST_INVALID_CLIENT,
@@ -340,6 +347,10 @@ const SimplyClubPupup = ({
         const response = await dispatch(getGroups({ SearchTerm: groupName, PageSize: 6, PageIndex: 1 }))
         if (response?.payload?.Groups && response?.payload?.RecordCount === 1) {
             handleAddClients([response.payload.Groups[0].GroupID])
+        }
+        else if (response?.payload?.RecordCount > 1) {
+            const exactGroup = response?.payload.Groups.find((g) => { return g.GroupName.trim() === groupName.trim() });
+            handleAddClients([exactGroup.GroupID]);
         }
     }
 
@@ -498,6 +509,7 @@ const SimplyClubPupup = ({
                 classes={classes}
                 isOpen={showClients}
                 settings={UploadSettings.GROUPS}
+                isSimplyAccount={true}
                 onClose={() => {
                     setSelectedGroups([])
                     setShowClients(false)
@@ -512,6 +524,8 @@ const SimplyClubPupup = ({
                 setheaders={setheaders}
                 tooltipText="recipient.bulkRecUpldTooltipText"
                 onUpdateClientFields={handleUpdateClientFields}
+                setselectArray={setselectArray}
+                selectArray={selectArray}
             />
         )
     }

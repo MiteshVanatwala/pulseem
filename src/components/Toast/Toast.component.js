@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import './Toast.styles.css'
 import clsx from 'clsx';
 import { useTranslation } from "react-i18next";
+import { renderHtml } from '../../helpers/utils';
 
 
 
@@ -40,7 +41,7 @@ const Toast = ({ data, onClose }) => {
     return (
         <div className={clsx(classes.root, "alert")}>
             <Alert severity={data.severity} color={data.color} className={classes.center} style={{ fontWeight: 900, fontSize: 16 }}>
-                {t(data.message)}
+                {renderHtml(t(data.message))}
             </Alert>
             {data.showAnimtionCheck && <div className={"notification-pop"}>
                 <svg
