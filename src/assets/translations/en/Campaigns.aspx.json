@@ -506,7 +506,14 @@
       "Subject": "When using emojis, it’s advised to use up to 2. Using more than 2 emojis may hurt deliverability.",
       "pre_helper_text": "The text will appear in the display bar in the email, before it opens",
       "upload": "The file will appear as an attached file in your mail"
-    }
+    },
+    "errors": {
+      "invaliApiKey": "Invalid or missing API KEY",
+      "fileExtNotAlwd": "File extension not allowed",
+      "fileCanNotNull": "File cannot be null",
+      "generalError": "Error Occured"
+    },
+    "success": "Success"
   },
   "newsLetterMgmt": {
     "emailVerification": {

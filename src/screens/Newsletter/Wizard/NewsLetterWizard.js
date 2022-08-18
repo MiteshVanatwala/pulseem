@@ -144,6 +144,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
     const { campaignInfo, verifiedEmails } = useSelector(state => state.campaignEditor);
+    const { ToastMessages } = useSelector(state => state.newsletter);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
 
@@ -180,6 +181,9 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [selectedCheck, setSelectedCheck] = useState({ WebViewLocation: false, PrintLocation: false, UnsubscribeLocation: false, UpdateClient: false })
     const [confirmDelete, setConfirmDelete] = useState(false)
 
+
+
+
     const handleGetNewsletterResponse = (res) => {
         switch (res?.StatusCode || 201) {
             case 200: {
@@ -209,6 +213,35 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     }
 
 
+    const handleSubmitNewsletterResponse = (res) => {
+        switch (res?.StatusCode) {
+            case 201: {
+                setToastMessage(ToastMessages.SUCEESS)
+                break;
+            }
+            case 401: {
+                setToastMessage(ToastMessages.INVALID_API_MISSING_KEY)
+                break;
+            }
+            case 403: {
+                setToastMessage(ToastMessages.FILE_EXT_NOT_ALWD)
+                break;
+            }
+            case 406: {
+                setToastMessage(ToastMessages.NULL_FILE)
+                break;
+            }
+            case 500: {
+                setToastMessage(ToastMessages.GENERAL_ERROR)
+                break;
+            }
+            default: {
+                setToastMessage(ToastMessages.GENERAL_ERROR)
+            }
+        }
+    }
+
+
 
     useEffect(() => {
         const preload = async () => {
@@ -223,15 +256,16 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         const initClientFields = async () => {
             let resp = await dispatch(getAccountExtraData());
             let _clientFields = [...ClientFields];
-            let arr = Object.keys(resp.payload)
-            let additionalExtraData = arr.map(function (key) {
-                return { [key]: resp.payload[key] };
-            })
+            let arr = Object.values(resp.payload).reduce((prev, next) => {
+                if (!!next) {
+                    return [...prev, { value: next, label: next, selected: false }]
+                }
+                else {
+                    return prev
+                }
+            }, [])
 
-            for (let i = 0; i < additionalExtraData.length; i++) {
-                _clientFields.push({ ...additionalExtraData[i], selected: false })
-            }
-            setextraAccountDATA(_clientFields)
+            setextraAccountDATA([..._clientFields, ...arr])
         }
 
         initClientFields();
@@ -274,6 +308,9 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         setLoader(true);
         console.log("VALUES:", campaingnValues)
         const response = await dispatch(saveCampaignInfo(campaingnValues));
+
+        handleSubmitNewsletterResponse(response)
+
         setLoader(false);
 
         if (isContiue) {
@@ -1140,6 +1177,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                     isConfirm={isGalleryConfirmed}
                     callbackSelectFile={handleSelectedImage}
                     style={{ minWidth: 400 }}
+                    multiSelect={true}
                     folderType={PulseemFolderType.DOCUMENT} />
             )
         };

@@ -497,7 +497,14 @@
       "Subject": "במקרים של שילוב אימוגים בכותרת, מומלץ להגביל את השימוש באימוגים לשניים בלבד. שימוש באימוגים מרובים עלול עלול לפגוע בעבירות.",
       "pre_helper_text": "הטקסט יופיע בשורת התצוגה במייל, טרם פתיחתו",
       "upload": "יופיע כקובץ מצורף במייל שתשלחו"
-    }
+    },
+    "errors": {
+      "invaliApiKey": "Invalid or missing API KEY",
+      "fileExtNotAlwd": "File extension not allowed",
+      "fileCanNotNull": "File cannot be null",
+      "generalError": "Error Occured"
+    },
+    "success": "Success"
   },
   "newsLetterMgmt": {
     "emailVerification": {

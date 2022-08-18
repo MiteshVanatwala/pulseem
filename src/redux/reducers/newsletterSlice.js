@@ -162,7 +162,14 @@ export const newsletterSlice = createSlice({
     newslettersReportsError: '',
     directNewsletterReport: {},
     directNewsletterReportError: '',
-    newsletterArchiveData: []
+    newsletterArchiveData: [],
+    ToastMessages: {
+      SUCEESS: { severity: 'success', color: 'success', message: 'campaigns.newsLetterEditor.success', showAnimtionCheck: false },
+      INVALID_API_MISSING_KEY: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.invaliApiKey', showAnimtionCheck: false },
+      FILE_EXT_NOT_ALWD: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.fileCanNotNull', showAnimtionCheck: false },
+      NULL_FILE: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.fileCanNotNull', showAnimtionCheck: false },
+      GENERAL_ERROR: { severity: 'error', color: 'error', message: 'campaigns.newsLetterEditor.errors.generalError', showAnimtionCheck: false },
+    }
     //archiveDirectNewsletterReport: []
   },
   reducers: {},
