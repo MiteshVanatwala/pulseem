@@ -313,10 +313,12 @@ const ClientSearchResult = ({ props, classes }) => {
     if (response && response.payload) {
       const data = response.payload;
       if (data.StatusCode === 201) {
-        let orderList = await data.Clients.reduce((prev, next) => {
-          let tempStatus = ClientStatus.Email.find((status) => status.id === next.Status)
-          let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === next.SmsStatus)
-          return [...prev, { ...next, Status: t(tempStatus.value), SmsStatus: t(tempSmsStatus.value) }]
+        let orderList = await data.Clients.map((client) => {
+          let tempStatus = ClientStatus.Email.find((status) => status.id === client.Status)
+          let tempSmsStatus = ClientStatus.Sms.find((status) => status.id === client.SmsStatus)
+          client.Status = t(tempStatus.value);
+          client.SmsStatus = t(tempSmsStatus.value);
+          return client;
         }, []);
         orderList = orderList.map((ol) => { return flatObject(ol) });
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
@@ -1038,7 +1040,7 @@ const ClientSearchResult = ({ props, classes }) => {
           <Grid item xs={windowSize === "xs" && 12} className={clsx(classes.groupsLableContainer)} style={{ alignItems: 'center' }}>
             <Box>
               <Typography className={clsx(classes.groupsLable, classes.f18, classes.bold)}>
-              {`${TotalCount.toLocaleString()} ${t("common.Clients")}`}
+                {`${TotalCount.toLocaleString()} ${t("common.Clients")}`}
               </Typography>
             </Box>
           </Grid>

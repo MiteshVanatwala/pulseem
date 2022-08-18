@@ -50,7 +50,8 @@ export const ClientStatus = {
         { id: -1, value: 'common.noSms' },
         { id: 0, value: 'common.statusActive' },
         { id: 1, value: 'common.Unsubscribed' },
-        { id: 4, value: 'common.invalid' }
+        { id: 4, value: 'common.invalid' },
+        { id: 5, value: 'common.Pending' }
     ],
     Email: [
         { id: -1, value: 'common.noEmail' },

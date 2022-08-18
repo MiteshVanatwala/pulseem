@@ -692,6 +692,20 @@ const NewslettersReport = ({ classes }) => {
     )
 
   }
+  const renderRevenueData = (value, type, data = {}) => {
+    const { href = '', textStyle = null, isRevenueCol = false } = data
+    return (
+      <Box style={{ display: 'flex', flexDirection: 'column' }} >
+        <Typography component={href !== '' && (value > 0 || (isRevenueCol && value > 0)) ? 'a' : 'p'}
+          href={href !== '' ? href : ''}
+          className={clsx(classes.middleText, colorTextStyle[type] || '')}
+          style={textStyle}
+          target="_blank">
+          {(value && value.toLocaleString()) || '0'} {t("common.NIS")}
+        </Typography>
+      </Box>
+    )
+  }
 
   const renderRow = (row) => {
     const {
@@ -817,7 +831,7 @@ const NewslettersReport = ({ classes }) => {
           classes={noBorderCellStyle}
           align='center'
           className={classes.flex1}>
-          {renderIntData(`${Revenue.toLocaleString()} ${t("common.NIS")}`, 'black', hrefs.Revenue, true, '')}
+          {renderRevenueData(Revenue, '', hrefs.Revenue)}
         </TableCell>}
       </TableRow>
     )
