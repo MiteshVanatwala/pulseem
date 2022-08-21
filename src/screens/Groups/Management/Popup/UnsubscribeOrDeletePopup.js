@@ -325,9 +325,6 @@ const UnsubscribeOrDeletePopup = ({
     const handleFinalData = (data) => {
         if (!data && data.length === 0)
             return;
-        else if (data.length > 1000) {
-            setLimitationWarning(true);
-        }
 
         setError(null);
         let filteredData = clearInvalidData(data);
@@ -338,6 +335,10 @@ const UnsubscribeOrDeletePopup = ({
         const tempData = [...filteredData];
         setareaData(tempData.join(',').trim().replace(',', "\n"));
         setLoader(false);
+
+        if (filteredData.length > 1000) {
+            setLimitationWarning(true);
+        }
     }
 
     const areaChange = (e) => {
