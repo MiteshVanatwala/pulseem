@@ -1154,7 +1154,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             finalFileNames = files.join("##");
         }
         setFileNames(finalFileNames);
-        setCampaingnValues({ ...campaingnValues, FileNames: files })
+        setCampaingnValues({ ...campaingnValues, Files: [files] })
         setShowGallery(false);
         setIsFileSelected(false);
     }
