@@ -148,6 +148,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const { ToastMessages } = useSelector(state => state.newsletter);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
+    const [fileNames, setFileNames] = useState('');
+    const [selectedFileUrls, setSelectedFileUrls] = useState('');
 
     const ErrorTexts = {
         Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
@@ -1142,8 +1144,19 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const handleGalleryConfirm = () => {
         setIsFileSelected(true);
     }
-    const handleSelectedImage = (image) => {
+    const handleSelectedImage = (files) => {
+        setSelectedFileUrls(files);
+        let finalFileNames = '';
+        if (typeof files === 'string') {
+            finalFileNames = files.split('/')[files.split('/').length - 1];
+        }
+        else if (typeof files === 'object') {
+            finalFileNames = files.join("##");
+        }
+        setFileNames(finalFileNames);
+        setCampaingnValues({ ...campaingnValues, FileNames: files })
         setShowGallery(false);
+        setIsFileSelected(false);
     }
     const showGalleryModal = () => {
         if (showGallery) {
