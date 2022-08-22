@@ -75,7 +75,7 @@ export const getRoutes = (t = () => null, isClalAccount = false, features = null
       alt='Newsletter'
       src={NewsletterIcon} />,
     options: [
-      { title: t('master.RadMenuItemResource9b.Text'), href: '/Pulseem/Editor/CampaignInfo?new=1&fromreact=true', isShow: true },
+      { title: t('master.RadMenuItemResource9b.Text'), href: '/react/Campaigns/Create', isShow: true },
       { title: t('master.RadMenuItemResource9.Text'), href: '/react/Campaigns', isShow: true },
       { title: t('master.linkSendCampaignByResultResource1.Text'), href: '/Pulseem/CampaignsByResults.aspx?fromreact=true', isShow: true },
       { title: t('master.linkAbTestingsResource1.Text'), href: '/Pulseem/CampaignsAbTestings.aspx?fromreact=true', isShow: true },
