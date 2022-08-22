@@ -574,5 +574,8 @@
   "campaignSaved": "Campaign successfully saved!",
   "sendTest": "Send Test",
   "rightToLeft": "Right to left",
-  "leftToRight": "Left to right"
+  "leftToRight": "Left to right",
+  "summaryTotal": "Total cost",
+  "totalSize": "Total size",
+  "kb": "KB"
 }

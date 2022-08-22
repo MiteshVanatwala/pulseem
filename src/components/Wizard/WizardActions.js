@@ -105,7 +105,7 @@ const WizardActions = ({
                                     classes.actionButtonLightGreen,
                                     classes.backButton
                                 )}
-                                style={{ margin: '8px' }}
+                                style={{ marginInlineStart: '8px' }}
                                 color="primary"
                             >{t('common.continue')}</Button>
                         }

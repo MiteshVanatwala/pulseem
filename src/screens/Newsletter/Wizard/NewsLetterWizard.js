@@ -4,15 +4,13 @@ import clsx from "clsx";
 import { BiUpload } from 'react-icons/bi';
 import { FaGoogle } from 'react-icons/fa';
 import { IoMdImages } from 'react-icons/io';
-import { Box, Divider, Typography, TextField, Button, Paper, InputAdornment, Checkbox, Radio, Grid, makeStyles, FormControl, Select, OutlinedInput, MenuItem, FormHelperText } from '@material-ui/core'
+import { Box, Divider, Typography, TextField, Checkbox, Radio, makeStyles, FormControl, Select, OutlinedInput, MenuItem, FormHelperText } from '@material-ui/core'
 import { Loader } from "../../../components/Loader/Loader";
 import SimpleGrid from "../../../components/Grids/SimpleGrid";
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from "react-i18next";
 import { deleteCampaign } from '../../../redux/reducers/newsletterSlice';
 import Toast from '../../../components/Toast/Toast.component';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import SmileIcon from '../../../assets/images/smile.png'
 import { Dialog } from "../../../components/managment/Dialog";
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import WizardActions from '../../../components/Wizard/WizardActions';
@@ -20,8 +18,9 @@ import { saveCampaignInfo, getCampaignInfo, getVerifiedEmail } from '../../../re
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, LangugeCode, MobileSupport, PulseemFolderType, PulseemFeatures } from "../../../model/PulseemFields/Fields";
-
 import CustomEmojiPicker from '../../../components/icons/CustomEmojiPicker';
+import PulseemTags from '../../../components/Tags/PulseemTags'
+import { makeId } from '../../../helpers/functions';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -128,16 +127,7 @@ const useStyles = makeStyles({
 })
 
 const NewsLetterWizard = ({ classes, ...props }) => {
-    const {
-        accountFeatures,
-        language,
-        windowSize,
-        email,
-        phone,
-        rowsPerPage,
-        smsOldVersion,
-        isRTL,
-    } = useSelector((state) => state.core);
+    const { accountFeatures } = useSelector((state) => state.core);
     const { t } = useTranslation();
     const localClasses = useStyles()
     const dispatch = useDispatch()
@@ -148,8 +138,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const { ToastMessages } = useSelector(state => state.newsletter);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
-    const [fileNames, setFileNames] = useState('');
-    const [selectedFileUrls, setSelectedFileUrls] = useState('');
+    const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
+    const [showCostLoader, setShowCostLoader] = useState(false);
 
     const ErrorTexts = {
         Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
@@ -255,6 +245,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                 handleGetNewsletterResponse(JSON.parse(response.payload))
             }
             setLoader(false);
+            setIsSilenceUpdated(false);
         }
         const initClientFields = async () => {
             let resp = await dispatch(getAccountExtraData());
@@ -274,6 +265,20 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         initClientFields();
         preload();
     }, [])
+
+    useEffect(() => {
+        const silenceSaveAndLoad = async () => {
+            await dispatch(saveCampaignInfo(campaingnValues))
+            const response = await dispatch(getCampaignInfo(campaingnValues.CampaignID))
+            handleGetNewsletterResponse(JSON.parse(response.payload))
+            setShowCostLoader(false);
+        }
+        if (isSilenceUpdated) {
+            setShowCostLoader(true);
+            silenceSaveAndLoad();
+            setIsSilenceUpdated(false);
+        }
+    }, [campaingnValues['FilesProperties']])
 
     const handleSelectionRadio = (e) => {
         console.log(e.target.name, " : ", e.target.value)
@@ -309,7 +314,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         // TODO: [PR-570] Fix this validation
         //if (handleValidations()) {
         setLoader(true);
-        console.log("VALUES:", campaingnValues)
         const response = await dispatch(saveCampaignInfo(campaingnValues));
 
         handleSubmitNewsletterResponse(response)
@@ -703,6 +707,24 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         </FormControl>,
                                     gridSize: { xs: 12, sm: 12 },
 
+                                }, {
+
+                                    content: accountFeatures?.indexOf(PulseemFeatures.GOOGLE_LINKS) > -1 && <Box className={clsx(classes.flex, localClasses.googleCheck)}>
+                                        <Checkbox
+                                            color="primary"
+                                            inputProps={{ 'aria-label': 'secondary checkbox' }}
+                                            name='googleAnalytics'
+                                            // className={ }
+                                            checked={campaingnValues.GoogleAnalytics === true}
+                                            onClick={() => {
+                                                setCampaingnValues({ ...campaingnValues, GoogleAnalytics: !campaingnValues.GoogleAnalytics })
+                                            }}
+                                        />
+                                        <FaGoogle />
+                                        <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.gAnalytics")} align="left">{t("campaigns.newsLetterEditor.gAnalytics")}</Typography>
+                                    </Box>
+                                    ,
+                                    gridSize: { xs: 12, sm: 12 }
                                 }
                                 ]}
                                 spacing={1}
@@ -710,7 +732,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                             />,
                             gridSize: { xs: 12, sm: 6 }
                         },
-
                         {
                             content: accountFeatures?.indexOf(PulseemFeatures.FILE_ATTACHMENT) > -1 && <SimpleGrid
                                 gridArr={[{
@@ -729,16 +750,39 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     gridSize: { xs: 12, sm: 12 }
                                 },
                                 {
-                                    content: <>
-                                        <Box className={localClasses.fileUploadBox}>
-                                            <Button
-                                                onClick={() => {
-                                                    setShowGallery(true);
-                                                }}>
-                                                <label htmlFor='upldNLFile'><BiUpload /></label>
-                                            </Button>
-                                        </Box>
+                                    content: campaingnValues.CampaignID && <>
+                                        <PulseemTags
+                                            title={""}
+                                            style={null}
+                                            classes={classes}
+                                            tagStyle={{ maxWidth: 150 }}
+                                            items={campaingnValues.FilesProperties?.map((f) => {
+                                                return {
+                                                    Name: f.Name ?? f.FileName,
+                                                    ID: f.ID
+                                                };
+                                            })}
+                                            onShowModal={() => setShowGallery(true)}
+                                            handleRemove={removeAttachmentFile}
+                                            icon={<BiUpload />}
+                                        />
                                         <label className={localClasses.helperText}>{t("campaigns.newsLetterEditor.helpTexts.upload")}</label>
+                                    </>
+                                    ,
+                                    gridSize: { xs: 12, sm: 12 },
+                                },
+                                {
+                                    content: campaingnValues.FilesProperties?.length > 0 && <>
+                                        <Box className={classes.dFlex} style={{ justifyContent: 'space-between' }}>
+                                            <Box className={classes.lightBlueTicket}>
+                                                <label className={localClasses.helperText}>{t('campaigns.totalSize')} {campaingnValues.TotalBytes.toLocaleString()} {t('campaigns.kb')}</label>
+                                                <Loader isOpen={showCostLoader} key="campaigns.kb" size={25} showBackdrop={false} color={"#c9302c"} />
+                                            </Box>
+                                            <Box className={classes.lightBlueTicket}>
+                                                <label className={localClasses.helperText}>{t('campaigns.summaryTotal')} {campaingnValues.TotalCost.toLocaleString()} {t('report.Credits')}</label>
+                                                <Loader isOpen={showCostLoader} key="report.Credits" size={25} showBackdrop={false} color={"#c9302c"} />
+                                            </Box>
+                                        </Box>
                                     </>
                                     ,
                                     gridSize: { xs: 12, sm: 12 },
@@ -753,21 +797,6 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                 }
 
             />
-            {accountFeatures?.indexOf(PulseemFeatures.GOOGLE_LINKS) > -1 && <Box className={clsx(classes.flex, localClasses.googleCheck)}>
-                <Checkbox
-                    color="primary"
-                    inputProps={{ 'aria-label': 'secondary checkbox' }}
-                    name='googleAnalytics'
-                    // className={ }
-                    checked={campaingnValues.GoogleAnalytics === true}
-                    onClick={() => {
-                        setCampaingnValues({ ...campaingnValues, GoogleAnalytics: !campaingnValues.GoogleAnalytics })
-                    }}
-                />
-                <FaGoogle />
-                <Typography className={classes.f14} title={t("campaigns.newsLetterEditor.gAnalytics")} align="left">{t("campaigns.newsLetterEditor.gAnalytics")}</Typography>
-            </Box>
-            }
         </Box>
     )
 
@@ -1138,6 +1167,14 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         </Box>
     )
 
+    const removeAttachmentFile = (event, fileId) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const newAttachments = [...campaingnValues.FilesProperties];
+        setCampaingnValues({ ...campaingnValues, FilesProperties: newAttachments.filter((f) => f.ID !== fileId) });
+        setIsSilenceUpdated(true);
+    }
+
     const getDeleteStatus = () => {
         return setConfirmDelete(true)
     }
@@ -1145,18 +1182,29 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         setIsFileSelected(true);
     }
     const handleSelectedImage = (files) => {
-        setSelectedFileUrls(files);
-        let finalFileNames = '';
+        const existsFiles = [...campaingnValues.FilesProperties];
+
         if (typeof files === 'string') {
-            finalFileNames = files.split('/')[files.split('/').length - 1];
+            files = [files];
         }
-        else if (typeof files === 'object') {
-            finalFileNames = files.join("##");
+
+        for (var i = 0; i < files.length; i++) {
+            const file = files[i];
+            let fileName = file.split('/')[file.split('/').length - 1];
+            const newFile = {
+                Name: fileName,
+                FileName: fileName,
+                FolderType: PulseemFolderType.DOCUMENT,
+                FileURL: file,
+                ID: makeId()
+            }
+            existsFiles.push(newFile);
         }
-        setFileNames(finalFileNames);
-        setCampaingnValues({ ...campaingnValues, Files: [files] })
+
+        setCampaingnValues({ ...campaingnValues, FilesProperties: [...existsFiles] })
         setShowGallery(false);
         setIsFileSelected(false);
+        setIsSilenceUpdated(true);
     }
     const showGalleryModal = () => {
         if (showGallery) {
@@ -1227,7 +1275,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                 ]}
             />
 
-            <Box className={classes.flex} style={{ justifyContent: 'end' }}>
+            <Box className={classes.flex} style={{ justifyContent: 'end', marginTop: 25 }}>
                 <WizardActions
                     classes={classes}
                     onSave={handleSubmit}

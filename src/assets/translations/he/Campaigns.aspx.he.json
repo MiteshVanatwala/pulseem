@@ -565,5 +565,8 @@
   "campaignSaved": "הקמפיין נשמר בהצלחה!",
   "sendTest": "שליחת ניסיון",
   "rightToLeft": "ימין לשמאל",
-  "leftToRight": "שמאל לימין"
+  "leftToRight": "שמאל לימין",
+  "summaryTotal": "סה\"כ עלות",
+  "totalSize": "סה\"כ נפח",
+  "kb": "KB"
 }
