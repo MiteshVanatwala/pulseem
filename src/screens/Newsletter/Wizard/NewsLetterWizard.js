@@ -733,64 +733,65 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                             gridSize: { xs: 12, sm: 6 }
                         },
                         {
-                            content: accountFeatures?.indexOf(PulseemFeatures.FILE_ATTACHMENT) > -1 && <SimpleGrid
-                                gridArr={[{
-                                    content:
-                                        <CustomTooltip
-                                            isSimpleTooltip={false}
-                                            classes={classes}
-                                            interactive={true}
-                                            arrow={true}
-                                            placement={'top'}
-                                            title={<Typography noWrap={false}>{t("Upload File")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt</Typography>}
-                                            text={t("Upload File - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt")}
-                                        >
-                                            <Typography noWrap={false}>{t("common.UploadFile")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt</Typography>
-                                        </CustomTooltip>,
-                                    gridSize: { xs: 12, sm: 12 }
-                                },
-                                {
-                                    content: campaingnValues.CampaignID && <>
-                                        <PulseemTags
-                                            title={""}
-                                            style={null}
-                                            classes={classes}
-                                            tagStyle={{ maxWidth: 150 }}
-                                            items={campaingnValues.FilesProperties?.map((f) => {
-                                                return {
-                                                    Name: f.Name ?? f.FileName,
-                                                    ID: f.ID
-                                                };
-                                            })}
-                                            onShowModal={() => setShowGallery(true)}
-                                            handleRemove={removeAttachmentFile}
-                                            icon={<BiUpload />}
-                                        />
-                                        <label className={localClasses.helperText}>{t("campaigns.newsLetterEditor.helpTexts.upload")}</label>
-                                    </>
-                                    ,
-                                    gridSize: { xs: 12, sm: 12 },
-                                },
-                                {
-                                    content: campaingnValues.FilesProperties?.length > 0 && <>
-                                        <Box className={classes.dFlex} style={{ justifyContent: 'space-between' }}>
-                                            <Box className={classes.lightBlueTicket}>
-                                                <label className={localClasses.helperText}>{t('campaigns.totalSize')} {campaingnValues.TotalBytes.toLocaleString()} {t('campaigns.kb')}</label>
-                                                <Loader isOpen={showCostLoader} key="campaigns.kb" size={25} showBackdrop={false} color={"#c9302c"} />
+                            content: accountFeatures?.indexOf(PulseemFeatures.FILE_ATTACHMENT) > -1 &&
+                                campaingnValues.CampaignID && <SimpleGrid
+                                    gridArr={[{
+                                        content:
+                                            <CustomTooltip
+                                                isSimpleTooltip={false}
+                                                classes={classes}
+                                                interactive={true}
+                                                arrow={true}
+                                                placement={'top'}
+                                                title={<Typography noWrap={false}>{t("Upload File")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt</Typography>}
+                                                text={t("Upload File - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt")}
+                                            >
+                                                <Typography noWrap={false}>{t("common.UploadFile")} - doc, docx, pdf, rtf, xls, xlsv, csv, txt, jpg, jpeg, ppt</Typography>
+                                            </CustomTooltip>,
+                                        gridSize: { xs: 12, sm: 12 }
+                                    },
+                                    {
+                                        content: campaingnValues.CampaignID && <>
+                                            <PulseemTags
+                                                title={""}
+                                                style={null}
+                                                classes={classes}
+                                                tagStyle={{ maxWidth: 150 }}
+                                                items={campaingnValues.FilesProperties?.map((f) => {
+                                                    return {
+                                                        Name: f.Name ?? f.FileName,
+                                                        ID: f.ID
+                                                    };
+                                                })}
+                                                onShowModal={() => setShowGallery(true)}
+                                                handleRemove={removeAttachmentFile}
+                                                icon={<BiUpload />}
+                                            />
+                                            <label className={localClasses.helperText}>{t("campaigns.newsLetterEditor.helpTexts.upload")}</label>
+                                        </>
+                                        ,
+                                        gridSize: { xs: 12, sm: 12 },
+                                    },
+                                    {
+                                        content: campaingnValues.FilesProperties?.length > 0 && <>
+                                            <Box className={classes.dFlex} style={{ justifyContent: 'space-between' }}>
+                                                <Box className={classes.lightBlueTicket}>
+                                                    <label className={localClasses.helperText}>{t('campaigns.totalSize')} {campaingnValues.TotalBytes.toLocaleString()} {t('campaigns.kb')}</label>
+                                                    <Loader isOpen={showCostLoader} key="campaigns.kb" size={25} showBackdrop={false} color={"#c9302c"} />
+                                                </Box>
+                                                <Box className={classes.lightBlueTicket}>
+                                                    <label className={localClasses.helperText}>{t('campaigns.summaryTotal')} {campaingnValues.TotalCost.toLocaleString()} {t('report.Credits')}</label>
+                                                    <Loader isOpen={showCostLoader} key="report.Credits" size={25} showBackdrop={false} color={"#c9302c"} />
+                                                </Box>
                                             </Box>
-                                            <Box className={classes.lightBlueTicket}>
-                                                <label className={localClasses.helperText}>{t('campaigns.summaryTotal')} {campaingnValues.TotalCost.toLocaleString()} {t('report.Credits')}</label>
-                                                <Loader isOpen={showCostLoader} key="report.Credits" size={25} showBackdrop={false} color={"#c9302c"} />
-                                            </Box>
-                                        </Box>
-                                    </>
-                                    ,
-                                    gridSize: { xs: 12, sm: 12 },
-                                }
-                                ]}
-                                spacing={1}
-                                gridStyles={localClasses.contentCenter}
-                            />,
+                                        </>
+                                        ,
+                                        gridSize: { xs: 12, sm: 12 },
+                                    }
+                                    ]}
+                                    spacing={1}
+                                    gridStyles={localClasses.contentCenter}
+                                />,
                             gridSize: { xs: 12, sm: 6 }
                         },
                     ]
