@@ -1184,9 +1184,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const handleSelectedImage = (files) => {
         const existsFiles = [...campaingnValues.FilesProperties];
 
-        if (typeof files === 'string') {
-            files = [files];
-        }
+        files = files.split(',');
 
         for (var i = 0; i < files.length; i++) {
             const file = files[i];
