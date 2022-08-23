@@ -57,6 +57,7 @@ import { ClientStatus } from "../../helpers/PulseemArrays";
 import { switchClientStatus } from '../../helpers/functions';
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
+import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -93,7 +94,7 @@ const ClientSearchResult = ({ props, classes }) => {
   } = useSelector((state) => state.core);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
-  const { groupData } = useSelector((state) => state.group);
+  const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
   const localClasses = useStyles();
   const location = useLocation()
@@ -175,7 +176,10 @@ const ClientSearchResult = ({ props, classes }) => {
   };
   useEffect(() => {
     const initExtraFields = async () => {
-      await dispatch(getAccountExtraData());
+      dispatch(getAccountExtraData());
+      if (subAccountAllGroups.length === 0) {
+        dispatch(getGroupsBySubAccountId());
+      }
     }
     let isSessionStorageData = null;
     let overwriteObject = location?.state;
@@ -926,7 +930,7 @@ const ClientSearchResult = ({ props, classes }) => {
             setPage(1);
           }}
           onKeyPress={handleKeyPress}
-          placeholder={t("report.clientName")}
+          placeholder={t("appbar.search")}
         />
       );
     }
@@ -940,7 +944,7 @@ const ClientSearchResult = ({ props, classes }) => {
             onKeyPress={handleKeyDown}
             onChange={(e) => setSearchStr(e.target.value)}
             className={clsx(classes.textField, classes.minWidth252)}
-            placeholder={t("report.clientName")}
+            placeholder={t("appBar.groups.search")}
           />
         </Grid>
         {PageTypeObject[`${searchData?.PageType || CLIENT_CONSTANTS.PAGE_TYPES.Undefined}`]?.filterComponents?.map(comp => comp?.())}
@@ -1296,7 +1300,20 @@ const ClientSearchResult = ({ props, classes }) => {
               {
                 label: t(""),
                 component: (
-                  <Typography title={Email} className={classes.bold}>{`${Email && Email.length > 18 ? Email.substring(0, 18) + '...' : Email}`}</Typography>
+                  Email !== '' && <CustomTooltip
+                    isSimpleTooltip={false}
+                    interactive={true}
+                    classes={{
+                      tooltip: clsx(classes.tooltipBlack, classes.tooltipPlacement),
+                      arrow: classes.fBlack,
+                    }}
+                    arrow={true}
+                    style={{ fontWeight: "bold" }}
+                    placement={"top"}
+                    title={<Typography title={Email} className={classes.bold}>{`${Email && Email.length > 22 ? Email.substring(0, 22) + '...' : Email}`}</Typography>}
+                    text={`${Email}`}
+                  >
+                  </CustomTooltip>
                 ),
                 classes: { text: localClasses.noWrap },
               },
@@ -1575,8 +1592,8 @@ const ClientSearchResult = ({ props, classes }) => {
             DialogType={DialogType}
             selectedGroups={data.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds || searchData?.GroupIds || []}
             setDialog={setDialog}
-            handleResponses={(response, actions) => { setDialog(null); handleResponses(response, actions); }}
-            onAddRecipient={() => { getData(); }}
+            handleResponses={(response, actions) => { handleResponses(response, actions); }}
+            onAddRecipient={() => { setDialog(null); getData(); }}
             recipientData={
               selectedClients[0] && (data.find((obj) => obj.ClientID === selectedClients[0]))
             }

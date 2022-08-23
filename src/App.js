@@ -433,6 +433,7 @@ const AppContainer = () => {
   useEffect(() => {
     const initFeatures = async () => {
       if (!accountSettings) {
+        //TODO: add promise to getCommonFeature & then setAccountFeature OR move setAccountFeatures to commonSlice.
         const settings = await dispatch(getCommonFeatures());
         dispatch(setAccountFeatures(settings.payload));
       }
