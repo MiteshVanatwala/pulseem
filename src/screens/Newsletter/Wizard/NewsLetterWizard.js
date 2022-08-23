@@ -167,7 +167,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         PrintLocation: 0,
         UnsubscribeLocation: 0,
         UpdateClient: 0,
-        IsResponsive: 1
+        IsResponsive: 1,
+        FilesProperties: []
     })
 
     const [selectedRadio, setSelectedRadio] = useState({ a: null, b: null, c: null, d: null })
@@ -273,10 +274,19 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             handleGetNewsletterResponse(JSON.parse(response.payload))
             setShowCostLoader(false);
         }
+
         if (isSilenceUpdated) {
-            setShowCostLoader(true);
-            silenceSaveAndLoad();
-            setIsSilenceUpdated(false);
+            if (isSilenceUpdated && campaingnValues?.CampaignID && campaingnValues?.CampaignID > 0) {
+                setShowCostLoader(true);
+                silenceSaveAndLoad();
+                setIsSilenceUpdated(false);
+            }
+            else {
+                if (campaingnValues?.FilesProperties?.length > 0) {
+                    // Show dialog with text instead of alert
+                    alert('save the campaign before')
+                }
+            }
         }
     }, [campaingnValues['FilesProperties']])
 
@@ -734,7 +744,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                         },
                         {
                             content: accountFeatures?.indexOf(PulseemFeatures.FILE_ATTACHMENT) > -1 &&
-                                campaingnValues.CampaignID && <SimpleGrid
+                                <SimpleGrid
                                     gridArr={[{
                                         content:
                                             <CustomTooltip
@@ -751,7 +761,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         gridSize: { xs: 12, sm: 12 }
                                     },
                                     {
-                                        content: campaingnValues.CampaignID && <>
+                                        content: <>
                                             <PulseemTags
                                                 title={""}
                                                 style={null}
@@ -773,14 +783,14 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         gridSize: { xs: 12, sm: 12 },
                                     },
                                     {
-                                        content: campaingnValues.FilesProperties?.length > 0 && <>
+                                        content: campaingnValues?.TotalBytes && campaingnValues?.TotalCost && <>
                                             <Box className={classes.dFlex} style={{ justifyContent: 'space-between' }}>
                                                 <Box className={classes.lightBlueTicket}>
-                                                    <label className={localClasses.helperText}>{t('campaigns.totalSize')} {campaingnValues.TotalBytes.toLocaleString()} {t('campaigns.kb')}</label>
+                                                    <label className={localClasses.helperText}>{t('campaigns.totalSize')} {campaingnValues?.TotalBytes?.toLocaleString()} {t('campaigns.kb')}</label>
                                                     <Loader isOpen={showCostLoader} key="campaigns.kb" size={25} showBackdrop={false} color={"#c9302c"} />
                                                 </Box>
                                                 <Box className={classes.lightBlueTicket}>
-                                                    <label className={localClasses.helperText}>{t('campaigns.summaryTotal')} {campaingnValues.TotalCost.toLocaleString()} {t('report.Credits')}</label>
+                                                    <label className={localClasses.helperText}>{t('campaigns.summaryTotal')} {campaingnValues?.TotalCost?.toLocaleString()} {t('report.Credits')}</label>
                                                     <Loader isOpen={showCostLoader} key="report.Credits" size={25} showBackdrop={false} color={"#c9302c"} />
                                                 </Box>
                                             </Box>
