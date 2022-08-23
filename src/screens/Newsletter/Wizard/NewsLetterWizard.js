@@ -274,10 +274,19 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             handleGetNewsletterResponse(JSON.parse(response.payload))
             setShowCostLoader(false);
         }
+
         if (isSilenceUpdated) {
-            setShowCostLoader(true);
-            silenceSaveAndLoad();
-            setIsSilenceUpdated(false);
+            if (isSilenceUpdated && campaingnValues?.CampaignID && campaingnValues?.CampaignID > 0) {
+                setShowCostLoader(true);
+                silenceSaveAndLoad();
+                setIsSilenceUpdated(false);
+            }
+            else {
+                if (campaingnValues?.FilesProperties?.length > 0) {
+                    // Show dialog with text instead of alert
+                    alert('save the campaign before')
+                }
+            }
         }
     }, [campaingnValues['FilesProperties']])
 
@@ -737,7 +746,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                             gridSize: { xs: 12, sm: 6 }
                         },
                         {
-                            content: accountFeatures?.indexOf(PulseemFeatures.FILE_ATTACHMENT) > -1 && campaingnValues.CampaignID &&
+                            content: accountFeatures?.indexOf(PulseemFeatures.FILE_ATTACHMENT) > -1 &&
                                 <SimpleGrid
                                     gridArr={[{
                                         content:
@@ -755,25 +764,24 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         gridSize: { xs: 12, sm: 12 }
                                     },
                                     {
-                                        content: campaingnValues.CampaignID &&
-                                            <>
-                                                <PulseemTags
-                                                    title={""}
-                                                    style={null}
-                                                    classes={classes}
-                                                    tagStyle={{ maxWidth: 120 }}
-                                                    items={campaingnValues.FilesProperties?.map((f) => {
-                                                        return {
-                                                            Name: f.Name ?? f.FileName,
-                                                            ID: f.ID
-                                                        };
-                                                    })}
-                                                    onShowModal={() => setShowGallery(true)}
-                                                    handleRemove={removeAttachmentFile}
-                                                    icon={<BiUpload />}
-                                                />
-                                                <label className={localClasses.helperText}>{t("campaigns.newsLetterEditor.helpTexts.upload")}</label>
-                                            </>
+                                        content: <>
+                                            <PulseemTags
+                                                title={""}
+                                                style={null}
+                                                classes={classes}
+                                                tagStyle={{ maxWidth: 150 }}
+                                                items={campaingnValues.FilesProperties?.map((f) => {
+                                                    return {
+                                                        Name: f.Name ?? f.FileName,
+                                                        ID: f.ID
+                                                    };
+                                                })}
+                                                onShowModal={() => setShowGallery(true)}
+                                                handleRemove={removeAttachmentFile}
+                                                icon={<BiUpload />}
+                                            />
+                                            <label className={localClasses.helperText}>{t("campaigns.newsLetterEditor.helpTexts.upload")}</label>
+                                        </>
                                         ,
                                         gridSize: { xs: 12, sm: 12 },
                                     },
