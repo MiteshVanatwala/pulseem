@@ -297,6 +297,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         // console.log("VALUES:", e.target.name, e.target.value)
 
         e.preventDefault();
+        setErrors({ ...errors, [e.target.name]: '' })
         setCampaingnValues({ ...campaingnValues, [e.target.name]: e.target.value })
     }
 
@@ -310,25 +311,40 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         handleChange(e)
     }
 
+    const handleValidations = () => {
+        const tempError = { ...errors }
+        const data = { ...campaingnValues }
+        let isError = false;
+
+        Object.keys(tempError).forEach((key) => {
+            if (!data[key] || !data[key].trim()) {
+                tempError[key] = "Null values not allowed";
+                isError = !data[key]
+            }
+        })
+        setErrors({ ...tempError })
+        return isError
+    }
+
     const handleSubmit = async (isContiue) => {
         // TODO: [PR-570] Fix this validation
-        //if (handleValidations()) {
-        setLoader(true);
-        const response = await dispatch(saveCampaignInfo(campaingnValues));
+        if (!handleValidations()) {
+            setLoader(true);
+            const response = await dispatch(saveCampaignInfo(campaingnValues));
 
-        handleSubmitNewsletterResponse(response)
+            handleSubmitNewsletterResponse(response)
 
-        setLoader(false);
+            setLoader(false);
 
-        if (isContiue) {
-            window.location = `/react/Campaigns/editor/${campaingnValues.CampaignID}`;
+            if (isContiue) {
+                window.location = `/react/Campaigns/editor/${campaingnValues.CampaignID}`;
+            }
+            else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
+                const savedCampaign = JSON.parse(response.payload);
+                const saveInfo = JSON.parse(savedCampaign.Message);
+                window.location = `/react/Campaigns/Create/${saveInfo.CampaignID}`
+            }
         }
-        else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
-            const savedCampaign = JSON.parse(response.payload);
-            const saveInfo = JSON.parse(savedCampaign.Message);
-            window.location = `/react/Campaigns/Create/${saveInfo.CampaignID}`
-        }
-        //}
     }
     const handleDelete = async () => {
         await dispatch(deleteCampaign(campaingnValues.CampaignID));
@@ -337,20 +353,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     }
 
 
-    const handleValidations = () => {
-        const tempError = { ...errors }
-        const data = { ...campaingnValues }
-        let isError = false;
 
-        Object.keys(tempError).forEach((key) => {
-            if (!data[key]) {
-                tempError[key] = "Null values not allowed";
-                isError = !data[key]
-            }
-        })
-        setErrors({ ...tempError })
-        return isError
-    }
 
 
     const renderToast = () => {
@@ -390,7 +393,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         autoComplete="off"
                                         onChange={handleChange}
                                         error={errors.Name}
-                                        helperText={ErrorTexts.Name}
+                                        helperText={errors.Name ? errors.Name : ErrorTexts.Name}
                                     />,
                                     gridSize: { xs: 12, sm: 12 }
                                 }
@@ -415,7 +418,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         autoComplete="off"
                                         onChange={handleChange}
                                         error={errors.FromName}
-                                        helperText={ErrorTexts.FromName}
+                                        helperText={errors.FromName ? errors.FromName : ErrorTexts.FromName}
                                     />,
                                     gridSize: { xs: 12, sm: 12 }
                                 }
@@ -500,7 +503,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 autoComplete="off"
                                                 onChange={handleChange}
                                                 error={errors.Subject}
-                                                helperText={ErrorTexts.Subject}
+                                                helperText={errors.Subject ? errors.Subject : ErrorTexts.Subject}
                                             />
                                             <Box
                                                 className={clsx(localClasses.iconbox)}
