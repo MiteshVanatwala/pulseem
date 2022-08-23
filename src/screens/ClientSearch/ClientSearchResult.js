@@ -275,7 +275,8 @@ const ClientSearchResult = ({ props, classes }) => {
         getData();
       }
     }
-  }, [searchData]);
+  }, [dispatch, searchData, page, rowsPerPage]);
+
   const handleFromDateChange = (value) => {
     if (value > date.ToDate) {
       setDate({ ...date, ToDate: null });
@@ -572,12 +573,12 @@ const ClientSearchResult = ({ props, classes }) => {
   ];
   const getData = async () => {
     setLoader(true);
-    await dispatch(searchAllClients(searchData));
+    await dispatch(searchAllClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page }));
     setLoader(false);
   };
   const getSearchData = async () => {
     setLoader(true);
-    await dispatch(searchAdvancedClients(searchData));
+    await dispatch(searchAdvancedClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page }));
     setLoader(false);
   }
   useEffect(() => {
@@ -1057,14 +1058,9 @@ const ClientSearchResult = ({ props, classes }) => {
       </Grid>
     );
   };
-  const handleRowsPerPageChange = async (val) => {
-    await dispatch(setRowsPerPage(val));
-    setSearchData({
-      ...searchData,
-      PageSize: val
-    })
-    setCookie("rpp", val, { maxAge: 2147483647 });
-  };
+  const handleRowsPerPageChange = (val) => {
+    dispatch(setRowsPerPage(val))
+  }
   const renderPhoneNameCell = (row, fullwidth) => {
     let date = null;
     const { FirstName, LastName } = row;
