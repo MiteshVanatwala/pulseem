@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import DefaultScreen from "../DefaultScreen";
 import { useParams } from 'react-router-dom'
+//import * as XLSX from 'xlsx';
 import clsx from "clsx";
 import {
   Box,
@@ -50,7 +51,7 @@ import AddGroupPopUp from "../Groups/Management/Popup/AddGroupPopUp";
 import UnsubscribeOrDeletePopup from "../Groups/Management/Popup/UnsubscribeOrDeletePopup";
 import FlexGrid from "../../components/Grids/FlexGrid";
 import AddRecipientPopup from "../Groups/Management/Popup/AddRecipientPopup";
-import { exportFile } from '../../helpers/exportFromJson';
+import { exportFile, exportAsXLSX } from '../../helpers/exportFromJson';
 import { preferredOrder, flatObject, formatDateTime, replaceExtraFieldHeader, deletePropertyFromArrayObject } from '../../helpers/exportHelper';
 import { ClientStatus } from "../../helpers/PulseemArrays";
 import { switchClientStatus } from '../../helpers/functions';
@@ -328,14 +329,15 @@ const ClientSearchResult = ({ props, classes }) => {
         if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.Revenue) {
           orderList = deletePropertyFromArrayObject(orderList, "Revenue");
         }
+        if (searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.SentToCampaignID || searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.FailureCountSMSCampaignID ||
+          searchData.PageType !== CLIENT_CONSTANTS.PAGE_TYPES.OpenedCampaignID) {
+          orderList = deletePropertyFromArrayObject(orderList, "SendDate");
+        }
         orderList = preferredOrder(orderList, Object.keys(exportColumnHeader.current));
         orderList = formatDateTime(orderList, t);
-        exportFile({
-          data: orderList,
-          fileName: (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult',
-          exportType: 'csv',
-          fields: exportColumnHeader.current
-        });
+        const fileName = (location?.state && location?.state.ResultTitle) ? location?.state.ResultTitle.replace(' ', '_').replace('/', '_') : 'ClientSearchResult';
+
+        await exportAsXLSX(orderList, exportColumnHeader.current, `${fileName}.XLSX`);
       }
       else {
         setToastMessage(t('common.errorOccured'));

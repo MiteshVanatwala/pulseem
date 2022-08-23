@@ -1044,7 +1044,7 @@ const AddRecipientPopup = ({ classes,
                             setErrors({ ...errors, Groups: '' })
                         }
                     },
-                    selectedGroups: recipientData ? selectedLocalGroups : selectedGroups
+                    selectedGroups: recipientData && selectedLocalGroups?.length > 0 ? selectedLocalGroups : selectedGroups
                 }
                 }
                 error={errors.Groups}
