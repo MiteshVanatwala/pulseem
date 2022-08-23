@@ -167,7 +167,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         PrintLocation: 0,
         UnsubscribeLocation: 0,
         UpdateClient: 0,
-        IsResponsive: 1
+        IsResponsive: 1,
+        FilesProperties: []
     })
 
     const [selectedRadio, setSelectedRadio] = useState({ a: null, b: null, c: null, d: null })
@@ -736,8 +737,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                             gridSize: { xs: 12, sm: 6 }
                         },
                         {
-                            content: accountFeatures?.indexOf(PulseemFeatures.FILE_ATTACHMENT) > -1 &&
-                                campaingnValues.CampaignID && <SimpleGrid
+                            content: accountFeatures?.indexOf(PulseemFeatures.FILE_ATTACHMENT) > -1 && campaingnValues.CampaignID &&
+                                <SimpleGrid
                                     gridArr={[{
                                         content:
                                             <CustomTooltip
@@ -754,37 +755,38 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         gridSize: { xs: 12, sm: 12 }
                                     },
                                     {
-                                        content: campaingnValues.CampaignID && <>
-                                            <PulseemTags
-                                                title={""}
-                                                style={null}
-                                                classes={classes}
-                                                tagStyle={{ maxWidth: 150 }}
-                                                items={campaingnValues.FilesProperties?.map((f) => {
-                                                    return {
-                                                        Name: f.Name ?? f.FileName,
-                                                        ID: f.ID
-                                                    };
-                                                })}
-                                                onShowModal={() => setShowGallery(true)}
-                                                handleRemove={removeAttachmentFile}
-                                                icon={<BiUpload />}
-                                            />
-                                            <label className={localClasses.helperText}>{t("campaigns.newsLetterEditor.helpTexts.upload")}</label>
-                                        </>
+                                        content: campaingnValues.CampaignID &&
+                                            <>
+                                                <PulseemTags
+                                                    title={""}
+                                                    style={null}
+                                                    classes={classes}
+                                                    tagStyle={{ maxWidth: 120 }}
+                                                    items={campaingnValues.FilesProperties?.map((f) => {
+                                                        return {
+                                                            Name: f.Name ?? f.FileName,
+                                                            ID: f.ID
+                                                        };
+                                                    })}
+                                                    onShowModal={() => setShowGallery(true)}
+                                                    handleRemove={removeAttachmentFile}
+                                                    icon={<BiUpload />}
+                                                />
+                                                <label className={localClasses.helperText}>{t("campaigns.newsLetterEditor.helpTexts.upload")}</label>
+                                            </>
                                         ,
                                         gridSize: { xs: 12, sm: 12 },
                                     },
                                     {
-                                        content: campaingnValues.FilesProperties?.length > 0 && <>
+                                        content: campaingnValues?.FilesProperties?.length > 0 && <>
                                             <Box className={classes.dFlex} style={{ justifyContent: 'space-between' }}>
                                                 <Box className={classes.lightBlueTicket}>
-                                                    <label className={localClasses.helperText}>{t('campaigns.totalSize')} {campaingnValues.TotalBytes.toLocaleString()} {t('campaigns.kb')}</label>
-                                                    <Loader isOpen={showCostLoader} key="campaigns.kb" size={25} showBackdrop={false} color={"#c9302c"} />
+                                                    <label className={localClasses.helperText}>{t('campaigns.totalSize')} {campaingnValues?.TotalBytes?.toLocaleString() || '0'} {t('campaigns.kb')}</label>
+                                                    {/* <Loader isOpen={showCostLoader} key="campaigns.kb" size={25} showBackdrop={false} color={"#c9302c"} /> */}
                                                 </Box>
                                                 <Box className={classes.lightBlueTicket}>
-                                                    <label className={localClasses.helperText}>{t('campaigns.summaryTotal')} {campaingnValues.TotalCost.toLocaleString()} {t('report.Credits')}</label>
-                                                    <Loader isOpen={showCostLoader} key="report.Credits" size={25} showBackdrop={false} color={"#c9302c"} />
+                                                    <label className={localClasses.helperText}>{t('campaigns.summaryTotal')} {campaingnValues?.TotalCost?.toLocaleString() || '0'} {t('report.Credits')}</label>
+                                                    {/* <Loader isOpen={showCostLoader} key="report.Credits" size={25} showBackdrop={false} color={"#c9302c"} /> */}
                                                 </Box>
                                             </Box>
                                         </>
@@ -1243,6 +1245,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                     callbackSelectFile={handleSelectedImage}
                     style={{ minWidth: 400 }}
                     multiSelect={true}
+                    selected={campaingnValues?.FilesProperties ? campaingnValues?.FilesProperties.map(f => f.FileName) : []}
                     folderType={PulseemFolderType.DOCUMENT} />
             )
         };

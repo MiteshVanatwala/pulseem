@@ -71,7 +71,7 @@ export const GalleryDocuments = ({
     const deleteDocument = (fileModel) => async (event) => {
         event.preventDefault();
         event.stopPropagation();
-        const fModel = {...fileModel};
+        const fModel = { ...fileModel };
         fModel.FolderName = fileModel.FolderName.replace('main\\', '');
         fModel.FolderType = PulseemFolderType.DOCUMENT;
         await dispatch(deleteGalleryFile(fModel));
@@ -135,7 +135,8 @@ export const GalleryDocuments = ({
             </Grid>
             {
                 docs && docs.map((f, index) => {
-                    const fileKey = `${f.FolderName.replace('\\', '')}_${index}`;
+                    const fileKey = f.FileName;
+                    // const fileKey = `${f.FolderName.replace('\\', '')}_${index}`;
                     const fileExtension = f.FileURL.split('.')[f.FileURL.split('.').length - 1];
                     return <Image
                         classes={classes}

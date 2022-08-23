@@ -139,7 +139,8 @@ export const GalleryImages = ({
             </Grid>
             {
                 images && images.map((f, index) => {
-                    const imgKey = `${f.FolderName.replace('\\', '')}_${index}`;
+                    // const imgKey = `${f.FolderName.replace('\\', '')}_${index}`;
+                    const imgKey = f.FileName;
                     return (
                         <Image
                             classes={classes}

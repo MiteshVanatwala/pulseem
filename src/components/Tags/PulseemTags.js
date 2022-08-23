@@ -18,7 +18,7 @@ const PulseemTags = ({
 }) => {
     const { t } = useTranslation();
     const { isRTL } = useSelector(state => state.core);
-    return <Box className={classes.rightForm} style={{ ...style }}>
+    return <Box className={classes.rightForm} style={{ ...style, position: 'relative' }}>
         <Box
             style={{ minHeight: 40, maxHeight: 40, position: 'relative' }}
             className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
@@ -44,14 +44,18 @@ const PulseemTags = ({
                     })}
                 </Box>
             ) : null}
-            {icon && <Box style={{
-                alignItems: "center",
-                position: 'absolute',
-                right: !isRTL ? 15 : 'auto',
-                left: !isRTL ? 'auto' : 15,
-                fontSize: 26
-            }}>{icon}</Box>}
+
         </Box>
+        {icon && <Box style={{
+            alignItems: "center",
+            position: 'absolute',
+            right: !isRTL ? 15 : 'auto',
+            left: !isRTL ? 'auto' : 15,
+            fontSize: 26,
+            cursor: 'pointer'
+        }}
+            onClick={() => onShowModal()}
+        >{icon}</Box>}
     </Box>
 }
 

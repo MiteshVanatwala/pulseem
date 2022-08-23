@@ -23,13 +23,13 @@ import Toast from '../Toast/Toast.component';
 import { GalleryImages } from './GalleryImages'
 import { GalleryDocuments } from './GalleryDocuments'
 
-const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemFolderType.CLIENT_IMAGES, multiSelect = false }) => {
+const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemFolderType.CLIENT_IMAGES, multiSelect = false, selected = [] }) => {
     const { t } = useTranslation();
     const dispatch = useDispatch();
     const [folders, setFolders] = useState(null);
     const [folderName, setFolderName] = useState('');
     const [scrollIndex, setScrollIndex] = useState(0);
-    const [selectedFile, setSelectedFile] = useState(multiSelect ? [] : null);
+    const [selectedFile, setSelectedFile] = useState(multiSelect ? selected : null);
     const [toastMessage, setToastMessage] = useState(null);
     const [selectedNode, setSelectedNode] = useState('k_0');
     const [selectedFileURL, setSelectedFileURL] = useState(multiSelect ? [] : null);
@@ -37,6 +37,13 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemF
     const [folderCreationState, setShowFolderCreation] = useState(false);
     const { windowSize, language, isRTL } = useSelector(state => state.core)
     const { gallery } = useSelector(state => state.gallery)
+
+
+    useEffect(() => {
+        console.log("SELECTED-1:", selected)
+        console.log("SELECTED-2:", selectedFile)
+    }, [selectedFile])
+
 
 
     const renderToast = () => {
