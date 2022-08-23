@@ -1300,7 +1300,7 @@ const ClientSearchResult = ({ props, classes }) => {
               {
                 label: t(""),
                 component: (
-                  Email !== '' && <CustomTooltip
+                  <CustomTooltip
                     isSimpleTooltip={false}
                     interactive={true}
                     classes={{
@@ -1310,8 +1310,8 @@ const ClientSearchResult = ({ props, classes }) => {
                     arrow={true}
                     style={{ fontWeight: "bold" }}
                     placement={"top"}
-                    title={<Typography title={Email} className={classes.bold}>{`${Email && Email.length > 22 ? Email.substring(0, 22) + '...' : Email}`}</Typography>}
-                    text={`${Email}`}
+                    title={<Typography title={Email} className={classes.bold}>{`${Email}`}</Typography>}
+                    text={`${Email && Email.length > 24 ? Email.substring(0, 24) + '...' : Email}`}
                   >
                   </CustomTooltip>
                 ),
