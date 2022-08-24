@@ -30,6 +30,7 @@ import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { getCookie } from '../../../helpers/cookies'
 import { RiCheckboxCircleFill, RiCloseCircleFill } from 'react-icons/ri';
+import EmailVerificationDialog from '../../../components/DialogTemplates/EmailVerificationDialog';
 
 
 const NewsletterManagnentScreen = ({ classes }) => {
@@ -72,12 +73,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       verified: true,
     },
   ])
-  const [emailVerificationStep, setEmailVerificationStep] = useState(0)
-  const [emailVerificationError, setEmailVerificationError] = useState(null)
-  const [selectedVerificationEmail, setSelectedVerificationEmail] = useState('')
-  const [codeResend, setCodeResend] = useState(false)
-  // const [emailStatus, setEmailStatus] = useState(false)
-  const verificationCode = useRef('');
+  const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
 
   moment.locale(language)
 
@@ -307,10 +303,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonDarkBlue
             )}
-            onClick={() => setDialogType({
-              type: 'emailVerification',
-              data: ''
-            })}
+            onClick={() =>
+              //   setDialogType({
+              //   type: 'emailVerification',
+              //   data: ''
+              // })
+              setShowEmailVerDialog(true)
+            }
           >
             {t('campaigns.newsLetterMgmt.emailVerification.emailVerificationBtnText')}
           </Button>
@@ -678,12 +677,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
 
   const handleClose = () => {
     setDialogType(null)
-    emailVerificationStep && setEmailVerificationStep(0)
-    emailVerificationError && setEmailVerificationError(null)
-    selectedVerificationEmail && setSelectedVerificationEmail('');
-    codeResend && setCodeResend(false);
-    if (!!verificationCode?.current?.value) verificationCode.current.value = ''
-    if (localStorage.getItem('verificationTrial')) localStorage.removeItem('verificationTrial')
   }
 
   const getRestorDialog = (data = []) => {
@@ -798,300 +791,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
     }
   })
 
-
-
-
-  const EmailVerificationModule = () => {
-
-    const verifyCode = () => {
-      return true
-    }
-
-    const handleResendCode = () => {
-      setCodeResend(false);
-      //API CALL
-      // setCodeResend(false);
-      setCodeResend(true);
-    }
-
-    const NextSlide = () => {
-      if (emailVerificationStep === 4) {
-        return setEmailVerificationStep(0)
-      }
-      return setEmailVerificationStep(emailVerificationStep + 1)
-    }
-
-    const PrevSlide = () => {
-      if (emailVerificationStep === 0) {
-        return setEmailVerificationStep(5)
-      }
-      return setEmailVerificationStep(emailVerificationStep - 1)
-    }
-
-    let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
-
-    const FirstSlide = () => (
-      <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
-        <Box className='cSlide firstSlide'>
-          <Box pb={1} className={classes.textCenter}>
-            <Typography style={{ fontWeight: 700, padding: '0 0 10px 0' }} variant="h4">
-              {t('campaigns.newsLetterMgmt.emailVerification.popupTitle')}
-            </Typography>
-            <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
-              {t('campaigns.newsLetterMgmt.emailVerification.popupDesc1')}
-            </Typography>
-            <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
-              {t('campaigns.newsLetterMgmt.emailVerification.popupDesc2')}
-            </Typography>
-            <Divider />
-          </Box>
-          <Box style={{ position: 'relative' }}>
-            <Typography className={clsx(classes.pbt5, classes.bold)} variant='h6' >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
-            {
-              emails.map((obj) => (
-                <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')}>
-                  <span>{obj.verified ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}</span>
-                  <Typography className='emailText'>{obj.email} </Typography>
-                  {!obj.verified && <Typography className={clsx(classes.link, 'emailVerLink')}
-                    onClick={() => {
-                      setSelectedVerificationEmail(obj.email);
-                      setEmailVerificationError({ email: '' })
-                      EmailVerificationModule().NextSlide()
-                    }}
-                  >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifyEmailAddr')}</Typography>}
-                </Box>
-              ))
-            }
-            <Button className={clsx(
-              classes.actionButton,
-              classes.actionButtonDarkBlue,
-              isRTL ? 'btnVerifyNewRTL' : 'btnVerifyNewLtr'
-            )}
-              onClick={() => {
-                setSelectedVerificationEmail('')
-                setEmailVerificationError({ email: '' })
-                EmailVerificationModule().NextSlide()
-              }}
-            >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.addNewToVerify')}</Button>
-          </Box>
-        </Box>
-      </Box>
-    )
-
-    const SecondSlide = () => (
-      <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
-        <Box className='cFlexSlide secondSlide' >
-          <Box className='titleDescBox'>
-            <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.title')}</Typography>
-            <Typography variant='body1' className='desc' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc1')}</Typography>
-            <Typography variant='body1' className='desc' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc2')}</Typography>
-          </Box>
-          <Box className={classes.flexColumn}>
-            <Box>
-              <TextField
-                variant='outlined'
-                size='small'
-                value={selectedVerificationEmail}
-                onChange={(e) => {
-                  !!emailVerificationError?.email && setEmailVerificationError({ email: '' })
-                  setSelectedVerificationEmail(e.target.value)
-                }}
-                className={clsx(classes.textField, classes.maxWidth400)}
-                placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
-                error={!!emailVerificationError?.email}
-              // helperText={emailVerificationError?.email}
-              />
-            </Box>
-            <Box mt={2}>
-              <Button className={clsx(classes.actionButton, classes.actionButtonGreen)}
-                onClick={() => {
-                  if (selectedVerificationEmail) {
-                    if (selectedVerificationEmail.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
-                      EmailVerificationModule().NextSlide()
-                    }
-                    else {
-                      setEmailVerificationError({ email: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error1') })
-                    }
-                  }
-                  else
-                    setEmailVerificationError({ email: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error2') })
-                }}
-              >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.btnText')}</Button>
-              <Typography className='error' variant="body1">{emailVerificationError?.email}</Typography>
-            </Box>
-          </Box>
-          <Box>
-            <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.anyProblem')} <span className={classes.link}>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.contactUs')}</span></Typography>
-            <Typography variant='body1'>{t('common.phone')} 03-5240290 / {t('common.email')} support@pulseem.com</Typography>
-          </Box>
-        </Box>
-      </Box>
-    )
-
-    const ThirdSlide = () => (
-      <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
-        <Box className='cFlexSlide'>
-          <Box>
-            <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.title')}</Typography>
-            <Typography variant='body1' className={classes.mt4}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.desc1')}</Typography>
-            <Typography variant='body1' mt={1}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.desc2')}</Typography>
-          </Box>
-          <Box className={classes.flexColumn}>
-            <Box>
-              <TextField
-                variant='outlined'
-                size='small'
-                className={clsx(classes.textField, classes.maxWidth400)}
-                onChange={() => !!emailVerificationError?.code && setEmailVerificationError({ code: '' })}
-                placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
-                error={!!emailVerificationError?.code}
-                // helperText={emailVerificationError?.code}
-                inputProps={{
-                  ref: verificationCode
-                }}
-              />
-            </Box>
-            <Box mt={2}>
-              <Button className={clsx(classes.actionButton, classes.actionButtonDarkBlue)}
-                onClick={() => {
-                  console.log("CODE:", verificationCode?.current)
-
-
-                  if (trials === 4) {
-                    return EmailVerificationModule().NextSlide();
-                  }
-
-                  if (verificationCode?.current?.value) {
-                    if (verifyCode()) {
-                      EmailVerificationModule().NextSlide();
-                    }
-                    else {
-                      localStorage.setItem('verificationTrial', trials + 1)
-                      setEmailVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error1') })
-                    }
-                  }
-                  else {
-                    localStorage.setItem('verificationTrial', trials + 1)
-                    setEmailVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error2') })
-                  }
-                }}
-              >
-                {t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.btnText')}
-              </Button>
-              <Typography className='error' variant="body1">{emailVerificationError?.code}</Typography>
-
-              {/* // <Button onClick={() => setEmailStatus(!emailStatus)}>Change Status</Button> */}
-            </Box>
-          </Box>
-          <Box>
-            <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={classes.link} onClick={handleResendCode}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span></Typography>
-            <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
-          </Box>
-        </Box>
-      </Box>
-    )
-
-    const ErrorSlide = () => (
-      <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
-        <Box className='cFlexSlide'>
-          <Box mt={4}>
-            <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.title')}</Typography>
-            <Typography variant='body1' className={classes.mt4}>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.desc')}</Typography>
-          </Box>
-
-          <Box>
-            <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.contactSupport')}</Typography>
-            <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.phone')}: 035240290</Typography>
-            <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.email')}: support@pulseem.com</Typography>
-          </Box>
-        </Box>
-      </Box>
-    )
-
-    const SuccessSlide = () => (
-      <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
-        <Box className='cFlexSlide'>
-          <Box>
-            <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.title')}</Typography>
-            <Typography variant='body1' className={classes.mt4}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.desc')} </Typography>
-            <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.mt6)} >{t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
-          </Box>
-        </Box>
-      </Box>
-    )
-
-    const UIComp = () => (
-      <Box className={classes.carouselContainer}>
-
-        {FirstSlide()}
-        {SecondSlide()}
-        {ThirdSlide()}
-        {(trials && trials >= 4) ? ErrorSlide() : SuccessSlide()}
-        {/* {!localStorage.getItem('verificationTrial') && Number(localStorage.getItem('verificationTrial')) < 4 && FifthStep()} */}
-      </Box>
-    )
-
-    return {
-      NextSlide: NextSlide,
-      PrevSlide: PrevSlide,
-      UIComp: UIComp
-    }
-
-  }
-
-
-  const EmailVerificationDialog = (data = '') => ({
-    // title: emailVerificationStep === 0 ? (<Box pb={1}>
-    //   {t('campaigns.newsLetterMgmt.emailVerification.popupTitle')}
-    //   <Typography style={{ fontSize: 14, color: '#000' }} variant="body1">
-    //     {t('campaigns.newsLetterMgmt.emailVerification.popupDesc')}
-    //   </Typography>
-    // </Box>) : '',
-    // showDivider: emailVerificationStep === 0 ? true : false,
-    // icon: (
-    //   <Box className={classes.dialogAlertIcon}>
-    //     !
-    //   </Box>
-    // ),
-    title: '',
-    icon: ' ',
-    content: (<>
-      {EmailVerificationModule().UIComp()}
-    </>
-
-    ),
-    renderButtons: () => (<Box className={classes.textCenter}>
-      <Button
-        name="btnConfirm"
-        variant='contained'
-        size='small'
-        onClick={() => {
-          handleClose()
-        }}
-        className={clsx(
-          classes.dialogButton,
-          classes.dialogConfirmButton,
-          classes.ml5
-        )}>
-        {t('common.Ok')}
-      </Button>
-
-      {(emailVerificationStep > 0 && emailVerificationStep < 3) && <Button
-        name="btnConfirm"
-        variant='contained'
-        size='small'
-        onClick={EmailVerificationModule().PrevSlide}
-        className={clsx(
-          classes.dialogButton,
-          classes.dialogConfirmButton,
-          classes.ml5
-        )}>
-        {t('notifications.back')}
-      </Button>}
-    </Box>)
-  })
-
-
   const renderDialog = () => {
     const { data, type } = dialogType || {}
 
@@ -1100,7 +799,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
       groups: getGruopsDialog(data),
       delete: getDeleteDialog(data),
       duplicate: getDuplicateDialog(data),
-      emailVerification: EmailVerificationDialog(),
     }
 
     const currentDialog = dialogContent[type] || {}
@@ -1127,6 +825,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
+      <EmailVerificationDialog classes={classes} isOpen={showEmailVerDialog} onClose={() => setShowEmailVerDialog(false)} />
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
