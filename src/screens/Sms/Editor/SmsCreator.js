@@ -649,7 +649,7 @@ const SmsCreator = ({ classes, ...props }) => {
   const renderFields = () => {
     return (
       <Grid container spacing={windowSize === "xs" ? 0 : 2} className={classes.fieldDiv}>
-        <Grid item={true} xs={12} md={4} sm={12} className={classes.buttonForm}>
+        <Grid item="true" xs={12} md={4} sm={12} className={classes.buttonForm}>
           <Typography className={classes.buttonHead}>
             {t("mainReport.campName")}
           </Typography>
@@ -669,7 +669,7 @@ const SmsCreator = ({ classes, ...props }) => {
             {t("mainReport.campDesc")}
           </Typography>
         </Grid>
-        <Grid item={true} xs={12} md={4} sm={12} className={classes.buttonForm}>
+        <Grid item="true" xs={12} md={4} sm={12} className={classes.buttonForm}>
           <Box className={classes.inputCampDiv}>
             <Typography className={classes.buttonHead}>
               {t("mainReport.campFrom")}
@@ -702,7 +702,7 @@ const SmsCreator = ({ classes, ...props }) => {
             {t("mainReport.campRemovalDesc")}
           </Typography>
         </Grid>
-        <Grid item={true} xs={12} md={4} sm={12} >
+        <Grid item="true" xs={12} md={4} sm={12} >
           {restoreBool && removalNumber !== null ? (
             <Box className={classes.buttonForm}>
               <Typography className={clsx(classes.buttonHead)}>
@@ -782,7 +782,7 @@ const SmsCreator = ({ classes, ...props }) => {
     return (
       <Grid container className={clsx(classes.msgDiv)}>
         <Grid container>
-          <Grid item={true} xs={12} md={8} className={classes.boxDiv}>
+          <Grid item="true" xs={12} md={8} className={classes.boxDiv}>
             <Typography className={classes.msgHead}>
               {t("mainReport.yourMessage")}
             </Typography>
@@ -1006,7 +1006,7 @@ const SmsCreator = ({ classes, ...props }) => {
               </Box>
             </Box>
           </Grid>
-          <Grid item={true} xs={12} md={4} sm={12}>
+          <Grid item="true" xs={12} md={4} sm={12}>
             <Box className={classes.switchDiv}>
               <FormGroup>
                 <Switch

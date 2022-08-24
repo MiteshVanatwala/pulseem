@@ -186,7 +186,8 @@ const AddRecipientPopup = ({ classes,
                     onChange={(e) => onSelect(e.target.value)}
                 >
                     {
-                        data.map(obj => <MenuItem
+                        data.map((obj, idx) => <MenuItem
+                            key={idx}
                             style={{ paddingBlockStart: 10, textAlign: isRTL ? 'right' : 'left', direction: isRTL ? 'rtl' : 'ltr' }}
                             disabled={obj.status === -1}
                             value={obj.status}>{t(obj.text)}</MenuItem>

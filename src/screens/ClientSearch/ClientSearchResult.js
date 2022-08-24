@@ -853,11 +853,11 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(false);
   }
   const handleAssignClientsToGroup = async (groupName) => {
+    setDialog(null);
     setLoader(true);
     const response = await dispatch(AddClientsToGroup({ ...searchData, GroupName: groupName }));
     handleResponses(response, assignClientsActions);
     setLoader(false);
-    setDialog(null);
   }
   const handleUnSubscribe = async (opt) => {
     setDialog(null);
