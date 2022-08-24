@@ -275,18 +275,10 @@ const NewsLetterWizard = ({ classes, ...props }) => {
             setShowCostLoader(false);
         }
 
-        if (isSilenceUpdated) {
-            if (isSilenceUpdated && campaingnValues?.CampaignID && campaingnValues?.CampaignID > 0) {
-                setShowCostLoader(true);
-                silenceSaveAndLoad();
-                setIsSilenceUpdated(false);
-            }
-            else {
-                if (campaingnValues?.FilesProperties?.length > 0) {
-                    // Show dialog with text instead of alert
-                    alert('save the campaign before')
-                }
-            }
+        if (isSilenceUpdated && campaingnValues?.CampaignID && campaingnValues?.CampaignID > 0) {
+            setShowCostLoader(true);
+            silenceSaveAndLoad();
+            setIsSilenceUpdated(false);
         }
     }, [campaingnValues['FilesProperties']])
 
