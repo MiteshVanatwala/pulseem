@@ -142,6 +142,11 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [showCostLoader, setShowCostLoader] = useState(false);
+    const maxCharLimits = {
+        Name: 100,
+        Subject: 200,
+        FromName: 100
+    }
 
     const ErrorTexts = {
         Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
@@ -253,9 +258,9 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         const initClientFields = async () => {
             let resp = await dispatch(getAccountExtraData());
             let _clientFields = [...ClientFields];
-            let arr = Object.values(resp.payload).reduce((prev, next) => {
-                if (!!next) {
-                    return [...prev, { value: next, label: next, selected: false }]
+            let arr = Object.keys(resp.payload).reduce((prev, next) => {
+                if (!!next && resp.payload[next] !== '') {
+                    return [...prev, { value: next, label: resp.payload[next], selected: false }]
                 }
                 else {
                     return prev
@@ -285,24 +290,21 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     }, [campaingnValues['FilesProperties']])
 
     const handleSelectionRadio = (e) => {
-        console.log(e.target.name, " : ", e.target.value)
-        // setSelectedRadio({ ...selectedRadio, [e.target.name]: e.target.value })
         setCampaingnValues({ ...campaingnValues, [e.target.name]: Number(e.target.value) })
     }
     const handleChangeCheckbox = (e) => {
         if (selectedCheck[e.target.name]) {
-            // setSelectedRadio({ ...selectedRadio, [e.target.name]: null })
             setCampaingnValues({ ...campaingnValues, [e.target.name]: 0 })
         }
         setSelectedCheck({ ...selectedCheck, [e.target.name]: !selectedCheck[e.target.name] })
     }
 
     const handleChange = (e) => {
-        // console.log("VALUES:", e.target.name, e.target.value)
-
         e.preventDefault();
-        setErrors({ ...errors, [e.target.name]: '' })
-        setCampaingnValues({ ...campaingnValues, [e.target.name]: e.target.value })
+        if (e.target.value.length < maxCharLimits[e.target.name]) {
+            setErrors({ ...errors, [e.target.name]: '' })
+            setCampaingnValues({ ...campaingnValues, [e.target.name]: e.target.value })
+        }
     }
 
     const handleEmailValue = (e) => {
@@ -397,6 +399,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         autoComplete="off"
                                         onChange={handleChange}
                                         error={errors.Name}
+                                        title={campaingnValues.Name}
                                         helperText={errors.Name ? errors.Name : ErrorTexts.Name}
                                     />,
                                     gridSize: { xs: 12, sm: 12 }
@@ -422,6 +425,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         autoComplete="off"
                                         onChange={handleChange}
                                         error={errors.FromName}
+                                        title={campaingnValues.FromName}
                                         helperText={errors.FromName ? errors.FromName : ErrorTexts.FromName}
                                     />,
                                     gridSize: { xs: 12, sm: 12 }
@@ -510,6 +514,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 autoComplete="off"
                                                 onChange={handleChange}
                                                 error={errors.Subject}
+                                                title={campaingnValues.Subject}
                                                 helperText={errors.Subject ? errors.Subject : ErrorTexts.Subject}
                                             />
                                             <Box
@@ -539,7 +544,12 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 // value={campaingnValues?.personalDatatoSubject}
                                                 value={''}
                                                 onChange={(event) => {
-                                                    setCampaingnValues({ ...campaingnValues, personalDatatoSubject: event.target.value, Subject: `${campaingnValues.Subject} ##${event.target.value}##` })
+                                                    setCampaingnValues(
+                                                        {
+                                                            ...campaingnValues,
+                                                            personalDatatoSubject: event.target.value,
+                                                            Subject: `${campaingnValues.Subject} ##${event.target.value}##`
+                                                        })
                                                 }}
                                                 input={<OutlinedInput />}
                                                 renderValue={(selected) => {
