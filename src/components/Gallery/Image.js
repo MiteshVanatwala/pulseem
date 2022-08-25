@@ -20,7 +20,7 @@ export const Image = ({
     imgSrc,
     imgKey,
     fileIndex,
-    selectedFile,
+    selectedFile = "",
     imgFile,
     fileExtension = null,
     folderType = PulseemFolderType.CLIENT_IMAGES }) => {
@@ -70,7 +70,7 @@ export const Image = ({
             style={{ padding: "6px 10px" }}
         >
             <Box className="select-image" onClick={onSelectFile(imgSrc, imgKey)}>
-                <Box className="img-container" style={{ border: (selectedFile === imgKey || selectedFile.indexOf(imgKey) !== -1) ? "1px solid #000" : null }}>
+                <Box className="img-container" style={{ border: (selectedFile === imgKey || selectedFile?.indexOf(imgKey) !== -1) ? "1px solid #000" : null }}>
                     {folderType === PulseemFolderType.CLIENT_IMAGES ?
                         (<LazyBackground url={imgSrc}>
                             <button
