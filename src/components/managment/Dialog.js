@@ -163,7 +163,7 @@ export const Dialog = ({
       <Paper className={clsx(classes.posRelative, paperStyle, classes.sidebar)}>
         {renderExitButton()}
         {renderContent()}
-        {renderIcon()}
+        {icon !== 'NONE' && renderIcon()}
       </Paper>
     </BaseDialog>
   )

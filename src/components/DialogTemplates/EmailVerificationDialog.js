@@ -9,101 +9,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { newAuthorizeEmail, verifyEmailCode } from '../../redux/reducers/commonSlice';
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice'
 
-const useStyles = makeStyles({
-    carouselContainer: {
-        display: 'flex',
-        flexWrap: 'nowrap',
-        overflowX: 'hidden'
-    },
-    carouselItem: {
-        height: '20rem',
-        minWidth: '100%',
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    T05S: {
-        transition: '.5s cubic-bezier(0.39, 0.575, 0.565, 1)'
-    },
-    T10S: {
-        transition: '1s cubic-bezier(0.39, 0.575, 0.565, 1)'
-    },
-    hAuto: {
-        height: 'auto !important'
-    },
-    emailVerItemContainer: {
-        '& .error': {
-            marginTop: 20,
-            color: 'red'
-        },
-        '& .success': {
-            marginTop: 7,
-            color: 'green'
-        },
-        '& .cSlide': {
-            width: "100%",
-            height: '100%',
-            position: "relative",
-            '&.firstSlide': {
-                '& .emailBox': {
-                    '& span': {
-                        paddingInline: 2,
-                        fontSize: 18,
-                        marginTop: 2
-                    },
-                    '& .emailText': {
-                        paddingInline: 3,
-                        maxWidth: 250,
-                        minWidth: 160
-                    },
-                    '& .emailVerLink': {
-                        paddingInline: 3
-                    }
-                }
-                ,
-                '& .btnVerifyNewLtr': {
-                    position: "absolute",
-                    top: 0,
-                    right: 0
-                },
-                '& .btnVerifyNewRTL': {
-                    position: "absolute",
-                    top: 0,
-                    left: 0
-                },
-                '& .MuiDivider-root': {
-                    marginTop: 6,
-                    height: '1.3px',
-                    backgroundColor: '#cdcdcd'
-                }
-            }
-        },
-        '& .cFlexSlide': {
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            width: "100%",
-            height: '100%',
-            textAlign: 'center',
-            '&.secondSlide': {
-                '& .titleDescBox': {
-                    // '& :nthChild(2)': {
-                    //   marginTop: 20
-                    // }
-                    '& .desc': {
-                        marginTop: 20
-                    }
-                }
-            }
-        },
-    }
-})
+
 
 const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
-    // const compClasses = useStyles()
     const { verifiedEmails } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [emailVerificationStep, setEmailVerificationStep] = useState(0)
@@ -113,11 +23,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
     const verificationCode = useRef('');
 
     useEffect(() => {
-        // const getData = () => {
-        // dispatch(getNewslatterData())
         dispatch(getAuthorizedEmails());
-        // setLoader(false);
-        //   }
     }, [])
 
 

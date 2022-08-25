@@ -811,7 +811,7 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
-      <EmailVerificationDialog classes={classes} isOpen={showEmailVerDialog} onClose={() => setShowEmailVerDialog(false)} />
+      {showEmailVerDialog && <EmailVerificationDialog classes={classes} isOpen={showEmailVerDialog} onClose={() => setShowEmailVerDialog(false)} />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )
