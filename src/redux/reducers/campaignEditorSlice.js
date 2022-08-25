@@ -15,12 +15,14 @@ export const getCampaignById = createAsyncThunk(
 
 export const saveCampaign = createAsyncThunk(
     '/CampaignEditor/SaveCampaign/', async (campaign, thunkAPI) => {
-        try {
-            const response = await instence.post(`/CampaignEditor/SaveCampaign/`, campaign);
-            return JSON.parse(response.data)
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await instence.post(`/CampaignEditor/SaveCampaign/`, campaign);
+                resolve(JSON.parse(response.data))
+            } catch (error) {
+                reject(thunkAPI.rejectWithValue({ error: error.message }));
+            }
+        })
     });
 
 export const saveUserBlock = createAsyncThunk(

@@ -65,7 +65,10 @@ const useStyles = makeStyles({
         width: '100%',
         '& .MuiSelect-select': {
             padding: '19.5px 24px',
-            width: '100%'
+            width: '100%',
+            '& option': {
+                fontSize: 20
+            }
         }
     },
     googleCheck: {
@@ -446,6 +449,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     content:
                                         <FormControl className={localClasses.select}>
                                             <Select
+                                                native
                                                 displayEmpty
                                                 // value={campaingnValues?.personalDatatoSubject}
                                                 value={campaingnValues?.FromEmail}
@@ -457,7 +461,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 input={<OutlinedInput />}
                                                 renderValue={(selected) => {
                                                     if (!selected) {
-                                                        return <em>{t("common.select")}</em>;
+                                                        return <option>{t("common.select")}</option>;
                                                     }
 
                                                     return selected;
@@ -472,17 +476,15 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 }}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                             >
-                                                <MenuItem disabled value="" key="-1">
-                                                    <em>Select</em>
-                                                </MenuItem>
+                                                <option disabled value="" key="-1">{t("common.select")}</option>
                                                 {verifiedEmails.map((item, index) => {
                                                     if (item.IsOptIn) {
-                                                        return <MenuItem
+                                                        return <option
                                                             key={`exd_${index}`}
                                                             value={item.Number}
                                                         >
                                                             {t(item.Number)}
-                                                        </MenuItem>
+                                                        </option>
                                                     }
                                                 }
                                                 )}
@@ -542,6 +544,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     content: <>
                                         <FormControl className={localClasses.select}>
                                             <Select
+                                                native
                                                 displayEmpty
                                                 // value={campaingnValues?.personalDatatoSubject}
                                                 value={''}
@@ -556,7 +559,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 input={<OutlinedInput />}
                                                 renderValue={(selected) => {
                                                     if (!selected) {
-                                                        return <em>{t("common.select")}</em>;
+                                                        return <option>{t("common.select")}</option>;
                                                     }
 
                                                     return selected;
@@ -571,16 +574,14 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 }}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                             >
-                                                <MenuItem disabled value="" key="-1">
-                                                    <em>Select</em>
-                                                </MenuItem>
+                                                <option>{t("common.select")}</option>;
                                                 {extraAccountDATA.map((item, index) => (
-                                                    <MenuItem
+                                                    <option
                                                         key={`exd_${index}`}
                                                         value={item.value}
                                                     >
                                                         {t(item.label)}
-                                                    </MenuItem>
+                                                    </option>
                                                 ))}
                                             </Select>
                                         </FormControl>
@@ -617,6 +618,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                 {
                                     content: <FormControl className={localClasses.select}>
                                         <Select
+                                            native
                                             displayEmpty
                                             value={campaingnValues?.IsResponsive ? 1 : 0}
                                             onChange={(event) => {
@@ -641,12 +643,12 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                             inputProps={{ 'aria-label': 'Without label' }}
                                         >
                                             {MobileSupport.map((item) => (
-                                                <MenuItem
+                                                <option
                                                     key={item.value}
                                                     value={item.value}
                                                 >
                                                     {t(item.label)}
-                                                </MenuItem>
+                                                </option>
                                             ))}
                                         </Select>
                                     </FormControl>,
@@ -696,6 +698,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     content:
                                         <FormControl className={localClasses.select}>
                                             <Select
+                                                native
                                                 displayEmpty
                                                 // value={campaingnValues?.personalDatatoSubject}
                                                 value={campaingnValues.LanguageCode}
@@ -718,12 +721,12 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                             >
                                                 {LangugeCode.map((item) => (
-                                                    <MenuItem
+                                                    <option
                                                         key={item.value}
                                                         value={item.value}
                                                     >
                                                         {t(item.label)}
-                                                    </MenuItem>
+                                                    </option>
                                                 ))}
                                             </Select>
                                         </FormControl>,

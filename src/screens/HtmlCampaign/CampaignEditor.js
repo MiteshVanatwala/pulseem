@@ -15,7 +15,7 @@ import {
 } from '../../redux/reducers/campaignEditorSlice';
 import { IoMdImages } from 'react-icons/io'
 import { Loader } from '../../components/Loader/Loader';
-import { options } from './constants'
+import { options, tools } from './constants'
 import { ClientFields } from '../../model/PulseemFields/Fields'
 import { getAccountExtraData, getPreviousLandingData, getTestGroups } from "../../redux/reducers/smsSlice";
 import { useTranslation } from "react-i18next";
@@ -267,11 +267,6 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
   const onReady = () => {
-    editorRef.current.editor.setBodyValues({
-      backgroundColor: "#e7e7e7",
-      contentWidth: "600px",
-      preheaderText: ""
-    });
     if (!campaign.JsonData && !campaign.HtmlData) {
       saveDesign(false, null, false);
     }
@@ -280,6 +275,11 @@ const CampaignEditor = ({ classes, ...props }) => {
     try {
       editorRef.current.setMergeTags(mergeData);
       editorRef.current.editor.setSpecialLinks(specialLinks);
+      editorRef.current.editor.setBodyValues({
+        backgroundColor: "#e7e7e7",
+        contentWidth: "600px",
+        preheaderText: ""
+      });
 
       if (!campaign && (!campaign.HTMLtoSend || campaign.HTMLtoSend === '') && !campaign.JsonData && campaign.HtmlData) {
         setLoader(false);
@@ -319,11 +319,17 @@ const CampaignEditor = ({ classes, ...props }) => {
     }
   }
   const saveDesign = (redirectAfterSave = false, redirectUrl = null, showAnimation = true) => {
-    return new Promise((resolve, reject) => {
-      try {
-        editorRef.current.exportHtml(async (data) => {
-          const { design, html } = data;
-          const response = await dispatch(saveCampaign({ campaignId: campaignId, JsonData: JSON.stringify(design), HtmlData: html }));
+    editorRef.current.exportHtml(
+      (data) => {
+        const { design, html, amp } = data;
+        const htmlToSave = amp.html
+        console.log(htmlToSave);
+        //const { html } = data.amp;
+        dispatch(saveCampaign({
+          campaignId: campaignId,
+          JsonData: JSON.stringify(design),
+          HtmlData: html
+        })).then((response) => {
           if (response.payload === true) {
             if (redirectAfterSave) {
               window.location = redirectUrl ?? `/Pulseem/SendCampaign.aspx?CampaignID=${campaignId}&fromreact=true`;
@@ -335,13 +341,9 @@ const CampaignEditor = ({ classes, ...props }) => {
           else {
             console.log(response);
           }
-          resolve();
         })
-      } catch (error) {
-        reject();
-      }
-    })
-
+      },
+      { amp: true, cleanup: true })
   }
   const deleteNewsletter = async () => {
     setDialog(null);
@@ -519,14 +521,14 @@ const CampaignEditor = ({ classes, ...props }) => {
     if (dataLoaded) {
       return <React.StrictMode>
         <EmailEditor
-          style={{ direction: isRTL ? 'rtl' : 'ltr' }}
-          onReady={onReady}
-          editorId="campaign-editor"
           ref={editorRef}
-          minHeight="calc(100vh - 120px)"
-          options={options}
+          tools={tools}
           key={iframeKey}
+          options={options}
           projectId={71525}
+          onReady={onReady}
+          minHeight="calc(100vh - 120px)"
+          style={{ direction: isRTL ? 'rtl' : 'ltr' }}
         />
       </React.StrictMode>
     }
