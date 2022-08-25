@@ -1700,11 +1700,13 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
   emailVerItemContainer: {
     '& .error': {
       marginTop: 20,
-      color: 'red'
+      color: 'red',
+      height: 26
     },
     '& .success': {
       marginTop: 7,
-      color: 'green'
+      color: 'green',
+      height: 26
     },
     '& .cSlide': {
       width: "100%",
@@ -1753,11 +1755,15 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
       textAlign: 'center',
       '&.secondSlide': {
         '& .titleDescBox': {
+          '& .mt20': {
+            marginTop: 20
+          },
           // '& :nthChild(2)': {
           //   marginTop: 20
           // }
           '& .desc': {
-            marginTop: 20
+            marginTop: 20,
+            // marginBottom: 10
           }
         }
       }
