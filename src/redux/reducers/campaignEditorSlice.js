@@ -80,12 +80,14 @@ export const testSend = createAsyncThunk(
 
 export const saveCampaignInfo = createAsyncThunk(
     'CampaignEditor/CreateOrUpdate', async (campaign, thunkAPI) => {
-        try {
-            const response = await instence.post(`CampaignEditor/CreateOrUpdate`, campaign);
-            return response.data
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await instence.post(`CampaignEditor/CreateOrUpdate`, campaign);
+                resolve(JSON.parse(response.data))
+            } catch (error) {
+                reject(thunkAPI.rejectWithValue({ error: error.message }));
+            }
+        })
     }
 )
 

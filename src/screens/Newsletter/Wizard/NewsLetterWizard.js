@@ -336,20 +336,22 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         // TODO: [PR-570] Fix this validation
         if (!handleValidations()) {
             setLoader(true);
-            const response = await dispatch(saveCampaignInfo(campaingnValues));
-
-            handleSubmitNewsletterResponse(response)
-
-            setLoader(false);
-
-            if (isContiue) {
-                window.location = `/react/Campaigns/editor/${campaingnValues.CampaignID}`;
-            }
-            else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
-                const savedCampaign = JSON.parse(response.payload);
+            dispatch(saveCampaignInfo(campaingnValues)).then((response) => {
+                const savedCampaign = response.payload;
+                handleSubmitNewsletterResponse(savedCampaign)
                 const saveInfo = JSON.parse(savedCampaign.Message);
-                window.location = `/react/Campaigns/Create/${saveInfo.CampaignID}`
-            }
+
+                setLoader(false);
+
+                if (isContiue) {
+                    window.location = `/react/Campaigns/editor/${saveInfo.CampaignID}`;
+                }
+                else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
+                    window.location = `/react/Campaigns/Create/${saveInfo.CampaignID}`
+                }
+            });
+
+
         }
     }
     const handleDelete = async () => {
