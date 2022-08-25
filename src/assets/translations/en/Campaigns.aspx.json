@@ -543,6 +543,8 @@
         "desc2": "This code will be valid for the next 10 minutes only",
         "error1": "Incorrect code. Please try again or click on resend below",
         "error2": "Code is required",
+        "error_not_match": "The code you entered is not match",
+        "error_expired": "This code is expired",
         "did_not_recieved": "Didn’t receive it?",
         "resend": "Resend",
         "resendSuccess": "Code Sent",

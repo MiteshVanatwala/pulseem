@@ -1,138 +1,127 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import clsx from 'clsx';
 import { Typography, Button, TextField, Box, makeStyles, Divider } from '@material-ui/core'
 import { Dialog } from '../../components/managment/index'
 import 'moment/locale/he'
 import { RiCheckboxCircleFill, RiCloseCircleFill } from 'react-icons/ri';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { newAuthorizeEmail, verifyEmailCode } from '../../redux/reducers/commonSlice';
+import { getAuthorizedEmails } from '../../redux/reducers/commonSlice'
 
-const staticEmails = [
-    {
-        email: 'Rishabh@gmail.com',
-        verified: false,
+const useStyles = makeStyles({
+    carouselContainer: {
+        display: 'flex',
+        flexWrap: 'nowrap',
+        overflowX: 'hidden'
     },
-    {
-        email: 'Rish@gmail.com',
-        verified: true,
+    carouselItem: {
+        height: '20rem',
+        minWidth: '100%',
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    {
-        email: 'Ido@gmail.com',
-        verified: false,
+    T05S: {
+        transition: '.5s cubic-bezier(0.39, 0.575, 0.565, 1)'
     },
-    {
-        email: 'RishRathore@gmail.com',
-        verified: true,
+    T10S: {
+        transition: '1s cubic-bezier(0.39, 0.575, 0.565, 1)'
     },
-]
+    hAuto: {
+        height: 'auto !important'
+    },
+    emailVerItemContainer: {
+        '& .error': {
+            marginTop: 20,
+            color: 'red'
+        },
+        '& .success': {
+            marginTop: 7,
+            color: 'green'
+        },
+        '& .cSlide': {
+            width: "100%",
+            height: '100%',
+            position: "relative",
+            '&.firstSlide': {
+                '& .emailBox': {
+                    '& span': {
+                        paddingInline: 2,
+                        fontSize: 18,
+                        marginTop: 2
+                    },
+                    '& .emailText': {
+                        paddingInline: 3,
+                        maxWidth: 250,
+                        minWidth: 160
+                    },
+                    '& .emailVerLink': {
+                        paddingInline: 3
+                    }
+                }
+                ,
+                '& .btnVerifyNewLtr': {
+                    position: "absolute",
+                    top: 0,
+                    right: 0
+                },
+                '& .btnVerifyNewRTL': {
+                    position: "absolute",
+                    top: 0,
+                    left: 0
+                },
+                '& .MuiDivider-root': {
+                    marginTop: 6,
+                    height: '1.3px',
+                    backgroundColor: '#cdcdcd'
+                }
+            }
+        },
+        '& .cFlexSlide': {
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            width: "100%",
+            height: '100%',
+            textAlign: 'center',
+            '&.secondSlide': {
+                '& .titleDescBox': {
+                    // '& :nthChild(2)': {
+                    //   marginTop: 20
+                    // }
+                    '& .desc': {
+                        marginTop: 20
+                    }
+                }
+            }
+        },
+    }
+})
 
-// const useStyles = makeStyles({
-//     carouselContainer: {
-//         display: 'flex',
-//         flexWrap: 'nowrap',
-//         overflow: 'hidden'
-//     },
-//     carouselItem: {
-//         height: '20rem',
-//         minWidth: '100%',
-//         width: '100%',
-//         display: 'flex',
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//     },
-//     T05S: {
-//         transition: '.5s cubic-bezier(0.39, 0.575, 0.565, 1)'
-//     },
-//     T10S: {
-//         transition: '1s cubic-bezier(0.39, 0.575, 0.565, 1)'
-//     },
-//     hAuto: {
-//         height: 'auto !important'
-//     },
-//     emailVerItemContainer: {
-//         '& .error': {
-//             marginTop: 20,
-//             color: 'red',
-//             height: 26
-//         },
-//         '& .success': {
-//             marginTop: 7,
-//             color: 'green',
-//             height: 26
-//         },
-//         '& .cSlide': {
-//             width: "100%",
-//             height: '100%',
-//             position: "relative",
-//             '&.firstSlide': {
-//                 '& .emailBox': {
-//                     '& span': {
-//                         paddingInline: 2,
-//                         fontSize: 18,
-//                         marginTop: 2
-//                     },
-//                     '& .emailText': {
-//                         paddingInline: 3,
-//                         maxWidth: 250,
-//                         minWidth: 160
-//                     },
-//                     '& .emailVerLink': {
-//                         paddingInline: 3
-//                     }
-//                 }
-//                 ,
-//                 '& .btnVerifyNewLtr': {
-//                     position: "absolute",
-//                     top: 0,
-//                     right: 0
-//                 },
-//                 '& .btnVerifyNewRTL': {
-//                     position: "absolute",
-//                     top: 0,
-//                     left: 0
-//                 },
-//                 '& .MuiDivider-root': {
-//                     marginTop: 6,
-//                     height: '1.3px',
-//                     backgroundColor: '#cdcdcd'
-//                 }
-//             }
-//         },
-//         '& .cFlexSlide': {
-//             display: 'flex',
-//             flexDirection: 'column',
-//             justifyContent: 'space-between',
-//             width: "100%",
-//             height: '100%',
-//             textAlign: 'center',
-//             '&.secondSlide': {
-//                 '& .titleDescBox': {
-//                     // '& :nthChild(2)': {
-//                     //   marginTop: 20
-//                     // }
-//                     '& .desc': {
-//                         marginTop: 20
-//                     }
-//                 }
-//             }
-//         },
-//     }
-// })
-
-const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = false, onClose = () => null }) => {
-
+const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null }) => {
+    const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
     // const compClasses = useStyles()
+    const { verifiedEmails } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [emailVerificationStep, setEmailVerificationStep] = useState(0)
     const [emailVerificationError, setEmailVerificationError] = useState(null)
     const [selectedVerificationEmail, setSelectedVerificationEmail] = useState('')
     const [codeResend, setCodeResend] = useState(false)
-    // const [emailStatus, setEmailStatus] = useState(false)
     const verificationCode = useRef('');
 
+    useEffect(() => {
+        // const getData = () => {
+        // dispatch(getNewslatterData())
+        dispatch(getAuthorizedEmails());
+        // setLoader(false);
+        //   }
+    }, [])
+
+
     const handleClose = (callback) => {
-        // setDialogType(null)
         callback?.()
         onClose?.()
         emailVerificationStep && setEmailVerificationStep(0)
@@ -146,14 +135,43 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
     const EmailVerificationModule = () => {
 
         const verifyCode = () => {
-            return true
+            dispatch(verifyEmailCode(
+                {
+                    email: selectedVerificationEmail,
+                    optinCode: verificationCode.current.value
+                })).then((response) => {
+                    switch (response?.payload.toLowerCase()) {
+                        case "ok": {
+                            EmailVerificationModule().NextSlide();
+                            break;
+                        }
+                        case "expired": {
+                            localStorage.setItem('verificationTrial', trials + 1)
+                            setEmailVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_expired') })
+                            break;
+                        }
+                        case "notmatch": {
+                            localStorage.setItem('verificationTrial', trials + 1)
+                            setEmailVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_not_match') })
+                            break;
+                        }
+                        default: {
+                            localStorage.setItem('verificationTrial', trials + 1)
+                            setEmailVerificationError({ code: t('common.ErrorOccured') })
+                            break;
+                        }
+                    }
+                })
         }
 
-        const handleResendCode = () => {
+        const handleSendCode = () => {
             setCodeResend(false);
-            //API CALL
-            // setCodeResend(false);
-            setCodeResend(true);
+            dispatch(newAuthorizeEmail({ email: selectedVerificationEmail })).then((result) => {
+                if (result?.payload === true) {
+                    setCodeResend(true);
+                }
+                return result?.payload;
+            });
         }
 
         const NextSlide = () => {
@@ -196,15 +214,16 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                     <Box style={{ position: 'relative' }}>
                         <Typography className={clsx(classes.pbt5, classes.bold)} variant='h6' >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                         {
-                            emails.map((obj) => (
+                            verifiedEmails.map((obj) => (
                                 <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')}>
-                                    <span>{obj.verified ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}</span>
-                                    <Typography className='emailText'>{obj.email} </Typography>
-                                    {!obj.verified && <Typography className={clsx(classes.link, 'emailVerLink')}
+                                    <span>{obj.IsOptIn ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}</span>
+                                    <Typography className='emailText'>{obj.Number} </Typography>
+                                    {!obj.IsOptIn && <Typography className={clsx(classes.link, 'emailVerLink')}
                                         onClick={() => {
-                                            setSelectedVerificationEmail(obj.email);
-                                            setEmailVerificationError({ email: '' })
+                                            setSelectedVerificationEmail(obj.Number);
+                                            setEmailVerificationError({ Number: '' })
                                             EmailVerificationModule().NextSlide()
+                                            handleSendCode();
                                         }}
                                     >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifyEmailAddr')}</Typography>}
                                 </Box>
@@ -217,7 +236,7 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                         )}
                             onClick={() => {
                                 setSelectedVerificationEmail('')
-                                setEmailVerificationError({ email: '' })
+                                setEmailVerificationError({ Number: '' })
                                 EmailVerificationModule().NextSlide()
                             }}
                         >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.addNewToVerify')}</Button>
@@ -248,7 +267,7 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                                 }}
                                 className={clsx(classes.textField, classes.maxWidth400)}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
-                                error={!!emailVerificationError?.email}
+                                error={!!emailVerificationError?.Number}
                             // helperText={emailVerificationError?.email}
                             />
                         </Box>
@@ -257,17 +276,18 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                                 onClick={() => {
                                     if (selectedVerificationEmail) {
                                         if (selectedVerificationEmail.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                                            handleSendCode()
                                             EmailVerificationModule().NextSlide()
                                         }
                                         else {
-                                            setEmailVerificationError({ email: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error1') })
+                                            setEmailVerificationError({ Number: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error1') })
                                         }
                                     }
                                     else
-                                        setEmailVerificationError({ email: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error2') })
+                                        setEmailVerificationError({ Number: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error2') })
                                 }}
                             >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.btnText')}</Button>
-                            <Typography className='error' variant="body1">{emailVerificationError?.email}</Typography>
+                            <Typography className='error' variant="body1">{emailVerificationError?.Number}</Typography>
                         </Box>
                     </Box>
                     <Box>
@@ -320,13 +340,7 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                                     }
 
                                     if (verificationCode?.current?.value) {
-                                        if (verifyCode()) {
-                                            EmailVerificationModule().NextSlide();
-                                        }
-                                        else {
-                                            localStorage.setItem('verificationTrial', trials + 1)
-                                            setEmailVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error1') })
-                                        }
+                                        verifyCode();
                                     }
                                     else {
                                         localStorage.setItem('verificationTrial', trials + 1)
@@ -342,7 +356,7 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                         </Box>
                     </Box>
                     <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={classes.link} onClick={handleResendCode}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span></Typography>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={classes.link} onClick={handleSendCode}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span></Typography>
                         <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
                     </Box>
                 </Box>
@@ -372,7 +386,9 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                     <Box>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.title')}</Typography>
                         <Typography variant='body1' className={classes.mt4}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.desc')} </Typography>
-                        <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.mt6)} onClick={() => handleClose()}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
+                        <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.mt6)} onClick={() => {
+                            handleClose()
+                        }}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
                     </Box>
                 </Box>
             </Box >
@@ -399,7 +415,7 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
 
     const verificationDialog = (data = '') => ({
         title: '',
-        icon: ' ',
+        icon: 'NONE',
         content: (<>
             {EmailVerificationModule().UIComp()}
         </>

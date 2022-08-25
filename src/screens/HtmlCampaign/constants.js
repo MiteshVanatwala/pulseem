@@ -443,65 +443,6 @@ export const options = {
       enabled: true,
     },
   },
-  tools: {
-    heading: {
-      position: 0,
-      enabled: true,
-      properties: {
-        textAlign: {
-          value: 'right'
-        },
-        direction: {
-          value: 'rtl'
-        }
-      }
-    },
-    text: {
-      position: 1,
-      enabled: true
-    },
-    html: {
-      enabled: true
-    },
-    social: {
-      enabled: true
-    },
-    timer: {
-      enabled: true
-    },
-    video: {
-      enabled: true
-    },
-    image: {
-      position: 3,
-      enabled: true
-    },
-    // Custom Tools
-    'custom#Header': {
-      data: {
-        emailTitle: i18n.t("common.Mail"),
-        phoneTitle: i18n.t("common.phone"),
-        faxTitle: i18n.t("common.Fax"),
-        CompanyNameTitle: i18n.t("common.CompanyName"),
-        addressTitle: i18n.t("common.address"),
-        cityTitle: i18n.t("common.city"),
-        countryTitle: i18n.t("common.country")
-      },
-      properties: properties
-    },
-    'custom#Footer': {
-      data: {
-        emailTitle: i18n.t("common.Mail"),
-        phoneTitle: i18n.t("common.phone"),
-        faxTitle: i18n.t("common.Fax"),
-        CompanyNameTitle: i18n.t("common.CompanyName"),
-        addressTitle: i18n.t("common.address"),
-        cityTitle: i18n.t("common.city"),
-        countryTitle: i18n.t("common.country")
-      },
-      properties: properties
-    }
-  },
   features: {
     imageEditor: true,
     stockImages: {
@@ -655,3 +596,63 @@ export const options = {
                 }
                 `]
 }
+
+export const tools = {
+  heading: {
+    position: 0,
+    enabled: true,
+    properties: {
+      textAlign: {
+        value: 'right'
+      },
+      direction: {
+        value: 'rtl'
+      }
+    }
+  },
+  text: {
+    position: 1,
+    enabled: true
+  },
+  html: {
+    enabled: true
+  },
+  social: {
+    enabled: true
+  },
+  timer: {
+    enabled: true
+  },
+  video: {
+    enabled: true
+  },
+  image: {
+    position: 3,
+    enabled: true
+  },
+  // Custom Tools
+  'custom#Header': {
+    data: {
+      emailTitle: i18n.t("common.Mail"),
+      phoneTitle: i18n.t("common.phone"),
+      faxTitle: i18n.t("common.Fax"),
+      CompanyNameTitle: i18n.t("common.CompanyName"),
+      addressTitle: i18n.t("common.address"),
+      cityTitle: i18n.t("common.city"),
+      countryTitle: i18n.t("common.country")
+    },
+    properties: properties
+  },
+  'custom#Footer': {
+    data: {
+      emailTitle: i18n.t("common.Mail"),
+      phoneTitle: i18n.t("common.phone"),
+      faxTitle: i18n.t("common.Fax"),
+      CompanyNameTitle: i18n.t("common.CompanyName"),
+      addressTitle: i18n.t("common.address"),
+      cityTitle: i18n.t("common.city"),
+      countryTitle: i18n.t("common.country")
+    },
+    properties: properties
+  }
+};

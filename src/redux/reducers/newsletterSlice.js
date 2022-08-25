@@ -4,12 +4,14 @@ import { exportFile } from '../../helpers/exportFromJson';
 
 export const getNewslatterData = createAsyncThunk(
   'email/getEmailCampaigns', async (_, thunkAPI) => {
-    try {
-      const response = await instence.get(`email/getEmailCampaigns`);
-      return JSON.parse(response.data)
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error: error.message });
-    }
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await instence.get(`email/getEmailCampaigns`);
+        resolve(JSON.parse(response.data))
+      } catch (error) {
+        reject(thunkAPI.rejectWithValue({ error: error.message }));
+      }
+    })
   }
 )
 

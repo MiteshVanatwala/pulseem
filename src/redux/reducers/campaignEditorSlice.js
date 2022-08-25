@@ -15,12 +15,14 @@ export const getCampaignById = createAsyncThunk(
 
 export const saveCampaign = createAsyncThunk(
     '/CampaignEditor/SaveCampaign/', async (campaign, thunkAPI) => {
-        try {
-            const response = await instence.post(`/CampaignEditor/SaveCampaign/`, campaign);
-            return JSON.parse(response.data)
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await instence.post(`/CampaignEditor/SaveCampaign/`, campaign);
+                resolve(JSON.parse(response.data))
+            } catch (error) {
+                reject(thunkAPI.rejectWithValue({ error: error.message }));
+            }
+        })
     });
 
 export const saveUserBlock = createAsyncThunk(
@@ -80,12 +82,14 @@ export const testSend = createAsyncThunk(
 
 export const saveCampaignInfo = createAsyncThunk(
     'CampaignEditor/CreateOrUpdate', async (campaign, thunkAPI) => {
-        try {
-            const response = await instence.post(`CampaignEditor/CreateOrUpdate`, campaign);
-            return response.data
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
+        return new Promise(async (resolve, reject) => {
+            try {
+                const response = await instence.post(`CampaignEditor/CreateOrUpdate`, campaign);
+                resolve(JSON.parse(response.data))
+            } catch (error) {
+                reject(thunkAPI.rejectWithValue({ error: error.message }));
+            }
+        })
     }
 )
 
@@ -94,16 +98,6 @@ export const getCampaignInfo = createAsyncThunk(
         try {
             const response = await instence.get(`CampaignEditor/GetCampaignInfo/${campaignId}`);
             return response.data
-        } catch (error) {
-            return thunkAPI.rejectWithValue({ error: error.message });
-        }
-    });
-
-export const getVerifiedEmail = createAsyncThunk(
-    'CampaignEditor/GetVerifiedEmails', async (_, thunkAPI) => {
-        try {
-            const response = await instence.get(`CampaignEditor/GetVerifiedEmails`);
-            return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });
         }
@@ -120,8 +114,7 @@ export const campaignEditorSlice = createSlice({
             NO_CREDITS_LEFT: { severity: 'error', color: 'error', message: "sms.noCredits", showAnimtionCheck: false },
             INVALID_EMAIL: { severity: 'error', color: 'error', message: "common.invalidEmail", showAnimtionCheck: false },
         },
-        campaignInfo: [],
-        verifiedEmails: ['abc@123.com', 'bca@321.com', 'gvc@nbc.com']
+        campaignInfo: []
     },
     extraReducers: builder => {
         builder
@@ -141,9 +134,6 @@ export const campaignEditorSlice = createSlice({
             })
             .addCase(getCampaignInfo.fulfilled, (state, { payload }) => {
                 state.campaignInfo = payload;
-            })
-            .addCase(getVerifiedEmail.fulfilled, (state, { payload }) => {
-                state.verifiedEmails = payload;
             })
     },
     reducers: {

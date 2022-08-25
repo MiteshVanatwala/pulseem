@@ -17,6 +17,7 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
   getNewslatterData, restoreCampaigns, deleteCampaign, duplicteCampaign
 } from '../../../redux/reducers/newsletterSlice'
+import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice'
 import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -35,6 +36,7 @@ import EmailVerificationDialog from '../../../components/DialogTemplates/EmailVe
 
 const NewsletterManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage, isRTL } = useSelector(state => state.core);
+  const { verifiedEmails } = useSelector(state => state.common);
   const { newslettersData, newslettersDataError, newslettersDeletedData } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -55,30 +57,13 @@ const NewsletterManagnentScreen = ({ classes }) => {
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch();
   const accountFeatures = getCookie("accountFeatures")
-  const [emails, setEmails] = useState([
-    {
-      email: 'Rishabh@gmail.com',
-      verified: false,
-    },
-    {
-      email: 'Rish@gmail.com',
-      verified: true,
-    },
-    {
-      email: 'Ido@gmail.com',
-      verified: false,
-    },
-    {
-      email: 'RishRathore@gmail.com',
-      verified: true,
-    },
-  ])
   const [showEmailVerDialog, setShowEmailVerDialog] = useState(false)
 
   moment.locale(language)
 
-  const getData = async () => {
-    await dispatch(getNewslatterData())
+  const getData = () => {
+    dispatch(getNewslatterData())
+    dispatch(getAuthorizedEmails());
     setLoader(false);
   }
 
@@ -178,7 +163,6 @@ const NewsletterManagnentScreen = ({ classes }) => {
           classes={classes}
           value={campaineNameSearch}
           onChange={handleCampainNameChange}
-          onKeyPress={handleSearch}
           onClick={handleSearch}
           onKeyPress={handleKeyPress}
           placeholder={t('common.CampaignName')}
@@ -252,6 +236,11 @@ const NewsletterManagnentScreen = ({ classes }) => {
     window.location = '/react/Campaigns/Archive'
   }
 
+  const handleVerificationDialog = () => {
+
+    setShowEmailVerDialog(true)
+  }
+
   const renderManagmentLine = () => {
     return (
       <Grid container spacing={2} className={classes.linePadding} >
@@ -303,12 +292,9 @@ const NewsletterManagnentScreen = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonDarkBlue
             )}
-            onClick={() =>
-              //   setDialogType({
-              //   type: 'emailVerification',
-              //   data: ''
-              // })
-              setShowEmailVerDialog(true)
+            onClick={() => {
+              handleVerificationDialog();
+            }
             }
           >
             {t('campaigns.newsLetterMgmt.emailVerification.emailVerificationBtnText')}

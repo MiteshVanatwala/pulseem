@@ -14,13 +14,14 @@ import Toast from '../../../components/Toast/Toast.component';
 import { Dialog } from "../../../components/managment/Dialog";
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import WizardActions from '../../../components/Wizard/WizardActions';
-import { saveCampaignInfo, getCampaignInfo, getVerifiedEmail } from '../../../redux/reducers/campaignEditorSlice'
+import { saveCampaignInfo, getCampaignInfo } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, LangugeCode, MobileSupport, PulseemFolderType, PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import CustomEmojiPicker from '../../../components/icons/CustomEmojiPicker';
 import PulseemTags from '../../../components/Tags/PulseemTags'
 import { makeId } from '../../../helpers/functions';
+import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -64,7 +65,10 @@ const useStyles = makeStyles({
         width: '100%',
         '& .MuiSelect-select': {
             padding: '19.5px 24px',
-            width: '100%'
+            width: '100%',
+            '& option': {
+                fontSize: 20
+            }
         }
     },
     googleCheck: {
@@ -134,12 +138,18 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
-    const { campaignInfo, verifiedEmails } = useSelector(state => state.campaignEditor);
+    const { campaignInfo } = useSelector(state => state.campaignEditor);
+    const { verifiedEmails } = useSelector(state => state.common);
     const { ToastMessages } = useSelector(state => state.newsletter);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [isSilenceUpdated, setIsSilenceUpdated] = useState(false);
     const [showCostLoader, setShowCostLoader] = useState(false);
+    const maxCharLimits = {
+        Name: 100,
+        Subject: 200,
+        FromName: 100
+    }
 
     const ErrorTexts = {
         Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
@@ -239,7 +249,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
 
     useEffect(() => {
         const preload = async () => {
-            await dispatch(getVerifiedEmail());
+            await dispatch(getAuthorizedEmails());
             if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
                 const campaignId = parseInt(props.match.params.id);
                 const response = await dispatch(getCampaignInfo(campaignId))
@@ -251,9 +261,9 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         const initClientFields = async () => {
             let resp = await dispatch(getAccountExtraData());
             let _clientFields = [...ClientFields];
-            let arr = Object.values(resp.payload).reduce((prev, next) => {
-                if (!!next) {
-                    return [...prev, { value: next, label: next, selected: false }]
+            let arr = Object.keys(resp.payload).reduce((prev, next) => {
+                if (!!next && resp.payload[next] !== '') {
+                    return [...prev, { value: next, label: resp.payload[next], selected: false }]
                 }
                 else {
                     return prev
@@ -283,24 +293,21 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     }, [campaingnValues['FilesProperties']])
 
     const handleSelectionRadio = (e) => {
-        console.log(e.target.name, " : ", e.target.value)
-        // setSelectedRadio({ ...selectedRadio, [e.target.name]: e.target.value })
         setCampaingnValues({ ...campaingnValues, [e.target.name]: Number(e.target.value) })
     }
     const handleChangeCheckbox = (e) => {
         if (selectedCheck[e.target.name]) {
-            // setSelectedRadio({ ...selectedRadio, [e.target.name]: null })
             setCampaingnValues({ ...campaingnValues, [e.target.name]: 0 })
         }
         setSelectedCheck({ ...selectedCheck, [e.target.name]: !selectedCheck[e.target.name] })
     }
 
     const handleChange = (e) => {
-        // console.log("VALUES:", e.target.name, e.target.value)
-
         e.preventDefault();
-        setErrors({ ...errors, [e.target.name]: '' })
-        setCampaingnValues({ ...campaingnValues, [e.target.name]: e.target.value })
+        if (e.target.value.length < maxCharLimits[e.target.name]) {
+            setErrors({ ...errors, [e.target.name]: '' })
+            setCampaingnValues({ ...campaingnValues, [e.target.name]: e.target.value })
+        }
     }
 
     const handleEmailValue = (e) => {
@@ -332,20 +339,22 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         // TODO: [PR-570] Fix this validation
         if (!handleValidations()) {
             setLoader(true);
-            const response = await dispatch(saveCampaignInfo(campaingnValues));
-
-            handleSubmitNewsletterResponse(response)
-
-            setLoader(false);
-
-            if (isContiue) {
-                window.location = `/react/Campaigns/editor/${campaingnValues.CampaignID}`;
-            }
-            else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
-                const savedCampaign = JSON.parse(response.payload);
+            dispatch(saveCampaignInfo(campaingnValues)).then((response) => {
+                const savedCampaign = response.payload;
+                handleSubmitNewsletterResponse(savedCampaign)
                 const saveInfo = JSON.parse(savedCampaign.Message);
-                window.location = `/react/Campaigns/Create/${saveInfo.CampaignID}`
-            }
+
+                setLoader(false);
+
+                if (isContiue) {
+                    window.location = `/react/Campaigns/editor/${saveInfo.CampaignID}`;
+                }
+                else if (campaingnValues.CampaignID <= 0 || campaingnValues.CampaignID === '' || !campaingnValues.CampaignID) {
+                    window.location = `/react/Campaigns/Create/${saveInfo.CampaignID}`
+                }
+            });
+
+
         }
     }
     const handleDelete = async () => {
@@ -395,6 +404,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         autoComplete="off"
                                         onChange={handleChange}
                                         error={errors.Name}
+                                        title={campaingnValues.Name}
                                         helperText={errors.Name ? errors.Name : ErrorTexts.Name}
                                     />,
                                     gridSize: { xs: 12, sm: 12 }
@@ -420,6 +430,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         autoComplete="off"
                                         onChange={handleChange}
                                         error={errors.FromName}
+                                        title={campaingnValues.FromName}
                                         helperText={errors.FromName ? errors.FromName : ErrorTexts.FromName}
                                     />,
                                     gridSize: { xs: 12, sm: 12 }
@@ -438,6 +449,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     content:
                                         <FormControl className={localClasses.select}>
                                             <Select
+                                                native
                                                 displayEmpty
                                                 // value={campaingnValues?.personalDatatoSubject}
                                                 value={campaingnValues?.FromEmail}
@@ -449,7 +461,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 input={<OutlinedInput />}
                                                 renderValue={(selected) => {
                                                     if (!selected) {
-                                                        return <em>{t("common.select")}</em>;
+                                                        return <option>{t("common.select")}</option>;
                                                     }
 
                                                     return selected;
@@ -464,17 +476,18 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 }}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                             >
-                                                <MenuItem disabled value="" key="-1">
-                                                    <em>Select</em>
-                                                </MenuItem>
-                                                {verifiedEmails.map((item, index) => (
-                                                    <MenuItem
-                                                        key={`exd_${index}`}
-                                                        value={item}
-                                                    >
-                                                        {t(item)}
-                                                    </MenuItem>
-                                                ))}
+                                                <option disabled value="" key="-1">{t("common.select")}</option>
+                                                {verifiedEmails.map((item, index) => {
+                                                    if (item.IsOptIn) {
+                                                        return <option
+                                                            key={`exd_${index}`}
+                                                            value={item.Number}
+                                                        >
+                                                            {t(item.Number)}
+                                                        </option>
+                                                    }
+                                                }
+                                                )}
                                             </Select>
                                             {/* error={errors.FromEmail}
                                                     helperText={ErrorTexts.FromEmail} */}
@@ -505,6 +518,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 autoComplete="off"
                                                 onChange={handleChange}
                                                 error={errors.Subject}
+                                                title={campaingnValues.Subject}
                                                 helperText={errors.Subject ? errors.Subject : ErrorTexts.Subject}
                                             />
                                             <Box
@@ -530,16 +544,22 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     content: <>
                                         <FormControl className={localClasses.select}>
                                             <Select
+                                                native
                                                 displayEmpty
                                                 // value={campaingnValues?.personalDatatoSubject}
                                                 value={''}
                                                 onChange={(event) => {
-                                                    setCampaingnValues({ ...campaingnValues, personalDatatoSubject: event.target.value, Subject: `${campaingnValues.Subject} ##${event.target.value}##` })
+                                                    setCampaingnValues(
+                                                        {
+                                                            ...campaingnValues,
+                                                            personalDatatoSubject: event.target.value,
+                                                            Subject: `${campaingnValues.Subject} ##${event.target.value}##`
+                                                        })
                                                 }}
                                                 input={<OutlinedInput />}
                                                 renderValue={(selected) => {
                                                     if (!selected) {
-                                                        return <em>{t("common.select")}</em>;
+                                                        return <option>{t("common.select")}</option>;
                                                     }
 
                                                     return selected;
@@ -554,16 +574,14 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 }}
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                             >
-                                                <MenuItem disabled value="" key="-1">
-                                                    <em>Select</em>
-                                                </MenuItem>
+                                                <option>{t("common.select")}</option>;
                                                 {extraAccountDATA.map((item, index) => (
-                                                    <MenuItem
+                                                    <option
                                                         key={`exd_${index}`}
                                                         value={item.value}
                                                     >
                                                         {t(item.label)}
-                                                    </MenuItem>
+                                                    </option>
                                                 ))}
                                             </Select>
                                         </FormControl>
@@ -600,6 +618,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                 {
                                     content: <FormControl className={localClasses.select}>
                                         <Select
+                                            native
                                             displayEmpty
                                             value={campaingnValues?.IsResponsive ? 1 : 0}
                                             onChange={(event) => {
@@ -624,12 +643,12 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                             inputProps={{ 'aria-label': 'Without label' }}
                                         >
                                             {MobileSupport.map((item) => (
-                                                <MenuItem
+                                                <option
                                                     key={item.value}
                                                     value={item.value}
                                                 >
                                                     {t(item.label)}
-                                                </MenuItem>
+                                                </option>
                                             ))}
                                         </Select>
                                     </FormControl>,
@@ -679,6 +698,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                     content:
                                         <FormControl className={localClasses.select}>
                                             <Select
+                                                native
                                                 displayEmpty
                                                 // value={campaingnValues?.personalDatatoSubject}
                                                 value={campaingnValues.LanguageCode}
@@ -701,12 +721,12 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 inputProps={{ 'aria-label': 'Without label' }}
                                             >
                                                 {LangugeCode.map((item) => (
-                                                    <MenuItem
+                                                    <option
                                                         key={item.value}
                                                         value={item.value}
                                                     >
                                                         {t(item.label)}
-                                                    </MenuItem>
+                                                    </option>
                                                 ))}
                                             </Select>
                                         </FormControl>,

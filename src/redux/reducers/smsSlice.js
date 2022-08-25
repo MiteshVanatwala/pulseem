@@ -239,7 +239,7 @@ export const sendVerificationCode = createAsyncThunk(
   })
 
 export const verifyCode = createAsyncThunk(
-  'authorization/newAuthorizeNumbers', async (data, thunkAPI) => {
+  'authorization/newAuthorizeNumberInsertCode', async (data, thunkAPI) => {
     try {
       const response = await instence.put(`authorization/newAuthorizeNumberInsertCode/${data.phoneNumber}/${data.optinCode}`);
       return JSON.parse(response.data)
