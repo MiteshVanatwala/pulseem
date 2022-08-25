@@ -2511,7 +2511,7 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   carouselContainer: {
     display: 'flex',
     flexWrap: 'nowrap',
-    overflow: 'hidden'
+    overflowX: 'hidden'
   },
   carouselItem: {
     height: '20rem',

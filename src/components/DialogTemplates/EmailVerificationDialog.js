@@ -5,32 +5,14 @@ import { Dialog } from '../../components/managment/index'
 import 'moment/locale/he'
 import { RiCheckboxCircleFill, RiCloseCircleFill } from 'react-icons/ri';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
-
-const staticEmails = [
-    {
-        email: 'Rishabh@gmail.com',
-        verified: false,
-    },
-    {
-        email: 'Rish@gmail.com',
-        verified: true,
-    },
-    {
-        email: 'Ido@gmail.com',
-        verified: false,
-    },
-    {
-        email: 'RishRathore@gmail.com',
-        verified: true,
-    },
-]
+import { useDispatch, useSelector } from 'react-redux';
+import { newAuthorizeEmail, verifyEmailCode } from '../../redux/reducers/commonSlice';
 
 const useStyles = makeStyles({
     carouselContainer: {
         display: 'flex',
         flexWrap: 'nowrap',
-        overflow: 'hidden'
+        overflowX: 'hidden'
     },
     carouselItem: {
         height: '20rem',
@@ -117,16 +99,15 @@ const useStyles = makeStyles({
     }
 })
 
-const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = false, onClose = () => null }) => {
-
+const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null }) => {
+    const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
-    const compClasses = useStyles()
+    const { verifiedEmails } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [emailVerificationStep, setEmailVerificationStep] = useState(0)
     const [emailVerificationError, setEmailVerificationError] = useState(null)
     const [selectedVerificationEmail, setSelectedVerificationEmail] = useState('')
     const [codeResend, setCodeResend] = useState(false)
-    // const [emailStatus, setEmailStatus] = useState(false)
     const verificationCode = useRef('');
 
     const handleClose = () => {
@@ -143,14 +124,43 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
     const EmailVerificationModule = () => {
 
         const verifyCode = () => {
-            return true
+            dispatch(verifyEmailCode(
+                {
+                    email: selectedVerificationEmail,
+                    optinCode: verificationCode.current.value
+                })).then((response) => {
+                    switch (response?.payload.toLowerCase()) {
+                        case "ok": {
+                            EmailVerificationModule().NextSlide();
+                            break;
+                        }
+                        case "expired": {
+                            localStorage.setItem('verificationTrial', trials + 1)
+                            setEmailVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_expired') })
+                            break;
+                        }
+                        case "notmatch": {
+                            localStorage.setItem('verificationTrial', trials + 1)
+                            setEmailVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error_not_match') })
+                            break;
+                        }
+                        default: {
+                            localStorage.setItem('verificationTrial', trials + 1)
+                            setEmailVerificationError({ code: t('common.ErrorOccured') })
+                            break;
+                        }
+                    }
+                })
         }
 
-        const handleResendCode = () => {
+        const handleSendCode = () => {
             setCodeResend(false);
-            //API CALL
-            // setCodeResend(false);
-            setCodeResend(true);
+            dispatch(newAuthorizeEmail({ email: selectedVerificationEmail })).then((result) => {
+                if (result?.payload === true) {
+                    setCodeResend(true);
+                }
+                return result?.payload;
+            });
         }
 
         const NextSlide = () => {
@@ -187,15 +197,16 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                     <Box style={{ position: 'relative' }}>
                         <Typography className={clsx(classes.pbt5, classes.bold)} variant='h6' >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                         {
-                            emails.map((obj) => (
+                            verifiedEmails.map((obj) => (
                                 <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')}>
-                                    <span>{obj.verified ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}</span>
-                                    <Typography className='emailText'>{obj.email} </Typography>
-                                    {!obj.verified && <Typography className={clsx(classes.link, 'emailVerLink')}
+                                    <span>{obj.IsOptIn ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}</span>
+                                    <Typography className='emailText'>{obj.Number} </Typography>
+                                    {!obj.IsOptIn && <Typography className={clsx(classes.link, 'emailVerLink')}
                                         onClick={() => {
-                                            setSelectedVerificationEmail(obj.email);
-                                            setEmailVerificationError({ email: '' })
+                                            setSelectedVerificationEmail(obj.Number);
+                                            setEmailVerificationError({ Number: '' })
                                             EmailVerificationModule().NextSlide()
+                                            handleSendCode();
                                         }}
                                     >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifyEmailAddr')}</Typography>}
                                 </Box>
@@ -208,7 +219,7 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                         )}
                             onClick={() => {
                                 setSelectedVerificationEmail('')
-                                setEmailVerificationError({ email: '' })
+                                setEmailVerificationError({ Number: '' })
                                 EmailVerificationModule().NextSlide()
                             }}
                         >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.addNewToVerify')}</Button>
@@ -232,12 +243,12 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                                 size='small'
                                 value={selectedVerificationEmail}
                                 onChange={(e) => {
-                                    !!emailVerificationError?.email && setEmailVerificationError({ email: '' })
+                                    !!emailVerificationError?.Number && setEmailVerificationError({ Number: '' })
                                     setSelectedVerificationEmail(e.target.value)
                                 }}
                                 className={clsx(classes.textField, classes.maxWidth400)}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
-                                error={!!emailVerificationError?.email}
+                                error={!!emailVerificationError?.Number}
                             // helperText={emailVerificationError?.email}
                             />
                         </Box>
@@ -246,17 +257,18 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                                 onClick={() => {
                                     if (selectedVerificationEmail) {
                                         if (selectedVerificationEmail.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+                                            handleSendCode()
                                             EmailVerificationModule().NextSlide()
                                         }
                                         else {
-                                            setEmailVerificationError({ email: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error1') })
+                                            setEmailVerificationError({ Number: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error1') })
                                         }
                                     }
                                     else
-                                        setEmailVerificationError({ email: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error2') })
+                                        setEmailVerificationError({ Number: t('campaigns.newsLetterMgmt.emailVerification.secondSlide.error2') })
                                 }}
                             >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.btnText')}</Button>
-                            <Typography className='error' variant="body1">{emailVerificationError?.email}</Typography>
+                            <Typography className='error' variant="body1">{emailVerificationError?.Number}</Typography>
                         </Box>
                     </Box>
                     <Box>
@@ -301,13 +313,7 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                                     }
 
                                     if (verificationCode?.current?.value) {
-                                        if (verifyCode()) {
-                                            EmailVerificationModule().NextSlide();
-                                        }
-                                        else {
-                                            localStorage.setItem('verificationTrial', trials + 1)
-                                            setEmailVerificationError({ code: t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.error1') })
-                                        }
+                                        verifyCode();
                                     }
                                     else {
                                         localStorage.setItem('verificationTrial', trials + 1)
@@ -323,7 +329,7 @@ const EmailVerificationDialog = ({ classes, emails = staticEmails, isOpen = fals
                         </Box>
                     </Box>
                     <Box>
-                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={classes.link} onClick={handleResendCode}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span></Typography>
+                        <Typography variant='body1'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.did_not_recieved')} <span className={classes.link} onClick={handleSendCode}>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resend')}</span></Typography>
                         <Typography className='success' variant="body1">{codeResend ? t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.resendSuccess') : ''}</Typography>
                     </Box>
                 </Box>

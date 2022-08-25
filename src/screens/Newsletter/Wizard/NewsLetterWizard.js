@@ -14,13 +14,14 @@ import Toast from '../../../components/Toast/Toast.component';
 import { Dialog } from "../../../components/managment/Dialog";
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import WizardActions from '../../../components/Wizard/WizardActions';
-import { saveCampaignInfo, getCampaignInfo, getVerifiedEmail } from '../../../redux/reducers/campaignEditorSlice'
+import { saveCampaignInfo, getCampaignInfo } from '../../../redux/reducers/campaignEditorSlice'
 import { getAccountExtraData } from "../../../redux/reducers/smsSlice";
 import Gallery from '../../../components/Gallery/Gallery.component';
 import { ClientFields, LangugeCode, MobileSupport, PulseemFolderType, PulseemFeatures } from "../../../model/PulseemFields/Fields";
 import CustomEmojiPicker from '../../../components/icons/CustomEmojiPicker';
 import PulseemTags from '../../../components/Tags/PulseemTags'
 import { makeId } from '../../../helpers/functions';
+import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 
 const useStyles = makeStyles({
     iconbox: {
@@ -134,7 +135,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
     const [toastMessage, setToastMessage] = useState(null);
     const [showLoader, setLoader] = useState(true);
     const [extraAccountDATA, setextraAccountDATA] = useState([]);
-    const { campaignInfo, verifiedEmails } = useSelector(state => state.campaignEditor);
+    const { campaignInfo } = useSelector(state => state.campaignEditor);
+    const { verifiedEmails } = useSelector(state => state.common);
     const { ToastMessages } = useSelector(state => state.newsletter);
     const [showGallery, setShowGallery] = useState(false);
     const [isGalleryConfirmed, setIsFileSelected] = useState(false);
@@ -239,7 +241,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
 
     useEffect(() => {
         const preload = async () => {
-            await dispatch(getVerifiedEmail());
+            await dispatch(getAuthorizedEmails());
             if (props.match.params.id != null && parseInt(props.match.params.id) > 0) {
                 const campaignId = parseInt(props.match.params.id);
                 const response = await dispatch(getCampaignInfo(campaignId))
@@ -467,14 +469,17 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 <MenuItem disabled value="" key="-1">
                                                     <em>Select</em>
                                                 </MenuItem>
-                                                {verifiedEmails.map((item, index) => (
-                                                    <MenuItem
-                                                        key={`exd_${index}`}
-                                                        value={item}
-                                                    >
-                                                        {t(item)}
-                                                    </MenuItem>
-                                                ))}
+                                                {verifiedEmails.map((item, index) => {
+                                                    if (item.IsOptIn) {
+                                                        return <MenuItem
+                                                            key={`exd_${index}`}
+                                                            value={item.Number}
+                                                        >
+                                                            {t(item.Number)}
+                                                        </MenuItem>
+                                                    }
+                                                }
+                                                )}
                                             </Select>
                                             {/* error={errors.FromEmail}
                                                     helperText={ErrorTexts.FromEmail} */}
