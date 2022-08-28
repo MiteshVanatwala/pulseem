@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import clsx from 'clsx';
 import { Typography, Button, TextField, Box, makeStyles, Divider } from '@material-ui/core'
 import { Dialog } from '../../components/managment/index'
@@ -7,97 +7,9 @@ import { RiCheckboxCircleFill, RiCloseCircleFill } from 'react-icons/ri';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { newAuthorizeEmail, verifyEmailCode } from '../../redux/reducers/commonSlice';
+import { getAuthorizedEmails } from '../../redux/reducers/commonSlice'
 
-const useStyles = makeStyles({
-    carouselContainer: {
-        display: 'flex',
-        flexWrap: 'nowrap',
-        overflowX: 'hidden'
-    },
-    carouselItem: {
-        height: '20rem',
-        minWidth: '100%',
-        width: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    T05S: {
-        transition: '.5s cubic-bezier(0.39, 0.575, 0.565, 1)'
-    },
-    T10S: {
-        transition: '1s cubic-bezier(0.39, 0.575, 0.565, 1)'
-    },
-    hAuto: {
-        height: 'auto !important'
-    },
-    emailVerItemContainer: {
-        '& .error': {
-            marginTop: 20,
-            color: 'red'
-        },
-        '& .success': {
-            marginTop: 7,
-            color: 'green'
-        },
-        '& .cSlide': {
-            width: "100%",
-            height: '100%',
-            position: "relative",
-            '&.firstSlide': {
-                '& .emailBox': {
-                    '& span': {
-                        paddingInline: 2,
-                        fontSize: 18,
-                        marginTop: 2
-                    },
-                    '& .emailText': {
-                        paddingInline: 3,
-                        maxWidth: 250,
-                        minWidth: 160
-                    },
-                    '& .emailVerLink': {
-                        paddingInline: 3
-                    }
-                }
-                ,
-                '& .btnVerifyNewLtr': {
-                    position: "absolute",
-                    top: 0,
-                    right: 0
-                },
-                '& .btnVerifyNewRTL': {
-                    position: "absolute",
-                    top: 0,
-                    left: 0
-                },
-                '& .MuiDivider-root': {
-                    marginTop: 6,
-                    height: '1.3px',
-                    backgroundColor: '#cdcdcd'
-                }
-            }
-        },
-        '& .cFlexSlide': {
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            width: "100%",
-            height: '100%',
-            textAlign: 'center',
-            '&.secondSlide': {
-                '& .titleDescBox': {
-                    // '& :nthChild(2)': {
-                    //   marginTop: 20
-                    // }
-                    '& .desc': {
-                        marginTop: 20
-                    }
-                }
-            }
-        },
-    }
-})
+
 
 const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null }) => {
     const dispatch = useDispatch();
@@ -110,8 +22,13 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
     const [codeResend, setCodeResend] = useState(false)
     const verificationCode = useRef('');
 
-    const handleClose = () => {
-        // setDialogType(null)
+    useEffect(() => {
+        dispatch(getAuthorizedEmails());
+    }, [])
+
+
+    const handleClose = (callback) => {
+        callback?.()
         onClose?.()
         emailVerificationStep && setEmailVerificationStep(0)
         emailVerificationError && setEmailVerificationError(null)
@@ -166,6 +83,12 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
         const NextSlide = () => {
             if (emailVerificationStep === 4) {
                 return setEmailVerificationStep(0)
+            }
+            if (setEmailVerificationError) {
+                setEmailVerificationError(null)
+            }
+            if (codeResend) {
+                setCodeResend(false)
             }
             return setEmailVerificationStep(emailVerificationStep + 1)
         }
@@ -233,8 +156,10 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
                 <Box className='cFlexSlide secondSlide' >
                     <Box className='titleDescBox'>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.title')}</Typography>
-                        <Typography variant='body1' className='desc' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc1')}</Typography>
-                        <Typography variant='body1' className='desc' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc2')}</Typography>
+                        <Box className='desc'>
+                            <Typography variant='body1' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc1')}</Typography>
+                            <Typography variant='body1' >{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.desc2')}</Typography>
+                        </Box>
                     </Box>
                     <Box className={classes.flexColumn}>
                         <Box>
@@ -243,8 +168,8 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
                                 size='small'
                                 value={selectedVerificationEmail}
                                 onChange={(e) => {
-                                    !!emailVerificationError?.Number && setEmailVerificationError({ Number: '' })
-                                    setSelectedVerificationEmail(e.target.value)
+                                    !!emailVerificationError?.email && setEmailVerificationError({ email: '' })
+                                    setSelectedVerificationEmail(e.target.value?.trim())
                                 }}
                                 className={clsx(classes.textField, classes.maxWidth400)}
                                 placeholder={t('campaigns.newsLetterMgmt.emailVerification.secondSlide.placeholder')}
@@ -298,7 +223,15 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
                                 error={!!emailVerificationError?.code}
                                 // helperText={emailVerificationError?.code}
                                 inputProps={{
-                                    ref: verificationCode
+                                    ref: verificationCode,
+                                    onKeyDown: (e) => {
+                                        if (e.key === "Backspace" || /^[0-9]+$/.test(e.key)) {
+                                            return true
+                                        }
+                                        else {
+                                            e.preventDefault()
+                                        }
+                                    }
                                 }}
                             />
                         </Box>
@@ -359,10 +292,12 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
                     <Box>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.title')}</Typography>
                         <Typography variant='body1' className={classes.mt4}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.desc')} </Typography>
-                        <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.mt6)} >{t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
+                        <Button className={clsx(classes.actionButton, classes.actionButtonGreen, classes.mt6)} onClick={() => {
+                            handleClose()
+                        }}>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.btnTxt')}</Button>
                     </Box>
                 </Box>
-            </Box>
+            </Box >
         )
 
         const UIComp = () => (
@@ -386,14 +321,14 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
 
     const verificationDialog = (data = '') => ({
         title: '',
-        icon: ' ',
+        icon: 'NONE',
         content: (<>
             {EmailVerificationModule().UIComp()}
         </>
 
         ),
         renderButtons: () => (<Box className={classes.textCenter}>
-            <Button
+            {emailVerificationStep < 2 && (<Button
                 name="btnConfirm"
                 variant='contained'
                 size='small'
@@ -406,7 +341,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
                     classes.ml5
                 )}>
                 {t('common.Ok')}
-            </Button>
+            </Button>)}
 
             {(emailVerificationStep > 0 && emailVerificationStep < 3) && <Button
                 name="btnConfirm"
