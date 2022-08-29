@@ -502,7 +502,11 @@
       "invaliApiKey": "Invalid or missing API KEY",
       "fileExtNotAlwd": "File extension not allowed",
       "fileCanNotNull": "File cannot be null",
-      "generalError": "Error Occured"
+      "generalError": "Error Occured",
+      "campaignName": "אנא מלא שם קמפיין",
+      "fromName": "אנא מלא שם שולח",
+      "fromEmail": "נא מלא כתובת מייל לשליחה",
+      "campaignSubject": "נא לרשום נושא קומפיין"
     },
     "success": "Success"
   },

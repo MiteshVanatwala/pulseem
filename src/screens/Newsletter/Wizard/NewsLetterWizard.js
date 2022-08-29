@@ -150,20 +150,26 @@ const NewsLetterWizard = ({ classes, ...props }) => {
         Subject: 200,
         FromName: 100
     }
-
-    const ErrorTexts = {
-        Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
-        Subject: t('campaigns.newsLetterEditor.helpTexts.Subject'),
-        FromName: t('common.requiredField'),
-        FromEmail: t('common.requiredField'),
-    }
-
     const [errors, setErrors] = useState({
         Name: "",
         Subject: "",
         FromName: "",
         FromEmail: ""
     })
+
+    const helperTexts = {
+        Name: t('campaigns.newsLetterEditor.helpTexts.Name'),
+        Subject: t('campaigns.newsLetterEditor.helpTexts.Subject'),
+        FromName: t('common.requiredField'),
+        FromEmail: t('common.requiredField'),
+    }
+
+    const ErrorTexts = {
+        Name: t('campaigns.newsLetterEditor.errors.fromName'),
+        Subject: t('campaigns.newsLetterEditor.errors.campaignSubject'),
+        FromName: t('campaigns.newsLetterEditor.errors.fromName'),
+        FromEmail: t('campaigns.newsLetterEditor.errors.fromEmail'),
+    }
 
     const [campaingnValues, setCampaingnValues] = useState({
         LanguageCode: 0,
@@ -327,7 +333,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
 
         Object.keys(tempError).forEach((key) => {
             if (!data[key] || !data[key].trim()) {
-                tempError[key] = "Null values not allowed";
+                tempError[key] = ErrorTexts[key];
                 isError = !data[key]
             }
         })
@@ -405,7 +411,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         onChange={handleChange}
                                         error={errors.Name}
                                         title={campaingnValues.Name}
-                                        helperText={errors.Name ? errors.Name : ErrorTexts.Name}
+                                        helperText={errors.Name ? errors.Name : helperTexts.Name}
                                     />,
                                     gridSize: { xs: 12, sm: 12 }
                                 }
@@ -431,7 +437,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                         onChange={handleChange}
                                         error={errors.FromName}
                                         title={campaingnValues.FromName}
-                                        helperText={errors.FromName ? errors.FromName : ErrorTexts.FromName}
+                                        helperText={errors.FromName ? errors.FromName : helperTexts.FromName}
                                     />,
                                     gridSize: { xs: 12, sm: 12 }
                                 }
@@ -447,7 +453,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                 },
                                 {
                                     content:
-                                        <FormControl className={localClasses.select}>
+                                        <FormControl className={localClasses.select} error={errors.FromEmail}>
                                             <Select
                                                 native
                                                 displayEmpty
@@ -490,8 +496,8 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 )}
                                             </Select>
                                             {/* error={errors.FromEmail}
-                                                    helperText={ErrorTexts.FromEmail} */}
-                                            <FormHelperText>{ErrorTexts.FromEmail}</FormHelperText>
+                                                    helperText={helperTexts.FromEmail} */}
+                                            <FormHelperText>{errors.FromEmail ? errors.FromEmail : helperTexts.FromEmail}</FormHelperText>
                                         </FormControl>,
                                     gridSize: { xs: 12, sm: 12 }
                                 }
@@ -519,7 +525,7 @@ const NewsLetterWizard = ({ classes, ...props }) => {
                                                 onChange={handleChange}
                                                 error={errors.Subject}
                                                 title={campaingnValues.Subject}
-                                                helperText={errors.Subject ? errors.Subject : ErrorTexts.Subject}
+                                                helperText={errors.Subject ? errors.Subject : helperTexts.Subject}
                                             />
                                             <Box
                                                 className={clsx(localClasses.iconbox)}

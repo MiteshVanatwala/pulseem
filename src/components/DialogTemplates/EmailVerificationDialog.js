@@ -10,10 +10,105 @@ import { newAuthorizeEmail, verifyEmailCode } from '../../redux/reducers/commonS
 import { getAuthorizedEmails } from '../../redux/reducers/commonSlice'
 
 
+const useStyles = makeStyles({
+    carouselContainer: {
+        display: 'flex',
+        flexWrap: 'nowrap',
+        overflowX: 'clip'
+    },
+    carouselItem: {
+        height: '20rem',
+        minWidth: '100%',
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    T05S: {
+        transition: '.5s cubic-bezier(0.39, 0.575, 0.565, 1)'
+    },
+    T10S: {
+        transition: '1s cubic-bezier(0.39, 0.575, 0.565, 1)'
+    },
+    hAuto: {
+        height: 'auto !important'
+    },
+    emailVerItemContainer: {
+        '& .error': {
+            marginTop: 20,
+            color: 'red',
+            height: 26
+        },
+        '& .success': {
+            marginTop: 7,
+            color: 'green',
+            height: 26
+        },
+        '& .cSlide': {
+            width: "100%",
+            height: '100%',
+            position: "relative",
+            '&.firstSlide': {
+                '& .emailBox': {
+                    '& span': {
+                        paddingInline: 2,
+                        fontSize: 18,
+                        marginTop: 2
+                    },
+                    '& .emailText': {
+                        paddingInline: 3,
+                        maxWidth: 250,
+                        minWidth: 160
+                    },
+                    '& .emailVerLink': {
+                        paddingInline: 3
+                    }
+                }
+                ,
+                '& .btnVerifyNewLtr': {
+                    position: "absolute",
+                    top: 0,
+                    right: 0
+                },
+                '& .btnVerifyNewRTL': {
+                    position: "absolute",
+                    top: 0,
+                    left: 0
+                },
+                '& .MuiDivider-root': {
+                    marginTop: 6,
+                    height: '1.3px',
+                    backgroundColor: '#cdcdcd'
+                }
+            }
+        },
+        '& .cFlexSlide': {
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            width: "100%",
+            height: '100%',
+            textAlign: 'center',
+            '&.secondSlide': {
+                '& .titleDescBox': {
+                    '& .mt20': {
+                        marginTop: 20
+                    },
+                    '& .desc': {
+                        marginTop: 20,
+                    }
+                }
+            }
+        },
+    }
+})
+
+
 
 const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null }) => {
     const dispatch = useDispatch();
     const { isRTL } = useSelector(state => state.core);
+    const compClasses = useStyles()
     const { verifiedEmails } = useSelector(state => state.common);
     const { t } = useTranslation();
     const [emailVerificationStep, setEmailVerificationStep] = useState(0)
@@ -103,7 +198,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
         let trials = localStorage.getItem('verificationTrial') ? Number(localStorage.getItem('verificationTrial')) : 0
 
         const FirstSlide = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
+            <Box className={clsx(compClasses.carouselItem, compClasses.T05S, compClasses.emailVerItemContainer)} style={{ position: "relative", transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
                 <Box className='cSlide firstSlide'>
                     <Box pb={1} className={classes.textCenter}>
                         <Typography style={{ fontWeight: 700, padding: '0 0 10px 0' }} variant="h4">
@@ -121,7 +216,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
                         <Typography className={clsx(classes.pbt5, classes.bold)} variant='h6' >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                         {
                             verifiedEmails.map((obj) => (
-                                <Box className={clsx(classes.flex, classes.hAuto, 'emailBox')}>
+                                <Box className={clsx(classes.flex, compClasses.hAuto, 'emailBox')}>
                                     <span>{obj.IsOptIn ? <RiCheckboxCircleFill /> : <RiCloseCircleFill />}</span>
                                     <Typography className='emailText'>{obj.Number} </Typography>
                                     {!obj.IsOptIn && <Typography className={clsx(classes.link, 'emailVerLink')}
@@ -152,7 +247,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
         )
 
         const SecondSlide = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
+            <Box className={clsx(compClasses.carouselItem, compClasses.T05S, compClasses.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide secondSlide' >
                     <Box className='titleDescBox'>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.secondSlide.title')}</Typography>
@@ -205,7 +300,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
         )
 
         const ThirdSlide = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
+            <Box className={clsx(compClasses.carouselItem, compClasses.T05S, compClasses.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide'>
                     <Box>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.title')}</Typography>
@@ -270,7 +365,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
         )
 
         const ErrorSlide = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
+            <Box className={clsx(compClasses.carouselItem, compClasses.T05S, compClasses.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide'>
                     <Box mt={4}>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.errorSlide.title')}</Typography>
@@ -287,7 +382,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
         )
 
         const SuccessSlide = () => (
-            <Box className={clsx(classes.carouselItem, classes.T05S, classes.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
+            <Box className={clsx(compClasses.carouselItem, compClasses.T05S, compClasses.emailVerItemContainer)} style={{ transform: `translate(${isRTL ? (emailVerificationStep * 100) : -(emailVerificationStep * 100)}%)` }}>
                 <Box className='cFlexSlide'>
                     <Box>
                         <Typography variant='h4'>{t('campaigns.newsLetterMgmt.emailVerification.successSlide.title')}</Typography>
@@ -301,7 +396,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
         )
 
         const UIComp = () => (
-            <Box className={classes.carouselContainer}>
+            <Box className={compClasses.carouselContainer}>
                 {FirstSlide()}
                 {SecondSlide()}
                 {ThirdSlide()}
