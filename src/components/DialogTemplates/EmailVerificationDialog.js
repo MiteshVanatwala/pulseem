@@ -165,9 +165,9 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
                 })
         }
 
-        const handleSendCode = () => {
+        const handleSendCode = (val) => {
             setCodeResend(false);
-            dispatch(newAuthorizeEmail({ email: selectedVerificationEmail })).then((result) => {
+            dispatch(newAuthorizeEmail({ email: val })).then((result) => {
                 if (result?.payload === true) {
                     setCodeResend(true);
                 }
@@ -224,7 +224,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
                                             setSelectedVerificationEmail(obj.Number);
                                             setEmailVerificationError({ Number: '' })
                                             EmailVerificationModule().NextSlide()
-                                            handleSendCode();
+                                            handleSendCode(obj.Number);
                                         }}
                                     >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifyEmailAddr')}</Typography>}
                                 </Box>
