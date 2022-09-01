@@ -191,7 +191,8 @@ const Gallery = ({ classes, isConfirm, callbackSelectFile, folderType = PulseemF
 
     useEffect(() => {
         if (isConfirm) {
-            callbackSelectFile(encodeURI(selectedFileURL));
+            // callbackSelectFile(encodeURI(selectedFileURL));
+            callbackSelectFile(multiSelect ? selectedFileURL.join(',') : selectedFileURL);
         }
     }, [isConfirm])
 
