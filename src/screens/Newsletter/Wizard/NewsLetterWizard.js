@@ -26,7 +26,6 @@ import { getAuthorizedEmails } from '../../../redux/reducers/commonSlice';
 const useStyles = makeStyles({
     iconbox: {
         marginBottom: 'auto',
-        width: 40,
         fontSize: 32,
         width: 50,
         height: 'auto',
