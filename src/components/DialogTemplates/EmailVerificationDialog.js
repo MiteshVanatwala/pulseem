@@ -14,7 +14,8 @@ const useStyles = makeStyles({
     carouselContainer: {
         display: 'flex',
         flexWrap: 'nowrap',
-        overflowX: 'clip'
+        overflowX: 'clip',
+        overflowY: 'auto'
     },
     carouselItem: {
         height: '20rem',
@@ -277,7 +278,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
                                 onClick={() => {
                                     if (selectedVerificationEmail) {
                                         if (selectedVerificationEmail.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
-                                            handleSendCode()
+                                            handleSendCode(selectedVerificationEmail)
                                             EmailVerificationModule().NextSlide()
                                         }
                                         else {
