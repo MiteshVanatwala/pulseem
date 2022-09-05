@@ -115,7 +115,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
     const [emailVerificationError, setEmailVerificationError] = useState(null)
     const [selectedVerificationEmail, setSelectedVerificationEmail] = useState('')
     const [codeResend, setCodeResend] = useState(false)
-    const verificationCode = useRef('');
+    const [verificationCode, setVerificationCode] = useState('')
 
     useEffect(() => {
         dispatch(getAuthorizedEmails());
@@ -128,7 +128,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
         emailVerificationStep && setEmailVerificationStep(0)
         emailVerificationError && setEmailVerificationError(null)
         selectedVerificationEmail && setSelectedVerificationEmail('');
-        if (!!verificationCode?.current?.value) verificationCode.current.value = ''
+        verificationCode && setVerificationCode('')
         if (localStorage.getItem('verificationTrial')) localStorage.removeItem('verificationTrial')
     }
 
@@ -139,7 +139,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
             dispatch(verifyEmailCode(
                 {
                     email: selectedVerificationEmail,
-                    optinCode: verificationCode.current.value
+                    optinCode: verificationCode
                 })).then((response) => {
                     switch (response?.payload.toLowerCase()) {
                         case "ok": {
@@ -313,34 +313,27 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
                                 variant='outlined'
                                 size='small'
                                 className={clsx(classes.textField, classes.maxWidth400)}
-                                onChange={() => !!emailVerificationError?.code && setEmailVerificationError({ code: '' })}
-                                placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
-                                error={!!emailVerificationError?.code}
-                                // helperText={emailVerificationError?.code}
-                                inputProps={{
-                                    ref: verificationCode,
-                                    onKeyDown: (e) => {
-                                        if (e.key === "Backspace" || /^[0-9]+$/.test(e.key)) {
-                                            return true
-                                        }
-                                        else {
-                                            e.preventDefault()
-                                        }
+                                onChange={(e) => {
+                                    !!emailVerificationError?.code && setEmailVerificationError({ code: '' })
+                                    if (!e.target.value || /^[0-9]+$/.test(e.target.value)) {
+                                        setVerificationCode(e.target.value)
                                     }
                                 }}
+                                placeholder={t('campaigns.newsLetterMgmt.emailVerification.thirdSlide.placeholder')}
+                                error={!!emailVerificationError?.code}
+                                value={verificationCode}
                             />
                         </Box>
                         <Box mt={2}>
                             <Button className={clsx(classes.actionButton, classes.actionButtonDarkBlue)}
                                 onClick={() => {
-                                    console.log("CODE:", verificationCode?.current)
 
 
                                     if (trials === 4) {
                                         return EmailVerificationModule().NextSlide();
                                     }
 
-                                    if (verificationCode?.current?.value) {
+                                    if (verificationCode) {
                                         verifyCode();
                                     }
                                     else {
