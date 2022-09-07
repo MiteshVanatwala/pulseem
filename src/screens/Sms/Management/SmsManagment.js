@@ -27,6 +27,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 //import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 const SmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -49,6 +50,7 @@ const SmsManagnentScreen = ({ classes }) => {
   const [dialogType, setDialogType] = useState(null)
   const [restoreArray, setRestoreArray] = useState([])
   const [showLoader, setLoader] = useState(true);
+  const [newSmsVerification, setNewSmsVerification] = useState(false);
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   moment.locale(language)
@@ -269,7 +271,8 @@ const SmsManagnentScreen = ({ classes }) => {
               classes.actionButton,
               classes.actionButtonDarkBlue
             )}
-            onClick={handleVerificationDialog}>
+            onClick={() => setNewSmsVerification(true)}
+          >
             {t('sms.verificationDialogTitle')}
           </Button>
         </Grid>}
@@ -1063,6 +1066,7 @@ const SmsManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
+      {newSmsVerification && <VerificationDialog classes={classes} isOpen={newSmsVerification} variant='sms' onClose={() => setNewSmsVerification(false)} />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )

@@ -36,7 +36,7 @@ const useStyles = makeStyles({
     },
     emailVerItemContainer: {
         '& .error': {
-            marginTop: 20,
+            marginTop: 5,
             color: 'red',
             height: 26
         },
@@ -214,7 +214,7 @@ const EmailVerificationDialog = ({ classes, isOpen = false, onClose = () => null
                         <Divider />
                     </Box>
                     <Box style={{ position: 'relative' }}>
-                        <Typography className={clsx(classes.pbt5, classes.bold)} variant='h6' >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
+                        <Typography className={clsx(classes.pbt15, classes.bold)} variant='h6' >{t('campaigns.newsLetterMgmt.emailVerification.firstSlide.verifiedEmails')} </Typography>
                         {
                             verifiedEmails.map((obj) => (
                                 <Box className={clsx(classes.flex, compClasses.hAuto, 'emailBox')}>

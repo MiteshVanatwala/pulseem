@@ -2441,5 +2441,20 @@ export const getGeneralStyle = (windowSize, isRTL, theme) => ({
   },
   ltr: {
     direction: 'ltr'
+  },
+  pbt5: {
+    paddingTop: 5,
+    paddingBottom: 5
+  },
+  pbt10: {
+    paddingTop: 10,
+    paddingBottom: 10
+  },
+  pbt15: {
+    paddingTop: 15,
+    paddingBottom: 15
+  },
+  buttonMinWidth:{
+    minWidth: 167
   }
 });

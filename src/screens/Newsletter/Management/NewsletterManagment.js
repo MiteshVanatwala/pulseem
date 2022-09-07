@@ -32,6 +32,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { getCookie } from '../../../helpers/cookies'
 import { RiCheckboxCircleFill, RiCloseCircleFill } from 'react-icons/ri';
 import EmailVerificationDialog from '../../../components/DialogTemplates/EmailVerificationDialog';
+import VerificationDialog from '../../../components/DialogTemplates/VerificationDialog';
 
 
 const NewsletterManagnentScreen = ({ classes }) => {
@@ -811,7 +812,8 @@ const NewsletterManagnentScreen = ({ classes }) => {
       {renderTable()}
       {renderTablePagination()}
       {renderDialog()}
-      {showEmailVerDialog && <EmailVerificationDialog classes={classes} isOpen={showEmailVerDialog} onClose={() => setShowEmailVerDialog(false)} />}
+      {/* {showEmailVerDialog && <EmailVerificationDialog classes={classes} isOpen={showEmailVerDialog} onClose={() => setShowEmailVerDialog(false)} />} */}
+      {showEmailVerDialog && <VerificationDialog classes={classes} isOpen={showEmailVerDialog} onClose={() => setShowEmailVerDialog(false)} />}
       <Loader isOpen={showLoader} />
     </DefaultScreen>
   )

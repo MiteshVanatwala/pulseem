@@ -513,6 +513,7 @@
         "error2": "Code is required",
         "error_not_match": "The code you entered is not match",
         "error_expired": "This code is expired",
+        "error_tooMuchAttempts": "Too much attempts",
         "did_not_recieved": "Didn’t receive it?",
         "resend": "Resend",
         "resendSuccess": "Code Sent",
@@ -529,7 +530,7 @@
       "successSlide": {
         "title": "The email was verified successfully",
         "desc": "From now on you will be able to send with this email without needing verification",
-        "btnTxt": "Continue to campaigns"
+        "btnTxt": "Continue"
       }
     }
   }
