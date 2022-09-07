@@ -427,6 +427,24 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     },
   },
 
+  actionButtonOutlinedRed: {
+    backgroundColor: '#fff',
+    border: '1px solid #c9302c',
+    color: '#c9302c',
+    '&:hover': {
+      backgroundColor: '#c9302c',
+      color: '#fff'
+    }
+  },
+  actionButtonOutlinedBlue: {
+    backgroundColor: '#fff',
+    border: '1px solid #3498DB',
+    color: '#3498DB',
+    '&:hover': {
+      backgroundColor: '#3498DB',
+      color: '#fff'
+    }
+  },
   textField: {
     width: 180,
     textTransform: "capitalize",
@@ -1080,8 +1098,9 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
     paddingTop: 20,
   },
   link: {
-    textDecoration: "underline",
-    margin: "0 5px",
+    textDecoration: 'underline',
+    margin: '0 5px',
+    cursor: 'pointer'
   },
   popperPaper: {
     padding: "5px 0",
@@ -1671,8 +1690,6 @@ export const getManagmentStyle = (windowSize, isRTL, theme) => ({
         },
       }
     }
-
-
   },
   importButtonBlue: {
     backgroundColor: '#3498DB',

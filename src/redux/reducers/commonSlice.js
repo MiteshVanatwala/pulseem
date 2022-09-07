@@ -81,12 +81,66 @@ export const getCommonFeatures = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
+  })
+
+export const isAlive = createAsyncThunk(
+  'IsAlive', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`IsAlive`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  })
+
+export const getAuthorizedEmails = createAsyncThunk(
+  'authorization/GetAuthorizedEmails', async (_, thunkAPI) => {
+    try {
+      const response = await instence.get(`authorization/GetAuthorizedEmails`);
+      return JSON.parse(response.data)
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
   });
+
+export const newAuthorizeEmail = createAsyncThunk(
+  'authorization/NewAuthorizeEmail', async (data, thunkAPI) => {
+    const { email = '' } = data || {};
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await instence.put(`authorization/NewAuthorizeEmail/${email}`);
+        resolve(JSON.parse(response.data))
+      } catch (error) {
+        reject(thunkAPI.rejectWithValue({ error: error.message }));
+      }
+    })
+  })
+
+export const verifyEmailCode = createAsyncThunk(
+  'authorization/VerifyEmailCode', async (data, thunkAPI) => {
+    const { email = '', optinCode = 0 } = data || {};
+    return new Promise(async (resolve, reject) => {
+      try {
+        const response = await instence.put(`authorization/VerifyEmailCode/${email}/${optinCode}`);
+        resolve(JSON.parse(response.data))
+      } catch (error) {
+        reject(thunkAPI.rejectWithValue({ error: error.message }));
+      }
+    })
+  })
+
 
 export const commonSlice = createSlice({
   name: 'common',
   initialState: {
-    Folders: []
+    Folders: [],
+    verifiedEmails: []
+  },
+  extraReducers: builder => {
+    builder
+      .addCase(getAuthorizedEmails.fulfilled, (state, { payload }) => {
+        state.verifiedEmails = payload
+      })
   }
 })
 
