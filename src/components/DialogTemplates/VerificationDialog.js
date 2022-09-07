@@ -276,7 +276,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         <Button className={clsx(
                             classes.actionButton,
                             classes.actionButtonDarkBlue,
-                            isRTL ? 'btnVerifyNewRTL' : 'btnVerifyNewLtr'
+                            'btnVerifyNewLtr'
                         )}
                             onClick={() => {
                                 setSelectedVerificationContact('')
@@ -492,7 +492,7 @@ const VerificationDialog = ({ classes, isOpen = false, onClose = () => null, var
                         <Button className={clsx(
                             classes.actionButton,
                             classes.actionButtonDarkBlue,
-                            isRTL ? 'btnVerifyNewRTL' : 'btnVerifyNewLtr'
+                            'btnVerifyNewLtr'
                         )}
                             onClick={() => {
                                 setSelectedVerificationContact('')
