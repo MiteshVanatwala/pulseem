@@ -16,7 +16,6 @@ import {
   getLandingPagesData, restoreLandingPages, deleteLandingPage,
   duplicteLandingPage, downloadReport, exportSurvey
 } from '../../../redux/reducers/landingPagesSlice'
-import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { openInNewTab } from '../../../helpers/functions'
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
@@ -43,7 +42,6 @@ const LandingPagesesManagmentScreen = ({ classes }) => {
   const [showCopied, setShowCopied] = useState(null)
   const [copyRef, setCopyRef] = useState(null)
   const [restoreArray, setRestoreArray] = useState([])
-  const history = useCtrlHistory()
   const dispatch = useDispatch()
   const [showLoader, setLoader] = useState(true);
 

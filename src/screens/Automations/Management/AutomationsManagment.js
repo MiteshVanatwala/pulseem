@@ -14,7 +14,6 @@ import {
 import {
   getAutomationsData, deleteAutomations, duplicateAutomations, restoreAutomations, activateAutomation
 } from '../../../redux/reducers/automationsSlice'
-import useCtrlHistory from '../../../helpers/useCtrlHistory'
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -46,7 +45,6 @@ const AutomationsManagnentScreen = ({ classes }) => {
   const [showLoader, setLoader] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
   const dispatch = useDispatch()
-  const history = useCtrlHistory()
   moment.locale(language)
 
 

@@ -12,7 +12,6 @@ import DoubleArrowIcon from '../../assets/images/doubleArrow.png'
 import { ReactComponent as QuestionIcon } from '../../assets/images/question.svg'
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { getRoutes, getSettingsItem } from '../../helpers/routes'
-//import useCtrlHistory from '../../helpers/useCtrlHistory'
 import { setCookie, getCookie } from '../../helpers/cookies'
 import { setScriptDialog } from '../../redux/reducers/notificationSlice';
 import { logout } from '../../helpers/api'
@@ -21,17 +20,17 @@ import {
   ChartIcon
 } from '../../assets/images/drawer/index'
 import i18n from '../../i18n'
+import { useNavigate } from 'react-router-dom';
 
 const AppBarItem = ({
   item,
-  onMainClick = () => { },
-  onInnerClick = () => { },
   chosen = false,
   textStyle = '',
   showIcon = false,
   classes,
   menuWidth = 290
 }) => {
+  const redirect = useNavigate();
   const [open, setOpen] = useState(false)
 
   const [buttonWidth, setButtonWidth] = useState(0)
@@ -57,12 +56,10 @@ const AppBarItem = ({
       className={clsx(classes.appBarItemContainer)}>
       <Box
         style={{ whiteSpace: 'nowrap' }}
-        component='a'
-        href={item.href}
         className={classes.appBarHrefContainer}
         onClick={() => {
           handleOpen()
-          onMainClick(item)
+          redirect(item.href)
         }}>
         <IconButton
           ref={buttonRef}
@@ -89,13 +86,11 @@ const AppBarItem = ({
                     option.isShow &&
                     <Box
                       key={index}
-                      component='a'
-                      className={classes.appBarItemMenuItem}
-                      href={option.href}>
+                      className={classes.appBarItemMenuItem}>
                       {index !== 0 && <Box className={classes.appBarItemBorder} />}
                       <MenuItem
                         key={option.title}
-                        onClick={() => onInnerClick(option)}
+                        onClick={() => { redirect(option.href) }}
                         classes={{ root: classes.appBarItemMenuRoot }}
                         className={classes.appBarItemMenuItem}
                       >
@@ -171,6 +166,7 @@ const LanguageSelector = ({ windowSize, classes }) => {
 
 
 export const TopAppBar = ({ classes, currentPage = '' }) => {
+  const redirect = useNavigate();
   let cookieFeature = getCookie("accountFeatures");
   const cookieIsClal = getCookie("isClal");
 
@@ -221,7 +217,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     if (!!uri) {
       setCookie('scriptDialog', false, { maxAge: 36000000000 });
       dispatch(setScriptDialog(false));
-      window.location.href = uri
+      redirect(uri);
     }
   }
   const returnToAdmin = () => {
@@ -239,7 +235,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
           item={route}
           chosen={route.key === currentPage}
           showIcon={windowSize === 'sm' || windowSize === 'md' || route.key === 'homepage'}
-          onInnerClick={navigate}
+          onInnerClick={() => redirect(route.href)}
         />
       ))}
       {windowSize === 'xl' || windowSize === 'lg' ? <>

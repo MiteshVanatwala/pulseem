@@ -23,7 +23,8 @@ import PulseemSwitch from '../../../components/Controlls/PulseemSwitch'
 import { setCookie } from '../../../helpers/cookies'
 import { FaExclamationCircle } from 'react-icons/fa'
 
-import { useHistory } from "react-router";
+//import { useHistory } from "react-router";
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   getPreviousCampaignData,
   getPreviousLandingData,
@@ -104,6 +105,7 @@ const defaultAccountExtraData = [
 
 const SmsCreator = ({ classes, ...props }) => {
   const { t } = useTranslation();
+  const { id, FromAutomation, NodeToEdit } = useParams();
   document.title = t("sms.pageTitle");
   const styles = useStyles();
   const btnStyle = useStyleNew();
@@ -111,7 +113,7 @@ const SmsCreator = ({ classes, ...props }) => {
     maxLength: "13"
   }
 
-  const history = useHistory();
+  const redirect = useNavigate();
   const dispatch = useDispatch();
   const { language, windowSize, isRTL, accountFeatures } = useSelector(
     (state) => state.core
@@ -247,8 +249,6 @@ const SmsCreator = ({ classes, ...props }) => {
     }
   }, [isPageLoaded || accountFeatures]);
 
-  const qs = queryString.parse(props.location.search);
-
   const renderHtml = (html) => {
     function createMarkup() {
       return { __html: html };
@@ -347,7 +347,7 @@ const SmsCreator = ({ classes, ...props }) => {
 
   const initDispatch = async () => {
     setLoader(true);
-    setCampaignId(props && props.match.params.id ? props.match.params.id : -1);
+    setCampaignId(id ?? -1);
     await dispatch(getPreviousLandingData());
     await dispatch(getTestGroups());
     await dispatch(getPreviousCampaignData());
@@ -362,7 +362,7 @@ const SmsCreator = ({ classes, ...props }) => {
     }
     setextraAccountDATA(defaultAccountExtraData)
     await dispatch(getGroupsBySubAccountId());
-    if (qs && qs.FromAutomation && qs.FromAutomation > 0) {
+    if (id && FromAutomation && FromAutomation > 0) {
       setIsFromAutomation(true);
     }
     await initFromNumber();
@@ -403,12 +403,11 @@ const SmsCreator = ({ classes, ...props }) => {
   }
 
   const getAutomationReturnUrl = (campaignId) => {
-    const nodeToEdit = qs.NodeToEdit ?? null;
-    return `/pulseem/CreateAutomations.aspx?AutomationID=${qs.FromAutomation}&NodeToEdit=${nodeToEdit}&SMSCampaignID=${campaignId}`;
+    return `/pulseem/CreateAutomations.aspx?AutomationID=${FromAutomation}&NodeToEdit=${NodeToEdit}&SMSCampaignID=${campaignId}`;
   }
   const getSavedData = async () => {
-    if (props && props.match.params.id) {
-      let response = await dispatch(getSmsByID(props.match.params.id))
+    if (id) {
+      let response = await dispatch(getSmsByID(id))
       if (response && !response.error) {
         setcampaignNumber(response.payload.FromNumber);
         setmessageCount(response.payload.CreditsPerSms);
@@ -532,10 +531,10 @@ const SmsCreator = ({ classes, ...props }) => {
   };
   const handleSend = async () => {
     if (phone !== "") {
-      if (props && props.match.params.id) {
+      if (id) {
         const smsQuickSendData = {
-          ...quickSendPayload, SmsCampaignID: props.match.params.id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
-            SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: props.match.params.id, Credits: messageCount,
+          ...quickSendPayload, SmsCampaignID: id, FromNumber: campaignNumber, PhoneNumber: phone, Name: smsModel.Name, Text: smsModel.Text, IsTest: false, IsLinksStatistics: isLinksStatistics, CreditsPerSms: messageCount, LogData: {
+            SubAccountID: commonSettings.SubAccountId, AccountID: commonSettings.AccountID, SmsCampaignID: id, Credits: messageCount,
             TotalRecipients: 1
           }
         }
@@ -1247,13 +1246,13 @@ const SmsCreator = ({ classes, ...props }) => {
       if (isSave) {
         setToastMessage(ToastMessages.SUCCESS);
         setTimeout(() => {
-          history.push(`/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + qs.FromAutomation + "&NodeToEdit=" + qs.NodeToEdit : ""}`);
+          redirect(`/react/sms/edit/${campaignId}${isFromAutomation ? "?FromAutomation=" + FromAutomation + "&NodeToEdit=" + NodeToEdit : ""}`);
           setToastMessage(null);
         }, 1500);
       } else if (returnToAutomation) {
-        window.location = getAutomationReturnUrl(campaignId);
+        redirect(getAutomationReturnUrl(campaignId));
       } else {
-        history.push(`/sms/send/${campaignId}`);
+        redirect(`/react/sms/send/${campaignId}`);
       }
     }
     else if (r.payload.Status === 3) {
@@ -1302,18 +1301,18 @@ const SmsCreator = ({ classes, ...props }) => {
   };
 
   const handleDelete = async () => {
-    if (props && props.match.params.id) {
-      let response = await dispatch(getSmsByID(props.match.params.id))
+    if (id) {
+      let response = await dispatch(getSmsByID(id))
       if (response) {
         dispatch(deleteSms(response.payload.SMSCampaignID));
         handleClose();
-        history.push("/SMSCampaigns");
+        redirect("/react/SMSCampaigns");
       }
     }
     else {
       dispatch(deleteSms(-1));
       handleClose();
-      history.push("/SMSCampaigns");
+      redirect("/react/SMSCampaigns");
     }
   };
 
@@ -1369,7 +1368,7 @@ const SmsCreator = ({ classes, ...props }) => {
         }
         else if (saveResponse.payload.Status === 2) {
           setDialogType(null);
-          history.push("/SMSCampaigns");
+          redirect("/react/SMSCampaigns");
 
         }
         else {
@@ -1383,7 +1382,7 @@ const SmsCreator = ({ classes, ...props }) => {
       }
     }
     else if (saveBeforeExit === false) {
-      history.push("/SMSCampaigns");
+      redirect("/react/SMSCampaigns");
       setDialogType(null);
     }
   };
@@ -1968,28 +1967,28 @@ const SmsCreator = ({ classes, ...props }) => {
         spacing={windowSize === "xs" ? 0 : 3}
         className={windowSize === "xs" || windowSize === "sm" ? classes.mobileGrid : null}
         style={{ height: windowSize !== "xs" ? 'calc(100vh - 75px)' : null }}>
-      <Grid item sm={12} md={12} lg={8}>
-        <Title title={t("mainReport.smsCampaign")}
-          classes={classes}
-          tooltip={t("mainReport.toolTip1")}
-          stepNumber={1}
-          subTitle={t("mainReport.createContent")}
-          topZero={false}
-        />
-        {renderFields()}
-        {renderMsg()}
+        <Grid item sm={12} md={12} lg={8}>
+          <Title title={t("mainReport.smsCampaign")}
+            classes={classes}
+            tooltip={t("mainReport.toolTip1")}
+            stepNumber={1}
+            subTitle={t("mainReport.createContent")}
+            topZero={false}
+          />
+          {renderFields()}
+          {renderMsg()}
+        </Grid>
+        <Grid item xs={12} sm={12} md={12} lg={4}>
+          <Box style={{ maxWidth: 420, marginTop: 20 }}>
+            {renderPhone()}
+          </Box>
+        </Grid>
+        {renderButtons()}
       </Grid>
-      <Grid item xs={12} sm={12} md={12} lg={4}>
-        <Box style={{ maxWidth: 420, marginTop: 20 }}>
-          {renderPhone()}
-        </Box>
-      </Grid>
-      {renderButtons()}
-    </Grid>
-      { renderDialog() }
-  { renderSummary() }
-  { otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} /> }
-  <Loader isOpen={showLoader} />
+      {renderDialog()}
+      {renderSummary()}
+      {otpOpen && <OTP classes={classes} campaignNumber={campaignNumber} isOpen={otpOpen} onClose={() => { setOTPOpen(false); setDialogType(null); }} />}
+      <Loader isOpen={showLoader} />
     </DefaultScreen >
   );
 };

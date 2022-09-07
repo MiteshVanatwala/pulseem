@@ -11,7 +11,7 @@ import rtl from 'jss-rtl';
 import jwt_decode from "jwt-decode";
 import { StylesProvider, jssPreset, MuiThemeProvider, useTheme } from '@material-ui/core/styles';
 import i18n from './i18n'
-import { BrowserRouter, useParams, Route } from 'react-router-dom';
+import { BrowserRouter, useParams, Route, Routes, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setWindowSize, setCoreData, setLanguage, setRowsPerPage, setIsClal, setAccountFeatures } from './redux/reducers/coreSlice' //smsOldVersion
 import { isClalAccount, getCommonFeatures } from './redux/reducers/commonSlice';
@@ -20,7 +20,6 @@ import { getTheme } from './style/theme'
 import { useClasses } from './style/classes/index'
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
-import { useHistory } from "react-router-dom";
 import moment from 'moment'
 import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
@@ -39,7 +38,7 @@ import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
 
-const renderRoutes = (classes, history) => {
+const renderRoutes = (classes, redirect) => {
   const transferUrl = (url = '', param = '') => () => {
     const { campaignID, automationID, id, notificationID } = useParams()
     const addParam = {
@@ -56,29 +55,29 @@ const renderRoutes = (classes, history) => {
     <>
       <Route
         exact
-        path="/"
-        render={props => <DashboardScreen {...props} classes={classes} />}
+        path="/react"
+        element={<DashboardScreen classes={classes} />}
       />
       <Route
 
-        path="/sms/create/"
-        render={props => <SmsCreator {...props} classes={classes} />}
+        path="/react/sms/create/"
+        element={<SmsCreator classes={classes} />}
       />
       <Route
-        path="/sms/edit/:id"
-        render={props => <SmsCreator {...props} classes={classes} />}
+        path="/react/sms/edit/:id"
+        element={<SmsCreator classes={classes} />}
       />
       <Route
 
-        path="/sms/send/:id"
-        render={props => <SmsSend {...props} classes={classes} />}
+        path="/react/sms/send/:id"
+        element={<SmsSend classes={classes} />}
       />
       <Route
-        path={`/notifications/edit/:notificationID`}
+        path={`/react/notifications/edit/:notificationID`}
         component={transferUrl('/Pulseem/notifications/Edit/', 'notification')}
       />
       <Route
-        path={`/SendCampaign/:campaignID`}
+        path={`/react/SendCampaign/:campaignID`}
         component={transferUrl('/Pulseem/SendCampaign.aspx?CampaignID=', 'campaign')}
       />
       <Route
@@ -94,21 +93,13 @@ const renderRoutes = (classes, history) => {
         component={transferUrl('/Pulseem/DuplicateCampign/', 'campaign')}
       />
       <Route
-        path={`/CampaignStatistics/:campaignID`}
+        path={`/react/CampaignStatistics/:campaignID`}
         // component={transferUrl('/Pulseem/CampaignStatistics.aspx?CampaignID=', 'campaign')}
-        render={props => <GraphicReport props={props} classes={classes} />}
+        element={<GraphicReport classes={classes} />}
       />
       <Route
-        path={`/homepage`}
-        component={transferUrl('/Pulseem/homepage.aspx')}
-      />
-      {/* <Route
-        path={`/Groups`}
-        component={transferUrl('/Pulseem/Groups.aspx')}
-      /> */}
-      <Route
-        path={'/Groups'}
-        render={props => <Groups props={props} classes={classes} />}
+        path={'/react/Groups'}
+        element={<Groups  classes={classes} />}
       />
       <Route
         path={`/ClientSearch`}
@@ -129,13 +120,13 @@ const renderRoutes = (classes, history) => {
       {/* Newsletter */}
       <Route
         exact
-        path="/Campaigns"
-        render={props => <NewsletterManagment {...props} classes={classes} />}
+        path="/react/Campaigns"
+        element={<NewsletterManagment classes={classes} />}
       />
       <Route
         exact
-        path="/Campaigns/Archive"
-        render={props => <ArchiveManagement {...props} classes={classes} />}
+        path="/react/Campaigns/Archive"
+        element={<ArchiveManagement classes={classes} />}
       />
       <Route
         path={`/Editor/CampaignInfo`}
@@ -163,8 +154,8 @@ const renderRoutes = (classes, history) => {
       />
       {/* SMS */}
       <Route
-        path={`/SMSCampaigns`}
-        render={props => <SmsManagment {...props} classes={classes} />}
+        path={`/react/SMSCampaigns`}
+        element={<SmsManagment classes={classes} />}
       />
       <Route
         path={`/SMSCampaignEdit`}
@@ -189,8 +180,8 @@ const renderRoutes = (classes, history) => {
 
       {/* MMS */}
       <Route
-        path="/MmsCampaigns"
-        render={props => <MmsManagment {...props} classes={classes} />}
+        path="/react/MmsCampaigns"
+        element={<MmsManagment classes={classes} />}
       />
       <Route
         path="/CreateMmsCampaign"
@@ -215,13 +206,13 @@ const renderRoutes = (classes, history) => {
         component={transferUrl('/Pulseem/NewWebForm/NewFormEdit/', 'id')}
       />
       <Route
-        path="/ClientSearchResult/:referrer/:id"
-        render={props => <ClientSearchResult {...props} classes={classes} />}
+        path="/react/ClientSearchResult/:referrer/:id"
+        element={<ClientSearchResult classes={classes} />}
       />
 
       <Route
-        path="/EditRegistrationPage"
-        render={props => <LandingPagesesManagment {...props} classes={classes} />}
+        path="/react/EditRegistrationPage"
+        element={<LandingPagesesManagment classes={classes} />}
       />
       <Route
         path={`/LandingPageWizard`}
@@ -233,25 +224,25 @@ const renderRoutes = (classes, history) => {
       />
       {/* Reports */}
       <Route
-        path={`/Reports/NewsletterReports`}
-        render={props => <NewslettersReport {...props} classes={classes} />}
+        path={`/react/Reports/NewsletterReports`}
+        element={<NewslettersReport classes={classes} />}
       />
       <Route
         path={`/ClalReport`}
         component={transferUrl('/Pulseem/ClalReport.aspx')}
       />
       <Route
-        path={`/Reports/SMSMainReport`}
-        render={props => <SmsReport {...props} classes={classes} />}
+        path={`/react/Reports/SMSMainReport`}
+        element={<SmsReport classes={classes} />}
       />
       <Route
         exact
-        path={"/Reports/SmsReplies/:id"}
-        render={props => <SmsReplies props={props} classes={classes} />}
+        path={"/react/Reports/SmsReplies/:id"}
+        element={<SmsReplies  classes={classes} />}
       />
       <Route
-        path={`/Reports/MmsMainReport`}
-        render={props => <MmsReport {...props} classes={classes} />}
+        path={`/react/Reports/MmsMainReport`}
+        element={<MmsReport classes={classes} />}
       />
       <Route
         path={`/AbTestsReport`}
@@ -283,13 +274,13 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         exact
-        path={`/Reports/DirectSendReport`}
-        render={props => <DirectSendReport {...props} classes={classes} isArchive={false} />}
+        path={`/react/Reports/DirectSendReport`}
+        element={<DirectSendReport classes={classes} isArchive={false} />}
       />
       <Route
         exact
-        path={`/Reports/DirectSendReport/Archive`}
-        render={props => <DirectSendReport {...props} classes={classes} isArchive={true} />}
+        path={`/react/Reports/DirectSendReport/Archive`}
+        element={<DirectSendReport classes={classes} isArchive={true} />}
       />
       <Route
         path={`/EmailCampaignStatistics`}
@@ -297,8 +288,8 @@ const renderRoutes = (classes, history) => {
       />
       {/* Automations */}
       <Route
-        path="/Automations"
-        render={props => <AutomationManagment {...props} classes={classes} />}
+        path="/react/Automations"
+        element={<AutomationManagment classes={classes} />}
       />
       <Route
         path={`/CreateAutomations`}
@@ -320,23 +311,23 @@ const renderRoutes = (classes, history) => {
       {/* Notifications */}
       <Route
         exact
-        path={`/Notifications`}
-        render={props => <NotificationManagement {...props} classes={classes} />}
+        path={`/react/Notifications`}
+        element={<NotificationManagement classes={classes} />}
       />
       <Route
         exact
-        path={"/Notification/create"}
-        render={props => <NotificationEditor props={props} classes={classes} />}
+        path={"/react/Notification/create"}
+        element={<NotificationEditor  classes={classes} />}
       />
       <Route
         exact
-        path={"/Notification/edit/:id"}
-        render={props => <NotificationEditor props={props} classes={classes} />}
+        path={"/react/Notification/edit/:id"}
+        element={<NotificationEditor  classes={classes} />}
       />
       <Route
         exact
-        path={"/Notification/send/:id"}
-        render={props => <NotificationEditor props={props} classes={classes} />}
+        path={"/react/Notification/send/:id"}
+        element={<NotificationEditor  classes={classes} />}
       />
       {/* Settings */}
       <Route
@@ -373,8 +364,8 @@ const renderRoutes = (classes, history) => {
       />
       <Route
         exact
-        path={`/SiteTracking`}
-        render={props => <SiteTrackingEditor props={props} classes={classes} />}
+        path={`/react/SiteTracking`}
+        element={<SiteTrackingEditor  classes={classes} />}
       />
     </>
   )
@@ -450,7 +441,7 @@ const App = ({ screenSize }) => {
 
   const classes = useClasses(windowSize, isRTL)()
   const theme = getTheme(language)
-  const history = useHistory()
+  const redirect = useNavigate()
   document.body.classList.add(classes.sidebar);
 
   if (isRTL) document.body.classList.add('rtl');
@@ -460,7 +451,9 @@ const App = ({ screenSize }) => {
     <MuiPickersUtilsProvider utils={MomentUtils} libInstance={moment} locale={language}>
       <MuiThemeProvider theme={theme}>
         <div dir={isRTL ? 'rtl' : 'ltr'}>
-          {renderRoutes(classes, history)}
+          <Routes>
+            {renderRoutes(classes, redirect)}
+          </Routes>
         </div>
       </MuiThemeProvider>
     </MuiPickersUtilsProvider>
@@ -487,7 +480,7 @@ const AppContainer = () => {
 
   return (
     <StylesProvider jss={jss}>
-      <BrowserRouter basename='/react'>
+      <BrowserRouter basename='/'>
         <App screenSize={width} />
       </BrowserRouter>
     </StylesProvider>
