@@ -14,7 +14,7 @@ import {
 import {
   getAutomationsData, deleteAutomations, duplicateAutomations, restoreAutomations, activateAutomation
 } from '../../../redux/reducers/automationsSlice'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
@@ -27,6 +27,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
 
 const AutomationsManagnentScreen = ({ classes }) => {
+  const redirect = useNavigate();
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
   const { automationsData, automationsDataError, automationsDeletedData } = useSelector(state => state.automations)
   const { t } = useTranslation()
@@ -429,7 +430,6 @@ const AutomationsManagnentScreen = ({ classes }) => {
           title={row.Name}
           classes={classes}
           interactive={true}
-          arrow={true}
           placement={'top'}
           title={<Typography noWrap={false}>{row.Name}</Typography>}
           text={row.Name}
@@ -595,9 +595,8 @@ const AutomationsManagnentScreen = ({ classes }) => {
 
       getData()
       if (isEdit)
-        window.location.href = `/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`
+        redirect(`/Pulseem/CreateAutomations.aspx?AutomationID=${data.ID}&fromreact=true`)
     } catch (err) {
-      console.log('AutomationManagment.ChangeStatus', err)
       setDialogType({
         type: "statusError",
         data: data.ID

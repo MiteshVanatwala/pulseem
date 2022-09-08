@@ -343,7 +343,7 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
                           <Box
                             className={classes.phoneAppBarItemContainer}>
                             <Button
-                              href={route.href}
+                              onClick={() => redirect(route.href)}
                               style={{ alignSelf: 'center', fontSize: route.key === 'directSendReport' ? 35 : null }}>
                               {route.iconUnicode ? (<Typography
                                 className={classes.phoneAppBarItemIcon}>
@@ -382,15 +382,15 @@ export const TopAppBar = ({ classes, currentPage = '' }) => {
     <Box style={{ flexGrow: 1 }}>
       <AppBar position='static' className={classes.appBar} ref={topNavRef}>
         <Toolbar variant='dense'>
-          <Box
-            component='a'
-            href={routes[0].href}>
+          <Button
+            style={{ padding: 0, matgin: 0 }}
+            onClick={() => redirect(routes[0].href)}>
             <Box
               component='img'
               src={`${imageURL}`}
               alt='Logo'
               className={classes.appBarLogo} />
-          </Box>
+          </Button>
           {settingsLoaded && <>
             {renderAppBar()}
             <AppBarItem

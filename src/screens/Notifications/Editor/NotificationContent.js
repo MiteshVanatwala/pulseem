@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen'
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import {
-  Typography, Button, TextField, Grid, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener,
-  FormHelperText, Divider
+  Typography, Button, TextField, Grid, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener
 } from '@material-ui/core'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
 import {
-  getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups,
-  getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups
+  getNotificationById, save, updateNotification, getNotificationPublicKey
 }
   from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
@@ -18,20 +16,14 @@ import { PushService } from './init-push';
 import Picker from 'emoji-picker-react';
 import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
 import './notification.styles.css';
-import Groups from '../../../components/Notifications/Groups/Groups';
 import Gallery from '../../../components/Gallery/Gallery.component';
-import {
-  DateField, Dialog
-} from '../../../components/managment/index';
+import { Dialog } from '../../../components/managment/index';
 import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 import { IoMdImages } from 'react-icons/io'
 import moment from 'moment'
 import 'moment/locale/he'
 import Toast from '../../../components/Toast/Toast.component';
 import Tooltip from '@material-ui/core/Tooltip';
-import {
-  CheckAnimation
-} from '../../../assets/images/settings/index'
 import { isValidUrl } from '../../../helpers/UrlHelper';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
@@ -108,10 +100,11 @@ const DashedInput = withStyles({
 
 })(TextField);
 
-const NotificationEditor = ({ props, classes }) => {
+const NotificationContent = ({ classes }) => {
   const redirect = useNavigate();
   const { id } = useParams();
   const location = useLocation();
+
   /* #region  Component settings constatns */
   const dispatch = useDispatch();
   const { language } = useSelector(state => state.core)
@@ -194,66 +187,6 @@ const NotificationEditor = ({ props, classes }) => {
     ERROR: { severity: 'error', color: 'error', message: t('notifications.error'), showAnimtionCheck: true },
   }
 
-  useEffect(() => {
-    const body = document.querySelector('#root');
-    body.scrollIntoView({}, 100);
-
-    handlePublicKey();
-    if (id != null && parseInt(id) > 0) {
-      getData();
-      if (location.pathname.toLowerCase().indexOf('send') > -1) {
-        getSubAccountGroups();
-        setActiveStep(activeStep + 1);
-      }
-    }
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (groupList && groupList.length > 0) {
-      getNotificationSettings();
-    }
-  }, [groupList]);
-  /* #endregion */
-  /* #region  Callbacks */
-  const callbackSelectedGroups = (group, key, reference) => {
-    const found = selectedGroups.map((group) => { return group.Id }).includes(group.Id)
-    if (found) {
-      setSelected(selectedGroups.filter(g => g.Id !== group.Id))
-    } else {
-      setSelected([...selectedGroups, group])
-    }
-  }
-  const callbackSelectAll = () => {
-    if (!allGroupsSelected) {
-      setSelected(groupList);
-    }
-    else {
-      setSelected([]);
-    }
-    setAllGroupsSelected(!allGroupsSelected);
-
-  }
-  const callbackUpdateGroups = (groups) => {
-    setSelected(groups);
-  }
-  const handleDatePicker = (value) => {
-    handleFromDate(value);
-    setTimePickerOpen(!timePickerOpen);
-  }
-  const handleTimePicker = (value) => {
-    var date = moment(sendDate);
-    var time = moment(value, 'HH:mm');
-    date.set({
-      hour: time.get('hour'),
-      minute: time.get('minute')
-    });
-
-    handleFromDate(date);
-    setTimePickerOpen(false);
-  }
-
-  /* #endregion */
-  /* #region  Data Handlers */
   const handlePublicKey = async () => {
     const t = await dispatch(getNotificationPublicKey());
     if (t && t.payload) {
@@ -263,6 +196,16 @@ const NotificationEditor = ({ props, classes }) => {
       setPublicKey('');
     }
   }
+
+  useEffect(() => {
+    const body = document.querySelector('#root');
+    body.scrollIntoView({}, 100);
+
+    handlePublicKey();
+    if (id != null && parseInt(id) > 0) {
+      getData();
+    }
+  }, [dispatch]);
 
   useEffect(() => {
     if (!ShowRedirectButton) {
@@ -318,146 +261,7 @@ const NotificationEditor = ({ props, classes }) => {
       }
     }
   }
-  const saveSettings = async (isExit, isSummary = false) => {
-    setSourceModel(model);
-    if (isValidSettings()) {
-      if (sendType === "2") {
-        const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
-        m.set({ h: m.format('HH'), m: m.format('mm') });
 
-        model.SendDate = m.format();
-      }
-      else {
-        model.sendDate = null;
-      }
-      const data = { NotificationId: parseInt(id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
-      const result = await dispatch(saveNotificationSettings(data));
-      if (result.payload == true) {
-        if (!isExit && isSummary === false) {
-          setToastMessage(toastMessages.SAVE_SETTINGS);
-        }
-        else {
-          if (isSummary === false)
-            redirect("/react/Notifications");
-          else
-            getSummary(null);
-        }
-      }
-      else {
-        setToastMessage(toastMessages.ERROR);
-      }
-    }
-
-  }
-  const insertNotificationForSend = async (e) => {
-    e.preventDefault();
-    const data = { NotificationId: parseInt(id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
-    const result = await dispatch(SendNotification(data));
-
-    if (result && result.payload === true) {
-      setSummary(null);
-      setCampaignSent(true);
-    }
-  }
-  const getData = async () => {
-    const notificationPayload = await dispatch(getNotificationById(id));
-    setModel(notificationPayload.payload);
-    setSourceModel(notificationPayload.payload);
-    setPublicKey(notificationPayload.payload.PublicKey);
-    if (notificationPayload.payload.RedirectButtonText != '') {
-      setRedirectButtonVisibillity(true);
-    }
-  }
-  const getSubAccountGroups = async () => {
-    const list = await dispatch(getNotificationGroups());
-    setGroupList(list.payload);
-  }
-  const getNotificationSettings = async () => {
-    const list = await dispatch(getSettings(id));
-    const selectedList = [];
-    if (list.payload.length > 0) {
-      const sendDate = list.payload[0].SendDate;
-      // const status = list.payload[0].StatusID;
-      if (sendDate) {
-        const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
-        const d = m.format('YYYY-MM-DD HH:mm:ss');
-        handleFromDate(d);
-        setSendType('2');
-      }
-      list.payload.forEach((g) => {
-        const exist = groupList.filter(gl => { return gl.Id === g.NotificationGroupId });
-        if (exist && exist.length > 0) {
-          selectedList.push(exist[0]);
-        }
-      });
-    }
-    setSelected(selectedList);
-  }
-  const getSummary = async () => {
-    const totalResonse = await dispatch(getUniqueClientsByGroups(selectedGroups.map((g) => { return g.Id; })));
-    const currentTotalRecipients = selectedGroups.reduce(function (a, b) {
-      return a + b['Members'];
-    }, 0);
-    setTotalRecipients(totalResonse.payload);
-    setDuplicatedRecipients(currentTotalRecipients - totalResonse.payload);
-    if (sendDate) {
-      const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
-      m.lang(isRTL ? "he" : "en");
-      setSummary({ groups: selectedGroups, sendType: sendType, sendDate: m.format("MMMM Do YYYY, hh:mm a") });
-
-    }
-    else {
-      setSummary({ groups: selectedGroups, sendType: sendType, sendDate: null });
-    }
-  }
-  const handleSendConfirm = () => {
-    redirect("/react/Notifications");
-  }
-  const renderSentDialog = () => {
-    if (campaignSent) {
-
-      let dialog = {};
-      dialog = {
-        icon: (
-          <MdNotificationsActive style={{ fontSize: 30 }} />
-        ),
-        content: (
-          <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
-            <img alt="Sent" src={CheckAnimation} />
-            <Typography style={{ fontWeight: 'bold' }}>{t("common.sentAlert")}</Typography>
-            <Typography>{t("common.yourCampaignOnItsWay")}</Typography>
-          </Box >
-        ),
-        renderButtons: () => (
-          <Button
-            variant='contained'
-            size='small'
-            onClick={handleSendConfirm}
-            className={clsx(
-              classes.confirmButton,
-              classes.dialogConfirmButton,
-            )}>
-            {t('common.confirm')}
-          </Button>
-        )
-      };
-
-      return (
-        <Dialog
-          showDivider={false}
-          classes={classes}
-          open={true}
-          onClose={handleSendConfirm}
-          {...dialog}>
-          {dialog.content}
-        </Dialog>
-      );
-    }
-    return null;
-  }
-
-  /* #endregion */
-  /* #region  Wizard steps */
   const handleCancel = () => {
     if (JSON.stringify(sourceModel) !== JSON.stringify(model)) {
       setShowConfirmCancel(true);
@@ -512,21 +316,13 @@ const NotificationEditor = ({ props, classes }) => {
   const handleBack = () => {
     redirect(`/react/Notification/edit/${model.ID}`)
   };
-  const getStepContent = (stepIndex) => {
-    switch (stepIndex) {
-      case 0:
-        return notificationEdit();
-      case 1:
-        return notificationSendSettings();
-    }
-  }
+
   const redirectAfterSave = (notificationId) => {
     if (notificationId > 0) {
       redirect(`/react/Notification/send/${notificationId}`);
     }
   }
-  /* #endregion */
-  /* #region  Model Handlers */
+
   const handleNotificationName = (event) => {
     setModel({ ...model, Name: event.target.value });
   }
@@ -569,8 +365,7 @@ const NotificationEditor = ({ props, classes }) => {
     }
     setSendType(event.target.value);
   }
-  /* #endregion */
-  /* #region  Emoji */
+
   const showEmoji = () => {
     setShowEmoji(!isEmojiShown);
   }
@@ -622,8 +417,6 @@ const NotificationEditor = ({ props, classes }) => {
     }, 100);
 
   }
-  /* #endregion */
-  /* #region  Validators */
 
   const updateUrlValue = (e) => {
     const val = e.target.value;
@@ -680,41 +473,7 @@ const NotificationEditor = ({ props, classes }) => {
 
     return true;
   }
-  const isValidSettings = () => {
-    let result = true;
-    setShowConfirmCancel(false);
-    const errorList = [];
-    document.querySelector("#datePicker").classList.remove("error");
-    document.querySelector("#timePicker").classList.remove("error");
 
-    if (sendType == 2) {
-      if ((!sendDate)) {
-        errorList.push({ message: t('notifications.validation.notificationDate') });
-      }
-      else {
-        const dateNow = new Date(Date.now());
-        const selectedDate = new Date(sendDate);
-        if (selectedDate < dateNow) {
-          errorList.push({ message: t('notifications.validation.notificationDatePassed') });
-          document.querySelector("#datePicker").classList.add("error");
-          document.querySelector("#timePicker").classList.add("error");
-          document.querySelector("#timePicker").focus();
-          result = false;
-        }
-      }
-    }
-    if (selectedGroups.length === 0) {
-      errorList.push({ message: t('notifications.validation.notificationGroups') });
-      result = false;
-    }
-    if (errorList.length > 0) {
-      setValidationError(errorList);
-      result = false;
-    }
-    return result;
-  }
-  /* #endregion */
-  // Test send 
   const handleTestSend = () => {
     if (isValidNotification()) {
       PushService(notificationPublicKey).then((permissions) => {
@@ -747,7 +506,6 @@ const NotificationEditor = ({ props, classes }) => {
     }
   }
 
-  /* #region  HTML Renders */
   // Notification Edtior
   const notificationEdit = () => {
     return (
@@ -989,78 +747,492 @@ const NotificationEditor = ({ props, classes }) => {
       </div >
     )
   }
-  // Notification Settings
-  const notificationSendSettings = () => {
-    return (
-      <Grid container
-        direction="row"
-        justifyContent="flex-start"
-        spacing={4}
-        className={classes.wizardFlex}
-      >
-        <Grid item md={7} xs={12}>
-          <h2 className={classes.sectionTitle}>{t('notifications.toWhomToSend')}</h2>
-          <Groups classes={classes}
-            list={groupList}
-            selectedList={selectedGroups}
-            callbackSelectedGroups={callbackSelectedGroups}
-            callbackUpdateGroups={callbackUpdateGroups}
-            callbackSelectAll={callbackSelectAll}
-            isNotifications={true}
-            showFilter={false}
-            isSms={false}
-            noSelectionText={t("notifications.noGroupsSelected")}
-            innerHeight={325}
-          />
-          <Box>
-            <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>
-              {t('notifications.totalRecipients')}
-              {selectedGroups.reduce(function (a, b) {
-                return a + b['Members'];
-              }, 0)}
-            </Typography>
-          </Box>
-        </Grid>
-        {windowSize !== "xs" && <Grid item xs={1}></Grid>}
-        <Grid item md={4} xs={12}>
-          <h2 className={classes.sectionTitle} style={{ marginTop: windowSize == "xs" ? "0" : null }}>{t('notifications.whenToSend')}</h2>
-          <FormControl component="fieldset">
-            <RadioGroup aria-label="gender" name="sendType" value={sendType} onChange={handleSendType}>
-              <FormControlLabel value="1" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.immediateSend")}</span>} />
-              <FormHelperText className={classes.helpText}>{t("notifications.immediateDescription")}</FormHelperText>
-              <FormControlLabel value="2" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.futureSend")}</span>} />
-            </RadioGroup>
-            <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
-              <DateField
-                minDate={moment()}
-                classes={classes}
-                value={sendDate}
-                onChange={handleDatePicker}
-                placeholder={t('notifications.date')}
-                // buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
-                autoOk
-              />
-            </Box>
-            <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
-              <DateField
-                classes={classes}
-                value={sendDate}
-                onTimeChange={handleTimePicker}
-                placeholder={t('notifications.hour')}
-                isTimePicker={true}
-                // buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
-                ampm={false}
-                timePickerOpen={timePickerOpen}
-                autoOk
-              />
-            </Box>
-          </FormControl>
-        </Grid>
-      </Grid>
-
-    );
+  const chooseImage = () => {
+    return (<div className={clsx(
+      classes.flex,
+      classes.flexCenter,
+      classes.flexColumn
+    )}
+      style={{ fontSize: '80px' }}>
+      <svg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="image" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+        <g>
+          <path fillRule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
+        </g>
+      </svg>
+      <span style={{ fontSize: '14px', direction: isRTL ? 'rtl' : 'ltr' }}>{t("notifications.ph_chooseImage")}</span>
+    </div>
+    )
   }
-  // Notification Summary
+  const ChooseIcon = () => {
+    return (<div className={clsx(
+      classes.flex,
+      classes.flexCenter,
+      classes.flexColumn
+    )}
+      style={{ fontSize: '40px' }}><svg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="image" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+        <g>
+          <path fillRule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
+        </g>
+      </svg>
+      <span style={{ fontSize: '14px', direction: isRTL ? 'rtl' : 'ltr' }}>{t("notifications.ph_chooseIcon")}</span>
+    </div>
+    )
+  }
+  const openGallery = (isIcon) => (event) => {
+    if (event.target.id == "removeIcon" || event.target.id == "removeImage") {
+      return;
+    }
+
+    setIsIcon(isIcon);
+    setGalleryState(true);
+    setIsFileSelected(false);
+  }
+  const handleSelectedImage = (image) => {
+    setGalleryState(false);
+    if (isIcon == true) {
+      setModel({ ...model, Icon: image });
+    }
+    else {
+      setModel({ ...model, Image: image });
+    }
+  }
+  const handleGalleryConfirm = () => {
+    setIsFileSelected(true);
+  }
+  const showGalleryModal = () => {
+    if (showGallery) {
+      let dialog = {};
+      dialog = renderGalleryDialog();
+
+      return (
+        <Dialog
+          maxHeight="calc(70vh)"
+          disableBackdropClick={true}
+          style={{ minHeight: 400 }}
+          showDivider={false}
+          classes={classes}
+          open={showGallery}
+          onClose={handleDialogClose}
+          onConfirm={handleGalleryConfirm}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
+    }
+  }
+  const renderGalleryDialog = () => {
+    return {
+      showDivider: false,
+      icon: (
+        <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
+      ),
+      title: t("common.imageGallery"),
+      content: (
+        <Gallery
+          classes={classes}
+          isConfirm={isGalleryConfirmed}
+          callbackSelectFile={handleSelectedImage}
+          style={{ minWidth: 400 }} />
+      )
+    };
+  }
+  const renderDialog = () => {
+    if (validationErrorList != null) {
+      let dialog = {};
+      dialog = renderValidationError();
+
+      return (
+        <Dialog
+          classes={classes}
+          open={validationErrorList}
+          onClose={handleDialogClose}
+          onConfirm={handleDialogClose}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
+    }
+  }
+  const renderValidationError = () => {
+    return {
+      showDivider: true,
+      icon: (
+        <MdErrorOutline style={{ fontSize: 30 }} />
+      ),
+      title: t("notifications.validationError"),
+      content: (
+        <Box className={classes.dialogBox}>
+          <ul>
+            {validationErrorList.map((d, index) => (<li key={{ index }}>{d.message}</li>))}
+          </ul>
+        </Box>
+      ),
+      renderButtons: () => (
+        <Button
+          variant='contained'
+          size='small'
+          onClick={handleDialogClose}
+          className={clsx(
+            classes.confirmButton,
+            classes.dialogConfirmButton,
+          )}>
+          {t('common.confirm')}
+        </Button>
+      )
+    };
+  }
+  const handleDialogClose = () => {
+    setValidationError(null);
+    setGalleryState(null);
+    setSummary(null);
+  }
+  const redirectButton = (showBorder) => {
+    return <div className={clsx(classes.RedirectButtonText, showBorder ? classes.dashed : null)}>{model.RedirectButtonText}</div>
+  }
+  const renderHeader = () => {
+    return (
+      <>
+        <Typography className={classes.managementTitle}>{t('notifications.createNewPush')}</Typography>
+        <Typography className={classes.pageSubTitle}>
+          <span className={classes.roundedCircle}>
+            {activeStep + 1}
+          </span>
+          <span className={classes.subTitle}>
+            {activeStep == 0 ? t('notifications.createContent') : t('notifications.sendSettings')}
+          </span>
+        </Typography>
+        <Typography style={{ fontSize: 24 }}>{activeStep == 0 && t('notifications.createContentText')}</Typography>
+      </>
+    )
+  }
+
+  const WizardButtons = () => {
+    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")} style={{ paddingBottom: 40 }}>
+      {activeStep == 0 &&
+        <Box>
+          <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"} >
+            <Button
+              variant='contained'
+              size='medium'
+              className={clsx(
+                classes.actionButton,
+                classes.actionButtonLightBlue,
+                classes.backButton
+              )}
+              color="primary"
+              onClick={handleTestSend}>
+              {t('notifications.testSend')}
+            </Button>
+          </BootstrapTooltip>
+
+        </Box>
+      }
+      {activeStep > 0 &&
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          onClick={() => handleBack()}
+        >
+          {t('notifications.back')}
+        </Button>
+      }
+
+      <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonRed
+          )}
+          style={{ margin: '8px' }}
+          onClick={() => handleCancel()}
+        >
+          {t('notifications.cancel')}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
+          onClick={event => activeStep == 0 ? saveNotification(false, false) : saveSettings(false)}>
+          {t('notifications.save')}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightBlue,
+            classes.backButton
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
+          onClick={event => activeStep == 0 ? saveNotification(true, false) : saveSettings(true)}>
+          {t('notifications.saveAndExit')}
+        </Button>
+        <Button
+          variant='contained'
+          size='medium'
+          className={clsx(
+            classes.actionButton,
+            classes.actionButtonLightGreen,
+            classes.backButton,
+            activeStep > 0 && selectedGroups.length === 0 ? classes.disabled : ''
+          )}
+          color="primary"
+          style={{ margin: '8px' }}
+          onClick={event => activeStep == 0 ? saveNotification(false, true) : saveSettings(false, true)}>
+          {activeStep == 0 ? t('notifications.saveAndContinue') : t('notifications.summary')}
+        </Button>
+      </Box>
+    </div>)
+  }
+  const renderToast = () => {
+    if (toastMessage) {
+      setTimeout(() => {
+        setToastMessage(null);
+      }, 2000);
+      return (
+        <Toast data={toastMessage} />
+      );
+    }
+    return null;
+  }
+
+  const callbackSelectedGroups = (group, key, reference) => {
+    const found = selectedGroups.map((group) => { return group.Id }).includes(group.Id)
+    if (found) {
+      setSelected(selectedGroups.filter(g => g.Id !== group.Id))
+    } else {
+      setSelected([...selectedGroups, group])
+    }
+  }
+  const callbackSelectAll = () => {
+    if (!allGroupsSelected) {
+      setSelected(groupList);
+    }
+    else {
+      setSelected([]);
+    }
+    setAllGroupsSelected(!allGroupsSelected);
+
+  }
+  const callbackUpdateGroups = (groups) => {
+    setSelected(groups);
+  }
+  const handleDatePicker = (value) => {
+    handleFromDate(value);
+    setTimePickerOpen(!timePickerOpen);
+  }
+  const handleTimePicker = (value) => {
+    var date = moment(sendDate);
+    var time = moment(value, 'HH:mm');
+    date.set({
+      hour: time.get('hour'),
+      minute: time.get('minute')
+    });
+
+    handleFromDate(date);
+    setTimePickerOpen(false);
+  }
+
+  const saveNotification = async (isExit, isContinue) => {
+    setSourceModel(model);
+
+    const modelToSave = { ...model };
+
+    if (isValidNotification()) {
+      if (modelToSave && modelToSave.ID > 0) {
+        await dispatch(updateNotification(modelToSave));
+        setToastMessage(toastMessages.SUCCESS);
+        if (isContinue) {
+          redirectAfterSave(modelToSave.ID);
+        }
+      }
+      else {
+        dispatch(save(modelToSave)).then((response) => {
+          if (location.pathname.toLowerCase().indexOf('create') > -1) {
+            if (isExit) {
+              redirect("/react/Notifications")
+            }
+            else {
+              setToastMessage(toastMessages.SUCCESS);
+              setTimeout(() => {
+                if (isContinue) {
+                  redirectAfterSave(response.payload);
+                }
+                else {
+                  redirect(`/react/Notification/edit/${response.payload}`);
+                }
+                setToastMessage(null);
+              }, 1500);
+            }
+          }
+          else {
+            setModel({ ...model, ID: response.payload });
+            if (isContinue) {
+              redirectAfterSave(response.payload);
+            }
+            else {
+              setToastMessage(toastMessages.SUCCESS);
+            }
+          }
+        });
+      }
+      if (isExit) {
+        redirect("/react/Notifications");
+      }
+    }
+  }
+  const saveSettings = async (isExit, isSummary = false) => {
+    setSourceModel(model);
+    if (isValidSettings()) {
+      if (sendType === "2") {
+        const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+        m.set({ h: m.format('HH'), m: m.format('mm') });
+
+        model.SendDate = m.format();
+      }
+      else {
+        model.sendDate = null;
+      }
+      const data = { NotificationId: parseInt(id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
+      const result = await dispatch(saveNotificationSettings(data));
+      if (result.payload == true) {
+        if (!isExit && isSummary === false) {
+          setToastMessage(toastMessages.SAVE_SETTINGS);
+        }
+        else {
+          if (isSummary === false)
+            redirect("/react/Notifications");
+          else
+            getSummary(null);
+        }
+      }
+      else {
+        setToastMessage(toastMessages.ERROR);
+      }
+    }
+
+  }
+  const insertNotificationForSend = async (e) => {
+    e.preventDefault();
+    const data = { NotificationId: parseInt(id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
+    const result = await dispatch(SendNotification(data));
+
+    if (result && result.payload === true) {
+      setSummary(null);
+      setCampaignSent(true);
+    }
+  }
+  const getData = async () => {
+    const notificationPayload = await dispatch(getNotificationById(id));
+    setModel(notificationPayload.payload);
+    setSourceModel(notificationPayload.payload);
+    setPublicKey(notificationPayload.payload.PublicKey);
+    if (notificationPayload.payload.RedirectButtonText != '') {
+      setRedirectButtonVisibillity(true);
+    }
+  }
+  const getSubAccountGroups = async () => {
+    const list = await dispatch(getNotificationGroups());
+    setGroupList(list.payload);
+  }
+  const getNotificationSettings = async () => {
+    const list = await dispatch(getSettings(id));
+    const selectedList = [];
+    if (list.payload.length > 0) {
+      const sendDate = list.payload[0].SendDate;
+      // const status = list.payload[0].StatusID;
+      if (sendDate) {
+        const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+        const d = m.format('YYYY-MM-DD HH:mm:ss');
+        handleFromDate(d);
+        setSendType('2');
+      }
+      list.payload.forEach((g) => {
+        const exist = groupList.filter(gl => { return gl.Id === g.NotificationGroupId });
+        if (exist && exist.length > 0) {
+          selectedList.push(exist[0]);
+        }
+      });
+    }
+    setSelected(selectedList);
+  }
+  const getSummary = async () => {
+    const totalResonse = await dispatch(getUniqueClientsByGroups(selectedGroups.map((g) => { return g.Id; })));
+    const currentTotalRecipients = selectedGroups.reduce(function (a, b) {
+      return a + b['Members'];
+    }, 0);
+    setTotalRecipients(totalResonse.payload);
+    setDuplicatedRecipients(currentTotalRecipients - totalResonse.payload);
+    if (sendDate) {
+      const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+      m.lang(isRTL ? "he" : "en");
+      setSummary({ groups: selectedGroups, sendType: sendType, sendDate: m.format("MMMM Do YYYY, hh:mm a") });
+
+    }
+    else {
+      setSummary({ groups: selectedGroups, sendType: sendType, sendDate: null });
+    }
+  }
+  const handleSendConfirm = () => {
+    redirect("/react/Notifications");
+  }
+  const renderSentDialog = () => {
+    if (campaignSent) {
+
+      let dialog = {};
+      dialog = {
+        icon: (
+          <MdNotificationsActive style={{ fontSize: 30 }} />
+        ),
+        content: (
+          <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+            <img alt="Sent" src={CheckAnimation} />
+            <Typography style={{ fontWeight: 'bold' }}>{t("common.sentAlert")}</Typography>
+            <Typography>{t("common.yourCampaignOnItsWay")}</Typography>
+          </Box >
+        ),
+        renderButtons: () => (
+          <Button
+            variant='contained'
+            size='small'
+            onClick={handleSendConfirm}
+            className={clsx(
+              classes.confirmButton,
+              classes.dialogConfirmButton,
+            )}>
+            {t('common.confirm')}
+          </Button>
+        )
+      };
+
+      return (
+        <Dialog
+          showDivider={false}
+          classes={classes}
+          open={true}
+          onClose={handleSendConfirm}
+          {...dialog}>
+          {dialog.content}
+        </Dialog>
+      );
+    }
+    return null;
+  }
+
   const renderSummary = () => {
     if (summary && totalRecipients) {
       let dialog = {};
@@ -1173,283 +1345,6 @@ const NotificationEditor = ({ props, classes }) => {
   const handleSummaryClose = () => {
     setSummary(null);
   }
-  /* #region  Templates */
-  const chooseImage = () => {
-    return (<div className={clsx(
-      classes.flex,
-      classes.flexCenter,
-      classes.flexColumn
-    )}
-      style={{ fontSize: '80px' }}>
-      <svg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="image" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-        <g>
-          <path fillRule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
-        </g>
-      </svg>
-      <span style={{ fontSize: '14px', direction: isRTL ? 'rtl' : 'ltr' }}>{t("notifications.ph_chooseImage")}</span>
-    </div>
-    )
-  }
-  const ChooseIcon = () => {
-    return (<div className={clsx(
-      classes.flex,
-      classes.flexCenter,
-      classes.flexColumn
-    )}
-      style={{ fontSize: '40px' }}><svg viewBox="0 0 16 16" width="1em" height="1em" focusable="false" role="img" aria-label="image" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
-        <g>
-          <path fillRule="evenodd" d="M14.002 2h-12a1 1 0 0 0-1 1v9l2.646-2.354a.5.5 0 0 1 .63-.062l2.66 1.773 3.71-3.71a.5.5 0 0 1 .577-.094L15.002 9.5V3a1 1 0 0 0-1-1zm-12-1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm4 4.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"></path>
-        </g>
-      </svg>
-      <span style={{ fontSize: '14px', direction: isRTL ? 'rtl' : 'ltr' }}>{t("notifications.ph_chooseIcon")}</span>
-    </div>
-    )
-  }
-  /* #endregion */
-  /* #endregion */
-  /* #region  Gallery Dialog */
-  const openGallery = (isIcon) => (event) => {
-    if (event.target.id == "removeIcon" || event.target.id == "removeImage") {
-      return;
-    }
-
-    setIsIcon(isIcon);
-    setGalleryState(true);
-    setIsFileSelected(false);
-  }
-  const handleSelectedImage = (image) => {
-    setGalleryState(false);
-    if (isIcon == true) {
-      setModel({ ...model, Icon: image });
-    }
-    else {
-      setModel({ ...model, Image: image });
-    }
-  }
-  const handleGalleryConfirm = () => {
-    setIsFileSelected(true);
-  }
-  const showGalleryModal = () => {
-    if (showGallery) {
-      let dialog = {};
-      dialog = renderGalleryDialog();
-
-      return (
-        <Dialog
-          maxHeight="calc(70vh)"
-          disableBackdropClick={true}
-          style={{ minHeight: 400 }}
-          showDivider={false}
-          classes={classes}
-          open={showGallery}
-          onClose={handleDialogClose}
-          onConfirm={handleGalleryConfirm}
-          {...dialog}>
-          {dialog.content}
-        </Dialog>
-      );
-    }
-  }
-  const renderGalleryDialog = () => {
-    return {
-      showDivider: false,
-      icon: (
-        <IoMdImages style={{ fontSize: 30, color: '#fff' }} />
-      ),
-      title: t("common.imageGallery"),
-      content: (
-        <Gallery
-          classes={classes}
-          isConfirm={isGalleryConfirmed}
-          callbackSelectFile={handleSelectedImage}
-          style={{ minWidth: 400 }} />
-      )
-    };
-  }
-  /* #endregion */
-  /* #region  Dialog */
-  const renderDialog = () => {
-    if (validationErrorList != null) {
-      let dialog = {};
-      dialog = renderValidationError();
-
-      return (
-        <Dialog
-          classes={classes}
-          open={validationErrorList}
-          onClose={handleDialogClose}
-          onConfirm={handleDialogClose}
-          {...dialog}>
-          {dialog.content}
-        </Dialog>
-      );
-    }
-  }
-  const renderValidationError = () => {
-    return {
-      showDivider: true,
-      icon: (
-        <MdErrorOutline style={{ fontSize: 30 }} />
-      ),
-      title: t("notifications.validationError"),
-      content: (
-        <Box className={classes.dialogBox}>
-          <ul>
-            {validationErrorList.map((d, index) => (<li key={{ index }}>{d.message}</li>))}
-          </ul>
-        </Box>
-      ),
-      renderButtons: () => (
-        <Button
-          variant='contained'
-          size='small'
-          onClick={handleDialogClose}
-          className={clsx(
-            classes.confirmButton,
-            classes.dialogConfirmButton,
-          )}>
-          {t('common.confirm')}
-        </Button>
-      )
-    };
-  }
-  const handleDialogClose = () => {
-    setValidationError(null);
-    setGalleryState(null);
-    setSummary(null);
-  }
-  /* #endregion */
-  const redirectButton = (showBorder) => {
-    return <div className={clsx(classes.RedirectButtonText, showBorder ? classes.dashed : null)}>{model.RedirectButtonText}</div>
-  }
-  const renderHeader = () => {
-    return (
-      <>
-        <Typography className={classes.managementTitle}>{t('notifications.createNewPush')}</Typography>
-        <Typography className={classes.pageSubTitle}>
-          <span className={classes.roundedCircle}>
-            {activeStep + 1}
-          </span>
-          <span className={classes.subTitle}>
-            {activeStep == 0 ? t('notifications.createContent') : t('notifications.sendSettings')}
-          </span>
-        </Typography>
-        <Typography style={{ fontSize: 24 }}>{activeStep == 0 && t('notifications.createContentText')}</Typography>
-      </>
-    )
-  }
-  const renderNotification = () => {
-    return (
-      <div className={classes.root}>
-        <div>
-          {getStepContent(activeStep)}
-        </div>
-      </div>
-    )
-  }
-  const WizardButtons = () => {
-    return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")} style={{ paddingBottom: 40 }}>
-      {activeStep == 0 &&
-        <Box>
-          <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"} >
-            <Button
-              variant='contained'
-              size='medium'
-              className={clsx(
-                classes.actionButton,
-                classes.actionButtonLightBlue,
-                classes.backButton
-              )}
-              color="primary"
-              onClick={handleTestSend}>
-              {t('notifications.testSend')}
-            </Button>
-          </BootstrapTooltip>
-
-        </Box>
-      }
-      {activeStep > 0 &&
-        <Button
-          variant='contained'
-          size='medium'
-          className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightBlue,
-            classes.backButton
-          )}
-          onClick={() => handleBack()}
-        >
-          {t('notifications.back')}
-        </Button>
-      }
-
-      <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
-        <Button
-          variant='contained'
-          size='medium'
-          className={clsx(
-            classes.actionButton,
-            classes.actionButtonRed
-          )}
-          style={{ margin: '8px' }}
-          onClick={() => handleCancel()}
-        >
-          {t('notifications.cancel')}
-        </Button>
-        <Button
-          variant='contained'
-          size='medium'
-          className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightBlue,
-            classes.backButton
-          )}
-          color="primary"
-          style={{ margin: '8px' }}
-          onClick={event => activeStep == 0 ? saveNotification(false, false) : saveSettings(false)}>
-          {t('notifications.save')}
-        </Button>
-        <Button
-          variant='contained'
-          size='medium'
-          className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightBlue,
-            classes.backButton
-          )}
-          color="primary"
-          style={{ margin: '8px' }}
-          onClick={event => activeStep == 0 ? saveNotification(true, false) : saveSettings(true)}>
-          {t('notifications.saveAndExit')}
-        </Button>
-        <Button
-          variant='contained'
-          size='medium'
-          className={clsx(
-            classes.actionButton,
-            classes.actionButtonLightGreen,
-            classes.backButton,
-            activeStep > 0 && selectedGroups.length === 0 ? classes.disabled : ''
-          )}
-          color="primary"
-          style={{ margin: '8px' }}
-          onClick={event => activeStep == 0 ? saveNotification(false, true) : saveSettings(false, true)}>
-          {activeStep == 0 ? t('notifications.saveAndContinue') : t('notifications.summary')}
-        </Button>
-      </Box>
-    </div>)
-  }
-  const renderToast = () => {
-    if (toastMessage) {
-      setTimeout(() => {
-        setToastMessage(null);
-      }, 2000);
-      return (
-        <Toast data={toastMessage} />
-      );
-    }
-    return null;
-  }
 
   return (
     <DefaultScreen
@@ -1461,16 +1356,15 @@ const NotificationEditor = ({ props, classes }) => {
       <div style={{ height: 'calc(100vh - 53px)', display: 'flex', flexDirection: 'column', paddingBottom: 40 }}>
         {renderToast()}
         {renderHeader()}
-        {renderNotification()}
+        {notificationEdit()}
         {renderDialog()}
-        {renderSummary()}
-        {renderSentDialog()}
         {showGalleryModal()}
         {renderConfirmCancel()}
         <WizardButtons />
       </div>
     </DefaultScreen>
   );
+
 }
 
-export default NotificationEditor;
+export default NotificationContent;
