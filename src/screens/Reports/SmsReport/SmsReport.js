@@ -25,18 +25,19 @@ import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, 
 import GraphReport from '../../../components/Reports/GraphReport';
 
 const SmsReport = ({ classes }) => {
+  const priorDate = moment().subtract(30, 'days').utcOffset(0);
+  priorDate.set({ hour: 0, minute: 0, second: 0, millisecond: 0 })
+
   const { language, windowSize, isRTL, accountFeatures } = useSelector(state => state.core)
   const { smsReport, smsGraph } = useSelector(state => state.sms)
   const { t } = useTranslation()
-  const [fromDate, handleFromDate] = useState(null);
+  const [fromDate, handleFromDate] = useState(priorDate);
   const [toDate, handleToDate] = useState(null);
   const [campaignName, setCampaignNameSearch] = useState('');
   const rowsOptions = [6, 10, 20, 50]
   const [rowsPerPage, setRowsPerPage] = useState(rowsOptions[0])
   const [page, setPage] = useState(1)
   const [isSearching, setSearching] = useState(false)
-  const [searchResults, setSearchResults] = useState(null)
-  const [isDemoSend, setIsDemoSend] = useState(false)
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
@@ -46,7 +47,7 @@ const SmsReport = ({ classes }) => {
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const [showLoader, setLoader] = useState(true);
-  const [smsQuery, setSmsQuery] = useState({ SerachTxt: '', From: null, To: null, ShowTestCampaigns: false, SmsCampaignID: null })
+  const [smsQuery, setSmsQuery] = useState({ SerachTxt: '', From: priorDate, To: null, ShowTestCampaigns: false, SmsCampaignID: null })
   const [hasRevenue, setHasRevenue] = useState(false);
 
   moment.locale(language)
@@ -94,12 +95,14 @@ const SmsReport = ({ classes }) => {
     }
   })
 
-  const getData = async () => {
+  const getData = async (query) => {
     setLoader(true);
-    await dispatch(getSmsReport(smsQuery));
+    await dispatch(getSmsReport(query));
     setLoader(false);
     await dispatch(getSmsGraph());
   }
+
+
 
   useEffect(() => {
     if (accountFeatures && accountFeatures.includes('42')) {
@@ -107,9 +110,30 @@ const SmsReport = ({ classes }) => {
     }
   }, [accountFeatures])
 
+  const usePrevious = (value) => {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  }
+
+  const prevShowTestCampaign = usePrevious(smsQuery.ShowTestCampaigns);
+
   useEffect(() => {
-    getData();
-  }, [dispatch, isDemoSend]);
+
+    if (smsQuery.SerachTxt !== '' ||
+      JSON.stringify(smsQuery.From) !== JSON.stringify(priorDate) ||
+      smsQuery.To !== null ||
+      (prevShowTestCampaign !== undefined && prevShowTestCampaign !== smsQuery.ShowTestCampaigns)) {
+      setPage(1);
+      setSearching(true);
+    }
+  }, [dispatch, smsQuery.ShowTestCampaigns, isSearching]);
+
+  useEffect(() => {
+    getData(smsQuery);
+  }, [, isSearching, smsQuery.ShowTestCampaigns])
 
 
   const exportColumnHeader = {
@@ -145,15 +169,14 @@ const SmsReport = ({ classes }) => {
   }
 
   const clearSearch = () => {
-    setCampaignNameSearch('')
-    handleFromDate(null)
-    handleToDate(null)
-    setSearchResults(null)
-    setSearching(false)
+    const resetSmsQuery = { ...smsQuery, From: priorDate, To: null, SerachTxt: '', ShowTestCampaigns: false, SmsCampaignID: null };
+    setSmsQuery(resetSmsQuery);
+    getData(resetSmsQuery)
+    setSearching(false);
   }
 
   const handleDownloadCsv = async () => {
-    let orderList = preferredOrder(searchResults || smsReport, Object.keys(exportColumnHeader));
+    let orderList = preferredOrder(smsReport, Object.keys(exportColumnHeader));
     orderList = await statusNumberToString(t, orderList, smsReportStatus);
     orderList = await formatDateTime(orderList, t);
     orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
@@ -171,48 +194,8 @@ const SmsReport = ({ classes }) => {
       if (campaignName === '' && !fromDate && !toDate) {
         return;
       }
-      const searchArray = [{
-        type: 'name',
-        campaignName: campaignName
-      }, {
-        type: 'date',
-        fromDate,
-        toDate
-      }];
-
-      const filtersObject = {
-        name: (row, values) => {
-          return String(row.Name.toLowerCase()).includes(values.campaignName.toLowerCase());
-        },
-        date: (row, values) => {
-          const { UpdateDate, SendDate } = row
-          const lastUpdate = SendDate ?
-            moment(SendDate, dateFormat).valueOf()
-            : moment(UpdateDate, dateFormat).valueOf()
-          const startFromDate = values.fromDate && values.fromDate.hour(0).minute(0).valueOf() || null
-          const endToDate = values.toDate && values.toDate.hour(23).minute(59).valueOf() || null
-
-          if (!values)
-            return true
-          if (fromDate && toDate && startFromDate && endToDate)
-            return ((lastUpdate >= startFromDate) && (lastUpdate <= endToDate))
-          if (fromDate && startFromDate)
-            return (lastUpdate >= startFromDate)
-          if (toDate && endToDate)
-            return (lastUpdate <= endToDate)
-          return true
-        }
-      }
-
-      let sortData = smsReport;
-      searchArray.forEach(values => {
-        sortData = sortData.filter(row => filtersObject[values.type](row, values))
-      });
-      setSearchResults(sortData);
-      if (smsReport.length !== sortData.length) {
-        setSearching(true);
-        setPage(1);
-      }
+      setSearching(true);
+      getData(smsQuery);
     }
 
     const handleKeyPress = (event) => {
@@ -220,15 +203,6 @@ const SmsReport = ({ classes }) => {
         handleSearch();
       }
     }
-
-    const handleFromDateChange = (value) => {
-      if (value > toDate) {
-        handleToDate(null);
-      }
-      handleFromDate(value);
-    }
-
-
 
     if (windowSize === 'xs') {
       return (
@@ -251,9 +225,14 @@ const SmsReport = ({ classes }) => {
           <TextField
             variant='outlined'
             size='small'
-            value={campaignName}
+            value={smsQuery.SerachTxt}
             onKeyPress={handleKeyPress}
-            onChange={(e) => setCampaignNameSearch(e.target.value)}
+            onChange={(e) => {
+              setSmsQuery({
+                ...smsQuery,
+                SerachTxt: e.target.value
+              })
+            }}
             className={clsx(classes.textField, classes.minWidth252)}
             placeholder={t('common.CampaignName')}
           />
@@ -264,8 +243,13 @@ const SmsReport = ({ classes }) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={fromDate}
-              onChange={handleFromDateChange}
+              value={smsQuery.From}
+              onChange={(value) => {
+                setSmsQuery({
+                  ...smsQuery,
+                  From: value
+                })
+              }}
               placeholder={t('mms.locFromDateResource1.Text')}
             />
           </Grid>
@@ -276,19 +260,23 @@ const SmsReport = ({ classes }) => {
             <DateField
               toolbarDisabled={false}
               classes={classes}
-              value={toDate}
-              onChange={handleToDate}
+              value={smsQuery.To}
+              onChange={(value) => {
+                setSmsQuery({
+                  ...smsQuery,
+                  To: value.set({ hour: 23, minute: 59, second: 59, millisecond: 59 })
+                })
+              }}
               placeholder={t('mms.locToDateResource1.Text')}
-              minDate={fromDate ? fromDate : undefined}
+              minDate={smsQuery.From ? smsQuery.From : undefined}
             />
           </Grid>
           : null}
 
         <Grid item style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Switch
-            checked={isDemoSend}
+            checked={smsQuery.ShowTestCampaigns}
             onColor="#0371ad"
-            //onHandleColor="#e6f6ff"
             handleDiameter={20}
             uncheckedIcon={false}
             checkedIcon={false}
@@ -297,7 +285,7 @@ const SmsReport = ({ classes }) => {
             height={15}
             width={40}
             className={clsx({ [classes.rtlSwitch]: isRTL })}
-            onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !isDemoSend }); setIsDemoSend(!isDemoSend) }}
+            onChange={() => { setSmsQuery({ ...smsQuery, ShowTestCampaigns: !smsQuery.ShowTestCampaigns }) }}
           />
           <Typography style={{ marginInlineStart: 8 }}>
             {t('mainReport.locShowTestCampaigns.Text')}
@@ -317,7 +305,7 @@ const SmsReport = ({ classes }) => {
           <Button
             size='large'
             variant='contained'
-            onClick={clearSearch}
+            onClick={() => clearSearch()}
             className={classes.searchButton}
             endIcon={<ClearIcon />}>
             {t('common.clear')}
@@ -328,7 +316,7 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderManagmentLine = () => {
-    const dataLength = isSearching ? searchResults.length : smsReport.length;
+    const dataLength = smsReport.length;
     return (
       <Grid container spacing={2} className={classes.linePadding} >
         {windowSize !== 'xs' && <Grid item>
@@ -644,7 +632,7 @@ const SmsReport = ({ classes }) => {
   }
 
   const renderTableBody = () => {
-    let rowData = searchResults || smsReport;
+    let rowData = smsReport;
     if (rowData.length > 0) {
       rowData = rowData.slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
       return (
@@ -675,7 +663,7 @@ const SmsReport = ({ classes }) => {
     return (
       <TablePagination
         classes={classes}
-        rows={isSearching ? searchResults.length : smsReport.length}
+        rows={isSearching && smsReport.length}
         rowsPerPage={rowsPerPage}
         onRowsPerPageChange={setRowsPerPage}
         rowsPerPageOptions={rowsOptions}
