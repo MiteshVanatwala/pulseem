@@ -488,7 +488,7 @@
       "emailVerificationBtnText": "Email Verification",
       "popupTitle": "Verification of email to send",
       "popupDesc1": "To ensure the security of your account, we need to verify this email address belongs to you.",
-      "popupDesc2": "This is 2 one-time process for each email you send from.",
+      "popupDesc2": "This is a one-time process for each email you send from.",
       "firstSlide": {
         "verifiedEmails": "Verified emails",
         "verifyEmailAddr": "Verify Email Address",
@@ -511,7 +511,7 @@
         "desc2": "This code will be valid for the next 10 minutes only",
         "error1": "Incorrect code. Please try again or click on resend below",
         "error2": "Code is required",
-        "error_not_match": "The code you entered is not match",
+        "error_not_match": "The code you entered does not match",
         "error_expired": "This code is expired",
         "error_tooMuchAttempts": "Too much attempts",
         "did_not_recieved": "Didn’t receive it?",
