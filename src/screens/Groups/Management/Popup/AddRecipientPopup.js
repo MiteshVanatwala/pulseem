@@ -203,12 +203,12 @@ const AddRecipientPopup = ({ classes,
             const { date, field } = dateField;
             if (isExtraData) {
                 setAccountExtraFields({
-                    ...accountExtraFields, [field]: moment(date, dateFormat).format()
+                    ...accountExtraFields, [field]: moment(date, dateFormat).format().split('T')[0]
                 });
             }
             else {
                 setAddRecipientData({
-                    ...addRecipientData, [field]: moment(date, dateFormat).format()
+                    ...addRecipientData, [field]: moment(date, dateFormat).format().split('T')[0]
                 })
             }
         }
