@@ -1,122 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import DefaultScreen from '../../DefaultScreen'
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import {
-    Typography, Button, TextField, Grid, Switch, Box, FormControlLabel, FormControl, RadioGroup, Radio, ClickAwayListener,
-    FormHelperText, Divider
-} from '@material-ui/core'
-import { useSelector, useDispatch } from 'react-redux'
-import { useTranslation } from 'react-i18next'
-import { Preview } from '../../../components/Notifications/Preview/Preview';
-import {
-    getNotificationById, save, updateNotification, getNotificationPublicKey, getNotificationGroups,
-    getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups
-}
-    from '../../../redux/reducers/notificationSlice';
 import clsx from 'clsx';
-import { PushService } from './init-push';
-import Picker from 'emoji-picker-react';
-import { FaAlignLeft, FaAlignRight } from 'react-icons/fa';
-import './notification.styles.css';
-import Groups from '../../../components/Notifications/Groups/Groups';
-import Gallery from '../../../components/Gallery/Gallery.component';
-import {
-    DateField, Dialog
-} from '../../../components/managment/index';
-import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
-import { IoMdImages } from 'react-icons/io'
-import moment from 'moment'
 import 'moment/locale/he'
+import moment from 'moment'
+import './notification.styles.css';
+import { useTranslation } from 'react-i18next'
+import DefaultScreen from '../../DefaultScreen'
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
 import Toast from '../../../components/Toast/Toast.component';
-import Tooltip from '@material-ui/core/Tooltip';
-import {
-    CheckAnimation
-} from '../../../assets/images/settings/index'
-import { isValidUrl } from '../../../helpers/UrlHelper';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
-
-const useStylesBootstrap = makeStyles((theme) => ({
-    arrow: {
-        color: theme.palette.common.black,
-    },
-    tooltip: {
-        backgroundColor: theme.palette.common.black,
-    },
-}));
-
-function BootstrapTooltip(props) {
-    const classes = useStylesBootstrap();
-
-    return <Tooltip arrow classes={classes} {...props} disableFocusListener />;
-}
-
-const DashedInput = withStyles({
-    root: {
-        border: 'none',
-        borderRadius: 0,
-        "& .MuiOutlinedInput-multiline": {
-            padding: 0,
-            minHeight: 55,
-            paddingTop: 0,
-            '& textarea + fieldset': {
-                border: '1px dashed #64a1bd',
-                borderRadius: 0,
-                borderWidth: 1
-            },
-            '& textarea:invalid:focus + fieldset': {
-                borderStyle: 'dashed',
-                borderWidth: 1,
-                borderColor: 'red'
-            },
-            '& textarea:valid:focus + fieldset': {
-                borderStyle: 'dashed',
-                borderWidth: 1
-            },
-            '& textarea + fieldset:hover': {
-                color: 'rgba(0, 0, 0, 0.87)',
-                border: '1px dashed #000',
-            },
-            '& textarea.error': {
-                border: '1px dashed red'
-            }
-        },
-        '& input': {
-            height: 0,
-        },
-        '& input + fieldset': {
-            borderStyle: 'dashed',
-            borderColor: '#64a1bd',
-            borderRadius: 0
-        },
-        '& input:invalid:focus + fieldset': {
-            borderColor: 'red',
-            borderWidth: 1
-        },
-        '& input:valid:focus + fieldset': {
-            borderStyle: 'dashed',
-            borderWidth: 1,
-            borderColor: '#64a1bd'
-        },
-        '& input:hover + fieldset': {
-            color: 'rgba(0, 0, 0, 0.87)',
-            border: '1px dashed rgba(0, 0, 0, 0.87)',
-        },
-        '& input.error': {
-            border: '1px dashed red'
-        }
-    },
-
-})(TextField);
+import { CheckAnimation } from '../../../assets/images/settings/index'
+import { Preview } from '../../../components/Notifications/Preview/Preview';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Typography, Button, Grid, Box, FormControlLabel, FormControl, RadioGroup, Radio, FormHelperText, Divider, Link } from '@material-ui/core'
+import { getNotificationById, getNotificationGroups, getSettings, saveNotificationSettings, SendNotification, getUniqueClientsByGroups } from '../../../redux/reducers/notificationSlice';
+import Groups from '../../../components/Notifications/Groups/Groups';
+import { DateField, Dialog } from '../../../components/managment/index';
+import { MdErrorOutline, MdNotificationsActive } from 'react-icons/md';
 
 const NotificationSend = ({ classes }) => {
-    const redirect = useNavigate();
     const { id } = useParams();
-    const location = useLocation();
+    const { t } = useTranslation();
+    const redirect = useNavigate();
+    const { notificationGroups } = useSelector(state => state.notification)
     /* #region  Component settings constatns */
     const dispatch = useDispatch();
-    const { language } = useSelector(state => state.core)
-    const { t } = useTranslation();
-    const { isRTL, windowSize } = useSelector(state => state.core);
+    const { language, isRTL, windowSize } = useSelector(state => state.core)
+    const [ShowRedirectButton, setRedirectButtonVisibillity] = useState(false);
+    const [groupList, setGroupList] = useState(null);
     moment.locale(language);
     /* #endregion */
     /* #region  State */
@@ -139,34 +48,7 @@ const NotificationSend = ({ classes }) => {
         RedirectButtonText: ""
     });
 
-    const [sourceModel, setSourceModel] = useState({
-        ID: 0,
-        Name: "",
-        Title: "",
-        Body: "",
-        Icon: "",
-        Image: "",
-        RedirectURL: "",
-        Tag: "",
-        Direction: 2,
-        IsRenotify: "",
-        SendDate: "",
-        IsDeleted: "",
-        SentCount: "",
-        StatusID: "",
-        NotificationGroups: "",
-        RedirectButtonText: ""
-    });
-
-    const [activeStep, setActiveStep] = useState(0);
-    const [ShowRedirectButton, setRedirectButtonVisibillity] = useState(false);
-    const [notificationPublicKey, setPublicKey] = useState(0);
-    const [chosenEmoji, setChosenEmoji] = useState(null);
-    const [inputFocus, setFocusOnInput] = useState(null);
-    const [cursorPosition, setCursorPosition] = useState(0);
-    const [isEmojiShown, setShowEmoji] = useState(false);
     const [validationErrorList, setValidationError] = useState(null);
-    const [groupList, setGroupList] = useState([]);
     // Groups
     const [selectedGroups, setSelected] = useState([]);
     const [allGroupsSelected, setAllGroupsSelected] = useState(false);
@@ -176,18 +58,42 @@ const NotificationSend = ({ classes }) => {
     const [timePickerOpen, setTimePickerOpen] = useState(false);
     const [summary, setSummary] = useState(null);
     const [showDetails, setDetailsVisibility] = useState(false);
-    const [notificationHover, setHovered] = useState(false);
-    const [showGallery, setGalleryState] = useState(false);
-    const [iconHover, setIconHover] = useState(false);
-    const [isIcon, setIsIcon] = useState(false);
     const [totalRecipients, setTotalRecipients] = useState(null);
     const [toastMessage, setToastMessage] = useState(null);
-    const [isGalleryConfirmed, setIsFileSelected] = useState(false);
     const [campaignSent, setCampaignSent] = useState(false);
     const [showConfirmCancel, setShowConfirmCancel] = useState(false);
     const [duplicatedRecipients, setDuplicatedRecipients] = useState(0);
     const [showGroupsList, setShowGroupsList] = useState(false);
-
+    const getData = () => {
+        return new Promise(async (resolve) => {
+            const notificationPayload = await dispatch(getNotificationById(id));
+            setModel(notificationPayload.payload);
+            if (notificationPayload.payload.RedirectButtonText !== '') {
+                setRedirectButtonVisibillity(true);
+            }
+            resolve();
+        })
+    }
+    const getNotificationSettings = async () => {
+        const list = await dispatch(getSettings(id));
+        const selectedList = [];
+        if (list.payload.length > 0) {
+            const sendDate = list.payload[0].SendDate;
+            if (sendDate) {
+                const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+                const d = m.format('YYYY-MM-DD HH:mm:ss');
+                handleFromDate(d);
+                setSendType('2');
+            }
+            list.payload.forEach((g) => {
+                const exist = groupList?.filter(gl => { return gl.Id === g.NotificationGroupId });
+                if (exist && exist.length > 0) {
+                    selectedList.push(exist[0]);
+                }
+            });
+        }
+        setSelected(selectedList);
+    }
     const toastMessages = {
         SUCCESS: { severity: 'success', color: 'success', message: t('notifications.saved'), showAnimtionCheck: true },
         SAVE_SETTINGS: { severity: 'success', color: 'success', message: t('notifications.settings_saved'), showAnimtionCheck: true },
@@ -198,23 +104,41 @@ const NotificationSend = ({ classes }) => {
         const body = document.querySelector('#root');
         body.scrollIntoView({}, 100);
 
-        handlePublicKey();
-        if (id != null && parseInt(id) > 0) {
-            getData();
-            if (location.pathname.toLowerCase().indexOf('send') > -1) {
-                getSubAccountGroups();
-                setActiveStep(activeStep + 1);
+        const initSettings = async () => {
+            if (id != null && parseInt(id) > 0) {
+                if (!notificationGroups) {
+                    const groups = await dispatch(getNotificationGroups());
+                    setGroupList(groups.payload);
+                }
+                else {
+                    setGroupList(notificationGroups);
+                }
             }
         }
+        initSettings();
     }, [dispatch]);
-
     useEffect(() => {
-        if (groupList && groupList.length > 0) {
-            getNotificationSettings();
+        if (groupList?.length > 0) {
+            getData().then(() => {
+                getNotificationSettings();
+            })
         }
-    }, [groupList]);
-
-
+    }, [groupList])
+    const renderHeader = () => {
+        return (
+            <>
+                <Typography className={classes.managementTitle}>{t('notifications.createNewPush')}</Typography>
+                <Typography className={classes.pageSubTitle}>
+                    <span className={classes.roundedCircle}>
+                        {2}
+                    </span>
+                    <span className={classes.subTitle}>
+                        {t('notifications.sendSettings')}
+                    </span>
+                </Typography>
+            </>
+        )
+    }
     const renderDialog = () => {
         if (validationErrorList != null) {
             let dialog = {};
@@ -262,45 +186,113 @@ const NotificationSend = ({ classes }) => {
     }
     const handleDialogClose = () => {
         setValidationError(null);
-        setGalleryState(null);
         setSummary(null);
+    }
+    const handleCancel = () => {
+        onCancelConfirm(false);
+    };
+    const onCancelConfirm = (saveBeforeCancel) => {
+        if (saveBeforeCancel) {
+            saveSettings(true)
+        }
+        else {
+            redirect("/react/Notifications");
+        }
+    }
+    const saveSettings = async (isExit, isSummary = false) => {
+        if (isValidSettings()) {
+            if (sendType === "2") {
+                const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+                m.set({ h: m.format('HH'), m: m.format('mm') });
+
+                model.SendDate = m.format();
+            }
+            else {
+                model.sendDate = null;
+            }
+            const data = { NotificationId: parseInt(id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
+            const result = await dispatch(saveNotificationSettings(data));
+            if (result.payload === true) {
+                if (!isExit && isSummary === false) {
+                    setToastMessage(toastMessages.SAVE_SETTINGS);
+                }
+                else {
+                    if (isSummary === false)
+                        redirect("/react/Notifications");
+                    else
+                        getSummary();
+                }
+            }
+            else {
+                setToastMessage(toastMessages.ERROR);
+            }
+        }
+    }
+    const getSummary = async () => {
+        const totalResonse = await dispatch(getUniqueClientsByGroups(selectedGroups.map((g) => { return g.Id; })));
+        const currentTotalRecipients = selectedGroups.reduce(function (a, b) {
+            return a + b['Members'];
+        }, 0);
+        setTotalRecipients(totalResonse.payload);
+        setDuplicatedRecipients(currentTotalRecipients - totalResonse.payload);
+        if (sendDate) {
+            const m = moment(sendDate, 'YYYY-MM-DD HH:mm:ss');
+            m.lang(isRTL ? "he" : "en");
+            setSummary({ groups: selectedGroups, sendType: sendType, sendDate: m.format("MMMM Do YYYY, hh:mm a") });
+
+        }
+        else {
+            setSummary({ groups: selectedGroups, sendType: sendType, sendDate: null });
+        }
+    }
+    const isValidSettings = () => {
+        let result = true;
+        setShowConfirmCancel(false);
+        const errorList = [];
+        document.querySelector("#datePicker").classList.remove("error");
+        document.querySelector("#timePicker").classList.remove("error");
+
+        if (sendType === 2) {
+            if ((!sendDate)) {
+                errorList.push({ message: t('notifications.validation.notificationDate') });
+            }
+            else {
+                const dateNow = new Date(Date.now());
+                const selectedDate = new Date(sendDate);
+                if (selectedDate < dateNow) {
+                    errorList.push({ message: t('notifications.validation.notificationDatePassed') });
+                    document.querySelector("#datePicker").classList.add("error");
+                    document.querySelector("#timePicker").classList.add("error");
+                    document.querySelector("#timePicker").focus();
+                    result = false;
+                }
+            }
+        }
+        if (selectedGroups.length === 0) {
+            errorList.push({ message: t('notifications.validation.notificationGroups') });
+            result = false;
+        }
+        if (errorList.length > 0) {
+            setValidationError(errorList);
+            result = false;
+        }
+        return result;
     }
 
     const WizardButtons = () => {
         return (<div className={clsx(classes.wizardButtonContainer, "wizardButtonContainer")} style={{ paddingBottom: 40 }}>
-            {activeStep == 0 &&
-                <Box>
-                    <BootstrapTooltip title={t("notifications.tooltip.testSend")} placement={isRTL ? "left" : "right"} >
-                        <Button
-                            variant='contained'
-                            size='medium'
-                            className={clsx(
-                                classes.actionButton,
-                                classes.actionButtonLightBlue,
-                                classes.backButton
-                            )}
-                            color="primary"
-                            onClick={handleTestSend}>
-                            {t('notifications.testSend')}
-                        </Button>
-                    </BootstrapTooltip>
-
-                </Box>
-            }
-            {activeStep > 0 &&
-                <Button
-                    variant='contained'
-                    size='medium'
-                    className={clsx(
-                        classes.actionButton,
-                        classes.actionButtonLightBlue,
-                        classes.backButton
-                    )}
-                    onClick={() => handleBack()}
-                >
-                    {t('notifications.back')}
-                </Button>
-            }
+            <Button
+                variant='contained'
+                size='medium'
+                className={clsx(
+                    classes.actionButton,
+                    classes.actionButtonLightBlue,
+                    classes.backButton
+                )}
+                onClick={() => redirect(`/react/Notification/edit/${model.ID}`)}
+            >
+                {t('notifications.back')}
+            </Button>
 
             <Box style={isRTL ? { marginRight: "auto" } : { marginLeft: "auto" }}>
                 <Button
@@ -325,7 +317,7 @@ const NotificationSend = ({ classes }) => {
                     )}
                     color="primary"
                     style={{ margin: '8px' }}
-                    onClick={event => activeStep == 0 ? saveNotification(false, false) : saveSettings(false)}>
+                    onClick={() => saveSettings(false)}>
                     {t('notifications.save')}
                 </Button>
                 <Button
@@ -338,7 +330,7 @@ const NotificationSend = ({ classes }) => {
                     )}
                     color="primary"
                     style={{ margin: '8px' }}
-                    onClick={event => activeStep == 0 ? saveNotification(true, false) : saveSettings(true)}>
+                    onClick={() => saveSettings(true)}>
                     {t('notifications.saveAndExit')}
                 </Button>
                 <Button
@@ -348,12 +340,12 @@ const NotificationSend = ({ classes }) => {
                         classes.actionButton,
                         classes.actionButtonLightGreen,
                         classes.backButton,
-                        activeStep > 0 && selectedGroups.length === 0 ? classes.disabled : ''
+                        selectedGroups.length === 0 ? classes.disabled : ''
                     )}
                     color="primary"
                     style={{ margin: '8px' }}
-                    onClick={event => activeStep == 0 ? saveNotification(false, true) : saveSettings(false, true)}>
-                    {activeStep == 0 ? t('notifications.saveAndContinue') : t('notifications.summary')}
+                    onClick={() => saveSettings(false, true)}>
+                    {t('notifications.summary')}
                 </Button>
             </Box>
         </div>)
@@ -369,76 +361,312 @@ const NotificationSend = ({ classes }) => {
         }
         return null;
     }
+    const callbackSelectAll = () => {
+        if (!allGroupsSelected) {
+            setSelected(groupList);
+        }
+        else {
+            setSelected([]);
+        }
+        setAllGroupsSelected(!allGroupsSelected);
 
+    }
+    const handleSendType = (event) => {
+        if (event.target.value === '1') {
+            setModel({ ...model, SendDate: null });
+            handleFromDate(null);
+        }
+        setSendType(event.target.value);
+    }
+    const handleDatePicker = (value) => {
+        handleFromDate(value);
+        setTimePickerOpen(!timePickerOpen);
+    }
+    const handleTimePicker = (value) => {
+        var date = moment(sendDate);
+        var time = moment(value, 'HH:mm');
+        date.set({
+            hour: time.get('hour'),
+            minute: time.get('minute')
+        });
+
+        handleFromDate(date);
+        setTimePickerOpen(false);
+    }
+    const renderSummary = () => {
+        if (summary && totalRecipients) {
+            let dialog = {};
+            dialog = summaryContent();
+            return (
+                <Dialog
+                    customContainerStyle={classes.summaryContainer}
+                    classes={classes}
+                    open={summary}
+                    onClose={() => setSummary(null)}
+                    {...dialog}>
+                    {dialog.content}
+                </Dialog>
+            );
+        }
+    }
+    const summaryContent = () => {
+        const handleShowDetails = () => {
+            setDetailsVisibility(!showDetails);
+        }
+        const whenToSend = summary.sendDate ? `${summary.sendDate}` : t("notifications.immediateSend")
+        return {
+            showDivider: true,
+            icon: (
+                <MdNotificationsActive style={{ fontSize: 30 }} />
+            ),
+            title: <span style={{ color: '#161616' }}>{`${t("notifications.summaryModalTitle")} "${model.Name}"`}</span>,
+            content: (
+                <Grid container direction={'row'} className={clsx(classes.root, classes.dialogBox)} spacing={4}>
+                    <Grid item md={6} xs={12}>
+                        <h3 className={clsx(classes.blue, classes.summaryTitle)}>{t("notifications.when")}</h3>
+                        <b>{whenToSend}</b>
+                        <h3 className={clsx(classes.blue, classes.summaryTitle)}>{t("notifications.for")}</h3>
+                        {t("notifications.totalRecipientForSending")} <b>{totalRecipients}</b>
+                        <Grid item xs={12} style={{ paddingTop: 15 }}>
+                            <Link onClick={() => handleShowDetails()} style={{ cursor: 'pointer', fontWeight: '500', textDecoration: 'underline', color: '#6c757d' }}>
+                                {!showDetails ? t("notifications.details") : t("notifications.close")}
+                            </Link>
+                        </Grid>
+                    </Grid>
+                    {windowSize !== 'xs' && <Grid item md={6}>
+                        <h3 className={classes.blue} style={{ fontWeight: '500', fontSize: 20, marginTop: 10 }}>{t("notifications.preview")}</h3>
+                        <Preview classes={classes}
+                            model={model}
+                            ShowRedirectButton={ShowRedirectButton && model.RedirectButtonText !== ''}
+                            showDevices={true}
+                            showTitle={false}
+                            showOSScreen={false}
+                        />
+                    </Grid>}
+                    <Grid item xs={12} style={{ paddingTop: 0 }}>
+                        {showDetails && <div>
+                            <h3 style={{ cursor: 'pointer', marginBotton: 0 }}
+                                onClick={() => setShowGroupsList(!showGroupsList)}
+                            >{t("notifications.buttons.groups")} ({selectedGroups.length})</h3>
+                            <Divider />
+                            {showGroupsList && <ul>
+                                {selectedGroups.map((g, index) => {
+                                    return (<li key={`group_${g.Id}`}>
+                                        <div className={classes.flexSpaceBetween}>
+                                            <Typography className={classes.padding10}>{g.GroupName}</Typography> <Typography>{g.Members} {g.Members !== 1 ? t("notifications.recipients") : t("notifications.recipient")}</Typography>
+                                        </div>
+                                        <Divider />
+                                    </li>)
+                                })}
+                            </ul>
+                            }
+                            {showDetails && duplicatedRecipients > 0 &&
+                                <div className={clsx(classes.flexStart, classes.flexAlignCetner)}>
+                                    <h3 className={classes.blue} style={{ marginTop: 0, marginBottom: 0 }}>{t("notifications.duplicatedRecipients")}: </h3> <b className={classes.summaryText}>{duplicatedRecipients}</b>
+                                </div>
+                            }
+                        </div>}
+
+                    </Grid>
+                </Grid>
+            ),
+            renderButtons: () => (
+                <Grid
+                    container
+                    spacing={4}
+                    className={clsx(classes.dialogButtonsContainer, isRTL ? classes.rowReverse : null)}
+                >
+                    <Grid item>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={() => insertNotificationForSend()}
+                            className={clsx(
+                                classes.dialogButton,
+                                classes.dialogConfirmButton
+                            )}>
+                            {t('common.Send1')}
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            variant='contained'
+                            size='small'
+                            onClick={() => { setSummary(null) }}
+                            className={clsx(
+                                classes.dialogButton,
+                                classes.dialogCancelButton
+                            )}>
+                            {t('common.Cancel')}
+                        </Button>
+                    </Grid>
+                </Grid>
+            )
+        };
+    }
+
+    const insertNotificationForSend = async (e) => {
+        e.preventDefault();
+        const data = { NotificationId: parseInt(id), NotificationGroups: selectedGroups.map((g) => { return g.Id }), ScheduleTime: model.SendDate };
+        const result = await dispatch(SendNotification(data));
+
+        if (result && result.payload === true) {
+            setSummary(null);
+            setCampaignSent(true);
+        }
+    }
+    const callbackSelectedGroups = (group, key, reference) => {
+        const found = selectedGroups.map((group) => { return group.Id }).includes(group.Id)
+        if (found) {
+            setSelected(selectedGroups.filter(g => g.Id !== group.Id))
+        } else {
+            setSelected([...selectedGroups, group])
+        }
+    }
     const notificationSendSettings = () => {
         return (
-            <Grid container
-                direction="row"
-                justifyContent="flex-start"
-                spacing={4}
-                className={classes.wizardFlex}
-            >
-                <Grid item md={7} xs={12}>
-                    <h2 className={classes.sectionTitle}>{t('notifications.toWhomToSend')}</h2>
-                    <Groups classes={classes}
-                        list={groupList}
-                        selectedList={selectedGroups}
-                        callbackSelectedGroups={callbackSelectedGroups}
-                        callbackUpdateGroups={callbackUpdateGroups}
-                        callbackSelectAll={callbackSelectAll}
-                        isNotifications={true}
-                        showFilter={false}
-                        isSms={false}
-                        noSelectionText={t("notifications.noGroupsSelected")}
-                        innerHeight={325}
-                    />
-                    <Box>
-                        <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>
-                            {t('notifications.totalRecipients')}
-                            {selectedGroups.reduce(function (a, b) {
-                                return a + b['Members'];
-                            }, 0)}
-                        </Typography>
-                    </Box>
-                </Grid>
-                {windowSize !== "xs" && <Grid item xs={1}></Grid>}
-                <Grid item md={4} xs={12}>
-                    <h2 className={classes.sectionTitle} style={{ marginTop: windowSize == "xs" ? "0" : null }}>{t('notifications.whenToSend')}</h2>
-                    <FormControl component="fieldset">
-                        <RadioGroup aria-label="gender" name="sendType" value={sendType} onChange={handleSendType}>
-                            <FormControlLabel value="1" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.immediateSend")}</span>} />
-                            <FormHelperText className={classes.helpText}>{t("notifications.immediateDescription")}</FormHelperText>
-                            <FormControlLabel value="2" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.futureSend")}</span>} />
-                        </RadioGroup>
-                        <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
-                            <DateField
-                                minDate={moment()}
-                                classes={classes}
-                                value={sendDate}
-                                onChange={handleDatePicker}
-                                placeholder={t('notifications.date')}
-                                // buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
-                                autoOk
-                            />
-                        </Box>
-                        <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
-                            <DateField
-                                classes={classes}
-                                value={sendDate}
-                                onTimeChange={handleTimePicker}
-                                placeholder={t('notifications.hour')}
-                                isTimePicker={true}
-                                // buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
-                                ampm={false}
-                                timePickerOpen={timePickerOpen}
-                                autoOk
-                            />
-                        </Box>
-                    </FormControl>
-                </Grid>
-            </Grid>
-
+            <div className={classes.root}>
+                <div>
+                    <Grid container
+                        direction="row"
+                        justifyContent="flex-start"
+                        spacing={4}
+                        className={classes.wizardFlex}
+                    >
+                        <Grid item md={7} xs={12}>
+                            <h2 className={classes.sectionTitle}>{t('notifications.toWhomToSend')}</h2>
+                            {groupList && <Groups classes={classes}
+                                list={[...groupList]}
+                                selectedList={selectedGroups}
+                                callbackSelectedGroups={callbackSelectedGroups}
+                                callbackUpdateGroups={callbackSelectedGroups}
+                                callbackSelectAll={callbackSelectAll}
+                                isNotifications={true}
+                                showFilter={false}
+                                isSms={false}
+                                noSelectionText={t("notifications.noGroupsSelected")}
+                                uniqueKey={'groups_2'}
+                                innerHeight={325}
+                            />}
+                            <Box>
+                                <Typography style={{ float: isRTL ? 'left' : 'right', marginTop: 5 }}>
+                                    {t('notifications.totalRecipients')}
+                                    {selectedGroups.reduce(function (a, b) {
+                                        return a + b['Members'];
+                                    }, 0)}
+                                </Typography>
+                            </Box>
+                        </Grid>
+                        {windowSize !== "xs" && <Grid item xs={1}></Grid>}
+                        <Grid item md={4} xs={12}>
+                            <h2 className={classes.sectionTitle} style={{ marginTop: windowSize == "xs" ? "0" : null }}>{t('notifications.whenToSend')}</h2>
+                            <FormControl component="fieldset">
+                                <RadioGroup aria-label="gender" name="sendType" value={sendType} onChange={handleSendType}>
+                                    <FormControlLabel value="1" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.immediateSend")}</span>} />
+                                    <FormHelperText className={classes.helpText}>{t("notifications.immediateDescription")}</FormHelperText>
+                                    <FormControlLabel value="2" control={<Radio color="primary" />} label={<span className={classes.radioText}>{t("notifications.futureSend")}</span>} />
+                                </RadioGroup>
+                                <Box style={{ paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
+                                    <DateField
+                                        minDate={moment()}
+                                        classes={classes}
+                                        value={sendDate}
+                                        onChange={handleDatePicker}
+                                        placeholder={t('notifications.date')}
+                                        // buttons={{ ok: t("common.confirm"), cancel: t("common.cancel") }}
+                                        autoOk
+                                    />
+                                </Box>
+                                <Box style={{ marginTop: 10, paddingRight: isRTL ? 30 : '', paddingLeft: isRTL ? '' : 30, pointerEvents: sendType == '1' ? 'none' : 'auto' }}>
+                                    <DateField
+                                        classes={classes}
+                                        value={sendDate}
+                                        onTimeChange={handleTimePicker}
+                                        placeholder={t('notifications.hour')}
+                                        isTimePicker={true}
+                                        ampm={false}
+                                        timePickerOpen={timePickerOpen}
+                                        autoOk
+                                    />
+                                </Box>
+                            </FormControl>
+                        </Grid>
+                    </Grid>
+                </div>
+            </div>
         );
+    }
+    const renderConfirmCancel = () => {
+        if (showConfirmCancel) {
+            let dialog = {
+                showDivider: true,
+                icon: (
+                    <MdNotificationsActive style={{ fontSize: 30 }} />
+                ),
+                title: t("notifications.leaveCampaignCreationTitle"),
+                content: (
+                    <Typography style={{ marginBottom: 20 }}>
+                        {t("notifications.leaveCampaignCreationText")}
+                    </Typography>
+                )
+            }
+            return (
+                <Dialog
+                    cancelText="common.No"
+                    confirmText="common.Yes"
+                    disableBackdropClick={true}
+                    classes={classes}
+                    open={showConfirmCancel}
+                    onCancel={() => setShowConfirmCancel(null)}
+                    onClose={() => onCancelConfirm(false)}
+                    onConfirm={() => onCancelConfirm(true)}
+                    {...dialog}>
+                    {dialog.content}
+                </Dialog>
+            );
+        }
+    }
+    const renderSentDialog = () => {
+        if (campaignSent) {
+
+            let dialog = {};
+            dialog = {
+                icon: (
+                    <MdNotificationsActive style={{ fontSize: 30 }} />
+                ),
+                content: (
+                    <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+                        <img alt="Sent" src={CheckAnimation} />
+                        <Typography style={{ fontWeight: 'bold' }}>{t("common.sentAlert")}</Typography>
+                        <Typography>{t("common.yourCampaignOnItsWay")}</Typography>
+                    </Box >
+                ),
+                renderButtons: () => (
+                    <Button
+                        variant='contained'
+                        size='small'
+                        onClick={() => { redirect("/react/Notifications") }}
+                        className={clsx(
+                            classes.confirmButton,
+                            classes.dialogConfirmButton,
+                        )}>
+                        {t('common.confirm')}
+                    </Button>
+                )
+            };
+
+            return (
+                <Dialog
+                    showDivider={false}
+                    classes={classes}
+                    open={true}
+                    onClose={() => { redirect("/react/Notifications") }}
+                    {...dialog}>
+                    {dialog.content}
+                </Dialog>
+            );
+        }
+        return null;
     }
 
     return (

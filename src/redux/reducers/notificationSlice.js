@@ -212,7 +212,8 @@ export const notificationSlice = createSlice({
     notificationData: [],
     notificationDeletedData: [],
     notificationDataError: '',
-    notificationById: {}
+    notificationById: {},
+    notificationGroups: null
   },
   reducers: {
     setScriptDialog: (state, action) => {
@@ -226,6 +227,9 @@ export const notificationSlice = createSlice({
     })
     builder.addCase(getNotificationData.rejected, (state, action) => {
       state.notificationDataError = action.error.message
+    })
+    builder.addCase(getNotificationGroups.fulfilled, (state, { payload }) => {
+      state.notificationGroups = payload;
     })
   }
 })

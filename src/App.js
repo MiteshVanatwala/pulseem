@@ -23,7 +23,7 @@ import MomentUtils from '@date-io/moment';
 import moment from 'moment'
 import DirectSendReport from './screens/Reports/DirectSendReport/DirectSendReport';
 import NotificationManagement from './screens/Notifications/Management/NotificationManagement';
-import NotificationEditor from './screens/Notifications/Editor/NotificationEditor';
+import NotificationEdit from './screens/Notifications/Editor/NotificationEdit';
 import NewslettersReport from './screens/Reports/NewslettersReport/NewslettersReport'
 import { useMediaQuery } from '@material-ui/core';
 import DashboardScreen from './screens/Dashboard/Dashboard';
@@ -37,6 +37,7 @@ import SmsReplies from './screens/Reports/SmsReport/SmsReplies';
 import Groups from './screens/Groups/Management/Groups';
 import MmsReport from './screens/Reports/MmsReport/MmsReport.js';
 import ClientSearchResult from './screens/ClientSearch/ClientSearchResult';
+import NotificationSend from './screens/Notifications/Editor/NotificationSend';
 
 const renderRoutes = (classes, redirect) => {
   const transferUrl = (url = '', param = '') => () => {
@@ -99,7 +100,7 @@ const renderRoutes = (classes, redirect) => {
       />
       <Route
         path={'/react/Groups'}
-        element={<Groups  classes={classes} />}
+        element={<Groups classes={classes} />}
       />
       <Route
         path={`/ClientSearch`}
@@ -238,7 +239,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={"/react/Reports/SmsReplies/:id"}
-        element={<SmsReplies  classes={classes} />}
+        element={<SmsReplies classes={classes} />}
       />
       <Route
         path={`/react/Reports/MmsMainReport`}
@@ -317,17 +318,17 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={"/react/Notification/create"}
-        element={<NotificationEditor  classes={classes} />}
+        element={<NotificationEdit classes={classes} />}
       />
       <Route
         exact
         path={"/react/Notification/edit/:id"}
-        element={<NotificationEditor  classes={classes} />}
+        element={<NotificationEdit classes={classes} />}
       />
       <Route
         exact
         path={"/react/Notification/send/:id"}
-        element={<NotificationEditor  classes={classes} />}
+        element={<NotificationSend classes={classes} />}
       />
       {/* Settings */}
       <Route
@@ -365,7 +366,7 @@ const renderRoutes = (classes, redirect) => {
       <Route
         exact
         path={`/react/SiteTracking`}
-        element={<SiteTrackingEditor  classes={classes} />}
+        element={<SiteTrackingEditor classes={classes} />}
       />
     </>
   )
