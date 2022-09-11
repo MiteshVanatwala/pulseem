@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
@@ -15,7 +15,6 @@ import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import { CSVLink } from 'react-csv'
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/cookies';
@@ -25,7 +24,7 @@ import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFro
 import { Loader } from '../../../components/Loader/Loader';
 
 const NewslettersReport = ({ classes }) => {
-  const { language, windowSize, isRTL, rowsPerPage, accountSettings, accountFeatures } = useSelector(state => state.core)
+  const { language, windowSize, isRTL, rowsPerPage, accountFeatures } = useSelector(state => state.core)
   const { newslettersReports } = useSelector(state => state.newsletter)
   const { t } = useTranslation()
   const [fromDate, handleFromDate] = useState(null);
@@ -37,7 +36,6 @@ const NewslettersReport = ({ classes }) => {
   const [searchResults, setSearchResults] = useState(null)
   const [toFileArray, setToFileArray] = useState([])
   const [isDemoSend, setIsDemoSend] = useState(false)
-  const [csvData, setCsvData] = useState('')
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot) }
@@ -46,7 +44,6 @@ const NewslettersReport = ({ classes }) => {
   const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.tableCellRootResponsive) }
   const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
   const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
-  const csvLinkRef = useRef(null);
   const [showLoader, setLoader] = useState(true);
   const [hasRevenue, setHasRevenue] = useState(false);
 
@@ -356,7 +353,6 @@ const NewslettersReport = ({ classes }) => {
           <Switch
             checked={isDemoSend}
             onColor="#0371ad"
-            //onHandleColor="#e6f6ff"
             handleDiameter={20}
             uncheckedIcon={false}
             checkedIcon={false}
@@ -424,13 +420,6 @@ const NewslettersReport = ({ classes }) => {
             startIcon={<ExportIcon />}>
             {t('campaigns.exportFile')}
           </Button>
-          <CSVLink
-            data={csvData}
-            filename='report.csv'
-            className='hidden'
-            ref={csvLinkRef}
-            target='_blank'
-          />
         </Grid>}
         <Grid item className={classes.groupsLableContainer} >
           <Typography className={classes.groupsLable}>
@@ -492,7 +481,7 @@ const NewslettersReport = ({ classes }) => {
           <Typography noWrap={false} className={classes.nameEllipsis}>
             {Name}
           </Typography>
-          {row.Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
+          {Status === 5 ? <Typography className={clsx(classes.f14, classes.red)}>({t("campaigns.Canceled")})</Typography> : null}
           {SendDate !== null && SendDate !== '' ?
             (
               <Typography className={classes.grayTextCell}>
@@ -598,7 +587,7 @@ const NewslettersReport = ({ classes }) => {
             href={href}
             className={clsx(classes.middleText, colorTextStyle[type] || '')}
             target="_blank">
-            {value && value.toLocaleString() || '0'}
+            {(value && value.toLocaleString()) || '0'}
           </Typography>
           <Typography component={clickable && value > 0 ? 'a' : 'p'}
             href={href}

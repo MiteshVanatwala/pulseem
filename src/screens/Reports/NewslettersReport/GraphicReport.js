@@ -15,10 +15,12 @@ import TabList from '@material-ui/lab/TabList';
 import RecipientsTab from './RecipientsTab';
 import queryString from 'query-string';
 import { Loader } from '../../../components/Loader/Loader';
+import { useNavigate } from 'react-router-dom';
 
 const GraphicReport = ({ props, classes }) => {
   const { language, windowSize, isRTL } = useSelector(state => state.core)
   const [tabValue, setTabValue] = useState(0);
+  const redirect = useNavigate();
   const [showLoader, setLoader] = useState(true);
   const [campaignData, setData] = useState(null);
   //const [campaignPreviewImage, setCampaignPreviewImage] = useState(null);
@@ -49,13 +51,14 @@ const GraphicReport = ({ props, classes }) => {
             </Typography>
           </Grid>
           <Grid item className={classes.mb4}>
-            <Typography
-              component={"a"}
-              href={"/react/Reports/NewsletterReports"}
+            <Button
+              onClick={() => {
+                redirect("/react/Reports/NewsletterReports");
+              }}
               className={classes.middleTxt}
             >
               {t("mainReport.backToNewsletterReports")}
-            </Typography>
+            </Button>
           </Grid>
         </Grid>
         <Divider />

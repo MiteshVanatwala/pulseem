@@ -27,6 +27,7 @@ import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 //import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { useNavigate } from 'react-router-dom';
 
 const SmsManagnentScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core) // smsOldVersion, isRTL
@@ -52,6 +53,7 @@ const SmsManagnentScreen = ({ classes }) => {
   const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
   const dispatch = useDispatch()
   moment.locale(language)
+  const redirect = useNavigate();
 
   const getData = async () => {
     await dispatch(getSmsData())
@@ -237,8 +239,9 @@ const SmsManagnentScreen = ({ classes }) => {
           <Button
             variant='contained'
             size='medium'
-            href="/react/sms/create"
-            //href={smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?OldVersion=true&Culture=${isRTL ? 'he-IL' : 'en-US'}` : "/react/sms/create"}
+            onClick={() => {
+              redirect("/react/sms/create")
+            }}
             className={clsx(
               classes.actionButton,
               classes.actionButtonLightGreen
@@ -308,7 +311,6 @@ const SmsManagnentScreen = ({ classes }) => {
         rootClass: classes.sendIcon,
         textClass: classes.sendIconText,
         href: `/react/sms/send/${Id}`
-        //href: smsOldVersion === "true" ? `/Pulseem/SendSMSCampaign.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/send/${Id}`
       },
       {
         key: 'preview',
@@ -330,7 +332,6 @@ const SmsManagnentScreen = ({ classes }) => {
         disable: Status !== 1 || AutomationID !== 0,
         lable: t('campaigns.Image2Resource1.ToolTip'),
         href: `/react/sms/edit/${Id}`,
-        //href: smsOldVersion === "true" ? `/Pulseem/SMSCampaignEdit.aspx?SMSCampaignID=${Id}&Culture=${isRTL ? 'he-IL' : 'en-US'}` : `/react/sms/edit/${Id}`,
         rootClass: classes.paddingIcon
       },
       {

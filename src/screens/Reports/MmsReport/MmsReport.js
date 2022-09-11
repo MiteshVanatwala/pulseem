@@ -1,16 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
-import {
-    Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
-} from '@material-ui/core'
+import { Typography, Divider, TableBody, TableRow, TableCell, Grid, Button, TextField, Box } from '@material-ui/core'
 import Switch from "react-switch";
-import {
-    SearchIcon, ExportIcon
-} from '../../../assets/images/managment/index'
-import {
-    TablePagination, DateField, SearchField
-} from '../../../components/managment/index'
+import { SearchIcon, ExportIcon } from '../../../assets/images/managment/index'
+import { TablePagination, DateField, SearchField } from '../../../components/managment/index'
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -24,7 +18,6 @@ import { MMSReportStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import DataTable from '../../../components/Table/DataTable';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 
@@ -41,19 +34,14 @@ const MmsReport = ({ classes }) => {
     const [filterValues, setFilterValues] = useState(DEFAULT_FILTER)
     const [filter, setFilter] = useState(false);
     const [page, setPage] = useState(1)
-
     const [filteredResults, setFilteredResults] = useState([])
     const [isDemoSend, setIsDemoSend] = useState(false)
-    const [csvData, setCsvData] = useState('')
-    const dateFormat = 'YYYY-MM-DD HH:mm:ss.FFF'
     const dispatch = useDispatch()
     const rowStyle = { head: classes.tableRowReportHead, root: clsx(classes.tableRowRoot, classes.maxHeight87) }
-    const cellStyle = { head: classes.tableCellHead, root: clsx(classes.tableCellRoot, classes.paddingHead) }
     const cell50wStyle = { head: clsx(classes.tableCellHead), root: clsx(classes.tableCellRoot, classes.paddingHead, classes.minWidth50) }
     const cellBodyStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot) }
     const noBorderCellStyle = { body: classes.tableCellBodyNoBorder, root: clsx(classes.tableCellRoot, classes.minWidth50) }
     const borderCellStyle = { body: clsx(classes.tableCellBody), root: clsx(classes.tableCellRoot, classes.minWidth50) }
-    const csvLinkRef = useRef(null)
     const [showLoader, setLoader] = useState(true);
 
     moment.locale(language)
@@ -80,9 +68,6 @@ const MmsReport = ({ classes }) => {
     useEffect(() => {
         handleSearch(filterValues);
     }, [mmsReport])
-
-
-
 
     //  HANDLERS  //
     const getHrefs = (id) => ({
@@ -270,7 +255,6 @@ const MmsReport = ({ classes }) => {
                     <Switch
                         checked={isDemoSend}
                         onColor="#0371ad"
-                        //onHandleColor="#e6f6ff"
                         handleDiameter={20}
                         uncheckedIcon={false}
                         checkedIcon={false}
@@ -339,13 +323,6 @@ const MmsReport = ({ classes }) => {
 
                         {t('campaigns.exportFile')}
                     </Button>
-                    <CSVLink
-                        data={csvData}
-                        filename='report.csv'
-                        className='hidden'
-                        ref={csvLinkRef}
-                        target='_blank'
-                    />
                 </Grid>}
                 <Grid item className={classes.groupsLableContainer} >
                     <Typography className={classes.groupsLable}>
@@ -410,15 +387,6 @@ const MmsReport = ({ classes }) => {
 
             </>
         )
-
-        // return <>
-        //     <Typography fullWidth className={clsx(classes.nameEllipsis, classes.fullWidth)} align={align} variant="body1">
-        //         {name}
-        //     </Typography>
-        //     <Typography className={classes.grayTextCell} align={align} variant="body1">
-        //         {date && (moment(date).format('LLL') ?? '')}
-        //     </Typography>
-        // </>
     }
 
     const renderIntData = (value, type, data = {}, clickable = true) => {
@@ -430,7 +398,7 @@ const MmsReport = ({ classes }) => {
                     href={innerRef}
                     className={clsx(classes.middleText, colorTextStyle[type] || '')}
                     target="_blank">
-                    {value && value.toLocaleString() || '0'}
+                    {(value && value.toLocaleString()) || '0'}
                 </Typography>
                 <Typography className={clsx(classes.middleWrapText, colorTextStyle[type])}>
                     {title}
@@ -471,16 +439,12 @@ const MmsReport = ({ classes }) => {
     const renderRow = (row) => {
         const {
             MmsCampaignID,
-            Name,
             Removed,
             Status,
             TotalCredits,
             TotalSent,
-            SendDate,
-            UpdateDate,
             Success,
             FutureSends,
-            TotalSendPlan,
             Failure,
             CreditsPerMms
         } = row
@@ -560,8 +524,6 @@ const MmsReport = ({ classes }) => {
             TotalSent,
             SendDate,
             UpdateDate,
-            FutureSends,
-            TotalSendPlan,
             Failure,
             CreditsPerMms
         } = row
