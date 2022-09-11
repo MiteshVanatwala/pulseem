@@ -58,6 +58,7 @@ import { switchClientStatus } from '../../helpers/functions';
 import { useLocation } from "react-router";
 import { CLIENT_CONSTANTS } from "../../model/Clients/Contants";
 import { getGroupsBySubAccountId } from "../../redux/reducers/groupSlice";
+import { useNavigate } from 'react-router';
 const useStyles = makeStyles({
   groupName: {
     "@media screen and (max-width: 1160px)": {
@@ -94,6 +95,7 @@ const ClientSearchResult = ({ props, classes }) => {
   } = useSelector((state) => state.core);
   const { t } = useTranslation();
   const { extraData } = useSelector(state => state.sms);
+  const navigate = useNavigate()
   const { groupData, subAccountAllGroups } = useSelector((state) => state.group);
   const { ClientData, TotalCount, TotalRevenue, CampaignClicks, ToastMessages } = useSelector(state => state.client);
   const localClasses = useStyles();
@@ -731,7 +733,8 @@ const ClientSearchResult = ({ props, classes }) => {
           code: 201,
           message: ToastMessages.SET_INVALID_SUCCESS,
           Func: () => {
-            getData()
+            getData();
+            navigate(-1)
           }
         },
         'S_401': {
