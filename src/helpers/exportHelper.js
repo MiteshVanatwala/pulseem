@@ -38,18 +38,18 @@ import 'moment/locale/he';
 //     return obj;
 // }
 
-// export const statusNumberToString = (t, obj, statuses) => {
-//     obj.forEach((o) => {
-//         if (o.Status) {
-//             let status = statuses.find((s) => { return s.id === o.Status });
-//             o.StatusName = t(status ? status.value : null);
-//         }
-//         if (o.Attachments && (o.Attachments === 'No_Attachments' || o.Attachments === '')) {
-//             o.Attachments = t('emailStatus.noAttachments');
-//         }
-//     });
-//     return obj;
-// }
+export const statusNumberToString = (t, obj, statuses) => {
+    obj.forEach((o) => {
+        if (o.Status) {
+            let status = statuses.find((s) => { return s.id === o.Status });
+            o.StatusName = t(status ? status.value : null);
+        }
+        if (o.Attachments && (o.Attachments === 'No_Attachments' || o.Attachments === '')) {
+            o.Attachments = t('emailStatus.noAttachments');
+        }
+    });
+    return obj;
+}
 
 export const booleanToNumber = (obj, column, isBoolean = false, t) => {
     obj.forEach((o) => {

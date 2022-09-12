@@ -14,7 +14,8 @@ import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { exportFile } from '../../../helpers/Export/ExportFile';
 import { MMSReportStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
+import { statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
+import { PreferredOrder } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import DataTable from '../../../components/Table/DataTable';
@@ -116,7 +117,7 @@ const MmsReport = ({ classes }) => {
     }
 
     const handleDownloadCsv = async () => {
-        let orderList = preferredOrder(filteredResults, Object.keys(exportColumnHeader));
+        let orderList = await PreferredOrder(filteredResults, Object.keys(exportColumnHeader));
         orderList = await statusNumberToString(t, orderList, MMSReportStatus);
         orderList = await formatDateTime(orderList, t);
         orderList = await booleanToNumber(orderList, 'IsResponse', true, t);

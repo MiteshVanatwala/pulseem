@@ -12,16 +12,18 @@ import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
-import { preferredOrder, switchStatusDescription, formatDateTime, replaceNull, replaceClientStatus, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { formatDateTime, replaceClientStatus, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { PreferredOrder, SwitchStatusDescription, ReplaceNull } from '../../../helpers/Export/ExportHelper';
 import { exportFile } from '../../../helpers/Export/ExportFile';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
 import { ExportIcon } from '../../../assets/images/managment/index'
-import queryString from 'query-string';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
+import { useSearchParams } from 'react-router-dom';
 
 const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
-  const qs = queryString.parse(props.location.search);
+  // const qs = queryString.parse(props.location.search);
+  const [searchParams] = useSearchParams();
   const { showContent } = useSelector(state => state.report);
   const { windowSize, isRTL, rowsPerPage } = useSelector(state => state.core);
   const { directNewsletterReport } = useSelector(state => state.newsletter);
@@ -29,7 +31,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const [searchData, setSearchData] = useState({});
   const [isSearching, setSearching] = useState({});
   const [searchParam, setSearchParam] = useState({});
-  const [tabValue, setTabValue] = useState((qs.t ? parseInt(qs.t) : 0) || 0);
+  const [tabValue, setTabValue] = useState(0);
   const rowsOptions = [6, 10, 20, 50];
   const [pageEmail, setPageEmail] = useState(1);
   const [pageSms, setPageSms] = useState(1);
@@ -39,6 +41,11 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const MAX_EXPORT_RECORDS = 600000;
+
+  useEffect(() => {
+    const reportTypeQS = searchParams.get('t');
+    setTabValue(reportTypeQS ? parseInt(reportTypeQS) : 0);
+  }, [searchParams])
 
   const defaultsDates = {
     archive: {
@@ -241,8 +248,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     if (tabValue === 0) {
       searchData.sms.ShowContent = showContent;
       response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
-      finalData = preferredOrder(response.payload, Object.keys(excelHeaders.SMS));
-      finalData = switchStatusDescription(finalData, SmsStatus);
+      finalData = await PreferredOrder(response.payload, Object.keys(excelHeaders.SMS));
+      finalData = await SwitchStatusDescription(finalData, SmsStatus);
       finalData = await formatDateTime(finalData, t);
       finalData = replaceClientStatus(finalData);
       if (showContent === false) {
@@ -256,9 +263,9 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
     if (tabValue === 1) {
       response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
-      finalData = preferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
-      finalData = switchStatusDescription(finalData, EmailStatus);
-      finalData = replaceNull(finalData, 'Attachments', t('emailStatus.noAttachments'));
+      finalData = await PreferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
+      finalData = await SwitchStatusDescription(finalData, EmailStatus);
+      finalData = await ReplaceNull(finalData, 'Attachments', t('emailStatus.noAttachments'));
       finalData = replaceClientStatus(finalData);
       finalData = await formatDateTime(finalData, t);
       finalData = deletePropertyFromArrayObject(finalData, 'Status');

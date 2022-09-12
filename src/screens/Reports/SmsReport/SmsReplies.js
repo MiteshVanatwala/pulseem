@@ -14,7 +14,8 @@ import { getSmsReplies } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { exportFile } from '../../../helpers/Export/ExportFile';
 import { ClientStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../helpers/exportHelper';
+import { formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../helpers/exportHelper';
+import { PreferredOrder } from '../../../helpers/Export/ExportHelper';
 import { EditIcon } from '../../../assets/images/managment/index'
 import { AiOutlineUserDelete, AiOutlineUsergroupDelete, AiOutlineExclamationCircle } from 'react-icons/ai';
 import { FiPhoneOff } from 'react-icons/fi';
@@ -113,7 +114,7 @@ const SmsReplies = ({ classes, ...other }) => {
     }
 
     const handleDownloadCsv = async () => {
-        let orderList = preferredOrder(smsReplies, Object.keys(exportColumnHeader));
+        let orderList = await PreferredOrder(smsReplies, Object.keys(exportColumnHeader));
         orderList = await emailStatusNumberToString(t, orderList, ClientStatus.Email);
         orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
         orderList = await formatDateTime(orderList);

@@ -20,7 +20,8 @@ import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/cookies';
 import { exportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
+import { PreferredOrder } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 
 const NewslettersReport = ({ classes }) => {
@@ -195,7 +196,7 @@ const NewslettersReport = ({ classes }) => {
 
     if (toFileArray.length > 0) {
       const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
-      orderList = await preferredOrder(fileArray, Object.keys(exportColumnHeader));
+      orderList = await PreferredOrder(fileArray, Object.keys(exportColumnHeader));
       orderList = await statusNumberToString(t, orderList, EmailStatus);
       orderList = await formatDateTime(orderList, t);
       orderList = await deletePropertyFromArrayObject(orderList, "Status");
@@ -209,7 +210,7 @@ const NewslettersReport = ({ classes }) => {
     }
     else {
       const list = searchResults || newslettersReports;
-      orderList = await preferredOrder(list, Object.keys(exportColumnHeader));
+      orderList = await PreferredOrder(list, Object.keys(exportColumnHeader));
       orderList = await statusNumberToString(t, orderList, EmailStatus);
       orderList = await formatDateTime(orderList, t);
       orderList = await deletePropertyFromArrayObject(orderList, "Status");

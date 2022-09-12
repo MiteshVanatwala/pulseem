@@ -1,5 +1,5 @@
 ﻿import { Client } from '../Clients/Client';
-import { ClientsUploadSummary } from '../Clients/Client'''
+import { ClientsUploadSummary } from '../Clients/Client'
 
 export interface Group {
     GroupID: number;

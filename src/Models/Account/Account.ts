@@ -1,4 +1,4 @@
-﻿import { SubAccount } from '../SubAccount/SubAccount';
+﻿import { SubAccount } from '../SubAccount/SubAccounts';
 import { DirectAccountModel } from './DirectAccount';
 
 export interface Account {

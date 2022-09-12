@@ -1,6 +1,7 @@
 ﻿import { AccountExtraFields } from "../Account/AccountExtraFields";
 import { ClientSearchModel } from '../Clients/ClientSearch'
 import { AutomationActions, AutomationTriggers } from '../Automations/AutomationNode'
+import { Columns } from '../Files/FileUpload';
 export enum RemovingOption {
     Both = 0,
     Email = 1,

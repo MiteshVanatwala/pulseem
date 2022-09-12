@@ -1,4 +1,5 @@
-﻿export interface CampaignLink {
+﻿import { CampaignLinkClickedLog } from "./CampaignLinkClickedLog";
+export interface CampaignLink {
     LinkID: number;
     CampaingID: number;
     Url: string;
