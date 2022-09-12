@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import { Typography, Divider, TableBody, TableRow, TableCell, Grid, Button, TextField, Box } from '@material-ui/core'
@@ -10,10 +10,9 @@ import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import { CSVLink } from 'react-csv'
 import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/exportFromJson';
+import { exportFile } from '../../../helpers/Export/ExportFile';
 import { MMSReportStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';

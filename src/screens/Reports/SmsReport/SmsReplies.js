@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
-    Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, TextField, Box
+    Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer, Grid, Button, Box
 } from '@material-ui/core'
 import { ExportIcon } from '../../../assets/images/managment/index'
 import { TablePagination, ManagmentIcon } from '../../../components/managment/index'
@@ -12,7 +12,7 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { getSmsReplies } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/exportFromJson';
+import { exportFile } from '../../../helpers/Export/ExportFile';
 import { ClientStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../helpers/exportHelper';
 import { EditIcon } from '../../../assets/images/managment/index'

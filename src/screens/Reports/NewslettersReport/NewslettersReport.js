@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
@@ -18,7 +18,7 @@ import 'moment/locale/he';
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/cookies';
-import { exportFile } from '../../../helpers/exportFromJson';
+import { exportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import { Loader } from '../../../components/Loader/Loader';

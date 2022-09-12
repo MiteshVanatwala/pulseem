@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultScreen from '../../DefaultScreen';
 import clsx from 'clsx';
 import {
@@ -16,10 +16,9 @@ import { useTranslation } from 'react-i18next';
 import ClearIcon from '@material-ui/icons/Clear';
 import moment from 'moment';
 import 'moment/locale/he';
-import { CSVLink } from 'react-csv'
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/exportFromJson';
+import { exportFile } from '../../../helpers/Export/ExportFile';
 import { smsReportStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';

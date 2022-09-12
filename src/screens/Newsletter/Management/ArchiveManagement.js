@@ -5,9 +5,8 @@ import {
   Typography, Divider, Table, TableBody, TableRow, TableHead, TableCell, TableContainer,
   Grid, Button, TextField, Box, Tooltip
 } from '@material-ui/core'
-import { DuplicateIcon, SearchIcon, PreviewIcon, ExportIcon, ReportsIcon } from '../../../assets/images/managment/index'
-import { TablePagination, ManagmentIcon, DateField, Dialog, PopMassage, SearchField } from '../../../components/managment/index'
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { DuplicateIcon, SearchIcon, PreviewIcon, ExportIcon } from '../../../assets/images/managment/index'
+import { TablePagination, ManagmentIcon, DateField, Dialog, SearchField } from '../../../components/managment/index'
 import { getArchiveCampaigns, cloneArchiveCampaign } from '../../../redux/reducers/newsletterSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
@@ -17,9 +16,8 @@ import 'moment/locale/he'
 import { pulseemNewTab } from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { exportFile } from '../../../helpers/exportFromJson';
+import { exportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { preferredOrder, statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 

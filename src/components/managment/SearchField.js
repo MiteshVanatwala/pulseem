@@ -21,7 +21,7 @@ export const SearchField=({
       onKeyPress={onKeyPress}
       placeholder={placeholder}
       endAdornment={
-        <InputAdornment>
+        <InputAdornment position="start">
           <IconButton
             onClick={onClick}
             className={classes.phoneSearchBarIcon}>

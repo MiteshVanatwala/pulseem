@@ -13,7 +13,7 @@ import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
 import { preferredOrder, switchStatusDescription, formatDateTime, replaceNull, replaceClientStatus, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
-import { exportFile } from '../../../helpers/exportFromJson';
+import { exportFile } from '../../../helpers/Export/ExportFile';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
 import { ExportIcon } from '../../../assets/images/managment/index'
