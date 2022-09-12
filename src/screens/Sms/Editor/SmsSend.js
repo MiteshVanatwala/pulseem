@@ -31,7 +31,7 @@ import Summary from "./smsSummary";
 import clsx from "clsx";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
-import { logout } from '../../../helpers/api'
+import { logout } from '../../../helpers/Api/PulseemReact'
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;

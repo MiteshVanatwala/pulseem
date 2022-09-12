@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { instence } from '../../helpers/api';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
 
 export const getRecipientsReport = createAsyncThunk(
     'dashboard/GetRecipientsReport', async (_, thunkAPI) => {
         try {
-            const response = await instence.get(`dashboard/GetRecipientsReport`);
+            const response = await PulseemReactInstance.get(`dashboard/GetRecipientsReport`);
             return JSON.parse(response.data)
         } catch (error) {
             return thunkAPI.rejectWithValue({ error: error.message });

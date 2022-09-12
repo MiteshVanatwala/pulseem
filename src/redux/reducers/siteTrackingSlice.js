@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { eventsInstance, instence } from '../../helpers/api';
+import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
+import { SiteTrackingInstance } from '../../helpers/Api/SiteTracking';
 import { verifyGetUrl } from '../../helpers/functions';
 import { siteTrackingScriptUrl } from '../../config/index';
 
 export const get = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
-      const response = await eventsInstance.get(`events`, data);
+      const response = await SiteTrackingInstance.get(`events`, data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -16,7 +17,7 @@ export const get = createAsyncThunk(
 export const post = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
-      const response = await eventsInstance.post(`events`, data);
+      const response = await SiteTrackingInstance.post(`events`, data);
       if (data?.actionType === 'TRACK_PURCHASE_EVENT') {
         return { status: response?.status, data: response?.data };
       }
@@ -29,7 +30,7 @@ export const post = createAsyncThunk(
 export const update = createAsyncThunk(
   'events', async (data, thunkAPI) => {
     try {
-      const response = await eventsInstance.patch(`events/${data.id}`, data);
+      const response = await SiteTrackingInstance.patch(`events/${data.id}`, data);
       return { status: response.status, data: response.data };
     } catch (error) {
       return thunkAPI.rejectWithValue({ status: error.statusCode });
@@ -39,7 +40,7 @@ export const update = createAsyncThunk(
 export const deleteSiteTrackingEvent = createAsyncThunk(
   'events', async (eventId, thunkAPI) => {
     try {
-      const response = await eventsInstance.delete(`events/${eventId}`);
+      const response = await SiteTrackingInstance.delete(`events/${eventId}`);
       if (response?.data === '') {
         return { event: "deleteEvent", eventId };
       }
@@ -53,7 +54,7 @@ export const deleteSiteTrackingEvent = createAsyncThunk(
 export const deletePulseemSiteTracking = createAsyncThunk(
   'siteTracking/DeleteDomain', async (_, thunkAPI) => {
     try {
-      const response = await instence.delete(`siteTracking/DeleteDomain`);
+      const response = await PulseemReactInstance.delete(`siteTracking/DeleteDomain`);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -86,7 +87,7 @@ export const getScript = createAsyncThunk(
 export const setDomain = createAsyncThunk(
   'siteTracking/SetDomain', async (domain, thunkAPI) => {
     try {
-      const response = await instence.post('siteTracking/SetDomain', domain);
+      const response = await PulseemReactInstance.post('siteTracking/SetDomain', domain);
       return JSON.parse(response.data);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
