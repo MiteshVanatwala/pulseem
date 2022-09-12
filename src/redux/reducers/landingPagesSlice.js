@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
 import { apiURL } from '../../config/index';
-import { exportFile } from '../../helpers/exportFromJson';
+import { exportFile } from '../../helpers/Export/ExportFile';
 
 export const getLandingPagesData = createAsyncThunk(
   'landingpages/getLandingPages', async (_, thunkAPI) => {
@@ -47,11 +47,12 @@ export const downloadReport = createAsyncThunk(
   'report/ExportPurchase/', async ({ ID, Name }, thunkAPI) => {
     try {
       const response = await PulseemReactInstance.get(`${apiURL}/report/ExportPurchase/${ID}`);
-      exportFile({
+      const exportOptions = {
         data: JSON.parse(response.data),
         fileName: 'purchaseReport',
         exportType: 'xls'
-      });
+      }
+      exportFile(exportOptions);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -63,11 +64,13 @@ export const exportSurvey = createAsyncThunk(
 
       const response = await PulseemReactInstance.get(`${apiURL}/report/ExportSurvey/${ID}`);
 
-      exportFile({
+      const exportOptions = {
         data: JSON.parse(response.data),
         fileName: 'surveyReport',
         exportType: 'xls'
-      });
+      }
+      exportFile(exportOptions);
+
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
