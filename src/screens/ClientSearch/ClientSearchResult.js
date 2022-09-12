@@ -195,6 +195,7 @@ const ClientSearchResult = ({ props, classes }) => {
         overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
       }
     }
+
     // On load
     let initSearchData = {
       IsAdvanced: false,
@@ -273,12 +274,17 @@ const ClientSearchResult = ({ props, classes }) => {
       exportColumnHeader.current = updatingObject;
     }
   }, [extraData])
+
+
   useEffect(() => {
     if (searchData) {
-      if (searchData.IsAdvanced) {
-        getSearchData();
+      if (document.referrer.toLowerCase().indexOf("ClientSearch.aspx".toLowerCase()) > -1) {
+        if (searchData.IsAdvanced) {
+          getSearchData();
+        }
       }
       else {
+        sessionStorage.removeItem('searchData')
         getData();
       }
     }
