@@ -18,10 +18,10 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/Export/ExportFile';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { smsReportStatus } from '../../../helpers/PulseemArrays';
 import { statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
-import { PreferredOrder } from '../../../helpers/Export/ExportHelper';
+import { OrderItems } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 
 const SmsReport = ({ classes }) => {
@@ -153,12 +153,12 @@ const SmsReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async () => {
-    let orderList = await PreferredOrder(searchResults || smsReport, Object.keys(exportColumnHeader));
+    let orderList = await OrderItems(searchResults || smsReport, Object.keys(exportColumnHeader));
     orderList = await statusNumberToString(t, orderList, smsReportStatus);
     orderList = await formatDateTime(orderList, t);
     orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
     orderList = await deletePropertyFromArrayObject(orderList, "Status");
-    exportFile({
+    ExportFile({
       data: orderList,
       fileName: 'smsReport',
       exportType: 'xls',

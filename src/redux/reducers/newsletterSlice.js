@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
-import { exportFile } from '../../helpers/Export/ExportFile';
+import { ExportFile } from '../../helpers/Export/ExportFile';
 
 export const getNewslatterData = createAsyncThunk(
   'email/getEmailCampaigns', async (_, thunkAPI) => {
@@ -122,7 +122,7 @@ export const downloadNewsletterReport = createAsyncThunk(
 
       const response = await PulseemReactInstance.post('email/EmailReportsByIds/', json);
 
-      exportFile({
+      ExportFile({
         data: JSON.parse(response.data),
         fileName: 'emailReport',
         exportType: 'xls'
