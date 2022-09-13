@@ -2,116 +2,91 @@ import i18n from 'i18next';
 import moment from 'moment';
 import 'moment/locale/he';
 
-
 export interface ExportConditions {
+    IsBoolean: boolean;
     OrderItems: boolean;
-    TranslateStatusToString: boolean;
-    TranslateStatusDescription: boolean;
+    FormatDate: boolean;
     ReplaceNull: boolean;
     BooleanToNumber: boolean;
-    IsBoolean: boolean;
-    FormatDate: boolean;
+    ReplaceClientStatus: boolean;
+    TranslateStatusToString: boolean;
+    TranslateStatusDescription: boolean;
 }
 export interface ExportOption extends ExportConditions {
     Order: any;
     PropertyToReplace: string;
     PropertyDefaultReplaceValue: string;
     Statuses: KeyValue[];
+    DeleteProperties: string[];
 }
 export interface ExportData {
     Data: any;
 }
-
 export interface KeyValue {
     id: number;
     value: string;
 }
+const DateOptions: string[] = ['SendDate', 'LastEditDate', 'UpdateDate', 'UpdatedDate', 'CreationDate', 'ReplyDate', 'DATE'];
 
 export const HandleExportData = async (exportData: ExportData, options: ExportOption) => {
-    let finalExportData: any = [];
-    const promises: any = [];
+    let finalExportData: ExportData | any = exportData;
 
-    if (options.OrderItems === true) {
-        const p1 = new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+        if (options.OrderItems === true) {
             try {
-                finalExportData = OrderItems(exportData.Data, options.Order);
-                resolve(finalExportData)
+                finalExportData = await OrderItems(finalExportData, options.Order, options);
             } catch (error) {
                 console.error('OrderItems');
                 reject();
             }
-        })
-        promises.push(p1);
-    }
-    if (options.ReplaceNull === true) {
-        if (options.PropertyToReplace && options.PropertyDefaultReplaceValue) {
-            const p2 = new Promise((resolve, reject) => {
-                try {
-                    finalExportData = ReplaceNull(exportData.Data, options.PropertyToReplace, options.PropertyDefaultReplaceValue);
-                    resolve(finalExportData);
-                } catch (error) {
-                    console.error('ReplaceNull');
-                    reject();
-                }
-            })
-            promises.push(p2);
         }
-        else {
-            console.warn("ReplaceNull cannot running due to null values: ", `${options.PropertyToReplace} - ${options.PropertyDefaultReplaceValue}`);
+        if (options.ReplaceNull === true) {
+            try {
+                finalExportData = await ReplaceNull(finalExportData, options.PropertyToReplace, options.PropertyDefaultReplaceValue);
+            } catch (error) {
+                console.error('ReplaceNull');
+                reject();
+            }
         }
-    }
-    if ((options.TranslateStatusDescription === true || options.TranslateStatusToString === true) && options.Statuses !== null) {
-        const p3 = new Promise((resolve, reject) => {
+        if ((options.TranslateStatusDescription === true || options.TranslateStatusToString === true) && options.Statuses !== null) {
             try {
-                finalExportData = SwitchStatus(exportData.Data, options.Statuses, options);
-                resolve(finalExportData)
+                finalExportData = await SwitchStatus(finalExportData, options.Statuses, options);
             } catch (error) {
-                console.error('SwitchStatusDescription');
+                console.error('SwitchStatus');
                 reject();
             }
-        })
-        promises.push(p3);
-    }
-    if (options.BooleanToNumber === true) {
-        const p4 = new Promise((resolve, reject) => {
+        }
+        if (options.BooleanToNumber === true) {
             try {
-                finalExportData = BooleanToNumber(exportData.Data, options.PropertyToReplace, options.IsBoolean);
-                resolve(finalExportData)
+                finalExportData = await BooleanToNumber(finalExportData, options.PropertyToReplace, options.IsBoolean);
             } catch (error) {
-                console.error('SwitchStatusDescription');
+                console.error('BooleanToNumber');
                 reject();
             }
-        })
-        promises.push(p4);
-    }
-    if (options.FormatDate === true) {
-        const p5 = new Promise((resolve, reject) => {
-            try {
-                finalExportData = FormatDateTime(exportData.Data);
-                resolve(finalExportData)
-            } catch (error) {
-                console.error('SwitchStatusDescription');
-                reject();
-            }
-        })
-        promises.push(p5);
-    }
-
-    Promise.all(promises).then((finalResult) => {
-        return finalResult;
+        }
+        if (options.DeleteProperties?.length > 0) {
+            finalExportData = await DeletePropertyFromArrayObject(finalExportData, options.DeleteProperties);
+        }
+        resolve(finalExportData);
     });
 }
-
-export const OrderItems = async (obj: any, order: any) => {
+export const OrderItems = async (data: ExportData | any, order: any, options: ExportOption) => {
     return new Promise((resolve, reject) => {
         try {
             const finalOrder: any = [];
 
-            for (var i = 0; i < obj.length; i++) {
+            for (var i = 0; i < data.length; i++) {
                 let newObject: any = {};
                 // eslint-disable-next-line no-loop-func
                 order.forEach((o: string | number) => {
-                    newObject[o] = obj[i][o];
+                    let value = data[i][o];
+                    if (options.ReplaceClientStatus === true && o?.toString()?.toLowerCase() === 'clientstatus') {
+                        value = data[i][o] === 0 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
+                    }
+                    if (options.FormatDate === true && DateOptions.filter(e => { return e === o })?.length > 0) {
+                        value = FormatDate(value);
+                    }
+                    newObject[o] = value;
                 });
 
                 finalOrder.push(newObject);
@@ -123,21 +98,29 @@ export const OrderItems = async (obj: any, order: any) => {
         }
     });
 }
-export const SwitchStatus = async (obj: any, statuses: KeyValue[], options: ExportOption) => {
+export const SwitchStatus = async (data: ExportData | any, statuses: KeyValue[], options: ExportOption) => {
     return new Promise((resolve, reject) => {
         try {
-            obj.forEach((o: { STATUS: any; StatusDescription: any; Status: any; StatusName: any; Attachments: any; }) => {
+            const retValData: any[] = [];
+            data.forEach((o: { STATUS: any; StatusDescription: any; Status: any; SmsStatus: any, StatusName: any; Attachments: any; }) => {
+                const tempData = { ...o };
                 if (options.TranslateStatusDescription === true) {
                     if (o.STATUS) {
                         let status = statuses.find((s: { id: any; }) => { return s.id === o.STATUS });
                         if (status && status.value !== '') {
-                            o.StatusDescription = i18n.t(status.value);
+                            tempData["StatusDescription"] = i18n.t(status.value);
                         }
                     }
-                    else if (o.Status) {
+                    if (o.Status) {
                         let status = statuses.find((s: { id: any; }) => { return s.id === o.Status });
                         if (status && status.value !== '') {
-                            o.StatusDescription = i18n.t(status.value);
+                            tempData["StatusDescription"] = i18n.t(status.value);
+                        }
+                    }
+                    if (o.SmsStatus || o.SmsStatus === 0) {
+                        const status = statuses.find((x) => { return x.id === o.SmsStatus });
+                        if (status) {
+                            tempData["SmsStatus"] = i18n.t(status.value);
                         }
                     }
                 }
@@ -145,15 +128,23 @@ export const SwitchStatus = async (obj: any, statuses: KeyValue[], options: Expo
                     if (o.Status) {
                         let status = statuses.find((s) => { return s.id === o.Status });
                         if (status && status.value !== '') {
-                            o.StatusName = i18n.t(status.value);
+                            tempData["StatusName"] = i18n.t(status.value);
+                        }
+                    }
+                    if (o.SmsStatus || o.SmsStatus === 0) {
+                        const status = statuses.find((x) => { return x.id === o.SmsStatus });
+                        if (status) {
+                            tempData["SmsStatus"] = i18n.t(status.value);
                         }
                     }
                     if (o.Attachments && (o.Attachments === 'No_Attachments' || o.Attachments === '')) {
-                        o.Attachments = i18n.t('emailStatus.noAttachments');
+                        tempData["Attachments"] = i18n.t('emailStatus.noAttachments');
                     }
                 }
+
+                retValData.push(tempData);
             });
-            resolve(obj);
+            resolve(retValData);
         } catch (error) {
             console.error('ExportHelper => SwitchStatusDescription', error);
             reject(error);
@@ -175,7 +166,6 @@ export const ReplaceNull = async (obj: any, property: string, val: string = '') 
         }
     });
 }
-
 export const BooleanToNumber = (obj: any, property: string, isBoolean: boolean = false) => {
     return new Promise((resolve, reject) => {
         try {
@@ -194,100 +184,32 @@ export const BooleanToNumber = (obj: any, property: string, isBoolean: boolean =
         }
     });
 }
-export const FormatDateTime = (arr: any) => {
-    const newArr = [...arr];
-    return new Promise((resolve, reject) => {
-        try {
-            newArr.forEach((a: any) => {
-                if (a.SendDate) {
-                    a.SendDate = moment(a.SendDate).format("DD/MM/YYYY HH:mm");
-                }
-                if (a.LastEditDate) {
-                    a.LastEditDate = moment(a.LastEditDate).format("DD/MM/YYYY HH:mm");
-                }
-                if (a.UpdatedDate) {
-                    a.UpdatedDate = moment(a.UpdatedDate).format("DD/MM/YYYY HH:mm");
-                }
-                if (a.UpdateDate) {
-                    a.UpdateDate = moment(a.UpdateDate).format("DD/MM/YYYY HH:mm");
-                }
-                if (a.CreationDate) {
-                    a.CreationDate = moment(a.CreationDate).format("DD/MM/YYYY HH:mm");
-                }
-                if (a.CreatedDate) {
-                    a.CreatedDate = moment(a.CreatedDate).format("DD/MM/YYYY HH:mm");
-                }
-                if (a.ReplyDate) {
-                    a.ReplyDate = moment(a.ReplyDate).format("DD/MM/YYYY HH:mm");
-                }
-                if (a.DATE) {
-                    a.DATE = moment(a.DATE).format("DD/MM/YYYY HH:mm");
-                }
-                if (a.SendDate === '' || !a.SendDate) {
-                    a.SendDate = i18n.t('common.notSent');
-                }
-
-            });
-
-            resolve(newArr);
-        } catch (error) {
-            console.error('ExportHelper => FormatDateTime', error);
-            reject(error);
-        }
-    });
+export const FormatDate = (date: string) => {
+    if (date === '' || !date) {
+        return date = i18n.t('common.notSent');
+    }
+    return moment(date).format("DD/MM/YYYY HH:mm");
 }
-
-
-
-
-
-
-
-
-
-
-
-export const SwitchStatusDescription = async (obj: any, statuses: KeyValue[]) => {
-    return new Promise((resolve, reject) => {
-        try {
-            obj.forEach((o: { STATUS: any; StatusDescription: any; Status: any; }) => {
-                if (o.STATUS) {
-                    let status = statuses.find((s: { id: any; }) => { return s.id === o.STATUS });
-                    if (status && status.value !== '') {
-                        o.StatusDescription = i18n.t(status.value);
-                    }
-                }
-                else if (o.Status) {
-                    let status = statuses.find((s: { id: any; }) => { return s.id === o.Status });
-                    if (status && status.value !== '') {
-                        o.StatusDescription = i18n.t(status.value);
-                    }
-                }
-            });
-            resolve(obj);
-        } catch (error) {
-            console.error('ExportHelper => SwitchStatusDescription', error);
-            reject(error);
-        }
+export const ReplaceClientStatus = (obj: any) => {
+    obj.forEach((o: any) => {
+        o.ClientStatus = o.ClientStatus === 0 ? i18n.t("common.Subscribed") : i18n.t("common.Unsubscribed");
     });
+    return obj;
 }
-export const StatusNumberToString = (obj: any[], statuses: any[]) => {
-    return new Promise((resolve, reject) => {
-        try {
-            obj.forEach((o) => {
-                if (o.Status) {
-                    let status = statuses.find((s) => { return s.id === o.Status });
-                    o.StatusName = i18n.t(status ? status.value : null);
-                }
-                if (o.Attachments && (o.Attachments === 'No_Attachments' || o.Attachments === '')) {
-                    o.Attachments = i18n.t('emailStatus.noAttachments');
-                }
-            });
-            resolve(obj);
-        } catch (error) {
-            console.error('ExportHelper => SwitchStatusDescription', error);
-            reject(error);
-        }
-    });
-}
+export const DeletePropertyFromArrayObject = (data: ExportData | any, properties: string[]) => {
+    try {
+        return new Promise((resolve) => {
+            const retValData: any[] = [];
 
+            data.forEach((obj: { [x: string]: any; }) => {
+                properties.forEach((property: string) => {
+                    delete obj[property];
+                })
+                retValData.push(obj);
+            });
+            resolve(retValData);
+        });
+    } catch (ex) {
+        console.error(ex);
+    }
+}

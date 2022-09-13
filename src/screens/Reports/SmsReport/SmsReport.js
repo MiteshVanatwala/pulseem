@@ -18,7 +18,7 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/Export/ExportFile';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { smsReportStatus } from '../../../helpers/PulseemArrays';
 import { statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import { OrderItems } from '../../../helpers/Export/ExportHelper';
@@ -158,7 +158,7 @@ const SmsReport = ({ classes }) => {
     orderList = await formatDateTime(orderList, t);
     orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
     orderList = await deletePropertyFromArrayObject(orderList, "Status");
-    exportFile({
+    ExportFile({
       data: orderList,
       fileName: 'smsReport',
       exportType: 'xls',

@@ -18,7 +18,7 @@ import 'moment/locale/he';
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/cookies';
-import { exportFile } from '../../../helpers/Export/ExportFile';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
 import { OrderItems } from '../../../helpers/Export/ExportHelper';
@@ -201,7 +201,7 @@ const NewslettersReport = ({ classes }) => {
       orderList = await formatDateTime(orderList, t);
       orderList = await deletePropertyFromArrayObject(orderList, "Status");
       orderList =
-        exportFile({
+        ExportFile({
           data: orderList,
           fileName: 'emailReport',
           exportType: 'xls',
@@ -214,7 +214,7 @@ const NewslettersReport = ({ classes }) => {
       orderList = await statusNumberToString(t, orderList, EmailStatus);
       orderList = await formatDateTime(orderList, t);
       orderList = await deletePropertyFromArrayObject(orderList, "Status");
-      exportFile({
+      ExportFile({
         data: orderList,
         fileName: 'emailReport',
         exportType: 'xls',

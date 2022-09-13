@@ -12,10 +12,11 @@ import moment from 'moment';
 import 'moment/locale/he';
 import { getMmsReport, getMmsGraph } from '../../../redux/reducers/mmsSlice';
 import { Loader } from '../../../components/Loader/Loader';
-import { exportFile } from '../../../helpers/Export/ExportFile';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { MMSReportStatus } from '../../../helpers/PulseemArrays';
-import { statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
-import { OrderItems } from '../../../helpers/Export/ExportHelper';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
+//import { statusNumberToString, formatDateTime, booleanToNumber } from '../../../helpers/exportHelper';
+//import { OrderItems } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import DataTable from '../../../components/Table/DataTable';
@@ -117,23 +118,31 @@ const MmsReport = ({ classes }) => {
     }
 
     const handleDownloadCsv = async () => {
-        let orderList = await OrderItems(filteredResults, Object.keys(exportColumnHeader));
-        orderList = await statusNumberToString(t, orderList, MMSReportStatus);
-        orderList = await formatDateTime(orderList, t);
-        orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-        orderList = orderList.reduce(
-            (previousValue, currentValue) => {
-                currentValue.Amount = currentValue.TotalSent + currentValue.FutureSends
-                return [...previousValue, currentValue]
-            },
-            []
-        );
-        console.log("OrderLIST: ", orderList)
-        exportFile({
-            data: orderList,
-            fileName: 'mmsReport',
-            exportType: 'csv',
-            fields: exportColumnHeader
+        HandleExportData(filteredResults, {
+            OrderItems: true,
+            FormatDate: true,
+            BooleanToNumber: true,
+            TranslateStatusToString: true,
+            PropertyToReplace: 'IsResponse',
+            IsBoolean: true,
+            Statuses: MMSReportStatus,
+            Order: Object.keys(exportColumnHeader)
+        }).then((result) => {
+            result = result.reduce(
+                (previousValue, currentValue) => {
+                    currentValue.Amount = currentValue.TotalSent + currentValue.FutureSends
+                    return [...previousValue, currentValue]
+                },
+                []
+            );
+            ExportFile({
+                data: result,
+                fileName: 'mmsReport',
+                exportType: 'csv',
+                fields: exportColumnHeader
+            });
+        }).catch((e) => {
+            console.error(e);
         });
     }
 
