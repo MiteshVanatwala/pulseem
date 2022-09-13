@@ -20,7 +20,7 @@ import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
 import { exportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
-import { PreferredOrder, StatusNumberToString } from '../../../helpers/Export/ExportHelper';
+import { OrderItems, StatusNumberToString } from '../../../helpers/Export/ExportHelper';
 
 const ArchiveManagementScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -247,8 +247,8 @@ const ArchiveManagementScreen = ({ classes }) => {
     let orderList = [];
 
     const list = searchResults || newsletterArchiveData;
-    orderList = await PreferredOrder(list, Object.keys(exportColumnHeader));
-    orderList = await StatusNumberToString(t, orderList, EmailStatus);
+    orderList = await OrderItems(list, Object.keys(exportColumnHeader));
+    orderList = await StatusNumberToString(orderList, EmailStatus);
     orderList = await formatDateTime(orderList, t);
     orderList = await deletePropertyFromArrayObject(orderList, "Status");
     exportFile({

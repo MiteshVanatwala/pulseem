@@ -13,7 +13,7 @@ import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
 import { formatDateTime, replaceClientStatus, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
-import { PreferredOrder, SwitchStatusDescription, ReplaceNull } from '../../../helpers/Export/ExportHelper';
+import { OrderItems, SwitchStatusDescription, ReplaceNull } from '../../../helpers/Export/ExportHelper';
 import { exportFile } from '../../../helpers/Export/ExportFile';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
@@ -248,7 +248,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
     if (tabValue === 0) {
       searchData.sms.ShowContent = showContent;
       response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
-      finalData = await PreferredOrder(response.payload, Object.keys(excelHeaders.SMS));
+      finalData = await OrderItems(response.payload, Object.keys(excelHeaders.SMS));
       finalData = await SwitchStatusDescription(finalData, SmsStatus);
       finalData = await formatDateTime(finalData, t);
       finalData = replaceClientStatus(finalData);
@@ -263,7 +263,7 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
     if (tabValue === 1) {
       response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
-      finalData = await PreferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
+      finalData = await OrderItems(response.payload, Object.keys(excelHeaders.EMAIL));
       finalData = await SwitchStatusDescription(finalData, EmailStatus);
       finalData = await ReplaceNull(finalData, 'Attachments', t('emailStatus.noAttachments'));
       finalData = replaceClientStatus(finalData);

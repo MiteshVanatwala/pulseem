@@ -21,7 +21,7 @@ import { getCookie, setCookie } from '../../../helpers/cookies';
 import { exportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
 import { statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
-import { PreferredOrder } from '../../../helpers/Export/ExportHelper';
+import { OrderItems } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 
 const NewslettersReport = ({ classes }) => {
@@ -196,7 +196,7 @@ const NewslettersReport = ({ classes }) => {
 
     if (toFileArray.length > 0) {
       const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
-      orderList = await PreferredOrder(fileArray, Object.keys(exportColumnHeader));
+      orderList = await OrderItems(fileArray, Object.keys(exportColumnHeader));
       orderList = await statusNumberToString(t, orderList, EmailStatus);
       orderList = await formatDateTime(orderList, t);
       orderList = await deletePropertyFromArrayObject(orderList, "Status");
@@ -210,7 +210,7 @@ const NewslettersReport = ({ classes }) => {
     }
     else {
       const list = searchResults || newslettersReports;
-      orderList = await PreferredOrder(list, Object.keys(exportColumnHeader));
+      orderList = await OrderItems(list, Object.keys(exportColumnHeader));
       orderList = await statusNumberToString(t, orderList, EmailStatus);
       orderList = await formatDateTime(orderList, t);
       orderList = await deletePropertyFromArrayObject(orderList, "Status");
