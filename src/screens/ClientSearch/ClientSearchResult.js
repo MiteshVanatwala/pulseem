@@ -1601,7 +1601,7 @@ const ClientSearchResult = ({ props, classes }) => {
             Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
             // selectGroup={(idArr) => setSelectedGroups(idArr)}
             DialogType={DialogType}
-            selectedGroups={data.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds || searchData?.GroupIds || []}
+            selectedGroups={data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds || searchData?.GroupIds || []}
             setDialog={setDialog}
             handleResponses={(response, actions) => { handleResponses(response, actions); }}
             onAddRecipient={() => { setDialog(null); getData(); }}
