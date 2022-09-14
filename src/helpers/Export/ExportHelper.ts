@@ -1,6 +1,7 @@
+import 'moment/locale/he';
 import i18n from 'i18next';
 import moment from 'moment';
-import 'moment/locale/he';
+import Papa from 'papaparse';
 
 export interface ExportConditions {
     IsBoolean: boolean;
@@ -212,4 +213,61 @@ export const DeletePropertyFromArrayObject = (data: ExportData | any, properties
     } catch (ex) {
         console.error(ex);
     }
+}
+
+export const JsonToCSV = async (data: any, options: any) => {
+    return new Promise((resolve, reject) => {
+        try {
+            if (!options) {
+                options = {
+                    quotes: false,
+                    quoteChar: '"',
+                    escapeChar: '"',
+                    delimiter: ",",
+                    header: false,
+                    newline: "\r\n",
+                    skipEmptyLines: true, //other option is 'greedy', meaning skip delimiters, quotes, and whitespace.
+                    columns: undefined, //or array of strings
+                    encoding: "UTF-8"
+                }
+            }
+            const { array } = data;
+            const p = Papa.unparse(array, options);
+
+            StringToArrayBuffer(p).then((output) => {
+                resolve(output);
+            });
+        }
+        catch (e) {
+            console.error('jsonToCsv', e);
+            reject(e);
+        }
+    });
+}
+
+export const CreateFile = (data: any, type: string) => {
+    return new Promise((resolve, reject) => {
+        try {
+            const f = new File([data], `${Date.now()}.${type}`, { type: `text/${type}` });
+            resolve(f);
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+export const StringToArrayBuffer = (str: string) => {
+    return new Promise((resolve, reject) => {
+        try {
+            var buf = new ArrayBuffer(str.length * 2); // 2 bytes for each char
+            var bufView = new Uint8Array(buf);
+            for (var i = 0, strLen = str.length; i < strLen; i++) {
+                bufView[i] = str.charCodeAt(i);
+            }
+            resolve(buf);
+        } catch (e) {
+            console.error('stringToArrayBuffer', e);
+            reject(null);
+        }
+    })
 }

@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import { RenderHtml } from "../../helpers/Utils/utils";
 import moment from 'moment';
 import 'moment/locale/he';
-import { jsonToCSV, createFile } from '../../helpers/SheetHelper';
+import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";
 import { Button } from "@mui/material";
 
 const useStyles = makeStyles((theme) => ({
@@ -208,10 +208,11 @@ const UploadXL = ({
         }
         setheaders(dummyArr);
         if (b.length > 1000) {
-            jsonToCSV({ array: b }).then((csvOutput) => {
-                const file = createFile(csvOutput, 'csv');
-                setFileToUpload(file);
-                parseFile(csvOutput);
+            JsonToCSV({ array: b }).then((csvOutput) => {
+                CreateFile(csvOutput, 'csv').then((file) => {
+                    setFileToUpload(file);
+                    parseFile(csvOutput);
+                })
             });
         }
         else {

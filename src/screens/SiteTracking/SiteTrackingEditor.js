@@ -17,14 +17,14 @@ import { getCookie, setCookie } from '../../helpers/cookies';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { AiOutlineExclamationCircle } from "react-icons/ai";
 import EventTabs from './EventTabs';
-import { isValidUrl } from '../../helpers/UrlHelper';
+import { Validation } from '../../helpers/Utils/Validations';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
 import { RenderHtml } from '../../helpers/Utils/utils';
 
 const SiteTrackingEditor = ({ classes }) => {
-    // const { subAccountGroups } = useSelector((state) => state.sms);
+    const validation = new Validation();
     const { isRTL, windowSize } = useSelector(state => state.core);
     const { ToastMessages, siteScript, event, purchaseEvent } = useSelector((state) => state.siteTracking);
     const [showLoader, setShowLoader] = useState(true);
@@ -55,7 +55,7 @@ const SiteTrackingEditor = ({ classes }) => {
 
     useEffect(() => {
         if (event && (isValidDomain !== null || event.domain !== '')) {
-            setIsValidDomain(isValidUrl(event.domain));
+            setIsValidDomain(validation.Url(event.domain));
         }
     }, [event]);
 
@@ -90,7 +90,7 @@ const SiteTrackingEditor = ({ classes }) => {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainRequired')])
             isValid = false;
         }
-        if (event.domain !== '' && !isValidUrl(event.domain)) {
+        if (event.domain !== '' && !validation.Url(event.domain)) {
             setValidationError(oldArray => [...oldArray, t('siteTracking.validation.domainNotValid')])
             isValid = false;
         }
@@ -475,7 +475,7 @@ const SiteTrackingEditor = ({ classes }) => {
                     </Box>
                     <Box>
                         <Typography className={clsx(classes.f18, classes.mb10)}>{t("siteTracking.scriptPurchaseIstructionForComplete")}</Typography>
-                        <Typography className={clsx(classes.f18, classes.mb10)}>{t("siteTracking.javscriptFunction")}</Typography>                        
+                        <Typography className={clsx(classes.f18, classes.mb10)}>{t("siteTracking.javscriptFunction")}</Typography>
                         <pre>
                             <div className={classes.scriptCode} style={{ padding: 5, direction: 'ltr' }}>
                                 {`window.addEventListener('load', function(event) {
