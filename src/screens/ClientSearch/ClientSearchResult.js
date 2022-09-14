@@ -1606,7 +1606,7 @@ const ClientSearchResult = ({ props, classes }) => {
             handleResponses={(response, actions) => { handleResponses(response, actions); }}
             onAddRecipient={() => { setDialog(null); getData(); }}
             recipientData={
-              selectedClients[0] && (data.find((obj) => obj.ClientID === selectedClients[0]))
+              selectedClients[0] && (data?.find((obj) => obj?.ClientID === selectedClients[0]))
             }
           />
         }
