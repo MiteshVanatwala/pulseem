@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
-import { translateKeys } from '../../helpers/languageHelper';
+import { TableHelper } from '../../helpers/UI/TableText';
 
 const useStyles = makeStyles((theme) => ({
     customWidth: {
@@ -36,6 +36,7 @@ const ColumnAdjustmentDialog = ({
     isSimplyAccount = false,
     tooltipText = "smsReport.manualTotalTooltip",
     onUpdateClientFields = () => null }) => {
+    const tableHelper = new TableHelper();
 
     const { extraData } = useSelector((state) => state.sms);
     const styles = useStyles();
@@ -296,9 +297,9 @@ const ColumnAdjustmentDialog = ({
                                                             }
                                                         }
                                                         else {
-                                                            const translatedKey = translateKeys(headerKey, t).key;
+                                                            const translatedKey = tableHelper.TranslateKeys(headerKey, t).key;
                                                             dispData = restObj[translatedKey];
-                                                            delete restObj[translateKeys(headerKey, t).value === t("sms.adjustTitle") ? Object.keys(restObj)[0] : translateKeys(headerKey, t).value];
+                                                            delete restObj[tableHelper.TranslateKeys(headerKey, t).value === t("sms.adjustTitle") ? Object.keys(restObj)[0] : tableHelper.TranslateKeys(headerKey, t).value];
                                                         }
 
                                                         return (
