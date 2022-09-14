@@ -32,7 +32,7 @@ import clsx from "clsx";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { logout } from '../../../helpers/Api/PulseemReact'
-import { RenderHtml } from "../../../helpers/Utils/utils";
+import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;

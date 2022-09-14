@@ -22,7 +22,7 @@ import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
 import { Preview } from '../../../components/Notifications/Preview/Preview';
-import { pulseemNewTab } from '../../../helpers/functions';
+import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 //import { setCookie } from '../../../helpers/cookies';

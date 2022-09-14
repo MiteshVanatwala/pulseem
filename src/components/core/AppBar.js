@@ -15,7 +15,7 @@ import { getRoutes, getSettingsItem } from '../../helpers/routes'
 import { setCookie, getCookie } from '../../helpers/cookies'
 import { setScriptDialog } from '../../redux/reducers/notificationSlice';
 import { logout } from '../../helpers/Api/PulseemReact'
-import { openInNewTab } from '../../helpers/functions'
+import { openInNewTab } from '../../helpers/Functions/functions'
 import {
   ChartIcon
 } from '../../assets/images/drawer/index'

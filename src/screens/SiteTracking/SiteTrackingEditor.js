@@ -21,7 +21,7 @@ import { Validation } from '../../helpers/Utils/Validations';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
-import { RenderHtml } from '../../helpers/Utils/utils';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 const SiteTrackingEditor = ({ classes }) => {
     const validation = new Validation();

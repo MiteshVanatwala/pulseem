@@ -11,7 +11,7 @@ import { CgShoppingCart } from 'react-icons/cg';
 import CustomTooltip from '../Tooltip/CustomTooltip';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { setAccountFeatures } from '../../redux/reducers/coreSlice'
-import { RenderHtml } from '../../helpers/Utils/utils';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, accountFeatures, accountSettings } = useSelector(state => state.core)

@@ -38,7 +38,7 @@ import { Dialog } from '../../../components/managment/index';
 import SimplyClubPupup from "./Popup/SimplyClubPupup";
 import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
-import { RenderHtml } from '../../../helpers/Utils/utils';
+import { RenderHtml } from '../../../helpers/Utils/HtmlUtils';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();

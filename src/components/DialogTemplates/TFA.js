@@ -5,7 +5,7 @@ import { Box, Button, Grid, Typography, FormControlLabel, Checkbox } from '@mate
 import { SolidDialog } from '../managment/index';
 import { useState } from 'react';
 import { setCookie } from '../../helpers/cookies';
-import { RenderHtml } from '../../helpers/Utils/utils';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 
 const TFA = ({ classes,

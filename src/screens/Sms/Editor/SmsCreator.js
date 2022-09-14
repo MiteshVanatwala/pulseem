@@ -54,7 +54,7 @@ import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
 import MobilePreview from '../../../components/MobilePreive/Mobile'
 import { logout } from '../../../helpers/Api/PulseemReact'
-import { RenderHtml } from "../../../helpers/Utils/utils";
+import { RenderHtml } from "../../../helpers/Utils/HtmlUtils";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {

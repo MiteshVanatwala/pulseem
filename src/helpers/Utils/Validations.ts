@@ -1,3 +1,4 @@
+import { TYPE_URL } from "../Types/common";
 export class Validation {
     Email(value: string) {
         if (value === '' || value === undefined) {
@@ -12,7 +13,7 @@ export class Validation {
         const phoneRegex = /^[0-9-]+$/
         return phoneRegex.test(value)
     }
-    Url(value: string) {
+    Url(value: TYPE_URL) {
         var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
             '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
             '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
@@ -20,5 +21,21 @@ export class Validation {
             '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
             '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
         return !!pattern.test(value);
+    }
+    VerifyGetUrl = async (value: string) => {
+        return new Promise((resolve, reject) => {
+            try {
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function () {
+                    if (xmlhttp.readyState === XMLHttpRequest.DONE && xmlhttp.status === 200) {
+                        resolve(true);
+                    }
+                }
+                xmlhttp.open("HEAD", value, true);
+                xmlhttp.send();
+            } catch (error) {
+                reject(false);
+            }
+        });
     }
 }

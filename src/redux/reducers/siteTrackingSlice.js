@@ -1,8 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
 import { SiteTrackingInstance } from '../../helpers/Api/SiteTracking';
-import { verifyGetUrl } from '../../helpers/functions';
+import { Validation } from '../../helpers/Utils/Validations';
 import { siteTrackingScriptUrl } from '../../config/index';
+import { RandomID } from '../../helpers/Functions/functions'
+
+const validation = new Validation();
 
 export const get = createAsyncThunk(
   'events', async (data, thunkAPI) => {
@@ -65,19 +68,19 @@ export const deletePulseemSiteTracking = createAsyncThunk(
 export const getScript = createAsyncThunk(
   'getScript', async (_, thunkAPI) => {
     try {
-      const isVerified = await verifyGetUrl(`${siteTrackingScriptUrl}?v=${Math.random()}`);
-      const response = {};
+      const payload = { data: '' };
+      const isVerified = await validation.VerifyGetUrl(`${siteTrackingScriptUrl}?v=${Math.random()}`);
       if (isVerified === true) {
-        response["data"] = `<script type="text/javascript">
-      (function(d, t) {
-        var g = d.createElement(t),
-        s = d.getElementsByTagName(t)[0];
-        g.src="${siteTrackingScriptUrl}?v=" + Math.floor(Date.now() / 1000);
-        s.parentNode.insertBefore(g, s);
-        }(document, "script"))
-    </script>`;
+        payload.data = `<script type="text/javascript">
+        (function(d, t) {
+          var g = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+          g.src="${siteTrackingScriptUrl}?v=" + Math.floor(Date.now() / 1000);
+          s.parentNode.insertBefore(g, s);
+          }(document, "script"))
+      </script>`;
       }
-      return response;
+      return payload;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -94,16 +97,6 @@ export const setDomain = createAsyncThunk(
     }
   }
 )
-
-export const makeId = () => {
-  let ID = "";
-  let characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  for (var i = 0; i < 12; i++) {
-    ID += characters.charAt(Math.floor(Math.random() * 36));
-  }
-  return ID;
-}
-
 
 export const siteTrackingSlice = createSlice({
   name: 'siteTracking',
@@ -125,7 +118,7 @@ export const siteTrackingSlice = createSlice({
         operatorKey: 'CONTAINS',
         operatorValue: '',
         groupIds: [],
-        id: makeId()
+        id: RandomID()
       }]
     }
   },
@@ -137,7 +130,7 @@ export const siteTrackingSlice = createSlice({
           if (state.event.metadata) {
             state.event.metadata.map((mt) => {
               if (!mt.id || mt.id === '') {
-                mt.id = makeId();
+                mt.id = RandomID();
               }
               return mt;
             });
@@ -166,7 +159,7 @@ export const siteTrackingSlice = createSlice({
     },
     addMetaData: (state, action) => {
       const newMetaData = action.payload;
-      newMetaData.id = makeId();
+      newMetaData.id = RandomID();
       state.event.metadata = [...state.event.metadata, newMetaData];
     },
     resetEventModel: (state, action) => {
@@ -184,7 +177,7 @@ export const siteTrackingSlice = createSlice({
   extraReducers: builder => {
     builder
       .addCase(getScript.fulfilled, (state, { payload }) => {
-        state.siteScript = payload.data;
+        state.siteScript = payload?.data ?? payload;
       })
       .addCase(get.fulfilled, (state, { payload }) => {
         try {
@@ -207,7 +200,7 @@ export const siteTrackingSlice = createSlice({
             if (state.event.metadata) {
               state.event.metadata.map((mt) => {
                 if (!mt.id || mt.id === '') {
-                  mt.id = makeId();
+                  mt.id = RandomID();
                 }
                 return mt;
               });

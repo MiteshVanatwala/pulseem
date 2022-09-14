@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'
-import { pulseemNewTab } from '../../../helpers/functions';
+import { pulseemNewTab } from '../../../helpers/Functions/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';

@@ -15,7 +15,6 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { getMmsData, restoreMms, deleteMms, duplicteMms, getMMSByID } from '../../../redux/reducers/mmsSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { pulseemNewTab } from '../../../helpers/functions'
 import ClearIcon from '@material-ui/icons/Clear'
 import moment from 'moment'
 import 'moment/locale/he'

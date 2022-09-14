@@ -18,10 +18,9 @@ import { reactivateSms } from '../../../redux/reducers/clientSlice';
 import { setShowContent } from '../../../redux/reducers/reportSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { SmsStatus } from '../../../helpers/PulseemArrays';
-import { smsStatusToString, smsStatusColor } from '../../../helpers/functions';
+import { StatusColor, StatusText } from '../../../helpers/UI/TableText';
 import TotalSection from '../../../components/managment/TotalSection';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
-import { setCookie } from '../../../helpers/cookies';
 import { useSelector } from 'react-redux';
 
 const DirectSMSReportTab = ({
@@ -43,6 +42,8 @@ const DirectSMSReportTab = ({
   rowsOptions,
   isArchive = false
 }) => {
+  const statusColor = new StatusColor();
+  const statusText = new StatusText();
   const rowStyle = { head: classes.tableRowHead, root: classes.tableRowRoot };
   const cellStyle = { head: classes.tableCellHead, body: classes.tableCellBody, root: classes.tableCellRoot };
   const noborderCell = { body: clsx(classes.tableCellBody, classes.noborder), root: classes.tableCellRoot };
@@ -109,9 +110,9 @@ const DirectSMSReportTab = ({
       text = `${text.format('DD/MM/YYYY HH:mm')}`
     }
     if (dataType === 'status') {
-      text = t(smsStatusToString(text));
+      text = t(statusText.Sms(text));
       return (
-        <Typography style={{ color: smsStatusColor(data), fontWeight: 600 }}>{text}</Typography>
+        <Typography style={{ color: statusColor.Sms(data), fontWeight: 600 }}>{text}</Typography>
       )
     }
 
@@ -544,8 +545,8 @@ const DirectSMSReportTab = ({
               {renderNameCell({ PID, DATE, FROM, TO, STATUS })}
             </Box>
             <Box style={{ justifySelf: 'flex-end', whiteSpace: 'nowrap' }}>
-              <Typography style={{ color: smsStatusColor(STATUS) }}>
-                {t(smsStatusToString(STATUS))}
+              <Typography style={{ color: statusColor.Sms(STATUS) }}>
+                {t(statusText.Sms(STATUS))}
               </Typography>
             </Box>
           </Box>

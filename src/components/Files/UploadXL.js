@@ -15,7 +15,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { Loader } from '../Loader/Loader';
 import { useTranslation } from "react-i18next";
-import { RenderHtml } from "../../helpers/Utils/utils";
+import { RenderHtml } from "../../helpers/Utils/HtmlUtils";
 import moment from 'moment';
 import 'moment/locale/he';
 import { JsonToCSV, CreateFile } from "../../helpers/Export/ExportHelper";

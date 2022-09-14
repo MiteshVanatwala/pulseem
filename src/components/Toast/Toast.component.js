@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import './Toast.styles.css'
 import clsx from 'clsx';
 import { useTranslation } from "react-i18next";
-import { RenderHtml } from '../../helpers/Utils/utils';
+import { RenderHtml } from '../../helpers/Utils/HtmlUtils';
 
 
 
