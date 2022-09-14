@@ -32,6 +32,7 @@ import clsx from "clsx";
 import OTP from './OTP';
 import { FaExclamationCircle } from 'react-icons/fa'
 import { logout } from '../../../helpers/Api/PulseemReact'
+import { RenderHtml } from "../../../helpers/Utils/utils";
 
 function Alert(props) {
   return <MuiAlert elevation={0} variant="filled" {...props} />;
@@ -1801,14 +1802,6 @@ const SmsSend = ({ classes, ...props }) => {
   const handlePreviousPage = () => {
     redirect(`/react/sms/edit/${id}`);
   }
-  const renderHtml = (html) => {
-    function createMarkup() {
-      return { __html: html };
-    }
-    return (
-      <label dangerouslySetInnerHTML={createMarkup()}></label>
-    );
-  }
   const renderSendType2validation = () => {
     return (<>
       <Dialog
@@ -2136,8 +2129,8 @@ const SmsSend = ({ classes, ...props }) => {
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               variant='contained'
@@ -2316,7 +2309,7 @@ const SmsSend = ({ classes, ...props }) => {
       ),
       content: (
         <Box className={classes.dialogBox}>
-          <Typography>{renderHtml(t("sms.reset_manual_upload_notice"))}</Typography>
+          <Typography>{RenderHtml(t("sms.reset_manual_upload_notice"))}</Typography>
         </Box>
       ),
       showDefaultButtons: true,
