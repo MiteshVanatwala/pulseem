@@ -280,15 +280,20 @@ const ClientSearchResult = ({ props, classes }) => {
 
   useEffect(() => {
     if (searchData) {
-      if (document.referrer.toLowerCase().indexOf("ClientSearch.aspx".toLowerCase()) > -1) {
-        if (searchData.IsAdvanced) {
-          getSearchData();
-        }
-      }
-      else {
+      if (!searchData.IsAdvanced) {
         sessionStorage.removeItem('searchData')
-        getData();
       }
+      getData();
+      //OLD version
+      // if (document.referrer.toLowerCase().indexOf("ClientSearch.aspx".toLowerCase()) > -1) {
+      //   if (searchData.IsAdvanced) {
+      //     getSearchData();
+      //   }
+      // }
+      // else {
+      //   sessionStorage.removeItem('searchData')
+      //   getData();
+      // }
     }
   }, [dispatch, searchData, page, rowsPerPage]);
 
@@ -592,11 +597,11 @@ const ClientSearchResult = ({ props, classes }) => {
     await dispatch(searchAllClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page }));
     setLoader(false);
   };
-  const getSearchData = async () => {
-    setLoader(true);
-    await dispatch(searchAdvancedClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page }));
-    setLoader(false);
-  }
+  // const getSearchData = async () => {
+  //   setLoader(true);
+  //   await dispatch(searchAdvancedClients({ ...searchData, PageSize: rowsPerPage, PageIndex: page }));
+  //   setLoader(false);
+  // }
   useEffect(() => {
     // setData(Static_CSR_Data)
     setData(ClientData);
