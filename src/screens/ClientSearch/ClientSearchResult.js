@@ -193,11 +193,13 @@ const ClientSearchResult = ({ props, classes }) => {
         (referrer.toLowerCase().includes('clientsearch') && !referrer.toLowerCase().includes('result'))
       if (isSessionStorageData) {
         overwriteObject = JSON.parse(window.sessionStorage?.getItem('searchData'));
+        overwriteObject.IsSearchByFilter = true;
       }
     }
 
     // On load
     let initSearchData = {
+      IsSearchByFilter: false,
       IsAdvanced: false,
       PageSize: rowsPerPage,
       PageIndex: page,
