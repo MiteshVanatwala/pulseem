@@ -11,6 +11,7 @@ import { CgShoppingCart } from 'react-icons/cg';
 import CustomTooltip from '../Tooltip/CustomTooltip';
 import { getCommonFeatures } from '../../redux/reducers/commonSlice';
 import { setAccountFeatures } from '../../redux/reducers/coreSlice'
+import { RenderHtml } from '../../helpers/Utils/utils';
 
 const BulkStatus = ({ classes }) => {
   const { billingTypeId, accountFeatures, accountSettings } = useSelector(state => state.core)
@@ -61,15 +62,6 @@ const BulkStatus = ({ classes }) => {
     dispatch(getPackagesDetails());
   }
 
-  const renderHtml = (html) => {
-    function createMarkup() {
-      return { __html: html };
-    }
-    return (
-      <label dangerouslySetInnerHTML={createMarkup()}></label>
-    );
-  }
-
   const renderPackagesDialog = () => {
     if (isOpenPackageDialog === true && accountSettings !== null) {
       let dialog = {};
@@ -108,7 +100,7 @@ const BulkStatus = ({ classes }) => {
       content: (
         <Grid item xs={12} style={{ paddingBottom: 5 }}>
           <Typography className={classes.f20}>
-            {renderHtml(t("common.contactSupportForBilling"))}
+            {RenderHtml(t("common.contactSupportForBilling"))}
           </Typography>
           <Box className={clsx(classes.mt25, classes.flexColCenter)}>
             <Button

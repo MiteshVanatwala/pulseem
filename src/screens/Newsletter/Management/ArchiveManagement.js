@@ -17,10 +17,9 @@ import { pulseemNewTab } from '../../../helpers/functions';
 import { Loader } from '../../../components/Loader/Loader';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import CustomTooltip from '../../../components/Tooltip/CustomTooltip';
-import { exportFile } from '../../../helpers/Export/ExportFile';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
-import { PreferredOrder, StatusNumberToString } from '../../../helpers/Export/ExportHelper';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 
 const ArchiveManagementScreen = ({ classes }) => {
   const { language, windowSize, rowsPerPage } = useSelector(state => state.core)
@@ -244,18 +243,24 @@ const ArchiveManagementScreen = ({ classes }) => {
       "StatusName": t('mainReport.statusName'),
     }
 
-    let orderList = [];
+    const list = searchResults ?? newsletterArchiveData;
 
-    const list = searchResults || newsletterArchiveData;
-    orderList = await PreferredOrder(list, Object.keys(exportColumnHeader));
-    orderList = await StatusNumberToString(t, orderList, EmailStatus);
-    orderList = await formatDateTime(orderList, t);
-    orderList = await deletePropertyFromArrayObject(orderList, "Status");
-    exportFile({
-      data: orderList,
-      fileName: 'emailReport',
-      exportType: 'xls',
-      fields: exportColumnHeader
+    HandleExportData(list, {
+      OrderItems: true,
+      FormatDate: true,
+      TranslateStatusToString: true,
+      Statuses: EmailStatus,
+      Order: Object.keys(exportColumnHeader),
+      DeleteProperties: ["Status"]
+    }).then((result) => {
+      ExportFile({
+        data: result,
+        fileName: 'emailReport',
+        exportType: 'csv',
+        fields: exportColumnHeader
+      });
+    }).catch((e) => {
+      console.error(e);
     });
   }
   const redirctToArchive = () => {

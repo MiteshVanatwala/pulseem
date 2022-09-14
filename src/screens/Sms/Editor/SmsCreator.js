@@ -54,6 +54,7 @@ import { HiOutlineUserGroup } from "react-icons/hi";
 import clsx from "clsx";
 import MobilePreview from '../../../components/MobilePreive/Mobile'
 import { logout } from '../../../helpers/Api/PulseemReact'
+import { RenderHtml } from "../../../helpers/Utils/utils";
 
 const useStyles = makeStyles((theme) => ({
   customWidth: {
@@ -242,15 +243,6 @@ const SmsCreator = ({ classes }) => {
       setShowRemovalLink(!accountFeatures.includes('39'))
     }
   }, [isPageLoaded || accountFeatures]);
-
-  const renderHtml = (html) => {
-    function createMarkup() {
-      return { __html: html };
-    }
-    return (
-      <label dangerouslySetInnerHTML={createMarkup()}></label>
-    );
-  }
 
   const handleSendResult = async (smsSendResult) => {
     switch (smsSendResult) {
@@ -1850,8 +1842,8 @@ const SmsCreator = ({ classes }) => {
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 100 }} />
           <Typography className={classes.mt4} style={{ fontWeight: 'bold' }}>{t("common.ErrorTitle")}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeft"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("sms.notEnoughCreditLeftDesc"))}</Typography>
           <Box style={{ marginTop: 25 }}>
             <Button
               variant='contained'
@@ -1883,7 +1875,7 @@ const SmsCreator = ({ classes }) => {
         <Box className={classes.dialogBox} style={{ display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
           <FaExclamationCircle style={{ fontSize: 60 }} />
           <Typography className={classes.mt2} style={{ fontWeight: 'bold' }}>{t("common.Notice")}</Typography>
-          <Typography style={{ textAlign: 'center' }}>{renderHtml(t("siteTracking.NoticeLinkStatistics"))}</Typography>
+          <Typography style={{ textAlign: 'center' }}>{RenderHtml(t("siteTracking.NoticeLinkStatistics"))}</Typography>
         </Box>
       ),
       showDefaultButtons: true,

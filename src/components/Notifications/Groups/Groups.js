@@ -45,14 +45,7 @@ const Groups = ({ classes,
     const [clearInput, setClearInput] = useState(false);
     const [groupHover, setIsHover] = useState(null);
     const [showTestGroups, setShowTestGroups] = useState(false);
-    const renderHtml = (html) => {
-        function createMarkup() {
-            return { __html: html };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
+
     const handleShowTestGroup = () => {
         callbackShowTestGroup(showTestGroups);
         setShowTestGroups(!showTestGroups);

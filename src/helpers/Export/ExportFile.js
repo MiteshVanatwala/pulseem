@@ -2,7 +2,7 @@ import exportFromJSON from 'export-from-json'
 
 const defaultData = { fileName: 'PulseemReport', exportType: 'csv' };
 
-const exportFile = (options) => {
+const ExportFile = (options) => {
 
     if (options.fileName === '') {
         options.fileName = defaultData.fileName;
@@ -40,4 +40,4 @@ const exportFile = (options) => {
     })
 }
 
-export { exportFile }
+export { ExportFile }

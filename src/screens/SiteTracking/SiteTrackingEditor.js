@@ -21,15 +21,7 @@ import { isValidUrl } from '../../helpers/UrlHelper';
 import { setSelectedGroups, getGroupsBySubAccountId } from '../../redux/reducers/groupSlice';
 import { ThemeProvider } from '@material-ui/core/styles';
 import { createTheme } from '@material-ui/core/styles'
-
-const renderHtml = (html) => {
-    function createMarkup() {
-        return { __html: html };
-    }
-    return (
-        <label dangerouslySetInnerHTML={createMarkup()}></label>
-    );
-}
+import { RenderHtml } from '../../helpers/Utils/utils';
 
 const SiteTrackingEditor = ({ classes }) => {
     // const { subAccountGroups } = useSelector((state) => state.sms);
@@ -238,7 +230,7 @@ const SiteTrackingEditor = ({ classes }) => {
             validationError: validationErrorDialog(),
             scriptImplementation: siteScript ? scriptImplementationDialog() : scriptErrorImplementationDialog(),
             dynamicMessage: renderDynamicDataDialog(t('common.ErrorTitle'), message),
-            deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), renderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
+            deleteEvent: renderDynamicDataDialog(t('siteTracking.deleteDialogTitle'), RenderHtml(t("siteTracking.deleteDialogMessage")), false, true, true),
             invalidDomain: renderDynamicDataDialog(t('common.ErrorTitle'), t('siteTracking.invalidDomainAddress')),
         }
 
@@ -416,7 +408,7 @@ const SiteTrackingEditor = ({ classes }) => {
                     </Typography>
                     <Typography
                         className={clsx(classes.f18, classes.pb10)}>
-                        {renderHtml(t('siteTracking.scriptDescription'))}
+                        {RenderHtml(t('siteTracking.scriptDescription'))}
                     </Typography>
                     <hr />
                     <Typography className={classes.f18}>

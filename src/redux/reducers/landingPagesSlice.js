@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { PulseemReactInstance } from '../../helpers/Api/PulseemReact';
 import { apiURL } from '../../config/index';
-import { exportFile } from '../../helpers/Export/ExportFile';
+import { ExportFile } from '../../helpers/Export/ExportFile';
 
 export const getLandingPagesData = createAsyncThunk(
   'landingpages/getLandingPages', async (_, thunkAPI) => {
@@ -52,7 +52,7 @@ export const downloadReport = createAsyncThunk(
         fileName: 'purchaseReport',
         exportType: 'xls'
       }
-      exportFile(exportOptions);
+      ExportFile(exportOptions);
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -69,7 +69,7 @@ export const exportSurvey = createAsyncThunk(
         fileName: 'surveyReport',
         exportType: 'xls'
       }
-      exportFile(exportOptions);
+      ExportFile(exportOptions);
 
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

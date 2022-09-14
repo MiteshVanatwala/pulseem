@@ -15,7 +15,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown, BsChevronUp } from "react-icons/bs";
 import { Loader } from '../Loader/Loader';
 import { useTranslation } from "react-i18next";
-import { renderHtml } from "../../helpers/utils";
+import { RenderHtml } from "../../helpers/Utils/utils";
 import moment from 'moment';
 import 'moment/locale/he';
 import { jsonToCSV, createFile } from '../../helpers/SheetHelper';
@@ -683,7 +683,7 @@ const UploadXL = ({
     const cautionDialog = () => {
         return {
             title: t('sms.columnAdjustment'),
-            content: renderHtml(t('sms.reset_manual_upload_notice')),
+            content: RenderHtml(t('sms.reset_manual_upload_notice')),
             disableBackdropClick: true,
             onClose: () => setDialogType({ type: "manualUpload" }),
             onCancel: () => setDialogType({ type: "manualUpload" }),

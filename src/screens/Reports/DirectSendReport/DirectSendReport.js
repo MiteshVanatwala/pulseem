@@ -12,9 +12,8 @@ import TabList from '@material-ui/lab/TabList';
 import DirectEmailReportTab from './DirectEmailReport';
 import { exportNewsletterDirectReport, getNewsletterDirectReport, exportArchiveEmailDirectReport, getArchiveDirectReport } from '../../../redux/reducers/newsletterSlice';
 import { exportSMSDirectReport, getSMSDirectReport, getArchiveSMSDirectReport, exportArchiveSmsDirect } from '../../../redux/reducers/smsSlice';
-import { formatDateTime, replaceClientStatus, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
-import { PreferredOrder, SwitchStatusDescription, ReplaceNull } from '../../../helpers/Export/ExportHelper';
-import { exportFile } from '../../../helpers/Export/ExportFile';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 import { EmailStatus, SmsStatus } from '../../../helpers/PulseemArrays';
 import { ExportIcon } from '../../../assets/images/managment/index'
@@ -223,7 +222,8 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
       "ClickCount": t('mainReport.clickCount'),
       "Attachments": t("mainReport.attachments"),
       "ClientStatus": t('report.clientStatus'),
-      "StatusDescription": t('report.StatusDescription')
+      "StatusDescription": t('report.StatusDescription'),
+      "ErrorData": t('report.errorReason')
     },
     SMS: {
       "DATE": t('common.CreationDate'),
@@ -243,48 +243,63 @@ const DirectSendReport = ({ classes, isArchive = false, ...props }) => {
 
   const handleExportFile = async () => {
     setLoader(true);
-    let response, finalData, headers, fileName = null;
+    let response, fileName = null;
 
     if (tabValue === 0) {
       searchData.sms.ShowContent = showContent;
       response = await dispatch(isArchive ? exportArchiveSmsDirect(searchData.sms) : exportSMSDirectReport(searchData.sms));
-      finalData = await PreferredOrder(response.payload, Object.keys(excelHeaders.SMS));
-      finalData = await SwitchStatusDescription(finalData, SmsStatus);
-      finalData = await formatDateTime(finalData, t);
-      finalData = replaceClientStatus(finalData);
-      if (showContent === false) {
-        finalData.forEach((fd) => {
-          delete fd.MESSAGE;
-        })
-      }
-      headers = excelHeaders.SMS;
-      fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
+
+
+      HandleExportData(response.payload, {
+        OrderItems: true,
+        FormatDate: true,
+        TranslateStatusToString: false,
+        TranslateStatusDescription: true,
+        Statuses: SmsStatus,
+        ReplaceClientStatus: true,
+        DeleteProperties: [showContent === false ? 'MESSAGE' : ''],
+        Order: Object.keys(excelHeaders.SMS)
+      }).then((result) => {
+        fileName = isArchive ? "Archive_Sms_DirectReports" : "Sms_DirectReports";
+        ExportFile({
+          data: result,
+          fileName: fileName,
+          exportType: 'csv',
+          fields: excelHeaders.SMS
+        });
+        setLoader(false);
+      }).catch((e) => {
+        console.error(e);
+      });
     }
 
     if (tabValue === 1) {
       response = await dispatch(isArchive ? exportArchiveEmailDirectReport(searchData.email) : exportNewsletterDirectReport(searchData.email))
-      finalData = await PreferredOrder(response.payload, Object.keys(excelHeaders.EMAIL));
-      finalData = await SwitchStatusDescription(finalData, EmailStatus);
-      finalData = await ReplaceNull(finalData, 'Attachments', t('emailStatus.noAttachments'));
-      finalData = replaceClientStatus(finalData);
-      finalData = await formatDateTime(finalData, t);
-      finalData = deletePropertyFromArrayObject(finalData, 'Status');
-      if (isArchive) {
-        finalData.forEach((fd) => {
-          delete fd.CreatedDate;
-        })
-      }
-      headers = excelHeaders.EMAIL;
-      fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
+      HandleExportData(response.payload, {
+        OrderItems: true,
+        FormatDate: true,
+        TranslateStatusToString: false,
+        TranslateStatusDescription: true,
+        Statuses: EmailStatus,
+        ReplaceClientStatus: true,
+        PropertyToReplace: "Status",
+        PropertyDefaultReplaceValue: t('emailStatus.noAttachments'),
+        ReplaceNull: true,
+        DeleteProperties: ['Status', isArchive ? "CreatedDate" : ''],
+        Order: Object.keys(excelHeaders.EMAIL)
+      }).then((result) => {
+        fileName = isArchive ? "Archive_Email_DirectReports" : "Email_DirectReports";
+        ExportFile({
+          data: result,
+          fileName: fileName,
+          exportType: 'csv',
+          fields: excelHeaders.EMAIL
+        });
+        setLoader(false);
+      }).catch((e) => {
+        console.error(e);
+      });
     }
-
-    exportFile({
-      data: finalData,
-      fileName: fileName,
-      exportType: 'csv',
-      fields: headers
-    });
-    setLoader(false);
   }
   const renderTabs = () => {
     return (

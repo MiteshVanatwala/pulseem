@@ -5,6 +5,7 @@ import { Box, Button, Grid, Typography, FormControlLabel, Checkbox } from '@mate
 import { SolidDialog } from '../managment/index';
 import { useState } from 'react';
 import { setCookie } from '../../helpers/cookies';
+import { RenderHtml } from '../../helpers/Utils/utils';
 
 
 const TFA = ({ classes,
@@ -16,15 +17,6 @@ const TFA = ({ classes,
     const { windowSize, isRTL } = useSelector(state => state.core);
     const { companyName } = useSelector(state => state.core)
     const [hideThisMessage, setHideThisMessage] = useState(false);
-
-    const renderHtml = (html) => {
-        function createMarkup() {
-            return { __html: html };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
 
     const handleHideThisMessage = (e) => {
         setHideThisMessage(e);
@@ -43,7 +35,7 @@ const TFA = ({ classes,
         content: (
             <Grid container>
                 <Grid item xs={12} className={clsx(classes.mb4)} style={{ textAlign: 'center' }}>
-                    {renderHtml(t('dashboard.2faDescription'))}
+                    {RenderHtml(t('dashboard.2faDescription'))}
                     <Box className={classes.mt15}>
                         <FormControlLabel
                             control={

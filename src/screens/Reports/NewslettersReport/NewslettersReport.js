@@ -18,10 +18,9 @@ import 'moment/locale/he';
 import { getNewsletterReports } from '../../../redux/reducers/newsletterSlice';
 import { setRowsPerPage } from '../../../redux/reducers/coreSlice';
 import { getCookie, setCookie } from '../../../helpers/cookies';
-import { exportFile } from '../../../helpers/Export/ExportFile';
+import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { EmailStatus } from '../../../helpers/PulseemArrays';
-import { statusNumberToString, formatDateTime, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
-import { PreferredOrder } from '../../../helpers/Export/ExportHelper';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { Loader } from '../../../components/Loader/Loader';
 
 const NewslettersReport = ({ classes }) => {
@@ -192,35 +191,32 @@ const NewslettersReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async () => {
-    let orderList = [];
+    let listToExport = null;
 
     if (toFileArray.length > 0) {
-      const fileArray = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
-      orderList = await PreferredOrder(fileArray, Object.keys(exportColumnHeader));
-      orderList = await statusNumberToString(t, orderList, EmailStatus);
-      orderList = await formatDateTime(orderList, t);
-      orderList = await deletePropertyFromArrayObject(orderList, "Status");
-      orderList =
-        exportFile({
-          data: orderList,
-          fileName: 'emailReport',
-          exportType: 'xls',
-          fields: exportColumnHeader
-        });
+      listToExport = newslettersReports.filter(a => toFileArray.includes(a.CampaignID));
     }
     else {
-      const list = searchResults || newslettersReports;
-      orderList = await PreferredOrder(list, Object.keys(exportColumnHeader));
-      orderList = await statusNumberToString(t, orderList, EmailStatus);
-      orderList = await formatDateTime(orderList, t);
-      orderList = await deletePropertyFromArrayObject(orderList, "Status");
-      exportFile({
-        data: orderList,
+      listToExport = searchResults || newslettersReports;
+    }
+
+    HandleExportData(listToExport, {
+      OrderItems: true,
+      FormatDate: true,
+      TranslateStatusToString: true,
+      Statuses: EmailStatus,
+      Order: Object.keys(exportColumnHeader),
+      DeleteProperties: ["Status"]
+    }).then((result) => {
+      ExportFile({
+        data: result,
         fileName: 'emailReport',
-        exportType: 'xls',
+        exportType: 'csv',
         fields: exportColumnHeader
       });
-    }
+    }).catch((e) => {
+      console.error(e);
+    });
 
     setToFileArray([]);
 

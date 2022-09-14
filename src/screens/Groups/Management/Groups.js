@@ -38,6 +38,7 @@ import { Dialog } from '../../../components/managment/index';
 import SimplyClubPupup from "./Popup/SimplyClubPupup";
 import Toast from '../../../components/Toast/Toast.component';
 import UnsubscribeOrDeletePopup from "./Popup/UnsubscribeOrDeletePopup";
+import { RenderHtml } from '../../../helpers/Utils/utils';
 
 const Groups = ({ classes }) => {
     const dispatch = useDispatch();
@@ -118,14 +119,6 @@ const Groups = ({ classes }) => {
             </>
         );
     };
-    const renderHtml = (html) => {
-        function createMarkup() {
-            return { __html: html };
-        }
-        return (
-            <label dangerouslySetInnerHTML={createMarkup()}></label>
-        );
-    }
     const renderToast = () => {
         setTimeout(() => {
             setToastMessage(null);
@@ -881,7 +874,7 @@ const Groups = ({ classes }) => {
                 break;
             }
             case 202: {
-                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: renderHtml(t("recipient.importResponses.fileUploaded")) })
+                setResponseMessage({ title: t("recipient.bulkImportTitle"), message: RenderHtml(t("recipient.importResponses.fileUploaded")) })
                 setDialog(DialogType.MESSAGE);
                 break;
             }
