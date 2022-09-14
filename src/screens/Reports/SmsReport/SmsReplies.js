@@ -14,7 +14,7 @@ import { getSmsReplies } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { ClientStatus } from '../../../helpers/PulseemArrays';
-import { formatDateTime, emailStatusNumberToString, smsStatusNumberToString } from '../../../helpers/exportHelper';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import { OrderItems } from '../../../helpers/Export/ExportHelper';
 import { EditIcon } from '../../../assets/images/managment/index'
 import { AiOutlineUserDelete, AiOutlineUsergroupDelete, AiOutlineExclamationCircle } from 'react-icons/ai';
@@ -115,14 +115,23 @@ const SmsReplies = ({ classes, ...other }) => {
 
     const handleDownloadCsv = async () => {
         let orderList = await OrderItems(smsReplies, Object.keys(exportColumnHeader));
-        orderList = await emailStatusNumberToString(t, orderList, ClientStatus.Email);
-        orderList = await smsStatusNumberToString(t, orderList, ClientStatus.Sms);
-        orderList = await formatDateTime(orderList);
-        ExportFile({
-            data: orderList,
-            fileName: `smsReplies_${other.props.match.params.id}`,
-            exportType: 'xls',
-            fields: exportColumnHeader
+
+        HandleExportData(orderList, {
+            OrderItems: true,
+            FormatDate: true,
+            TranslateStatusToString: true,
+            Statuses: ClientStatus.Email.concat(ClientStatus.Sms),
+            Order: Object.keys(exportColumnHeader),
+            DeleteProperties: ["Status"]
+        }).then((result) => {
+            ExportFile({
+                data: result,
+                fileName: `smsReplies_${other.props.match.params.id}`,
+                exportType: 'csv',
+                fields: exportColumnHeader
+            });
+        }).catch((e) => {
+            console.error(e);
         });
     }
 

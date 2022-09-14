@@ -20,8 +20,7 @@ import { getSmsReport, getSmsGraph } from '../../../redux/reducers/smsSlice';
 import { Loader } from '../../../components/Loader/Loader';
 import { ExportFile } from '../../../helpers/Export/ExportFile';
 import { smsReportStatus } from '../../../helpers/PulseemArrays';
-import { statusNumberToString, formatDateTime, booleanToNumber, deletePropertyFromArrayObject } from '../../../helpers/exportHelper';
-import { OrderItems } from '../../../helpers/Export/ExportHelper';
+import { HandleExportData } from '../../../helpers/Export/ExportHelper';
 import GraphReport from '../../../components/Reports/GraphReport';
 
 const SmsReport = ({ classes }) => {
@@ -153,16 +152,28 @@ const SmsReport = ({ classes }) => {
   }
 
   const handleDownloadCsv = async () => {
-    let orderList = await OrderItems(searchResults || smsReport, Object.keys(exportColumnHeader));
-    orderList = await statusNumberToString(t, orderList, smsReportStatus);
-    orderList = await formatDateTime(orderList, t);
-    orderList = await booleanToNumber(orderList, 'IsResponse', true, t);
-    orderList = await deletePropertyFromArrayObject(orderList, "Status");
-    ExportFile({
-      data: orderList,
-      fileName: 'smsReport',
-      exportType: 'xls',
-      fields: exportColumnHeader
+    let orderList = searchResults || smsReport;
+    //await OrderItems(searchResults || smsReport, Object.keys(exportColumnHeader));
+
+    HandleExportData(orderList, {
+      OrderItems: true,
+      FormatDate: true,
+      IsBoolean: true,
+      BooleanToNumber: true,
+      Statuses: smsReportStatus,
+      TranslateStatusToString: true,
+      PropertyToReplace: 'IsResponse',
+      Order: Object.keys(exportColumnHeader),
+      DeleteProperties: ["Status"]
+    }).then((result) => {
+      ExportFile({
+        data: result,
+        fileName: 'smsReport',
+        exportType: 'csv',
+        fields: exportColumnHeader
+      });
+    }).catch((e) => {
+      console.error(e);
     });
   }
 
