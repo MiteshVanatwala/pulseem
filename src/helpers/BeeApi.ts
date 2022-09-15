@@ -11,11 +11,11 @@ type GetTokenResponse = {
   token: String;
 };
 
-type Campaign = {
-  campaignId: Number,
-  JsonData: JSON.stringify(design),
-  HtmlData: html
-}
+// type Campaign = {
+//   campaignId: Number,
+//   JsonData: JSON.stringify(design),
+//   HtmlData: html
+// }
 
 // This method should call React API method that return the final token
 export const GetBeeToken = async () => {
@@ -49,7 +49,7 @@ export const SaveDesign = async (campaign: any) => {
     try {
       const response = await axios.post(`/CampaignEditor/SaveCampaign/`, campaign);
       return JSON.parse(response.data);
-    } catch (error) {
+    } catch (error: any) {
       return { error: error.message };
     }
   }
