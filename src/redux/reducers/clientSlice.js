@@ -15,7 +15,7 @@ export const removeEmailClient = createAsyncThunk(
   'client/RemoveEmailClient', async (id, thunkAPI) => {
     try {
       const response = await instence.put(`client/RemoveEmailClient/${id}`);
-      return response.data
+      return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
@@ -25,7 +25,7 @@ export const removeSmsClient = createAsyncThunk(
   'client/RemoveSmsClient', async (id, thunkAPI) => {
     try {
       const response = await instence.put(`client/RemoveSmsClient/${id}`);
-      return response.data
+      return JSON.parse(response.data)
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
