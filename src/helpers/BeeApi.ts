@@ -48,9 +48,9 @@ export const SaveDesign = async (campaign: any) => {
   return new Promise(async (resolve, reject) => {
     try {
       const response = await axios.post(`/CampaignEditor/SaveCampaign/`, campaign);
-      return JSON.parse(response.data);
+      resolve(JSON.parse(response.data));
     } catch (error: any) {
-      return { error: error.message };
+      reject(error.message);
     }
-  }
+  });
 }
