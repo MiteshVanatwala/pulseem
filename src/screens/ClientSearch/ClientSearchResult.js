@@ -1619,7 +1619,10 @@ const ClientSearchResult = ({ props, classes }) => {
             selectedGroups={mappedGroups}
             setDialog={setDialog}
             handleResponses={(response, actions) => { handleResponses(response, actions); }}
-            onAddRecipient={() => { setDialog(null); getData(); }}
+            onAddRecipient={(closeDialog = true) => {
+              closeDialog && setDialog(null);
+              getData();
+            }}
             recipientData={
               selectedClients[0] && (data?.find((obj) => obj?.ClientID === selectedClients[0]))
             }
