@@ -198,8 +198,7 @@ const AddGroupPopUp = ({
                                 )}
                                 onClick={() => {
                                     if (addClientByQuery === true) {
-                                        createGroupCallback(newGroupData.GroupName);
-                                        // handleAddGroup(newGroupData, createGroupCallback);
+                                        createGroupCallback(newGroupData);
 
                                     }
                                     else {

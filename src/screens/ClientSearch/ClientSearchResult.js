@@ -868,10 +868,14 @@ const ClientSearchResult = ({ props, classes }) => {
     }
     setLoader(false);
   }
-  const handleAssignClientsToGroup = async (groupName) => {
+  const handleAssignClientsToGroup = async (groupData) => {
     setDialog(null);
     setLoader(true);
-    const response = await dispatch(AddClientsToGroup({ ...searchData, GroupName: groupName }));
+    const response = await dispatch(AddClientsToGroup({
+      ...searchData,
+      GroupName: groupData.GroupName,
+      IsTestGroup: groupData.IsTestGroup
+    }));
     handleResponses(response, assignClientsActions);
     setLoader(false);
   }
@@ -1589,7 +1593,7 @@ const ClientSearchResult = ({ props, classes }) => {
             ToastMessages={ToastMessages}
             setToastMessage={setToastMessage}
             addClientByQuery={true}
-            createGroupCallback={(groupName) => { handleAssignClientsToGroup(groupName); }}
+            createGroupCallback={(groupData) => { handleAssignClientsToGroup(groupData); }}
             handleResponses={(response, actions) => handleResponses(response, actions)}
             getData={() => null}
           />
