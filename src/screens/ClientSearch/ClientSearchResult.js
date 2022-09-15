@@ -787,9 +787,6 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(true);
     const response = await dispatch(removeEmailClient(selectedClients[0]))
     if (response) {
-      if (response.payload === 'true') {
-        response.payload = { ...response.payload, StatusCode: 201 }
-      }
       //TODO: show delete success message
       handleResponses(response,
         {
@@ -830,9 +827,6 @@ const ClientSearchResult = ({ props, classes }) => {
     setLoader(true);
     const response = await dispatch(removeSmsClient(selectedClients[0]))
     if (response) {
-      if (response.payload === 'true') {
-        response.payload = { ...response.payload, StatusCode: 201 }
-      }
       //TODO: show delete success message
       handleResponses(response,
         {
