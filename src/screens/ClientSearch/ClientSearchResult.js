@@ -1325,7 +1325,7 @@ const ClientSearchResult = ({ props, classes }) => {
                     style={{ fontWeight: "bold" }}
                     placement={"top"}
                     title={<Typography title={Email} className={classes.bold}>{`${Email}`}</Typography>}
-                    text={`${Email && Email.length > 24 ? Email.substring(0, 24) + '...' : Email}`}
+                    text={`${Email && Email.length > 20 ? Email.substring(0, 20) + '...' : Email}`}
                   >
                   </CustomTooltip>
                 ),
@@ -1593,6 +1593,11 @@ const ClientSearchResult = ({ props, classes }) => {
           />
         }
         case DialogType.EDIT_RECIPIENT: {
+          const mappedGroups = data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds?.split(',')?.map(function (x) {
+            return parseInt(x, 10);
+          }) || searchData?.GroupIds?.split(',')?.map(function (x) {
+            return parseInt(x, 10);
+          }) || [];
           return <AddRecipientPopup
             classes={classes}
             isOpen={selectedClients.length === 1 && dialog === DialogType.EDIT_RECIPIENT}
@@ -1604,7 +1609,7 @@ const ClientSearchResult = ({ props, classes }) => {
             Groups={groupData?.Groups?.reduce((prevVal, newVal) => [...prevVal, { GroupID: newVal.GroupID, GroupName: newVal.GroupName }], []) || []}
             // selectGroup={(idArr) => setSelectedGroups(idArr)}
             DialogType={DialogType}
-            selectedGroups={data?.find((obj) => obj.ClientID === selectedClients[0])?.GroupIds || searchData?.GroupIds || []}
+            selectedGroups={mappedGroups}
             setDialog={setDialog}
             handleResponses={(response, actions) => { handleResponses(response, actions); }}
             onAddRecipient={() => { setDialog(null); getData(); }}

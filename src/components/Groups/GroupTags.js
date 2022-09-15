@@ -34,27 +34,9 @@ const GroupTags = ({ classes,
     const handleRemoveGroup = (e, groupId) => {
         e.stopPropagation();
         e.preventDefault();
-        const newList = groups.filter((g) => { return g.GroupID !== groupId });
+        const newList = groupSelected.filter((g) => { return g !== groupId });
         onRemoveGroup(newList);
-        dispatch(setSelectedGroups(newList));
     }
-
-    useEffect(() => {
-        if (groupSelected && subAccountAllGroups) {
-            let tmpGroups = [];
-            groupSelected.forEach((grp) => {
-                const findGroup = subAccountAllGroups.find((g) => { return g.GroupID === grp });
-                if (findGroup) {
-                    tmpGroups.push(findGroup)
-                }
-            });
-
-            setGroups(tmpGroups);
-            dispatch(setSelectedGroups(tmpGroups));
-
-        }
-    }, [groupSelected])
-
 
     const CheckBoxPanel = () => (
         <Box className={classes.rightForm} style={{ ...style }}>
@@ -63,10 +45,10 @@ const GroupTags = ({ classes,
                 className={clsx(classes.sidebar, classes.contactGroupDiv, classes.dFlex)}
                 onClick={() => onShowModal()}
             >
-                {(!selectedGroups || selectedGroups.length <= 0) && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
-                {selectedGroups && selectedGroups.length > 0 ? (
+                {(!groupSelected || groupSelected.length <= 0) && <Box style={{ alignSelf: 'center', fontSize: 15 }}>{t(title)}</Box>}
+                {groupSelected && groupSelected.length > 0 ? (
                     <Box className={classes.mappedGroup} style={{ maxWidth: '100%' }}>
-                        {selectedGroups.map((item, index) => {
+                        {subAccountAllGroups.filter((g) => groupSelected.indexOf(g.GroupID) > -1).map((item, index) => {
                             return (
                                 <Box key={index} className={clsx(classes.selectedGroupsDiv)}>
                                     <span className={clsx(classes.ellipsisText, classes.nameGroup)}>
